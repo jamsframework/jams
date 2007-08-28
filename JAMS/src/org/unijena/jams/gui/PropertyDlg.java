@@ -1,0 +1,227 @@
+/*
+ * PropertyDlg.java
+ * Created on 11. April 2006, 21:47
+ *
+ * This file is part of JAMS
+ * Copyright (C) 2005 FSU Jena
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ *
+ */
+
+package org.unijena.jams.gui;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Vector;
+import javax.swing.*;
+import org.unijena.jams.*;
+import org.unijena.jams.gui.input.BooleanInput;
+import org.unijena.jams.gui.input.FileInput;
+import org.unijena.jams.gui.input.ListInput;
+import org.unijena.jams.gui.input.TextInput;
+import org.unijena.jams.JAMSTools;
+
+/**
+ *
+ * @author S. Kralisch
+ */
+public class PropertyDlg extends JDialog {
+    
+    private static final long serialVersionUID = -7072048498542653432L;
+    private static final int JCOMP_HEIGHT = 20;
+    
+    private ListInput list;
+    private BooleanInput verboseCheck, windowEnable, windowOnTop;
+    private JSpinner debugSpinner;
+    private FileInput infoFile, errorFile;
+    private TextInput windowHeight, windowWidth;
+    private JAMSProperties properties;
+    
+    public static final int APPROVE_OPTION = 1;
+    public static final int CANCEL_OPTION = 0;
+    private int result = CANCEL_OPTION;
+    
+    public PropertyDlg(Frame owner, JAMSProperties properties) {
+        
+        super(owner);
+        this.setLayout(new BorderLayout());
+        this.setLocationRelativeTo(owner);
+        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        
+        this.properties = properties;
+        
+        setTitle("JAMS Properties");
+        setModal(true);
+        
+        JPanel contentPanel = new JPanel();
+        GridBagLayout gbl = new GridBagLayout();
+        contentPanel.setLayout(gbl);
+        //contentPanel.setPreferredSize(new Dimension(420, 250));
+        
+        int y = 0;
+        
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Libraries:"), 0, y, 1, 1, 0, 0);
+        list = new ListInput();
+        list.setPreferredSize(new Dimension(295, 130));
+        LHelper.addGBComponent(contentPanel, gbl, list, 1, y, 1, 1, 1, 1);
+        
+        y++;
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Command line output:"), 0, y, 1, 1, 0, 0);
+        verboseCheck = new BooleanInput();
+        verboseCheck.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
+        LHelper.addGBComponent(contentPanel, gbl, verboseCheck, 1, y, 1, 1, 1, 1);
+        
+        y++;
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Debug level:"), 0, y, 1, 1, 0, 0);
+        debugSpinner = new JSpinner();
+        JPanel spinnerPanel = new JPanel();
+        spinnerPanel.setLayout(new BorderLayout());
+        spinnerPanel.add(debugSpinner, BorderLayout.WEST);
+        ArrayList<Integer> vals = new ArrayList<Integer>();
+        vals.add(0);
+        vals.add(1);
+        vals.add(2);
+        vals.add(3);
+        SpinnerListModel sModel = new SpinnerListModel(vals);
+        debugSpinner.setModel(sModel);
+        debugSpinner.setPreferredSize(new Dimension(35, 26));
+        LHelper.addGBComponent(contentPanel, gbl, spinnerPanel, 1, y, 1, 1, 0, 0);
+        
+        y++;
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Info log file:"), 0, y, 1, 1, 0, 0);
+        infoFile = new FileInput();
+        infoFile.setPreferredSize(new Dimension(286, JCOMP_HEIGHT));
+        LHelper.addGBComponent(contentPanel, gbl, infoFile, 1, y, 1, 1, 1, 1);
+        
+        y++;
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Error log file:"), 0, y, 1, 1, 0, 0);
+        errorFile = new FileInput();
+        errorFile.setPreferredSize(new Dimension(286, JCOMP_HEIGHT));
+        LHelper.addGBComponent(contentPanel, gbl, errorFile, 1, y, 1, 1, 1, 1);
+        
+        y++;
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Model window visible:"), 0, y, 1, 1, 0, 0);
+        windowEnable = new BooleanInput();
+        windowEnable.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
+        LHelper.addGBComponent(contentPanel, gbl, windowEnable, 1, y, 1, 1, 1, 1);
+        
+        y++;
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Model window on top:"), 0, y, 1, 1, 0, 0);
+        windowOnTop = new BooleanInput();
+        windowOnTop.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
+        LHelper.addGBComponent(contentPanel, gbl, windowOnTop, 1, y, 1, 1, 1, 1);
+        
+        y++;
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Model window width:"), 0, y, 1, 1, 0, 0);
+        windowWidth = new TextInput();
+        windowWidth.getComponent().setPreferredSize(new Dimension(100, JCOMP_HEIGHT));
+        LHelper.addGBComponent(contentPanel, gbl, windowWidth, 1, y, 1, 1, 1, 1);
+        JPanel buttonPanel = new JPanel();
+        
+        y++;
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Model window height:"), 0, y, 1, 1, 0, 0);
+        windowHeight = new TextInput();
+        windowHeight.getComponent().setPreferredSize(new Dimension(100, JCOMP_HEIGHT));
+        LHelper.addGBComponent(contentPanel, gbl, windowHeight, 1, y, 1, 1, 1, 1);
+        
+        JButton okButton = new JButton("OK");
+        okButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                result = APPROVE_OPTION;
+            }
+        });
+        buttonPanel.add(okButton);
+        
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                result = CANCEL_OPTION;
+            }
+        });
+        buttonPanel.add(cancelButton);
+        
+        JPanel mainPanel = new JPanel();
+        mainPanel.add(contentPanel);
+        
+        getContentPane().add(new JScrollPane(mainPanel), BorderLayout.CENTER);
+        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+        
+        pack();
+    }
+    
+    public void setProperties(JAMSProperties properties) {
+        
+        this.properties = properties;
+        
+        String[] libs = JAMSTools.toArray(properties.getProperty("libs"), ";");
+        Vector<String> v = new Vector<String>();
+        for (int i = 0; i < libs.length; i++) {
+            v.add(libs[i]);
+        }
+        list.setListData(v);
+        
+        verboseCheck.setValue(properties.getProperty("verbose"));
+        
+        Integer debugLevel = 1;
+        try {
+            debugLevel = Integer.parseInt(properties.getProperty("debug"));
+        } catch (NumberFormatException e) {}
+        debugSpinner.setValue(debugLevel);
+        
+        errorFile.setFile(properties.getProperty("errorlog"));
+        infoFile.setFile(properties.getProperty("infolog"));
+        
+        windowEnable.setValue(properties.getProperty("windowenable"));
+        windowOnTop.setValue(properties.getProperty("windowontop"));
+        
+        windowHeight.setValue(properties.getProperty("windowheight"));
+        windowWidth.setValue(properties.getProperty("windowwidth"));
+    }
+    
+    public void validateProperties() {
+        
+        Vector<String> v = list.getListData();
+        String libs = "";
+        if (v.size()>0)
+            libs = v.get(0);
+        
+        for (int i = 1; i < v.size(); i++) {
+            libs += ";" + v.get(i);
+        }
+        properties.setProperty("libs", libs);
+        properties.setProperty("debug", debugSpinner.getValue().toString());
+        properties.setProperty("verbose", verboseCheck.getValue());
+        properties.setProperty("errorlog", errorFile.getFile());
+        properties.setProperty("infolog", infoFile.getFile());
+        properties.setProperty("windowenable", windowEnable.getValue());
+        properties.setProperty("windowontop", windowOnTop.getValue());
+        properties.setProperty("windowheight", windowHeight.getValue());
+        properties.setProperty("windowwidth", windowWidth.getValue());
+    }
+    
+    public JAMSProperties getProperties() {
+        validateProperties();
+        return properties;
+    }
+    
+    public int getResult() {
+        return result;
+    }
+}
