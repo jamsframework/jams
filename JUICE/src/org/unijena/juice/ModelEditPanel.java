@@ -1,0 +1,184 @@
+/*
+ * ModelEditPanel.java
+ * Created on 12. Dezember 2006, 22:43
+ *
+ * This file is part of JAMS
+ * Copyright (C) 2006 FSU Jena
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ *
+ */
+
+package org.unijena.juice;
+
+import java.awt.Dimension;
+import java.awt.GridBagLayout;
+import java.util.HashMap;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import org.unijena.jams.gui.LHelper;
+
+/**
+ *
+ * @author S. Kralisch
+ */
+public class ModelEditPanel extends JPanel {
+    
+    private static final int TEXTAREA_WIDTH = 295;
+    private static final String DEFAULT_STRING = "[none]";
+    
+    private HashMap<String, JTextField> textFields = new HashMap<String, JTextField>();
+    private HashMap<String, JTextPane> textAreas = new HashMap<String, JTextPane>();
+    private JPanel componentPanel;
+    private GridBagLayout mainLayout;
+    private ModelView view;
+    
+    public ModelEditPanel(ModelView view) {
+        super();
+        this.view = view;
+        init();
+    }
+    
+    private void init() {
+        
+        componentPanel = new JPanel();
+        setBorder(BorderFactory.createTitledBorder("Model Properties"));
+        
+        mainLayout = new GridBagLayout();
+        componentPanel.setLayout(mainLayout);
+        
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Author:"), 1, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Date:"), 1, 2, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Description:"), 1, 3, 1, 1, 0, 0);
+        
+        LHelper.addGBComponent(componentPanel, mainLayout, getTextField("author", "", true), 2, 1, 1, 1, 1.0, 1.0);
+        LHelper.addGBComponent(componentPanel, mainLayout, getTextField("date", "", true), 2, 2, 1, 1, 1.0, 1.0);
+        LHelper.addGBComponent(componentPanel, mainLayout, getTextPane("description", "", 250, true), 2, 3, 1, 1, 1.0, 1.0);
+        
+
+        textFields.get("author").getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                updateAuthor();
+            }
+            public void insertUpdate(DocumentEvent e) {
+                updateAuthor();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                updateAuthor();
+            }
+        });
+        textFields.get("date").getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                updateDate();
+            }
+            public void insertUpdate(DocumentEvent e) {
+                updateDate();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                updateDate();
+            }
+        });
+        textAreas.get("description").getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                updateDescription();
+            }
+            public void insertUpdate(DocumentEvent e) {
+                updateDescription();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                updateDescription();
+            }
+        });
+        
+/*
+        textFields.get("author").addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                updateAuthor();
+            }
+        });
+        textFields.get("date").addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                updateDate();
+            }
+        });
+        textAreas.get("description").addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                updateDescription();
+            }
+        });
+*/      
+        add(componentPanel);
+    }
+    
+    public void update() {
+        textFields.get("author").setText(view.getAuthor());
+        textFields.get("date").setText(view.getDate());
+        textAreas.get("description").setText(view.getDescription());
+    }
+    
+    public JTextField getTextField(String key, String value, boolean editable) {
+        JTextField text = new JTextField();
+        text.setEditable(editable);
+        text.setText(value);
+        text.setColumns(30);
+        textFields.put(key, text);
+        return text;
+    }
+    
+    public JScrollPane getTextPane(String key, String value, int height, boolean editable) {
+        JTextPane textPane = new JTextPane();
+        textPane.setContentType("text/plain");
+        textPane.setEditable(editable);
+        textPane.setText(value);
+        JScrollPane scroll = new JScrollPane(textPane);
+        scroll.setPreferredSize(new Dimension(TEXTAREA_WIDTH, height));
+        textAreas.put(key, textPane);
+        return scroll;
+    }
+    
+    private void updateAuthor() {
+        
+        String author = textFields.get("author").getText();
+        if (!author.equals(view.getAuthor())) {
+            view.setModified(true);
+        }
+        view.setAuthor(author);
+    }
+    
+    private void updateDate() {
+        
+        String date = textFields.get("date").getText();
+        if (!date.equals(view.getDate())) {
+            view.setModified(true);
+        }
+        view.setDate(date);
+    }
+    
+    private void updateDescription() {
+        
+        String description = textAreas.get("description").getText();
+        if (!description.equals(view.getDescription())) {
+            view.setModified(true);
+        }
+        view.setDescription(description);
+    }
+    
+}
