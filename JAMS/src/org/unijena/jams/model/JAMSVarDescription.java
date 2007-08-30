@@ -37,10 +37,12 @@ public @interface JAMSVarDescription {
     public enum UpdateType { INIT, RUN };
     
     AccessType access();                        // type of access
-    UpdateType update();                        // when to update this var
     String description() default "";            // description of purpose
+    String defaultValue() default "";           // default value
     String unit() default "";                   // unit of this var if numeric
     double lowerBound() default 0d;             // lowest allowed value of var if numeric
     double upperBound() default 0d;             // highest allowed value of var if numeric
-    
+
+    //this is obsolete//
+    UpdateType update();                        // when to update
 }

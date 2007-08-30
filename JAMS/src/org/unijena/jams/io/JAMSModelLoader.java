@@ -148,11 +148,6 @@ public class JAMSModelLoader {
             component = (JAMSComponent) componentClazz.newInstance();
             component.setModel(jamsModel);
             component.setInstanceName(componentName);
-
-/*            if (component instanceof JAMSContext) {
-                ((JAMSContext) component).registerObserver();
-            }
-  */          
             
             if (component instanceof JAMSGUIComponent) {
                 JAMSGUIComponent guiComponent = (JAMSGUIComponent) component;
@@ -171,7 +166,7 @@ public class JAMSModelLoader {
             jamsModel.getRuntime().handle(iae, false);
         }
         
-                
+        
         // put the JAMSComponent object into the component repository
         this.componentRepository.put(componentName, component);
         
@@ -187,9 +182,13 @@ public class JAMSModelLoader {
                 // process child components of context components
                 childComponent = loadComponent((Element) node, component);
                 childComponentList.add(childComponent);
-                                /*
-                                 * if (childComponent instanceof JAMSGUIComponent) { JAMSGUIComponent guiComponent = (JAMSGUIComponent) childComponent; jamsModel.getRuntime().addGUIComponent(guiComponent); }
-                                 */
+                
+/*
+                if (childComponent instanceof JAMSGUIComponent) {
+                    JAMSGUIComponent guiComponent = (JAMSGUIComponent) childComponent;
+                    jamsModel.getRuntime().addGUIComponent(guiComponent);
+                }
+ */
                 
             } else if (node.getNodeName() == "attribute") {
                 
@@ -213,18 +212,17 @@ public class JAMSModelLoader {
                     Field field = componentClazz.getField(varName);
                     varClassName = field.getType().getName();
                     
-                    jamsModel.getRuntime().println("     " + componentName + " var declaration: " + varName + " (" + varClassName + ")", JAMS.VERBOSE);
-                    
                     if (field.isAnnotationPresent(JAMSVarDescription.class)) {
                         
                         JAMSVarDescription jvd = field.getAnnotation(JAMSVarDescription.class);
-                        jamsModel.getRuntime().println("          Access: " + jvd.access() + " Update: " + jvd.update(), JAMS.VERBOSE);
                         
+                        jamsModel.getRuntime().println("     " + componentName + " var declaration: " + varName + " (" + varClassName + ", " + jvd.access() + ")", JAMS.VERBOSE);
+                        
+/*
                         if ((jvd.update() == JAMSVarDescription.UpdateType.INIT) && ((jvd.access() != JAMSVarDescription.AccessType.READ) || element.hasAttribute("attribute"))) {
-                            
-                            //throw new ModelSpecificationException("Component " + componentName + ": Variable " + varName + " can only be set using \"value\" or \"globvar\"!");
-                            
+                            throw new ModelSpecificationException("Component " + componentName + ": Variable " + varName + " can only be set using \"value\" or \"globvar\"!");
                         }
+ */
                         
                         // set the var object if value provided directly
                         if (element.hasAttribute("value")) {
@@ -241,12 +239,15 @@ public class JAMSModelLoader {
                             // attach the variable to the component's field..
                             field.set(component, variable);
                             
-                            // set the var object if value provided via globvar
-                            // directive
+                            JAMSData data = (JAMSData) field.get(component);
+                            String id = componentName + "." + varName;
+                            jamsModel.getRuntime().getDataHandles().put(id, data);
+                            
                         }
                         
                         // set the var object if value provided via globvar
                         // attribute
+                        /*
                         if (element.hasAttribute("globvar")) {
                             
                             // create the var object
@@ -261,6 +262,7 @@ public class JAMSModelLoader {
                             field.set(component, variable);
                             
                         }
+                        */
                         
                         if (element.hasAttribute("attribute")) {
                             
@@ -272,44 +274,32 @@ public class JAMSModelLoader {
                                 context = jamsModel;
                             }
                             
-                            // check if providing comtext supplies specified variable
-                            String cVarName = element.getAttribute("cvar");
+                            // check if providing context supplies specified variable
                             // ...
                             
-                            if (element.hasAttribute("attribute")) {
-                                
-                                if (!(context instanceof JAMSContext)) {
-                                    throw new ModelSpecificationException("Component " + componentName + ": Component \"" + element.getAttribute("context") + "\" must be of type JAMSSpatialContext!");
-                                }
-                                
-                                JAMSContext sc = (JAMSContext) context;
-                                String attributeName;
-                                
-                                attributeName = element.getAttribute("attribute");
-                                
-                                if (jvd.access() == JAMSVarDescription.AccessType.READ)
-                                    sc.addAccess(component, varName, attributeName, JAMSEntityDataAccessor.READ_ACCESS);
-                                else if (jvd.access() == JAMSVarDescription.AccessType.WRITE)
-                                    sc.addAccess(component, varName, attributeName, JAMSEntityDataAccessor.WRITE_ACCESS);
-                                else if (jvd.access() == JAMSVarDescription.AccessType.READWRITE)
-                                    sc.addAccess(component, varName, attributeName, JAMSEntityDataAccessor.READWRITE_ACCESS);
-                            } else {
-                                
-                                // check if var types of context and user do match
-                                String cVarClassName = context.getClass().getField(cVarName).getType().getName();
-                                if (!cVarClassName.equals(varClassName)) {
-                                    throw new ModelSpecificationException("Types of variables " + cVarName + " (" + cVarClassName + ") and " + varName + " (" + varClassName + ") do not match!");
-                                }
-                                
+                            if (!(context instanceof JAMSContext)) {
+                                throw new ModelSpecificationException("Component " + componentName + ": Component \"" + element.getAttribute("context") + "\" must be of type JAMSSpatialContext!");
                             }
+                            
+                            JAMSContext sc = (JAMSContext) context;
+                            String attributeName;
+                            
+                            attributeName = element.getAttribute("attribute");
+                            
+                            if (jvd.access() == JAMSVarDescription.AccessType.READ)
+                                sc.addAccess(component, varName, attributeName, JAMSEntityDataAccessor.READ_ACCESS);
+                            else if (jvd.access() == JAMSVarDescription.AccessType.WRITE)
+                                sc.addAccess(component, varName, attributeName, JAMSEntityDataAccessor.WRITE_ACCESS);
+                            else if (jvd.access() == JAMSVarDescription.AccessType.READWRITE)
+                                sc.addAccess(component, varName, attributeName, JAMSEntityDataAccessor.READWRITE_ACCESS);
                         }
-                        
+/*
                         if (jvd.update() == JAMSVarDescription.UpdateType.INIT) {
                             JAMSData data = (JAMSData) field.get(component);
                             String id = componentName + "." + varName;
                             jamsModel.getRuntime().getDataHandles().put(id, data);
                         }
-                        
+ */
                     } else {
                         throw new ModelSpecificationException("Component " + componentName + ": variable " + varName + " can not be accessed (missing annotation)!");
                     }
