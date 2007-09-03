@@ -44,5 +44,5 @@ public @interface JAMSVarDescription {
     double upperBound() default 0d;             // highest allowed value of var if numeric
 
     //this is obsolete//
-    UpdateType update();                        // when to update
+    UpdateType update() default UpdateType.INIT;// when to update
 }

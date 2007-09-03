@@ -27,7 +27,7 @@ package org.unijena.jams.data;
  *
  * @author S. Kralisch
  */
-public class JAMSInteger  extends JAMSSerializableData {
+public class JAMSInteger extends JAMSNumeric {
     
     private int value;
     

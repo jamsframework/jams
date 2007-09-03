@@ -178,6 +178,20 @@ public class TSPlot extends JAMSGUIComponent {
             )
             public JAMSDouble[] valueRight;
     
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            description = "Value for \"No data\" (shouldn't be plotted)",
+            defaultValue = "-9999"
+            )
+            public JAMSDouble noDataValue;
+    
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            description = "Plot data after cacheSize values have been collected",
+            defaultValue = "10"
+            )
+            public JAMSInteger cacheSize;
+    
     
     TimeSeries[] tsLeft, tsRight;
     TimeSeriesCollection dataset1, dataset2;
@@ -187,6 +201,13 @@ public class TSPlot extends JAMSGUIComponent {
     JButton saveButton;
     int i, graphCountLeft = 0, graphCountRight = 0;
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
+    double noDataValue_;
+    int cacheSize_;
+    long[] timeStamps;
+    double[] dataValuesLeft;
+    double[] dataValuesRight;
+    int count;
+    
     
     public TSPlot() {
         colorTable.put("yellow", Color.yellow);
@@ -221,7 +242,7 @@ public class TSPlot extends JAMSGUIComponent {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.add(chartPanel, BorderLayout.CENTER);
-                
+        
         return panel;
     }
     
@@ -274,8 +295,9 @@ public class TSPlot extends JAMSGUIComponent {
         return r;
     }
     
-    
     public void init() {
+        
+        noDataValue_ = noDataValue.getValue();
         
         if (chart!=null) {
             plot = chart.getXYPlot();
@@ -320,28 +342,81 @@ public class TSPlot extends JAMSGUIComponent {
                 }
             }
         }
+        
+        cacheSize_ = cacheSize.getValue();
+        timeStamps = new long[cacheSize_];
+        dataValuesRight = new double[cacheSize_*graphCountRight];
+        dataValuesLeft = new double[cacheSize_*graphCountLeft];
+        count = 0;
     }
     
     public void run() {
+        timeStamps[count] = time.getTimeInMillis();
+        int offsetRight = count * graphCountRight;
+        int offsetLeft = count * graphCountLeft;
+        
+        for (i = 0; i < graphCountRight; i++) {
+            double value = valueRight[i].getValue();
+            if (value == noDataValue_) {
+                value = 0;
+            }
+            dataValuesRight[offsetRight+i] = value;
+        }
+        
+        for (i = 0; i < graphCountLeft; i++) {
+            double value = valueLeft[i].getValue();
+            if (value == noDataValue_) {
+                value = 0;
+            }
+            dataValuesLeft[offsetLeft+i] = value;
+        }
+        
+        if (count == cacheSize_-1) {
+            plotData();
+            count = 0;
+        } else {
+            count++;
+        }
+    }
+    
+    private void plotData() {
+        try {
+            
+            for (int i = 0; i <= count; i++) {
+                
+                Second second = new Second(new Date(timeStamps[i]));
+                for (int j = 0; j < graphCountRight; j++) {
+                    tsRight[j].add(second, dataValuesRight[i*graphCountRight+j]);
+                }
+                for (int j = 0; j < graphCountLeft; j++) {
+                    tsLeft[j].add(second, dataValuesLeft[i*graphCountLeft+j]);
+                }
+            }
+            
+        } catch (Exception e) {} //caused by bugs in JFreeChart
+    }
+    
+    public void run_() {
         try {
             for (i = 0; i < graphCountRight; i++) {
                 double value = valueRight[i].getValue();
-                if(value == -9999)
+                if (value == noDataValue_) {
                     value = 0;
-                //tsRight[i].add(new Hour(new Date(time.getTimeInMillis())), valueRight[i].getValue());
+                }
                 tsRight[i].add(new Second(new Date(time.getTimeInMillis())), value);
             }
             for (i = 0; i < graphCountLeft; i++) {
                 double value = valueLeft[i].getValue();
-                if(value == -9999)
+                if (value == noDataValue_) {
                     value = 0;
+                }
                 tsLeft[i].add(new Second(new Date(time.getTimeInMillis())), value);
             }
         } catch (Exception e) {} //caused by bugs in JFreeChart
     }
     
     public void cleanup() {
-//        saveButton.setEnabled(true);
+        plotData();
     }
     
 }

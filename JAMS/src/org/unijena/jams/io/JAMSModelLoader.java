@@ -337,21 +337,21 @@ public class JAMSModelLoader {
     
     private void createMembers(JAMSComponent component) throws IllegalAccessException, InstantiationException {
         
-        Object var;
+        Object o;
         Class dataType;
         
         Field[] fields = component.getClass().getFields();
         for (int i = 0; i < fields.length; i++) {
-            var = fields[i].get(component);
+            o = fields[i].get(component);
             dataType = fields[i].getType();
             
-            if (JAMSData.class.isAssignableFrom(dataType) && fields[i].isAnnotationPresent(JAMSVarDescription.class)) {
+            if (!dataType.isInterface() && JAMSData.class.isAssignableFrom(dataType) && fields[i].isAnnotationPresent(JAMSVarDescription.class)) {
                 
-                JAMSData dataObject = (JAMSData) var;
+                JAMSData dataObject = (JAMSData) o;
                 
                 // get variable object or create one if not existing
-                if (dataObject == null && !dataType.isInterface()) {
-                    //System.out.println(fields[i].getName());
+                if (dataObject == null) {
+                    System.out.println(fields[i].getName());
                     dataObject = (JAMSData) dataType.newInstance();
                     fields[i].set(component, dataObject);
                 }
@@ -385,6 +385,11 @@ public class JAMSModelLoader {
                 if (!jvd.unit().equals("")) {
                     numericObject.setUnit(jvd.unit());
                 }
+                
+                if (!jvd.defaultValue().equals("")) {
+                    numericObject.setValue(jvd.defaultValue());
+                }
+                
             }
 //            else if (JAMSData.class.isAssignableFrom(fields[i].getType())) {
 //
