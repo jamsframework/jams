@@ -54,49 +54,9 @@ public class JAMSRemote extends JAMS {
     
     public static void startJAMS(JAMSProperties properties, String modelFilename, String cmdLineParameterValues) {
         
-        int guiConfig = Integer.parseInt(properties.getProperty("guiconfig", "0"));
+        JAMSSplash splash = new JAMSSplash();
+        splash.show(new JAMSRemoteLauncher(modelFilename, properties, cmdLineParameterValues), SPLASH_DISPLAY_TIME);
         
-        if (guiConfig == 1) {
-            
-            JAMSSplash splash = new JAMSSplash();
-            splash.show(new JAMSRemoteLauncher(modelFilename, properties, cmdLineParameterValues), SPLASH_DISPLAY_TIME);
-            
-        } else {
-            
-            String info = "";
-            
-            // do some search and replace on the input file and create new file if necessary
-            String newModelFilename = XMLProcessor.modelDocConverter(modelFilename);
-            if (!newModelFilename.equalsIgnoreCase(modelFilename)) {
-                info = "The model definition in \"" + modelFilename + "\" has been adapted in order to meet modifications of the JAMS model DTD.\nThe new definition has been stored in \"" + newModelFilename + "\" while your original file was left untouched.";
-                modelFilename = newModelFilename;
-            }
-            
-            String xmlString = JAMSTools.fileToString(modelFilename);
-            String[] args = JAMSTools.toArray(cmdLineParameterValues, ";");
-            if (args != null) {
-                for (int i = 0; i < args.length; i++) {
-                    xmlString = xmlString.replaceAll("%"+i, args[i]);
-                }
-            }
-            
-            try {
-                
-                Document modelDoc = XMLIO.getDocumentFromString(xmlString);
-                JAMSRuntime runtime = new StandardRuntime();
-                runtime.loadModel(modelDoc, properties);
-                
-                if (!info.equals("")) {
-                    runtime.println(info);
-                }
-                runtime.runModel();
-                
-            } catch (IOException ioe) {
-                System.out.println("The model definition file " + modelFilename + " could not be loaded!");
-            } catch (SAXException se) {
-                System.out.println("The model definition file " + modelFilename + " contained errors!");
-            }
-        }
     }
     
     public static void main(String[] args) throws Exception {
@@ -125,15 +85,10 @@ public class JAMSRemote extends JAMS {
             }
         }
         
-        int guiConfig = Integer.parseInt(properties.getProperty("guiconfig", "0"));
         
         if ((cmdLine.getModelFileName() == null)) {
             //see if at least GUI is enabled
-            if (guiConfig == 1) {
-                startJAMS(properties);
-            } else {
-                System.out.println("You must provide a model file name (see JAMS --help) when disabling GUI config!");
-            }
+            startJAMS(properties);
         } else {
             if (cmdLine.getParameterValues() == null) {
                 startJAMS(properties, cmdLine.getModelFileName(), null);

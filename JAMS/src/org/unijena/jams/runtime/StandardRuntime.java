@@ -73,7 +73,7 @@ public class StandardRuntime implements JAMSRuntime {
     private PrintStream infoStream, errorStream;
     private boolean guiEnabled = false;
     private ClassLoader classLoader;
-        
+    
     public void loadModel(Document modelDocument, JAMSProperties properties) {
         
         long start = System.currentTimeMillis();
@@ -100,7 +100,7 @@ public class StandardRuntime implements JAMSRuntime {
         }
         
         try {
-            if (properties.getProperty("infolog")!=null && !properties.getProperty("infolog").equals("")) {
+            if ((properties.getProperty("infolog") != null) && (!properties.getProperty("infolog").equals(""))) {
                 infoStream = new PrintStream(properties.getProperty("infolog"));
             }
         } catch (FileNotFoundException fnfe) {
@@ -108,7 +108,7 @@ public class StandardRuntime implements JAMSRuntime {
         }
         
         try {
-            if (properties.getProperty("errorlog")!=null  && !properties.getProperty("errorlog").equals("")) {
+            if ((properties.getProperty("errorlog") != null)  && (!properties.getProperty("errorlog").equals(""))) {
                 errorStream = new PrintStream(properties.getProperty("errorlog"));
             }
         } catch (FileNotFoundException fnfe) {
@@ -129,7 +129,7 @@ public class StandardRuntime implements JAMSRuntime {
         } catch (IOException ioe) {
             this.handle(ioe);
         }
-        */
+         */
         
         // create model config object from config document
         ModelConfig config = new ModelConfig(modelDocument);
@@ -391,11 +391,11 @@ public class StandardRuntime implements JAMSRuntime {
             this.notifyObservers();
         }
     }
-
+    
     public ClassLoader getClassLoader() {
         return classLoader;
     }
-
+    
     
     
 }

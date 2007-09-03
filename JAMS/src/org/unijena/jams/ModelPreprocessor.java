@@ -68,13 +68,14 @@ public class ModelPreprocessor {
             
             ArrayList<Setting> list = config.getSettings(compName);
             if (list != null) {
+
                 NodeList varChilds, attributeChilds;
                 
                 attributeChilds = rootElement.getElementsByTagName("attribute");
                 varChilds = rootElement.getElementsByTagName("var");
                 
                 for (Setting s : list) {
-                    if (s.getAttribute().equals("%enable%") && (s.getValue()=="0")) {
+                    if (s.getAttribute().equals("%enable%") && (s.getValue().equals("0"))) {
                         rootElement.getParentNode().removeChild(rootElement);
                         rt.println("Disabling component " + compName, JAMS.VERBOSE);
                         return;
