@@ -1,6 +1,6 @@
 /*
- * StandardEntityWriterN.java
- * Created on 15. Febuary 2006, 11:05
+ * EntityWriterMonthlyAgg.java
+ * Created on 03. September 2007
  *
  * This file is part of JAMS
  * Copyright (C) 2005 S. Kralisch and P. Krause
@@ -32,12 +32,12 @@ import org.unijena.jams.io.*;
 
 /**
  *
- * @author S. Kralisch
+ * @author D. Varga
  */
 @JAMSComponentDescription(
 title="Entity file writer (spatial+monthly)",
         author="D. Varga",
-        description="Base: StandardEntityWriterN (S.Kralisch)." +
+        description="Base: StandardEntityWriterN (P.Krause)." +
         "Use: For calculating monthly averages, the time Interval should be always one day longer."
         )
         public class EntityWriterMonthlyAgg extends JAMSComponent {
@@ -188,7 +188,9 @@ title="Entity file writer (spatial+monthly)",
         getModel().getRuntime().println("aggStartdate:\t" + agg_sd.toString(), JAMS.VERBOSE);
         getModel().getRuntime().println("aggEnddate:\t" + agg_ed.toString(), JAMS.VERBOSE);
         
-        
+        edAgg = edAgg + 86400000;
+        agg_ed.setTimeInMillis(edAgg);
+        this.aggTimeInterval.setEnd(agg_ed);
         
         writer = new GenericDataWriter(dirName.getValue()+"/"+fileName.getValue());
         
@@ -198,6 +200,9 @@ title="Entity file writer (spatial+monthly)",
         
         nEnts = this.entities.getEntityArray().length;
         valueMatrix = new double[tsteps+1][nEnts];
+        valueMatrixAverage = new double[nEnts];
+        StDev = new double[nEnts];
+        
         dailyValue = new double[nEnts];
         dateVals = new String[tsteps];
         weightVal = new double[nEnts];
@@ -226,7 +231,7 @@ title="Entity file writer (spatial+monthly)",
                 
                 //aggregated values
                 //monthly values
-                if(tcounter != 0){
+                if(tcounter > 0){
                     int month = oldMonth;//time.get(time.MONTH);
                     aggFieldNames[month] = time.toString("%1$tb");
                     if(this.type.getValue().equals("average")){
@@ -308,7 +313,7 @@ title="Entity file writer (spatial+monthly)",
             //header
             writer.addColumn("ID");
             if(monthlyValuesWriting.getValue()){
-                for(int i = 0; i < tcounter; i++){
+                for(int i = 0; i < tcounter-1; i++){
                     writer.addColumn(dateVals[i]);
                 }
             }
@@ -340,7 +345,7 @@ title="Entity file writer (spatial+monthly)",
                 int ID = (int)(((JAMSDouble)entities.getEntityArray()[e].getObject("ID")).getValue());
                 writer.addData(ID);
                 if(monthlyValuesWriting.getValue()){
-                    for(int t = 1; t < tcounter+1; t++){
+                    for(int t = 1; t < tcounter; t++){
                         String dStr = String.format(Locale.US,"%.6f",valueMatrix[t][e]);
                         writer.addData(dStr);
                     }
@@ -355,6 +360,10 @@ title="Entity file writer (spatial+monthly)",
                     String dStr = String.format(Locale.US,"%.3f",(aggMatrix[t][e]) / aggCounter[t]);
                     writer.addData(dStr);
                 }
+                if (!type.getValue().equals("sum")){
+                    aggSum = aggSum/12;
+                }
+                
                 if(this.weight.getValue().equals("none")){
                     String dStr = String.format(Locale.US,"%.3f",(aggSum));
                     writer.addData(dStr);
@@ -362,6 +371,7 @@ title="Entity file writer (spatial+monthly)",
                     String dStr = String.format(Locale.US,"%.3f",aggSum);
                     writer.addData(dStr);
                 }
+                
                 writer.writeData();
             }
         } catch (org.unijena.jams.runtime.RuntimeException jre) {
