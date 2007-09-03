@@ -436,6 +436,10 @@ title="Entity file writer (spatial+monthly)",
                     String dStr = String.format(Locale.US,"%.3f",(aggMatrix[t][e]) / aggCounter[t]);
                     writer.addData(dStr);
                 }
+                if (!type.getValue().equals("sum")){
+                    aggSum = aggSum/12;
+                }
+                
                 if(this.weight.getValue().equals("none")){
                     String dStr = String.format(Locale.US,"%.3f",(aggSum));
                     writer.addData(dStr);
