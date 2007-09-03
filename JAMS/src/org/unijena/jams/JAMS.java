@@ -126,6 +126,13 @@ public class JAMS {
             
             String info = "";
             
+            //check if file exists
+            File file = new File(modelFilename);
+            if (!file.exists()) {
+                System.out.println("Model file " + modelFilename + " could not be found - exiting!");
+                return;
+            }
+            
             // do some search and replace on the input file and create new file if necessary
             String newModelFilename = XMLProcessor.modelDocConverter(modelFilename);
             if (!newModelFilename.equalsIgnoreCase(modelFilename)) {

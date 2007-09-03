@@ -114,8 +114,14 @@ public class JAMSLauncher extends JFrame {
         
         try {
             
-            // first do search&replace on the input xml file
+            //check if file exists
+            File file = new File(modelFilename);
+            if (!file.exists()) {
+                LHelper.showErrorDlg(this, "Model file " + modelFilename + " could not be found!", "File open error");
+                return;
+            }
             
+            // first do search&replace on the input xml file
             String newModelFilename = XMLProcessor.modelDocConverter(modelFilename);
             if (!newModelFilename.equalsIgnoreCase(modelFilename)) {
                 LHelper.showInfoDlg(JAMSLauncher.this,
