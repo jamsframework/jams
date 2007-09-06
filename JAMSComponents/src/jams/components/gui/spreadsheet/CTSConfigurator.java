@@ -42,7 +42,9 @@ public class CTSConfigurator {
     private JPanel optionpanel;
     private JPanel graphpanel;
     private JPanel southpanel;
-    private Vector<JPanel> datapanels = new Vector<JPanel>();
+    //private Vector<JPanel> datapanels = new Vector<JPanel>();
+    
+    private JPanel[] datapanels;
     
     private String[] headers;
     private String[] colors = {"yellow","orange","red","pink","magenta","cyan","blue","green","gray","lightgray","black"};
@@ -63,13 +65,21 @@ public class CTSConfigurator {
     JButton plotbutton = new JButton("plot");
     JButton deletebutton = new JButton("delete");
     
-    int graphCount = 0;
-    Vector<JCheckBox> activate = new Vector<JCheckBox>();
-    Vector<JComboBox> datachoice = new Vector<JComboBox>();
-    Vector<JComboBox> poschoice = new Vector<JComboBox>();
-    Vector<JComboBox> typechoice = new Vector<JComboBox>();
-    Vector<JComboBox> colorchoice = new Vector<JComboBox>();
+    int graphCount=0;
+//    Vector<JCheckBox> activate = new Vector<JCheckBox>();
+//    Vector<JComboBox> datachoice = new Vector<JComboBox>();
+//    Vector<JComboBox> poschoice = new Vector<JComboBox>();
+//    Vector<JComboBox> typechoice = new Vector<JComboBox>();
+//    Vector<JComboBox> colorchoice = new Vector<JComboBox>();
     
+    JCheckBox[] activate;
+    JComboBox[] datachoice;
+    JComboBox[] poschoice;
+    JComboBox[] typechoice;
+    JComboBox[] colorchoice;
+    
+    /* ActionListener */
+    ActionListener[] activationChange;
     
     /** Creates a new instance of CTSConfigurator */
     public CTSConfigurator() {
@@ -86,10 +96,12 @@ public class CTSConfigurator {
         this.table = table;         
         this.rows = table.getSelectedRows();
         this.columns = table.getSelectedColumns();
-        this.headers = new String[columns.length];/* hier aufpassen bei reselection */
+        this.graphCount = columns.length;
+        this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
         this.parent = parent;
         
-        for(int k=0;k<columns.length;k++){
+        
+        for(int k=0;k<graphCount;k++){
             headers[k] = table.getColumnName(columns[k]);
         }
         
@@ -125,6 +137,8 @@ public class CTSConfigurator {
         southpanel = new JPanel();
         southpanel.setLayout(new FlowLayout());
         
+        
+        /*
         for(int k=0;k<headers.length;k++){
             
            datapanels.add(new JPanel());
@@ -136,6 +150,25 @@ public class CTSConfigurator {
            typechoice.add(new JComboBox(types));
            colorchoice.add(new JComboBox(colors));
         }
+         */
+        
+        datapanels = new JPanel[graphCount];
+        activate = new JCheckBox[graphCount];
+        poschoice = new JComboBox[graphCount];
+        typechoice = new JComboBox[graphCount];
+        colorchoice = new JComboBox[graphCount];
+        
+        createActionListener();
+        
+        for(int k=0;k<graphCount;k++){
+            activate[k] = new JCheckBox(headers[k], true);
+            activate[k].addActionListener(actChanged);
+            poschoice[k] = new JComboBox(positions);
+            typechoice[k] = new JComboBox(types);
+            colorchoice[k] = new JComboBox(colors);     
+        }
+        
+                
             
         
         addbutton.addActionListener(addbuttonclick);  
@@ -148,15 +181,15 @@ public class CTSConfigurator {
             
             //datapanels.get(i).add(datachoice.get(i));
             //datachoice.get(i).setSelectedItem(headers[i]);
-            datapanels.get(i).add(activate.get(i));
-            datapanels.get(i).add(poschoice.get(i));
-            poschoice.get(i).setSelectedItem("left");
-            datapanels.get(i).add(typechoice.get(i));
-            typechoice.get(i).setSelectedItem("line");
-            datapanels.get(i).add(colorchoice.get(i));
-            colorchoice.get(i).setSelectedIndex(i);
+            datapanels[i].add(activate[i]);
+            datapanels[i].add(poschoice[i]);
+            poschoice[i].setSelectedItem("left");
+            datapanels[i].add(typechoice[i]);
+            typechoice[i].setSelectedItem("line");
+            datapanels[i].add(colorchoice[i]);
+            colorchoice[i].setSelectedIndex(i);
             
-            graphpanel.add(datapanels.get(i));    
+            graphpanel.add(datapanels[i]);
         }    
     
         
@@ -208,12 +241,7 @@ public class CTSConfigurator {
         System.out.println("CTSPlot ctsplot = new CTSPlot();");
          
          /* Parameter festlegen */
-        ctsplot.setGraphCountLeft(columns.length);
-        
-        /* CTSPlot erstellen */
-        
-        ctsplot.createPlot();
-         System.out.println("ctsplot.setGraphCountLeft(columns.length);");
+
         //ctsplot.setGraphCountRight(columns.length);
          /*
         plotframe = new JDialog(); 
@@ -228,26 +256,58 @@ public class CTSConfigurator {
 
          System.out.println("plotframe.setVisible(true)");
         
-        JAMSCalendar test = new JAMSCalendar();
+        //JAMSCalendar test = new JAMSCalendar();
         //if(table.getValueAt(rows[0], columns[0]).getClass() != test.getClass()){
+        int numActiveLeft=0;
+        int numActiveRight=0;
         
-        double[] valueLeft = new double[columns.length];
-        double[] valueRight = null;
+        /* zuordnung der graphen */
+        for(int i=0;i<graphCount;i++){
+            
+            if(activate[i].isSelected()){
+                if(poschoice[i].getSelectedItem() == "left"){
+                    numActiveLeft++;
+                }
+                if(poschoice[i].getSelectedItem() == "right"){
+                    numActiveRight++;
+                }
+                
+            }
+        }
+        
+       ctsplot.setGraphCountLeft(numActiveLeft);
+       ctsplot.setGraphCountRight(numActiveRight); 
+        /* CTSPlot erstellen */
+        
+        ctsplot.createPlot();
+        System.out.println("ctsplot.createPlot();");
+        
+        double[] valueLeft = new double[numActiveLeft];
+        double[] valueRight = new double[numActiveRight];
         
         //Double value;
+        
+        /* jedesmal fragen, ob der graph zu valueLEFT GEHÖRT (COMBObOX ABFRAGEN) */
             for(int k=0;k<rows.length;k++){
-                for(int i=0;i<columns.length;i++){
+                for(int i=0;i<graphCount;i++){
                     //value = (Double) table.getValueAt(rows[k],columns[i]);
-                    valueLeft[i] = (Double) table.getValueAt(rows[k],columns[i]);
-                    System.out.println(table.getValueAt(rows[k],columns[i]));
+                    if(activate[i].isSelected()){
+                        if(poschoice[i].getSelectedItem() == "left"){
+                            valueLeft[i] = (Double) table.getValueAt(rows[k],columns[i]);
+                            System.out.println(table.getValueAt(rows[k],columns[i]));
+                        }
+                        if(poschoice[i].getSelectedItem() == "right"){
+                            valueRight[i] = (Double) table.getValueAt(rows[k],columns[i]);
+                        }
+                    }
                 }
                 /*
-                for(int j=0;j<columns.length;j++){
-                    valueRight[j] = (Double) table.getValueAt(k,j);
+                for(int j=0;j<graphCount;j++){
+                    valueRight[j] = (Double) table.getValueAt(rows[k],columns[j]);
                 }
-                 **/
+                */
                 
-                ctsplot.plot((JAMSCalendar)table.getValueAt(rows[k],0),valueLeft,valueRight);
+                ctsplot.plot((JAMSCalendar)table.getValueAt(rows[k],0), valueLeft, valueRight);
             }
         
     }
@@ -267,4 +327,29 @@ public class CTSConfigurator {
             } 
     };
     
+   ActionListener actChanged = new ActionListener(){
+         public void actionPerformed(ActionEvent e) {
+                timePlot();
+            } 
+    };
+    
+    
+   public void createActionListener(){ 
+       
+        activationChange = new ActionListener[graphCount];
+        
+        for(int k=0;k<graphCount;k++){
+            /* reicht hier ein listener für alle boxes? scheint so... */
+           activationChange[k] = new ActionListener(){
+                 public void actionPerformed(ActionEvent e) {
+                        timePlot();
+
+                    } 
+            };
+   
+        
+        }
+   
+   
+   }
 }
