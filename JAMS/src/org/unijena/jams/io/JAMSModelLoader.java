@@ -160,6 +160,7 @@ public class JAMSModelLoader {
             
         } catch (ClassNotFoundException cnfe) {
             jamsModel.getRuntime().handle(cnfe, false);
+            return null;
         } catch (InstantiationException ie) {
             jamsModel.getRuntime().handle(ie, false);
         } catch (IllegalAccessException iae) {
@@ -181,7 +182,9 @@ public class JAMSModelLoader {
                 
                 // process child components of context components
                 childComponent = loadComponent((Element) node, component);
-                childComponentList.add(childComponent);
+                if (childComponent != null) {
+                    childComponentList.add(childComponent);
+                }
                 
 /*
                 if (childComponent instanceof JAMSGUIComponent) {
@@ -249,20 +252,20 @@ public class JAMSModelLoader {
                         // attribute
                         /*
                         if (element.hasAttribute("globvar")) {
-                            
+                         
                             // create the var object
                             varClazz = loader.loadClass(varClassName);
                             variable = (JAMSData) varClazz.newInstance();
                             // variable = getInstance(varClazz);
-                            
+                         
                             varValue = element.getAttribute("globvar");
                             variable.setValue(constants.get(varValue));
-                            
+                         
                             // attach the variable to the component's field..
                             field.set(component, variable);
-                            
+                         
                         }
-                        */
+                         */
                         
                         if (element.hasAttribute("attribute")) {
                             

@@ -507,7 +507,7 @@ public class JAMSLauncher extends JFrame {
     }
     
     private boolean closeModel() {
-        
+
         if (this.modelDocument == null) {
             return true;
         }
@@ -538,7 +538,7 @@ public class JAMSLauncher extends JFrame {
         if (!closeModel()) {
             return;
         }
-        
+
         // finally write property file to default location
         try {
             String defaultFile = getProperties().getDefaultFilename();
