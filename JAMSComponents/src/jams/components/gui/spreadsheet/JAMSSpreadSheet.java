@@ -134,7 +134,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     private int kindofcalc=0;
     
     /* Plot-Test */
-    private ExtendedTSPlot tsplot;
+    //private ExtendedTSPlot tsplot;
     
     /* ActionEvents */
     //private ActionListener buttonclicked;
