@@ -578,6 +578,7 @@ public class JAMSLauncher extends JFrame {
         });
         runtime.addErrorLogObserver(new Observer() {
             public void update(Observable obs, Object obj) {
+                LHelper.showErrorDlg(JAMSLauncher.this, "An error has occurred! Please check the error log for further information!", "JAMS Error");
                 JAMSLauncher.this.getErrorDlg().appendText(obj.toString());
             }
         });

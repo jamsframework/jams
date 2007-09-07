@@ -123,7 +123,7 @@ public class JAMSModelLoader {
     }
     
     /**
-     * Recursively create all components used in the model before model execution and add them to the component repository for easy access
+     * Recursively create all components used in the model and add them to the component repository for easy access
      */
     private JAMSComponent loadComponent(Element root, JAMSComponent rootComponent) throws ModelSpecificationException {
         
