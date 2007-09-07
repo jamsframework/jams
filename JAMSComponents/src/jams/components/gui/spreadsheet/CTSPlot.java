@@ -303,7 +303,7 @@ public class CTSPlot {
                 dataset1.addSeries(tsLeft[i]);
             }
             
-            if (valueRight != null) {
+            if (graphCountRight != 0) {
                 ValueAxis axis2 = new NumberAxis(rightAxisTitle);
                 axis2.setInverted(rightAxisInverted);
                 plot.setRangeAxis(1, axis2);
@@ -317,8 +317,8 @@ public class CTSPlot {
                 
                 tsRight = new TimeSeries[graphCountRight];
                 for (i = 0; i < graphCountRight; i++) {
-                    rightRenderer.setSeriesPaint(i, colorTable.get(colorRight[i]));
-                    tsRight[i] = new TimeSeries(titleRight[i], Second.class);
+                    rightRenderer.setSeriesPaint(i, Color.black);
+                    tsRight[i] = new TimeSeries("title right wieder einbauen!", Second.class);
                     dataset2.addSeries(tsRight[i]);
                 }
             }

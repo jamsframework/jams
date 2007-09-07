@@ -62,8 +62,10 @@ public class CTSViewer extends JDialog{
         panel.setLayout(new BorderLayout());
         panel.add(ctsConf.getPanel(), BorderLayout.WEST);
         
-        ctsConf.timePlot();
-        panel.add(ctsConf.getCTSPlot(), BorderLayout.CENTER); 
+
+        //ctsConf.timePlot();
+        //panel.add(ctsConf.getCTSPlot(), BorderLayout.CENTER); 
+        panel.add(ctsConf.timePlot(), BorderLayout.CENTER);
         ctsTabPane.addTab("title", panel);
         
         

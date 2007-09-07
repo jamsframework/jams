@@ -161,11 +161,14 @@ public class CTSConfigurator {
         createActionListener();
         
         for(int k=0;k<graphCount;k++){
+             
+            datapanels[k] = new JPanel();
             activate[k] = new JCheckBox(headers[k], true);
             activate[k].addActionListener(actChanged);
             poschoice[k] = new JComboBox(positions);
             typechoice[k] = new JComboBox(types);
-            colorchoice[k] = new JComboBox(colors);     
+            colorchoice[k] = new JComboBox(colors);  
+            
         }
         
                 
@@ -231,14 +234,16 @@ public class CTSConfigurator {
         }    
     }
     */
-    public void timePlot(){
+   
+    
+    public JPanel timePlot(){
         /* very primitive version!!*/
         
         /* Festlegen welche cols zu valueLeft und welche zu valueRight gehören!! */
         
         /* CTSPlot initialisieren */
-        ctsplot = new CTSPlot();
-        System.out.println("CTSPlot ctsplot = new CTSPlot();");
+       ctsplot = new CTSPlot();
+       System.out.println("CTSPlot ctsplot = new CTSPlot();");
          
          /* Parameter festlegen */
 
@@ -254,7 +259,7 @@ public class CTSConfigurator {
           **/
 
 
-         System.out.println("plotframe.setVisible(true)");
+         //System.out.println("plotframe.setVisible(true)");
         
         //JAMSCalendar test = new JAMSCalendar();
         //if(table.getValueAt(rows[0], columns[0]).getClass() != test.getClass()){
@@ -275,6 +280,10 @@ public class CTSConfigurator {
             }
         }
         
+
+
+       System.out.println("NumActiveLeft: "+numActiveLeft); 
+       System.out.println("NumActiveRight: "+numActiveRight); 
        ctsplot.setGraphCountLeft(numActiveLeft);
        ctsplot.setGraphCountRight(numActiveRight); 
         /* CTSPlot erstellen */
@@ -282,6 +291,7 @@ public class CTSConfigurator {
         ctsplot.createPlot();
         System.out.println("ctsplot.createPlot();");
         
+
         double[] valueLeft = new double[numActiveLeft];
         double[] valueRight = new double[numActiveRight];
         
@@ -289,26 +299,48 @@ public class CTSConfigurator {
         
         /* jedesmal fragen, ob der graph zu valueLEFT GEHÖRT (COMBObOX ABFRAGEN) */
             for(int k=0;k<rows.length;k++){
-                for(int i=0;i<graphCount;i++){
-                    //value = (Double) table.getValueAt(rows[k],columns[i]);
-                    if(activate[i].isSelected()){
-                        if(poschoice[i].getSelectedItem() == "left"){
-                            valueLeft[i] = (Double) table.getValueAt(rows[k],columns[i]);
-                            System.out.println(table.getValueAt(rows[k],columns[i]));
-                        }
-                        if(poschoice[i].getSelectedItem() == "right"){
-                            valueRight[i] = (Double) table.getValueAt(rows[k],columns[i]);
+            
+                    int corrLeft = 0;
+                    int corrRight = 0;
+                    
+                    for(int i=0;i<graphCount;i++){
+                        //value = (Double) table.getValueAt(rows[k],columns[i]);
+                        if(activate[i].isSelected()){
+                            if(poschoice[i].getSelectedItem() == "left"){
+                                valueLeft[i - corrLeft] = (Double) table.getValueAt(rows[k],columns[i]);
+                                corrRight++;
+                                System.out.println("LEFT COL"+columns[i]);
+                            }
+                           
+                            if(poschoice[i].getSelectedItem() == "right"){
+                                valueRight[i - corrRight] = (Double) table.getValueAt(rows[k],columns[i]);
+                                corrLeft++;
+                                System.out.println("RIGHT COL"+columns[i]);
+                            }
+                        }else{
+                            corrLeft++;
+                            corrRight++;
                         }
                     }
-                }
+                    /*
+                    for(int i=0;i<graphCount;i++){
+                        if(activate[i].isSelected()){
+                            if(poschoice[i].getSelectedItem() == "right"){
+                                valueRight[i] = (Double) table.getValueAt(rows[k],columns[i]);
+                                System.out.println("RIGHT COL"+columns[i]);
+                            }
+                        }
+                    }
+                     **/
                 /*
                 for(int j=0;j<graphCount;j++){
                     valueRight[j] = (Double) table.getValueAt(rows[k],columns[j]);
                 }
                 */
-                
+
                 ctsplot.plot((JAMSCalendar)table.getValueAt(rows[k],0), valueLeft, valueRight);
             }
+        return ctsplot.getPanel();
         
     }
     
