@@ -77,7 +77,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     //private String[] columnNameArray = headers.getValue();
                                         //{"test1","test2"};
     
-    private final String title = "JAMSSpreadSheet v0.77";
+    private final String title = "JAMSSpreadSheet v0.82";
     
     private JPanel panel = new JPanel();
     private String panelname="spreadsheet";
@@ -811,7 +811,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         
         if(time == null){
             
-            rowdata = new double[rowarray.length];
+            rowdata = new double[rowarray.length]; /* performance */
             for(int i = 0; i < rowarray.length; i++){
                 rowdata[i] = rowarray[i].getValue();
             }
@@ -826,14 +826,14 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                 //rowdata[0] = time.getTimeInMillis() / (3600.0*24.0);
                 for(int i = 0; i < rowarray.length; i++){
                 rowdata[i] = rowarray[i].getValue();
-            }
+                }
                 addCurrentTime();
         }
         
         
         addRowArray(rowdata);
         
-        
+        /*
         for(int j = 0; j<rowarray.length; j++){
             
         
@@ -844,6 +844,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         if(timeRuns == false){
             System.out.println( "time false ");
         }
+         */
       
         //SwingUtilities.invokeLater(updateTable);
         if(onthefly.isSelected()==true){

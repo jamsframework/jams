@@ -84,6 +84,8 @@ public class CTSPlot {
             double[] valueLeft;
             double[] valueRight;
             String title;
+            
+            ChartPanel chartPanel;
     
     
     TimeSeries[] tsLeft, tsRight;
@@ -121,7 +123,7 @@ public class CTSPlot {
             String[] colorLeft = {"red","pink","magenta","orange","yellow"};
             String[] colorRight = {"cyan","blue","green","gray","black"};
             int typeLeft = 0;
-            int typeRight = 0;
+            int typeRight = 1;
             String xAxisTitle = "x axis title";
             String leftAxisTitle = "left axis title";
             String rightAxisTitle = "right axis title";
@@ -202,6 +204,10 @@ public class CTSPlot {
     
     
     
+    public ChartPanel getChartPanel(){
+        createPlot();
+        return chartPanel;
+    }
     
     public JPanel getPanel() {
         
@@ -272,7 +278,7 @@ public class CTSPlot {
                 false,
                 false);
         
-        ChartPanel chartPanel = new ChartPanel(chart, true);
+        chartPanel = new ChartPanel(chart, true);
         
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -298,7 +304,7 @@ public class CTSPlot {
                     legendEntry = legendEntry + varTitleLeft[i];
                 }
              **/
-                leftRenderer.setSeriesPaint(i,Color.red); // colorTable.get(colorLeft[i])
+                leftRenderer.setSeriesPaint(i,colorTable.get(colorLeft[i])); // colorTable.get(colorLeft[i])
                 tsLeft[i] = new TimeSeries(legendEntry, Second.class);
                 dataset1.addSeries(tsLeft[i]);
             }
@@ -317,13 +323,14 @@ public class CTSPlot {
                 
                 tsRight = new TimeSeries[graphCountRight];
                 for (i = 0; i < graphCountRight; i++) {
-                    rightRenderer.setSeriesPaint(i, Color.black);
+                    rightRenderer.setSeriesPaint(i, colorTable.get(colorRight[i]));
                     tsRight[i] = new TimeSeries("title right wieder einbauen!", Second.class);
                     dataset2.addSeries(tsRight[i]);
                 }
             }
         }
     }
+
     
     public void plot(JAMSCalendar time, double[] valueLeft, double[] valueRight) {
         try {

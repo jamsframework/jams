@@ -38,7 +38,8 @@ public class CTSConfigurator {
     
     private JFrame parent;
     private JPanel frame;
-    private JDialog plotframe;
+    private JPanel mainpanel;
+    private JPanel plotpanel;
     private JPanel optionpanel;
     private JPanel graphpanel;
     private JPanel southpanel;
@@ -48,7 +49,7 @@ public class CTSConfigurator {
     
     private String[] headers;
     private String[] colors = {"yellow","orange","red","pink","magenta","cyan","blue","green","gray","lightgray","black"};
-    private String[] types = {"line","bar","area","dot"};
+    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Difference","Step","StepArea"};
     private String[] positions = {"left","right"};
     
     private int index;
@@ -56,8 +57,8 @@ public class CTSConfigurator {
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
     
     int[] rows, columns;
-    JTable table;
-    
+    JTable table;    
+
     CTSPlot ctsplot;
     
     /*buttons*/
@@ -125,7 +126,12 @@ public class CTSConfigurator {
         colorTable.put("lightgray", Color.lightGray);
         colorTable.put("black", Color.black);
         
-
+        mainpanel = new JPanel();
+        mainpanel.setLayout(new BorderLayout());
+        
+        plotpanel = new JPanel();
+        plotpanel.setLayout(new BorderLayout());
+        
         frame = new JPanel();
         frame.setLayout(new GridLayout(2,2));        
         
@@ -166,8 +172,13 @@ public class CTSConfigurator {
             activate[k] = new JCheckBox(headers[k], true);
             activate[k].addActionListener(actChanged);
             poschoice[k] = new JComboBox(positions);
+            poschoice[k].addActionListener(actChanged);
             typechoice[k] = new JComboBox(types);
+            typechoice[k].addActionListener(actChanged);
+            //typechoice[k].setEnabled(false);
             colorchoice[k] = new JComboBox(colors);  
+            colorchoice[k].addActionListener(actChanged);
+            //colorchoice[k].setEnabled(false);
             
         }
         
@@ -198,14 +209,15 @@ public class CTSConfigurator {
         
         frame.add(graphpanel);
         //frame.add(optionpanel);
-        frame.add(southpanel);        
+        frame.add(southpanel);   
+        mainpanel.add(frame, BorderLayout.WEST);
         /** CTSConfigurator will be added to CTSViewer ******
         frame.pack();
         frame.setVisible(true);
          */
     }
     public JPanel getPanel(){
-        return frame;
+        return mainpanel;
     }
     
     public JPanel getCTSPlot(){
@@ -218,6 +230,12 @@ public class CTSConfigurator {
     
     public void setIndex(int index){
         this.index = index;
+    }
+    
+    private void disableEnableFunct(){
+        for(int k=0;k<graphCount;k++){
+            
+        }
     }
     
     /*
@@ -236,13 +254,14 @@ public class CTSConfigurator {
     */
    
     
-    public JPanel timePlot(){
+    public void timePlot(){
         /* very primitive version!!*/
         
         /* Festlegen welche cols zu valueLeft und welche zu valueRight gehören!! */
         
         /* CTSPlot initialisieren */
        ctsplot = new CTSPlot();
+       
        System.out.println("CTSPlot ctsplot = new CTSPlot();");
          
          /* Parameter festlegen */
@@ -265,30 +284,74 @@ public class CTSConfigurator {
         //if(table.getValueAt(rows[0], columns[0]).getClass() != test.getClass()){
         int numActiveLeft=0;
         int numActiveRight=0;
+        int corr=0;
+        boolean typechosen_R=false;
+        boolean typechosen_L=false;
+        String[] colorLeft = new String[graphCount];
+        String[] colorRight = new String[graphCount];
         
         /* zuordnung der graphen */
         for(int i=0;i<graphCount;i++){
             
             if(activate[i].isSelected()){
+                
+                /* GUI reaction */
+                    colorchoice[i].setEnabled(true);
+                    typechoice[i].setEnabled(true);
+                    poschoice[i].setEnabled(true);
+                    
+                    
+                    
+                
+                /* plot preparations */
                 if(poschoice[i].getSelectedItem() == "left"){
+                        if(typechosen_L == false){
+                            ctsplot.setTypeLeft(typechoice[i].getSelectedIndex());
+                            typechosen_L = true;
+                        }else{
+                            typechoice[i].setEnabled(false);
+                        }
+                        colorLeft[i - numActiveRight - corr] = (String) colorchoice[i].getSelectedItem();
+                        
                     numActiveLeft++;
                 }
                 if(poschoice[i].getSelectedItem() == "right"){
+                        if(typechosen_R == false){
+                             ctsplot.setTypeRight(typechoice[i].getSelectedIndex());
+                             typechosen_R = true;
+                        }else{
+                            typechoice[i].setEnabled(false);
+                        }
+                   
+                    
+                    colorRight[i - numActiveLeft - corr] = (String) colorchoice[i].getSelectedItem();
                     numActiveRight++;
                 }
                 
+            }else{
+                colorchoice[i].setEnabled(false);
+                typechoice[i].setEnabled(false);
+                poschoice[i].setEnabled(false);
+                corr++;
             }
         }
         
 
+        
+       
 
        System.out.println("NumActiveLeft: "+numActiveLeft); 
        System.out.println("NumActiveRight: "+numActiveRight); 
        ctsplot.setGraphCountLeft(numActiveLeft);
        ctsplot.setGraphCountRight(numActiveRight); 
+       
+       ctsplot.setColorLeft(colorLeft);
+       ctsplot.setColorRight(colorRight);
         /* CTSPlot erstellen */
         
-        ctsplot.createPlot();
+        mainpanel.removeAll(); /* nullPionterEx at first startup? */
+        mainpanel.add(frame, BorderLayout.WEST);
+        mainpanel.add(ctsplot.getChartPanel(), BorderLayout.CENTER);
         System.out.println("ctsplot.createPlot();");
         
 
@@ -302,21 +365,30 @@ public class CTSConfigurator {
             
                     int corrLeft = 0;
                     int corrRight = 0;
+                    Object value = null;
                     
                     for(int i=0;i<graphCount;i++){
                         //value = (Double) table.getValueAt(rows[k],columns[i]);
                         if(activate[i].isSelected()){
+                            
+                            value = table.getValueAt(rows[k],columns[i]);
+                            if(value.getClass() != java.lang.Double.class){
+                                    value = 0.0;
+                                }
+                            
                             if(poschoice[i].getSelectedItem() == "left"){
-                                valueLeft[i - corrLeft] = (Double) table.getValueAt(rows[k],columns[i]);
+                                    //valueLeft[i - corrLeft] = (Double) table.getValueAt(rows[k],columns[i]);
+                                valueLeft[i - corrLeft] = (Double) value;
                                 corrRight++;
-                                System.out.println("LEFT COL"+columns[i]);
+                                
                             }
                            
                             if(poschoice[i].getSelectedItem() == "right"){
-                                valueRight[i - corrRight] = (Double) table.getValueAt(rows[k],columns[i]);
-                                corrLeft++;
-                                System.out.println("RIGHT COL"+columns[i]);
+                                //valueRight[i - corrRight] = (Double) table.getValueAt(rows[k],columns[i]);
+                                valueRight[i - corrRight] = (Double) value;
+                                corrLeft++;  
                             }
+                            
                         }else{
                             corrLeft++;
                             corrRight++;
@@ -340,9 +412,13 @@ public class CTSConfigurator {
 
                 ctsplot.plot((JAMSCalendar)table.getValueAt(rows[k],0), valueLeft, valueRight);
             }
-        return ctsplot.getPanel();
+
+        frame.repaint();
+        
         
     }
+    
+    
     
     
     /****** EVENT HANDLING ******/

@@ -37,6 +37,7 @@ public class CTSViewer extends JDialog{
     JTabbedPane ctsTabPane;
     JPanel panel;
     int index = 0;
+    Vector<CTSConfigurator> ctsvector;
     
     /** Creates a new instance of CTSViewer */
     public CTSViewer(Frame parent) {
@@ -57,15 +58,16 @@ public class CTSViewer extends JDialog{
     
     public void addGraph(JTable table){
         CTSConfigurator ctsConf = new CTSConfigurator(table);
-        ctsConf.setIndex(index);
+        //ctsConf.setIndex(index);
+        ctsConf.timePlot();
         panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        panel.add(ctsConf.getPanel(), BorderLayout.WEST);
+        panel.setLayout(new FlowLayout());
+        panel.add(ctsConf.getPanel());
         
 
         //ctsConf.timePlot();
         //panel.add(ctsConf.getCTSPlot(), BorderLayout.CENTER); 
-        panel.add(ctsConf.timePlot(), BorderLayout.CENTER);
+        //panel.add(ctsConf.timePlot(), BorderLayout.CENTER);
         ctsTabPane.addTab("title", panel);
         
         
@@ -79,6 +81,9 @@ public class CTSViewer extends JDialog{
     }
     
     /**** EVENT HANDLING ************/
+    
+
+    
         ActionListener deletebuttonclick = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
                 
