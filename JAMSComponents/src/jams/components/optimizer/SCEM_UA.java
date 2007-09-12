@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.Optimizer;
+package jams.components.optimizer;
 
 import java.util.Random;
 import java.util.Vector;
@@ -31,7 +31,6 @@ import java.util.Collections;
 import org.unijena.jams.data.*;
 import org.unijena.jams.io.GenericDataWriter;
 import org.unijena.jams.model.*;
-import jams.components.optimizer.SCE.SCE_Comparator;
 import Jama.*;
 /**
  *

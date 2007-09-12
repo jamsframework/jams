@@ -21,7 +21,7 @@
  *
  */
 
-package jams.components.optimizer.MOCOM;
+package jams.components.optimizer;
 
 import java.util.Comparator;
 import java.util.Vector;
@@ -31,12 +31,12 @@ import java.util.Vector;
  * @author Christian Fischer
  */
 
-public class MOCOM_Comparator implements Comparator {
+public class SCEM_UA_Comparator implements Comparator {
 
     private int col = 0;
     private int order = 1;
     
-    public MOCOM_Comparator(int col,boolean decreasing_order) {
+    public SCEM_UA_Comparator(int col,boolean decreasing_order) {
 	this.col = col;
 	if (decreasing_order)
 	    order = -1;
@@ -56,7 +56,5 @@ public class MOCOM_Comparator implements Comparator {
 	else
 	    return 1*order;
     }
-    
-    
 } 
 

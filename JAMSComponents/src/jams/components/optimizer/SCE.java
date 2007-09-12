@@ -1,5 +1,5 @@
 /*
- * ABCGradientDescent.java
+ * ShuffleComplexEvolution.java
  * Created on 30. Juni 2006, 15:12
  *
  * This file is part of JAMS
@@ -21,9 +21,12 @@
  *
  */
 
-package jams.components.optimizer.SCE;
+package jams.components.optimizer;
 
+import jams.components.efficiencies.NashSutcliffe;
+import jams.components.efficiencies.VolumeError;
 import java.io.IOException;
+import java.util.*;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -35,7 +38,8 @@ import java.util.Arrays.*;
 
 /**
  *
- * @author Christian Fischer
+ * @author Christian Fischer, based on the original MatLab sources
+ * from SAHRA Tuscon Arizona
  */
 @JAMSComponentDescription(
 title="Title",
@@ -65,16 +69,30 @@ title="Title",
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "efficiency methods"
+            description = "objective function name"
             )
             public JAMSString effMethodName;
+    
+    /*@JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READWRITE,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "objective function value"
+            )
+            public JAMSDouble effValue;*/
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "efficiency values"
+            description = "the prediction series"
             )
-            public JAMSDouble effValue;
+            public JAMSDoubleArray prediction;
+    
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READWRITE,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "the observation series"
+            )
+            public JAMSDoubleArray observation;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
@@ -86,16 +104,37 @@ title="Title",
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "maximize efficiency?"
+            description = "number of complexes"
             )
             public JAMSInteger NumberOfComplexes;
     
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
+    access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "The current hru entity"
+            description = "maximum runs"
             )
-            public JAMSEntityCollection entities;
+            public JAMSInteger maxn;
+    
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READWRITE,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "kstop"
+            )
+            public JAMSInteger kstop;
+    
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READWRITE,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "pcento"
+            )
+            public JAMSDouble pcento;
+    
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READWRITE,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "peps"
+            )
+            public JAMSDouble peps;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -242,8 +281,6 @@ title="Title",
                 i++;
             }
             
-            entities = (JAMSEntityCollection)getModel().getRuntime().getDataHandles().get("hrus");
-            
             //retreiving boundaries
             tok = new StringTokenizer(boundaries.getValue(), ";");
             int n = tok.countTokens();
@@ -295,14 +332,18 @@ title="Title",
         int paras = this.parameterNames.length;
         double[] sample = new double[paras];
         
+        for(int i = 0; i < paras; i++){
+            double d = Custom_rand();
+            sample[i] = (lowBound[i] + d * (upBound[i]-lowBound[i]));
+        }
+        /*
 	int order[] = {1,2,0,3};
 	
         for(int i = 0; i < paras; i++){
             double d = Custom_rand();
             
-//            sample[order[i]] = (lowBound[order[i]] + d * (upBound[order[i]]-lowBound[order[i]]));
-            sample[i] = (lowBound[i] + d * (upBound[i]-lowBound[i]));
-        }
+            sample[order[i]] = (lowBound[order[i]] + d * (upBound[order[i]]-lowBound[order[i]]));
+        }*/
         return sample;
     }
          
@@ -402,9 +443,49 @@ title="Title",
             parameters[j].setValue(x[j]);
         }
         
+        //model run
         singleRun();
-
-        if (MaximizeEff.getValue() == MINIMIZATION)
+        
+        
+        //getting rid of pairs which contain missing data values
+        double[] preArr = prediction.getValue();
+        double[] obsArr = observation.getValue();
+        Vector<Double> obsVector = new Vector<Double>();
+        Vector<Double> preVector = new Vector<Double>();
+        for(int i = 0; i < preArr.length; i++){
+            //consider valid values only
+            if(preArr[i] > -9999 && obsArr[i] > -9999){
+                obsVector.add(obsArr[i]);
+                preVector.add(preArr[i]);
+            }
+        }
+        int dataCount = obsVector.size();
+        obsArr = new double[dataCount];
+        preArr = new double[dataCount];
+                
+        //converting Vectors to arrays
+        for(int i = 0; i < dataCount; i++){
+            obsArr[i] = obsVector.get(i).doubleValue();
+            preArr[i] = preVector.get(i).doubleValue();
+        }
+        
+        //efficiency calculation
+        if(this.effMethodName.getValue().equals("e2")){
+            return (-1 * NashSutcliffe.efficiency(preArr, obsArr, 2));
+        }
+        else if(this.effMethodName.getValue().equals("e1")){
+            return (-1 * NashSutcliffe.efficiency(preArr, obsArr, 1));
+        }
+        else if(this.effMethodName.getValue().equals("le2")){
+            return (-1 * NashSutcliffe.logEfficiency(preArr, obsArr, 2));
+        }
+        else if(this.effMethodName.getValue().equals("pbias")){
+            return (Math.abs(VolumeError.pbias(obsArr, preArr)));
+        }
+        else
+            return -9999;
+        
+        /*if (MaximizeEff.getValue() == MINIMIZATION)
             return this.effValue.getValue();
         else if (MaximizeEff.getValue() == ABSMINIMIZATION)
             return Math.abs(this.effValue.getValue());
@@ -413,11 +494,11 @@ title="Title",
         else if (MaximizeEff.getValue() == MAXIMIZATION)
             return -this.effValue.getValue();
         else
-            return 0;
+            return 0;*/
     }
 
     
-    @SuppressWarnings("unchecked") public void sort(double x[][],double xf[]) {	
+    public void sort(double x[][],double xf[]) {	
 	if (x.length == 0)
 	    return;
 	int n = x[0].length;
@@ -584,7 +665,7 @@ title="Title",
     }
     
     public double[] sceua(double[] x0,double[] bl,double []bu,int maxn,int kstop,double pcento,double peps,int ngs,int iseed,int iniflg) {
-    
+    try {
 	int nopt = x0.length;
 	int npg = 2*nopt+1;
 	int nps = nopt+1;
@@ -599,7 +680,6 @@ title="Title",
 	
 	// Create an initial population to fill array x(npt,nopt):
 	//this.generator.setSeed(iseed);
-	this.generator.setSeed(System.currentTimeMillis());
 	
 	double x[][] = new double[npt][nopt];
 	
@@ -642,27 +722,51 @@ title="Title",
 	System.out.println("The Inital Loop: 0");
 	System.out.println("BestF: " + bestf);
 	System.out.print("BestX");
+        
+        //writer.writeLine("The Inital Loop: 0");
+	//writer.writeLine("BestF: " + bestf);
+	//writer.writeLine("BestX");
 	for (int i=0;i<nopt;i++) {
 	    System.out.print("\t\t" + bestx[i]);
+        }
+        for (int i=0;i<nopt;i++) {
+	    writer.addData(bestx[i]);
 	}
+        writer.addData(bestf);
+        writer.writeData();
+        writer.flush();
 	System.out.println("");
 	System.out.println("WorstF: " + worstf);
 	System.out.print("WorstX");
+        
+        //writer.writeLine("");
+	//writer.writeLine("WorstF: " + worstf);
+	//writer.writeLine("WorstX");
 	for (int i=0;i<nopt;i++) {
 	    System.out.print("\t\t" + worstx[i]);
+        //    writer.write("\t\t" + worstx[i]);
 	}
 	System.out.println("");
-	
+        //writer.writeLine("");
+	//writer.flush();
 	//Check for convergency;
 	if (icall >= maxn) {
 	    System.out.println("*** OPTIMIZATION SEARCH TERMINATED BECAUSE THE LIMIT");
 	    System.out.println("ON THE MAXIMUM NUMBER OF TRIALS" + maxn);
 	    System.out.println("HAS BEEN EXCEEDED.  SEARCH WAS STOPPED AT TRIAL NUMBER:" + icall);
 	    System.out.println("OF THE INITIAL LOOP!");
+            
+            writer.writeLine("*** OPTIMIZATION SEARCH TERMINATED BECAUSE THE LIMIT");
+	    writer.writeLine("ON THE MAXIMUM NUMBER OF TRIALS" + maxn);
+	    writer.writeLine("HAS BEEN EXCEEDED.  SEARCH WAS STOPPED AT TRIAL NUMBER:" + icall);
+	    writer.writeLine("OF THE INITIAL LOOP!");
+            writer.flush();
 	}
 	
 	if (gnrng < peps) {
-	    System.out.println("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");
+	    writer.writeLine("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");
+            System.out.println("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");
+            writer.flush();
 	}
 	
 	// Begin evolution loops:
@@ -703,7 +807,7 @@ title="Title",
 			int lpos = 0;
 			for (int iter=0;iter<1000;iter++) {
 			    lpos = (int)Math.floor(npg+0.5-Math.sqrt((npg+0.5)*(npg+0.5) - npg*(npg+1)*Custom_rand()));
-			    
+			    //wirklich nötig??
 			    int idx = find(lcs,0,k3,lpos);
 			    if (idx == -1) {
 				break;
@@ -779,23 +883,48 @@ title="Title",
 	    System.out.println("Evolution Loop:" + nloop + " - Trial - " + icall);
 	    System.out.println("BESTF:" + bestf);
 	    System.out.print("BESTX:");
+            
+            //writer.writeLine("Evolution Loop:" + nloop + " - Trial - " + icall);
+	    //writer.writeLine("BESTF:" + bestf);
+	    //writer.writeLine("BESTX:");
 	    for (int i = 0;i<nopt;i++) {
 	        System.out.print("\t" + bestx[i]);
+              //  writer.write("\t" + bestx[i]);
 	    }
+            for (int i=0;i<nopt;i++) {
+                //System.out.print("\t\t" + bestx[i]);
+                writer.addData(bestx[i]);
+            }
+            writer.addData(bestf);
+            writer.writeData();
+            writer.flush();
+            
 	    System.out.println("\nWORSTF:" + worstf);
 	    System.out.print("WORSTX:");
+            
+            //writer.writeLine("\nWORSTF:" + worstf);
+	    //writer.writeLine("WORSTX:");
 	    for (int i = 0;i<nopt;i++) {
 	        System.out.print("\t" + worstx[i]);
+                //writer.write("\t" + worstx[i]);
 	    }
 	    System.out.println("");
+            //writer.flush();
+            
 	    
 	    // Check for convergency;
 	    if (icall >= maxn) {
 		System.out.println("*** OPTIMIZATION SEARCH TERMINATED BECAUSE THE LIMIT");
 		System.out.println("ON THE MAXIMUM NUMBER OF TRIALS " +  maxn + " HAS BEEN EXCEEDED!");
+                
+                writer.writeLine("*** OPTIMIZATION SEARCH TERMINATED BECAUSE THE LIMIT");
+		writer.writeLine("ON THE MAXIMUM NUMBER OF TRIALS " +  maxn + " HAS BEEN EXCEEDED!");
+                writer.flush();
 	    }
 	    if (gnrng < peps) {
 		System.out.println("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");
+                writer.writeLine("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");
+                writer.flush();
 	    }
 	    	   
 	    for (int i=0;i<kstop-1;i++) {
@@ -815,18 +944,36 @@ title="Title",
 		    System.out.println("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY");
 		    System.out.println("LESS THAN THE THRESHOLD " + pcento + "%");
 		    System.out.println("CONVERGENCY HAS ACHIEVED BASED ON OBJECTIVE FUNCTION CRITERIA!!!");
+                    
+                    writer.writeLine("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY");
+		    writer.writeLine("LESS THAN THE THRESHOLD " + pcento + "%");
+		    writer.writeLine("CONVERGENCY HAS ACHIEVED BASED ON OBJECTIVE FUNCTION CRITERIA!!!");
+                    writer.flush();
 		}
 	    }
 	}
 	System.out.println("SEARCH WAS STOPPED AT TRIAL NUMBER: " + icall);
 	System.out.println("NORMALIZED GEOMETRIC RANGE = " + gnrng);
 	System.out.println("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY " + criter_change + "%");
-	
-	return bestx;
+        
+        writer.writeLine("SEARCH WAS STOPPED AT TRIAL NUMBER: " + icall);
+	writer.writeLine("NORMALIZED GEOMETRIC RANGE = " + gnrng);
+	writer.writeLine("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY " + criter_change + "%");
+        writer.flush();
+        double[] retVal = new double[nopt+1];
+        for(int i = 0; i < nopt; i++)
+            retVal[i] = bestx[i];
+        retVal[nopt] = bestf;
+	return retVal;
+        } catch (org.unijena.jams.runtime.RuntimeException ex) {
+                ex.printStackTrace();
+            }
+    return null;
     }
     
     public void run() {        
         if (runEnumerator == null) {
+            
             runEnumerator = getChildrenEnumerator();
         }
         if(!enable.getValue()){
@@ -834,16 +981,19 @@ title="Title",
 	    return;
 	}
         
-	int maxn=10000;
-	int kstop=10;
-	double  pcento=0.1;
-	double peps=0.001;
+	int maxn= this.maxn.getValue();//10000;
+	int kstop=this.kstop.getValue();//10;
+	double  pcento=this.pcento.getValue();//0.01;
+	double peps=this.peps.getValue();//0.00001;
 	int iseed=10;
 	int iniflg=0;
 	
+        System.out.println("Pcento: " + pcento);
+        
 	double bestpoint[],bestx[],bestf;
 	
-	double x0[] = RandomSampler();
+        double x0[] = RandomSampler();
+        
 	//double x0[] = {-1.295,2.659,1.1,0.1649};
 			
 	bestpoint = sceua(x0,this.lowBound,this.upBound,maxn,kstop,pcento,peps,NumberOfComplexes.getValue(),iseed,iniflg);
@@ -852,6 +1002,7 @@ title="Title",
 	for (int i=0;i<this.parameters.length;i++) {
 	    bestx[i] = bestpoint[i];
 	}
+        
 	bestf = bestpoint[this.parameters.length];
     }
     

@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package jams.components.optimizer.MOCOM;
+package jams.components.optimizer;
 
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ import java.util.Arrays.*;
  *
  * @author c0krpe
  */
-public class Test extends JAMSComponent {
+public class MocomTest extends JAMSComponent {
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,

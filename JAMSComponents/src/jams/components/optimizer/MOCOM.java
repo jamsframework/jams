@@ -21,7 +21,7 @@
  *
  */
 
-package jams.components.optimizer.MOCOM;
+package jams.components.optimizer;
 
 import java.io.IOException;
 import java.util.Arrays;

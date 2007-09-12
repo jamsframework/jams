@@ -21,7 +21,7 @@
  *
  */
 
-package jams.components.optimizer.SCE;
+package jams.components.optimizer;
 
 import java.util.Comparator;
 import java.util.Vector;
