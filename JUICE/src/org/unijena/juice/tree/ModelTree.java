@@ -584,8 +584,13 @@ public class ModelTree extends JAMSTree {
             NodeList varChilds = rootElement.getElementsByTagName("var");
             for (int index = 0; index < varChilds.getLength(); index++) {
                 
-                addVar(cd, (Element) varChilds.item(index));
-                
+                Element e = (Element) varChilds.item(index);
+                try {
+                    setVar(cd, e);
+                } catch (NullPointerException npe) {
+                    LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component " + cd.getName() + 
+                            ": component attribute \"" + e.getAttribute("name") + "\" does not exist!", "Model loading error");
+                }
             }
             
         } else if (type == "contextcomponent") {
@@ -605,7 +610,7 @@ public class ModelTree extends JAMSTree {
                     
                 } else if (node.getNodeName() == "var") {
                     
-                    addVar(cd, (Element) node);
+                    setVar(cd, (Element) node);
                     
                 } else if (node.getNodeName() == "attribute") {
                     
@@ -633,7 +638,7 @@ public class ModelTree extends JAMSTree {
         }
     }
     
-    private void addVar(ComponentDescriptor cd, Element e) {
+    private void setVar(ComponentDescriptor cd, Element e) {
         
         if (e.hasAttribute("attribute")) {
             
