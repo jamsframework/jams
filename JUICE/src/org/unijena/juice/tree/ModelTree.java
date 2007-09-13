@@ -127,15 +127,15 @@ public class ModelTree extends JAMSTree {
             }
             public void keyTyped(KeyEvent e) {
                 switch (e.getKeyChar()) {
-                case KeyEvent.VK_DELETE :
-                    deleteNode();
-                    break;
-                case '-' :
-                    moveUpNode();
-                    break;
-                case '+' :
-                    moveDownNode();
-                    break;
+                    case KeyEvent.VK_DELETE :
+                        deleteNode();
+                        break;
+                    case '-' :
+                        moveUpNode();
+                        break;
+                    case '+' :
+                        moveDownNode();
+                        break;
                 }
             }
         });
@@ -583,14 +583,7 @@ public class ModelTree extends JAMSTree {
             
             NodeList varChilds = rootElement.getElementsByTagName("var");
             for (int index = 0; index < varChilds.getLength(); index++) {
-                
-                Element e = (Element) varChilds.item(index);
-                try {
-                    setVar(cd, e);
-                } catch (NullPointerException npe) {
-                    LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component " + cd.getName() + 
-                            ": component attribute \"" + e.getAttribute("name") + "\" does not exist!", "Model loading error");
-                }
+                setVar(cd, (Element) varChilds.item(index));
             }
             
         } else if (type == "contextcomponent") {
@@ -650,10 +643,22 @@ public class ModelTree extends JAMSTree {
             String name = e.getAttribute("name");
             String attribute = e.getAttribute("attribute");
             
-            cd.setComponentVar(name, view.getComponentDescriptor(context), attribute);
-            if (cd.getCVars().get(name).accessType != ComponentDescriptor.ComponentVar.READ_ACCESS) {
-                Class attributeType = cd.getCVars().get(name).type;
-                this.getView().getDataRepository(view.getComponentDescriptor(context)).addAttribute(attribute, attributeType);
+            try {
+                cd.setComponentVar(name, view.getComponentDescriptor(context), attribute);
+            } catch (NullPointerException ex) {
+                LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component " + cd.getName() +
+                        ": context \"" + context + "\" does not exist!", "Model loading error");
+                return;
+            }
+            try {
+                if (cd.getCVars().get(name).accessType != ComponentDescriptor.ComponentVar.READ_ACCESS) {
+                    Class attributeType = cd.getCVars().get(name).type;
+                    this.getView().getDataRepository(view.getComponentDescriptor(context)).addAttribute(attribute, attributeType);
+                }
+            } catch (NullPointerException ex) {
+                LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component " + cd.getName() +
+                        ": component attribute \"" + e.getAttribute("name") + "\" does not exist!", "Model loading error");
+                return;
             }
             
         } else if (e.hasAttribute("value")) {
