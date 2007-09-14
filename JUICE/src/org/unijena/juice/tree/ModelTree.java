@@ -646,8 +646,8 @@ public class ModelTree extends JAMSTree {
             try {
                 cd.setComponentVar(name, view.getComponentDescriptor(context), attribute);
             } catch (NullPointerException ex) {
-                LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component " + cd.getName() +
-                        ": context \"" + context + "\" does not exist!", "Model loading error");
+                LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component \"" + cd.getName() +
+                        "\": context \"" + context + "\" does not exist!", "Model loading error");
                 return;
             }
             try {
@@ -656,8 +656,8 @@ public class ModelTree extends JAMSTree {
                     this.getView().getDataRepository(view.getComponentDescriptor(context)).addAttribute(attribute, attributeType);
                 }
             } catch (NullPointerException ex) {
-                LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component " + cd.getName() +
-                        ": component attribute \"" + e.getAttribute("name") + "\" does not exist!", "Model loading error");
+                LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component \"" + cd.getName() +
+                        "\": component attribute \"" + e.getAttribute("name") + "\" does not exist!", "Model loading error");
                 return;
             }
             
