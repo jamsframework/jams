@@ -519,15 +519,28 @@ public class ModelTree extends JAMSTree {
                     
                     ModelProperties.ModelProperty property = view.getModelProperties().createProperty();
                     property.component = view.getComponentDescriptor(propertyElement.getAttribute("component"));
+                    
                     if (property.component == null) {
                         LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Component \"" + propertyElement.getAttribute("component") +
                                 "\" does not exist, but is referred in list of model parameters!\n" +
-                                "Will be removed when model is saved!", "Error loading model");
+                                "Will be removed when model is saved!", "Model loading error");
                     } else {
-                        property.var = property.component.getCVars().get(propertyElement.getAttribute("attribute"));
                         
+                        String attributeName = propertyElement.getAttribute("attribute");
+                        
+                        property.var = property.component.getCVars().get(attributeName);
+                        
+                        //in case this is a context component, check whether this refers to a context attribute
                         if (property.attribute == null) {
-                            property.attribute = property.component.getModelAttributes().get(propertyElement.getAttribute("attribute"));
+                            property.attribute = property.component.getModelAttributes().get(attributeName);
+                        }
+                        
+                        //check wether the referred var is existing or not
+                        if ((property.attribute == null) && (property.var == null) && !attributeName.equals("%enable%")) {
+                            LHelper.showErrorDlg(JUICE.getJuiceFrame(),  "Attribute " + attributeName +
+                                    " does not exist in component " + property.component.getName() +
+                                    ". Removing associated property!", "Model loading error");
+                            continue;
                         }
                         
                         property.defaultValue = propertyElement.getAttribute("default");
@@ -545,7 +558,6 @@ public class ModelTree extends JAMSTree {
                 }
             }
         }
-        
         
         return rootNode;
     }

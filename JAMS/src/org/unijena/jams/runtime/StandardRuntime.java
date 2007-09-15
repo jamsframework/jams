@@ -51,6 +51,7 @@ import org.unijena.jams.ModelConfig;
 import org.unijena.jams.ModelPreprocessor;
 import org.unijena.jams.data.JAMSData;
 import org.unijena.jams.io.JAMSModelLoader;
+import org.unijena.jams.io.XMLIO;
 import org.unijena.jams.model.JAMSGUIComponent;
 import org.unijena.jams.model.JAMSModel;
 import org.w3c.dom.Document;

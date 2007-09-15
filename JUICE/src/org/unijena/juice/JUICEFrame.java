@@ -366,8 +366,10 @@ public class JUICEFrame extends JFrame {
     public void saveModel(ModelView view) {
         if (view.getSavePath() != null) {
             if (!view.save()) {
-                LHelper.showErrorDlg(this, "Unable to save model at " + view.getSavePath(), "Error");
+                LHelper.showErrorDlg(this, "Error saving model to " + view.getSavePath(), "Error");
                 view.setSavePath(null);
+            } else {
+                view.setInitialState();
             }
         } else {
             saveModelAs(view);

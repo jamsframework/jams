@@ -78,7 +78,6 @@ public class ModelView {
     private HashMap<String, ComponentDescriptor> componentDescriptors = new HashMap<String, ComponentDescriptor>();
     private TreePanel modelTreePanel;
     private JDesktopPane parentPanel;
-    private boolean modified = false;
     private ModelProperties modelProperties = new ModelProperties();
     private WorkerDlg setupModelDlg;
     private Runnable modelLoading;
@@ -309,16 +308,16 @@ public class ModelView {
         
         boolean result = false;
         
+        launcherPanel.updateProperties();
+        
+        Document doc = tree.getModelDocument();
+
         try {
-            result = XMLIO.writeXmlFile(tree.getModelDocument(), savePath);
+            result = XMLIO.writeXmlFile(doc, savePath);
         } catch (IOException ioe) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Error saving configuration to " + savePath.toString(), "Error");
             return false;
         }
-        if (result) {
-            setInitialState();
-        }
-        
+
         return result;
     }
     
@@ -387,7 +386,7 @@ public class ModelView {
         String newXMLString = XMLIO.getStringFromDocument(tree.getModelDocument());
         String oldXMLString = XMLIO.getStringFromDocument(initialDoc);
         
-        if (modified || (newXMLString.compareTo(oldXMLString) != 0)) {
+        if (newXMLString.compareTo(oldXMLString) != 0) {
             int result = LHelper.showYesNoCancelDlg(JUICE.getJuiceFrame(), "Save modifications in " + this.getFrame().getTitle() + "?", "JUICE: unsaved modifications");
             if (result == JOptionPane.OK_OPTION) {
                 JUICE.getJuiceFrame().saveModel(this);
@@ -467,10 +466,6 @@ public class ModelView {
     
     public void setDescription(String description) {
         this.description = description;
-    }
-    
-    public void setModified(boolean modified) {
-        this.modified = modified;
     }
     
     public ComponentDescriptor getComponentDescriptor(String name) {

@@ -157,27 +157,18 @@ public class ModelEditPanel extends JPanel {
     private void updateAuthor() {
         
         String author = textFields.get("author").getText();
-        if (!author.equals(view.getAuthor())) {
-            view.setModified(true);
-        }
         view.setAuthor(author);
     }
     
     private void updateDate() {
         
         String date = textFields.get("date").getText();
-        if (!date.equals(view.getDate())) {
-            view.setModified(true);
-        }
         view.setDate(date);
     }
     
     private void updateDescription() {
         
         String description = textAreas.get("description").getText();
-        if (!description.equals(view.getDescription())) {
-            view.setModified(true);
-        }
         view.setDescription(description);
     }
     
