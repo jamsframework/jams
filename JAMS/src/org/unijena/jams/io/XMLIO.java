@@ -100,25 +100,22 @@ public class XMLIO {
     }
     
     public static String getStringFromDocument(Document doc) {
+        return xmlSerializerSun(doc);
+    }
+    
+    public static String xmlSerializerSun(Document doc) {
         
         String returnValue = "";
         
         try {
-            Transformer xformer = TransformerFactory.newInstance().newTransformer();
-            
-            xformer.setOutputProperty(OutputKeys.METHOD, "xml");
-            xformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            xformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            xformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-            xformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
+            Transformer transformer = getTransformer();
             
             Source source = new DOMSource(doc);
             StringWriter writer = new StringWriter();
             Result result = new StreamResult(writer);
-            xformer.transform(source, result);
+            transformer.transform(source, result);
             
             returnValue = writer.toString();
-            //returnValue = new String(writer.toString().getBytes(), "ISO-8859-1");
             
         } catch (TransformerConfigurationException ex) {
             ex.printStackTrace();
@@ -129,26 +126,39 @@ public class XMLIO {
         return returnValue;
     }
     
+    /*
+    private static String xmlSerializerXerces(Document doc) {
+        OutputFormat format = new OutputFormat(doc);
+        format.setLineWidth(400);
+        format.setIndenting(true);
+        format.setIndent(4);
+        StringWriter writer = new StringWriter();
+        XMLSerializer serializer = new XMLSerializer(writer, format);
+        try {
+            serializer.serialize(doc);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return writer.toString();
+    }
+     */
+    
     public static boolean writeXmlFile(Document modelDoc, String filename) throws IOException {
         return writeXmlFile(modelDoc, new File(filename));
     }
     
-    public static boolean writeXmlFile(Document modelDoc, File savePath) throws IOException {
+    public static boolean writeXmlFile(Document doc, File savePath) throws IOException {
         
         if (!savePath.exists()) {
             savePath.createNewFile();
         }
         
         if (savePath.canWrite()) {
+            
             try {
-                Transformer transformer = TransformerFactory.newInstance().newTransformer();
-                transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-                transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-                transformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
+                Transformer transformer = getTransformer();
                 
-                DOMSource source = new DOMSource(modelDoc);
+                DOMSource source = new DOMSource(doc);
                 FileOutputStream os = new FileOutputStream(savePath);
                 StreamResult result = new StreamResult(os);
                 transformer.transform(source, result);
@@ -159,10 +169,25 @@ public class XMLIO {
             } catch (TransformerException te) {
                 return false;
             }
+            
         } else {
             return false;
         }
         return true;
+    }
+    
+    private static Transformer getTransformer() throws TransformerConfigurationException {
+        
+        TransformerFactory factory = TransformerFactory.newInstance();
+//        factory.setAttribute("indent-number", new Integer(4));
+        Transformer transformer = factory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+//        transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "4");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
+        
+        return transformer;
     }
     
 }
