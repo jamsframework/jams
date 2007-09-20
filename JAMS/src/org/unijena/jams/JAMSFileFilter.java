@@ -45,7 +45,7 @@ public class JAMSFileFilter {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".jam") || f.getName().toLowerCase().endsWith(".xml");
         }
         public String getDescription() {
-            return "JAMS model (*.jam)";
+            return "JAMS model (*.jam; *.xml)";
         }
     };
 /*    private static FileFilter modelConfigFilter = new FileFilter() {

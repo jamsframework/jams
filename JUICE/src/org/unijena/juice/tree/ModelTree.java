@@ -32,6 +32,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import javax.swing.DropMode;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -139,6 +140,9 @@ public class ModelTree extends JAMSTree {
                 }
             }
         });
+        
+        
+        this.setDropMode(DropMode.ON_OR_INSERT);
     }
     
     private void deleteNode() {
@@ -326,7 +330,7 @@ public class ModelTree extends JAMSTree {
             rootElement.appendChild(element);
             rootElement.appendChild(document.createTextNode("\n"));
             
-            for (ModelAttribute attribute : cd.getModelAttributes().values()) {
+            for (ContextAttribute attribute : cd.getContextAttributes().values()) {
                 element = (Element) document.createElement("attribute");
                 element.setAttribute("name", attribute.name);
                 element.setAttribute("class", attribute.type.getName());
@@ -367,7 +371,7 @@ public class ModelTree extends JAMSTree {
         rootElement.appendChild(document.createTextNode("\n"));
         
         Element element;
-        for (ModelAttribute attribute : cd.getModelAttributes().values()) {
+        for (ContextAttribute attribute : cd.getContextAttributes().values()) {
             rootElement.appendChild(document.createTextNode("\n"));
             
             element = (Element) document.createElement("attribute");
@@ -451,7 +455,7 @@ public class ModelTree extends JAMSTree {
         }
         
         if (modelDoc == null) {
-            ComponentDescriptor cd = new ComponentDescriptor(NEW_MODEL_NAME, clazz, this, view);
+            ComponentDescriptor cd = new ComponentDescriptor(NEW_MODEL_NAME, clazz, this);
             JAMSNode rootNode = new JAMSNode(cd);
             rootNode.setType(JAMSNode.MODEL_ROOT);
             return rootNode;
@@ -473,7 +477,7 @@ public class ModelTree extends JAMSTree {
         
         //create the tree's root node
         
-        ComponentDescriptor cd = new ComponentDescriptor(modelName, clazz, this, view);
+        ComponentDescriptor cd = new ComponentDescriptor(modelName, clazz, this);
         JAMSNode rootNode = new JAMSNode(cd);
         rootNode.setType(JAMSNode.MODEL_ROOT);
         
@@ -532,7 +536,7 @@ public class ModelTree extends JAMSTree {
                         
                         //in case this is a context component, check whether this refers to a context attribute
                         if (property.attribute == null) {
-                            property.attribute = property.component.getModelAttributes().get(attributeName);
+                            property.attribute = property.component.getContextAttributes().get(attributeName);
                         }
                         
                         //check wether the referred var is existing or not
@@ -575,7 +579,7 @@ public class ModelTree extends JAMSTree {
             
             clazz  = JUICE.getLoader().loadClass(className);
             
-            cd = new ComponentDescriptor(componentName, clazz, this, view);
+            cd = new ComponentDescriptor(componentName, clazz, this);
             
         } catch (ClassNotFoundException cnfe) {
             throw new ModelLoadException(className, componentName);
@@ -636,7 +640,7 @@ public class ModelTree extends JAMSTree {
             String typeName = e.getAttribute("class");
             Class type = Class.forName(typeName);
             String value = e.getAttribute("value");
-            cd.addModelAttribute(attribute, type, value);
+            cd.addContextAttribute(attribute, type, value);
             this.getView().getDataRepository(cd).addAttribute(attribute, type);
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();

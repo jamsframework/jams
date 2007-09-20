@@ -54,7 +54,7 @@ import org.unijena.jams.JAMSTools;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.juice.tree.ComponentDescriptor;
 import org.unijena.juice.tree.JAMSNode;
-import org.unijena.juice.tree.ModelAttribute;
+import org.unijena.juice.tree.ContextAttribute;
 
 /**
  *
@@ -296,7 +296,7 @@ public class CompEditPanel extends JPanel {
         }
         
         String componentName = attrNameList.get(selectedAttrRow);
-        ModelAttribute attr = componentDescriptor.getModelAttributes().get(componentName);
+        ContextAttribute attr = componentDescriptor.getContextAttributes().get(componentName);
         attrEditDlg.show(attr.name, attr.type.getName(), attr.value);
         
         if (attrEditDlg.getResult() == attrEditDlg.APPROVE_OPTION) {
@@ -321,7 +321,7 @@ public class CompEditPanel extends JPanel {
         
         if (attrEditDlg.getResult() == attrEditDlg.APPROVE_OPTION) {
             try {
-                componentDescriptor.addModelAttribute(attrEditDlg.getAttributeName(), Class.forName(attrEditDlg.getType()), attrEditDlg.getValue());
+                componentDescriptor.addContextAttribute(attrEditDlg.getAttributeName(), Class.forName(attrEditDlg.getType()), attrEditDlg.getValue());
             } catch (ClassNotFoundException ex) {
                 ex.printStackTrace();
             }
@@ -338,7 +338,7 @@ public class CompEditPanel extends JPanel {
         if (result == JOptionPane.NO_OPTION)
             return;
         
-        componentDescriptor.removeComponentAttr(attrName);
+        componentDescriptor.removeContextAttr(attrName);
         this.updateAttrs();
         
         if (tmpSelectedAttrRow > attributeTable.getRowCount()-1) {
@@ -428,13 +428,13 @@ public class CompEditPanel extends JPanel {
     private void updateAttrs() {
         selectedAttrRow = -1;
         
-        attrNameList = new ArrayList<String>(componentDescriptor.getModelAttributes().keySet());
+        attrNameList = new ArrayList<String>(componentDescriptor.getContextAttributes().keySet());
         Collections.sort(attrNameList);
         
         Vector<Vector<String>> tableData = new Vector<Vector<String>>();
         Vector<String> rowData;
         for (String name : attrNameList) {
-            ModelAttribute attr = componentDescriptor.getModelAttributes().get(name);
+            ContextAttribute attr = componentDescriptor.getContextAttributes().get(name);
             
             //create a vector with table data from attr properties
             rowData = new Vector<String>();
@@ -496,7 +496,7 @@ public class CompEditPanel extends JPanel {
         String name = textFields.get("name").getText();
         if (componentDescriptor != null) {
             try {
-                componentDescriptor.setName(name);
+                componentDescriptor.setInstanceName(name);
             } catch (JUICEException.NameAlreadyUsedException ex) {
                 LHelper.showInfoDlg(this, "Name " + name + " is already in use. Renamed component to " +
                         componentDescriptor.getName() + "!", "Component name");

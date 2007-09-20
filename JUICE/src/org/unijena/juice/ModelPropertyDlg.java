@@ -48,7 +48,7 @@ import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.FloatInput;
 import org.unijena.juice.ModelProperties.ModelProperty;
 import org.unijena.juice.tree.ComponentDescriptor;
-import org.unijena.juice.tree.ModelAttribute;
+import org.unijena.juice.tree.ContextAttribute;
 
 /**
  *
@@ -152,7 +152,7 @@ public class ModelPropertyDlg extends JDialog {
     private void updateComponentVars(Object item) {
         ComponentDescriptor cd = this.componentDescriptors.get((String) item);
         HashMap <String, ComponentDescriptor.ComponentVar> vars = cd.getCVars();
-        HashMap <String, ModelAttribute> attrs = cd.getModelAttributes();
+        HashMap <String, ContextAttribute> attrs = cd.getContextAttributes();
         
         ArrayList<String> varNames = new ArrayList<String>();
         for (String name : vars.keySet()) {
@@ -252,7 +252,7 @@ public class ModelPropertyDlg extends JDialog {
         return getComponent().getCVars().get(varCombo.getSelectedItem());
     }
     
-    public ModelAttribute getAttribute() {
-        return getComponent().getModelAttributes().get(varCombo.getSelectedItem());
+    public ContextAttribute getAttribute() {
+        return getComponent().getContextAttributes().get(varCombo.getSelectedItem());
     }
 }

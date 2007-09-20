@@ -1,6 +1,7 @@
 package org.unijena.juice.tree;
 import java.awt.*;
 import java.util.Collections;
+import javax.swing.DropMode;
 import javax.swing.tree.*;
 import java.awt.dnd.*;
 import java.util.ArrayList;
@@ -43,10 +44,13 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             return(false);
         }
  */
+
         if (((JAMSNode)pathTarget.getLastPathComponent()).getType() == JAMSNode.COMPONENT_NODE) { // or ((JAMSNode)pathTarget.getLastPathComponent()).getChildCount()==0
             target.setSelectionPath(null);
-            return(false);
+            target.setDropMode(DropMode.INSERT);
+            return(true);
         }
+
         if(action == DnDConstants.ACTION_COPY) {
             target.setSelectionPath(pathTarget);
             return(true);

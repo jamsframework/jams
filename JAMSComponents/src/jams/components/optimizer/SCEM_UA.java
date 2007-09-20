@@ -260,7 +260,8 @@ title="Title",
         return true;
     }
     
-    @SuppressWarnings("unchecked") public void sort(double data[][],int col,boolean decreasing_order) {
+    @SuppressWarnings("unchecked") 
+    public void sort(double data[][],int col,boolean decreasing_order) {
         SCE_Comparator comparator = new SCE_Comparator(col,decreasing_order);
         java.util.Arrays.sort(data,comparator);
     }

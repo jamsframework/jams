@@ -103,11 +103,11 @@ public class VarEditDlg extends JDialog {
         
         varNameText = new JTextField();
         varNameText.setColumns(20);
-        LHelper.addGBComponent(mainPanel, mainLayout, varNameText, 3, 1, 1, 1, 0, 0);
+//        LHelper.addGBComponent(mainPanel, mainLayout, varNameText, 3, 1, 1, 1, 0, 0);
         
         varNameCombo = new JComboBox();
         varNameCombo.setEditable(true);
-//        LHelper.addGBComponent(mainPanel, mainLayout, varNameCombo, 3, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, varNameCombo, 3, 1, 1, 1, 0, 0);
         
         
         LHelper.addGBComponent(mainPanel, mainLayout, new JPanel(), 0, 3, 1, 1, 0, 0);

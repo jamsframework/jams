@@ -224,8 +224,9 @@ public class JUICEFrame extends JFrame {
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String stringValue = jfc.getSelectedFile().getAbsolutePath();
                     try {
-                        JAMSProperties prop = JUICE.getJamsProperties();
-                        prop.load(stringValue);
+                        JAMSProperties properties = JUICE.getJamsProperties();
+                        properties.load(stringValue);
+                        
                     } catch (IOException ioe) {
                         JAMS.handle(ioe);
                     }

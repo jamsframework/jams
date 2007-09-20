@@ -64,10 +64,10 @@ public class JAMSProperties extends Observable {
                     property = new JAMSProperty((String) key);
                     propertyMap.put((String) key, property);
                 }
+                property.setChanged();
+                property.notifyObservers();
             }
             
-//            this.setChanged();
-//            this.notifyObservers();
         } catch (Exception ex) {
             JAMS.handle(ex);
         }
@@ -106,8 +106,6 @@ public class JAMSProperties extends Observable {
         property.setChanged();
         property.notifyObservers();
         
-        this.setChanged();
-        this.notifyObservers();
     }
     
     public void addObserver(String key, Observer obs) {

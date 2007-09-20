@@ -497,7 +497,7 @@ title="Title",
             return 0;*/
     }
 
-    
+    @SuppressWarnings("unchecked")
     public void sort(double x[][],double xf[]) {	
 	if (x.length == 0)
 	    return;

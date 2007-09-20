@@ -247,7 +247,7 @@ public class JAMSLauncher extends JFrame {
             }
         });
         resetButton.setEnabled(false);
-        buttonPanel.add(resetButton);
+        //buttonPanel.add(resetButton);
         
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(new ActionListener() {

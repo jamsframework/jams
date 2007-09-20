@@ -26,7 +26,7 @@ package org.unijena.juice;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.unijena.juice.tree.ComponentDescriptor;
-import org.unijena.juice.tree.ModelAttribute;
+import org.unijena.juice.tree.ContextAttribute;
 
 /**
  *
@@ -136,7 +136,7 @@ public class ModelProperties {
         public String defaultValue, value, description, name;
         public ComponentDescriptor component;
         public ComponentDescriptor.ComponentVar var;
-        public ModelAttribute attribute;
+        public ContextAttribute attribute;
         public double lowerBound, upperBound;
         private Group group;
         public Group getGroup() {

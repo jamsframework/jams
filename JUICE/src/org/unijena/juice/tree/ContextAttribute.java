@@ -27,12 +27,12 @@ package org.unijena.juice.tree;
  *
  * @author Sven Kralisch
  */
-public class ModelAttribute {
+public class ContextAttribute {
     
     public String name = "", value = "";
     public Class type = null;
     
-    public ModelAttribute(String name, Class type) {
+    public ContextAttribute(String name, Class type) {
         this.name = name;
         this.type = type;
     }

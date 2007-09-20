@@ -37,28 +37,28 @@ import org.unijena.juice.ModelView;
  */
 public class ComponentDescriptor {
     
-    private String name;
+    private String instanceName;
     private Class clazz;
     private JAMSTree tree;
     private HashMap<String, ComponentVar> cVars = new HashMap<String, ComponentVar>();
-    private HashMap<String, ModelAttribute> modelAttributes = new HashMap<String, ModelAttribute>();
+    private HashMap<String, ContextAttribute> contextAttributes = new HashMap<String, ContextAttribute>();
     
-    public ComponentDescriptor(String name, Class clazz, JAMSTree tree, ModelView view) {
+    public ComponentDescriptor(String instanceName, Class clazz, JAMSTree tree) {
         if (clazz == null) {
-            LHelper.showInfoDlg(JUICE.getJuiceFrame(), "Could not find class for component \"" + name + "\"!", "Error!");
+            LHelper.showInfoDlg(JUICE.getJuiceFrame(), "Could not find class for component \"" + instanceName + "\"!", "Error!");
         }
         this.clazz = clazz;
         this.tree = tree;
 
         try {
-            this.setName(name);
+            this.setInstanceName(instanceName);
         } catch (JUICEException.NameAlreadyUsedException ex) {}
         
         init();
     }
     
-    public ComponentDescriptor(Class clazz, JAMSTree tree, ModelView view) {
-        this(clazz.getSimpleName(), clazz, tree, view);
+    public ComponentDescriptor(Class clazz, JAMSTree tree) {
+        this(clazz.getSimpleName(), clazz, tree);
     }
     
     private void init() {
@@ -88,12 +88,12 @@ public class ComponentDescriptor {
         return getName();
     }
     
-    public ModelAttribute addModelAttribute(String name, Class type, String value) {
-        ModelAttribute ma = getModelAttributes().get(name);
+    public ContextAttribute addContextAttribute(String name, Class type, String value) {
+        ContextAttribute ma = getContextAttributes().get(name);
         
         if (ma == null) {
-            ma = new ModelAttribute(name, type);
-            getModelAttributes().put(name, ma);
+            ma = new ContextAttribute(name, type);
+            getContextAttributes().put(name, ma);
         }
         
         ma.value = value;
@@ -101,8 +101,8 @@ public class ComponentDescriptor {
         return ma;
     }
     
-    public void removeComponentAttr(String attrName) {
-        getModelAttributes().remove(attrName);
+    public void removeContextAttr(String attrName) {
+        getContextAttributes().remove(attrName);
     }
     
     public void setComponentVar(String name, String value) {
@@ -116,7 +116,7 @@ public class ComponentDescriptor {
         ComponentVar var = getCVars().get(name);
         if (var != null) {
             
-            ModelAttribute attr = context.getModelAttributes().get(attributeName);
+            ContextAttribute attr = context.getContextAttributes().get(attributeName);
             
             if (attr == null) {
                 if (var.accessType == ComponentVar.READ_ACCESS) {
@@ -146,7 +146,7 @@ public class ComponentDescriptor {
     
     public ComponentDescriptor clone(JAMSTree target) {
         ModelView view = JUICE.getJuiceFrame().getCurrentView();
-        ComponentDescriptor copy = new ComponentDescriptor(getName(), getClazz(), target, view);
+        ComponentDescriptor copy = new ComponentDescriptor(getName(), getClazz(), target);
         for (String name : cVars.keySet()) {
             ComponentVar ca = cVars.get(name);
             ComponentVar caCopy = new ComponentVar(ca.name, ca.type, ca.accessType);
@@ -155,18 +155,18 @@ public class ComponentDescriptor {
             caCopy.value = ca.value;
             copy.cVars.put(name, caCopy);
         }
-        for (String name : modelAttributes.keySet()) {
-            ModelAttribute ca = modelAttributes.get(name);
-            ModelAttribute caCopy = new ModelAttribute(ca.name, ca.type);
+        for (String name : contextAttributes.keySet()) {
+            ContextAttribute ca = contextAttributes.get(name);
+            ContextAttribute caCopy = new ContextAttribute(ca.name, ca.type);
             caCopy.value = ca.value;
-            copy.modelAttributes.put(name, caCopy);
+            copy.contextAttributes.put(name, caCopy);
         }
         
         return copy;
     }
     
     public String getName() {
-        return name;
+        return instanceName;
     }
     
     public Class getClazz() {
@@ -177,24 +177,24 @@ public class ComponentDescriptor {
         return cVars;
     }
     
-    public HashMap<String, ModelAttribute> getModelAttributes() {
-        return modelAttributes;
+    public HashMap<String, ContextAttribute> getContextAttributes() {
+        return contextAttributes;
     }
     
-    public void setName(String name) throws JUICEException.NameAlreadyUsedException {
-        String oldName = this.name;
+    public void setInstanceName(String name) throws JUICEException.NameAlreadyUsedException {
+        String oldName = this.instanceName;
         if (this.tree instanceof ModelTree) {
             ModelTree modelTree = (ModelTree) this.tree;
             
-            this.name = modelTree.getView().registerComponentDescriptor(oldName, name, this);
+            this.instanceName = modelTree.getView().registerComponentDescriptor(oldName, name, this);
             this.tree.updateUI();
             
-            if (!this.name.equals(name)) {
+            if (!this.instanceName.equals(name)) {
                 throw JUICEException.getNameAlreadyUsedException(name);
             }
             
         } else {
-            this.name = name;
+            this.instanceName = name;
             this.tree.updateUI();
         }
     }
@@ -213,7 +213,7 @@ public class ComponentDescriptor {
         public Class type = null;
         public int accessType;
         public ComponentDescriptor context;
-        public ModelAttribute attribz;
+        public ContextAttribute attribz;
         public ComponentVar(String name, Class type, int accessType) {
             this.name = name;
             this.type = type;

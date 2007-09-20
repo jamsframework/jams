@@ -36,11 +36,13 @@ public class DataRepository {
     private HashMap<String, Attribute> attributesByName = new HashMap<String, Attribute>();
     private HashMap<Class, ArrayList<Attribute>> attributesByType = new HashMap<Class, ArrayList<Attribute>>();
     
-    /** Creates a new instance of DataRepository */
-    public DataRepository() {
-    }
-    
+//    public void addAttribute(String name, Class type, ComponentDescriptor cd) {
     public void addAttribute(String name, Class type) {
+        
+        if (attributesByName.containsKey(name)) {
+            return;
+        }
+        
         Attribute a = new Attribute(name, type);
         attributesByName.put(name, a);
         
