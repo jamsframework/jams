@@ -297,10 +297,11 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
         }
         rows++;
     }
-    
+    /*
     public void addTimeString(String time){
         timeAxis.add(time);
     }
+     **/
     
     public void addTime(JAMSCalendar time){
         JAMSCalendar nextTime = time.clone();

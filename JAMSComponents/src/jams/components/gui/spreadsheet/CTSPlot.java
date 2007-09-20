@@ -205,13 +205,18 @@ public class CTSPlot {
     
     
     public ChartPanel getChartPanel(){
-        createPlot();
+        //createPlot();
+        
         return chartPanel;
     }
     
     public JPanel getPanel() {
         
         return panel;
+    }
+    
+    public JFreeChart getChart(){
+        return chart;
     }
     
     private XYItemRenderer getRenderer(int type) {
@@ -274,7 +279,7 @@ public class CTSPlot {
                 xAxisTitle,
                 leftAxisTitle,
                 dataset1,
-                false,
+                true,
                 false,
                 false);
         
@@ -298,7 +303,7 @@ public class CTSPlot {
             tsLeft = new TimeSeries[graphCountLeft];
             
             for (i = 0; i < graphCountLeft; i++) {
-                String legendEntry = "" + i;
+                String legendEntry = titleLeft[i];
              /*   
                 if(this.varTitleLeft != null){
                     legendEntry = legendEntry + varTitleLeft[i];
@@ -324,7 +329,7 @@ public class CTSPlot {
                 tsRight = new TimeSeries[graphCountRight];
                 for (i = 0; i < graphCountRight; i++) {
                     rightRenderer.setSeriesPaint(i, colorTable.get(colorRight[i]));
-                    tsRight[i] = new TimeSeries("title right wieder einbauen!", Second.class);
+                    tsRight[i] = new TimeSeries(titleRight[i], Second.class);
                     dataset2.addSeries(tsRight[i]);
                 }
             }

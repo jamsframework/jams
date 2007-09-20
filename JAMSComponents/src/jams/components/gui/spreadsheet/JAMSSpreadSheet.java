@@ -15,6 +15,7 @@ package jams.components.gui.spreadsheet;
 
 import jams.components.gui.*;
 import java.util.Vector;
+import java.util.StringTokenizer;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.Observable;
@@ -77,7 +78,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     //private String[] columnNameArray = headers.getValue();
                                         //{"test1","test2"};
     
-    private final String title = "JAMSSpreadSheet v0.82";
+    private final String title = "JAMSSpreadSheet v0.88";
     
     private JPanel panel = new JPanel();
     private String panelname="spreadsheet";
@@ -104,8 +105,8 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     
     /* Buttons */
     private JButton calcbutton = new JButton("Calculate");
-    private JButton openbutton = new JButton("Open");
-    private JButton savebutton = new JButton("Save");
+    private JButton openbutton = new JButton("Import");
+    private JButton savebutton = new JButton("Export");
     private JButton plotButton = new JButton("Time Plot");
     
     /* Labels */
@@ -117,7 +118,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     private JLabel plotalert = new JLabel();
     
     /*CheckBox*/
-    private JCheckBox onthefly = new JCheckBox("On the fly", true);
+    private JCheckBox onthefly = new JCheckBox("On the fly", false);
     
     /* TextFields */
     private JTextField editField = new JTextField();
@@ -224,46 +225,134 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     ActionListener saveAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
              
+             save();
+             
 //             //Vector savedata = new Vector();
 //             Vector<double[]> tabledata = tmodel.getDataVector();
 //             String[] columnNames = tmodel.getCoulumnNameArray();
                          
-             try{
-                 
-                    JFileChooser chooser = new JFileChooser("c:/Dokumente und Einstellungen/p4riro.DAHME/Eigene Dateien/Java/test"); //ACHTUNG!!!!!!!!!
-                    int returnVal = chooser.showSaveDialog(panel);
-                    File file = chooser.getSelectedFile();
-//                    String filename = chooser.getSelectedFile().getName();
-                
-               
-                 FileOutputStream out = new FileOutputStream(file);
-                 ObjectOutputStream vout = new ObjectOutputStream(out);
-                 
-                 //vout.writeObject(timeRuns);
-                 
-                 vout.writeObject(tmodel.getTimeVector());
-                 
-                 vout.writeObject(tmodel.getDataVector());
-                 vout.writeObject(tmodel.getCoulumnNameArray());
-                 vout.close();
-                 out.close();
-                
-                
-              //ganzes tablemodel speichern  
-//                    //"c:/Dokumente und Einstellungen/p4riro.DAHME/Eigene Dateien/Java/test/data.out"
-//              FileOutputStream out = new FileOutputStream(file);  
-//              ObjectOutputStream vout = new ObjectOutputStream(out);
-//              vout.writeObject(tmodel.getTableModel());
-//              vout.close();
-//              out.close();
-             }
-             catch(Exception oute){
-                 System.err.println(oute.toString());
-             }
+//             try{
+//                 
+//                    JFileChooser chooser = new JFileChooser("c:/Dokumente und Einstellungen/p4riro.DAHME/Eigene Dateien/Java/test"); //ACHTUNG!!!!!!!!!
+//                    int returnVal = chooser.showSaveDialog(panel);
+//                    File file = chooser.getSelectedFile();
+////                    String filename = chooser.getSelectedFile().getName();
+//                
+//               
+//                 FileOutputStream out = new FileOutputStream(file);
+//                 ObjectOutputStream vout = new ObjectOutputStream(out);
+//                 
+//                 //vout.writeObject(timeRuns);
+//                 
+//                 vout.writeObject(tmodel.getTimeVector());
+//                 
+//                 vout.writeObject(tmodel.getDataVector());
+//                 vout.writeObject(tmodel.getCoulumnNameArray());
+//                 vout.close();
+//                 out.close();
+//                
+//                
+//              //ganzes tablemodel speichern  
+////                    //"c:/Dokumente und Einstellungen/p4riro.DAHME/Eigene Dateien/Java/test/data.out"
+////              FileOutputStream out = new FileOutputStream(file);  
+////              ObjectOutputStream vout = new ObjectOutputStream(out);
+////              vout.writeObject(tmodel.getTableModel());
+////              vout.close();
+////              out.close();
+//             }
+//             catch(Exception oute){
+//                 System.err.println(oute.toString());
+//             }
   
         }
 
     };  
+    
+    public void save(){
+        /* Only for Time Series */
+        int colcount = tmodel.getColumnCount();
+        int rowcount = tmodel.getRowCount();
+        String value;
+        String[] columnNames = tmodel.getCoulumnNameArray();
+        
+        try{
+            
+            JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
+            int returnVal = chooser.showSaveDialog(panel);
+            File file = chooser.getSelectedFile();
+            //File file = chooser.getSelectedFile();
+            FileWriter filewriter = new FileWriter(file);
+            
+            
+            for(int j=0;j<colcount;j++){
+                filewriter.write("#"+columnNames[j],0,columnNames[j].length()+1);
+                filewriter.write("\t");
+            }
+            
+            filewriter.write("\r\n");
+            filewriter.write("\r\n");
+            
+            for(int k = 0; k < rowcount; k++){
+                for(int i = 0; i < colcount; i++){
+   
+                    value = table.getValueAt(k,i).toString();
+                    filewriter.write(value,0,value.length());
+                    filewriter.write("\t"); 
+                }
+                filewriter.write("\r\n");         
+            }
+            filewriter.close();   
+            
+        }catch (IOException ex){            
+        }     
+    }
+    
+    public void open(){
+        
+        
+        String text = "";
+        String[] headers;
+        int k=0;
+        
+        try{
+            
+            
+            JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
+            int returnVal = chooser.showOpenDialog(panel);
+            File file = chooser.getSelectedFile();
+            FileReader fReader = new FileReader(file);
+            
+            StringBuffer stBuff = new StringBuffer();
+            char[] c = new char[100];
+            int i;
+            
+            
+            while(fReader.ready()){
+                i = fReader.read(c,0,c.length);
+                stBuff.append(c,0,i);
+            }
+            fReader.close();
+            text = stBuff.toString();
+            
+            
+        }catch(IOException ex){
+            /* FEHLERMELDUNG */
+            System.out.println("Lesen fehlgeschlagen!");
+        }
+        /* Tokenizers */
+        
+        StringTokenizer st = new StringTokenizer(text);
+        
+        
+        while(st.nextToken("\t")=="#"){
+           // headers[k] = st.nextToken();
+            k++;
+        }
+        
+    }
+    
+    
+    
     
     /* Open */
     ActionListener openAction = new ActionListener(){
@@ -657,6 +746,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
               controlpanel.add(onthefly);
               controlpanel.add(plotButton);
               
+              openbutton.setEnabled(false);
               openbutton.addActionListener(openAction);
               savebutton.addActionListener(saveAction);
               plotButton.addActionListener(plotAction);
@@ -799,8 +889,11 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
    }
     
     public void addCurrentTime(){
+        tmodel.addTime(time);   
+    }
+    
+    public void addTime(JAMSCalendar time){
         tmodel.addTime(time);
-       
     }
 
            
