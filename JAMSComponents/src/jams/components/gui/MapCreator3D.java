@@ -19,6 +19,7 @@ import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -58,6 +59,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import javax.swing.JButton;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -250,7 +252,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
         }
         if (mp == null)
             mp = new Styled3DMapPane();
-	info.setText("3D Map Pane ... loading map");
+        info.setText("3D Map Pane ... loading map");
         asg = new JAMSAscGridReader(this.dirName + "/" + this.heightMap.toString());
         boolean light = true;
         int Resolution = 256;
@@ -272,17 +274,17 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
         //mp.setMapArea(mc[0].asCollectionDataStore().getCollection().getBounds());
         setMap(mc[0]);
         mp.setHeightMap(asg);
-	info.setText("3D Map Pane ... calculating normals");
+        info.setText("3D Map Pane ... calculating normals");
         mp.init();
         p.setDividerLocation(0.80);
         splitPane.setDividerLocation(0.70);
         finished = true;
-        tree.setVisible(true);        
+        tree.setVisible(true);
         panel.repaint();
         mp.repaint();
-	info.setText("ready");
-	mp.invalidate();
-	mp.repaint();
+        info.setText("ready");
+        mp.invalidate();
+        mp.repaint();
     }
     
     class ShapeExport extends AbstractAction {
@@ -446,7 +448,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
     public class NodeRenderer extends DefaultTreeCellRenderer {
 /*        private ImageIcon iconProject = new ImageIcon(ClassLoader
                 .getSystemResource("resources/images/root.png"));
-         
+ 
         private ImageIcon iconRange = new ImageIcon(ClassLoader
                 .getSystemResource("resources/images/map.png"));*/
         
@@ -474,8 +476,8 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
             }
             
             if (node.isRoot()) {
-		//this.setIcon(iconProject);
-	    }
+                //this.setIcon(iconProject);
+            }
             if (!leaf && !node.isRoot()) {
                 //this.setIcon(iconRange);
             }
@@ -529,16 +531,17 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
             });
             
             info = new JTextPane();
-            info.setEditable(false);	    
-	    info.setText("3D Map Pane, has not been running!");
-            treeView = new JScrollPane(tree);
-            p = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-            p.setTopComponent(treeView);
-            p.setBottomComponent(info);
-            
-            JSplitPane p2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-            p2.setTopComponent(p);
-            
+            info.setEditable(false);
+            info.setText("3D Map Pane, has not been running!");
+/*            
+            JPanel infoPanel = new JPanel();
+            infoPanel.setBorder(BorderFactory.createTitledBorder("Info log"));
+            infoPanel.add(info);
+*/
+            JPanel miscPanel = new JPanel();
+            miscPanel.setLayout(new BorderLayout());
+            miscPanel.add(info, BorderLayout.CENTER);
+                        
             JSlider js = new JSlider();
             js.setMinimum(-20);
             js.setMaximum(20);
@@ -549,7 +552,19 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
                     mp.hScale = (float)Math.exp(((double)source.getValue())/10.0);
                 }
             });
-            p2.setBottomComponent(js);
+            
+            JPanel sliderPanel = new JPanel();
+            sliderPanel.setBorder(BorderFactory.createTitledBorder("Vertical exaggeration"));
+            sliderPanel.add(js);
+            
+            miscPanel.add(sliderPanel, BorderLayout.NORTH);
+                        
+            treeView = new JScrollPane(tree);
+            
+            p = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+            p.setTopComponent(treeView);
+            p.setBottomComponent(miscPanel);
+            
             
             boolean light2 = true;
             int Resolution = 256;
@@ -583,7 +598,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
             
             Action export = new ShapeExport();
             splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-            splitPane.setRightComponent(p2);
+            splitPane.setRightComponent(p);
             splitPane.setLeftComponent(mp);
             //this.add(jtb, BorderLayout.NORTH);
             this.add(splitPane);

@@ -1,7 +1,6 @@
 package org.unijena.juice.tree;
 import java.awt.*;
 import java.util.Collections;
-import javax.swing.DropMode;
 import javax.swing.tree.*;
 import java.awt.dnd.*;
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             return false;
         }
         
+        //package and library nodes can't be moved
         if (draggedNode.getType() == JAMSNode.PACKAGE_NODE || draggedNode.getType() == JAMSNode.LIBRARY_ROOT) {
             return false;
         }
@@ -39,35 +39,32 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             target.setSelectionPath(null);
             return(false);
         }
+        
 /*        if (((JAMSNode)pathTarget.getLastPathComponent()).isLeaf()) { // or ((JAMSNode)pathTarget.getLastPathComponent()).getChildCount()==0
             target.setSelectionPath(null);
             return(false);
         }
  */
-
         if (((JAMSNode)pathTarget.getLastPathComponent()).getType() == JAMSNode.COMPONENT_NODE) { // or ((JAMSNode)pathTarget.getLastPathComponent()).getChildCount()==0
             target.setSelectionPath(null);
-            target.setDropMode(DropMode.INSERT);
-            return(true);
+            return(false);
         }
-
         if(action == DnDConstants.ACTION_COPY) {
             target.setSelectionPath(pathTarget);
             return(true);
-        } else
-            if(action == DnDConstants.ACTION_MOVE) {
+        } else if (action == DnDConstants.ACTION_MOVE) {
             JAMSNode parentNode =(JAMSNode)pathTarget.getLastPathComponent();
-            if (draggedNode.isRoot() || parentNode == draggedNode.getParent() || draggedNode.isNodeDescendant(parentNode)) {
+            if (draggedNode.isRoot() || (parentNode == draggedNode.getParent()) || (draggedNode.isNodeDescendant(parentNode))) {
                 target.setSelectionPath(null);
                 return(false);
             } else {
                 target.setSelectionPath(pathTarget);
                 return(true);
             }
-            } else {
+        } else {
             target.setSelectionPath(null);
             return(false);
-            }
+        }
     }
     
     public boolean executeDrop(JAMSTree target, JAMSNode draggedNode, JAMSNode newParentNode, Vector expandedStates, int action) {
@@ -81,7 +78,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             
             if (target instanceof ModelTree) {
                 fixPendingContexts(newNode, newParentNode);
-            }            
+            }
             
             target.expandPath(new TreePath(newParentNode.getPath()));
             ((DefaultTreeModel)target.getModel()).insertNodeInto(newNode, newParentNode, newParentNode.getChildCount());

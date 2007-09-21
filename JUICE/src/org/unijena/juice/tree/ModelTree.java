@@ -73,6 +73,7 @@ public class ModelTree extends JAMSTree {
     public ModelTree(ModelView view) {
         super();
         setEditable(true);
+        
         new DefaultTreeTransferHandler(this, DnDConstants.ACTION_COPY_OR_MOVE);
         getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
         this.view = view;
@@ -140,9 +141,6 @@ public class ModelTree extends JAMSTree {
                 }
             }
         });
-        
-        
-        this.setDropMode(DropMode.ON_OR_INSERT);
     }
     
     private void deleteNode() {

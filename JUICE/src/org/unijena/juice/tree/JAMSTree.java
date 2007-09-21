@@ -30,18 +30,7 @@ import javax.swing.tree.*;
 
 public class JAMSTree extends JTree {
     
-    static int ICON_WIDTH = 17;
-    static int ICON_HEIGHT = 17;
-    
-//    static Icon MODEL_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Shapes/model2.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));
-//    static Icon COMPONENT_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Shapes/Cube of Envy.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));
-//    static Icon CONTEXT_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Shapes/White Cylinder.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));
-/*    static Icon MODEL_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/world04.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));
-    static Icon COMPONENT_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/symbol04.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));
-    static Icon CONTEXT_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/tree04.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));
- */
-    
-    Insets autoscrollInsets = new Insets(20, 20, 20, 20); // insets
+    private Insets autoscrollInsets = new Insets(20, 20, 20, 20); // insets
     
     public JAMSTree() {
         setAutoscrolls(true);
@@ -66,7 +55,6 @@ public class JAMSTree extends JTree {
         return false;
     }
     
-    
     public Insets getAutoscrollInsets()  {
         return (autoscrollInsets);
     }
@@ -74,9 +62,7 @@ public class JAMSTree extends JTree {
     public static JAMSNode makeDeepCopy(JAMSNode node, JAMSTree target) {
         
         JAMSNode copy = node.clone(target);
-        
         ComponentDescriptor cd = (ComponentDescriptor) copy.getUserObject();
-        
         for (Enumeration e = node.children(); e.hasMoreElements();) {
             copy.add(makeDeepCopy((JAMSNode)e.nextElement(), target));
         }
@@ -90,19 +76,8 @@ public class JAMSTree extends JTree {
             TreeNode node = (TreeNode) value;
             
             if (node instanceof JAMSNode) {
-                
                 JAMSNode jNode = (JAMSNode) node;
-                
                 setIcon(JAMSNode.NODE_ICON[jNode.getType()]);
-/*
-                if (node.getParent() == null) {
-                    setIcon(MODEL_ICON);
-                } else if (leaf) {
-                    setIcon(COMPONENT_ICON);
-                } else {
-                    setIcon(CONTEXT_ICON);
-                }
- */
             }
             return this;
         }
@@ -122,5 +97,5 @@ public class JAMSTree extends JTree {
             this.collapseRow(row);
             row--;
         }
-    }    
+    }
 }

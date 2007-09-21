@@ -34,14 +34,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
  */
 public class JAMSNode extends DefaultMutableTreeNode {
     
-    public static int MODEL_ROOT = 0;
-    public static int LIBRARY_ROOT = 1;
-    public static int CONTEXT_NODE = 2;
-    public static int COMPONENT_NODE = 3;
-    public static int PACKAGE_NODE = 4;
+    public final static int MODEL_ROOT = 0;
+    public final static int LIBRARY_ROOT = 1;
+    public final static int CONTEXT_NODE = 2;
+    public final static int COMPONENT_NODE = 3;
+    public final static int PACKAGE_NODE = 4;
     
-    static int ICON_WIDTH = 17;
-    static int ICON_HEIGHT = 17;
+    static int ICON_WIDTH = 16;
+    static int ICON_HEIGHT = 16;
     
     static Icon[] NODE_ICON = {
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/ContextComponent_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
@@ -50,7 +50,6 @@ public class JAMSNode extends DefaultMutableTreeNode {
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Context_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Folder_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH))
     };
-    
     
     private int type = 0;
     

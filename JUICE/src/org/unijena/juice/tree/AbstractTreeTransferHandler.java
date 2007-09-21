@@ -26,7 +26,7 @@ public abstract class AbstractTreeTransferHandler implements DragGestureListener
         dragSource.createDefaultDragGestureRecognizer(tree, action, this);
         dropTarget = new DropTarget(tree, action, this);
     }
-
+    
     /* Methods for DragSourceListener */
     public void dragDropEnd(DragSourceDropEvent dsde) {
         if (drawImage) {
