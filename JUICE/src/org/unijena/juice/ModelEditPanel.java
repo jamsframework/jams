@@ -39,6 +39,10 @@ import org.unijena.jams.gui.LHelper;
 /**
  *
  * @author S. Kralisch
+ *
+ * Panel that provides Swing components for defining model author,
+ * date and description
+ *
  */
 public class ModelEditPanel extends JPanel {
     

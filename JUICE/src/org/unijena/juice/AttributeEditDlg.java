@@ -124,7 +124,7 @@ public class AttributeEditDlg extends JDialog {
                     return;
                 }
                 setVisible(false);
-                result = VarEditDlg.APPROVE_OPTION;
+                result = ComponentAttributeDlg.APPROVE_OPTION;
             }
         });
         buttonPanel.add(okButton);
@@ -134,7 +134,7 @@ public class AttributeEditDlg extends JDialog {
         ActionListener cancelActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                result = VarEditDlg.CANCEL_OPTION;
+                result = ComponentAttributeDlg.CANCEL_OPTION;
             }
         };
         cancelButton.addActionListener(cancelActionListener);

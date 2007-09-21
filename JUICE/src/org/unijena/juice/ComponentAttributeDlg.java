@@ -53,8 +53,12 @@ import org.unijena.juice.tree.ComponentDescriptor;
 /**
  *
  * @author S. Kralisch
+ *
+ * Dialog with swing inputs for providing a component's attribute value
+ * or linkage to a context attribute
+ *
  */
-public class VarEditDlg extends JDialog {
+public class ComponentAttributeDlg extends JDialog {
     
     public static final int APPROVE_OPTION = 1;
     public static final int CANCEL_OPTION = 0;
@@ -72,7 +76,7 @@ public class VarEditDlg extends JDialog {
     /**
      * Creates a new instance of VarEditDlg
      */
-    public VarEditDlg(Frame owner, ModelView view) {
+    public ComponentAttributeDlg(Frame owner, ModelView view) {
         
         super(owner);
         this.setLayout(new BorderLayout());
@@ -103,11 +107,11 @@ public class VarEditDlg extends JDialog {
         
         varNameText = new JTextField();
         varNameText.setColumns(20);
-//        LHelper.addGBComponent(mainPanel, mainLayout, varNameText, 3, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, varNameText, 3, 1, 1, 1, 0, 0);
         
         varNameCombo = new JComboBox();
         varNameCombo.setEditable(true);
-        LHelper.addGBComponent(mainPanel, mainLayout, varNameCombo, 3, 1, 1, 1, 0, 0);
+//        LHelper.addGBComponent(mainPanel, mainLayout, varNameCombo, 3, 1, 1, 1, 0, 0);
         
         
         LHelper.addGBComponent(mainPanel, mainLayout, new JPanel(), 0, 3, 1, 1, 0, 0);
@@ -123,12 +127,12 @@ public class VarEditDlg extends JDialog {
                 if (!valueInput.getValue().equals("") && !valueInput.verify()) {
                     Color oldColor = valueInput.getComponent().getBackground();
                     valueInput.getComponent().setBackground(new Color(255, 0, 0));
-                    LHelper.showErrorDlg(VarEditDlg.this, "Invalid data format!", "Format error");
+                    LHelper.showErrorDlg(ComponentAttributeDlg.this, "Invalid data format!", "Format error");
                     valueInput.getComponent().setBackground(oldColor);
                     return;
                 }
                 setVisible(false);
-                result = VarEditDlg.APPROVE_OPTION;
+                result = ComponentAttributeDlg.APPROVE_OPTION;
             }
         });
         buttonPanel.add(okButton);
@@ -138,7 +142,7 @@ public class VarEditDlg extends JDialog {
         ActionListener cancelActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                result = VarEditDlg.CANCEL_OPTION;
+                result = ComponentAttributeDlg.CANCEL_OPTION;
             }
         };
         cancelButton.addActionListener(cancelActionListener);

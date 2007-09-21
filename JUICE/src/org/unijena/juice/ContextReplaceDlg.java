@@ -92,7 +92,7 @@ public class ContextReplaceDlg extends JDialog {
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                result = VarEditDlg.APPROVE_OPTION;
+                result = ComponentAttributeDlg.APPROVE_OPTION;
             }
         });
         buttonPanel.add(okButton);

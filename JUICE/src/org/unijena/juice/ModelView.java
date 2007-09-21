@@ -72,7 +72,7 @@ public class ModelView {
     private JButton modelStopButton;
     private JButton modelRunButton;
     private ModelTree tree;
-    private CompEditPanel compEditPanel;
+    private ComponentEditPanel compEditPanel;
     private HashMap<ComponentDescriptor, DataRepository> dataRepositories = new HashMap<ComponentDescriptor, DataRepository>();
     private LauncherPanel launcherPanel;
     private ModelEditPanel modelEditPanel;
@@ -97,7 +97,7 @@ public class ModelView {
     public ModelView(String title, JDesktopPane parentPanel) {
 
         this.parentPanel = parentPanel;
-        compEditPanel = new CompEditPanel(this);
+        compEditPanel = new ComponentEditPanel(this);
         modelEditPanel = new ModelEditPanel(this);
         launcherPanel = new LauncherPanel(this);
         modelTreePanel = new TreePanel();
@@ -436,7 +436,7 @@ public class ModelView {
         return frame;
     }
 
-    public CompEditPanel getCompEditPanel() {
+    public ComponentEditPanel getCompEditPanel() {
         return compEditPanel;
     }
 
@@ -444,7 +444,7 @@ public class ModelView {
         return modelEditPanel;
     }
 
-    public void setCompEditPanel(CompEditPanel compEditPanel) {
+    public void setCompEditPanel(ComponentEditPanel compEditPanel) {
         this.compEditPanel = compEditPanel;
     }
 

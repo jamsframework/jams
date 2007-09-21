@@ -47,7 +47,7 @@ import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.model.JAMSComponent;
 import org.unijena.jams.model.JAMSComponentDescription;
 import org.unijena.jams.model.JAMSContext;
-import org.unijena.juice.CompViewPanel;
+import org.unijena.juice.ComponentInfoPanel;
 import org.unijena.juice.JUICE;
 
 /**
@@ -128,7 +128,7 @@ public class LibTree extends JAMSTree {
                 
                 compViewDlgs.put(clazz, compViewDlg);
                 compViewDlg.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                CompViewPanel compView = new CompViewPanel();
+                ComponentInfoPanel compView = new ComponentInfoPanel();
                 compViewDlg.add(new JScrollPane(compView));
                 
                 JAMSComponentDescription jcd = (JAMSComponentDescription) clazz.getAnnotation(JAMSComponentDescription.class);
