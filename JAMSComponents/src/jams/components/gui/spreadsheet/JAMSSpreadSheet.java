@@ -290,8 +290,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
             }
             
             filewriter.write("\r\n");
-            filewriter.write("\r\n");
-            
+                        
             for(int k = 0; k < rowcount; k++){
                 for(int i = 0; i < colcount; i++){
    
@@ -311,8 +310,19 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         
         
         String text = "";
-        String[] headers;
+        String rowtext = "";
+        String itemtext = "";
+        String[] headers = new String[256];
+        int colNumber = 0;
+        double[] rowBuffer = new double[colNumber];
+        
+        boolean headerSet = false;
+        int line=0;
         int k=0;
+        this.tmodel = new JAMSTableModel();
+        tmodel.setTimeRuns(true);
+        this.timeRuns = true;
+        JAMSCalendar timeval = new JAMSCalendar();
         
         try{
             
@@ -335,19 +345,90 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
             text = stBuff.toString();
             
             
+            
+            
         }catch(IOException ex){
             /* FEHLERMELDUNG */
             System.out.println("Lesen fehlgeschlagen!");
         }
+        
+        
         /* Tokenizers */
         
-        StringTokenizer st = new StringTokenizer(text);
-        
-        
-        while(st.nextToken("\t")=="#"){
-           // headers[k] = st.nextToken();
-            k++;
+        StringTokenizer row = new StringTokenizer(text,"\r\n");
+        while(row.hasMoreTokens()){
+            
+            System.out.println("line = "+line);
+            
+            rowtext = row.nextToken();
+            
+            System.out.println(rowtext);
+            StringTokenizer item = new StringTokenizer(rowtext,"\t");
+            
+            
+            while(item.hasMoreTokens()){
+                System.out.println(" --item has more tokens");
+                System.out.println("k = "+k);
+                itemtext = item.nextToken();
+                
+                try{
+                    if(!headerSet){
+                        StringTokenizer headerSearch = new StringTokenizer(itemtext,"#",true);
+                        
+                            if (headerSearch.nextToken() == "#"){
+                                headers[k] = headerSearch.nextToken();
+                                System.out.println(headers[k]);
+                                /* gibt es hier noch trash? */
+                            }else{
+                                colNumber = k;
+                                headerSet = true;
+
+                                System.out.println("headers found");
+                            }
+                        
+                    }else{
+                        if(line == 0){ /* headers[k-1] != null &&  */
+                            String[] colnames = new String[colNumber];
+                            for(int l=0;l<colNumber;l++){
+                                colnames[l] = headers[l];
+                            }
+                            setColumnNameArray(colnames);
+                            
+                            System.out.println("+++++++ setColumnNameArray ++++++");
+                            
+                        }else{
+                        
+                            if(k == 0){
+                                timeval.setValue(itemtext);
+                                addTime(timeval);
+                            }else{
+                                rowBuffer[k] = new Double(itemtext);
+
+                            }
+                        }
+                    }
+                }catch(NullPointerException ne){
+                    System.out.println("no header found! Please mark header in line 0 with pre-arranged #-symbol!");
+                }
+                
+                
+                
+                k++;
+            }
+            if(rowBuffer.length != 0){
+                addRowArray(rowBuffer);
+            }
+            rowBuffer = new double[colNumber]; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            
+            k=0;
+            line++;
         }
+        
+        updateGUI();
+        
+        
+        
+
         
     }
     
@@ -358,7 +439,8 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     ActionListener openAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
 
-             
+             open();
+             /*
              try{
                
                 JFileChooser chooser = new JFileChooser("c:/Dokumente und Einstellungen/p4riro.DAHME/Eigene Dateien/Java/test");//ACHTUNG!!!!!!!!
@@ -419,6 +501,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
              //updateGUI();
              //updateTable();
              //repaint();
+              */
         } 
     };      
     
@@ -746,7 +829,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
               controlpanel.add(onthefly);
               controlpanel.add(plotButton);
               
-              openbutton.setEnabled(false);
+              //openbutton.setEnabled(false);
               openbutton.addActionListener(openAction);
               savebutton.addActionListener(saveAction);
               plotButton.addActionListener(plotAction);
