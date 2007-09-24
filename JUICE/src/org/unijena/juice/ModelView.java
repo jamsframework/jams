@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.StringTokenizer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
@@ -48,6 +49,7 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import org.unijena.jams.JAMS;
 import org.unijena.jams.JAMSProperties;
+import org.unijena.jams.JAMSTools;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.io.XMLIO;
 import org.unijena.jams.runtime.JAMSRuntime;
@@ -55,7 +57,6 @@ import org.unijena.jams.runtime.StandardRuntime;
 import org.unijena.juice.tree.ComponentDescriptor;
 import org.unijena.juice.tree.ModelTree;
 import org.w3c.dom.Document;
-import java.awt.Image;
 
 /**
  *
@@ -368,8 +369,8 @@ public class ModelView {
     }
 
     /*
-     *Create a new name for a component instance.
-     *If possible, use the given name, else add a suffix in order to create a unique one.
+     * Create a new name for a component instance.
+     * If possible, use the given name, else add a suffix in order to create a unique one.
      */
     public String createComponentInstanceName(String name) {
 
@@ -379,6 +380,12 @@ public class ModelView {
             return name;
         }
 
+        String[] sArray = JAMSTools.toArray(name, "_");
+        if (sArray.length > 1) {
+            String suffix = "_" + sArray[sArray.length-1];
+            name = name.substring(0, name.length()-suffix.length());
+        }
+        
         int i = 1;
         String result = name + "_" + i;
 
@@ -498,6 +505,10 @@ public class ModelView {
         return newNewName;
     }
 
+    public void unRegisterComponentDescriptor(ComponentDescriptor cd) {
+        this.getComponentDescriptors().remove(cd.getName());
+    }    
+    
     public void setInitialState() {
         this.initialDoc = tree.getModelDocument();
     }

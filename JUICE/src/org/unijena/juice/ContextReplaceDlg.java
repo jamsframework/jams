@@ -96,6 +96,15 @@ public class ContextReplaceDlg extends JDialog {
             }
         });
         buttonPanel.add(okButton);
+        
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                result = ComponentAttributeDlg.CANCEL_OPTION;
+            }
+        });
+        buttonPanel.add(cancelButton);        
                 
         this.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
         
@@ -112,7 +121,7 @@ public class ContextReplaceDlg extends JDialog {
         return scroll;
     }
     
-    public void show(String oldContext, String[] availableContexts, HashSet<ComponentDescriptor> components) {
+    public int show(String oldContext, String[] availableContexts, HashSet<ComponentDescriptor> components) {
         
         this.setTitle("Replace context : " + oldContext);
         
@@ -137,6 +146,7 @@ public class ContextReplaceDlg extends JDialog {
         
         pack();
         this.setVisible(true);
+        return this.result;
     }
     
     

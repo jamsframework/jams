@@ -149,6 +149,8 @@ public class ModelTree extends JAMSTree {
             JAMSNode node = (JAMSNode) path.getLastPathComponent();
             int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), "Really delete component " + node.getUserObject().toString() + "?", "Deleting component");
             if (result == JOptionPane.YES_OPTION) {
+                ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
+                view.unRegisterComponentDescriptor(cd);
                 node.removeFromParent();
                 this.updateUI();
             }
@@ -658,7 +660,7 @@ public class ModelTree extends JAMSTree {
             String attribute = e.getAttribute("attribute");
             
             try {
-                cd.setComponentVar(name, view.getComponentDescriptor(context), attribute);
+                cd.setComponentAttribute(name, view.getComponentDescriptor(context), attribute);
             } catch (NullPointerException ex) {
                 LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component \"" + cd.getName() +
                         "\": context \"" + context + "\" does not exist!", "Model loading error");
@@ -677,7 +679,7 @@ public class ModelTree extends JAMSTree {
             
         } else if (e.hasAttribute("value")) {
             
-            cd.setComponentVar(e.getAttribute("name"), e.getAttribute("value"));
+            cd.setComponentAttribute(e.getAttribute("name"), e.getAttribute("value"));
             
         }
     }

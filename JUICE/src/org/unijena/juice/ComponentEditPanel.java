@@ -337,7 +337,7 @@ public class ComponentEditPanel extends JPanel {
         if (result == JOptionPane.NO_OPTION)
             return;
         
-        componentDescriptor.removeContextAttr(attrName);
+        componentDescriptor.removeContextAttribute(attrName);
         this.updateCtxtAttrs();
         
         if (tmpSelectedAttrRow > attributeTable.getRowCount()-1) {

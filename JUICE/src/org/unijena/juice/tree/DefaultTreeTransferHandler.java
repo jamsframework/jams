@@ -77,7 +77,9 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             newNode.setType(draggedNode.getType());
             
             if (target instanceof ModelTree) {
-                fixPendingContexts(newNode, newParentNode);
+                if (!fixPendingContexts(newNode, newParentNode)) {
+                    return false;
+                }
             }
             
             target.expandPath(new TreePath(newParentNode.getPath()));
@@ -94,12 +96,14 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             target.scrollPathToVisible(treePath);
             target.setSelectionPath(treePath);
             
-            return (true);
+            return true;
         }
         if (action == DnDConstants.ACTION_MOVE) {
             
             if (target instanceof ModelTree) {
-                fixPendingContexts(draggedNode, newParentNode);
+                if (!fixPendingContexts(draggedNode, newParentNode)) {
+                    return false;
+                }
             }
             
             TreePath oldParentPath = new TreePath(((JAMSNode)draggedNode.getParent()).getPath());
@@ -117,12 +121,12 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             }
             target.scrollPathToVisible(treePath);
             target.setSelectionPath(treePath);
-            return (true);
+            return true;
         }
-        return (false);
+        return false;
     }
     
-    private void fixPendingContexts(JAMSNode rootNode, JAMSNode parentNode) {
+    private boolean fixPendingContexts(JAMSNode rootNode, JAMSNode parentNode) {
         
         JAMSNode node;
         ComponentDescriptor cd;
@@ -186,7 +190,9 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             HashSet<ComponentDescriptor> components = pendingContexts.get(oldContextName);
             
             //open a dialog for specification of new context and get new context
-            dlg.show(oldContextName, ancestorNameArray, components);
+            if (dlg.show(oldContextName, ancestorNameArray, components) == ContextReplaceDlg.CANCEL_OPTION) {
+                return false;
+            }
             ComponentDescriptor newContext = ancestors.get(dlg.getContext());
             
             //iterate over all components referencing pending contexts
@@ -202,5 +208,6 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
                 }
             }
         }
+        return true;
     }
 }

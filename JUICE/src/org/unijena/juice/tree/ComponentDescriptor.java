@@ -101,18 +101,18 @@ public class ComponentDescriptor {
         return ma;
     }
     
-    public void removeContextAttr(String attrName) {
+    public void removeContextAttribute(String attrName) {
         getContextAttributes().remove(attrName);
     }
     
-    public void setComponentVar(String name, String value) {
+    public void setComponentAttribute(String name, String value) {
         ComponentVar ca = getCVars().get(name);
         if (ca != null) {
             ca.value = value;
         }
     }
     
-    public void setComponentVar(String name, ComponentDescriptor context, String attributeName) {
+    public void setComponentAttribute(String name, ComponentDescriptor context, String attributeName) {
         ComponentVar var = getCVars().get(name);
         if (var != null) {
             
