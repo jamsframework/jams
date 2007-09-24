@@ -153,24 +153,6 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
     public Object getValueAt(int rowIndex, int columnIndex){
        //Vector rowvector=(Vector) data.get(columnIndex);
            Object value=null; //kann was passieren?
-       /*  
-       if(worksWithArray == false){    
-          
-
-           Vector rowdata = data.get(columnIndex);
-
-           //if(rowdata.isEmpty())
-           if(rowIndex <= rowdata.lastIndexOf(rowdata.lastElement())){
-                 value = data.get(columnIndex).get(rowIndex);
-                }
-
-           else{
-               value = "-";
-           }
-
-       }
-       */
-           //java.lang.ClassCastException: java.util.Vector
            
            if(timeRuns == false){
                if(columnIndex < this.arrayVector.get(rowIndex).length  ){
@@ -183,7 +165,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
            }
            
            if(timeRuns == true){ //kann timeRuns true sein, aber trotzdem scheiße bauen?
-               if(columnIndex < this.arrayVector.get(rowIndex).length + 1){
+               if(columnIndex < this.arrayVector.get(rowIndex).length + 1){ /** +1 */
                     if (columnIndex == 0){
                        // value = timeVector.get(rowIndex).toString();
                         value = timeVector.get(rowIndex);
@@ -258,12 +240,12 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
                     if(timeRuns == false){
                         if(columns < arrayVector.get(i).length){
                            columns = arrayVector.get(i).length;
-                           this.colnamesset=false;
+                           //this.colnamesset=false;
                         }
                     } else {
                         if(columns < arrayVector.get(i).length + 1){
                            columns = arrayVector.get(i).length + 1;
-                           this.colnamesset=false;
+                           //this.colnamesset=false;
                     }
                 }
             }
@@ -336,6 +318,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
             this.columns = names.length;
             this.colnames = names;
         }
+        
         if(names.length > columns){
             this.columns = names.length;
         }

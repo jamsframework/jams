@@ -37,7 +37,7 @@ import org.jfree.data.time.TimeSeries;
  */
 public class CTSConfigurator {
     
-    private JFrame parent;
+    private JDialog parent;
     private JPanel frame;
     private JPanel mainpanel;
     private JPanel plotpanel;
@@ -278,7 +278,9 @@ public class CTSConfigurator {
             datapanels[i].add(typechoice[i]);
             typechoice[i].setSelectedItem("line");
             datapanels[i].add(colorchoice[i]);
-            colorchoice[i].setSelectedIndex(i);
+            if(i>11){
+                colorchoice[i].setSelectedIndex(11);
+            }
             
             graphpanel.add(datapanels[i]);
         }
@@ -318,6 +320,10 @@ public class CTSConfigurator {
         }
     }
     
+    public void setParent(JDialog parent){
+        this.parent = parent;
+    }
+    
     /*
     public void addGraph(){
         for(int i=0; i<headers.length; i++){
@@ -332,7 +338,31 @@ public class CTSConfigurator {
         }    
     }
     */
-   
+    private void editProperties(){
+        JDialog propDlg = new JDialog(parent,"Properties");
+        int ct = headers.length;
+        
+        JLabel[] labels = new JLabel[ct];
+        JTextField[] textFields = new JTextField[ct];
+        JPanel[] inputpanels = new JPanel[ct];
+
+        JPanel proppanel = new JPanel();
+        proppanel.setLayout(new GridLayout(ct,1));
+        
+        for(int i=0; i<ct ; i++){
+            labels[i] = new JLabel(headers[i]);
+            textFields[i] = new JTextField(headers[i]);
+            inputpanels[i] = new JPanel();
+            inputpanels[i].setLayout(new FlowLayout());
+            inputpanels[i].add(labels[i]);
+            inputpanels[i].add(textFields[i]);
+        }
+        
+        
+        JScrollPane propPane = new JScrollPane(proppanel);
+        
+        
+    }
     
     public void timePlot(){
         /* very primitive version!!*/

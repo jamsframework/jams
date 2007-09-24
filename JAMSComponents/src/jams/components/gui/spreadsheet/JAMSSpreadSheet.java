@@ -285,10 +285,11 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
             
             
             for(int j=0;j<colcount;j++){
-                filewriter.write("#"+columnNames[j],0,columnNames[j].length()+1);
+                filewriter.write(columnNames[j],0,columnNames[j].length());
                 filewriter.write("\t");
             }
             
+            filewriter.write("\r\n"+"#");
             filewriter.write("\r\n");
                         
             for(int k = 0; k < rowcount; k++){
@@ -300,6 +301,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                 }
                 filewriter.write("\r\n");         
             }
+            //filewriter.write("#");
             filewriter.close();   
             
         }catch (IOException ex){            
@@ -312,9 +314,13 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         String text = "";
         String rowtext = "";
         String itemtext = "";
-        String[] headers = new String[256];
+        String[] headerBuff = new String[256];
         int colNumber = 0;
-        double[] rowBuffer = new double[colNumber];
+        double[] rowBuffer = null;
+        String[] headers = null;
+        
+        Vector<double[]> arrayVector = new Vector<double[]>();
+        Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
         
         boolean headerSet = false;
         int line=0;
@@ -322,7 +328,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         this.tmodel = new JAMSTableModel();
         tmodel.setTimeRuns(true);
         this.timeRuns = true;
-        JAMSCalendar timeval = new JAMSCalendar();
+        
         
         try{
             
@@ -358,72 +364,79 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         StringTokenizer row = new StringTokenizer(text,"\r\n");
         while(row.hasMoreTokens()){
             
-            System.out.println("line = "+line);
-            
             rowtext = row.nextToken();
-            
-            System.out.println(rowtext);
             StringTokenizer item = new StringTokenizer(rowtext,"\t");
             
             
             while(item.hasMoreTokens()){
-                System.out.println(" --item has more tokens");
-                System.out.println("k = "+k);
+
                 itemtext = item.nextToken();
                 
                 try{
-                    if(!headerSet){
-                        StringTokenizer headerSearch = new StringTokenizer(itemtext,"#",true);
-                        
-                            if (headerSearch.nextToken() == "#"){
-                                headers[k] = headerSearch.nextToken();
-                                System.out.println(headers[k]);
-                                /* gibt es hier noch trash? */
-                            }else{
-                                colNumber = k;
-                                headerSet = true;
+                    if(line == 0){
 
-                                System.out.println("headers found");
-                            }
-                        
+                        headerBuff[k] = itemtext;
+                        colNumber++;
+
                     }else{
-                        if(line == 0){ /* headers[k-1] != null &&  */
-                            String[] colnames = new String[colNumber];
+                        
+                        if(line == 1){ /* headers[k-1] != null &&  */
+                            headers = new String[colNumber];
                             for(int l=0;l<colNumber;l++){
-                                colnames[l] = headers[l];
+                                headers[l] = headerBuff[l];
                             }
-                            setColumnNameArray(colnames);
-                            
-                            System.out.println("+++++++ setColumnNameArray ++++++");
-                            
+                            //setColumnNameArray(colnames);
+                            rowBuffer = null;
+  
                         }else{
                         
                             if(k == 0){
+                                JAMSCalendar timeval = new JAMSCalendar();
                                 timeval.setValue(itemtext);
-                                addTime(timeval);
+                                timeVector.add(timeval);
+                                
                             }else{
-                                rowBuffer[k] = new Double(itemtext);
-
+                                rowBuffer[k-1] = new Double(itemtext);
+                                
                             }
                         }
                     }
                 }catch(NullPointerException ne){
-                    System.out.println("no header found! Please mark header in line 0 with pre-arranged #-symbol!");
+                    
                 }
                 
                 
                 
                 k++;
             }
-            if(rowBuffer.length != 0){
-                addRowArray(rowBuffer);
+            
+            
+            if(rowBuffer != null){
+
+                arrayVector.add(rowBuffer);
             }
-            rowBuffer = new double[colNumber]; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            rowBuffer = new double[colNumber-1];
+            ; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             
             k=0;
             line++;
         }
         
+        this.tmodel = new JAMSTableModel();
+        tmodel.setTimeRuns(true);
+        timeRuns = true;
+        //if(headers != null){
+            
+        //}
+        tmodel.setTimeVector(timeVector);
+        
+        tmodel.setNewDataVector(arrayVector);
+        String headertest = "";
+
+        System.out.println(headertest);
+        tmodel.setColumnNames(headers);
+        
+
         updateGUI();
         
         
@@ -744,7 +757,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         
         
         //makeTable();
-        table.setModel(tmodel); 
+        table.setModel(tmodel);
         scrollpane.setViewportView(table);
         panel.repaint();
                 //panel.remove(table);
@@ -997,11 +1010,11 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                 timeRuns = true;
             //TODO: normal im rowdata abspeichern und alles im table model verwalten
                 rowdata = new double[rowarray.length];
-                
-                
-                //rowdata[0] = time.getTimeInMillis() / (3600.0*24.0);
+
                 for(int i = 0; i < rowarray.length; i++){
-                rowdata[i] = rowarray[i].getValue();
+                    rowdata[i] = rowarray[i].getValue();
+                    System.out.println("rowarray["+i+"] STRING = "+rowarray[i].toString());
+                    System.out.println("rowarray["+i+"] VALUE= "+rowarray[i].getValue());
                 }
                 addCurrentTime();
         }

@@ -58,6 +58,7 @@ public class CTSViewer extends JDialog{
     
     public void addGraph(JTable table){
         CTSConfigurator ctsConf = new CTSConfigurator(table);
+        ctsConf.setParent(this);
         //ctsConf.setIndex(index);
         ctsConf.timePlot();
         panel = new JPanel();
@@ -79,6 +80,7 @@ public class CTSViewer extends JDialog{
         /* Parameter festlegen */
 
     }
+    
     
     /**** EVENT HANDLING ************/
     
