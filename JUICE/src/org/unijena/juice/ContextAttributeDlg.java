@@ -50,7 +50,7 @@ import org.unijena.jams.gui.input.InputComponent;
  *
  * @author S. Kralisch
  */
-public class AttributeEditDlg extends JDialog {
+public class ContextAttributeDlg extends JDialog {
     
     public static final int APPROVE_OPTION = 1;
     public static final int CANCEL_OPTION = 0;
@@ -65,7 +65,7 @@ public class AttributeEditDlg extends JDialog {
     /**
      * Creates a new instance of AttributeEditDlg
      */
-    public AttributeEditDlg(Frame owner) {
+    public ContextAttributeDlg(Frame owner) {
         
         super(owner);
         this.setLayout(new BorderLayout());
@@ -119,7 +119,7 @@ public class AttributeEditDlg extends JDialog {
                 if (!valueInput.verify()) {
                     Color oldColor = valueInput.getComponent().getBackground();
                     valueInput.getComponent().setBackground(new Color(255, 0, 0));
-                    LHelper.showErrorDlg(AttributeEditDlg.this, "Invalid data format!", "Format error");
+                    LHelper.showErrorDlg(ContextAttributeDlg.this, "Invalid data format!", "Format error");
                     valueInput.getComponent().setBackground(oldColor);
                     return;
                 }

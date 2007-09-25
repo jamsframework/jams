@@ -45,8 +45,8 @@ public class JUICE {
     
     public static final Font STANDARD_FONT = new java.awt.Font("Arial", 0, 11);
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
-    public static final float SCREEN_WIDTH_FRACTION = 0.8f;
-    public static final float SCREEN_HEIGHT_FRACTION = 0.8f;
+    public static final int SCREEN_WIDTH = 1200;
+    public static final int SCREEN_HEIGHT = 800;
     public static final String APP_TITLE = "JUICE";
     
     private static JUICEFrame juiceFrame;

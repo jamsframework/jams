@@ -177,7 +177,7 @@ public class ModelView {
         modelSplitPane.setContinuousLayout(true);
         modelSplitPane.setLeftComponent(modelTreePanel);
 
-        JSplitPane compEditSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        //JSplitPane compEditSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
 
         /*
@@ -190,12 +190,14 @@ public class ModelView {
         //compEditSplitPane.setTopComponent(new JScrollPane(compEditPanel));
         JTabbedPane tabPane = new JTabbedPane();
         tabPane.addTab("Component", new JScrollPane(compEditPanel));
-        tabPane.addTab("Model", new JScrollPane(modelEditPanel));
-        compEditSplitPane.setTopComponent(tabPane);
-        compEditSplitPane.setBottomComponent(new JScrollPane(launcherPanel));
-        compEditSplitPane.setDividerLocation(400);
+        tabPane.addTab("Model metadata", new JScrollPane(modelEditPanel));
+        tabPane.addTab("Model parameter", new JScrollPane(launcherPanel));
+        
+        //compEditSplitPane.setTopComponent(tabPane);
+        //compEditSplitPane.setBottomComponent(new JScrollPane(launcherPanel));
+        //compEditSplitPane.setDividerLocation(400);
 
-        modelSplitPane.setRightComponent(compEditSplitPane);
+        modelSplitPane.setRightComponent(tabPane);
         modelSplitPane.setDividerLocation(TREE_PANE_WIDTH);
         modelSplitPane.setOneTouchExpandable(true);
         modelSplitPane.setDividerSize(DIVIDER_WIDTH);

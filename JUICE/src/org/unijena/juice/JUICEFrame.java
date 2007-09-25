@@ -322,8 +322,8 @@ public class JUICEFrame extends JFrame {
         
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         
-        setSize((int) (d.width*JUICE.SCREEN_WIDTH_FRACTION), (int) (d.height*JUICE.SCREEN_HEIGHT_FRACTION));
-        super.setExtendedState(Frame.MAXIMIZED_BOTH);
+        setSize(Math.min(d.width, JUICE.SCREEN_WIDTH), Math.min(d.height, JUICE.SCREEN_HEIGHT));
+        //super.setExtendedState(Frame.MAXIMIZED_BOTH);
         
     }
     

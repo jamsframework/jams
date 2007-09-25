@@ -64,7 +64,7 @@ public class ModelEditPanel extends JPanel {
     private void init() {
         
         componentPanel = new JPanel();
-        setBorder(BorderFactory.createTitledBorder("Model Properties"));
+        //setBorder(BorderFactory.createTitledBorder("Model Properties"));
         
         mainLayout = new GridBagLayout();
         componentPanel.setLayout(mainLayout);

@@ -53,7 +53,7 @@ public class LauncherPanel extends JPanel {
     
     private static ImageIcon UP_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowup.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
     private static ImageIcon DOWN_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowdown.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
-    private static final Dimension BUTTON_DIMENSION = new Dimension(120,20);
+    private static final Dimension BUTTON_DIMENSION = new Dimension(130,20);
     
     private JTabbedPane tabbedPane = new JTabbedPane();
     private HashMap<ModelProperty, InputComponent> inputMap = new HashMap<ModelProperty, InputComponent>();
@@ -70,11 +70,11 @@ public class LauncherPanel extends JPanel {
         
         this.view = view;
         
-        setBorder(BorderFactory.createTitledBorder("Model Parameters"));
+        //setBorder(BorderFactory.createTitledBorder("Model Parameters"));
         setLayout(new BorderLayout());
         
         this.add(tabbedPane, BorderLayout.CENTER);
-        this.add(mainButtonPanel, BorderLayout.EAST);
+        this.add(mainButtonPanel, BorderLayout.NORTH);
         
         JButton addPropertyButton = new JButton("Add Property");
         addPropertyButton.setPreferredSize(BUTTON_DIMENSION);
@@ -124,22 +124,24 @@ public class LauncherPanel extends JPanel {
             }
         });
         
-        mainButtonPanel.setPreferredSize(new Dimension(BUTTON_DIMENSION.width+20,20));
+        mainButtonPanel.setPreferredSize(new Dimension(BUTTON_DIMENSION.width+20,80));
+/*
         mainButtonPanel.add(addPropertyButton);
         mainButtonPanel.add(addGroupButton);
         mainButtonPanel.add(moveupGroupButton);
         mainButtonPanel.add(movedownGroupButton);
         mainButtonPanel.add(editGroupButton);
         mainButtonPanel.add(delGroupButton);
-        
-        /*
-        LHelper.addGBComponent(mainButtonPanel, gbl, addPropertyButton, 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainButtonPanel, gbl, addGroupButton, 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainButtonPanel, gbl, moveupGroupButton, 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainButtonPanel, gbl, movedownGroupButton, 0, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainButtonPanel, gbl, editGroupButton, 0, 4, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainButtonPanel, gbl, delGroupButton, 0, 5, 1, 1, 0, 0);
-         */
+*/        
+
+        GridBagLayout gblButton = new GridBagLayout();
+        mainButtonPanel.setLayout(gblButton);
+        LHelper.addGBComponent(mainButtonPanel, gblButton, addPropertyButton, 0, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainButtonPanel, gblButton, addGroupButton, 0, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainButtonPanel, gblButton, moveupGroupButton, 1, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainButtonPanel, gblButton, movedownGroupButton, 1, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainButtonPanel, gblButton, editGroupButton, 2, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainButtonPanel, gblButton, delGroupButton, 2, 1, 1, 1, 0, 0);
         /*
         modelProperties.addObserver(new Observer() {
             public void update(Observable o, Object arg) {
