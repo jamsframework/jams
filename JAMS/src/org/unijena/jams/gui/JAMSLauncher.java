@@ -600,13 +600,25 @@ public class JAMSLauncher extends JFrame {
         setupModelDlg.execute();
         
         // start the model
-        runtime.runModel();
-        
-        getInfoDlg().appendText("\n\n");
-        getErrorDlg().appendText("\n\n");
-        
-        runtime = null;
-        Runtime.getRuntime().gc();
+        Thread t = new Thread() {
+            
+            public void run() {
+                
+                runtime.runModel();
+                
+                getInfoDlg().appendText("\n\n");
+                getErrorDlg().appendText("\n\n");
+                
+                //dump the runtime and clean up
+                runtime = null;
+                Runtime.getRuntime().gc();
+            }
+        };
+        try {
+            t.start();
+        } catch (Exception e) {
+            runtime.handle(e);
+        }        
     }
     
     private void saveModel() {

@@ -272,6 +272,7 @@ public class ModelView {
                 JUICE.getJuiceFrame().getInfoDlg().appendText("\n\n");
                 JUICE.getJuiceFrame().getErrorDlg().appendText("\n\n");
 
+                //dump the runtime and clean up
                 runtime = null;
                 Runtime.getRuntime().gc();
             }
