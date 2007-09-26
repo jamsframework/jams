@@ -116,8 +116,8 @@ public class ModelProperties {
         if (groups.keySet().contains(name)) {
             return false;
         } else {
+            groups.remove(group.name);
             group.name = name;
-            groups.remove(group);
             groups.put(group.name, group);
             return true;
         }

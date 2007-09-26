@@ -144,9 +144,15 @@ public class ModelTree extends JAMSTree {
     }
     
     private void deleteNode() {
+        
+        if (this.getSelectionPaths() == null) {
+            return;
+        }
+        
         for (TreePath path : this.getSelectionPaths()) {
             
             JAMSNode node = (JAMSNode) path.getLastPathComponent();
+                        
             int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), "Really delete component " + node.getUserObject().toString() + "?", "Deleting component");
             if (result == JOptionPane.YES_OPTION) {
                 ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
@@ -155,6 +161,8 @@ public class ModelTree extends JAMSTree {
                 this.updateUI();
             }
         }
+        
+        this.setSelectionPath(null);
     }
     
     private void moveUpNode() {

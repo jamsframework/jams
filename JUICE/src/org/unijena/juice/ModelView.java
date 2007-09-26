@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.util.StringTokenizer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
@@ -51,6 +50,7 @@ import org.unijena.jams.JAMS;
 import org.unijena.jams.JAMSProperties;
 import org.unijena.jams.JAMSTools;
 import org.unijena.jams.gui.LHelper;
+import org.unijena.jams.gui.WorkerDlg;
 import org.unijena.jams.io.XMLIO;
 import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
@@ -246,7 +246,7 @@ public class ModelView {
     }
 
     public void runModel() {
-/*
+        /*
         modelDoc = tree.getModelDocument();
         JAMSLauncher launcher = new JAMSLauncher(modelDoc, JUICE.getJamsProperties());
         launcher.setVisible(true);

@@ -95,6 +95,9 @@ public class JAMSLauncher extends JFrame {
     private JMenuBar mainMenu;
     private JMenu logsMenu;
     private String initialModelDocString = "";
+    private JAMSRuntime runtime;
+    private Runnable modelLoading;
+    private WorkerDlg setupModelDlg;
     
     public JAMSLauncher(JAMSProperties properties) {
         this.properties = properties;
@@ -160,6 +163,34 @@ public class JAMSLauncher extends JFrame {
     
     
     private void init() throws HeadlessException, DOMException, NumberFormatException {
+        
+        modelLoading = new Runnable() {
+            public void run() {
+                
+                // create a copy of the model document
+                Document modelDocCopy = (Document) getModelDocument().cloneNode(true);
+                
+                // create the runtime
+                runtime = new StandardRuntime();
+                
+                // add info and error log output
+                runtime.addInfoLogObserver(new Observer() {
+                    public void update(Observable obs, Object obj) {
+                        JAMSLauncher.this.getInfoDlg().appendText(obj.toString());
+                    }
+                });
+                runtime.addErrorLogObserver(new Observer() {
+                    public void update(Observable obs, Object obj) {
+                        LHelper.showErrorDlg(JAMSLauncher.this, "An error has occurred! Please check the error log for further information!", "JAMS Error");
+                        JAMSLauncher.this.getErrorDlg().appendText(obj.toString());
+                    }
+                });
+                
+                // load the model
+                runtime.loadModel(modelDocCopy, getProperties());
+            }
+        };
+        setupModelDlg = new WorkerDlg(this, "Setting up the model");
         
         this.propertyDlg = new PropertyDlg(this, getProperties());
         
@@ -276,7 +307,7 @@ public class JAMSLauncher extends JFrame {
                     
                     String modelFilename = jfc.getSelectedFile().getAbsolutePath();
                     loadModelDefinition(modelFilename, null);
-
+                    
                 }
             }
         });
@@ -507,7 +538,7 @@ public class JAMSLauncher extends JFrame {
     }
     
     private boolean closeModel() {
-
+        
         if (this.modelDocument == null) {
             return true;
         }
@@ -538,7 +569,7 @@ public class JAMSLauncher extends JFrame {
         if (!closeModel()) {
             return;
         }
-
+        
         // finally write property file to default location
         try {
             String defaultFile = getProperties().getDefaultFilename();
@@ -564,27 +595,9 @@ public class JAMSLauncher extends JFrame {
             element.setAttribute("value", ic.getValue());
         }
         
-        // create a copy of the model document
-        Document modelDocCopy = (Document) getModelDocument().cloneNode(true);
-        
-        // create the runtime
-        JAMSRuntime runtime = new StandardRuntime();
-        
-        // add info and error log output
-        runtime.addInfoLogObserver(new Observer() {
-            public void update(Observable obs, Object obj) {
-                JAMSLauncher.this.getInfoDlg().appendText(obj.toString());
-            }
-        });
-        runtime.addErrorLogObserver(new Observer() {
-            public void update(Observable obs, Object obj) {
-                LHelper.showErrorDlg(JAMSLauncher.this, "An error has occurred! Please check the error log for further information!", "JAMS Error");
-                JAMSLauncher.this.getErrorDlg().appendText(obj.toString());
-            }
-        });
-        
-        // load the model
-        runtime.loadModel(modelDocCopy, getProperties());
+        // first load the model via the modelLoading runnable
+        setupModelDlg.setTask(modelLoading);
+        setupModelDlg.execute();
         
         // start the model
         runtime.runModel();

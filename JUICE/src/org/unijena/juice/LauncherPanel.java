@@ -41,6 +41,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;
 import org.unijena.juice.ModelProperties.ModelProperty;
@@ -124,31 +126,37 @@ public class LauncherPanel extends JPanel {
             }
         });
         
-        mainButtonPanel.setPreferredSize(new Dimension(BUTTON_DIMENSION.width+20,80));
 /*
+        mainButtonPanel.setPreferredSize(new Dimension(BUTTON_DIMENSION.width+20,60));
         mainButtonPanel.add(addPropertyButton);
         mainButtonPanel.add(addGroupButton);
         mainButtonPanel.add(moveupGroupButton);
         mainButtonPanel.add(movedownGroupButton);
         mainButtonPanel.add(editGroupButton);
         mainButtonPanel.add(delGroupButton);
-*/        
-
+ */
+        
         GridBagLayout gblButton = new GridBagLayout();
-        mainButtonPanel.setLayout(gblButton);
-        LHelper.addGBComponent(mainButtonPanel, gblButton, addPropertyButton, 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainButtonPanel, gblButton, addGroupButton, 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainButtonPanel, gblButton, moveupGroupButton, 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainButtonPanel, gblButton, movedownGroupButton, 1, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainButtonPanel, gblButton, editGroupButton, 2, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainButtonPanel, gblButton, delGroupButton, 2, 1, 1, 1, 0, 0);
-        /*
+        JPanel innerButtonPanel = new JPanel();
+        innerButtonPanel.setLayout(gblButton);
+        innerButtonPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+        
+        LHelper.addGBComponent(innerButtonPanel, gblButton, addPropertyButton, 0, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(innerButtonPanel, gblButton, addGroupButton, 0, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(innerButtonPanel, gblButton, moveupGroupButton, 1, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(innerButtonPanel, gblButton, movedownGroupButton, 1, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(innerButtonPanel, gblButton, editGroupButton, 2, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(innerButtonPanel, gblButton, delGroupButton, 2, 1, 1, 1, 0, 0);
+        
+        mainButtonPanel.add(innerButtonPanel);
+        
+/*
         modelProperties.addObserver(new Observer() {
             public void update(Observable o, Object arg) {
                 LauncherPanel.this.setValue((ModelProperties) o);
             }
         });
-         */
+ */
         
     }
     
@@ -224,10 +232,11 @@ public class LauncherPanel extends JPanel {
         // get name
         
         String groupName = JOptionPane.showInputDialog(this, "Group name:");
-        if (groupName.equals("")) {
+        
+        if ((groupName == null) || groupName.equals("")) {
             return;
         }
-        
+                
         // add group
         
         if (!view.getModelProperties().addGroup(groupName)) {

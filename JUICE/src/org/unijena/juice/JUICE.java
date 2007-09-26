@@ -32,6 +32,7 @@ import org.unijena.jams.JAMSProperties;
 import org.unijena.jams.JAMSTools;
 import org.unijena.jams.gui.JAMSSplash;
 import org.unijena.jams.gui.LHelper;
+import org.unijena.jams.gui.WorkerDlg;
 import org.unijena.jams.runtime.JAMSClassLoader;
 import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
