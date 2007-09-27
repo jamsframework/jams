@@ -88,7 +88,7 @@ public class JAMSLauncher extends JFrame {
     private JAMSProperties properties;
     private JButton resetButton, runButton;
     private JMenuItem saveItem, saveAsItem;
-    private PropertyDlg propertyDlg;
+    private PropertyDlg propertyDlg; 
     private JFileChooser jfc = new JFileChooser();
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, "Info Log");
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, "Error Log");
