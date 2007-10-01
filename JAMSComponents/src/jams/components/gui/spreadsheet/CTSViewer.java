@@ -57,16 +57,16 @@ public class CTSViewer extends JDialog{
     }
     
     public void addGraph(JTable table){
-        CTSConfigurator ctsConf = new CTSConfigurator(table);
-        ctsConf.setParent(this);
+        CTSConfigurator ctsConf = new CTSConfigurator(this, table);
+        //ctsConf.setParent(this);
         //ctsConf.setIndex(index);
-        ctsConf.timePlot();
+        //ctsConf.timePlot();
         panel = new JPanel();
         panel.setLayout(new FlowLayout());
         panel.add(ctsConf.getPanel());
         
 
-        //ctsConf.timePlot();
+        ctsConf.timePlot();
         //panel.add(ctsConf.getCTSPlot(), BorderLayout.CENTER); 
         //panel.add(ctsConf.timePlot(), BorderLayout.CENTER);
         ctsTabPane.addTab("title", panel);

@@ -230,7 +230,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
     
 
     public void setNewDataVector(Vector<double[]> inputvector){
-        this.arrayVector = (Vector) inputvector;
+        this.arrayVector = (Vector<double[]>) inputvector;
        // this.arrayVector = (Vector) inputvector.clone();
         
         //int columns=0;

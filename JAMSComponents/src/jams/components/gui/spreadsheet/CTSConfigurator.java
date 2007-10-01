@@ -51,36 +51,38 @@ public class CTSConfigurator {
     private JPanel edTimeAxisPanel;
     
     private JPanel[] datapanels;
+    private JScrollPane graphScPane;
+    
+    private String[] headers;
     
     private JLabel edTitle = new JLabel("      Plot Title: ");
     private JLabel edLeft  = new JLabel(" Left axis title: ");
     private JLabel edRight = new JLabel("Right axis title: ");
     
-    private JTextField edTitleField = new JTextField();
-    private JTextField edLeftField = new JTextField();
-    private JTextField edRightField = new JTextField();
+    private JTextField edTitleField = new JTextField(14);
+    private JTextField edLeftField = new JTextField(14);
+    private JTextField edRightField = new JTextField(14);
     
+    private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
     
-    private String[] headers;
-    //private String[] colors = {"yellow","orange","red","pink","magenta","cyan","blue","green","gray","lightgray","black"};
-    private String[] colors = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
-    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Difference","Step","StepArea"};
-    private String[] positions = {"left","right"};
+//    private String[] headers;
+//    //private String[] colors = {"yellow","orange","red","pink","magenta","cyan","blue","green","gray","lightgray","black"};
+    //private String[] colors = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
+//    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Difference","Step","StepArea"};
+//    private String[] positions = {"left","right"};
     
     /* test*/
-    private Color[] colors_ = {Color.RED, Color.BLUE};
+//    private Color[] colors_ = {Color.RED, Color.BLUE};
     
-    
-    
-    private String[] legendEntries;
+//    private String[] legendEntries;
     
     private int index;
     
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
     
     int[] rows, columns;
-    JTable table;    
-
+    JTable table;
+    
     CTSPlot ctsplot;
     
     /*buttons*/
@@ -115,45 +117,46 @@ public class CTSConfigurator {
     }
      **/
     
-    public CTSConfigurator(JTable table){
+    public CTSConfigurator(JDialog parent, JTable table){
         
-        this.table = table;         
+        this.table = table;
+        
         this.rows = table.getSelectedRows();
         this.columns = table.getSelectedColumns();
         this.graphCount = columns.length;
         this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
         this.parent = parent;
-        this.legendEntries = new String[graphCount];
+//        this.legendEntries = new String[graphCount];
         
-        for(int k=0;k<graphCount;k++){
-            headers[k] = table.getColumnName(columns[k]);
-            legendEntries[k] = headers[k];
-        }
+//        for(int k=0;k<graphCount;k++){
+//            headers[k] = table.getColumnName(columns[k]);
+//            legendEntries[k] = headers[k];
+//        }
         
         
         createPanel();
-              
+        
     }
     
-    public void setTable(JTable table){
-        
-        this.table = table;         
-        this.rows = table.getSelectedRows();
-        this.columns = table.getSelectedColumns();
-        this.graphCount = columns.length;
-        this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
-        this.parent = parent;
-        this.legendEntries = new String[graphCount];
-        
-        for(int k=0;k<graphCount;k++){
-            headers[k] = table.getColumnName(columns[k]);
-            legendEntries[k] = headers[k];
-        }
-        
-        /* now call createPanel() */
-    }
+//    public void setTable(JTable table){
+//
+//        this.table = table;
+//        this.rows = table.getSelectedRows();
+//        this.columns = table.getSelectedColumns();
+//        this.graphCount = columns.length;
+//        this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
+//        this.parent = parent;
+//        this.legendEntries = new String[graphCount];
+//
+//        for(int k=0;k<graphCount;k++){
+//            headers[k] = table.getColumnName(columns[k]);
+//            legendEntries[k] = headers[k];
+//        }
+//
+//        /* now call createPanel() */
+//    }
     
-    private void createPanel(){
+    public void createPanel(){
         
         /* create ColorMap */
         colorTable.put("yellow", Color.yellow);
@@ -175,15 +178,18 @@ public class CTSConfigurator {
         plotpanel.setLayout(new BorderLayout());
         
         frame = new JPanel();
-        frame.setLayout(new GridLayout(3,1));        
+        frame.setLayout(new GridLayout(3,1));
         
+        graphScPane = new JScrollPane();
         
         optionpanel = new JPanel();
         optionpanel.setLayout(new GridLayout(3,1));
         graphpanel = new JPanel();
-        graphpanel.setLayout(new GridLayout(headers.length,1));
+        graphpanel.setLayout(new GridLayout(graphCount,1));
         southpanel = new JPanel();
         southpanel.setLayout(new FlowLayout());
+        
+        
         
         edTitlePanel = new JPanel();
         edTitlePanel.setLayout(new FlowLayout());
@@ -197,10 +203,10 @@ public class CTSConfigurator {
         
         /*
         for(int k=0;k<headers.length;k++){
-            
+         
            datapanels.add(new JPanel());
            datapanels.get(k).setLayout(new FlowLayout());
-            
+         
            activate.add(new JCheckBox(headers[k],true));
            //datachoice.add(new JComboBox(headers));
            poschoice.add(new JComboBox(positions));
@@ -209,11 +215,11 @@ public class CTSConfigurator {
         }
          */
         
-        datapanels = new JPanel[graphCount];
-        activate = new JCheckBox[graphCount];
-        poschoice = new JComboBox[graphCount];
-        typechoice = new JComboBox[graphCount];
-        colorchoice = new JComboBox[graphCount];
+//        datapanels = new JPanel[graphCount];
+//        activate = new JCheckBox[graphCount];
+//        poschoice = new JComboBox[graphCount];
+//        typechoice = new JComboBox[graphCount];
+//        colorchoice = new JComboBox[graphCount];
         
         //createActionListener();
         
@@ -238,66 +244,75 @@ public class CTSConfigurator {
         optionpanel.add(edLeftAxisPanel);
         optionpanel.add(edRightAxisPanel);
         
-        for(int k=0;k<graphCount;k++){
-             
+        for(int k=1;k<=graphCount;k++){
             
+            GraphProperties prop = new GraphProperties(parent, table);
+            //propVector.add(new GraphProperties(parent,table));
             
-            datapanels[k] = new JPanel();
-            activate[k] = new JCheckBox(headers[k], true);
-            activate[k].addActionListener(actChanged);
-            poschoice[k] = new JComboBox(positions);
-            poschoice[k].addActionListener(actChanged);
-            typechoice[k] = new JComboBox(types);
-            typechoice[k].addActionListener(actChanged);
-            //typechoice[k].setEnabled(false);
-            colorchoice[k] = new JComboBox(colors);  
-            colorchoice[k].addActionListener(actChanged);
-            //colorchoice[k].setEnabled(false);
+            prop.setSelectedColumn(columns[k-1]);
+            prop.setSelectedRows(rows);
+//            prop.setColor((String) colorchoice.getSelectedItem());
+//            prop.setPosition((String) poschoice.getSelectedItem());
+//            prop.setRendererType(typechoice.getSelectedIndex());
+            prop.setName(table.getColumnName(k));
+            prop.setLegendName(table.getColumnName(k));
+            
+            propVector.add(prop);
+            graphpanel.add(propVector.get(k-1).getGraphPanel());
             
         }
         
-        //JComboBox colortest = new JComboBox(colors_); 
-        //southpanel.add(colortest);
-            
         
-        addbutton.addActionListener(addbuttonclick);  
+        //JComboBox colortest = new JComboBox(colors_);
+        //southpanel.add(colortest);
+        
+        
+        addbutton.addActionListener(addbuttonclick);
         plotbutton.addActionListener(plotbuttonclick);
         propbutton.addActionListener(propbuttonclick);
+        
         //optionpanel.add(addbutton);
         //southpanel.add(deletebutton);
+        southpanel.add(addbutton);
         southpanel.add(propbutton);
         southpanel.add(plotbutton);
         
-        for(int i=0; i<headers.length; i++){
-            
-            //datapanels.get(i).add(datachoice.get(i));
-            //datachoice.get(i).setSelectedItem(headers[i]);
-            datapanels[i].add(activate[i]);
-            datapanels[i].add(poschoice[i]);
-            poschoice[i].setSelectedItem("left");
-            datapanels[i].add(typechoice[i]);
-            typechoice[i].setSelectedItem("line");
-            datapanels[i].add(colorchoice[i]);
-            if(i>11){
-                colorchoice[i].setSelectedIndex(11);
-            }
-            
-            graphpanel.add(datapanels[i]);
-        }
         
         
-    
         
-        frame.add(graphpanel);
+        graphScPane = new JScrollPane(graphpanel);
+        
+        frame.add(graphScPane);
         //frame.add(optionpanel);
-        frame.add(southpanel); 
+        frame.add(southpanel);
         frame.add(optionpanel);
         mainpanel.add(frame, BorderLayout.WEST);
         /** CTSConfigurator will be added to CTSViewer ******
-        frame.pack();
-        frame.setVisible(true);
+         * frame.pack();
+         * frame.setVisible(true);
          */
     }
+    
+    private void addGraph(){
+        
+        GraphProperties prop = new GraphProperties(parent,table);
+        //prop.showPropDlg();
+        
+        //if(prop.getResult()){
+        graphCount++;
+        graphpanel.setLayout(new GridLayout(graphCount,1));
+        graphpanel.add(prop.getGraphPanel());
+        propVector.add(prop);
+        
+        
+        //}
+        
+        graphScPane.setViewportView(graphpanel);
+        frame.repaint();
+        
+        
+    }
+    
     public JPanel getPanel(){
         return mainpanel;
     }
@@ -327,17 +342,17 @@ public class CTSConfigurator {
     /*
     public void addGraph(){
         for(int i=0; i<headers.length; i++){
-            
+     
             datapanels.get(i).add(datachoice.get(i));
             datapanels.get(i).add(poschoice.get(i));
             datapanels.get(i).add(typechoice.get(i));
             datapanels.get(i).add(colorchoice.get(i));
-            
+     
             graphpanel.add(datapanels.get(i));
-            
-        }    
+     
+        }
     }
-    */
+     */
     private void editProperties(){
         JDialog propDlg = new JDialog(parent,"Properties");
         int ct = headers.length;
@@ -345,7 +360,7 @@ public class CTSConfigurator {
         JLabel[] labels = new JLabel[ct];
         JTextField[] textFields = new JTextField[ct];
         JPanel[] inputpanels = new JPanel[ct];
-
+        
         JPanel proppanel = new JPanel();
         proppanel.setLayout(new GridLayout(ct,1));
         
@@ -365,25 +380,25 @@ public class CTSConfigurator {
     }
     
     public void timePlot(){
-        /* very primitive version!!*/
-        
-        /* Festlegen welche cols zu valueLeft und welche zu valueRight gehören!! */
-        
-        /* CTSPlot initialisieren */
-       ctsplot = new CTSPlot();
-       
-       System.out.println("CTSPlot ctsplot = new CTSPlot();");
-       
-        /* Parameter festlegen */
-       
-       ctsplot.setTitle(edTitleField.getText());
-       ctsplot.setLeftAxisTitle(edLeftField.getText());
-       ctsplot.setRightAxisTitle(edRightField.getText());
-        
-
-        //ctsplot.setGraphCountRight(columns.length);
+//
+//
+//        /* Festlegen welche cols zu valueLeft und welche zu valueRight gehören!! */
+//
+//        /* CTSPlot initialisieren */
+        ctsplot = new CTSPlot();
+//
+//       System.out.println("CTSPlot ctsplot = new CTSPlot();");
+//
+//        /* Parameter festlegen */
+//
+        ctsplot.setTitle(edTitleField.getText());
+        ctsplot.setLeftAxisTitle(edLeftField.getText());
+        ctsplot.setRightAxisTitle(edRightField.getText());
+//
+//
+//        //ctsplot.setGraphCountRight(columns.length);
          /*
-        plotframe = new JDialog(); 
+        plotframe = new JDialog();
         plotframe.setLayout(new FlowLayout());
          System.out.println("plotframe.setLayout(new FlowLayout());");
         plotframe.add(ctsplot.getPanel());
@@ -391,12 +406,12 @@ public class CTSConfigurator {
         plotframe.pack();
         plotframe.setVisible(true);
           **/
-
-
-         //System.out.println("plotframe.setVisible(true)");
-        
-        //JAMSCalendar test = new JAMSCalendar();
-        //if(table.getValueAt(rows[0], columns[0]).getClass() != test.getClass()){
+//
+//
+//         //System.out.println("plotframe.setVisible(true)");
+//
+//        //JAMSCalendar test = new JAMSCalendar();
+//        //if(table.getValueAt(rows[0], columns[0]).getClass() != test.getClass()){
         int numActiveLeft=0;
         int numActiveRight=0;
         int corr=0;
@@ -406,68 +421,48 @@ public class CTSConfigurator {
         String[] colorRight = new String[graphCount];
         String[] titleLeft = new String[graphCount];
         String[] titleRight = new String[graphCount];
-        
-        /* zuordnung der graphen */
-        for(int i=0;i<graphCount;i++){
+//
+//        /* zuordnung der graphen */
+        for(int i=0; i<graphCount; i++){
             
-            if(activate[i].isSelected()){
+            GraphProperties prop = propVector.get(i);
+            
+            if(prop.getPosition()== "left"){
                 
-                /* GUI reaction */
-                    colorchoice[i].setEnabled(true);
-                    typechoice[i].setEnabled(true);
-                    poschoice[i].setEnabled(true);
-                    
-                    
-                    
+                ctsplot.setTypeLeft(0);
                 
-                /* plot preparations */
-                if(poschoice[i].getSelectedItem() == "left"){
-                        if(typechosen_L == false){
-                            ctsplot.setTypeLeft(typechoice[i].getSelectedIndex());
-                            typechosen_L = true;
-                        }else{
-                            typechoice[i].setEnabled(false);
-                        }
-                        colorLeft[i - numActiveRight - corr] = (String) colorchoice[i].getSelectedItem();
-                        titleLeft[i - numActiveRight - corr] = legendEntries[i];
-                        
-                    numActiveLeft++;
-                }
-                if(poschoice[i].getSelectedItem() == "right"){
-                        if(typechosen_R == false){
-                             ctsplot.setTypeRight(typechoice[i].getSelectedIndex());
-                             typechosen_R = true;
-                        }else{
-                            typechoice[i].setEnabled(false);
-                        }
-                   
-                    
-                    colorRight[i - numActiveLeft - corr] = (String) colorchoice[i].getSelectedItem();
-                    titleRight[i - numActiveLeft - corr] = legendEntries[i];
-                    numActiveRight++;
-                }
+                colorLeft[i - numActiveRight - corr] = prop.getColor();
+                titleLeft[i - numActiveRight - corr] = prop.getLegendName();
+                numActiveLeft++;
+            }
+            if(prop.getPosition() == "right"){
+                ctsplot.setTypeRight(1);
                 
-            }else{
-                colorchoice[i].setEnabled(false);
-                typechoice[i].setEnabled(false);
-                poschoice[i].setEnabled(false);
-                corr++;
+                colorRight[i - numActiveLeft - corr] = prop.getColor();
+                titleRight[i - numActiveLeft - corr] = prop.getLegendName();
+                numActiveRight++;
             }
         }
         
-
+        String[] legendLeft = new String[numActiveLeft];
+        String[] legendRight = new String[numActiveRight];
         
-       
-
-       System.out.println("NumActiveLeft: "+numActiveLeft); 
-       System.out.println("NumActiveRight: "+numActiveRight); 
-       ctsplot.setGraphCountLeft(numActiveLeft);
-       ctsplot.setGraphCountRight(numActiveRight); 
-       
-       ctsplot.setColorLeft(colorLeft);
-       ctsplot.setColorRight(colorRight);
-       ctsplot.setTitleLeft(titleLeft);
-       ctsplot.setTitleRight(titleRight);
+        for(int n=0; n<numActiveLeft; n++){
+            legendLeft[n] = titleLeft[n];
+        }
+        for(int n=0; n<numActiveRight; n++){
+            legendRight[n] = titleRight[n];
+        }
+        ctsplot.setTitleLeft(legendLeft);
+        ctsplot.setTitleRight(legendRight);
+        
+        ctsplot.setGraphCountLeft(numActiveLeft);
+        ctsplot.setGraphCountRight(numActiveRight);
+        
+        ctsplot.setColorLeft(colorLeft);
+        ctsplot.setColorRight(colorRight);
+        ctsplot.setTitleLeft(titleLeft);
+        ctsplot.setTitleRight(titleRight);
         /* CTSPlot erstellen */
         
         mainpanel.removeAll(); /* nullPionterEx at first startup? */
@@ -475,70 +470,63 @@ public class CTSConfigurator {
         ctsplot.createPlot();
         mainpanel.add(ctsplot.getPanel());
         //mainpanel.add(ctsplot.getChartPanel(), BorderLayout.CENTER);
-        System.out.println("ctsplot.createPlot();");
-        
-
+        //System.out.println("ctsplot.createPlot();");
+       
         double[] valueLeft = new double[numActiveLeft];
         double[] valueRight = new double[numActiveRight];
         
-        //Double value;
         
+       
+                
         /* jedesmal fragen, ob der graph zu valueLEFT GEHÖRT (COMBObOX ABFRAGEN) */
-            for(int k=0;k<rows.length;k++){
-            
+        /* ACHTUNG: Funktioniert noch nicht bei addGraph() */
+        int rowcount = table.getRowCount();
+        int c = 0;
+        
+        for(int k=0;k<rowcount;k++){
+                    
                     int corrLeft = 0;
                     int corrRight = 0;
                     Object value = null;
-                    
-                    for(int i=0;i<graphCount;i++){
-                        //value = (Double) table.getValueAt(rows[k],columns[i]);
-                        if(activate[i].isSelected()){
-                            
-                            value = table.getValueAt(rows[k],columns[i]);
-                            if(value.getClass() != java.lang.Double.class){
-                                    value = 0.0;
-                                }
-                            
-                            if(poschoice[i].getSelectedItem() == "left"){
-                                    //valueLeft[i - corrLeft] = (Double) table.getValueAt(rows[k],columns[i]);
-                                valueLeft[i - corrLeft] = (Double) value;
-                                corrRight++;
-                                
-                            }
-                           
-                            if(poschoice[i].getSelectedItem() == "right"){
-                                //valueRight[i - corrRight] = (Double) table.getValueAt(rows[k],columns[i]);
-                                valueRight[i - corrRight] = (Double) value;
-                                corrLeft++;  
-                            }
-                            
-                        }else{
-                            corrLeft++;
-                            corrRight++;
-                        }
-                    }
-                    /*
-                    for(int i=0;i<graphCount;i++){
-                        if(activate[i].isSelected()){
-                            if(poschoice[i].getSelectedItem() == "right"){
-                                valueRight[i] = (Double) table.getValueAt(rows[k],columns[i]);
-                                System.out.println("RIGHT COL"+columns[i]);
-                            }
-                        }
-                    }
-                     **/
-                /*
-                for(int j=0;j<graphCount;j++){
-                    valueRight[j] = (Double) table.getValueAt(rows[k],columns[j]);
-                }
-                */
 
-                ctsplot.plot((JAMSCalendar)table.getValueAt(rows[k],0), valueLeft, valueRight);
+                    for(int i=0;i<graphCount;i++){
+                        
+                        GraphProperties prop = propVector.get(i);
+                        //value = (Double) table.getValueAt(rows[k],columns[i]);
+                            int rows[] = prop.getSelectedRows();
+                            int col = prop.getSelectedColumn();
+                            
+                            if(!(k<rows[0]) && !(k>rows[rows.length-1])){
+
+                                value = table.getValueAt(k,col);
+                                if(value.getClass() != java.lang.Double.class){
+                                        value = 0.0;
+                                    }
+
+                                if(prop.getPosition() == "left"){
+                                        //valueLeft[i - corrLeft] = (Double) table.getValueAt(rows[k],columns[i]);
+                                    valueLeft[i - corrLeft] = (Double) value;
+                                    corrRight++;
+
+                                }
+
+                                if(prop.getPosition() == "right"){
+                                    //valueRight[i - corrRight] = (Double) table.getValueAt(rows[k],columns[i]);
+                                    valueRight[i - corrRight] = (Double) value;
+                                    corrLeft++;
+                                }
+                            }else{
+                                corrRight++;
+                                corrLeft++;
+                                corr++;
+                            }
+                    }                 
+                ctsplot.plot((JAMSCalendar)table.getValueAt(k,0), valueLeft, valueRight);
             }
 
         frame.repaint();
-        
-        
+
+
     }
     
     
@@ -554,47 +542,47 @@ public class CTSConfigurator {
     };
     
     ActionListener propbuttonclick = new ActionListener(){
-         public void actionPerformed(ActionEvent e) {
-                ctsplot.getChartPanel().doEditChartProperties();
-            } 
+        public void actionPerformed(ActionEvent e) {
+            ctsplot.getChartPanel().doEditChartProperties();
+        }
     };
     
     ActionListener addbuttonclick = new ActionListener(){
-         public void actionPerformed(ActionEvent e) {
-                
-            } 
+        public void actionPerformed(ActionEvent e) {
+            addGraph();
+        }
     };
     
     ActionListener plotbuttonclick = new ActionListener(){
-         public void actionPerformed(ActionEvent e) {
-             System.out.println("actionPerformed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                timePlot();
-            } 
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("actionPerformed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            timePlot();
+        }
     };
     
-   ActionListener actChanged = new ActionListener(){
-         public void actionPerformed(ActionEvent e) {
-                timePlot();
-            } 
+    ActionListener actChanged = new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+            //timePlot();
+        }
     };
     
     
-   public void createActionListener(){ 
-       
+    public void createActionListener(){
+        
         activationChange = new ActionListener[graphCount];
         
         for(int k=0;k<graphCount;k++){
             /* reicht hier ein listener für alle boxes? scheint so... */
-           activationChange[k] = new ActionListener(){
-                 public void actionPerformed(ActionEvent e) {
-                        timePlot();
-
-                    } 
+            activationChange[k] = new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                    //timePlot();
+                    
+                }
             };
-   
-        
+            
+            
         }
-   
-   
-   }
+        
+        
+    }
 }
