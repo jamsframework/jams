@@ -433,7 +433,6 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         tmodel.setNewDataVector(arrayVector);
         String headertest = "";
 
-        System.out.println(headertest);
         tmodel.setColumnNames(headers);
         
 
@@ -1013,8 +1012,6 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
 
                 for(int i = 0; i < rowarray.length; i++){
                     rowdata[i] = rowarray[i].getValue();
-                    System.out.println("rowarray["+i+"] STRING = "+rowarray[i].toString());
-                    System.out.println("rowarray["+i+"] VALUE= "+rowarray[i].getValue());
                 }
                 addCurrentTime();
         }

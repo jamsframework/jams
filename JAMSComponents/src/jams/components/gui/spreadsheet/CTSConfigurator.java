@@ -92,20 +92,6 @@ public class CTSConfigurator {
     JButton propbutton = new JButton("properties");
     
     int graphCount=0;
-//    Vector<JCheckBox> activate = new Vector<JCheckBox>();
-//    Vector<JComboBox> datachoice = new Vector<JComboBox>();
-//    Vector<JComboBox> poschoice = new Vector<JComboBox>();
-//    Vector<JComboBox> typechoice = new Vector<JComboBox>();
-//    Vector<JComboBox> colorchoice = new Vector<JComboBox>();
-    
-    JCheckBox[] activate;
-    JComboBox[] datachoice;
-    JComboBox[] poschoice;
-    JComboBox[] typechoice;
-    JComboBox[] colorchoice;
-    
-    /* ActionListener */
-    ActionListener[] activationChange;
     
     /** Creates a new instance of CTSConfigurator */
     public CTSConfigurator() {
@@ -197,32 +183,7 @@ public class CTSConfigurator {
         edLeftAxisPanel.setLayout(new FlowLayout());
         edRightAxisPanel = new JPanel();
         edRightAxisPanel.setLayout(new FlowLayout());
-        
-        
-        
-        
-        /*
-        for(int k=0;k<headers.length;k++){
-         
-           datapanels.add(new JPanel());
-           datapanels.get(k).setLayout(new FlowLayout());
-         
-           activate.add(new JCheckBox(headers[k],true));
-           //datachoice.add(new JComboBox(headers));
-           poschoice.add(new JComboBox(positions));
-           typechoice.add(new JComboBox(types));
-           colorchoice.add(new JComboBox(colors));
-        }
-         */
-        
-//        datapanels = new JPanel[graphCount];
-//        activate = new JCheckBox[graphCount];
-//        poschoice = new JComboBox[graphCount];
-//        typechoice = new JComboBox[graphCount];
-//        colorchoice = new JComboBox[graphCount];
-        
-        //createActionListener();
-        
+               
         edTitleField.setColumns(20);
         edTitleField.setText("Plot Title");
         edTitleField.addActionListener(actChanged);
@@ -466,7 +427,7 @@ public class CTSConfigurator {
         /* CTSPlot erstellen */
         
         mainpanel.removeAll(); /* nullPionterEx at first startup? */
-        mainpanel.add(frame, BorderLayout.WEST);
+        mainpanel.add(frame, BorderLayout.NORTH);
         ctsplot.createPlot();
         mainpanel.add(ctsplot.getPanel());
         //mainpanel.add(ctsplot.getChartPanel(), BorderLayout.CENTER);
@@ -555,7 +516,6 @@ public class CTSConfigurator {
     
     ActionListener plotbuttonclick = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-            System.out.println("actionPerformed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             timePlot();
         }
     };
@@ -567,22 +527,4 @@ public class CTSConfigurator {
     };
     
     
-    public void createActionListener(){
-        
-        activationChange = new ActionListener[graphCount];
-        
-        for(int k=0;k<graphCount;k++){
-            /* reicht hier ein listener für alle boxes? scheint so... */
-            activationChange[k] = new ActionListener(){
-                public void actionPerformed(ActionEvent e) {
-                    //timePlot();
-                    
-                }
-            };
-            
-            
-        }
-        
-        
-    }
 }

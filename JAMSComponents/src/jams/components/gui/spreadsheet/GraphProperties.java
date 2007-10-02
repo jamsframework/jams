@@ -55,7 +55,7 @@ import org.unijena.jams.model.JAMSGUIComponent;
 import org.unijena.jams.model.JAMSVarDescription;
 
 
-public class GraphProperties extends JDialog{
+public class GraphProperties {
     
     JTable table;
     
@@ -84,6 +84,9 @@ public class GraphProperties extends JDialog{
     JComboBox poschoice1;
     
     JLabel nameLabel;
+    JLabel colorLabel;
+    JLabel typeLabel;
+    JLabel posLabel;
     
     JTextField setName;
     JTextField setLegend;
@@ -93,8 +96,11 @@ public class GraphProperties extends JDialog{
     private String[] positions = {"left","right"};
     
     JPanel graphpanel = new JPanel();
+    JPanel selectColPanel = new JPanel();
     JPanel datapanel = new JPanel();
     JPanel buttonpanel = new JPanel();
+    
+    HashMap<String, Color> colorTable = new HashMap<String, Color>();
     
     
     
@@ -103,11 +109,23 @@ public class GraphProperties extends JDialog{
     /** Creates a new instance of GraphProperties */
     public GraphProperties(JDialog parent, JTable table) {
         
-        super(parent, "Select Properties");
+        //super(parent, "Select Properties");
         //this.parent = parent;
-        setLayout(new FlowLayout());
-        Point parentloc = parent.getLocation();
-        setLocation(parentloc.x + 30, parentloc.y + 30);
+        //setLayout(new FlowLayout());
+        //Point parentloc = parent.getLocation();
+        //setLocation(parentloc.x + 30, parentloc.y + 30);
+        
+        colorTable.put("yellow", Color.yellow);
+        colorTable.put("orange", Color.orange);
+        colorTable.put("red", Color.red);
+        colorTable.put("pink", Color.pink);
+        colorTable.put("magenta", Color.magenta);
+        colorTable.put("cyan", Color.cyan);
+        colorTable.put("blue", Color.blue);
+        colorTable.put("green", Color.green);
+        colorTable.put("gray", Color.gray);
+        colorTable.put("lightgray", Color.lightGray);
+        colorTable.put("black", Color.black);
         
         this.table = table;
         this.color = "red";
@@ -118,12 +136,13 @@ public class GraphProperties extends JDialog{
         this.selectedColumn = 0;
         this.rowSelection = null;
         
-        setLayout(new GridLayout(5,1));
+        //setLayout(new GridLayout(5,1));
         
         JPanel namePanel = new JPanel();
         namePanel.setLayout(new FlowLayout());
         JPanel legendPanel = new JPanel();
         legendPanel.setLayout(new FlowLayout());
+        selectColPanel.setLayout(new FlowLayout());
         
         colorchoice = new JComboBox(colors);
         colorchoice.setSelectedIndex(0);
@@ -145,6 +164,14 @@ public class GraphProperties extends JDialog{
         JLabel setColumnLabel = new JLabel("  Set Column:");
         JLabel setLegendLabel = new JLabel("Legend Entry:");
         nameLabel = new JLabel();
+        colorLabel = new JLabel();
+        typeLabel = new JLabel();
+        posLabel = new JLabel();
+        
+        nameLabel.setBackground(Color.WHITE);
+        colorLabel.setBackground(Color.WHITE);
+        typeLabel.setBackground(Color.WHITE);
+        posLabel.setBackground(Color.WHITE);
 
 //        JTextField setName = new JTextField("Plot Name", 14);
 //        JTextField setLegend = new JTextField("Legend Entry", 14);
@@ -157,6 +184,7 @@ public class GraphProperties extends JDialog{
         
         setColumn = new JComboBox(column);
         setColumn.setSelectedIndex(1);
+        
         nameLabel.setText((String) setColumn.getSelectedItem());
         
         String name = (String) setColumn.getSelectedItem();
@@ -169,8 +197,19 @@ public class GraphProperties extends JDialog{
         legendPanel.add(setLegendLabel);
         legendPanel.add(setLegend);
         
+        this.selectColPanel.add(setColumn);
+        
         this.datapanel.setLayout(new FlowLayout());
-        this.graphpanel.setLayout(new FlowLayout());
+        
+        /** Group Layout **/
+        GroupLayout layout = new GroupLayout(graphpanel);
+        graphpanel.setLayout(layout);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+        GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
+        
+        //vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(setColumn).addComponent(setLegendLabel).addComponent(setLegend).addComponent(setColumn));
+       
         
         this.graphpanel.add(setColumn);
         this.graphpanel.add(poschoice);
@@ -179,7 +218,11 @@ public class GraphProperties extends JDialog{
         
        // this.graphpanel.add(propButton);
         
-        this.datapanel.add(nameLabel);
+//        this.datapanel.add(colorLabel);
+//        this.datapanel.add(nameLabel);
+//        this.datapanel.add(posLabel);
+//        this.datapanel.add(typeLabel);
+        
 //        this.datapanel.add(setColumn);
 //        this.datapanel.add(poschoice);
 //        this.datapanel.add(typechoice);
@@ -194,7 +237,7 @@ public class GraphProperties extends JDialog{
         propButton.addActionListener(propAction);
             
         add(graphpanel);
-        add(setColumn);
+        add(selectColPanel);
         add(namePanel);
         add(legendPanel);
         add(buttonpanel);
@@ -255,6 +298,7 @@ public class GraphProperties extends JDialog{
     public void setColor(String color){
         this.color = color;
         colorchoice.setSelectedItem(color);
+        colorLabel.setBackground(colorTable.get(color));
     }
     
     public void setLegendName(String legendName){
@@ -271,11 +315,13 @@ public class GraphProperties extends JDialog{
     public void setPosition(String position){
         this.position = position;
         poschoice.setSelectedItem(position);
+        posLabel.setText(position);
     }
     
     public void setRendererType(int type){
         this.type = type;
         typechoice.setSelectedIndex(type);
+        typeLabel.setText((String) typechoice.getItemAt(type));
     }
     
     public String getColor(){
