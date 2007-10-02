@@ -151,6 +151,8 @@ public class JAMSAscGridReader {
     double getValue(double x, double y) {
 	int East,West,South,North;
 	
+	y = y11corner + nrows*cellsize - (y - y11corner);
+	
 	East = (int)( (x - x11corner) / this.cellsize);
 	West = East + 1;
 	
@@ -181,7 +183,7 @@ public class JAMSAscGridReader {
 	double xD = East*cellsize + x11corner;
 	double yD = (North+1)*cellsize + y11corner;
 	double zD = grid[East][North+1];
-	
+		
 	/*
 	A              B
 	 --------------

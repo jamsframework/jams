@@ -318,8 +318,8 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
     private void setMap(MapCollection mc) throws Exception {
         map = mc.getMapContext();
         //mp.addMouseListener(this);
-        mp.setContext(map);
-        mp.setHeightMap(asg);
+	mp.setHeightMap(asg);
+        mp.setContext(map);        
     }
     
     public Style getStyle(FeatureSource fs, int i) {

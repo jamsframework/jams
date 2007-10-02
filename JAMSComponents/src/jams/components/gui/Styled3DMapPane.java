@@ -27,8 +27,10 @@ import java.awt.Rectangle;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Enumeration;
 import java.util.HashMap;
+import javax.imageio.ImageIO;
 import javax.media.j3d.*;
 import javax.vecmath.*;
 import org.geotools.map.MapLayer;
@@ -53,11 +55,11 @@ public class Styled3DMapPane extends Applet {
     JAMSAscGridReader agr = null;
     MyOrbitBehavior orbit = null;
     
-    public double   textureHeight = 512.0,
-            textureWidth  = 512.0;
+    public double   textureHeight = 256.0,
+            textureWidth  = 256.0;
     
     public int xRes = 256,yRes = 256;
-    public float scale = 1.0f;
+    public float scale = 1.2f;
     public float height = 0.5f;
     public float hScale = 1.0f;
     public boolean light = true;
@@ -443,14 +445,19 @@ public class Styled3DMapPane extends Applet {
     
     @SuppressWarnings("unchecked")
     public void setContext(org.geotools.map.MapContext map) {
-        //liteRenderer = new LiteRenderer (map);
         double width = this.textureWidth;
         double height = this.textureHeight;
         
         img = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = img.createGraphics();
         
-        envelope = new Envelope();
+	double xs = this.agr.x11corner;
+	double ys = this.agr.y11corner;
+	double xe = xs + this.agr.ncols*this.agr.cellsize;
+	double ye = ys + this.agr.nrows*this.agr.cellsize;
+	
+        envelope = new Envelope(/*xs,xe,ys,ye*/);	
+	/*envelope.init(xs,xe,ys,ye);	*/
         for (MapLayer mapLayer : map.getLayers()) {
             try {
                 envelope.expandToInclude(mapLayer.getFeatureSource().getFeatures().getBounds());
@@ -458,25 +465,12 @@ public class Styled3DMapPane extends Applet {
                 System.out.println("Error because: " + e.toString());
             }
         }
-        
-        affineTransform = new AffineTransform();
-        
-        double scaleFactor = Math.min((width / envelope.getWidth()),
-                (height / envelope.getHeight())) * 1.0; //zoom
-        
-        // Translate to the center of the JPanel.
-        affineTransform.translate((width / 2.0f), (height / 2));
-        
-        // Scale with negative y factor to correct the orientation.
-        affineTransform.scale(scaleFactor, - scaleFactor);
-        
-        // Translate to the center of the feature collection.
-        Coordinate center = new Coordinate
-                (((envelope.getMinX() + envelope.getMaxX()) / 2),
-                ((envelope.getMinY() + envelope.getMaxY()) / 2));
-        
-        affineTransform.translate(-center.x,-center.y);
-        
+
+	xs = (int)(envelope.getMinX()/this.agr.cellsize)*this.agr.cellsize;
+	xe = (int)(envelope.getMaxX()/this.agr.cellsize)*this.agr.cellsize;
+	ys = (int)(envelope.getMinY()/this.agr.cellsize)*this.agr.cellsize;
+	ye = (int)(envelope.getMaxY()/this.agr.cellsize)*this.agr.cellsize;
+	envelope = new Envelope(xs,xe,ys,ye);
         bound = new Rectangle();
         bound.x = 0;
         bound.y = 0;
@@ -486,15 +480,14 @@ public class Styled3DMapPane extends Applet {
         GTRenderer myRender = new StreamingRenderer();
         myRender.setContext(map);
         HashMap hints = new HashMap();
-        hints.put("optimizedDataLoadingEnabled", Boolean.TRUE);
-        myRender.setRendererHints(hints);
-        myRender.paint(graphics2D, bound , affineTransform);
-        
-        /*liteRenderer.setConcatTransforms (true);
-        liteRenderer.paint (graphics2D, bound , affineTransform);	*/
-        
-        /*Grid3D grid = (Grid3D)objScale.getChild(0);
-        grid.setGeometry(grid.createGeometry());*/
+        //hints.put("optimizedDataLoadingEnabled", Boolean.TRUE);
+        myRender.setRendererHints(hints);                
+	myRender.paint(graphics2D, bound , envelope);
+	
+	try {
+	ImageIO.write(img,"BMP",new File("E:\\test.bmp"));
+	} catch(Exception e) {
+	 }
     }
     
     public class Grid3D extends Shape3D{
@@ -535,9 +528,22 @@ public class Styled3DMapPane extends Applet {
         }
         
         public Geometry createGeometry(){
-            float offset = 0.5f*scale;
-            final float invxRes = scale*1.0f/(float)xRes;
-            final float invyRes = scale*1.0f/(float)yRes;
+	    double scalex = envelope.getWidth();
+	    double scaley = envelope.getHeight();
+
+	    if (scalex > scaley) {
+		scaley = (scaley/scalex)*scale;
+		scalex = scale;
+	    }
+	    else {
+		scalex = (scalex/scaley)*scale;
+		scaley = scale;
+	    }
+	    
+            double offsetx = 0.5*scalex;
+	    double offsety = 0.5*scaley;
+            double invxRes = scalex/(double)(xRes-1);
+            double invyRes = scaley/(double)(yRes-1);
             
             //go through and determine minheight and maxheight
             float minHeight = Float.POSITIVE_INFINITY,maxHeight = Float.NEGATIVE_INFINITY;
@@ -547,13 +553,15 @@ public class Styled3DMapPane extends Applet {
                 for (int y=0;y<yRes;y++) {
                     float fx = x,fy = y;
                     if (agr != null && envelope != null) {
-                        double posX = envelope.getMinX() + fx*invxRes/scale*(envelope.getMaxX()-envelope.getMinX());
-                        double posY = envelope.getMinY() + fy*invxRes/scale*(envelope.getMaxY()-envelope.getMinY());
+                        double posX = envelope.getMinX() + fx*(invxRes/scalex)*envelope.getWidth();
+                        double posY = envelope.getMinY() + fy*(invyRes/scaley)*envelope.getHeight();
                         float value = (float)agr.getValue(posX,posY);
                         hMap[x][y] = value;
 			if (value != -1.0) {
-			    if (minHeight > value) minHeight = value;
-			    if (maxHeight < value) maxHeight = value;
+			    if (minHeight > value) 
+				minHeight = value;
+			    if (maxHeight < value) 
+				maxHeight = value;
 			}
                     }
                 }
@@ -568,14 +576,14 @@ public class Styled3DMapPane extends Applet {
                 for (int y=0;y<yRes;y++) {
                     float fx = x,fy = y;
                     if (agr == null) {
-                        grid.setCoordinate( x*xRes+y, new Point3f((fx*invxRes)-offset,-((fy*invyRes)-offset),0.0f));
+                        grid.setCoordinate( x*xRes+y, new Point3f((float)((fx*invxRes)-offsetx),(float)((fy*invyRes)-offsety),0.0f));
                     } else {
                         float value = hMap[x][y];
                         value -= minHeight;
-                        grid.setCoordinate( x*xRes+y, new Point3f((fx*invxRes)-offset,-((fy*invyRes)-offset),hScale*value - 0.5f*height));
+                        grid.setCoordinate( x*xRes+y, new Point3f((float)((fx*invxRes)-offsetx),(float)((fy*invyRes)-offsety),(float)hScale*value - 0.5f*height));
                     }
                     //y axes is mirrored
-                    grid.setTextureCoordinate(0,x*xRes+y,new TexCoord2f(fx*invxRes/scale, fy*invyRes/scale));
+                    grid.setTextureCoordinate(0,x*xRes+y,new TexCoord2f((float)(fx*invxRes/scalex),1.0f-(float)(fy*invyRes/scaley)));
                     
                     if (x != xRes-1 && y != yRes-1 && hMap[x][y] >= 0.0 && hMap[x+1][y] >= 0.0 && hMap[x][y+1] >= 0.0 && hMap[x+1][y+1] >= 0.0) {
 			
@@ -651,61 +659,61 @@ public class Styled3DMapPane extends Applet {
                      ***create a vector to every point in heightmap***
                      ****************************************************************************/
                     //v22
-                    v22.x = (((float)x)*invxRes)-offset;
-                    v22.y = (((float)y)*invyRes)-offset;
+                    v22.x = (float)((((float)x)*invxRes)-offsetx);
+                    v22.y = (float)((((float)y)*invyRes)-offsety);
                     v22.z = hScale*hMap[x][y] - 2.5f;
                     //v11
-                    v11.x = (((float)(x-1))*invxRes)-offset;
-                    v11.y = (((float)(y-1))*invxRes)-offset;
+                    v11.x = (float)((((float)(x-1))*invxRes)-offsetx);
+                    v11.y = (float)((((float)(y-1))*invxRes)-offsety);
                     if (x>0&&y>0)
                         v11.z = hScale*hMap[x-1][y-1] - 2.5f;
                     else
                         v11.z = v22.z;
                     //v12
-                    v12.x = (((float)(x))*invxRes)-offset;
-                    v12.y = (((float)(y-1))*invxRes)-offset;
+                    v12.x = (float)((((float)(x))*invxRes)-offsetx);
+                    v12.y = (float)((((float)(y-1))*invxRes)-offsety);
                     if (y>0)
                         v12.z = hScale*hMap[x][y-1] - 2.5f;
                     else
                         v12.z = v22.z;
                     //v13
-                    v13.x = (((float)(x+1))*invxRes)-offset;
-                    v13.y = (((float)(y-1))*invxRes)-offset;
+                    v13.x = (float)((((float)(x+1))*invxRes)-offsetx);
+                    v13.y = (float)((((float)(y-1))*invxRes)-offsety);
                     if (x<xRes-1 && y>0)
                         v13.z = hScale*hMap[x+1][y-1] - 2.5f;
                     else
                         v13.z = v22.z;
                     //v21
-                    v21.x = (((float)(x-1))*invxRes)-offset;
-                    v21.y = (((float)(y))*invxRes)-offset;
+                    v21.x = (float)((((float)(x-1))*invxRes)-offsetx);
+                    v21.y = (float)((((float)(y))*invxRes)-offsety);
                     if (x>0)
                         v21.z = hScale*hMap[x-1][y] - 2.5f;
                     else
                         v21.z = v22.z;
                     //v23
-                    v23.x = (((float)(x+1))*invxRes)-offset;
-                    v23.y = (((float)(y))*invxRes)-offset;
+                    v23.x = (float)((((float)(x+1))*invxRes)-offsetx);
+                    v23.y = (float)((((float)(y))*invxRes)-offsety);
                     if (x<xRes-1)
                         v23.z = hScale*hMap[x+1][y] - 2.5f;
                     else
                         v23.z = v22.z;
                     //v31
-                    v31.x = (((float)(x-1))*invxRes)-offset;
-                    v31.y = (((float)(y+1))*invxRes)-offset;
+                    v31.x = (float)((((float)(x-1))*invxRes)-offsetx);
+                    v31.y = (float)((((float)(y+1))*invxRes)-offsety);
                     if (x>0 && y < yRes-1)
                         v31.z = hScale*hMap[x-1][y+1] - 2.5f;
                     else
                         v31.z = v22.z;
                     //v32
-                    v32.x = (((float)(x))*invxRes)-offset;
-                    v32.y = (((float)(y+1))*invxRes)-offset;
+                    v32.x = (float)((((float)(x))*invxRes)-offsetx);
+                    v32.y = (float)((((float)(y+1))*invxRes)-offsety);
                     if (y < yRes-1)
                         v32.z = hScale*hMap[x][y+1] - 2.5f;
                     else
                         v32.z = v22.z;
                     //v33
-                    v33.x = (((float)(x+1))*invxRes)-offset;
-                    v33.y = (((float)(y+1))*invxRes)-offset;
+                    v33.x = (float)((((float)(x+1))*invxRes)-offsetx);
+                    v33.y = (float)((((float)(y+1))*invxRes)-offsety);
                     if (x < xRes-1 && y < yRes-1)
                         v33.z = hScale*hMap[x+1][y+1] - 2.5f;
                     else
