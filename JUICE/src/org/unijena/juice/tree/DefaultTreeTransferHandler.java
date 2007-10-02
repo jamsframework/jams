@@ -145,7 +145,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
                 contexts.add(cd.getName());
             }
             
-            for (ComponentDescriptor.ComponentVar var : cd.getCVars().values()) {
+            for (ComponentDescriptor.ComponentAttribute var : cd.getComponentAttributes().values()) {
                 if (var.context != null) {
                     String contextName = var.context.getName();
                     if (!contexts.contains(contextName)) {
@@ -198,7 +198,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             //iterate over all components referencing pending contexts
             for (ComponentDescriptor component : components) {
                 //iterate over all vars
-                for (ComponentDescriptor.ComponentVar var : component.getCVars().values()) {
+                for (ComponentDescriptor.ComponentAttribute var : component.getComponentAttributes().values()) {
                     if (var.context != null) {
                         //again select vars that reference this pending context and connect to new (selected) context
                         if (var.context.getName().equals(oldContextName)) {

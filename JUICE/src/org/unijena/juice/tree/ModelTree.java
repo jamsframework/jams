@@ -390,7 +390,7 @@ public class ModelTree extends JAMSTree {
             rootElement.appendChild(element);
         }
         
-        for (ComponentDescriptor.ComponentVar var : cd.getCVars().values()) {
+        for (ComponentDescriptor.ComponentAttribute var : cd.getComponentAttributes().values()) {
             if (!var.value.equals("") || ((var.context != null) && !var.attribute.equals(""))) {
                 
                 element = document.createElement("var");
@@ -540,7 +540,7 @@ public class ModelTree extends JAMSTree {
                         
                         String attributeName = propertyElement.getAttribute("attribute");
                         
-                        property.var = property.component.getCVars().get(attributeName);
+                        property.var = property.component.getComponentAttributes().get(attributeName);
                         
                         //in case this is a context component, check whether this refers to a context attribute
                         if (property.attribute == null) {
@@ -675,8 +675,8 @@ public class ModelTree extends JAMSTree {
                 return;
             }
             try {
-                if (cd.getCVars().get(name).accessType != ComponentDescriptor.ComponentVar.READ_ACCESS) {
-                    Class attributeType = cd.getCVars().get(name).type;
+                if (cd.getComponentAttributes().get(name).accessType != ComponentDescriptor.ComponentAttribute.READ_ACCESS) {
+                    Class attributeType = cd.getComponentAttributes().get(name).type;
                     this.getView().getDataRepository(view.getComponentDescriptor(context)).addAttribute(attribute, attributeType);
                 }
             } catch (NullPointerException ex) {

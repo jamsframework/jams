@@ -62,7 +62,7 @@ public class ComponentEditPanel extends JPanel {
     
     private static final String DEFAULT_STRING = "[none]";
     private static final Dimension BUTTON_DIMENSION = new Dimension(70,20);
-    private static final Dimension TABLE_DIMENSION = new Dimension(500,250);
+    private static final Dimension TABLE_DIMENSION = new Dimension(500,200);
     
     private ComponentDescriptor componentDescriptor = null;
     private HashMap<String, JTextField> textFields = new HashMap<String, JTextField>();
@@ -79,6 +79,7 @@ public class ComponentEditPanel extends JPanel {
     private ModelView view;
     private JAMSNode node;
     private JTabbedPane tabPane;
+    private ComponentAttributePanel attributeConfigPanel;
     
     public ComponentEditPanel(ModelView view) {
         super();
@@ -145,6 +146,7 @@ public class ComponentEditPanel extends JPanel {
                     ComponentEditPanel.this.varEditButton.setEnabled(false);
                     ComponentEditPanel.this.varResetButton.setEnabled(false);
                 }
+                updateAttributeConfigPanel();
             }
         });
         varTable.addMouseListener(new MouseAdapter() {
@@ -288,9 +290,14 @@ public class ComponentEditPanel extends JPanel {
         tabPane.add("Context attributes (local)", attributePanel);
         tabPane.setEnabledAt(1, false);
         
+        attributeConfigPanel = new ComponentAttributePanel(view);
+        
         LHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 2, 4, 1, 1.0, 1.0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Attributes:"), 0, 10, 4, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Attribute overview"), 0, 10, 4, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, tabPane, 0, 20, 4, 1, 1.0, 1.0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 25, 4, 1, 1.0, 1.0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Attribute configuration"), 0, 27, 4, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, attributeConfigPanel, 0, 30, 4, 1, 1.0, 1.0);
         
         reset(DEFAULT_STRING);
         add(componentPanel);
@@ -363,8 +370,8 @@ public class ComponentEditPanel extends JPanel {
     
     private void showVarEditDlg() {
         int tmpSelectedVarRow = selectedVarRow;
-        String componentName = varNameList.get(selectedVarRow);
-        ComponentDescriptor.ComponentVar var = componentDescriptor.getCVars().get(componentName);
+        String attributeName = varNameList.get(selectedVarRow);
+        ComponentDescriptor.ComponentAttribute var = componentDescriptor.getComponentAttributes().get(attributeName);
         
         //create the dialog if it not yet existing
         if (varEditDlg == null) {
@@ -400,7 +407,7 @@ public class ComponentEditPanel extends JPanel {
     private void varReset() {
         int tmpSelectedVarRow = selectedVarRow;
         String componentName = varNameList.get(selectedVarRow);
-        ComponentDescriptor.ComponentVar var = componentDescriptor.getCVars().get(componentName);
+        ComponentDescriptor.ComponentAttribute var = componentDescriptor.getComponentAttributes().get(componentName);
         var.value = "";
         var.context = null;
         var.attribute = "";
@@ -457,10 +464,9 @@ public class ComponentEditPanel extends JPanel {
         
         attributeTableModel.setDataVector(tableData, attributeTableColumnIds);
         
-        attributeTable.getColumnModel().getColumn(0).setMaxWidth(100);
         attributeTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-        attributeTable.getColumnModel().getColumn(1).setMaxWidth(100);
         attributeTable.getColumnModel().getColumn(1).setPreferredWidth(100);
+        attributeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
     }
     
     private void updateCmpAttrs() {
@@ -468,13 +474,13 @@ public class ComponentEditPanel extends JPanel {
         selectedVarRow = -1;
         varEditButton.setEnabled(false);
         
-        varNameList = new ArrayList<String>(componentDescriptor.getCVars().keySet());
+        varNameList = new ArrayList<String>(componentDescriptor.getComponentAttributes().keySet());
         //Collections.sort(varNameList);
         
         Vector<Vector<String>> tableData = new Vector<Vector<String>>();
         Vector<String> rowData;
         for (String name : varNameList) {
-            ComponentDescriptor.ComponentVar var = componentDescriptor.getCVars().get(name);
+            ComponentDescriptor.ComponentAttribute var = componentDescriptor.getComponentAttributes().get(name);
             
             //create a vector with table data from var properties
             rowData = new Vector<String>();
@@ -484,32 +490,32 @@ public class ComponentEditPanel extends JPanel {
             rowData.add(type);
             
             String accessType = "";
-            if (var.accessType == ComponentDescriptor.ComponentVar.READ_ACCESS)
+            if (var.accessType == ComponentDescriptor.ComponentAttribute.READ_ACCESS)
                 accessType = "R";
-            if (var.accessType == ComponentDescriptor.ComponentVar.WRITE_ACCESS)
+            if (var.accessType == ComponentDescriptor.ComponentAttribute.WRITE_ACCESS)
                 accessType = "W";
-            if (var.accessType == ComponentDescriptor.ComponentVar.READWRITE_ACCESS)
+            if (var.accessType == ComponentDescriptor.ComponentAttribute.READWRITE_ACCESS)
                 accessType = "R/W";
             
             rowData.add(accessType);
             
-            if (!var.attribute.equals(""))
+            if (!var.attribute.equals("")) {
                 rowData.add(var.context+"."+var.attribute);
-            else
+            } else {
                 rowData.add("");
+            }
+            
             rowData.add(var.value);
             
             tableData.add(rowData);
-//            System.out.println(name + " : " + var.context + " : " + var.attribute + " : " + var.value);
         }
         varTableModel.setDataVector(tableData, varTableColumnIds);
         
-        varTable.getColumnModel().getColumn(0).setMaxWidth(100);
         varTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-        varTable.getColumnModel().getColumn(1).setMaxWidth(100);
         varTable.getColumnModel().getColumn(1).setPreferredWidth(100);
         varTable.getColumnModel().getColumn(2).setMaxWidth(30);
         varTable.getColumnModel().getColumn(2).setPreferredWidth(30);
+        varTable.getColumnModel().getColumn(3).setPreferredWidth(150);
         
     }
     
@@ -532,5 +538,29 @@ public class ComponentEditPanel extends JPanel {
             }
         }
     }
+    
+    private void updateAttributeConfigPanel() {
+        
+        if (selectedVarRow < 0) {
+            attributeConfigPanel.cleanup();
+            return;
+        }
+        String attributeName = varNameList.get(selectedVarRow);
+        ComponentDescriptor.ComponentAttribute attr = componentDescriptor.getComponentAttributes().get(attributeName);
+        
+        Vector<String> ancestors = new Vector<String>();
+        ancestors.add("");
+        
+        JAMSNode ancestor = (JAMSNode) node.getParent();
+        while (ancestor != null) {
+            ancestors.add(ancestor.getUserObject().toString());
+            ancestor = (JAMSNode) ancestor.getParent();
+        }
+        
+        String ancestorNames[] = ancestors.toArray(new String[ancestors.size()]);
+        
+        attributeConfigPanel.update(attr, ancestorNames, componentDescriptor);
+    }
+    
     
 }

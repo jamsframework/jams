@@ -151,7 +151,7 @@ public class ModelPropertyDlg extends JDialog {
     
     private void updateComponentVars(Object item) {
         ComponentDescriptor cd = this.componentDescriptors.get((String) item);
-        HashMap <String, ComponentDescriptor.ComponentVar> vars = cd.getCVars();
+        HashMap <String, ComponentDescriptor.ComponentAttribute> vars = cd.getComponentAttributes();
         HashMap <String, ContextAttribute> attrs = cd.getContextAttributes();
         
         ArrayList<String> varNames = new ArrayList<String>();
@@ -248,8 +248,8 @@ public class ModelPropertyDlg extends JDialog {
         return componentDescriptors.get(componentCombo.getSelectedItem());
     }
     
-    public ComponentDescriptor.ComponentVar getVar() {
-        return getComponent().getCVars().get(varCombo.getSelectedItem());
+    public ComponentDescriptor.ComponentAttribute getVar() {
+        return getComponent().getComponentAttributes().get(varCombo.getSelectedItem());
     }
     
     public ContextAttribute getAttribute() {

@@ -178,7 +178,7 @@ public class ComponentAttributeDlg extends JDialog {
         
     }
     
-    public void show(ComponentDescriptor.ComponentVar var, String ancestorNames[]) {
+    public void show(ComponentDescriptor.ComponentAttribute var, String ancestorNames[]) {
         
         this.setTitle("Variable: " + var.name);
         

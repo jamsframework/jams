@@ -135,7 +135,7 @@ public class ModelProperties {
     public class ModelProperty {
         public String defaultValue, value, description, name;
         public ComponentDescriptor component;
-        public ComponentDescriptor.ComponentVar var;
+        public ComponentDescriptor.ComponentAttribute var;
         public ContextAttribute attribute;
         public double lowerBound, upperBound;
         private Group group;

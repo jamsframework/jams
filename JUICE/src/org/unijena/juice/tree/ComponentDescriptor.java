@@ -40,7 +40,7 @@ public class ComponentDescriptor {
     private String instanceName;
     private Class clazz;
     private JAMSTree tree;
-    private HashMap<String, ComponentVar> cVars = new HashMap<String, ComponentVar>();
+    private HashMap<String, ComponentAttribute> cVars = new HashMap<String, ComponentAttribute>();
     private HashMap<String, ContextAttribute> contextAttributes = new HashMap<String, ContextAttribute>();
     
     public ComponentDescriptor(String instanceName, Class clazz, JAMSTree tree) {
@@ -73,13 +73,13 @@ public class ComponentDescriptor {
                 int accessType;
                 
                 if (jvd.access() == JAMSVarDescription.AccessType.READ)
-                    accessType = ComponentVar.READ_ACCESS;
+                    accessType = ComponentAttribute.READ_ACCESS;
                 else if (jvd.access() == JAMSVarDescription.AccessType.WRITE)
-                    accessType = ComponentVar.WRITE_ACCESS;
+                    accessType = ComponentAttribute.WRITE_ACCESS;
                 else
-                    accessType = ComponentVar.READWRITE_ACCESS;
+                    accessType = ComponentAttribute.READWRITE_ACCESS;
                 
-                getCVars().put(field.getName(), new ComponentVar(field.getName(), field.getType(), accessType));
+                getComponentAttributes().put(field.getName(), new ComponentAttribute(field.getName(), field.getType(), accessType));
             }
         }
     }
@@ -106,20 +106,20 @@ public class ComponentDescriptor {
     }
     
     public void setComponentAttribute(String name, String value) {
-        ComponentVar ca = getCVars().get(name);
+        ComponentAttribute ca = getComponentAttributes().get(name);
         if (ca != null) {
             ca.value = value;
         }
     }
     
     public void setComponentAttribute(String name, ComponentDescriptor context, String attributeName) {
-        ComponentVar var = getCVars().get(name);
+        ComponentAttribute var = getComponentAttributes().get(name);
         if (var != null) {
             
             ContextAttribute attr = context.getContextAttributes().get(attributeName);
             
             if (attr == null) {
-                if (var.accessType == ComponentVar.READ_ACCESS) {
+                if (var.accessType == ComponentAttribute.READ_ACCESS) {
                     //attribute not existing and read access -- bad!
                     //System.out.println("no such attribute in component " + this.getName() + "(" + name + "): " + attributeName);
                     //return;
@@ -137,7 +137,7 @@ public class ComponentDescriptor {
     }
     
     public void outputUnsetAttributes() {
-        for (ComponentVar ad : getCVars().values()) {
+        for (ComponentAttribute ad : getComponentAttributes().values()) {
             if (ad.attribute == null && ad.context == null && ad.value == null) {
                 System.out.println("Attribute " + ad.name + " (" + ad.type + ") not set in component " + getName());
             }
@@ -148,8 +148,8 @@ public class ComponentDescriptor {
         ModelView view = JUICE.getJuiceFrame().getCurrentView();
         ComponentDescriptor copy = new ComponentDescriptor(getName(), getClazz(), target);
         for (String name : cVars.keySet()) {
-            ComponentVar ca = cVars.get(name);
-            ComponentVar caCopy = new ComponentVar(ca.name, ca.type, ca.accessType);
+            ComponentAttribute ca = cVars.get(name);
+            ComponentAttribute caCopy = new ComponentAttribute(ca.name, ca.type, ca.accessType);
             caCopy.context = ca.context;
             caCopy.attribute = ca.attribute;
             caCopy.value = ca.value;
@@ -173,7 +173,7 @@ public class ComponentDescriptor {
         return clazz;
     }
     
-    public HashMap<String, ComponentVar> getCVars() {
+    public HashMap<String, ComponentAttribute> getComponentAttributes() {
         return cVars;
     }
     
@@ -207,14 +207,13 @@ public class ComponentDescriptor {
         this.tree = tree;
     }
 */    
-    public class ComponentVar {
+    public class ComponentAttribute {
         public static final int READ_ACCESS = 0, WRITE_ACCESS = 1, READWRITE_ACCESS = 2;
         public String attribute = "", value = "", name = "";
         public Class type = null;
         public int accessType;
         public ComponentDescriptor context;
-        public ContextAttribute attribz;
-        public ComponentVar(String name, Class type, int accessType) {
+        public ComponentAttribute(String name, Class type, int accessType) {
             this.name = name;
             this.type = type;
             this.accessType = accessType;

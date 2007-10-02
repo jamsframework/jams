@@ -1,9 +1,9 @@
 /*
- * VarEditDlg.java
- * Created on 3. Januar 2007, 22:53
+ * ComponentAttributeConfigPanel.java
+ * Created on 28. September 2007, 22:38
  *
  * This file is part of JAMS
- * Copyright (C) 2006 FSU Jena
+ * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,27 +24,26 @@
 package org.unijena.juice;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Frame;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
+import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.WindowConstants;
+import javax.swing.JToggleButton;
+import javax.swing.ListSelectionModel;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;
 import org.unijena.juice.DataRepository.Attribute;
@@ -52,47 +51,93 @@ import org.unijena.juice.tree.ComponentDescriptor;
 
 /**
  *
- * @author S. Kralisch
+ * @author Sven Kralisch
  *
- * Dialog with swing inputs for providing a component's attribute value
- * or linkage to a context attribute
- *
+ * This panel provides GUI components for editing a component's attributes connections
  */
 public class ComponentAttributePanel extends JPanel {
     
-    public static final int APPROVE_OPTION = 1;
-    public static final int CANCEL_OPTION = 0;
-    
-    private int result = CANCEL_OPTION;
     private JComboBox contextCombo;
-    private JTextField varNameText;
-    private JComboBox varNameCombo;
     private InputComponent valueInput;
-    private GridBagLayout mainLayout;
-    private JPanel mainPanel, valuePanel;
+    private GridBagLayout connectionLayout, infoLayout;
+    private JTextField localNameText, compText, linkText;
+    private JPanel listPanel, infoPanel, valuePanel;
     private ModelView view;
     private Class type;
+    private JList attributeList;
+    private JToggleButton linkButton, setButton;
     
-    /**
-     * Creates a new instance of VarEditDlg
-     */
+    
     public ComponentAttributePanel(ModelView view) {
         
-        this.setLayout(new BorderLayout());
-        
         this.view = view;
+        this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         
-        mainLayout = new GridBagLayout();
-        mainPanel = new JPanel();
-        mainPanel.setLayout(mainLayout);
+        connectionLayout = new GridBagLayout();
         
-        LHelper.addGBComponent(mainPanel, mainLayout, new JPanel(), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel("Context.Attribute:"), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel("Value:"), 0, 2, 1, 1, 0, 0);
+        listPanel = new JPanel();
+        listPanel.setLayout(new BorderLayout());
+        listPanel.setPreferredSize(new Dimension(100,245));
+        
+        infoPanel = new JPanel();
+        //infoPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+        //infoPanel.setPreferredSize(new Dimension(250,245));
+        infoLayout = new GridBagLayout();
+        infoLayout.preferredLayoutSize(infoPanel);
+        infoPanel.setLayout(infoLayout);
+        
+        JPanel detailPanel = new JPanel();
+        detailPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+        detailPanel.setPreferredSize(new Dimension(420,245));
+        detailPanel.add(infoPanel);
+        
+        this.add(detailPanel);
+        this.add(listPanel);
+        
+        valuePanel = new JPanel();
+        valuePanel.setBorder(BorderFactory.createEtchedBorder());
+//        valuePanel.setLayout(new BorderLayout());
+        valuePanel.setPreferredSize(new Dimension(250, 180));
+        
+        LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Component:"), 0, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Local name:"), 0, 10, 1, 1, 0, 0);
+        LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Linkage:"), 0, 15, 1, 1, 0, 0);
+        LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Value:"), 0, 20, 1, 1, 0, 0);
+        
+        compText = new JTextField();
+        compText.setEditable(false);
+        compText.setBorder(BorderFactory.createEtchedBorder());
+        compText.setPreferredSize(new Dimension(300, 20));
+        LHelper.addGBComponent(infoPanel, infoLayout, compText, 1, 0, 1, 1, 0, 0);
+        
+        localNameText = new JTextField();
+        localNameText.setEditable(false);
+        localNameText.setBorder(BorderFactory.createEtchedBorder());
+        localNameText.setPreferredSize(new Dimension(300, 20));
+        LHelper.addGBComponent(infoPanel, infoLayout, localNameText, 1, 10, 1, 1, 0, 0);
+        
+        linkText = new JTextField();
+        linkText.setEditable(false);
+        linkText.setBorder(BorderFactory.createEtchedBorder());
+        linkText.setPreferredSize(new Dimension(300, 20));
+        LHelper.addGBComponent(infoPanel, infoLayout, linkText, 1, 15, 1, 1, 0, 0);
+        
+        linkButton = new JToggleButton("LINK");
+        linkButton.setMargin(new Insets(1, 1, 1, 1));
+        linkButton.setPreferredSize(new Dimension(30,20));
+        JPanel linkBtnPanel = new JPanel();
+        linkBtnPanel.add(linkButton);
+        LHelper.addGBComponent(infoPanel, infoLayout, linkBtnPanel, 2, 15, 1, 1, 0, 0);
+        
+        setButton = new JToggleButton("SET");
+        setButton.setMargin(new Insets(1, 1, 1, 1));
+        setButton.setPreferredSize(new Dimension(30,20));
+        JPanel setBtnPanel = new JPanel();
+        setBtnPanel.add(setButton);
+        LHelper.addGBComponent(infoPanel, infoLayout, setBtnPanel, 2, 20, 1, 1, 0, 0);
+        
         
         contextCombo = new JComboBox();
-        LHelper.addGBComponent(mainPanel, mainLayout, contextCombo, 1, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel("."), 2, 1, 1, 1, 0, 0);
         contextCombo.addItemListener(new ItemListener(){
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -100,52 +145,43 @@ public class ComponentAttributePanel extends JPanel {
                 }
             }
         });
+        listPanel.add(contextCombo, BorderLayout.NORTH);
         
-        varNameText = new JTextField();
-        varNameText.setColumns(20);
-        LHelper.addGBComponent(mainPanel, mainLayout, varNameText, 3, 1, 1, 1, 0, 0);
+        attributeList = new JList();
+        attributeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane listScroll = new JScrollPane(attributeList);
+        listPanel.add(listScroll, BorderLayout.CENTER);
         
-        varNameCombo = new JComboBox();
-        varNameCombo.setEditable(true);
-//        LHelper.addGBComponent(mainPanel, mainLayout, varNameCombo, 3, 1, 1, 1, 0, 0);
+    }
+    
+    public void update(ComponentDescriptor.ComponentAttribute var, String ancestorNames[], ComponentDescriptor component) {
         
+        this.type = var.type;
         
-        LHelper.addGBComponent(mainPanel, mainLayout, new JPanel(), 0, 3, 1, 1, 0, 0);
+        this.contextCombo.setModel(new DefaultComboBoxModel(ancestorNames));
         
-        this.add(new JScrollPane(mainPanel), BorderLayout.CENTER);
+        if (valueInput != null) {
+            infoPanel.remove(valueInput.getComponent());
+            infoPanel.updateUI();
+        }
         
-        JPanel buttonPanel = new JPanel();
+        valueInput = LHelper.createInputComponent(var.type.getSimpleName());
+        LHelper.addGBComponent(infoPanel, infoLayout, valueInput.getComponent(), 1, 20, 1, 1, 0, 0);
+        //valuePanel.add(valueInput.getComponent());
+        localNameText.setText(var.name);
+        compText.setText(component.getName());
         
-        JButton okButton = new JButton("OK");
-        okButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                
-                if (!valueInput.getValue().equals("") && !valueInput.verify()) {
-                    Color oldColor = valueInput.getComponent().getBackground();
-                    valueInput.getComponent().setBackground(new Color(255, 0, 0));
-                    LHelper.showErrorDlg(ComponentAttributePanel.this, "Invalid data format!", "Format error");
-                    valueInput.getComponent().setBackground(oldColor);
-                    return;
-                }
-                setVisible(false);
-                result = ComponentAttributeDlg.APPROVE_OPTION;
-            }
-        });
-        buttonPanel.add(okButton);
-        getRootPane().setDefaultButton(okButton);
+        this.valueInput.setValue(var.value);
         
-        JButton cancelButton = new JButton("Cancel");
-        ActionListener cancelActionListener = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-                result = ComponentAttributeDlg.CANCEL_OPTION;
-            }
-        };
-        cancelButton.addActionListener(cancelActionListener);
-        cancelButton.registerKeyboardAction(cancelActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JButton.WHEN_IN_FOCUSED_WINDOW);
-        buttonPanel.add(cancelButton);
+        if (var.context != null) {
+            contextCombo.setSelectedItem(var.context.getName());
+            attributeList.setSelectedValue(var.attribute.toString(), true);
+            linkText.setText(var.context.getName() + " -> " + var.attribute.toString());
+        } else {
+            linkText.setText(null);
+            attributeList.setModel(new DefaultListModel());
+        }
         
-        this.add(buttonPanel, BorderLayout.SOUTH);
     }
     
     private void updateRepository() {
@@ -153,8 +189,7 @@ public class ComponentAttributePanel extends JPanel {
         DataRepository repo = view.getDataRepository(this.getContext());
         ArrayList<Attribute> attributes = repo.getAttributesByType(type);
         
-        String[] attrNames = {""};
-        
+        DefaultListModel lModel = new DefaultListModel();
         if (attributes != null) {
             
             //sort the list
@@ -164,53 +199,28 @@ public class ComponentAttributePanel extends JPanel {
                 }
             });
             
-            attrNames = new String[attributes.size()];
             for (int i = 0; i < attributes.size(); i++) {
-                attrNames[i] = attributes.get(i).toString();
+                lModel.addElement(attributes.get(i).toString());
             }
         }
         
-        varNameCombo.setModel(new DefaultComboBoxModel(attrNames));
-        
-    }
-    
-    public void show(ComponentDescriptor.ComponentVar var, String ancestorNames[]) {
-        
-        this.type = var.type;
-        
-        contextCombo.setModel(new DefaultComboBoxModel(ancestorNames));
-        
-        if (valueInput != null) {
-            LHelper.removeGBComponent(mainPanel, valueInput.getComponent());
-        }
-        valueInput = LHelper.createInputComponent(var.type.getSimpleName());
-        LHelper.addGBComponent(mainPanel, mainLayout, valueInput.getComponent(), 1, 2, 3, 1, 0, 0);
-        
-        this.valueInput.setValue(var.value);
-        
-        this.varNameText.setText(var.attribute);
-        if (var.context != null) {
-            this.contextCombo.setSelectedItem(var.context.getName());
-            this.varNameCombo.setSelectedItem(var.attribute);
-        }
+        attributeList.setModel(lModel);
     }
     
     public ComponentDescriptor getContext() {
         return view.getComponentDescriptor((String) contextCombo.getSelectedItem());
     }
     
-    public String getAttributeName() {
-        return varNameText.getText();
-        //return varNameCombo.getSelectedItem().toString();
+    public void cleanup() {
+        contextCombo.setModel(new DefaultComboBoxModel());
+        attributeList.setModel(new DefaultListModel());
+        localNameText.setText(null);
+        compText.setText(null);
+        linkText.setText(null);
+        if (valueInput != null) {
+            infoPanel.remove(valueInput.getComponent());
+            infoPanel.updateUI();
+        }
     }
-    
-    public String getValue() {
-        return valueInput.getValue();
-    }
-    
-    public int getResult() {
-        return result;
-    }
-
     
 }

@@ -29,8 +29,10 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import org.unijena.jams.gui.input.BooleanInput;
+import org.unijena.jams.gui.input.CalendarInput;
 import org.unijena.jams.gui.input.FileInput;
 import org.unijena.jams.gui.input.FloatInput;
 import org.unijena.jams.gui.input.InputComponent;
@@ -114,6 +116,8 @@ public class LHelper {
         } else if (type.equals("JAMSDir")) {
             ic = new FileInput(true);
             ((Component) ic).setPreferredSize(new Dimension(FILEINPUT_WIDTH, JCOMP_HEIGHT));
+        } else if (type.equals("JAMSCalendar")) {
+            ic = new CalendarInput();
         } else if (type.equals("JAMSTimeInterval")) {
             ic = new TimeintervalInput();
         } else if (type.equals("JAMSBoolean")) {
@@ -129,6 +133,7 @@ public class LHelper {
             ic.getComponent().setPreferredSize(new Dimension(TEXTINPUT_WIDTH, JCOMP_HEIGHT));
         }
         
+        ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
         return ic;
     }
     

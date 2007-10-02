@@ -1,9 +1,9 @@
 /*
- * TimeintervalInput.java
- * Created on 5. September 2006, 23:43
+ * CalendarInput.java
+ * Created on 2. October 2007, 15:10
  *
  * This file is part of JAMS
- * Copyright (C) 2005 FSU Jena
+ * Copyright (C) 2007 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,16 +45,15 @@ import org.unijena.jams.gui.*;
  *
  * @author S. Kralisch
  */
-public class TimeintervalInput extends JPanel implements InputComponent {
+public class CalendarInput extends JPanel implements InputComponent {
     
-    JTextField tuCount, syear, smonth, sday, shour, sminute, eyear, emonth, eday, ehour, eminute;
-    JComboBox timeUnit;
+    JTextField syear, smonth, sday, shour, sminute;
     Map<Integer, Integer> indexMap = new HashMap<Integer, Integer>();
     Map<Integer, Integer> fieldMap = new HashMap<Integer, Integer>();
     JPanel panel;
     
     /** Creates a new instance of TimeintervalInput */
-    public TimeintervalInput() {
+    public CalendarInput() {
         
         GridBagLayout gbl = new GridBagLayout();
         this.setBorder(BorderFactory.createEtchedBorder());
@@ -63,10 +62,6 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         
         LHelper.addGBComponent(this, gbl, new JLabel("Date (YYYY/MM/DD)"), 1, 0, 1, 1, 0, 0);
         LHelper.addGBComponent(this, gbl, new JLabel("Time (HH:MM)"), 11, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel("Start: "), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel("End: "), 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel("Unit: "), 0, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel("Unit Count: "), 0, 4, 1, 1, 0, 0);
         
         syear = new JTextField();
         syear.setInputVerifier(new NumericIntervalVerifier(1900, 2100));
@@ -104,43 +99,6 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         panel.add(sminute);
         LHelper.addGBComponent(this, gbl, panel, 11, 1, 1, 1, 0, 0);
         
-        
-        eyear = new JTextField();
-        eyear.setInputVerifier(new NumericIntervalVerifier(1900, 2100));
-        eyear.setPreferredSize(new Dimension(40, 20));
-        
-        emonth = new JTextField();
-        emonth.setInputVerifier(new NumericIntervalVerifier(1, 12));
-        emonth.setPreferredSize(new Dimension(25, 20));
-        
-        eday = new JTextField();
-        eday.setInputVerifier(new NumericIntervalVerifier(1, 31));
-        eday.setPreferredSize(new Dimension(25, 20));
-        
-        panel = new JPanel();
-        panel.setBorder(BorderFactory.createEtchedBorder());
-        panel.add(eyear);
-        panel.add(new JLabel("/"));
-        panel.add(emonth);
-        panel.add(new JLabel("/"));
-        panel.add(eday);
-        LHelper.addGBComponent(this, gbl, panel, 1, 2, 10, 1, 0, 0);
-        
-        ehour = new JTextField();
-        ehour.setInputVerifier(new NumericIntervalVerifier(0, 23));
-        ehour.setPreferredSize(new Dimension(25, 20));
-        
-        eminute = new JTextField();
-        eminute.setInputVerifier(new NumericIntervalVerifier(0, 59));
-        eminute.setPreferredSize(new Dimension(25, 20));
-        
-        panel = new JPanel();
-        panel.setBorder(BorderFactory.createEtchedBorder());
-        panel.add(ehour);
-        panel.add(new JLabel(":"));
-        panel.add(eminute);
-        LHelper.addGBComponent(this, gbl, panel, 11, 2, 1, 1, 0, 0);
-        
         indexMap.put(JAMSCalendar.YEAR, 0);
         indexMap.put(JAMSCalendar.MONTH, 1);
         indexMap.put(JAMSCalendar.DAY_OF_YEAR, 2);
@@ -155,83 +113,40 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         fieldMap.put(4, JAMSCalendar.MINUTE);
         fieldMap.put(5, JAMSCalendar.SECOND);
         
-        timeUnit = new JComboBox();
-        timeUnit.addItem("YEAR");
-        timeUnit.addItem("MONTH");
-        timeUnit.addItem("DAY");
-        timeUnit.addItem("HOUR");
-        timeUnit.addItem("MINUTE");
-        timeUnit.addItem("SECOND");
-        timeUnit.setPreferredSize(new Dimension(40, 20));
-        LHelper.addGBComponent(this, gbl, timeUnit, 1, 3, 1, 1, 0, 0);
-        
-        tuCount = new JTextField();
-        tuCount.setInputVerifier(new NumericIntervalVerifier(0, 1000));
-        tuCount.setPreferredSize(new Dimension(40, 20));
-        LHelper.addGBComponent(this, gbl, tuCount, 1, 4, 1, 1, 0, 0);
-        
         sday.setBorder(BorderFactory.createEtchedBorder());
         smonth.setBorder(BorderFactory.createEtchedBorder());
         syear.setBorder(BorderFactory.createEtchedBorder());
         shour.setBorder(BorderFactory.createEtchedBorder());
-        sminute.setBorder(BorderFactory.createEtchedBorder());
-        eday.setBorder(BorderFactory.createEtchedBorder());
-        emonth.setBorder(BorderFactory.createEtchedBorder());
-        eyear.setBorder(BorderFactory.createEtchedBorder());
-        ehour.setBorder(BorderFactory.createEtchedBorder());
-        eminute.setBorder(BorderFactory.createEtchedBorder());
-        tuCount.setBorder(BorderFactory.createEtchedBorder());
-        timeUnit.setBorder(BorderFactory.createEtchedBorder());
+        sminute.setBorder(BorderFactory.createEtchedBorder());        
+        
     }
     
     public String getValue() {
-        JAMSTimeInterval ti = new JAMSTimeInterval();
-        ti.setStart(new JAMSCalendar(
+        JAMSCalendar cal = new JAMSCalendar(
                 Integer.parseInt(syear.getText()),
                 Integer.parseInt(smonth.getText())-1,
                 Integer.parseInt(sday.getText()),
                 Integer.parseInt(shour.getText()),
                 Integer.parseInt(sminute.getText()),
                 0
-                ));
-        ti.setEnd(new JAMSCalendar(
-                Integer.parseInt(eyear.getText()),
-                Integer.parseInt(emonth.getText())-1,
-                Integer.parseInt(eday.getText()),
-                Integer.parseInt(ehour.getText()),
-                Integer.parseInt(eminute.getText()),
-                0
-                ));
-        ti.setTimeUnit(fieldMap.get(timeUnit.getSelectedIndex()));
-        ti.setTimeUnitCount(Integer.parseInt(tuCount.getText()));
-        //System.out.println(ti);System.exit(0);
-        return ti.toString();
+                );
+        return cal.toString();
     }
     
     public void setValue(String value) {
-        //1996-11-01 7:30 2000-10-31 7:30 6 1
         
-        JAMSTimeInterval ti = new JAMSTimeInterval();
+        JAMSCalendar cal = new JAMSCalendar();
+        
         if (value != "") {
-            ti.setValue(value);
+            cal.setValue(value);
         }
         
-        JAMSCalendar start = ti.getStart();
-        syear.setText(Integer.toString(start.get(JAMSCalendar.YEAR)));
-        smonth.setText(Integer.toString(start.get(JAMSCalendar.MONTH)+1));
-        sday.setText(Integer.toString(start.get(JAMSCalendar.DAY_OF_MONTH)));
-        shour.setText(Integer.toString(start.get(JAMSCalendar.HOUR_OF_DAY)));
-        sminute.setText(Integer.toString(start.get(JAMSCalendar.MINUTE)));
+        syear.setText(Integer.toString(cal.get(JAMSCalendar.YEAR)));
+        smonth.setText(Integer.toString(cal.get(JAMSCalendar.MONTH)+1));
+        sday.setText(Integer.toString(cal.get(JAMSCalendar.DAY_OF_MONTH)));
+        shour.setText(Integer.toString(cal.get(JAMSCalendar.HOUR_OF_DAY)));
+        sminute.setText(Integer.toString(cal.get(JAMSCalendar.MINUTE)));
         
-        JAMSCalendar end = ti.getEnd();
-        eyear.setText(Integer.toString(end.get(JAMSCalendar.YEAR)));
-        emonth.setText(Integer.toString(end.get(JAMSCalendar.MONTH)+1));
-        eday.setText(Integer.toString(end.get(JAMSCalendar.DAY_OF_MONTH)));
-        ehour.setText(Integer.toString(end.get(JAMSCalendar.HOUR_OF_DAY)));
-        eminute.setText(Integer.toString(end.get(JAMSCalendar.MINUTE)));
-        
-        timeUnit.setSelectedIndex(indexMap.get(ti.getTimeUnit()));
-        tuCount.setText(Integer.toString(ti.getTimeUnitCount()));
     }
     
     public JComponent getComponent() {
@@ -274,5 +189,5 @@ public class TimeintervalInput extends JPanel implements InputComponent {
     
     public int getErrorCode() {
         return INPUT_OK;
-    }    
+    }
 }

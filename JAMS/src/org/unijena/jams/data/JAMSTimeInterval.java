@@ -34,7 +34,7 @@ public class JAMSTimeInterval  extends JAMSSerializableData{
     protected JAMSCalendar start = new JAMSCalendar();
     protected JAMSCalendar end = new JAMSCalendar();
     protected int timeUnit = 6;
-    protected int timeUnitCount = 0;
+    protected int timeUnitCount = 1;
     private long timestepCount = -1;
     
     public JAMSTimeInterval() {
