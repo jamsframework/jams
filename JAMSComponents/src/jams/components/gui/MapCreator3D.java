@@ -532,7 +532,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
             // create info pane
             info = new JTextPane();
             info.setEditable(false);
-            info.setText("3D Map Pane, has not been running!");
+            info.setText("3D Map Pane has not been started yet, please wait ..");
                         
             // create slider panel
             JSlider js = new JSlider();
