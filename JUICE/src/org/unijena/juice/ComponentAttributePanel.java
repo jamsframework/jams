@@ -124,6 +124,7 @@ public class ComponentAttributePanel extends JPanel {
         
         linkButton = new JToggleButton("LINK");
         linkButton.setMargin(new Insets(1, 1, 1, 1));
+        linkButton.setFocusable(false);
         linkButton.setPreferredSize(new Dimension(30,20));
         JPanel linkBtnPanel = new JPanel();
         linkBtnPanel.add(linkButton);
@@ -131,6 +132,7 @@ public class ComponentAttributePanel extends JPanel {
         
         setButton = new JToggleButton("SET");
         setButton.setMargin(new Insets(1, 1, 1, 1));
+        setButton.setFocusable(false);
         setButton.setPreferredSize(new Dimension(30,20));
         JPanel setBtnPanel = new JPanel();
         setBtnPanel.add(setButton);

@@ -75,8 +75,8 @@ public class Styled3DMapPane extends Applet {
         add("Center", canvas3D);
         
         simpleU = new SimpleUniverse(canvas3D);
-	simpleU.getViewer().getView().setFrontClipDistance(0.001);
-	simpleU.getViewer().getView().setBackClipDistance(10.0);
+        simpleU.getViewer().getView().setFrontClipDistance(0.001);
+        simpleU.getViewer().getView().setBackClipDistance(10.0);
         scene = createSceneGraph(simpleU);
         simpleU.addBranchGraph(scene);
     }
@@ -103,7 +103,7 @@ public class Styled3DMapPane extends Applet {
     class MyMouseRotateBehavior extends Behavior {
         double rotX = 0.0,rotZ = 0.0;
         int x,x_last,y,y_last;
-	int x2,x2_last,y2,y2_last;
+        int x2,x2_last,y2,y2_last;
         boolean init,initb2;
         double xFactor = 0.0015,yFactor = 0.0015;
         double xTranslationFactor = 0.01,yTranslationFactor = 0.01;
@@ -140,9 +140,9 @@ public class Styled3DMapPane extends Applet {
         }
         
         public void processMouseEvent(MouseEvent mouseEvent) {
-	    if (mouseEvent.getButton() == mouseEvent.BUTTON2)
-		return;
-	  
+            if (mouseEvent.getButton() == mouseEvent.BUTTON2)
+                return;
+            
             //System.out.println(mouseEvent.getID() + " " + mouseEvent.getButton());
             if (mouseEvent.getID() == mouseEvent.MOUSE_PRESSED) {
                 if (mouseEvent.getButton() == mouseEvent.BUTTON1) {
@@ -171,7 +171,7 @@ public class Styled3DMapPane extends Applet {
             }
             /*if (bOnClick && bOnClickb2) {
                 bOnClick = false;
-		bOnClickb2 = false;
+                bOnClickb2 = false;
                 init = false;
             }*/
             
@@ -184,8 +184,8 @@ public class Styled3DMapPane extends Applet {
                     init = true;
                 }
             }
-	    
-	     if ((mouseEvent.getModifiersEx() & mouseEvent.BUTTON3_DOWN_MASK) != 0) {
+            
+            if ((mouseEvent.getModifiersEx() & mouseEvent.BUTTON3_DOWN_MASK) != 0) {
                 x2 = mouseEvent.getX();
                 y2 = mouseEvent.getY();
                 if (!initb2) {
@@ -196,16 +196,16 @@ public class Styled3DMapPane extends Applet {
             }
             
             //scrap ... this because sometimes no release event is received
-	    //is there any better method to init the last_positions?
-	    if (x2 - x2_last < -40 || x2 - x2_last > 40)
-		x2_last = x2;
-	    if (x - x_last < -40   || x - x_last > 40)
-		x_last = x;
-	    if (y2 - y2_last < -40 || y2 - y2_last > 40)
-		y2_last = y2;
-	    if (y - y_last < -40 || y - y_last > 40)
-		y_last = y;
-	    
+            //is there any better method to init the last_positions?
+            if (x2 - x2_last < -40 || x2 - x2_last > 40)
+                x2_last = x2;
+            if (x - x_last < -40   || x - x_last > 40)
+                x_last = x;
+            if (y2 - y2_last < -40 || y2 - y2_last > 40)
+                y2_last = y2;
+            if (y - y_last < -40 || y - y_last > 40)
+                y_last = y;
+            
             if ((mouseEvent.getModifiersEx() & mouseEvent.BUTTON1_DOWN_MASK) != 0) {
                 rotZ += ((double)(this.x - this.x_last)) * xFactor;
                 rotX += ((double)(this.y - this.y_last)) * yFactor;
@@ -221,7 +221,7 @@ public class Styled3DMapPane extends Applet {
                 transRotZ.rotZ(rotZ);
                 transRotX.mul(transRotZ);
                 trans = transRotX;
-                this.transformGroup.setTransform(trans);                                
+                this.transformGroup.setTransform(trans);
             }
             
             if ((mouseEvent.getModifiersEx() & mouseEvent.BUTTON3_DOWN_MASK) != 0 && !((mouseEvent.getModifiersEx() & mouseEvent.BUTTON1_DOWN_MASK) != 0)) {
@@ -283,9 +283,9 @@ public class Styled3DMapPane extends Applet {
                 point.y += vTransX.y + vTransY.y;
                 point.z += vTransX.z + vTransY.z;
                 
-                orbit.setRotationCenter(point);                                
+                orbit.setRotationCenter(point);
             }
-	    x_last = x;
+            x_last = x;
             y_last = y;
             x2_last = x2;
             y2_last = y2;
@@ -315,17 +315,17 @@ public class Styled3DMapPane extends Applet {
             this.setTranslateEnable(false);
             this.setRotYFactor(0.0);
             this.setRotXFactor(0.0);
-	    this.setZoomFactor(0.5);
+            this.setZoomFactor(0.5);
             setMinRadius(100.0);
         }
         
         public void mouseMoved(MouseEvent mouseEvent) {
             super.mouseMoved(mouseEvent);
         }
-	
-	public void mouseWheelMoved(MouseWheelEvent m) {
-	    super.mouseWheelMoved(m);
-	}
+        
+        public void mouseWheelMoved(MouseWheelEvent m) {
+            super.mouseWheelMoved(m);
+        }
     }
     
     class UpdateTextureBehavior extends Behavior implements ImageComponent2D.Updater{
@@ -374,11 +374,11 @@ public class Styled3DMapPane extends Applet {
         Transform3D scale = new Transform3D();
         Matrix4d matrix = new Matrix4d();
         matrix.setIdentity();
-	matrix.m00 = 1.0;
-	matrix.m11 = 1.0;
-	matrix.m22 = 1.0;
-	matrix.m33 = 1.0;
-	
+        matrix.m00 = 1.0;
+        matrix.m11 = 1.0;
+        matrix.m22 = 1.0;
+        matrix.m33 = 1.0;
+        
         scale.set(matrix);
         objScale.setTransform(scale);
         objScale.addChild(new Grid3D());
@@ -421,21 +421,21 @@ public class Styled3DMapPane extends Applet {
         
         orbit = new MyOrbitBehavior(su.getCanvas());
         orbit.setSchedulingBounds(new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY));
-	
+        
         su.getViewingPlatform().setViewPlatformBehavior(orbit);
-        			
+        
         objRoot.compile();
-	
-	int x = su.getCanvas().getBounds().x + 20;
-	int y = su.getCanvas().getBounds().y + 20;
-	MouseWheelEvent m = new MouseWheelEvent(this, 507, 0, 0 , x, y, 0, false, 0, 3, 1);
-		
-	orbit.mouseWheelMoved(m);
-	orbit.mouseWheelMoved(m);
-	orbit.mouseWheelMoved(m);
-	orbit.mouseWheelMoved(m);
-	orbit.mouseWheelMoved(m);
-	
+        
+        int x = su.getCanvas().getBounds().x + 20;
+        int y = su.getCanvas().getBounds().y + 20;
+        MouseWheelEvent m = new MouseWheelEvent(this, 507, 0, 0 , x, y, 0, false, 0, 3, 1);
+        
+        orbit.mouseWheelMoved(m);
+        orbit.mouseWheelMoved(m);
+        orbit.mouseWheelMoved(m);
+        orbit.mouseWheelMoved(m);
+        orbit.mouseWheelMoved(m);
+        
         return objRoot;
     }
     
@@ -451,13 +451,13 @@ public class Styled3DMapPane extends Applet {
         img = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = img.createGraphics();
         
-	double xs = this.agr.x11corner;
-	double ys = this.agr.y11corner;
-	double xe = xs + this.agr.ncols*this.agr.cellsize;
-	double ye = ys + this.agr.nrows*this.agr.cellsize;
-	
-        envelope = new Envelope(/*xs,xe,ys,ye*/);	
-	/*envelope.init(xs,xe,ys,ye);	*/
+        double xs = this.agr.x11corner;
+        double ys = this.agr.y11corner;
+        double xe = xs + this.agr.ncols*this.agr.cellsize;
+        double ye = ys + this.agr.nrows*this.agr.cellsize;
+        
+        envelope = new Envelope(/*xs,xe,ys,ye*/);
+        /*envelope.init(xs,xe,ys,ye);	*/
         for (MapLayer mapLayer : map.getLayers()) {
             try {
                 envelope.expandToInclude(mapLayer.getFeatureSource().getFeatures().getBounds());
@@ -465,12 +465,12 @@ public class Styled3DMapPane extends Applet {
                 System.out.println("Error because: " + e.toString());
             }
         }
-
-	xs = (int)(envelope.getMinX()/this.agr.cellsize)*this.agr.cellsize;
-	xe = (int)(envelope.getMaxX()/this.agr.cellsize)*this.agr.cellsize;
-	ys = (int)(envelope.getMinY()/this.agr.cellsize)*this.agr.cellsize;
-	ye = (int)(envelope.getMaxY()/this.agr.cellsize)*this.agr.cellsize;
-	envelope = new Envelope(xs,xe,ys,ye);
+        
+        xs = (int)(envelope.getMinX()/this.agr.cellsize)*this.agr.cellsize;
+        xe = (int)(envelope.getMaxX()/this.agr.cellsize)*this.agr.cellsize;
+        ys = (int)(envelope.getMinY()/this.agr.cellsize)*this.agr.cellsize;
+        ye = (int)(envelope.getMaxY()/this.agr.cellsize)*this.agr.cellsize;
+        envelope = new Envelope(xs,xe,ys,ye);
         bound = new Rectangle();
         bound.x = 0;
         bound.y = 0;
@@ -481,13 +481,13 @@ public class Styled3DMapPane extends Applet {
         myRender.setContext(map);
         HashMap hints = new HashMap();
         //hints.put("optimizedDataLoadingEnabled", Boolean.TRUE);
-        myRender.setRendererHints(hints);                
-	myRender.paint(graphics2D, bound , envelope);
-	
-	try {
-	ImageIO.write(img,"BMP",new File("E:\\test.bmp"));
-	} catch(Exception e) {
-	 }
+        myRender.setRendererHints(hints);
+        myRender.paint(graphics2D, bound , envelope);
+        
+        try {
+            //ImageIO.write(img,"BMP",new File("E:\\test.bmp"));
+        } catch(Exception e) {
+        }
     }
     
     public class Grid3D extends Shape3D{
@@ -528,20 +528,19 @@ public class Styled3DMapPane extends Applet {
         }
         
         public Geometry createGeometry(){
-	    double scalex = envelope.getWidth();
-	    double scaley = envelope.getHeight();
-
-	    if (scalex > scaley) {
-		scaley = (scaley/scalex)*scale;
-		scalex = scale;
-	    }
-	    else {
-		scalex = (scalex/scaley)*scale;
-		scaley = scale;
-	    }
-	    
+            double scalex = envelope.getWidth();
+            double scaley = envelope.getHeight();
+            
+            if (scalex > scaley) {
+                scaley = (scaley/scalex)*scale;
+                scalex = scale;
+            } else {
+                scalex = (scalex/scaley)*scale;
+                scaley = scale;
+            }
+            
             double offsetx = 0.5*scalex;
-	    double offsety = 0.5*scaley;
+            double offsety = 0.5*scaley;
             double invxRes = scalex/(double)(xRes-1);
             double invyRes = scaley/(double)(yRes-1);
             
@@ -557,12 +556,12 @@ public class Styled3DMapPane extends Applet {
                         double posY = envelope.getMinY() + fy*(invyRes/scaley)*envelope.getHeight();
                         float value = (float)agr.getValue(posX,posY);
                         hMap[x][y] = value;
-			if (value != -1.0) {
-			    if (minHeight > value) 
-				minHeight = value;
-			    if (maxHeight < value) 
-				maxHeight = value;
-			}
+                        if (value != -1.0) {
+                            if (minHeight > value)
+                                minHeight = value;
+                            if (maxHeight < value)
+                                maxHeight = value;
+                        }
                     }
                 }
             }
@@ -570,7 +569,7 @@ public class Styled3DMapPane extends Applet {
             float hScale = height / (maxHeight -  minHeight);
             
             int indexCounter = 0;
-	    
+            
             IndexedQuadArray grid = new IndexedQuadArray(xRes*yRes,IndexedQuadArray.NORMALS | IndexedQuadArray.TEXTURE_COORDINATE_2 | IndexedQuadArray.COORDINATES,4*(xRes-1)*(yRes-1));
             for (int x=0;x<xRes;x++) {
                 for (int y=0;y<yRes;y++) {
@@ -586,23 +585,23 @@ public class Styled3DMapPane extends Applet {
                     grid.setTextureCoordinate(0,x*xRes+y,new TexCoord2f((float)(fx*invxRes/scalex),1.0f-(float)(fy*invyRes/scaley)));
                     
                     if (x != xRes-1 && y != yRes-1 && hMap[x][y] >= 0.0 && hMap[x+1][y] >= 0.0 && hMap[x][y+1] >= 0.0 && hMap[x+1][y+1] >= 0.0) {
-			
+                        
                         /*grid.setCoordinateIndex(4*(x*(xRes-1)+y)+0,x*xRes+y);
                         grid.setCoordinateIndex(4*(x*(xRes-1)+y)+1,(x+1)*xRes+y);
                         grid.setCoordinateIndex(4*(x*(xRes-1)+y)+2,(x+1)*xRes+y+1);
                         grid.setCoordinateIndex(4*(x*(xRes-1)+y)+3,(x)*xRes+y+1);
-                        
+                         
                         grid.setTextureCoordinateIndex(0,4*(x*(xRes-1)+y)+0,x*xRes+y);
                         grid.setTextureCoordinateIndex(0,4*(x*(xRes-1)+y)+1,(x+1)*xRes+y);
                         grid.setTextureCoordinateIndex(0,4*(x*(xRes-1)+y)+2,(x+1)*xRes+y+1);
                         grid.setTextureCoordinateIndex(0,4*(x*(xRes-1)+y)+3,(x)*xRes+y+1);
-                        
+                         
                         grid.setNormalIndex(4*(x*(xRes-1)+y)+0,x*xRes+y);
                         grid.setNormalIndex(4*(x*(xRes-1)+y)+1,(x+1)*xRes+y);
                         grid.setNormalIndex(4*(x*(xRes-1)+y)+2,(x+1)*xRes+y+1);
                         grid.setNormalIndex(4*(x*(xRes-1)+y)+3,(x)*xRes+y+1);*/
-			
-			grid.setCoordinateIndex(indexCounter+0,x*xRes+y);
+                        
+                        grid.setCoordinateIndex(indexCounter+0,x*xRes+y);
                         grid.setCoordinateIndex(indexCounter+1,(x+1)*xRes+y);
                         grid.setCoordinateIndex(indexCounter+2,(x+1)*xRes+y+1);
                         grid.setCoordinateIndex(indexCounter+3,(x)*xRes+y+1);
@@ -617,7 +616,7 @@ public class Styled3DMapPane extends Applet {
                         grid.setNormalIndex(indexCounter+2,(x+1)*xRes+y+1);
                         grid.setNormalIndex(indexCounter+3,(x)*xRes+y+1);
                         
-			indexCounter+=4;
+                        indexCounter+=4;
                     }
                     /***************************************************************************
                      ***

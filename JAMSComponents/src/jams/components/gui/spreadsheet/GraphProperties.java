@@ -55,7 +55,7 @@ import org.unijena.jams.model.JAMSGUIComponent;
 import org.unijena.jams.model.JAMSVarDescription;
 
 
-public class GraphProperties {
+public class GraphProperties extends JDialog {
     
     JTable table;
     
