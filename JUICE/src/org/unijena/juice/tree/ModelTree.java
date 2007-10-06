@@ -316,8 +316,8 @@ public class ModelTree extends JAMSTree {
                             propertyElement.setAttribute("attribute", property.var.name);
                             propertyElement.setAttribute("type", property.var.type.getSimpleName());
                         } else if (property.attribute != null) {
-                            propertyElement.setAttribute("attribute", property.attribute.name);
-                            propertyElement.setAttribute("type", property.attribute.type.getSimpleName());
+                            propertyElement.setAttribute("attribute", property.attribute.getName());
+                            propertyElement.setAttribute("type", property.attribute.getType().getSimpleName());
                         } else {
                             propertyElement.setAttribute("attribute", "%enable%");
                             propertyElement.setAttribute("type", JUICE.JAMS_DATA_TYPES[0].getSimpleName());
@@ -340,9 +340,9 @@ public class ModelTree extends JAMSTree {
             
             for (ContextAttribute attribute : cd.getContextAttributes().values()) {
                 element = (Element) document.createElement("attribute");
-                element.setAttribute("name", attribute.name);
-                element.setAttribute("class", attribute.type.getName());
-                element.setAttribute("value", attribute.value);
+                element.setAttribute("name", attribute.getName());
+                element.setAttribute("class", attribute.getType().getName());
+                element.setAttribute("value", attribute.getValue());
                 
                 rootElement.appendChild(element);
                 rootElement.appendChild(document.createTextNode("\n"));
@@ -383,9 +383,9 @@ public class ModelTree extends JAMSTree {
             rootElement.appendChild(document.createTextNode("\n"));
             
             element = (Element) document.createElement("attribute");
-            element.setAttribute("name", attribute.name);
-            element.setAttribute("class", attribute.type.getName());
-            element.setAttribute("value", attribute.value);
+            element.setAttribute("name", attribute.getName());
+            element.setAttribute("class", attribute.getType().getName());
+            element.setAttribute("value", attribute.getValue());
             
             rootElement.appendChild(element);
         }
@@ -649,7 +649,7 @@ public class ModelTree extends JAMSTree {
             Class type = Class.forName(typeName);
             String value = e.getAttribute("value");
             cd.addContextAttribute(attribute, type, value);
-            this.getView().getDataRepository(cd).addAttribute(attribute, type);
+            this.getView().getDataRepository(cd).addAttribute(attribute, type, cd);
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -677,7 +677,7 @@ public class ModelTree extends JAMSTree {
             try {
                 if (cd.getComponentAttributes().get(name).accessType != ComponentDescriptor.ComponentAttribute.READ_ACCESS) {
                     Class attributeType = cd.getComponentAttributes().get(name).type;
-                    this.getView().getDataRepository(view.getComponentDescriptor(context)).addAttribute(attribute, attributeType);
+                    this.getView().getDataRepository(view.getComponentDescriptor(context)).addAttribute(attribute, attributeType, cd);
                 }
             } catch (NullPointerException ex) {
                 LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component \"" + cd.getName() +
@@ -685,7 +685,8 @@ public class ModelTree extends JAMSTree {
                 return;
             }
             
-        } else if (e.hasAttribute("value")) {
+        } 
+        if (e.hasAttribute("value")) {
             
             cd.setComponentAttribute(e.getAttribute("name"), e.getAttribute("value"));
             

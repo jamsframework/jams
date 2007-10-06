@@ -49,7 +49,7 @@ public class ComponentDescriptor {
         }
         this.clazz = clazz;
         this.tree = tree;
-
+        
         try {
             this.setInstanceName(instanceName);
         } catch (JUICEException.NameAlreadyUsedException ex) {}
@@ -91,18 +91,28 @@ public class ComponentDescriptor {
     public ContextAttribute addContextAttribute(String name, Class type, String value) {
         ContextAttribute ma = getContextAttributes().get(name);
         
-        if (ma == null) {
-            ma = new ContextAttribute(name, type);
+        // info wenn attribut mit gleichem namen schon existent und dann zum repo adden!!!
+        if (ma != null) {
+            
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Context attribute \"" + name + "\" does already exist. " +
+                    "Please remove or chose a different name!", "Error adding context attribute");
+            return null;
+            
+        } else {
+            ma = new ContextAttribute(name, type, this);
             getContextAttributes().put(name, ma);
         }
         
-        ma.value = value;
+        ma.setValue(value);
         
         return ma;
     }
     
-    public void removeContextAttribute(String attrName) {
-        getContextAttributes().remove(attrName);
+    
+//    !!!!!methode linkattribute einrichten, die registrierung und deregistrierung von attributen übernimmmt
+    
+    public void removeContextAttribute(String name) {
+        getContextAttributes().remove(name);
     }
     
     public void setComponentAttribute(String name, String value) {
@@ -113,6 +123,30 @@ public class ComponentDescriptor {
     }
     
     public void setComponentAttribute(String name, ComponentDescriptor context, String attributeName) {
+        ComponentAttribute var = getComponentAttributes().get(name);
+        if (var != null) {
+            
+            ContextAttribute attr = context.getContextAttributes().get(attributeName);
+            
+            if (attr == null) {
+                if (var.accessType == ComponentAttribute.READ_ACCESS) {
+                    //attribute not existing and read access -- bad!
+                    //System.out.println("no such attribute in component " + this.getName() + "(" + name + "): " + attributeName);
+                    //return;
+                } else {
+                    //attribute not existing but write access -- will create new
+                    //attr = new ModelAttribute(attributeName, var.type);
+                    //context.getModelAttributes().put(attributeName, attr);
+                }
+            }
+            
+            
+            var.context = context;
+            var.attribute = attributeName;
+        }
+    }    
+    
+    public void setComponentAttribute_(String name, ComponentDescriptor context, String attributeName) {
         ComponentAttribute var = getComponentAttributes().get(name);
         if (var != null) {
             
@@ -157,8 +191,8 @@ public class ComponentDescriptor {
         }
         for (String name : contextAttributes.keySet()) {
             ContextAttribute ca = contextAttributes.get(name);
-            ContextAttribute caCopy = new ContextAttribute(ca.name, ca.type);
-            caCopy.value = ca.value;
+            ContextAttribute caCopy = new ContextAttribute(ca.getName(), ca.getType(), ca.getContext());
+            caCopy.setValue(ca.getValue());
             copy.contextAttributes.put(name, caCopy);
         }
         
@@ -206,7 +240,7 @@ public class ComponentDescriptor {
 /*    public void setTree(JAMSTree tree) {
         this.tree = tree;
     }
-*/    
+ */
     public class ComponentAttribute {
         public static final int READ_ACCESS = 0, WRITE_ACCESS = 1, READWRITE_ACCESS = 2;
         public String attribute = "", value = "", name = "";

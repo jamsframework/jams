@@ -25,6 +25,7 @@ package org.unijena.juice;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import org.unijena.juice.tree.ComponentDescriptor;
 
 /**
@@ -33,49 +34,79 @@ import org.unijena.juice.tree.ComponentDescriptor;
  */
 public class DataRepository {
     
-    private HashMap<String, Attribute> attributesByName = new HashMap<String, Attribute>();
+    private HashMap<String, ArrayList<Attribute>> attributesByName = new HashMap<String, ArrayList<Attribute>>();
     private HashMap<Class, ArrayList<Attribute>> attributesByType = new HashMap<Class, ArrayList<Attribute>>();
     
 //    public void addAttribute(String name, Class type, ComponentDescriptor cd) {
-    public void addAttribute(String name, Class type) {
+    public void addAttribute(String name, Class type, ComponentDescriptor cd) {
         
-        if (attributesByName.containsKey(name)) {
-            return;
-        }
+//        if (attributesByName.containsKey(name)) {
+//            return;
+//        }
+
+        Attribute a = new Attribute(name, type, cd);
+        ArrayList<Attribute> attributes;
         
-        Attribute a = new Attribute(name, type);
-        attributesByName.put(name, a);
-        
-        ArrayList<Attribute> attributes = attributesByType.get(type);
+        attributes = attributesByName.get(name);
+        if (attributes == null) {
+            attributes = new ArrayList<Attribute>();
+            attributesByName.put(name, attributes);
+        }        
+        attributes.add(a);
+                
+        attributes = attributesByType.get(type);
         if (attributes == null) {
             attributes = new ArrayList<Attribute>();
             attributesByType.put(type, attributes);
-        }
-        
+        }        
         attributes.add(a);
     }
     
     public void removeAttribute(Attribute attribute) {
-        attributesByName.remove(attribute.name);
+        ArrayList<Attribute> aList;
+        aList = attributesByType.get(attribute.type);
+        aList.remove(attribute);
+        aList = attributesByName.get(attribute.name);
+        aList.remove(attribute);        
     }
-    
+/*    
     public HashMap<String, Attribute> getAttributesByName() {
         return attributesByName;
+    }
+  */  
+
+    public ArrayList<Attribute> getUniqueAttributesByType(Class type) {
+        ArrayList<Attribute> aList = attributesByType.get(type);
+        
+        if (aList == null) {
+            return null;
+        }
+        
+        HashMap<String, Attribute> map = new HashMap<String, Attribute>();
+        for (Attribute a : aList) {
+            map.put(a.name, a);
+        }
+        ArrayList<Attribute> result = new ArrayList<Attribute>();
+        for (Attribute a : map.values()) {
+            result.add(a);
+        }
+        return result;
     }
     
     public ArrayList<Attribute> getAttributesByType(Class type) {
         return attributesByType.get(type);
     }
     
-    
     public class Attribute {
         
         public String name;
         public Class type;
+        public ComponentDescriptor cd;
         
-        public Attribute(String name, Class type) {
+        public Attribute(String name, Class type, ComponentDescriptor cd) {
             this.name = name;
             this.type = type;
+            this.cd = cd;
         }
         
         public String toString() {

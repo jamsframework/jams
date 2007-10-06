@@ -25,8 +25,11 @@ package org.unijena.juice;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
@@ -44,6 +47,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;
 import org.unijena.juice.DataRepository.Attribute;
@@ -60,12 +67,13 @@ public class ComponentAttributePanel extends JPanel {
     private JComboBox contextCombo;
     private InputComponent valueInput;
     private GridBagLayout connectionLayout, infoLayout;
-    private JTextField localNameText, compText, linkText;
+    private JTextField localNameText, compText, linkText, customContextText;
     private JPanel listPanel, infoPanel, valuePanel;
     private ModelView view;
     private Class type;
     private JList attributeList;
     private JToggleButton linkButton, setButton;
+    private ComponentDescriptor.ComponentAttribute var;
     
     
     public ComponentAttributePanel(ModelView view) {
@@ -102,7 +110,8 @@ public class ComponentAttributePanel extends JPanel {
         LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Component:"), 0, 0, 1, 1, 0, 0);
         LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Local name:"), 0, 10, 1, 1, 0, 0);
         LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Linkage:"), 0, 15, 1, 1, 0, 0);
-        LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Value:"), 0, 20, 1, 1, 0, 0);
+        LHelper.addGBComponent(infoPanel, infoLayout, new JPanel(), 0, 17, 1, 1, 0, 0);
+        LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Value:"), 0, 20, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
         
         compText = new JTextField();
         compText.setEditable(false);
@@ -126,17 +135,18 @@ public class ComponentAttributePanel extends JPanel {
         linkButton.setMargin(new Insets(1, 1, 1, 1));
         linkButton.setFocusable(false);
         linkButton.setPreferredSize(new Dimension(30,20));
-        JPanel linkBtnPanel = new JPanel();
-        linkBtnPanel.add(linkButton);
-        LHelper.addGBComponent(infoPanel, infoLayout, linkBtnPanel, 2, 15, 1, 1, 0, 0);
+        linkButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setAttributeLink();
+            }
+        });
+        LHelper.addGBComponent(infoPanel, infoLayout, linkButton, 2, 15, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTH);
         
         setButton = new JToggleButton("SET");
         setButton.setMargin(new Insets(1, 1, 1, 1));
         setButton.setFocusable(false);
         setButton.setPreferredSize(new Dimension(30,20));
-        JPanel setBtnPanel = new JPanel();
-        setBtnPanel.add(setButton);
-        LHelper.addGBComponent(infoPanel, infoLayout, setBtnPanel, 2, 20, 1, 1, 0, 0);
+        LHelper.addGBComponent(infoPanel, infoLayout, setButton, 2, 20, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTH);
         
         
         contextCombo = new JComboBox();
@@ -149,15 +159,58 @@ public class ComponentAttributePanel extends JPanel {
         });
         listPanel.add(contextCombo, BorderLayout.NORTH);
         
+        JPanel customContextPanel = new JPanel();
+        customContextPanel.setLayout(new BoxLayout(customContextPanel, BoxLayout.Y_AXIS));
+        customContextText = new JTextField();
+        customContextText.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                setAttributeLink();
+            }
+            public void insertUpdate(DocumentEvent e) {
+                setAttributeLink();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                setAttributeLink();
+            }
+        });
+        customContextText.setBorder(BorderFactory.createEtchedBorder());
+        
+        //customContextPanel.add(contextCombo);
+        customContextPanel.add(new JLabel("Custom Attribute:"));
+        customContextPanel.add(customContextText);
+        listPanel.add(customContextPanel, BorderLayout.SOUTH);
+        
         attributeList = new JList();
         attributeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane listScroll = new JScrollPane(attributeList);
+        attributeList.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    Object o = attributeList.getSelectedValue();
+                    if (o != null) {
+                        customContextText.setText(o.toString());
+                    } else {
+                        customContextText.setText("");
+                    }
+                }
+            }
+        });
         listPanel.add(listScroll, BorderLayout.CENTER);
         
     }
     
+    private void setAttributeLink() {
+        if (linkButton.isSelected()) {
+            linkText.setText(contextCombo.getSelectedItem() + " -> " + customContextText.getText());
+        } else {
+            linkText.setText("");
+        }
+    }
+    
+    
     public void update(ComponentDescriptor.ComponentAttribute var, String ancestorNames[], ComponentDescriptor component) {
         
+        this.var = var;
         this.type = var.type;
         
         this.contextCombo.setModel(new DefaultComboBoxModel(ancestorNames));
@@ -169,7 +222,6 @@ public class ComponentAttributePanel extends JPanel {
         
         valueInput = LHelper.createInputComponent(var.type.getSimpleName());
         LHelper.addGBComponent(infoPanel, infoLayout, valueInput.getComponent(), 1, 20, 1, 1, 0, 0);
-        //valuePanel.add(valueInput.getComponent());
         localNameText.setText(var.name);
         compText.setText(component.getName());
         
@@ -179,17 +231,33 @@ public class ComponentAttributePanel extends JPanel {
             contextCombo.setSelectedItem(var.context.getName());
             attributeList.setSelectedValue(var.attribute.toString(), true);
             linkText.setText(var.context.getName() + " -> " + var.attribute.toString());
+            linkButton.setSelected(true);
         } else {
             linkText.setText(null);
             attributeList.setModel(new DefaultListModel());
+            linkButton.setSelected(false);
         }
         
+        if (var.accessType == var.READ_ACCESS) {
+            customContextText.setEnabled(true);
+        } else {
+            customContextText.setEnabled(true);
+        }
+        
+        if (var.value != "") {
+            valueInput.getComponent().setEnabled(true);
+            setButton.setSelected(true);
+        } else {
+            valueInput.getComponent().setEnabled(false);
+            setButton.setSelected(false);
+        }
     }
     
     private void updateRepository() {
         
         DataRepository repo = view.getDataRepository(this.getContext());
-        ArrayList<Attribute> attributes = repo.getAttributesByType(type);
+        //ArrayList<Attribute> attributes = repo.getAttributesByType(type);
+        ArrayList<Attribute> attributes = repo.getUniqueAttributesByType(type);
         
         DefaultListModel lModel = new DefaultListModel();
         if (attributes != null) {

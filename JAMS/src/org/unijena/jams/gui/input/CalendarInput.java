@@ -117,7 +117,7 @@ public class CalendarInput extends JPanel implements InputComponent {
         smonth.setBorder(BorderFactory.createEtchedBorder());
         syear.setBorder(BorderFactory.createEtchedBorder());
         shour.setBorder(BorderFactory.createEtchedBorder());
-        sminute.setBorder(BorderFactory.createEtchedBorder());        
+        sminute.setBorder(BorderFactory.createEtchedBorder());
         
     }
     
@@ -175,6 +175,14 @@ public class CalendarInput extends JPanel implements InputComponent {
             
             return (result);
         }
+    }
+    
+    public void setEnabled(boolean enabled) {
+        syear.setEnabled(enabled);
+        smonth.setEnabled(enabled);
+        sday.setEnabled(enabled);
+        shour.setEnabled(enabled);
+        sminute.setEnabled(enabled);
     }
     
     public void setRange(double lower, double upper){};

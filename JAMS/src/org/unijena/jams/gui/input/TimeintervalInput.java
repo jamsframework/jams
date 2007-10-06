@@ -264,6 +264,21 @@ public class TimeintervalInput extends JPanel implements InputComponent {
     
     public void setRange(double lower, double upper){};
     
+    public void setEnabled(boolean enabled) {
+        syear.setEnabled(enabled);
+        smonth.setEnabled(enabled);
+        sday.setEnabled(enabled);
+        shour.setEnabled(enabled);
+        sminute.setEnabled(enabled);
+        eyear.setEnabled(enabled);
+        emonth.setEnabled(enabled);
+        eday.setEnabled(enabled);
+        ehour.setEnabled(enabled);
+        eminute.setEnabled(enabled);
+        timeUnit.setEnabled(enabled);
+        tuCount.setEnabled(enabled);
+    }
+    
     public boolean verify() {
         
 //        JAMSTimeInterval ti = new JAMSTimeInterval();
@@ -274,5 +289,5 @@ public class TimeintervalInput extends JPanel implements InputComponent {
     
     public int getErrorCode() {
         return INPUT_OK;
-    }    
+    }
 }

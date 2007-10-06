@@ -192,8 +192,8 @@ public class ModelPropertyDlg extends JDialog {
                 varCombo.setSelectedItem(property.var.name);
                 type = property.var.type;
             } else if (property.attribute != null) {
-                varCombo.setSelectedItem(property.attribute.name);
-                type = property.attribute.type;
+                varCombo.setSelectedItem(property.attribute.getName());
+                type = property.attribute.getType();
             }
             
             nameField.setText(property.name);

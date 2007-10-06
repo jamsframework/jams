@@ -23,18 +23,68 @@
 
 package org.unijena.juice.tree;
 
+import java.util.HashMap;
+import org.unijena.jams.gui.LHelper;
+import org.unijena.juice.JUICE;
+
 /**
  *
  * @author Sven Kralisch
  */
 public class ContextAttribute {
+    private String name = "";
+    private String value = "";
+    private Class type = null;
+    private ComponentDescriptor context;
     
-    public String name = "", value = "";
-    public Class type = null;
-    
-    public ContextAttribute(String name, Class type) {
+    public ContextAttribute(String name, Class type, ComponentDescriptor context) {
         this.name = name;
         this.type = type;
+        this.context = context;
     }
-
+    
+    private void renameContextAttribute(String newName) {
+        
+        HashMap<String, ContextAttribute> attributes = getContext().getContextAttributes();
+        
+        if (attributes.get(newName) != null) {
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Context attribute \"" + newName + "\" does already exist. " +
+                    "Please remove or chose a different name!", "Error renaming context attribute");
+        } else {
+            attributes.remove(this.name);
+            this.name = newName;
+            attributes.put(newName, this);
+        }
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        if (!this.name.equals(name)) {
+            renameContextAttribute(name);
+        }
+    }
+    
+    public String getValue() {
+        return value;
+    }
+    
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
+    public Class getType() {
+        return type;
+    }
+    
+    public void setType(Class type) {
+        this.type = type;
+    }
+    
+    public ComponentDescriptor getContext() {
+        return context;
+    }
+    
 }

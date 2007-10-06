@@ -41,6 +41,7 @@ public class FileInput extends JPanel implements InputComponent {
     static final int BUTTON_SIZE = 21;
     
     private JTextField textField;
+    private JButton addButton;
     private JFileChooser jfc;
     
     public FileInput(boolean dirsOnly) {
@@ -67,7 +68,7 @@ public class FileInput extends JPanel implements InputComponent {
         add( buttonPanel, BorderLayout.EAST );
         
         
-        JButton addButton = new JButton("...");
+        addButton = new JButton("...");
         addButton.setPreferredSize(new Dimension(BUTTON_SIZE,BUTTON_SIZE));
         addButton.setMargin(new java.awt.Insets(10, 10, 10, 10));
         
@@ -113,6 +114,11 @@ public class FileInput extends JPanel implements InputComponent {
     }
     
     public void setRange(double lower, double upper){};
+    
+    public void setEnabled(boolean enabled) {
+        textField.setEnabled(enabled);
+        addButton.setEnabled(enabled);
+    }
     
     public boolean verify() {
         return true;

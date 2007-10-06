@@ -311,7 +311,7 @@ public class LauncherPanel extends JPanel {
             if (property.var != null) {
                 ic = LHelper.createInputComponent(property.var.type.getSimpleName());
             } else if (property.attribute != null) {
-                ic = LHelper.createInputComponent(property.attribute.type.getSimpleName());
+                ic = LHelper.createInputComponent(property.attribute.getType().getSimpleName());
             } else {
                 ic = LHelper.createInputComponent(JUICE.JAMS_DATA_TYPES[0].getSimpleName());
             }

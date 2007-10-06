@@ -314,16 +314,17 @@ public class ComponentEditPanel extends JPanel {
         
         String componentName = attrNameList.get(selectedAttrRow);
         ContextAttribute attr = componentDescriptor.getContextAttributes().get(componentName);
-        attrEditDlg.show(attr.name, attr.type.getName(), attr.value);
+        attrEditDlg.show(attr.getName(), attr.getType().getName(), attr.getValue());
         
         if (attrEditDlg.getResult() == attrEditDlg.APPROVE_OPTION) {
-            attr.value = attrEditDlg.getValue();
+            attr.setValue(attrEditDlg.getValue());
             try {
-                attr.type = Class.forName(attrEditDlg.getType());
+                attr.setType(Class.forName(attrEditDlg.getType()));
             } catch (ClassNotFoundException ex) {
                 ex.printStackTrace();
             }
-            attr.name = attrEditDlg.getAttributeName();
+            
+            attr.setName(attrEditDlg.getAttributeName());
             this.updateCtxtAttrs();
             attributeTable.setRowSelectionInterval(tmpSelectedAttrRow, tmpSelectedAttrRow);
         }
@@ -455,9 +456,9 @@ public class ComponentEditPanel extends JPanel {
             
             //create a vector with table data from attr properties
             rowData = new Vector<String>();
-            rowData.add(attr.name);
-            rowData.add(attr.type.getSimpleName());
-            rowData.add(attr.value);
+            rowData.add(attr.getName());
+            rowData.add(attr.getType().getSimpleName());
+            rowData.add(attr.getValue());
             
             tableData.add(rowData);
         }

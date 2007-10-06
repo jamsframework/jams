@@ -68,9 +68,10 @@ public class LHelper {
         return cont.add(c);
     }
     
-    public static Component addGBComponent(Container cont, GridBagLayout gbl, Component c, int x, int y, int width, int height, double weightx, double weighty, int fill) {
+    public static Component addGBComponent(Container cont, GridBagLayout gbl, Component c, int x, int y, int width, int height, double weightx, double weighty, int fill, int anchor) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = fill;
+        gbc.anchor = anchor;
         gbc.insets = new Insets(0, 2, 2, 2);
         gbc.gridx = x; gbc.gridy = y;
         gbc.gridwidth = width; gbc.gridheight = height;
