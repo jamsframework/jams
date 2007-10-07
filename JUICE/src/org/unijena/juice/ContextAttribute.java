@@ -21,11 +21,11 @@
  *
  */
 
-package org.unijena.juice.tree;
+package org.unijena.juice;
 
 import java.util.HashMap;
 import org.unijena.jams.gui.LHelper;
-import org.unijena.juice.JUICE;
+import org.unijena.juice.gui.tree.*;
 
 /**
  *
@@ -36,11 +36,14 @@ public class ContextAttribute {
     private String value = "";
     private Class type = null;
     private ComponentDescriptor context;
+//    public ComponentDescriptor component;
+    
     
     public ContextAttribute(String name, Class type, ComponentDescriptor context) {
         this.name = name;
         this.type = type;
         this.context = context;
+//        this.component = component;
     }
     
     private void renameContextAttribute(String newName) {
@@ -86,5 +89,9 @@ public class ContextAttribute {
     public ComponentDescriptor getContext() {
         return context;
     }
-    
+
+    public String toString() {
+        return name;
+    }
+        
 }

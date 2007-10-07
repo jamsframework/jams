@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.juice;
+package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -45,6 +45,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;
+import org.unijena.juice.*;
 import org.unijena.juice.ModelProperties.ModelProperty;
 
 /**

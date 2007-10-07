@@ -1,4 +1,4 @@
-package org.unijena.juice.tree;
+package org.unijena.juice.gui.tree;
 
 import java.awt.datatransfer.*;
 import java.util.*;

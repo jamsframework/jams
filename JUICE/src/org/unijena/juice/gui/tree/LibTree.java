@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.juice.tree;
+package org.unijena.juice.gui.tree;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -47,7 +47,8 @@ import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.model.JAMSComponent;
 import org.unijena.jams.model.JAMSComponentDescription;
 import org.unijena.jams.model.JAMSContext;
-import org.unijena.juice.ComponentInfoPanel;
+import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.gui.ComponentInfoPanel;
 import org.unijena.juice.JUICE;
 
 /**

@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.juice;
+package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -50,9 +50,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import org.unijena.jams.gui.LHelper;
-import org.unijena.juice.tree.ComponentDescriptor;
-import org.unijena.juice.tree.JAMSNode;
-import org.unijena.juice.tree.ContextAttribute;
+import org.unijena.juice.*;
+import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.gui.tree.JAMSNode;
+import org.unijena.juice.ContextAttribute;
 
 /**
  *
@@ -395,11 +396,12 @@ public class ComponentEditPanel extends JPanel {
         if (varEditDlg.getResult() == ComponentAttributeDlg.APPROVE_OPTION) {
             if ((varEditDlg.getAttributeName().equals("") && varEditDlg.getContext() == null) ||
                     (!varEditDlg.getAttributeName().equals("") && varEditDlg.getContext() != null)) {
-                var.attribute = varEditDlg.getAttributeName();
-                //var.context = view.getComponentDescriptor(varEditDlg.getContext());
-                var.context = varEditDlg.getContext();
+                
+                componentDescriptor.linkComponentAttribute(attributeName, varEditDlg.getContext(), varEditDlg.getAttributeName());
+                
             }
-            var.value = varEditDlg.getValue();
+            componentDescriptor.setComponentAttribute(attributeName, varEditDlg.getValue());
+            
             this.updateCmpAttrs();
             varTable.setRowSelectionInterval(tmpSelectedVarRow, tmpSelectedVarRow);
         }
@@ -409,9 +411,11 @@ public class ComponentEditPanel extends JPanel {
         int tmpSelectedVarRow = selectedVarRow;
         String componentName = varNameList.get(selectedVarRow);
         ComponentDescriptor.ComponentAttribute var = componentDescriptor.getComponentAttributes().get(componentName);
+/*
         var.value = "";
         var.context = null;
         var.attribute = "";
+ */
         this.updateCmpAttrs();
         varTable.setRowSelectionInterval(tmpSelectedVarRow, tmpSelectedVarRow);
     }
@@ -500,13 +504,13 @@ public class ComponentEditPanel extends JPanel {
             
             rowData.add(accessType);
             
-            if (!var.attribute.equals("")) {
-                rowData.add(var.context+"."+var.attribute);
+            if (!var.getAttribute().equals("")) {
+                rowData.add(var.getContext()+"."+var.getAttribute());
             } else {
                 rowData.add("");
             }
             
-            rowData.add(var.value);
+            rowData.add(var.getValue());
             
             tableData.add(rowData);
         }

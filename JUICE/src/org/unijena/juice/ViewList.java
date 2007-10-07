@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 import javax.swing.JInternalFrame;
+import org.unijena.juice.gui.ModelView;
 
 /**
  *

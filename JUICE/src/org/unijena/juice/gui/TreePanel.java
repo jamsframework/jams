@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.juice;
+package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -35,8 +35,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.tree.TreePath;
 import org.unijena.jams.gui.LHelper;
-import org.unijena.juice.tree.JAMSNode;
-import org.unijena.juice.tree.JAMSTree;
+import org.unijena.juice.*;
+import org.unijena.juice.gui.tree.JAMSNode;
+import org.unijena.juice.gui.tree.JAMSTree;
 
 /**
  *

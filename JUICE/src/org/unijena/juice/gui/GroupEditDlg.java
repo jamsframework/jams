@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.juice;
+package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -41,6 +41,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.WindowConstants;
 import org.unijena.jams.gui.LHelper;
+import org.unijena.juice.*;
 
 /**
  *

@@ -1,6 +1,6 @@
 /*
- * VarEditDlg.java
- * Created on 3. Januar 2007, 22:53
+ * AttributeEditDlg.java
+ * Created on 12. Januar 2007, 11:41
  *
  * This file is part of JAMS
  * Copyright (C) 2006 FSU Jena
@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.juice;
+package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -32,9 +32,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -47,74 +45,69 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;
-import org.unijena.juice.DataRepository.Attribute;
-import org.unijena.juice.tree.ComponentDescriptor;
+import org.unijena.juice.*;
 
 /**
  *
  * @author S. Kralisch
- *
- * Dialog with swing inputs for providing a component's attribute value
- * or linkage to a context attribute
- *
  */
-public class ComponentAttributeDlg extends JDialog {
+public class ContextAttributeDlg extends JDialog {
     
     public static final int APPROVE_OPTION = 1;
     public static final int CANCEL_OPTION = 0;
     
     private int result = CANCEL_OPTION;
-    private JComboBox contextCombo;
-    private JTextField varNameText;
-    private JComboBox varNameCombo;
+    private JTextField nameText;
+    private JComboBox typeCombo;
     private InputComponent valueInput;
+    private JPanel mainPanel;
     private GridBagLayout mainLayout;
-    private JPanel mainPanel, valuePanel;
-    private ModelView view;
-    private Class type;
     
     /**
-     * Creates a new instance of VarEditDlg
+     * Creates a new instance of AttributeEditDlg
      */
-    public ComponentAttributeDlg(Frame owner, ModelView view) {
+    public ContextAttributeDlg(Frame owner) {
         
         super(owner);
         this.setLayout(new BorderLayout());
         this.setLocationRelativeTo(owner);
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setModal(true);
-        
-        this.view = view;
-        
+                
         mainLayout = new GridBagLayout();
         mainPanel = new JPanel();
         mainPanel.setLayout(mainLayout);
         
         LHelper.addGBComponent(mainPanel, mainLayout, new JPanel(), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel("Context.Attribute:"), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel("Value:"), 0, 2, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel("Name:"), 0, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel("Type:"), 0, 2, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel("Value:"), 0, 3, 1, 1, 0, 0);
         
-        contextCombo = new JComboBox();
-        LHelper.addGBComponent(mainPanel, mainLayout, contextCombo, 1, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel("."), 2, 1, 1, 1, 0, 0);
-        contextCombo.addItemListener(new ItemListener(){
+        nameText = new JTextField();
+        nameText.setColumns(40);
+        valueInput = LHelper.createInputComponent("");
+        
+        typeCombo = new JComboBox();
+        
+        String[] typeNames = new String[JUICE.JAMS_DATA_TYPES.length];
+        for (int i = 0; i < JUICE.JAMS_DATA_TYPES.length; i++) {
+            typeNames[i] = JUICE.JAMS_DATA_TYPES[i].getName();
+        }
+        typeCombo.setModel(new DefaultComboBoxModel(typeNames));
+        
+        typeCombo.addItemListener(new ItemListener(){
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    updateRepository();
+                    updateInputComponent(e.getItem(), true);
                 }
             }
         });
         
-        varNameText = new JTextField();
-        varNameText.setColumns(20);
-        LHelper.addGBComponent(mainPanel, mainLayout, varNameText, 3, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, nameText, 1, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, typeCombo, 1, 2, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, valueInput.getComponent(), 1, 3, 1, 1, 0, 0);
         
-        varNameCombo = new JComboBox();
-        varNameCombo.setEditable(true);
-//        LHelper.addGBComponent(mainPanel, mainLayout, varNameCombo, 3, 1, 1, 1, 0, 0);
-        
-        
-        LHelper.addGBComponent(mainPanel, mainLayout, new JPanel(), 0, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, new JPanel(), 0, 4, 1, 1, 0, 0);
         
         this.getContentPane().add(new JScrollPane(mainPanel), BorderLayout.CENTER);
         
@@ -124,10 +117,10 @@ public class ComponentAttributeDlg extends JDialog {
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 
-                if (!valueInput.getValue().equals("") && !valueInput.verify()) {
+                if (!valueInput.verify()) {
                     Color oldColor = valueInput.getComponent().getBackground();
                     valueInput.getComponent().setBackground(new Color(255, 0, 0));
-                    LHelper.showErrorDlg(ComponentAttributeDlg.this, "Invalid data format!", "Format error");
+                    LHelper.showErrorDlg(ContextAttributeDlg.this, "Invalid data format!", "Format error");
                     valueInput.getComponent().setBackground(oldColor);
                     return;
                 }
@@ -148,74 +141,55 @@ public class ComponentAttributeDlg extends JDialog {
         cancelButton.addActionListener(cancelActionListener);
         cancelButton.registerKeyboardAction(cancelActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JButton.WHEN_IN_FOCUSED_WINDOW);
         buttonPanel.add(cancelButton);
-        
+
         this.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
     }
     
-    private void updateRepository() {
+    private void updateInputComponent(Object type, boolean doUpdate) {
         
-        DataRepository repo = view.getDataRepository(this.getContext());
-        ArrayList<Attribute> attributes = repo.getAttributesByType(type);
+        String shortType = (String) type;
+        String oldValue = "";
         
-        String[] attrNames = {""};
-        
-        if (attributes != null) {
-            
-            //sort the list
-            Collections.sort(attributes, new Comparator<Attribute>() {
-                public int compare(Attribute a1, Attribute a2) {
-                    return a1.toString().compareTo(a2.toString());
-                }
-            });
-            
-            attrNames = new String[attributes.size()];
-            for (int i = 0; i < attributes.size(); i++) {
-                attrNames[i] = attributes.get(i).toString();
-            }
+        StringTokenizer tok = new StringTokenizer(shortType, ".");
+        while (tok.hasMoreTokens()) {
+            shortType = tok.nextToken();
         }
-        
-        varNameCombo.setModel(new DefaultComboBoxModel(attrNames));
-        
-    }
-    
-    public void show(ComponentDescriptor.ComponentAttribute var, String ancestorNames[]) {
-        
-        this.setTitle("Variable: " + var.name);
-        
-        this.type = var.type;
-        
-        contextCombo.setModel(new DefaultComboBoxModel(ancestorNames));
-        
         if (valueInput != null) {
             LHelper.removeGBComponent(mainPanel, valueInput.getComponent());
+            oldValue = valueInput.getValue();
         }
-        valueInput = LHelper.createInputComponent(var.type.getSimpleName());
-        LHelper.addGBComponent(mainPanel, mainLayout, valueInput.getComponent(), 1, 2, 3, 1, 0, 0);
+        valueInput = LHelper.createInputComponent(shortType);
         
-        this.valueInput.setValue(var.value);
-        
-        this.varNameText.setText(var.attribute);
-        if (var.context != null) {
-            this.contextCombo.setSelectedItem(var.context.getName());
-            this.varNameCombo.setSelectedItem(var.attribute);
+        if (doUpdate) {
+            valueInput.setValue(oldValue);
         }
+        LHelper.addGBComponent(mainPanel, mainLayout, valueInput.getComponent(), 1, 3, 1, 1, 0, 0);
         
+        pack();
+    }
+    
+    public void show(String name, String type, String value) {
+        
+        this.setTitle("Attribute: " + name);
+        updateInputComponent(type, false);
+        this.valueInput.setValue(value);
+        this.typeCombo.setSelectedItem(type);
+        this.nameText.setText(name);
         
         pack();
         this.setVisible(true);
     }
     
-    public ComponentDescriptor getContext() {
-        return view.getComponentDescriptor((String) contextCombo.getSelectedItem());
-    }
-    
     public String getAttributeName() {
-        return varNameText.getText();
-        //return varNameCombo.getSelectedItem().toString();
+        return nameText.getText();
     }
     
     public String getValue() {
         return valueInput.getValue();
+    }
+    
+    public String getType() {
+        return (String) typeCombo.getSelectedItem();
     }
     
     public int getResult() {

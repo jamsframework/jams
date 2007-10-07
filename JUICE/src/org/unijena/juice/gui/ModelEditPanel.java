@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.juice;
+package org.unijena.juice.gui;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -35,6 +35,7 @@ import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.unijena.jams.gui.LHelper;
+import org.unijena.juice.*;
 
 /**
  *

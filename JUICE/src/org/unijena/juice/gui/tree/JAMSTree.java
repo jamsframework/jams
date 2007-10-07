@@ -21,12 +21,13 @@
  *
  */
 
-package org.unijena.juice.tree;
+package org.unijena.juice.gui.tree;
 
 import java.util.*;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
+import org.unijena.juice.ComponentDescriptor;
 
 public class JAMSTree extends JTree {
     

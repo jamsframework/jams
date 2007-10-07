@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.juice;
+package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -46,9 +46,10 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.FloatInput;
+import org.unijena.juice.*;
 import org.unijena.juice.ModelProperties.ModelProperty;
-import org.unijena.juice.tree.ComponentDescriptor;
-import org.unijena.juice.tree.ContextAttribute;
+import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.ContextAttribute;
 
 /**
  *

@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.juice;
+package org.unijena.juice.gui;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -33,6 +33,7 @@ import javax.swing.text.SimpleAttributeSet;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.model.JAMSComponentDescription;
 import org.unijena.jams.model.JAMSVarDescription;
+import org.unijena.juice.*;
 
 /**
  *

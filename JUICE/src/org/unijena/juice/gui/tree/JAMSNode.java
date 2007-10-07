@@ -21,12 +21,13 @@
  *
  */
 
-package org.unijena.juice.tree;
+package org.unijena.juice.gui.tree;
 
 import java.awt.Image;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.tree.DefaultMutableTreeNode;
+import org.unijena.juice.ComponentDescriptor;
 
 /**
  *

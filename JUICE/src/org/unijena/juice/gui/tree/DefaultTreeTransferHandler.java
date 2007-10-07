@@ -1,4 +1,4 @@
-package org.unijena.juice.tree;
+package org.unijena.juice.gui.tree;
 import java.awt.*;
 import java.util.Collections;
 import javax.swing.tree.*;
@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 import org.unijena.jams.model.JAMSContext;
-import org.unijena.juice.ContextReplaceDlg;
+import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.gui.ContextReplaceDlg;
 import org.unijena.juice.JUICE;
 
 public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
@@ -146,8 +147,8 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             }
             
             for (ComponentDescriptor.ComponentAttribute var : cd.getComponentAttributes().values()) {
-                if (var.context != null) {
-                    String contextName = var.context.getName();
+                if (var.getContext() != null) {
+                    String contextName = var.getContext().getName();
                     if (!contexts.contains(contextName)) {
                         HashSet<ComponentDescriptor> components = pendingContexts.get(contextName);
                         if (components == null) {
@@ -199,10 +200,13 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             for (ComponentDescriptor component : components) {
                 //iterate over all vars
                 for (ComponentDescriptor.ComponentAttribute var : component.getComponentAttributes().values()) {
-                    if (var.context != null) {
+                    if (var.getContext() != null) {
                         //again select vars that reference this pending context and connect to new (selected) context
-                        if (var.context.getName().equals(oldContextName)) {
-                            var.context = newContext;
+                        if (var.getContext().getName().equals(oldContextName)) {
+                            
+                            component.linkComponentAttribute(var.name, newContext, var.getAttribute());
+                            
+                            //var.context = newContext;
                         }
                     }
                 }

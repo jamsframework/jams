@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.juice;
+package org.unijena.juice.gui;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -39,7 +39,9 @@ import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.LogViewDlg;
 import org.unijena.jams.gui.PropertyDlg;
 import org.unijena.jams.io.XMLIO;
-import org.unijena.juice.tree.*;
+import org.unijena.juice.*;
+import org.unijena.juice.gui.tree.LibTree;
+import org.unijena.juice.gui.tree.ModelTree;
 import org.w3c.dom.Document;
 
 /**

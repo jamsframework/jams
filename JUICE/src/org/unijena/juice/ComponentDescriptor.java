@@ -21,15 +21,14 @@
  *
  */
 
-package org.unijena.juice.tree;
+package org.unijena.juice;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.model.JAMSVarDescription;
-import org.unijena.juice.JUICE;
-import org.unijena.juice.JUICEException;
-import org.unijena.juice.ModelView;
+import org.unijena.juice.gui.ModelView;
+import org.unijena.juice.gui.tree.*;
 
 /**
  *
@@ -42,6 +41,7 @@ public class ComponentDescriptor {
     private JAMSTree tree;
     private HashMap<String, ComponentAttribute> cVars = new HashMap<String, ComponentAttribute>();
     private HashMap<String, ContextAttribute> contextAttributes = new HashMap<String, ContextAttribute>();
+    private AttributeRepository dataRepository;
     
     public ComponentDescriptor(String instanceName, Class clazz, JAMSTree tree) {
         if (clazz == null) {
@@ -55,6 +55,7 @@ public class ComponentDescriptor {
         } catch (JUICEException.NameAlreadyUsedException ex) {}
         
         init();
+        dataRepository = new AttributeRepository(this);
     }
     
     public ComponentDescriptor(Class clazz, JAMSTree tree) {
@@ -122,57 +123,41 @@ public class ComponentDescriptor {
         }
     }
     
-    public void setComponentAttribute(String name, ComponentDescriptor context, String attributeName) {
-        ComponentAttribute var = getComponentAttributes().get(name);
-        if (var != null) {
+    public void linkComponentAttribute(String name, ComponentDescriptor context, String attributeName) {
+        
+        ComponentAttribute ca = getComponentAttributes().get(name);
+        
+        if (ca != null) {
             
-            ContextAttribute attr = context.getContextAttributes().get(attributeName);
+            ContextAttribute a = new ContextAttribute(attributeName, ca.type, context);
             
-            if (attr == null) {
-                if (var.accessType == ComponentAttribute.READ_ACCESS) {
-                    //attribute not existing and read access -- bad!
-                    //System.out.println("no such attribute in component " + this.getName() + "(" + name + "): " + attributeName);
-                    //return;
-                } else {
-                    //attribute not existing but write access -- will create new
-                    //attr = new ModelAttribute(attributeName, var.type);
-                    //context.getModelAttributes().put(attributeName, attr);
+            // if access is W or R/W (not R), then the component authomatically
+            // creates a new context attribute which is registered at the
+            // contexts attribute repository in order to be accessed by
+            // other components
+            if (ca.accessType != ComponentAttribute.READ_ACCESS) {
+                
+                // check if component attribute has been linked before
+                // and unlink if thats the case
+                if (ca.getContext() != null) {
+                    AttributeRepository oldRepo = ca.getContext().getDataRepository();
+                    oldRepo.removeAttribute(ca.getContextAttribute());
                 }
+                
+                AttributeRepository newRepo = context.getDataRepository();
+                newRepo.addAttribute(a);
             }
             
-            
-            var.context = context;
-            var.attribute = attributeName;
-        }
-    }    
-    
-    public void setComponentAttribute_(String name, ComponentDescriptor context, String attributeName) {
-        ComponentAttribute var = getComponentAttributes().get(name);
-        if (var != null) {
-            
-            ContextAttribute attr = context.getContextAttributes().get(attributeName);
-            
-            if (attr == null) {
-                if (var.accessType == ComponentAttribute.READ_ACCESS) {
-                    //attribute not existing and read access -- bad!
-                    //System.out.println("no such attribute in component " + this.getName() + "(" + name + "): " + attributeName);
-                    //return;
-                } else {
-                    //attribute not existing but write access -- will create new
-                    //attr = new ModelAttribute(attributeName, var.type);
-                    //context.getModelAttributes().put(attributeName, attr);
-                }
-            }
-            
-            
-            var.context = context;
-            var.attribute = attributeName;
+            // finally, set the component attributes context and context attribute
+            ca.setContextAttribute(a);
+            //ca.context = context;
+            //ca.attribute = attributeName;
         }
     }
     
     public void outputUnsetAttributes() {
         for (ComponentAttribute ad : getComponentAttributes().values()) {
-            if (ad.attribute == null && ad.context == null && ad.value == null) {
+            if (ad.getAttribute() == null && ad.getContext() == null && ad.getValue() == null) {
                 System.out.println("Attribute " + ad.name + " (" + ad.type + ") not set in component " + getName());
             }
         }
@@ -184,9 +169,9 @@ public class ComponentDescriptor {
         for (String name : cVars.keySet()) {
             ComponentAttribute ca = cVars.get(name);
             ComponentAttribute caCopy = new ComponentAttribute(ca.name, ca.type, ca.accessType);
-            caCopy.context = ca.context;
-            caCopy.attribute = ca.attribute;
-            caCopy.value = ca.value;
+            //caCopy.context = ca.getContext();
+            //caCopy.attribute = ca.getAttribute();
+            caCopy.value = ca.getValue();
             copy.cVars.put(name, caCopy);
         }
         for (String name : contextAttributes.keySet()) {
@@ -242,16 +227,55 @@ public class ComponentDescriptor {
     }
  */
     public class ComponentAttribute {
+        
         public static final int READ_ACCESS = 0, WRITE_ACCESS = 1, READWRITE_ACCESS = 2;
-        public String attribute = "", value = "", name = "";
+        private String value = "";
+        public String name = "";
         public Class type = null;
         public int accessType;
-        public ComponentDescriptor context;
+        //private String attribute = "";
+        //private ComponentDescriptor context;
+        private ContextAttribute contextAttribute;
+        
         public ComponentAttribute(String name, Class type, int accessType) {
             this.name = name;
             this.type = type;
             this.accessType = accessType;
         }
+        
+        public String getAttribute() {
+            //return attribute;
+            if (contextAttribute != null) {
+                return contextAttribute.getName();
+            } else {
+                return "";
+            }
+        }
+        
+        public ComponentDescriptor getContext() {
+            //return context;
+            if (contextAttribute != null) {
+                return contextAttribute.getContext();
+            } else {
+                return null;
+            }
+        }
+        
+        public String getValue() {
+            return value;
+        }
+        
+        public ContextAttribute getContextAttribute() {
+            return contextAttribute;
+        }
+        
+        public void setContextAttribute(ContextAttribute contextAttribute) {
+            this.contextAttribute = contextAttribute;
+        }
+    }
+    
+    public AttributeRepository getDataRepository() {
+        return dataRepository;
     }
 }
 

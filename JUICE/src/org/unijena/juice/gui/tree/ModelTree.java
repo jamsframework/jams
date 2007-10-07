@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.juice.tree;
+package org.unijena.juice.gui.tree;
 
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
@@ -47,11 +47,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.unijena.jams.gui.LHelper;
+import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.ContextAttribute;
 import org.unijena.juice.JUICE;
 import org.unijena.juice.JUICEException;
 import org.unijena.juice.ModelProperties;
 import org.unijena.juice.ModelProperties.ModelProperty;
-import org.unijena.juice.ModelView;
+import org.unijena.juice.gui.ModelView;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -391,16 +393,16 @@ public class ModelTree extends JAMSTree {
         }
         
         for (ComponentDescriptor.ComponentAttribute var : cd.getComponentAttributes().values()) {
-            if (!var.value.equals("") || ((var.context != null) && !var.attribute.equals(""))) {
+            if (!var.getValue().equals("") || ((var.getContext() != null) && !var.getAttribute().equals(""))) {
                 
                 element = document.createElement("var");
                 element.setAttribute("name", var.name);
-                if (!var.attribute.equals("")) {
-                    element.setAttribute("attribute", var.attribute);
-                    element.setAttribute("context", var.context.getName());
+                if (!var.getAttribute().equals("")) {
+                    element.setAttribute("attribute", var.getAttribute());
+                    element.setAttribute("context", var.getContext().getName());
                 }
-                if (!var.value.equals("")) {
-                    element.setAttribute("value", var.value);
+                if (!var.getValue().equals("")) {
+                    element.setAttribute("value", var.getValue());
                 }
                 
                 rootElement.appendChild(element);
@@ -509,7 +511,7 @@ public class ModelTree extends JAMSTree {
                 }
                 
             } else if (node.getNodeName() == "attribute") {
-                addAttr(cd, (Element) node);
+                addContextAttribute(cd, (Element) node);
             }
         }
         
@@ -631,7 +633,7 @@ public class ModelTree extends JAMSTree {
                     
                 } else if (node.getNodeName() == "attribute") {
                     
-                    addAttr(cd, (Element) node);
+                    addContextAttribute(cd, (Element) node);
                     
                 }
             }
@@ -642,14 +644,14 @@ public class ModelTree extends JAMSTree {
         return rootNode;
     }
     
-    private void addAttr(ComponentDescriptor cd, Element e) {
+    private void addContextAttribute(ComponentDescriptor cd, Element e) {
         try {
             String attribute = e.getAttribute("name");
             String typeName = e.getAttribute("class");
             Class type = Class.forName(typeName);
             String value = e.getAttribute("value");
             cd.addContextAttribute(attribute, type, value);
-            this.getView().getDataRepository(cd).addAttribute(attribute, type, cd);
+            cd.getDataRepository().addAttribute(new ContextAttribute(attribute, type, cd));
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -668,7 +670,7 @@ public class ModelTree extends JAMSTree {
             String attribute = e.getAttribute("attribute");
             
             try {
-                cd.setComponentAttribute(name, view.getComponentDescriptor(context), attribute);
+                cd.linkComponentAttribute(name, view.getComponentDescriptor(context), attribute);
             } catch (NullPointerException ex) {
                 LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component \"" + cd.getName() +
                         "\": context \"" + context + "\" does not exist!", "Model loading error");
@@ -677,7 +679,7 @@ public class ModelTree extends JAMSTree {
             try {
                 if (cd.getComponentAttributes().get(name).accessType != ComponentDescriptor.ComponentAttribute.READ_ACCESS) {
                     Class attributeType = cd.getComponentAttributes().get(name).type;
-                    this.getView().getDataRepository(view.getComponentDescriptor(context)).addAttribute(attribute, attributeType, cd);
+                    view.getComponentDescriptor(context).getDataRepository().addAttribute(new ContextAttribute(attribute, attributeType, view.getComponentDescriptor(context)));
                 }
             } catch (NullPointerException ex) {
                 LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component \"" + cd.getName() +

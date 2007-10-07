@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.juice;
+package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -53,8 +53,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;
-import org.unijena.juice.DataRepository.Attribute;
-import org.unijena.juice.tree.ComponentDescriptor;
+import org.unijena.juice.*;
+import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.ContextAttribute;
 
 /**
  *
@@ -225,12 +226,12 @@ public class ComponentAttributePanel extends JPanel {
         localNameText.setText(var.name);
         compText.setText(component.getName());
         
-        this.valueInput.setValue(var.value);
+        this.valueInput.setValue(var.getValue());
         
-        if (var.context != null) {
-            contextCombo.setSelectedItem(var.context.getName());
-            attributeList.setSelectedValue(var.attribute.toString(), true);
-            linkText.setText(var.context.getName() + " -> " + var.attribute.toString());
+        if (var.getContext() != null) {
+            contextCombo.setSelectedItem(var.getContext().getName());
+            attributeList.setSelectedValue(var.getAttribute().toString(), true);
+            linkText.setText(var.getContext().getName() + " -> " + var.getAttribute().toString());
             linkButton.setSelected(true);
         } else {
             linkText.setText(null);
@@ -244,7 +245,7 @@ public class ComponentAttributePanel extends JPanel {
             customContextText.setEnabled(true);
         }
         
-        if (var.value != "") {
+        if (var.getValue() != "") {
             valueInput.getComponent().setEnabled(true);
             setButton.setSelected(true);
         } else {
@@ -255,16 +256,16 @@ public class ComponentAttributePanel extends JPanel {
     
     private void updateRepository() {
         
-        DataRepository repo = view.getDataRepository(this.getContext());
+        AttributeRepository repo = this.getContext().getDataRepository();
         //ArrayList<Attribute> attributes = repo.getAttributesByType(type);
-        ArrayList<Attribute> attributes = repo.getUniqueAttributesByType(type);
+        ArrayList<ContextAttribute> attributes = repo.getUniqueAttributesByType(type);
         
         DefaultListModel lModel = new DefaultListModel();
         if (attributes != null) {
             
             //sort the list
-            Collections.sort(attributes, new Comparator<Attribute>() {
-                public int compare(Attribute a1, Attribute a2) {
+            Collections.sort(attributes, new Comparator<ContextAttribute>() {
+                public int compare(ContextAttribute a1, ContextAttribute a2) {
                     return a1.toString().compareTo(a2.toString());
                 }
             });

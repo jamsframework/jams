@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.juice;
+package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -54,8 +54,9 @@ import org.unijena.jams.gui.WorkerDlg;
 import org.unijena.jams.io.XMLIO;
 import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
-import org.unijena.juice.tree.ComponentDescriptor;
-import org.unijena.juice.tree.ModelTree;
+import org.unijena.juice.*;
+import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.gui.tree.ModelTree;
 import org.w3c.dom.Document;
 
 /**
@@ -74,7 +75,7 @@ public class ModelView {
     private JButton modelRunButton;
     private ModelTree tree;
     private ComponentEditPanel compEditPanel;
-    private HashMap<ComponentDescriptor, DataRepository> dataRepositories = new HashMap<ComponentDescriptor, DataRepository>();
+    //private HashMap<ComponentDescriptor, DataRepository> dataRepositories = new HashMap<ComponentDescriptor, DataRepository>();
     private LauncherPanel launcherPanel;
     private ModelEditPanel modelEditPanel;
     private String author;
@@ -458,10 +459,11 @@ public class ModelView {
         this.compEditPanel = compEditPanel;
     }
 
+    /*
     public DataRepository getDataRepository(ComponentDescriptor context) {
         DataRepository repo = dataRepositories.get(context);
         if (repo == null) {
-            repo = new DataRepository();
+            repo = new DataRepository(context);
             dataRepositories.put(context, repo);
         }
         return repo;
@@ -470,6 +472,7 @@ public class ModelView {
     public HashMap<ComponentDescriptor, DataRepository> getDataRepositories() {
         return dataRepositories;
     }
+     */
 
     public String getAuthor() {
         return author;
