@@ -43,6 +43,8 @@ public class CTSViewer extends JDialog{
     public CTSViewer(Frame parent) {
         super(parent, "JAMS CTS Viewer");
         this.parent = parent;
+        
+        setResizable(false);
         showCTSViewer();
     }
     

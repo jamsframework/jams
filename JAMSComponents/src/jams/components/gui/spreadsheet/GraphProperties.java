@@ -55,7 +55,7 @@ import org.unijena.jams.model.JAMSGUIComponent;
 import org.unijena.jams.model.JAMSVarDescription;
 
 
-public class GraphProperties extends JDialog {
+public class GraphProperties {
     
     JTable table;
     
@@ -78,15 +78,16 @@ public class GraphProperties extends JDialog {
     JComboBox typechoice;
     JComboBox poschoice;
     
-    JComboBox setColumn1;
-    JComboBox colorchoice1;
-    JComboBox typechoice1;
-    JComboBox poschoice1;
+    JComboBox timechoice_START;
+    JComboBox timechoice_END;
     
+    JButton addButton;
+    JButton remButton;
+    JButton plotButton;
+    JButton upButton;
+    JButton downButton;
+
     JLabel nameLabel;
-    JLabel colorLabel;
-    JLabel typeLabel;
-    JLabel posLabel;
     
     JTextField setName;
     JTextField setLegend;
@@ -96,11 +97,8 @@ public class GraphProperties extends JDialog {
     private String[] positions = {"left","right"};
     
     JPanel graphpanel = new JPanel();
-    JPanel selectColPanel = new JPanel();
     JPanel datapanel = new JPanel();
     JPanel buttonpanel = new JPanel();
-    
-    HashMap<String, Color> colorTable = new HashMap<String, Color>();
     
     
     
@@ -112,20 +110,8 @@ public class GraphProperties extends JDialog {
         //super(parent, "Select Properties");
         //this.parent = parent;
         //setLayout(new FlowLayout());
-        //Point parentloc = parent.getLocation();
+        Point parentloc = parent.getLocation();
         //setLocation(parentloc.x + 30, parentloc.y + 30);
-        
-        colorTable.put("yellow", Color.yellow);
-        colorTable.put("orange", Color.orange);
-        colorTable.put("red", Color.red);
-        colorTable.put("pink", Color.pink);
-        colorTable.put("magenta", Color.magenta);
-        colorTable.put("cyan", Color.cyan);
-        colorTable.put("blue", Color.blue);
-        colorTable.put("green", Color.green);
-        colorTable.put("gray", Color.gray);
-        colorTable.put("lightgray", Color.lightGray);
-        colorTable.put("black", Color.black);
         
         this.table = table;
         this.color = "red";
@@ -142,49 +128,66 @@ public class GraphProperties extends JDialog {
         namePanel.setLayout(new FlowLayout());
         JPanel legendPanel = new JPanel();
         legendPanel.setLayout(new FlowLayout());
-        selectColPanel.setLayout(new FlowLayout());
+        
+        addButton = new JButton("+");
+        remButton = new JButton("-");
+        plotButton = new JButton("p");
+        upButton = new JButton("<");
+        downButton = new JButton(">");
+        
+        addButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        addButton.setPreferredSize(new Dimension(20,14));
+        remButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        remButton.setPreferredSize(new Dimension(20,14));
+        upButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        upButton.setPreferredSize(new Dimension(20,14));
+        plotButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        plotButton.setPreferredSize(new Dimension(20,14));
+        downButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        downButton.setPreferredSize(new Dimension(20,14));
         
         colorchoice = new JComboBox(colors);
         colorchoice.setSelectedIndex(0);
+        colorchoice.addActionListener(okListener);
+        
         typechoice = new JComboBox(types);
         typechoice.setSelectedIndex(0);
+        typechoice.addActionListener(okListener);
+        
         poschoice = new JComboBox(positions);
         poschoice.setSelectedIndex(0);
-        
-        colorchoice1 = colorchoice;
-        typechoice1 = typechoice;
-        poschoice1 = poschoice;
-                
+        poschoice.addActionListener(okListener);
+       
         JButton okButton = new JButton("OK");
         JButton cancelButton = new JButton("CANCEL");
-        JButton propButton = new JButton("...");
+        //JButton propButton = new JButton("...");
 
         //JLabel namelabel = new JLabel();
         JLabel setNameLabel =   new JLabel("        Name:");
         JLabel setColumnLabel = new JLabel("  Set Column:");
         JLabel setLegendLabel = new JLabel("Legend Entry:");
         nameLabel = new JLabel();
-        colorLabel = new JLabel();
-        typeLabel = new JLabel();
-        posLabel = new JLabel();
-        
-        nameLabel.setBackground(Color.WHITE);
-        colorLabel.setBackground(Color.WHITE);
-        typeLabel.setBackground(Color.WHITE);
-        posLabel.setBackground(Color.WHITE);
 
 //        JTextField setName = new JTextField("Plot Name", 14);
 //        JTextField setLegend = new JTextField("Legend Entry", 14);
 
         String[] column = new String[table.getColumnCount()];
-        for(int i=0;i<table.getColumnCount();i++){
-            
+        for(int i=0;i<table.getColumnCount();i++){      
             column[i] = table.getColumnName(i);
         }
         
+        String[] timeIntervals = new String[table.getRowCount()];
+        for(int i=0; i<table.getRowCount(); i++){
+            timeIntervals[i] = table.getValueAt(i,0).toString();
+        }
+        
+        timechoice_START = new JComboBox(timeIntervals);
+        timechoice_START.addActionListener(timeListener);
+        timechoice_END = new JComboBox(timeIntervals);
+        timechoice_END.addActionListener(timeListener);
+        
         setColumn = new JComboBox(column);
         setColumn.setSelectedIndex(1);
-        
         nameLabel.setText((String) setColumn.getSelectedItem());
         
         String name = (String) setColumn.getSelectedItem();
@@ -197,19 +200,8 @@ public class GraphProperties extends JDialog {
         legendPanel.add(setLegendLabel);
         legendPanel.add(setLegend);
         
-        this.selectColPanel.add(setColumn);
-        
         this.datapanel.setLayout(new FlowLayout());
-        
-        /** Group Layout **/
-        GroupLayout layout = new GroupLayout(graphpanel);
-        graphpanel.setLayout(layout);
-        layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
-        GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-        
-        //vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(setColumn).addComponent(setLegendLabel).addComponent(setLegend).addComponent(setColumn));
-       
+        this.graphpanel.setLayout(new FlowLayout());
         
         this.graphpanel.add(setColumn);
         this.graphpanel.add(poschoice);
@@ -218,31 +210,27 @@ public class GraphProperties extends JDialog {
         
        // this.graphpanel.add(propButton);
         
-//        this.datapanel.add(colorLabel);
-//        this.datapanel.add(nameLabel);
-//        this.datapanel.add(posLabel);
-//        this.datapanel.add(typeLabel);
-        
+        this.datapanel.add(nameLabel);
 //        this.datapanel.add(setColumn);
 //        this.datapanel.add(poschoice);
 //        this.datapanel.add(typechoice);
 //        this.datapanel.add(colorchoice);
-        this.datapanel.add(propButton);
+        //this.datapanel.add(propButton);
         //this.datapanel.add(nameLabel);
         
         this.buttonpanel.add(okButton);
         this.buttonpanel.add(cancelButton);
         
-        okButton.addActionListener(okListener);
-        propButton.addActionListener(propAction);
+        plotButton.addActionListener(okListener);
+        //propButton.addActionListener(propAction);
             
-        add(graphpanel);
-        add(selectColPanel);
-        add(namePanel);
-        add(legendPanel);
-        add(buttonpanel);
+        //add(graphpanel);
+        //add(setColumn);
+        //add(namePanel);
+        //add(legendPanel);
+        //add(buttonpanel);
         
-        pack();
+        //pack();
     }
     
     /*    
@@ -264,12 +252,17 @@ public class GraphProperties extends JDialog {
         setRendererType(typechoice.getSelectedIndex());
         setName(setName.getText());
         setLegendName(setLegend.getText());
-        setVisible(false);
+        //setVisible(false);
         this.result = true;
     }
     
-    public void showPropDlg(){
-        setVisible(true);
+    private void setPossibleTimeIntervals(){
+        int s = timechoice_START.getSelectedIndex();
+        int e = timechoice_END.getSelectedIndex();
+        
+        if(s >= e){
+            timechoice_END.setSelectedIndex(s);
+        }    
     }
     
     public boolean getResult(){
@@ -298,7 +291,12 @@ public class GraphProperties extends JDialog {
     public void setColor(String color){
         this.color = color;
         colorchoice.setSelectedItem(color);
-        colorLabel.setBackground(colorTable.get(color));
+    }
+    
+    public void setColor(int index){
+        
+        colorchoice.setSelectedIndex(index);
+        this.color = (String) colorchoice.getSelectedItem();
     }
     
     public void setLegendName(String legendName){
@@ -315,13 +313,19 @@ public class GraphProperties extends JDialog {
     public void setPosition(String position){
         this.position = position;
         poschoice.setSelectedItem(position);
-        posLabel.setText(position);
     }
     
     public void setRendererType(int type){
         this.type = type;
         typechoice.setSelectedIndex(type);
-        typeLabel.setText((String) typechoice.getItemAt(type));
+    }
+    
+    public void setTimeSTART(int index){
+        timechoice_START.setSelectedIndex(index);
+    }
+    
+    public void setTimeEND(int index){
+        timechoice_END.setSelectedIndex(index);
     }
     
     public String getColor(){
@@ -357,28 +361,86 @@ public class GraphProperties extends JDialog {
     public int getRendererType(){
         return this.type;
     }
+    
+    public int getTimeSTART(){
+        return timechoice_START.getSelectedIndex();
+    }
+    
+    public int getTimeEND(){
+        return timechoice_END.getSelectedIndex();
+    }
+
+    /** GUI return **/
+    public JLabel getNameLabel(){
+        return nameLabel;
+    }
+  
+    public JComboBox getPosChoice(){
+        return poschoice;
+    }
+    
+    public JComboBox getTypeChoice(){
+        return typechoice;
+    }
+    
+    public JComboBox getColorChoice(){
+        return colorchoice;
+    }
+    
+    public JTextField getLegendField(){
+        return setLegend;
+    }
+    
+    public JComboBox getDataChoice(){
+        return setColumn;
+    }
+    
+    public JComboBox getTimeChoiceSTART(){
+        return timechoice_START;
+    }
+    
+    public JComboBox getTimeChoiceEND(){
+        return timechoice_END;
+    }
+    
+    public JButton getAddButton(){
+        return addButton;
+    }
+    
+    public JButton getRemButton(){
+        return remButton;
+    }
+    
+    public JButton getUpButton(){
+        return upButton;
+    }
+    
+    public JButton getDownButton(){
+        return downButton;
+    }
+    
+    public JButton getPlotButton(){
+        return this.plotButton;
+    }
+    
    
     /*** Action Listener ***/
     ActionListener okListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
             applyProperties();
-            setVisible(false);
+            //setVisible(false);
         }
     };
     
-    ActionListener cancelListener = new ActionListener(){
+    ActionListener timeListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
-            result = false;
-            setVisible(false);
-        }
-    };
-    
-    ActionListener propAction = new ActionListener(){
-        public void actionPerformed(ActionEvent te){
-            
-            showPropDlg();
+            setPossibleTimeIntervals();
+            //setVisible(false);
         }
     };
     
     
+   
+    
+ 
 }

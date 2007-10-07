@@ -20,6 +20,9 @@ import java.util.Observer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.*;
+import javax.swing.BorderFactory.*;
+import javax.swing.border.*;
+import javax.swing.GroupLayout.*;
 
 import java.io.*;
 
@@ -52,11 +55,13 @@ public class CTSConfigurator {
     
     private JPanel[] datapanels;
     private JScrollPane graphScPane;
+    private JScrollPane optionScPane;
+    private JScrollPane mainScPane;
     
     private String[] headers;
     
-    private JLabel edTitle = new JLabel("      Plot Title: ");
-    private JLabel edLeft  = new JLabel(" Left axis title: ");
+    private JLabel edTitle = new JLabel("Plot Title: ");
+    private JLabel edLeft  = new JLabel("Left axis title: ");
     private JLabel edRight = new JLabel("Right axis title: ");
     
     private JTextField edTitleField = new JTextField(14);
@@ -92,6 +97,21 @@ public class CTSConfigurator {
     JButton propbutton = new JButton("properties");
     
     int graphCount=0;
+//    Vector<JCheckBox> activate = new Vector<JCheckBox>();
+//    Vector<JComboBox> datachoice = new Vector<JComboBox>();
+//    Vector<JComboBox> poschoice = new Vector<JComboBox>();
+//    Vector<JComboBox> typechoice = new Vector<JComboBox>();
+//    Vector<JComboBox> colorchoice = new Vector<JComboBox>();
+    
+    JCheckBox[] activate;
+    JComboBox[] datachoice;
+    JComboBox[] poschoice;
+    JComboBox[] typechoice;
+    JComboBox[] colorchoice;
+    
+    
+    /* ActionListener */
+    ActionListener[] activationChange;
     
     /** Creates a new instance of CTSConfigurator */
     public CTSConfigurator() {
@@ -157,6 +177,22 @@ public class CTSConfigurator {
         colorTable.put("lightgray", Color.lightGray);
         colorTable.put("black", Color.black);
         
+        JLabel nameLabel = new JLabel("Name");
+        JLabel posLabel = new JLabel("Position");
+        JLabel typeLabel = new JLabel("Renderer");
+        JLabel colorLabel = new JLabel("Colour");
+        JLabel dataLabel = new JLabel("Select Data");
+        JLabel timeLabel = new JLabel("Time Interval");
+        JLabel emptyTimeLabel = new JLabel("    ");
+        JLabel legendLabel = new JLabel("Legend Entry");
+      
+        nameLabel.setBackground(Color.DARK_GRAY);
+        posLabel.setBackground(Color.DARK_GRAY);
+        typeLabel.setBackground(Color.DARK_GRAY);
+        colorLabel.setBackground(Color.DARK_GRAY);
+        dataLabel.setBackground(Color.DARK_GRAY);
+        timeLabel.setBackground(Color.DARK_GRAY);
+        
         mainpanel = new JPanel();
         mainpanel.setLayout(new BorderLayout());
         
@@ -164,18 +200,40 @@ public class CTSConfigurator {
         plotpanel.setLayout(new BorderLayout());
         
         frame = new JPanel();
-        frame.setLayout(new GridLayout(3,1));
+        frame.setLayout(new BorderLayout());
         
         graphScPane = new JScrollPane();
-        
+                
         optionpanel = new JPanel();
-        optionpanel.setLayout(new GridLayout(3,1));
+        optionpanel.setLayout(new FlowLayout());
         graphpanel = new JPanel();
-        graphpanel.setLayout(new GridLayout(graphCount,1));
+        
+        //graphpanel.setLayout(new GridLayout(graphCount,1));
+        
+        GroupLayout gLayout = new GroupLayout(graphpanel);
+        graphpanel.setLayout(gLayout);
+        gLayout.setAutoCreateGaps(true);
+        gLayout.setAutoCreateContainerGaps(true);
+        GroupLayout.SequentialGroup hGroup = gLayout.createSequentialGroup();
+        GroupLayout.SequentialGroup vGroup = gLayout.createSequentialGroup();
+        Group group1 = gLayout.createParallelGroup();
+        Group group2 = gLayout.createParallelGroup();
+        Group group3 = gLayout.createParallelGroup();
+        Group group4 = gLayout.createParallelGroup();
+        Group group5 = gLayout.createParallelGroup();
+        Group group6 = gLayout.createParallelGroup();
+        Group group7 = gLayout.createParallelGroup();
+        Group group8 = gLayout.createParallelGroup();
+        Group group9 = gLayout.createParallelGroup();
+        Group group10 = gLayout.createParallelGroup();
+        Group group11 = gLayout.createParallelGroup();
+        Group group12 = gLayout.createParallelGroup();
+        Group group13 = gLayout.createParallelGroup();
+        Group group14 = gLayout.createParallelGroup();
+        Group group15 = gLayout.createParallelGroup();
+        
         southpanel = new JPanel();
         southpanel.setLayout(new FlowLayout());
-        
-        
         
         edTitlePanel = new JPanel();
         edTitlePanel.setLayout(new FlowLayout());
@@ -183,7 +241,32 @@ public class CTSConfigurator {
         edLeftAxisPanel.setLayout(new FlowLayout());
         edRightAxisPanel = new JPanel();
         edRightAxisPanel.setLayout(new FlowLayout());
-               
+        
+        
+        
+        
+        /*
+        for(int k=0;k<headers.length;k++){
+         
+           datapanels.add(new JPanel());
+           datapanels.get(k).setLayout(new FlowLayout());
+         
+           activate.add(new JCheckBox(headers[k],true));
+           //datachoice.add(new JComboBox(headers));
+           poschoice.add(new JComboBox(positions));
+           typechoice.add(new JComboBox(types));
+           colorchoice.add(new JComboBox(colors));
+        }
+         */
+        
+//        datapanels = new JPanel[graphCount];
+//        activate = new JCheckBox[graphCount];
+//        poschoice = new JComboBox[graphCount];
+//        typechoice = new JComboBox[graphCount];
+//        colorchoice = new JComboBox[graphCount];
+        
+        //createActionListener();
+        
         edTitleField.setColumns(20);
         edTitleField.setText("Plot Title");
         edTitleField.addActionListener(actChanged);
@@ -201,9 +284,34 @@ public class CTSConfigurator {
         edRightAxisPanel.add(edRight);
         edRightAxisPanel.add(edRightField);
         
-        optionpanel.add(edTitlePanel);
-        optionpanel.add(edLeftAxisPanel);
-        optionpanel.add(edRightAxisPanel);
+        optionpanel.add(edTitle);
+        optionpanel.add(edTitleField);
+        optionpanel.add(edLeft);
+        optionpanel.add(edLeftField);
+        optionpanel.add(edRight);
+        optionpanel.add(edRightField);
+        
+        group1.addComponent(nameLabel);
+        group2.addComponent(posLabel);
+        group3.addComponent(typeLabel);
+        group4.addComponent(colorLabel);
+        group5.addComponent(legendLabel);
+        group6.addComponent(dataLabel);
+        group7.addComponent(timeLabel);
+        group8.addComponent(emptyTimeLabel);
+//        group9.addComponent();
+//        group10.addComponent(emptyTimeLabel);
+//        group11.addComponent(emptyTimeLabel);
+//        group12.addComponent(emptyTimeLabel);
+//        group13.addComponent(emptyTimeLabel);
+//        group14.addComponent(emptyTimeLabel);
+//        group15.addComponent(emptyTimeLabel);
+        
+        
+        vGroup.addGroup(gLayout.createParallelGroup(Alignment.BASELINE)
+        .addComponent(nameLabel).addComponent(posLabel).addComponent(typeLabel)
+        .addComponent(colorLabel).addComponent(legendLabel).addComponent(dataLabel)
+        .addComponent(timeLabel).addComponent(emptyTimeLabel));
         
         for(int k=1;k<=graphCount;k++){
             
@@ -212,42 +320,87 @@ public class CTSConfigurator {
             
             prop.setSelectedColumn(columns[k-1]);
             prop.setSelectedRows(rows);
+            prop.setTimeSTART(rows[0]);
+            prop.setTimeEND(rows[rows.length - 1]);
+            if( k<=12){
+                prop.setColor(k-1);
+            }
 //            prop.setColor((String) colorchoice.getSelectedItem());
 //            prop.setPosition((String) poschoice.getSelectedItem());
 //            prop.setRendererType(typechoice.getSelectedIndex());
             prop.setName(table.getColumnName(k));
             prop.setLegendName(table.getColumnName(k));
             
+            prop.getPlotButton().addActionListener(plotbuttonclick);
+            
+            JLabel space1 = new JLabel(" ");
+            JLabel space2 = new JLabel(" ");
+            
+            group1.addComponent(prop.getNameLabel());
+            group2.addComponent(prop.getPosChoice());
+            group3.addComponent(prop.getTypeChoice());
+            group4.addComponent(prop.getColorChoice());
+            group5.addComponent(prop.getLegendField());
+            group6.addComponent(prop.getDataChoice());
+            group7.addComponent(prop.getTimeChoiceSTART());
+            group8.addComponent(prop.getTimeChoiceEND());
+            group9.addComponent(space1);
+            group10.addComponent(prop.getPlotButton());
+            group11.addComponent(space2);
+            group12.addComponent(prop.getAddButton());
+            group13.addComponent(prop.getRemButton());
+            group14.addComponent(prop.getUpButton());
+            group15.addComponent(prop.getDownButton());
+            
+            
+            vGroup.addGroup(gLayout.createParallelGroup(Alignment.BASELINE)
+            .addComponent(prop.getNameLabel()).addComponent(prop.getPosChoice())
+            .addComponent(prop.getTypeChoice()).addComponent(prop.getColorChoice())
+            .addComponent(prop.getDataChoice()).addComponent(prop.getLegendField())
+            .addComponent(prop.getTimeChoiceSTART()).addComponent(prop.getTimeChoiceEND())
+            .addComponent(space1).addComponent(prop.getPlotButton())
+            .addComponent(space2).addComponent(prop.getAddButton())
+            .addComponent(prop.getRemButton())
+            .addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
+            
             propVector.add(prop);
-            graphpanel.add(propVector.get(k-1).getGraphPanel());
+            //graphpanel.add(propVector.get(k-1).getGraphPanel());
             
         }
+        hGroup.addGroup(group1);
+        hGroup.addGroup(group2);
+        hGroup.addGroup(group3);
+        hGroup.addGroup(group4);
+        hGroup.addGroup(group5);
+        hGroup.addGroup(group6);
+        hGroup.addGroup(group7);
+        hGroup.addGroup(group8);
+        hGroup.addGroup(group9);
+        hGroup.addGroup(group10);
+        hGroup.addGroup(group11);
+        hGroup.addGroup(group12);
+        hGroup.addGroup(group13);
+        hGroup.addGroup(group14);
+        hGroup.addGroup(group15);
         
-        
-        //JComboBox colortest = new JComboBox(colors_);
-        //southpanel.add(colortest);
-        
-        
+        gLayout.setHorizontalGroup(hGroup);
+        gLayout.setVerticalGroup(vGroup);
+
         addbutton.addActionListener(addbuttonclick);
         plotbutton.addActionListener(plotbuttonclick);
         propbutton.addActionListener(propbuttonclick);
-        
-        //optionpanel.add(addbutton);
-        //southpanel.add(deletebutton);
-        southpanel.add(addbutton);
-        southpanel.add(propbutton);
-        southpanel.add(plotbutton);
-        
-        
-        
-        
-        graphScPane = new JScrollPane(graphpanel);
-        
-        frame.add(graphScPane);
+
+        frame.add(graphpanel, BorderLayout.NORTH);
         //frame.add(optionpanel);
-        frame.add(southpanel);
-        frame.add(optionpanel);
-        mainpanel.add(frame, BorderLayout.WEST);
+        frame.add(optionpanel, BorderLayout.CENTER);
+ 
+        optionpanel.setBorder(new EtchedBorder());
+
+        mainpanel.add(frame, BorderLayout.NORTH);
+        
+        mainScPane = new JScrollPane(mainpanel);
+        mainScPane.createVerticalScrollBar();
+        mainScPane.createHorizontalScrollBar();
         /** CTSConfigurator will be added to CTSViewer ******
          * frame.pack();
          * frame.setVisible(true);
@@ -376,6 +529,10 @@ public class CTSConfigurator {
         int numActiveLeft=0;
         int numActiveRight=0;
         int corr=0;
+        
+        int row_start = 0;
+        int row_end = 0;
+        
         boolean typechosen_R=false;
         boolean typechosen_L=false;
         String[] colorLeft = new String[graphCount];
@@ -387,17 +544,26 @@ public class CTSConfigurator {
         for(int i=0; i<graphCount; i++){
             
             GraphProperties prop = propVector.get(i);
+            int s = prop.getTimeSTART();
+            int e = prop.getTimeEND();
+            
+            if(s > row_start){
+                row_start = s;
+            }
+            if(e > row_end){
+                row_end = e;
+            }
             
             if(prop.getPosition()== "left"){
                 
-                ctsplot.setTypeLeft(0);
+                ctsplot.setTypeLeft(prop.getRendererType());
                 
                 colorLeft[i - numActiveRight - corr] = prop.getColor();
                 titleLeft[i - numActiveRight - corr] = prop.getLegendName();
                 numActiveLeft++;
             }
             if(prop.getPosition() == "right"){
-                ctsplot.setTypeRight(1);
+                ctsplot.setTypeRight(prop.getRendererType());
                 
                 colorRight[i - numActiveLeft - corr] = prop.getColor();
                 titleRight[i - numActiveLeft - corr] = prop.getLegendName();
@@ -429,7 +595,7 @@ public class CTSConfigurator {
         mainpanel.removeAll(); /* nullPionterEx at first startup? */
         mainpanel.add(frame, BorderLayout.NORTH);
         ctsplot.createPlot();
-        mainpanel.add(ctsplot.getPanel());
+        mainpanel.add(ctsplot.getPanel(), BorderLayout.CENTER);
         //mainpanel.add(ctsplot.getChartPanel(), BorderLayout.CENTER);
         //System.out.println("ctsplot.createPlot();");
        
@@ -441,10 +607,10 @@ public class CTSConfigurator {
                 
         /* jedesmal fragen, ob der graph zu valueLEFT GEHÖRT (COMBObOX ABFRAGEN) */
         /* ACHTUNG: Funktioniert noch nicht bei addGraph() */
-        int rowcount = table.getRowCount();
+        //int rowcount = table.getRowCount();
         int c = 0;
         
-        for(int k=0;k<rowcount;k++){
+        for(int k=row_start; k<=row_end; k++){
                     
                     int corrLeft = 0;
                     int corrRight = 0;
@@ -454,10 +620,12 @@ public class CTSConfigurator {
                         
                         GraphProperties prop = propVector.get(i);
                         //value = (Double) table.getValueAt(rows[k],columns[i]);
-                            int rows[] = prop.getSelectedRows();
+                            //int rows[] = prop.getSelectedRows();
                             int col = prop.getSelectedColumn();
+                            int s = prop.getTimeSTART();
+                            int e = prop.getTimeEND();
                             
-                            if(!(k<rows[0]) && !(k>rows[rows.length-1])){
+                            if(!(k<s) && !(k>e)){
 
                                 value = table.getValueAt(k,col);
                                 if(value.getClass() != java.lang.Double.class){
@@ -527,4 +695,22 @@ public class CTSConfigurator {
     };
     
     
+    public void createActionListener(){
+        
+        activationChange = new ActionListener[graphCount];
+        
+        for(int k=0;k<graphCount;k++){
+            /* reicht hier ein listener für alle boxes? scheint so... */
+            activationChange[k] = new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                    //timePlot();
+                    
+                }
+            };
+            
+            
+        }
+        
+        
+    }
 }

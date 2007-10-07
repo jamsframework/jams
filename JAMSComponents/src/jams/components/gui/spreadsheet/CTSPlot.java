@@ -23,7 +23,7 @@
 
 package jams.components.gui.spreadsheet;
 
-import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -286,8 +286,8 @@ public class CTSPlot {
         chartPanel = new ChartPanel(chart, true);
         
         panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        panel.add(chartPanel, BorderLayout.CENTER);
+        panel.setLayout(new FlowLayout());
+        panel.add(chartPanel);
         
         
         
