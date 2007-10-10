@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Vector;
 import org.unijena.jams.model.JAMSContext;
 import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
 import org.unijena.juice.gui.ContextReplaceDlg;
 import org.unijena.juice.JUICE;
 
@@ -146,7 +147,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
                 contexts.add(cd.getName());
             }
             
-            for (ComponentDescriptor.ComponentAttribute var : cd.getComponentAttributes().values()) {
+            for (ComponentAttribute var : cd.getComponentAttributes().values()) {
                 if (var.getContext() != null) {
                     String contextName = var.getContext().getName();
                     if (!contexts.contains(contextName)) {
@@ -199,7 +200,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             //iterate over all components referencing pending contexts
             for (ComponentDescriptor component : components) {
                 //iterate over all vars
-                for (ComponentDescriptor.ComponentAttribute var : component.getComponentAttributes().values()) {
+                for (ComponentAttribute var : component.getComponentAttributes().values()) {
                     if (var.getContext() != null) {
                         //again select vars that reference this pending context and connect to new (selected) context
                         if (var.getContext().getName().equals(oldContextName)) {

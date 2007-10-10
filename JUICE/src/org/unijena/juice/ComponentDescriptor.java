@@ -119,7 +119,7 @@ public class ComponentDescriptor {
     public void setComponentAttribute(String name, String value) {
         ComponentAttribute ca = getComponentAttributes().get(name);
         if (ca != null) {
-            ca.value = value;
+            ca.setValue(value);
         }
     }
     
@@ -129,6 +129,7 @@ public class ComponentDescriptor {
         
         if (ca != null) {
             
+            // create a context attribute object
             ContextAttribute a = new ContextAttribute(attributeName, ca.type, context);
             
             // if access is W or R/W (not R), then the component authomatically
@@ -171,7 +172,7 @@ public class ComponentDescriptor {
             ComponentAttribute caCopy = new ComponentAttribute(ca.name, ca.type, ca.accessType);
             //caCopy.context = ca.getContext();
             //caCopy.attribute = ca.getAttribute();
-            caCopy.value = ca.getValue();
+            caCopy.setValue(ca.getValue());
             copy.cVars.put(name, caCopy);
         }
         for (String name : contextAttributes.keySet()) {
@@ -222,29 +223,29 @@ public class ComponentDescriptor {
         return tree;
     }
     
-/*    public void setTree(JAMSTree tree) {
-        this.tree = tree;
+    public AttributeRepository getDataRepository() {
+        return dataRepository;
     }
- */
+    
     public class ComponentAttribute {
         
-        public static final int READ_ACCESS = 0, WRITE_ACCESS = 1, READWRITE_ACCESS = 2;
+        public static final int READ_ACCESS = 0;
+        public static final int WRITE_ACCESS = 1;
+        public static final int READWRITE_ACCESS = 2;
         private String value = "";
         public String name = "";
         public Class type = null;
         public int accessType;
-        //private String attribute = "";
-        //private ComponentDescriptor context;
         private ContextAttribute contextAttribute;
         
         public ComponentAttribute(String name, Class type, int accessType) {
+            super();
             this.name = name;
             this.type = type;
             this.accessType = accessType;
         }
         
         public String getAttribute() {
-            //return attribute;
             if (contextAttribute != null) {
                 return contextAttribute.getName();
             } else {
@@ -253,7 +254,6 @@ public class ComponentDescriptor {
         }
         
         public ComponentDescriptor getContext() {
-            //return context;
             if (contextAttribute != null) {
                 return contextAttribute.getContext();
             } else {
@@ -265,6 +265,10 @@ public class ComponentDescriptor {
             return value;
         }
         
+        public void setValue(String value) {
+            this.value = value;
+        }
+        
         public ContextAttribute getContextAttribute() {
             return contextAttribute;
         }
@@ -272,10 +276,6 @@ public class ComponentDescriptor {
         public void setContextAttribute(ContextAttribute contextAttribute) {
             this.contextAttribute = contextAttribute;
         }
-    }
-    
-    public AttributeRepository getDataRepository() {
-        return dataRepository;
     }
 }
 

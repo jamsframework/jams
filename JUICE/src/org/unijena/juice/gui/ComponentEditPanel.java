@@ -35,7 +35,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -48,10 +47,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.juice.*;
 import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
 import org.unijena.juice.gui.tree.JAMSNode;
 import org.unijena.juice.ContextAttribute;
 
@@ -373,7 +372,7 @@ public class ComponentEditPanel extends JPanel {
     private void showVarEditDlg() {
         int tmpSelectedVarRow = selectedVarRow;
         String attributeName = varNameList.get(selectedVarRow);
-        ComponentDescriptor.ComponentAttribute var = componentDescriptor.getComponentAttributes().get(attributeName);
+        ComponentAttribute var = componentDescriptor.getComponentAttributes().get(attributeName);
         
         //create the dialog if it not yet existing
         if (varEditDlg == null) {
@@ -410,7 +409,7 @@ public class ComponentEditPanel extends JPanel {
     private void varReset() {
         int tmpSelectedVarRow = selectedVarRow;
         String componentName = varNameList.get(selectedVarRow);
-        ComponentDescriptor.ComponentAttribute var = componentDescriptor.getComponentAttributes().get(componentName);
+        ComponentAttribute var = componentDescriptor.getComponentAttributes().get(componentName);
 /*
         var.value = "";
         var.context = null;
@@ -485,7 +484,7 @@ public class ComponentEditPanel extends JPanel {
         Vector<Vector<String>> tableData = new Vector<Vector<String>>();
         Vector<String> rowData;
         for (String name : varNameList) {
-            ComponentDescriptor.ComponentAttribute var = componentDescriptor.getComponentAttributes().get(name);
+            ComponentAttribute var = componentDescriptor.getComponentAttributes().get(name);
             
             //create a vector with table data from var properties
             rowData = new Vector<String>();
@@ -495,11 +494,11 @@ public class ComponentEditPanel extends JPanel {
             rowData.add(type);
             
             String accessType = "";
-            if (var.accessType == ComponentDescriptor.ComponentAttribute.READ_ACCESS)
+            if (var.accessType == ComponentAttribute.READ_ACCESS)
                 accessType = "R";
-            if (var.accessType == ComponentDescriptor.ComponentAttribute.WRITE_ACCESS)
+            if (var.accessType == ComponentAttribute.WRITE_ACCESS)
                 accessType = "W";
-            if (var.accessType == ComponentDescriptor.ComponentAttribute.READWRITE_ACCESS)
+            if (var.accessType == ComponentAttribute.READWRITE_ACCESS)
                 accessType = "R/W";
             
             rowData.add(accessType);
@@ -551,7 +550,7 @@ public class ComponentEditPanel extends JPanel {
             return;
         }
         String attributeName = varNameList.get(selectedVarRow);
-        ComponentDescriptor.ComponentAttribute attr = componentDescriptor.getComponentAttributes().get(attributeName);
+        ComponentAttribute attr = componentDescriptor.getComponentAttributes().get(attributeName);
         
         Vector<String> ancestors = new Vector<String>();
         ancestors.add("");

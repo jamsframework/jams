@@ -32,7 +32,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import javax.swing.DropMode;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -48,9 +47,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
 import org.unijena.juice.ContextAttribute;
 import org.unijena.juice.JUICE;
-import org.unijena.juice.JUICEException;
 import org.unijena.juice.ModelProperties;
 import org.unijena.juice.ModelProperties.ModelProperty;
 import org.unijena.juice.gui.ModelView;
@@ -392,7 +391,7 @@ public class ModelTree extends JAMSTree {
             rootElement.appendChild(element);
         }
         
-        for (ComponentDescriptor.ComponentAttribute var : cd.getComponentAttributes().values()) {
+        for (ComponentAttribute var : cd.getComponentAttributes().values()) {
             if (!var.getValue().equals("") || ((var.getContext() != null) && !var.getAttribute().equals(""))) {
                 
                 element = document.createElement("var");
@@ -677,7 +676,7 @@ public class ModelTree extends JAMSTree {
                 return;
             }
             try {
-                if (cd.getComponentAttributes().get(name).accessType != ComponentDescriptor.ComponentAttribute.READ_ACCESS) {
+                if (cd.getComponentAttributes().get(name).accessType != ComponentAttribute.READ_ACCESS) {
                     Class attributeType = cd.getComponentAttributes().get(name).type;
                     view.getComponentDescriptor(context).getDataRepository().addAttribute(new ContextAttribute(attribute, attributeType, view.getComponentDescriptor(context)));
                 }

@@ -46,9 +46,9 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.FloatInput;
-import org.unijena.juice.*;
 import org.unijena.juice.ModelProperties.ModelProperty;
 import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
 import org.unijena.juice.ContextAttribute;
 
 /**
@@ -152,7 +152,7 @@ public class ModelPropertyDlg extends JDialog {
     
     private void updateComponentVars(Object item) {
         ComponentDescriptor cd = this.componentDescriptors.get((String) item);
-        HashMap <String, ComponentDescriptor.ComponentAttribute> vars = cd.getComponentAttributes();
+        HashMap <String,ComponentAttribute> vars = cd.getComponentAttributes();
         HashMap <String, ContextAttribute> attrs = cd.getContextAttributes();
         
         ArrayList<String> varNames = new ArrayList<String>();
@@ -249,7 +249,7 @@ public class ModelPropertyDlg extends JDialog {
         return componentDescriptors.get(componentCombo.getSelectedItem());
     }
     
-    public ComponentDescriptor.ComponentAttribute getVar() {
+    public ComponentAttribute getVar() {
         return getComponent().getComponentAttributes().get(varCombo.getSelectedItem());
     }
     

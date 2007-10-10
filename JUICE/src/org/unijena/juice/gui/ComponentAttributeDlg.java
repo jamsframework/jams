@@ -49,6 +49,7 @@ import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;
 import org.unijena.juice.*;
 import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
 import org.unijena.juice.ContextAttribute;
 
 /**
@@ -179,7 +180,7 @@ public class ComponentAttributeDlg extends JDialog {
         
     }
     
-    public void show(ComponentDescriptor.ComponentAttribute var, String ancestorNames[]) {
+    public void show(ComponentAttribute var, String ancestorNames[]) {
         
         this.setTitle("Variable: " + var.name);
         

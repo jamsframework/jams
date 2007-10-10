@@ -55,6 +55,7 @@ import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;
 import org.unijena.juice.*;
 import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
 import org.unijena.juice.ContextAttribute;
 
 /**
@@ -74,7 +75,7 @@ public class ComponentAttributePanel extends JPanel {
     private Class type;
     private JList attributeList;
     private JToggleButton linkButton, setButton;
-    private ComponentDescriptor.ComponentAttribute var;
+    private ComponentAttribute var;
     
     
     public ComponentAttributePanel(ModelView view) {
@@ -209,7 +210,7 @@ public class ComponentAttributePanel extends JPanel {
     }
     
     
-    public void update(ComponentDescriptor.ComponentAttribute var, String ancestorNames[], ComponentDescriptor component) {
+    public void update(ComponentAttribute var, String ancestorNames[], ComponentDescriptor component) {
         
         this.var = var;
         this.type = var.type;
