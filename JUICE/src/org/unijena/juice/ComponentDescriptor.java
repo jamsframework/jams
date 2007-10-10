@@ -109,9 +109,6 @@ public class ComponentDescriptor {
         return ma;
     }
     
-    
-//    !!!!!methode linkattribute einrichten, die registrierung und deregistrierung von attributen übernimmmt
-    
     public void removeContextAttribute(String name) {
         getContextAttributes().remove(name);
     }
@@ -119,18 +116,18 @@ public class ComponentDescriptor {
     public void setComponentAttribute(String name, String value) {
         ComponentAttribute ca = getComponentAttributes().get(name);
         if (ca != null) {
-            ca.setValue(value);
+            ca.value = value;
         }
     }
     
-    public void linkComponentAttribute(String name, ComponentDescriptor context, String attributeName) {
+    public void linkComponentAttribute(String componentAttributeName, ComponentDescriptor context, String contextAttributeName) {
         
-        ComponentAttribute ca = getComponentAttributes().get(name);
+        ComponentAttribute ca = getComponentAttributes().get(componentAttributeName);
         
         if (ca != null) {
             
             // create a context attribute object
-            ContextAttribute a = new ContextAttribute(attributeName, ca.type, context);
+            ContextAttribute a = new ContextAttribute(contextAttributeName, ca.type, context);
             
             // if access is W or R/W (not R), then the component authomatically
             // creates a new context attribute which is registered at the
@@ -150,9 +147,9 @@ public class ComponentDescriptor {
             }
             
             // finally, set the component attributes context and context attribute
-            ca.setContextAttribute(a);
+            ca.contextAttribute = a;
             //ca.context = context;
-            //ca.attribute = attributeName;
+            //ca.attribute = contextAttributeName;
         }
     }
     
@@ -170,10 +167,11 @@ public class ComponentDescriptor {
         for (String name : cVars.keySet()) {
             ComponentAttribute ca = cVars.get(name);
             ComponentAttribute caCopy = new ComponentAttribute(ca.name, ca.type, ca.accessType);
-            //caCopy.context = ca.getContext();
-            //caCopy.attribute = ca.getAttribute();
-            caCopy.setValue(ca.getValue());
+            caCopy.value = ca.getValue();
             copy.cVars.put(name, caCopy);
+            if (ca.getContextAttribute() != null) {
+                copy.linkComponentAttribute(ca.name, ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
+            }
         }
         for (String name : contextAttributes.keySet()) {
             ContextAttribute ca = contextAttributes.get(name);
@@ -261,20 +259,12 @@ public class ComponentDescriptor {
             }
         }
         
-        public String getValue() {
-            return value;
-        }
-        
-        public void setValue(String value) {
-            this.value = value;
-        }
-        
         public ContextAttribute getContextAttribute() {
             return contextAttribute;
         }
         
-        public void setContextAttribute(ContextAttribute contextAttribute) {
-            this.contextAttribute = contextAttribute;
+        public String getValue() {
+            return value;
         }
     }
 }
