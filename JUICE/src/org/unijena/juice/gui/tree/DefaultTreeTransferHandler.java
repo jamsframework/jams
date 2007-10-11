@@ -135,7 +135,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
         HashSet<String> contexts = new HashSet<String>();
         HashMap<String, HashSet<ComponentDescriptor>> pendingContexts = new HashMap<String, HashSet<ComponentDescriptor>>();
         
-        cd = (ComponentDescriptor) rootNode.getUserObject();
+//        cd = (ComponentDescriptor) rootNode.getUserObject();
         
         Enumeration nodeEnum = rootNode.breadthFirstEnumeration();
         
@@ -146,10 +146,26 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             if (JAMSContext.class.isAssignableFrom(cd.getClazz())) {
                 contexts.add(cd.getName());
             }
+
+            // create list if ancestor nodes in the new (sub)tree
+            HashSet<String> ancestors = new HashSet<String>();
+            ancestors.add(parentNode.getUserObject().toString());
+            JAMSNode ancestor = (JAMSNode) parentNode.getParent();
+            while (ancestor != null) {
+                ancestors.add(ancestor.getUserObject().toString());
+                ancestor = (JAMSNode) ancestor.getParent();
+            }
             
             for (ComponentAttribute var : cd.getComponentAttributes().values()) {
-                if (var.getContext() != null) {
+                if (var.getContext() != null) {                    
                     String contextName = var.getContext().getName();
+                    
+                    // check if context is part of new ancestors
+                    if (ancestors.contains(contextName)) {
+                        continue;
+                    }
+                    
+                    // check if context has been moved as well
                     if (!contexts.contains(contextName)) {
                         HashSet<ComponentDescriptor> components = pendingContexts.get(contextName);
                         if (components == null) {
