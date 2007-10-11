@@ -25,7 +25,6 @@ package org.unijena.jams.gui.input;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import org.unijena.jams.gui.*;
 
 /**
  *
@@ -33,9 +32,9 @@ import org.unijena.jams.gui.*;
  */
 public class BooleanInput extends JCheckBox implements InputComponent {
     
-	private static final long serialVersionUID = -4821261861964727164L;
-
-	public String getValue() {
+    private static final long serialVersionUID = -4821261861964727164L;
+    
+    public String getValue() {
         if (isSelected())
             return "1";
         else
@@ -61,5 +60,5 @@ public class BooleanInput extends JCheckBox implements InputComponent {
     
     public int getErrorCode() {
         return INPUT_OK;
-    }    
+    }
 }

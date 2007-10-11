@@ -141,6 +141,7 @@ public class ModelEditPanel extends JPanel {
     
     public JTextField getTextField(String key, String value, boolean editable) {
         JTextField text = new JTextField();
+        text.setBorder(BorderFactory.createEtchedBorder());
         text.setEditable(editable);
         text.setText(value);
         text.setColumns(30);

@@ -669,7 +669,9 @@ public class ModelTree extends JAMSTree {
             String attribute = e.getAttribute("attribute");
             
             try {
-                cd.linkComponentAttribute(name, view.getComponentDescriptor(context), attribute);
+                ComponentDescriptor.ComponentAttribute ca = cd.getComponentAttributes().get(name);
+                ca.linkToAttribute(view.getComponentDescriptor(context), attribute);
+                //cd.linkComponentAttribute(name, view.getComponentDescriptor(context), attribute);
             } catch (NullPointerException ex) {
                 LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component \"" + cd.getName() +
                         "\": context \"" + context + "\" does not exist!", "Model loading error");

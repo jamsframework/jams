@@ -29,6 +29,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -66,8 +67,9 @@ public class TreePanel extends JPanel {
         JPanel collapsePanel = new JPanel();
         
         searchText = new JTextField();
+        searchText.setBorder(BorderFactory.createEtchedBorder());
         searchText.setEditable(true);
-        searchText.setColumns(10);
+        searchText.setColumns(15);
         searchText.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 TreePanel.this.searchText.selectAll();

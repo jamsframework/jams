@@ -120,7 +120,7 @@ public class ComponentDescriptor {
         }
     }
     
-    public void linkComponentAttribute(String componentAttributeName, ComponentDescriptor context, String contextAttributeName) {
+    public void linkComponentAttribute_(String componentAttributeName, ComponentDescriptor context, String contextAttributeName) {
         
         ComponentAttribute ca = getComponentAttributes().get(componentAttributeName);
         
@@ -170,7 +170,8 @@ public class ComponentDescriptor {
             caCopy.value = ca.getValue();
             copy.cVars.put(name, caCopy);
             if (ca.getContextAttribute() != null) {
-                copy.linkComponentAttribute(ca.name, ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
+                caCopy.linkToAttribute(ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
+                //copy.linkComponentAttribute(ca.name, ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
             }
         }
         for (String name : contextAttributes.keySet()) {
@@ -266,6 +267,36 @@ public class ComponentDescriptor {
         public String getValue() {
             return value;
         }
+        
+        public void linkToAttribute(ComponentDescriptor context, String contextAttributeName) {
+            
+            // create a context attribute object
+            ContextAttribute a = new ContextAttribute(contextAttributeName, this.type, context);
+            
+            // if access is W or R/W (not R), then the component authomatically
+            // creates a new context attribute which is registered at the
+            // contexts attribute repository in order to be accessed by
+            // other components
+            if (this.accessType != ComponentAttribute.READ_ACCESS) {
+                
+                // check if component attribute has been linked before
+                // and unlink if thats the case
+                ComponentDescriptor oldContext = this.getContext();
+                if (oldContext != null) {
+                    AttributeRepository oldRepo = oldContext.getDataRepository();
+                    oldRepo.removeAttribute(this.getContextAttribute());
+                }
+                
+                AttributeRepository newRepo = context.getDataRepository();
+                newRepo.addAttribute(a);
+            }
+            
+            // finally, set the component attributes context and context attribute
+            this.contextAttribute = a;
+            //ca.context = context;
+            //ca.attribute = contextAttributeName;
+        }
+        
     }
 }
 

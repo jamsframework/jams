@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -396,7 +397,9 @@ public class ComponentEditPanel extends JPanel {
             if ((varEditDlg.getAttributeName().equals("") && varEditDlg.getContext() == null) ||
                     (!varEditDlg.getAttributeName().equals("") && varEditDlg.getContext() != null)) {
                 
-                componentDescriptor.linkComponentAttribute(attributeName, varEditDlg.getContext(), varEditDlg.getAttributeName());
+                ComponentDescriptor.ComponentAttribute ca = componentDescriptor.getComponentAttributes().get(attributeName);
+                ca.linkToAttribute(varEditDlg.getContext(), varEditDlg.getAttributeName());
+                //componentDescriptor.linkComponentAttribute(attributeName, varEditDlg.getContext(), varEditDlg.getAttributeName());
                 
             }
             componentDescriptor.setComponentAttribute(attributeName, varEditDlg.getValue());
@@ -421,6 +424,7 @@ public class ComponentEditPanel extends JPanel {
     
     public JTextField getTextField(String key, String value, boolean editable) {
         JTextField text = new JTextField();
+        text.setBorder(BorderFactory.createEtchedBorder());
         text.setEditable(editable);
         text.setText(value);
         text.setColumns(30);
@@ -553,7 +557,6 @@ public class ComponentEditPanel extends JPanel {
         ComponentAttribute attr = componentDescriptor.getComponentAttributes().get(attributeName);
         
         Vector<String> ancestors = new Vector<String>();
-        ancestors.add("");
         
         JAMSNode ancestor = (JAMSNode) node.getParent();
         while (ancestor != null) {

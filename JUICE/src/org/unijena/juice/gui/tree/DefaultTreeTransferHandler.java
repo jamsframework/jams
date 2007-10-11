@@ -146,7 +146,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             if (JAMSContext.class.isAssignableFrom(cd.getClazz())) {
                 contexts.add(cd.getName());
             }
-
+            
             // create list if ancestor nodes in the new (sub)tree
             HashSet<String> ancestors = new HashSet<String>();
             ancestors.add(parentNode.getUserObject().toString());
@@ -157,7 +157,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             }
             
             for (ComponentAttribute var : cd.getComponentAttributes().values()) {
-                if (var.getContext() != null) {                    
+                if (var.getContext() != null) {
                     String contextName = var.getContext().getName();
                     
                     // check if context is part of new ancestors
@@ -221,7 +221,8 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
                         //again select vars that reference this pending context and connect to new (selected) context
                         if (var.getContext().getName().equals(oldContextName)) {
                             
-                            component.linkComponentAttribute(var.name, newContext, var.getAttribute());
+                            var.linkToAttribute(newContext, var.getAttribute());
+                            //component.linkComponentAttribute(var.name, newContext, var.getAttribute());
                             
                             //var.context = newContext;
                         }

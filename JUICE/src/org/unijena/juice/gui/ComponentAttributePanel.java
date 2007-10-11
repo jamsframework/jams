@@ -69,7 +69,7 @@ public class ComponentAttributePanel extends JPanel {
     private JComboBox contextCombo;
     private InputComponent valueInput;
     private GridBagLayout connectionLayout, infoLayout;
-    private JTextField localNameText, compText, linkText, customContextText;
+    private JTextField localNameText, compText, linkText, customAttributeText;
     private JPanel listPanel, infoPanel, valuePanel;
     private ModelView view;
     private Class type;
@@ -152,6 +152,7 @@ public class ComponentAttributePanel extends JPanel {
         
         
         contextCombo = new JComboBox();
+        contextCombo.setBorder(BorderFactory.createEtchedBorder());
         contextCombo.addItemListener(new ItemListener(){
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -163,8 +164,8 @@ public class ComponentAttributePanel extends JPanel {
         
         JPanel customContextPanel = new JPanel();
         customContextPanel.setLayout(new BoxLayout(customContextPanel, BoxLayout.Y_AXIS));
-        customContextText = new JTextField();
-        customContextText.getDocument().addDocumentListener(new DocumentListener() {
+        customAttributeText = new JTextField();
+        customAttributeText.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 setAttributeLink();
             }
@@ -175,11 +176,11 @@ public class ComponentAttributePanel extends JPanel {
                 setAttributeLink();
             }
         });
-        customContextText.setBorder(BorderFactory.createEtchedBorder());
+        customAttributeText.setBorder(BorderFactory.createEtchedBorder());
         
         //customContextPanel.add(contextCombo);
         customContextPanel.add(new JLabel("Custom Attribute:"));
-        customContextPanel.add(customContextText);
+        customContextPanel.add(customAttributeText);
         listPanel.add(customContextPanel, BorderLayout.SOUTH);
         
         attributeList = new JList();
@@ -190,9 +191,9 @@ public class ComponentAttributePanel extends JPanel {
                 if (!e.getValueIsAdjusting()) {
                     Object o = attributeList.getSelectedValue();
                     if (o != null) {
-                        customContextText.setText(o.toString());
+                        customAttributeText.setText(o.toString());
                     } else {
-                        customContextText.setText("");
+                        customAttributeText.setText("");
                     }
                 }
             }
@@ -202,8 +203,12 @@ public class ComponentAttributePanel extends JPanel {
     }
     
     private void setAttributeLink() {
-        if (linkButton.isSelected()) {
-            linkText.setText(contextCombo.getSelectedItem() + " -> " + customContextText.getText());
+        if (linkButton.isSelected() && !customAttributeText.getText().equals("")) {
+
+            
+            linkText.setText(var.getContext() + " -> " + var.getContextAttribute());
+            //linkText.setText(contextCombo.getSelectedItem() + " -> " + customAttributeText.getText());
+
         } else {
             linkText.setText("");
         }
@@ -216,6 +221,8 @@ public class ComponentAttributePanel extends JPanel {
         this.type = var.type;
         
         this.contextCombo.setModel(new DefaultComboBoxModel(ancestorNames));
+        
+        updateRepository();
         
         if (valueInput != null) {
             infoPanel.remove(valueInput.getComponent());
@@ -236,14 +243,13 @@ public class ComponentAttributePanel extends JPanel {
             linkButton.setSelected(true);
         } else {
             linkText.setText(null);
-            attributeList.setModel(new DefaultListModel());
             linkButton.setSelected(false);
         }
         
         if (var.accessType == var.READ_ACCESS) {
-            customContextText.setEnabled(true);
+            customAttributeText.setEnabled(false);
         } else {
-            customContextText.setEnabled(true);
+            customAttributeText.setEnabled(true);
         }
         
         if (var.getValue() != "") {
@@ -257,7 +263,9 @@ public class ComponentAttributePanel extends JPanel {
     
     private void updateRepository() {
         
-        AttributeRepository repo = this.getContext().getDataRepository();
+        ComponentDescriptor context = this.getContext();
+        
+        AttributeRepository repo = context.getDataRepository();
         //ArrayList<Attribute> attributes = repo.getAttributesByType(type);
         ArrayList<ContextAttribute> attributes = repo.getUniqueAttributesByType(type);
         
