@@ -113,10 +113,10 @@ public class ComponentDescriptor {
         getContextAttributes().remove(name);
     }
     
-    public void setComponentAttribute(String name, String value) {
+    public void setComponentAttribute_(String name, String value) {
         ComponentAttribute ca = getComponentAttributes().get(name);
         if (ca != null) {
-            ca.value = value;
+            ca.setValue(value);
         }
     }
     
@@ -167,7 +167,7 @@ public class ComponentDescriptor {
         for (String name : cVars.keySet()) {
             ComponentAttribute ca = cVars.get(name);
             ComponentAttribute caCopy = new ComponentAttribute(ca.name, ca.type, ca.accessType);
-            caCopy.value = ca.getValue();
+            caCopy.setValue(ca.getValue());
             copy.cVars.put(name, caCopy);
             if (ca.getContextAttribute() != null) {
                 caCopy.linkToAttribute(ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
@@ -267,7 +267,7 @@ public class ComponentDescriptor {
         public String getValue() {
             return value;
         }
-        
+                
         public void linkToAttribute(ComponentDescriptor context, String contextAttributeName) {
             
             // create a context attribute object
@@ -295,6 +295,10 @@ public class ComponentDescriptor {
             this.contextAttribute = a;
             //ca.context = context;
             //ca.attribute = contextAttributeName;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
         }
         
     }

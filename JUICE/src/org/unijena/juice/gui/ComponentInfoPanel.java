@@ -1,5 +1,5 @@
 /*
- * CompViewPanel.java
+ * ComponentInfoPanel.java
  * Created on 24. April 2006, 09:45
  *
  * This file is part of JAMS

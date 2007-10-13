@@ -1,5 +1,5 @@
 /*
- * ComponentAttributeConfigPanel.java
+ * ComponentAttributePanel.java
  * Created on 28. September 2007, 22:38
  *
  * This file is part of JAMS
@@ -51,6 +51,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableModel;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;
 import org.unijena.juice.*;
@@ -76,6 +77,8 @@ public class ComponentAttributePanel extends JPanel {
     private JList attributeList;
     private JToggleButton linkButton, setButton;
     private ComponentAttribute var;
+    private TableModel tableModel;
+    private int selectedRow;
     
     
     public ComponentAttributePanel(ModelView view) {
@@ -148,6 +151,11 @@ public class ComponentAttributePanel extends JPanel {
         setButton.setMargin(new Insets(1, 1, 1, 1));
         setButton.setFocusable(false);
         setButton.setPreferredSize(new Dimension(30,20));
+        setButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setAttributeValue();
+            }
+        });
         LHelper.addGBComponent(infoPanel, infoLayout, setButton, 2, 20, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTH);
         
         
@@ -199,28 +207,53 @@ public class ComponentAttributePanel extends JPanel {
             }
         });
         listPanel.add(listScroll, BorderLayout.CENTER);
-        
+        cleanup();
+    }
+    
+    private void setAttributeValue() {
+        if (setButton.isSelected()) {
+            valueInput.getComponent().setEnabled(false);
+            var.setValue(valueInput.getValue());
+        } else {
+            valueInput.getComponent().setEnabled(true);
+            var.setValue("");
+        }
+        tableModel.setValueAt(var.getValue(), selectedRow, 4);
     }
     
     private void setAttributeLink() {
-        if (linkButton.isSelected() && !customAttributeText.getText().equals("")) {
-
+        
+        if (customAttributeText.getText().equals("")) {
+            linkButton.setSelected(false);
+            linkButton.setEnabled(false);
+        } else {
+            linkButton.setEnabled(true);
+        }
+        
+        if (linkButton.isSelected()) {
             
+            ComponentDescriptor context = (ComponentDescriptor) contextCombo.getSelectedItem();
+            var.linkToAttribute(context, customAttributeText.getText());
             linkText.setText(var.getContext() + " -> " + var.getContextAttribute());
             //linkText.setText(contextCombo.getSelectedItem() + " -> " + customAttributeText.getText());
-
+            tableModel.setValueAt(var.getContext() + "." + var.getContextAttribute(), selectedRow, 3);
+            
         } else {
             linkText.setText("");
+            tableModel.setValueAt("", selectedRow, 3);
         }
     }
     
     
-    public void update(ComponentAttribute var, String ancestorNames[], ComponentDescriptor component) {
+    public void update(ComponentAttribute var, ComponentDescriptor ancestorArray[],
+            ComponentDescriptor component, TableModel tableModel,  int selectedRow) {
         
         this.var = var;
         this.type = var.type;
+        this.tableModel = tableModel;
+        this.selectedRow = selectedRow;
         
-        this.contextCombo.setModel(new DefaultComboBoxModel(ancestorNames));
+        this.contextCombo.setModel(new DefaultComboBoxModel(ancestorArray));
         
         updateRepository();
         
@@ -234,17 +267,12 @@ public class ComponentAttributePanel extends JPanel {
         localNameText.setText(var.name);
         compText.setText(component.getName());
         
-        this.valueInput.setValue(var.getValue());
-        
         if (var.getContext() != null) {
-            contextCombo.setSelectedItem(var.getContext().getName());
-            attributeList.setSelectedValue(var.getAttribute().toString(), true);
-            linkText.setText(var.getContext().getName() + " -> " + var.getAttribute().toString());
             linkButton.setSelected(true);
-        } else {
-            linkText.setText(null);
-            linkButton.setSelected(false);
+            contextCombo.setSelectedItem(var.getContext());
+            attributeList.setSelectedValue(var.getAttribute().toString(), true);
         }
+        setAttributeLink();
         
         if (var.accessType == var.READ_ACCESS) {
             customAttributeText.setEnabled(false);
@@ -252,18 +280,20 @@ public class ComponentAttributePanel extends JPanel {
             customAttributeText.setEnabled(true);
         }
         
+        setButton.setEnabled(true);
+        valueInput.setValue(var.getValue());
         if (var.getValue() != "") {
-            valueInput.getComponent().setEnabled(true);
+            valueInput.getComponent().setEnabled(false);
             setButton.setSelected(true);
         } else {
-            valueInput.getComponent().setEnabled(false);
+            valueInput.getComponent().setEnabled(true);
             setButton.setSelected(false);
         }
     }
     
     private void updateRepository() {
         
-        ComponentDescriptor context = this.getContext();
+        ComponentDescriptor context = (ComponentDescriptor) contextCombo.getSelectedItem();
         
         AttributeRepository repo = context.getDataRepository();
         //ArrayList<Attribute> attributes = repo.getAttributesByType(type);
@@ -287,10 +317,6 @@ public class ComponentAttributePanel extends JPanel {
         attributeList.setModel(lModel);
     }
     
-    public ComponentDescriptor getContext() {
-        return view.getComponentDescriptor((String) contextCombo.getSelectedItem());
-    }
-    
     public void cleanup() {
         contextCombo.setModel(new DefaultComboBoxModel());
         attributeList.setModel(new DefaultListModel());
@@ -301,6 +327,13 @@ public class ComponentAttributePanel extends JPanel {
             infoPanel.remove(valueInput.getComponent());
             infoPanel.updateUI();
         }
+        
+        linkButton.setSelected(false);
+        linkButton.setEnabled(false);
+        setButton.setSelected(false);
+        setButton.setEnabled(false);
+        customAttributeText.setText(null);
+        customAttributeText.setEnabled(false);
     }
     
 }

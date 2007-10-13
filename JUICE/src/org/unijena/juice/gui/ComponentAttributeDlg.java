@@ -1,5 +1,5 @@
 /*
- * VarEditDlg.java
+ * ComponentAttributeDlg.java
  * Created on 3. Januar 2007, 22:53
  *
  * This file is part of JAMS

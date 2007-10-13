@@ -691,7 +691,8 @@ public class ModelTree extends JAMSTree {
         } 
         if (e.hasAttribute("value")) {
             
-            cd.setComponentAttribute(e.getAttribute("name"), e.getAttribute("value"));
+            //cd.setComponentAttribute(e.getAttribute("name"), e.getAttribute("value"));
+            cd.getComponentAttributes().get(e.getAttribute("name")).setValue(e.getAttribute("value"));
             
         }
     }

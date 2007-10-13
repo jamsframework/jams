@@ -1,5 +1,5 @@
 /*
- * AttributeEditDlg.java
+ * ContextAttributeDlg.java
  * Created on 12. Januar 2007, 11:41
  *
  * This file is part of JAMS
