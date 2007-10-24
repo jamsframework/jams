@@ -1,7 +1,7 @@
 /*
  * JAMSSerializableData.java
  *
- * Created on 9. M�rz 2007, 13:08
+ * Created on 9. MÃ¤rz 2007, 13:08
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.

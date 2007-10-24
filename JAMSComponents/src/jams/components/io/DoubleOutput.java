@@ -1,6 +1,6 @@
 /*
  * DoubleOutput.java
- * Created on 21. März 2007, 17:26
+ * Created on 21. MÃ¤rz 2007, 17:26
  *
  * This file is part of JAMS
  * Copyright (C) 2006 FSU Jena

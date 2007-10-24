@@ -807,7 +807,7 @@ title="Title",
 			int lpos = 0;
 			for (int iter=0;iter<1000;iter++) {
 			    lpos = (int)Math.floor(npg+0.5-Math.sqrt((npg+0.5)*(npg+0.5) - npg*(npg+1)*Custom_rand()));
-			    //wirklich nötig??
+			    //wirklich nÃ¶tig??
 			    int idx = find(lcs,0,k3,lpos);
 			    if (idx == -1) {
 				break;

@@ -79,6 +79,7 @@ public class ComponentAttributePanel extends JPanel {
     private ComponentAttribute var;
     private TableModel tableModel;
     private int selectedRow;
+    private boolean isUpdating = false;
     
     
     public ComponentAttributePanel(ModelView view) {
@@ -143,6 +144,7 @@ public class ComponentAttributePanel extends JPanel {
         linkButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setAttributeLink();
+                updateAttributeLinkGUI();
             }
         });
         LHelper.addGBComponent(infoPanel, infoLayout, linkButton, 2, 15, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTH);
@@ -176,12 +178,15 @@ public class ComponentAttributePanel extends JPanel {
         customAttributeText.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 setAttributeLink();
+                updateAttributeLinkGUI();
             }
             public void insertUpdate(DocumentEvent e) {
                 setAttributeLink();
+                updateAttributeLinkGUI();
             }
             public void removeUpdate(DocumentEvent e) {
                 setAttributeLink();
+                updateAttributeLinkGUI();
             }
         });
         customAttributeText.setBorder(BorderFactory.createEtchedBorder());
@@ -221,26 +226,49 @@ public class ComponentAttributePanel extends JPanel {
         tableModel.setValueAt(var.getValue(), selectedRow, 4);
     }
     
-    private void setAttributeLink() {
+    private void updateAttributeLinkGUI() {
+        
+        isUpdating = true;
+        
+        if (var.getContextAttribute() == null) {
+            linkButton.setSelected(false);
+            linkText.setText("");
+            tableModel.setValueAt("", selectedRow, 3);
+            contextCombo.setSelectedItem(null);
+            attributeList.setSelectedValue(null, true);
+        } else {
+            linkButton.setSelected(true);
+            linkText.setText(var.getContext() + " -> " + var.getContextAttribute());
+            tableModel.setValueAt(var.getContext() + "." + var.getContextAttribute(), selectedRow, 3);
+            contextCombo.setSelectedItem(var.getContext());
+            attributeList.setSelectedValue(var.getAttribute().toString(), true);            
+        }
         
         if (customAttributeText.getText().equals("")) {
-            linkButton.setSelected(false);
             linkButton.setEnabled(false);
         } else {
             linkButton.setEnabled(true);
         }
         
-        if (linkButton.isSelected()) {
-            
-            ComponentDescriptor context = (ComponentDescriptor) contextCombo.getSelectedItem();
-            var.linkToAttribute(context, customAttributeText.getText());
-            linkText.setText(var.getContext() + " -> " + var.getContextAttribute());
-            //linkText.setText(contextCombo.getSelectedItem() + " -> " + customAttributeText.getText());
-            tableModel.setValueAt(var.getContext() + "." + var.getContextAttribute(), selectedRow, 3);
-            
-        } else {
-            linkText.setText("");
-            tableModel.setValueAt("", selectedRow, 3);
+        isUpdating = false;
+        
+    }
+    
+    private void setAttributeLink() {
+        
+        if (isUpdating) {
+            return;
+        }
+        
+        String attribute = customAttributeText.getText();
+        ComponentDescriptor context = (ComponentDescriptor) contextCombo.getSelectedItem();
+        
+        if (linkButton.isSelected() && !attribute.equals("") && (context != null)) {
+            var.linkToAttribute(context, attribute);
+        }
+        
+        if (!linkButton.isSelected()) {
+            var.unlinkFromAttribute();
         }
     }
     
@@ -268,13 +296,14 @@ public class ComponentAttributePanel extends JPanel {
         compText.setText(component.getName());
         
         if (var.getContext() != null) {
-            linkButton.setSelected(true);
-            contextCombo.setSelectedItem(var.getContext());
-            attributeList.setSelectedValue(var.getAttribute().toString(), true);
+//            linkButton.setSelected(true);
+//            contextCombo.setSelectedItem(var.getContext());
+//            attributeList.setSelectedValue(var.getAttribute().toString(), true);
+//            customAttributeText.setText(var.getAttribute().toString());
         }
-        setAttributeLink();
+        updateAttributeLinkGUI();
         
-        if (var.accessType == var.READ_ACCESS) {
+        if (var.accessType == ComponentAttribute.READ_ACCESS) {
             customAttributeText.setEnabled(false);
         } else {
             customAttributeText.setEnabled(true);
@@ -282,16 +311,19 @@ public class ComponentAttributePanel extends JPanel {
         
         setButton.setEnabled(true);
         valueInput.setValue(var.getValue());
-        if (var.getValue() != "") {
+        if (!var.getValue().equals("")) {
             valueInput.getComponent().setEnabled(false);
             setButton.setSelected(true);
         } else {
             valueInput.getComponent().setEnabled(true);
             setButton.setSelected(false);
         }
+        
     }
     
     private void updateRepository() {
+        
+        isUpdating = true;
         
         ComponentDescriptor context = (ComponentDescriptor) contextCombo.getSelectedItem();
         
@@ -315,9 +347,14 @@ public class ComponentAttributePanel extends JPanel {
         }
         
         attributeList.setModel(lModel);
+        
+        isUpdating = false;
     }
     
     public void cleanup() {
+        
+        isUpdating = true;
+        
         contextCombo.setModel(new DefaultComboBoxModel());
         attributeList.setModel(new DefaultListModel());
         localNameText.setText(null);
@@ -334,6 +371,8 @@ public class ComponentAttributePanel extends JPanel {
         setButton.setEnabled(false);
         customAttributeText.setText(null);
         customAttributeText.setEnabled(false);
+        
+        isUpdating = false;
     }
     
 }

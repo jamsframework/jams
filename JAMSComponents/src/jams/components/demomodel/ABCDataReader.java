@@ -1,6 +1,6 @@
 /*
  * ABCDataReader.java
- * Created on 21. März 2007, 17:25
+ * Created on 21. MÃ¤rz 2007, 17:25
  *
  * This file is part of JAMS
  * Copyright (C) 2006 FSU Jena

@@ -364,7 +364,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             else idx = top.getIndex(last);
             
                         /*
-                         * Select-Filter überarbeiten, DEPRECATED, aber Bug in GT 2.3.1 !!!
+                         * Select-Filter Ã¼berarbeiten, DEPRECATED, aber Bug in GT 2.3.1 !!!
                          */
             // *************FILTER***************
             GeometryDistanceFilter distWithinFilter = null;

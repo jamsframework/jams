@@ -1,6 +1,6 @@
 /*
  * InitTest.java
- * Created on 16. März 2007, 10:54
+ * Created on 16. MÃ¤rz 2007, 10:54
  *
  * This file is part of JAMS
  * Copyright (C) 2006 FSU Jena

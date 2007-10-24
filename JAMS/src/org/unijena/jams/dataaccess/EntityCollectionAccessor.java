@@ -1,6 +1,6 @@
 /*
  * EntityCollectionAccessor.java
- * Created on 30. März 2006, 09:29
+ * Created on 30. MÃ¤rz 2006, 09:29
  *
  * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena

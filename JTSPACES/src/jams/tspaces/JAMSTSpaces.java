@@ -88,7 +88,7 @@ public class JAMSTSpaces  extends JAMSContext {
                  if (!spaceTools.patternExists(exkl)){
                      spaceTools.tsJAMS.write(new Tuple(new JAMSString("****initJAMSTSpaces****")));
                      JAMSString actualState = spaceTools.readString(new JAMSString("state"));;
-                    //muss noch gekl�rt werden cccc
+                    //muss noch geklï¿½rt werden cccc
 //                    if ((actualState != null) && (actualState.equals(new JAMSString("done")))){
 //                              tempInt = tsJAMS.deleteAll();
 //                    } 

@@ -1,6 +1,6 @@
 /*
  * GroupEditDlg.java
- * Created on 14. März 2007, 07:44
+ * Created on 14. MÃ¤rz 2007, 07:44
  *
  * This file is part of JAMS
  * Copyright (C) 2006 FSU Jena

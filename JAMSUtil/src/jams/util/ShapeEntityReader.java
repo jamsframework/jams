@@ -92,7 +92,7 @@ public class ShapeEntityReader extends StandardEntityReader {
 	    store = new ShapefileDataStore(shapeURL);
 	}
 	catch (MalformedURLException badURL) {
-	    model.getRuntime().println("Ungültiger Pfad: " + badURL.getMessage(), JAMS.STANDARD);
+	    model.getRuntime().println("UngÃ¼ltiger Pfad: " + badURL.getMessage(), JAMS.STANDARD);
 	}
 	    	
 	String name = store.getTypeNames()[0];

@@ -352,7 +352,7 @@ import org.unijena.jams.model.*;
 	    }
 	getModel().getRuntime().println("***************************************************************");
 	getModel().getRuntime().println("***************************************************************");
-	getModel().getRuntime().println("Optimierung f¸r Maﬂ Nummer: " + e + " abgeschlossen!!");
+	getModel().getRuntime().println("Optimierung f√ºr Ma√ü Nummer: " + e + " abgeschlossen!!");
 	getModel().getRuntime().println("***************************************************************");
 	getModel().getRuntime().println("***************************************************************");
 	}

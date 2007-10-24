@@ -496,7 +496,7 @@ public class CTSConfigurator {
     public void timePlot(){
 //
 //
-//        /* Festlegen welche cols zu valueLeft und welche zu valueRight gehören!! */
+//        /* Festlegen welche cols zu valueLeft und welche zu valueRight gehÃ¶ren!! */
 //
 //        /* CTSPlot initialisieren */
         ctsplot = new CTSPlot();
@@ -605,7 +605,7 @@ public class CTSConfigurator {
         
        
                 
-        /* jedesmal fragen, ob der graph zu valueLEFT GEHÖRT (COMBObOX ABFRAGEN) */
+        /* jedesmal fragen, ob der graph zu valueLEFT GEHÃ–RT (COMBObOX ABFRAGEN) */
         /* ACHTUNG: Funktioniert noch nicht bei addGraph() */
         //int rowcount = table.getRowCount();
         int c = 0;
@@ -700,7 +700,7 @@ public class CTSConfigurator {
         activationChange = new ActionListener[graphCount];
         
         for(int k=0;k<graphCount;k++){
-            /* reicht hier ein listener für alle boxes? scheint so... */
+            /* reicht hier ein listener fÃ¼r alle boxes? scheint so... */
             activationChange[k] = new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
                     //timePlot();

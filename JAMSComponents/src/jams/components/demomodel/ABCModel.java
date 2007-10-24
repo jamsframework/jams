@@ -14,14 +14,14 @@ title="ABCModel",
         "was developed by Fiering (1967), purely for educational purposes. The model is a simple water " +
         "balance calculation assuming that losses to evaporation and transpiration can simply be described " +
         "by a constant factor, while the watershed generally is assumed to behave like a linear reservoir. " +
-        "The abc model has the following form: Qt = (1 – a – b)Pt + cSt-1 " +
+        "The abc model has the following form: Qt = (1 Â– a Â– b)Pt + cSt-1 " +
         "where Q is the streamflow, P is the precipitation, a is a parameter describing the fraction of" +
         "precipitation that percolates through the soil to the groundwater, b is a parameter describing the" +
         "fraction of precipitation directly lost to the atmosphere through evapotranspiration, and c is a" +
         "parameter describing the amount of groundwater that leaves the aquifer storage S and drains into" +
-        "the stream. The index t describes the year (t=1,2,…,N). Streamflow, precipitation and storage are" +
+        "the stream. The index t describes the year (t=1,2,Â…,N). Streamflow, precipitation and storage are" +
         "measured in volume units so that the additive relations derived are dimensionally homogeneous. " +
-        "The groundwater storage at the end of the year t is: St = aPt + (1 – c)St-1" +
+        "The groundwater storage at the end of the year t is: St = aPt + (1 Â– c)St-1" +
         "The following constraints are required:" +
         "0 < a,b,c < 1 ," +
         "0 < a + b < 1 ," +

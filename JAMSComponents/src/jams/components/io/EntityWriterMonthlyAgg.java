@@ -223,10 +223,10 @@ title="Entity file writer (spatial+monthly)",
         
         if (!time.after(aggTimeInterval.getEnd()) && !time.before(aggTimeInterval.getStart())) {
             
-            int newMonth=time.get(time.MONTH);  //hier wird überprüft, ob ein Monatswechsel stattgefunden hat
+            int newMonth=time.get(time.MONTH);  //hier wird Ã¼berprÃ¼ft, ob ein Monatswechsel stattgefunden hat
             if(newMonth != oldMonth){           //wenn das der Fall ist, dann werden im Folgenden die Werte der valueMatrix zur aggMatrix aggregiert
                 
-                //Einfügen: Lesen von Monat und Jahr für Header!
+                //EinfÃ¼gen: Lesen von Monat und Jahr fÃ¼r Header!
                 dateVals[tcounter] = time.toString(timeFormat);
                 
                 //aggregated values
@@ -257,7 +257,7 @@ title="Entity file writer (spatial+monthly)",
                         }
                     }
                     
-                    aggCounter[month]++; // in diesem Array wird gezählt wie oft ein bestimmter Monat aggregiert wurde. Dient zur Berechnung des Mittelwertes
+                    aggCounter[month]++; // in diesem Array wird gezÃ¤hlt wie oft ein bestimmter Monat aggregiert wurde. Dient zur Berechnung des Mittelwertes
                 }
                 tcounter++;
                 daycounter = 0;
@@ -272,7 +272,7 @@ title="Entity file writer (spatial+monthly)",
                 for(int i = 0; i < nEnts; i++){
                     //hier wird der Tageswert aus dem Modell geholt
                     dailyValue[i] = (((JAMSDouble)entities.getEntityArray()[i].getObject(this.attributeName.getValue())).getValue());
-                    //hier für die Berechnung der Standardabweichung zwischengespeichert
+                    //hier fÃ¼r die Berechnung der Standardabweichung zwischengespeichert
                     if(this.type.getValue().equals("stDev")){
                         monthValueMatrix[daycounter][i] = dailyValue[i];
                     }

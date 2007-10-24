@@ -1,6 +1,6 @@
 /*
  * ModelAttribute.java
- * Created on 4. März 2007, 18:58
+ * Created on 4. MÃ¤rz 2007, 18:58
  *
  * This file is part of JAMS
  * Copyright (C) 2007 FSU Jena

@@ -1,6 +1,6 @@
 /*
  * ModelProperties.java
- * Created on 10. M�rz 2007, 12:50
+ * Created on 10. Mï¿½rz 2007, 12:50
  *
  * This file is part of JAMS
  * Copyright (C) 2006 FSU Jena

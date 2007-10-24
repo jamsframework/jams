@@ -69,7 +69,7 @@ public class TreePanel extends JPanel {
         searchText = new JTextField();
         searchText.setBorder(BorderFactory.createEtchedBorder());
         searchText.setEditable(true);
-        searchText.setColumns(15);
+        searchText.setColumns(20);
         searchText.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 TreePanel.this.searchText.selectAll();
@@ -78,14 +78,19 @@ public class TreePanel extends JPanel {
         });
         
         JButton searchButton = new JButton("Search");
+        searchButton.setMargin(new Insets(4, 4, 4, 4));
+        searchButton.setPreferredSize(new Dimension(60,20));
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 searchComponent();
             }
         });
         
-        searchPanel.add(searchText);
-        searchPanel.add(searchButton);
+        searchPanel.setLayout(new BorderLayout());
+        JPanel searchButtonPanel = new JPanel();
+        searchButtonPanel.add(searchButton);
+        searchPanel.add(searchText, BorderLayout.CENTER);
+        searchPanel.add(searchButtonPanel, BorderLayout.SOUTH);
         
         
         JButton expandButton = new JButton("+");
@@ -124,6 +129,9 @@ public class TreePanel extends JPanel {
     private void searchComponent() {
         
         String newSearchString =  TreePanel.this.searchText.getText();
+        if (newSearchString.equals("")) {
+            return;
+        }
         JAMSNode rootNode = (JAMSNode) tree.getModel().getRoot();
         
         if (!newSearchString.equals(searchString) || nodeEnum == null) {

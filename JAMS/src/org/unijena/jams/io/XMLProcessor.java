@@ -1,6 +1,6 @@
 /*
  * XMLProcessor.java
- * Created on 20. März 2006, 09:02
+ * Created on 20. MÃ¤rz 2006, 09:02
  *
  * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena

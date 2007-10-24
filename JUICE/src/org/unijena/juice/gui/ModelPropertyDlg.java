@@ -1,6 +1,6 @@
 /*
  * ModelPropertyDlg.java
- * Created on 9. März 2007, 23:21
+ * Created on 9. MÃ¤rz 2007, 23:21
  *
  * This file is part of JAMS
  * Copyright (C) 2006 FSU Jena
@@ -230,19 +230,19 @@ public class ModelPropertyDlg extends JDialog {
     }
     
     public double getLowerBound() {
-        double result = 0;
+        double lowBound = 0;
         try {
-            result = Double.parseDouble(lowField.getValue());
+            lowBound = Double.parseDouble(lowField.getValue());
         } catch (NumberFormatException nfe) {}
-        return result;
+        return lowBound;
     }
     
     public double getUpperBound() {
-        double result = 0;
+        double upBound = 0;
         try {
-            result = Double.parseDouble(upField.getValue());
+            upBound = Double.parseDouble(upField.getValue());
         } catch (NumberFormatException nfe) {}
-        return result;
+        return upBound;
     }
     
     public ComponentDescriptor getComponent() {

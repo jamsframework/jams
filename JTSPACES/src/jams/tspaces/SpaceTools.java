@@ -72,7 +72,7 @@ public class SpaceTools {
                      
                      JAMSString state = this.readString(new JAMSString("state"));
                      if (state != null){
-                         // noch zu kl�ren ccc
+                         // noch zu klï¿½ren ccc
                          if ((state.equals(deletePriority)) && (state.equals(new JAMSString("done")))){
                              tsJAMS.deleteAll(); 
                          }
@@ -90,7 +90,7 @@ public class SpaceTools {
              if (tsJAMS != null){
                  JAMSString state = this.readString(new JAMSString("state"));
                  if (state != null){
-                     // noch zu kl�ren ccc
+                     // noch zu klï¿½ren ccc
 //                     if (state.equals("done")){
 //                         System.exit(0);
 //                     }

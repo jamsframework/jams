@@ -289,7 +289,7 @@ title="Title",
         double vecLength = data.length;
         
         if (data.length == 0)
-            getModel().getRuntime().sendInfoMsg("Complex in SCEM_UA hat nur die Größe von 1! - Kritischer Fehler!!");
+            getModel().getRuntime().sendInfoMsg("Complex in SCEM_UA hat nur die GrÃ¶ÃŸe von 1! - Kritischer Fehler!!");
         
         for (int i=0;i<N;i++) {
             java.util.Arrays.fill(coV[i],0);

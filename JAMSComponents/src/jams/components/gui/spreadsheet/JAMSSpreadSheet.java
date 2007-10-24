@@ -518,7 +518,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     };      
     
     private void openCTS(){
-        /* achtung: nur wenn time mitläuft!! */
+        /* achtung: nur wenn time mitlÃ¤uft!! */
         if(!ctsIsOpen){
         ctstabs = new CTSViewer(getModel().getRuntime().getFrame());
         ctstabs.addGraph(table);
@@ -595,7 +595,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                      
 
                          ts[k] = new TimeSeries("timeseriesname", Second.class);
-                         //yAxisName += "  "+table.getColumnName(cols[k]); TODO: column übergeben!
+                         //yAxisName += "  "+table.getColumnName(cols[k]); TODO: column Ã¼bergeben!
                  }
                  
                  try{
@@ -623,7 +623,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                  //int[] cols = table.getSelectedColumns();
                timePlot(table.getSelectedRows(),table.getSelectedColumns());
              }
-             else{ //noch als übergeordnetes fenster machen!
+             else{ //noch als Ã¼bergeordnetes fenster machen!
                  final JDialog frame = new JDialog();
                  frame.setLayout(new FlowLayout());
                  frame.add(new JLabel("Please load a time series dataset"));
@@ -812,7 +812,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
               headerpanel.setLayout(new GridLayout(1,2));
 //////        tmodel = new JAMSTableModel();
               //tmodel = new JAMSTableModel();
-//////        //hier platz für time schaffen!!!!!!!!!!!!
+//////        //hier platz fÃ¼r time schaffen!!!!!!!!!!!!
 //////        //
         if(time != null){
             tmodel.setTimeRuns(true);

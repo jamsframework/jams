@@ -41,7 +41,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;

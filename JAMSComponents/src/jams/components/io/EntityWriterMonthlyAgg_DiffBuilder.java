@@ -212,7 +212,7 @@ title="Entity file writer (spatial+monthly)",
         getModel().getRuntime().println("aggStartdate:\t" + agg_sd.toString(), JAMS.VERBOSE);
         getModel().getRuntime().println("aggEnddate:\t" + agg_ed.toString(), JAMS.VERBOSE);
         
-//Anpassungen des Anfangs- und Endzeitpunkts (einen Tag eher Berechnung durchführen, einen Tag länger laufen um Daten schreiben zu können
+//Anpassungen des Anfangs- und Endzeitpunkts (einen Tag eher Berechnung durchfÃ¼hren, einen Tag lÃ¤nger laufen um Daten schreiben zu kÃ¶nnen
         dayBeforeAggTI = sdAgg - 86400000;
         edAgg = edAgg + 86400000;
         agg_ed.setTimeInMillis(edAgg);
@@ -254,7 +254,7 @@ title="Entity file writer (spatial+monthly)",
     
     public void run() throws JAMSEntity.NoSuchAttributeException {
         
-        /*Für die Differenz braucht man immer den Attributwert des Vortages.
+        /*FÃ¼r die Differenz braucht man immer den Attributwert des Vortages.
         Um zu Verhindern, dass man immer das Aggregationsinterval einen Tag eher startet,
         wird hier der Wert der Vortages berechnet */
         long checkTime = time.getTimeInMillis();
@@ -285,7 +285,7 @@ title="Entity file writer (spatial+monthly)",
             int newMonth=time.get(time.MONTH);
             if(newMonth != oldMonth){
                 
-                //Einfügen: Lesen von Monat und Jahr für Header!
+                //EinfÃ¼gen: Lesen von Monat und Jahr fÃ¼r Header!
                 dateVals[tcounter] = time.toString(timeFormat);
                 
                 //aggregated values

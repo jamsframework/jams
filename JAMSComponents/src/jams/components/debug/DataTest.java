@@ -1,6 +1,6 @@
 /*
  * DataTest.java
- * Created on 27. März 2007, 17:16
+ * Created on 27. MÃ¤rz 2007, 17:16
  *
  * This file is part of JAMS
  * Copyright (C) 2006 FSU Jena

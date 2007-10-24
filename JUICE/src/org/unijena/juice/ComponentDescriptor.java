@@ -267,6 +267,23 @@ public class ComponentDescriptor {
         public String getValue() {
             return value;
         }
+        
+        public void unlinkFromAttribute() {
+
+            // if access is W or R/W (not R), then the component authomatically
+            // removes its context attribute from the context
+            if (this.accessType != ComponentAttribute.READ_ACCESS) {
+                
+                // check if component attribute has been linked before
+                // and unlink if thats the case
+                ComponentDescriptor context = this.getContext();
+                if (context != null) {
+                    AttributeRepository repo = context.getDataRepository();
+                    repo.removeAttribute(this.getContextAttribute());
+                }
+            }
+            this.contextAttribute = null;
+        }
                 
         public void linkToAttribute(ComponentDescriptor context, String contextAttributeName) {
             

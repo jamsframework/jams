@@ -1,7 +1,7 @@
 /*
  * JAMSTableModel.java
  *
- * Created on 27. M‰rz 2007, 15:17
+ * Created on 27. M√§rz 2007, 15:17
  *
  * To change this template, choose Tools | Options and locate the template under
  * the Source Creation and Management node. Right-click the template and choose
@@ -137,7 +137,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
             }
         }
         else {
-            name = "COL"+index; //TODO: Column Names kˆnnen gesetzt werden
+            name = "COL"+index; //TODO: Column Names k√∂nnen gesetzt werden
         }
         return name;
     }
@@ -164,7 +164,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
                }
            }
            
-           if(timeRuns == true){ //kann timeRuns true sein, aber trotzdem scheiﬂe bauen?
+           if(timeRuns == true){ //kann timeRuns true sein, aber trotzdem schei√üe bauen?
                if(columnIndex < this.arrayVector.get(rowIndex).length + 1){ /** +1 */
                     if (columnIndex == 0){
                        // value = timeVector.get(rowIndex).toString();
@@ -251,7 +251,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
             }
         }
         this.columns=columns;
-         //TODO: hier mˆglichkeit f¸r colnames schaffen!!
+         //TODO: hier m√∂glichkeit f√ºr colnames schaffen!!
         
         
     }

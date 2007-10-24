@@ -1,6 +1,6 @@
 /*
  * DoubleArrayAccessor.java
- * Created on 19. März 2006, 14:07
+ * Created on 19. MÃ¤rz 2006, 14:07
  *
  * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena

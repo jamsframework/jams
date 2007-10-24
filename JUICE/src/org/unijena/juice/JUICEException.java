@@ -1,6 +1,6 @@
 /*
  * JUICEException.java
- * Created on 20. März 2007, 22:50
+ * Created on 20. MÃ¤rz 2007, 22:50
  *
  * This file is part of JAMS
  * Copyright (C) 2006 FSU Jena

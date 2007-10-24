@@ -14,9 +14,9 @@ public class baumpart {
 		int hruanzahl=anz(hrudatei);
 		int reachanzahl=anz(reachdatei);
 		
-		//legt das Array, in dem die Verknüpfungen zwischen Kindern und Vätern stehen sollen, an
+		//legt das Array, in dem die VerknÃ¼pfungen zwischen Kindern und VÃ¤tern stehen sollen, an
 		int[] baumarray=new int[hruanzahl+reachanzahl+1];
-		//legt das Array, in dem die ursprüngliche Bezeichnung jedes Index steht, an
+		//legt das Array, in dem die ursprÃ¼ngliche Bezeichnung jedes Index steht, an
 		String[] namensarray=new String[hruanzahl+reachanzahl+1];
 		
 		//liest die Kind/Vater-Beziehungen der hru- bzw. der reach-Datei ein. Diese stehen dann im baumarray.
@@ -28,7 +28,7 @@ public class baumpart {
 		//gibt den gespeicherten Baum aus
 		baumausgabe(wurzel);System.out.println();
 		
-		//legt eine Liste von Bäumen an, die dann nacheinander parallel bearbeitet werden können
+		//legt eine Liste von BÃ¤umen an, die dann nacheinander parallel bearbeitet werden kÃ¶nnen
 		Liste partitioningtree = partitioning(wurzel);
 		listenausgabe(partitioningtree);
 	}
@@ -38,10 +38,10 @@ public class baumpart {
 	}
 	
 	public static Liste<Node> partitioning(Node wurzel, int n){
-		baumumsortierung(wurzel); //sortiert den Baum so um, dass immer die Knoten mit größter Size ganz links stehen
+		baumumsortierung(wurzel); //sortiert den Baum so um, dass immer die Knoten mit grÃ¶ÃŸter Size ganz links stehen
 		Node kindknoten=wurzel;
 		Liste<Node> teilbaum = new Liste<Node>();
-		teilbaum.setNummer(n); //nummeriert die Teilbäume durch
+		teilbaum.setNummer(n); //nummeriert die TeilbÃ¤ume durch
 		if (wurzel.getSize()<=maxsize){//letzter Baum
 			teilbaum.setElement(wurzel);
 			teilbaum.setNext(null);
@@ -51,12 +51,12 @@ public class baumpart {
 			kindknoten=kindknoten.getlinkesterSohn();
 		}
 		int size=kindknoten.getSize();
-		//löscht die Verbindung des Vaterknotens zum gefundenen Teilbaum
+		//lÃ¶scht die Verbindung des Vaterknotens zum gefundenen Teilbaum
 		kindknoten.getVater().setDegree(kindknoten.getVater().getDegree()-1);
 		kindknoten.getVater().setlinkesterSohn(kindknoten.getrechterBruder());
 		kindknoten.setrechterBruder(null);
-		teilbaum.setElement(kindknoten); //fügt den neuen Teilbaum in die Liste der Teilbäume ein und aktualisiert Höhe der Knoten im Tailbaum
-		//Aktualisieren der "Size"-Einträge oberhalb des gefundenen Teilbaums
+		teilbaum.setElement(kindknoten); //fÃ¼gt den neuen Teilbaum in die Liste der TeilbÃ¤ume ein und aktualisiert HÃ¶he der Knoten im Tailbaum
+		//Aktualisieren der "Size"-EintrÃ¤ge oberhalb des gefundenen Teilbaums
 		while (kindknoten.getVater()!=null){
 			kindknoten=kindknoten.getVater();
 			kindknoten.setSize(kindknoten.getSize()-size);
@@ -119,7 +119,7 @@ public class baumpart {
 		return baum(barray, narray, new Node<String>(0,"0"));
 	}
 	
-	public static Node baum(int[] barray, String[] narray, Node<String> node){//gibt jeweils den linkesten Teilbaum des Wurzelknoten node zurück
+	public static Node baum(int[] barray, String[] narray, Node<String> node){//gibt jeweils den linkesten Teilbaum des Wurzelknoten node zurÃ¼ck
 		if (node.getIndex()==0){
 			node.setHoehe(-1);
 		}
@@ -127,27 +127,27 @@ public class baumpart {
 		int size=1;
 		for (int i=0; i<soehne.length; i++){
 			if (i<soehne.length-1){
-				soehne[i].setrechterBruder(soehne[i+1]); //lässt jeden Knoten auf seinen rechten Bruder zeigen
+				soehne[i].setrechterBruder(soehne[i+1]); //lÃ¤sst jeden Knoten auf seinen rechten Bruder zeigen
 			}
 			soehne[i].setVater(node); //speichert Vaterknoten
-			soehne[i].setHoehe(node.getHoehe()+1); //errechnet die Höhe der Kinderknoten aus Höhe des Vaterknotens+1
-			Node teilbaum=baum(barray, narray, soehne[i]); //bestimmt für jedes Kind wiederum den linkesten Teilbaum und die Verkettung der Geschwister dieses Teilbaums
+			soehne[i].setHoehe(node.getHoehe()+1); //errechnet die HÃ¶he der Kinderknoten aus HÃ¶he des Vaterknotens+1
+			Node teilbaum=baum(barray, narray, soehne[i]); //bestimmt fÃ¼r jedes Kind wiederum den linkesten Teilbaum und die Verkettung der Geschwister dieses Teilbaums
 			soehne[i].setlinkesterSohn(teilbaum);
 			size+=soehne[i].getSize();
 		}
 		node.setDegree(soehne.length);
 		node.setSize(size);
 		if (soehne.length>0) {
-			return soehne[0]; //wenn der aktuelle Wuerzelknoten Kinder hat, wird der linkeste Teilbaum des Wurzelknotens zurückgegeben
+			return soehne[0]; //wenn der aktuelle Wuerzelknoten Kinder hat, wird der linkeste Teilbaum des Wurzelknotens zurÃ¼ckgegeben
 		}
-		return null; //ansonsten wird null zurückgegeben
+		return null; //ansonsten wird null zurÃ¼ckgegeben
 	}
 	
 	public static Node[] findChildren(int[] b, String n[], int index){
 		int sohnanzahl=0;
 		for (int i=1; i<b.length; i++){
 			if (b[i]==index){
-				sohnanzahl=sohnanzahl+1;//zählt alle Array-Einträge, die den gegeben Index als Vater haben 
+				sohnanzahl=sohnanzahl+1;//zÃ¤hlt alle Array-EintrÃ¤ge, die den gegeben Index als Vater haben 
 			}
 		}
 		Node[] kinderarray=new Node[sohnanzahl];
@@ -170,7 +170,7 @@ public class baumpart {
 			while(h!=-1){
 				h=reader.read(); //liest alle Zeichen nacheinander ein
 				if (h==10) {
-					anzahl+=1; //bei Zeilenumbruch wird die hru/rech-Zahl um eins erhöht
+					anzahl+=1; //bei Zeilenumbruch wird die hru/rech-Zahl um eins erhÃ¶ht
 				}
 			}
 			anzahl-=5; //zieht die ersten "unwichtigen" Zeilen ab 
@@ -207,23 +207,23 @@ public class baumpart {
 			    	int indexalt=Integer.parseInt(tokenizer.nextToken()); //liest hru/reach-Nummer ein
 			    	int index=indexalt;
 			    	if (typ.equals("reach")){
-			    		index=indexalt/100+ baumarray.length-anzahl-1; //hru-Einträge und reach-Einträge werden fortlaufend durchnummeriert 
+			    		index=indexalt/100+ baumarray.length-anzahl-1; //hru-EintrÃ¤ge und reach-EintrÃ¤ge werden fortlaufend durchnummeriert 
 			    	}
 			    	namensarray[index]=(indexalt+typ); // den durchnummerierten Indizes werden die alten Namen zugeordnet
 			    		
 			    	String s="";
 			    	for (int i=1; i<pos-1; i++){
-			    		s=tokenizer.nextToken("	 "); //bestimmt Gebiet, in das das im Index gespeicherte Gebiet abfließt		
+			    		s=tokenizer.nextToken("	 "); //bestimmt Gebiet, in das das im Index gespeicherte Gebiet abflieÃŸt		
 			    	}
 			    	int tohru=Integer.parseInt(tokenizer.nextToken());
-			    	if (typ.equals("hru")&&tohru==0){ //wenn hru ind reach abfließt		    		
+			    	if (typ.equals("hru")&&tohru==0){ //wenn hru ind reach abflieÃŸt		    		
 			    			tohru=Integer.parseInt(tokenizer.nextToken());
 			    			tohru=tohru/100+anzahl;
 			    	}
 			    	if (typ.equals("reach")&&tohru!=0){
 			    		tohru=tohru/100+baumarray.length-anzahl-1;
 			    	}
-			    	baumarray[index]=tohru; //speichert die Beziehung zwischen einem Gebiet (index) und dem Gebiet, in welches es abfließt (baumarray[index])
+			    	baumarray[index]=tohru; //speichert die Beziehung zwischen einem Gebiet (index) und dem Gebiet, in welches es abflieÃŸt (baumarray[index])
 		    	}
 			}
 		}
