@@ -97,21 +97,16 @@ public class ComponentAttributePanel extends JPanel {
         //infoPanel.setBorder(BorderFactory.createLoweredBevelBorder());
         //infoPanel.setPreferredSize(new Dimension(250,245));
         infoLayout = new GridBagLayout();
-        infoLayout.preferredLayoutSize(infoPanel);
+        //infoLayout.preferredLayoutSize(infoPanel);
         infoPanel.setLayout(infoLayout);
         
         JPanel detailPanel = new JPanel();
         detailPanel.setBorder(BorderFactory.createLoweredBevelBorder());
-        detailPanel.setPreferredSize(new Dimension(420,245));
+        detailPanel.setPreferredSize(new Dimension(460,245));
         detailPanel.add(infoPanel);
         
         this.add(detailPanel);
         this.add(listPanel);
-        
-        valuePanel = new JPanel();
-        valuePanel.setBorder(BorderFactory.createEtchedBorder());
-//        valuePanel.setLayout(new BorderLayout());
-        valuePanel.setPreferredSize(new Dimension(250, 180));
         
         LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Component:"), 0, 0, 1, 1, 0, 0);
         LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Local name:"), 0, 10, 1, 1, 0, 0);
@@ -128,7 +123,7 @@ public class ComponentAttributePanel extends JPanel {
         localNameText = new JTextField();
         localNameText.setEditable(false);
         localNameText.setBorder(BorderFactory.createEtchedBorder());
-        localNameText.setPreferredSize(new Dimension(300, 20));
+        localNameText.setPreferredSize(new Dimension(320, 20));
         LHelper.addGBComponent(infoPanel, infoLayout, localNameText, 1, 10, 1, 1, 0, 0);
         
         linkText = new JTextField();
@@ -140,7 +135,7 @@ public class ComponentAttributePanel extends JPanel {
         linkButton = new JToggleButton("LINK");
         linkButton.setMargin(new Insets(1, 1, 1, 1));
         linkButton.setFocusable(false);
-        linkButton.setPreferredSize(new Dimension(30,20));
+        linkButton.setPreferredSize(new Dimension(40,20));
         linkButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setAttributeLink();
@@ -149,10 +144,14 @@ public class ComponentAttributePanel extends JPanel {
         });
         LHelper.addGBComponent(infoPanel, infoLayout, linkButton, 2, 15, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTH);
         
+        valuePanel = new JPanel();
+        valuePanel.setLayout(new BorderLayout());
+        LHelper.addGBComponent(infoPanel, infoLayout, valuePanel, 1, 20, 1, 1, 0, 0);
+        
         setButton = new JToggleButton("SET");
         setButton.setMargin(new Insets(1, 1, 1, 1));
         setButton.setFocusable(false);
-        setButton.setPreferredSize(new Dimension(30,20));
+        setButton.setPreferredSize(new Dimension(40,20));
         setButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setAttributeValue();
@@ -286,12 +285,13 @@ public class ComponentAttributePanel extends JPanel {
         updateRepository();
         
         if (valueInput != null) {
-            infoPanel.remove(valueInput.getComponent());
-            infoPanel.updateUI();
+            valuePanel.remove(valueInput.getComponent());
+            valuePanel.updateUI();
         }
         
         valueInput = LHelper.createInputComponent(var.type.getSimpleName());
-        LHelper.addGBComponent(infoPanel, infoLayout, valueInput.getComponent(), 1, 20, 1, 1, 0, 0);
+        valuePanel.add(valueInput.getComponent(), BorderLayout.WEST);
+        //LHelper.addGBComponent(infoPanel, infoLayout, valueInput.getComponent(), 1, 20, 1, 1, 0, 0);
         localNameText.setText(var.name);
         compText.setText(component.getName());
         
@@ -363,6 +363,7 @@ public class ComponentAttributePanel extends JPanel {
         if (valueInput != null) {
             infoPanel.remove(valueInput.getComponent());
             infoPanel.updateUI();
+            valuePanel = null;
         }
         
         linkButton.setSelected(false);
