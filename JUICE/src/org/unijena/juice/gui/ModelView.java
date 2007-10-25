@@ -143,7 +143,7 @@ public class ModelView {
         frame.setMaximizable(true);
         frame.setResizable(true);
         frame.setTitle(title);
-        frame.setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/ContextComponent_s.png")));
+        frame.setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/ContextComponent_si.png")));
         //frame.setVisible(true);
         frame.setBounds(0, 0, 600, 600);
         frame.addInternalFrameListener(new InternalFrameListener() {

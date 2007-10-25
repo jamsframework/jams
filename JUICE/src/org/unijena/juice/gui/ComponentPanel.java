@@ -84,7 +84,7 @@ public class ComponentPanel extends JPanel {
     
     public ComponentPanel(ModelView view) {
         super();
-        this.view = view;
+        this.view = view;   
         init();
     }
     
