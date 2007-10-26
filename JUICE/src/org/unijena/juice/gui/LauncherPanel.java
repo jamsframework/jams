@@ -139,7 +139,7 @@ public class LauncherPanel extends JPanel {
         GridBagLayout gblButton = new GridBagLayout();
         JPanel innerButtonPanel = new JPanel();
         innerButtonPanel.setLayout(gblButton);
-        innerButtonPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+        //innerButtonPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
         
         LHelper.addGBComponent(innerButtonPanel, gblButton, addPropertyButton, 0, 0, 1, 1, 0, 0);
         LHelper.addGBComponent(innerButtonPanel, gblButton, addGroupButton, 0, 1, 1, 1, 0, 0);
