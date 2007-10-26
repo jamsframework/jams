@@ -155,7 +155,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
     public void run() throws Exception {
         
         if (!System.getProperty("os.name").contains("Windows")) {
-            return;
+            //return;
         }
         info.setText("3D Map Pane ... initializing");
         if (shapeFileName1 == null)
@@ -606,16 +606,16 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
     @Override
     public JPanel getPanel() {
         try {
-            if (System.getProperty("os.name").contains("Windows")) {
+//            if (System.getProperty("os.name").contains("Windows")) {
                 panel = new GISPanel();
-            }
+//            }
         } catch (Exception e) {
             System.out.println("Error during initialization of GIS Panel-->" + e.toString());
         }
         
         if (panel == null) {
             panel = new JPanel();
-            JTextField text = new JTextField("Available only under Windows!");
+            JTextField text = new JTextField("Not available on this platform!");
             text.setEditable(false);
             text.setBorder(null);
             panel.add(text);

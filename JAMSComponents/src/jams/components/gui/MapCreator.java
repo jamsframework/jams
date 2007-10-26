@@ -6,7 +6,6 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -162,10 +161,6 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
     @SuppressWarnings("unchecked")
     public void run() throws Exception {
         
-        if (!System.getProperty("os.name").contains("Windows")) {
-            return;
-        }
-        
         if (shapeFileName1 == null)
             shapeFileName1 = new JAMSString("");
         if (shapeFileName2 == null)
@@ -186,6 +181,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                     fs = new ShapefileDataStore(shpUrl)
                     .getFeatureSource(sourcename);
                 } catch (Exception e) {
+                    this.getModel().getRuntime().handle(e);
                 }
                 DefaultMapLayer layer = new DefaultMapLayer(fs, getStyle(fs, i));
                 layer.setTitle(otherLayers[i]);
@@ -211,7 +207,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             try {
                 ft = (DefaultFeatureType) mapFeatureType.getFeatureType();
             } catch (SchemaException e) {
-                e.printStackTrace();
+                this.getModel().getRuntime().handle(e);
             }
             
             Iterator<JAMSEntity> hrusIterate = hrus.getEntities().iterator();
@@ -295,7 +291,9 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                         baseShape, mc[idx].getDesc(), p, treeView);
                 p.setTopComponent(expPanel);
                 p.setDividerLocation(0.80);
-            } catch (Exception e1) {}
+            } catch (Exception e1) {
+                MapCreator.this.getModel().getRuntime().handle(e1);
+            }
         }
     }
     
@@ -571,11 +569,11 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                             else
                                 infoidx = top.getIndex(last);
                         } catch (Exception e1) {
+                            MapCreator.this.getModel().getRuntime().handle(e1);
                         }
                     }
                 }
             });
-            
             info = new JTextPane();
             info.setEditable(false);
             treeView = new JScrollPane(tree);
@@ -616,16 +614,16 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             waitPanel.add(label);
             splitPane.setLeftComponent(waitPanel);
             this.add(splitPane);
+            
         }
     }
     
     @Override
     public JPanel getPanel() {
         try {
-//            if (System.getProperty("os.name").contains("Windows")) {
             panel = new GISPanel();
-//            }
         } catch (Exception e) {
+            this.getModel().getRuntime().handle(e);
         }
         
         if (panel == null) {

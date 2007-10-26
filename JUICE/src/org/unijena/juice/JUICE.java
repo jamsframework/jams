@@ -23,6 +23,9 @@
 
 package org.unijena.juice;
 
+import com.jgoodies.looks.Options;
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
+import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 import java.awt.*;
 import java.io.File;
 import java.util.*;
@@ -68,6 +71,11 @@ public class JUICE {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } else {
+                PlasticLookAndFeel laf = new PlasticXPLookAndFeel();
+                PlasticLookAndFeel.setPlasticTheme(new com.jgoodies.looks.plastic.theme.ExperienceBlue());
+                Options.setPopupDropShadowEnabled(true);
+                UIManager.setLookAndFeel(laf);
             }
         } catch (Exception evt) {}
         try {
