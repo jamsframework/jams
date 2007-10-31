@@ -89,7 +89,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     private boolean timeRuns = false;
     //private Runnable updateTable;
     private boolean ctsIsOpen = false;
-    private CTSViewer ctstabs;
+    //private CTSViewer ctstabs;
     
     //Vectors
     private Vector<Vector> data = new Vector<Vector>();    
@@ -163,28 +163,11 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         createPanel();
         
         updateGUI();
-        
-        
-        
-
-       
-        
-        //this.updateGUI();
-        /* creating GUI */
-        //createPanel();
+ 
     }
     
      /************* *** Event Handling *** *********************************/
-    /*
-    MouseListener columnSelect = new MouseListener(){
-        public void mouseClicked(){}
-        public void mousePressed(){}
-        public void mouseReleased(){}
-        public void mouseEntered(){}
-        public void mouseExited(){}
-        
-    };
-    */
+
     
     ActionListener calcbuttonclick = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
@@ -197,73 +180,18 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                 calclabel.setText("Mean: " + calcmean());
                 //label.setText("MEAN");
             }
-         
-         /* testing output
-        int[] rows = table.getSelectedRows();
-        int[] columns = table.getSelectedColumns();
-        System.out.println("erster markierter Wert: "+ (Double)table.getValueAt(rows[0], columns[0]));
-        */ 
+
          
          }
          
     };
-    /*
-        ActionListener editingAction = new ActionListener(){
-         public void actionPerformed(ActionEvent ed) {
-         
-             double value = Double.parseDouble(editField.getText());
-             int[] rows = table.getSelectedRows();
-             int[] columns = table.getSelectedColumns();
-             table.setValueAt(value, rows[0], columns[0]);//erstmal nur das first element
-             updateTable();  //ARRAY OUT OF BOUNDS EXCEPTION
-        } 
-    };
-    */
-     
 
+     
     /* Save */
     ActionListener saveAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
              
-             save();
-             
-//             //Vector savedata = new Vector();
-//             Vector<double[]> tabledata = tmodel.getDataVector();
-//             String[] columnNames = tmodel.getCoulumnNameArray();
-                         
-//             try{
-//                 
-//                    JFileChooser chooser = new JFileChooser("c:/Dokumente und Einstellungen/p4riro.DAHME/Eigene Dateien/Java/test"); //ACHTUNG!!!!!!!!!
-//                    int returnVal = chooser.showSaveDialog(panel);
-//                    File file = chooser.getSelectedFile();
-////                    String filename = chooser.getSelectedFile().getName();
-//                
-//               
-//                 FileOutputStream out = new FileOutputStream(file);
-//                 ObjectOutputStream vout = new ObjectOutputStream(out);
-//                 
-//                 //vout.writeObject(timeRuns);
-//                 
-//                 vout.writeObject(tmodel.getTimeVector());
-//                 
-//                 vout.writeObject(tmodel.getDataVector());
-//                 vout.writeObject(tmodel.getCoulumnNameArray());
-//                 vout.close();
-//                 out.close();
-//                
-//                
-//              //ganzes tablemodel speichern  
-////                    //"c:/Dokumente und Einstellungen/p4riro.DAHME/Eigene Dateien/Java/test/data.out"
-////              FileOutputStream out = new FileOutputStream(file);  
-////              ObjectOutputStream vout = new ObjectOutputStream(out);
-////              vout.writeObject(tmodel.getTableModel());
-////              vout.close();
-////              out.close();
-//             }
-//             catch(Exception oute){
-//                 System.err.println(oute.toString());
-//             }
-  
+             save(); 
         }
 
     };  
@@ -443,147 +371,23 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
 
         
     }
-    
-    
-    
-    
+   
     /* Open */
     ActionListener openAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
 
              open();
-             /*
-             try{
-               
-                JFileChooser chooser = new JFileChooser("c:/Dokumente und Einstellungen/p4riro.DAHME/Eigene Dateien/Java/test");//ACHTUNG!!!!!!!!
-                
-                
-                int returnVal = chooser.showOpenDialog(panel);
-                    File file = chooser.getSelectedFile();
-                    //File file = chooser.getSelectedFile().getAbsoluteFile();
-
-                     FileInputStream in = new FileInputStream(file);
-                     ObjectInputStream oin = new ObjectInputStream(in);
-
-
-                     
-                     //timeRuns = (boolean) oin.readBoolean();
-                     Vector<JAMSCalendar> timeVector;
-                     
-                     timeVector = (Vector) oin.readObject();
-                    
-                     Vector inputdata = (Vector) oin.readObject();
-                     String[] columnNames = (String[]) oin.readObject();
-
-                     //tmodel = (JAMSTableModel) oin.readObject();
-
-                     oin.close();
-                     in.close();
-                     //calclabel.setText("loading");
-                     
-                     
-                     //tmodel.setNewDataVector(inputdata);
-                     
-                     tmodel = new JAMSTableModel();
-                     
-                     if(timeVector != null){
-                         tmodel.setTimeRuns(true);
-                         timeRuns = true;
-                         tmodel.setColumnNames(columnNames);    
-                         tmodel.setTimeVector(timeVector);
-                     } else {
-                         tmodel.setTimeRuns(false);
-                         timeRuns = false;
-                         tmodel.setColumnNames(columnNames);
-                     }
-                     tmodel.setNewDataVector(inputdata);
-
-                     //tmodel = new JAMSTableModel(inputdata);
-                     //updateTable();
-
-                     updateGUI();
-                     //calclabel.setText("loading successful");
-                 
-             }
-             catch(Exception ine){
-                 System.err.println((ine.toString()));
-             }
-             
-             //createPanel();
-             //updateGUI();
-             //updateTable();
-             //repaint();
-              */
         } 
     };      
     
     private void openCTS(){
         /* achtung: nur wenn time mitläuft!! */
-        if(!ctsIsOpen){
-        ctstabs = new CTSViewer(getModel().getRuntime().getFrame());
-        ctstabs.addGraph(table);
-        ctsIsOpen = true;
+        //if(!ctsIsOpen){
+        CTSConfigurator cts = new CTSConfigurator(getModel().getRuntime().getFrame(), this.table);
+        //ctstabs.addGraph(table);
+        //ctsIsOpen = true;
         }
-        else{
-            ctstabs.addGraph(table);
-        }
-        //CTSConfigurator ctsconf = new CTSConfigurator(table, getModel().getRuntime().getFrame());
-        
-    }
-    
-    private void timePlot(int[] rows, int[] cols){
-        try{
-                 //aus ts einfach ein array machen!!
-                 /* 
-                  *Open Panel and Show Plot (after getting data from spreadsheet)
-                  */
-                 //int[] rows = table.getSelectedRows();
-                 //int[] cols = table.getSelectedColumns();
-
-                 TimeSeriesCollection dataset = new TimeSeriesCollection();
-                 TimeSeries[] ts = new TimeSeries[cols.length];
-                 //TimeSeries ts = new TimeSeries("timeseriesname", Second.class);
-                 Vector<JAMSCalendar> timevector = tmodel.getTimeVector();
-                 double value;
-
-                 String yAxisName = "";
-
-                     for(int k=0; k<cols.length; k++){
-
-                         ts[k] = new TimeSeries("timeseriesname", Second.class);
-                         yAxisName += "  "+table.getColumnName(cols[k]);
-                         
-                         for(int i=0; i < rows.length; i++){
-                             if(cols[k] != 0){
-                             value = (Double) table.getValueAt(rows[i], cols[k]);
-                             if(value < -9999) {
-                                 value = 0;
-                             }
-                             } else {
-                                 value = 0;
-                             }
-                             ts[k].add(new Second(new Date(timevector.get(i).getTimeInMillis())), value);
-                         }
-
-                     dataset.addSeries(ts[k]);
-                     }
-                 
-                 
-                 JFreeChart testchart = ChartFactory.createTimeSeriesChart(getInstanceName(),"time",yAxisName,dataset,false,false,false);
-
-                 ChartPanel chartPanel = new ChartPanel(testchart);
-                 JDialog frame = new JDialog();
-                 frame.setLayout(new FlowLayout());
-                 //chartPanel.show();
-                 frame.add(chartPanel);
-                 frame.pack();
-                 frame.setVisible(true);
-               } 
-               catch(Exception pe){
-                     System.err.println(pe.toString() + " plot failure");
-               }
-    }
-    
+   
     private void createEmptyTimePlot(int graphCount){
                  TimeSeriesCollection dataset = new TimeSeriesCollection();
                  TimeSeries[] ts = new TimeSeries[graphCount];
@@ -1015,40 +819,13 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                 }
                 addCurrentTime();
         }
-        
-        
+       
         addRowArray(rowdata);
         
-        /*
-        for(int j = 0; j<rowarray.length; j++){
-            
-        
-        System.out.print("    "+rowdata[j] );
-        
-        }
-        System.out.println( "\n ");
-        if(timeRuns == false){
-            System.out.println( "time false ");
-        }
-         */
-      
-        //SwingUtilities.invokeLater(updateTable);
         if(onthefly.isSelected()==true){
             updateGUI();
         }
         
-        /* Plot-Test 
-        
-        int graphCount = 2; //configure in xml!!
-        
-        for(int k=0;k<graphCount;k++){
-            tsplot.addData(time,rowarray[k],k);
-        }
-        /*
-         *The run method handles the behavior of the component while JAMS is operating.
-         *
-         */
-        //this.getContext().getNumberOfIterations();
     }
     
     public void cleanup() {  

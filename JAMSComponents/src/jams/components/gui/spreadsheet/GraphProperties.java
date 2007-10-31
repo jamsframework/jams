@@ -61,7 +61,7 @@ public class GraphProperties {
     
     JScrollPane scpane;
     
-    int index;
+    int index = 0;
     String legendName;
     String color;
     String name;
@@ -92,6 +92,8 @@ public class GraphProperties {
     JTextField setName;
     JTextField setLegend;
     
+    CTSConfigurator ctsconf;
+    
     private String[] colors = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
     private String[] types = {"Line","Bar","Area","Line and Base","Dot","Difference","Step","StepArea"};
     private String[] positions = {"left","right"};
@@ -105,12 +107,13 @@ public class GraphProperties {
     
     
     /** Creates a new instance of GraphProperties */
-    public GraphProperties(JDialog parent, JTable table) {
+    public GraphProperties(JDialog parent, JTable table, CTSConfigurator ctsconf) {
         
         //super(parent, "Select Properties");
         //this.parent = parent;
         //setLayout(new FlowLayout());
-        Point parentloc = parent.getLocation();
+        //Point parentloc = parent.getLocation();
+        this.ctsconf = ctsconf;
         //setLocation(parentloc.x + 30, parentloc.y + 30);
         
         this.table = table;
@@ -137,6 +140,12 @@ public class GraphProperties {
         
         addButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         addButton.setPreferredSize(new Dimension(20,14));
+        
+        addButton.addActionListener(addListener);
+        remButton.addActionListener(removeListener);
+        upButton.addActionListener(upListener);
+        downButton.addActionListener(downListener);
+        
         remButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         remButton.setPreferredSize(new Dimension(20,14));
         upButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -256,6 +265,15 @@ public class GraphProperties {
         this.result = true;
     }
     
+    public void setIndex(int index){
+        this.index = index;
+    }
+    
+    public int getIndex(){
+        return index;
+    }
+    
+    
     private void setPossibleTimeIntervals(){
         int s = timechoice_START.getSelectedIndex();
         int e = timechoice_END.getSelectedIndex();
@@ -333,7 +351,7 @@ public class GraphProperties {
     }
     
     public String getLegendName(){
-        return this.legendName;
+        return this.setLegend.getText();
     }
     
     public String getName(){
@@ -435,6 +453,34 @@ public class GraphProperties {
     ActionListener timeListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
             setPossibleTimeIntervals();
+            //setVisible(false);
+        }
+    };
+    
+    ActionListener addListener = new ActionListener(){
+        public void actionPerformed(ActionEvent te){
+            ctsconf.addGraph(index+1);
+            //setVisible(false);
+        }
+    };
+    
+    ActionListener removeListener = new ActionListener(){
+        public void actionPerformed(ActionEvent te){
+            ctsconf.removeGraph(index);
+            //setVisible(false);
+        }
+    };
+    
+    ActionListener upListener = new ActionListener(){
+        public void actionPerformed(ActionEvent te){
+            ctsconf.upGraph(index);
+            //setVisible(false);
+        }
+    };
+    
+    ActionListener downListener = new ActionListener(){
+        public void actionPerformed(ActionEvent te){
+            ctsconf.downGraph(index);
             //setVisible(false);
         }
     };

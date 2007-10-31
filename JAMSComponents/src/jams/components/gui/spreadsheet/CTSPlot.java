@@ -284,9 +284,11 @@ public class CTSPlot {
                 false);
         
         chartPanel = new ChartPanel(chart, true);
+        chartPanel.setBackground(Color.WHITE);
         
         panel = new JPanel();
         panel.setLayout(new FlowLayout());
+        //panel.setBackground(Color.WHITE);
         panel.add(chartPanel);
         
         
@@ -316,7 +318,8 @@ public class CTSPlot {
             
             if (graphCountRight != 0) {
                 ValueAxis axis2 = new NumberAxis(rightAxisTitle);
-                axis2.setInverted(rightAxisInverted);
+                axis2.setInverted(true);
+                //axis2.setInverted(rightAxisInverted);
                 plot.setRangeAxis(1, axis2);
                 plot.setDataset(1, dataset2);
                 plot.mapDatasetToRangeAxis(1, 1);
