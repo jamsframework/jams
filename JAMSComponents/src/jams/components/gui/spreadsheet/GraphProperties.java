@@ -56,6 +56,9 @@ import org.unijena.jams.model.JAMSVarDescription;
 
 
 public class GraphProperties {
+//    
+//    private static ImageIcon UP_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("jams/components/gui/resources/arrowup.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
+//    private static ImageIcon DOWN_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("jams/components/gui/resources/arrowdown.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
     
     JTable table;
     
@@ -137,6 +140,8 @@ public class GraphProperties {
         plotButton = new JButton("p");
         upButton = new JButton("<");
         downButton = new JButton(">");
+//        upButton.setIcon(UP_ICON);
+//        upButton.setIcon(DOWN_ICON);
         
         addButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         addButton.setPreferredSize(new Dimension(20,14));

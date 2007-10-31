@@ -66,19 +66,21 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
             )
             public JAMSCalendar time;
     
+    
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
+    access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "Array with data of one row" //currently without time
+            description = "Array with data of one row"
             )
             public JAMSDouble[] rowarray;
+    
     
     
     /* TESTING VARIABLES */
     //private String[] columnNameArray = headers.getValue();
                                         //{"test1","test2"};
     
-    private final String title = "JAMSSpreadSheet v0.88";
+    private final String title = "JAMSSpreadSheet v0.90";
     
     private JPanel panel = new JPanel();
     private String panelname="spreadsheet";
@@ -256,8 +258,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         this.tmodel = new JAMSTableModel();
         tmodel.setTimeRuns(true);
         this.timeRuns = true;
-        
-        
+       
         try{
             
             
@@ -375,8 +376,20 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     /* Open */
     ActionListener openAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
-
-             open();
+            
+             YesNoDlg yesnodialog = new YesNoDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?");
+             yesnodialog.setVisible(true);
+             
+             if(yesnodialog.getResult().equals("Yes")){
+                 save();
+                 open();
+             }
+             if(yesnodialog.getResult().equals("No")){
+                 open();
+             }
+             
+             
+             
         } 
     };      
     
@@ -539,7 +552,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     
     public void addRowArray(double[] data){
         //
-        tmodel.addRowArray(data);
+        //tmodel.addRowArray(data);
     }
     /*
     public void addValue(double value, int columnIndex){
@@ -592,6 +605,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                     
                     table.setRowSelectionAllowed(true);
                     table.setColumnSelectionAllowed(true);
+                    table.setDragEnabled(false);
                     //table.setSelectionMode(SINGLE SELECTION);
                     table.setCellSelectionEnabled(true);
                     
@@ -797,7 +811,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
 
            
     public void run() { 
-        
+        //System.out.println("precip: "+value.toString());
         /*for time steps?*/
         
         
@@ -812,15 +826,18 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         else{
                 timeRuns = true;
             //TODO: normal im rowdata abspeichern und alles im table model verwalten
-                rowdata = new double[rowarray.length];
-
-                for(int i = 0; i < rowarray.length; i++){
-                    rowdata[i] = rowarray[i].getValue();
-                }
+//                rowdata = new double[rowarray.length];
+//
+//                for(int i = 0; i < rowarray.length; i++){
+//                    rowdata[i] = rowarray[i].getValue();
+//                }
+ 
                 addCurrentTime();
         }
-       
-        addRowArray(rowdata);
+        
+        tmodel.addRowArray(rowarray);
+        
+        
         
         if(onthefly.isSelected()==true){
             updateGUI();

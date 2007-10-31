@@ -40,6 +40,9 @@ import org.jfree.data.time.TimeSeries;
  */
 public class CTSConfigurator extends JDialog{
     
+    
+    
+    
         GroupLayout gLayout;
         
         GroupLayout.SequentialGroup hGroup;
@@ -60,6 +63,8 @@ public class CTSConfigurator extends JDialog{
         Group group14;
         Group group15;
     
+        
+        
     private Vector<ActionListener> addAction = new Vector<ActionListener>();    
         
     private JDialog parent;

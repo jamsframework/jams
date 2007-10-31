@@ -272,10 +272,25 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
     }
 
     
-    public void addRowArray(double[] rowdata){
-        arrayVector.add(rowdata);
-        if(this.columns < rowdata.length){
-            this.columns  = rowdata.length;
+//    public void addRowArray(double[] rowdata){
+//        arrayVector.add(rowdata);
+//        if(this.columns < rowdata.length){
+//            this.columns  = rowdata.length;
+//        }
+//        rows++;
+//    }
+    
+    public void addRowArray(JAMSDouble[] rowdata){
+        int c = rowdata.length;
+        double data[] = new double[c];
+        
+        for(int i=0; i<c; i++){
+            data[i] = rowdata[i].getValue();
+        }
+        
+        arrayVector.add(data);
+        if(this.columns < c){
+            this.columns  = c;
         }
         rows++;
     }
@@ -299,6 +314,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
     
     /* old method for save procedure */
     public String[] getCoulumnNameArray(){
+        
         String[] cnames = new String[columns];
         if (this.colnamesset == false){
              for(int i=0; i<columns; i++){
@@ -308,7 +324,6 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
         else{
             cnames = colnames;         
         }
-        
         return cnames;       
     }
     
