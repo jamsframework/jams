@@ -13,35 +13,24 @@
 
 package jams.components.gui.spreadsheet;
 
-import jams.components.gui.*;
 import java.util.Vector;
 import java.util.StringTokenizer;
 import java.awt.event.*;
 import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.swing.*;
 import java.io.*;
-
-import java.util.Iterator;
-
-import org.unijena.jams.JAMS;
 import org.unijena.jams.data.*;
 import org.unijena.jams.model.*;
 
 import org.jfree.data.time.Second;
-import org.jfree.data.time.TimeSeries;
 
 import org.jfree.chart.*;
-import org.jfree.data.*;
-import org.jfree.data.xy.*;
 
 
 //not used yet
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.unijena.jams.gui.LHelper;
 
 //import jams.components.*;
 //import org.unijena.jams.model;
@@ -376,9 +365,21 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     /* Open */
     ActionListener openAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
-            
-             YesNoDlg yesnodialog = new YesNoDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?");
+
+             int result = LHelper.showYesNoCancelDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?", "Attention");
+             if (result == JOptionPane.YES_OPTION) {
+                 save();
+                 open();                 
+             }
+             if (result == JOptionPane.NO_OPTION) {
+                 open();                 
+             }
+             
+             
+/*             YesNoDlg yesnodialog = new YesNoDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?");
              yesnodialog.setVisible(true);
+ *
+ *
              
              if(yesnodialog.getResult().equals("Yes")){
                  save();
@@ -387,7 +388,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
              if(yesnodialog.getResult().equals("No")){
                  open();
              }
-             
+*/             
              
              
         } 
