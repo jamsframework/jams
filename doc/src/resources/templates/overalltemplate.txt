@@ -1,5 +1,0 @@
-<h1>JAMS components in %jar%</h1>
-<table border="0" cellpadding="10" width="100%">
-<tr bgcolor="lightblue"><td><b>Component list</b></td><td width="100%"><b>Details</b></td></tr>
-<tr><td valign="top">%complist%</td><td valign="top">%compdesc%</td></tr>
-</table>
