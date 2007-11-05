@@ -1,0 +1,13 @@
+<h2><font size='-1'>%package%</font><br>
+<font size='+1'>%class%</font></h2>
+<hr>
+<h2>Component description</h2>
+<table border="0" cellpadding="3">
+<tr><td valign="top">Title:</td><td>%title%</td></tr>
+<tr><td valign="top">Author:</td><td>%author%</td></tr>
+<tr><td valign="top">Date:</td><td>%date%</td></tr>
+<tr><td valign="top">Description:</td><td>%description%</td></tr>
+</table>
+
+<h2>Interface description</h2>
+%componentvars%

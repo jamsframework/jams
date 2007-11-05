@@ -1,0 +1,8 @@
+<h4>%name%</h4>
+<p><table border="0" cellpadding="3">
+<tr><td>Type:</td><td>%type%</td></tr>
+<tr><td>Access:</td><td>%access%</td></tr>
+<tr><td>Update:</td><td>%update%</td></tr>
+<tr><td>Description:</td><td>%description%</td></tr>
+<!--<tr><td>Unit:</td><td>%unit%</td></tr>-->
+</table></p>
