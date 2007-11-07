@@ -30,6 +30,7 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
 import org.unijena.jams.JAMS;
+import org.unijena.jams.runtime.MiniRuntime;
 
 /**
  *
@@ -131,5 +132,5 @@ import org.unijena.jams.JAMS;
     public void cleanup() {
 
     }
-    
+   
 }
