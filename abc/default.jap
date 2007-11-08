@@ -1,0 +1,6 @@
+#JAMS configuration file
+#Mon Jan 08 11:04:44 CET 2007
+debug=3
+verbose=1
+libs=D\:\\jamsdeploy\\lib;D\:\\jams\\lib
+guiconfig=0

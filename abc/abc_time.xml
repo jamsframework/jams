@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!--<!DOCTYPE JAMSModel SYSTEM "jamsmodel.dtd">-->
+
+<model name="ABC Model" author="Fiering, M.B." date="08.01.2007">
+    
+    <contextcomponent class="org.unijena.jams.model.JAMSTemporalContext" name="TemporalContext">
+        <var name="timeInterval" value="1948-01-01 00:00 1986-12-01 00:00 1 1"/>
+        <var name="current" attribute="time"/>
+        
+        <component class="jams.components.gui.JAMSExecInfo" name="JAMSProgress"/>
+        
+        <component class="abc.ClimateReader" name="ClimateReader">
+            <var name="fileName" value="S:/home5/nsk/docs/lehre/OOM/WS0607/Leaf_River_Data.txt"/>
+            <var name="precip" attribute="precip"/>
+        </component>
+        
+        <component class="abc.ABCModel" name="abcModel">
+            <var name="time" attribute="time"/>
+            <var name="precip" attribute="precip"/>
+            <var name="a" value="0.1"/>
+            <var name="b" value="0.4"/>
+            <var name="c" value="0.01"/>
+            <var name="initStor" value="1000"/>
+            <var name="simRunoff" attribute="simRunoff"/>
+        </component>
+        
+        <component class="jams.components.gui.TSPlot" name="Runoff Plot" >
+            <var name="titleLeft" value="Simulated Runoff"/>
+            <var name="titleRight" value="Precipitation"/>
+            <var name="colorLeft" value="red"/>        
+            <var name="colorRight" value="gray"/>        
+            <var name="typeLeft" value="0"/>        
+            <var name="typeRight" value="1"/>        
+            <var name="xAxisTitle" value="Time"/>
+            <var name="leftAxisTitle" value="Runoff [m³/s]"/>
+            <var name="rightAxisTitle" value="Precip [mm]"/>
+            <var name="rightAxisInverted" value="true"/>
+            <var name="dateFormat" value="dd-MM-yyyy hh:mm"/>
+            <var name="time" attribute="time"/>
+            <var name="valueLeft" attribute="simRunoff"/>
+            <var name="valueRight" attribute="precip"/>
+        </component>        
+        
+        <component class="jams.components.gui.TSPlot" name="Runoff Plot 2" >
+            <var name="titleLeft" value="Simulated Runoff"/>
+            <var name="titleRight" value="Precipitation"/>
+            <var name="colorLeft" value="blue"/>        
+            <var name="colorRight" value="gray"/>        
+            <var name="typeLeft" value="0"/>        
+            <var name="typeRight" value="2"/>        
+            <var name="xAxisTitle" value="Time"/>
+            <var name="leftAxisTitle" value="Runoff [m³/s]"/>
+            <var name="rightAxisTitle" value="Precip [mm]"/>
+            <var name="rightAxisInverted" value="true"/>
+            <var name="dateFormat" value="dd-MM-yyyy hh:mm"/>
+            <var name="time" attribute="time"/>
+            <var name="valueLeft" attribute="simRunoff"/>
+            <var name="valueRight" attribute="precip"/>
+        </component>   
+    </contextcomponent>
+    
+</model>
