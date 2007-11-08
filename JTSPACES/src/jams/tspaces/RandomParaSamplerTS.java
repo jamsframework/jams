@@ -33,10 +33,10 @@ import com.ibm.tspaces.*;
 
 /**
  *
- * @author nsk
+ * @author ncb
  */
 @JAMSComponentDescription(
-title="Title",
+        title="Title",
         author="Author",
         description="Description"
         )
@@ -45,103 +45,103 @@ title="Title",
     /*
      *  Component variables
      */
-     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "tSpaceIP"
             )
             public JAMSString tSpaceIP;
-     
-     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
+    
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "tSpaceIP"
             )
             public JAMSString modelerKey;
-     
+    
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
+            access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "Data file directory name"
             )
             public JAMSString dirName;
     
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
+            access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter identifiers to be sampled"
             )
             public JAMSString parameterIDs;
     
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
+            access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter value bounaries corresponding to parameter identifiers"
             )
             public JAMSString boundaries;
     
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
+            access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "Number of samples to be taken"
             )
             public JAMSInteger sampleCount;
     
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
+            access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "efficiency methods"
             )
             public JAMSString effMethodNames;
     
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READWRITE,
+            access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "efficiency values"
             )
             public JAMSDouble[] effValues;
     
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
+            access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "Flag for dis/enabling this sampler"
             )
             public JAMSBoolean enable;
     
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
+            access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT
             )
             public JAMSString paraFileName;
     
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
+            access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT
             )
             public JAMSString attribFileName;
     
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
+            access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "The model time interval"
             )
             public JAMSTimeInterval modelTimeInterval;
     
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
+            access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file header descriptions"
             )
             public JAMSString attribHeader;
     
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READWRITE,
+            access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "Output file attribute"
             )
             public JAMSDoubleArray targetValue;
-  
-      
+    
+    
     JAMSDouble[] parameters;
     String[] parameterNames;
     double[] lowBound;
@@ -155,48 +155,31 @@ title="Title",
     int timeStepCounter = 0;
     int runCounter = 0;
     int timeSteps = 0;
-    
+    JAMSString localHost;
     
     
     
     public void init() {
-       
-            getModel().getRuntime().println("INIT RandomParaSampler");
-            //connect to the TSpace
-          
-            spaceTools = new SpaceTools(modelerKey,tSpaceIP); 
-            
-            
-            
-            try{
-                //Transaction trans = new Transaction();
-                //trans.addTupleSpace(spaceTools.tsJAMS);
-                //trans.beginTrans();
-                if (!spaceTools.patternExists(new JAMSString("****initRandomPara****"))){
-                     spaceTools.tsJAMS.write(new Tuple(new JAMSString("****initRandomPara****")));
-                
-                      if (!spaceTools.patternExists(new JAMSString("sampleCount"),JAMSInteger.class)){
-                         spaceTools.setInteger(new JAMSString("sampleCount"),sampleCount);
-                      }    
-                     //set currentCount if value not set
-                     if (!spaceTools.patternExists(new JAMSString("currentCount"),JAMSInteger.class)){
-                         spaceTools.setInteger(new JAMSString("currentCount"),new JAMSInteger(0));
-                     } 
-                      spaceTools.tsJAMS.delete(new Tuple(new JAMSString("****initRandomPara****"))); 
-                }   
-              //  else{
-               //      Thread.currentThread().sleep(300);
-               // }
-            //    trans.commitTrans();
+        
+        getModel().getRuntime().println("INIT RandomParaSampler");
+        localHost = NetworkTools.getLocalHost();
+        //connect to the TSpace
+        spaceTools = new SpaceTools(modelerKey,tSpaceIP);
+        JAMSString excl = new JAMSString("****initRandomPara****");
+        if (!spaceTools.monitorExistsInTupleSpace(excl)){
+            spaceTools.takeMonitor();
+            // now we are in a uncritical area and need to reread the pattern exkl
+            if (!spaceTools.monitorExistsInTupleSpace(excl)){
+                spaceTools.setMonitor(excl);
+                spaceTools.setInteger(new JAMSString("sampleCount"),sampleCount);
+                spaceTools.setInteger(new JAMSString("currentCount"),new JAMSInteger(0));
+                spaceTools.setInteger(new JAMSString("resultsWritten"),new JAMSInteger(0));
             }
-            catch (Exception e){
-                System.out.println(e.toString());
-            }
-             //tsJAMS = spaceTools.getTupleSpace();
-            
-            
+            spaceTools.setMonitor();
+        }
+        
         if(enable.getValue()){
-//add more checks!!!
+            //add more checks!!!
             //retreiving parameter names
             int i;
             StringTokenizer tok = new StringTokenizer(parameterIDs.getValue(), ";");
@@ -255,7 +238,7 @@ title="Title",
             }
             
             //create parameter output file
-           // paraWriter = new GenericDataWriter(dirName.getValue()+"/"+this.paraFileName.getValue());
+            // paraWriter = new GenericDataWriter(dirName.getValue()+"/"+this.paraFileName.getValue());
             paraWriter = new GenericDataWriter(dirName.getValue()+"/"+this.paraFileName.getValue(),true);
             paraWriter.addColumn("Run");
             
@@ -286,9 +269,6 @@ title="Title",
             
             attribWriter.writeHeader();
             
-            //setting up the dataArray
-            //this.timeSteps = (int)modelTimeInterval.getNumberOfTimesteps();
-//            this.valueArray = new double[this.sampleCount.getValue()][timeSteps];
             this.timeStepCounter = 0;
             this.runCounter = 0;
             
@@ -296,8 +276,8 @@ title="Title",
     }
     
     public void run() {
-            getModel().getRuntime().println("RUN RandomParaSampler");
-      
+        getModel().getRuntime().println("RUN RandomParaSampler");
+        
         if (runEnumerator == null) {
             runEnumerator = getChildrenEnumerator();
         }
@@ -307,9 +287,10 @@ title="Title",
         } else {
             resetValues();
             while (hasNext()) {
+                
                 updateValues();
                 singleRun();
-                
+                //currentCount=spaceTools.readIntegerW(new JAMSString("currentCount")).getValue();
                 paraWriter.addData(currentCount);
                 for(int i = 0; i < this.parameters.length; i++)
                     paraWriter.addData(this.parameters[i].getValue());
@@ -319,19 +300,23 @@ title="Title",
                     paraWriter.writeData();
                     
                     paraWriter.flush();
+                    //  if (!spaceTools.patternExists(new JAMSString("****stopRandomPara****"))){
                     spaceTools.writeString(new JAMSString("result"),new JAMSString(paraWriter.getDataString()));
                     paraWriter.deleteDataString();
+                    JAMSString monitorKey= new JAMSString("RandomParaSampler.run");
+                    getModel().getRuntime().println("Take:"+monitorKey);
+                    spaceTools.takeMonitor(monitorKey);
                     spaceTools.setString(new JAMSString("header"),new JAMSString(paraWriter.getHeaderString()));
-                    spaceTools.setString(new JAMSString("fileName"),new JAMSString(paraWriter.getFileName()));
-                    //spaceTools.tsJAMS.write(new JAMSString("result"),new String("paraWriter"));
-                   // System.out.println(paraWriter.toString());
+                    spaceTools.setMonitor(monitorKey);
                     
-                }catch(org.unijena.jams.runtime.RuntimeException e){
+                    spaceTools.setString(new JAMSString("fileName"),new JAMSString(paraWriter.getFileName()));
+                    spaceTools.takeMonitor(monitorKey);
+                    spaceTools.addInteger(new JAMSString("resultsWritten"),new JAMSInteger(1));
+                    spaceTools.setMonitor(monitorKey);
+                    getModel().getRuntime().println("Set:"+monitorKey);
+                } catch(org.unijena.jams.runtime.RuntimeException e){System.out.println(e.toString());} catch(Exception e){System.out.println(e.toString());} finally{
                     
                 }
-                
-                
-//                this.valueArray[runCounter] = this.targetValue.getValue();
                 this.runCounter++;
             }
             
@@ -346,24 +331,10 @@ title="Title",
     
     
     public void cleanup() {
-//         getModel().getRuntime().println("CLEANUP RandomParaSampler");
-//            String tSpaceIP = new String("localhost");
-//            try{
-//                if (TupleSpace.exists("tsJAMS",tSpaceIP)) {
-//                  TupleSpace tsJAMS = new TupleSpace("tsJAMS",tSpaceIP);
-//                  Tuple tupleToWrite = new Tuple();
-//                  tupleToWrite.add(new Field("result"));
-//                  tupleToWrite.add(new Field(paraWriter.toString()));
-//                  tsJAMS.write(tupleToWrite);
-//                }    
-//            }
-//            catch (Exception e){
-//                System.out.println(e.toString());
-//            }
-//            paraWriter.close();
+        getModel().getRuntime().println("CLEANUP RandomParaSampler");
         if (enable.getValue()) {
             /*
-            //always write time
+            //always write time (may be we do it later with the TSPACES too)
             //the time also knows a toString() method with additional formatting parameters
             //e.g. time.toString("%1$tY-%1$tm-%1$td %1$tH:%1$tM")
             JAMSCalendar timeStamp = this.modelTimeInterval.getStart();
@@ -383,44 +354,41 @@ title="Title",
              
              
              */
-        
+            
         }
     }
     
     
     private void updateValues() {
-       // int count = this.currentCount + 1;
-         int count = spaceTools.readIntegerW(new JAMSString("currentCount")).getValue();
-         
-         
-        getModel().getRuntime().println("Run No. " + count + " of " + this.sampleCount.getValue());
-        double[] sample = this.randomSampler(parameters.length);
+        // int count = this.currentCount + 1;
         
-        for (int i = 0; i < parameters.length; i++) {
-            //System.out.println("Parameter: " + this.parameterIDs.getValue());
-            //double d = generator.nextDouble();
-            parameters[i].setValue(sample[i]);//lowBound[i] + d * (upBound[i]-lowBound[i]));
-            getModel().getRuntime().println("Para: " + parameterNames[i] + " = " + sample[i]);
-        }
+        try{
+            
+            
+            
+            //
+            // currentCount = spaceTools.readIntegerW(new JAMSString("currentCount")).getValue();
+            
+            // spaceTools.addInteger(new JAMSString("currentCount"),new JAMSInteger(1));
+            
+            
+            getModel().getRuntime().println("Run No. " + currentCount + " of " + this.sampleCount.getValue());
+            double[] sample = this.randomSampler(parameters.length);
+            
+            for (int i = 0; i < parameters.length; i++) {
+                //System.out.println("Parameter: " + this.parameterIDs.getValue());
+                //double d = generator.nextDouble();
+                parameters[i].setValue(sample[i]);//lowBound[i] + d * (upBound[i]-lowBound[i]));
+                getModel().getRuntime().println("Para: " + parameterNames[i] + " = " + sample[i]);
+            }
+            
+            
+            
+            
+        } catch (Exception e){System.out.println(e.toString());}
         
-        spaceTools.addInteger(new JAMSString("currentCount"),new JAMSInteger(1));
-        currentCount = spaceTools.readIntegerW(new JAMSString("currentCount")).getValue();
-        //currentCount++;
     }
-//     private void updateValues() {
-//        int count = this.currentCount + 1;
-//        getModel().getRuntime().println("Run No. " + count + " of " + this.sampleCount.getValue());
-//        double[] sample = this.randomSampler(parameters.length);
-//        
-//        for (int i = 0; i < parameters.length; i++) {
-//            //System.out.println("Parameter: " + this.parameterIDs.getValue());
-//            //double d = generator.nextDouble();
-//            parameters[i].setValue(sample[i]);//lowBound[i] + d * (upBound[i]-lowBound[i]));
-//            getModel().getRuntime().println("Para: " + parameterNames[i] + " = " + sample[i]);
-//        }
-//        
-//        currentCount++;
-//    }
+    
     
     private double[] randomSampler(int nSamples){
         double[] sample = new double[nSamples];
@@ -481,17 +449,29 @@ title="Title",
     
     private boolean hasNext() {
         boolean nextRun = false;
-         int current ,sample;
-         current = spaceTools.readIntegerW(new JAMSString("currentCount")).getValue();
-         sample =  spaceTools.readIntegerW(new JAMSString("sampleCount")).getValue();
-         if (current<sample){
-             nextRun = true;
-         }
-         else{
-             nextRun = false; //only for debugging
-         }
-         
-         
+        int current ,sample,currentCountIncreased,resultsWritten;
+        JAMSString monitorKey= new JAMSString("RandomParaSampler.run.hasNext");
+        getModel().getRuntime().println("Take:"+monitorKey);
+        spaceTools.takeMonitor(monitorKey);
+        currentCount = spaceTools.readIntegerW(new JAMSString("currentCount")).getValue();
+        resultsWritten = spaceTools.readIntegerW(new JAMSString("resultsWritten")).getValue();
+        getModel().getRuntime().println("actual Value:"+currentCount);
+        sample =  spaceTools.readIntegerW(new JAMSString("sampleCount")).getValue();
+        spaceTools.addInteger(new JAMSString("currentCount"),new JAMSInteger(1));
+        
+        currentCountIncreased = spaceTools.readIntegerW(new JAMSString("currentCount")).getValue();
+        spaceTools.writeString(new JAMSString("Threadname:"+localHost.getValue()+Thread.currentThread().hashCode()),new JAMSString(currentCountIncreased+""));
+        getModel().getRuntime().println("currentCount:"+currentCount+" increased actual Value:"+currentCountIncreased);
+        spaceTools.setMonitor(monitorKey);
+        getModel().getRuntime().println("Set:"+monitorKey);
+        if (resultsWritten<sample){
+            nextRun = true;
+        } else{
+            nextRun = false; //only for debugging
+            
+        }
+        
+        
         return nextRun;
     }
 }
