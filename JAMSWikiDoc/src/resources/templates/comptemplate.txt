@@ -1,0 +1,11 @@
+<big>'''[[%package%]]'''</big><br />
+==%class%==
+:jar: [[%jarFile%]]<p><span style="color:white">#</span></p>
+===Component description===
+:Title: %title%
+:Author: %author% 
+:Date: %date%
+:Description: %description%
+
+===Interface description===
+%componentvars%
