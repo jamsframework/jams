@@ -39,10 +39,7 @@ import org.jfree.data.time.TimeSeries;
  * @author Robert Riedel
  */
 public class CTSConfigurator extends JDialog{
-    
-    
-    
-    
+
         GroupLayout gLayout;
         
         GroupLayout.SequentialGroup hGroup;
@@ -82,7 +79,7 @@ public class CTSConfigurator extends JDialog{
     
     private JPanel[] datapanels;
     private JScrollPane graphScPane;
-    private JScrollPane optionScPane;
+    private JScrollPane plotScPane;
     private JScrollPane mainScPane;
     
     private String[] headers;
@@ -176,11 +173,10 @@ public class CTSConfigurator extends JDialog{
 //        }
         
         
+        setSize(680,480);
+        setMinimumSize(new Dimension(680,480));
         createPanel();
-        add(this.getPanel());
-        
         timePlot();
-        
         pack();
         setVisible(true);
         
@@ -235,8 +231,8 @@ public class CTSConfigurator extends JDialog{
         dataLabel.setBackground(Color.DARK_GRAY);
         timeLabel.setBackground(Color.DARK_GRAY);
         
-        mainpanel = new JPanel();
-        mainpanel.setLayout(new BorderLayout());
+        //mainpanel = new JPanel();
+        setLayout(new BorderLayout());
         //mainpanel.setBackground(Color.WHITE);
         
         plotpanel = new JPanel();
@@ -244,6 +240,7 @@ public class CTSConfigurator extends JDialog{
         
         frame = new JPanel();
         frame.setLayout(new BorderLayout());
+        frame.setSize(640,80);
         
         graphScPane = new JScrollPane();
                 
@@ -288,13 +285,13 @@ public class CTSConfigurator extends JDialog{
 //        
 //        //createActionListener();
 //        
-        edTitleField.setColumns(20);
+        //edTitleField.setColumns(20);
         edTitleField.setText("Plot Title");
         edTitleField.addActionListener(actChanged);
-        edLeftField.setColumns(20);
+        //edLeftField.setColumns(20);
         edLeftField.setText("Left Axis Title");
         edLeftField.addActionListener(actChanged);
-        edRightField.setColumns(20);
+        //edRightField.setColumns(20);
         edRightField.setText("Right Axis Title");
         edRightField.addActionListener(actChanged);
         applyButton.addActionListener(plotbuttonclick);
@@ -349,23 +346,20 @@ public class CTSConfigurator extends JDialog{
         addbutton.addActionListener(addbuttonclick);
         plotbutton.addActionListener(plotbuttonclick);
         propbutton.addActionListener(propbuttonclick);
-
-        frame.add(graphpanel, BorderLayout.NORTH);
+        
+        graphScPane = new JScrollPane(graphpanel);
+        graphScPane.setPreferredSize(new Dimension(640,120));
+        graphScPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        frame.add(graphScPane, BorderLayout.NORTH);
         //frame.add(optionpanel);
+        
         frame.add(optionpanel, BorderLayout.CENTER);
- 
-        optionpanel.setBorder(new EtchedBorder());
 
-        mainpanel.add(frame, BorderLayout.NORTH);
-        
-        mainScPane = new JScrollPane(mainpanel);
-        mainScPane.createVerticalScrollBar();
-        mainScPane.createHorizontalScrollBar();
-        /** CTSConfigurator will be added to CTSViewer ******
-         * frame.pack();
-         * frame.setVisible(true);
-         */
-        
+        optionpanel.setBorder(new EtchedBorder());
+        plotScPane = new JScrollPane();
+        add(frame, BorderLayout.NORTH);
+        add(plotScPane, BorderLayout.CENTER);
+    
     }
     
     public void addGraph(int index){
@@ -392,8 +386,9 @@ public class CTSConfigurator extends JDialog{
             
         }
         finishGroupUI();
-        mainpanel.repaint();
-        pack();
+        //mainpanel.repaint();
+        //frame.updateUI();
+        //pack();
         repaint();
     }
     
@@ -419,8 +414,8 @@ public class CTSConfigurator extends JDialog{
             
         }
         finishGroupUI();
-        mainpanel.repaint();
-        pack();
+        //mainpanel.updateUI();
+//        pack();
         repaint();
     }
     
@@ -450,7 +445,7 @@ public class CTSConfigurator extends JDialog{
 
             }
             finishGroupUI();
-            mainpanel.repaint();
+            
             pack();
             repaint();
         }
@@ -480,7 +475,7 @@ public class CTSConfigurator extends JDialog{
                 
             }
             finishGroupUI();
-            mainpanel.repaint();
+            
             pack();
             repaint();
         }
@@ -493,12 +488,12 @@ public class CTSConfigurator extends JDialog{
         
         JLabel nameLabel = new JLabel("Name");
         JLabel posLabel = new JLabel("Position");
-        JLabel typeLabel = new JLabel("Renderer");
-        JLabel colorLabel = new JLabel("Colour");
+        JLabel typeLabel = new JLabel("Legend/Position");
+        JLabel colorLabel = new JLabel("Type/Colour");
         JLabel dataLabel = new JLabel("Select Data");
         JLabel timeLabel = new JLabel("Time Interval");
         JLabel emptyTimeLabel = new JLabel("    ");
-        JLabel legendLabel = new JLabel("Legend Entry");
+        JLabel legendLabel = new JLabel("Legend Entry: ");
         
         gLayout = new GroupLayout(graphpanel);
         graphpanel.setLayout(gLayout);
@@ -523,14 +518,13 @@ public class CTSConfigurator extends JDialog{
         group14 = gLayout.createParallelGroup();
         group15 = gLayout.createParallelGroup();
 
-        group1.addComponent(nameLabel);
-        group2.addComponent(posLabel);
+              
+
+        group1.addComponent(dataLabel);
+        group2.addComponent(timeLabel);
         group3.addComponent(typeLabel);
         group4.addComponent(colorLabel);
-        group5.addComponent(legendLabel);
-        group6.addComponent(dataLabel);
-        group7.addComponent(timeLabel);
-        group8.addComponent(emptyTimeLabel);
+
 //        group9.addComponent();
 //        group10.addComponent(emptyTimeLabel);
 //        group11.addComponent(emptyTimeLabel);
@@ -539,54 +533,72 @@ public class CTSConfigurator extends JDialog{
 //        group14.addComponent(emptyTimeLabel);
 //        group15.addComponent(emptyTimeLabel);
    
-        vGroup.addGroup(gLayout.createParallelGroup(Alignment.BASELINE)
-        .addComponent(nameLabel).addComponent(posLabel).addComponent(typeLabel)
-        .addComponent(colorLabel).addComponent(legendLabel).addComponent(dataLabel)
-        .addComponent(timeLabel).addComponent(emptyTimeLabel));
+        vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING)
+        .addComponent(dataLabel).addComponent(timeLabel).addComponent(typeLabel).addComponent(colorLabel));
+        
+//        vGroup.addGroup(gLayout.createParallelGroup(Alignment.BASELINE)
+//        .addComponent(dataLabel).addComponent(timeLabel).addComponent(typeLabel));
+
     }
     
     private void addPropGroup(GraphProperties prop){
             JLabel space1 = new JLabel(" ");
             JLabel space2 = new JLabel(" ");
+            JLabel space3 = new JLabel(" ");
+            JLabel space4 = new JLabel(" ");
+            JLabel space5 = new JLabel("   ");
+            JLabel space6 = new JLabel("   ");
+            JTextField lf = prop.getLegendField();
             
-            group1.addComponent(prop.getNameLabel());
-            group2.addComponent(prop.getPosChoice());
-            group3.addComponent(prop.getTypeChoice());
-            group4.addComponent(prop.getColorChoice());
-            group5.addComponent(prop.getLegendField());
-            group6.addComponent(prop.getDataChoice());
-            group7.addComponent(prop.getTimeChoiceSTART());
-            group8.addComponent(prop.getTimeChoiceEND());
-            group9.addComponent(space1);
+            group6.addComponent(space5).addComponent(space6);
+            
+            group1.addComponent(prop.getDataChoice()).addComponent(space1);
+            group2.addComponent(prop.getTimeChoiceSTART()).addComponent(prop.getTimeChoiceEND());
+            group3.addComponent(lf).addComponent(prop.getPosChoice());
+            group4.addComponent(prop.getTypeChoice()).addComponent(prop.getColorChoice());
+
+            group9.addComponent(space3);
             group10.addComponent(prop.getPlotButton());
-            group11.addComponent(space2);
+            group11.addComponent(space4);
             group12.addComponent(prop.getAddButton());
             group13.addComponent(prop.getRemButton());
             group14.addComponent(prop.getUpButton());
             group15.addComponent(prop.getDownButton());
             
             
-            vGroup.addGroup(gLayout.createParallelGroup(Alignment.BASELINE)
-            .addComponent(prop.getNameLabel()).addComponent(prop.getPosChoice())
-            .addComponent(prop.getTypeChoice()).addComponent(prop.getColorChoice())
-            .addComponent(prop.getDataChoice()).addComponent(prop.getLegendField())
-            .addComponent(prop.getTimeChoiceSTART()).addComponent(prop.getTimeChoiceEND())
-            .addComponent(space1).addComponent(prop.getPlotButton())
-            .addComponent(space2).addComponent(prop.getAddButton())
-            .addComponent(prop.getRemButton())
+            vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING)
+            .addComponent(prop.getDataChoice()).addComponent(prop.getTimeChoiceSTART()).addComponent(space5)
+            .addComponent(lf).addComponent(prop.getTypeChoice()));
+            vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING)
+            .addComponent(space1).addComponent(prop.getTimeChoiceEND()).addComponent(space6)
+            .addComponent(prop.getPosChoice())
+            .addComponent(prop.getColorChoice()).addComponent(space3).addComponent(prop.getPlotButton())
+            .addComponent(space4).addComponent(prop.getAddButton()).addComponent(prop.getRemButton())
             .addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
+            
+//            vGroup.addGroup(gLayout.createParallelGroup(Alignment.BASELINE)
+//            .addComponent(prop.getNameLabel()).addComponent(prop.getPosChoice())
+//            .addComponent(prop.getTypeChoice()).addComponent(prop.getColorChoice())
+//            .addComponent(prop.getDataChoice()).addComponent(prop.getLegendField())
+//            .addComponent(prop.getTimeChoiceSTART()).addComponent(prop.getTimeChoiceEND())
+//            .addComponent(space1).addComponent(prop.getPlotButton())
+//            .addComponent(space2).addComponent(prop.getAddButton())
+//            .addComponent(prop.getRemButton())
+//            .addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
     }
     
     private void finishGroupUI(){
         
         hGroup.addGroup(group1);
         hGroup.addGroup(group2);
-        hGroup.addGroup(group3);
-        hGroup.addGroup(group4);
-        hGroup.addGroup(group5);
         hGroup.addGroup(group6);
-        hGroup.addGroup(group7);
-        hGroup.addGroup(group8);
+        hGroup.addGroup(group3);  
+        hGroup.addGroup(group4);
+//        hGroup.addGroup(group5);
+//        hGroup.addGroup(group6);
+//        hGroup.addGroup(group7);
+//        hGroup.addGroup(group8);
+        
         hGroup.addGroup(group9);
         hGroup.addGroup(group10);
         hGroup.addGroup(group11);
@@ -766,10 +778,11 @@ public class CTSConfigurator extends JDialog{
         ctsplot.setTitleRight(titleRight);
         /* CTSPlot erstellen */
         
-        mainpanel.removeAll(); /* nullPionterEx at first startup? */
-        mainpanel.add(frame, BorderLayout.NORTH);
+        //removeAll(); /* nullPionterEx at first startup? */
+        //add(frame, BorderLayout.NORTH);
         ctsplot.createPlot();
-        mainpanel.add(ctsplot.getPanel(), BorderLayout.CENTER);
+        //plotScPane = new JScrollPane(ctsplot.getPanel());
+        plotScPane.setViewportView(ctsplot.getPanel());
         //mainpanel.add(ctsplot.getChartPanel(), BorderLayout.CENTER);
         //System.out.println("ctsplot.createPlot();");
        
@@ -827,8 +840,9 @@ public class CTSConfigurator extends JDialog{
                 ctsplot.plot((JAMSCalendar)table.getValueAt(k,0), valueLeft, valueRight);
             }
 
-        pack();
         repaint();
+        pack();
+
 
 
     }

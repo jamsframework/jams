@@ -15,6 +15,7 @@ package jams.components.gui.spreadsheet;
  */
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URL;
 import javax.swing.*;
 import javax.swing.JTable;
 import java.awt.BorderLayout;
@@ -59,6 +60,17 @@ public class GraphProperties {
 //    
 //    private static ImageIcon UP_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("jams/components/gui/resources/arrowup.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
 //    private static ImageIcon DOWN_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("jams/components/gui/resources/arrowdown.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
+    
+    URL url1 = this.getClass().getResource("/jams/components/gui/resources/arrowup.png");
+    ImageIcon up_icon = new ImageIcon(url1);
+    
+    URL url2 = this.getClass().getResource("/jams/components/gui/resources/arrowdown.png");
+    ImageIcon down_icon = new ImageIcon(url2);
+    
+    URL url3 = this.getClass().getResource("/jams/components/gui/resources/correct.png");
+    ImageIcon plot_icon = new ImageIcon(url3);
+    
+    //ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/root.png
     
     JTable table;
     
@@ -137,11 +149,19 @@ public class GraphProperties {
         
         addButton = new JButton("+");
         remButton = new JButton("-");
-        plotButton = new JButton("p");
-        upButton = new JButton("<");
-        downButton = new JButton(">");
-//        upButton.setIcon(UP_ICON);
-//        upButton.setIcon(DOWN_ICON);
+        plotButton = new JButton();
+        upButton = new JButton();
+        downButton = new JButton();
+        upButton.setIcon(up_icon);
+        downButton.setIcon(down_icon);
+        plotButton.setIcon(plot_icon);
+        
+        plotButton.setToolTipText("plot graph");
+        upButton.setToolTipText("move up");
+        downButton.setToolTipText("move down");
+        addButton.setToolTipText("add graph");
+        remButton.setToolTipText("remove button");
+        
         
         addButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         addButton.setPreferredSize(new Dimension(20,14));

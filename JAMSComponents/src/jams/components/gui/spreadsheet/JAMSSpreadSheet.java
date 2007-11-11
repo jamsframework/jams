@@ -157,7 +157,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
  
     }
     
-     /************* *** Event Handling *** *********************************/
+     /************* *** Event Handling *** ****l*****************************/
 
     
     ActionListener calcbuttonclick = new ActionListener(){
