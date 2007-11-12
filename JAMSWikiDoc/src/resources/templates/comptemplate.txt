@@ -1,6 +1,6 @@
 <big>'''[[%package%]]'''</big><br />
 ==%class%==
-:jar: [[%jarFile%]]<p><span style="color:white">#</span></p>
+:jar: [[%jarFile%]]
 ===Component description===
 :Title: %title%
 :Author: %author% 
@@ -9,3 +9,4 @@
 
 ===Interface description===
 %componentvars%
+<span style="color:white">%IDCODE%</span>

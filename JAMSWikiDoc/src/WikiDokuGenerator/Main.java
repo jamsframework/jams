@@ -122,13 +122,14 @@ public class Main {
         String varTemplate = readContent(ClassLoader.getSystemResourceAsStream("resources/templates/vartemplate.txt"));
         String packageTemplate = readContent(ClassLoader.getSystemResourceAsStream("resources/templates/packagetemplate.txt"));
         String packageListTemplate = readContent(ClassLoader.getSystemResourceAsStream("resources/templates/pkglisttemplate.txt"));
-        
+                
         HashMap<Class, String> componentDescriptions = new HashMap<Class, String>();
         ArrayList<Class> components = new ArrayList<Class>();
         
         //delete old components
-        bot.RemoveAllArticlesWithString(jfile.getName());
-        
+        String idCode = "11"+fileName.replace(".","").toUpperCase()+"11";
+        bot.RemoveAllArticlesWithString(idCode);
+                        
         while (jarentries.hasMoreElements()) {
             String entry = jarentries.nextElement().toString();
             if ((entry.endsWith(".class"))) {
@@ -143,7 +144,7 @@ public class Main {
                         compDesc = compDesc.replaceAll("%package%", clazz.getPackage().toString());
                         compDesc = compDesc.replaceAll("%class%", clazz.getSimpleName());
                         compDesc = compDesc.replaceAll("%jarFile%", fileName);
-                        
+                        compDesc = compDesc.replaceAll("%IDCODE%", idCode);
                         JAMSComponentDescription jcd = (JAMSComponentDescription) clazz.getAnnotation(JAMSComponentDescription.class);
                         
                         if (jcd != null) {
@@ -204,7 +205,7 @@ public class Main {
                     package_desc = package_desc.replace("%name%",oldPackage);
                     package_desc = package_desc.replace("%complist%",package_list);
                     package_desc = package_desc.replace("%jarFile%",fileName);
-                                    
+                    package_desc = package_desc.replace("%IDCODE%", idCode);
                     mainpage += "===[[package "+oldPackage + "]]===\n" + package_list;
 
                     package_list = "";
@@ -217,6 +218,19 @@ public class Main {
             package_list += package_item;  //"<p style='line-height:3px;margin-left:20px;'><a href=\"" + clazz.getName() + ".html\">" + clazz.getSimpleName() + "</a></p>\n";
         }
         
+        //send last package
+        String package_desc = packageListTemplate;
+        package_desc = package_desc.replace("%name%",oldPackage);
+        package_desc = package_desc.replace("%complist%",package_list);
+        package_desc = package_desc.replace("%jarFile%",fileName);
+        package_desc = package_desc.replace("%IDCODE%", idCode);
+        
+        mainpage += "===[[package "+oldPackage + "]]===\n" + package_list;
+
+        package_list = "";
+        sendContent("package_" + oldPackage, package_desc);
+        System.out.println("Sending:" + "package_" + oldPackage);         
+        
         String jarName = file.getCanonicalFile().getName();
                 
         for (Class clazz : components) {
@@ -227,7 +241,7 @@ public class Main {
             System.out.println("Sending:" + clazz.getName());
             sendContent(clazz.getName(), html);            
         }
-        sendContent(fileName, mainpage);
+        sendContent(fileName, mainpage + "<span style=\"color:white\">" + idCode + "</span>");
         System.out.println("Sending:" + fileName);                    
     }
 
@@ -239,7 +253,7 @@ public class Main {
         Vector<String> DeleteList = new Vector<String>();
         Vector<String> AddList = new Vector<String>();
 
-        int mode = 0;
+        //parse arguments        
         for (int i=0;i<args.length-1;i++) {
             jarDirName = args[i];
 
@@ -277,27 +291,41 @@ public class Main {
             System.out.println("Could not login! Check username, password and wiki location");
             return;
         }
-        
+        //delete files
         for (int i=0;i<DeleteList.size();i++) {            
             try {
                 File jarDir = new File(DeleteList.get(i));
+                //does file exist?
                 if( jarDir.exists() ) {
                     File[] files = jarDir.listFiles();
+                    //no directory?
+                    if (files == null) {
+                        files = new File[1];
+                        files[0] = jarDir;
+                    }
                     for(int k=0; k<files.length; k++) {
-                        bot.RemoveAllArticlesWithString(files[k].getName()+"]]<span style=\"color:white\">#</span>");
+                        bot.RemoveAllArticlesWithString("11"+files[k].getName().replace(".","").toUpperCase()+"11");
                     }
                 }
+                //search for name
                 else {
-                 bot.RemoveAllArticlesWithString(DeleteList.get(i)+"]]<p><span style=\"color:white\">#</span></p>");   
+                    bot.RemoveAllArticlesWithString("11"+DeleteList.get(i).replace(".","").toUpperCase()+"11");   
                 }                                    
             }catch(Exception e) {
                 System.out.println("Could not remove articles because: " + e.toString());
             }
         }            
+        //add files
         for (int i=0;i<AddList.size();i++) {
             File jarDir = new File(AddList.get(i));
+            //file must exist
             if( jarDir.exists() ) {
                 File[] files = jarDir.listFiles();
+                //no directory?
+                if (files == null) {
+                    files = new File[1];
+                    files[0] = jarDir;
+                }
                 for(int k=0; k<files.length; k++) {
                     try {
                         if (files[k].getCanonicalFile().getName().endsWith(".jar")) {                                            

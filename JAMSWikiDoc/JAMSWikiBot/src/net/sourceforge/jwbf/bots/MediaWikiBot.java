@@ -33,6 +33,7 @@ import net.sourceforge.jwbf.actions.http.mw.MWAction;
 import net.sourceforge.jwbf.actions.http.mw.PostDelete;
 import net.sourceforge.jwbf.actions.http.mw.PostLoginOld;
 import net.sourceforge.jwbf.actions.http.mw.PostModifyContent;
+import net.sourceforge.jwbf.actions.http.mw.api.FindPage;
 import net.sourceforge.jwbf.actions.http.mw.api.GetAllPageTitles;
 import net.sourceforge.jwbf.actions.http.mw.api.GetBacklinkTitles;
 import net.sourceforge.jwbf.actions.http.mw.api.GetFullCategoryMembers;
@@ -466,7 +467,14 @@ public class MediaWikiBot extends HttpBot {
 		return performMultiAction(a);
 
 	}
-
+        
+        
+        public Iterable<String> FindPage(String searchString)
+			throws ActionException {
+            FindPage a = new FindPage(searchString);
+            return performMultiAction(a);
+	} 
+        
 	/**
 	 * variation of the getAllPageTitles-method which does not set a namespace
 	 * restriction.
@@ -670,7 +678,9 @@ public class MediaWikiBot extends HttpBot {
         public boolean RemoveAllArticlesWithString(String searchString) {
             Iterable<String> result = null;
             try {
-                result = getAllPageTitles();
+                //better would be to use getAllPageTitles, but this dont work if media
+                //wiki api is not installed!!
+                result = FindPage(searchString);//getAllPageTitles();
             }catch (Exception e) {
                 System.out.println("Could not access articles, because: " + e.toString() );
             }
@@ -684,10 +694,12 @@ public class MediaWikiBot extends HttpBot {
                     
                     String title = URLEncoder.encode(tmp, MediaWikiBot.CHARSET);
                     
-                    SimpleArticle a = (SimpleArticle)readContent(title);
-                    if ( a.getText().contains(searchString) ) {
+                    //check if search string is in Article, this is obsolete
+                    //if FindPage function is used
+           //         SimpleArticle a = (SimpleArticle)readContent(title);
+             //       if ( a.getText().contains(searchString) ) {
                         removeArticle(title);
-                    }
+               //     }
                 }catch(Exception e) {
                     System.out.println("Could not read article, because: " + e.toString());
                 }
