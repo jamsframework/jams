@@ -70,9 +70,17 @@ public class GraphProperties {
     URL url3 = this.getClass().getResource("/jams/components/gui/resources/correct.png");
     ImageIcon plot_icon = new ImageIcon(url3);
     
+    URL url4 = this.getClass().getResource("/jams/components/gui/resources/add.png");
+    ImageIcon add_icon = new ImageIcon(url4);
+    
+    URL url5 = this.getClass().getResource("/jams/components/gui/resources/remove.png");
+    ImageIcon rem_icon = new ImageIcon(url5);
     //ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/root.png
     
     JTable table;
+    
+    TimeSeries ts;
+    TimeSeriesCollection dataset;
     
     JScrollPane scpane;
     
@@ -101,6 +109,8 @@ public class GraphProperties {
     JButton plotButton;
     JButton upButton;
     JButton downButton;
+    
+    JCheckBox invBox;
 
     JLabel nameLabel;
     
@@ -139,22 +149,23 @@ public class GraphProperties {
         
         this.selectedColumn = 0;
         this.rowSelection = null;
-        
-        //setLayout(new GridLayout(5,1));
-        
+    
         JPanel namePanel = new JPanel();
         namePanel.setLayout(new FlowLayout());
         JPanel legendPanel = new JPanel();
         legendPanel.setLayout(new FlowLayout());
         
-        addButton = new JButton("+");
-        remButton = new JButton("-");
+        addButton = new JButton();
+        remButton = new JButton();
         plotButton = new JButton();
         upButton = new JButton();
         downButton = new JButton();
+        
         upButton.setIcon(up_icon);
         downButton.setIcon(down_icon);
         plotButton.setIcon(plot_icon);
+        addButton.setIcon(add_icon);
+        remButton.setIcon(rem_icon);
         
         plotButton.setToolTipText("plot graph");
         upButton.setToolTipText("move up");
@@ -162,6 +173,7 @@ public class GraphProperties {
         addButton.setToolTipText("add graph");
         remButton.setToolTipText("remove button");
         
+        invBox = new JCheckBox("invert axis");
         
         addButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         addButton.setPreferredSize(new Dimension(20,14));
@@ -182,15 +194,15 @@ public class GraphProperties {
         
         colorchoice = new JComboBox(colors);
         colorchoice.setSelectedIndex(0);
-        colorchoice.addActionListener(okListener);
+        //colorchoice.addActionListener(okListener);
         
         typechoice = new JComboBox(types);
         typechoice.setSelectedIndex(0);
-        typechoice.addActionListener(okListener);
+        //typechoice.addActionListener(okListener);
         
         poschoice = new JComboBox(positions);
         poschoice.setSelectedIndex(0);
-        poschoice.addActionListener(okListener);
+        //poschoice.addActionListener(okListener);
        
         JButton okButton = new JButton("OK");
         JButton cancelButton = new JButton("CANCEL");
@@ -256,15 +268,9 @@ public class GraphProperties {
         this.buttonpanel.add(cancelButton);
         
         plotButton.addActionListener(okListener);
-        //propButton.addActionListener(propAction);
-            
-        //add(graphpanel);
-        //add(setColumn);
-        //add(namePanel);
-        //add(legendPanel);
-        //add(buttonpanel);
         
-        //pack();
+        applyProperties();
+        
     }
     
     /*    
@@ -274,20 +280,39 @@ public class GraphProperties {
      **/
     
     public void applyProperties(){
-        setSelectedColumn(setColumn.getSelectedIndex());
-        int[] rows = new int[table.getRowCount()];
+        JAMSCalendar time;
+        double value;
+        selectedColumn = setColumn.getSelectedIndex();
+        color = (String) colorchoice.getSelectedItem();
+        ts = new TimeSeries(name, Second.class);
+        dataset = new TimeSeriesCollection(ts);
         
-        for(int i=0;i<table.getRowCount();i++){
-            rows[i] = i;
+        for(int i=getTimeSTART(); i<=getTimeEND(); i++){
+            
+            time =  (JAMSCalendar) table.getValueAt(i,0); //ONLY FOR TIME SERIES TABLE WITH TIME IN COL 0!!!
+            value = (Double) table.getValueAt(i, selectedColumn);
+            ts.add(new Second(new Date(time.getTimeInMillis())), value);
         }
-        setSelectedRows(rows);
-        setColor((String) colorchoice.getSelectedItem());
-        setPosition((String) poschoice.getSelectedItem());
-        setRendererType(typechoice.getSelectedIndex());
-        setName(setName.getText());
-        setLegendName(setLegend.getText());
-        //setVisible(false);
-        this.result = true;
+        dataset.addSeries(ts);
+//        
+//        setSelectedColumn(setColumn.getSelectedIndex());
+//        int[] rows = new int[table.getRowCount()];
+//        
+//        for(int i=0;i<table.getRowCount();i++){
+//            rows[i] = i;
+//        }
+//        setSelectedRows(rows);
+//        setColor((String) colorchoice.getSelectedItem());
+//        setPosition((String) poschoice.getSelectedItem());
+//        setRendererType(typechoice.getSelectedIndex());
+//        setName(setName.getText());
+//        setLegendName(setLegend.getText());
+//        //setVisible(false);
+//        this.result = true;
+    }
+    
+    public TimeSeriesCollection getDataset(){
+        return dataset;
     }
     
     public void setIndex(int index){
@@ -409,11 +434,21 @@ public class GraphProperties {
         return timechoice_START.getSelectedIndex();
     }
     
+    
+    
     public int getTimeEND(){
         return timechoice_END.getSelectedIndex();
     }
 
+    public boolean axisInverted(){
+        return invBox.isSelected();
+    }
+    
     /** GUI return **/
+    public JCheckBox getInvBox(){
+        return invBox;
+    }
+    
     public JLabel getNameLabel(){
         return nameLabel;
     }
@@ -471,7 +506,7 @@ public class GraphProperties {
     ActionListener okListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
             applyProperties();
-            //setVisible(false);
+            ctsconf.plotGraph(index);
         }
     };
     
@@ -491,7 +526,9 @@ public class GraphProperties {
     
     ActionListener removeListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
-            ctsconf.removeGraph(index);
+            
+                ctsconf.removeGraph(index);
+            
             //setVisible(false);
         }
     };
@@ -499,6 +536,8 @@ public class GraphProperties {
     ActionListener upListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
             ctsconf.upGraph(index);
+            applyProperties();
+            
             //setVisible(false);
         }
     };
@@ -506,6 +545,8 @@ public class GraphProperties {
     ActionListener downListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
             ctsconf.downGraph(index);
+            applyProperties();
+            
             //setVisible(false);
         }
     };

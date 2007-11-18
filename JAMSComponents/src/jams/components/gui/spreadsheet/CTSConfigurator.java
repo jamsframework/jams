@@ -60,8 +60,6 @@ public class CTSConfigurator extends JDialog{
         Group group14;
         Group group15;
     
-        
-        
     private Vector<ActionListener> addAction = new Vector<ActionListener>();    
         
     private JDialog parent;
@@ -95,6 +93,7 @@ public class CTSConfigurator extends JDialog{
     private JButton applyButton = new JButton("Apply");
     
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
+    private JAMSTimePlot jts = new JAMSTimePlot();
     
 //    private String[] headers;
 //    //private String[] colors = {"yellow","orange","red","pink","magenta","cyan","blue","green","gray","lightgray","black"};
@@ -174,9 +173,9 @@ public class CTSConfigurator extends JDialog{
         
         
         setSize(680,480);
-        setMinimumSize(new Dimension(680,480));
+        //setMinimumSize(new Dimension(680,480));
         createPanel();
-        timePlot();
+        //timePlot();
         pack();
         setVisible(true);
         
@@ -322,6 +321,7 @@ public class CTSConfigurator extends JDialog{
             prop.setSelectedRows(rows);
             prop.setTimeSTART(rows[0]);
             prop.setTimeEND(rows[rows.length - 1]);
+            
             if( k<=12){
                 prop.setColor(k);
             }
@@ -331,8 +331,9 @@ public class CTSConfigurator extends JDialog{
             prop.setName(table.getColumnName(k+1));
             prop.setLegendName(table.getColumnName(k+1));
             
-            prop.getPlotButton().addActionListener(plotbuttonclick);
+            //prop.getPlotButton().addActionListener(plotbuttonclick);
             
+            prop.applyProperties();
             addPropGroup(prop);
       
             propVector.add(k,prop);
@@ -347,6 +348,11 @@ public class CTSConfigurator extends JDialog{
         plotbutton.addActionListener(plotbuttonclick);
         propbutton.addActionListener(propbuttonclick);
         
+        /* initialise JTSPlot */
+        //JAMSTimePlot jts = new JAMSTimePlot(propVector);
+        jts.setPropVector(propVector);
+        jts.createPlot();
+ 
         graphScPane = new JScrollPane(graphpanel);
         graphScPane.setPreferredSize(new Dimension(640,120));
         graphScPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -354,18 +360,27 @@ public class CTSConfigurator extends JDialog{
         //frame.add(optionpanel);
         
         frame.add(optionpanel, BorderLayout.CENTER);
-
+        
         optionpanel.setBorder(new EtchedBorder());
-        plotScPane = new JScrollPane();
+        plotScPane = new JScrollPane(jts.getPanel());
         add(frame, BorderLayout.NORTH);
         add(plotScPane, BorderLayout.CENTER);
+        
+        jts.plotAll();
     
     }
     
     public void addGraph(int index){
         
         int i = index;
+        int t_s, t_e;
         GraphProperties prop = new GraphProperties(parent, table, this);
+        if(i>0){
+            t_s = propVector.get(i-1).getTimeChoiceSTART().getSelectedIndex();
+            t_e = propVector.get(i-1).getTimeChoiceEND().getSelectedIndex();
+            prop.getTimeChoiceSTART().setSelectedIndex(t_s);
+            prop.getTimeChoiceEND().setSelectedIndex(t_e);
+        }
         propVector.add(i, prop);
         
         graphCount = propVector.size();
@@ -376,7 +391,7 @@ public class CTSConfigurator extends JDialog{
             
             prop = propVector.get(k);
             prop.setIndex(k);
-            prop.getPlotButton().addActionListener(plotbuttonclick);
+            //prop.getPlotButton().addActionListener(plotbuttonclick);
             
             addPropGroup(prop);
             
@@ -393,7 +408,7 @@ public class CTSConfigurator extends JDialog{
     }
     
     public void removeGraph(int index){
-        
+        if(graphCount > 0){
         GraphProperties prop;
         propVector.remove(index);
         graphCount = propVector.size();
@@ -404,7 +419,7 @@ public class CTSConfigurator extends JDialog{
             
             prop = propVector.get(k);
             prop.setIndex(k);
-            prop.getPlotButton().addActionListener(plotbuttonclick);
+            //prop.getPlotButton().addActionListener(plotbuttonclick);
             
             addPropGroup(prop);
             
@@ -417,6 +432,7 @@ public class CTSConfigurator extends JDialog{
         //mainpanel.updateUI();
 //        pack();
         repaint();
+        }
     }
     
     public void upGraph(int index){
@@ -435,7 +451,7 @@ public class CTSConfigurator extends JDialog{
 
                 prop = propVector.get(k);
                 prop.setIndex(k);
-                prop.getPlotButton().addActionListener(plotbuttonclick);
+                //prop.getPlotButton().addActionListener(plotbuttonclick);
 
                 addPropGroup(prop);
 
@@ -446,7 +462,7 @@ public class CTSConfigurator extends JDialog{
             }
             finishGroupUI();
             
-            pack();
+            
             repaint();
         }
     }
@@ -469,18 +485,30 @@ public class CTSConfigurator extends JDialog{
 
                 prop = propVector.get(k);
                 prop.setIndex(k);
-                prop.getPlotButton().addActionListener(plotbuttonclick);
+                //prop.getPlotButton().addActionListener(plotbuttonclick);
 
                 addPropGroup(prop);
                 
             }
             finishGroupUI();
             
-            pack();
+            
             repaint();
         }
     }
     
+    private void updatePropVector(){
+        
+        for(int i=0; i<propVector.size(); i++){
+            propVector.get(i).applyProperties();
+        }
+    }
+    
+    public void plotGraph(int i){
+       
+            propVector.get(i).applyProperties();
+            jts.plot(i);
+    }
     
     private void initGroupUI(){
         
@@ -555,7 +583,8 @@ public class CTSConfigurator extends JDialog{
             group1.addComponent(prop.getDataChoice()).addComponent(space1);
             group2.addComponent(prop.getTimeChoiceSTART()).addComponent(prop.getTimeChoiceEND());
             group3.addComponent(lf).addComponent(prop.getPosChoice());
-            group4.addComponent(prop.getTypeChoice()).addComponent(prop.getColorChoice());
+            group4.addComponent(prop.getColorChoice()).addComponent(prop.getTypeChoice());
+            
 
             group9.addComponent(space3);
             group10.addComponent(prop.getPlotButton());
@@ -564,15 +593,15 @@ public class CTSConfigurator extends JDialog{
             group13.addComponent(prop.getRemButton());
             group14.addComponent(prop.getUpButton());
             group15.addComponent(prop.getDownButton());
-            
-            
+                        
             vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING)
             .addComponent(prop.getDataChoice()).addComponent(prop.getTimeChoiceSTART()).addComponent(space5)
             .addComponent(lf).addComponent(prop.getTypeChoice()));
             vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING)
             .addComponent(space1).addComponent(prop.getTimeChoiceEND()).addComponent(space6)
             .addComponent(prop.getPosChoice())
-            .addComponent(prop.getColorChoice()).addComponent(space3).addComponent(prop.getPlotButton())
+            .addComponent(prop.getColorChoice())
+            .addComponent(space3).addComponent(prop.getPlotButton())
             .addComponent(space4).addComponent(prop.getAddButton()).addComponent(prop.getRemButton())
             .addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
             
@@ -679,173 +708,175 @@ public class CTSConfigurator extends JDialog{
         
     }
     
-    public void timePlot(){
-//
-//
-//        /* Festlegen welche cols zu valueLeft und welche zu valueRight gehören!! */
-//
-//        /* CTSPlot initialisieren */
-        ctsplot = new CTSPlot();
-//
-//       System.out.println("CTSPlot ctsplot = new CTSPlot();");
-//
-//        /* Parameter festlegen */
-//
-        ctsplot.setTitle(edTitleField.getText());
-        ctsplot.setLeftAxisTitle(edLeftField.getText());
-        ctsplot.setRightAxisTitle(edRightField.getText());
-//
-//
-//        //ctsplot.setGraphCountRight(columns.length);
-         /*
-        plotframe = new JDialog();
-        plotframe.setLayout(new FlowLayout());
-         System.out.println("plotframe.setLayout(new FlowLayout());");
-        plotframe.add(ctsplot.getPanel());
-         System.out.println("plotframe.add(ctsplot.getPanel());");
-        plotframe.pack();
-        plotframe.setVisible(true);
-          **/
-//
-//
-//         //System.out.println("plotframe.setVisible(true)");
-//
-//        //JAMSCalendar test = new JAMSCalendar();
-//        //if(table.getValueAt(rows[0], columns[0]).getClass() != test.getClass()){
-        int numActiveLeft=0;
-        int numActiveRight=0;
-        int corr=0;
-        
-        int row_start = 0;
-        int row_end = 0;
-        
-        boolean typechosen_R=false;
-        boolean typechosen_L=false;
-        String[] colorLeft = new String[graphCount];
-        String[] colorRight = new String[graphCount];
-        String[] titleLeft = new String[graphCount];
-        String[] titleRight = new String[graphCount];
-//
-//        /* zuordnung der graphen */
-        for(int i=0; i<graphCount; i++){
-            
-            GraphProperties prop = propVector.get(i);
-            int s = prop.getTimeSTART();
-            int e = prop.getTimeEND();
-            
-            if(s > row_start){
-                row_start = s;
-            }
-            if(e > row_end){
-                row_end = e;
-            }
-            
-            if(prop.getPosition()== "left"){
-                
-                ctsplot.setTypeLeft(prop.getRendererType());
-                
-                colorLeft[i - numActiveRight] = prop.getColor();
-                titleLeft[i - numActiveRight] = prop.getLegendName();
-                numActiveLeft++;
-            }
-            if(prop.getPosition() == "right"){
-                ctsplot.setTypeRight(prop.getRendererType());
-                
-                colorRight[i - numActiveLeft] = prop.getColor();
-                titleRight[i - numActiveLeft] = prop.getLegendName();
-                numActiveRight++;
-            }
-        }
-        
-        String[] legendLeft = new String[numActiveLeft];
-        String[] legendRight = new String[numActiveRight];
-        
-        for(int n=0; n<numActiveLeft; n++){
-            legendLeft[n] = titleLeft[n];
-        }
-        for(int n=0; n<numActiveRight; n++){
-            legendRight[n] = titleRight[n];
-        }
-        ctsplot.setTitleLeft(legendLeft);
-        ctsplot.setTitleRight(legendRight);
-        
-        ctsplot.setGraphCountLeft(numActiveLeft);
-        ctsplot.setGraphCountRight(numActiveRight);
-        
-        ctsplot.setColorLeft(colorLeft);
-        ctsplot.setColorRight(colorRight);
-        ctsplot.setTitleLeft(titleLeft);
-        ctsplot.setTitleRight(titleRight);
-        /* CTSPlot erstellen */
-        
-        //removeAll(); /* nullPionterEx at first startup? */
-        //add(frame, BorderLayout.NORTH);
-        ctsplot.createPlot();
-        //plotScPane = new JScrollPane(ctsplot.getPanel());
-        plotScPane.setViewportView(ctsplot.getPanel());
-        //mainpanel.add(ctsplot.getChartPanel(), BorderLayout.CENTER);
-        //System.out.println("ctsplot.createPlot();");
-       
-        double[] valueLeft = new double[numActiveLeft];
-        double[] valueRight = new double[numActiveRight];
-        
-        
-       
-                
-        /* jedesmal fragen, ob der graph zu valueLEFT GEHÖRT (COMBObOX ABFRAGEN) */
-        /* ACHTUNG: Funktioniert noch nicht bei addGraph() */
-        //int rowcount = table.getRowCount();
-        int c = 0;
-        
-        for(int k=row_start; k<=row_end; k++){
-                    
-                    int corrLeft = 0;
-                    int corrRight = 0;
-                    Object value = null;
 
-                    for(int i=0;i<graphCount;i++){
-                        
-                        GraphProperties prop = propVector.get(i);
-                        //value = (Double) table.getValueAt(rows[k],columns[i]);
-                            //int rows[] = prop.getSelectedRows();
-                            int col = prop.getSelectedColumn();
-                            int s = prop.getTimeSTART();
-                            int e = prop.getTimeEND();
-                            
-                            if(!(k<s) && !(k>e)){
-
-                                value = table.getValueAt(k,col);
-                                if(value.getClass() != java.lang.Double.class){
-                                        value = 0.0;
-                                    }
-
-                                if(prop.getPosition() == "left"){
-                                        //valueLeft[i - corrLeft] = (Double) table.getValueAt(rows[k],columns[i]);
-                                    valueLeft[i - corrLeft] = (Double) value;
-                                    corrRight++;
-
-                                }
-
-                                if(prop.getPosition() == "right"){
-                                    //valueRight[i - corrRight] = (Double) table.getValueAt(rows[k],columns[i]);
-                                    valueRight[i - corrRight] = (Double) value;
-                                    corrLeft++;
-                                }
-                            }else{
-                                corrRight++;
-                                corrLeft++;
-                                corr++;
-                            }
-                    }                 
-                ctsplot.plot((JAMSCalendar)table.getValueAt(k,0), valueLeft, valueRight);
-            }
-
-        repaint();
-        pack();
-
-
-
-    }
+    
+//    public void timePlot(){
+////
+////
+////        /* Festlegen welche cols zu valueLeft und welche zu valueRight gehören!! */
+////
+////        /* CTSPlot initialisieren */
+//        ctsplot = new CTSPlot();
+////
+////       System.out.println("CTSPlot ctsplot = new CTSPlot();");
+////
+////        /* Parameter festlegen */
+////
+//        ctsplot.setTitle(edTitleField.getText());
+//        ctsplot.setLeftAxisTitle(edLeftField.getText());
+//        ctsplot.setRightAxisTitle(edRightField.getText());
+////
+////
+////        //ctsplot.setGraphCountRight(columns.length);
+//         /*
+//        plotframe = new JDialog();
+//        plotframe.setLayout(new FlowLayout());
+//         System.out.println("plotframe.setLayout(new FlowLayout());");
+//        plotframe.add(ctsplot.getPanel());
+//         System.out.println("plotframe.add(ctsplot.getPanel());");
+//        plotframe.pack();
+//        plotframe.setVisible(true);
+//          **/
+////
+////
+////         //System.out.println("plotframe.setVisible(true)");
+////
+////        //JAMSCalendar test = new JAMSCalendar();
+////        //if(table.getValueAt(rows[0], columns[0]).getClass() != test.getClass()){
+//        int numActiveLeft=0;
+//        int numActiveRight=0;
+//        int corr=0;
+//        
+//        int row_start = 0;
+//        int row_end = 0;
+//        
+//        boolean typechosen_R=false;
+//        boolean typechosen_L=false;
+//        String[] colorLeft = new String[graphCount];
+//        String[] colorRight = new String[graphCount];
+//        String[] titleLeft = new String[graphCount];
+//        String[] titleRight = new String[graphCount];
+////
+////        /* zuordnung der graphen */
+//        for(int i=0; i<graphCount; i++){
+//            
+//            GraphProperties prop = propVector.get(i);
+//            int s = prop.getTimeSTART();
+//            int e = prop.getTimeEND();
+//            
+//            if(s > row_start){
+//                row_start = s;
+//            }
+//            if(e > row_end){
+//                row_end = e;
+//            }
+//            
+//            if(prop.getPosition()== "left"){
+//                
+//                ctsplot.setTypeLeft(prop.getRendererType());
+//                
+//                colorLeft[i - numActiveRight] = prop.getColor();
+//                titleLeft[i - numActiveRight] = prop.getLegendName();
+//                numActiveLeft++;
+//            }
+//            if(prop.getPosition() == "right"){
+//                ctsplot.setTypeRight(prop.getRendererType());
+//                
+//                colorRight[i - numActiveLeft] = prop.getColor();
+//                titleRight[i - numActiveLeft] = prop.getLegendName();
+//                numActiveRight++;
+//            }
+//        }
+//        
+//        String[] legendLeft = new String[numActiveLeft];
+//        String[] legendRight = new String[numActiveRight];
+//        
+//        for(int n=0; n<numActiveLeft; n++){
+//            legendLeft[n] = titleLeft[n];
+//        }
+//        for(int n=0; n<numActiveRight; n++){
+//            legendRight[n] = titleRight[n];
+//        }
+//        ctsplot.setTitleLeft(legendLeft);
+//        ctsplot.setTitleRight(legendRight);
+//        
+//        ctsplot.setGraphCountLeft(numActiveLeft);
+//        ctsplot.setGraphCountRight(numActiveRight);
+//        
+//        ctsplot.setColorLeft(colorLeft);
+//        ctsplot.setColorRight(colorRight);
+//        ctsplot.setTitleLeft(titleLeft);
+//        ctsplot.setTitleRight(titleRight);
+//        /* CTSPlot erstellen */
+//        
+//        //removeAll(); /* nullPionterEx at first startup? */
+//        //add(frame, BorderLayout.NORTH);
+//        ctsplot.createPlot();
+//        //plotScPane = new JScrollPane(ctsplot.getPanel());
+//        plotScPane.setViewportView(ctsplot.getPanel());
+//        //mainpanel.add(ctsplot.getChartPanel(), BorderLayout.CENTER);
+//        //System.out.println("ctsplot.createPlot();");
+//       
+//        double[] valueLeft = new double[numActiveLeft];
+//        double[] valueRight = new double[numActiveRight];
+//        
+//        
+//       
+//                
+//        /* jedesmal fragen, ob der graph zu valueLEFT GEHÖRT (COMBObOX ABFRAGEN) */
+//        /* ACHTUNG: Funktioniert noch nicht bei addGraph() */
+//        //int rowcount = table.getRowCount();
+//        int c = 0;
+//        
+//        for(int k=row_start; k<=row_end; k++){
+//                    
+//                    int corrLeft = 0;
+//                    int corrRight = 0;
+//                    Object value = null;
+//
+//                    for(int i=0;i<graphCount;i++){
+//                        
+//                        GraphProperties prop = propVector.get(i);
+//                        //value = (Double) table.getValueAt(rows[k],columns[i]);
+//                            //int rows[] = prop.getSelectedRows();
+//                            int col = prop.getSelectedColumn();
+//                            int s = prop.getTimeSTART();
+//                            int e = prop.getTimeEND();
+//                            
+//                            if(!(k<s) && !(k>e)){
+//
+//                                value = table.getValueAt(k,col);
+//                                if(value.getClass() != java.lang.Double.class){
+//                                        value = 0.0;
+//                                    }
+//
+//                                if(prop.getPosition() == "left"){
+//                                        //valueLeft[i - corrLeft] = (Double) table.getValueAt(rows[k],columns[i]);
+//                                    valueLeft[i - corrLeft] = (Double) value;
+//                                    corrRight++;
+//
+//                                }
+//
+//                                if(prop.getPosition() == "right"){
+//                                    //valueRight[i - corrRight] = (Double) table.getValueAt(rows[k],columns[i]);
+//                                    valueRight[i - corrRight] = (Double) value;
+//                                    corrLeft++;
+//                                }
+//                            }else{
+//                                corrRight++;
+//                                corrLeft++;
+//                                corr++;
+//                            }
+//                    }                 
+//                ctsplot.plot((JAMSCalendar)table.getValueAt(k,0), valueLeft, valueRight);
+//            }
+//
+//        repaint();
+//        //pack();
+//
+//
+//
+//    }
     
     
     
@@ -873,7 +904,8 @@ public class CTSConfigurator extends JDialog{
     
     ActionListener plotbuttonclick = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-            timePlot();
+            updatePropVector();
+            jts.plotAll();
         }
     };
     
