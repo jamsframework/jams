@@ -112,7 +112,7 @@ public class ComponentAttributePanel extends JPanel {
 
         LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Component:"), 0, 0, 1, 1, 0, 0);
         LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Local name:"), 0, 10, 1, 1, 0, 0);
-        LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Linkage:"), 0, 15, 1, 1, 0, 0);
+        LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Link:"), 0, 15, 1, 1, 0, 0);
         LHelper.addGBComponent(infoPanel, infoLayout, new JPanel(), 0, 17, 1, 1, 0, 0);
         LHelper.addGBComponent(infoPanel, infoLayout, new JLabel("Value:"), 0, 20, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
@@ -190,15 +190,21 @@ public class ComponentAttributePanel extends JPanel {
         String attribute = customAttributeText.getText();
         ComponentDescriptor context = (ComponentDescriptor) contextCombo.getSelectedItem();
 
+        if (!attribute.equals("") && context != null) {
+            linkButton.setEnabled(true);
+        } else {
+            linkButton.setEnabled(false);
+        }
+
         if (linkButton.isSelected() && !attribute.equals("") && (context != null)) {
             var.linkToAttribute(context, attribute);
-            linkText.setText(var.getContext() + " -> " + var.getContextAttribute());            
+            linkText.setText(var.getContext() + " -> " + var.getContextAttribute());
             tableModel.setValueAt(var.getContext() + "." + var.getContextAttribute(), selectedRow, 3);
         }
 
         if (!linkButton.isSelected()) {
             var.unlinkFromAttribute();
-            linkText.setText("");            
+            linkText.setText("");
             tableModel.setValueAt("", selectedRow, 3);
         }
 
@@ -214,7 +220,7 @@ public class ComponentAttributePanel extends JPanel {
             setButton.setSelected(false);
             return;
         }
-        
+
         if (setButton.isSelected()) {
             valueInput.getComponent().setEnabled(false);
             var.setValue(valueInput.getValue());
@@ -227,12 +233,12 @@ public class ComponentAttributePanel extends JPanel {
 
     private void updateAttributeLinkGUI() {
 
-        
         //adjust context input components according to context attributes
         if (var.getContextAttribute() == null) {
             linkButton.setSelected(false);
             linkText.setText("");
-            contextCombo.setSelectedItem(null);
+            contextCombo.setSelectedIndex(0);
+            //contextCombo.setSelectedItem(null);
             attributeList.setSelectedValue(null, true);
         } else {
             linkButton.setSelected(true);
@@ -248,12 +254,11 @@ public class ComponentAttributePanel extends JPanel {
         } else {
             setButton.setSelected(true);
             valueInput.getComponent().setEnabled(false);
-        }        
+        }
         valueInput.setValue(var.getValue());
-        
+
         if (customAttributeText.getText().equals("")) {
             linkButton.setEnabled(false);
-            linkButton.setSelected(false);
         } else {
             linkButton.setEnabled(true);
         }
@@ -276,6 +281,7 @@ public class ComponentAttributePanel extends JPanel {
         //fill the context combo box
         this.contextCombo.setModel(new DefaultComboBoxModel(ancestorArray));
         updateRepository();
+
         //enable field for custom attribute name if !READ_ACCESS        
         if (var.accessType == ComponentAttribute.READ_ACCESS) {
             customAttributeText.setEnabled(false);
@@ -288,17 +294,16 @@ public class ComponentAttributePanel extends JPanel {
             valuePanel.remove(valueInput.getComponent());
             valuePanel.updateUI();
         }
-        
+
         //create value input component
         valueInput = LHelper.createInputComponent(var.type.getSimpleName());
         valuePanel.add(valueInput.getComponent(), BorderLayout.WEST);
-        
+
         //enable set-value-button (disabled, when no var is displayed)
         setButton.setEnabled(true);
 
-
+        //init gui according to the component's settings
         updateAttributeLinkGUI();
-        
 
         adjusting = false;
     }

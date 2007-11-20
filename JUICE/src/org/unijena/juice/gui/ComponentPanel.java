@@ -74,7 +74,7 @@ public class ComponentPanel extends JPanel {
     private DefaultTableModel varTableModel, attributeTableModel;
     private List<String> varNameList, attrNameList;
     private int selectedVarRow, selectedAttrRow;
-    private JButton varEditButton, varResetButton, attributeEditButton, attributeAddButton, attributeDeleteButton;
+    private JButton attributeEditButton, attributeAddButton, attributeDeleteButton;
     private ComponentAttributeDlg varEditDlg;
     private ContextAttributeDlg attrEditDlg;
     private ModelView view;
@@ -140,16 +140,14 @@ public class ComponentPanel extends JPanel {
                 ListSelectionModel lsm = (ListSelectionModel)e.getSource();
                 if (!lsm.isSelectionEmpty()) {
                     ComponentPanel.this.selectedVarRow = lsm.getMinSelectionIndex();
-                    ComponentPanel.this.varEditButton.setEnabled(true);
-                    ComponentPanel.this.varResetButton.setEnabled(true);
                 } else {
                     ComponentPanel.this.selectedVarRow = -1;
-                    ComponentPanel.this.varEditButton.setEnabled(false);
-                    ComponentPanel.this.varResetButton.setEnabled(false);
                 }
                 updateAttributeConfigPanel();
             }
         });
+        
+        /*
         varTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e){
                 if (e.getClickCount() == 2){
@@ -157,6 +155,8 @@ public class ComponentPanel extends JPanel {
                 }
             }
         });
+        */
+        
         varTableColumnIds.add("Name");
         varTableColumnIds.add("Type (Access)");
         varTableColumnIds.add("R/W");
@@ -175,31 +175,7 @@ public class ComponentPanel extends JPanel {
         varPanel.setLayout(new BorderLayout());
         
         varPanel.add(varTableScroll, BorderLayout.CENTER);
-        
-        varEditButton = new JButton("Edit");
-        varEditButton.setEnabled(false);
-        varEditButton.setPreferredSize(BUTTON_DIMENSION);
-        varEditButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                showVarEditDlg();
-            }
-        });
-        
-        varResetButton = new JButton("Reset");
-        varResetButton.setEnabled(false);
-        varResetButton.setPreferredSize(BUTTON_DIMENSION);
-        varResetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                varReset();
-            }
-        });
-        
-        JPanel varButtonPanel = new JPanel();
-        varButtonPanel.setPreferredSize(new Dimension(BUTTON_DIMENSION.width+10,20));
-        varButtonPanel.add(varEditButton);
-        varButtonPanel.add(varResetButton);
-        varPanel.add(varButtonPanel, BorderLayout.EAST);
-        
+                
         //create attribute table
         attributeTable = new JTable(){
             public boolean isCellEditable(int row, int column) {
@@ -369,7 +345,8 @@ public class ComponentPanel extends JPanel {
         }
         
     }
-    
+
+    /*    
     private void showVarEditDlg() {
         int tmpSelectedVarRow = selectedVarRow;
         String attributeName = varNameList.get(selectedVarRow);
@@ -409,19 +386,7 @@ public class ComponentPanel extends JPanel {
             varTable.setRowSelectionInterval(tmpSelectedVarRow, tmpSelectedVarRow);
         }
     }
-    
-    private void varReset() {
-        int tmpSelectedVarRow = selectedVarRow;
-        String componentName = varNameList.get(selectedVarRow);
-        ComponentAttribute var = componentDescriptor.getComponentAttributes().get(componentName);
-/*
-        var.value = "";
-        var.context = null;
-        var.attribute = "";
- */
-        this.updateCmpAttrs();
-        varTable.setRowSelectionInterval(tmpSelectedVarRow, tmpSelectedVarRow);
-    }
+    */
     
     public JTextField getTextField(String key, String value, boolean editable) {
         JTextField text = new JTextField();
@@ -481,7 +446,6 @@ public class ComponentPanel extends JPanel {
     private void updateCmpAttrs() {
         
         selectedVarRow = -1;
-        varEditButton.setEnabled(false);
         
         varNameList = new ArrayList<String>(componentDescriptor.getComponentAttributes().keySet());
         //Collections.sort(varNameList);
