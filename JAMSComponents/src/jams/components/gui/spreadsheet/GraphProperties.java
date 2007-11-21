@@ -284,8 +284,8 @@ public class GraphProperties {
         double value;
         selectedColumn = setColumn.getSelectedIndex();
         color = (String) colorchoice.getSelectedItem();
-        ts = new TimeSeries(name, Second.class);
-        dataset = new TimeSeriesCollection(ts);
+        ts = new TimeSeries(setLegend.getText(), Second.class);
+        //dataset = new TimeSeriesCollection(ts);
         
         for(int i=getTimeSTART(); i<=getTimeEND(); i++){
             
@@ -293,7 +293,7 @@ public class GraphProperties {
             value = (Double) table.getValueAt(i, selectedColumn);
             ts.add(new Second(new Date(time.getTimeInMillis())), value);
         }
-        dataset.addSeries(ts);
+        //dataset.addSeries(ts);
 //        
 //        setSelectedColumn(setColumn.getSelectedIndex());
 //        int[] rows = new int[table.getRowCount()];
@@ -311,8 +311,12 @@ public class GraphProperties {
 //        this.result = true;
     }
     
-    public TimeSeriesCollection getDataset(){
-        return dataset;
+//    public TimeSeriesCollection getDataset(){
+//        return dataset;
+//    }
+    
+    public TimeSeries getTS(){
+        return ts;
     }
     
     public void setIndex(int index){

@@ -67,11 +67,13 @@ import org.unijena.jams.model.JAMSVarDescription;
  * @author Robert Riedel
  */
 public class JAMSTimePlot {
-    
 
     Vector<GraphProperties> propVector;
     ValueAxis axisLEFT;
     ValueAxis axisRIGHT;
+    int graphCount=0;
+    int graphCountRight=0;
+    int graphCountLeft=0;
     
 
     String xAxisTitle;
@@ -81,15 +83,13 @@ public class JAMSTimePlot {
 
     ChartPanel chartPanel;
     
-    
-    TimeSeries[] tsLeft, tsRight;
-    TimeSeriesCollection dataset1, dataset2;
+    TimeSeriesCollection dataLeft, dataRight;
     XYItemRenderer rightRenderer, leftRenderer;
     XYPlot plot;
     JFreeChart chart;
     JPanel panel;
     JButton saveButton;
-    int i, graphCountLeft = 0, graphCountRight = 0;
+
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
     
     public JAMSTimePlot() {
@@ -131,95 +131,13 @@ public class JAMSTimePlot {
     }
     
     public void setDefaultValues(){
-//            String plotTitle = "Title";
-//            String[] titleLeft = {"Title left"};
-//            String[] varTitleLeft = {"Var Title left"};
-//            String[] titleRight = {"Title right"};
-//            String[] colorLeft = {"red","pink","magenta","orange","yellow"};
-//            String[] colorRight = {"cyan","blue","green","gray","black"};
-//            int typeLeft = 0;
-//            int typeRight = 1;
+
             String xAxisTitle = "x axis title";
             String leftAxisTitle = "left axis title";
             String rightAxisTitle = "right axis title";
-//            boolean rightAxisInverted = false;
-//            String dateFormat = "dd/MM/yyyy"; //"dd-MM-yyyy"
-            //public JAMSCalendar time;
-            //double[] valueLeft;
-            //double[] valueRight;
+
             String title = "CTSPlot ver. 0.10";
     }
-    
-//    public void setPlotTitle(String plotTitle){
-//        this.plotTitle = plotTitle;
-//    }
-//    
-//    public void setTitleLeft(String[] titleLeft){
-//        this.titleLeft = titleLeft;
-//    }
-//
-//    
-//    public void setVarTitleLeft(String[] varTitleLeft){
-//        this.varTitleLeft = varTitleLeft;
-//    }
-//        
-//    public void setTitleRight(String[] titleRight){
-//        this.titleRight = titleRight;
-//    }    
-//    
-//     
-//    public void setColorLeft(String[] colorLeft){
-//        this.colorLeft = colorLeft;
-//    }
-//    
-//    public void setColorRight(String[] colorRight){
-//        this.colorRight = colorRight;
-//    }
-//    
-//    public void setTypeLeft(int typeLeft){
-//        this.typeLeft = typeLeft;
-//    }
-//    
-//    public void setTypeRight(int typeRight){
-//        this.typeRight = typeRight;
-//    }
-//    
-//    public void setXAxisTitle(String xAxisTitle){
-//        this.xAxisTitle = xAxisTitle;
-//    }
-//    
-//    public void setLeftAxisTitle(String leftAxisTitle){
-//        this.leftAxisTitle = leftAxisTitle;
-//    }
-//    
-//    public void setRightAxisTitle(String rightAxisTitle){
-//        this.rightAxisTitle = rightAxisTitle;
-//    }
-//    
-//    public void setRightAxisInverted(boolean rightAxisInverted){
-//        this.rightAxisInverted = rightAxisInverted;
-//    }
-//    
-//    public void setLeftAxisInverted(boolean rightAxisInverted){
-//        this.leftAxisInverted = leftAxisInverted;
-//    }
-//  
-//    public void setDateFormat(String dateFormat){
-//        this.dateFormat = dateFormat;
-//    }
-//    
-//    public void setTitle(String title){
-//        this.title = title;
-//    }
-//    
-//    public void setGraphCountLeft(int graphCountLeft){
-//        this.graphCountLeft = graphCountLeft;
-//    }
-//    
-//    public void setGraphCountRight(int graphCountRight){
-//        this.graphCountRight = graphCountRight;
-//    }
-      
     public ChartPanel getChartPanel(){
         //createPlot();
         
@@ -291,7 +209,7 @@ public class JAMSTimePlot {
                 "title",
                 "xAxisTitle",
                 "leftAxisTitle",
-                propVector.get(0).getDataset(),
+                dataLeft,
                 false,
                 false,
                 false);
@@ -311,7 +229,7 @@ public class JAMSTimePlot {
 
         axisLEFT = plot.getRangeAxis();
         axisRIGHT = new NumberAxis(rightAxisTitle);
-    
+        
 
     }
     
@@ -319,43 +237,58 @@ public class JAMSTimePlot {
         
         this.propVector = propVector;
     }
-      
-    public void plot(int i){
+    
+    public Vector<GraphProperties> getPropVector(){
         
-        GraphProperties prop = propVector.get(i);
-        XYItemRenderer renderer = getRenderer(prop.typechoice.getSelectedIndex());
-
-        /* RENDERER & COLOR */
-        renderer.setPaint(colorTable.get(prop.getColor())); 
-
-        /* POSITION */
-        if(prop.getPosChoice().getSelectedItem() == "left"){
-            plot.setRangeAxis(i, axisLEFT);
-            axisLEFT.setInverted(prop.getInvBox().isSelected());
+        return this.propVector;
+    }
+        
+    public void plotLeft(int renderer, String nameLeft, boolean inverted){ //plotLeft(renderer, axisname, inverted)
+        int c = propVector.size();
+        int corr = 0;
+        dataLeft = new TimeSeriesCollection();
+        
+        axisLEFT.setInverted(inverted);
+        axisLEFT.setLabel(nameLeft);
+        
+        for(int k=0; k<c; k++){ 
             
-        }else{
-            plot.setRangeAxis(i, axisRIGHT);
-            axisRIGHT.setInverted(prop.getInvBox().isSelected());
+            if(propVector.get(k-corr).getPosChoice().getSelectedItem() == "left"){
+                GraphProperties prop = propVector.get(k-corr);
+                dataLeft.addSeries(prop.getTS());
+                //leftRenderer.setSeriesPaint(k,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
+            }else{
+                
+            }
         }
-
-        plot.mapDatasetToRangeAxis(1, 1);
-        
-        /* DATASET */
-        plot.setDataset(i, prop.getDataset());
-        plot.setRenderer(i, renderer);
-
+        plot.setRangeAxis(0, axisLEFT);
+        plot.setDataset(0, dataLeft);
+        plot.setRenderer(0, getRenderer(renderer));
     }
     
-    public void plotAll(){
+    public void plotRight(int renderer, String nameRight, boolean inverted){
+        int c = propVector.size();
+        int corr = 0;
+        dataRight = new TimeSeriesCollection();
         
-        for(int i=0; i<propVector.size(); i++){
-            plot(i);
-        }
+        axisRIGHT.setInverted(inverted);
+        axisRIGHT.setLabel(nameRight);
         
-    }
-    
+        for(int k=0; k<c; k++){
 
-    
+            if(propVector.get(k-corr).getPosChoice().getSelectedItem() == "right"){
+                GraphProperties prop = propVector.get(k-corr);
+                dataRight.addSeries(prop.getTS());
+                //rightRenderer.setSeriesPaint(k-corr, colorTable.get("red"));
+            }else{
+                corr++;
+            }
+        }
+        plot.setRangeAxis(1, axisRIGHT);
+        plot.setDataset(1, dataRight);
+        plot.setRenderer(1, getRenderer(renderer));
+    }
+
 //    public void plot(JAMSCalendar time, double[] valueLeft, double[] valueRight) {
 //        try {
 //            for (i = 0; i < graphCountRight; i++) {

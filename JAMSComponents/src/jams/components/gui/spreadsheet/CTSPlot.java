@@ -306,7 +306,7 @@ public class CTSPlot {
             dateAxis.setDateFormatOverride(new SimpleDateFormat("dd-MM-yyyy"));
             
             leftRenderer = getRenderer(typeLeft);
-                plot.setRenderer(0, leftRenderer);
+             plot.setRenderer(0, leftRenderer);
             
             tsLeft = new TimeSeries[graphCountLeft];
             

@@ -366,7 +366,8 @@ public class CTSConfigurator extends JDialog{
         add(frame, BorderLayout.NORTH);
         add(plotScPane, BorderLayout.CENTER);
         
-        jts.plotAll();
+        jts.plotLeft(0, "leftAxisName", false);
+        jts.plotRight(1, "rightAxisName", true);
     
     }
     
@@ -408,6 +409,7 @@ public class CTSConfigurator extends JDialog{
     }
     
     public void removeGraph(int index){
+        
         if(graphCount > 0){
         GraphProperties prop;
         propVector.remove(index);
@@ -507,7 +509,11 @@ public class CTSConfigurator extends JDialog{
     public void plotGraph(int i){
        
             propVector.get(i).applyProperties();
-            jts.plot(i);
+            if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
+                jts.plotLeft(0, "leftAxisName", false);
+            }else{
+                jts.plotRight(1, "rightAxisName", false);
+            }
     }
     
     private void initGroupUI(){
@@ -905,7 +911,10 @@ public class CTSConfigurator extends JDialog{
     ActionListener plotbuttonclick = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
             updatePropVector();
-            jts.plotAll();
+            
+                jts.plotLeft(0, "leftAxisName", false);
+                jts.plotRight(1, "rightAxisName", false);
+            
         }
     };
     
