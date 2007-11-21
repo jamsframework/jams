@@ -40,5 +40,6 @@ public interface InputComponent {
     public void setRange(double lower, double upper);
     public boolean verify();
     public int getErrorCode();
+    public void addValueChangeListener(ValueChangeListener l);
     
 }

@@ -20,13 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.gui.input;
 
 import java.awt.BorderLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import org.unijena.jams.gui.*;
 
 /**
@@ -34,36 +35,58 @@ import org.unijena.jams.gui.*;
  * @author S. Kralisch
  */
 public class TextInput extends JPanel implements InputComponent {
-    
+
     private static final long serialVersionUID = 784799996931992935L;
-    JTextField text = new JTextField();
-    
+    private JTextField text = new JTextField();
+    private ValueChangeListener l;
+
     public TextInput() {
         super();
         setLayout(new BorderLayout());
         add(text, BorderLayout.WEST);
     }
-    
+
     public String getValue() {
         return text.getText();
     }
-    
+
     public void setValue(String value) {
         text.setText(value);
     }
-    
+
     public JComponent getComponent() {
         return text;
     }
-    
-    public void setRange(double lower, double upper){};
+
+    public void setRange(double lower, double upper) {
+    }
     
     public boolean verify() {
         return true;
     }
-    
+
     public int getErrorCode() {
         return INPUT_OK;
     }
-    
+
+    public void addValueChangeListener(ValueChangeListener l) {
+        this.l = l;
+        this.text.getDocument().addDocumentListener(new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                TextInput.this.l.valueChanged();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                TextInput.this.l.valueChanged();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                TextInput.this.l.valueChanged();
+            }
+        });
+    }
 }

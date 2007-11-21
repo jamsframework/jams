@@ -23,6 +23,8 @@
 
 package org.unijena.jams.gui.input;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 
@@ -33,6 +35,7 @@ import javax.swing.JComponent;
 public class BooleanInput extends JCheckBox implements InputComponent {
     
     private static final long serialVersionUID = -4821261861964727164L;
+    private ValueChangeListener l;
     
     public String getValue() {
         if (isSelected())
@@ -60,5 +63,16 @@ public class BooleanInput extends JCheckBox implements InputComponent {
     
     public int getErrorCode() {
         return INPUT_OK;
+    }
+    
+    public void addValueChangeListener(ValueChangeListener l) {
+        this.l = l;
+        this.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BooleanInput.this.l.valueChanged();
+            }
+        });
     }
 }

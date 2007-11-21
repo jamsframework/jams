@@ -29,8 +29,12 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -53,6 +57,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;
+import org.unijena.jams.gui.input.ValueChangeListener;
 import org.unijena.juice.*;
 import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
@@ -216,16 +221,20 @@ public class ComponentAttributePanel extends JPanel {
             return;
         }
 
+        if (!valueInput.verify()) {
+            return;
+        }
+        
         if (valueInput.getValue().equals("")) {
             setButton.setSelected(false);
             return;
         }
 
         if (setButton.isSelected()) {
-            valueInput.getComponent().setEnabled(false);
+            //valueInput.getComponent().setEnabled(false);
             var.setValue(valueInput.getValue());
         } else {
-            valueInput.getComponent().setEnabled(true);
+            //valueInput.getComponent().setEnabled(true);
             var.setValue("");
         }
         tableModel.setValueAt(var.getValue(), selectedRow, 4);
@@ -250,10 +259,10 @@ public class ComponentAttributePanel extends JPanel {
         //adjust var input components according to var values
         if (var.getValue().equals("")) {
             setButton.setSelected(false);
-            valueInput.getComponent().setEnabled(true);
+        //valueInput.getComponent().setEnabled(true);
         } else {
             setButton.setSelected(true);
-            valueInput.getComponent().setEnabled(false);
+        //valueInput.getComponent().setEnabled(false);
         }
         valueInput.setValue(var.getValue());
 
@@ -292,12 +301,12 @@ public class ComponentAttributePanel extends JPanel {
         //remove existing input component if necessary
         if (valueInput != null) {
             valuePanel.remove(valueInput.getComponent());
-            valuePanel.updateUI();
         }
 
         //create value input component
         valueInput = LHelper.createInputComponent(var.type.getSimpleName());
         valuePanel.add(valueInput.getComponent(), BorderLayout.WEST);
+        valuePanel.updateUI();
 
         //enable set-value-button (disabled, when no var is displayed)
         setButton.setEnabled(true);
@@ -305,6 +314,14 @@ public class ComponentAttributePanel extends JPanel {
         //init gui according to the component's settings
         updateAttributeLinkGUI();
 
+        valueInput.addValueChangeListener(new ValueChangeListener() {
+
+            @Override
+            public void valueChanged() {
+                setAttributeValue();
+            }
+        });        
+        
         adjusting = false;
     }
 
@@ -432,7 +449,6 @@ public class ComponentAttributePanel extends JPanel {
     }
 
     private void addListeners() {
-
         linkButton.addActionListener(linkButtonListener);
         setButton.addActionListener(setButtonListener);
         contextCombo.addItemListener(contextComboListener);
