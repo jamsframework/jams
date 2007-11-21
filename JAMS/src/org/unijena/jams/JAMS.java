@@ -50,7 +50,7 @@ public class JAMS {
     public static final int RUNSTATE_RUN = 1;
     
     public static final Font STANDARD_FONT = new java.awt.Font("Courier", 0, 11);
-    public static final int SPLASH_DISPLAY_TIME = 0;
+    public static final int SPLASH_DISPLAY_TIME = 2000;
     
     private static JAMSCmdLine cmdLine;
     

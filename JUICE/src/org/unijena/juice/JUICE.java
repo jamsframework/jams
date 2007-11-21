@@ -71,12 +71,12 @@ public class JUICE {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } else {
+            }/* else {
                 PlasticLookAndFeel laf = new PlasticXPLookAndFeel();
                 PlasticLookAndFeel.setPlasticTheme(new com.jgoodies.looks.plastic.theme.ExperienceBlue());
                 Options.setPopupDropShadowEnabled(true);
                 UIManager.setLookAndFeel(laf);
-            }
+            }*/
         } catch (Exception evt) {}
         try {
             //try to load property values from file
