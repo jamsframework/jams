@@ -117,7 +117,7 @@ public class GraphProperties {
     JTextField setName;
     JTextField setLegend;
     
-    CTSConfigurator ctsconf;
+    JTSConfigurator ctsconf;
     
     private String[] colors = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
     private String[] types = {"Line","Bar","Area","Line and Base","Dot","Difference","Step","StepArea"};
@@ -132,7 +132,7 @@ public class GraphProperties {
     
     
     /** Creates a new instance of GraphProperties */
-    public GraphProperties(JDialog parent, JTable table, CTSConfigurator ctsconf) {
+    public GraphProperties(JDialog parent, JTable table, JTSConfigurator ctsconf) {
         
         //super(parent, "Select Properties");
         //this.parent = parent;

@@ -397,7 +397,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     private void openCTS(){
         /* achtung: nur wenn time mitläuft!! */
         //if(!ctsIsOpen){
-        CTSConfigurator cts = new CTSConfigurator(getModel().getRuntime().getFrame(), this.table);
+        JTSConfigurator jts = new JTSConfigurator(getModel().getRuntime().getFrame(), this.table);
         //ctstabs.addGraph(table);
         //ctsIsOpen = true;
         }

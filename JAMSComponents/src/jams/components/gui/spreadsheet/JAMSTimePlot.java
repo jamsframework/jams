@@ -83,7 +83,8 @@ public class JAMSTimePlot {
 
     ChartPanel chartPanel;
     
-    TimeSeriesCollection dataLeft, dataRight;
+    TimeSeriesCollection dataLeft = new TimeSeriesCollection();
+    TimeSeriesCollection dataRight = new TimeSeriesCollection();
     XYItemRenderer rightRenderer, leftRenderer;
     XYPlot plot;
     JFreeChart chart;
@@ -251,19 +252,26 @@ public class JAMSTimePlot {
         axisLEFT.setInverted(inverted);
         axisLEFT.setLabel(nameLeft);
         
+        leftRenderer = getRenderer(renderer);
+        
         for(int k=0; k<c; k++){ 
             
-            if(propVector.get(k-corr).getPosChoice().getSelectedItem() == "left"){
-                GraphProperties prop = propVector.get(k-corr);
+            if(propVector.get(k).getPosChoice().getSelectedItem() == "left"){
+                GraphProperties prop = propVector.get(k);
                 dataLeft.addSeries(prop.getTS());
-                //leftRenderer.setSeriesPaint(k,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
+                if(k-corr <= dataRight.getSeriesCount()){
+                    dataRight.removeSeries(prop.getTS());
+                }
+                leftRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
             }else{
-                
+                corr++;
             }
         }
         plot.setRangeAxis(0, axisLEFT);
         plot.setDataset(0, dataLeft);
-        plot.setRenderer(0, getRenderer(renderer));
+        plot.setRenderer(0, leftRenderer);
+        plot.mapDatasetToRangeAxis(1, 1);
+        
     }
     
     public void plotRight(int renderer, String nameRight, boolean inverted){
@@ -274,19 +282,26 @@ public class JAMSTimePlot {
         axisRIGHT.setInverted(inverted);
         axisRIGHT.setLabel(nameRight);
         
+        rightRenderer = getRenderer(renderer);
+        
         for(int k=0; k<c; k++){
 
-            if(propVector.get(k-corr).getPosChoice().getSelectedItem() == "right"){
-                GraphProperties prop = propVector.get(k-corr);
+            if(propVector.get(k).getPosChoice().getSelectedItem() == "right"){
+                GraphProperties prop = propVector.get(k);
                 dataRight.addSeries(prop.getTS());
-                //rightRenderer.setSeriesPaint(k-corr, colorTable.get("red"));
+                if( k-corr <=dataLeft.getSeriesCount()){
+                    dataLeft.removeSeries(prop.getTS());
+                }
+                rightRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
             }else{
                 corr++;
             }
         }
         plot.setRangeAxis(1, axisRIGHT);
         plot.setDataset(1, dataRight);
-        plot.setRenderer(1, getRenderer(renderer));
+        plot.setRenderer(1, rightRenderer);
+        plot.mapDatasetToRangeAxis(1, 1);
+        plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
     }
 
 //    public void plot(JAMSCalendar time, double[] valueLeft, double[] valueRight) {
