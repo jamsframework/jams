@@ -24,7 +24,7 @@
 package jams.components.gui.spreadsheet;
 
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -220,9 +220,9 @@ public class JAMSTimePlot {
         chartPanel.setBackground(Color.WHITE);
         
         panel = new JPanel();
-            panel.setLayout(new GridLayout(1,1));
+            panel.setLayout(new BorderLayout());
         //panel.setBackground(Color.WHITE);
-        panel.add(chartPanel);
+        panel.add(chartPanel, BorderLayout.CENTER);
         
         plot = chart.getXYPlot();
         

@@ -9,6 +9,7 @@
 
 package jams.components.gui.spreadsheet;
 
+import java.net.URL;
 import jams.components.gui.*;
 import java.awt.Color;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ import org.jfree.data.time.TimeSeries;
  *
  * @author Robert Riedel
  */
-public class JTSConfigurator extends JDialog{
+public class JTSConfigurator extends JFrame{
 
         GroupLayout gLayout;
         
@@ -166,8 +167,11 @@ public class JTSConfigurator extends JDialog{
     
     public JTSConfigurator(JFrame parent, JTable table){
         
-        super(parent, "JAMS CTS Viewer");
-        
+        //super(parent, "JAMS JTS Viewer");
+        setTitle("JAMS JTS Viewer");
+        URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
+        ImageIcon icon = new ImageIcon(url);
+        setIconImage(icon.getImage());
         
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
@@ -372,19 +376,20 @@ public class JTSConfigurator extends JDialog{
         jts.setPropVector(propVector);
         jts.createPlot();
  
-        graphScPane = new JScrollPane(graphpanel);
+        JPanel graphPanel = new JPanel();
+        JPanel optPanel = new JPanel();
+        graphPanel.add(graphpanel);
+        optPanel.add(optionpanel);
+        
+        graphScPane = new JScrollPane(graphPanel);
         //graphScPane.setPreferredSize(new Dimension(200,150));
         graphScPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        frame.add(graphScPane, BorderLayout.NORTH);
-        //frame.add(optionpanel);
-        
-        frame.add(optionpanel, BorderLayout.CENTER);
-        
+
         optionpanel.setBorder(new EtchedBorder());
         plotScPane = new JScrollPane(jts.getPanel());
-        optScPane = new JScrollPane(optionpanel);
-        split_hor.add(optScPane,0);
-        split_hor.add(graphScPane,1);
+        optScPane = new JScrollPane(optPanel);
+        split_hor.add(optScPane, 0);
+        split_hor.add(graphScPane, 1);
         split_vert.add(split_hor, 0);
         split_vert.add(plotScPane, 1);
         add(split_vert);
