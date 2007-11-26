@@ -69,6 +69,7 @@ import org.unijena.jams.model.JAMSVarDescription;
 public class JAMSTimePlot {
 
     Vector<GraphProperties> propVector;
+    DateAxis dateAxis;
     ValueAxis axisLEFT;
     ValueAxis axisRIGHT;
     int graphCount=0;
@@ -211,7 +212,7 @@ public class JAMSTimePlot {
                 "xAxisTitle",
                 "leftAxisTitle",
                 dataLeft,
-                false,
+                true,
                 false,
                 false);
         
@@ -219,7 +220,7 @@ public class JAMSTimePlot {
         chartPanel.setBackground(Color.WHITE);
         
         panel = new JPanel();
-        panel.setLayout(new GridLayout(1,1));
+            panel.setLayout(new GridLayout(1,1));
         //panel.setBackground(Color.WHITE);
         panel.add(chartPanel);
         
@@ -227,6 +228,7 @@ public class JAMSTimePlot {
         
         DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
         dateAxis.setDateFormatOverride(new SimpleDateFormat("dd-MM-yyyy"));
+        
 
         axisLEFT = plot.getRangeAxis();
         axisRIGHT = new NumberAxis(rightAxisTitle);
@@ -244,13 +246,15 @@ public class JAMSTimePlot {
         return this.propVector;
     }
         
-    public void plotLeft(int renderer, String nameLeft, boolean inverted){ //plotLeft(renderer, axisname, inverted)
+    public void plotLeft(int renderer, String nameLeft, String xAxisTitle, boolean inverted){ //plotLeft(renderer, axisname, inverted)
         int c = propVector.size();
         int corr = 0;
         dataLeft = new TimeSeriesCollection();
+        DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
         
         axisLEFT.setInverted(inverted);
         axisLEFT.setLabel(nameLeft);
+        dateAxis.setLabel(xAxisTitle);
         
         leftRenderer = getRenderer(renderer);
         
@@ -274,13 +278,19 @@ public class JAMSTimePlot {
         
     }
     
-    public void plotRight(int renderer, String nameRight, boolean inverted){
+    public void setTitle(String title){
+        chart.setTitle(title);
+    }
+    
+    public void plotRight(int renderer, String nameRight, String xAxisTitle, boolean inverted){
         int c = propVector.size();
         int corr = 0;
         dataRight = new TimeSeriesCollection();
+        DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
         
         axisRIGHT.setInverted(inverted);
         axisRIGHT.setLabel(nameRight);
+        dateAxis.setLabel(xAxisTitle);
         
         rightRenderer = getRenderer(renderer);
         

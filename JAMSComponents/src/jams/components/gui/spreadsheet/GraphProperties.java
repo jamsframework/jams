@@ -193,14 +193,17 @@ public class GraphProperties {
         downButton.setPreferredSize(new Dimension(20,14));
         
         colorchoice = new JComboBox(colors);
+        colorchoice.setPreferredSize(new Dimension(40,14));
         colorchoice.setSelectedIndex(0);
         //colorchoice.addActionListener(okListener);
         
         typechoice = new JComboBox(types);
+        typechoice.setPreferredSize(new Dimension(40,14));
         typechoice.setSelectedIndex(0);
         //typechoice.addActionListener(okListener);
         
         poschoice = new JComboBox(positions);
+        poschoice.setPreferredSize(new Dimension(40,14));
         poschoice.setSelectedIndex(0);
         //poschoice.addActionListener(okListener);
        
@@ -228,18 +231,24 @@ public class GraphProperties {
         }
         
         timechoice_START = new JComboBox(timeIntervals);
+        timechoice_START.setPreferredSize(new Dimension(40,14));
         timechoice_START.addActionListener(timeListener);
+        
         timechoice_END = new JComboBox(timeIntervals);
+        timechoice_END.setPreferredSize(new Dimension(40,14));
         timechoice_END.addActionListener(timeListener);
         
         setColumn = new JComboBox(column);
+        setColumn.setPreferredSize(new Dimension(40,14));
         setColumn.setSelectedIndex(1);
         nameLabel.setText((String) setColumn.getSelectedItem());
         
         String name = (String) setColumn.getSelectedItem();
 
         setName = new JTextField(name, 14);
+        setName.setPreferredSize(new Dimension(40,14));
         setLegend = new JTextField(name, 14);
+        setLegend.setPreferredSize(new Dimension(40,14));
         
         namePanel.add(setNameLabel);
         namePanel.add(setName);

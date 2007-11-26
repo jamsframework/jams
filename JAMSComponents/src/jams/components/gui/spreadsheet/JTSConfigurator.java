@@ -82,11 +82,14 @@ public class JTSConfigurator extends JDialog{
     private JScrollPane graphScPane;
     private JScrollPane plotScPane;
     private JScrollPane mainScPane;
+    private JScrollPane optScPane;
     
     private String[] headers;
     
     private JLabel edTitle = new JLabel("Plot Title: ");
     private JLabel edLeft  = new JLabel("Left axis title: ");
+    private JLabel edXAxis = new JLabel("X axis title");
+    
     private JLabel edRight = new JLabel("Right axis title: ");
     private JLabel rLeftLabel = new JLabel("Renderer left");
     private JLabel rRightLabel= new JLabel("Renderer right");
@@ -96,6 +99,7 @@ public class JTSConfigurator extends JDialog{
     private JTextField edTitleField = new JTextField(14);
     private JTextField edLeftField = new JTextField(14);
     private JTextField edRightField = new JTextField(14);
+    private JTextField edXAxisField = new JTextField(14);
     
     private String[] types = {"Line","Bar","Area","Line and Base","Dot","Difference","Step","StepArea"};
     
@@ -230,7 +234,7 @@ public class JTSConfigurator extends JDialog{
         JLabel posLabel = new JLabel("Position");
         JLabel typeLabel = new JLabel("Renderer");
         JLabel colorLabel = new JLabel("Colour");
-        JLabel dataLabel = new JLabel("Select Data");
+        JLabel dataLabel = new JLabel("Select Data / Legend Entry");
         JLabel timeLabel = new JLabel("Time Interval");
         JLabel emptyTimeLabel = new JLabel("    ");
         JLabel legendLabel = new JLabel("Legend Entry");
@@ -298,21 +302,27 @@ public class JTSConfigurator extends JDialog{
 //        
         //edTitleField.setColumns(20);
         edTitleField.setText("Plot Title");
-        edTitleField.addActionListener(actChanged);
+        edTitleField.setSize(40,10);
+        edTitleField.addActionListener(plotbuttonclick);
         //edLeftField.setColumns(20);
         edLeftField.setText("Left Axis Title");
-        edLeftField.addActionListener(actChanged);
+        edLeftField.addActionListener(plotbuttonclick);
+        edLeftField.setSize(40,10);
         //edRightField.setColumns(20);
         edRightField.setText("Right Axis Title");
-        edRightField.addActionListener(actChanged);
+        edRightField.addActionListener(plotbuttonclick);
+        edRightField.setSize(40,10);
+        
+        edXAxisField.setText("Time");
+        edXAxisField.addActionListener(plotbuttonclick);
         applyButton.addActionListener(plotbuttonclick);
         
-        edTitlePanel.add(edTitle);
-        edTitlePanel.add(edTitleField);
-        edLeftAxisPanel.add(edLeft);
-        edLeftAxisPanel.add(edLeftField);
-        edRightAxisPanel.add(edRight);
-        edRightAxisPanel.add(edRightField);
+//        edTitlePanel.add(edTitle);
+//        edTitlePanel.add(edTitleField);
+//        edLeftAxisPanel.add(edLeft);
+//        edLeftAxisPanel.add(edLeftField);
+//        edRightAxisPanel.add(edRight);
+//        edRightAxisPanel.add(edRightField);
         
         optionpanel.add(edTitle);
         optionpanel.add(edTitleField);
@@ -372,7 +382,8 @@ public class JTSConfigurator extends JDialog{
         
         optionpanel.setBorder(new EtchedBorder());
         plotScPane = new JScrollPane(jts.getPanel());
-        split_hor.add(optionpanel,0);
+        optScPane = new JScrollPane(optionpanel);
+        split_hor.add(optScPane,0);
         split_hor.add(graphScPane,1);
         split_vert.add(split_hor, 0);
         split_vert.add(plotScPane, 1);
@@ -380,7 +391,7 @@ public class JTSConfigurator extends JDialog{
 //        add(frame, BorderLayout.NORTH);
 //        add(plotScPane, BorderLayout.CENTER);
         
-        jts.plotLeft(0, "leftAxisName", false);
+        jts.plotLeft(0, "leftAxisName", "Time", false);
         //jts.plotRight(1, "rightAxisName", true);
     
     }
@@ -424,7 +435,7 @@ public class JTSConfigurator extends JDialog{
     
     public void removeGraph(int index){
         
-        if(graphCount > 0){
+        if(graphCount > 1){
         GraphProperties prop;
         propVector.remove(index);
         graphCount = propVector.size();
@@ -524,13 +535,12 @@ public class JTSConfigurator extends JDialog{
        
             //propVector.get(i).applyProperties();
             if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
-                jts.plotLeft(0, "leftAxisName", false);
+                jts.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
             }
             if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
-                jts.plotRight(1, "rightAxisName", false);
+                jts.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
             }
-    }
-    
+    }    
     
     private void createOptionPanel(){
         GroupLayout optLayout = new GroupLayout(optionpanel);
@@ -548,22 +558,25 @@ public class JTSConfigurator extends JDialog{
         optVGroup.addGroup(optLayout.createParallelGroup()
         .addComponent(edRight).addComponent(edRightField));
         optVGroup.addGroup(optLayout.createParallelGroup()
+        .addComponent(edXAxis).addComponent(edXAxisField));
+        optVGroup.addGroup(optLayout.createParallelGroup()
         .addComponent(rLeftLabel).addComponent(rLeftBox));
         optVGroup.addGroup(optLayout.createParallelGroup()
         .addComponent(rRightLabel).addComponent(rRightBox));
         optVGroup.addGroup(optLayout.createParallelGroup()
         .addComponent(invLeftBox));
         optVGroup.addGroup(optLayout.createParallelGroup()
-        .addComponent(invRightBox));
+        .addComponent(invRightBox).addComponent(applyButton));
         
         optHGroup.addGroup(optLayout.createParallelGroup().
                 addComponent(edTitle).addComponent(edLeft).addComponent(edRight)
-                .addComponent(rLeftLabel).addComponent(rRightLabel)
+                .addComponent(edXAxis).addComponent(rLeftLabel).addComponent(rRightLabel)
                 .addComponent(invLeftBox).addComponent(invRightBox));
         
         optHGroup.addGroup(optLayout.createParallelGroup().
                 addComponent(edTitleField).addComponent(edLeftField).addComponent(edRightField)
-                .addComponent(rLeftBox).addComponent(rRightBox));
+                .addComponent(edXAxisField).addComponent(rLeftBox).addComponent(rRightBox).addGap(1,1,1)
+                .addComponent(applyButton));
         
         
         optLayout.setHorizontalGroup(optHGroup);
@@ -576,9 +589,9 @@ public class JTSConfigurator extends JDialog{
         
         JLabel nameLabel = new JLabel("Name");
         JLabel posLabel = new JLabel("Position");
-        JLabel typeLabel = new JLabel("Legend/Position");
+        JLabel typeLabel = new JLabel("Colour / Position");
         JLabel colorLabel = new JLabel("Type/Colour");
-        JLabel dataLabel = new JLabel("Select Data");
+        JLabel dataLabel = new JLabel("Data / Legend Entry");
         JLabel timeLabel = new JLabel("Time Interval");
         JLabel emptyTimeLabel = new JLabel("    ");
         JLabel legendLabel = new JLabel("Legend Entry: ");
@@ -611,7 +624,7 @@ public class JTSConfigurator extends JDialog{
         group1.addComponent(dataLabel);
         group2.addComponent(timeLabel);
         group3.addComponent(typeLabel);
-        group4.addComponent(colorLabel);
+        //group4.addComponent(colorLabel);
 
 //        group9.addComponent();
 //        group10.addComponent(emptyTimeLabel);
@@ -622,7 +635,7 @@ public class JTSConfigurator extends JDialog{
 //        group15.addComponent(emptyTimeLabel);
    
         vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING)
-        .addComponent(dataLabel).addComponent(timeLabel).addComponent(typeLabel).addComponent(colorLabel));
+        .addComponent(dataLabel).addComponent(timeLabel).addComponent(typeLabel));
         
 //        vGroup.addGroup(gLayout.createParallelGroup(Alignment.BASELINE)
 //        .addComponent(dataLabel).addComponent(timeLabel).addComponent(typeLabel));
@@ -640,11 +653,10 @@ public class JTSConfigurator extends JDialog{
             
             group6.addComponent(space5).addComponent(space6);
             
-            group1.addComponent(prop.getDataChoice()).addComponent(space1);
+            group1.addComponent(prop.getDataChoice()).addComponent(lf).addGap(20);
             group2.addComponent(prop.getTimeChoiceSTART()).addComponent(prop.getTimeChoiceEND());
-            group3.addComponent(lf).addComponent(prop.getPosChoice());
-            group4.addComponent(prop.getColorChoice()).addComponent(prop.getTypeChoice());
-            
+            group3.addComponent(prop.getColorChoice()).addComponent(prop.getPosChoice());
+                       
 
             group9.addComponent(space3);
             group10.addComponent(prop.getPlotButton());
@@ -656,14 +668,14 @@ public class JTSConfigurator extends JDialog{
                         
             vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING)
             .addComponent(prop.getDataChoice()).addComponent(prop.getTimeChoiceSTART()).addComponent(space5)
-            .addComponent(lf).addComponent(prop.getTypeChoice()));
+            .addComponent(prop.getColorChoice()));
             vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING)
-            .addComponent(space1).addComponent(prop.getTimeChoiceEND()).addComponent(space6)
+            .addComponent(lf).addComponent(prop.getTimeChoiceEND()).addComponent(space6)
             .addComponent(prop.getPosChoice())
-            .addComponent(prop.getColorChoice())
             .addComponent(space3).addComponent(prop.getPlotButton())
             .addComponent(space4).addComponent(prop.getAddButton()).addComponent(prop.getRemButton())
             .addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
+            vGroup.addGroup(gLayout.createParallelGroup().addGap(20));
             
 //            vGroup.addGroup(gLayout.createParallelGroup(Alignment.BASELINE)
 //            .addComponent(prop.getNameLabel()).addComponent(prop.getPosChoice())
@@ -682,7 +694,7 @@ public class JTSConfigurator extends JDialog{
         hGroup.addGroup(group2);
         hGroup.addGroup(group6);
         hGroup.addGroup(group3);  
-        hGroup.addGroup(group4);
+//        hGroup.addGroup(group4);
 //        hGroup.addGroup(group5);
 //        hGroup.addGroup(group6);
 //        hGroup.addGroup(group7);
@@ -955,10 +967,11 @@ public class JTSConfigurator extends JDialog{
     ActionListener plotbuttonclick = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
             updatePropVector();
+      
             
-                jts.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), false);
-                jts.plotRight(1, "rightAxisName", false);
-            
+            jts.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
+            jts.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected()); 
+            jts.setTitle(edTitleField.getText());
         }
     };
     
@@ -968,6 +981,9 @@ public class JTSConfigurator extends JDialog{
         }
     };
     
+
+    
+
     
     public void createActionListener(){
         
