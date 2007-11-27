@@ -316,6 +316,7 @@ public class LauncherPanel extends JPanel {
                 ic = LHelper.createInputComponent(JUICE.JAMS_DATA_TYPES[0].getSimpleName());
             }
             ic.setRange(property.lowerBound, property.upperBound);
+            ic.setLength(property.length);
             ic.getComponent().setToolTipText(property.description);
             ic.setValue(property.value);
             
@@ -471,6 +472,7 @@ public class LauncherPanel extends JPanel {
             property.description = propertyDlg.getDescription();
             property.lowerBound = propertyDlg.getLowerBound();
             property.upperBound = propertyDlg.getUpperBound();
+            property.length = propertyDlg.getLength();
             property.component = propertyDlg.getComponent();
             property.attribute = propertyDlg.getAttribute();
             property.var = propertyDlg.getVar();
@@ -497,6 +499,7 @@ public class LauncherPanel extends JPanel {
             property.description = propertyDlg.getDescription();
             property.lowerBound = propertyDlg.getLowerBound();
             property.upperBound = propertyDlg.getUpperBound();
+            property.length = propertyDlg.getLength();
             property.component = propertyDlg.getComponent();
             property.attribute = propertyDlg.getAttribute();
             property.var = propertyDlg.getVar();

@@ -328,6 +328,8 @@ public class ModelTree extends JAMSTree {
                         propertyElement.setAttribute("name", property.name);
                         propertyElement.setAttribute("value", property.value);
                         propertyElement.setAttribute("range", "" + property.lowerBound + ";" + property.upperBound);
+                        if (property.length > 0 )
+                            propertyElement.setAttribute("length", "" + property.length);
                         
                         groupElement.appendChild(propertyElement);
                         groupElement.appendChild(document.createTextNode("\n"));
@@ -566,6 +568,10 @@ public class ModelTree extends JAMSTree {
                             property.lowerBound = Double.parseDouble(tok.nextToken());
                             property.upperBound = Double.parseDouble(tok.nextToken());
                         }
+                        String lenStr = propertyElement.getAttribute("length");
+                        if (lenStr != null && lenStr.length()>0)
+                            property.length = Integer.parseInt(lenStr);
+
                         view.getModelProperties().addProperty(view.getModelProperties().getGroup(group), property);
                     }
                 }

@@ -46,6 +46,7 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.FloatInput;
+import org.unijena.jams.gui.input.IntegerInput;
 import org.unijena.juice.ModelProperties.ModelProperty;
 import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
@@ -64,6 +65,7 @@ public class ModelPropertyDlg extends JDialog {
     private HashMap<String, ComponentDescriptor> componentDescriptors;
     private JTextField nameField, descriptionField;
     private FloatInput lowField, upField;
+    private IntegerInput lengthField;
     private int result = CANCEL_RESULT;
     
     public ModelPropertyDlg(Frame owner) {
@@ -92,6 +94,7 @@ public class ModelPropertyDlg extends JDialog {
         LHelper.addGBComponent(contentPanel, gbl, new JLabel("Description:"), 0, 5, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, new JLabel("Lower Boundary:"), 0, 6, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, new JLabel("Upper Boundary:"), 0, 7, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Length:"), 0, 8, 1, 1, 0, 0);
         
         groupCombo = new JComboBox();
         LHelper.addGBComponent(contentPanel, gbl, groupCombo, 1, 1, 1, 1, 0, 0);
@@ -113,11 +116,13 @@ public class ModelPropertyDlg extends JDialog {
         descriptionField = new JTextField();
         lowField = new FloatInput();
         upField= new FloatInput();
+        lengthField = new IntegerInput();
         
         LHelper.addGBComponent(contentPanel, gbl, nameField, 1, 4, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, descriptionField, 1, 5, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, lowField.getComponent(), 1, 6, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, upField.getComponent(), 1, 7, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, lengthField.getComponent(), 1, 8, 1, 1, 0, 0);
         
         
         JButton okButton = new JButton("OK");
@@ -202,11 +207,13 @@ public class ModelPropertyDlg extends JDialog {
             
             lowField.setValue("" + property.lowerBound);
             upField.setValue("" + property.upperBound);
+            lengthField.setValue("" + property.length);
         } else {
             nameField.setText("");
             descriptionField.setText("");
             lowField.setValue("");
             upField.setValue("");
+            lengthField.setValue("");
             updateComponentVars(componentCombo.getSelectedItem());
         }
         
@@ -243,6 +250,14 @@ public class ModelPropertyDlg extends JDialog {
             upBound = Double.parseDouble(upField.getValue());
         } catch (NumberFormatException nfe) {}
         return upBound;
+    }
+    
+    public int getLength() {
+        int length = 0;
+        try {
+            length = Integer.parseInt(lengthField.getValue());
+        } catch (NumberFormatException nfe) {}
+        return length;
     }
     
     public ComponentDescriptor getComponent() {

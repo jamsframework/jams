@@ -138,6 +138,7 @@ public class ModelProperties {
         public ComponentDescriptor.ComponentAttribute var;
         public ContextAttribute attribute;
         public double lowerBound, upperBound;
+        public int length;
         private Group group;
         public Group getGroup() {
             return group;
