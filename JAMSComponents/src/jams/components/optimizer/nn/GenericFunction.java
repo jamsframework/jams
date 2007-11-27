@@ -39,7 +39,7 @@ public class GenericFunction {
     private int functionType;
     public Long id = null;
     private Matrix M;
-    private static Vector idList = new Vector();
+    private static Vector<Long> idList = new Vector<Long>();
     
     public GenericFunction(Long id, String name, String description, int functionType, int polyDegree, Matrix M) {
         this.registerID(id);

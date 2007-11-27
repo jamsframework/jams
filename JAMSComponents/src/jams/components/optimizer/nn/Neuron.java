@@ -46,7 +46,7 @@ public class Neuron {
     
     protected long ID;
         
-    protected Vector ActivationFunctions = new Vector();
+    protected Vector<GenericFunction> ActivationFunctions = new Vector<GenericFunction>();
     protected Vector<NeuralConnection> OutputConnection = new Vector<NeuralConnection>();
     protected Vector<NeuralConnection> InputConnection = new Vector<NeuralConnection>();
                     

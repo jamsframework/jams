@@ -118,10 +118,10 @@ public class NNOptimizer extends JAMSContext{
     static final int MODE_ABSMINIMIZATION = 4;
     
     int LayerCount = 4;
-    
+    @SuppressWarnings("unchecked")
     Vector<Neuron> Layer[] = new Vector[LayerCount];
     int LayerSize[] = new int[LayerCount];
-    Vector<double[]> TrainData = new Vector();
+    Vector<double[]> TrainData = new Vector<double[]>();
     Neuron outNeuron = null;
     Neuron rootNeuron = null;
     
@@ -186,10 +186,10 @@ public class NNOptimizer extends JAMSContext{
         rootNeuron = new InputNeuron();
         
         //simple input layer
-        Layer[0] = new Vector();
-        Layer[1] = new Vector();
-        Layer[2] = new Vector();
-        Layer[3] = new Vector();
+        Layer[0] = new Vector<Neuron>();
+        Layer[1] = new Vector<Neuron>();
+        Layer[2] = new Vector<Neuron>();
+        Layer[3] = new Vector<Neuron>();
         
         Layer[0].add(rootNeuron);
         
@@ -394,7 +394,7 @@ public class NNOptimizer extends JAMSContext{
                meanValidationEff_older = 0.0,
                meanValidationEff_newer = 0.0,
                meanTrainImprovement = 1.0;
-        Vector<Double> ValidationEffHistory = new Vector();
+        Vector<Double> ValidationEffHistory = new Vector<Double>();
                 
         boolean ValidationImprovement = true;
         Neuron.learningRate = 0.001;

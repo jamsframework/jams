@@ -1,6 +1,6 @@
 package jams.components.optimizer.nn;
-/* Matrix.java
 
+/* Matrix.java
  Author: Bryan Lewis
  Kent State University 
  Department of Mathematics & Computer Science
@@ -157,8 +157,8 @@ public class Matrix {
        short rows filled with zeros to make rectangular
     */
 
-    Vector row = new Vector();	// data will be assembled into these vectors
-    Vector col = new Vector();	// and then transferred 
+    Vector<Vector<String>> row = new Vector<Vector<String>>();	// data will be assembled into these vectors
+    Vector<String> col = new Vector<String>();	// and then transferred 
                                 // into the array element[][].    
     s = s + " ;";
     int i = s.length();
@@ -195,7 +195,7 @@ public class Matrix {
 	  rowCounter = rowCounter + 1;
 	  sData = new String();		// wipe out contents of string
 	  colCounter = col.size();
-	  col = new Vector();	// wipe out the column vector
+	  col = new Vector<String>();	// wipe out the column vector
 	  /* an interesting Java (1.02) note: use new Vector() method to
 	     force the contents of this vector to be explicitly copied
 	     into the row vector. The removeAllElements method will not
@@ -215,10 +215,10 @@ public class Matrix {
     rows = rowCounter;
     columns = colCounter;
     element = new double[rows][columns];
-    col = new Vector();
+    col = new Vector<String>();
     Double d = new Double(0);
     for (j = 0; j<rows; j++) {
-      col = (Vector) row.elementAt(j);
+      col = row.elementAt(j);
       for (i = 0; i<col.size(); i++) {
 	d = new Double((String)col.elementAt(i));
 	element[j][i] = d.doubleValue();
@@ -602,12 +602,12 @@ public class Matrix {
     return A;
   }
 
-  public Vector  qr() {
+  public Vector<Matrix>  qr() {
     /*	returns the QR-decomposition of this matrix object
 	using Householder reflections, without column pivoting
 	The results is a (Java) vector containing {Q, R}
     */
-    Vector result = new Vector();
+    Vector<Matrix> result = new Vector<Matrix>();
     Matrix P = new Matrix(rows, rows, 'I');
     Matrix A = new Matrix(this);
     Matrix AA, PP;
@@ -639,12 +639,12 @@ public class Matrix {
     return result;
   }
 
-  public Vector  toHess() {
+  public Vector<Matrix>  toHess() {
     /*	makes the matrix upper Hessenberg via Householder reflections
 	returns  {P, H} s.t. P' * this * P = H and H is upper Hessenberg
 	and P' * P = I.
     */
-    Vector result = new Vector();	// the result
+    Vector<Matrix> result = new Vector<Matrix>();	// the result
     Matrix P = new Matrix(rows, columns, 'I');
     Matrix I = new Matrix(rows, columns, 'I');
     Matrix A = new Matrix(this);
@@ -675,7 +675,7 @@ public class Matrix {
     return result;
   }
 
-  public Vector  gepp() {
+  public Vector <Matrix> gepp() {
 
     /*	returns the LU decomposition of a matrix using the Gauss
 	transform. This algorithm returns 3 matrices as follows:
@@ -683,7 +683,7 @@ public class Matrix {
 	pivoting.
 	Written 3-March, 1997 by Bryan Lewis
     */
-    Vector v = new Vector();	// the result
+    Vector<Matrix> v = new Vector<Matrix>();	// the result
     Matrix P = new Matrix(rows, columns, 'I');	
     // P will track the permutations
     Matrix L = new Matrix(rows, columns, 'I');	// the lower triangle
