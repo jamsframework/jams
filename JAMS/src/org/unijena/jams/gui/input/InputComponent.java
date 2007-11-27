@@ -38,6 +38,7 @@ public interface InputComponent {
     public void setValue(String value);
     public JComponent getComponent();
     public void setRange(double lower, double upper);
+    public void setLength(int length);
     public boolean verify();
     public int getErrorCode();
     public void addValueChangeListener(ValueChangeListener l);

@@ -517,6 +517,9 @@ public class JAMSLauncher extends JFrame {
                     String upper = tok.nextToken();
                     ic.setRange(Double.parseDouble(lower), Double.parseDouble(upper));
                 }
+                String lenStr = property.getAttribute("length");
+                if (lenStr != null && lenStr.length() > 0)
+                    ic.setLength(Integer.parseInt(lenStr));
                 
                 ic.getComponent().setToolTipText(property.getAttribute("description"));
                 ic.setValue(property.getAttribute("value"));

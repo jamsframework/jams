@@ -64,6 +64,9 @@ public class BooleanInput extends JCheckBox implements InputComponent {
     public int getErrorCode() {
         return INPUT_OK;
     }
+
+    public void setLength(int length) {
+    }
     
     public void addValueChangeListener(ValueChangeListener l) {
         this.l = l;

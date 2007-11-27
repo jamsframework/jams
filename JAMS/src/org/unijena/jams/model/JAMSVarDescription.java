@@ -42,6 +42,7 @@ public @interface JAMSVarDescription {
     String unit() default "";                   // unit of this var if numeric
     double lowerBound() default 0d;             // lowest allowed value of var if numeric
     double upperBound() default 0d;             // highest allowed value of var if numeric
+    int length() default 0;             // length of variable if string
 
     //this is obsolete//
     UpdateType update() default UpdateType.INIT;// when to update

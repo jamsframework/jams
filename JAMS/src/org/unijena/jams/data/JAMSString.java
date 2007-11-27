@@ -30,6 +30,8 @@ package org.unijena.jams.data;
 public class JAMSString  extends JAMSSerializableData {
     
     private String value;
+    private int length;
+
     static final long serialVersionUID = -2475757193974756987L;
     /** Creates a new instance of JAMSString */
     public JAMSString() {
@@ -47,6 +49,15 @@ public class JAMSString  extends JAMSSerializableData {
         this.value = value;
     }
     
+    public int getLength() {
+        return length;
+    }
+    
+    public void setLength(int length) {
+        this.length = length;
+    }
+    
+
     public String toString() {
         return value;
     }

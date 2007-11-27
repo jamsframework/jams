@@ -131,6 +131,10 @@ public class FileInput extends JPanel implements InputComponent {
         return INPUT_OK;
     }
 
+    public void setLength(int length) {
+    }
+    
+
     public void addValueChangeListener(ValueChangeListener l) {
         this.l = l;
         this.textField.getDocument().addDocumentListener(new DocumentListener() {

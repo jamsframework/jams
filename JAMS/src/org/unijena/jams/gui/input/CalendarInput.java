@@ -204,6 +204,9 @@ public class CalendarInput extends JPanel implements InputComponent {
         return INPUT_OK;
     }
 
+    public void setLength(int length) {
+    }
+
     public void addValueChangeListener(ValueChangeListener l) {
         this.l = l;
         this.syear.getDocument().addDocumentListener(new DocumentListener() {

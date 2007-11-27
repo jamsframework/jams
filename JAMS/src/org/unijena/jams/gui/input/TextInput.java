@@ -69,6 +69,10 @@ public class TextInput extends JPanel implements InputComponent {
         return INPUT_OK;
     }
 
+    public void setLength(int length) {
+        text.setColumns(length);
+    }
+    
     public void addValueChangeListener(ValueChangeListener l) {
         this.l = l;
         this.text.getDocument().addDocumentListener(new DocumentListener() {
