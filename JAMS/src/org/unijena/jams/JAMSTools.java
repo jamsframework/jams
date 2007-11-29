@@ -81,5 +81,9 @@ public class JAMSTools {
             result += "        at " + ste.toString() + "\n";
         }
         return result;
-    }    
+    }
+    
+    public static String[] arrayStringAsStringArray(String arrayString) {
+        return toArray(arrayString, ";");
+    }
 }

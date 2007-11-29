@@ -102,6 +102,7 @@ public class ComponentPanel extends JPanel {
         JButton nameEditButton = new JButton("...");
         nameEditButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         nameEditButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 String oldName = textFields.get("name").getText();
                 String newName = LHelper.showInputDlg(JUICE.getJuiceFrame(), "New model name", oldName);
@@ -124,6 +125,7 @@ public class ComponentPanel extends JPanel {
         
         //create var table
         varTable = new JTable(){
+            @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
@@ -178,6 +180,7 @@ public class ComponentPanel extends JPanel {
                 
         //create attribute table
         attributeTable = new JTable(){
+            @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
@@ -185,6 +188,7 @@ public class ComponentPanel extends JPanel {
         attributeTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListSelectionModel attrRowSM = attributeTable.getSelectionModel();
         attrRowSM.addListSelectionListener(new ListSelectionListener() {
+            @Override
             public void valueChanged(ListSelectionEvent e) {
                 //Ignore extra messages.
                 if (e.getValueIsAdjusting()) {
@@ -203,6 +207,7 @@ public class ComponentPanel extends JPanel {
             }
         });
         attributeTable.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e){
                 if (e.getClickCount() == 2){
                     showAttributeEditDlg();
@@ -231,6 +236,7 @@ public class ComponentPanel extends JPanel {
         attributeEditButton.setEnabled(false);
         attributeEditButton.setPreferredSize(BUTTON_DIMENSION);
         attributeEditButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 showAttributeEditDlg();
             }
@@ -239,6 +245,7 @@ public class ComponentPanel extends JPanel {
         attributeAddButton.setEnabled(true);
         attributeAddButton.setPreferredSize(BUTTON_DIMENSION);
         attributeAddButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 showAttributeAddDlg();
             }
@@ -247,6 +254,7 @@ public class ComponentPanel extends JPanel {
         attributeDeleteButton.setEnabled(false);
         attributeDeleteButton.setPreferredSize(BUTTON_DIMENSION);
         attributeDeleteButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 showAttributeDeleteDlg();
             }

@@ -25,8 +25,6 @@ package org.unijena.juice;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.unijena.juice.ComponentDescriptor;
-import org.unijena.juice.ContextAttribute;
 
 /**
  *

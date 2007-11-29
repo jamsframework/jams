@@ -23,14 +23,12 @@
 
 package jams.components.gui;
 
-import java.util.Iterator;
 import org.unijena.jams.model.*;
 import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
 import org.unijena.jams.JAMS;
-import org.unijena.jams.runtime.MiniRuntime;
 
 /**
  *
@@ -41,7 +39,7 @@ import org.unijena.jams.runtime.MiniRuntime;
         title="JAMS execution info frame",
         author="Sven Kralisch",
         date="17. June 2006",
-        description="This visual component creates a panel with progress bar and log information")
+        description="This visual component creates a panel with progress bar and log information <math>\\frac{a^{\\pi}{\\sum_{\\pi^{\\gamma}}}</math>")
         public class JAMSExecInfo extends JAMSGUIComponent {
     
     

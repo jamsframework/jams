@@ -29,12 +29,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,6 +51,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
+import org.unijena.jams.JAMSTools;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;
 import org.unijena.jams.gui.input.ValueChangeListener;
@@ -173,7 +170,6 @@ public class ComponentAttributePanel extends JPanel {
         listPanel.add(customContextPanel, BorderLayout.SOUTH);
 
         attributeList = new JList();
-        attributeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane listScroll = new JScrollPane(attributeList);
 
         listPanel.add(listScroll, BorderLayout.CENTER);
@@ -224,7 +220,7 @@ public class ComponentAttributePanel extends JPanel {
         if (!valueInput.verify()) {
             return;
         }
-        
+
         if (valueInput.getValue().equals("")) {
             setButton.setSelected(false);
             return;
@@ -253,7 +249,18 @@ public class ComponentAttributePanel extends JPanel {
             linkButton.setSelected(true);
             linkText.setText(var.getContext() + " -> " + var.getContextAttribute());
             contextCombo.setSelectedItem(var.getContext());
-            attributeList.setSelectedValue(var.getAttribute().toString(), true);
+
+            if (type.isArray()) {
+                /*
+                String[] values = JAMSTools.arrayStringAsStringArray(var.getAttribute());
+                for (String value : values) {
+                    attributeList.setSelectedValue(value, true);
+                }
+                */
+                customAttributeText.setText(var.getAttribute());
+            } else {
+                attributeList.setSelectedValue(var.getAttribute().toString(), true);
+            }
         }
 
         //adjust var input components according to var values
@@ -292,7 +299,7 @@ public class ComponentAttributePanel extends JPanel {
         updateRepository();
 
         //enable field for custom attribute name if !READ_ACCESS        
-        if (var.accessType == ComponentAttribute.READ_ACCESS) {
+        if ((var.accessType == ComponentAttribute.READ_ACCESS) && !type.isArray()) {
             customAttributeText.setEnabled(false);
         } else {
             customAttributeText.setEnabled(true);
@@ -320,8 +327,8 @@ public class ComponentAttributePanel extends JPanel {
             public void valueChanged() {
                 setAttributeValue();
             }
-        });        
-        
+        });
+
         adjusting = false;
     }
 
@@ -349,6 +356,14 @@ public class ComponentAttributePanel extends JPanel {
                 lModel.addElement(attributes.get(i).toString());
             }
         }
+
+        if (type.isArray()) {
+            attributeList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+            attributeList.setEnabled(false);
+        } else {
+            attributeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        }
+
 
         attributeList.setModel(lModel);
     }
