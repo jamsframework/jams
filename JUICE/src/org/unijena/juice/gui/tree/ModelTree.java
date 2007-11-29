@@ -444,22 +444,6 @@ public class ModelTree extends JAMSTree {
     public void updateModelTree() {
 
         TreeModel model = new DefaultTreeModel(getModelTree());
-        /*
-        model.addTreeModelListener(new TreeModelListener() {
-        public void treeNodesChanged(TreeModelEvent e) {
-        }
-        public void treeNodesInserted(TreeModelEvent e) {
-        JAMSNode rootNode = (JAMSNode) e.getTreePath().getLastPathComponent();
-        for (int i = 0; i < rootNode.getChildCount(); i++) {
-        System.out.println(rootNode.getChildAt(i));
-        }
-        }
-        public void treeNodesRemoved(TreeModelEvent e) {
-        }
-        public void treeStructureChanged(TreeModelEvent e) {
-        }
-        });
-         */
         setModel(model);
         this.setSelectionRow(0);
         this.displayComponentInfo();
