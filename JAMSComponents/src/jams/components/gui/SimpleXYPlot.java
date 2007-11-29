@@ -112,7 +112,7 @@ public class SimpleXYPlot extends JAMSGUIComponent {
             update = JAMSVarDescription.UpdateType.RUN,
             description = "Title string for x axis"
             )
-            public JAMSDouble yValue;
+            public JAMSDouble[] yValue;
                                    
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
@@ -121,45 +121,61 @@ public class SimpleXYPlot extends JAMSGUIComponent {
             )
             public JAMSBoolean paint;
     
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Flag for disabling or enabling the plot"
+            )
+            public JAMSInteger PlotCount;
+    
     private XYPlot plot;
-    private XYSeries dataset;
+    private XYSeries dataset[];
     private JPanel panel;
     JFreeChart chart;
     JButton saveButton;
     int i, graphCountLeft = 0, graphCountRight = 0;
-    HashMap<String, Color> colorTable = new HashMap<String, Color>();
-    
+    HashMap<Integer, Color> colorTable = new HashMap<Integer, Color>();
+        
     public SimpleXYPlot() {
-        colorTable.put("yellow", Color.yellow);
-        colorTable.put("orange", Color.orange);
-        colorTable.put("red", Color.red);
-        colorTable.put("pink", Color.pink);
-        colorTable.put("magenta", Color.magenta);
-        colorTable.put("cyan", Color.cyan);
-        colorTable.put("blue", Color.blue);
-        colorTable.put("green", Color.green);
-        colorTable.put("gray", Color.gray);
-        colorTable.put("lightgray", Color.lightGray);
-        colorTable.put("black", Color.black);
+        colorTable.put(0, Color.red);
+        colorTable.put(1, Color.blue);
+        colorTable.put(2, Color.green);
+        colorTable.put(3, Color.pink);
+        colorTable.put(4, Color.magenta);
+        colorTable.put(5, Color.cyan);
+        colorTable.put(6, Color.yellow);
+        colorTable.put(7, Color.green);
+        colorTable.put(8, Color.gray);
+        colorTable.put(9, Color.lightGray);
+        colorTable.put(10, Color.black);
 	
 	panel = null;		
     }
     
+    private void initDataSets(){
+        
+        dataset = new XYSeries[this.PlotCount.getValue()];
+                
+        for (int i=0;i<this.PlotCount.getValue();i++) {
+            XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+            dataset[i] = new XYSeries(plotTitle.getValue());
+            plot.setDataset(i, new XYSeriesCollection(dataset[i]));
+            renderer.setSeriesLinesVisible(0, true);
+            renderer.setSeriesShapesVisible(0, false);        
+            
+            renderer.setSeriesPaint(0, colorTable.get(i));
+            //renderer.set
+            plot.setRenderer(i, renderer);                        
+        }           	
+
+    }
     private JPanel CreatePanel() {	
 	plot = new XYPlot();
 	plot.setDomainAxis(new NumberAxis(xAxisTitle.getValue()));
 	plot.setRangeAxis(new NumberAxis(yAxisTitle.getValue()));
-
+        initDataSets();
 	chart = new JFreeChart(plot);
-        
-	dataset = new XYSeries(plotTitle.getValue());
-                
-	plot.setDataset(0, new XYSeriesCollection(dataset));
-	XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-	renderer.setSeriesLinesVisible(0, true);
-        renderer.setSeriesShapesVisible(0, false);        
-	plot.setRenderer(0, renderer);
-
+                                		
 	ChartPanel chartPanel = new ChartPanel(chart, true);
 
 	panel = new JPanel(new BorderLayout());		    		    	    
@@ -180,8 +196,13 @@ public class SimpleXYPlot extends JAMSGUIComponent {
     }
     
     public void run() {
+        if (dataset == null) {
+            this.initDataSets();
+        }
     	if(this.paint == null || this.paint.getValue()){
-	    dataset.add(this.xValue.getValue(),this.yValue.getValue());
+            for (int i=0;i<dataset.length;i++){
+                dataset[i].add(this.xValue.getValue(),this.yValue[i].getValue());
+            }
     	}
     }
     
