@@ -100,6 +100,7 @@ public class ComponentAttributeDlg extends JDialog {
         LHelper.addGBComponent(mainPanel, mainLayout, contextCombo, 1, 1, 1, 1, 0, 0);
         LHelper.addGBComponent(mainPanel, mainLayout, new JLabel("."), 2, 1, 1, 1, 0, 0);
         contextCombo.addItemListener(new ItemListener(){
+            @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     updateRepository();
@@ -124,6 +125,7 @@ public class ComponentAttributeDlg extends JDialog {
         
         JButton okButton = new JButton("OK");
         okButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 
                 if (!valueInput.getValue().equals("") && !valueInput.verify()) {
@@ -142,6 +144,7 @@ public class ComponentAttributeDlg extends JDialog {
         
         JButton cancelButton = new JButton("Cancel");
         ActionListener cancelActionListener = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
                 result = ComponentAttributeDlg.CANCEL_OPTION;
@@ -165,6 +168,7 @@ public class ComponentAttributeDlg extends JDialog {
             
             //sort the list
             Collections.sort(attributes, new Comparator<ContextAttribute>() {
+                @Override
                 public int compare(ContextAttribute a1, ContextAttribute a2) {
                     return a1.toString().compareTo(a2.toString());
                 }

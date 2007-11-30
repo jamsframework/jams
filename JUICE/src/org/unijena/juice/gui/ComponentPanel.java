@@ -134,6 +134,7 @@ public class ComponentPanel extends JPanel {
         varTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListSelectionModel varRowSM = varTable.getSelectionModel();
         varRowSM.addListSelectionListener(new ListSelectionListener() {
+            @Override
             public void valueChanged(ListSelectionEvent e) {
                 //Ignore extra messages.
                 if (e.getValueIsAdjusting()) {

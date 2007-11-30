@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<datastore id="tmean" author="Sven Kralisch" date="30/11/2007">
+    <description>
+        Short description
+    </description>
+    
+    <tsdatasource interval="1996-11-01 7:30 2000-10-31 7:30 6 1">
+        <colset>
+            <definition>
+                <column id="tmean0" position="0" type="JAMSDouble" start="" />
+                <column id="tmean1" position="1" type="JAMSDouble" start="" />
+            </definition>
+            <coldatasource>
+                <bean id="mydatatreader1" type="ujena.rbis.Reader">
+                    <parameter id="username" value="nsk" />
+                    <parameter id="hostname" value="localhost" />
+                    <parameter id="query" value="SELECT ..." />
+                </bean>
+            </coldatasource>
+        </colset>
+    </tsdatasource>
+    
+</datastore>
