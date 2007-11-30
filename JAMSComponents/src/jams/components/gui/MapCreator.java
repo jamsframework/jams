@@ -366,7 +366,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                          */
             // *************FILTER***************
             GeometryDistanceFilter distWithinFilter = null;
-            Feature selectedF = null;
+            selectedF = null;
             Coordinate c1 = new Coordinate(mapX, mapY);
             Coordinate c2 = new Coordinate(mapX + 0.000001, mapY + 0.000001);
             
