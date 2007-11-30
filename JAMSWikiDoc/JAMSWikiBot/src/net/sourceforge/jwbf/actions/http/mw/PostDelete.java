@@ -53,8 +53,7 @@ public class PostDelete extends MWAction {
 		wpReason.setName("backdraft");
 		
 		NameValuePair wpEditToken = new NameValuePair("wpEditToken", tab
-				.get("wpEditToken"));
-
+				.get("wpEditToken"));                                
 		PostMethod pm = new PostMethod(
 				"/index.php?title=" + label + "&action=delete");
                                 //"/api.php?action=delete&title=" + label + "&token=" + tab.get("wpEditToken") );

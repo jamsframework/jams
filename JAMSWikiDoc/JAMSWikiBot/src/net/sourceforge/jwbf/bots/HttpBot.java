@@ -40,7 +40,7 @@ public abstract class HttpBot {
 
 	private HttpActionClient cc;
 
-	private HttpClient client;
+	public HttpClient client;
 
 	/**
 	 * protected because abstract.

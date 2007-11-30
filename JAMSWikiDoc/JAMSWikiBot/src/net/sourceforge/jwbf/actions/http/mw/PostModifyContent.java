@@ -86,7 +86,7 @@ public class PostModifyContent extends MWAction {
 		
 		LOG.info("WRITE: " + a.getLabel());
 		PostMethod pm = new PostMethod(uS);
-		pm.getParams().setContentCharset(MediaWikiBot.CHARSET);
+		//pm.getParams().setContentCharset(MediaWikiBot.CHARSET);
 
 		pm.setRequestBody(new NameValuePair[] { action, wpStarttime,
 				wpEditToken, wpEdittime, wpTextbox, wpSummary, wpMinoredit });

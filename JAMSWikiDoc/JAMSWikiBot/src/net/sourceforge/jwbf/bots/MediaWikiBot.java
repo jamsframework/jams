@@ -45,12 +45,12 @@ import net.sourceforge.jwbf.actions.http.mw.api.GetSimpleCategoryMembers;
 import net.sourceforge.jwbf.actions.http.mw.api.GetSiteinfo;
 import net.sourceforge.jwbf.actions.http.mw.api.GetTemplateUserTitles;
 import net.sourceforge.jwbf.actions.http.mw.api.MultiAction;
+import net.sourceforge.jwbf.actions.http.mw.api.UploadFile;
 import net.sourceforge.jwbf.bots.util.LoginData;
 import net.sourceforge.jwbf.contentRep.Version;
 import net.sourceforge.jwbf.contentRep.mw.CategoryItem;
 import net.sourceforge.jwbf.contentRep.mw.ContentAccessable;
 import net.sourceforge.jwbf.contentRep.mw.LogItem;
-import net.sourceforge.jwbf.contentRep.mw.SimpleArticle;
 import net.sourceforge.jwbf.contentRep.mw.Siteinfo;
 
 /*
@@ -161,6 +161,14 @@ public class MediaWikiBot extends HttpBot {
 		httpLogin(username, passwd);
 	}
 
+        public final void uploadFile(final String filename) {
+            try {
+                performAction(new UploadFile(filename,this.client));
+            }catch(Exception e) {
+                System.out.println("Could not upload file, because:" + e.toString());
+                e.printStackTrace();
+            }
+        }
 	/**
 	 * 
 	 * @param name
