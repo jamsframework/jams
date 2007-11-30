@@ -94,7 +94,7 @@ public class PGSQLConnector {
                 System.out.println("");
                 rowCount++;
             }
-
+            
             rs.close();
             pgsql.close();
 
