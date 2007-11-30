@@ -4,20 +4,20 @@
         Short description
     </description>
     
-    <tsdatasource interval="1996-11-01 7:30 2000-10-31 7:30 6 1">
+    <timeseries interval="1996-11-01 7:30 2000-10-31 7:30 6 1">
         <colset>
             <definition>
                 <column id="tmean0" position="0" type="JAMSDouble" start="1996-11-01 7:30" />
                 <column id="tmean1" position="1" type="JAMSDouble" start="1996-11-01 7:30" />
             </definition>
-            <columndatasource>
+            <datasource>
                 <bean id="mydatatreader1" type="ujena.rbis.Reader">
                     <parameter id="username" value="nsk" />
                     <parameter id="hostname" value="localhost" />
                     <parameter id="query" value="SELECT ..." />
                 </bean>
-            </columndatasource>
+            </datasource>
         </colset>
-    </tsdatasource>
+    </timeseries>
     
 </datastore>
