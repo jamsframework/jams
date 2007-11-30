@@ -10,13 +10,13 @@
                 <column id="tmean0" position="0" type="JAMSDouble" start="" />
                 <column id="tmean1" position="1" type="JAMSDouble" start="" />
             </definition>
-            <coldatasource>
+            <columndatasource>
                 <bean id="mydatatreader1" type="ujena.rbis.Reader">
                     <parameter id="username" value="nsk" />
                     <parameter id="hostname" value="localhost" />
                     <parameter id="query" value="SELECT ..." />
                 </bean>
-            </coldatasource>
+            </columndatasource>
         </colset>
     </tsdatasource>
     
