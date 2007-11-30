@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import org.unijena.jams.JAMSTools;
 
 /**
  *
@@ -35,26 +36,51 @@ import java.sql.Statement;
  */
 public class PGSQLConnector {
 
-    public PGSQLConnector() {
-    }
+    private String hostname,  database,  username,  passwd;
+    private Connection con;
 
-    public static void main(String[] args) {
-
-        String user = "postgres";
-        String passwd = "admin";
-        String query = "SELECT * FROM address LIMIT 1";
+    public PGSQLConnector(String hostname, String database, String username, String passwd) {
+        this.hostname = hostname;
+        this.database = database;
+        this.username = username;
+        this.passwd = passwd;
 
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException cnfe) {
             cnfe.printStackTrace();
         }
+    }
+
+    public void connect() throws SQLException {
+        this.con = DriverManager.getConnection("jdbc:postgresql://" + hostname + "/" + database, username, passwd);
+    }
+
+    public ResultSet execQuery(String sqlQuery) throws SQLException {
+        if (con == null) {
+            return null;
+        } else {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sqlQuery);
+            return rs;
+        }
+    }
+
+    public void close() throws SQLException {
+        this.con.close();
+    }
+    
+    public static void main(String[] args) {
+
+        PGSQLConnector pgsql = new PGSQLConnector("localhost", "saaleRIS", "postgres", "admin");
 
         try {
 
-            Connection con = DriverManager.getConnection("jdbc:postgresql://localhost/saaleRIS", user, passwd);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            pgsql.connect();
+            
+            String query = JAMSTools.fileToString("D:/jams/RBISDesk/timeseries.sql");
+            ResultSet rs = pgsql.execQuery(query);
+            
             ResultSetMetaData rsmd = rs.getMetaData();
 
             int numberOfColumns = rsmd.getColumnCount();
@@ -68,11 +94,13 @@ public class PGSQLConnector {
                 System.out.println("");
                 rowCount++;
             }
-            stmt.close();
-            con.close();
+
+            rs.close();
+            pgsql.close();
 
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
+
     }
 }
