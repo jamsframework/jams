@@ -399,7 +399,8 @@ public class Main {
         ProgrammInformation.setAlwaysOnTop(true);
         //try to login
         if (!initBot()) {
-            JOptionPane.showMessageDialog(null,"Could not login! Check username, password and wiki location");            
+            JOptionPane.showMessageDialog(ProgrammInformation,"Could not login! Check username, password and wiki location");            
+            ProgrammInformation.dispose();
             return;
         }
         
