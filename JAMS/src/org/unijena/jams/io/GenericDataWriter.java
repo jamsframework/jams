@@ -116,6 +116,14 @@ public class GenericDataWriter {
         data.add(o);
     }
     
+    public void addData(double val, int prec) {
+        String fStr = null;
+        fStr = "%."+prec+"f";
+        
+        String dStr = String.format(Locale.US,fStr,val);
+        data.add(dStr);
+    }
+    
     public void writeLine(String line){
         try {
             writer.write(line);
