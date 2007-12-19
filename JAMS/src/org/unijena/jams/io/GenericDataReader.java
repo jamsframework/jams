@@ -182,7 +182,8 @@ public class GenericDataReader implements JAMSTableDataStore {
         StringTokenizer st = new StringTokenizer(nextString, "\t");
         
         if (timeParse) {
-            String timeString = st.nextToken() + " " + st.nextToken();
+            String timeString = st.nextToken();
+            timeString = timeString + " " + st.nextToken();
             time = JAMSTableDataConverter.parseTime(timeString);
         } else {
             time = null;
