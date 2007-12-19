@@ -316,6 +316,7 @@ title="Title",
                 writer.addColumn(this.parameterNames[p]);
             }
             writer.addColumn(this.effMethodName.getValue());
+            writer.addColumn("model runs");
             writer.writeHeader();
             writer.flush();
             
@@ -445,7 +446,7 @@ title="Title",
         
         //model run
         singleRun();
-        
+        this.currentCount++;
         
         //getting rid of pairs which contain missing data values
         double[] preArr = prediction.getValue();
@@ -733,6 +734,7 @@ title="Title",
 	    writer.addData(bestx[i]);
 	}
         writer.addData(bestf);
+        writer.addData(this.currentCount);
         writer.writeData();
         writer.flush();
 	System.out.println("");
@@ -896,6 +898,7 @@ title="Title",
                 writer.addData(bestx[i]);
             }
             writer.addData(bestf);
+            writer.addData(this.currentCount);
             writer.writeData();
             writer.flush();
             
