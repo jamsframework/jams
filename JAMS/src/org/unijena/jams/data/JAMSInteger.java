@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
 
 /**
@@ -28,17 +27,17 @@ package org.unijena.jams.data;
  * @author S. Kralisch
  */
 public class JAMSInteger extends JAMSNumeric {
-    
+
     private int value;
-    
+
     /** Creates a new instance of JAMSInteger */
     public JAMSInteger() {
     }
-    
+
     public JAMSInteger(int value) {
         this.value = value;
     }
-    
+
     public int getValue() {
         return value;
     }
@@ -50,13 +49,15 @@ public class JAMSInteger extends JAMSNumeric {
     public void setValue(String value) {
         this.value = Integer.parseInt(value);
     }
-    
+
     public String toString() {
         return Integer.toString(value);
     }
-    public boolean equals( Object other ) {      
-        if ( (other == null) || ! (other instanceof JAMSInteger) ) 
-          return false;    
-        return value == ((JAMSInteger)other).getValue();
+
+    public boolean equals(Object other) {
+        if ((other == null) || !(other instanceof JAMSInteger)) {
+            return false;
+        }
+        return value == ((JAMSInteger) other).getValue();
     }  // end equals()
 }

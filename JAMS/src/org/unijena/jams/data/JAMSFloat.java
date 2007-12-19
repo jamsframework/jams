@@ -20,45 +20,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSFloat   extends JAMSSerializableData {
-    
+public class JAMSFloat extends JAMSSerializableData {
+
     private float value;
-    
+
     /**
      * Creates a new instance of JAMSFloat
      */
     public JAMSFloat() {
     }
-    
+
     public JAMSFloat(float value) {
         this.value = value;
     }
-    
+
     public String toString() {
         return Float.toString(value);
     }
-    
+
     public float getValue() {
         return value;
     }
-    
+
     public void setValue(float value) {
         this.value = value;
     }
-    
+
     public void setValue(String value) {
         this.value = Float.parseFloat(value);
     }
-    public boolean equals( Object other ) {      
-        if ( (other == null) || ! (other instanceof JAMSFloat) ) 
-          return false;    
-        return value == ((JAMSFloat)other).getValue();
+
+    public boolean equals(Object other) {
+        if ((other == null) || !(other instanceof JAMSFloat)) {
+            return false;
+        }
+        return value == ((JAMSFloat) other).getValue();
     }  // end equals()
 }

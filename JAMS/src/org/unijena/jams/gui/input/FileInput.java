@@ -36,7 +36,6 @@ import org.unijena.jams.gui.*;
  */
 public class FileInput extends JPanel implements InputComponent {
 
-    private static final long serialVersionUID = -2171698332789577245L;
     static final int BUTTON_SIZE = 21;
     private JTextField textField;
     private JButton addButton;
@@ -59,6 +58,7 @@ public class FileInput extends JPanel implements InputComponent {
         setLayout(layout);
 
         textField = new JTextField();
+        textField.setBorder(BorderFactory.createEtchedBorder());
         add(textField, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
@@ -99,12 +99,12 @@ public class FileInput extends JPanel implements InputComponent {
         jfc.setCurrentDirectory(file);
     }
 
-    public String getFile() {
+    public String getFileName() {
         return textField.getText();
     }
 
     public String getValue() {
-        return getFile();
+        return getFileName();
     }
 
     public void setValue(String value) {
@@ -124,7 +124,12 @@ public class FileInput extends JPanel implements InputComponent {
     }
 
     public boolean verify() {
-        return true;
+        File file = new File(getFileName());
+        if (file.exists()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public int getErrorCode() {
@@ -133,7 +138,6 @@ public class FileInput extends JPanel implements InputComponent {
 
     public void setLength(int length) {
     }
-    
 
     public void addValueChangeListener(ValueChangeListener l) {
         this.l = l;

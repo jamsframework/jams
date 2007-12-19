@@ -182,19 +182,21 @@ public class JUICE {
         ArrayList<Class> classes = new ArrayList<Class>();
         try {
             classes.add(Class.forName("org.unijena.jams.data.JAMSBoolean"));
-            classes.add(Class.forName("org.unijena.jams.data.JAMSBooleanArray"));
             classes.add(Class.forName("org.unijena.jams.data.JAMSCalendar"));
             classes.add(Class.forName("org.unijena.jams.data.JAMSDouble"));
-            classes.add(Class.forName("org.unijena.jams.data.JAMSDoubleArray"));
+            classes.add(Class.forName("org.unijena.jams.data.JAMSDirName"));
             classes.add(Class.forName("org.unijena.jams.data.JAMSEntity"));
             classes.add(Class.forName("org.unijena.jams.data.JAMSFloat"));
-            classes.add(Class.forName("org.unijena.jams.data.JAMSFloatArray"));
+            classes.add(Class.forName("org.unijena.jams.data.JAMSFileName"));
             classes.add(Class.forName("org.unijena.jams.data.JAMSGeometry"));
             classes.add(Class.forName("org.unijena.jams.data.JAMSInteger"));
-            classes.add(Class.forName("org.unijena.jams.data.JAMSIntegerArray"));
             classes.add(Class.forName("org.unijena.jams.data.JAMSLong"));
-            classes.add(Class.forName("org.unijena.jams.data.JAMSLongArray"));
             classes.add(Class.forName("org.unijena.jams.data.JAMSString"));
+            classes.add(Class.forName("org.unijena.jams.data.JAMSBooleanArray"));
+            classes.add(Class.forName("org.unijena.jams.data.JAMSDoubleArray"));
+            classes.add(Class.forName("org.unijena.jams.data.JAMSFloatArray"));
+            classes.add(Class.forName("org.unijena.jams.data.JAMSIntegerArray"));
+            classes.add(Class.forName("org.unijena.jams.data.JAMSLongArray"));
             classes.add(Class.forName("org.unijena.jams.data.JAMSStringArray"));
             classes.add(Class.forName("org.unijena.jams.data.JAMSTimeInterval"));
         } catch (ClassNotFoundException ex) {

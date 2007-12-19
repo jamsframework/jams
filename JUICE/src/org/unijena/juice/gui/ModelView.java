@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.StringTokenizer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
@@ -58,6 +59,9 @@ import org.unijena.juice.*;
 import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.gui.tree.ModelTree;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  *
@@ -346,6 +350,10 @@ public class ModelView {
     public void setTree(ModelTree tree) {
         this.tree = tree;
         modelTreePanel.setTree(tree);
+        updateLauncherPanel();
+    }
+    
+    public void updateLauncherPanel() {
         this.launcherPanel.updatePanel();
     }
 
@@ -435,6 +443,71 @@ public class ModelView {
         return returnValue;
     }
 
+    public void setModelParameters(Element launcherNode) {
+
+        Node node;
+
+        if (launcherNode != null) {
+            NodeList groupNodes = launcherNode.getElementsByTagName("group");
+            for (int gindex = 0; gindex < groupNodes.getLength(); gindex++) {
+                node = groupNodes.item(gindex);
+                Element groupElement = (Element) node;
+                String group = groupElement.getAttribute("name");
+                getModelProperties().addGroup(group);
+
+                NodeList propertyNodes = groupElement.getElementsByTagName("property");
+                for (int pindex = 0; pindex < propertyNodes.getLength(); pindex++) {
+                    node = propertyNodes.item(pindex);
+                    Element propertyElement = (Element) node;
+
+                    ModelProperties.ModelProperty property = getModelProperties().createProperty();
+                    property.component = getComponentDescriptor(propertyElement.getAttribute("component"));
+
+                    if (property.component == null) {
+                        LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Component \"" + propertyElement.getAttribute("component") +
+                                "\" does not exist, but is referred in list of model parameters!\n" +
+                                "Will be removed when model is saved!", "Model loading error");
+                    } else {
+
+                        String attributeName = propertyElement.getAttribute("attribute");
+
+                        property.var = property.component.getComponentAttributes().get(attributeName);
+
+                        //in case this is a context component, check whether this refers to a context attribute
+                        if (property.attribute == null) {
+                            property.attribute = property.component.getContextAttributes().get(attributeName);
+                        }
+
+                        //check wether the referred var is existing or not
+                        if ((property.attribute == null) && (property.var == null) && !attributeName.equals("%enable%")) {
+                            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Attribute " + attributeName +
+                                    " does not exist in component " + property.component.getName() +
+                                    ". Removing associated property!", "Model loading error");
+                            continue;
+                        }
+
+                        property.defaultValue = propertyElement.getAttribute("default");
+                        property.description = propertyElement.getAttribute("description");
+                        property.name = propertyElement.getAttribute("name");
+                        property.value = propertyElement.getAttribute("value");
+                        String range = propertyElement.getAttribute("range");
+                        StringTokenizer tok = new StringTokenizer(range, ";");
+                        if (tok.countTokens() == 2) {
+                            property.lowerBound = Double.parseDouble(tok.nextToken());
+                            property.upperBound = Double.parseDouble(tok.nextToken());
+                        }
+                        String lenStr = propertyElement.getAttribute("length");
+                        if (lenStr != null && lenStr.length() > 0) {
+                            property.length = Integer.parseInt(lenStr);
+                        }
+
+                        getModelProperties().addProperty(getModelProperties().getGroup(group), property);
+                    }
+                }
+            }
+        }
+    }    
+    
     public Document getModelDoc() {
         return modelDoc;
     }
@@ -523,6 +596,10 @@ public class ModelView {
         return modelProperties;
     }
 
+    public void setModelProperties(ModelProperties modelProperties) {
+        this.modelProperties = modelProperties;
+    }
+    
     public HashMap<String, ComponentDescriptor> getComponentDescriptors() {
         return componentDescriptors;
     }

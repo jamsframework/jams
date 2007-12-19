@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.runtime;
 
 import java.util.*;
@@ -31,20 +30,18 @@ import org.unijena.jams.model.*;
  * @author S. Kralisch
  */
 public class JAMSNotificationEvent extends EventObject {
-    
-	private static final long serialVersionUID = 1406010209983471696L;
-	protected JAMSComponent source;
+
+    protected JAMSComponent source;
     protected String message;
-    
+
     /** Creates a new instance of JAMSNotificationEvent */
     public JAMSNotificationEvent(JAMSComponent source, String message) {
         super(source);
         this.source = source;
         this.message = message;
     }
-    
+
     public JAMSComponent getComponent() {
         return source;
     }
-    
 }

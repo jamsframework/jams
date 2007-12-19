@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
 
 import org.jscience.physics.units.Unit;
@@ -29,12 +28,11 @@ import org.jscience.physics.units.Unit;
  *
  * @author S. Kralisch
  */
+public abstract class JAMSNumeric extends JAMSSerializableData {
 
-public abstract class JAMSNumeric  extends JAMSSerializableData {
-    
     private NumericRange range = null;
     private Unit unit = null;
-    
+
     public NumericRange getRange() {
         return range;
     }
@@ -50,23 +48,22 @@ public abstract class JAMSNumeric  extends JAMSSerializableData {
     public void setUnit(String unitString) {
         this.unit = Unit.valueOf(unitString);
     }
-    
+
     public class NumericRange {
-        
-        private double maxValue, minValue;
-        
+
+        private double maxValue,  minValue;
+
         public NumericRange(double minValue, double maxValue) {
             this.maxValue = maxValue;
             this.minValue = minValue;
         }
-        
+
         public double getMaxValue() {
             return maxValue;
         }
-        
+
         public double getMinValue() {
             return minValue;
         }
     }
-    
 }

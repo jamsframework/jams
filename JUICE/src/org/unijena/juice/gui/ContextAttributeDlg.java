@@ -120,7 +120,7 @@ public class ContextAttributeDlg extends JDialog {
                 if (!valueInput.verify()) {
                     Color oldColor = valueInput.getComponent().getBackground();
                     valueInput.getComponent().setBackground(new Color(255, 0, 0));
-                    LHelper.showErrorDlg(ContextAttributeDlg.this, "Invalid data format!", "Format error");
+                    LHelper.showErrorDlg(ContextAttributeDlg.this, "Invalid value!", "Format error");
                     valueInput.getComponent().setBackground(oldColor);
                     return;
                 }

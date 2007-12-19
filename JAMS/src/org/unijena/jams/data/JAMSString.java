@@ -20,62 +20,52 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSString  extends JAMSSerializableData {
-    
+public class JAMSString extends JAMSSerializableData {
+
     private String value;
     private int length;
 
-    static final long serialVersionUID = -2475757193974756987L;
     /** Creates a new instance of JAMSString */
     public JAMSString() {
     }
-    
+
     public JAMSString(String value) {
         this.value = value;
     }
-    
+
     public String getValue() {
         return value;
     }
-    
+
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     public int getLength() {
         return length;
     }
-    
+
     public void setLength(int length) {
         this.length = length;
     }
-    
 
     public String toString() {
         return value;
     }
-    public boolean equals( Object other ) {      
-    if ( (other == null) || ! (other instanceof JAMSString) ) 
-      return false;    
-    if ( value == null ) 
-      return ( ((JAMSString)other).getValue() == null);     
-    return value.equals(((JAMSString)other).getValue());
-  }  // end equals()
-    
-//     public int compareTo( Object other ) {      
-//    if ( (other == null) || ! (other instanceof JAMSString) ) 
-//      return +1;    
-//    if ( value == null ) 
-//      return ( -1);     
-//    return value.compareTo(((JAMSString)other).getValue());
-//   
-//    
-//  }  // end compareTo()
+
+    public boolean equals(Object other) {
+        if ((other == null) || !(other instanceof JAMSString)) {
+            return false;
+        }
+        if (value == null) {
+            return (((JAMSString) other).getValue() == null);
+        }
+        return value.equals(((JAMSString) other).getValue());
+    }  // end equals()
 }

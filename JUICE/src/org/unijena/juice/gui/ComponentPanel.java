@@ -321,7 +321,7 @@ public class ComponentPanel extends JPanel {
         if (attrEditDlg == null) {
             attrEditDlg = new ContextAttributeDlg(JUICE.getJuiceFrame());
         }
-        attrEditDlg.show("", JUICE.JAMS_DATA_TYPES[13].getName(), "");
+        attrEditDlg.show("", JUICE.JAMS_DATA_TYPES[10].getName(), "");
         
         if (attrEditDlg.getResult() == ContextAttributeDlg.APPROVE_OPTION) {
             try {

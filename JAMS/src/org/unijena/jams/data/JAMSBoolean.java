@@ -20,46 +20,47 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSBoolean extends JAMSSerializableData implements Attribute.Boolean{
-    
+public class JAMSBoolean extends JAMSSerializableData implements Attribute.Boolean {
+
     private boolean value;
-    
+
     /** Creates a new instance of JAMSBoolean */
     public JAMSBoolean() {
     }
-    
+
     public JAMSBoolean(boolean value) {
         this.value = value;
     }
-    
+
     public boolean getValue() {
         return value;
     }
-    
+
     public void setValue(boolean value) {
         this.value = value;
     }
-    
+
     public void setValue(String value) {
-        if (value.equals("1"))
+        if (value.equals("1")) {
             value = "true";
+        }
         this.value = Boolean.parseBoolean(value);
     }
-    
+
     public String toString() {
         return Boolean.toString(value);
     }
-   
-    public boolean equals( Object other ) {      
-        if ( (other == null) || ! (other instanceof JAMSBoolean) ) 
-          return false;    
-        return value & ((JAMSBoolean)other).getValue();
+
+    public boolean equals(Object other) {
+        if ((other == null) || !(other instanceof JAMSBoolean)) {
+            return false;
+        }
+        return value & ((JAMSBoolean) other).getValue();
     }  // end equals()
 }

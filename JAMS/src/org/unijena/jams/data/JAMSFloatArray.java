@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
 
 import java.util.*;
@@ -29,24 +28,25 @@ import java.util.*;
  *
  * @author S. Kralisch
  */
-public class JAMSFloatArray extends JAMSSerializableData{
-    
+public class JAMSFloatArray extends JAMSSerializableData {
+
     private float[] value;
-    
+
     /**
      * Creates a new instance of JAMSFloatArray
      */
     public JAMSFloatArray() {
     }
-    
+
     public String toString() {
         String s = "";
         if (value == null || value.length == 0) {
             s = "null";
         } else {
             s += value[0];
-            for (int i = 1; i < value.length; i++)
+            for (int i = 1; i < value.length; i++) {
                 s += ", " + value[i];
+            }
         }
         s += "";
         return s;
@@ -59,12 +59,13 @@ public class JAMSFloatArray extends JAMSSerializableData{
     public void setValue(float[] value) {
         this.value = value;
     }
-    
+
     public void setValue(String value) {
         StringTokenizer st = new StringTokenizer(value, ",");
         float[] values = new float[st.countTokens()];
-        for (int i = 0; i < values.length; i++)
+        for (int i = 0; i < values.length; i++) {
             values[i] = Float.parseFloat(st.nextToken().trim());
+        }
         this.value = values;
-    }    
+    }
 }

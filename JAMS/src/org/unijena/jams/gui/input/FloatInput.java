@@ -37,7 +37,6 @@ import org.unijena.jams.gui.*;
  */
 public class FloatInput extends JPanel implements InputComponent {
 
-    private static final long serialVersionUID = 2424203601132061595L;
     private JTextField text = new JTextField();
     private ValueChangeListener l;
 

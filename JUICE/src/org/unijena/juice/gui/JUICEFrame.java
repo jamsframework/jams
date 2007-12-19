@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.juice.gui;
 
 import java.awt.*;
@@ -43,59 +42,68 @@ import org.unijena.juice.*;
 import org.unijena.juice.gui.tree.LibTree;
 import org.unijena.juice.gui.tree.ModelTree;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  *
  * @author  S. Kralisch
  */
 public class JUICEFrame extends JFrame {
-    
+
     private static final int TREE_PANE_WIDTH = 250;
     private static final int DIVIDER_WIDTH = 9;
-    
     private PropertyDlg propertyDlg;
     private JFileChooser jfc = new JFileChooser();
     private TreePanel libTreePanel = new TreePanel();
     private JDesktopPane modelPanel = new JDesktopPane();
     private JMenu windowMenu = new JMenu();
+    private JMenuItem pasteModelParameterItem,  copyModelParameterItem;
     private JLabel statusLabel;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, "Info Log");
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, "Error Log");
-    
-    
+    private Node modelProperties;
+
     public JUICEFrame() {
         init();
     }
-    
+
     private void init() {
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        
+
         this.addWindowListener(new WindowListener() {
+
             public void windowActivated(WindowEvent e) {
             }
+
             public void windowClosed(WindowEvent e) {
             }
+
             public void windowClosing(WindowEvent e) {
                 exit();
             }
+
             public void windowDeactivated(WindowEvent e) {
             }
+
             public void windowDeiconified(WindowEvent e) {
             }
+
             public void windowIconified(WindowEvent e) {
             }
+
             public void windowOpened(WindowEvent e) {
             }
         });
-        
+
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(JUICE.APP_TITLE);
         modelPanel.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-        
+
         propertyDlg = new PropertyDlg(this, JUICE.getJamsProperties());
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setCurrentDirectory(JUICE.getBaseDir());
-        
+
         JSplitPane mainSplitPane = new JSplitPane();
         mainSplitPane.setAutoscrolls(true);
         mainSplitPane.setContinuousLayout(true);
@@ -104,24 +112,25 @@ public class JUICEFrame extends JFrame {
         mainSplitPane.setDividerLocation(TREE_PANE_WIDTH);
         mainSplitPane.setOneTouchExpandable(true);
         mainSplitPane.setDividerSize(DIVIDER_WIDTH);
-        
-        
+
+
         getContentPane().add(mainSplitPane, java.awt.BorderLayout.CENTER);
-        
+
         JToolBar toolBar = new JToolBar();
         toolBar.setPreferredSize(new Dimension(0, 40));
-        
+
         JButton modelNewButton = new JButton();
         modelNewButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelNew.png")));
         modelNewButton.addActionListener(new java.awt.event.ActionListener() {
+
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JUICEFrame.this.newModel();
             }
         });
         toolBar.add(modelNewButton);
-        
+
         getContentPane().add(toolBar, BorderLayout.NORTH);
-        
+
         JPanel statusPanel = new JPanel();
         statusPanel.setLayout(new java.awt.BorderLayout());
         statusPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -130,16 +139,21 @@ public class JUICEFrame extends JFrame {
         statusLabel.setText("JAMS Status");
         statusPanel.add(statusLabel, java.awt.BorderLayout.CENTER);
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
-        
+
         //Menu stuff
         JMenuBar mainMenu = new JMenuBar();
-        
+
         JMenuItem aboutItem = new JMenuItem();
         JMenu fileMenu = new JMenu();
         JMenu helpMenu = new JMenu();
         JMenu extrasMenu = new JMenu();
+        JMenu modelMenu = new JMenu();
         JMenu logsMenu = new JMenu();
-        
+
+        JMenuItem copyModelItem = new JMenuItem();
+        pasteModelParameterItem = new JMenuItem();
+        copyModelParameterItem = new JMenuItem();
+        JMenuItem pasteModelItem = new JMenuItem();
         JMenuItem editOptionsItem = new JMenuItem();
         JMenuItem loadOptionsItem = new JMenuItem();
         JMenuItem saveOptionsItem = new JMenuItem();
@@ -148,23 +162,25 @@ public class JUICEFrame extends JFrame {
         JMenuItem exitItem = new JMenuItem();
         JMenuItem saveModelItem = new JMenuItem();
         JMenuItem saveAsModelItem = new JMenuItem();
-        
+
         fileMenu.setText("File");
         newModelItem.setText("New Model");
         newModelItem.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent evt) {
                 newModel();
             }
         });
         newModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
         fileMenu.add(newModelItem);
-        
+
         loadModelItem.setText("Load Model");
         loadModelItem.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 jfc.setFileFilter(JAMSFileFilter.getModelFilter());
                 int result = jfc.showOpenDialog(JUICEFrame.this);
-                
+
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String stringValue = jfc.getSelectedFile().getAbsolutePath();
                     loadModel(stringValue);
@@ -173,26 +189,29 @@ public class JUICEFrame extends JFrame {
         });
         loadModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
         fileMenu.add(loadModelItem);
-        
+
         saveModelItem.setText("Save Model");
         saveModelItem.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 saveModel(getCurrentView());
             }
         });
         saveModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
         fileMenu.add(saveModelItem);
-        
+
         saveAsModelItem.setText("Save Model As");
         saveAsModelItem.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 saveModelAs(getCurrentView());
             }
         });
         fileMenu.add(saveAsModelItem);
-        
+
         exitItem.setText("Exit");
         exitItem.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 exit();
             }
@@ -200,35 +219,37 @@ public class JUICEFrame extends JFrame {
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         fileMenu.add(exitItem);
         mainMenu.add(fileMenu);
-        
+
         extrasMenu.setText("Extras");
         editOptionsItem.setText("Edit Options");
         editOptionsItem.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 propertyDlg.setProperties(JUICE.getJamsProperties());
                 propertyDlg.setVisible(true);
                 if (propertyDlg.getResult() == PropertyDlg.APPROVE_OPTION) {
                     propertyDlg.validateProperties();
                 }
-                
+
             }
         });
         editOptionsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         extrasMenu.add(editOptionsItem);
-        
+
         loadOptionsItem.setText("Load Options");
         loadOptionsItem.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
-                
+
                 jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
                 int result = jfc.showOpenDialog(JUICEFrame.this);
-                
+
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String stringValue = jfc.getSelectedFile().getAbsolutePath();
                     try {
                         JAMSProperties properties = JUICE.getJamsProperties();
                         properties.load(stringValue);
-                        
+
                     } catch (IOException ioe) {
                         JAMS.handle(ioe);
                     }
@@ -236,14 +257,15 @@ public class JUICEFrame extends JFrame {
             }
         });
         extrasMenu.add(loadOptionsItem);
-        
+
         saveOptionsItem.setText("Save Options");
         saveOptionsItem.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
-                
+
                 jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
                 int result = jfc.showSaveDialog(JUICEFrame.this);
-                
+
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String stringValue = jfc.getSelectedFile().getAbsolutePath();
                     try {
@@ -253,15 +275,44 @@ public class JUICEFrame extends JFrame {
                         JAMS.handle(ioe);
                     }
                 }
-                
+
             }
         });
         extrasMenu.add(saveOptionsItem);
         mainMenu.add(extrasMenu);
-        
+
+        modelMenu.setText("Model");
+        copyModelParameterItem.setText("Copy Model Parameter");
+        copyModelParameterItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                pasteModelParameterItem.setEnabled(true);
+                ModelView view = getCurrentView();
+                modelProperties = view.getModelDoc().getElementsByTagName("launcher").item(0).cloneNode(true);
+            }
+        });
+        modelMenu.add(copyModelParameterItem);
+
+        pasteModelParameterItem.setText("Paste Model Parameter");
+        pasteModelParameterItem.setEnabled(false);
+        pasteModelParameterItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                ModelView view = getCurrentView();
+                view.setModelParameters((Element) modelProperties);
+                view.updateLauncherPanel();
+            }
+        });
+        modelMenu.add(pasteModelParameterItem);
+
+
+        mainMenu.add(modelMenu);
+
+
         logsMenu.setText("Logs");
         JMenuItem infoLogItem = new JMenuItem("Info log");
         infoLogItem.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 infoDlg.setVisible(true);
             }
@@ -269,16 +320,18 @@ public class JUICEFrame extends JFrame {
         logsMenu.add(infoLogItem);
         JMenuItem errorLogItem = new JMenuItem("Error log");
         errorLogItem.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 errorDlg.setVisible(true);
             }
         });
         logsMenu.add(errorLogItem);
         mainMenu.add(logsMenu);
-        
+
         windowMenu.setText("Windows");
         windowMenu.setEnabled(false);
         ModelView.viewList.addObserver(new Observer() {
+
             public void update(Observable o, Object arg) {
                 JUICEFrame.this.windowMenu.removeAll();
                 ArrayList<ModelView> mViews = ModelView.viewList.getViewList();
@@ -286,6 +339,7 @@ public class JUICEFrame extends JFrame {
                     JInternalFrame frame = mViews.get(i).getFrame();
                     WindowItem windowItem = new WindowItem(frame.getTitle(), frame);
                     windowItem.addActionListener(new ActionListener() {
+
                         public void actionPerformed(ActionEvent e) {
                             WindowItem item = (WindowItem) e.getSource();
                             try {
@@ -306,40 +360,41 @@ public class JUICEFrame extends JFrame {
             }
         });
         mainMenu.add(windowMenu);
-        
-        
+
+
         helpMenu.setText("Help");
         aboutItem.setText("About");
         aboutItem.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent evt) {
                 new AboutDlg(JUICEFrame.this).setVisible(true);
             }
         });
         helpMenu.add(aboutItem);
         mainMenu.add(helpMenu);
-        
+
         setJMenuBar(mainMenu);
-        
+
         //pack();
-        
+
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        
+
         setSize(Math.min(d.width, JUICE.SCREEN_WIDTH), Math.min(d.height, JUICE.SCREEN_HEIGHT));
-        //super.setExtendedState(Frame.MAXIMIZED_BOTH);
-        
+    //super.setExtendedState(Frame.MAXIMIZED_BOTH);
+
     }
-    
+
     public void setLibTree(LibTree tree) {
         this.libTreePanel.setTree(tree);
     }
-    
+
     private void newModel() {
         ModelView mView = new ModelView(modelPanel);
         mView.setTree(new ModelTree(mView));
         mView.setInitialState();
         mView.getFrame().setVisible(true);
     }
-    
+
     public void loadModel(String path) {
         try {
             Document modelDoc = XMLIO.getDocument(path);
@@ -353,11 +408,11 @@ public class JUICEFrame extends JFrame {
             LHelper.showErrorDlg(this, "File " + path + " could not be loaded.", "File open error");
         }
     }
-    
+
     private void saveModelAs(ModelView view) {
         jfc.setFileFilter(JAMSFileFilter.getModelFilter());
         int result = jfc.showSaveDialog(JUICEFrame.this);
-        
+
         if (result == JFileChooser.APPROVE_OPTION) {
             String path = jfc.getSelectedFile().getAbsolutePath();
             File savePath = new File(path);
@@ -365,7 +420,7 @@ public class JUICEFrame extends JFrame {
             saveModel(view);
         }
     }
-    
+
     public void saveModel(ModelView view) {
         if (view.getSavePath() != null) {
             if (!view.save()) {
@@ -378,48 +433,50 @@ public class JUICEFrame extends JFrame {
             saveModelAs(view);
         }
     }
-    
+
     public ModelView getCurrentView() {
         JInternalFrame frame = modelPanel.getAllFrames()[0];
         ModelView view = ModelView.viewList.getMViews().get(frame);
         return view;
     }
-    
+
     private class WindowItem extends JMenuItem {
+
         JInternalFrame frame;
+
         public WindowItem(String title, JInternalFrame frame) {
             super(title);
             this.frame = frame;
         }
     }
-    
+
     public JLabel getStatusLabel() {
         return statusLabel;
     }
-    
+
     public void setStatusLabel(JLabel statusLabel) {
         this.statusLabel = statusLabel;
     }
-    
+
     public LogViewDlg getInfoDlg() {
         return infoDlg;
     }
-    
+
     public LogViewDlg getErrorDlg() {
         return errorDlg;
     }
-    
+
     private void exit() {
-        
+
         ModelView[] views = ModelView.viewList.getViewList().toArray(new ModelView[ModelView.viewList.getViewList().size()]);
-        
+
         for (ModelView view : views) {
             if (!view.exit()) {
                 return;
             }
         }
         if (ModelView.viewList.getViewList().size() == 0) {
-            
+
             // finally write property file to default location
             try {
                 String defaultFile = JUICE.getJamsProperties().getDefaultFilename();
@@ -427,10 +484,9 @@ public class JUICEFrame extends JFrame {
             } catch (IOException ioe) {
                 JAMS.handle(ioe);
             }
-            
+
             this.dispose();
             System.exit(0);
         }
     }
-    
 }

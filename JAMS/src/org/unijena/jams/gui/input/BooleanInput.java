@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.gui.input;
 
 import java.awt.event.ActionEvent;
@@ -33,41 +32,49 @@ import javax.swing.JComponent;
  * @author S. Kralisch
  */
 public class BooleanInput extends JCheckBox implements InputComponent {
-    
-    private static final long serialVersionUID = -4821261861964727164L;
+
     private ValueChangeListener l;
-    
+
     public String getValue() {
-        if (isSelected())
+        if (isSelected()) {
             return "1";
-        else
+        } else {
             return "0";
+        }
     }
-    
+
     public void setValue(String value) {
-        if ("1".equals(value))
+        if ("1".equals(value)) {
             this.setSelected(true);
-        else
+        } else {
             this.setSelected(false);
+        }
     }
-    
+
     public JComponent getComponent() {
         return this;
     }
+
+    public void setRange(double lower, double upper) {
+    }
+
     
-    public void setRange(double lower, double upper){};
+    
+
+       
+         ;
     
     public boolean verify() {
         return true;
     }
-    
+
     public int getErrorCode() {
         return INPUT_OK;
     }
 
     public void setLength(int length) {
     }
-    
+
     public void addValueChangeListener(ValueChangeListener l) {
         this.l = l;
         this.addActionListener(new ActionListener() {

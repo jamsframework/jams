@@ -20,22 +20,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
-
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSDataFactory   {
-    
+public class JAMSDataFactory {
+
     //public JAMSDataFactory
-    
     public static JAMSEntity createEntity() {
         return new JAMSCheckedEntity();
     }
-    
+
     public static JAMSData getData(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         Class clazz = null;
         try {
@@ -45,8 +42,7 @@ public class JAMSDataFactory   {
             System.exit(0);
         }
         JAMSData dataObject = (JAMSData) clazz.newInstance();
-        
+
         return dataObject;
     }
-    
 }

@@ -20,52 +20,52 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
-
 
 /**
  *
  * @author S. Kralisch
  */
 public class JAMSDouble extends JAMSNumeric {
-    
+
     private double value;
-    
+
     /**
      * Creates a new instance of JAMSDouble
      */
     public JAMSDouble() {
     }
-    
+
     public JAMSDouble(double value) {
         this.value = value;
     }
-    
+
     public JAMSDouble(double value, double minValue, double maxValue, String unitString) {
         this.setValue(value);
         this.setUnit(unitString);
         this.setRange(minValue, maxValue);
     }
-    
+
     public String toString() {
         return Double.toString(value);
     }
-    
+
     public double getValue() {
         return value;
     }
-    
+
     public void setValue(double value) {
         this.value = value;
     }
-    
+
     public void setValue(String value) {
         this.value = Double.parseDouble(value);
     }
-    public boolean equals( Object other ) {      
-        if ( (other == null) || ! (other instanceof JAMSDouble) ) 
-          return false;    
-        return value == ((JAMSDouble)other).getValue();
+
+    public boolean equals(Object other) {
+        if ((other == null) || !(other instanceof JAMSDouble)) {
+            return false;
+        }
+        return value == ((JAMSDouble) other).getValue();
     }  // end equals()
 }

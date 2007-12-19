@@ -1,9 +1,9 @@
 /*
- * JAMSData.java
- * Created on 10. September 2005, 23:55
+ * JAMSDirName.java
+ * Created on 16. Dezember 2007, 07:43
  *
  * This file is part of JAMS
- * Copyright (C) 2005 FSU Jena
+ * Copyright (C) 2007 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,9 +26,7 @@ package org.unijena.jams.data;
  *
  * @author S. Kralisch
  */
-public interface JAMSData {
+public class JAMSDirName extends JAMSFileName {
 
-    public void setValue(String value);
 
-    public String toString();
 }

@@ -36,7 +36,6 @@ import org.unijena.jams.gui.*;
  */
 public class TextInput extends JPanel implements InputComponent {
 
-    private static final long serialVersionUID = 784799996931992935L;
     private JTextField text = new JTextField();
     private ValueChangeListener l;
 

@@ -28,9 +28,7 @@ package org.unijena.jams.runtime;
  * @author S. Kralisch
  */
 public class RuntimeException extends Exception {
-    
-    private static final long serialVersionUID = 5306531371125995980L;
-    
+        
     public RuntimeException(String message) {
         super(message);
     }

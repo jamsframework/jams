@@ -20,45 +20,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSSimpleDouble  extends JAMSSerializableData/*implements JAMSDouble*/ {
-    
+public class JAMSSimpleDouble extends JAMSSerializableData/*implements JAMSDouble*/ {
+
     private double value;
-    
+
     /**
      * Creates a new instance of JAMSDouble
      */
     public JAMSSimpleDouble() {
     }
-    
+
     public JAMSSimpleDouble(double value) {
         this.value = value;
     }
-    
+
     public String toString() {
         return Double.toString(value);
     }
-    
+
     public double getValue() {
         return value;
     }
-    
+
     public void setValue(double value) {
         this.value = value;
     }
-    
+
     public void setValue(String value) {
         this.value = Double.parseDouble(value);
     }
-    public boolean equals( Object other ) {      
-        if ( (other == null) || ! (other instanceof JAMSSimpleDouble) ) 
-          return false;    
-        return value == ((JAMSSimpleDouble)other).getValue();
+
+    public boolean equals(Object other) {
+        if ((other == null) || !(other instanceof JAMSSimpleDouble)) {
+            return false;
+        }
+        return value == ((JAMSSimpleDouble) other).getValue();
     }  // end equals()
 }

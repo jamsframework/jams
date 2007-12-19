@@ -20,51 +20,50 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
 
 import java.util.StringTokenizer;
-
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSStringArray  extends JAMSSerializableData{
-    
+public class JAMSStringArray extends JAMSSerializableData {
+
     private String[] value;
-    
+
     /** Creates a new instance of JAMSStringArray */
     public JAMSStringArray() {
     }
-    
+
     public String toString() {
         String s = "";
         if (value == null || value.length == 0) {
             s = "null";
         } else {
             s += value[0];
-            for (int i = 1; i < value.length; i++)
+            for (int i = 1; i < value.length; i++) {
                 s += ", " + value[i];
+            }
         }
         s += "";
         return s;
     }
-    
+
     public String[] getValue() {
         return value;
     }
-    
+
     public void setValue(String[] value) {
         this.value = value;
     }
-    
+
     public void setValue(String value) {
         StringTokenizer st = new StringTokenizer(value, ";");
         String[] values = new String[st.countTokens()];
-        for (int i = 0; i < values.length; i++)
+        for (int i = 0; i < values.length; i++) {
             values[i] = st.nextToken().trim();
+        }
         this.value = values;
     }
-    
 }

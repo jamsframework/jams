@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
 
 import java.util.StringTokenizer;
@@ -29,17 +28,17 @@ import java.util.StringTokenizer;
  *
  * @author S. Kralisch
  */
-public class JAMSBooleanArray  extends JAMSSerializableData {
-    
-    private boolean[] value;    
-    
+public class JAMSBooleanArray extends JAMSSerializableData {
+
+    private boolean[] value;
+
     /** Creates a new instance of JAMSBooleanArray */
     public JAMSBooleanArray() {
     }
-    
+
     public JAMSBooleanArray(boolean[] value) {
         this.value = value;
-    }        
+    }
 
     public boolean[] getValue() {
         return value;
@@ -48,12 +47,13 @@ public class JAMSBooleanArray  extends JAMSSerializableData {
     public void setValue(boolean[] value) {
         this.value = value;
     }
-    
+
     public void setValue(String value) {
         StringTokenizer st = new StringTokenizer(value, ",");
         boolean[] values = new boolean[st.countTokens()];
-        for (int i = 0; i < values.length; i++)
+        for (int i = 0; i < values.length; i++) {
             values[i] = Boolean.parseBoolean(st.nextToken().trim());
+        }
         this.value = values;
-    }    
+    }
 }

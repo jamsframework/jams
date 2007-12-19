@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
 
 import java.util.*;
@@ -29,67 +28,67 @@ import java.util.*;
  *
  * @author S. Kralisch
  */
-public class JAMSEntityCollection   extends JAMSSerializableData {
-    
+public class JAMSEntityCollection extends JAMSSerializableData {
+
     protected ArrayList<JAMSEntity> entities = new ArrayList<JAMSEntity>();
     protected JAMSEntity[] entityArray;
     protected JAMSEntity current;
-        
+
     public JAMSEntity[] getEntityArray() {
         return this.entityArray;
     }
-    
+
     public JAMSEntityEnumerator getEntityEnumerator() {
         return new EntityEnumerator();
     }
-    
+
     class EntityEnumerator implements JAMSEntityEnumerator {
-        
+
         JAMSEntity[] entityArray = getEntityArray();
         int index = 0;
-        
+
         public boolean hasNext() {
-            return (index+1 < entityArray.length);
+            return (index + 1 < entityArray.length);
         }
-        
+
         public JAMSEntity next() {
             index++;
             JAMSEntityCollection.this.current = entityArray[index];
             return entityArray[index];
         }
-        
+
         public void reset() {
             index = 0;
             JAMSEntityCollection.this.current = entityArray[index];
         }
     }
-    
+
     public ArrayList<JAMSEntity> getEntities() {
         return entities;
     }
-    
+
     public void setEntities(ArrayList<JAMSEntity> entities) {
         this.entities = entities;
         this.entityArray = entities.toArray(new JAMSEntity[entities.size()]);
-        if (entityArray.length>0)
+        if (entityArray.length > 0) {
             this.current = entityArray[0];
-        else 
+        } else {
             this.current = null;
+        }
     }
-    
+
     public JAMSEntity getCurrent() {
         return current;
     }
-    
+
     public void setValue(String data) {
-        //this makes no sense!
+    //this makes no sense!
     }
-    
-    
+
     public void setValue(ArrayList<JAMSEntity> entities) {
         setEntities(entities);
     }
-    
+
     public ArrayList<JAMSEntity> getValue() {
         return getEntities();
     }

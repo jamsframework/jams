@@ -216,6 +216,7 @@ public class StandardRuntime implements JAMSRuntime {
         ListIterator<JAMSGUIComponent> i = guiComponents.listIterator();
         if (guiComponents.size() > 1) {
             JTabbedPane tabbedPane = new JTabbedPane();
+            tabbedPane.setTabPlacement(JTabbedPane.LEFT);
             
             while (i.hasNext()) {
                 JAMSGUIComponent comp = i.next();
@@ -232,7 +233,7 @@ public class StandardRuntime implements JAMSRuntime {
         }
         
         JToolBar toolBar = new JToolBar();
-        toolBar.setPreferredSize(new Dimension(0, 50));
+        toolBar.setPreferredSize(new Dimension(0, 40));
         
         stopButton = new JButton();
         //stopButton.setText("Stop");

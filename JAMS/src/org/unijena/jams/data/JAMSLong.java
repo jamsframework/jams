@@ -20,43 +20,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSLong  extends JAMSSerializableData {
-    
+public class JAMSLong extends JAMSSerializableData {
+
     private long value;
-    
+
     /** Creates a new instance of JAMSLong */
     public JAMSLong() {
     }
-    
+
     public JAMSLong(long value) {
         this.value = value;
     }
-    
+
     public String toString() {
         return Long.toString(value);
     }
-    
+
     public long getValue() {
         return value;
     }
-    
+
     public void setValue(long value) {
         this.value = value;
     }
-    
+
     public void setValue(String value) {
         this.value = Long.parseLong(value);
     }
-    public boolean equals( Object other ) {      
-        if ( (other == null) || ! (other instanceof JAMSLong) ) 
-          return false;    
-        return value == ((JAMSLong)other).getValue();
+
+    public boolean equals(Object other) {
+        if ((other == null) || !(other instanceof JAMSLong)) {
+            return false;
+        }
+        return value == ((JAMSLong) other).getValue();
     }  // end equals()
 }

@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.data;
 
 import java.util.*;
@@ -29,43 +28,44 @@ import java.util.*;
  *
  * @author S. Kralisch
  */
-public class JAMSIntegerArray  extends JAMSSerializableData {
-    
+public class JAMSIntegerArray extends JAMSSerializableData {
+
     private int[] value;
-    
+
     /**
      * Creates a new instance of JAMSIntegerArray
      */
     public JAMSIntegerArray() {
     }
-    
+
     public String toString() {
         String s = "";
         if (value == null || value.length == 0) {
             s = "null";
         } else {
             s += value[0];
-            for (int i = 1; i < value.length; i++)
+            for (int i = 1; i < value.length; i++) {
                 s += ", " + value[i];
+            }
         }
         s += "";
         return s;
     }
-    
+
     public int[] getValue() {
         return value;
     }
-    
+
     public void setValue(int[] value) {
         this.value = value;
     }
-    
+
     public void setValue(String value) {
         StringTokenizer st = new StringTokenizer(value, ",");
         int[] values = new int[st.countTokens()];
-        for (int i = 0; i < values.length; i++)
+        for (int i = 0; i < values.length; i++) {
             values[i] = Integer.parseInt(st.nextToken().trim());
+        }
         this.value = values;
     }
-    
 }

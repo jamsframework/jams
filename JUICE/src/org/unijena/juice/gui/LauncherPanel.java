@@ -71,6 +71,7 @@ public class LauncherPanel extends JPanel {
     public LauncherPanel(ModelView view) {
         
         this.view = view;
+        this.tabbedPane.setTabPlacement(JTabbedPane.LEFT);
         
         //setBorder(BorderFactory.createTitledBorder("Model Parameters"));
         setLayout(new BorderLayout());
@@ -534,7 +535,7 @@ public class LauncherPanel extends JPanel {
                 if (ic.getErrorCode() == InputComponent.INPUT_OUT_OF_RANGE) {
                     LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Selected value out of range!", "Range error");
                 } else {
-                    LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Invalid data format!", "Format error");
+                    LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Invalid value!", "Format error");
                 }
                 
                 ic.getComponent().setBackground(oldColor);
