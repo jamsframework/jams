@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+
+<!--< erzeugt tabelle, timeseries/dataseries nicht >-->
+<datastore id="tmean" author="Sven Kralisch" date="30/11/2007" description="blablub">    
+
+
+    <timeseries interval="1996-11-01 7:30 2000-10-31 7:30 6 1">
+        
+        <datasource id="mydatatreader1" type="ujena.rbis.Reader">
+                <parameter id="username" value="nsk" />
+                <parameter id="hostname" value="localhost" />
+                <parameter id="query" value="SELECT ..." />
+        </datasource>
+        
+	<column id="time"   position="0">
+		<columnsource> source="index" sourcecolumn="1" starttime="1996-11-01 7:30" />
+		<columnsource> source="index" sourcecolumn="1" starttime="1996-11-01 7:30" />
+	</column>
+
+        <column id="time"   position="0" source="index" sourcecolumn="1">
+        <column id="tmean0" position="0" source="mydatatreader1" sourcecolumn="2" type="JAMSDouble" starttime="1996-11-01 7:30" />
+        <column id="tmean1" position="2" source="mydatatreader1" sourcecolumn="3" type="JAMSDouble" starttime="1996-11-01 7:30" />
+
+    </timeseries>
+
+    <dataseries>
+        
+        <datasource id="mydatatreader1" type="ujena.rbis.Reader">
+                <parameter id="username" value="nsk" />
+                <parameter id="hostname" value="localhost" />
+                <parameter id="query" value="SELECT ..." />
+        </datasource>
+                
+        <column id="tmean0" position="1" source="mydatatreader1" sourcecolumn="0" type="JAMSDouble" startrow="800" />
+        <column id="tmean1" position="2" source="mydatatreader1" type="JAMSDouble" startrow="0" />
+
+    </dataseries>
+   
+    
+</datastore>
