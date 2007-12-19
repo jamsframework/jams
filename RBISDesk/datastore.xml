@@ -11,16 +11,18 @@
                 <parameter id="hostname" value="localhost" />
                 <parameter id="query" value="SELECT ..." />
         </datasource>
+
+	<datasource id="mydatatreader1" type="ujena.rbis.Reader">
+                <parameter id="username" value="nsk" />
+                <parameter id="hostname" value="localhost" />
+                <parameter id="query" value="SELECT ..." />
+        </datasource>
         
 	<column id="time"   position="0">
 		<columnsource> source="index" sourcecolumn="1" starttime="1996-11-01 7:30" />
-		<columnsource> source="index" sourcecolumn="1" starttime="1996-11-01 7:30" />
+		<columnsource> source="mydatatreader1" sourcecolumn="1" starttime="1996-11-01 7:30" />
 	</column>
-
-        <column id="time"   position="0" source="index" sourcecolumn="1">
-        <column id="tmean0" position="0" source="mydatatreader1" sourcecolumn="2" type="JAMSDouble" starttime="1996-11-01 7:30" />
-        <column id="tmean1" position="2" source="mydatatreader1" sourcecolumn="3" type="JAMSDouble" starttime="1996-11-01 7:30" />
-
+      
     </timeseries>
 
     <dataseries>
