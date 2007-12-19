@@ -81,7 +81,7 @@ public class ModelProperties {
     }
     
     public boolean insertGroup(Group group, int index) {
-        if (index>=0 && index<groupList.size()) {
+        if (index>=0 && index<=groupList.size()) {
             groups.put(group.name, group);
             groupList.add(index, group);
             return true;
