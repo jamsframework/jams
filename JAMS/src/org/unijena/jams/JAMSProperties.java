@@ -130,7 +130,7 @@ public class JAMSProperties extends Observable {
         p.setProperty("infolog", "");
         p.setProperty("errorlog", "");
         p.setProperty("windowenable", "1");
-        p.setProperty("windowwidth", "800");
+        p.setProperty("windowwidth", "900");
         p.setProperty("windowheight", "600");
         p.setProperty("guiconfig", "1");
         p.setProperty("guiconfigwidth", "600");
