@@ -32,12 +32,12 @@ import net.sourceforge.jwbf.contentRep.mw.ContentAccessable;
 import net.sourceforge.jwbf.contentRep.mw.SimpleArticle;
 
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
+import org.apache.log4j.Logger;
 
 /**
  * @author Thomas Stock
@@ -55,7 +55,6 @@ public class GetRevision extends MWAction {
 	public static final int LAST = 1 << 6;
 
 	private static final Logger LOG = Logger.getLogger(GetRevision.class);
-	
 	/**
 	 * TODO follow redirects.
 	 */
@@ -74,7 +73,7 @@ public class GetRevision extends MWAction {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		LOG.debug(uS);
+                LOG.debug(uS);
 		msgs.add(new GetMethod(uS));
 		
 	}

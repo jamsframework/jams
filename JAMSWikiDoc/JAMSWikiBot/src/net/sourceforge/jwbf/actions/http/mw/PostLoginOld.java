@@ -39,12 +39,7 @@ public class PostLoginOld extends MWAction {
 
 
 	private String username = "";
-	
-	private static final Logger LOG = Logger.getLogger(PostLoginOld.class);
-	
-
-
-	
+        private static final Logger LOG = Logger.getLogger(PostLoginOld.class);
 	/**
 	 * 
 	 * @param username the
@@ -95,7 +90,7 @@ public class PostLoginOld extends MWAction {
 			for (int i = 0; i < cs.length; i++) {	
 		
 				if (cs[i].toString().contains(compare)) {
-					LOG.info("Logged in as: " + username);
+                                        LOG.info("Logged in as: " + username);
 					return;
 				}
 				if (i == cs.length - 1) {

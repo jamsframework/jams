@@ -689,6 +689,7 @@ public class MediaWikiBot extends HttpBot {
                 //better would be to use getAllPageTitles, but this dont work if media
                 //wiki api is not installed!!
                 result = FindPage(searchString);//getAllPageTitles();
+                
             }catch (Exception e) {
                 System.out.println("Could not access articles, because: " + e.toString() );
             }

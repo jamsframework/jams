@@ -19,18 +19,17 @@ import java.util.regex.Pattern;
 import net.sourceforge.jwbf.actions.http.ProcessException;
 import net.sourceforge.jwbf.actions.http.mw.MWAction;
 import net.sourceforge.jwbf.bots.MediaWikiBot;
-
+import org.apache.log4j.*;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.log4j.Logger;
 
 /**
  *
  * @author admin
  */
-public class FindPage extends MWAction implements MultiAction<String>  {    
-    private static final Logger LOG = Logger.getLogger(FindPage.class);
-    
+public class FindPage extends MWAction implements MultiAction<String>  {        
     private Collection<String> titleCollection = new ArrayList<String>();
+    
+    private static final Logger LOG = Logger.getLogger(FindPage.class);
     
     //this component finds all pages with given search string, without use of wikimedia api.
     //if wikimedia is installed there far better ways to perform this action
@@ -42,7 +41,7 @@ public class FindPage extends MWAction implements MultiAction<String>  {
 	} catch (UnsupportedEncodingException e) {
 		e.printStackTrace();
 	}
-	LOG.debug(uS);
+        LOG.debug(uS);
 	msgs.add(new GetMethod(uS));		
     }
     //parse page for search hits

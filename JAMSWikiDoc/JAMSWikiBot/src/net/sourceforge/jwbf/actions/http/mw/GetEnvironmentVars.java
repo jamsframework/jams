@@ -28,7 +28,6 @@ import net.sourceforge.jwbf.bots.MediaWikiBot;
 import net.sourceforge.jwbf.bots.util.LoginData;
 
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.log4j.Logger;
 
 /**
  * This Message can be used to find variables, you need to process modification
@@ -41,7 +40,6 @@ import org.apache.log4j.Logger;
 public class GetEnvironmentVars extends MWAction {
 
 	private Hashtable<String, String> tab;
-	private static final Logger LOG = Logger.getLogger(GetEnvironmentVars.class);
 	
 	/**
 	 * 
@@ -69,7 +67,6 @@ public class GetEnvironmentVars extends MWAction {
 		
 		 
 		getWpValues(s, tab);
-		LOG.debug(tab);
 		return s;
 	}
 	

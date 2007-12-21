@@ -326,7 +326,7 @@ public class Main {
     
     public static void main(String[] args) {                
         Class c = JAMSComponent.class;
-                        
+                               
         FileOutputStream f = null;
         try {
             f = new FileOutputStream("wikidocu.log");

@@ -31,23 +31,19 @@ import net.sourceforge.jwbf.bots.util.LoginData;
 
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.log4j.Logger;
 import org.jdom.DataConversionException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
-
+import org.apache.log4j.Logger;
 /**
  * 
  * @author Thomas Stock
  * @supportedBy MediaWiki 1.9.x
  */
-public class PostLogin extends MWAction {
-	
-	private static final Logger LOG = Logger.getLogger(PostLogin.class);
-	
+public class PostLogin extends MWAction {		
 	private LoginData login = null;
 	
 	private final String success = "Success";
@@ -56,7 +52,7 @@ public class PostLogin extends MWAction {
 	
 	private String exceptionText = "";
 
-	
+	private static final Logger LOG = Logger.getLogger(PostLogin.class);
 	/**
 	 * 
 	 * @param username the
@@ -95,8 +91,8 @@ public class PostLogin extends MWAction {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		LOG.debug(s);
 		findContent(root);
+                LOG.debug(s);
 		return s;
 	}
 	private void findContent(final Element api){

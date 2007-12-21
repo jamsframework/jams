@@ -37,10 +37,8 @@ import org.apache.log4j.Logger;
  * 
  */
 public class PostModifyContent extends MWAction {
-
-	
-	private static final Logger LOG = Logger.getLogger(PostModifyContent.class);
-	/**
+private static final Logger LOG = Logger.getLogger(PostModifyContent.class);
+		/**
 	 * 
 	 * @param a the
 	 * @param tab internal value set
@@ -80,11 +78,7 @@ public class PostModifyContent extends MWAction {
 			wpMinoredit.setValue("1");
 			wpMinoredit.setName("wpMinoredit");
 		}
-		
-		
-		
-		
-		LOG.info("WRITE: " + a.getLabel());
+		LOG.info("WRITE: " + a.getLabel());					
 		PostMethod pm = new PostMethod(uS);
 		//pm.getParams().setContentCharset(MediaWikiBot.CHARSET);
 

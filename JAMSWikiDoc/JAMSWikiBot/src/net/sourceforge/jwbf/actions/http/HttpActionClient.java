@@ -30,7 +30,6 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
-
 /**
  * The main interaction class.
  * 
@@ -42,9 +41,7 @@ public class HttpActionClient {
 	private HttpClient client;
 
 	private String path = "";
-
-	private static final Logger LOG = Logger.getLogger(HttpActionClient.class);
-
+private static final Logger LOG = Logger.getLogger(HttpActionClient.class);
 	/**
 	 * 
 	 * @param client
@@ -96,7 +93,6 @@ public class HttpActionClient {
 			if (path.length() > 1) {
 
 				e.setPath(path + e.getPath());
-				LOG.debug("path is: " + e.getPath());
 
 			}
 			try {
@@ -142,7 +138,7 @@ public class HttpActionClient {
 		cp.validateReturningCookies(client.getState().getCookies(), authpost);
 
 		authpost.releaseConnection();
-		LOG.debug(authpost.getURI() + " || " + "POST: "
+                LOG.debug(authpost.getURI() + " || " + "POST: "
 				+ authpost.getStatusLine().toString());
 
 		// Usually a successful form-based login results in a redicrect to
@@ -192,8 +188,6 @@ public class HttpActionClient {
 
 		client.executeMethod(authgets);
 		cp.validateReturningCookies(client.getState().getCookies(), authgets);
-		LOG.debug(authgets.getURI());
-		LOG.debug("GET: " + authgets.getStatusLine().toString());
 
 		out = new String(authgets.getResponseBody());
 		out = cp.processReturningText(out, authgets);
@@ -202,7 +196,7 @@ public class HttpActionClient {
 		int statuscode = authgets.getStatusCode();
 
 		if (statuscode == HttpStatus.SC_NOT_FOUND) {
-			LOG.warn("Not Found: " + authgets.getQueryString());
+
 
 			throw new FileNotFoundException(authgets.getQueryString());
 		}
@@ -220,7 +214,7 @@ public class HttpActionClient {
 		Cookie[] cookies = client.getState().getCookies();
 		if (cookies.length > 0) {
 			for (int i = 0; i < cookies.length; i++) {
-				LOG.trace("cookie: " + cookies[i].toString());
+                            LOG.trace("cookie: " + cookies[i].toString());
 			}
 		}
 	}
