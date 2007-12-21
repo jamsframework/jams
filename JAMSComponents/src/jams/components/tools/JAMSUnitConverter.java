@@ -35,7 +35,7 @@ import org.jscience.physics.units.*;
         title="JScience Unit Converter",
         author="Sven Kralisch",
         date="1. December 2005",
-        description="This component converts an input value having one unit into an output value " +
+        description="This component converts an input value having a certain unit into an output value " +
         "having another unit. The units are represented by SI compliant unit strings, e.g. m^3/s.")
 public class JAMSUnitConverter extends JAMSComponent {
     
