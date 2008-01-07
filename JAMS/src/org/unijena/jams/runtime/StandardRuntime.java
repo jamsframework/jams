@@ -167,7 +167,7 @@ public class StandardRuntime implements JAMSRuntime {
             return;
         }
         
-        if (guiEnabled) {
+        if (guiEnabled && (guiComponents.size() > 0)) {
             frame.setVisible(true);
         }
         

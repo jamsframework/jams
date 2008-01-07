@@ -281,7 +281,7 @@ public class LibTree extends JAMSTree {
                 clazzName = clazz.getSimpleName();
                 clazzFullName = clazz.getName();
                 
-                if (!(clazzName.equals("JAMSComponent") || clazzName.equals("JAMSContext") || clazzName.equals("JAMSGUIComponent") || clazzName.equals("JAMSModel"))) {
+                if (!(clazzName.equals("JAMSComponent") || clazzName.equals("JAMSContext_") || clazzName.equals("JAMSGUIComponent") || clazzName.equals("JAMSModel"))) {
                     
                     try {
                         
