@@ -67,6 +67,7 @@ import org.unijena.jams.data.*;
         this.timeInterval = new JAMSTimeInterval(start, end, timeUnit, timeUnitCount);
     }
     
+    @Override
     public void init() {
         super.init();
         lastValue = timeInterval.getEnd().clone();
@@ -74,10 +75,12 @@ import org.unijena.jams.data.*;
         lastValue.add(JAMSCalendar.MILLISECOND, 1);
     }
     
+    @Override
     public JAMSComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
     }
     
+    @Override
     public long getNumberOfIterations() {
         return timeInterval.getNumberOfTimesteps();
     }
@@ -86,12 +89,14 @@ import org.unijena.jams.data.*;
         
         JAMSComponentEnumerator ce = getChildrenEnumerator();
         
+        @Override
         public boolean hasNext() {
             boolean nextTime = current.before(lastValue);
             boolean nextComp = ce.hasNext();
             return (nextTime || nextComp) ;
         }
         
+        @Override
         public JAMSComponent next() {
             // check end of component elements list, if required switch to the next
             // timestep start with the new Component list again
@@ -102,6 +107,7 @@ import org.unijena.jams.data.*;
             return ce.next();
         }
         
+        @Override
         public void reset() {
             current.setValue(timeInterval.getStart().getValue());
             ce.reset();
