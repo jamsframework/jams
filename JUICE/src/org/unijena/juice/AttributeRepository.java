@@ -40,8 +40,7 @@ public class AttributeRepository {
         this.context = context;
     }
     
-    public void addAttribute(ContextAttribute attribute) {
-        
+    public void addAttribute(ContextAttribute attribute) {        
         ArrayList<ContextAttribute> attributes = attributesByType.get(attribute.getType());
         if (attributes == null) {
             attributes = new ArrayList<ContextAttribute>();
@@ -52,15 +51,14 @@ public class AttributeRepository {
     }
     
     public void removeAttribute(ContextAttribute attribute) {
-        ArrayList<ContextAttribute> aList;
-        aList = attributesByType.get(attribute.getType());
+        ArrayList<ContextAttribute> aList = attributesByType.get(attribute.getType());
         aList.remove(attribute);
 //        aList = attributesByName.get(attribute.name);
 //        aList.remove(attribute);
     }
     
     public ArrayList<ContextAttribute> getUniqueAttributesByType(Class type) {
-        ArrayList<ContextAttribute> aList = attributesByType.get(type);
+        ArrayList<ContextAttribute> aList =  getAttributesByType(type);
         
         if (aList == null) {
             return null;
@@ -78,8 +76,23 @@ public class AttributeRepository {
     }
     
     public ArrayList<ContextAttribute> getAttributesByType(Class type) {
-        return attributesByType.get(type);
+        ArrayList<ContextAttribute> result = new ArrayList<ContextAttribute>();
+        for (Class subType : attributesByType.keySet()) {
+            if (type.isAssignableFrom(subType)) {
+                result.addAll(attributesByType.get(subType));
+            }
+        }
+//        return attributesByType.get(type);
+        return result;
     }
 
-    
+    public ContextAttribute getAttributeByTypeName(Class type, String name) {
+        ArrayList<ContextAttribute> attrs = getAttributesByType(type);
+        for (ContextAttribute attr : attrs) {
+            if (attr.getName().equals(name)) {
+                return attr;
+            }
+        }
+        return null;
+    }
 }

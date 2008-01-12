@@ -298,8 +298,8 @@ public class ComponentPanel extends JPanel {
             attrEditDlg = new ContextAttributeDlg(JUICE.getJuiceFrame());
         }
         
-        String componentName = attrNameList.get(selectedAttrRow);
-        ContextAttribute attr = componentDescriptor.getContextAttributes().get(componentName);
+        String attributeName = attrNameList.get(selectedAttrRow);
+        ContextAttribute attr = componentDescriptor.getContextAttributes().get(attributeName);
         attrEditDlg.show(attr.getName(), attr.getType().getName(), attr.getValue());
         
         if (attrEditDlg.getResult() == ContextAttributeDlg.APPROVE_OPTION) {

@@ -38,7 +38,7 @@ public class ComponentDescriptor {
     private String instanceName;
     private Class clazz;
     private JAMSTree tree;
-    private HashMap<String, ComponentAttribute> cVars = new HashMap<String, ComponentAttribute>();
+    private HashMap<String, ComponentAttribute> componentAttributes = new HashMap<String, ComponentAttribute>();
     private HashMap<String, ContextAttribute> contextAttributes = new HashMap<String, ContextAttribute>();
     private AttributeRepository dataRepository;
 
@@ -104,6 +104,7 @@ public class ComponentDescriptor {
         } else {
             ma = new ContextAttribute(name, type, this);
             getContextAttributes().put(name, ma);
+            getDataRepository().addAttribute(ma);
         }
 
         ma.setValue(value);
@@ -112,7 +113,9 @@ public class ComponentDescriptor {
     }
 
     public void removeContextAttribute(String name) {
+        ContextAttribute ca = getContextAttributes().get(name);
         getContextAttributes().remove(name);
+        getDataRepository().removeAttribute(ca);
     }
 
     public void setComponentAttribute_(String name, String value) {
@@ -133,11 +136,11 @@ public class ComponentDescriptor {
     public ComponentDescriptor clone(JAMSTree target) {
         ModelView view = JUICE.getJuiceFrame().getCurrentView();
         ComponentDescriptor copy = new ComponentDescriptor(getName(), getClazz(), target);
-        for (String name : cVars.keySet()) {
-            ComponentAttribute ca = cVars.get(name);
+        for (String name : componentAttributes.keySet()) {
+            ComponentAttribute ca = componentAttributes.get(name);
             ComponentAttribute caCopy = new ComponentAttribute(ca.name, ca.type, ca.accessType);
             caCopy.setValue(ca.getValue());
-            copy.cVars.put(name, caCopy);
+            copy.componentAttributes.put(name, caCopy);
             if (ca.getContextAttribute() != null) {
                 caCopy.linkToAttribute(ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
             //copy.linkComponentAttribute(ca.name, ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
@@ -162,7 +165,7 @@ public class ComponentDescriptor {
     }
 
     public HashMap<String, ComponentAttribute> getComponentAttributes() {
-        return cVars;
+        return componentAttributes;
     }
 
     public HashMap<String, ContextAttribute> getContextAttributes() {
@@ -194,7 +197,6 @@ public class ComponentDescriptor {
     public AttributeRepository getDataRepository() {
         return dataRepository;
     }
-
 
     public class ComponentAttribute {
 
@@ -256,38 +258,40 @@ public class ComponentDescriptor {
             }
             this.contextAttribute = null;
         }
-/*
+        /*
         public void linkToAttribute(ComponentDescriptor context, String contextAttributeName) {
-
-            if (!this.type.isArray()) {
-                // if the type is not an array, simply create a context attribute
-                // and add it to the repository
-                linkToAttribute_(context, contextAttributeName);
-            } else {
-                linkToAttribute_(context, contextAttributeName);
-
-                System.out.println(ComponentDescriptor.this.getName() + " -> " + contextAttributeName);
-                // if it is an array, tokenize the attribute string (semicolon-separated)
-                // and do the above for every token
-                String[] values = JAMSTools.arrayStringAsStringArray(contextAttributeName);
-                for (String value : values) {
-                    linkToAttribute_(context, value);
-                }
-            }
+        if (!this.type.isArray()) {
+        // if the type is not an array, simply create a context attribute
+        // and add it to the repository
+        linkToAttribute_(context, contextAttributeName);
+        } else {
+        linkToAttribute_(context, contextAttributeName);
+        System.out.println(ComponentDescriptor.this.getName() + " -> " + contextAttributeName);
+        // if it is an array, tokenize the attribute string (semicolon-separated)
+        // and do the above for every token
+        String[] values = JAMSTools.arrayStringAsStringArray(contextAttributeName);
+        for (String value : values) {
+        linkToAttribute_(context, value);
         }
-*/
+        }
+        }
+         */
+
         public void linkToAttribute(ComponentDescriptor context, String contextAttributeName) {
 
 
-            // create a context attribute object
-            ContextAttribute a = new ContextAttribute(contextAttributeName, this.type, context);
+            // this will be the attribute object to be linked
+            ContextAttribute attribute;
 
             // if access is W or R/W (not R), then the component authomatically
             // creates a new context attribute which is registered at the
             // contexts attribute repository in order to be accessed by
             // other components
             if (this.accessType != ComponentAttribute.READ_ACCESS) {
-                
+
+                // create a context attribute object
+                attribute = new ContextAttribute(contextAttributeName, this.type, context);
+
 //                if ((this.accessType == ComponentAttribute.WRITE_ACCESS) && this.type.isArray()) {
 //                    System.out.println(ComponentDescriptor.this.getName() + " -> " + contextAttributeName);
 //                }
@@ -301,11 +305,20 @@ public class ComponentDescriptor {
                 }
 
                 AttributeRepository newRepo = context.getDataRepository();
-                newRepo.addAttribute(a);
+                newRepo.addAttribute(attribute);
+            } else {
+                //check if this one has been already declared by some writing component attribute
+                attribute = context.getDataRepository().getAttributeByTypeName(this.type, contextAttributeName);
+                
+                // check if still not available
+                // this happens, if the attribute has been implicitly declared by an entity set
+                if (attribute == null) {
+                     attribute = new ContextAttribute(contextAttributeName, this.type, context);
+                }
             }
 
             // finally, set the component attributes context and context attribute
-            this.contextAttribute = a;
+            this.contextAttribute = attribute;
         //ca.context = context;
         //ca.attribute = contextAttributeName;
         }
@@ -314,6 +327,5 @@ public class ComponentDescriptor {
             this.value = value;
         }
     }
-
 }
 

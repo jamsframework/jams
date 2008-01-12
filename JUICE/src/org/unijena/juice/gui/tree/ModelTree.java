@@ -603,14 +603,14 @@ public class ModelTree extends JAMSTree {
                 // and add it to the repository
                 String value = e.getAttribute("value");
                 cd.addContextAttribute(attribute, type, value);
-                cd.getDataRepository().addAttribute(new ContextAttribute(attribute, type, cd));
+//                cd.getDataRepository().addAttribute(new ContextAttribute(attribute, type, cd));
             } else {
                 // if it is an array, tokenize the attribute string (semicolon-separated)
                 // and do the above for every token
                 String[] values = JAMSTools.arrayStringAsStringArray(attribute);
                 for (String value : values) {
                     cd.addContextAttribute(attribute, type, value);
-                    cd.getDataRepository().addAttribute(new ContextAttribute(attribute, type, cd));
+//                    cd.getDataRepository().addAttribute(new ContextAttribute(attribute, type, cd));
                 }
             }
 
