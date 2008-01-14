@@ -39,6 +39,7 @@ import java.util.Observer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import org.unijena.jams.JAMS;
@@ -106,7 +107,16 @@ public class StandardRuntime implements JAMSRuntime {
 
                 public void update(Observable obs, Object obj) {
                     //LHelper.showErrorDlg(frame, "An error has occurred! Please check the error log for further information!", "JAMS Error");
-                    LHelper.showErrorDlg(frame, obj.toString(), "Model execution error");
+                    //LHelper.showErrorDlg(frame, obj.toString(), "Model execution error");
+
+                    Object[] options = {"OK", "OK, skip other messages"};
+                    int result = JOptionPane.showOptionDialog(frame, obj.toString(), "Model execution error",
+                            JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+
+                    if (result == 1) {
+                        StandardRuntime.this.deleteErrorLogObserver(this);
+                    }
+
                 }
             });
         }
@@ -377,8 +387,16 @@ public class StandardRuntime implements JAMSRuntime {
         infoLog.addObserver(o);
     }
 
+    public void deleteInfoLogObserver(Observer o) {
+        infoLog.deleteObserver(o);
+    }
+
     public void addErrorLogObserver(Observer o) {
         errorLog.addObserver(o);
+    }
+
+    public void deleteErrorLogObserver(Observer o) {
+        errorLog.deleteObserver(o);
     }
 
     public String getErrorLog() {

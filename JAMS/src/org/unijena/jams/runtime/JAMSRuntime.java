@@ -51,6 +51,8 @@ public interface JAMSRuntime {
     public void addRunStateObserver(Observer o);
     public void addInfoLogObserver(Observer o);
     public void addErrorLogObserver(Observer o);
+    public void deleteInfoLogObserver(Observer o);
+    public void deleteErrorLogObserver(Observer o);
     public String getErrorLog();
     public String getInfoLog();
     public void sendErrorMsg(String str);

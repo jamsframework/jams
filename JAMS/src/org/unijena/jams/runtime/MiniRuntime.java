@@ -104,15 +104,16 @@ public class MiniRuntime implements JAMSRuntime {
         return -1;
     }
     
-    public void addRunStateObserver(Observer o) {
-    }
+    public void addRunStateObserver(Observer o) {}
     
-    public void addInfoLogObserver(Observer o) {
-    }
+    public void addInfoLogObserver(Observer o) {}
     
-    public void addErrorLogObserver(Observer o) {
-    }
+    public void addErrorLogObserver(Observer o) {}
     
+    public void deleteInfoLogObserver(Observer o) {}
+    
+    public void deleteErrorLogObserver(Observer o) {}
+
     public String getErrorLog() {
         return "";
     }
