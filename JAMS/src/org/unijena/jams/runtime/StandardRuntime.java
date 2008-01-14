@@ -106,8 +106,6 @@ public class StandardRuntime implements JAMSRuntime {
             this.addErrorLogObserver(new Observer() {
 
                 public void update(Observable obs, Object obj) {
-                    //LHelper.showErrorDlg(frame, "An error has occurred! Please check the error log for further information!", "JAMS Error");
-                    //LHelper.showErrorDlg(frame, obj.toString(), "Model execution error");
 
                     Object[] options = {"OK", "OK, skip other messages"};
                     int result = JOptionPane.showOptionDialog(frame, obj.toString(), "Model execution error",
