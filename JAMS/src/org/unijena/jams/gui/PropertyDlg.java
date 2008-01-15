@@ -43,7 +43,7 @@ public class PropertyDlg extends JDialog {
 
     private static final int JCOMP_HEIGHT = 20;
     private ListInput list;
-    private BooleanInput verboseCheck,  windowEnable,  windowOnTop;
+    private BooleanInput verboseCheck,  windowEnable,  windowOnTop, errorDlg;
     private JSpinner debugSpinner;
     private FileInput infoFile,  errorFile;
     private TextInput windowHeight,  windowWidth;
@@ -117,6 +117,12 @@ public class PropertyDlg extends JDialog {
         LHelper.addGBComponent(contentPanel, gbl, windowEnable, 1, y, 1, 1, 1, 1);
 
         y++;
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Show dialog on errors:"), 0, y, 1, 1, 0, 0);
+        errorDlg = new BooleanInput();
+        errorDlg.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
+        LHelper.addGBComponent(contentPanel, gbl, errorDlg, 1, y, 1, 1, 1, 1);        
+        
+        y++;
         LHelper.addGBComponent(contentPanel, gbl, new JLabel("Model window on top:"), 0, y, 1, 1, 0, 0);
         windowOnTop = new BooleanInput();
         windowOnTop.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
@@ -188,6 +194,7 @@ public class PropertyDlg extends JDialog {
         infoFile.setFile(properties.getProperty("infolog"));
 
         windowEnable.setValue(properties.getProperty("windowenable"));
+        errorDlg.setValue(properties.getProperty("errordlg"));
         windowOnTop.setValue(properties.getProperty("windowontop"));
 
         windowHeight.setValue(properties.getProperty("windowheight"));
@@ -211,6 +218,7 @@ public class PropertyDlg extends JDialog {
         properties.setProperty("errorlog", errorFile.getFileName());
         properties.setProperty("infolog", infoFile.getFileName());
         properties.setProperty("windowenable", windowEnable.getValue());
+        properties.setProperty("errordlg", errorDlg.getValue());
         properties.setProperty("windowontop", windowOnTop.getValue());
         properties.setProperty("windowheight", windowHeight.getValue());
         properties.setProperty("windowwidth", windowWidth.getValue());

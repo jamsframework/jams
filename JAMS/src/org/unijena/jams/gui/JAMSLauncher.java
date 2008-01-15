@@ -362,7 +362,7 @@ public class JAMSLauncher extends JFrame {
         fileMenu.add(exitItem);
         getMainMenu().add(fileMenu);
 
-        JMenu editMenu = new JMenu("Edit");
+        JMenu editMenu = new JMenu("Extras");
         JMenuItem editOptionsItem = new JMenuItem("Edit Options");
         editOptionsItem.addActionListener(new ActionListener() {
 
