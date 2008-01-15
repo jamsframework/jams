@@ -179,7 +179,7 @@ public class PropertyDlg extends JDialog {
 
     @Override
     protected JRootPane createRootPane() {
-        JRootPane pane = new JRootPane();
+        JRootPane pane = super.createRootPane();
         Action actionListener = new AbstractAction() {
 
             public void actionPerformed(ActionEvent actionEvent) {
