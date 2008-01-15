@@ -25,6 +25,7 @@ package org.unijena.jams.gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.*;
@@ -43,7 +44,7 @@ public class PropertyDlg extends JDialog {
 
     private static final int JCOMP_HEIGHT = 20;
     private ListInput list;
-    private BooleanInput verboseCheck,  windowEnable,  windowOnTop, errorDlg;
+    private BooleanInput verboseCheck,  windowEnable,  windowOnTop,  errorDlg;
     private JSpinner debugSpinner;
     private FileInput infoFile,  errorFile;
     private TextInput windowHeight,  windowWidth;
@@ -57,7 +58,7 @@ public class PropertyDlg extends JDialog {
         super(owner);
         this.setLayout(new BorderLayout());
         this.setLocationRelativeTo(owner);
-        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         this.properties = properties;
 
@@ -120,8 +121,8 @@ public class PropertyDlg extends JDialog {
         LHelper.addGBComponent(contentPanel, gbl, new JLabel("Show dialog on errors:"), 0, y, 1, 1, 0, 0);
         errorDlg = new BooleanInput();
         errorDlg.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
-        LHelper.addGBComponent(contentPanel, gbl, errorDlg, 1, y, 1, 1, 1, 1);        
-        
+        LHelper.addGBComponent(contentPanel, gbl, errorDlg, 1, y, 1, 1, 1, 1);
+
         y++;
         LHelper.addGBComponent(contentPanel, gbl, new JLabel("Model window on top:"), 0, y, 1, 1, 0, 0);
         windowOnTop = new BooleanInput();
@@ -150,13 +151,14 @@ public class PropertyDlg extends JDialog {
             }
         });
         buttonPanel.add(okButton);
+        getRootPane().setDefaultButton(okButton);
+
 
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-                result = CANCEL_OPTION;
+                cancel();
             }
         });
         buttonPanel.add(cancelButton);
@@ -168,6 +170,27 @@ public class PropertyDlg extends JDialog {
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
         pack();
+    }
+
+    private void cancel() {
+        setVisible(false);
+        result = CANCEL_OPTION;
+    }
+
+    @Override
+    protected JRootPane createRootPane() {
+        JRootPane pane = new JRootPane();
+        Action actionListener = new AbstractAction() {
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                cancel();
+            }
+        };
+        InputMap inputMap = pane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        inputMap.put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
+        pane.getActionMap().put("ESCAPE", actionListener);
+
+        return pane;
     }
 
     public void setProperties(JAMSProperties properties) {
