@@ -24,20 +24,11 @@
 package jams.remote.client;
 
 import java.io.File;
-import java.io.IOException;
 import javax.swing.UIManager;
 import org.unijena.jams.JAMS;
 import org.unijena.jams.JAMSCmdLine;
 import org.unijena.jams.JAMSProperties;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.gui.JAMSLauncher;
 import org.unijena.jams.gui.JAMSSplash;
-import org.unijena.jams.io.XMLIO;
-import org.unijena.jams.io.XMLProcessor;
-import org.unijena.jams.runtime.JAMSRuntime;
-import org.unijena.jams.runtime.StandardRuntime;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 /**
  *
