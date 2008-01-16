@@ -146,8 +146,7 @@ public class PropertyDlg extends JDialog {
         okButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-                result = APPROVE_OPTION;
+                ok();
             }
         });
         buttonPanel.add(okButton);
@@ -177,18 +176,33 @@ public class PropertyDlg extends JDialog {
         result = CANCEL_OPTION;
     }
 
+    private void ok() {
+        setVisible(false);
+        result = APPROVE_OPTION;
+    }
+
     @Override
     protected JRootPane createRootPane() {
         JRootPane pane = super.createRootPane();
-        Action actionListener = new AbstractAction() {
+        Action cancelAction = new AbstractAction() {
 
+            @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 cancel();
             }
         };
+        Action okAction = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                ok();
+            }
+        };
         InputMap inputMap = pane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         inputMap.put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
-        pane.getActionMap().put("ESCAPE", actionListener);
+        inputMap.put(KeyStroke.getKeyStroke("ENTER"), "ENTER");
+        pane.getActionMap().put("ESCAPE", cancelAction);
+        pane.getActionMap().put("ENTER", okAction);
 
         return pane;
     }
