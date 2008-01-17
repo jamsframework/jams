@@ -99,6 +99,8 @@ public class StandardRuntime implements JAMSRuntime {
             });
         }
 
+        //bla
+        
         int errorDlg = Integer.parseInt(properties.getProperty("errordlg", "0"));
         if (errorDlg != 0) {
 
