@@ -28,7 +28,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import org.unijena.jams.JAMSTools;
 
 /**
  *
@@ -78,7 +77,7 @@ public class PGSQLConnector {
 
             pgsql.connect();
             
-            String query = JAMSTools.fileToString("D:/jams/RBISDesk/timeseries.sql");
+            String query = org.unijena.jams.JAMSTools.fileToString("D:/jams/RBISDesk/timeseries.sql");
             ResultSet rs = pgsql.execQuery(query);
             
             ResultSetMetaData rsmd = rs.getMetaData();
