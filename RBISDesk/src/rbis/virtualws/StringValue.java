@@ -1,7 +1,6 @@
 package rbis.virtualws;
 
-
-public class StringValue implements DataObject {
+public class StringValue implements DataValue {
 
     private String value;
 
@@ -13,7 +12,7 @@ public class StringValue implements DataObject {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public String getString() {
+    public Object getObject() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -25,9 +24,8 @@ public class StringValue implements DataObject {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setString(String value) {
+    public void setObject(Object value) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
 }
 

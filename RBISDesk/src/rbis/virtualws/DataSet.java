@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 public class DataSet {
 
-    public ArrayList<DataObject> getData () {
+    public ArrayList<DataValue> getData () {
         return null;
     }
 
-    public void setData (ArrayList<DataObject> data) {
+    public void setData (ArrayList<DataValue> data) {
     }
 
 }
