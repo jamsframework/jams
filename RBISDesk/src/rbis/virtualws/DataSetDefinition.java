@@ -24,6 +24,7 @@ package rbis.virtualws;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Set;
 
 public class DataSetDefinition {
@@ -62,8 +63,29 @@ public class DataSetDefinition {
         return list;
     }
 
-    public void setAttributeValues(String attributeName, ArrayList<Object> values) {
+    public boolean setAttributeValues(String attributeName, ArrayList<Object> values) {
+
+        //check if size matches
+        if (values.size() != columnCount) {
+            return false;
+        }
+        
+        //check if attribute exists
+        if (!attributes.containsKey(attributeName)) {
+            return false;
+        }
+        
+        //check if provided values are compatible to attribute types
+        Class<?> type = attributes.get(attributeName);
+        for (int i = 0; i < values.size(); i++) {
+            if (!type.isAssignableFrom(values.get(i).getClass())) {
+                System.out.println("Invalid type in dataset definition: " + values.get(i).getClass()  + "<->" + type);
+                return false;
+            }
+        }
+        
         attributeValues.put(attributeName, values);
+        return true;
     }
 
     public void removeAttribute(String attributeName) {
@@ -123,7 +145,38 @@ public class DataSetDefinition {
         def.addAttribute("LAT", Double.class);
         def.addAttribute("LONG", Double.class);
         def.addAttribute("HEIGHT", Double.class);
+        
+        ArrayList<Object> values = new ArrayList<Object>();
+        values.add(new Long(0));
+        values.add(new Long(1));
+        values.add(new Long(2));
+        values.add(new Long(12));
+        def.setAttributeValues("ID", values);
 
+        values = new ArrayList<Object>();
+        values.add("Tmean");
+        values.add("Tmin");
+        values.add("Tmax");
+        values.add("Precip");
+        def.setAttributeValues("NAME", values);
+        
+        Random r = new Random(42);
+        values = new ArrayList<Object>();
+        for (int i = 0; i < 4; i++) {
+            values.add(100000 * new Double(r.nextDouble()));
+        }
+        def.setAttributeValues("LAT", values);
+        values = new ArrayList<Object>();
+        for (int i = 0; i < 4; i++) {
+            values.add(100000 * new Double(r.nextDouble()));
+        }
+        def.setAttributeValues("LONG", values);
+        values = new ArrayList<Object>();
+        for (int i = 0; i < 4; i++) {
+            values.add(100 * new Double(r.nextDouble()));
+        }
+        def.setAttributeValues("HEIGHT", values);
+        
         System.out.println(def.toASCIIString());
     }
 }
