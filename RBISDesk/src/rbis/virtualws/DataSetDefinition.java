@@ -23,39 +23,108 @@
 package rbis.virtualws;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 public class DataSetDefinition {
 
+    private int columnCount;
     private ArrayList<Class> dataTypes;
+    private ArrayList<String> attributeNames = new ArrayList<String>();
+    private HashMap<String, Class> attributes = new HashMap<String, Class>();
+    private HashMap<String, ArrayList<Object>> attributeValues = new HashMap<String, ArrayList<Object>>();
 
     public DataSetDefinition(ArrayList<Class> dataTypes) {
         this.dataTypes = dataTypes;
+        columnCount = dataTypes.size();
     }
 
-    public AttributeDefinition getAttribute(String title) {
-        return null;
+    public Class getType(String attributeName) {
+        return attributes.get(attributeName);
     }
 
-    public Object getAttributeValue(AttributeDefinition attribute, int column) {
-        return null;
+    public Object getAttributeValue(String attributeName, int column) {
+        ArrayList<Object> values = attributeValues.get(attributeName);
+        return values.get(column);
     }
 
-    public ArrayList<Object> getAttributeValues(AttributeDefinition attribute) {
-        return null;
+    public ArrayList<Object> getAttributeValues(String attributeName) {
+        return attributeValues.get(attributeName);
     }
 
     public ArrayList<Object> getAttributeValues(int column) {
-        return null;
+
+        ArrayList<Object> list = new ArrayList<Object>();
+        for (String attributeName : attributeNames) {
+            list.add(getAttributeValue(attributeName, column));
+        }
+
+        return list;
     }
 
-    public void removeAttribute(AttributeDefinition attribute) {
+    public void setAttributeValues(String attributeName, ArrayList<Object> values) {
+        attributeValues.put(attributeName, values);
     }
 
-    public void addAttribute(Class type) {
+    public void removeAttribute(String attributeName) {
+        attributeNames.remove(attributeName);
+        attributes.remove(attributeName);
+        attributeValues.remove(attributeName);
     }
 
-    ArrayList<AttributeDefinition> getAttributes() {
-        return null;
+    public void addAttribute(String attributeName, Class type) {
+        attributeNames.add(attributeName);
+        attributes.put(attributeName, type);
+        ArrayList<Object> values = new ArrayList<Object>();
+        for (int i = 0; i < getColumnCount(); i++) {
+            values.add(null);
+        }
+        attributeValues.put(attributeName, values);
+    }
+
+    public Set<String> getAttributes() {
+        return attributes.keySet();
+    }
+
+    public int getColumnCount() {
+        return columnCount;
+    }
+
+    public String toASCIIString() {
+        String result = "";
+
+        for (String attributeName : attributeNames) {
+
+            result += "#" + attributeName;
+
+            ArrayList<Object> values = getAttributeValues(attributeName);
+            for (Object value : values) {
+                result += "\t" + value;
+            }
+
+            result += "\n";
+        }
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+
+        ArrayList<Class> dataTypes = new ArrayList<Class>();
+        dataTypes.add(Double.class);
+        dataTypes.add(Long.class);
+        dataTypes.add(String.class);
+        dataTypes.add(Object.class);
+
+        DataSetDefinition def = new DataSetDefinition(dataTypes);
+
+        def.addAttribute("ID", Long.class);
+        def.addAttribute("NAME", String.class);
+        def.addAttribute("LAT", Double.class);
+        def.addAttribute("LONG", Double.class);
+        def.addAttribute("HEIGHT", Double.class);
+
+        System.out.println(def.toASCIIString());
     }
 }
 
