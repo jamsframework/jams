@@ -69,21 +69,21 @@ public class DataSetDefinition {
         if (values.size() != columnCount) {
             return false;
         }
-        
+
         //check if attribute exists
         if (!attributes.containsKey(attributeName)) {
             return false;
         }
-        
+
         //check if provided values are compatible to attribute types
         Class<?> type = attributes.get(attributeName);
         for (int i = 0; i < values.size(); i++) {
             if (!type.isAssignableFrom(values.get(i).getClass())) {
-                System.out.println("Invalid type in dataset definition: " + values.get(i).getClass()  + "<->" + type);
+                System.out.println("Invalid type in dataset definition: " + values.get(i).getClass() + "<->" + type);
                 return false;
             }
         }
-        
+
         attributeValues.put(attributeName, values);
         return true;
     }
@@ -127,6 +127,12 @@ public class DataSetDefinition {
             result += "\n";
         }
 
+        result += "#_TYPE_";
+        for (Class type : dataTypes) {
+            result += "\t" + type.getSimpleName();
+        }
+        result += "\n";
+
         return result;
     }
 
@@ -145,7 +151,7 @@ public class DataSetDefinition {
         def.addAttribute("LAT", Double.class);
         def.addAttribute("LONG", Double.class);
         def.addAttribute("HEIGHT", Double.class);
-        
+
         ArrayList<Object> values = new ArrayList<Object>();
         values.add(new Long(0));
         values.add(new Long(1));
@@ -159,7 +165,7 @@ public class DataSetDefinition {
         values.add("Tmax");
         values.add("Precip");
         def.setAttributeValues("NAME", values);
-        
+
         Random r = new Random(42);
         values = new ArrayList<Object>();
         for (int i = 0; i < 4; i++) {
@@ -176,7 +182,7 @@ public class DataSetDefinition {
             values.add(100 * new Double(r.nextDouble()));
         }
         def.setAttributeValues("HEIGHT", values);
-        
+
         System.out.println(def.toASCIIString());
     }
 }
