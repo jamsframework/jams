@@ -32,7 +32,7 @@ import org.unijena.jams.data.JAMSBoolean;
 "conditionally execute components. This context must contain two components. If \"condition\" is true, the first one will be executed, otherwise the second one.")
 public class JAMSConditionalContext extends JAMSContext {
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Time interval of temporal context")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining which component to execute")
     public JAMSBoolean condition;
 
     public JAMSConditionalContext() {
