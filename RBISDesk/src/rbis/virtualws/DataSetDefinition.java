@@ -127,7 +127,7 @@ public class DataSetDefinition {
             result += "\n";
         }
 
-        result += "#_TYPE_";
+        result += "#TYPE_";
         for (Class type : dataTypes) {
             result += "\t" + type.getSimpleName();
         }
