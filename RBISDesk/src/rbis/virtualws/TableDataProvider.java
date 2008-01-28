@@ -22,6 +22,11 @@
  */
 package rbis.virtualws;
 
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
+import org.unijena.jams.data.JAMSCalendar;
 import org.unijena.jams.io.XMLIO;
 import org.w3c.dom.Document;
 
@@ -57,6 +62,12 @@ public class TableDataProvider {
         //System.out.println(XMLIO.getStringFromDocument(doc));
         
         TableDataProvider provider = new TableDataProvider(doc);
+        
+        
+        JAMSCalendar cal = new JAMSCalendar();
+        cal.set(1925, 10, 1, 0, 0, 0);
+        System.out.println(cal);
+        System.out.println(cal.getTimeInMillis()/1000); //should be -1393804800
         
     }
 
