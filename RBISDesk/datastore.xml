@@ -19,8 +19,8 @@
         </datasource>
         
 	<column id="time"   position="0">
-		<columnsource> source="index" sourcecolumn="1" starttime="1996-11-01 7:30" />
-		<columnsource> source="mydatatreader1" sourcecolumn="1" starttime="1996-11-01 7:30" />
+		<columnsource source="index" sourcecolumn="1" starttime="1996-11-01 7:30" />
+		<columnsource source="mydatatreader1" sourcecolumn="1" starttime="1996-11-01 7:30" />
 	</column>
       
     </timeseries>
