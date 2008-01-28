@@ -33,13 +33,13 @@ public class JAMSCalendar extends GregorianCalendar implements JAMSData {
     public JAMSCalendar() {
         super();
         this.setTimeInMillis(0);
-        java.util.SimpleTimeZone stz = new java.util.SimpleTimeZone(3600000, "MEZsimple");
+        java.util.SimpleTimeZone stz = new java.util.SimpleTimeZone(0, "GMT");
         this.setTimeZone(stz);
     }
 
     public JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second) {
         super(year, month, dayOfMonth, hourOfDay, minute, second);
-        java.util.SimpleTimeZone stz = new java.util.SimpleTimeZone(3600000, "MEZsimple");
+        java.util.SimpleTimeZone stz = new java.util.SimpleTimeZone(0, "GMT");
         this.setTimeZone(stz);
     }
 
