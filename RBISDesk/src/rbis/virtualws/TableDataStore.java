@@ -22,6 +22,10 @@
  */
 package rbis.virtualws;
 
+/**
+ *
+ * @author Sven Kralisch
+ */
 public class TableDataStore implements DataStore {
 
     private String title,  description;

@@ -27,6 +27,11 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 
+
+/**
+ *
+ * @author Sven Kralisch
+ */
 public class DataSetDefinition {
 
     private int columnCount;

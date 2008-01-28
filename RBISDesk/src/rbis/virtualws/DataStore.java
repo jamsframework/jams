@@ -22,6 +22,10 @@
  */
 package rbis.virtualws;
 
+/**
+ *
+ * @author Sven Kralisch
+ */
 public interface DataStore {
     
     public String getTitle();
