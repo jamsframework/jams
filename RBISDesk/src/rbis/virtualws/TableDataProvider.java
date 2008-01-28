@@ -20,26 +20,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package rbis.virtualws;
+
+import org.unijena.jams.io.XMLIO;
+import org.w3c.dom.Document;
 
 /**
  *
  * @author Sven Kralisch
  */
 public class TableDataProvider {
-    
-    public TableDataProvider() {
 
     
+    private Document xmlDoc;
+    
+    public TableDataProvider(Document xmlDoc) {
+        this.xmlDoc = xmlDoc;
+        parseXML();
+    }
+
+    private void parseXML() {
+        
     }
     
     public boolean hasNext() {
         return false;
     }
-    
+
     public DataSet getNext() {
         return null;
     }
     
+    public static void main(String[] args) throws Exception  {
+        
+        Document doc = XMLIO.getDocument("D:/jams/RBISDesk/datastore.xml");
+        //System.out.println(XMLIO.getStringFromDocument(doc));
+        
+        TableDataProvider provider = new TableDataProvider(doc);
+        
+    }
+
 }
