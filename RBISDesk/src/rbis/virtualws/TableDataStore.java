@@ -20,20 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package rbis.virtualws;
 
 public class TableDataStore implements DataStore {
 
-    private String title, description;
+    private String title,  description;
     private DataSetDefinition dsDef;
+    private TableDataProvider provider;
+
+    public TableDataStore() {
+        this.provider = null;
+    }
+
+    public TableDataStore(TableDataProvider provider) {
+        this.provider = provider;
+    }
 
     public boolean hasNext() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return provider.hasNext();
     }
 
     public DataSet getNext() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return provider.getNext();
     }
 
     public String getTitle() {
@@ -60,4 +68,3 @@ public class TableDataStore implements DataStore {
         this.dsDef = dsDef;
     }
 }
-

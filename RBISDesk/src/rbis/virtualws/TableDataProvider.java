@@ -1,6 +1,6 @@
 /*
- * DataStore.java
- * Created on 23. Januar 2008, 15:46
+ * DataProvider.java
+ * Created on 28. Januar 2008, 13:12
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -20,25 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
+
 package rbis.virtualws;
 
-public interface DataStore {
+/**
+ *
+ * @author Sven Kralisch
+ */
+public class TableDataProvider {
     
-    public String getTitle();
+    public TableDataProvider() {
 
-    public void setTitle(String title);
-
-    public String getDescription();
-
-    public void setDescription(String descriptiom);
-
-    public boolean hasNext();
-
-    public DataSet getNext();
     
-    public DataSetDefinition getDataSetDefinition();
+    }
     
-    public void setDataSetDefinition(DataSetDefinition dsDef);
-
+    public boolean hasNext() {
+        return false;
+    }
+    
+    public DataSet getNext() {
+        return null;
+    }
+    
 }
-
