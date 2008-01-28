@@ -88,6 +88,39 @@ public class DataSetDefinition {
         return true;
     }
 
+    public boolean setAttributeValues(int column, ArrayList<Object> values) {
+
+        //check if size matches
+        if (values.size() != attributeNames.size()) {
+            return false;
+        }
+
+        //check if column exists
+        if ((column < 0) || (column >= columnCount)) {
+            return false;
+        }
+
+//        for (int i = 0; i < attributeNames.size(); i++) {
+        int i = 0;
+        for (String attributeName : attributeNames) {
+
+            //check if provided values are compatible to attribute types
+            Class<?> type = attributes.get(attributeName);
+
+            if (!type.isAssignableFrom(values.get(i).getClass())) {
+                System.out.println("Invalid type in dataset definition: " + values.get(i).getClass() + "<->" + type);
+                return false;
+            }
+
+            ArrayList<Object> valueRow = attributeValues.get(attributeName);
+            valueRow.set(column, values.get(i));
+
+            i++;
+        }
+
+        return true;
+    }
+
     public void removeAttribute(String attributeName) {
         attributeNames.remove(attributeName);
         attributes.remove(attributeName);
@@ -182,6 +215,14 @@ public class DataSetDefinition {
             values.add(100 * new Double(r.nextDouble()));
         }
         def.setAttributeValues("HEIGHT", values);
+
+        values = new ArrayList<Object>();
+        values.add(new Long(42));
+        values.add("Vmax");
+        values.add(new Double(42000));
+        values.add(new Double(84000));
+        values.add(new Double(-1));
+        def.setAttributeValues(0, values);
 
         System.out.println(def.toASCIIString());
     }
