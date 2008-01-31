@@ -30,12 +30,22 @@ public class DataSet {
 
     DataValue[] data;
 
+    public DataSet(int size) {
+        data = new DataValue[size];
+    }
+    
     public DataValue[] getData() {
         return data;
     }
 
+    public void setData(int index, DataValue data) {
+        this.data[index] = data;
+    }    
+    
     public void setData(DataValue[] data) {
         this.data = data;
     }
+    
+    
 }
 

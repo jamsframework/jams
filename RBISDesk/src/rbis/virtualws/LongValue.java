@@ -4,6 +4,10 @@ public class LongValue implements DataValue {
 
     private Long value;
 
+    public LongValue(long value) {
+        this.value = new Long(value);
+    }
+
     public double getDouble() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

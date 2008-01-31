@@ -3,6 +3,10 @@ package rbis.virtualws;
 public class DoubleValue implements DataValue {
 
     private Double value;
+    
+    public DoubleValue(double value) {
+        this.value = new Double(value);
+    }
 
     public double getDouble() {
         return value.doubleValue();

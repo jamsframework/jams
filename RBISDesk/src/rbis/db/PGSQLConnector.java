@@ -87,7 +87,7 @@ public class PGSQLConnector {
             while (rs.next()) {
                 System.out.println("Line " + rowCount + ": ");
                 for (int i = 1; i <= numberOfColumns; i++) {
-                    System.out.print("\t" + rsmd.getColumnName(i) + ": ");
+                    System.out.print("\t" + rsmd.getColumnTypeName(i) + ": ");
                     System.out.println(rs.getString(i));
                 }
                 System.out.println("");

@@ -4,6 +4,10 @@ public class ObjectValue implements DataValue {
 
     private Object value;
 
+    public ObjectValue(Object value) {
+        this.value = value;
+    }
+
     public double getDouble() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

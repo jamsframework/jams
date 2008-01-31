@@ -28,6 +28,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import rbis.db.PGSQLConnector;
 import rbis.virtualws.DataSet;
+import rbis.virtualws.DataValue;
+import rbis.virtualws.DoubleValue;
+import rbis.virtualws.LongValue;
+import rbis.virtualws.ObjectValue;
+import rbis.virtualws.StringValue;
 
 /**
  *
@@ -35,10 +40,16 @@ import rbis.virtualws.DataSet;
  */
 public class RBISPgSQL implements DataReader {
 
+    private static final int DOUBLE = 0;
+    private static final int LONG = 1;
+    private static final int STRING = 2;
+    private static final int OBJECT = 3;
     private String user,  password,  host,  db,  query;
     private ResultSet rs;
     private ResultSetMetaData rsmd;
     private PGSQLConnector pgsql;
+    private int numberOfColumns;
+    private int[] type;
 
     public RBISPgSQL() {
     }
@@ -79,30 +90,35 @@ public class RBISPgSQL implements DataReader {
 
         ArrayList<DataSet> data = new ArrayList<DataSet>();
         DataSet dataSet;
+        DataValue value;
 
         try {
 
             int i = 0;
             while (rs.next() && i < count) {
                 i++;
-                dataSet = new DataSet();
-                
-                
+                dataSet = new DataSet(numberOfColumns);
+
+                for (int j = 0; j < numberOfColumns; j++) {
+
+                    switch (type[j]) {
+                        case DOUBLE:
+                            value = new DoubleValue(rs.getDouble(j + 1));
+                            dataSet.setData(j, value);
+                        case LONG:
+                            value = new LongValue(rs.getLong(j + 1));
+                            dataSet.setData(j, value);
+                        case STRING:
+                            value = new StringValue(rs.getString(j + 1));
+                            dataSet.setData(j, value);
+                        default:
+                            value = new ObjectValue(rs.getObject(j + 1));
+                            dataSet.setData(j, value);
+                    }
+                }
+                data.add(dataSet);
             }
 
-        /*            
-        int numberOfColumns = rsmd.getColumnCount();
-        int rowCount = 1;
-        while (rs.next()) {
-        System.out.println("Line " + rowCount + ": ");
-        for (int i = 1; i <= numberOfColumns; i++) {
-        System.out.print("\t" + rsmd.getColumnName(i) + ": ");
-        System.out.println(rs.getString(i));
-        }
-        System.out.println("");
-        rowCount++;
-        }
-         */
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
@@ -140,6 +156,19 @@ public class RBISPgSQL implements DataReader {
             rs = pgsql.execQuery(query);
             rs.setFetchSize(0);
             rsmd = rs.getMetaData();
+            numberOfColumns = rsmd.getColumnCount();
+            type = new int[numberOfColumns];
+            for (int i = 0; i < numberOfColumns; i++) {
+                if (rsmd.getColumnTypeName(i + 1).startsWith("int")) {
+                    type[i] = LONG;
+                } else if (rsmd.getColumnTypeName(i + 1).startsWith("float")) {
+                    type[i] = DOUBLE;
+                } else if (rsmd.getColumnTypeName(i + 1).startsWith("varchar")) {
+                    type[i] = DOUBLE;
+                } else {
+                    type[i] = OBJECT;
+                }
+            }
 
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();

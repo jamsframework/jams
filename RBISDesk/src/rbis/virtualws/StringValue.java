@@ -4,6 +4,10 @@ public class StringValue implements DataValue {
 
     private String value;
 
+    public StringValue(String value) {
+        this.value = value;
+    }
+
     public double getDouble() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
