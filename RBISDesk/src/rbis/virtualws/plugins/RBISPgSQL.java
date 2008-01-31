@@ -164,7 +164,7 @@ public class RBISPgSQL implements DataReader {
                 } else if (rsmd.getColumnTypeName(i + 1).startsWith("float")) {
                     type[i] = DOUBLE;
                 } else if (rsmd.getColumnTypeName(i + 1).startsWith("varchar")) {
-                    type[i] = DOUBLE;
+                    type[i] = STRING;
                 } else {
                     type[i] = OBJECT;
                 }
@@ -182,5 +182,19 @@ public class RBISPgSQL implements DataReader {
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        RBISPgSQL reader = new RBISPgSQL();
+        reader.setDb("saaleRIS");
+        reader.setHost("localhost");
+        reader.setUser("postgres");
+        reader.setPassword("admin");
+        String query = org.unijena.jams.JAMSTools.fileToString("D:/jams/RBISDesk/timeseries.sql");
+        reader.setQuery(query);
+        reader.init();
+        
+        reader.cleanup();
+    
     }
 }
