@@ -75,18 +75,18 @@ public class RBISPgSQL implements DataReader {
     }
 
     public DataSet[] getValues() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return getDBRows(Long.MAX_VALUE);
     }
 
     public DataSet[] getValues(int count) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return getDBRows(count);
     }
 
     public DataSet getValue() {
         return getDBRows(1)[0];
     }
 
-    private DataSet[] getDBRows(int count) {
+    private DataSet[] getDBRows(long count) {
 
         ArrayList<DataSet> data = new ArrayList<DataSet>();
         DataSet dataSet;
