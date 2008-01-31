@@ -185,15 +185,21 @@ public class RBISPgSQL implements DataReader {
     }
 
     public static void main(String[] args) {
+        
+        
+//        !!!REFLECTION!!!
         RBISPgSQL reader = new RBISPgSQL();
-        reader.setDb("saaleRIS");
+        reader.setDb("saaleTSData");
         reader.setHost("localhost");
         reader.setUser("postgres");
         reader.setPassword("admin");
-        String query = org.unijena.jams.JAMSTools.fileToString("D:/jams/RBISDesk/timeseries.sql");
+//        String query = org.unijena.jams.JAMSTools.fileToString("D:/jams/RBISDesk/timeseries.sql");
+        String query = "SELECT * FROM ts_5060";
         reader.setQuery(query);
         reader.init();
-        
+        DataSet[] data = reader.getValues();
+        System.out.println("Rows: " + data.length);
+        System.out.println("Cols: " + data[0].getData().length);
         reader.cleanup();
     
     }
