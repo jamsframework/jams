@@ -33,18 +33,17 @@ import org.w3c.dom.Document;
  */
 public class TableDataProvider {
 
-    
     private Document xmlDoc;
-    
+
     public TableDataProvider(Document xmlDoc) {
         this.xmlDoc = xmlDoc;
         parseXML();
     }
 
     private void parseXML() {
-        
+
     }
-    
+
     public boolean hasNext() {
         return false;
     }
@@ -52,22 +51,21 @@ public class TableDataProvider {
     public DataSet getNext() {
         return null;
     }
-    
-    public static void main(String[] args) throws Exception  {
-        
+
+    public static void main(String[] args) throws Exception {
+
         Document doc = XMLIO.getDocument("D:/jams/RBISDesk/datastore.xml");
 
         //System.out.println(XMLIO.getStringFromDocument(doc));
-        
+
         TableDataProvider provider = new TableDataProvider(doc);
-        
-        
+
+
         JAMSCalendar cal = new JAMSCalendar();
         cal.setValue(new GregorianCalendar());
         cal.set(1925, 10, 1, 0, 0, 0);
         System.out.println(cal);
-        System.out.println(Math.round((double) cal.getTimeInMillis()/1000)); //should be "1925-11-01 00:00" / -1393804800
-        
-    }
+        System.out.println(Math.round((double) cal.getTimeInMillis() / 1000)); //should be "1925-11-01 00:00" / -1393804800
 
+    }
 }
