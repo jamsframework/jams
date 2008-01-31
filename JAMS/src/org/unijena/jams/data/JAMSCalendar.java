@@ -39,6 +39,7 @@ public class JAMSCalendar extends GregorianCalendar implements JAMSData {
 
     public JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second) {
         super(year, month, dayOfMonth, hourOfDay, minute, second);
+        set(Calendar.MILLISECOND, 0);
         java.util.SimpleTimeZone stz = new java.util.SimpleTimeZone(0, "GMT");
         this.setTimeZone(stz);
     }
@@ -87,6 +88,7 @@ public class JAMSCalendar extends GregorianCalendar implements JAMSData {
 
     public void setValue(GregorianCalendar cal) {
         setTimeInMillis(cal.getTimeInMillis());
+        set(Calendar.MILLISECOND, 0);
     }
 
     public void setValue(String value) {
@@ -132,4 +134,5 @@ public class JAMSCalendar extends GregorianCalendar implements JAMSData {
             org.unijena.jams.JAMS.handle(nfe);
         }
     }
+
 }
