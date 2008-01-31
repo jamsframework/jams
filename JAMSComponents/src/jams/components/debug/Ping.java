@@ -33,7 +33,7 @@ import org.unijena.jams.model.*;
 @JAMSComponentDescription(
 title="Ping",
         author="Sven Kralisch",
-        description="Echos a ping at invocation ...",
+        description="Echos a ping (with component's name) at invocation ...",
         date="20.12.2006"
         )
         public class Ping extends JAMSComponent {

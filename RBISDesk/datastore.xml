@@ -18,8 +18,10 @@
                 <parameter id="query" value="SELECT ..." />
         </datasource>
         
-	<column id="time"   position="0">
-		<columnsource source="index" sourcecolumn="1" starttime="1996-11-01 7:30" />
+	<column id="time" position="0">
+		<columnsource source="index" starttime="1996-11-01 7:30" />
+	</column>
+	<column id="value1" position="1">
 		<columnsource source="mydatatreader1" sourcecolumn="1" starttime="1996-11-01 7:30" />
 	</column>
       
