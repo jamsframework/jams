@@ -66,7 +66,7 @@ public class TableDataProvider {
         cal.setValue(new GregorianCalendar());
         cal.set(1925, 10, 1, 0, 0, 0);
         System.out.println(cal);
-        System.out.println(cal.getTimeInMillis()/1000); //should be "1925-11-01 00:00" / -1393804800
+        System.out.println(Math.round((double) cal.getTimeInMillis()/1000)); //should be "1925-11-01 00:00" / -1393804800
         
     }
 
