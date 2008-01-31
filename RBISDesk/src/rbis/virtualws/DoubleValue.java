@@ -5,27 +5,41 @@ public class DoubleValue implements DataValue {
     private Double value;
 
     public double getDouble() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return value.doubleValue();
     }
 
     public long getLong() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return value.longValue();
+    }
+
+    public String getString() {
+        return value.toString();
     }
 
     public Object getObject() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return value;
     }
 
     public void setDouble(double value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.value = new Double(value);
     }
 
     public void setLong(long value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.value = new Double(value);
+    }
+
+    public void setString(String value) {
+        try {
+            this.value = new Double(value);
+        } catch (NumberFormatException nfe) {
+
+        }
     }
 
     public void setObject(Object value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (value instanceof Double) {
+            this.value = (Double) value;
+        }
     }
 }
 

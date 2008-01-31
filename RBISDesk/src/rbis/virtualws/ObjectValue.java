@@ -12,6 +12,10 @@ public class ObjectValue implements DataValue {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public String getString() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public Object getObject() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -21,6 +25,10 @@ public class ObjectValue implements DataValue {
     }
 
     public void setLong(long value) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setString(String value) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

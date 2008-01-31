@@ -78,24 +78,35 @@ public class RBISPgSQL implements DataReader {
     private DataSet[] getDBRows(int count) {
 
         ArrayList<DataSet> data = new ArrayList<DataSet>();
-        
+        DataSet dataSet;
+
         try {
 
-            int numberOfColumns = rsmd.getColumnCount();
-            int rowCount = 1;
-            while (rs.next()) {
-                System.out.println("Line " + rowCount + ": ");
-                for (int i = 1; i <= numberOfColumns; i++) {
-                    System.out.print("\t" + rsmd.getColumnName(i) + ": ");
-                    System.out.println(rs.getString(i));
-                }
-                System.out.println("");
-                rowCount++;
+            int i = 0;
+            while (rs.next() && i < count) {
+                i++;
+                dataSet = new DataSet();
+                
+                
             }
+
+        /*            
+        int numberOfColumns = rsmd.getColumnCount();
+        int rowCount = 1;
+        while (rs.next()) {
+        System.out.println("Line " + rowCount + ": ");
+        for (int i = 1; i <= numberOfColumns; i++) {
+        System.out.print("\t" + rsmd.getColumnName(i) + ": ");
+        System.out.println(rs.getString(i));
+        }
+        System.out.println("");
+        rowCount++;
+        }
+         */
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
-        
+
         return data.toArray(new DataSet[data.size()]);
     }
 
