@@ -20,15 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package rbis.virtualws;
 
 import java.util.HashMap;
+import org.unijena.jams.runtime.JAMSClassLoader;
+import org.unijena.jams.runtime.StandardRuntime;
 
 public class VirtualWorkspace {
 
     private String wsTitle;
     private HashMap<String, DataStore> stores = new HashMap<String, DataStore>();
+    private StandardRuntime runtime = new StandardRuntime();
+    private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+
+    public void setLibs(String[] libs) {
+         classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
+    }
+    
+    private ClassLoader getClassLoader() {
+        return classLoader;
+    }
 
     public void addDataStore(DataStore store, String dsTitle) {
         stores.put(dsTitle, store);
