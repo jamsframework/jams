@@ -194,12 +194,24 @@ public class RBISPgSQL implements DataReader {
         reader.setUser("postgres");
         reader.setPassword("admin");
 //        String query = org.unijena.jams.JAMSTools.fileToString("D:/jams/RBISDesk/timeseries.sql");
-        String query = "SELECT * FROM ts_5060";
+//        String query = "SELECT * FROM ts_5060";
+        String query = "SELECT * FROM ts_8206";
         reader.setQuery(query);
+        
+        long start = System.currentTimeMillis();
+        
         reader.init();
-        DataSet[] data = reader.getValues();
-        System.out.println("Rows: " + data.length);
-        System.out.println("Cols: " + data[0].getData().length);
+        
+        DataSet[] data = reader.getValues(1);
+        int rows = data.length;
+        int columns = data[0].getData().length;
+        while (data.length>0) {
+            data = reader.getValues(1000);
+            rows += data.length;
+        }
+        System.out.println("Time: " + (System.currentTimeMillis()-start));
+        System.out.println("Rows: " + rows);
+        System.out.println("Cols: " + columns);
         reader.cleanup();
     
     }
