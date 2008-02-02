@@ -59,7 +59,7 @@ public class TableDataProvider {
 
         try {
 
-            Class clazz = loader.loadClass(className);
+            Class<?> clazz = loader.loadClass(className);
             io = (DataIO) clazz.newInstance();
 
             NodeList parameterNodes = ioNode.getElementsByTagName("parameter");
@@ -70,15 +70,12 @@ public class TableDataProvider {
                 String attributeName = parameterNode.getAttribute("id");
                 String attributeValue = parameterNode.getAttribute("value");
                 String methodName = "set" + attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1);
-                
+
                 Method method = clazz.getMethod(methodName, String.class);
-                
+
                 method.invoke(io, attributeValue);
 
             }
-
-
-            System.out.println("loaded " + className);
 
         } catch (ClassNotFoundException cnfe) {
             ws.getRuntime().handle(cnfe);
@@ -114,12 +111,29 @@ public class TableDataProvider {
                 System.out.println(arg);
             }
         });
-        
+
         String[] libs = {"D:/nbprojects/RBISDesk/dist", "D:/nbprojects/RBISDesk/dist/lib"};
         ws.setLibs(libs);
 
         TableDataProvider provider = new TableDataProvider(ws, doc);
 
+        DataIO reader = provider.io;
+
+        long start = System.currentTimeMillis();
+        
+        reader.init();
+        DataSet[] data = reader.getValues(1);
+        int rows = data.length;
+        int columns = data[0].getData().length;
+        while (data.length > 0) {
+            data = reader.getValues(1000);
+            rows += data.length;
+        }
+        System.out.println("Time: " + (System.currentTimeMillis() - start));
+        System.out.println("Rows: " + rows);
+        System.out.println("Cols: " + columns);
+
+        reader.cleanup();
 
         JAMSCalendar cal = new JAMSCalendar();
         cal.setValue(new GregorianCalendar());

@@ -55,27 +55,22 @@ public class RBISPgSQL implements DataIO {
     }
 
     public void setUser(String user) {
-        System.out.println("called setUser");
         this.user = user;
     }
 
     public void setPassword(String password) {
-        System.out.println("called setPassword");
         this.password = password;
     }
 
     public void setHost(String host) {
-        System.out.println("called setHost");
         this.host = host;
     }
 
     public void setQuery(String query) {
-        System.out.println("called setQuery");
         this.query = query;
     }
 
     public void setDb(String db) {
-        System.out.println("called setDb");
         this.db = db;
     }
 
@@ -187,37 +182,5 @@ public class RBISPgSQL implements DataIO {
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        
-        
-//        !!!REFLECTION!!!
-        RBISPgSQL reader = new RBISPgSQL();
-        reader.setDb("saaleTSData");
-        reader.setHost("localhost");
-        reader.setUser("postgres");
-        reader.setPassword("admin");
-//        String query = org.unijena.jams.JAMSTools.fileToString("D:/jams/RBISDesk/timeseries.sql");
-//        String query = "SELECT * FROM ts_5060";
-        String query = "SELECT * FROM ts_8206";
-        reader.setQuery(query);
-        
-        long start = System.currentTimeMillis();
-        
-        reader.init();
-        
-        DataSet[] data = reader.getValues(1);
-        int rows = data.length;
-        int columns = data[0].getData().length;
-        while (data.length>0) {
-            data = reader.getValues(1000);
-            rows += data.length;
-        }
-        System.out.println("Time: " + (System.currentTimeMillis()-start));
-        System.out.println("Rows: " + rows);
-        System.out.println("Cols: " + columns);
-        reader.cleanup();
-    
     }
 }
