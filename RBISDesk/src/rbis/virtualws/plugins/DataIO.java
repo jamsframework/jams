@@ -28,7 +28,7 @@ import rbis.virtualws.DataSet;
  *
  * @author Sven Kralisch
  */
-public interface DataReader {
+public interface DataIO {
 
     public void init();
 

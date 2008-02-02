@@ -24,21 +24,26 @@ package rbis.virtualws;
 
 import java.util.HashMap;
 import org.unijena.jams.runtime.JAMSClassLoader;
+import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
 
 public class VirtualWorkspace {
 
     private String wsTitle;
     private HashMap<String, DataStore> stores = new HashMap<String, DataStore>();
-    private StandardRuntime runtime = new StandardRuntime();
+    private JAMSRuntime runtime = new StandardRuntime();
     private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
     public void setLibs(String[] libs) {
          classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
     }
     
-    private ClassLoader getClassLoader() {
+    public ClassLoader getClassLoader() {
         return classLoader;
+    }
+
+    public JAMSRuntime getRuntime() {
+        return runtime;
     }
 
     public void addDataStore(DataStore store, String dsTitle) {

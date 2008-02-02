@@ -22,10 +22,17 @@
  */
 package rbis.virtualws;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.GregorianCalendar;
+import java.util.Observable;
+import java.util.Observer;
 import org.unijena.jams.data.JAMSCalendar;
 import org.unijena.jams.io.XMLIO;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import rbis.virtualws.plugins.DataIO;
 
 /**
  *
@@ -34,14 +41,56 @@ import org.w3c.dom.Document;
 public class TableDataProvider {
 
     private Document xmlDoc;
+    private DataIO io;
+    private VirtualWorkspace ws;
 
-    public TableDataProvider(Document xmlDoc) {
+    public TableDataProvider(VirtualWorkspace ws, Document xmlDoc) {
         this.xmlDoc = xmlDoc;
+        this.ws = ws;
         parseXML();
     }
 
     private void parseXML() {
+        Element sourceElement = (Element) xmlDoc.getElementsByTagName("dataseries").item(0);
+        Element ioNode = (Element) sourceElement.getElementsByTagName("dataio").item(0);
+        String className = ioNode.getAttribute("type");
 
+        ClassLoader loader = ws.getClassLoader();
+
+        try {
+
+            Class clazz = loader.loadClass(className);
+            io = (DataIO) clazz.newInstance();
+
+            NodeList parameterNodes = ioNode.getElementsByTagName("parameter");
+            for (int i = 0; i < parameterNodes.getLength(); i++) {
+
+                Element parameterNode = (Element) parameterNodes.item(i);
+
+                String attributeName = parameterNode.getAttribute("id");
+                String attributeValue = parameterNode.getAttribute("value");
+                String methodName = "set" + attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1);
+                
+                Method method = clazz.getMethod(methodName, String.class);
+                
+                method.invoke(io, attributeValue);
+
+            }
+
+
+            System.out.println("loaded " + className);
+
+        } catch (ClassNotFoundException cnfe) {
+            ws.getRuntime().handle(cnfe);
+        } catch (InstantiationException ie) {
+            ws.getRuntime().handle(ie);
+        } catch (IllegalAccessException iae) {
+            ws.getRuntime().handle(iae);
+        } catch (NoSuchMethodException nsme) {
+            ws.getRuntime().handle(nsme);
+        } catch (InvocationTargetException ite) {
+            ws.getRuntime().handle(ite);
+        }
     }
 
     public boolean hasNext() {
@@ -58,7 +107,18 @@ public class TableDataProvider {
 
         //System.out.println(XMLIO.getStringFromDocument(doc));
 
-        TableDataProvider provider = new TableDataProvider(doc);
+        VirtualWorkspace ws = new VirtualWorkspace();
+        ws.getRuntime().addErrorLogObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                System.out.println(arg);
+            }
+        });
+        
+        String[] libs = {"D:/nbprojects/RBISDesk/dist", "D:/nbprojects/RBISDesk/dist/lib"};
+        ws.setLibs(libs);
+
+        TableDataProvider provider = new TableDataProvider(ws, doc);
 
 
         JAMSCalendar cal = new JAMSCalendar();

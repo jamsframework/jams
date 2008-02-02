@@ -38,7 +38,7 @@ import rbis.virtualws.StringValue;
  *
  * @author Sven Kralisch
  */
-public class RBISPgSQL implements DataReader {
+public class RBISPgSQL implements DataIO {
 
     private static final int DOUBLE = 0;
     private static final int LONG = 1;
@@ -55,22 +55,27 @@ public class RBISPgSQL implements DataReader {
     }
 
     public void setUser(String user) {
+        System.out.println("called setUser");
         this.user = user;
     }
 
     public void setPassword(String password) {
+        System.out.println("called setPassword");
         this.password = password;
     }
 
     public void setHost(String host) {
+        System.out.println("called setHost");
         this.host = host;
     }
 
     public void setQuery(String query) {
+        System.out.println("called setQuery");
         this.query = query;
     }
 
     public void setDb(String db) {
+        System.out.println("called setDb");
         this.db = db;
     }
 
