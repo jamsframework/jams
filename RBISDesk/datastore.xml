@@ -4,7 +4,7 @@
 <datastore id="tmean" author="Sven Kralisch" date="30/11/2007" description="blablub">    
 
 
-    <timeseries interval="1996-11-01 7:30 2000-10-31 7:30 6 1">
+    <!--timeseries interval="1996-11-01 7:30 2000-10-31 7:30 6 1">
         
         <datasource id="mydatatreader1" type="ujena.rbis.Reader">
                 <parameter id="username" value="nsk" />
@@ -25,15 +25,18 @@
 		<columnsource source="mydatatreader1" sourcecolumn="1" starttime="1996-11-01 7:30" />
 	</column>
       
-    </timeseries>
+    </timeseries-->
 
     <dataseries>
         
-        <datasource id="mydatatreader1" type="ujena.rbis.Reader">
-                <parameter id="username" value="nsk" />
-                <parameter id="hostname" value="localhost" />
-                <parameter id="query" value="SELECT ..." />
-        </datasource>
+        <dataio id="mydatatreader1" type="rbis.virtualws.plugins.RBISPgSQL">
+                <parameter id="user" value="postgres" />
+                <parameter id="password" value="admin" />
+                <parameter id="host" value="localhost" />
+                <parameter id="db" value="saaleTSData" />
+                <!--parameter id="query" value="SELECT * FROM ts_8206" /-->
+                <parameter id="query1" value="SELECT * FROM ts_5060" />
+        </dataio>
                 
         <column id="tmean0" position="1" source="mydatatreader1" sourcecolumn="0" type="JAMSDouble" startrow="800" />
         <column id="tmean1" position="2" source="mydatatreader1" type="JAMSDouble" startrow="0" />

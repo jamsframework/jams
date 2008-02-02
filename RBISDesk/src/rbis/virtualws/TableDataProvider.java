@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.util.GregorianCalendar;
 import java.util.Observable;
 import java.util.Observer;
+import org.unijena.jams.JAMS;
 import org.unijena.jams.data.JAMSCalendar;
 import org.unijena.jams.io.XMLIO;
 import org.w3c.dom.Document;
@@ -105,6 +106,7 @@ public class TableDataProvider {
         //System.out.println(XMLIO.getStringFromDocument(doc));
 
         VirtualWorkspace ws = new VirtualWorkspace();
+        ws.getRuntime().setDebugLevel(JAMS.VERBOSE);
         ws.getRuntime().addErrorLogObserver(new Observer() {
 
             public void update(Observable o, Object arg) {
@@ -117,11 +119,20 @@ public class TableDataProvider {
 
         TableDataProvider provider = new TableDataProvider(ws, doc);
 
+        if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
+            System.exit(-1);
+        }
+
         DataIO reader = provider.io;
 
         long start = System.currentTimeMillis();
-        
+
         reader.init();
+
+        if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
+            System.exit(-1);
+        }
+
         DataSet[] data = reader.getValues(1);
         int rows = data.length;
         int columns = data[0].getData().length;
