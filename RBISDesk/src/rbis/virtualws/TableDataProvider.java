@@ -48,12 +48,15 @@ public class TableDataProvider {
     public TableDataProvider(VirtualWorkspace ws, Document xmlDoc) {
         this.xmlDoc = xmlDoc;
         this.ws = ws;
-        parseXML();
-    }
+        io = getDataIO(xmlDoc, ws);
+    }   
 
-    private void parseXML() {
-        Element sourceElement = (Element) xmlDoc.getElementsByTagName("dataseries").item(0);
-        Element ioNode = (Element) sourceElement.getElementsByTagName("dataio").item(0);
+    private static DataIO getDataIO(Document doc, VirtualWorkspace ws) {
+//        Element sourceElement = (Element) xmlDoc.getElementsByTagName("dataseries").item(0);
+        
+        DataIO dataIO = null;
+        
+        Element ioNode = (Element) doc.getElementsByTagName("dataio").item(0);
         String className = ioNode.getAttribute("type");
 
         ClassLoader loader = ws.getClassLoader();
@@ -61,7 +64,7 @@ public class TableDataProvider {
         try {
 
             Class<?> clazz = loader.loadClass(className);
-            io = (DataIO) clazz.newInstance();
+            dataIO = (DataIO) clazz.newInstance();
 
             NodeList parameterNodes = ioNode.getElementsByTagName("parameter");
             for (int i = 0; i < parameterNodes.getLength(); i++) {
@@ -74,7 +77,7 @@ public class TableDataProvider {
 
                 Method method = clazz.getMethod(methodName, String.class);
 
-                method.invoke(io, attributeValue);
+                method.invoke(dataIO, attributeValue);
 
             }
 
@@ -89,6 +92,8 @@ public class TableDataProvider {
         } catch (InvocationTargetException ite) {
             ws.getRuntime().handle(ite);
         }
+        
+        return dataIO;
     }
 
     public boolean hasNext() {

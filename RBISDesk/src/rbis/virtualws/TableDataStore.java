@@ -26,7 +26,7 @@ package rbis.virtualws;
  *
  * @author Sven Kralisch
  */
-public class TableDataStore implements DataStore {
+public class TableDataStore extends StandardDataStore {
 
     private String title,  description;
     private DataSetDefinition dsDef;

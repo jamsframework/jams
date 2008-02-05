@@ -26,6 +26,8 @@ import java.util.HashMap;
 import org.unijena.jams.runtime.JAMSClassLoader;
 import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class VirtualWorkspace {
 
@@ -34,10 +36,27 @@ public class VirtualWorkspace {
     private JAMSRuntime runtime = new StandardRuntime();
     private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
-    public void setLibs(String[] libs) {
-         classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
+    public static DataStore getDataStore(Document doc) {
+
+        DataStore store = null;
+        Element dataNode = (Element) doc.getElementsByTagName("data").item(0);
+        String type = dataNode.getAttribute("type");
+
+        if (type.equals("table")) {
+            store = new TableDataStore();
+        } else if (type.equals("timeseries")) {
+            store = new TSDataStore();
+        } else if (type.equals("geodata")) {
+            store = new GeoDataStore();
+        }
+
+        return store;
     }
-    
+
+    public void setLibs(String[] libs) {
+        classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
+    }
+
     public ClassLoader getClassLoader() {
         return classLoader;
     }

@@ -1,6 +1,6 @@
 package rbis.virtualws;
 
-public class GeoDataStore implements DataStore {
+public class GeoDataStore extends StandardDataStore {
 
     //private Polygon extend;
     public String getTitle() {
