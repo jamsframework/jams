@@ -49,7 +49,7 @@ public abstract class StandardDataStore implements DataStore {
     public StandardDataStore(VirtualWorkspace ws, Document doc) {
         this.doc = doc;
         this.ws = ws;
-        this.dataIO = StandardDataStore.getDataIO(this.doc, ws);
+        this.dataIO = getDataIO(doc, ws);
     }
 
     public static HashMap<String, DataIO> getDataIO(Document doc, VirtualWorkspace ws) {
