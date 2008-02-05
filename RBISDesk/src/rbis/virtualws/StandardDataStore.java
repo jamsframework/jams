@@ -20,18 +20,86 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package rbis.virtualws;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import rbis.virtualws.plugins.DataIO;
 
 /**
  *
  * @author Sven Kralisch
  */
 public abstract class StandardDataStore implements DataStore {
-    
+
+    private Document doc;
+    private DataIO io;
+    private VirtualWorkspace ws;
+
     public StandardDataStore() {
+        this.doc = null;
+        this.ws = null;
+        this.io = null;
     }
-    
+
+    public StandardDataStore(VirtualWorkspace ws, Document doc) {
+        this.doc = doc;
+        this.ws = ws;
+        this.io = StandardDataStore.getDataIO(this.doc, ws);
+    }
+
+    public DataIO getIO() {
+        return io;
+    }
+
+    public static DataIO getDataIO(Document doc, VirtualWorkspace ws) {
+//        Element sourceElement = (Element) xmlDoc.getElementsByTagName("dataseries").item(0);
+
+        DataIO dataIO = null;
+
+        Element ioNode = (Element) doc.getElementsByTagName("dataio").item(0);
+        String className = ioNode.getAttribute("type");
+
+        ClassLoader loader = ws.getClassLoader();
+
+        try {
+
+            Class<?> clazz = loader.loadClass(className);
+            dataIO = (DataIO) clazz.newInstance();
+
+            NodeList parameterNodes = ioNode.getElementsByTagName("parameter");
+            for (int i = 0; i < parameterNodes.getLength(); i++) {
+
+                Element parameterNode = (Element) parameterNodes.item(i);
+
+                String attributeName = parameterNode.getAttribute("id");
+                String attributeValue = parameterNode.getAttribute("value");
+                String methodName = "set" + attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1);
+
+                Method method = clazz.getMethod(methodName, String.class);
+
+                method.invoke(dataIO, attributeValue);
+
+            }
+
+        } catch (ClassNotFoundException cnfe) {
+            ws.getRuntime().handle(cnfe);
+        } catch (InstantiationException ie) {
+            ws.getRuntime().handle(ie);
+        } catch (IllegalAccessException iae) {
+            ws.getRuntime().handle(iae);
+        } catch (NoSuchMethodException nsme) {
+            ws.getRuntime().handle(nsme);
+        } catch (InvocationTargetException ite) {
+            ws.getRuntime().handle(ite);
+        }
+
+        return dataIO;
+    }
+
     public String getTitle() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -55,5 +123,4 @@ public abstract class StandardDataStore implements DataStore {
     public void setDataSetDefinition(DataSetDefinition dsDef) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
 }

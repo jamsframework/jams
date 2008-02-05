@@ -22,6 +22,8 @@
  */
 package rbis.virtualws;
 
+import org.w3c.dom.Document;
+
 /**
  *
  * @author Sven Kralisch
@@ -30,22 +32,21 @@ public class TableDataStore extends StandardDataStore {
 
     private String title,  description;
     private DataSetDefinition dsDef;
-    private TableDataProvider provider;
 
     public TableDataStore() {
-        this.provider = null;
+        super();
     }
 
-    public TableDataStore(TableDataProvider provider) {
-        this.provider = provider;
+    public TableDataStore(VirtualWorkspace ws, Document doc) {
+        super(ws, doc);
     }
 
     public boolean hasNext() {
-        return provider.hasNext();
+        return false;
     }
 
     public DataSet getNext() {
-        return provider.getNext();
+        return null;
     }
 
     public String getTitle() {

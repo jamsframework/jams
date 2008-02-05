@@ -22,12 +22,19 @@
  */
 package rbis.virtualws;
 
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
+import org.unijena.jams.JAMS;
+import org.unijena.jams.data.JAMSCalendar;
+import org.unijena.jams.io.XMLIO;
 import org.unijena.jams.runtime.JAMSClassLoader;
 import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import rbis.virtualws.plugins.DataIO;
 
 public class VirtualWorkspace {
 
@@ -83,6 +90,61 @@ public class VirtualWorkspace {
 
     public void setTitle(String title) {
         this.wsTitle = title;
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        Document doc = XMLIO.getDocument("D:/jams/RBISDesk/datastore.xml");
+
+        //System.out.println(XMLIO.getStringFromDocument(doc));
+
+        VirtualWorkspace ws = new VirtualWorkspace();
+        ws.getRuntime().setDebugLevel(JAMS.VERBOSE);
+        ws.getRuntime().addErrorLogObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                System.out.println(arg);
+            }
+        });
+
+        String[] libs = {"D:/nbprojects/RBISDesk/dist", "D:/nbprojects/RBISDesk/dist/lib"};
+        ws.setLibs(libs);
+
+        TableDataStore store = new TableDataStore(ws, doc);
+
+        if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
+            System.exit(-1);
+        }
+
+        DataIO reader = store.getIO();
+
+        long start = System.currentTimeMillis();
+
+        reader.init();
+
+        if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
+            System.exit(-1);
+        }
+
+        DataSet[] data = reader.getValues(1);
+        int rows = data.length;
+        int columns = data[0].getData().length;
+        while (data.length > 0) {
+            data = reader.getValues(1000);
+            rows += data.length;
+        }
+        System.out.println("Time: " + (System.currentTimeMillis() - start));
+        System.out.println("Rows: " + rows);
+        System.out.println("Cols: " + columns);
+
+        reader.cleanup();
+
+        JAMSCalendar cal = new JAMSCalendar();
+        cal.setValue(new GregorianCalendar());
+        cal.set(1925, 10, 1, 0, 0, 0);
+        System.out.println(cal);
+        System.out.println(Math.round((double) cal.getTimeInMillis() / 1000)); //should be "1925-11-01 00:00" / -1393804800
+
     }
 }
 
