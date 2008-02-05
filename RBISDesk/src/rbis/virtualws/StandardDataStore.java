@@ -24,6 +24,7 @@ package rbis.virtualws;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -36,67 +37,76 @@ import rbis.virtualws.plugins.DataIO;
 public abstract class StandardDataStore implements DataStore {
 
     private Document doc;
-    private DataIO io;
+    private HashMap<String, DataIO> dataIO;
     private VirtualWorkspace ws;
 
     public StandardDataStore() {
         this.doc = null;
         this.ws = null;
-        this.io = null;
+        this.dataIO = null;
     }
 
     public StandardDataStore(VirtualWorkspace ws, Document doc) {
         this.doc = doc;
         this.ws = ws;
-        this.io = StandardDataStore.getDataIO(this.doc, ws);
+        this.dataIO = StandardDataStore.getDataIO(this.doc, ws);
     }
 
-    public DataIO getIO() {
-        return io;
-    }
-
-    public static DataIO getDataIO(Document doc, VirtualWorkspace ws) {
+    public static HashMap<String, DataIO> getDataIO(Document doc, VirtualWorkspace ws) {
 //        Element sourceElement = (Element) xmlDoc.getElementsByTagName("dataseries").item(0);
 
-        DataIO dataIO = null;
+        HashMap<String, DataIO> dataIO = new HashMap<String, DataIO>();
 
-        Element ioNode = (Element) doc.getElementsByTagName("dataio").item(0);
-        String className = ioNode.getAttribute("type");
-
-        ClassLoader loader = ws.getClassLoader();
-
-        try {
-
-            Class<?> clazz = loader.loadClass(className);
-            dataIO = (DataIO) clazz.newInstance();
-
-            NodeList parameterNodes = ioNode.getElementsByTagName("parameter");
-            for (int i = 0; i < parameterNodes.getLength(); i++) {
-
-                Element parameterNode = (Element) parameterNodes.item(i);
-
-                String attributeName = parameterNode.getAttribute("id");
-                String attributeValue = parameterNode.getAttribute("value");
-                String methodName = "set" + attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1);
-
-                Method method = clazz.getMethod(methodName, String.class);
-
-                method.invoke(dataIO, attributeValue);
-
-            }
-
-        } catch (ClassNotFoundException cnfe) {
-            ws.getRuntime().handle(cnfe);
-        } catch (InstantiationException ie) {
-            ws.getRuntime().handle(ie);
-        } catch (IllegalAccessException iae) {
-            ws.getRuntime().handle(iae);
-        } catch (NoSuchMethodException nsme) {
-            ws.getRuntime().handle(nsme);
-        } catch (InvocationTargetException ite) {
-            ws.getRuntime().handle(ite);
+        Element ioElement = (Element) doc.getElementsByTagName("dataio").item(0);
+        
+        if (ioElement == null) {
+            return null;
         }
+        
+        NodeList nodes = ioElement.getElementsByTagName("plugin");
 
+        for (int n = 0; n < nodes.getLength(); n++) {
+
+            Element ioNode = (Element) nodes.item(n);
+            String className = ioNode.getAttribute("type");
+            String id = ioNode.getAttribute("id");
+
+            ClassLoader loader = ws.getClassLoader();
+
+            try {
+
+                Class<?> clazz = loader.loadClass(className);
+                DataIO io = (DataIO) clazz.newInstance();
+
+                NodeList parameterNodes = ioNode.getElementsByTagName("parameter");
+                for (int i = 0; i < parameterNodes.getLength(); i++) {
+
+                    Element parameterNode = (Element) parameterNodes.item(i);
+
+                    String attributeName = parameterNode.getAttribute("id");
+                    String attributeValue = parameterNode.getAttribute("value");
+                    String methodName = "set" + attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1);
+
+                    Method method = clazz.getMethod(methodName, String.class);
+
+                    method.invoke(io, attributeValue);
+
+                }
+
+                dataIO.put(id, io);
+
+            } catch (ClassNotFoundException cnfe) {
+                ws.getRuntime().handle(cnfe);
+            } catch (InstantiationException ie) {
+                ws.getRuntime().handle(ie);
+            } catch (IllegalAccessException iae) {
+                ws.getRuntime().handle(iae);
+            } catch (NoSuchMethodException nsme) {
+                ws.getRuntime().handle(nsme);
+            } catch (InvocationTargetException ite) {
+                ws.getRuntime().handle(ite);
+            }
+        }
         return dataIO;
     }
 

@@ -110,15 +110,13 @@ public class VirtualWorkspace {
         String[] libs = {"D:/nbprojects/RBISDesk/dist", "D:/nbprojects/RBISDesk/dist/lib"};
         ws.setLibs(libs);
 
-        TableDataStore store = new TableDataStore(ws, doc);
-
         if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
             System.exit(-1);
         }
 
-        DataIO reader = store.getIO();
+        DataIO reader = StandardDataStore.getDataIO(doc, ws).get("MetadataReader");
 
-        long start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();    
 
         reader.init();
 
