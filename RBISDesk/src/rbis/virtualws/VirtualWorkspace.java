@@ -43,18 +43,18 @@ public class VirtualWorkspace {
     private JAMSRuntime runtime = new StandardRuntime();
     private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
-    public static DataStore getDataStore(Document doc) {
+    public DataStore getDataStore(Document doc) {
 
         DataStore store = null;
         Element dataNode = (Element) doc.getElementsByTagName("data").item(0);
         String type = dataNode.getAttribute("type");
 
         if (type.equals("table")) {
-            store = new TableDataStore();
+            store = new TableDataStore(this, doc);
         } else if (type.equals("timeseries")) {
-            store = new TSDataStore();
+            store = new TSDataStore(this, doc);
         } else if (type.equals("geodata")) {
-            store = new GeoDataStore();
+            store = new GeoDataStore(this, doc);
         }
 
         return store;

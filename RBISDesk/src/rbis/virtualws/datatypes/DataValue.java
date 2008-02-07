@@ -1,6 +1,6 @@
 /*
- * TSDataStore.java
- * Created on 23. Januar 2008, 15:53
+ * DataValue.java
+ * Created on 7. Februar 2008, 21:26
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -20,26 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package rbis.virtualws;
-
-import org.unijena.jams.data.JAMSCalendar;
-import org.w3c.dom.Document;
+package rbis.virtualws.datatypes;
 
 /**
  *
  * @author Sven Kralisch
  */
-public class TSDataStore extends TableDataStore {
+public interface DataValue {
 
-    private JAMSCalendar start;
-    private JAMSCalendar end;
+    public double getDouble();
 
-    public TSDataStore() {
-        super();
-    }
+    public long getLong();
+    
+    public String getString();
 
-    public TSDataStore(VirtualWorkspace ws, Document doc) {
-        super(ws, doc);
-    }
+    public Object getObject();
+
+    public void setDouble(double value);
+
+    public void setLong(long value);
+    
+    public void setString(String value);
+
+    public void setObject(Object value);
 }
 

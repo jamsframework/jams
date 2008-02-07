@@ -28,11 +28,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import rbis.db.PGSQLConnector;
 import rbis.virtualws.DataSet;
-import rbis.virtualws.DataValue;
-import rbis.virtualws.DoubleValue;
-import rbis.virtualws.LongValue;
-import rbis.virtualws.ObjectValue;
-import rbis.virtualws.StringValue;
+import rbis.virtualws.datatypes.DataValue;
+import rbis.virtualws.datatypes.DoubleValue;
+import rbis.virtualws.datatypes.LongValue;
+import rbis.virtualws.datatypes.ObjectValue;
+import rbis.virtualws.datatypes.StringValue;
 
 /**
  *

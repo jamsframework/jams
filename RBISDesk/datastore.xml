@@ -9,17 +9,31 @@
             <parameter id="password" value="admin" />
             <parameter id="host" value="localhost" />
             <parameter id="db" value="saaleTSData" />
-            <parameter id="query" value="SELECT * FROM ts_8206" />
+            <parameter id="query" value="SELECT * FROM ts_267 LIMIT 100" />
             <!--parameter id="query" value="SELECT * FROM ts_5060" /-->
         </plugin>
-        
+        <plugin id="DataReader2" type="rbis.virtualws.plugins.RBISPgSQL">
+            <parameter id="user" value="postgres" />
+            <parameter id="password" value="admin" />
+            <parameter id="host" value="localhost" />
+            <parameter id="db" value="saaleTSData" />
+            <parameter id="query" value="SELECT * FROM ts_283 LIMIT 100" />
+            <!--parameter id="query" value="SELECT * FROM ts_5060" /-->
+        </plugin>        
         <plugin id="MetadataReader1" type="rbis.virtualws.plugins.RBISPgSQL">
             <parameter id="user" value="postgres" />
             <parameter id="password" value="admin" />
             <parameter id="host" value="localhost" />
             <parameter id="db" value="saaleRIS" />
-            <parameter id="query" value='SELECT stat_ts.ts_timeser_id, dsstation.statname, dsstation.latutm, dsstation.longutm, dsstation.elevat FROM ts_timeser LEFT JOIN metadata ON ts_timeser.md_metadata_id = metadata.md_metadata_id LEFT JOIN dataidinfo ON metadata.md_metadata_id = dataidinfo.md_metadata_id LEFT JOIN ident ON dataidinfo.md_ident_id = ident.md_ident_id LEFT JOIN citation ON ident.ci_citation_id = citation.ci_citation_id LEFT JOIN stat_ts ON ts_timeser.ts_timeser_id = stat_ts.ts_timeser_id LEFT JOIN dr_datarelia ON ts_timeser.dr_datarelia_id = dr_datarelia.dr_datarelia_id LEFT JOIN scstatuscd ON dr_datarelia.sc_scstatuscd_id = scstatuscd.sc_scstatuscd_id LEFT JOIN ts_kind ON ts_timeser.ts_kind_id = ts_kind.ts_kind_id LEFT JOIN dsstation ON stat_ts.dsstation_id = dsstation.dsstation_id LEFT JOIN riverseg ON dsstation.rivsyst_id = riverseg.rivsyst_id LEFT JOIN mdcontact ON metadata.md_metadata_id = mdcontact.md_metadata_id LEFT JOIN respparty ON mdcontact.ci_respparty_id = respparty.ci_respparty_id LEFT JOIN mdconst ON metadata.md_metadata_id = mdconst.md_metadata_id LEFT JOIN consts ON mdconst.md_consts_id = consts.md_consts_id LEFT JOIN respparty respparty2 ON dsstation.ci_respparty_id = respparty2.ci_respparty_id LEFT JOIN distrib ON metadata.md_distrib_id = distrib.md_distrib_id LEFT JOIN distributors ON distrib.md_distrib_id = distributors.md_distrib_id LEFT JOIN distributor ON distributors.md_distributor_id = distributor.md_distributor_id LEFT JOIN respparty respparty3 ON distributor.ci_respparty_id = respparty3.ci_respparty_id LEFT JOIN uomunits ON ts_timeser.uom_units_id = uomunits.uom_units_id LEFT JOIN map_srid ON dsstation.srid = map_srid.srid WHERE ts_timeser.md_metadata_id = 3558' />
-        </plugin>        
+            <parameter id="query" value='SELECT stat_ts.ts_timeser_id, dsstation.statname, dsstation.latutm, dsstation.longutm, dsstation.elevat FROM ts_timeser LEFT JOIN metadata ON ts_timeser.md_metadata_id = metadata.md_metadata_id LEFT JOIN dataidinfo ON metadata.md_metadata_id = dataidinfo.md_metadata_id LEFT JOIN ident ON dataidinfo.md_ident_id = ident.md_ident_id LEFT JOIN citation ON ident.ci_citation_id = citation.ci_citation_id LEFT JOIN stat_ts ON ts_timeser.ts_timeser_id = stat_ts.ts_timeser_id LEFT JOIN dr_datarelia ON ts_timeser.dr_datarelia_id = dr_datarelia.dr_datarelia_id LEFT JOIN scstatuscd ON dr_datarelia.sc_scstatuscd_id = scstatuscd.sc_scstatuscd_id LEFT JOIN ts_kind ON ts_timeser.ts_kind_id = ts_kind.ts_kind_id LEFT JOIN dsstation ON stat_ts.dsstation_id = dsstation.dsstation_id LEFT JOIN riverseg ON dsstation.rivsyst_id = riverseg.rivsyst_id LEFT JOIN mdcontact ON metadata.md_metadata_id = mdcontact.md_metadata_id LEFT JOIN respparty ON mdcontact.ci_respparty_id = respparty.ci_respparty_id LEFT JOIN mdconst ON metadata.md_metadata_id = mdconst.md_metadata_id LEFT JOIN consts ON mdconst.md_consts_id = consts.md_consts_id LEFT JOIN respparty respparty2 ON dsstation.ci_respparty_id = respparty2.ci_respparty_id LEFT JOIN distrib ON metadata.md_distrib_id = distrib.md_distrib_id LEFT JOIN distributors ON distrib.md_distrib_id = distributors.md_distrib_id LEFT JOIN distributor ON distributors.md_distributor_id = distributor.md_distributor_id LEFT JOIN respparty respparty3 ON distributor.ci_respparty_id = respparty3.ci_respparty_id LEFT JOIN uomunits ON ts_timeser.uom_units_id = uomunits.uom_units_id LEFT JOIN map_srid ON dsstation.srid = map_srid.srid WHERE ts_timeser.md_metadata_id = 267' />
+        </plugin>
+        <plugin id="MetadataReader2" type="rbis.virtualws.plugins.RBISPgSQL">
+            <parameter id="user" value="postgres" />
+            <parameter id="password" value="admin" />
+            <parameter id="host" value="localhost" />
+            <parameter id="db" value="saaleRIS" />
+            <parameter id="query" value='SELECT stat_ts.ts_timeser_id, dsstation.statname, dsstation.latutm, dsstation.longutm, dsstation.elevat FROM ts_timeser LEFT JOIN metadata ON ts_timeser.md_metadata_id = metadata.md_metadata_id LEFT JOIN dataidinfo ON metadata.md_metadata_id = dataidinfo.md_metadata_id LEFT JOIN ident ON dataidinfo.md_ident_id = ident.md_ident_id LEFT JOIN citation ON ident.ci_citation_id = citation.ci_citation_id LEFT JOIN stat_ts ON ts_timeser.ts_timeser_id = stat_ts.ts_timeser_id LEFT JOIN dr_datarelia ON ts_timeser.dr_datarelia_id = dr_datarelia.dr_datarelia_id LEFT JOIN scstatuscd ON dr_datarelia.sc_scstatuscd_id = scstatuscd.sc_scstatuscd_id LEFT JOIN ts_kind ON ts_timeser.ts_kind_id = ts_kind.ts_kind_id LEFT JOIN dsstation ON stat_ts.dsstation_id = dsstation.dsstation_id LEFT JOIN riverseg ON dsstation.rivsyst_id = riverseg.rivsyst_id LEFT JOIN mdcontact ON metadata.md_metadata_id = mdcontact.md_metadata_id LEFT JOIN respparty ON mdcontact.ci_respparty_id = respparty.ci_respparty_id LEFT JOIN mdconst ON metadata.md_metadata_id = mdconst.md_metadata_id LEFT JOIN consts ON mdconst.md_consts_id = consts.md_consts_id LEFT JOIN respparty respparty2 ON dsstation.ci_respparty_id = respparty2.ci_respparty_id LEFT JOIN distrib ON metadata.md_distrib_id = distrib.md_distrib_id LEFT JOIN distributors ON distrib.md_distrib_id = distributors.md_distrib_id LEFT JOIN distributor ON distributors.md_distributor_id = distributor.md_distributor_id LEFT JOIN respparty respparty3 ON distributor.ci_respparty_id = respparty3.ci_respparty_id LEFT JOIN uomunits ON ts_timeser.uom_units_id = uomunits.uom_units_id LEFT JOIN map_srid ON dsstation.srid = map_srid.srid WHERE ts_timeser.md_metadata_id = 283' />
+        </plugin>
     </dataio>
     
     <metadata>
@@ -28,13 +42,14 @@
         <row id="LAT" type="java.lang.Double" />
         <row id="LONG" type="java.lang.Double" />
         <row id="HEIGHT" type="java.lang.Double" />
-        <column id="tmean" type="java.lang.Double" metadataio="MetadataReader1" />
+        <column id="1" type="java.lang.Double" metadataio="MetadataReader1" />
+        <column id="2" type="java.lang.Double" metadataio="MetadataReader2" />
     </metadata>
     
     <data>
         
         <table>
-            <column id="tmean" dataio="DataReader1" sourcecolumn="1" valuecount="100" />
+            <column id="1" dataio="DataReader1" sourcecolumn="1" valuecount="100" />
         </table>
         
         <!--timeseries>

@@ -22,6 +22,8 @@
  */
 package rbis.virtualws;
 
+import rbis.virtualws.datatypes.DataValue;
+
 /**
  *
  * @author Sven Kralisch

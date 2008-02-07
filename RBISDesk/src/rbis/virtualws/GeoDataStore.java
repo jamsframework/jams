@@ -22,6 +22,8 @@
  */
 package rbis.virtualws;
 
+import org.w3c.dom.Document;
+
 /**
  *
  * @author Sven Kralisch
@@ -30,9 +32,13 @@ public class GeoDataStore extends StandardDataStore {
 
     //private Polygon extend;
     public GeoDataStore() {
-
+        super();
     }
-
+    
+    public GeoDataStore(VirtualWorkspace ws, Document doc) {
+        super(ws, doc);
+    }
+    
     public String getTitle() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

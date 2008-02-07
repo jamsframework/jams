@@ -22,6 +22,7 @@
  */
 package rbis.virtualws;
 
+import rbis.virtualws.datatypes.DataValue;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
