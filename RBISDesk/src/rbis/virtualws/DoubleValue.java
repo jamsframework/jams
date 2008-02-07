@@ -3,7 +3,7 @@ package rbis.virtualws;
 public class DoubleValue implements DataValue {
 
     private Double value;
-    
+
     public DoubleValue(double value) {
         this.value = new Double(value);
     }
@@ -32,12 +32,8 @@ public class DoubleValue implements DataValue {
         this.value = new Double(value);
     }
 
-    public void setString(String value) {
-        try {
-            this.value = new Double(value);
-        } catch (NumberFormatException nfe) {
-
-        }
+    public void setString(String value) throws NumberFormatException {
+        this.value = new Double(value);
     }
 
     public void setObject(Object value) {

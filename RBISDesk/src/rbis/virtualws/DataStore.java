@@ -27,7 +27,7 @@ package rbis.virtualws;
  * @author Sven Kralisch
  */
 public interface DataStore {
-    
+
     public String getTitle();
 
     public void setTitle(String title);
@@ -39,10 +39,7 @@ public interface DataStore {
     public boolean hasNext();
 
     public DataSet getNext();
-    
-    public DataSetDefinition getDataSetDefinition();
-    
-    public void setDataSetDefinition(DataSetDefinition dsDef);
 
+    public DataSetDefinition getDataSetDefinition();
 }
 

@@ -8,36 +8,38 @@ public class StringValue implements DataValue {
         this.value = value;
     }
 
-    public double getDouble() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public double getDouble() throws NumberFormatException {
+        return new Double(value);
     }
 
-    public long getLong() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public long getLong() throws NumberFormatException {
+        return new Long(value);
     }
 
     public String getString() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return value;
     }
 
     public Object getObject() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return value;
     }
 
     public void setDouble(double value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.value = "" + value;
     }
 
     public void setLong(long value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.value = "" + value;
     }
 
     public void setString(String value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.value = value;
     }
 
     public void setObject(Object value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (value instanceof String) {
+            this.value = (String) value;
+        }
     }
 }
 

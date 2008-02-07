@@ -24,6 +24,7 @@ package rbis.virtualws;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -39,6 +40,8 @@ public abstract class StandardDataStore implements DataStore {
     private Document doc;
     private HashMap<String, DataIO> dataIO;
     private VirtualWorkspace ws;
+    private DataSetDefinition dsd;
+    private String title,  description;
 
     public StandardDataStore() {
         this.doc = null;
@@ -49,20 +52,69 @@ public abstract class StandardDataStore implements DataStore {
     public StandardDataStore(VirtualWorkspace ws, Document doc) {
         this.doc = doc;
         this.ws = ws;
-        this.dataIO = getDataIO(doc, ws);
+        this.dataIO = createDataIO();
+        this.dsd = createDataSetDefinition();
     }
 
-    public static HashMap<String, DataIO> getDataIO(Document doc, VirtualWorkspace ws) {
-//        Element sourceElement = (Element) xmlDoc.getElementsByTagName("dataseries").item(0);
+    private DataSetDefinition createDataSetDefinition() {
 
-        HashMap<String, DataIO> dataIO = new HashMap<String, DataIO>();
+        ArrayList<Class> dataTypes = new ArrayList<Class>();
+
+        Element metadataElement = (Element) doc.getElementsByTagName("metadata").item(0);
+
+        NodeList columnList = metadataElement.getElementsByTagName("column");
+        for (int i = 0; i < columnList.getLength(); i++) {
+            Element columnElement = (Element) columnList.item(i);
+            try {
+                Class type = Class.forName(columnElement.getAttribute("type"));
+                dataTypes.add(type);
+            } catch (ClassNotFoundException cnfe) {
+                ws.getRuntime().handle(cnfe);
+            }
+        }
+
+        DataSetDefinition def = new DataSetDefinition(dataTypes);
+
+        NodeList rowList = metadataElement.getElementsByTagName("row");
+        for (int i = 0; i < rowList.getLength(); i++) {
+            Element rowElement = (Element) rowList.item(i);
+            try {
+                Class type = Class.forName(rowElement.getAttribute("type"));
+                def.addAttribute(rowElement.getAttribute("id"), type);
+            } catch (ClassNotFoundException cnfe) {
+                ws.getRuntime().handle(cnfe);
+            }
+        }
+
+        for (int i = 0; i < columnList.getLength(); i++) {
+            Element columnElement = (Element) columnList.item(i);
+            DataIO metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
+
+            metadataIO.init();
+            DataSet metadataSet = metadataIO.getValue();
+            metadataIO.cleanup();
+
+            ArrayList<Object> values = new ArrayList<Object>();
+            for (DataValue value : metadataSet.getData()) {
+                values.add(value.getObject());
+            }
+            def.setAttributeValues(i, values);
+
+        }
+
+        return def;
+    }
+
+    private HashMap<String, DataIO> createDataIO() {
+
+        HashMap<String, DataIO> _dataIO = new HashMap<String, DataIO>();
 
         Element ioElement = (Element) doc.getElementsByTagName("dataio").item(0);
-        
+
         if (ioElement == null) {
             return null;
         }
-        
+
         NodeList nodes = ioElement.getElementsByTagName("plugin");
 
         for (int n = 0; n < nodes.getLength(); n++) {
@@ -93,7 +145,7 @@ public abstract class StandardDataStore implements DataStore {
 
                 }
 
-                dataIO.put(id, io);
+                _dataIO.put(id, io);
 
             } catch (ClassNotFoundException cnfe) {
                 ws.getRuntime().handle(cnfe);
@@ -107,30 +159,30 @@ public abstract class StandardDataStore implements DataStore {
                 ws.getRuntime().handle(ite);
             }
         }
-        return dataIO;
+        return _dataIO;
     }
 
     public String getTitle() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return title;
     }
 
     public void setTitle(String title) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.title = title;
     }
 
     public String getDescription() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return description;
     }
 
-    public void setDescription(String descriptiom) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public DataSetDefinition getDataSetDefinition() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.dsd;
     }
 
-    public void setDataSetDefinition(DataSetDefinition dsDef) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public HashMap<String, DataIO> getDataIO() {
+        return dataIO;
     }
 }

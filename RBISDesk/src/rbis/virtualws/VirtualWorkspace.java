@@ -95,6 +95,7 @@ public class VirtualWorkspace {
     public static void main(String[] args) throws Exception {
 
         Document doc = XMLIO.getDocument("D:/jams/RBISDesk/datastore.xml");
+        String[] libs = {"D:/nbprojects/RBISDesk/dist", "D:/nbprojects/RBISDesk/dist/lib"};
 
         //System.out.println(XMLIO.getStringFromDocument(doc));
 
@@ -107,14 +108,28 @@ public class VirtualWorkspace {
             }
         });
 
-        String[] libs = {"D:/nbprojects/RBISDesk/dist", "D:/nbprojects/RBISDesk/dist/lib"};
         ws.setLibs(libs);
 
         if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
             System.exit(-1);
         }
 
-        DataIO reader = StandardDataStore.getDataIO(doc, ws).get("MetadataReader");
+        StandardDataStore store = new StandardDataStore(ws, doc) {
+
+            public boolean hasNext() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public DataSet getNext() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        };
+        
+        System.out.println(store.getDataSetDefinition().toASCIIString());
+        
+        System.exit(0);
+        
+        DataIO reader = store.getDataIO().get("MetadataReader");
 
         long start = System.currentTimeMillis();    
 

@@ -105,12 +105,15 @@ public class RBISPgSQL implements DataIO {
                         case DOUBLE:
                             value = new DoubleValue(rs.getDouble(j + 1));
                             dataSet.setData(j, value);
+                            break;
                         case LONG:
                             value = new LongValue(rs.getLong(j + 1));
                             dataSet.setData(j, value);
+                            break;
                         case STRING:
                             value = new StringValue(rs.getString(j + 1));
                             dataSet.setData(j, value);
+                            break;
                         default:
                             value = new ObjectValue(rs.getObject(j + 1));
                             dataSet.setData(j, value);

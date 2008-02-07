@@ -9,35 +9,37 @@ public class LongValue implements DataValue {
     }
 
     public double getDouble() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new Double(value);
     }
 
     public long getLong() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return value;
     }
 
     public String getString() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return value.toString();
     }
 
     public Object getObject() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return value;
     }
 
     public void setDouble(double value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.value = new Long((long)value);
     }
 
     public void setLong(long value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.value = new Long(value);
     }
 
-    public void setString(String value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void setString(String value) throws NumberFormatException {
+        this.value = new Long(value);
     }
 
     public void setObject(Object value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (value instanceof Long) {
+            this.value = (Long) value;
+        }
     }
 }
 
