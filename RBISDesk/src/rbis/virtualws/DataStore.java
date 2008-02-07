@@ -22,6 +22,8 @@
  */
 package rbis.virtualws;
 
+import rbis.virtualws.plugins.DataIO;
+
 /**
  *
  * @author Sven Kralisch
@@ -41,5 +43,7 @@ public interface DataStore {
     public DataSet getNext();
 
     public DataSetDefinition getDataSetDefinition();
+
+    public DataIO getDataIO(String id);
 }
 

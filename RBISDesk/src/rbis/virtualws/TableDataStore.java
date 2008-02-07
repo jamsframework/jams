@@ -30,9 +30,6 @@ import org.w3c.dom.Document;
  */
 public class TableDataStore extends StandardDataStore {
 
-    private String title,  description;
-    private DataSetDefinition dsDef;
-
     public TableDataStore() {
         super();
     }
@@ -47,29 +44,5 @@ public class TableDataStore extends StandardDataStore {
 
     public DataSet getNext() {
         return null;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public DataSetDefinition getDataSetDefinition() {
-        return dsDef;
-    }
-
-    public void setDataSetDefinition(DataSetDefinition dsDef) {
-        this.dsDef = dsDef;
     }
 }

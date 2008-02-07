@@ -183,7 +183,7 @@ public abstract class StandardDataStore implements DataStore {
         return this.dsd;
     }
 
-    public HashMap<String, DataIO> getDataIO() {
-        return dataIO;
+    public DataIO getDataIO(String id) {
+        return dataIO.get(id);
     }
 }

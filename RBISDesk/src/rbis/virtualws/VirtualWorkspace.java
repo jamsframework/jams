@@ -129,7 +129,7 @@ public class VirtualWorkspace {
         
         System.exit(0);
         
-        DataIO reader = store.getDataIO().get("MetadataReader");
+        DataIO reader = store.getDataIO("MetadataReader");
 
         long start = System.currentTimeMillis();    
 
