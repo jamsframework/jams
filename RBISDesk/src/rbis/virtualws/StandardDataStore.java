@@ -42,19 +42,17 @@ public abstract class StandardDataStore implements DataStore {
     private HashMap<String, DataIO> dataIO;
     private VirtualWorkspace ws;
     private DataSetDefinition dsd;
-    private String title,  description;
-
-    public StandardDataStore() {
-        this.doc = null;
-        this.ws = null;
-        this.dataIO = null;
-    }
+    private String id, description;
 
     public StandardDataStore(VirtualWorkspace ws, Document doc) {
         this.doc = doc;
         this.ws = ws;
         this.dataIO = createDataIO();
         this.dsd = createDataSetDefinition();
+        
+        this.id = doc.getDocumentElement().getAttribute("id");
+        this.description = doc.getDocumentElement().getAttribute("description");
+        
     }
 
     private DataSetDefinition createDataSetDefinition() {
@@ -163,20 +161,12 @@ public abstract class StandardDataStore implements DataStore {
         return _dataIO;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+    public String getID() {
+        return id;
     }
 
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public DataSetDefinition getDataSetDefinition() {
@@ -186,4 +176,5 @@ public abstract class StandardDataStore implements DataStore {
     public DataIO getDataIO(String id) {
         return dataIO.get(id);
     }
+
 }

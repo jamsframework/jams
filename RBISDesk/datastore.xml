@@ -47,7 +47,6 @@
     </metadata>
     
     <data>
-        
         <table>
             <column id="1" dataio="DataReader1" sourcecolumn="1" valuecount="100" />
         </table>

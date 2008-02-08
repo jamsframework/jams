@@ -30,10 +30,6 @@ import org.w3c.dom.Document;
  */
 public class TableDataStore extends StandardDataStore {
 
-    public TableDataStore() {
-        super();
-    }
-
     public TableDataStore(VirtualWorkspace ws, Document doc) {
         super(ws, doc);
     }

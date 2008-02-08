@@ -34,10 +34,6 @@ public class TSDataStore extends TableDataStore {
     private JAMSCalendar start;
     private JAMSCalendar end;
 
-    public TSDataStore() {
-        super();
-    }
-
     public TSDataStore(VirtualWorkspace ws, Document doc) {
         super(ws, doc);
     }

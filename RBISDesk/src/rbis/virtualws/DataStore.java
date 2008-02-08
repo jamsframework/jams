@@ -30,13 +30,9 @@ import rbis.virtualws.plugins.DataIO;
  */
 public interface DataStore {
 
-    public String getTitle();
-
-    public void setTitle(String title);
+    public String getID();
 
     public String getDescription();
-
-    public void setDescription(String descriptiom);
 
     public boolean hasNext();
 

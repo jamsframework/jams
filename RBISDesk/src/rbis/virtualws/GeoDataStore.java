@@ -31,10 +31,6 @@ import org.w3c.dom.Document;
 public class GeoDataStore extends StandardDataStore {
 
     //private Polygon extend;
-    public GeoDataStore() {
-        super();
-    }
-    
     public GeoDataStore(VirtualWorkspace ws, Document doc) {
         super(ws, doc);
     }
