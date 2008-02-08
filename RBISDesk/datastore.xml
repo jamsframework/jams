@@ -46,7 +46,7 @@
         <column id="2" type="java.lang.Double" metadataio="MetadataReader2" />
     </metadata>
     
-    <data>
+    <data type="table">
         <table>
             <column id="1" dataio="DataReader1" sourcecolumn="1" valuecount="100" />
         </table>

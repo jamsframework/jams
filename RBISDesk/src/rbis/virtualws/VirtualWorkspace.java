@@ -43,7 +43,7 @@ public class VirtualWorkspace {
     private JAMSRuntime runtime = new StandardRuntime();
     private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
-    public DataStore getDataStore(Document doc) {
+    public DataStore addDataStore(Document doc) {
 
         DataStore store = null;
         Element dataNode = (Element) doc.getElementsByTagName("data").item(0);
@@ -70,10 +70,6 @@ public class VirtualWorkspace {
 
     public JAMSRuntime getRuntime() {
         return runtime;
-    }
-
-    public void addDataStore(DataStore store, String dsTitle) {
-        stores.put(dsTitle, store);
     }
 
     public void removeDataStore(DataStore store) {
@@ -114,17 +110,8 @@ public class VirtualWorkspace {
             System.exit(-1);
         }
 
-        StandardDataStore store = new StandardDataStore(ws, doc) {
-
-            public boolean hasNext() {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            public DataSet getNext() {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        };
-        
+        DataStore store = ws.addDataStore(doc);
+                
         System.out.println(store.getDataSetDefinition().toASCIIString());
         
         System.exit(0);
