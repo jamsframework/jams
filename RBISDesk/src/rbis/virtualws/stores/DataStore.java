@@ -20,8 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package rbis.virtualws;
+package rbis.virtualws.stores;
 
+import rbis.virtualws.*;
 import rbis.virtualws.plugins.DataIO;
 
 /**

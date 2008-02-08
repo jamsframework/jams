@@ -1,6 +1,6 @@
 /*
- * GeoDataStore.java
- * Created on 5. Februar 2008, 14:45
+ * TSDataStore.java
+ * Created on 23. Januar 2008, 15:53
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -20,27 +20,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package rbis.virtualws;
+package rbis.virtualws.stores;
 
+import rbis.virtualws.*;
+import org.unijena.jams.data.JAMSCalendar;
 import org.w3c.dom.Document;
 
 /**
  *
  * @author Sven Kralisch
  */
-public class GeoDataStore extends StandardDataStore {
+public class TSDataStore extends TableDataStore {
 
-    //private Polygon extend;
-    public GeoDataStore(VirtualWorkspace ws, Document doc) {
+    private JAMSCalendar start;
+    private JAMSCalendar end;
+
+    public TSDataStore(VirtualWorkspace ws, Document doc) {
         super(ws, doc);
-    }
-
-    public boolean hasNext() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public DataSet getNext() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
 

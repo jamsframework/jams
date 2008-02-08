@@ -22,6 +22,10 @@
  */
 package rbis.virtualws;
 
+import rbis.virtualws.stores.GeoDataStore;
+import rbis.virtualws.stores.TableDataStore;
+import rbis.virtualws.stores.TSDataStore;
+import rbis.virtualws.stores.DataStore;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Observable;
