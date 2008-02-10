@@ -39,21 +39,21 @@ import rbis.virtualws.plugins.DataIO;
  */
 public abstract class StandardDataStore implements DataStore {
 
-    private Document doc;
-    private HashMap<String, DataIO> dataIO;
-    private VirtualWorkspace ws;
-    private DataSetDefinition dsd;
-    private String id, description;
+    protected Document doc;
+    protected HashMap<String, DataIO> dataIO;
+    protected VirtualWorkspace ws;
+    protected DataSetDefinition dsd;
+    protected String id,  description;
 
     public StandardDataStore(VirtualWorkspace ws, Document doc) {
         this.doc = doc;
         this.ws = ws;
-        this.dataIO = createDataIO();
-        this.dsd = createDataSetDefinition();
-        
+
         this.id = doc.getDocumentElement().getAttribute("id");
         this.description = doc.getDocumentElement().getAttribute("description");
-        
+
+        this.dataIO = createDataIO();
+        this.dsd = createDataSetDefinition();
     }
 
     private DataSetDefinition createDataSetDefinition() {
@@ -177,5 +177,4 @@ public abstract class StandardDataStore implements DataStore {
     public DataIO getDataIO(String id) {
         return dataIO.get(id);
     }
-
 }

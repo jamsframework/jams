@@ -22,17 +22,37 @@
  */
 package rbis.virtualws.stores;
 
+import java.util.ArrayList;
 import rbis.virtualws.*;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import rbis.virtualws.plugins.DataIO;
 
 /**
  *
  * @author Sven Kralisch
  */
 public class TableDataStore extends StandardDataStore {
+    
+    
 
     public TableDataStore(VirtualWorkspace ws, Document doc) {
         super(ws, doc);
+        initDataAccess();
+    }
+
+    private void initDataAccess() {
+        
+        ArrayList<DataIO> dataIOs = new ArrayList<DataIO>();
+                
+        Element dataElement = (Element) doc.getElementsByTagName("data").item(0);
+        NodeList columns = dataElement.getElementsByTagName("column");
+        for (int i = 0; i < columns.getLength(); i++) {
+            Element columnElement = (Element) columns.item(i);
+            dataIOs.add(dataIO.get(columnElement.getAttribute("dataio")));
+        }
+        
     }
 
     public boolean hasNext() {

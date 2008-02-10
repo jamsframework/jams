@@ -37,7 +37,6 @@ import org.unijena.jams.runtime.JAMSClassLoader;
 import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import rbis.virtualws.plugins.DataIO;
 
 public class VirtualWorkspace {
@@ -50,14 +49,13 @@ public class VirtualWorkspace {
     public DataStore addDataStore(Document doc) {
 
         DataStore store = null;
-        Element dataNode = (Element) doc.getElementsByTagName("data").item(0);
-        String type = dataNode.getAttribute("type");
+        String type = doc.getDocumentElement().getTagName();
 
-        if (type.equals("table")) {
+        if (type.equals("tabledatastore")) {
             store = new TableDataStore(this, doc);
-        } else if (type.equals("timeseries")) {
+        } else if (type.equals("tsdatastore")) {
             store = new TSDataStore(this, doc);
-        } else if (type.equals("geodata")) {
+        } else if (type.equals("geodatastore")) {
             store = new GeoDataStore(this, doc);
         }
 
