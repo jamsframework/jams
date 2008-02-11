@@ -41,6 +41,6 @@ public interface DataStore {
 
     public DataSetDefinition getDataSetDefinition();
 
-    public DataIO getDataIO(String id);
+    public void close();
 }
 

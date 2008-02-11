@@ -43,5 +43,9 @@ public class GeoDataStore extends StandardDataStore {
     public DataSet getNext() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public void close() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
 

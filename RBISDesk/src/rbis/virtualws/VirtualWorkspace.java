@@ -95,8 +95,6 @@ public class VirtualWorkspace {
         Document doc = XMLIO.getDocument("D:/jams/RBISDesk/datastore.xml");
         String[] libs = {"D:/nbprojects/RBISDesk/dist", "D:/nbprojects/RBISDesk/dist/lib"};
 
-        //System.out.println(XMLIO.getStringFromDocument(doc));
-
         VirtualWorkspace ws = new VirtualWorkspace();
         ws.getRuntime().setDebugLevel(JAMS.VERBOSE);
         ws.getRuntime().addErrorLogObserver(new Observer() {
@@ -122,38 +120,16 @@ public class VirtualWorkspace {
             System.out.println(ds.toString());
             
         }
-        
-        System.exit(0);
-        
-        DataIO reader = store.getDataIO("MetadataReader");
 
-        long start = System.currentTimeMillis();    
+        store.close();
 
-        reader.init();
-
-        if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
-            System.exit(-1);
-        }
-
-        DataSet[] data = reader.getValues();
-        int rows = data.length;
-        int columns = data[0].getData().length;
-        while (data.length > 0) {
-            data = reader.getValues();
-            rows += data.length;
-        }
-        System.out.println("Time: " + (System.currentTimeMillis() - start));
-        System.out.println("Rows: " + rows);
-        System.out.println("Cols: " + columns);
-
-        reader.cleanup();
-
+        /*
         JAMSCalendar cal = new JAMSCalendar();
         cal.setValue(new GregorianCalendar());
         cal.set(1925, 10, 1, 0, 0, 0);
         System.out.println(cal);
         System.out.println(Math.round((double) cal.getTimeInMillis() / 1000)); //should be "1925-11-01 00:00" / -1393804800
-
+        */
     }
 }
 

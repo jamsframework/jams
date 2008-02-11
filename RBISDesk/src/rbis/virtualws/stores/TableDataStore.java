@@ -81,11 +81,15 @@ public class TableDataStore extends StandardDataStore {
     private void fillBuffer() {
 
         for (DataIO io : dataIOSet) {
-            io.fetchValues(bufferSize);
+
+            if (bufferSize > 0) {
+                io.fetchValues(bufferSize);
+            } else {
+                io.fetchValues();
+            }
             maxPosition = Math.min(maxPosition, io.getValues().length);
             currentPosition = 0;
         }
-
     }
 
     public boolean hasNext() {
@@ -115,5 +119,11 @@ public class TableDataStore extends StandardDataStore {
         currentPosition++;
 
         return result;
+    }
+
+    public void close() {
+        for (DataIO io : dataIOSet) {
+            io.cleanup();
+        }
     }
 }

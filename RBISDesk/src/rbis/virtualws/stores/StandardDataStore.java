@@ -55,12 +55,14 @@ public abstract class StandardDataStore implements DataStore {
 
         Node descriptionNode = doc.getDocumentElement().getElementsByTagName("description").item(0);
         this.description = descriptionNode.getTextContent();
-        
-        Element parameterElement = (Element) doc.getDocumentElement().getElementsByTagName("parameter").item(0);
-        Element bufferSizeElement = (Element) parameterElement.getElementsByTagName("bufferSize").item(0);
-        this.bufferSize = Integer.parseInt(bufferSizeElement.getAttribute("value"));
-        
 
+        Element parameterElement = (Element) doc.getDocumentElement().getElementsByTagName("parameter").item(0);
+
+        Element bufferSizeElement = (Element) parameterElement.getElementsByTagName("buffersize").item(0);
+        if (bufferSizeElement != null) {
+            this.bufferSize = Integer.parseInt(bufferSizeElement.getAttribute("value"));
+        }
+        
         this.dataIO = createDataIO();
         this.dsd = createDataSetDefinition();
     }

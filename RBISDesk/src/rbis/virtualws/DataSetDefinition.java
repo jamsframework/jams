@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 
-
 /**
  *
  * @author Sven Kralisch
@@ -95,11 +94,6 @@ public class DataSetDefinition {
 
     public boolean setAttributeValues(int column, ArrayList<Object> values) {
 
-        //check if size matches
-        if (values.size() != attributeNames.size()) {
-            return false;
-        }
-
         //check if column exists
         if ((column < 0) || (column >= columnCount)) {
             return false;
@@ -108,6 +102,11 @@ public class DataSetDefinition {
 //        for (int i = 0; i < attributeNames.size(); i++) {
         int i = 0;
         for (String attributeName : attributeNames) {
+
+            //check if size matches
+            if (i >= values.size()) {
+                return false;
+            }
 
             //check if provided values are compatible to attribute types
             Class<?> type = attributes.get(attributeName);
@@ -169,7 +168,6 @@ public class DataSetDefinition {
         for (Class type : dataTypes) {
             result += "\t" + type.getSimpleName();
         }
-        result += "\n";
 
         return result;
     }
