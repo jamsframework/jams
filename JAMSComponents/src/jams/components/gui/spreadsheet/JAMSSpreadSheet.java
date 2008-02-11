@@ -17,7 +17,9 @@ import java.util.Vector;
 import java.util.StringTokenizer;
 import java.awt.event.*;
 import java.awt.*;
+import java.awt.Cursor.*;
 import javax.swing.*;
+import javax.swing.table.*;
 import java.io.*;
 import org.unijena.jams.data.*;
 import org.unijena.jams.model.*;
@@ -115,6 +117,10 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     private JTextField editField = new JTextField();
     /* Table and TableModel */
     private JAMSTableModel tmodel;
+    private JTableHeader tableHeader;
+    //private MouseListener mouseListener;
+    //private MouseAdapter mouseAdapter;
+    
     JTable table;
     
     /* ComboBox */
@@ -159,6 +165,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     
      /************* *** Event Handling *** ****l*****************************/
 
+
     
     ActionListener calcbuttonclick = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
@@ -170,11 +177,8 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
             if(kindofcalc == 1){
                 calclabel.setText("Mean: " + calcmean());
                 //label.setText("MEAN");
-            }
-
-         
-         }
-         
+            }         
+         }         
     };
 
      
@@ -402,35 +406,35 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         //ctsIsOpen = true;
         }
    
-    private void createEmptyTimePlot(int graphCount){
-                 TimeSeriesCollection dataset = new TimeSeriesCollection();
-                 TimeSeries[] ts = new TimeSeries[graphCount];
-                 
-                 Vector<JAMSCalendar> timevector = new Vector<JAMSCalendar>();
-                 String yAxisName = "";
-                 for(int k=0; k<graphCount; k++){
-                     
-                     
-
-                         ts[k] = new TimeSeries("timeseriesname", Second.class);
-                         //yAxisName += "  "+table.getColumnName(cols[k]); TODO: column übergeben!
-                 }
-                 
-                 try{
-                     JFreeChart testchart = ChartFactory.createTimeSeriesChart(getInstanceName(),"time",yAxisName,dataset,false,false,false);
-
-                     ChartPanel chartPanel = new ChartPanel(testchart);
-                     JDialog frame = new JDialog();
-                     frame.setLayout(new FlowLayout());
-                     //chartPanel.show();
-                     frame.add(chartPanel);
-                     frame.pack();
-                     frame.setVisible(true);
-                 }
-                 catch(Exception pe){
-                     System.err.println(pe.toString() + " plot failure");
-                 }
-    }
+//    private void createEmptyTimePlot(int graphCount){
+//                 TimeSeriesCollection dataset = new TimeSeriesCollection();
+//                 TimeSeries[] ts = new TimeSeries[graphCount];
+//                 
+//                 Vector<JAMSCalendar> timevector = new Vector<JAMSCalendar>();
+//                 String yAxisName = "";
+//                 for(int k=0; k<graphCount; k++){
+//                     
+//                     
+//
+//                         ts[k] = new TimeSeries("timeseriesname", Second.class);
+//                         //yAxisName += "  "+table.getColumnName(cols[k]); TODO: column übergeben!
+//                 }
+//                 
+//                 try{
+//                     JFreeChart testchart = ChartFactory.createTimeSeriesChart(getInstanceName(),"time",yAxisName,dataset,false,false,false);
+//
+//                     ChartPanel chartPanel = new ChartPanel(testchart);
+//                     JDialog frame = new JDialog();
+//                     frame.setLayout(new FlowLayout());
+//                     //chartPanel.show();
+//                     frame.add(chartPanel);
+//                     frame.pack();
+//                     frame.setVisible(true);
+//                 }
+//                 catch(Exception pe){
+//                     System.err.println(pe.toString() + " plot failure");
+//                 }
+//    }
     
     ActionListener plotAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
@@ -590,6 +594,9 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                     
                     table = new JTable(this.tmodel);
                     this.table=table;
+                    this.tableHeader = table.getTableHeader();
+                    HeaderHandler mouseListener = new HeaderHandler();
+                    tableHeader.addMouseListener(mouseListener);
         
                     
                     //this.scrollpane = new JScrollPane(table);
@@ -604,6 +611,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                     //scrollpane.updateUI();
                     //scrollpane.repaint();
                     
+                    //table.getColumnModel().getColumn(0)
                     table.setRowSelectionAllowed(true);
                     table.setColumnSelectionAllowed(true);
                     table.setDragEnabled(false);
@@ -850,13 +858,73 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         updateGUI();
        // panel.removeAll();
         //TODO: cleanup tmodel
+    }   
+
+
+    private class HeaderHandler extends MouseAdapter {
+            
+            int button = -1;
+            int[] selectedColumns;
+            int col_START = 0; // is this nessesary?
+            int col_END = 0;
+            
+            public void mouseClicked(MouseEvent e){
+                
+                JTableHeader h = (JTableHeader) e.getSource();
+                TableColumnModel tcm = h.getColumnModel();
+                int viewCol = tcm.getColumnIndexAtX(e.getX());
+                
+                if(e.isShiftDown()){
+                    button = 1;
+                }
+                if(e.isControlDown()){
+                    button = 2;
+                }
+                
+                switch (button) {
+                    
+                    case 1: //SHIFT DOWN          
+                        col_END = table.getColumnModel().getColumn(viewCol).getModelIndex(); 
+                        //table.setColumnSelectionInterval(col_START,col_END);
+                        table.addColumnSelectionInterval(col_START, col_END);
+                        break;
+                        
+                    case 2: //CTRL DOWN
+                       selectedColumns = table.getSelectedColumns();
+                       col_END = table.getColumnModel().getColumn(viewCol).getModelIndex();
+                       table.addColumnSelectionInterval(col_END, col_END);
+                       
+                       for(int k=0; k<selectedColumns.length; k++){
+                           
+                           if(col_END == selectedColumns[k]){
+                               table.removeColumnSelectionInterval(col_END, col_END);
+                               break;
+                           }
+                               
+                       }
+                       //table.setColumnSelectionInterval(col_START,col_END);
+                       
+                       break;
+                        
+                    default:
+                        col_START = table.getColumnModel().getColumn(viewCol).getModelIndex();
+                        table.setColumnSelectionInterval(col_START, col_START);
+                }
+                
+                
+                table.setRowSelectionInterval(0,table.getRowCount()-1);
+                button = -1;
+            }
+            
+            public void mouseEntered(MouseEvent e){
+                JTableHeader h = (JTableHeader) e.getSource();
+                h.setCursor(new Cursor(12)); //hand curser
+            }
+            
+            public void mouseExited(MouseEvent e){
+                JTableHeader h = (JTableHeader) e.getSource();
+                //h.setCursor(new Cursor(-1)); //default curser
+            }
+
     }
-    
-
-       
-    
-    
-    /** Creates a new instance of JAMSSpreadSheet */
-
-    
 }
