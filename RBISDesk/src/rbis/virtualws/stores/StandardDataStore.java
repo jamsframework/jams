@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import rbis.virtualws.plugins.DataIO;
 
@@ -44,13 +45,21 @@ public abstract class StandardDataStore implements DataStore {
     protected VirtualWorkspace ws;
     protected DataSetDefinition dsd;
     protected String id,  description;
+    protected int bufferSize = 0;
 
     public StandardDataStore(VirtualWorkspace ws, Document doc) {
         this.doc = doc;
         this.ws = ws;
 
         this.id = doc.getDocumentElement().getAttribute("id");
-        this.description = doc.getDocumentElement().getAttribute("description");
+
+        Node descriptionNode = doc.getDocumentElement().getElementsByTagName("description").item(0);
+        this.description = descriptionNode.getTextContent();
+        
+        Element parameterElement = (Element) doc.getDocumentElement().getElementsByTagName("parameter").item(0);
+        Element bufferSizeElement = (Element) parameterElement.getElementsByTagName("bufferSize").item(0);
+        this.bufferSize = Integer.parseInt(bufferSizeElement.getAttribute("value"));
+        
 
         this.dataIO = createDataIO();
         this.dsd = createDataSetDefinition();
@@ -91,7 +100,8 @@ public abstract class StandardDataStore implements DataStore {
             DataIO metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
 
             metadataIO.init();
-            DataSet metadataSet = metadataIO.getValue();
+            metadataIO.fetchValues(1);
+            DataSet metadataSet = metadataIO.getValues()[0];
             metadataIO.cleanup();
 
             ArrayList<Object> values = new ArrayList<Object>();

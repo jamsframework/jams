@@ -48,6 +48,23 @@ public class DataSet {
         this.data = data;
     }
     
+    @Override
+    public String toString() {
+        
+        String result = "";
+
+        if (data.length == 0) {
+            return result;
+        } else {
+            result += data[0].getString();
+        } 
+        
+        for (int i = 1; i < data.length; i++) {
+            result += "\t" + data[i].getString();
+        }
+        
+        return result;
+    }
     
 }
 

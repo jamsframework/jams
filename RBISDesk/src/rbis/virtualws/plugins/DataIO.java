@@ -34,9 +34,11 @@ public interface DataIO {
 
     public void cleanup();
 
+    public void fetchValues();
+
+    public void fetchValues(int count);
+    
     public DataSet[] getValues();
 
-    public DataSet[] getValues(int count);
-
-    public DataSet getValue();
+    public int numberOfColumns();
 }

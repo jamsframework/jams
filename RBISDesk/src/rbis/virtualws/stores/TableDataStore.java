@@ -22,11 +22,13 @@
  */
 package rbis.virtualws.stores;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import rbis.virtualws.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import rbis.virtualws.datatypes.DataValue;
 import rbis.virtualws.plugins.DataIO;
 
 /**
@@ -34,32 +36,84 @@ import rbis.virtualws.plugins.DataIO;
  * @author Sven Kralisch
  */
 public class TableDataStore extends StandardDataStore {
-    
-    
+
+    private int currentPosition,  maxPosition;
+    private Set<DataIO> dataIOSet = new HashSet<DataIO>();
+    private DataIO[] dataIOArray;
+    private int[] positionArray;
 
     public TableDataStore(VirtualWorkspace ws, Document doc) {
         super(ws, doc);
         initDataAccess();
+
     }
 
     private void initDataAccess() {
-        
-        ArrayList<DataIO> dataIOs = new ArrayList<DataIO>();
-                
+
         Element dataElement = (Element) doc.getElementsByTagName("data").item(0);
         NodeList columns = dataElement.getElementsByTagName("column");
-        for (int i = 0; i < columns.getLength(); i++) {
+
+        int colCount = columns.getLength();
+
+        dataIOArray = new DataIO[colCount];
+        positionArray = new int[colCount];
+
+        for (int i = 0; i < colCount; i++) {
+
             Element columnElement = (Element) columns.item(i);
-            dataIOs.add(dataIO.get(columnElement.getAttribute("dataio")));
+
+            dataIOArray[i] = dataIO.get(columnElement.getAttribute("dataio"));
+            dataIOSet.add(dataIOArray[i]);
+
+            positionArray[i] = Integer.parseInt(columnElement.getAttribute("sourcecolumn"));
         }
-        
+
+        for (DataIO io : dataIOSet) {
+            io.init();
+        }
+
+        currentPosition = 0;
+        maxPosition = Integer.MAX_VALUE;
+
+        fillBuffer();
+    }
+
+    private void fillBuffer() {
+
+        for (DataIO io : dataIOSet) {
+            io.fetchValues(bufferSize);
+            maxPosition = Math.min(maxPosition, io.getValues().length);
+            currentPosition = 0;
+        }
+
     }
 
     public boolean hasNext() {
-        return false;
+        if (currentPosition < maxPosition) {
+            return true;
+        } else {
+            fillBuffer();
+            if (currentPosition < maxPosition) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     public DataSet getNext() {
-        return null;
+
+        DataSet result = new DataSet(positionArray.length);
+
+        for (int i = 0; i < positionArray.length; i++) {
+
+            DataSet ds = dataIOArray[i].getValues()[currentPosition];
+            DataValue[] values = ds.getData();
+            result.setData(i, values[positionArray[i]]);
+
+        }
+        currentPosition++;
+
+        return result;
     }
 }

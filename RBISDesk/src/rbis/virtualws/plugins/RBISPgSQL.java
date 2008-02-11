@@ -48,9 +48,11 @@ public class RBISPgSQL implements DataIO {
     private ResultSet rs;
     private ResultSetMetaData rsmd;
     private PGSQLConnector pgsql;
-    private int numberOfColumns;
+    private int numberOfColumns = -1;
     private int[] type;
-
+    private boolean inited = false,  cleanedup = false;
+    private DataSet[] currentData = null;            
+            
     public RBISPgSQL() {
     }
 
@@ -75,16 +77,17 @@ public class RBISPgSQL implements DataIO {
     }
 
     public DataSet[] getValues() {
-        return getDBRows(Long.MAX_VALUE);
+        return currentData;
     }
 
-    public DataSet[] getValues(int count) {
-        return getDBRows(count);
+    public void fetchValues() {
+        currentData = getDBRows(Long.MAX_VALUE);
     }
 
-    public DataSet getValue() {
-        return getDBRows(1)[0];
+    public void fetchValues(int count) {
+        currentData = getDBRows(count);
     }
+
 
     private DataSet[] getDBRows(long count) {
 
@@ -95,7 +98,7 @@ public class RBISPgSQL implements DataIO {
         try {
 
             int i = 0;
-            while (rs.next() && i < count) {
+            while ((i < count) && rs.next()) {
                 i++;
                 dataSet = new DataSet(numberOfColumns);
 
@@ -130,6 +133,12 @@ public class RBISPgSQL implements DataIO {
     }
 
     public void init() {
+
+        if (inited) {
+            return;
+        } else {
+            inited = true;
+        }
 
         if (db == null) {
             return;
@@ -166,12 +175,15 @@ public class RBISPgSQL implements DataIO {
                     type[i] = LONG;
                 } else if (rsmd.getColumnTypeName(i + 1).startsWith("float")) {
                     type[i] = DOUBLE;
+                } else if (rsmd.getColumnTypeName(i + 1).startsWith("numeric")) {
+                    type[i] = DOUBLE;
                 } else if (rsmd.getColumnTypeName(i + 1).startsWith("varchar")) {
                     type[i] = STRING;
                 } else {
                     type[i] = OBJECT;
                 }
             }
+            cleanedup = false;
 
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
@@ -179,11 +191,23 @@ public class RBISPgSQL implements DataIO {
     }
 
     public void cleanup() {
+
+        if (cleanedup) {
+            return;
+        } else {
+            cleanedup = true;
+        }
+
         try {
             rs.close();
             pgsql.close();
+            inited = false;
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
+    }
+
+    public int numberOfColumns() {
+        return numberOfColumns;
     }
 }

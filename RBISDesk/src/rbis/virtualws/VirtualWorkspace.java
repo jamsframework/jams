@@ -115,6 +115,13 @@ public class VirtualWorkspace {
         DataStore store = ws.addDataStore(doc);
                 
         System.out.println(store.getDataSetDefinition().toASCIIString());
+
+        while (store.hasNext()) {
+         
+            DataSet ds = store.getNext();
+            System.out.println(ds.toString());
+            
+        }
         
         System.exit(0);
         
@@ -128,11 +135,11 @@ public class VirtualWorkspace {
             System.exit(-1);
         }
 
-        DataSet[] data = reader.getValues(1);
+        DataSet[] data = reader.getValues();
         int rows = data.length;
         int columns = data[0].getData().length;
         while (data.length > 0) {
-            data = reader.getValues(1000);
+            data = reader.getValues();
             rows += data.length;
         }
         System.out.println("Time: " + (System.currentTimeMillis() - start));
