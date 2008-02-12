@@ -111,25 +111,30 @@ public class VirtualWorkspace {
         }
 
         DataStore store = ws.addDataStore(doc);
-                
+
+        if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
+            return;
+        }
+
+
         System.out.println(store.getDataSetDefinition().toASCIIString());
 
         while (store.hasNext()) {
-         
+
             DataSet ds = store.getNext();
             System.out.println(ds.toString());
-            
+
         }
 
         store.close();
 
-        /*
-        JAMSCalendar cal = new JAMSCalendar();
-        cal.setValue(new GregorianCalendar());
-        cal.set(1925, 10, 1, 0, 0, 0);
-        System.out.println(cal);
-        System.out.println(Math.round((double) cal.getTimeInMillis() / 1000)); //should be "1925-11-01 00:00" / -1393804800
-        */
+    /*
+    JAMSCalendar cal = new JAMSCalendar();
+    cal.setValue(new GregorianCalendar());
+    cal.set(1925, 10, 1, 0, 0, 0);
+    System.out.println(cal);
+    System.out.println(Math.round((double) cal.getTimeInMillis() / 1000)); //should be "1925-11-01 00:00" / -1393804800
+     */
     }
 }
 

@@ -98,7 +98,7 @@ public class PGSQLConnector {
             pgsql.close();
 
         } catch (SQLException sqlex) {
-            sqlex.printStackTrace();
+            System.out.println("PGSQLConnector: " + sqlex.getMessage());
         }
 
     }

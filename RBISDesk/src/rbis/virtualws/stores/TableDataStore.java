@@ -24,6 +24,7 @@ package rbis.virtualws.stores;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.unijena.jams.JAMS;
 import rbis.virtualws.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,8 +45,12 @@ public class TableDataStore extends StandardDataStore {
 
     public TableDataStore(VirtualWorkspace ws, Document doc) {
         super(ws, doc);
+        
+        if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
+            return;
+        }
+        
         initDataAccess();
-
     }
 
     private void initDataAccess() {

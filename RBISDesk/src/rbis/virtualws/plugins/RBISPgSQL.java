@@ -80,12 +80,14 @@ public class RBISPgSQL implements DataIO {
         return currentData;
     }
 
-    public void fetchValues() {
+    public int fetchValues() {
         currentData = getDBRows(Long.MAX_VALUE);
+        return 0;
     }
 
-    public void fetchValues(int count) {
+    public int fetchValues(int count) {
         currentData = getDBRows(count);
+        return 0;
     }
 
 
@@ -126,38 +128,38 @@ public class RBISPgSQL implements DataIO {
             }
 
         } catch (SQLException sqlex) {
-            sqlex.printStackTrace();
+            System.out.println("RBISPgSQL: " + sqlex);
         }
 
         return data.toArray(new DataSet[data.size()]);
     }
 
-    public void init() {
+    public int init() {
 
         if (inited) {
-            return;
+            return 0;
         } else {
             inited = true;
         }
 
         if (db == null) {
-            return;
+            return -1;
         }
 
         if (user == null) {
-            return;
+            return -1;
         }
 
         if (password == null) {
-            return;
+            return -1;
         }
 
         if (host == null) {
-            return;
+            return -1;
         }
 
         if (query == null) {
-            return;
+            return -1;
         }
 
         pgsql = new PGSQLConnector(host, db, user, password);
@@ -186,14 +188,16 @@ public class RBISPgSQL implements DataIO {
             cleanedup = false;
 
         } catch (SQLException sqlex) {
-            sqlex.printStackTrace();
+            System.out.println("RBISPgSQL: " + sqlex);
+            return -1;
         }
+        return 0;
     }
 
-    public void cleanup() {
+    public int cleanup() {
 
         if (cleanedup) {
-            return;
+            return 0;
         } else {
             cleanedup = true;
         }
@@ -203,8 +207,11 @@ public class RBISPgSQL implements DataIO {
             pgsql.close();
             inited = false;
         } catch (SQLException sqlex) {
-            sqlex.printStackTrace();
+            System.out.println("RBISPgSQL: " + sqlex);
+            return -1;
         }
+        
+        return 0;
     }
 
     public int numberOfColumns() {

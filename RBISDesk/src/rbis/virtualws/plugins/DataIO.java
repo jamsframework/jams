@@ -30,13 +30,13 @@ import rbis.virtualws.DataSet;
  */
 public interface DataIO {
 
-    public void init();
+    public int init();
 
-    public void cleanup();
+    public int cleanup();
 
-    public void fetchValues();
+    public int fetchValues();
 
-    public void fetchValues(int count);
+    public int fetchValues(int count);
     
     public DataSet[] getValues();
 

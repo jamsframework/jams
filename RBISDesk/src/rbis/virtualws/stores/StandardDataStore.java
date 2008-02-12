@@ -101,7 +101,11 @@ public abstract class StandardDataStore implements DataStore {
             Element columnElement = (Element) columnList.item(i);
             DataIO metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
 
-            metadataIO.init();
+            int result = metadataIO.init();
+            if (result < 0) {
+                ws.getRuntime().sendHalt("Initialization of data I/O component (" + this.getClass().getName() + ") failed..");
+                return null;
+            }
             metadataIO.fetchValues(1);
             DataSet metadataSet = metadataIO.getValues()[0];
             metadataIO.cleanup();
