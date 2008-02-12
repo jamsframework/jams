@@ -47,5 +47,9 @@ public class GeoDataStore extends StandardDataStore {
     public void close() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public String toASCIIString() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
 

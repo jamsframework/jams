@@ -45,11 +45,11 @@ public class TableDataStore extends StandardDataStore {
 
     public TableDataStore(VirtualWorkspace ws, Document doc) {
         super(ws, doc);
-        
+
         if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
             return;
         }
-        
+
         initDataAccess();
     }
 
@@ -131,4 +131,5 @@ public class TableDataStore extends StandardDataStore {
             io.cleanup();
         }
     }
+
 }

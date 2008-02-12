@@ -23,7 +23,6 @@
 package rbis.virtualws.stores;
 
 import rbis.virtualws.*;
-import rbis.virtualws.plugins.DataIO;
 
 /**
  *
@@ -42,5 +41,7 @@ public interface DataStore {
     public DataSetDefinition getDataSetDefinition();
 
     public void close();
+    
+    public String toASCIIString();
 }
 

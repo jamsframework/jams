@@ -44,7 +44,7 @@ public abstract class StandardDataStore implements DataStore {
     protected HashMap<String, DataIO> dataIO;
     protected VirtualWorkspace ws;
     protected DataSetDefinition dsd;
-    protected String id,  description;
+    protected String id,  description = "";
     protected int bufferSize = 0;
 
     public StandardDataStore(VirtualWorkspace ws, Document doc) {
@@ -54,7 +54,9 @@ public abstract class StandardDataStore implements DataStore {
         this.id = doc.getDocumentElement().getAttribute("id");
 
         Node descriptionNode = doc.getDocumentElement().getElementsByTagName("description").item(0);
-        this.description = descriptionNode.getTextContent();
+        if (descriptionNode != null) {
+            this.description = descriptionNode.getTextContent();
+        }
 
         Element parameterElement = (Element) doc.getDocumentElement().getElementsByTagName("parameter").item(0);
 
@@ -62,7 +64,7 @@ public abstract class StandardDataStore implements DataStore {
         if (bufferSizeElement != null) {
             this.bufferSize = Integer.parseInt(bufferSizeElement.getAttribute("value"));
         }
-        
+
         this.dataIO = createDataIO();
         this.dsd = createDataSetDefinition();
     }
@@ -106,9 +108,14 @@ public abstract class StandardDataStore implements DataStore {
                 ws.getRuntime().sendHalt("Initialization of data I/O component (" + this.getClass().getName() + ") failed..");
                 return null;
             }
+        }
+
+        for (int i = 0; i < columnList.getLength(); i++) {
+            Element columnElement = (Element) columnList.item(i);
+            DataIO metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
+
             metadataIO.fetchValues(1);
             DataSet metadataSet = metadataIO.getValues()[0];
-            metadataIO.cleanup();
 
             ArrayList<Object> values = new ArrayList<Object>();
             for (DataValue value : metadataSet.getData()) {
@@ -116,6 +123,13 @@ public abstract class StandardDataStore implements DataStore {
             }
             def.setAttributeValues(i, values);
 
+        }
+
+        for (int i = 0; i < columnList.getLength(); i++) {
+            Element columnElement = (Element) columnList.item(i);
+            DataIO metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
+
+            metadataIO.cleanup();
         }
 
         return def;
@@ -192,5 +206,28 @@ public abstract class StandardDataStore implements DataStore {
 
     public DataIO getDataIO(String id) {
         return dataIO.get(id);
+    }
+
+    public String toASCIIString() {
+
+        String result = "";
+
+        result += "@comments\n";
+        result += "#ID: " + id + "\n";
+        result += "#DESCRIPTION:\n";
+        if (!description.equals("")) {
+            result += "# " + description.replace("\n", "\n# ") + "\n";
+        }
+
+        result += "@metadata\n";
+        result += getDataSetDefinition().toASCIIString() + "\n";
+
+        result += "@data\n";
+        while (hasNext()) {
+            DataSet ds = getNext();
+            result += ds.toString() + "\n";
+        }
+
+        return result;
     }
 }
