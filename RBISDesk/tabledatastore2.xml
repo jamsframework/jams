@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 
-<!--< erzeugt tabelle, timeseries/dataseries nicht >-->
-<tabledatastore id="tmean" creator="Sven Kralisch" date="30/11/2007">    
+<tabledatastore id="temp_Bad_Blankenburg" creator="Sven Kralisch" date="30/11/2007">    
     
     <parameter>
         <buffersize value="2"/>

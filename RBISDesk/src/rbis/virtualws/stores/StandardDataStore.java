@@ -44,7 +44,7 @@ public abstract class StandardDataStore implements DataStore {
     protected HashMap<String, DataIO> dataIO;
     protected VirtualWorkspace ws;
     protected DataSetDefinition dsd;
-    protected String id,  description = "";
+    protected String id,  description = "", creator, date;
     protected int bufferSize = 0;
 
     public StandardDataStore(VirtualWorkspace ws, Document doc) {
@@ -52,6 +52,8 @@ public abstract class StandardDataStore implements DataStore {
         this.ws = ws;
 
         this.id = doc.getDocumentElement().getAttribute("id");
+        this.date = doc.getDocumentElement().getAttribute("date");
+        this.creator = doc.getDocumentElement().getAttribute("creator");
 
         Node descriptionNode = doc.getDocumentElement().getElementsByTagName("description").item(0);
         if (descriptionNode != null) {
@@ -214,6 +216,8 @@ public abstract class StandardDataStore implements DataStore {
 
         result += "@comments\n";
         result += "#ID: " + id + "\n";
+        result += "#DATE: " + date + "\n";
+        result += "#CREATOR: " + creator + "\n";
         result += "#DESCRIPTION:\n";
         if (!description.equals("")) {
             result += "# " + description.replace("\n", "\n# ") + "\n";

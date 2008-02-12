@@ -22,9 +22,11 @@
  */
 package rbis.virtualws.stores;
 
-import rbis.virtualws.*;
+import org.unijena.jams.data.JAMSTimeInterval;
 import org.unijena.jams.data.JAMSCalendar;
+import rbis.virtualws.*;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  *
@@ -32,11 +34,26 @@ import org.w3c.dom.Document;
  */
 public class TSDataStore extends TableDataStore {
 
-    private JAMSCalendar start;
-    private JAMSCalendar end;
+    private JAMSTimeInterval ti;
 
     public TSDataStore(VirtualWorkspace ws, Document doc) {
         super(ws, doc);
+        
+        Element tiNode = (Element) doc.getElementsByTagName("timeinterval").item(0);
+        Element startElement = (Element) tiNode.getElementsByTagName("start").item(0);
+        Element endElement = (Element) tiNode.getElementsByTagName("end").item(0);
+        Element stepsizeElement = (Element) tiNode.getElementsByTagName("stepsize").item(0);
+        
+        JAMSCalendar start = new JAMSCalendar();
+        start.setValue(startElement.getAttribute("value"));
+
+        JAMSCalendar end = new JAMSCalendar();
+        end.setValue(endElement.getAttribute("value"));
+        
+        int timeUnit = Integer.parseInt(stepsizeElement.getAttribute("unit"));
+        int timeUnitCount = Integer.parseInt(stepsizeElement.getAttribute("count"));
+        
+        ti = new JAMSTimeInterval(start, end, timeUnit, timeUnitCount);
     }
 }
 

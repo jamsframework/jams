@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 
-<tabledatastore id="tmean" creator="Sven Kralisch" date="30/11/2007">    
+<tsdatastore id="tmean_timeseries" creator="Sven Kralisch" date="30/11/2007">    
     
+    <timeinterval>
+        <start value="1960-01-01 7:30"/>
+        <end value="1960-12-31 7:30"/>
+        <stepsize unit="6" count="1"/>
+    </timeinterval>
+
     <parameter>
         <buffersize value="2"/>
         <maxdatarows value="10"/>
@@ -61,48 +67,6 @@
     <data>
         <column id="1" dataio="DataReader1" sourcecolumn="1" />
         <column id="2" dataio="DataReader2" sourcecolumn="1" />
-        
-        <!--timeseries>
-            
-        </timeseries>
-        
-        <geodata>
-            
-        </geodata-->
-        
-    </data>
+    </data>    
     
-    
-    <!--timeseries interval="1996-11-01 7:30 2000-10-31 7:30 6 1">
-        
-        <datasource id="mydatatreader1" type="ujena.rbis.Reader">
-                <parameter id="username" value="nsk" />
-                <parameter id="hostname" value="localhost" />
-                <parameter id="query" value="SELECT ..." />
-        </datasource>
-
-	<datasource id="mydatatreader1" type="ujena.rbis.Reader">
-                <parameter id="username" value="nsk" />
-                <parameter id="hostname" value="localhost" />
-                <parameter id="query" value="SELECT ..." />
-        </datasource>
-        
-	<column id="time" position="0">
-		<columnsource source="index" starttime="1996-11-01 7:30" />
-	</column>
-	<column id="value1" position="1">
-		<columnsource source="mydatatreader1" sourcecolumn="1" starttime="1996-11-01 7:30" />
-	</column>
-      
-    </timeseries-->
-
-    <dataseries>
-        
-        
-        <column id="tmean0" position="1" source="mydatatreader1" sourcecolumn="0" type="JAMSDouble" startrow="800" />
-        <column id="tmean1" position="2" source="mydatatreader1" type="JAMSDouble" startrow="0" />
-        
-    </dataseries>
-    
-    
-</tabledatastore>
+</tsdatastore>
