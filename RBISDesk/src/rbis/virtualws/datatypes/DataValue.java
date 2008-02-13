@@ -22,6 +22,8 @@
  */
 package rbis.virtualws.datatypes;
 
+import org.unijena.jams.data.JAMSCalendar;
+
 /**
  *
  * @author Sven Kralisch
@@ -34,6 +36,8 @@ public interface DataValue {
     
     public String getString();
 
+    public JAMSCalendar getCalendar();
+
     public Object getObject();
 
     public void setDouble(double value);
@@ -41,6 +45,8 @@ public interface DataValue {
     public void setLong(long value);
     
     public void setString(String value);
+
+    public void setCalendar(JAMSCalendar value);
 
     public void setObject(Object value);
 }

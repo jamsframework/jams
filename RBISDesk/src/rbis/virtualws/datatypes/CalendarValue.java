@@ -1,6 +1,6 @@
 /*
- * LongValue.java
- * Created on 7. Februar 2008, 21:26
+ * CalendarValue.java
+ * Created on 13. Februar 2008, 14:38
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -28,20 +28,20 @@ import org.unijena.jams.data.JAMSCalendar;
  *
  * @author Sven Kralisch
  */
-public class LongValue implements DataValue {
+public class CalendarValue implements DataValue {
 
-    private Long value;
+    private JAMSCalendar value;
 
-    public LongValue(long value) {
-        this.value = new Long(value);
+    public CalendarValue(JAMSCalendar value) {
+        this.value = value;
     }
 
     public double getDouble() {
-        return new Double(value);
+        return (double) value.getTimeInMillis();
     }
 
     public long getLong() {
-        return value;
+        return  value.getTimeInMillis();
     }
 
     public String getString() {
@@ -53,29 +53,28 @@ public class LongValue implements DataValue {
     }
 
     public void setDouble(double value) {
-        this.value = new Long((long)value);
+        this.value.setTimeInMillis(Math.round(value));
     }
 
     public void setLong(long value) {
-        this.value = new Long(value);
+        this.value.setTimeInMillis(value);
     }
 
-    public void setString(String value) throws NumberFormatException {
-        this.value = new Long(value);
+    public void setString(String value) {
+        this.value.setValue(value);
     }
 
     public void setObject(Object value) {
-        if (value instanceof Long) {
-            this.value = (Long) value;
-        }
-    }
+        if (value instanceof JAMSCalendar) {
+            this.value = (JAMSCalendar) value;
+        }    }
 
     public JAMSCalendar getCalendar() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return value;
     }
 
     public void setCalendar(JAMSCalendar value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.value = value;
     }
 }
 

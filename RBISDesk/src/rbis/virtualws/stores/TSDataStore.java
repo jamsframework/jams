@@ -27,6 +27,8 @@ import org.unijena.jams.data.JAMSCalendar;
 import rbis.virtualws.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import rbis.virtualws.datatypes.CalendarValue;
+import rbis.virtualws.datatypes.DataValue;
 
 /**
  *
@@ -35,25 +37,52 @@ import org.w3c.dom.Element;
 public class TSDataStore extends TableDataStore {
 
     private JAMSTimeInterval ti;
+    private CalendarValue calendar;
+    private JAMSCalendar currentDate;
 
     public TSDataStore(VirtualWorkspace ws, Document doc) {
         super(ws, doc);
-        
+
         Element tiNode = (Element) doc.getElementsByTagName("timeinterval").item(0);
         Element startElement = (Element) tiNode.getElementsByTagName("start").item(0);
         Element endElement = (Element) tiNode.getElementsByTagName("end").item(0);
         Element stepsizeElement = (Element) tiNode.getElementsByTagName("stepsize").item(0);
-        
+
         JAMSCalendar start = new JAMSCalendar();
         start.setValue(startElement.getAttribute("value"));
 
         JAMSCalendar end = new JAMSCalendar();
         end.setValue(endElement.getAttribute("value"));
-        
+
         int timeUnit = Integer.parseInt(stepsizeElement.getAttribute("unit"));
         int timeUnitCount = Integer.parseInt(stepsizeElement.getAttribute("count"));
-        
+
         ti = new JAMSTimeInterval(start, end, timeUnit, timeUnitCount);
+
+        currentDate = ti.getStart();
+        currentDate.add(timeUnit, -1*timeUnitCount);
+        calendar = new CalendarValue(currentDate);
+    }
+
+    @Override
+    public DataSet getNext() {
+
+        DataSet result = new DataSet(positionArray.length + 1);
+
+        currentDate.add(ti.getTimeUnit(), ti.getTimeUnitCount());
+        result.setData(0, calendar);
+
+        for (int i = 0; i < positionArray.length; i++) {
+
+            DataSet ds = dataIOArray[i].getValues()[currentPosition];
+            DataValue[] values = ds.getData();
+            result.setData(i + 1, values[positionArray[i]]);
+
+        }
+
+        currentPosition++;
+
+        return result;
     }
 }
 

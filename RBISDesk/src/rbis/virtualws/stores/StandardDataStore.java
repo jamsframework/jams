@@ -27,7 +27,9 @@ import rbis.virtualws.datatypes.DataValue;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import org.unijena.jams.data.JAMSCalendar;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,16 +46,15 @@ public abstract class StandardDataStore implements DataStore {
     protected HashMap<String, DataIO> dataIO;
     protected VirtualWorkspace ws;
     protected DataSetDefinition dsd;
-    protected String id,  description = "", creator, date;
     protected int bufferSize = 0;
+    private String id,  description = "", respParty;
 
     public StandardDataStore(VirtualWorkspace ws, Document doc) {
         this.doc = doc;
         this.ws = ws;
 
         this.id = doc.getDocumentElement().getAttribute("id");
-        this.date = doc.getDocumentElement().getAttribute("date");
-        this.creator = doc.getDocumentElement().getAttribute("creator");
+        this.respParty = doc.getDocumentElement().getAttribute("respparty");
 
         Node descriptionNode = doc.getDocumentElement().getElementsByTagName("description").item(0);
         if (descriptionNode != null) {
@@ -216,8 +217,11 @@ public abstract class StandardDataStore implements DataStore {
 
         result += "@comments\n";
         result += "#ID: " + id + "\n";
-        result += "#DATE: " + date + "\n";
-        result += "#CREATOR: " + creator + "\n";
+        result += "#TYPE: " + this.getClass().getSimpleName() + "\n";
+        JAMSCalendar creationDate = new JAMSCalendar();
+        creationDate.setValue(new GregorianCalendar());
+        result += "#DATE: " + creationDate + "\n";
+        result += "#RESPPARTY: " + respParty + "\n";
         result += "#DESCRIPTION:\n";
         if (!description.equals("")) {
             result += "# " + description.replace("\n", "\n# ") + "\n";

@@ -22,6 +22,8 @@
  */
 package rbis.virtualws.datatypes;
 
+import org.unijena.jams.data.JAMSCalendar;
+
 /**
  *
  * @author Sven Kralisch
@@ -66,6 +68,14 @@ public class StringValue implements DataValue {
         if (value instanceof String) {
             this.value = (String) value;
         }
+    }
+
+    public JAMSCalendar getCalendar() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setCalendar(JAMSCalendar value) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
 

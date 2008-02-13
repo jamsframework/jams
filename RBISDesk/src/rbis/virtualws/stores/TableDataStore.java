@@ -38,10 +38,10 @@ import rbis.virtualws.plugins.DataIO;
  */
 public class TableDataStore extends StandardDataStore {
 
-    private int currentPosition,  maxPosition;
+    protected int currentPosition,  maxPosition;
     private Set<DataIO> dataIOSet = new HashSet<DataIO>();
-    private DataIO[] dataIOArray;
-    private int[] positionArray;
+    protected DataIO[] dataIOArray;
+    protected int[] positionArray;
 
     public TableDataStore(VirtualWorkspace ws, Document doc) {
         super(ws, doc);
