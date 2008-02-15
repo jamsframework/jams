@@ -92,7 +92,7 @@ public class VirtualWorkspace {
 
     public static void main(String[] args) throws Exception {
 
-        Document doc = XMLIO.getDocument("D:/jams/RBISDesk/tsdatastore.xml");
+        Document doc = XMLIO.getDocument("D:/jams/RBISDesk/tabledatastore2.xml");
         String[] libs = {"D:/nbprojects/RBISDesk/dist", "D:/nbprojects/RBISDesk/dist/lib"};
 
         VirtualWorkspace ws = new VirtualWorkspace();
