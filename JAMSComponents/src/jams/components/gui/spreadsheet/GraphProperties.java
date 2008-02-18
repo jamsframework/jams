@@ -46,6 +46,7 @@ import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.xy.*;
 import org.unijena.jams.data.JAMSBoolean;
 import org.unijena.jams.data.JAMSCalendar;
 import org.unijena.jams.data.JAMSDouble;
@@ -80,7 +81,10 @@ public class GraphProperties {
     JTable table;
     
     TimeSeries ts;
-    TimeSeriesCollection dataset;
+    //TimeSeriesCollection dataset;
+    
+    XYSeries xys;
+    
     
     JScrollPane scpane;
     
@@ -91,10 +95,12 @@ public class GraphProperties {
     String position; // left/right
     int type; //renderer index
     
+    boolean is_x_series = false;
     boolean result = false;
     
     int selectedColumn;
     int[] rowSelection;
+    int x_series_col;
     
     JComboBox setColumn;
     JComboBox colorchoice;
@@ -104,6 +110,9 @@ public class GraphProperties {
     JComboBox timechoice_START;
     JComboBox timechoice_END;
     
+    JComboBox datachoice_START;
+    JComboBox datachoice_END;
+    
     JButton addButton;
     JButton remButton;
     JButton plotButton;
@@ -111,6 +120,7 @@ public class GraphProperties {
     JButton downButton;
     
     JCheckBox invBox;
+    JToggleButton isXAxis;
 
     JLabel nameLabel;
     
@@ -118,6 +128,9 @@ public class GraphProperties {
     JTextField setLegend;
     
     JTSConfigurator ctsconf;
+    JXYConfigurator cxyconf;
+    
+    String[] x_dataIntervals;
     
     private String[] colors = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
     private String[] types = {"Line","Bar","Area","Line and Base","Dot","Difference","Step","StepArea"};
@@ -150,6 +163,63 @@ public class GraphProperties {
         this.selectedColumn = 0;
         this.rowSelection = null;
     
+        String[] timeIntervals = new String[table.getRowCount()];
+        for(int i=0; i<table.getRowCount(); i++){
+            timeIntervals[i] = table.getValueAt(i,0).toString();
+        }
+        
+        timechoice_START = new JComboBox(timeIntervals);
+        timechoice_START.setPreferredSize(new Dimension(40,14));
+        timechoice_START.addActionListener(timeListener);
+        
+        timechoice_END = new JComboBox(timeIntervals);
+        timechoice_END.setPreferredSize(new Dimension(40,14));
+        timechoice_END.addActionListener(timeListener);
+        
+        
+        createPanel();
+        applyTSProperties();
+        
+    }
+    
+    public GraphProperties(JDialog parent, JTable table, JXYConfigurator cxyconf) {
+        
+        //super(parent, "Select Properties");
+        //this.parent = parent;
+        //setLayout(new FlowLayout());
+        //Point parentloc = parent.getLocation();
+        this.cxyconf = cxyconf;
+        //setLocation(parentloc.x + 30, parentloc.y + 30);
+        
+        this.table = table;
+        this.color = "red";
+        this.position = "left";
+        this.name = "Graph Name";
+        this.legendName = this.name;
+        
+        //this.selectedColumn = 0;
+        this.rowSelection = null;
+    
+        x_dataIntervals = new String[table.getRowCount()];
+        
+        for(int i=0; i<table.getRowCount(); i++){
+            x_dataIntervals[i] = table.getValueAt(i, x_series_col).toString();
+        }
+        
+        datachoice_START = new JComboBox(x_dataIntervals);
+        datachoice_START.setPreferredSize(new Dimension(40,14));
+        //datachoice_START.addActionListener(timeListener);
+        
+        datachoice_END = new JComboBox(x_dataIntervals);
+        datachoice_END.setPreferredSize(new Dimension(40,14));
+        //datachoice_END.addActionListener(timeListener);
+        
+        createPanel();
+        
+        
+    }
+    
+    public void createPanel(){
         JPanel namePanel = new JPanel();
         namePanel.setLayout(new FlowLayout());
         JPanel legendPanel = new JPanel();
@@ -174,6 +244,7 @@ public class GraphProperties {
         remButton.setToolTipText("remove button");
         
         invBox = new JCheckBox("invert axis");
+        isXAxis = new JToggleButton();
         
         addButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         addButton.setPreferredSize(new Dimension(20,14));
@@ -225,18 +296,11 @@ public class GraphProperties {
             column[i] = table.getColumnName(i);
         }
         
-        String[] timeIntervals = new String[table.getRowCount()];
-        for(int i=0; i<table.getRowCount(); i++){
-            timeIntervals[i] = table.getValueAt(i,0).toString();
-        }
         
-        timechoice_START = new JComboBox(timeIntervals);
-        timechoice_START.setPreferredSize(new Dimension(40,14));
-        timechoice_START.addActionListener(timeListener);
         
-        timechoice_END = new JComboBox(timeIntervals);
-        timechoice_END.setPreferredSize(new Dimension(40,14));
-        timechoice_END.addActionListener(timeListener);
+       
+        
+
         
         setColumn = new JComboBox(column);
         setColumn.setPreferredSize(new Dimension(40,14));
@@ -277,9 +341,6 @@ public class GraphProperties {
         this.buttonpanel.add(cancelButton);
         
         plotButton.addActionListener(okListener);
-        
-        applyProperties();
-        
     }
     
     /*    
@@ -288,7 +349,7 @@ public class GraphProperties {
     }
      **/
     
-    public void applyProperties(){
+    public void applyTSProperties(){
         JAMSCalendar time;
         double value;
         selectedColumn = setColumn.getSelectedIndex();
@@ -302,22 +363,22 @@ public class GraphProperties {
             value = (Double) table.getValueAt(i, selectedColumn);
             ts.add(new Second(new Date(time.getTimeInMillis())), value);
         }
-        //dataset.addSeries(ts);
-//        
-//        setSelectedColumn(setColumn.getSelectedIndex());
-//        int[] rows = new int[table.getRowCount()];
-//        
-//        for(int i=0;i<table.getRowCount();i++){
-//            rows[i] = i;
-//        }
-//        setSelectedRows(rows);
-//        setColor((String) colorchoice.getSelectedItem());
-//        setPosition((String) poschoice.getSelectedItem());
-//        setRendererType(typechoice.getSelectedIndex());
-//        setName(setName.getText());
-//        setLegendName(setLegend.getText());
-//        //setVisible(false);
-//        this.result = true;
+    }
+    
+    public void applyXYProperties(){
+        double x_value;
+        double value;
+        selectedColumn = setColumn.getSelectedIndex();
+        color = (String) colorchoice.getSelectedItem();
+        xys = new XYSeries(setLegend.getText());
+        //dataset = new TimeSeriesCollection(ts);
+        
+        for(int i=getDataSTART(); i<=getDataEND(); i++){
+            
+            x_value = (Double) table.getValueAt(i, x_series_col); //ONLY FOR TIME SERIES TABLE WITH TIME IN COL 0!!!
+            value = (Double) table.getValueAt(i, selectedColumn);
+            xys.add(x_value, value);
+        }
     }
     
 //    public TimeSeriesCollection getDataset(){
@@ -326,6 +387,10 @@ public class GraphProperties {
     
     public TimeSeries getTS(){
         return ts;
+    }
+    
+    public XYSeries getXYS(){
+        return xys;
     }
     
     public void setIndex(int index){
@@ -346,12 +411,24 @@ public class GraphProperties {
         }    
     }
     
+    public boolean isXSeries(){
+        return is_x_series;
+    }
+    
     public boolean getResult(){
         return result;
     }
     
     public JPanel getGraphPanel(){
         return datapanel;
+    }
+    
+    public void setIsXSeries(boolean xseries){
+        is_x_series = xseries;          // Probleme abfangen?
+    }
+    
+    public void setXSeries(int col){
+        x_series_col = col;          // Probleme abfangen?
     }
     
     public void setDataSelection(){
@@ -409,6 +486,14 @@ public class GraphProperties {
         timechoice_END.setSelectedIndex(index);
     }
     
+    public void setDataSTART(int index){
+        datachoice_START.setSelectedIndex(index);
+    }
+    
+    public void setDataEND(int index){
+        datachoice_END.setSelectedIndex(index);
+    }
+    
     public String getColor(){
         return this.color;
     }
@@ -446,11 +531,17 @@ public class GraphProperties {
     public int getTimeSTART(){
         return timechoice_START.getSelectedIndex();
     }
-    
-    
-    
+
     public int getTimeEND(){
         return timechoice_END.getSelectedIndex();
+    }
+    
+    public int getDataSTART(){
+        return datachoice_START.getSelectedIndex();
+    }
+
+    public int getDataEND(){
+        return datachoice_END.getSelectedIndex();
     }
 
     public boolean axisInverted(){
@@ -460,6 +551,10 @@ public class GraphProperties {
     /** GUI return **/
     public JCheckBox getInvBox(){
         return invBox;
+    }
+    
+    public JToggleButton getIsXAxisButton(){
+        return isXAxis;
     }
     
     public JLabel getNameLabel(){
@@ -494,6 +589,14 @@ public class GraphProperties {
         return timechoice_END;
     }
     
+    public JComboBox getDataChoiceSTART(){
+        return datachoice_START;
+    }
+    
+    public JComboBox getDataChoiceEND(){
+        return datachoice_END;
+    }
+    
     public JButton getAddButton(){
         return addButton;
     }
@@ -518,7 +621,7 @@ public class GraphProperties {
     /*** Action Listener ***/
     ActionListener okListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
-            applyProperties();
+            applyTSProperties();
             ctsconf.plotGraph(index);
         }
     };
@@ -549,7 +652,7 @@ public class GraphProperties {
     ActionListener upListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
             ctsconf.upGraph(index);
-            applyProperties();
+            applyTSProperties();
             
             //setVisible(false);
         }
@@ -558,7 +661,7 @@ public class GraphProperties {
     ActionListener downListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
             ctsconf.downGraph(index);
-            applyProperties();
+            applyTSProperties();
             
             //setVisible(false);
         }

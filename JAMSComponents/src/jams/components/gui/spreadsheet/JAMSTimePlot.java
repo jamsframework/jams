@@ -1,5 +1,5 @@
 /*
- * TSPlot.java
+ * JAMSTimePlot.java
  * Created on 21. Juni 2006, 22:06
  *
  * This file is part of JAMS

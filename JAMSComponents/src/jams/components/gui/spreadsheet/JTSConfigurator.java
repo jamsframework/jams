@@ -96,6 +96,7 @@ public class JTSConfigurator extends JFrame{
     private JLabel rRightLabel= new JLabel("Renderer right");
     private JLabel invLeftLabel = new JLabel("Invert left axis");
     private JLabel invRightLabel = new JLabel("Invert right axis");
+    private JLabel timeFormatLabel = new JLabel("Time format");
     
     private JTextField edTitleField = new JTextField(14);
     private JTextField edLeftField = new JTextField(14);
@@ -109,6 +110,11 @@ public class JTSConfigurator extends JFrame{
     
     private JCheckBox invLeftBox = new JCheckBox("Invert left Axis");
     private JCheckBox invRightBox = new JCheckBox("Invert right Axis");
+    
+    private JCheckBox timeFormat_yy = new JCheckBox("yy");
+    private JCheckBox timeFormat_mm = new JCheckBox("mm");
+    private JCheckBox timeFormat_dd = new JCheckBox("dd");
+    private JCheckBox timeFormat_hm = new JCheckBox("hh:mm");
     
     private JButton applyButton = new JButton("Apply");
     
@@ -359,7 +365,7 @@ public class JTSConfigurator extends JFrame{
             
             //prop.getPlotButton().addActionListener(plotbuttonclick);
             
-            prop.applyProperties();
+            prop.applyTSProperties();
             addPropGroup(prop);
       
             propVector.add(k,prop);
@@ -532,7 +538,7 @@ public class JTSConfigurator extends JFrame{
     private void updatePropVector(){
         
         for(int i=0; i<propVector.size(); i++){
-            propVector.get(i).applyProperties();
+            propVector.get(i).applyTSProperties();
         }
     }
     
@@ -549,6 +555,11 @@ public class JTSConfigurator extends JFrame{
     
     private void createOptionPanel(){
         GroupLayout optLayout = new GroupLayout(optionpanel);
+        JPanel timeFormatPanel = new JPanel();
+        timeFormatPanel.add(timeFormat_yy);
+        timeFormatPanel.add(timeFormat_mm);
+        timeFormatPanel.add(timeFormat_dd);
+        timeFormatPanel.add(timeFormat_hm);
         optionpanel.setLayout(optLayout);
         optLayout.setAutoCreateGaps(true);
         optLayout.setAutoCreateContainerGaps(true);
@@ -572,11 +583,15 @@ public class JTSConfigurator extends JFrame{
         .addComponent(invLeftBox));
         optVGroup.addGroup(optLayout.createParallelGroup()
         .addComponent(invRightBox).addComponent(applyButton));
+        optVGroup.addGroup(optLayout.createParallelGroup().addComponent(timeFormatLabel));
+        optVGroup.addGroup(optLayout.createParallelGroup().addComponent(timeFormatPanel));
+        
         
         optHGroup.addGroup(optLayout.createParallelGroup().
                 addComponent(edTitle).addComponent(edLeft).addComponent(edRight)
                 .addComponent(edXAxis).addComponent(rLeftLabel).addComponent(rRightLabel)
-                .addComponent(invLeftBox).addComponent(invRightBox));
+                .addComponent(invLeftBox).addComponent(invRightBox).addComponent(timeFormatLabel)
+                .addComponent(timeFormatPanel));
         
         optHGroup.addGroup(optLayout.createParallelGroup().
                 addComponent(edTitleField).addComponent(edLeftField).addComponent(edRightField)

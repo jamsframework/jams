@@ -101,6 +101,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     private JButton openbutton = new JButton("Import");
     private JButton savebutton = new JButton("Export");
     private JButton plotButton = new JButton("Time Plot");
+    private JButton dataplotButton = new JButton("Data Plot");
     
     /* Labels */
     private JLabel headerlabel = new JLabel();
@@ -405,63 +406,25 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         //ctstabs.addGraph(table);
         //ctsIsOpen = true;
         }
+    
+    private void openCXYS(){
+
+        JXYConfigurator jxys = new JXYConfigurator(getModel().getRuntime().getFrame(), this.table);
+
+        }
    
-//    private void createEmptyTimePlot(int graphCount){
-//                 TimeSeriesCollection dataset = new TimeSeriesCollection();
-//                 TimeSeries[] ts = new TimeSeries[graphCount];
-//                 
-//                 Vector<JAMSCalendar> timevector = new Vector<JAMSCalendar>();
-//                 String yAxisName = "";
-//                 for(int k=0; k<graphCount; k++){
-//                     
-//                     
-//
-//                         ts[k] = new TimeSeries("timeseriesname", Second.class);
-//                         //yAxisName += "  "+table.getColumnName(cols[k]); TODO: column übergeben!
-//                 }
-//                 
-//                 try{
-//                     JFreeChart testchart = ChartFactory.createTimeSeriesChart(getInstanceName(),"time",yAxisName,dataset,false,false,false);
-//
-//                     ChartPanel chartPanel = new ChartPanel(testchart);
-//                     JDialog frame = new JDialog();
-//                     frame.setLayout(new FlowLayout());
-//                     //chartPanel.show();
-//                     frame.add(chartPanel);
-//                     frame.pack();
-//                     frame.setVisible(true);
-//                 }
-//                 catch(Exception pe){
-//                     System.err.println(pe.toString() + " plot failure");
-//                 }
-//    }
     
     ActionListener plotAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
-           
-             /*
-             if(timeRuns == true){   
-                   //int[] rows = table.getSelectedRows();
-                 //int[] cols = table.getSelectedColumns();
-               timePlot(table.getSelectedRows(),table.getSelectedColumns());
-             }
-             else{ //noch als übergeordnetes fenster machen!
-                 final JDialog frame = new JDialog();
-                 frame.setLayout(new FlowLayout());
-                 frame.add(new JLabel("Please load a time series dataset"));
-                 JButton ok = new JButton("OK");
-                 frame.add(ok);
-                 frame.pack();
-                 frame.setVisible(true);
-                 ok.addActionListener( new ActionListener(){
-                     public void actionPerformed(ActionEvent e){
-                        frame.setVisible(false);
-                    }
-                });
-                 
-             }
-             */ 
+
              openCTS();
+         } 
+    };  
+    
+    ActionListener dataplotAction = new ActionListener(){
+         public void actionPerformed(ActionEvent e) {
+
+             openCXYS();
          } 
     };  
     
@@ -667,11 +630,13 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
               controlpanel.add(savebutton);
               controlpanel.add(onthefly);
               controlpanel.add(plotButton);
+              controlpanel.add(dataplotButton);
               
               //openbutton.setEnabled(false);
               openbutton.addActionListener(openAction);
               savebutton.addActionListener(saveAction);
               plotButton.addActionListener(plotAction);
+              dataplotButton.addActionListener(dataplotAction);
               
               headerpanel.add(titleLabel);
               headerpanel.add(headerlabel);
@@ -888,7 +853,8 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                         //table.setColumnSelectionInterval(col_START,col_END);
                         table.addColumnSelectionInterval(col_START, col_END);
                         break;
-                        
+                  
+//                        
                     case 2: //CTRL DOWN
                        selectedColumns = table.getSelectedColumns();
                        col_END = table.getColumnModel().getColumn(viewCol).getModelIndex();
