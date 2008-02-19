@@ -34,6 +34,8 @@ public interface DataStore {
 
     public String getDescription();
 
+    public String getRespParty();
+    
     public boolean hasNext();
 
     public DataSet getNext();
@@ -42,6 +44,5 @@ public interface DataStore {
 
     public void close();
     
-    public String toASCIIString();
 }
 

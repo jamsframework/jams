@@ -51,5 +51,13 @@ public class GeoDataStore extends StandardDataStore {
     public String toASCIIString() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public String getRespParty() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getDate() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
 

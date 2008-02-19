@@ -27,9 +27,7 @@ import rbis.virtualws.datatypes.DataValue;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
-import org.unijena.jams.data.JAMSCalendar;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -210,32 +208,9 @@ public abstract class StandardDataStore implements DataStore {
     public DataIO getDataIO(String id) {
         return dataIO.get(id);
     }
-
-    public String toASCIIString() {
-
-        String result = "";
-
-        result += "@comments\n";
-        result += "#ID: " + id + "\n";
-        result += "#TYPE: " + this.getClass().getSimpleName() + "\n";
-        JAMSCalendar creationDate = new JAMSCalendar();
-        creationDate.setValue(new GregorianCalendar());
-        result += "#DATE: " + creationDate + "\n";
-        result += "#RESPPARTY: " + respParty + "\n";
-        result += "#DESCRIPTION:\n";
-        if (!description.equals("")) {
-            result += "# " + description.replace("\n", "\n# ") + "\n";
-        }
-
-        result += "@metadata\n";
-        result += getDataSetDefinition().toASCIIString() + "\n";
-
-        result += "@data\n";
-        while (hasNext()) {
-            DataSet ds = getNext();
-            result += ds.toString() + "\n";
-        }
-
-        return result;
+    
+    public String getRespParty() {
+        return respParty;
     }
+
 }

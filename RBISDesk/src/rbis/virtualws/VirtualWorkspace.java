@@ -38,6 +38,7 @@ import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
 import org.w3c.dom.Document;
 import rbis.virtualws.plugins.DataIO;
+import rbis.virtualws.stores.ASCIIConverter;
 
 public class VirtualWorkspace {
 
@@ -116,7 +117,8 @@ public class VirtualWorkspace {
             return;
         }
 
-        System.out.println(store.toASCIIString());
+        ASCIIConverter asciiConverter = new ASCIIConverter(store);
+        System.out.println(asciiConverter.toASCIIString());
         
         store.close();
 
