@@ -120,7 +120,7 @@ public class GraphProperties {
     JButton downButton;
     
     JCheckBox invBox;
-    JToggleButton isXAxis;
+    JRadioButton isXAxis;
 
     JLabel nameLabel;
     
@@ -202,17 +202,18 @@ public class GraphProperties {
     
         x_dataIntervals = new String[table.getRowCount()];
         
+        x_series_col = cxyconf.columns[0];
         for(int i=0; i<table.getRowCount(); i++){
             x_dataIntervals[i] = table.getValueAt(i, x_series_col).toString();
         }
         
         datachoice_START = new JComboBox(x_dataIntervals);
         datachoice_START.setPreferredSize(new Dimension(40,14));
-        //datachoice_START.addActionListener(timeListener);
+        //datachoice_START.addActionListener(dataListener);
         
         datachoice_END = new JComboBox(x_dataIntervals);
         datachoice_END.setPreferredSize(new Dimension(40,14));
-        //datachoice_END.addActionListener(timeListener);
+        //datachoice_END.addActionListener(dataListener);
         
         createPanel();
         
@@ -244,7 +245,7 @@ public class GraphProperties {
         remButton.setToolTipText("remove button");
         
         invBox = new JCheckBox("invert axis");
-        isXAxis = new JToggleButton();
+        isXAxis = new JRadioButton();
         
         addButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         addButton.setPreferredSize(new Dimension(20,14));
@@ -401,6 +402,14 @@ public class GraphProperties {
         return index;
     }
     
+    private void setPossibleDataIntervals(){
+        int s = datachoice_START.getSelectedIndex();
+        int e = datachoice_END.getSelectedIndex();
+        
+        if(s >= e){
+            datachoice_END.setSelectedIndex(s);
+        }    
+    }
     
     private void setPossibleTimeIntervals(){
         int s = timechoice_START.getSelectedIndex();
@@ -553,7 +562,7 @@ public class GraphProperties {
         return invBox;
     }
     
-    public JToggleButton getIsXAxisButton(){
+    public JRadioButton getIsXAxisButton(){
         return isXAxis;
     }
     

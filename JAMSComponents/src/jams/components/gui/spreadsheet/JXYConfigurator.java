@@ -339,7 +339,7 @@ public class JXYConfigurator extends JFrame{
         for(int k=0;k<graphCount;k++){
             
             GraphProperties prop = new GraphProperties(parent, table, this);
-            prop.setXSeries(columns[0]);
+            //prop.setXSeries(columns[0]);
             prop.applyXYProperties();
             //propVector.add(new GraphProperties(parent,table));
             
@@ -604,7 +604,7 @@ public class JXYConfigurator extends JFrame{
         JLabel typeLabel = new JLabel("Colour / Position");
         JLabel colorLabel = new JLabel("Type/Colour");
         JLabel dataLabel = new JLabel("Data / Legend Entry");
-        JLabel timeLabel = new JLabel("Time Interval");
+        JLabel timeLabel = new JLabel("Data Range");
         JLabel emptyTimeLabel = new JLabel("    ");
         JLabel legendLabel = new JLabel("Legend Entry: ");
         
