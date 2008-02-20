@@ -282,6 +282,18 @@ public class JAMSTimePlot {
         chart.setTitle(title);
     }
     
+    public void setDateFormat(boolean yy, boolean mm, boolean dd, boolean hm){
+        String timeFormat = ""; //"dd-MM-yyyy"
+            if(dd){ timeFormat+= "dd. "; }
+            if(mm){ timeFormat+= "MM. "; }
+            if(yy){ timeFormat+= "yyyy "; }
+            if(hm){ timeFormat+= "hh:mm"; }
+        dateAxis = (DateAxis) plot.getDomainAxis();
+        dateAxis.setDateFormatOverride(new SimpleDateFormat(timeFormat));
+        
+        
+    }
+    
     public void plotRight(int renderer, String nameRight, String xAxisTitle, boolean inverted){
         int c = propVector.size();
         int corr = 0;

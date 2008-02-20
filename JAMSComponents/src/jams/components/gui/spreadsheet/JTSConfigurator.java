@@ -403,6 +403,8 @@ public class JTSConfigurator extends JFrame{
 //        add(plotScPane, BorderLayout.CENTER);
         
         jts.plotLeft(0, "leftAxisName", "Time", false);
+        jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
+                                timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
         //jts.plotRight(1, "rightAxisName", true);
     
     }
@@ -556,10 +558,21 @@ public class JTSConfigurator extends JFrame{
     private void createOptionPanel(){
         GroupLayout optLayout = new GroupLayout(optionpanel);
         JPanel timeFormatPanel = new JPanel();
-        timeFormatPanel.add(timeFormat_yy);
-        timeFormatPanel.add(timeFormat_mm);
         timeFormatPanel.add(timeFormat_dd);
+        timeFormatPanel.add(timeFormat_mm);
+        timeFormatPanel.add(timeFormat_yy);
         timeFormatPanel.add(timeFormat_hm);
+        
+        timeFormat_yy.setSelected(true);
+        timeFormat_mm.setSelected(true);
+        timeFormat_dd.setSelected(true);
+        timeFormat_hm.setSelected(false);
+        
+        timeFormat_yy.addActionListener(timeListener);
+        timeFormat_mm.addActionListener(timeListener);
+        timeFormat_dd.addActionListener(timeListener);
+        timeFormat_hm.addActionListener(timeListener);
+        
         optionpanel.setLayout(optLayout);
         optLayout.setAutoCreateGaps(true);
         optLayout.setAutoCreateContainerGaps(true);
@@ -582,9 +595,9 @@ public class JTSConfigurator extends JFrame{
         optVGroup.addGroup(optLayout.createParallelGroup()
         .addComponent(invLeftBox));
         optVGroup.addGroup(optLayout.createParallelGroup()
-        .addComponent(invRightBox).addComponent(applyButton));
+        .addComponent(invRightBox));
         optVGroup.addGroup(optLayout.createParallelGroup().addComponent(timeFormatLabel));
-        optVGroup.addGroup(optLayout.createParallelGroup().addComponent(timeFormatPanel));
+        optVGroup.addGroup(optLayout.createParallelGroup().addComponent(timeFormatPanel).addComponent(applyButton));
         
         
         optHGroup.addGroup(optLayout.createParallelGroup().
@@ -972,6 +985,13 @@ public class JTSConfigurator extends JFrame{
         }
     };
     
+    ActionListener timeListener = new ActionListener(){
+        public void actionPerformed(ActionEvent te){
+            jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
+                                timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
+        }
+    };
+    
     ActionListener propbuttonclick = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
             ctsplot.getChartPanel().doEditChartProperties();
@@ -992,6 +1012,8 @@ public class JTSConfigurator extends JFrame{
             jts.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
             jts.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected()); 
             jts.setTitle(edTitleField.getText());
+            jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
+                                timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
         }
     };
     
