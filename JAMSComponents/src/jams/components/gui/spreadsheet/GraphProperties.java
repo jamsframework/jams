@@ -102,6 +102,8 @@ public class GraphProperties {
     int[] rowSelection;
     int x_series_col;
     
+    int plotType;
+    
     JComboBox setColumn;
     JComboBox colorchoice;
     JComboBox typechoice;
@@ -147,6 +149,7 @@ public class GraphProperties {
     /** Creates a new instance of GraphProperties */
     public GraphProperties(JDialog parent, JTable table, JTSConfigurator ctsconf) {
         
+        this.plotType = 0;
         //super(parent, "Select Properties");
         //this.parent = parent;
         //setLayout(new FlowLayout());
@@ -184,6 +187,7 @@ public class GraphProperties {
     
     public GraphProperties(JDialog parent, JTable table, JXYConfigurator cxyconf) {
         
+        this.plotType = 1;
         //super(parent, "Select Properties");
         //this.parent = parent;
         //setLayout(new FlowLayout());
@@ -246,6 +250,7 @@ public class GraphProperties {
         
         invBox = new JCheckBox("invert axis");
         isXAxis = new JRadioButton();
+        isXAxis.addActionListener(isXListener);
         
         addButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         addButton.setPreferredSize(new Dimension(20,14));
@@ -630,8 +635,15 @@ public class GraphProperties {
     /*** Action Listener ***/
     ActionListener okListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
-            applyTSProperties();
-            ctsconf.plotGraph(index);
+            
+            if(plotType == 0){
+                applyTSProperties();
+                ctsconf.plotGraph(index);
+            }
+            if(plotType == 1){
+                applyXYProperties();
+                cxyconf.plotGraph(index);
+            }
         }
     };
     
@@ -644,7 +656,15 @@ public class GraphProperties {
     
     ActionListener addListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
-            ctsconf.addGraph(index+1);
+            
+            if(plotType == 0){
+                ctsconf.addGraph(index+1);
+            }
+            if(plotType == 1){
+                cxyconf.addGraph(index+1);
+                
+            }
+            
             //setVisible(false);
         }
     };
@@ -652,7 +672,15 @@ public class GraphProperties {
     ActionListener removeListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
             
+            
+            if(plotType == 0){
                 ctsconf.removeGraph(index);
+            }
+            if(plotType == 1){
+                cxyconf.removeGraph(index);
+                
+            }
+                
             
             //setVisible(false);
         }
@@ -660,8 +688,18 @@ public class GraphProperties {
     
     ActionListener upListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
-            ctsconf.upGraph(index);
-            applyTSProperties();
+            
+            if(plotType == 0){
+                ctsconf.upGraph(index);
+                applyTSProperties();
+            }
+            if(plotType == 1){
+                cxyconf.upGraph(index);
+                
+                applyXYProperties();
+            }
+            
+            
             
             //setVisible(false);
         }
@@ -669,10 +707,27 @@ public class GraphProperties {
     
     ActionListener downListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
-            ctsconf.downGraph(index);
-            applyTSProperties();
+            
+            if(plotType == 0){
+                ctsconf.downGraph(index);
+                applyTSProperties();
+            }
+            if(plotType == 1){
+                cxyconf.downGraph(index);
+                
+                applyXYProperties();
+            }
+            
+            
             
             //setVisible(false);
+        }
+    };
+    
+    ActionListener isXListener = new ActionListener(){
+        public void actionPerformed(ActionEvent te){
+            
+            cxyconf.xChanged(index);
         }
     };
     

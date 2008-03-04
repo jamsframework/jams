@@ -110,6 +110,8 @@ public class JXYConfigurator extends JFrame{
     private JCheckBox invLeftBox = new JCheckBox("Invert left Axis");
     private JCheckBox invRightBox = new JCheckBox("Invert right Axis");
     
+    private ButtonGroup isXAxisGroup = new ButtonGroup();
+    
     private JButton applyButton = new JButton("Apply");
     
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
@@ -346,8 +348,21 @@ public class JXYConfigurator extends JFrame{
             prop.setIndex(k);
             
             if(k==0){
+                prop.getIsXAxisButton().setSelected(true);
                 prop.setIsXSeries(true);
+                prop.getDataChoice().setEnabled(false);
+                prop.getDataChoiceSTART().setEnabled(false);
+                prop.getDataChoiceEND().setEnabled(false);
+                prop.getColorChoice().setEnabled(false);
+                prop.getPosChoice().setEnabled(false);
+                prop.getLegendField().setEnabled(false);
             }
+                prop.getAddButton().setEnabled(false);
+                prop.getRemButton().setEnabled(false);
+                prop.getUpButton().setEnabled(false);
+                prop.getDownButton().setEnabled(false);
+                
+            
             
             
             prop.setSelectedColumn(columns[k]);
@@ -403,7 +418,7 @@ public class JXYConfigurator extends JFrame{
 //        add(frame, BorderLayout.NORTH);
 //        add(plotScPane, BorderLayout.CENTER);
         
-        jxys.plotLeft(0, "left axis name", "x axis title", false);
+        plotAllGraphs();
         //jts.plotRight(1, "rightAxisName", true);
     
     }
@@ -477,6 +492,8 @@ public class JXYConfigurator extends JFrame{
     public void upGraph(int index){
         
         int i = index;
+        int x_series = columns[0];
+        boolean xChanged = false;
         GraphProperties prop = propVector.get(i);
         
         if(i-1>=0 && i-1<graphCount){
@@ -490,6 +507,10 @@ public class JXYConfigurator extends JFrame{
 
                 prop = propVector.get(k);
                 prop.setIndex(k);
+                if(prop.isXSeries()){
+                    x_series = prop.getSelectedColumn();
+                    xChanged = true;
+                }
                 //prop.getPlotButton().addActionListener(plotbuttonclick);
 
                 addPropGroup(prop);
@@ -498,6 +519,9 @@ public class JXYConfigurator extends JFrame{
 
                 //graphpanel.add(propVector.get(k-1).getGraphPanel());
 
+            }
+            if(xChanged){
+                xChanged(x_series);
             }
             finishGroupUI();
             
@@ -509,6 +533,8 @@ public class JXYConfigurator extends JFrame{
     public void downGraph(int index){
         
         int i = index;
+        int x_series = columns[0];
+        boolean xChanged = false;
         GraphProperties prop = propVector.get(i+1);
         
         if(i+1>=0 && i+1<graphCount){
@@ -524,10 +550,17 @@ public class JXYConfigurator extends JFrame{
 
                 prop = propVector.get(k);
                 prop.setIndex(k);
+                if(prop.isXSeries()){
+                    x_series = prop.getSelectedColumn();
+                    xChanged = true;
+                }
                 //prop.getPlotButton().addActionListener(plotbuttonclick);
 
                 addPropGroup(prop);
                 
+            }
+            if(xChanged){
+                xChanged(x_series);
             }
             finishGroupUI();
             
@@ -543,6 +576,41 @@ public class JXYConfigurator extends JFrame{
         }
     }
     
+    public void xChanged(int col){
+        int index = col;
+        for(int i=0; i<propVector.size(); i++){
+            if(i != index){
+                propVector.get(i).setXSeries(columns[index]);
+                propVector.get(i).setIsXSeries(false);
+                propVector.get(i).getDataChoice().setEnabled(true);
+                propVector.get(i).getDataChoiceSTART().setEnabled(true);
+                propVector.get(i).getDataChoiceEND().setEnabled(true);
+                propVector.get(i).getColorChoice().setEnabled(true);
+                propVector.get(i).getPosChoice().setEnabled(true);
+//                propVector.get(i).getAddButton().setEnabled(true);
+//                propVector.get(i).getRemButton().setEnabled(true);
+//                propVector.get(i).getUpButton().setEnabled(true);
+//                propVector.get(i).getDownButton().setEnabled(true);
+                propVector.get(i).getLegendField().setEnabled(true);
+                propVector.get(i).applyXYProperties();
+            }
+            
+        }
+        propVector.get(index).setIsXSeries(true);
+        propVector.get(index).setXSeries(columns[index]);
+        propVector.get(index).getDataChoice().setEnabled(false);
+        propVector.get(index).getDataChoiceSTART().setEnabled(false);
+        propVector.get(index).getDataChoiceEND().setEnabled(false);
+        propVector.get(index).getColorChoice().setEnabled(false);
+        propVector.get(index).getPosChoice().setEnabled(false);
+        propVector.get(index).getAddButton().setEnabled(false);
+        propVector.get(index).getRemButton().setEnabled(false);
+        propVector.get(index).getUpButton().setEnabled(false);
+        propVector.get(index).getDownButton().setEnabled(false);
+        propVector.get(index).getLegendField().setEnabled(false);
+        propVector.get(index).applyXYProperties();
+    }
+    
     public void plotGraph(int i){
        
             //propVector.get(i).applyProperties();
@@ -553,6 +621,28 @@ public class JXYConfigurator extends JFrame{
                 jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
             }
     }    
+    
+    public void plotAllGraphs(){
+    updatePropVector();
+            int l=0;
+            int r=0;
+            for(int i=0; i<propVector.size(); i++){
+                if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
+                    l++;
+                }
+                if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
+                    r++;
+                }
+            }
+            if(l>0){
+                jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
+            }
+            if(r>0){
+                jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected()); 
+            }
+            
+            jxys.setTitle(edTitleField.getText());
+    }
     
     private void createOptionPanel(){
         GroupLayout optLayout = new GroupLayout(optionpanel);
@@ -655,6 +745,8 @@ public class JXYConfigurator extends JFrame{
     }
     
     private void addPropGroup(GraphProperties prop){
+        
+            isXAxisGroup.add(prop.getIsXAxisButton());
             JLabel space1 = new JLabel(" ");
             JLabel space2 = new JLabel(" ");
             JLabel space3 = new JLabel(" ");
@@ -978,12 +1070,7 @@ public class JXYConfigurator extends JFrame{
     
     ActionListener plotbuttonclick = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-            updatePropVector();
-      
-            
-            jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
-            jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected()); 
-            jxys.setTitle(edTitleField.getText());
+            plotAllGraphs();
         }
     };
     
@@ -992,6 +1079,11 @@ public class JXYConfigurator extends JFrame{
             //timePlot();
         }
     };
+    
+    
+    
+    
+    
     
 
     

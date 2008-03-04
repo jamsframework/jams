@@ -416,15 +416,22 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     
     ActionListener plotAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
-
-             openCTS();
+         
+             if(table.getValueAt(0, table.getSelectedColumn()).getClass() == JAMSCalendar.class){     
+                openCTS();
+             }
          } 
     };  
     
     ActionListener dataplotAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
-
-             openCXYS();
+             
+             Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
+             if(test == org.unijena.jams.data.JAMSCalendar.class){
+                 
+             } else {
+                openCXYS();
+             }
          } 
     };  
     

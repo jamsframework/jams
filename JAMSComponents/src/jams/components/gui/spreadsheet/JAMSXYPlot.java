@@ -40,6 +40,7 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.SegmentedTimeline;
 import org.jfree.chart.axis.Timeline;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
@@ -212,7 +213,7 @@ public class JAMSXYPlot {
                 "axis title default1",
                 "axis Title default2",
                 dataLeft,
-                org.jfree.chart.plot.PlotOrientation.HORIZONTAL,
+                org.jfree.chart.plot.PlotOrientation.VERTICAL,
                 true,
                 false,
                 false);
@@ -227,9 +228,10 @@ public class JAMSXYPlot {
         
         plot = chart.getXYPlot();
         
-        xAxis = plot.getRangeAxis();
+        xAxis = plot.getDomainAxis();
+        plot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
         
-        axisLEFT = plot.getDomainAxis();
+        axisLEFT = plot.getRangeAxis();
         axisRIGHT = new NumberAxis(rightAxisTitle);
         
 
@@ -274,11 +276,11 @@ public class JAMSXYPlot {
                 corr++;
             }
         }
-        plot.setRangeAxis(0, xAxis);
-        plot.setDomainAxis(0, axisLEFT);
+//        plot.setDomainAxis(0, xAxis);
+//        plot.setRangeAxis(0, axisLEFT);
         plot.setDataset(0, dataLeft);
         plot.setRenderer(0, leftRenderer);
-        plot.mapDatasetToRangeAxis(1, 1);
+        //plot.mapDatasetToDomainAxis(0, 0); //dataset einer achse zuordnen!
         
     }
     
@@ -308,20 +310,22 @@ public class JAMSXYPlot {
                         dataLeft.removeSeries(prop.getXYS());
                     }
                     rightRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
-                }else{
+                } else {
                     corr++;
                 }
             } else {
                 corr++;
             }
         }
-        plot.setRangeAxis(0, xAxis);
-        plot.setDomainAxis(1, axisRIGHT);
+        plot.setDomainAxis(0, xAxis);
+        plot.setRangeAxis(1, axisRIGHT);
         plot.setDataset(1, dataRight);
         plot.setRenderer(1, rightRenderer);
         plot.mapDatasetToRangeAxis(1, 1);
         plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
     }
+    
+    
 
 //    public void plot(JAMSCalendar time, double[] valueLeft, double[] valueRight) {
 //        try {

@@ -402,9 +402,10 @@ public class JTSConfigurator extends JFrame{
 //        add(frame, BorderLayout.NORTH);
 //        add(plotScPane, BorderLayout.CENTER);
         
-        jts.plotLeft(0, "leftAxisName", "Time", false);
+        //jts.plotLeft(0, "leftAxisName", "Time", false);
         jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
                                 timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
+        plotAllGraphs();
         //jts.plotRight(1, "rightAxisName", true);
     
     }
@@ -553,7 +554,31 @@ public class JTSConfigurator extends JFrame{
             if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
                 jts.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
             }
-    }    
+    }
+    
+    public void plotAllGraphs(){
+    updatePropVector();
+            int l=0;
+            int r=0;
+            for(int i=0; i<propVector.size(); i++){
+                if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
+                    l++;
+                }
+                if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
+                    r++;
+                }
+            }
+            if(l>0){
+                jts.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
+            }
+            if(r>0){
+                jts.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected()); 
+            }
+            
+            jts.setTitle(edTitleField.getText());
+            jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
+                                timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
+}
     
     private void createOptionPanel(){
         GroupLayout optLayout = new GroupLayout(optionpanel);
@@ -567,11 +592,6 @@ public class JTSConfigurator extends JFrame{
         timeFormat_mm.setSelected(true);
         timeFormat_dd.setSelected(true);
         timeFormat_hm.setSelected(false);
-        
-        timeFormat_yy.addActionListener(timeListener);
-        timeFormat_mm.addActionListener(timeListener);
-        timeFormat_dd.addActionListener(timeListener);
-        timeFormat_hm.addActionListener(timeListener);
         
         optionpanel.setLayout(optLayout);
         optLayout.setAutoCreateGaps(true);
@@ -1006,14 +1026,7 @@ public class JTSConfigurator extends JFrame{
     
     ActionListener plotbuttonclick = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-            updatePropVector();
-      
-            
-            jts.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
-            jts.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected()); 
-            jts.setTitle(edTitleField.getText());
-            jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
-                                timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
+            plotAllGraphs();
         }
     };
     

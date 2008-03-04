@@ -289,9 +289,7 @@ public class JAMSTimePlot {
             if(yy){ timeFormat+= "yyyy "; }
             if(hm){ timeFormat+= "hh:mm"; }
         dateAxis = (DateAxis) plot.getDomainAxis();
-        dateAxis.setDateFormatOverride(new SimpleDateFormat(timeFormat));
-        
-        
+        dateAxis.setDateFormatOverride(new SimpleDateFormat(timeFormat));    
     }
     
     public void plotRight(int renderer, String nameRight, String xAxisTitle, boolean inverted){
