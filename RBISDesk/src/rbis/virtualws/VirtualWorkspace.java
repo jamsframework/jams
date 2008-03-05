@@ -26,18 +26,15 @@ import rbis.virtualws.stores.GeoDataStore;
 import rbis.virtualws.stores.TableDataStore;
 import rbis.virtualws.stores.TSDataStore;
 import rbis.virtualws.stores.DataStore;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import org.unijena.jams.JAMS;
-import org.unijena.jams.data.JAMSCalendar;
 import org.unijena.jams.io.XMLIO;
 import org.unijena.jams.runtime.JAMSClassLoader;
 import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
 import org.w3c.dom.Document;
-import rbis.virtualws.plugins.DataIO;
 import rbis.virtualws.stores.ASCIIConverter;
 
 public class VirtualWorkspace {

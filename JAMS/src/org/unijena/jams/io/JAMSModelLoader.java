@@ -85,14 +85,14 @@ public class JAMSModelLoader {
         // first check all childs for globvar nodes!
         for (int index = 0; index < childs.getLength(); index++) {
             node = childs.item(index);
-            if (node.getNodeName() == "globvar") {
+            if (node.getNodeName().equals("globvar")) {
                 element = (Element) node;
                 if (!constants.containsKey(element.getAttribute("name"))) {
                     constants.put(element.getAttribute("name"), element.getAttribute("value"));
                 }
             }
 
-            if (node.getNodeName() == "attribute") {
+            if (node.getNodeName().equals("attribute")) {
                 element = (Element) node;
                 jamsModel.addAttribute(element.getAttribute("name"), element.getAttribute("class"), element.getAttribute("value"));
             }
@@ -103,7 +103,7 @@ public class JAMSModelLoader {
         ArrayList<JAMSComponent> childComponentList = new ArrayList<JAMSComponent>();
         for (int index = 0; index < childs.getLength(); index++) {
             node = childs.item(index);
-            if (node.getNodeName() == "contextcomponent" || node.getNodeName() == "component") {
+            if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
                 element = (Element) node;
                 try {
 
@@ -177,7 +177,7 @@ public class JAMSModelLoader {
 
             Node node = childs.item(index);
 
-            if (node.getNodeName() == "contextcomponent" || node.getNodeName() == "component") {
+            if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
 
                 // process child components of context components
                 childComponent = loadComponent((Element) node, component);
@@ -192,7 +192,7 @@ public class JAMSModelLoader {
             }
              */
 
-            } else if (node.getNodeName() == "attribute") {
+            } else if (node.getNodeName().equals("attribute")) {
 
                 if (!JAMSContext.class.isAssignableFrom(component.getClass())) {
                     throw new ModelSpecificationException("Attribute tag can only be used inside context components! (component " + componentName + ")");
@@ -201,7 +201,7 @@ public class JAMSModelLoader {
                 Element element = (Element) node;
                 ((JAMSContext) component).addAttribute(element.getAttribute("name"), element.getAttribute("class"), element.getAttribute("value"));
 
-            } else if (node.getNodeName() == "var") {
+            } else if (node.getNodeName().equals("var")) {
 
                 // process components variable declarations
                 Element element = (Element) node;
@@ -357,7 +357,7 @@ public class JAMSModelLoader {
         }
     }
 
-    private void createNumericMembers(JAMSComponent component) throws IllegalAccessException, InstantiationException {
+    private void createNumericMembers(JAMSComponent component) throws IllegalAccessException, InstantiationException, ModelSpecificationException {
 
         Class cClass = component.getClass();
         Object var;
@@ -381,7 +381,11 @@ public class JAMSModelLoader {
                 }
 
                 if (!jvd.unit().equals("")) {
-                    numericObject.setUnit(jvd.unit());
+                    try {
+                        numericObject.setUnit(jvd.unit());
+                    } catch (IllegalArgumentException iaex) {
+                        throw new ModelSpecificationException("Invalid unit string in component " + component.getClass().getName() + ": " + jvd.unit());
+                    }
                 }
 
                 if (!jvd.defaultValue().equals("")) {
