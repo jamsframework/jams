@@ -410,18 +410,18 @@ public class JTSConfigurator extends JFrame{
     
     }
     
-    public void addGraph(int index){
+    public void addGraph(GraphProperties prop){
         
-        int i = index;
+        int i = propVector.indexOf(prop);
         int t_s, t_e;
-        GraphProperties prop = new GraphProperties(parent, table, this);
+        GraphProperties newProp = new GraphProperties(parent, table, this);
         if(i>0){
-            t_s = propVector.get(i-1).getTimeChoiceSTART().getSelectedIndex();
-            t_e = propVector.get(i-1).getTimeChoiceEND().getSelectedIndex();
-            prop.getTimeChoiceSTART().setSelectedIndex(t_s);
-            prop.getTimeChoiceEND().setSelectedIndex(t_e);
+            t_s = prop.getTimeChoiceSTART().getSelectedIndex();
+            t_e = prop.getTimeChoiceEND().getSelectedIndex();
+            newProp.getTimeChoiceSTART().setSelectedIndex(t_s);
+            newProp.getTimeChoiceEND().setSelectedIndex(t_e);
         }
-        propVector.add(i, prop);
+        propVector.add(i, newProp);
         
         graphCount = propVector.size();
         
@@ -429,11 +429,11 @@ public class JTSConfigurator extends JFrame{
         
         for(int k=0;k<graphCount;k++){
             
-            prop = propVector.get(k);
-            prop.setIndex(k);
+            newProp = propVector.get(k);
+            newProp.setIndex(k);
             //prop.getPlotButton().addActionListener(plotbuttonclick);
             
-            addPropGroup(prop);
+            addPropGroup(newProp);
             
             
             
@@ -447,22 +447,22 @@ public class JTSConfigurator extends JFrame{
         repaint();
     }
     
-    public void removeGraph(int index){
+    public void removeGraph(GraphProperties prop){
         
         if(graphCount > 1){
-        GraphProperties prop;
-        propVector.remove(index);
+        GraphProperties newProp;
+        propVector.remove(propVector.indexOf(prop));
         graphCount = propVector.size();
         
         initGroupUI();
         
         for(int k=0;k<graphCount;k++){
             
-            prop = propVector.get(k);
-            prop.setIndex(k);
+            newProp = propVector.get(k);
+            //newProp.setIndex(k);
             //prop.getPlotButton().addActionListener(plotbuttonclick);
             
-            addPropGroup(prop);
+            addPropGroup(newProp);
             
             
             
@@ -476,13 +476,13 @@ public class JTSConfigurator extends JFrame{
         }
     }
     
-    public void upGraph(int index){
+    public void upGraph(GraphProperties prop){
         
-        int i = index;
-        GraphProperties prop = propVector.get(i);
+        int i = propVector.indexOf(prop);
+        //GraphProperties prop = propVector.get(i);
         
         if(i-1>=0 && i-1<graphCount){
-            propVector.remove(i);
+            propVector.remove(prop);
             propVector.add(i-1, prop);
         
 
@@ -491,7 +491,7 @@ public class JTSConfigurator extends JFrame{
             for(int k=0;k<graphCount;k++){
 
                 prop = propVector.get(k);
-                prop.setIndex(k);
+                //prop.setIndex(k);
                 //prop.getPlotButton().addActionListener(plotbuttonclick);
 
                 addPropGroup(prop);
@@ -508,15 +508,17 @@ public class JTSConfigurator extends JFrame{
         }
     }
     
-    public void downGraph(int index){
+    public void downGraph(GraphProperties prop){
         
-        int i = index;
-        GraphProperties prop = propVector.get(i+1);
+        int i = propVector.indexOf(prop);
+        
+        if(i<propVector.size()){
+        GraphProperties newProp = propVector.get(i+1);
         
         if(i+1>=0 && i+1<graphCount){
             
             propVector.remove(i+1);
-            propVector.add(i, prop);
+            propVector.add(i, newProp);
 
             graphCount = propVector.size();
 
@@ -524,17 +526,18 @@ public class JTSConfigurator extends JFrame{
 
             for(int k=0;k<graphCount;k++){
 
-                prop = propVector.get(k);
-                prop.setIndex(k);
+                newProp = propVector.get(k);
+                newProp.setIndex(k);
                 //prop.getPlotButton().addActionListener(plotbuttonclick);
 
-                addPropGroup(prop);
+                addPropGroup(newProp);
                 
             }
             finishGroupUI();
             
             
             repaint();
+        }
         }
     }
     
@@ -545,16 +548,32 @@ public class JTSConfigurator extends JFrame{
         }
     }
     
-    public void plotGraph(int i){
+//    public void plotGraph(int i){
+//       
+//            //propVector.get(i).applyProperties();
+//            if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
+//                jts.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
+//            }
+//            if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
+//                jts.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
+//            }
+//    }
+    public void plotGraph(GraphProperties prop){
        
             //propVector.get(i).applyProperties();
-            if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
+//            if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
+//                jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
+//            }
+//            if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
+//                jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
+//            }
+        if(prop.getPosChoice().getSelectedItem() == "left"){
                 jts.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
             }
-            if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
+            if(prop.getPosChoice().getSelectedItem() == "right"){
                 jts.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
             }
-    }
+    }  
     
     public void plotAllGraphs(){
     updatePropVector();

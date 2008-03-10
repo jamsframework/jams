@@ -417,7 +417,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     ActionListener plotAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
          
-             if(table.getValueAt(0, table.getSelectedColumn()).getClass() == JAMSCalendar.class){     
+             if(table.getValueAt(0, 0).getClass() == JAMSCalendar.class){     
                 openCTS();
              }
          } 
