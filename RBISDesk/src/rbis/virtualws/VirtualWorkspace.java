@@ -90,7 +90,8 @@ public class VirtualWorkspace {
 
     public static void main(String[] args) throws Exception {
 
-        Document doc = XMLIO.getDocument("D:/jams/RBISDesk/tabledatastore2.xml");
+//        Document doc = XMLIO.getDocument("D:/jams/RBISDesk/tabledatastore2.xml");
+        Document doc = XMLIO.getDocument("D:/jams/RBISDesk/tsdatastore.xml");
         String[] libs = {"D:/nbprojects/RBISDesk/dist", "D:/nbprojects/RBISDesk/dist/lib"};
 
         VirtualWorkspace ws = new VirtualWorkspace();
@@ -104,19 +105,9 @@ public class VirtualWorkspace {
 
         ws.setLibs(libs);
 
-        if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
-            System.exit(-1);
-        }
-
         DataStore store = ws.addDataStore(doc);
-
-        if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
-            return;
-        }
-
         ASCIIConverter asciiConverter = new ASCIIConverter(store);
         System.out.println(asciiConverter.toASCIIString());
-        
         store.close();
 
     /*

@@ -6,7 +6,6 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-
 package jams.components.gui.spreadsheet;
 
 import java.net.URL;
@@ -16,10 +15,6 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.awt.event.*;
 import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.swing.*;
 import javax.swing.BorderFactory.*;
 import javax.swing.border.*;
@@ -27,42 +22,35 @@ import javax.swing.GroupLayout.*;
 
 import java.io.*;
 
-import java.util.Iterator;
 
-import org.unijena.jams.JAMS;
 import org.unijena.jams.data.*;
 import org.unijena.jams.model.*;
 
-import org.jfree.data.time.Second;
-import org.jfree.data.time.TimeSeries;
 /**
  *
  * @author Robert Riedel
  */
-public class JXYConfigurator extends JFrame{
+public class JXYConfigurator extends JFrame {
 
-        GroupLayout gLayout;
-        
-        GroupLayout.SequentialGroup hGroup;
-        GroupLayout.SequentialGroup vGroup;
-        Group group1;
-        Group group2;
-        Group group3;
-        Group group4;
-        Group group5;
-        Group group6;
-        Group group7;
-        Group group8;
-        Group group9;
-        Group group10;
-        Group group11;
-        Group group12;
-        Group group13;
-        Group group14;
-        Group group15;
-    
-    private Vector<ActionListener> addAction = new Vector<ActionListener>();    
-        
+    GroupLayout gLayout;
+    GroupLayout.SequentialGroup hGroup;
+    GroupLayout.SequentialGroup vGroup;
+    Group group1;
+    Group group2;
+    Group group3;
+    Group group4;
+    Group group5;
+    Group group6;
+    Group group7;
+    Group group8;
+    Group group9;
+    Group group10;
+    Group group11;
+    Group group12;
+    Group group13;
+    Group group14;
+    Group group15;
+    private Vector<ActionListener> addAction = new Vector<ActionListener>();
     private JDialog parent;
     private JPanel frame;
     private JPanel mainpanel;
@@ -75,134 +63,109 @@ public class JXYConfigurator extends JFrame{
     private JPanel edLeftAxisPanel;
     private JPanel edRightAxisPanel;
     private JPanel edTimeAxisPanel;
-    
     private JSplitPane split_hor = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
     private JSplitPane split_vert = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-    
     private JPanel[] datapanels;
     private JScrollPane graphScPane;
     private JScrollPane plotScPane;
     private JScrollPane mainScPane;
     private JScrollPane optScPane;
-    
     private String[] headers;
-    
     private JLabel edTitle = new JLabel("Plot Title: ");
-    private JLabel edLeft  = new JLabel("Left axis title: ");
+    private JLabel edLeft = new JLabel("Left axis title: ");
     private JLabel edXAxis = new JLabel("X axis title");
-    
     private JLabel edRight = new JLabel("Right axis title: ");
     private JLabel rLeftLabel = new JLabel("Renderer left");
-    private JLabel rRightLabel= new JLabel("Renderer right");
+    private JLabel rRightLabel = new JLabel("Renderer right");
     private JLabel invLeftLabel = new JLabel("Invert left axis");
     private JLabel invRightLabel = new JLabel("Invert right axis");
-    
     private JTextField edTitleField = new JTextField(14);
     private JTextField edLeftField = new JTextField(14);
     private JTextField edRightField = new JTextField(14);
     private JTextField edXAxisField = new JTextField(14);
-    
-    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Difference","Step","StepArea"};
-    
+    private String[] types = {"Line", "Bar", "Area", "Line and Base", "Dot", "Difference", "Step", "StepArea"};
     private JComboBox rLeftBox = new JComboBox(types);
     private JComboBox rRightBox = new JComboBox(types);
-    
     private JCheckBox invLeftBox = new JCheckBox("Invert left Axis");
     private JCheckBox invRightBox = new JCheckBox("Invert right Axis");
-    
     private ButtonGroup isXAxisGroup = new ButtonGroup();
-    
     private JButton applyButton = new JButton("Apply");
-    
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
     private JAMSXYPlot jxys = new JAMSXYPlot();
-    
 //    private String[] headers;
 //    //private String[] colors = {"yellow","orange","red","pink","magenta","cyan","blue","green","gray","lightgray","black"};
     //private String[] colors = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
 //    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Difference","Step","StepArea"};
 //    private String[] positions = {"left","right"};
-    
     /* test*/
 //    private Color[] colors_ = {Color.RED, Color.BLUE};
-    
 //    private String[] legendEntries;
-    
     private int index;
-    
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
-    
     int[] rows, columns;
     JTable table;
-    
     CTSPlot ctsplot;
-    
     /*buttons*/
-
-    
-    int graphCount=0;
+    int graphCount = 0;
 //    Vector<JCheckBox> activate = new Vector<JCheckBox>();
 //    Vector<JComboBox> datachoice = new Vector<JComboBox>();
 //    Vector<JComboBox> poschoice = new Vector<JComboBox>();
 //    Vector<JComboBox> typechoice = new Vector<JComboBox>();
 //    Vector<JComboBox> colorchoice = new Vector<JComboBox>();
-    
     JCheckBox[] activate;
     JComboBox[] datachoice;
     JComboBox[] poschoice;
     JComboBox[] typechoice;
     JComboBox[] colorchoice;
-    
-    
     /* ActionListener */
     ActionListener[] activationChange;
-    
+
     /** Creates a new instance of CTSConfigurator */
     public JXYConfigurator() {
-        /* open CTSConf */
+    /* open CTSConf */
     }
     /*
     public CTSConfigurator(JAMSTableModel tmodel){
-        this.tmodel = tmodel;
+    this.tmodel = tmodel;
     }
      **/
-    
-    public JXYConfigurator(JFrame parent, JTable table){
-        
+
+    public JXYConfigurator(JFrame parent, JTable table) {
+
         //super(parent, "JAMS JTS Viewer");
         setTitle("JAMS XYPlot Viewer");
         URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
         ImageIcon icon = new ImageIcon(url);
         setIconImage(icon.getImage());
-        
+
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
-        
+
         this.table = table;
-        
+
         this.rows = table.getSelectedRows();
         this.columns = table.getSelectedColumns();
         this.graphCount = columns.length;
         this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
-        
+
 //        this.legendEntries = new String[graphCount];
-        
+
 //        for(int k=0;k<graphCount;k++){
 //            headers[k] = table.getColumnName(columns[k]);
 //            legendEntries[k] = headers[k];
 //        }
-        
-        
-        setSize(680,480);
+
+
+        setSize(680, 480);
         //setMinimumSize(new Dimension(680,480));
         createPanel();
         //timePlot();
         pack();
         setVisible(true);
-        
+
     }
-    
+
 //    public void setTable(JTable table){
 //
 //        this.table = table;
@@ -220,9 +183,8 @@ public class JXYConfigurator extends JFrame{
 //
 //        /* now call createPanel() */
 //    }
-    
-    public void createPanel(){
-        
+    public void createPanel() {
+
         /* create ColorMap */
         colorTable.put("yellow", Color.yellow);
         colorTable.put("orange", Color.orange);
@@ -235,7 +197,7 @@ public class JXYConfigurator extends JFrame{
         colorTable.put("gray", Color.gray);
         colorTable.put("lightgray", Color.lightGray);
         colorTable.put("black", Color.black);
-        
+
         JLabel nameLabel = new JLabel("Name");
         JLabel posLabel = new JLabel("Position");
         JLabel typeLabel = new JLabel("Renderer");
@@ -244,36 +206,36 @@ public class JXYConfigurator extends JFrame{
         JLabel timeLabel = new JLabel("Data Range");
         JLabel emptyTimeLabel = new JLabel("    ");
         JLabel legendLabel = new JLabel("Legend Entry");
-      
+
         nameLabel.setBackground(Color.DARK_GRAY);
         posLabel.setBackground(Color.DARK_GRAY);
         typeLabel.setBackground(Color.DARK_GRAY);
         colorLabel.setBackground(Color.DARK_GRAY);
         dataLabel.setBackground(Color.DARK_GRAY);
         timeLabel.setBackground(Color.DARK_GRAY);
-        
+
         //mainpanel = new JPanel();
         setLayout(new BorderLayout());
         //mainpanel.setBackground(Color.WHITE);
-        
+
         plotpanel = new JPanel();
         plotpanel.setLayout(new BorderLayout());
-        
+
         frame = new JPanel();
         frame.setLayout(new BorderLayout());
         //frame.setSize(640,80);
-        
+
         graphScPane = new JScrollPane();
-                
+
         optionpanel = new JPanel();
         //optionpanel.setLayout(new FlowLayout());
         graphpanel = new JPanel();
-        
+
         initGroupUI();
-    
+
         southpanel = new JPanel();
         southpanel.setLayout(new FlowLayout());
-        
+
         edTitlePanel = new JPanel();
         edTitlePanel.setLayout(new FlowLayout());
         edLeftAxisPanel = new JPanel();
@@ -308,28 +270,28 @@ public class JXYConfigurator extends JFrame{
 //        
         //edTitleField.setColumns(20);
         edTitleField.setText("Plot Title");
-        edTitleField.setSize(40,10);
+        edTitleField.setSize(40, 10);
         edTitleField.addActionListener(plotbuttonclick);
         //edLeftField.setColumns(20);
         edLeftField.setText("Left Axis Title");
         edLeftField.addActionListener(plotbuttonclick);
-        edLeftField.setSize(40,10);
+        edLeftField.setSize(40, 10);
         //edRightField.setColumns(20);
         edRightField.setText("Right Axis Title");
         edRightField.addActionListener(plotbuttonclick);
-        edRightField.setSize(40,10);
-        
+        edRightField.setSize(40, 10);
+
         edXAxisField.setText("x axis title");
         edXAxisField.addActionListener(plotbuttonclick);
         applyButton.addActionListener(plotbuttonclick);
-        
+
 //        edTitlePanel.add(edTitle);
 //        edTitlePanel.add(edTitleField);
 //        edLeftAxisPanel.add(edLeft);
 //        edLeftAxisPanel.add(edLeftField);
 //        edRightAxisPanel.add(edRight);
 //        edRightAxisPanel.add(edRightField);
-        
+
         optionpanel.add(edTitle);
         optionpanel.add(edTitleField);
         optionpanel.add(edLeft);
@@ -337,25 +299,25 @@ public class JXYConfigurator extends JFrame{
         optionpanel.add(edRight);
         optionpanel.add(edRightField);
         optionpanel.add(applyButton);
-        
-        for(int k=0;k<graphCount;k++){
-            
+
+        for (int k = 0; k < graphCount; k++) {
+
             GraphProperties prop = new GraphProperties(parent, table, this);
             //prop.setXSeries(columns[0]);
             prop.setSelectedColumn(columns[k]);
             prop.setXSeries(columns[0]);
             prop.setSelectedRows(rows);
             prop.setInitialDataIntervals();
-            
+
             //prop.setDataSTART((Double)table.getValueAt(rows[0], columns[0]));
             //prop.setDataEND((Double)table.getValueAt(rows[rows.length - 1], columns[0]));
             //prop.applyXYProperties();
-            
+
             //propVector.add(new GraphProperties(parent,table));
-            
+
             //prop.setIndex(k);
-            
-            if(k==0){
+
+            if (k == 0) {
                 prop.getIsXAxisButton().setSelected(true);
                 prop.setIsXSeries(true);
                 prop.getDataChoice().setEnabled(false);
@@ -365,49 +327,49 @@ public class JXYConfigurator extends JFrame{
                 prop.getPosChoice().setEnabled(false);
                 prop.getLegendField().setEnabled(false);
             }
-                prop.getAddButton().setEnabled(false);
-                prop.getRemButton().setEnabled(false);
-                prop.getUpButton().setEnabled(false);
-                prop.getDownButton().setEnabled(false);
-                
-            
-            
-            
-            
-            
-            if( k<=12){
+            prop.getAddButton().setEnabled(true);
+            prop.getRemButton().setEnabled(true);
+            prop.getUpButton().setEnabled(true);
+            prop.getDownButton().setEnabled(true);
+
+
+
+
+
+
+            if (k <= 12) {
                 prop.setColor(k);
             }
 //            prop.setColor((String) colorchoice.getSelectedItem());
 //            prop.setPosition((String) poschoice.getSelectedItem());
 //            prop.setRendererType(typechoice.getSelectedIndex());
-            prop.setName(table.getColumnName(k+1));
-            prop.setLegendName(table.getColumnName(k+1));
-            
+            prop.setName(table.getColumnName(k + 1));
+            prop.setLegendName(table.getColumnName(k + 1));
+
             //prop.getPlotButton().addActionListener(plotbuttonclick);
-            
+
             prop.applyXYProperties();
             addPropGroup(prop);
-      
-            propVector.add(k,prop);
-            
-            //graphpanel.add(propVector.get(k-1).getGraphPanel());
-            
+
+            propVector.add(k, prop);
+
+        //graphpanel.add(propVector.get(k-1).getGraphPanel());
+
         }
-        
+
         finishGroupUI();
         createOptionPanel();
-    
+
         /* initialise JTSPlot */
         //JAMSTimePlot jts = new JAMSTimePlot(propVector);
         jxys.setPropVector(propVector);
         jxys.createPlot();
- 
+
         JPanel graphPanel = new JPanel();
         JPanel optPanel = new JPanel();
         graphPanel.add(graphpanel);
         optPanel.add(optionpanel);
-        
+
         graphScPane = new JScrollPane(graphPanel);
         //graphScPane.setPreferredSize(new Dimension(200,150));
         graphScPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -422,42 +384,42 @@ public class JXYConfigurator extends JFrame{
         add(split_vert);
 //        add(frame, BorderLayout.NORTH);
 //        add(plotScPane, BorderLayout.CENTER);
-        
+
         plotAllGraphs();
-        //jts.plotRight(1, "rightAxisName", true);
-    
+    //jts.plotRight(1, "rightAxisName", true);
+
     }
-    
-    public void addGraph(GraphProperties prop){
-        
+
+    public void addGraph(GraphProperties prop) {
+
         int i = propVector.indexOf(prop);
         double d_start, d_end;
         GraphProperties newProp = new GraphProperties(parent, table, this);
-        
-        if(i>0){
+
+        if (i > 0) {
             d_start = prop.getDataSTART();
             d_end = prop.getDataEND();
             newProp.setDataSTART(d_start);
             newProp.setDataEND(d_end);
         }
         propVector.add(i, newProp);
-        
+
         graphCount = propVector.size();
-        
+
         initGroupUI();
-        
-        for(int k=0;k<graphCount;k++){
-            
+
+        for (int k = 0; k < graphCount; k++) {
+
 //            newProp = propVector.get(k);
 //            newProp.setIndex(k);
             //prop.getPlotButton().addActionListener(plotbuttonclick);
-            
+
             addPropGroup(newProp);
-            
-            
-            
-            //graphpanel.add(propVector.get(k-1).getGraphPanel());
-            
+
+
+
+        //graphpanel.add(propVector.get(k-1).getGraphPanel());
+
         }
         finishGroupUI();
         //mainpanel.repaint();
@@ -465,130 +427,130 @@ public class JXYConfigurator extends JFrame{
         //pack();
         repaint();
     }
-    
-    public void removeGraph(GraphProperties prop){
-        
-        if(graphCount > 1){
-        GraphProperties newProp;
-        propVector.remove(propVector.indexOf(prop));
-        graphCount = propVector.size();
-        
-        initGroupUI();
-        
-        for(int k=0;k<graphCount;k++){
-            
-            newProp = propVector.get(k);
-//            prop.setIndex(k);
-            //prop.getPlotButton().addActionListener(plotbuttonclick);
-            
-            addPropGroup(newProp);
-            
-            
-            
-            //graphpanel.add(propVector.get(k-1).getGraphPanel());
-            
-        }
-        finishGroupUI();
-        //mainpanel.updateUI();
-//        pack();
-        repaint();  
-        }
-    }
-    
-    public void upGraph(GraphProperties prop){
-        
-        int i = propVector.indexOf(prop);
-        int x_series = columns[0];
-        boolean xChanged = false;
-        GraphProperties newProp;
-        
-        if(i-1>=0 && i-1<graphCount){
-            propVector.remove(prop);
-            propVector.add(i-1, prop);
-        
 
-            initGroupUI();
+    public void removeGraph(GraphProperties prop) {
 
-            for(int k=0;k<graphCount;k++){
-
-                newProp = propVector.get(k);
-                //prop.setIndex(k);
-                if(prop.isXSeries()){
-                    x_series = newProp.getSelectedColumn();
-                    xChanged = true;
-                }
-                //prop.getPlotButton().addActionListener(plotbuttonclick);
-
-                addPropGroup(newProp);
-
-
-
-                //graphpanel.add(propVector.get(k-1).getGraphPanel());
-
-            }
-            if(xChanged){
-                xChanged(propVector.get(x_series));
-            }
-            finishGroupUI();
-            
-            
-            repaint();
-        }
-    }
-    
-    public void downGraph(GraphProperties prop){
-        
-        int i = propVector.indexOf(prop);
-        int x_series = columns[0];
-        boolean xChanged = false;
-        if(i<propVector.size()){
-        GraphProperties newProp = propVector.get(i+1);
-        
-        if(i+1>=0 && i+1<graphCount){
-            
-            propVector.remove(i+1);
-            propVector.add(i, newProp);
-
+        if (graphCount > 1) {
+            GraphProperties newProp;
+            propVector.remove(propVector.indexOf(prop));
             graphCount = propVector.size();
 
             initGroupUI();
 
-            for(int k=0;k<graphCount;k++){
+            for (int k = 0; k < graphCount; k++) {
 
                 newProp = propVector.get(k);
-                newProp.setIndex(k);
-                if(prop.isXSeries()){
+//            prop.setIndex(k);
+                //prop.getPlotButton().addActionListener(plotbuttonclick);
+
+                addPropGroup(newProp);
+
+
+
+            //graphpanel.add(propVector.get(k-1).getGraphPanel());
+
+            }
+            finishGroupUI();
+            //mainpanel.updateUI();
+//        pack();
+            repaint();
+        }
+    }
+
+    public void upGraph(GraphProperties prop) {
+
+        int i = propVector.indexOf(prop);
+        int x_series = columns[0];
+        boolean xChanged = false;
+        GraphProperties newProp;
+
+        if (i - 1 >= 0 && i - 1 < graphCount) {
+            propVector.remove(prop);
+            propVector.add(i - 1, prop);
+
+
+            initGroupUI();
+
+            for (int k = 0; k < graphCount; k++) {
+
+                newProp = propVector.get(k);
+                //prop.setIndex(k);
+                if (prop.isXSeries()) {
                     x_series = newProp.getSelectedColumn();
                     xChanged = true;
                 }
                 //prop.getPlotButton().addActionListener(plotbuttonclick);
 
                 addPropGroup(newProp);
-                
+
+
+
+            //graphpanel.add(propVector.get(k-1).getGraphPanel());
+
             }
-            if(xChanged){
+            if (xChanged) {
                 xChanged(propVector.get(x_series));
             }
             finishGroupUI();
-            
-            
+
+
             repaint();
         }
+    }
+
+    public void downGraph(GraphProperties prop) {
+
+        int i = propVector.indexOf(prop);
+        int x_series = columns[0];
+        boolean xChanged = false;
+        if (i < propVector.size()) {
+            GraphProperties newProp = propVector.get(i + 1);
+
+            if (i + 1 >= 0 && i + 1 < graphCount) {
+
+                propVector.remove(i + 1);
+                propVector.add(i, newProp);
+
+                graphCount = propVector.size();
+
+                initGroupUI();
+
+                for (int k = 0; k < graphCount; k++) {
+
+                    newProp = propVector.get(k);
+                    newProp.setIndex(k);
+                    if (prop.isXSeries()) {
+                        x_series = newProp.getSelectedColumn();
+                        xChanged = true;
+                    }
+                    //prop.getPlotButton().addActionListener(plotbuttonclick);
+
+                    addPropGroup(newProp);
+
+                }
+                if (xChanged) {
+                    xChanged(propVector.get(x_series));
+                }
+                finishGroupUI();
+
+
+                repaint();
+            }
         }
     }
-    
-    private void updatePropVector(){
-        
-        for(int i=0; i<propVector.size(); i++){
+
+    private void updatePropVector() {
+
+        for (int i = 0; i < propVector.size(); i++) {
             propVector.get(i).applyXYProperties();
         }
     }
-    
-    public void xChanged(GraphProperties prop){
-        
+
+    public void xChanged(GraphProperties prop) {
+
         int index = propVector.indexOf(prop);
-        for(int i=0; i<propVector.size(); i++){
-            if(i != index){
+        for (int i = 0; i < propVector.size(); i++) {
+            if (i != index) {
                 propVector.get(i).setXSeries(columns[index]);
                 propVector.get(i).setIsXSeries(false);
                 propVector.get(i).getDataChoice().setEnabled(true);
@@ -603,7 +565,7 @@ public class JXYConfigurator extends JFrame{
                 propVector.get(i).getLegendField().setEnabled(true);
                 propVector.get(i).applyXYProperties();
             }
-            
+
         }
         propVector.get(index).setIsXSeries(true);
         propVector.get(index).setXSeries(columns[index]);
@@ -612,98 +574,86 @@ public class JXYConfigurator extends JFrame{
         propVector.get(index).getDataChoiceEND().setEnabled(false);
         propVector.get(index).getColorChoice().setEnabled(false);
         propVector.get(index).getPosChoice().setEnabled(false);
-        propVector.get(index).getAddButton().setEnabled(false);
-        propVector.get(index).getRemButton().setEnabled(false);
-        propVector.get(index).getUpButton().setEnabled(false);
-        propVector.get(index).getDownButton().setEnabled(false);
+        propVector.get(index).getAddButton().setEnabled(true);
+        propVector.get(index).getRemButton().setEnabled(true);
+        propVector.get(index).getUpButton().setEnabled(true);
+        propVector.get(index).getDownButton().setEnabled(true);
         propVector.get(index).getLegendField().setEnabled(false);
         propVector.get(index).applyXYProperties();
     }
-    
-    public void plotGraph(GraphProperties prop){
-       
-            //propVector.get(i).applyProperties();
+
+    public void plotGraph(GraphProperties prop) {
+
+        //propVector.get(i).applyProperties();
 //            if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
 //                jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
 //            }
 //            if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
 //                jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
 //            }
-            if(prop.getPosChoice().getSelectedItem() == "left"){
-                jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
-            }
-            if(prop.getPosChoice().getSelectedItem() == "right"){
-                jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
-            }
-    }    
-    
-    public void plotAllGraphs(){
-    updatePropVector();
-            int l=0;
-            int r=0;
-            for(int i=0; i<propVector.size(); i++){
-                if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
-                    l++;
-                }
-                if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
-                    r++;
-                }
-            }
-            if(l>0){
-                jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
-            }
-            if(r>0){
-                jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected()); 
-            }
-            
-            jxys.setTitle(edTitleField.getText());
+        if (prop.getPosChoice().getSelectedItem() == "left") {
+            jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
+        }
+        if (prop.getPosChoice().getSelectedItem() == "right") {
+            jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
+        }
     }
-    
-    private void createOptionPanel(){
+
+    public void plotAllGraphs() {
+        updatePropVector();
+        int l = 0;
+        int r = 0;
+        for (int i = 0; i < propVector.size(); i++) {
+            if (propVector.get(i).getPosChoice().getSelectedItem() == "left") {
+                l++;
+            }
+            if (propVector.get(i).getPosChoice().getSelectedItem() == "right") {
+                r++;
+            }
+        }
+        if (l > 0) {
+            jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
+        }
+        if (r > 0) {
+            jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
+        }
+
+        jxys.setTitle(edTitleField.getText());
+    }
+
+    private void createOptionPanel() {
         GroupLayout optLayout = new GroupLayout(optionpanel);
         optionpanel.setLayout(optLayout);
         optLayout.setAutoCreateGaps(true);
         optLayout.setAutoCreateContainerGaps(true);
-        
+
         GroupLayout.SequentialGroup optHGroup = optLayout.createSequentialGroup();
         GroupLayout.SequentialGroup optVGroup = optLayout.createSequentialGroup();
-        
-        optVGroup.addGroup(optLayout.createParallelGroup()
-        .addComponent(edTitle).addComponent(edTitleField));
-        optVGroup.addGroup(optLayout.createParallelGroup()
-        .addComponent(edLeft).addComponent(edLeftField));
-        optVGroup.addGroup(optLayout.createParallelGroup()
-        .addComponent(edRight).addComponent(edRightField));
-        optVGroup.addGroup(optLayout.createParallelGroup()
-        .addComponent(edXAxis).addComponent(edXAxisField));
-        optVGroup.addGroup(optLayout.createParallelGroup()
-        .addComponent(rLeftLabel).addComponent(rLeftBox));
-        optVGroup.addGroup(optLayout.createParallelGroup()
-        .addComponent(rRightLabel).addComponent(rRightBox));
-        optVGroup.addGroup(optLayout.createParallelGroup()
-        .addComponent(invLeftBox));
-        optVGroup.addGroup(optLayout.createParallelGroup()
-        .addComponent(invRightBox).addComponent(applyButton));
-        
+
+        optVGroup.addGroup(optLayout.createParallelGroup().addComponent(edTitle).addComponent(edTitleField));
+        optVGroup.addGroup(optLayout.createParallelGroup().addComponent(edLeft).addComponent(edLeftField));
+        optVGroup.addGroup(optLayout.createParallelGroup().addComponent(edRight).addComponent(edRightField));
+        optVGroup.addGroup(optLayout.createParallelGroup().addComponent(edXAxis).addComponent(edXAxisField));
+        optVGroup.addGroup(optLayout.createParallelGroup().addComponent(rLeftLabel).addComponent(rLeftBox));
+        optVGroup.addGroup(optLayout.createParallelGroup().addComponent(rRightLabel).addComponent(rRightBox));
+        optVGroup.addGroup(optLayout.createParallelGroup().addComponent(invLeftBox));
+        optVGroup.addGroup(optLayout.createParallelGroup().addComponent(invRightBox).addComponent(applyButton));
+
         optHGroup.addGroup(optLayout.createParallelGroup().
-                addComponent(edTitle).addComponent(edLeft).addComponent(edRight)
-                .addComponent(edXAxis).addComponent(rLeftLabel).addComponent(rRightLabel)
-                .addComponent(invLeftBox).addComponent(invRightBox));
-        
+                addComponent(edTitle).addComponent(edLeft).addComponent(edRight).addComponent(edXAxis).addComponent(rLeftLabel).addComponent(rRightLabel).addComponent(invLeftBox).addComponent(invRightBox));
+
         optHGroup.addGroup(optLayout.createParallelGroup().
-                addComponent(edTitleField).addComponent(edLeftField).addComponent(edRightField)
-                .addComponent(edXAxisField).addComponent(rLeftBox).addComponent(rRightBox).addGap(1,1,1)
-                .addComponent(applyButton));
-        
-        
+                addComponent(edTitleField).addComponent(edLeftField).addComponent(edRightField).addComponent(edXAxisField).addComponent(rLeftBox).addComponent(rRightBox).addGap(1, 1, 1).addComponent(applyButton));
+
+
         optLayout.setHorizontalGroup(optHGroup);
         optLayout.setVerticalGroup(optVGroup);
     }
-    
-    private void initGroupUI(){
-        
+
+    private void initGroupUI() {
+
         graphpanel.removeAll();
-        
+
         JLabel nameLabel = new JLabel("Name");
         JLabel posLabel = new JLabel("Position");
         JLabel typeLabel = new JLabel("Colour / Position");
@@ -712,12 +662,12 @@ public class JXYConfigurator extends JFrame{
         JLabel timeLabel = new JLabel("Data Range");
         JLabel emptyTimeLabel = new JLabel("    ");
         JLabel legendLabel = new JLabel("Legend Entry: ");
-        
+
         gLayout = new GroupLayout(graphpanel);
         graphpanel.setLayout(gLayout);
         gLayout.setAutoCreateGaps(true);
         gLayout.setAutoCreateContainerGaps(true);
-        
+
         hGroup = gLayout.createSequentialGroup();
         vGroup = gLayout.createSequentialGroup();
         group1 = gLayout.createParallelGroup();
@@ -736,7 +686,7 @@ public class JXYConfigurator extends JFrame{
         group14 = gLayout.createParallelGroup();
         group15 = gLayout.createParallelGroup();
 
-              
+
 
         group1.addComponent(dataLabel);
         group2.addComponent(timeLabel);
@@ -750,52 +700,44 @@ public class JXYConfigurator extends JFrame{
 //        group13.addComponent(emptyTimeLabel);
 //        group14.addComponent(emptyTimeLabel);
 //        group15.addComponent(emptyTimeLabel);
-   
-        vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING)
-        .addComponent(dataLabel).addComponent(timeLabel).addComponent(typeLabel));
-        
+
+        vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING).addComponent(dataLabel).addComponent(timeLabel).addComponent(typeLabel));
+
 //        vGroup.addGroup(gLayout.createParallelGroup(Alignment.BASELINE)
 //        .addComponent(dataLabel).addComponent(timeLabel).addComponent(typeLabel));
 
     }
-    
-    private void addPropGroup(GraphProperties prop){
-        
-            isXAxisGroup.add(prop.getIsXAxisButton());
-            JLabel space1 = new JLabel(" ");
-            JLabel space2 = new JLabel(" ");
-            JLabel space3 = new JLabel(" ");
-            JLabel space4 = new JLabel(" ");
-            JLabel space5 = new JLabel("   ");
-            JLabel space6 = new JLabel("   ");
-            JTextField lf = prop.getLegendField();
-            
-            group6.addComponent(space5).addComponent(space6);
-            
-            group1.addComponent(prop.getDataChoice()).addComponent(lf).addGap(20);
-            group2.addComponent(prop.getDataChoiceSTART()).addComponent(prop.getDataChoiceEND());
-            group3.addComponent(prop.getColorChoice()).addComponent(prop.getPosChoice());
-                       
 
-            group9.addComponent(space3);
-            group10.addComponent(prop.getIsXAxisButton()).addComponent(prop.getPlotButton());
-            group11.addComponent(space4);
-            group12.addComponent(prop.getAddButton());
-            group13.addComponent(prop.getRemButton());
-            group14.addComponent(prop.getUpButton());
-            group15.addComponent(prop.getDownButton());
-                        
-            vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING)
-            .addComponent(prop.getDataChoice()).addComponent(prop.getDataChoiceSTART()).addComponent(space5)
-            .addComponent(prop.getColorChoice()).addComponent(space5).addComponent(prop.getIsXAxisButton()));
-            vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING)
-            .addComponent(lf).addComponent(prop.getDataChoiceEND()).addComponent(space6)
-            .addComponent(prop.getPosChoice())
-            .addComponent(space3).addComponent(prop.getPlotButton())
-            .addComponent(space4).addComponent(prop.getAddButton()).addComponent(prop.getRemButton())
-            .addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
-            vGroup.addGroup(gLayout.createParallelGroup().addGap(20));
-            
+    private void addPropGroup(GraphProperties prop) {
+
+        isXAxisGroup.add(prop.getIsXAxisButton());
+        JLabel space1 = new JLabel(" ");
+        JLabel space2 = new JLabel(" ");
+        JLabel space3 = new JLabel(" ");
+        JLabel space4 = new JLabel(" ");
+        JLabel space5 = new JLabel("   ");
+        JLabel space6 = new JLabel("   ");
+        JTextField lf = prop.getLegendField();
+
+        group6.addComponent(space5).addComponent(space6);
+
+        group1.addComponent(prop.getDataChoice()).addComponent(lf).addGap(20);
+        group2.addComponent(prop.getDataChoiceSTART()).addComponent(prop.getDataChoiceEND());
+        group3.addComponent(prop.getColorChoice()).addComponent(prop.getPosChoice());
+
+
+        group9.addComponent(space3);
+        group10.addComponent(prop.getIsXAxisButton()).addComponent(prop.getPlotButton());
+        group11.addComponent(space4);
+        group12.addComponent(prop.getAddButton());
+        group13.addComponent(prop.getRemButton());
+        group14.addComponent(prop.getUpButton());
+        group15.addComponent(prop.getDownButton());
+
+        vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING).addComponent(prop.getDataChoice()).addComponent(prop.getDataChoiceSTART()).addComponent(space5).addComponent(prop.getColorChoice()).addComponent(space5).addComponent(prop.getIsXAxisButton()));
+        vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING).addComponent(lf).addComponent(prop.getDataChoiceEND()).addComponent(space6).addComponent(prop.getPosChoice()).addComponent(space3).addComponent(prop.getPlotButton()).addComponent(space4).addComponent(prop.getAddButton()).addComponent(prop.getRemButton()).addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
+        vGroup.addGroup(gLayout.createParallelGroup().addGap(20));
+
 //            vGroup.addGroup(gLayout.createParallelGroup(Alignment.BASELINE)
 //            .addComponent(prop.getNameLabel()).addComponent(prop.getPosChoice())
 //            .addComponent(prop.getTypeChoice()).addComponent(prop.getColorChoice())
@@ -806,19 +748,19 @@ public class JXYConfigurator extends JFrame{
 //            .addComponent(prop.getRemButton())
 //            .addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
     }
-    
-    private void finishGroupUI(){
-        
+
+    private void finishGroupUI() {
+
         hGroup.addGroup(group1);
         hGroup.addGroup(group2);
         hGroup.addGroup(group6);
-        hGroup.addGroup(group3);  
+        hGroup.addGroup(group3);
 //        hGroup.addGroup(group4);
 //        hGroup.addGroup(group5);
 //        hGroup.addGroup(group6);
 //        hGroup.addGroup(group7);
 //        hGroup.addGroup(group8);
-        
+
         hGroup.addGroup(group9);
         hGroup.addGroup(group10);
         hGroup.addGroup(group11);
@@ -826,55 +768,52 @@ public class JXYConfigurator extends JFrame{
         hGroup.addGroup(group13);
         hGroup.addGroup(group14);
         hGroup.addGroup(group15);
-        
+
         gLayout.setHorizontalGroup(hGroup);
         gLayout.setVerticalGroup(vGroup);
-        
-        
+
+
     }
-    
-    public JPanel getPanel(){
+
+    public JPanel getPanel() {
         return mainpanel;
     }
-    
-    public JPanel getCTSPlot(){
+
+    public JPanel getCTSPlot() {
         return ctsplot.getPanel();
     }
 
-    public void setIndex(int index){
+    public void setIndex(int index) {
         this.index = index;
     }
 
-    public void setParent(JDialog parent){
+    public void setParent(JDialog parent) {
         this.parent = parent;
     }
-    
+
     /*
     public void addGraph(){
-        for(int i=0; i<headers.length; i++){
-     
-            datapanels.get(i).add(datachoice.get(i));
-            datapanels.get(i).add(poschoice.get(i));
-            datapanels.get(i).add(typechoice.get(i));
-            datapanels.get(i).add(colorchoice.get(i));
-     
-            graphpanel.add(datapanels.get(i));
-     
-        }
+    for(int i=0; i<headers.length; i++){
+    datapanels.get(i).add(datachoice.get(i));
+    datapanels.get(i).add(poschoice.get(i));
+    datapanels.get(i).add(typechoice.get(i));
+    datapanels.get(i).add(colorchoice.get(i));
+    graphpanel.add(datapanels.get(i));
+    }
     }
      */
-    private void editProperties(){
-        JDialog propDlg = new JDialog(parent,"Properties");
+    private void editProperties() {
+        JDialog propDlg = new JDialog(parent, "Properties");
         int ct = headers.length;
-        
+
         JLabel[] labels = new JLabel[ct];
         JTextField[] textFields = new JTextField[ct];
         JPanel[] inputpanels = new JPanel[ct];
-        
+
         JPanel proppanel = new JPanel();
-        proppanel.setLayout(new GridLayout(ct,1));
-        
-        for(int i=0; i<ct ; i++){
+        proppanel.setLayout(new GridLayout(ct, 1));
+
+        for (int i = 0; i < ct; i++) {
             labels[i] = new JLabel(headers[i]);
             textFields[i] = new JTextField(headers[i]);
             inputpanels[i] = new JPanel();
@@ -882,15 +821,12 @@ public class JXYConfigurator extends JFrame{
             inputpanels[i].add(labels[i]);
             inputpanels[i].add(textFields[i]);
         }
-        
-        
-        JScrollPane propPane = new JScrollPane(proppanel);
-        
-        
-    }
-    
 
-    
+
+        JScrollPane propPane = new JScrollPane(proppanel);
+
+
+    }
 //    public void timePlot(){
 ////
 ////
@@ -1058,69 +994,56 @@ public class JXYConfigurator extends JFrame{
 //
 //
 //    }
-    
-    
-    
-    
     /****** EVENT HANDLING ******/
-    
-    
-    ActionListener titleListener = new ActionListener(){
-        public void actionPerformed(ActionEvent te){
+    ActionListener titleListener = new ActionListener() {
+
+        public void actionPerformed(ActionEvent te) {
             ctsplot.getChart().setTitle(edTitleField.getText());
         }
     };
-    
-    ActionListener propbuttonclick = new ActionListener(){
+    ActionListener propbuttonclick = new ActionListener() {
+
         public void actionPerformed(ActionEvent e) {
             ctsplot.getChartPanel().doEditChartProperties();
         }
     };
-    
-    ActionListener addbuttonclick = new ActionListener(){
+    ActionListener addbuttonclick = new ActionListener() {
+
         public void actionPerformed(ActionEvent e) {
-            //addGraph();
+        //addGraph();
         }
     };
-    
-    ActionListener plotbuttonclick = new ActionListener(){
+    ActionListener plotbuttonclick = new ActionListener() {
+
         public void actionPerformed(ActionEvent e) {
             plotAllGraphs();
         }
     };
-    
-    ActionListener actChanged = new ActionListener(){
+    ActionListener actChanged = new ActionListener() {
+
         public void actionPerformed(ActionEvent e) {
-            //timePlot();
+        //timePlot();
         }
     };
-    
-    
-    
-    
-    
-    
 
-    
+    public void createActionListener() {
 
-    
-    public void createActionListener(){
-        
         Vector<ActionListener> addAction = new Vector<ActionListener>();
-        
-        for(int k=0;k<graphCount;k++){
+
+        for (int k = 0; k < graphCount; k++) {
             /* reicht hier ein listener für alle boxes? scheint so... */
-            activationChange[k] = new ActionListener(){
+            activationChange[k] = new ActionListener() {
+
                 public void actionPerformed(ActionEvent e) {
-                    //timePlot();
-                    
+                //timePlot();
+
                 }
             };
-            
-            
+
+
         }
-        
-        
+
+
     }
 }
 

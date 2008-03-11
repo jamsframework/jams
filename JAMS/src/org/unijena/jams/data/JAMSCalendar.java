@@ -30,6 +30,8 @@ import java.util.*;
  */
 public class JAMSCalendar extends GregorianCalendar implements JAMSData {
 
+    private String formatString = "%1$tY-%1$tm-%1$td %1$tH:%1$tM";
+    
     public JAMSCalendar() {
         super();
         this.setTimeInMillis(0);
@@ -49,7 +51,7 @@ public class JAMSCalendar extends GregorianCalendar implements JAMSData {
     }
 
     public String toString() {
-        return String.format("%1$tY-%1$tm-%1$td %1$tH:%1$tM", this);
+        return toString(this.formatString);
     }
 
     public String toString(String formatString) {
@@ -133,6 +135,14 @@ public class JAMSCalendar extends GregorianCalendar implements JAMSData {
         } catch (NumberFormatException nfe) {
             org.unijena.jams.JAMS.handle(nfe);
         }
+    }
+
+    public void setFormatString(String formatString) {
+        this.formatString = formatString;
+    }
+
+    public String getFormatString() {
+        return this.formatString;
     }
 
 }

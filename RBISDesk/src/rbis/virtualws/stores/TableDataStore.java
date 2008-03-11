@@ -39,7 +39,7 @@ import rbis.virtualws.plugins.DataIO;
 public class TableDataStore extends StandardDataStore {
 
     protected int currentPosition,  maxPosition;
-    private Set<DataIO> dataIOSet = new HashSet<DataIO>();
+    protected Set<DataIO> dataIOSet = new HashSet<DataIO>();
     protected DataIO[] dataIOArray;
     protected int[] positionArray;
 
@@ -77,13 +77,12 @@ public class TableDataStore extends StandardDataStore {
             io.init();
         }
 
-        currentPosition = 0;
+        currentPosition = Integer.MAX_VALUE;;
         maxPosition = Integer.MAX_VALUE;
 
-        fillBuffer();
     }
 
-    private void fillBuffer() {
+    protected void fillBuffer() {
 
         for (DataIO io : dataIOSet) {
 
@@ -114,7 +113,7 @@ public class TableDataStore extends StandardDataStore {
 
         DataSet result = new DataSet(positionArray.length);
 
-        for (int i = 0; i < positionArray.length; i++) {
+        for (int i = 0; i < dataIOArray.length; i++) {
 
             DataSet ds = dataIOArray[i].getValues()[currentPosition];
             DataValue[] values = ds.getData();
