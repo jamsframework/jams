@@ -71,7 +71,7 @@ public class TSDataStore extends TableDataStore {
 
 
         int oldBufferSize = bufferSize;
-        if (bufferSize < 2) {
+        if (bufferSize == 1) {
             bufferSize = 2;
         }
         fillBuffer();

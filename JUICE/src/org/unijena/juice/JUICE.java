@@ -23,9 +23,6 @@
 
 package org.unijena.juice;
 
-import com.jgoodies.looks.Options;
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 import java.awt.*;
 import java.io.File;
 import java.util.*;
