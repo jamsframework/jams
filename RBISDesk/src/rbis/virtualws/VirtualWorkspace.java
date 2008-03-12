@@ -22,6 +22,9 @@
  */
 package rbis.virtualws;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import rbis.virtualws.stores.GeoDataStore;
 import rbis.virtualws.stores.TableDataStore;
 import rbis.virtualws.stores.TSDataStore;
@@ -29,6 +32,7 @@ import rbis.virtualws.stores.DataStore;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 import org.unijena.jams.JAMS;
 import org.unijena.jams.io.XMLIO;
 import org.unijena.jams.runtime.JAMSClassLoader;
@@ -40,16 +44,27 @@ import rbis.virtualws.stores.ASCIIConverter;
 public class VirtualWorkspace {
 
     private String wsTitle;
-    private HashMap<String, DataStore> stores = new HashMap<String, DataStore>();
+    private HashMap<String, DataStore> dataStores = new HashMap<String, DataStore>();
     private JAMSRuntime runtime = new StandardRuntime();
     private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+    private File directory = null;
+
+    public VirtualWorkspace(File directory, JAMSRuntime runtime) {
+        this.runtime = runtime;
+        if (!directory.isDirectory()) {
+            this.getRuntime().sendErrorMsg("Error adding datastores: \"" + directory.getAbsolutePath() + "\" is not a directory!");
+        } else {
+            this.directory = directory;
+            this.createDataStores();
+        }
+    }
 
     public DataStore addDataStore(Document doc) {
 
         DataStore store = null;
         String type = doc.getDocumentElement().getTagName();
 
-        if (type.equals("tabledatastore")) {
+        if (type.equals("tableda tastore")) {
             store = new TableDataStore(this, doc);
         } else if (type.equals("tsdatastore")) {
             store = new TSDataStore(this, doc);
@@ -57,7 +72,14 @@ public class VirtualWorkspace {
             store = new GeoDataStore(this, doc);
         }
 
+        if (store != null) {
+            dataStores.put(store.getID(), store);
+        }
         return store;
+    }
+    
+    public void reload() {
+        
     }
 
     public void setLibs(String[] libs) {
@@ -72,12 +94,16 @@ public class VirtualWorkspace {
         return runtime;
     }
 
+    public Set<String> getDataStoreNames() {
+        return this.dataStores.keySet();
+    }
+
     public void removeDataStore(DataStore store) {
-        stores.remove(store);
+        dataStores.remove(store);
     }
 
     public DataStore getDataStore(String dsTitle) {
-        return stores.get(dsTitle);
+        return dataStores.get(dsTitle);
     }
 
     public String getTitle() {
@@ -88,13 +114,71 @@ public class VirtualWorkspace {
         this.wsTitle = title;
     }
 
-    public static void main(String[] args) throws Exception {
+    private void createDataStores() {
+
+        FileFilter filter = new FileFilter() {
+
+            public boolean accept(File pathname) {
+                if (pathname.getPath().endsWith(".xml")) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
+        File[] children = directory.listFiles(filter);
+        for (File child : children) {
+            try {
+
+                Document doc = XMLIO.getDocument(child.getAbsolutePath());
+                DataStore store = this.addDataStore(doc);
+                if (store != null) {
+                    this.getRuntime().println("Added store \"" + store.getID() + "\" from \"" + child.getAbsolutePath() + "\"", JAMS.VERBOSE);
+                }
+
+            } catch (FileNotFoundException fnfe) {
+                this.getRuntime().sendErrorMsg("Error reading datastore \"" + child.getAbsolutePath() + "\"!");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        File f = new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace");
+        JAMSRuntime runtime = new StandardRuntime();
+        runtime.setDebugLevel(JAMS.STANDARD);
+        runtime.addErrorLogObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                System.out.print(arg);
+            }
+        });
+        runtime.addInfoLogObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                System.out.print(arg);
+            }
+        });
+        
+        VirtualWorkspace ws = new VirtualWorkspace(f, runtime);
+
+        for (String name : ws.getDataStoreNames()) {
+            System.out.println(name);
+        }
+        
+        DataStore store = ws.getDataStore("tmean_timeseries");
+        ASCIIConverter asciiConverter = new ASCIIConverter(store);
+        System.out.println(asciiConverter.toASCIIString());
+        store.close();
+    }
+
+    public static void main2(String[] args) throws Exception {
 
 //        Document doc = XMLIO.getDocument("D:/jams/RBISDesk/tabledatastore2.xml");
         Document doc = XMLIO.getDocument("D:/jams/RBISDesk/tsdatastore.xml");
         String[] libs = {"D:/nbprojects/RBISDesk/dist", "D:/nbprojects/RBISDesk/dist/lib"};
 
-        VirtualWorkspace ws = new VirtualWorkspace();
+        VirtualWorkspace ws = new VirtualWorkspace(null, null);
         ws.getRuntime().setDebugLevel(JAMS.VERBOSE);
         ws.getRuntime().addErrorLogObserver(new Observer() {
 

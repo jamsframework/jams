@@ -4,9 +4,9 @@
     
     <timeinterval>
         <start value="1991-08-22 00:00" />
-        <end value="1992-08-21 23:59" />
+        <end value="2020-10-31 00:00" />
         <stepsize unit="6" count="1" />
-        <timeformat value="%1$tY/%1$tm/%1$td %1$tH:%1$tM" />
+        <timeformat value="%1$tY-%1$tm-%1$td %1$tH:%1$tM" />
     </timeinterval>
 
     <parameter>
