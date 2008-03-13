@@ -51,7 +51,6 @@ public class FileInput extends JPanel implements InputComponent {
 
     // constructor of main frame
     public FileInput() {
-
         // create a panel to hold all other components
         BorderLayout layout = new BorderLayout();
         layout.setHgap(5);
@@ -72,7 +71,7 @@ public class FileInput extends JPanel implements InputComponent {
         addButton.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
         addButton.setMargin(new java.awt.Insets(10, 10, 10, 10));
 
-        jfc = new JFileChooser();
+        jfc = LHelper.getJFileChooser();
 
         buttonPanel.add(addButton);
         add(addButton, BorderLayout.EAST);

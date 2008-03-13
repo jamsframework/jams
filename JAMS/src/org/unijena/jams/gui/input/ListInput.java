@@ -55,7 +55,7 @@ public class ListInput extends JPanel {
     // constructor of main frame
     public ListInput() {
 
-        jfc = new JFileChooser();
+        jfc = LHelper.getJFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
         // create a panel to hold all other components

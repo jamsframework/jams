@@ -29,6 +29,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.BorderFactory;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.unijena.jams.gui.input.BooleanInput;
 import org.unijena.jams.gui.input.CalendarInput;
@@ -141,5 +142,18 @@ public class LHelper {
 
         ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
         return ic;
+    }
+
+    public static JFileChooser getJFileChooser() {
+
+        return new JFileChooser() {
+
+            @Override
+            public void updateUI() {
+                //putClientProperty("FileChooser.useShellFolder", Boolean.FALSE);
+                super.updateUI();
+            }
+        };
+
     }
 }

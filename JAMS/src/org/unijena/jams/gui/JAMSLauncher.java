@@ -87,7 +87,7 @@ public class JAMSLauncher extends JFrame {
     private JButton resetButton,  runButton;
     private JMenuItem saveItem,  saveAsItem;
     private PropertyDlg propertyDlg;
-    private JFileChooser jfc = new JFileChooser();
+    private JFileChooser jfc;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, "Info Log");
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, "Error Log");
     private JMenuBar mainMenu;
@@ -189,6 +189,9 @@ public class JAMSLauncher extends JFrame {
                 runtime.loadModel(modelDocCopy, getProperties());
             }
         };
+
+        jfc = LHelper.getJFileChooser();
+        
         setupModelDlg = new WorkerDlg(this, "Setting up the model");
 
         this.propertyDlg = new PropertyDlg(this, getProperties());

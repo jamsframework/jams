@@ -54,7 +54,7 @@ public class JUICEFrame extends JFrame {
     private static final int TREE_PANE_WIDTH = 250;
     private static final int DIVIDER_WIDTH = 9;
     private PropertyDlg propertyDlg;
-    private JFileChooser jfc = new JFileChooser();
+    private JFileChooser jfc = LHelper.getJFileChooser();
     private TreePanel libTreePanel = new TreePanel();
     private JDesktopPane modelPanel = new JDesktopPane();
     private JMenu windowMenu = new JMenu();
