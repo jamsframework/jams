@@ -25,6 +25,7 @@ package rbis.virtualws;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import rbis.virtualws.stores.GeoDataStore;
 import rbis.virtualws.stores.TableDataStore;
 import rbis.virtualws.stores.TSDataStore;
@@ -39,12 +40,13 @@ import org.unijena.jams.runtime.JAMSClassLoader;
 import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import rbis.virtualws.stores.ASCIIConverter;
 
 public class VirtualWorkspace {
 
     private String wsTitle;
-    private HashMap<String, DataStore> dataStores = new HashMap<String, DataStore>();
+    private HashMap<String, Document> dataStores = new HashMap<String, Document>();
     private JAMSRuntime runtime = new StandardRuntime();
     private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
     private File directory = null;
@@ -59,27 +61,15 @@ public class VirtualWorkspace {
         }
     }
 
-    public DataStore addDataStore(Document doc) {
-
-        DataStore store = null;
-        String type = doc.getDocumentElement().getTagName();
-
-        if (type.equals("tableda tastore")) {
-            store = new TableDataStore(this, doc);
-        } else if (type.equals("tsdatastore")) {
-            store = new TSDataStore(this, doc);
-        } else if (type.equals("geodatastore")) {
-            store = new GeoDataStore(this, doc);
-        }
-
-        if (store != null) {
-            dataStores.put(store.getID(), store);
-        }
-        return store;
+    public String addDataStore(Document doc) {
+        Element root = doc.getDocumentElement();
+        String id = root.getAttribute("id");
+        dataStores.put(id, doc);
+        return id;
     }
-    
+
     public void reload() {
-        
+
     }
 
     public void setLibs(String[] libs) {
@@ -103,7 +93,21 @@ public class VirtualWorkspace {
     }
 
     public DataStore getDataStore(String dsTitle) {
-        return dataStores.get(dsTitle);
+
+        Document doc = dataStores.get(dsTitle);
+
+        DataStore store = null;
+        String type = doc.getDocumentElement().getTagName();
+
+        if (type.equals("tableda tastore")) {
+            store = new TableDataStore(this, doc);
+        } else if (type.equals("tsdatastore")) {
+            store = new TSDataStore(this, doc);
+        } else if (type.equals("geodatastore")) {
+            store = new GeoDataStore(this, doc);
+        }
+
+        return store;
     }
 
     public String getTitle() {
@@ -132,10 +136,8 @@ public class VirtualWorkspace {
             try {
 
                 Document doc = XMLIO.getDocument(child.getAbsolutePath());
-                DataStore store = this.addDataStore(doc);
-                if (store != null) {
-                    this.getRuntime().println("Added store \"" + store.getID() + "\" from \"" + child.getAbsolutePath() + "\"", JAMS.VERBOSE);
-                }
+                String storeID = this.addDataStore(doc);
+                this.getRuntime().println("Added store \"" + storeID + "\" from \"" + child.getAbsolutePath() + "\"", JAMS.VERBOSE);
 
             } catch (FileNotFoundException fnfe) {
                 this.getRuntime().sendErrorMsg("Error reading datastore \"" + child.getAbsolutePath() + "\"!");
@@ -143,8 +145,35 @@ public class VirtualWorkspace {
         }
     }
 
-    public static void main(String[] args) {
-        File f = new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace");
+    public String dataStoreToString(String dsTitle) {
+        DataStore store = this.getDataStore(dsTitle);
+        ASCIIConverter asciiConverter = new ASCIIConverter(store);
+        String result = asciiConverter.toASCIIString();
+        store.close();
+        return result;
+    }
+
+    public void dataStoreToFile(String dsTitle, File file) throws IOException {
+        DataStore store = this.getDataStore(dsTitle);
+        ASCIIConverter asciiConverter = new ASCIIConverter(store);
+        asciiConverter.toASCIIFile(file);
+        store.close();
+    }
+
+    public void wsToFile() throws IOException {
+        for (String dsTitle : this.getDataStoreNames()) {
+            
+            DataStore store = this.getDataStore(dsTitle);
+            File file = new File(this.directory.getAbsolutePath() + File.separator + "_" + dsTitle + ".txt");
+            ASCIIConverter asciiConverter = new ASCIIConverter(store);
+            asciiConverter.toASCIIFile(file);
+            store.close();
+            
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+
         JAMSRuntime runtime = new StandardRuntime();
         runtime.setDebugLevel(JAMS.STANDARD);
         runtime.addErrorLogObserver(new Observer() {
@@ -159,48 +188,13 @@ public class VirtualWorkspace {
                 System.out.print(arg);
             }
         });
-        
-        VirtualWorkspace ws = new VirtualWorkspace(f, runtime);
 
-        for (String name : ws.getDataStoreNames()) {
-            System.out.println(name);
-        }
-        
-        DataStore store = ws.getDataStore("tmean_timeseries");
-        ASCIIConverter asciiConverter = new ASCIIConverter(store);
-        System.out.println(asciiConverter.toASCIIString());
-        store.close();
+        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace"), runtime);
+
+//        System.out.println(ws.dataStoreToString("tmean_timeseries"));
+//        ws.dataStoreToFile("tmean_timeseries", new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace/_tmean_dump.txt"));
+        ws.wsToFile();
     }
 
-    public static void main2(String[] args) throws Exception {
-
-//        Document doc = XMLIO.getDocument("D:/jams/RBISDesk/tabledatastore2.xml");
-        Document doc = XMLIO.getDocument("D:/jams/RBISDesk/tsdatastore.xml");
-        String[] libs = {"D:/nbprojects/RBISDesk/dist", "D:/nbprojects/RBISDesk/dist/lib"};
-
-        VirtualWorkspace ws = new VirtualWorkspace(null, null);
-        ws.getRuntime().setDebugLevel(JAMS.VERBOSE);
-        ws.getRuntime().addErrorLogObserver(new Observer() {
-
-            public void update(Observable o, Object arg) {
-                System.out.println(arg);
-            }
-        });
-
-        ws.setLibs(libs);
-
-        DataStore store = ws.addDataStore(doc);
-        ASCIIConverter asciiConverter = new ASCIIConverter(store);
-        System.out.println(asciiConverter.toASCIIString());
-        store.close();
-
-    /*
-    JAMSCalendar cal = new JAMSCalendar();
-    cal.setValue(new GregorianCalendar());
-    cal.set(1925, 10, 1, 0, 0, 0);
-    System.out.println(cal);
-    System.out.println(Math.round((double) cal.getTimeInMillis() / 1000)); //should be "1925-11-01 00:00" / -1393804800
-     */
-    }
 }
 

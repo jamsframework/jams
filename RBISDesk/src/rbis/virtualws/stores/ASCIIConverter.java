@@ -22,6 +22,10 @@
  */
 package rbis.virtualws.stores;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.GregorianCalendar;
 import org.unijena.jams.data.JAMSCalendar;
 import rbis.virtualws.DataSet;
@@ -33,40 +37,53 @@ import rbis.virtualws.DataSet;
 public class ASCIIConverter {
 
     private DataStore store;
-    private String commentTag="@comments", metadataTag="@metadata", dataTag="@data";
-    
+    private String commentTag = "@comments",  metadataTag = "@metadata",  dataTag = "@data",  endTag = "@end";
+
     public ASCIIConverter(DataStore store) {
         this.store = store;
-        
+
     }
 
     public String toASCIIString() {
+        StringTarget target = new StringTarget();
+        try {
+            output(target);
+        } catch (IOException ioe) {
+        }
+        return target.buffer.toString();
+    }
 
-        String result = "";
+    public void toASCIIFile(File file) throws IOException {
 
-        result += commentTag+"\n";
-        result += "#ID: " + store.getID() + "\n";
-        result += "#TYPE: " + store.getClass().getSimpleName() + "\n";
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        FileTarget target = new FileTarget(writer);
+        output(target);
+        writer.close();
+    }
+
+    private void output(OutputTarget target) throws IOException {
+        target.append(commentTag + "\n");
+        target.append("#ID: " + store.getID() + "\n");
+        target.append("#TYPE: " + store.getClass().getSimpleName() + "\n");
         JAMSCalendar creationDate = new JAMSCalendar();
         creationDate.setValue(new GregorianCalendar());
-        result += "#DATE: " + creationDate + "\n";
-        result += "#RESPPARTY: " + store.getRespParty() + "\n";
-        result += "#DESCRIPTION:\n";
+        target.append("#DATE: " + creationDate + "\n");
+        target.append("#RESPPARTY: " + store.getRespParty() + "\n");
+        target.append("#DESCRIPTION:\n");
         String description = store.getDescription();
         if (!description.equals("")) {
-            result += "# " + description.replace("\n", "\n# ") + "\n";
+            target.append("# " + description.replace("\n", "\n# ") + "\n");
         }
 
-        result += metadataTag+"\n";
-        result += store.getDataSetDefinition().toASCIIString() + "\n";
+        target.append(metadataTag + "\n");
+        target.append(store.getDataSetDefinition().toASCIIString() + "\n");
 
-        result += dataTag +"\n";
+        target.append(dataTag + "\n");
         while (store.hasNext()) {
             DataSet ds = store.getNext();
-            result += ds.toString() + "\n";
+            target.append(ds.toString() + "\n");
         }
-
-        return result;
+        target.append(endTag);
     }
 
     public void setCommentTag(String commentTag) {
@@ -79,5 +96,32 @@ public class ASCIIConverter {
 
     public void setDataTag(String dataTag) {
         this.dataTag = dataTag;
+    }
+
+    interface OutputTarget {
+
+        public void append(String s) throws IOException;
+    }
+
+    class StringTarget implements OutputTarget {
+
+        StringBuffer buffer = new StringBuffer();
+
+        public void append(String s) {
+            buffer.append(s);
+        }
+    }
+
+    class FileTarget implements OutputTarget {
+
+        BufferedWriter writer;
+
+        public FileTarget(BufferedWriter writer) {
+            this.writer = writer;
+        }
+
+        public void append(String s) throws IOException {
+            writer.write(s);
+        }
     }
 }
