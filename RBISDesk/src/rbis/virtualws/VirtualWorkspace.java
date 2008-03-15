@@ -191,9 +191,9 @@ public class VirtualWorkspace {
 
         VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace"), runtime);
 
-//        System.out.println(ws.dataStoreToString("tmean_timeseries"));
+        System.out.println(ws.dataStoreToString("tmean_timeseries"));
 //        ws.dataStoreToFile("tmean_timeseries", new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace/_tmean_dump.txt"));
-        ws.wsToFile();
+//        ws.wsToFile();
     }
 
 }

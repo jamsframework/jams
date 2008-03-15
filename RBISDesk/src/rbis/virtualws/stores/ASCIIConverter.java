@@ -62,6 +62,7 @@ public class ASCIIConverter {
     }
 
     private void output(OutputTarget target) throws IOException {
+
         target.append(commentTag + "\n");
         target.append("#ID: " + store.getID() + "\n");
         target.append("#TYPE: " + store.getClass().getSimpleName() + "\n");

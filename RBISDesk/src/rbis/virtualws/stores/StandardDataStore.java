@@ -45,7 +45,7 @@ public abstract class StandardDataStore implements DataStore {
     protected VirtualWorkspace ws;
     protected DataSetDefinition dsd;
     protected int bufferSize = 0;
-    private String id,  description = "", respParty;
+    private String id,  description = "",  respParty;
 
     public StandardDataStore(VirtualWorkspace ws, Document doc) {
         this.doc = doc;
@@ -146,11 +146,18 @@ public abstract class StandardDataStore implements DataStore {
             return null;
         }
 
-        NodeList nodes = ioElement.getElementsByTagName("plugin");
+        HashMap<String, String> varMap = new HashMap<String, String>();
+        Element variableElement = (Element) ioElement.getElementsByTagName("variables").item(0);
+        NodeList varNodes = variableElement.getElementsByTagName("var");
+        for (int n = 0; n < varNodes.getLength(); n++) {
+            Element varNode = (Element) varNodes.item(n);
+            varMap.put(varNode.getAttribute("id"), varNode.getAttribute("value"));
+        }
 
-        for (int n = 0; n < nodes.getLength(); n++) {
+        NodeList ioNodes = ioElement.getElementsByTagName("plugin");
+        for (int n = 0; n < ioNodes.getLength(); n++) {
 
-            Element ioNode = (Element) nodes.item(n);
+            Element ioNode = (Element) ioNodes.item(n);
             String className = ioNode.getAttribute("type");
             String id = ioNode.getAttribute("id");
 
@@ -167,7 +174,13 @@ public abstract class StandardDataStore implements DataStore {
                     Element parameterNode = (Element) parameterNodes.item(i);
 
                     String attributeName = parameterNode.getAttribute("id");
-                    String attributeValue = parameterNode.getAttribute("value");
+                    String attributeValue = "";
+                    if (parameterNode.hasAttribute("value")) {
+                        attributeValue = parameterNode.getAttribute("value");
+                    } else {
+                        String varID = parameterNode.getAttribute("varid");
+                        attributeValue = varMap.get(varID);
+                    }
                     String methodName = "set" + attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1);
 
                     Method method = clazz.getMethod(methodName, String.class);
@@ -208,9 +221,8 @@ public abstract class StandardDataStore implements DataStore {
     public DataIO getDataIO(String id) {
         return dataIO.get(id);
     }
-    
+
     public String getRespParty() {
         return respParty;
     }
-
 }
