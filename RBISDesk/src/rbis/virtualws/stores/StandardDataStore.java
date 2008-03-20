@@ -106,7 +106,7 @@ public abstract class StandardDataStore implements DataStore {
 
             int result = metadataIO.init();
             if (result < 0) {
-                ws.getRuntime().sendHalt("Initialization of data I/O component (" + this.getClass().getName() + ") failed..");
+                ws.getRuntime().sendErrorMsg("Initialization of data I/O component (" + this.getClass().getName() + ") failed..");
                 return null;
             }
         }
@@ -147,13 +147,16 @@ public abstract class StandardDataStore implements DataStore {
         }
 
         HashMap<String, String> varMap = new HashMap<String, String>();
+        
         Element variableElement = (Element) ioElement.getElementsByTagName("variables").item(0);
-        NodeList varNodes = variableElement.getElementsByTagName("var");
-        for (int n = 0; n < varNodes.getLength(); n++) {
-            Element varNode = (Element) varNodes.item(n);
-            varMap.put(varNode.getAttribute("id"), varNode.getAttribute("value"));
+        if (variableElement != null) {
+            NodeList varNodes = variableElement.getElementsByTagName("var");
+            for (int n = 0; n < varNodes.getLength(); n++) {
+                Element varNode = (Element) varNodes.item(n);
+                varMap.put(varNode.getAttribute("id"), varNode.getAttribute("value"));
+            }
         }
-
+        
         NodeList ioNodes = ioElement.getElementsByTagName("plugin");
         for (int n = 0; n < ioNodes.getLength(); n++) {
 

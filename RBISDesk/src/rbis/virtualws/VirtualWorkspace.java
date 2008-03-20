@@ -162,13 +162,13 @@ public class VirtualWorkspace {
 
     public void wsToFile() throws IOException {
         for (String dsTitle : this.getDataStoreNames()) {
-            
+
             DataStore store = this.getDataStore(dsTitle);
             File file = new File(this.directory.getAbsolutePath() + File.separator + "_" + dsTitle + ".txt");
             ASCIIConverter asciiConverter = new ASCIIConverter(store);
             asciiConverter.toASCIIFile(file);
             store.close();
-            
+
         }
     }
 
@@ -191,10 +191,9 @@ public class VirtualWorkspace {
 
         VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace"), runtime);
 
-        System.out.println(ws.dataStoreToString("tmean_timeseries"));
-//        ws.dataStoreToFile("tmean_timeseries", new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace/_tmean_dump.txt"));
-//        ws.wsToFile();
+        //System.out.println(ws.dataStoreToString("tmean_timeseries"));
+        //ws.dataStoreToFile("tmean_timeseries", new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace/_tmean_dump.txt"));
+        ws.wsToFile();
     }
-
 }
 

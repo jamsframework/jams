@@ -213,6 +213,7 @@ public class ModelView {
         toolBar.setPreferredSize(new Dimension(0, 40));
 
         modelRunButton = new JButton();
+        modelRunButton.setPreferredSize(new Dimension(40,40));
         modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         modelRunButton.addActionListener(new java.awt.event.ActionListener() {
 

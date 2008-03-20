@@ -20,9 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.dataaccess;
 
+import java.util.HashMap;
 import org.unijena.jams.data.*;
 
 /**
@@ -30,14 +30,15 @@ import org.unijena.jams.data.*;
  * @author S. Kralisch
  */
 public class EntityAccessor implements JAMSEntityDataAccessor {
-    
+
     JAMSEntity componentObject;
     JAMSEntity[] entityObject;
     int index;
     int accessType;
-    
+    String attributeName;
+
     public EntityAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
-        
+
         //get the entities' data objects
         entityObject = new JAMSEntity[entities.length];
         for (int i = 0; i < entities.length; i++) {
@@ -54,24 +55,31 @@ public class EntityAccessor implements JAMSEntityDataAccessor {
                 }
             }
         }
-        
+
         this.accessType = accessType;
         this.componentObject = (JAMSEntity) dataObject;
+        this.attributeName = attributeName;
     }
-    
+
     public void setIndex(int index) {
         this.index = index;
     }
-    
+
     public void read() {
-        componentObject.setValue(entityObject[index].getValue());
+//        if (entityObject[index] != null) {
+            componentObject.setValue(entityObject[index].getValue());
+//        } else {
+//            componentObject.setValue((HashMap<String, Object>) null);
+//        }
     }
-    
+
     public void write() {
-        entityObject[index].setValue(componentObject.getValue());
+//        if (entityObject[index] != null) {
+            entityObject[index].setValue(componentObject.getValue());
+//        }
     }
-    
+
     public int getAccessType() {
         return accessType;
-    }    
+    }
 }
