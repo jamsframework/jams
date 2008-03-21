@@ -32,7 +32,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import rbis.virtualws.plugins.DataIO;
+import rbis.virtualws.plugins.DataReader;
 
 /**
  *
@@ -41,7 +41,7 @@ import rbis.virtualws.plugins.DataIO;
 public abstract class StandardDataStore implements DataStore {
 
     protected Document doc;
-    protected HashMap<String, DataIO> dataIO;
+    protected HashMap<String, DataReader> dataIO;
     protected VirtualWorkspace ws;
     protected DataSetDefinition dsd;
     protected int bufferSize = 0;
@@ -102,7 +102,7 @@ public abstract class StandardDataStore implements DataStore {
 
         for (int i = 0; i < columnList.getLength(); i++) {
             Element columnElement = (Element) columnList.item(i);
-            DataIO metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
+            DataReader metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
 
             int result = metadataIO.init();
             if (result < 0) {
@@ -113,10 +113,10 @@ public abstract class StandardDataStore implements DataStore {
 
         for (int i = 0; i < columnList.getLength(); i++) {
             Element columnElement = (Element) columnList.item(i);
-            DataIO metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
+            DataReader metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
 
             metadataIO.fetchValues(1);
-            DataSet metadataSet = metadataIO.getValues()[0];
+            DataSet metadataSet = metadataIO.getData()[0];
 
             ArrayList<Object> values = new ArrayList<Object>();
             for (DataValue value : metadataSet.getData()) {
@@ -128,7 +128,7 @@ public abstract class StandardDataStore implements DataStore {
 
         for (int i = 0; i < columnList.getLength(); i++) {
             Element columnElement = (Element) columnList.item(i);
-            DataIO metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
+            DataReader metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
 
             metadataIO.cleanup();
         }
@@ -136,9 +136,9 @@ public abstract class StandardDataStore implements DataStore {
         return def;
     }
 
-    private HashMap<String, DataIO> createDataIO() {
+    private HashMap<String, DataReader> createDataIO() {
 
-        HashMap<String, DataIO> _dataIO = new HashMap<String, DataIO>();
+        HashMap<String, DataReader> _dataIO = new HashMap<String, DataReader>();
 
         Element ioElement = (Element) doc.getElementsByTagName("dataio").item(0);
 
@@ -169,7 +169,7 @@ public abstract class StandardDataStore implements DataStore {
             try {
 
                 Class<?> clazz = loader.loadClass(className);
-                DataIO io = (DataIO) clazz.newInstance();
+                DataReader io = (DataReader) clazz.newInstance();
 
                 NodeList parameterNodes = ioNode.getElementsByTagName("parameter");
                 for (int i = 0; i < parameterNodes.getLength(); i++) {
@@ -221,7 +221,7 @@ public abstract class StandardDataStore implements DataStore {
         return this.dsd;
     }
 
-    public DataIO getDataIO(String id) {
+    public DataReader getDataIO(String id) {
         return dataIO.get(id);
     }
 

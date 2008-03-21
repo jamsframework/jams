@@ -28,7 +28,7 @@ import rbis.virtualws.DataSet;
  *
  * @author Sven Kralisch
  */
-public interface DataIO {
+public interface DataReader {
 
     public int init();
 
@@ -38,7 +38,7 @@ public interface DataIO {
 
     public int fetchValues(int count);
     
-    public DataSet[] getValues();
+    public DataSet[] getData();
 
     public int numberOfColumns();
 }

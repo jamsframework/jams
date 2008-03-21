@@ -38,7 +38,7 @@ import rbis.virtualws.datatypes.StringValue;
  *
  * @author Sven Kralisch
  */
-public class RBISPgSQL implements DataIO {
+public class RBISPgSQL implements DataReader {
 
     private static final int DOUBLE = 0;
     private static final int LONG = 1;
@@ -76,7 +76,7 @@ public class RBISPgSQL implements DataIO {
         this.db = db;
     }
 
-    public DataSet[] getValues() {
+    public DataSet[] getData() {
         return currentData;
     }
 

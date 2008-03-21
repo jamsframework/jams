@@ -81,8 +81,8 @@ public class TSDataStore extends TableDataStore {
             for (int i = 0; i < dataIOArray.length; i++) {
 
                 //get the timestamps of the first two rows
-                long timeStamp1 = dataIOArray[i].getValues()[0].getData()[0].getLong();
-                long timeStamp2 = dataIOArray[i].getValues()[1].getData()[0].getLong();
+                long timeStamp1 = dataIOArray[i].getData()[0].getData()[0].getLong();
+                long timeStamp2 = dataIOArray[i].getData()[1].getData()[0].getLong();
 
                 //compare the two time stamps
                 JAMSCalendar cal1 = new JAMSCalendar();
@@ -111,7 +111,7 @@ public class TSDataStore extends TableDataStore {
             // for all but the first columns
             for (int i = 0; i < dataIOArray.length; i++) {
 
-                long timeStamp2 = dataIOArray[i].getValues()[0].getData()[0].getLong();
+                long timeStamp2 = dataIOArray[i].getData()[0].getData()[0].getLong();
 
                 //compare the two time stamps
                 JAMSCalendar cal = new JAMSCalendar();
@@ -150,7 +150,7 @@ public class TSDataStore extends TableDataStore {
 
         for (int i = 0; i < dataIOArray.length; i++) {
 
-            DataSet ds = dataIOArray[i].getValues()[currentPosition];
+            DataSet ds = dataIOArray[i].getData()[currentPosition];
             DataValue[] values = ds.getData();
             result.setData(i + 1, values[positionArray[i]]);
 

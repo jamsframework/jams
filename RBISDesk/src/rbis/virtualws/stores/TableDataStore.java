@@ -30,7 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import rbis.virtualws.datatypes.DataValue;
-import rbis.virtualws.plugins.DataIO;
+import rbis.virtualws.plugins.DataReader;
 
 /**
  *
@@ -39,8 +39,8 @@ import rbis.virtualws.plugins.DataIO;
 public class TableDataStore extends StandardDataStore {
 
     protected int currentPosition,  maxPosition;
-    protected Set<DataIO> dataIOSet = new HashSet<DataIO>();
-    protected DataIO[] dataIOArray;
+    protected Set<DataReader> dataIOSet = new HashSet<DataReader>();
+    protected DataReader[] dataIOArray;
     protected int[] positionArray;
 
     public TableDataStore(VirtualWorkspace ws, Document doc) {
@@ -60,7 +60,7 @@ public class TableDataStore extends StandardDataStore {
 
         int colCount = columns.getLength();
 
-        dataIOArray = new DataIO[colCount];
+        dataIOArray = new DataReader[colCount];
         positionArray = new int[colCount];
 
         for (int i = 0; i < colCount; i++) {
@@ -73,7 +73,7 @@ public class TableDataStore extends StandardDataStore {
             positionArray[i] = Integer.parseInt(columnElement.getAttribute("sourcecolumn"));
         }
 
-        for (DataIO io : dataIOSet) {
+        for (DataReader io : dataIOSet) {
             io.init();
         }
 
@@ -84,14 +84,14 @@ public class TableDataStore extends StandardDataStore {
 
     protected void fillBuffer() {
 
-        for (DataIO io : dataIOSet) {
+        for (DataReader io : dataIOSet) {
 
             if (bufferSize > 0) {
                 io.fetchValues(bufferSize);
             } else {
                 io.fetchValues();
             }
-            maxPosition = Math.min(maxPosition, io.getValues().length);
+            maxPosition = Math.min(maxPosition, io.getData().length);
             currentPosition = 0;
         }
     }
@@ -115,7 +115,7 @@ public class TableDataStore extends StandardDataStore {
 
         for (int i = 0; i < dataIOArray.length; i++) {
 
-            DataSet ds = dataIOArray[i].getValues()[currentPosition];
+            DataSet ds = dataIOArray[i].getData()[currentPosition];
             DataValue[] values = ds.getData();
             result.setData(i, values[positionArray[i]]);
 
@@ -126,7 +126,7 @@ public class TableDataStore extends StandardDataStore {
     }
 
     public void close() {
-        for (DataIO io : dataIOSet) {
+        for (DataReader io : dataIOSet) {
             io.cleanup();
         }
     }

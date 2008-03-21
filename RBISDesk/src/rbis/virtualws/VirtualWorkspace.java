@@ -99,7 +99,7 @@ public class VirtualWorkspace {
         DataStore store = null;
         String type = doc.getDocumentElement().getTagName();
 
-        if (type.equals("tableda tastore")) {
+        if (type.equals("tabledatastore")) {
             store = new TableDataStore(this, doc);
         } else if (type.equals("tsdatastore")) {
             store = new TSDataStore(this, doc);
@@ -193,7 +193,7 @@ public class VirtualWorkspace {
 
         //System.out.println(ws.dataStoreToString("tmean_timeseries"));
         //ws.dataStoreToFile("tmean_timeseries", new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace/_tmean_dump.txt"));
-        ws.wsToFile();
+        //ws.wsToFile();
     }
 }
 
