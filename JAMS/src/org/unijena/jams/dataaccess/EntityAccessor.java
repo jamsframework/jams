@@ -45,7 +45,8 @@ public class EntityAccessor implements JAMSEntityDataAccessor {
             if (entities[i].existsAttribute(attributeName)) {
                 try {
                     entityObject[i] = (JAMSEntity) entities[i].getObject(attributeName);
-                } catch (JAMSEntity.NoSuchAttributeException nsae) {}
+                } catch (JAMSEntity.NoSuchAttributeException nsae) {
+                }
             } else {
                 if (accessType != JAMSEntityDataAccessor.READ_ACCESS) {
                     entityObject[i] = JAMSDataFactory.createEntity();
@@ -66,17 +67,11 @@ public class EntityAccessor implements JAMSEntityDataAccessor {
     }
 
     public void read() {
-//        if (entityObject[index] != null) {
-            componentObject.setValue(entityObject[index].getValue());
-//        } else {
-//            componentObject.setValue((HashMap<String, Object>) null);
-//        }
+        componentObject.setValue(entityObject[index].getValue());
     }
 
     public void write() {
-//        if (entityObject[index] != null) {
-            entityObject[index].setValue(componentObject.getValue());
-//        }
+        entityObject[index].setValue(componentObject.getValue());
     }
 
     public int getAccessType() {
