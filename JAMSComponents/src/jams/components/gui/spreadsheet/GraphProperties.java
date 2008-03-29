@@ -102,6 +102,7 @@ public class GraphProperties {
     
     boolean is_x_series = false;
     boolean result = false;
+    boolean x_changed;
     
     int selectedColumn;
     int[] rowSelection;
@@ -364,10 +365,10 @@ public class GraphProperties {
     
     public void applyXYProperties(){
         
-        if(selectedColumn != setColumn.getSelectedIndex()){
-            //selectedColumn = setColumn.getSelectedIndex();
-            writeXYPairs(); 
-        }
+//        if(selectedColumn != setColumn.getSelectedIndex()){
+//            //selectedColumn = setColumn.getSelectedIndex();
+//            writeXYPairs(); 
+//        }
 
         color = (String) colorchoice.getSelectedItem();
         xys = new XYSeries(setLegend.getText());
@@ -454,46 +455,107 @@ public class GraphProperties {
         
     }
     
-    public int[] setPossibleDataIntervals(){
+//    public int[] setPossibleDataIntervals(){
+//        double possible_start, possible_end;
+//        
+//        //int[] d_range = new int[2];  //end index
+//        
+//        double start = readDataSTART();
+//        double end = readDataEND();
+//        
+//        possible_start = readDataSTART();
+//        possible_end = readDataEND();
+//        
+//        double start_diff, end_diff, start_diff_min, end_diff_min; 
+//        start_diff_min = Math.abs(data[0].x - start);
+//        end_diff_min = Math.abs(data[0].x - end);
+//        //start = data[0].x;
+//        //end = data[data.length -1].x;
+//        
+//        
+//        for(int i=0; i<data.length; i++){
+//            
+//            start_diff = Math.abs(data[i].x - start);
+//            end_diff = Math.abs(data[i].x - end);
+//            
+//            if(start_diff < start_diff_min){
+//                start_diff_min = start_diff;
+//                possible_start = data[i].x;
+//                d_range[0] = i;
+//            }
+//            if(end_diff < end_diff_min){
+//                end_diff_min = end_diff;
+//                possible_end = data[i].x;
+//                d_range[1] = i;
+//            }
+//        }
+//
+//        setDataSTART(possible_start);
+//        setDataEND(possible_end);
+////        if(possible_start >= possible_end){
+////            datachoice_END.setText(""+possible_start);
+////        }
+//        return d_range;
+//    }
+    
+     public int[] setPossibleDataIntervals(){
         double possible_start, possible_end;
         
-        //int[] d_range = new int[2];  //end index
+        int[] range = new int[2];
         
         double start = readDataSTART();
         double end = readDataEND();
+
+        int i=0;
+        boolean out_of_boundaries = (start < data[0].x) || (start > data[data.length -1].x);
         
-        possible_start = readDataSTART();
-        possible_end = readDataEND();
+        if(end < start) end = start;
         
-        double start_diff, end_diff, start_diff_min, end_diff_min; 
-        start_diff_min = Math.abs(data[0].x - start);
-        end_diff_min = Math.abs(data[0].x - end);
-        //start = data[0].x;
-        //end = data[data.length -1].x;
-        
-        
-        for(int i=0; i<data.length; i++){
+        if(!out_of_boundaries){
             
-            start_diff = Math.abs(data[i].x - start);
-            end_diff = Math.abs(data[i].x - end);
-            
-            if(start_diff < start_diff_min){
-                start_diff_min = start_diff;
-                possible_start = data[i].x;
-                d_range[0] = i;
+            while(!(start >= data[i].x && start <= data[i+1].x)){
+                i++;
             }
-            if(end_diff < end_diff_min){
-                end_diff_min = end_diff;
-                possible_end = data[i].x;
-                d_range[1] = i;
+            start = data[i].x;
+            range[0] = i;
+        }else{
+            if(start < data[0].x){
+                start = data[0].x;
+                range[0] = 0;
+            }
+            if(start > data[0].x){
+                start = data[data.length -1].x;
+                range[0] = data.length -1;
             }
         }
 
-        setDataSTART(possible_start);
-        setDataEND(possible_end);
-//        if(possible_start >= possible_end){
-//            datachoice_END.setText(""+possible_start);
+        setDataSTART(start);
+        
+        
+        out_of_boundaries = (end < data[0].x) || (end > data[data.length -1].x);
+        if(!out_of_boundaries){
+            
+            while(!(end >= data[i].x && end <= data[i+1].x)){
+                i++;
+            }
+            end = data[i].x;
+            range[1] = i;
+            
+        }else{
+            if(end < data[0].x){
+                end = data[0].x;
+                range[1] = 0;
+            }
+            if(end > data[0].x){
+                end = data[data.length -1].x;
+                range[1] = data.length -1;
+            }
+        }
+        setDataEND(end);
+//        if(possible_end >= possible_end){
+//            datachoice_END.setText(""+possible_end);
 //        }
+        d_range = range;
         return d_range;
     }
     
@@ -526,12 +588,20 @@ public class GraphProperties {
         x_series_col = col;          // Probleme abfangen?
     }
     
+    public int getXSeriesCol(){
+        return this.x_series_col;
+    }
+    
     public void setXIntervals(int[] range){
         this.d_range = range;
         if(!isXSeries()){
         setDataSTART(data[d_range[0]].x);
         setDataEND(data[d_range[1]].x);
         }
+    }
+    
+    public void setXChanged(boolean state){
+        this.x_changed = state;
     }
     
     public void setDataSelection(){
@@ -660,6 +730,8 @@ public class GraphProperties {
         return data_range_end;
     }
     
+    
+    
     public double readDataEND(){
         double d_end = new Double(datachoice_END.getText());
         return d_end;
@@ -749,6 +821,10 @@ public class GraphProperties {
             }
             if(plotType == 1){
                 //writeXYPairs();
+//                if(x_changed){
+//                    writeXYPairs();
+//                    x_changed=false;
+//                }
                 cxyconf.setXIntervals();
                 applyXYProperties();
                 cxyconf.plotGraph(thisProp);

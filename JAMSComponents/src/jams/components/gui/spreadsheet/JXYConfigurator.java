@@ -128,7 +128,7 @@ public class JXYConfigurator extends JFrame{
     
 //    private String[] legendEntries;
     
-    private int index;
+    private int x_series_index;
     
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
     
@@ -577,9 +577,13 @@ public class JXYConfigurator extends JFrame{
     public void xChanged(GraphProperties prop){
         
         int index = propVector.indexOf(prop);
+        //x_series_col = columns[index];
+        x_series_index = index;
+        
         for(int i=0; i<propVector.size(); i++){
             if(i != index){
-                propVector.get(i).setXSeries(columns[index]);
+                propVector.get(i).setXSeries(columns[x_series_index]);
+                propVector.get(i).setXChanged(true);
                 propVector.get(i).setIsXSeries(false);
                 propVector.get(i).getDataChoice().setEnabled(true);
                 propVector.get(i).getDataChoiceSTART().setEnabled(false);
@@ -595,8 +599,9 @@ public class JXYConfigurator extends JFrame{
             }
             
         }
+        propVector.get(index).setXChanged(true);
         propVector.get(index).setIsXSeries(true);
-        propVector.get(index).setXSeries(columns[index]);
+        propVector.get(index).setXSeries(columns[x_series_index]);
         propVector.get(index).getDataChoice().setEnabled(false);
         propVector.get(index).getDataChoiceSTART().setEnabled(true);
         propVector.get(index).getDataChoiceEND().setEnabled(true);
@@ -612,20 +617,20 @@ public class JXYConfigurator extends JFrame{
     
     public void setXIntervals(){
         double start = 0, end = 0;
-        int x_series_index = 1;
+        
         int[] range = new int[2];
         
         //search for x_series
-        for(int i=0; i<propVector.size(); i++){
-            if(propVector.get(i).isXAxis.isEnabled()){
-                GraphProperties x_prop = propVector.get(i);
-                range = x_prop.setPossibleDataIntervals();
-                x_series_index = propVector.indexOf(x_prop);
-            }
-        }
         
+        //x_series_index = propVector.get(0).getXSeriesCol();    
+        GraphProperties x_prop = propVector.get(x_series_index);
+        x_prop.writeXYPairs();
+        range = x_prop.setPossibleDataIntervals();
+
+                
         for(int i=0; i<propVector.size(); i++){
             //if(!propVector.get(i).isXAxis.isEnabled()){
+                propVector.get(i).writeXYPairs();
                 propVector.get(i).setXIntervals(range);
 //                propVector.get(i).setDataSTART((Double)table.getValueAt(range[0], x_series_index));
 //                propVector.get(i).setDataEND((Double)table.getValueAt(range[1], x_series_index));
@@ -881,10 +886,6 @@ public class JXYConfigurator extends JFrame{
     
     public JPanel getCTSPlot(){
         return ctsplot.getPanel();
-    }
-
-    public void setIndex(int index){
-        this.index = index;
     }
 
     public void setParent(JDialog parent){
