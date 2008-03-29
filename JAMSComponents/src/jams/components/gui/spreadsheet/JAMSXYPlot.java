@@ -248,6 +248,7 @@ public class JAMSXYPlot {
     }
         
     public void plotLeft(int renderer, String nameLeft, String xAxisTitle, boolean inverted){ //plotLeft(renderer, axisname, inverted)
+        int plot_count = 0;
         int c = propVector.size();
         int corr = 0;
         dataLeft = new XYSeriesCollection();
@@ -263,6 +264,7 @@ public class JAMSXYPlot {
             
             if(!propVector.get(k).isXSeries()){
                 if(propVector.get(k).getPosChoice().getSelectedItem() == "left"){
+                    plot_count++;
                     GraphProperties prop = propVector.get(k);
                     dataLeft.addSeries(prop.getXYS());
                     if(k-corr <= dataRight.getSeriesCount()){
@@ -276,6 +278,7 @@ public class JAMSXYPlot {
                 corr++;
             }
         }
+        if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
 //        plot.setDomainAxis(0, xAxis);
 //        plot.setRangeAxis(0, axisLEFT);
         plot.setDataset(0, dataLeft);
@@ -289,6 +292,7 @@ public class JAMSXYPlot {
     }
     
     public void plotRight(int renderer, String nameRight, String xAxisTitle, boolean inverted){
+        int plot_count = 0;
         int c = propVector.size();
         int corr = 0;
         dataRight = new XYSeriesCollection();
@@ -304,6 +308,7 @@ public class JAMSXYPlot {
 
             if(!propVector.get(k).isXSeries()){
                 if(propVector.get(k).getPosChoice().getSelectedItem() == "right"){
+                    plot_count++;
                     GraphProperties prop = propVector.get(k);
                     dataRight.addSeries(prop.getXYS());
                     if( k-corr <=dataLeft.getSeriesCount()){
@@ -317,6 +322,7 @@ public class JAMSXYPlot {
                 corr++;
             }
         }
+        if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
         plot.setDomainAxis(0, xAxis);
         plot.setRangeAxis(1, axisRIGHT);
         plot.setDataset(1, dataRight);

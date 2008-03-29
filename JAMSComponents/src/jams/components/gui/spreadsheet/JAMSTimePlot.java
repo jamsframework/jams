@@ -184,15 +184,15 @@ public class JAMSTimePlot {
                 r = dotR;
                 break;
                 
-            case 5:
+            case 7:
                 r = new XYDifferenceRenderer();
                 break;
                 
-            case 6:
+            case 5:
                 r = new XYStepRenderer();
                 break;
                 
-            case 7:
+            case 6:
                 r = new XYStepAreaRenderer();
                 break;
                 
@@ -247,6 +247,7 @@ public class JAMSTimePlot {
     }
         
     public void plotLeft(int renderer, String nameLeft, String xAxisTitle, boolean inverted){ //plotLeft(renderer, axisname, inverted)
+        int plot_count = 0;
         int c = propVector.size();
         int corr = 0;
         dataLeft = new TimeSeriesCollection();
@@ -261,6 +262,7 @@ public class JAMSTimePlot {
         for(int k=0; k<c; k++){ 
             
             if(propVector.get(k).getPosChoice().getSelectedItem() == "left"){
+                plot_count++;
                 GraphProperties prop = propVector.get(k);
                 dataLeft.addSeries(prop.getTS());
                 if(k-corr <= dataRight.getSeriesCount()){
@@ -271,6 +273,8 @@ public class JAMSTimePlot {
                 corr++;
             }
         }
+        
+        if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
         plot.setRangeAxis(0, axisLEFT);
         plot.setDataset(0, dataLeft);
         plot.setRenderer(0, leftRenderer);
@@ -293,6 +297,7 @@ public class JAMSTimePlot {
     }
     
     public void plotRight(int renderer, String nameRight, String xAxisTitle, boolean inverted){
+        int plot_count = 0;
         int c = propVector.size();
         int corr = 0;
         dataRight = new TimeSeriesCollection();
@@ -307,6 +312,7 @@ public class JAMSTimePlot {
         for(int k=0; k<c; k++){
 
             if(propVector.get(k).getPosChoice().getSelectedItem() == "right"){
+                plot_count++;
                 GraphProperties prop = propVector.get(k);
                 dataRight.addSeries(prop.getTS());
                 if( k-corr <=dataLeft.getSeriesCount()){
@@ -317,6 +323,7 @@ public class JAMSTimePlot {
                 corr++;
             }
         }
+        if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
         plot.setRangeAxis(1, axisRIGHT);
         plot.setDataset(1, dataRight);
         plot.setRenderer(1, rightRenderer);

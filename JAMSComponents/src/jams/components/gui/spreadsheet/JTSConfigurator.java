@@ -103,7 +103,7 @@ public class JTSConfigurator extends JFrame{
     private JTextField edRightField = new JTextField(14);
     private JTextField edXAxisField = new JTextField(14);
     
-    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Difference","Step","StepArea"};
+    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Step","StepArea","Difference"};
     
     private JComboBox rLeftBox = new JComboBox(types);
     private JComboBox rRightBox = new JComboBox(types);
@@ -425,6 +425,18 @@ public class JTSConfigurator extends JFrame{
         
         graphCount = propVector.size();
         
+        //Renderer Box Handler
+        handleRenderer();
+//        if(graphCount<2 && rLeftBox.getItemCount()==8){
+//            rLeftBox.removeItemAt(7);
+//            rRightBox.removeItemAt(7);
+//            
+//        }
+//        if(graphCount>=2 && rLeftBox.getItemCount()==7){
+//            rLeftBox.addItem("Difference");
+//            rRightBox.addItem("Difference");  
+//        }
+        
         initGroupUI();
         
         for(int k=0;k<graphCount;k++){
@@ -453,6 +465,8 @@ public class JTSConfigurator extends JFrame{
         GraphProperties newProp;
         propVector.remove(propVector.indexOf(prop));
         graphCount = propVector.size();
+        
+        handleRenderer();
         
         initGroupUI();
         
@@ -598,6 +612,28 @@ public class JTSConfigurator extends JFrame{
             jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
                                 timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
 }
+    
+    public void handleRenderer(){
+        int r=0, l=0;
+        for(int i=0; i<propVector.size(); i++){
+                if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
+                    l++;
+                }
+                if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
+                    r++;
+                }
+            }
+        
+        if(((l<2 || l>2) || (r<2 || r>2)) && rLeftBox.getItemCount()==8){
+            rLeftBox.removeItemAt(7);
+            rRightBox.removeItemAt(7);           
+        }
+ 
+        if((l == 2 || r == 2) && rLeftBox.getItemCount()==7){
+            rLeftBox.addItem("Difference");
+            rRightBox.addItem("Difference");  
+        }     
+    }
     
     private void createOptionPanel(){
         GroupLayout optLayout = new GroupLayout(optionpanel);

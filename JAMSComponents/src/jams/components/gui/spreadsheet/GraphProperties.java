@@ -98,6 +98,7 @@ public class GraphProperties {
     String name;
     String position; // left/right
     int type; //renderer index
+    int[] d_range = new int[2];
     
     boolean is_x_series = false;
     boolean result = false;
@@ -105,6 +106,9 @@ public class GraphProperties {
     int selectedColumn;
     int[] rowSelection;
     int x_series_col;
+    
+    double data_range_start;
+    double data_range_end;
     
     int plotType;
     
@@ -141,8 +145,8 @@ public class GraphProperties {
     double[] y_data;
     
     private String[] colors = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
-    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Difference","Step","StepArea"};
-    private String[] positions = {"left","right"};
+    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Step","StepArea","Difference"};
+    private String[] positions = {"left","right"}; 
     
     JPanel graphpanel = new JPanel();
     JPanel datapanel = new JPanel();
@@ -195,13 +199,9 @@ public class GraphProperties {
     public GraphProperties(JDialog parent, JTable table, JXYConfigurator cxyconf) {
         
         this.plotType = 1;
-        //super(parent, "Select Properties");
-        //this.parent = parent;
-        //setLayout(new FlowLayout());
-        //Point parentloc = parent.getLocation();
+
         this.cxyconf = cxyconf;
         this.thisProp = this;
-        //setLocation(parentloc.x + 30, parentloc.y + 30);
         
         this.table = table;
         this.color = "red";
@@ -209,32 +209,24 @@ public class GraphProperties {
         this.name = "Graph Name";
         this.legendName = this.name;
         
-        //this.selectedColumn = 0;
         this.rowSelection = null;
         
         data = new XYPair[table.getRowCount()];
-        
-//        x_dataIntervals = new double[table.getRowCount()];
-//        y_data = new double[table.getRowCount()];
-        
-        //x_series_col = table.getSelectedColumn();
+
         rowSelection = table.getSelectedRows();
         x_series_col = table.getSelectedColumn();
-        
-        
-        
-        
+
         datachoice_START = new JTextField();
         datachoice_START.setPreferredSize(new Dimension(40,14));
-        //datachoice_START.addActionListener(dataListener);
-        
+        datachoice_START.addMouseListener(dataSTARTListener);
+
         datachoice_END = new JTextField();
         datachoice_END.setPreferredSize(new Dimension(40,14));
-        //datachoice_END.addActionListener(dataListener);
-        
-        createPanel();
+        datachoice_END.addMouseListener(dataENDListener);
         
         
+        
+        createPanel();     
     }
     
     public void createPanel(){
@@ -295,6 +287,7 @@ public class GraphProperties {
         poschoice = new JComboBox(positions);
         poschoice.setPreferredSize(new Dimension(40,14));
         poschoice.setSelectedIndex(0);
+        poschoice.addActionListener(rendererListener);
         //poschoice.addActionListener(okListener);
        
         JButton okButton = new JButton("OK");
@@ -345,28 +338,14 @@ public class GraphProperties {
         this.graphpanel.add(poschoice);
         this.graphpanel.add(typechoice);
         this.graphpanel.add(colorchoice);
-        
-       // this.graphpanel.add(propButton);
-        
+         
         this.datapanel.add(nameLabel);
-//        this.datapanel.add(setColumn);
-//        this.datapanel.add(poschoice);
-//        this.datapanel.add(typechoice);
-//        this.datapanel.add(colorchoice);
-        //this.datapanel.add(propButton);
-        //this.datapanel.add(nameLabel);
-        
+
         this.buttonpanel.add(okButton);
         this.buttonpanel.add(cancelButton);
         
         plotButton.addActionListener(okListener);
     }
-    
-    /*    
-    public void setRowSelection(int[] rows){
-        this.rowSelection = rowSelection;
-    }
-     **/
     
     public void applyTSProperties(){
         JAMSCalendar time;
@@ -374,7 +353,6 @@ public class GraphProperties {
         selectedColumn = setColumn.getSelectedIndex();
         color = (String) colorchoice.getSelectedItem();
         ts = new TimeSeries(setLegend.getText(), Second.class);
-        //dataset = new TimeSeriesCollection(ts);
         
         for(int i=getTimeSTART(); i<=getTimeEND(); i++){
             
@@ -385,41 +363,39 @@ public class GraphProperties {
     }
     
     public void applyXYProperties(){
-
-        selectedColumn = setColumn.getSelectedIndex();
         
+        if(selectedColumn != setColumn.getSelectedIndex()){
+            //selectedColumn = setColumn.getSelectedIndex();
+            writeXYPairs(); 
+        }
+
+        color = (String) colorchoice.getSelectedItem();
+        xys = new XYSeries(setLegend.getText());
+       
+        //sort xy data
+        
+        //check data intervals
+        //int[] d_range = setPossibleDataIntervals();
+        //if(!isXSeries()){
+            //cxyconf.setXIntervals();
+            //write xy series
+            for(int i=this.d_range[0]; i<=this.d_range[1]; i++){
+                xys.add(data[i].x, data[i].y);
+                System.out.println("Row "+i+": ("+data[i].x+","+data[i].y+") ");
+            }
+      //}
+    }
+    
+    public void writeXYPairs(){
+        selectedColumn = setColumn.getSelectedIndex();
         for(int i=0; i<table.getRowCount(); i++){
             
               data[i] = new XYPair((Double) table.getValueAt(i, x_series_col),
                                     (Double) table.getValueAt(i, selectedColumn));
-//            x_dataIntervals[i] = (Double) table.getValueAt(i, x_series_col);
-//            y_data[i] = (Double) table.getValueAt(i, selectedColumn);
         }
-        
-        color = (String) colorchoice.getSelectedItem();
-        xys = new XYSeries(setLegend.getText());
-        //dataset = new TimeSeriesCollection(ts);
-        
-        //sort xy data
         java.util.Arrays.sort(data);
-        //check data intervals
-        //setSelectedDataIntervals();
-        int[] d_range = setPossibleDataIntervals();
-        //write xy series
-        for(int i=d_range[0]; i<=d_range[1]; i++){
-        //for(int i=0; i<=table.getRowCount()-1; i++){
-            
-            //x_value = (Double) table.getValueAt(i, x_series_col); //ONLY FOR TIME SERIES TABLE WITH TIME IN COL 0!!!
-            //value = (Double) table.getValueAt(i, selectedColumn);
-            xys.add(data[i].x, data[i].y);
-            //xys.add(x_dataIntervals[i], y_data[i]);
-        }
     }
-    
-//    public TimeSeriesCollection getDataset(){
-//        return dataset;
-//    }
-    
+  
     public TimeSeries getTS(){
         return ts;
     }
@@ -435,55 +411,65 @@ public class GraphProperties {
     public int getIndex(){
         return index;
     }
-    
-//    private void sortXYData(){
-//        double x,y;
-//        int y_index = 0;
-//        
-//        java.util.Arrays.sort(data);
-//        
-//        for(int i=0; i<x_dataIntervals.length; i++){
-//            x = x_dataIntervals[i];
-//            for(int k=0; k<x_dataIntervals.length; k++){
-//                double x_compare = (Double) table.getValueAt(k,x_series_col);
-//                if(x_compare == x){
-//                    y_data[y_index] = (Double) table.getValueAt(k,selectedColumn);
-//                    y_index++;
-//                }
-//            }
-//        }
-//    }
-    
-    public void setInitialDataIntervals(){
+ 
+    public int[] setInitialDataIntervals(){
         
-        double row_start = (Double) table.getValueAt(rowSelection[0], x_series_col);
-        double row_end = (Double) table.getValueAt(rowSelection[rowSelection.length - 1], x_series_col);
+//        double row_start = (Double) table.getValueAt(rowSelection[0], x_series_col);
+//        double row_end = (Double) table.getValueAt(rowSelection[rowSelection.length - 1], x_series_col);
+        int[] range = new int[2];
+        
+        double row_start = data[0].x;
+        double row_end = data[data.length -1].x;
+        range[0] = 0;
+        range[1] = data.length - 1;
         
         double start, end;
         
-        for(int i=0; i<rowSelection.length; i++){
-            start = (Double) table.getValueAt(rowSelection[i], x_series_col);
-            end = (Double) table.getValueAt(rowSelection[i], x_series_col);
-            if(start < row_start) row_start = start;
-            if(end > row_end) row_end = end;
+//        for(int i=0; i<rowSelection.length; i++){
+//            start = (Double) table.getValueAt(rowSelection[i], x_series_col);
+//            end = (Double) table.getValueAt(rowSelection[i], x_series_col);
+//            if(start < row_start) row_start = start;
+//            if(end > row_end) row_end = end;
+//        }
+        
+        for(int i=0; i<data.length; i++){
+            start = data[i].x;
+            end = data[i].x;
+            if(start < row_start){ 
+                
+                range[0] = i;
+                row_start = start;
+                    
+            }
+            if(end > row_end){
+                range[1] = i;
+                row_end = end;
+            }
         }
         setDataSTART(row_start);
         setDataEND(row_end);
+        
+        return range;
+        
+        
     }
     
-    private int[] setPossibleDataIntervals(){
+    public int[] setPossibleDataIntervals(){
         double possible_start, possible_end;
         
-        int[] d_range = new int[2];  //end index
+        //int[] d_range = new int[2];  //end index
         
-        double start = new Double(getDataSTART());
-        double end = new Double(getDataEND());
+        double start = readDataSTART();
+        double end = readDataEND();
+        
+        possible_start = readDataSTART();
+        possible_end = readDataEND();
         
         double start_diff, end_diff, start_diff_min, end_diff_min; 
         start_diff_min = Math.abs(data[0].x - start);
         end_diff_min = Math.abs(data[0].x - end);
-        possible_start = data[0].x;
-        possible_end = data[0].x;
+        //start = data[0].x;
+        //end = data[data.length -1].x;
         
         
         for(int i=0; i<data.length; i++){
@@ -538,6 +524,14 @@ public class GraphProperties {
     
     public void setXSeries(int col){
         x_series_col = col;          // Probleme abfangen?
+    }
+    
+    public void setXIntervals(int[] range){
+        this.d_range = range;
+        if(!isXSeries()){
+        setDataSTART(data[d_range[0]].x);
+        setDataEND(data[d_range[1]].x);
+        }
     }
     
     public void setDataSelection(){
@@ -596,10 +590,14 @@ public class GraphProperties {
     }
     
     public void setDataSTART(double d_start){
+        data_range_start = d_start;
+        d_start=Math.round(d_start*1000.)/1000.;
         datachoice_START.setText(""+d_start);
     }
     
     public void setDataEND(double d_end){
+        data_range_end = d_end;
+        d_end=Math.round(d_end*1000.)/1000.;
         datachoice_END.setText(""+d_end);
     }
     
@@ -645,12 +643,24 @@ public class GraphProperties {
         return timechoice_END.getSelectedIndex();
     }
     
-    public double getDataSTART(){
-        double d_start = new Double(datachoice_START.getText());
+    public double readDataSTART(){
+        String text = datachoice_START.getText();
+        double d_start;
+        d_start = new Double(text);
         return d_start;
     }
-
+    
+    public double getDataSTART(){
+        
+        return data_range_start;
+    }
+    
     public double getDataEND(){
+        
+        return data_range_end;
+    }
+    
+    public double readDataEND(){
         double d_end = new Double(datachoice_END.getText());
         return d_end;
     }
@@ -738,6 +748,8 @@ public class GraphProperties {
                 ctsconf.plotGraph(thisProp);
             }
             if(plotType == 1){
+                //writeXYPairs();
+                cxyconf.setXIntervals();
                 applyXYProperties();
                 cxyconf.plotGraph(thisProp);
             }
@@ -747,6 +759,14 @@ public class GraphProperties {
     ActionListener timeListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
             setPossibleTimeIntervals();
+            //setVisible(false);
+        }
+    };
+    
+    ActionListener rendererListener = new ActionListener(){
+        public void actionPerformed(ActionEvent te){
+            ctsconf.handleRenderer();
+            //cxyconf.handleRenderer();
             //setVisible(false);
         }
     };
@@ -829,13 +849,57 @@ public class GraphProperties {
     };
     
     ActionListener isXListener = new ActionListener(){
-        public void actionPerformed(ActionEvent te){
+        public void actionPerformed(ActionEvent xe){
             
             cxyconf.xChanged(thisProp);
         }
     };
     
+    MouseAdapter dataSTARTListener = new MouseAdapter(){
+        public void mouseClicked(){
+            datachoice_START.selectAll();
+        }
+    };
+    
+    MouseAdapter dataENDListener = new MouseAdapter(){
+        public void mouseClicked(){
+            datachoice_END.selectAll();
+        }
+    };
+    
+    
+    
+//    KeyAdapter intervalENDListener = new KeyAdapter(){
+//        public void keyPressed(KeyEvent pe){
+//            
+//        }
+//        public void keyReleased(KeyEvent pe){
+//            
+//        }
+//        public void keyTyped(KeyEvent pe){
+//            if(isXAxis.isEnabled()) cxyconf.setENDIntervals(getDataEND());
+//        }
+//        
+//    };
+//    
+//    KeyAdapter intervalSTARTListener = new KeyAdapter(){
+//        public void keyPressed(KeyEvent pe){
+//            
+//        }
+//        public void keyReleased(KeyEvent pe){
+//            
+//        }
+//        public void keyTyped(KeyEvent pe){
+//            
+//            if(isXAxis.isEnabled()) cxyconf.setSTARTIntervals(getDataSTART());
+//        }
+//        
+//    };
+    
+    
+    
 }
+  
     class XYPair implements Comparable<XYPair>{
         
         double x, y;
