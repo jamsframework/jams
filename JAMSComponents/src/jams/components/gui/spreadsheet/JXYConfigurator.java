@@ -357,14 +357,19 @@ public class JXYConfigurator extends JFrame{
                 prop.getColorChoice().setEnabled(false);
                 prop.getPosChoice().setEnabled(false);
                 prop.getLegendField().setEnabled(false);
-            }else{
-                prop.getDataChoiceSTART().setEnabled(false);
-                prop.getDataChoiceEND().setEnabled(false);
-            }
+                
                 prop.getAddButton().setEnabled(false);
                 prop.getRemButton().setEnabled(false);
                 prop.getUpButton().setEnabled(false);
                 prop.getDownButton().setEnabled(false);
+            }else{
+                prop.getDataChoiceSTART().setEnabled(false);
+                prop.getDataChoiceEND().setEnabled(false);
+            }
+                prop.getAddButton().setEnabled(true);
+                prop.getRemButton().setEnabled(true);
+                prop.getUpButton().setEnabled(true);
+                prop.getDownButton().setEnabled(true);
                 
             
             
@@ -430,6 +435,17 @@ public class JXYConfigurator extends JFrame{
         double d_start, d_end;
         GraphProperties newProp = new GraphProperties(parent, table, this);
         
+//        if(columns[i] == columns[x_series_index]){
+//            int itemCount = newProp.getDataChoice().getItemCount();
+//            if(i+1<itemCount){ i++;
+//            }else{
+//                if(i>0){
+//                    i--;
+//                }
+//            }
+//            newProp.getDataChoice().setSelectedIndex(columns[i]);
+//        }
+        
         if(i>0){
             d_start = prop.getDataSTART();
             d_end = prop.getDataEND();
@@ -444,10 +460,13 @@ public class JXYConfigurator extends JFrame{
         
         for(int k=0;k<graphCount;k++){
             
-//            newProp = propVector.get(k);
+            newProp = propVector.get(k);
 //            newProp.setIndex(k);
             //prop.getPlotButton().addActionListener(plotbuttonclick);
             
+            if(newProp.isXSeries()){
+                 x_series_index = k;
+            }
             addPropGroup(newProp);
             
             
@@ -455,6 +474,7 @@ public class JXYConfigurator extends JFrame{
             //graphpanel.add(propVector.get(k-1).getGraphPanel());
             
         }
+        xChanged(propVector.get(x_series_index));
         finishGroupUI();
         //mainpanel.repaint();
         //frame.updateUI();
@@ -477,6 +497,9 @@ public class JXYConfigurator extends JFrame{
 //            prop.setIndex(k);
             //prop.getPlotButton().addActionListener(plotbuttonclick);
             
+            if(newProp.isXSeries()){
+                 x_series_index = k;
+            }
             addPropGroup(newProp);
             
             
@@ -484,6 +507,7 @@ public class JXYConfigurator extends JFrame{
             //graphpanel.add(propVector.get(k-1).getGraphPanel());
             
         }
+        xChanged(propVector.get(x_series_index));
         finishGroupUI();
         //mainpanel.updateUI();
 //        pack();
@@ -494,9 +518,12 @@ public class JXYConfigurator extends JFrame{
     public void upGraph(GraphProperties prop){
         
         int i = propVector.indexOf(prop);
-        int x_series = columns[0];
+               
+        
         boolean xChanged = false;
         GraphProperties newProp;
+        //GraphProperties xProp = propVector.get(x_series_index);
+
         
         if(i-1>=0 && i-1<graphCount){
             propVector.remove(prop);
@@ -509,19 +536,17 @@ public class JXYConfigurator extends JFrame{
 
                 newProp = propVector.get(k);
                 //prop.setIndex(k);
-                if(prop.isXSeries()){
-                    x_series = newProp.getSelectedColumn();
-                    xChanged = true;
+                if(newProp.isXSeries()){
+                    x_series_index = k;
+                    xChanged = true;     
                 }
-
+                
+                
                 addPropGroup(newProp);
             }
-            if(xChanged){
-                xChanged(propVector.get(x_series));
-            }
+            
+            xChanged(propVector.get(x_series_index));
             finishGroupUI();
-            
-            
             repaint();
         }
     }
@@ -548,7 +573,7 @@ public class JXYConfigurator extends JFrame{
                 newProp = propVector.get(k);
                 newProp.setIndex(k);
                 if(prop.isXSeries()){
-                    x_series = newProp.getSelectedColumn();
+                    x_series_index = k;
                     xChanged = true;
                 }
                 //prop.getPlotButton().addActionListener(plotbuttonclick);
@@ -556,9 +581,9 @@ public class JXYConfigurator extends JFrame{
                 addPropGroup(newProp);
                 
             }
-            if(xChanged){
-                xChanged(propVector.get(x_series));
-            }
+            
+            xChanged(propVector.get(x_series));
+            
             finishGroupUI();
             
             
@@ -582,7 +607,8 @@ public class JXYConfigurator extends JFrame{
         
         for(int i=0; i<propVector.size(); i++){
             if(i != index){
-                propVector.get(i).setXSeries(columns[x_series_index]);
+//                propVector.get(i).setXSeries(columns[x_series_index]);
+                propVector.get(i).setXSeries(propVector.get(x_series_index).getSelectedColumn());
                 propVector.get(i).setXChanged(true);
                 propVector.get(i).setIsXSeries(false);
                 propVector.get(i).getDataChoice().setEnabled(true);
@@ -590,10 +616,10 @@ public class JXYConfigurator extends JFrame{
                 propVector.get(i).getDataChoiceEND().setEnabled(false);
                 propVector.get(i).getColorChoice().setEnabled(true);
                 propVector.get(i).getPosChoice().setEnabled(true);
-//                propVector.get(i).getAddButton().setEnabled(true);
-//                propVector.get(i).getRemButton().setEnabled(true);
-//                propVector.get(i).getUpButton().setEnabled(true);
-//                propVector.get(i).getDownButton().setEnabled(true);
+                propVector.get(i).getAddButton().setEnabled(true);
+                propVector.get(i).getRemButton().setEnabled(true);
+                propVector.get(i).getUpButton().setEnabled(true);
+                propVector.get(i).getDownButton().setEnabled(true);
                 propVector.get(i).getLegendField().setEnabled(true);
                 propVector.get(i).applyXYProperties();
             }
@@ -601,7 +627,7 @@ public class JXYConfigurator extends JFrame{
         }
         propVector.get(index).setXChanged(true);
         propVector.get(index).setIsXSeries(true);
-        propVector.get(index).setXSeries(columns[x_series_index]);
+        propVector.get(index).setXSeries(propVector.get(x_series_index).getSelectedColumn());
         propVector.get(index).getDataChoice().setEnabled(false);
         propVector.get(index).getDataChoiceSTART().setEnabled(true);
         propVector.get(index).getDataChoiceEND().setEnabled(true);

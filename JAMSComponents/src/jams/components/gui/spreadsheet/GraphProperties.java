@@ -365,10 +365,12 @@ public class GraphProperties {
     
     public void applyXYProperties(){
         
-//        if(selectedColumn != setColumn.getSelectedIndex()){
-//            //selectedColumn = setColumn.getSelectedIndex();
-//            writeXYPairs(); 
-//        }
+        System.out.println("ApplyXYProperties()");
+        System.out.println("------------------------------");
+        
+            selectedColumn = setColumn.getSelectedIndex();
+            writeXYPairs();
+//        
 
         color = (String) colorchoice.getSelectedItem();
         xys = new XYSeries(setLegend.getText());
@@ -384,6 +386,9 @@ public class GraphProperties {
                 xys.add(data[i].x, data[i].y);
                 System.out.println("Row "+i+": ("+data[i].x+","+data[i].y+") ");
             }
+        System.out.println("------------------------------");
+        System.out.println("x_series_col: " + x_series_col);
+        System.out.println("------------------------------");
       //}
     }
     
