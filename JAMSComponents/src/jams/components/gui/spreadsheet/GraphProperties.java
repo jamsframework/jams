@@ -158,7 +158,7 @@ public class GraphProperties {
     
     
     /** Creates a new instance of GraphProperties */
-    public GraphProperties(JDialog parent, JTable table, JTSConfigurator ctsconf) {
+    public GraphProperties(JFrame parent, JTable table, JTSConfigurator ctsconf) {
         
         this.plotType = 0;
         //super(parent, "Select Properties");
@@ -197,7 +197,7 @@ public class GraphProperties {
         
     }
     
-    public GraphProperties(JDialog parent, JTable table, JXYConfigurator cxyconf) {
+    public GraphProperties(JFrame parent, JTable table, JXYConfigurator cxyconf) {
         
         this.plotType = 1;
 
@@ -255,7 +255,7 @@ public class GraphProperties {
         remButton.setToolTipText("remove button");
         
         invBox = new JCheckBox("invert axis");
-        isXAxis = new JRadioButton();
+        isXAxis = new JRadioButton("x");
         isXAxis.addActionListener(isXListener);
         
         addButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -345,7 +345,7 @@ public class GraphProperties {
         this.buttonpanel.add(okButton);
         this.buttonpanel.add(cancelButton);
         
-        plotButton.addActionListener(okListener);
+        //plotButton.addActionListener(okListener);
     }
     
     public void applyTSProperties(){
@@ -368,10 +368,8 @@ public class GraphProperties {
         System.out.println("ApplyXYProperties()");
         System.out.println("------------------------------");
         
-            selectedColumn = setColumn.getSelectedIndex();
-            writeXYPairs();
-//        
-
+        selectedColumn = setColumn.getSelectedIndex();
+        
         color = (String) colorchoice.getSelectedItem();
         xys = new XYSeries(setLegend.getText());
        
@@ -382,10 +380,10 @@ public class GraphProperties {
         //if(!isXSeries()){
             //cxyconf.setXIntervals();
             //write xy series
-            for(int i=this.d_range[0]; i<=this.d_range[1]; i++){
-                xys.add(data[i].x, data[i].y);
-                System.out.println("Row "+i+": ("+data[i].x+","+data[i].y+") ");
-            }
+        for(int i=this.d_range[0]; i<=this.d_range[1]; i++){
+            xys.add(cxyconf.sorted_Row[i].col[x_series_col], cxyconf.sorted_Row[i].col[selectedColumn]);
+            System.out.println("x: "+cxyconf.sorted_Row[i].col[x_series_col]+" y: "+cxyconf.sorted_Row[i].col[selectedColumn]);
+        }
         System.out.println("------------------------------");
         System.out.println("x_series_col: " + x_series_col);
         System.out.println("------------------------------");
@@ -424,7 +422,7 @@ public class GraphProperties {
 //        double row_end = (Double) table.getValueAt(rowSelection[rowSelection.length - 1], x_series_col);
         int[] range = new int[2];
         
-        double row_start = data[0].x;
+        double row_start = cxyconf.sorted_Row[0].col[x_series_col];
         double row_end = data[data.length -1].x;
         range[0] = 0;
         range[1] = data.length - 1;
@@ -503,66 +501,66 @@ public class GraphProperties {
 //        return d_range;
 //    }
     
-     public int[] setPossibleDataIntervals(){
-        double possible_start, possible_end;
-        
-        int[] range = new int[2];
-        
-        double start = readDataSTART();
-        double end = readDataEND();
-
-        int i=0;
-        boolean out_of_boundaries = (start < data[0].x) || (start > data[data.length -1].x);
-        
-        if(end < start) end = start;
-        
-        if(!out_of_boundaries){
-            
-            while(!(start >= data[i].x && start <= data[i+1].x)){
-                i++;
-            }
-            start = data[i].x;
-            range[0] = i;
-        }else{
-            if(start < data[0].x){
-                start = data[0].x;
-                range[0] = 0;
-            }
-            if(start > data[0].x){
-                start = data[data.length -1].x;
-                range[0] = data.length -1;
-            }
-        }
-
-        setDataSTART(start);
-        
-        
-        out_of_boundaries = (end < data[0].x) || (end > data[data.length -1].x);
-        if(!out_of_boundaries){
-            
-            while(!(end >= data[i].x && end <= data[i+1].x)){
-                i++;
-            }
-            end = data[i].x;
-            range[1] = i;
-            
-        }else{
-            if(end < data[0].x){
-                end = data[0].x;
-                range[1] = 0;
-            }
-            if(end > data[0].x){
-                end = data[data.length -1].x;
-                range[1] = data.length -1;
-            }
-        }
-        setDataEND(end);
-//        if(possible_end >= possible_end){
-//            datachoice_END.setText(""+possible_end);
+//     public int[] setPossibleDataIntervals(){
+//        double possible_start, possible_end;
+//        
+//        int[] range = new int[2];
+//        
+//        double start = readDataSTART();
+//        double end = readDataEND();
+//
+//        int i=0;
+//        boolean out_of_boundaries = (start < data[0].x) || (start > data[data.length -1].x);
+//        
+//        if(end < start) end = start;
+//        
+//        if(!out_of_boundaries){
+//            
+//            while(!(start >= data[i].x && start <= data[i+1].x)){
+//                i++;
+//            }
+//            start = data[i].x;
+//            range[0] = i;
+//        }else{
+//            if(start < data[0].x){
+//                start = data[0].x;
+//                range[0] = 0;
+//            }
+//            if(start > data[0].x){
+//                start = data[data.length -1].x;
+//                range[0] = data.length -1;
+//            }
 //        }
-        d_range = range;
-        return d_range;
-    }
+//
+//        setDataSTART(start);
+//        
+//        
+//        out_of_boundaries = (end < data[0].x) || (end > data[data.length -1].x);
+//        if(!out_of_boundaries){
+//            
+//            while(!(end >= data[i].x && end <= data[i+1].x)){
+//                i++;
+//            }
+//            end = data[i].x;
+//            range[1] = i;
+//            
+//        }else{
+//            if(end < data[0].x){
+//                end = data[0].x;
+//                range[1] = 0;
+//            }
+//            if(end > data[0].x){
+//                end = data[data.length -1].x;
+//                range[1] = data.length -1;
+//            }
+//        }
+//        setDataEND(end);
+////        if(possible_end >= possible_end){
+////            datachoice_END.setText(""+possible_end);
+////        }
+//        d_range = range;
+//        return d_range;
+//    }
     
     private void setPossibleTimeIntervals(){
         int s = timechoice_START.getSelectedIndex();
@@ -599,10 +597,10 @@ public class GraphProperties {
     
     public void setXIntervals(int[] range){
         this.d_range = range;
-        if(!isXSeries()){
-        setDataSTART(data[d_range[0]].x);
-        setDataEND(data[d_range[1]].x);
-        }
+//        if(!isXSeries()){
+//        setDataSTART(data[d_range[0]].x);
+//        setDataEND(data[d_range[1]].x);
+//        }
     }
     
     public void setXChanged(boolean state){
@@ -817,25 +815,18 @@ public class GraphProperties {
     
    
     /*** Action Listener ***/
-    ActionListener okListener = new ActionListener(){
-        public void actionPerformed(ActionEvent te){
-
-            if(plotType == 0){
-                applyTSProperties();
-                ctsconf.plotGraph(thisProp);
-            }
-            if(plotType == 1){
-                //writeXYPairs();
-//                if(x_changed){
-//                    writeXYPairs();
-//                    x_changed=false;
-//                }
-                cxyconf.setXIntervals();
-                applyXYProperties();
-                cxyconf.plotGraph(thisProp);
-            }
-        }
-    };
+//    ActionListener okListener = new ActionListener(){
+//        public void actionPerformed(ActionEvent te){
+//
+//            if(plotType == 0){
+//                applyTSProperties();
+//                ctsconf.plotGraph(thisProp);
+//            }
+//            if(plotType == 1){
+//
+//            }
+//        }
+//    };
     
     ActionListener timeListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){

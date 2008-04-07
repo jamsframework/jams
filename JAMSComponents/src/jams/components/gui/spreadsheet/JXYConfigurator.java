@@ -63,7 +63,8 @@ public class JXYConfigurator extends JFrame{
     
     //private Vector<ActionListener> addAction = new Vector<ActionListener>();    
         
-    private JDialog parent;
+    private JFrame parent;
+    private JFrame thisDlg;
     private JPanel frame;
     private JPanel mainpanel;
     private JPanel plotpanel;
@@ -113,9 +114,12 @@ public class JXYConfigurator extends JFrame{
     private ButtonGroup isXAxisGroup = new ButtonGroup();
     
     private JButton applyButton = new JButton("Apply");
+    private JButton addButton = new JButton("Add Graph");
     
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
     private JAMSXYPlot jxys = new JAMSXYPlot();
+    
+    public XYRow[] sorted_Row;
     
 //    private String[] headers;
 //    //private String[] colors = {"yellow","orange","red","pink","magenta","cyan","blue","green","gray","lightgray","black"};
@@ -129,6 +133,10 @@ public class JXYConfigurator extends JFrame{
 //    private String[] legendEntries;
     
     private int x_series_index;
+    private int colour_cnt;
+    
+    double row_start;
+    double row_end;
     
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
     
@@ -169,6 +177,7 @@ public class JXYConfigurator extends JFrame{
     
     public JXYConfigurator(JFrame parent, JTable table){
         
+        this.parent = parent;
         //super(parent, "JAMS JTS Viewer");
         setTitle("JAMS XYPlot Viewer");
         URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
@@ -185,7 +194,8 @@ public class JXYConfigurator extends JFrame{
         this.columns = table.getSelectedColumns();
         this.graphCount = columns.length;
         this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
-        
+
+        writeSortedData(columns[0]);
 //        this.legendEntries = new String[graphCount];
         
 //        for(int k=0;k<graphCount;k++){
@@ -223,6 +233,8 @@ public class JXYConfigurator extends JFrame{
     
     public void createPanel(){
         
+        thisDlg = this;
+        colour_cnt = 0;
         /* create ColorMap */
         colorTable.put("yellow", Color.yellow);
         colorTable.put("orange", Color.orange);
@@ -338,15 +350,14 @@ public class JXYConfigurator extends JFrame{
         optionpanel.add(edRightField);
         optionpanel.add(applyButton);
         
+        GraphProperties prop;
+        
         for(int k=0;k<graphCount;k++){
             
-            GraphProperties prop = new GraphProperties(parent, table, this);
+            prop = new GraphProperties(parent, table, this);
             prop.setSelectedColumn(columns[k]);
             prop.setXSeries(columns[0]);
             prop.setSelectedRows(rows);
-            prop.writeXYPairs();
-            prop.setInitialDataIntervals();
-            prop.setXIntervals(prop.setInitialDataIntervals());
 
             if(k==0){ //initial x axis
                 prop.getIsXAxisButton().setSelected(true);
@@ -370,30 +381,34 @@ public class JXYConfigurator extends JFrame{
                 prop.getRemButton().setEnabled(true);
                 prop.getUpButton().setEnabled(true);
                 prop.getDownButton().setEnabled(true);
-                
+
+            prop.setColor(k%11);
+            colour_cnt=k;
             
-            
-            
-            
-            
-            if( k<=12){
-                prop.setColor(k);
-            }
 //            prop.setColor((String) colorchoice.getSelectedItem());
 //            prop.setPosition((String) poschoice.getSelectedItem());
 //            prop.setRendererType(typechoice.getSelectedIndex());
             prop.setName(table.getColumnName(k+1));
             prop.setLegendName(table.getColumnName(k+1));
             
-            //prop.getPlotButton().addActionListener(plotbuttonclick);
             
-            prop.applyXYProperties();
-            addPropGroup(prop);
-      
             propVector.add(k,prop);
+        }
+        
+        //initial data intervals
+        int[] range = setInitialDataIntervals();
+        
+        //set data intervals
+        for(int k=0; k<propVector.size(); k++){
             
-            //graphpanel.add(propVector.get(k-1).getGraphPanel());
+            prop = propVector.get(k);
             
+            prop.setXIntervals(range);
+            prop.setDataSTART(this.row_start);
+            prop.setDataEND(this.row_end);
+            prop.applyXYProperties();
+            addPropGroup(propVector.get(k));
+
         }
         
         finishGroupUI();
@@ -429,22 +444,152 @@ public class JXYConfigurator extends JFrame{
     
     }
     
+    private void writeSortedData(int x_col){
+        int row_nr = table.getRowCount();
+        int col_nr = table.getColumnCount();
+        sorted_Row = new XYRow[row_nr];
+        double[] rowarray; 
+        
+        for(int i=0; i<row_nr; i++){
+            
+            rowarray = new double[col_nr];
+            for(int j=0; j<col_nr; j++){
+                try{
+                   rowarray[j] = (Double) table.getValueAt(i,j);
+
+                }catch(ClassCastException cce){
+                   rowarray[j] = 0;
+                }
+            }
+            //double[] array = rowarray;
+            sorted_Row[i] = new XYRow(rowarray, x_col);
+            
+        }
+        java.util.Arrays.sort(sorted_Row);
+    }
+    
+    private void resortData(int x_col){
+        for(int i=0; i<sorted_Row.length; i++){         
+                sorted_Row[i].setCompareIndex(x_col);    
+        }
+        java.util.Arrays.sort(sorted_Row);       
+    }
+    
+    public int[] setInitialDataIntervals(){
+        
+//        double row_start = (Double) table.getValueAt(rowSelection[0], x_series_col);
+//        double row_end = (Double) table.getValueAt(rowSelection[rowSelection.length - 1], x_series_col);
+        int[] range = new int[2];
+        int x_column = propVector.get(x_series_index).getSelectedColumn();
+        
+        this.row_start = sorted_Row[0].col[x_column];
+        this.row_end = sorted_Row[sorted_Row.length -1].col[x_column];
+        range[0] = 0;
+        range[1] = sorted_Row.length -1;
+        
+        //double start, end;
+        
+//        for(int i=0; i<rowSelection.length; i++){
+//            start = (Double) table.getValueAt(rowSelection[i], x_series_col);
+//            end = (Double) table.getValueAt(rowSelection[i], x_series_col);
+//            if(start < row_start) row_start = start;
+//            if(end > row_end) row_end = end;
+//        }
+        
+//        for(int i=0; i<sorted_Row.length; i++){
+//            start = data[i].x;
+//            end = data[i].x;
+//            if(start < row_start){ 
+//                
+//                range[0] = i;
+//                row_start = start;
+//                    
+//            }
+//            if(end > row_end){
+//                range[1] = i;
+//                row_end = end;
+//            }
+//        }
+        
+        return range;
+        
+        
+    }
+    
+    public int[] setPossibleDataIntervals(){
+        double possible_start, possible_end;
+        
+        int[] range = new int[2];
+        GraphProperties x_prop = propVector.get(x_series_index);
+        
+        double start = x_prop.readDataSTART();
+        double end = x_prop.readDataEND();
+
+        int i=0;
+        int x_col = x_prop.getSelectedColumn();
+        boolean out_of_boundaries = (start < sorted_Row[0].col[x_col]) || (start > sorted_Row[sorted_Row.length-1].col[x_col]);
+        
+        if(end < start) end = start;
+        
+        if(!out_of_boundaries){
+            
+            while(!(start >= sorted_Row[i].col[x_col] && start <= sorted_Row[i+1].col[x_col])){
+                i++;
+            }
+            start = sorted_Row[i+1].col[x_col];
+            range[0] = i;
+        }else{
+            if(start < sorted_Row[0].col[x_col]){
+                start = sorted_Row[0].col[x_col];
+                range[0] = 0;
+            }
+            if(start > sorted_Row[sorted_Row.length-1].col[x_col]){
+                start = sorted_Row[sorted_Row.length-1].col[x_col];
+                range[0] = sorted_Row.length -1;
+            }
+        }
+
+        out_of_boundaries = (end < sorted_Row[0].col[x_col]) || (end > sorted_Row[sorted_Row.length-1].col[x_col]);
+        if(!out_of_boundaries){
+            
+            while(!(end >= sorted_Row[i].col[x_col] && end <= sorted_Row[i+1].col[x_col])){
+                i++;
+            }
+            end = sorted_Row[i].col[x_col];
+            range[1] = i;
+            
+        }else{
+            if(end < sorted_Row[0].col[x_col]){
+                end = sorted_Row[0].col[x_col];
+                range[1] = 0;
+            }
+            if(end > sorted_Row[sorted_Row.length-1].col[x_col]){
+                end = sorted_Row[sorted_Row.length-1].col[x_col];
+                range[1] = sorted_Row.length -1;
+            }
+        }
+        
+        this.row_start = start;
+        this.row_end = end;
+
+        return range;
+    }
+    
     public void addGraph(GraphProperties prop){
         
         int i = propVector.indexOf(prop);
         double d_start, d_end;
         GraphProperties newProp = new GraphProperties(parent, table, this);
+        colour_cnt++;
         
-//        if(columns[i] == columns[x_series_index]){
-//            int itemCount = newProp.getDataChoice().getItemCount();
-//            if(i+1<itemCount){ i++;
-//            }else{
-//                if(i>0){
-//                    i--;
-//                }
-//            }
-//            newProp.getDataChoice().setSelectedIndex(columns[i]);
-//        }
+        AddGraphDlg dlg = new AddGraphDlg();
+        dlg.setVisible(true);
+        
+        if(dlg.getOK()){
+            newProp.setPosition(dlg.getSide());
+            i = dlg.getPosition();
+            dlg.dispose();
+        }
         
         if(i>0){
             d_start = prop.getDataSTART();
@@ -452,7 +597,8 @@ public class JXYConfigurator extends JFrame{
             newProp.setDataSTART(d_start);
             newProp.setDataEND(d_end);
         }
-        propVector.add(i, newProp);
+        newProp.setColor(colour_cnt%11);
+        propVector.add(newProp);
         
         graphCount = propVector.size();
         
@@ -605,6 +751,8 @@ public class JXYConfigurator extends JFrame{
         //x_series_col = columns[index];
         x_series_index = index;
         
+        resortData(propVector.get(x_series_index).getSelectedColumn());
+        
         for(int i=0; i<propVector.size(); i++){
             if(i != index){
 //                propVector.get(i).setXSeries(columns[x_series_index]);
@@ -640,30 +788,7 @@ public class JXYConfigurator extends JFrame{
         propVector.get(index).getLegendField().setEnabled(false);
         propVector.get(index).applyXYProperties();
     }
-    
-    public void setXIntervals(){
-        double start = 0, end = 0;
-        
-        int[] range = new int[2];
-        
-        //search for x_series
-        
-        //x_series_index = propVector.get(0).getXSeriesCol();    
-        GraphProperties x_prop = propVector.get(x_series_index);
-        x_prop.writeXYPairs();
-        range = x_prop.setPossibleDataIntervals();
-
-                
-        for(int i=0; i<propVector.size(); i++){
-            //if(!propVector.get(i).isXAxis.isEnabled()){
-                propVector.get(i).writeXYPairs();
-                propVector.get(i).setXIntervals(range);
-//                propVector.get(i).setDataSTART((Double)table.getValueAt(range[0], x_series_index));
-//                propVector.get(i).setDataEND((Double)table.getValueAt(range[1], x_series_index));
-            //}
-        }
-    }
-    
+       
 //    public void setENDIntervals(double end){
 //        for(int i=0; i<propVector.size(); i++){
 //            if(propVector.get(i).isXAxis.isEnabled()) propVector.get(i).setDataEND(end);
@@ -738,6 +863,8 @@ public class JXYConfigurator extends JFrame{
         optLayout.setAutoCreateGaps(true);
         optLayout.setAutoCreateContainerGaps(true);
         
+        addButton.addActionListener(addbuttonclick);
+        
         GroupLayout.SequentialGroup optHGroup = optLayout.createSequentialGroup();
         GroupLayout.SequentialGroup optVGroup = optLayout.createSequentialGroup();
         
@@ -754,7 +881,7 @@ public class JXYConfigurator extends JFrame{
         optVGroup.addGroup(optLayout.createParallelGroup()
         .addComponent(rRightLabel).addComponent(rRightBox));
         optVGroup.addGroup(optLayout.createParallelGroup()
-        .addComponent(invLeftBox));
+        .addComponent(invLeftBox).addComponent(addButton));
         optVGroup.addGroup(optLayout.createParallelGroup()
         .addComponent(invRightBox).addComponent(applyButton));
         
@@ -765,7 +892,7 @@ public class JXYConfigurator extends JFrame{
         
         optHGroup.addGroup(optLayout.createParallelGroup().
                 addComponent(edTitleField).addComponent(edLeftField).addComponent(edRightField)
-                .addComponent(edXAxisField).addComponent(rLeftBox).addComponent(rRightBox).addGap(1,1,1)
+                .addComponent(edXAxisField).addComponent(rLeftBox).addComponent(rRightBox).addComponent(addButton).addGap(1,1,1)
                 .addComponent(applyButton));
         
         
@@ -851,9 +978,9 @@ public class JXYConfigurator extends JFrame{
                        
 
             group9.addComponent(space3);
-            group10.addComponent(prop.getIsXAxisButton()).addComponent(prop.getPlotButton());
+            group10.addComponent(prop.getIsXAxisButton());
             group11.addComponent(space4);
-            group12.addComponent(prop.getAddButton());
+            
             group13.addComponent(prop.getRemButton());
             group14.addComponent(prop.getUpButton());
             group15.addComponent(prop.getDownButton());
@@ -864,8 +991,8 @@ public class JXYConfigurator extends JFrame{
             vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING)
             .addComponent(lf).addComponent(prop.getDataChoiceEND()).addComponent(space6)
             .addComponent(prop.getPosChoice())
-            .addComponent(space3).addComponent(prop.getPlotButton())
-            .addComponent(space4).addComponent(prop.getAddButton()).addComponent(prop.getRemButton())
+            .addComponent(space3)
+            .addComponent(space4).addComponent(prop.getRemButton())
             .addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
             vGroup.addGroup(gLayout.createParallelGroup().addGap(20));
             
@@ -914,7 +1041,7 @@ public class JXYConfigurator extends JFrame{
         return ctsplot.getPanel();
     }
 
-    public void setParent(JDialog parent){
+    public void setParent(JFrame parent){
         this.parent = parent;
     }
     
@@ -1148,12 +1275,23 @@ public class JXYConfigurator extends JFrame{
     
     ActionListener addbuttonclick = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-            //addGraph();
+            addGraph(propVector.get(0));
         }
     };
     
     ActionListener plotbuttonclick = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
+            
+            int[] range = setPossibleDataIntervals();
+            for(int i=0; i<propVector.size(); i++){
+                GraphProperties prop = propVector.get(i);
+                
+                prop.setXIntervals(range);
+                prop.setDataSTART(row_start);
+                prop.setDataEND(row_end);
+                prop.applyXYProperties();
+
+            }
             plotAllGraphs();
         }
     };
@@ -1191,5 +1329,92 @@ public class JXYConfigurator extends JFrame{
         
         
     }
+    
+    private class AddGraphDlg extends JDialog{
+ 
+        boolean result;
+        int max;
+        String side;
+        int side_index;
+        int position;
+       
+        JSpinner posSpinner;
+        JComboBox sideChoice;
+        JButton okButton;
+        
+        public AddGraphDlg(){
+            super(thisDlg, "Add Graph", true);
+            URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
+            ImageIcon icon = new ImageIcon(url);
+            setIconImage(icon.getImage());
+            Point parentloc = thisDlg.getLocation();
+            setLocation(parentloc.x + 50, parentloc.y + 50);
+            createPanel();
+        }
+        
+        void createPanel(){
+            setLayout(new FlowLayout());
+            
+            max = propVector.size();
+            String[] posArray = {"left","right"};
+            posSpinner = new JSpinner(new SpinnerNumberModel(max,0,max,1));
+            sideChoice = new JComboBox(posArray);
+            sideChoice.setSelectedIndex(0);
+            JButton okButton = new JButton("OK");
+            
+            add(sideChoice);
+            add(posSpinner);
+            add(okButton);
+            okButton.addActionListener(ok);
+            pack();
+        }
+        
+        String getSide(){
+            if(side_index == 0) side = "left";
+            else side = "right";
+            
+            return side;
+        }
+        int getPosition(){
+            return position;
+        }
+        boolean getOK(){
+            return result;
+        }
+
+        ActionListener ok = new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                //e.getActionCommand(); ...
+                
+                side_index = sideChoice.getSelectedIndex();
+                position = (Integer) posSpinner.getValue();
+                result = true;
+                setVisible(false);
+                
+            }
+        };
+    }
 }
+
+class XYRow implements Comparable<XYRow>{
+        
+        double[] col;
+        int compare_index;
+        public XYRow(double[] rowdata, int compare_index){
+            this.col = rowdata;
+            this.compare_index = compare_index;
+        }
+        
+        public void setCompareIndex(int compare_index){
+            this.compare_index = compare_index;
+        }
+        
+        public int compareTo(XYRow arg){
+            
+            if(col[compare_index] < arg.col[compare_index]) return -1;
+            if(col[compare_index] > arg.col[compare_index]) return 1;
+            return 0;
+
+        }
+    }
 

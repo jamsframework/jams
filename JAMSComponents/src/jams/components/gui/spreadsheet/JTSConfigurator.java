@@ -63,7 +63,8 @@ public class JTSConfigurator extends JFrame{
     
     private Vector<ActionListener> addAction = new Vector<ActionListener>();    
         
-    private JDialog parent;
+    private JFrame parent;
+    private JFrame thisDlg;
     private JPanel frame;
     private JPanel mainpanel;
     private JPanel plotpanel;
@@ -117,6 +118,7 @@ public class JTSConfigurator extends JFrame{
     private JCheckBox timeFormat_hm = new JCheckBox("hh:mm");
     
     private JButton applyButton = new JButton("Apply");
+    private JButton addButton = new JButton("Add Graph");
     
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
     private JAMSTimePlot jts = new JAMSTimePlot();
@@ -133,6 +135,7 @@ public class JTSConfigurator extends JFrame{
 //    private String[] legendEntries;
     
     private int index;
+    private int colour_cnt;
     
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
     
@@ -174,6 +177,7 @@ public class JTSConfigurator extends JFrame{
     public JTSConfigurator(JFrame parent, JTable table){
         
         //super(parent, "JAMS JTS Viewer");
+        this.parent = parent;
         setTitle("JAMS JTS Viewer");
         URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
         ImageIcon icon = new ImageIcon(url);
@@ -226,7 +230,8 @@ public class JTSConfigurator extends JFrame{
 //    }
     
     public void createPanel(){
-        
+        thisDlg = this;
+        colour_cnt = 0;
         /* create ColorMap */
         colorTable.put("yellow", Color.yellow);
         colorTable.put("orange", Color.orange);
@@ -354,9 +359,10 @@ public class JTSConfigurator extends JFrame{
             prop.setTimeSTART(rows[0]);
             prop.setTimeEND(rows[rows.length - 1]);
             
-            if( k<=12){
-                prop.setColor(k);
-            }
+            
+            prop.setColor(k%11);
+            colour_cnt = k;
+            
 //            prop.setColor((String) colorchoice.getSelectedItem());
 //            prop.setPosition((String) poschoice.getSelectedItem());
 //            prop.setRendererType(typechoice.getSelectedIndex());
@@ -415,13 +421,26 @@ public class JTSConfigurator extends JFrame{
         int i = propVector.indexOf(prop);
         int t_s, t_e;
         GraphProperties newProp = new GraphProperties(parent, table, this);
-        if(i>0){
+        colour_cnt++;
+        
+        AddGraphDlg dlg = new AddGraphDlg();
+        dlg.setVisible(true);
+        
+        if(dlg.getOK()){
+            newProp.setPosition(dlg.getSide());
+            i = dlg.getPosition();
+            dlg.dispose();
+        }
+        
+        newProp.setColor(colour_cnt % 11);
+        
+        if(i>=0){
             t_s = prop.getTimeChoiceSTART().getSelectedIndex();
             t_e = prop.getTimeChoiceEND().getSelectedIndex();
             newProp.getTimeChoiceSTART().setSelectedIndex(t_s);
             newProp.getTimeChoiceEND().setSelectedIndex(t_e);
         }
-        propVector.add(i, newProp);
+        propVector.add(i,newProp);
         
         graphCount = propVector.size();
         
@@ -648,6 +667,8 @@ public class JTSConfigurator extends JFrame{
         timeFormat_dd.setSelected(true);
         timeFormat_hm.setSelected(false);
         
+        addButton.addActionListener(addbuttonclick);
+        
         optionpanel.setLayout(optLayout);
         optLayout.setAutoCreateGaps(true);
         optLayout.setAutoCreateContainerGaps(true);
@@ -668,7 +689,7 @@ public class JTSConfigurator extends JFrame{
         optVGroup.addGroup(optLayout.createParallelGroup()
         .addComponent(rRightLabel).addComponent(rRightBox));
         optVGroup.addGroup(optLayout.createParallelGroup()
-        .addComponent(invLeftBox));
+        .addComponent(invLeftBox).addComponent(addButton));
         optVGroup.addGroup(optLayout.createParallelGroup()
         .addComponent(invRightBox));
         optVGroup.addGroup(optLayout.createParallelGroup().addComponent(timeFormatLabel));
@@ -683,7 +704,7 @@ public class JTSConfigurator extends JFrame{
         
         optHGroup.addGroup(optLayout.createParallelGroup().
                 addComponent(edTitleField).addComponent(edLeftField).addComponent(edRightField)
-                .addComponent(edXAxisField).addComponent(rLeftBox).addComponent(rRightBox).addGap(1,1,1)
+                .addComponent(edXAxisField).addComponent(rLeftBox).addComponent(rRightBox).addComponent(addButton).addGap(1,1,1)
                 .addComponent(applyButton));
         
         
@@ -767,9 +788,9 @@ public class JTSConfigurator extends JFrame{
                        
 
             group9.addComponent(space3);
-            group10.addComponent(prop.getPlotButton());
+            
             group11.addComponent(space4);
-            group12.addComponent(prop.getAddButton());
+            
             group13.addComponent(prop.getRemButton());
             group14.addComponent(prop.getUpButton());
             group15.addComponent(prop.getDownButton());
@@ -780,8 +801,8 @@ public class JTSConfigurator extends JFrame{
             vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING)
             .addComponent(lf).addComponent(prop.getTimeChoiceEND()).addComponent(space6)
             .addComponent(prop.getPosChoice())
-            .addComponent(space3).addComponent(prop.getPlotButton())
-            .addComponent(space4).addComponent(prop.getAddButton()).addComponent(prop.getRemButton())
+            .addComponent(space3)
+            .addComponent(space4).addComponent(prop.getRemButton())
             .addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
             vGroup.addGroup(gLayout.createParallelGroup().addGap(20));
             
@@ -834,7 +855,7 @@ public class JTSConfigurator extends JFrame{
         this.index = index;
     }
 
-    public void setParent(JDialog parent){
+    public void setParent(JFrame parent){
         this.parent = parent;
     }
     
@@ -1075,7 +1096,7 @@ public class JTSConfigurator extends JFrame{
     
     ActionListener addbuttonclick = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-            //addGraph();
+            addGraph(propVector.get(0));
         }
     };
     
@@ -1106,12 +1127,83 @@ public class JTSConfigurator extends JFrame{
                     //timePlot();
                     
                 }
-            };
-            
-            
+            };         
+        }       
+    }
+    
+    private class AddGraphDlg extends JDialog{
+ 
+        boolean result;
+        int max;
+        String side;
+        int side_index;
+        int position;
+        
+        
+        JSpinner posSpinner;
+        JComboBox sideChoice;
+        JButton okButton;
+        
+        public AddGraphDlg(){
+            super(thisDlg, "Add Graph", true);
+            URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
+            ImageIcon icon = new ImageIcon(url);
+            setIconImage(icon.getImage());
+            Point parentloc = parent.getLocation();
+            setLocation(parentloc.x + 50, parentloc.y + 50);
+            createPanel();
         }
         
+        void createPanel(){
+            setLayout(new FlowLayout());
+            
+            max = propVector.size();
+            String[] posArray = {"left","right"};
+            posSpinner = new JSpinner(new SpinnerNumberModel(max,0,max,1));
+            sideChoice = new JComboBox(posArray);
+            sideChoice.setSelectedIndex(0);
+            JButton okButton = new JButton("OK");
+            
+            add(sideChoice);
+            add(posSpinner);
+            add(okButton);
+            okButton.addActionListener(ok);
+            pack();
+        }
         
+        String getSide(){
+            if(side_index == 0) side = "left";
+            else side = "right";
+            
+            return side;
+        }
+        int getPosition(){
+            return position;
+        }
+        boolean getOK(){
+            return result;
+        }
+
+        ActionListener ok = new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                //e.getActionCommand(); ...
+                
+                side_index = sideChoice.getSelectedIndex();
+                position = (Integer) posSpinner.getValue();
+                result = true;
+                setVisible(false);
+                
+            }
+            
+        };
+        
+        
+        
+
     }
 }
+
+
+
+
 
