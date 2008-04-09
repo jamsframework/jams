@@ -24,9 +24,7 @@
 package jams.components.optimizer.gradient;
 
 import java.util.*;
-import org.unijena.jams.JAMS;
 import org.unijena.jams.data.*;
-import org.unijena.jams.io.GenericDataWriter;
 import org.unijena.jams.model.*;
 import java.io.*;
 

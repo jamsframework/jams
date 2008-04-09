@@ -31,7 +31,7 @@ import org.unijena.jams.model.JAMSVarDescription;
         author="Christian Fischer",
         description="under construction!!"
         )
-public class NNOptimizer extends JAMSContext{
+public class NNOptimizer extends JAMSContext {
     /*
      *  Component variables
      */    
