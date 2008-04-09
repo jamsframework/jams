@@ -1,6 +1,6 @@
 /*
- * JAMSConditionalContext.java
- * Created on 7. Januar 2008, 09:34
+ * DoubleConditionalContext.java
+ * Created on 9. April 2008, 11:31
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -20,39 +20,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.model;
+package org.unijena.jams.model.cc;
 
-import org.unijena.jams.data.JAMSBoolean;
+import org.unijena.jams.model.*;
+import org.unijena.jams.data.JAMSDouble;
 
 /**
  *
  * @author S. Kralisch
  */
-@JAMSComponentDescription(title = "JAMS conditional context", author = "Sven Kralisch", date = "7. January 2008", description = "This component represents a JAMS context which can be used to " +
-"conditionally execute components. This context must contain two components. If \"condition\" is true, the first one will be executed, otherwise the second one.")
-public class JAMSConditionalContext extends JAMSContext {
+@JAMSComponentDescription(title = "DoubleConditionalContext", author = "Sven Kralisch", date = "9. April 2008", description = "This component represents a JAMS context which can be used to " +
+"conditionally execute components. This context must contain two components. If \"value1\" equals \"value2\", the first one will be executed, otherwise the second one.")
+public class DoubleConditionalContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining which component to execute")
-    public JAMSBoolean condition;
+    public JAMSDouble value1;
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining which component to execute")
+    public JAMSDouble value2;
 
-    public JAMSConditionalContext() {
+    public DoubleConditionalContext() {
     }
-    
+
     @Override
     public JAMSComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
     }
-    
+
     @Override
     public JAMSComponentEnumerator getChildrenEnumerator() {
         return new RunEnumerator();
     }
-    
+
     @Override
     public long getNumberOfIterations() {
         return 1;
-    }    
-    
+    }
+
     class RunEnumerator implements JAMSComponentEnumerator {
 
         JAMSComponent[] compArray = getCompArray();
@@ -71,7 +74,7 @@ public class JAMSConditionalContext extends JAMSContext {
         @Override
         public JAMSComponent next() {
             // if condition is true return first component, else second component
-            if (condition.getValue()) {
+            if (value1.getValue() == value2.getValue()) {
                 return compArray[0];
             } else {
                 return compArray[1];
