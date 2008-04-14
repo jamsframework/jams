@@ -132,7 +132,7 @@ getData()   {
 **
 ** @param other  The value from the corresponding Field in the 
 **         Tuple that we are comparing against.
-** @returns boolean true if the values are equal.
+** @return boolean true if the values are equal.
 */	
 public boolean 
 equals( Object other ) {
