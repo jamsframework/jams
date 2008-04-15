@@ -32,23 +32,31 @@ import java.util.concurrent.TimeUnit;
  */
 public class TaskExecutor {
 
-    public static int MAX_CONCURRENT_THREADS = 1;
+    private ThreadPoolExecutor tpe;
+
+    public TaskExecutor() {
+        this(1);
+    }
+
+    public TaskExecutor(int maxConcurrentThreads) {
+        setMaxConcurrentThreads(maxConcurrentThreads);
+    }
+
+    public void setMaxConcurrentThreads(int n) {
+        tpe = new ThreadPoolExecutor(n, n, Long.MAX_VALUE,
+                TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+    }
 
     public void start(Runnable[] tasks) {
-
-        ThreadPoolExecutor tpe = new ThreadPoolExecutor(MAX_CONCURRENT_THREADS, MAX_CONCURRENT_THREADS,
-                Long.MAX_VALUE, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-
         TaskGroup taskGroup = new TaskGroup(tasks, tpe);
-        
         taskGroup.run();
+    }
 
+    public void shutdown() {
         tpe.shutdown();
-
     }
 
     public static void main(String[] args) {
-        TaskExecutor.MAX_CONCURRENT_THREADS = 1;
 
         int max = 10000;
         Runnable[] tasks = new RunnableComponent[max];
@@ -56,7 +64,8 @@ public class TaskExecutor {
             tasks[i] = new RunnableComponent(new Task(i));
         }
 
-        TaskExecutor executor = new TaskExecutor();
+        TaskExecutor executor = new TaskExecutor(1);
         executor.start(tasks);
+        executor.shutdown();
     }
 }
