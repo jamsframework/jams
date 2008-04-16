@@ -48,7 +48,6 @@ import org.unijena.jams.JAMSTools;
 import org.unijena.jams.ModelConfig;
 import org.unijena.jams.ModelPreprocessor;
 import org.unijena.jams.data.JAMSData;
-import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.io.JAMSModelLoader;
 import org.unijena.jams.model.JAMSGUIComponent;
 import org.unijena.jams.model.JAMSModel;
@@ -98,7 +97,7 @@ public class StandardRuntime implements JAMSRuntime {
                 }
             });
         }
-        
+
         int errorDlg = Integer.parseInt(properties.getProperty("errordlg", "0"));
         if (errorDlg != 0) {
 
@@ -166,6 +165,9 @@ public class StandardRuntime implements JAMSRuntime {
 
         long end = System.currentTimeMillis();
         this.println("JAMS model setup time: " + (end - start) + " ms", JAMS.STANDARD);
+
+        classLoader = null;
+        Runtime.getRuntime().gc();
     }
 
     public void runModel() {
@@ -207,7 +209,8 @@ public class StandardRuntime implements JAMSRuntime {
         }
 
         model = null;
-        Runtime.getRuntime().gc();
+        classLoader = null;
+        Runtime.getRuntime().gc();        
     }
 
     public void initGUI(String title, boolean ontop, int width, int height) {

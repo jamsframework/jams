@@ -39,7 +39,7 @@ public class TaskExecutor {
     }
 
     public TaskExecutor(int maxConcurrentThreads) {
-        setMaxConcurrentThreads(maxConcurrentThreads);
+        setMaxConcurrentThreads(maxConcurrentThreads);        
     }
 
     public void setMaxConcurrentThreads(int n) {
