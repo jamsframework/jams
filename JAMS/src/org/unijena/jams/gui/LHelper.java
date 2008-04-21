@@ -37,6 +37,7 @@ import org.unijena.jams.gui.input.FileInput;
 import org.unijena.jams.gui.input.FloatInput;
 import org.unijena.jams.gui.input.InputComponent;
 import org.unijena.jams.gui.input.IntegerInput;
+//import org.unijena.jams.gui.input.IntegerArrayInput;
 import org.unijena.jams.gui.input.TextInput;
 import org.unijena.jams.gui.input.TimeintervalInput;
 
