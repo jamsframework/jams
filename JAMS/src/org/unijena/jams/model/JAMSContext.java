@@ -429,7 +429,7 @@ title="JAMS Component",
         }
     }
     
-    private void updateDataAccessors(int index) {
+    protected void updateDataAccessors(int index) {
         for (int i = 0; i < dataAccessors.length; i++) {
             dataAccessors[i].setIndex(index);
             //read entity data before execution

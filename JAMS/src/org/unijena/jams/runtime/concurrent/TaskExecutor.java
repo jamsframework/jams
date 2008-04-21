@@ -64,7 +64,7 @@ public class TaskExecutor {
             tasks[i] = new RunnableComponent(new Task(i));
         }
 
-        TaskExecutor executor = new TaskExecutor(1);
+        TaskExecutor executor = new TaskExecutor(2);
         executor.start(tasks);
         executor.shutdown();
     }
