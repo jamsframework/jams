@@ -486,34 +486,8 @@ public class JXYConfigurator extends JFrame{
         this.row_end = sorted_Row[sorted_Row.length -1].col[x_column];
         range[0] = 0;
         range[1] = sorted_Row.length -1;
-        
-        //double start, end;
-        
-//        for(int i=0; i<rowSelection.length; i++){
-//            start = (Double) table.getValueAt(rowSelection[i], x_series_col);
-//            end = (Double) table.getValueAt(rowSelection[i], x_series_col);
-//            if(start < row_start) row_start = start;
-//            if(end > row_end) row_end = end;
-//        }
-        
-//        for(int i=0; i<sorted_Row.length; i++){
-//            start = data[i].x;
-//            end = data[i].x;
-//            if(start < row_start){ 
-//                
-//                range[0] = i;
-//                row_start = start;
-//                    
-//            }
-//            if(end > row_end){
-//                range[1] = i;
-//                row_end = end;
-//            }
-//        }
-        
-        return range;
-        
-        
+       
+        return range;       
     }
     
     public int[] setPossibleDataIntervals(){
@@ -703,12 +677,12 @@ public class JXYConfigurator extends JFrame{
         int x_series = columns[0];
         boolean xChanged = false;
         if(i<propVector.size()){
-        GraphProperties newProp = propVector.get(i+1);
+        GraphProperties newProp;
         
         if(i+1>=0 && i+1<graphCount){
             
-            propVector.remove(i+1);
-            propVector.add(i, newProp);
+            propVector.remove(prop);
+            propVector.add(i+1, prop);
 
             graphCount = propVector.size();
             handleRenderer();
@@ -717,18 +691,17 @@ public class JXYConfigurator extends JFrame{
             for(int k=0;k<graphCount;k++){
 
                 newProp = propVector.get(k);
-                newProp.setIndex(k);
+                //newProp.setIndex(k);
                 if(prop.isXSeries()){
                     x_series_index = k;
                     xChanged = true;
                 }
                 //prop.getPlotButton().addActionListener(plotbuttonclick);
 
-                addPropGroup(newProp);
-                
+                addPropGroup(newProp);         
             }
             
-            xChanged(propVector.get(x_series));
+            xChanged(propVector.get(x_series_index));
             
             finishGroupUI();
             
@@ -751,7 +724,7 @@ public class JXYConfigurator extends JFrame{
         //x_series_col = columns[index];
         x_series_index = index;
         
-        resortData(propVector.get(x_series_index).getSelectedColumn());
+        //resortData(propVector.get(x_series_index).getSelectedColumn());
         
         for(int i=0; i<propVector.size(); i++){
             if(i != index){
@@ -846,15 +819,21 @@ public class JXYConfigurator extends JFrame{
                 }
             }
         
-        if(((l<2 || l>2) || (r<2 || r>2)) && rLeftBox.getItemCount()==8){
+        if((l<2 || l>2) && rLeftBox.getItemCount()==8){
             rLeftBox.removeItemAt(7);
-            rRightBox.removeItemAt(7);           
+        }
+        
+        if((r<2 || r>2) && rRightBox.getItemCount()==8){
+            rRightBox.removeItemAt(7);
         }
  
-        if((l == 2 || r == 2) && rLeftBox.getItemCount()==7){
+        if((l == 2) && rLeftBox.getItemCount()==7){
             rLeftBox.addItem("Difference");
-            rRightBox.addItem("Difference");  
         }     
+        
+        if((r == 2) && rRightBox.getItemCount()==7){
+            rRightBox.addItem("Difference");
+        } 
     }
     
     private void createOptionPanel(){

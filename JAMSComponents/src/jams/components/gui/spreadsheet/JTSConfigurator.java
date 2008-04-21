@@ -643,15 +643,21 @@ public class JTSConfigurator extends JFrame{
                 }
             }
         
-        if(((l<2 || l>2) || (r<2 || r>2)) && rLeftBox.getItemCount()==8){
+        if((l<2 || l>2) && rLeftBox.getItemCount()==8){
             rLeftBox.removeItemAt(7);
-            rRightBox.removeItemAt(7);           
+        }
+        
+        if((r<2 || r>2) && rRightBox.getItemCount()==8){
+            rRightBox.removeItemAt(7);
         }
  
-        if((l == 2 || r == 2) && rLeftBox.getItemCount()==7){
+        if((l == 2) && rLeftBox.getItemCount()==7){
             rLeftBox.addItem("Difference");
-            rRightBox.addItem("Difference");  
         }     
+        
+        if((r == 2) && rRightBox.getItemCount()==7){
+            rRightBox.addItem("Difference");
+        } 
     }
     
     private void createOptionPanel(){
@@ -1159,7 +1165,7 @@ public class JTSConfigurator extends JFrame{
             
             max = propVector.size();
             String[] posArray = {"left","right"};
-            posSpinner = new JSpinner(new SpinnerNumberModel(max,0,max,1));
+            posSpinner = new JSpinner(new SpinnerNumberModel(max,1,max,1));
             sideChoice = new JComboBox(posArray);
             sideChoice.setSelectedIndex(0);
             JButton okButton = new JButton("OK");
@@ -1177,6 +1183,7 @@ public class JTSConfigurator extends JFrame{
             
             return side;
         }
+        
         int getPosition(){
             return position;
         }
@@ -1190,6 +1197,7 @@ public class JTSConfigurator extends JFrame{
                 
                 side_index = sideChoice.getSelectedIndex();
                 position = (Integer) posSpinner.getValue();
+                
                 result = true;
                 setVisible(false);
                 
