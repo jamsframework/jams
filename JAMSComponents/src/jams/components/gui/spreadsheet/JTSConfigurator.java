@@ -426,7 +426,7 @@ public class JTSConfigurator extends JFrame{
         AddGraphDlg dlg = new AddGraphDlg();
         dlg.setVisible(true);
         
-        if(dlg.getOK()){
+        if(dlg.getResult()){
             newProp.setPosition(dlg.getSide());
             i = dlg.getPosition();
             dlg.dispose();
@@ -1139,7 +1139,7 @@ public class JTSConfigurator extends JFrame{
     
     private class AddGraphDlg extends JDialog{
  
-        boolean result;
+        boolean result = false;
         int max;
         String side;
         int side_index;
@@ -1187,7 +1187,7 @@ public class JTSConfigurator extends JFrame{
         int getPosition(){
             return position;
         }
-        boolean getOK(){
+        boolean getResult(){
             return result;
         }
 
