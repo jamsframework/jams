@@ -382,7 +382,7 @@ public class JTSConfigurator extends JFrame{
         
         finishGroupUI();
         createOptionPanel();
-    
+        handleRenderer();
         /* initialise JTSPlot */
         //JAMSTimePlot jts = new JAMSTimePlot(propVector);
         jts.setPropVector(propVector);
@@ -426,7 +426,7 @@ public class JTSConfigurator extends JFrame{
         AddGraphDlg dlg = new AddGraphDlg();
         dlg.setVisible(true);
         
-        if(dlg.getResult()){
+        if(dlg.getOK()){
             newProp.setPosition(dlg.getSide());
             i = dlg.getPosition();
             dlg.dispose();
@@ -441,23 +441,12 @@ public class JTSConfigurator extends JFrame{
             newProp.getTimeChoiceEND().setSelectedIndex(t_e);
         }
         propVector.add(i,newProp);
-        
+  
         graphCount = propVector.size();
-        
+        initGroupUI();
         //Renderer Box Handler
         handleRenderer();
-//        if(graphCount<2 && rLeftBox.getItemCount()==8){
-//            rLeftBox.removeItemAt(7);
-//            rRightBox.removeItemAt(7);
-//            
-//        }
-//        if(graphCount>=2 && rLeftBox.getItemCount()==7){
-//            rLeftBox.addItem("Difference");
-//            rRightBox.addItem("Difference");  
-//        }
-        
-        initGroupUI();
-        
+ 
         for(int k=0;k<graphCount;k++){
             
             newProp = propVector.get(k);
@@ -1187,7 +1176,7 @@ public class JTSConfigurator extends JFrame{
         int getPosition(){
             return position;
         }
-        boolean getResult(){
+        boolean getOK(){
             return result;
         }
 

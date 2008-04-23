@@ -413,7 +413,7 @@ public class JXYConfigurator extends JFrame{
         
         finishGroupUI();
         createOptionPanel();
-    
+        handleRenderer();
         /* initialise JTSPlot */
         //JAMSTimePlot jts = new JAMSTimePlot(propVector);
         jxys.setPropVector(propVector);
@@ -572,7 +572,7 @@ public class JXYConfigurator extends JFrame{
             newProp.setDataEND(d_end);
         }
         newProp.setColor(colour_cnt%11);
-        propVector.add(newProp);
+        propVector.add(i,newProp);
         
         graphCount = propVector.size();
         
@@ -811,13 +811,14 @@ public class JXYConfigurator extends JFrame{
     public void handleRenderer(){
         int r=0, l=0;
         for(int i=0; i<propVector.size(); i++){
-                if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
-                    l++;
-                }
-                if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
-                    r++;
-                }
+                
+            if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
+                if(!propVector.get(i).isXSeries()) l++;
             }
+            if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
+                if(!propVector.get(i).isXSeries()) r++;
+            }
+        }
         
         if((l<2 || l>2) && rLeftBox.getItemCount()==8){
             rLeftBox.removeItemAt(7);
@@ -1311,7 +1312,7 @@ public class JXYConfigurator extends JFrame{
     
     private class AddGraphDlg extends JDialog{
  
-        boolean result;
+        boolean result = false;
         int max;
         String side;
         int side_index;

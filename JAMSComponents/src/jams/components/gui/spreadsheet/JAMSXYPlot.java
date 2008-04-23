@@ -184,18 +184,18 @@ public class JAMSXYPlot {
                 dotR.setDefaultEntityRadius(2);
                 r = dotR;
                 break;
-                
+      
             case 5:
-                r = new XYDifferenceRenderer();
-                break;
-                
-            case 6:
                 r = new XYStepRenderer();
                 break;
                 
-            case 7:
+            case 6:
                 r = new XYStepAreaRenderer();
                 break;
+                
+            case 7:
+                r = new XYDifferenceRenderer();
+                break;    
                 
             default:
                 lsr = new XYLineAndShapeRenderer();
