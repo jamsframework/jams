@@ -418,19 +418,23 @@ public class JTSConfigurator extends JFrame{
     
     public void addGraph(GraphProperties prop){
         
+        AddGraphDlg dlg = new AddGraphDlg();
+        dlg.setVisible(true);
+        
+        if(dlg.getResult()){
+            
         int i = propVector.indexOf(prop);
         int t_s, t_e;
         GraphProperties newProp = new GraphProperties(parent, table, this);
         colour_cnt++;
         
-        AddGraphDlg dlg = new AddGraphDlg();
-        dlg.setVisible(true);
         
-        if(dlg.getOK()){
+        
+        
             newProp.setPosition(dlg.getSide());
             i = dlg.getPosition();
             dlg.dispose();
-        }
+        
         
         newProp.setColor(colour_cnt % 11);
         
@@ -465,6 +469,7 @@ public class JTSConfigurator extends JFrame{
         //frame.updateUI();
         //pack();
         repaint();
+        }
     }
     
     public void removeGraph(GraphProperties prop){
@@ -1176,22 +1181,19 @@ public class JTSConfigurator extends JFrame{
         int getPosition(){
             return position;
         }
-        boolean getOK(){
+        boolean getResult(){
             return result;
         }
 
         ActionListener ok = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                //e.getActionCommand(); ...
                 
                 side_index = sideChoice.getSelectedIndex();
                 position = (Integer) posSpinner.getValue();
                 
                 result = true;
-                setVisible(false);
-                
+                setVisible(false);                
             }
-            
         };
         
         

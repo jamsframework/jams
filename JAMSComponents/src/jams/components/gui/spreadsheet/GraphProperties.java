@@ -837,7 +837,9 @@ public class GraphProperties {
     
     ActionListener rendererListener = new ActionListener(){
         public void actionPerformed(ActionEvent te){
-            ctsconf.handleRenderer();
+            if(plotType == 0) ctsconf.handleRenderer();
+            if(plotType == 1) cxyconf.handleRenderer();
+            
             //cxyconf.handleRenderer();
             //setVisible(false);
         }

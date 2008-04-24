@@ -559,11 +559,13 @@ public class JXYConfigurator extends JFrame{
         AddGraphDlg dlg = new AddGraphDlg();
         dlg.setVisible(true);
         
-        if(dlg.getOK()){
+        if(dlg.getResult()){
             newProp.setPosition(dlg.getSide());
             i = dlg.getPosition();
             dlg.dispose();
         }
+        
+        newProp.setColor(colour_cnt % 11);
         
         if(i>0){
             d_start = prop.getDataSTART();
@@ -571,22 +573,19 @@ public class JXYConfigurator extends JFrame{
             newProp.setDataSTART(d_start);
             newProp.setDataEND(d_end);
         }
-        newProp.setColor(colour_cnt%11);
         propVector.add(i,newProp);
-        
+  
         graphCount = propVector.size();
-        
         initGroupUI();
-        
+        //Renderer Box Handler
+        handleRenderer();
+ 
         for(int k=0;k<graphCount;k++){
             
             newProp = propVector.get(k);
-//            newProp.setIndex(k);
+            newProp.setIndex(k);
             //prop.getPlotButton().addActionListener(plotbuttonclick);
             
-            if(newProp.isXSeries()){
-                 x_series_index = k;
-            }
             addPropGroup(newProp);
             
             
@@ -594,13 +593,14 @@ public class JXYConfigurator extends JFrame{
             //graphpanel.add(propVector.get(k-1).getGraphPanel());
             
         }
-        xChanged(propVector.get(x_series_index));
         finishGroupUI();
         //mainpanel.repaint();
         //frame.updateUI();
         //pack();
         repaint();
     }
+    
+    
     
     public void removeGraph(GraphProperties prop){
         
@@ -1358,7 +1358,7 @@ public class JXYConfigurator extends JFrame{
         int getPosition(){
             return position;
         }
-        boolean getOK(){
+        boolean getResult(){
             return result;
         }
 
