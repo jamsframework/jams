@@ -123,6 +123,8 @@ public class GraphProperties {
     
     JTextField datachoice_START;
     JTextField datachoice_END;
+    JPanel datachoice_panel;
+    JButton datachoice_max;
     
     JButton addButton;
     JButton remButton;
@@ -216,7 +218,15 @@ public class GraphProperties {
 
         rowSelection = table.getSelectedRows();
         x_series_col = table.getSelectedColumn();
-
+        
+        datachoice_panel = new JPanel();
+        datachoice_panel.setLayout(new FlowLayout());
+        datachoice_panel.setSize(20,50);
+        datachoice_max = new JButton("...");
+        //datachoice_max.setPreferredSize(new Dimension(5,10));
+        
+        datachoice_max.addActionListener(max_listener);
+        
         datachoice_START = new JTextField();
         datachoice_START.setPreferredSize(new Dimension(40,14));
         datachoice_START.addMouseListener(dataSTARTListener);
@@ -225,6 +235,8 @@ public class GraphProperties {
         datachoice_END.setPreferredSize(new Dimension(40,14));
         datachoice_END.addMouseListener(dataENDListener);
         
+        datachoice_panel.add(datachoice_END);
+        datachoice_panel.add(datachoice_max);
         
         
         createPanel();     
@@ -793,6 +805,10 @@ public class GraphProperties {
         return datachoice_END;
     }
     
+    public JButton getMaxButton(){
+        return datachoice_max;
+    }
+    
     public JButton getAddButton(){
         return addButton;
     }
@@ -889,12 +905,12 @@ public class GraphProperties {
             
             if(plotType == 0){
                 ctsconf.upGraph(thisProp);
-                applyTSProperties();
+                //applyTSProperties();
             }
             if(plotType == 1){
                 cxyconf.upGraph(thisProp);
                 
-                applyXYProperties();
+                //applyXYProperties();
             }
             
             
@@ -908,12 +924,12 @@ public class GraphProperties {
             
             if(plotType == 0){
                 ctsconf.downGraph(thisProp);
-                applyTSProperties();
+                //applyTSProperties();
             }
             if(plotType == 1){
                 cxyconf.downGraph(thisProp);
                 
-                applyXYProperties();
+                //applyXYProperties();
             }
             
             
@@ -926,6 +942,13 @@ public class GraphProperties {
         public void actionPerformed(ActionEvent xe){
             
             cxyconf.xChanged(thisProp);
+        }
+    };
+    
+    ActionListener max_listener = new ActionListener(){
+        public void actionPerformed(ActionEvent me){
+            
+            cxyconf.setMaxDataIntervals(thisProp);
         }
     };
     
