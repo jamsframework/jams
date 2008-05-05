@@ -87,6 +87,7 @@ public class JXYConfigurator extends JFrame{
     private JScrollPane optScPane;
     
     private String[] headers;
+ 
     
     private JLabel edTitle = new JLabel("Plot Title: ");
     private JLabel edLeft  = new JLabel("Left axis title: ");
@@ -136,8 +137,12 @@ public class JXYConfigurator extends JFrame{
     private int colour_cnt;
     
     double row_start;
-    double row_end;
+    double row_end;    
+       
+    private boolean d_start_changed;
+    private boolean d_end_changed;
     
+    int[] range = new int[2];
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
     
     int[] rows, columns;
@@ -195,6 +200,9 @@ public class JXYConfigurator extends JFrame{
         this.graphCount = columns.length;
         this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
 
+        d_start_changed = false;
+        d_end_changed = false;
+        
         writeSortedData(columns[0]);
 //        this.legendEntries = new String[graphCount];
         
@@ -396,7 +404,7 @@ public class JXYConfigurator extends JFrame{
         }
         
         //initial data intervals
-        int[] range = setInitialDataIntervals();
+        this.range = setInitialDataIntervals();
         
         //set data intervals
         for(int k=0; k<propVector.size(); k++){
@@ -486,91 +494,205 @@ public class JXYConfigurator extends JFrame{
         this.row_end = sorted_Row[sorted_Row.length -1].col[x_column];
         range[0] = 0;
         range[1] = sorted_Row.length -1;
-       
+        
+        dStartChanged(false);
+        dEndChanged(false);
+        
         return range;       
     }
     
     public void setMaxDataIntervals(GraphProperties x_prop){
         
-        int[] range = new int[2];
+        int[] range = new int[2];  
         resortData(x_prop.getSelectedColumn());
         range = setInitialDataIntervals();
+        this.range = range;
         x_prop.setXIntervals(range);
         x_prop.setDataSTART(this.row_start);
         x_prop.setDataEND(this.row_end);
+        dStartChanged(false);
+        dEndChanged(false);
     }
     
+    public void dStartChanged(boolean state){
+        this.d_start_changed = state;
+    }
+    
+    public void dEndChanged(boolean state){
+        this.d_end_changed = state;
+    }
+    
+    
     public int[] setPossibleDataIntervals(){
+        
+        
         double possible_start, possible_end;
         
         int[] range = new int[2];
         GraphProperties x_prop = propVector.get(x_series_index);
         
-        double start = x_prop.readDataSTART();
-        double end = x_prop.readDataEND();
-
-        int i=0;
-        int x_col = x_prop.getSelectedColumn();
-        boolean out_of_boundaries = (start < sorted_Row[0].col[x_col]) || (start > sorted_Row[sorted_Row.length-1].col[x_col]);
-        
-        if(end < start) end = start;
-        
-        if(!out_of_boundaries){
-            
-            while(!(start >= sorted_Row[i].col[x_col] && start <= sorted_Row[i+1].col[x_col])){
-                i++;
-            }
-            if(start - sorted_Row[i].col[x_col] < sorted_Row[i+1].col[x_col] - start){
-                start = sorted_Row[i].col[x_col];
-                range[0] = i;
+        if(!d_start_changed || !d_end_changed){
+            if(!d_start_changed){
+                range[0] = this.range[0];
+                
             }
             else{
-                start = sorted_Row[i+1].col[x_col];
-                range[0] = i+1;
-            }
-            
-        }else{
-            if(start < sorted_Row[0].col[x_col]){
-                start = sorted_Row[0].col[x_col];
-                range[0] = 0;
-            }
-            if(start > sorted_Row[sorted_Row.length-1].col[x_col]){
-                start = sorted_Row[sorted_Row.length-1].col[x_col];
-                range[0] = sorted_Row.length -1;
-            }
-        }
+                
+                double start = x_prop.readDataSTART();
+                double end = x_prop.readDataEND();
 
-        out_of_boundaries = (end < sorted_Row[0].col[x_col]) || (end > sorted_Row[sorted_Row.length-1].col[x_col]);
-        if(!out_of_boundaries){
-            
-            while(!(end >= sorted_Row[i].col[x_col] && end <= sorted_Row[i+1].col[x_col])){
-                i++;
-            }
-            if(end - sorted_Row[i+1].col[x_col] < sorted_Row[i].col[x_col] - end){
-                end = sorted_Row[i+1].col[x_col];
-                range[0] = i+1;
-            }
-            else{
-                end = sorted_Row[i].col[x_col];
-                range[0] = i;
-            }
-            end = sorted_Row[i].col[x_col];
-            range[1] = i;
-            
-        }else{
-            if(end < sorted_Row[0].col[x_col]){
-                end = sorted_Row[0].col[x_col];
-                range[1] = 0;
-            }
-            if(end > sorted_Row[sorted_Row.length-1].col[x_col]){
-                end = sorted_Row[sorted_Row.length-1].col[x_col];
-                range[1] = sorted_Row.length -1;
-            }
-        }
-        
-        this.row_start = start;
-        this.row_end = end;
+                int i=0;
+                int x_col = x_prop.getSelectedColumn();
+                boolean out_of_boundaries = (start < sorted_Row[0].col[x_col]) || (start > sorted_Row[sorted_Row.length-1].col[x_col]);
 
+                if(end < start) end = start;
+
+                if(!out_of_boundaries){
+
+                    while(!(start >= sorted_Row[i].col[x_col] && start <= sorted_Row[i+1].col[x_col])){
+                        i++;
+                    }
+
+                    if(start == sorted_Row[i].col[x_col]){
+                        start = sorted_Row[i].col[x_col];
+                        range[0] = i;
+                    } else {
+                        start = sorted_Row[i+1].col[x_col];
+                        range[0] = i+1;
+                    }      
+
+                }else{
+                    if(start < sorted_Row[0].col[x_col]){
+                        start = sorted_Row[0].col[x_col];
+                        range[0] = 0;
+                    }
+                    if(start > sorted_Row[sorted_Row.length-1].col[x_col]){
+                        start = sorted_Row[sorted_Row.length-1].col[x_col];
+                        range[0] = sorted_Row.length -1;
+                    }
+                }
+                this.row_start = start;
+                }
+                    
+
+                if(!d_end_changed){
+                    range[1] = this.range[1];
+                    
+                } else {
+                    double start = x_prop.readDataSTART();
+                    double end = x_prop.readDataEND();
+
+                    int i=0;
+                    int x_col = x_prop.getSelectedColumn();
+                    boolean out_of_boundaries = (end < sorted_Row[0].col[x_col]) || (end > sorted_Row[sorted_Row.length-1].col[x_col]);
+                    if(!out_of_boundaries){
+            
+                    while(!(end >= sorted_Row[i].col[x_col] && end <= sorted_Row[i+1].col[x_col])){
+                        i++;
+                    }
+
+                    if(end == sorted_Row[i+1].col[x_col]){
+                        end = sorted_Row[i+1].col[x_col];
+                        range[1] = i+1;
+                    }
+                    else{
+                        end = sorted_Row[i].col[x_col];
+                         range[1] = i;
+                    }
+
+                    }else{
+                        if(end < sorted_Row[0].col[x_col]){
+                            end = sorted_Row[0].col[x_col];
+                            range[1] = 0;
+                        }
+                        if(end > sorted_Row[sorted_Row.length-1].col[x_col]){
+                            end = sorted_Row[sorted_Row.length-1].col[x_col];
+                            range[1] = sorted_Row.length -1;
+                        }
+                    }
+                    this.row_end = end;
+                
+                }
+            
+            } else {
+
+
+
+            double start = x_prop.readDataSTART();
+            double end = x_prop.readDataEND();
+
+            int i=0;
+            int x_col = x_prop.getSelectedColumn();
+            boolean out_of_boundaries = (start < sorted_Row[0].col[x_col]) || (start > sorted_Row[sorted_Row.length-1].col[x_col]);
+
+            if(end < start) end = start;
+
+            if(!out_of_boundaries){
+
+                while(!(start >= sorted_Row[i].col[x_col] && start <= sorted_Row[i+1].col[x_col])){
+                    i++;
+                }
+
+                if(start == sorted_Row[i].col[x_col]){
+                    start = sorted_Row[i].col[x_col];
+                    range[0] = i;
+                } else {
+                    start = sorted_Row[i+1].col[x_col];
+                    range[0] = i+1;
+                }
+    //            if(start - sorted_Row[i].col[x_col] < sorted_Row[i+1].col[x_col] - start){
+    //                start = sorted_Row[i].col[x_col];
+    //                range[0] = i;
+    //            }
+    //            else{
+    //                start = sorted_Row[i+1].col[x_col];
+    //                range[0] = i+1;
+    //            }
+
+
+            }else{
+                if(start < sorted_Row[0].col[x_col]){
+                    start = sorted_Row[0].col[x_col];
+                    range[0] = 0;
+                }
+                if(start > sorted_Row[sorted_Row.length-1].col[x_col]){
+                    start = sorted_Row[sorted_Row.length-1].col[x_col];
+                    range[0] = sorted_Row.length -1;
+                }
+            }
+
+            out_of_boundaries = (end < sorted_Row[0].col[x_col]) || (end > sorted_Row[sorted_Row.length-1].col[x_col]);
+            if(!out_of_boundaries){
+
+                while(!(end >= sorted_Row[i].col[x_col] && end <= sorted_Row[i+1].col[x_col])){
+                    i++;
+                }
+
+                if(end == sorted_Row[i+1].col[x_col]){
+                    end = sorted_Row[i+1].col[x_col];
+                    range[1] = i+1;
+                }
+                else{
+                    end = sorted_Row[i].col[x_col];
+                     range[1] = i;
+                }
+
+            }else{
+                if(end < sorted_Row[0].col[x_col]){
+                    end = sorted_Row[0].col[x_col];
+                    range[1] = 0;
+                }
+                if(end > sorted_Row[sorted_Row.length-1].col[x_col]){
+                    end = sorted_Row[sorted_Row.length-1].col[x_col];
+                    range[1] = sorted_Row.length -1;
+                }
+            }
+
+
+            this.row_start = start;
+            this.row_end = end;
+        }
+        this.range = range;
         return range;
     }
     
@@ -750,6 +872,9 @@ public class JXYConfigurator extends JFrame{
         int index = propVector.indexOf(prop);
         //x_series_col = columns[index];
         x_series_index = index;
+        
+        dStartChanged(true);
+        dEndChanged(true);
         
         //resortData(propVector.get(x_series_index).getSelectedColumn());
         
@@ -1299,9 +1424,12 @@ public class JXYConfigurator extends JFrame{
                 prop.setDataSTART(row_start);
                 prop.setDataEND(row_end);
                 prop.applyXYProperties();
+                
 
             }
             plotAllGraphs();
+            dStartChanged(false);
+            dEndChanged(false);
         }
     };
     
@@ -1372,7 +1500,7 @@ public class JXYConfigurator extends JFrame{
             sideChoice = new JComboBox(posArray);
             sideChoice.setSelectedIndex(0);
             okButton = new JButton("OK");
-            pos_label = new JLabel("position: ");
+            pos_label = new JLabel("position after: ");
             side_label = new JLabel("side: ");
             
             add(side_label);

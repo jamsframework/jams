@@ -1143,6 +1143,8 @@ public class JTSConfigurator extends JFrame{
         JSpinner posSpinner;
         JComboBox sideChoice;
         JButton okButton;
+        JLabel pos_label;
+        JLabel side_label;
         
         public AddGraphDlg(){
             super(thisDlg, "Add Graph", true);
@@ -1163,10 +1165,15 @@ public class JTSConfigurator extends JFrame{
             sideChoice = new JComboBox(posArray);
             sideChoice.setSelectedIndex(0);
             JButton okButton = new JButton("OK");
+            pos_label = new JLabel("position after: ");
+            side_label = new JLabel("side: ");
             
+            add(side_label);
             add(sideChoice);
+            add(pos_label);
             add(posSpinner);
             add(okButton);
+
             okButton.addActionListener(ok);
             pack();
         }

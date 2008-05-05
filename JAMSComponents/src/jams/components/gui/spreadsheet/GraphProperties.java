@@ -25,6 +25,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Comparator;
+import java.util.Locale;
+import java.text.*;
+import javax.swing.event.*;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
@@ -222,7 +225,7 @@ public class GraphProperties {
         datachoice_panel = new JPanel();
         datachoice_panel.setLayout(new FlowLayout());
         datachoice_panel.setSize(20,50);
-        datachoice_max = new JButton("...");
+        datachoice_max = new JButton("max");
         //datachoice_max.setPreferredSize(new Dimension(5,10));
         
         datachoice_max.addActionListener(max_listener);
@@ -230,10 +233,14 @@ public class GraphProperties {
         datachoice_START = new JTextField();
         datachoice_START.setPreferredSize(new Dimension(40,14));
         datachoice_START.addMouseListener(dataSTARTListener);
+        
+        datachoice_START.getDocument().addDocumentListener(d_start_listener);
 
         datachoice_END = new JTextField();
         datachoice_END.setPreferredSize(new Dimension(40,14));
         datachoice_END.addMouseListener(dataENDListener);
+        
+        datachoice_END.getDocument().addDocumentListener(d_end_listener);
         
         datachoice_panel.add(datachoice_END);
         datachoice_panel.add(datachoice_max);
@@ -377,8 +384,8 @@ public class GraphProperties {
     
     public void applyXYProperties(){
         
-        System.out.println("ApplyXYProperties()");
-        System.out.println("------------------------------");
+        //System.out.println("ApplyXYProperties()");
+        
         
         selectedColumn = setColumn.getSelectedIndex();
         
@@ -394,11 +401,11 @@ public class GraphProperties {
             //write xy series
         for(int i=this.d_range[0]; i<=this.d_range[1]; i++){
             xys.add(cxyconf.sorted_Row[i].col[x_series_col], cxyconf.sorted_Row[i].col[selectedColumn]);
-            System.out.println("x: "+cxyconf.sorted_Row[i].col[x_series_col]+" y: "+cxyconf.sorted_Row[i].col[selectedColumn]);
+            //System.out.println("x: "+cxyconf.sorted_Row[i].col[x_series_col]+" y: "+cxyconf.sorted_Row[i].col[selectedColumn]);
         }
-        System.out.println("------------------------------");
-        System.out.println("x_series_col: " + x_series_col);
-        System.out.println("------------------------------");
+        
+        //System.out.println("x_series_col: " + x_series_col);
+        
       //}
     }
     
@@ -676,14 +683,20 @@ public class GraphProperties {
     
     public void setDataSTART(double d_start){
         data_range_start = d_start;
-        d_start=Math.round(d_start*1000.)/1000.;
-        datachoice_START.setText(""+d_start);
+        String s;
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+        nf.setMaximumFractionDigits(4);
+        s = nf.format(d_start);
+        datachoice_START.setText(s);
     }
     
     public void setDataEND(double d_end){
         data_range_end = d_end;
-        d_end=Math.round(d_end*1000.)/1000.;
-        datachoice_END.setText(""+d_end);
+        String s;
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+        nf.setMaximumFractionDigits(4);
+        s = nf.format(d_end);
+        datachoice_END.setText(s);
     }
     
     public String getColor(){
@@ -964,37 +977,36 @@ public class GraphProperties {
         }
     };
     
+    DocumentListener d_start_listener = new DocumentListener(){
+        public void changedUpdate(DocumentEvent e){
+            cxyconf.dStartChanged(true);
+            
+        }
+        public void removeUpdate(DocumentEvent e){
+            cxyconf.dStartChanged(true);
+           
+        }
+        public void insertUpdate(DocumentEvent e){
+            cxyconf.dStartChanged(true);
+            
+        }
+    };
     
-    
-//    KeyAdapter intervalENDListener = new KeyAdapter(){
-//        public void keyPressed(KeyEvent pe){
-//            
-//        }
-//        public void keyReleased(KeyEvent pe){
-//            
-//        }
-//        public void keyTyped(KeyEvent pe){
-//            if(isXAxis.isEnabled()) cxyconf.setENDIntervals(getDataEND());
-//        }
-//        
-//    };
-//    
-//    KeyAdapter intervalSTARTListener = new KeyAdapter(){
-//        public void keyPressed(KeyEvent pe){
-//            
-//        }
-//        public void keyReleased(KeyEvent pe){
-//            
-//        }
-//        public void keyTyped(KeyEvent pe){
-//            
-//            if(isXAxis.isEnabled()) cxyconf.setSTARTIntervals(getDataSTART());
-//        }
-//        
-//    };
-    
-    
-    
+    DocumentListener d_end_listener = new DocumentListener(){
+        public void changedUpdate(DocumentEvent e){
+            cxyconf.dEndChanged(true);
+            
+        }
+        public void removeUpdate(DocumentEvent e){
+            cxyconf.dEndChanged(true);
+            
+        }
+        public void insertUpdate(DocumentEvent e){
+            cxyconf.dEndChanged(true);
+            
+        }
+    };
+        
 }
   
     class XYPair implements Comparable<XYPair>{
