@@ -42,6 +42,7 @@ import org.jfree.chart.axis.Timeline;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
@@ -181,6 +182,8 @@ public class JAMSTimePlot {
             case 4:
                 XYDotRenderer dotR = new XYDotRenderer();
                 dotR.setDefaultEntityRadius(2);
+                dotR.setDotHeight(5);
+                dotR.setDotWidth(5);
                 r = dotR;
                 break;
                 
@@ -229,8 +232,9 @@ public class JAMSTimePlot {
         DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
         dateAxis.setDateFormatOverride(new SimpleDateFormat("dd-MM-yyyy"));
         
-
-        axisLEFT = plot.getRangeAxis();
+        //plot.clearRangeAxes();
+        //axisLEFT = plot.getRangeAxis();
+        axisLEFT = new NumberAxis(leftAxisTitle);
         axisRIGHT = new NumberAxis(rightAxisTitle);
         
 
@@ -252,7 +256,7 @@ public class JAMSTimePlot {
         int corr = 0;
         dataLeft = new TimeSeriesCollection();
         DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
-        
+   
         axisLEFT.setInverted(inverted);
         axisLEFT.setLabel(nameLeft);
         dateAxis.setLabel(xAxisTitle);
@@ -275,10 +279,23 @@ public class JAMSTimePlot {
         }
         
         if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
+        
+        
+        if(corr == 0){
+            axisRIGHT.setVisible(false);
+            plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+            plot.setRangeAxis(0, axisLEFT);
+            plot.setDataset(0, dataLeft);
+            plot.setRenderer(0, leftRenderer);
+            
+        } else {
+        axisRIGHT.setVisible(true);
+        plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
         plot.setRangeAxis(0, axisLEFT);
         plot.setDataset(0, dataLeft);
         plot.setRenderer(0, leftRenderer);
-        plot.mapDatasetToRangeAxis(1, 1);
+        plot.mapDatasetToRangeAxis(0, 0);
+        }
         
     }
     
@@ -302,9 +319,6 @@ public class JAMSTimePlot {
         int corr = 0;
         dataRight = new TimeSeriesCollection();
         DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
-        
-        axisRIGHT.setInverted(inverted);
-        axisRIGHT.setLabel(nameRight);
         dateAxis.setLabel(xAxisTitle);
         
         rightRenderer = getRenderer(renderer);
@@ -323,11 +337,33 @@ public class JAMSTimePlot {
                 corr++;
             }
         }
-        if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
-        plot.setRangeAxis(1, axisRIGHT);
-        plot.setDataset(1, dataRight);
-        plot.setRenderer(1, rightRenderer);
-        plot.mapDatasetToRangeAxis(1, 1);
+        if((plot_count<2 || plot_count>2) && renderer == 7) rightRenderer = getRenderer(0);
+        
+        if(corr == 0){
+
+            axisRIGHT.setInverted(inverted);
+            axisRIGHT.setLabel(nameRight);
+            
+            axisLEFT.setVisible(false);
+            
+            
+            plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
+            plot.setRangeAxis(1, axisRIGHT);
+            plot.setDataset(1, dataRight);
+            plot.setRenderer(1, rightRenderer);
+        } else {
+            axisLEFT.setVisible(true);
+            axisRIGHT.setInverted(inverted);
+            axisRIGHT.setLabel(nameRight);
+
+            plot.setRangeAxis(1, axisRIGHT);
+            plot.setDataset(1, dataRight);
+            plot.setRenderer(1, rightRenderer);
+            plot.mapDatasetToRangeAxis(1, 1);
+        }
+        
+        //plot.mapDatasetToRangeAxis(1, 1);
+        
         plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
     }
 

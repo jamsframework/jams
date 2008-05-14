@@ -279,8 +279,8 @@ public class JAMSXYPlot {
             }
         }
         if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
-//        plot.setDomainAxis(0, xAxis);
-//        plot.setRangeAxis(0, axisLEFT);
+        plot.setDomainAxis(0, xAxis);
+        plot.setRangeAxis(0, axisLEFT);
         plot.setDataset(0, dataLeft);
         plot.setRenderer(0, leftRenderer);
         //plot.mapDatasetToDomainAxis(0, 0); //dataset einer achse zuordnen!
@@ -329,6 +329,7 @@ public class JAMSXYPlot {
         plot.setRenderer(1, rightRenderer);
         plot.mapDatasetToRangeAxis(1, 1);
         plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
+
     }
     
     
