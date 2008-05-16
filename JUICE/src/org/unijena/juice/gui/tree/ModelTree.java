@@ -29,8 +29,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.util.Vector;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -50,8 +49,8 @@ import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
 import org.unijena.juice.ContextAttribute;
 import org.unijena.juice.JUICE;
-import org.unijena.juice.ModelProperties;
 import org.unijena.juice.ModelProperties.ModelProperty;
+import org.unijena.juice.ModelProperties.Group;
 import org.unijena.juice.gui.ModelView;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -322,32 +321,38 @@ public class ModelTree extends JAMSTree {
             for (String group : view.getModelProperties().getGroupNames()) {
                 Element groupElement = (Element) document.createElement("group");
                 groupElement.setAttribute("name", group);
-                ArrayList<ModelProperty> properties = view.getModelProperties().getGroup(group).getProperties();
+                Vector properties = view.getModelProperties().getGroup(group).getProperties();
                 if (properties != null) {
-                    for (ModelProperties.ModelProperty property : properties) {
-                        Element propertyElement = (Element) document.createElement("property");
-                        propertyElement.setAttribute("component", property.component.getName());
-                        if (property.var != null) {
-                            propertyElement.setAttribute("attribute", property.var.name);
-                            propertyElement.setAttribute("type", property.var.type.getSimpleName());
-                        } else if (property.attribute != null) {
-                            propertyElement.setAttribute("attribute", property.attribute.getName());
-                            propertyElement.setAttribute("type", property.attribute.getType().getSimpleName());
-                        } else {
-                            propertyElement.setAttribute("attribute", "%enable%");
-                            propertyElement.setAttribute("type", JUICE.JAMS_DATA_TYPES[0].getSimpleName());
-                        }
-                        propertyElement.setAttribute("default", property.defaultValue);
-                        propertyElement.setAttribute("description", property.description);
-                        propertyElement.setAttribute("name", property.name);
-                        propertyElement.setAttribute("value", property.value);
-                        propertyElement.setAttribute("range", "" + property.lowerBound + ";" + property.upperBound);
-                        if (property.length > 0) {
-                            propertyElement.setAttribute("length", "" + property.length);
-                        }
+                    for (Object modelProperty : properties) {
 
-                        groupElement.appendChild(propertyElement);
-                        groupElement.appendChild(document.createTextNode("\n"));
+                        // <@todo> groups consists of subgroups and properties,
+                        //          subgroups consists of properties
+                        //          this could be recursive too
+                        if (modelProperty instanceof ModelProperty) {
+                            ModelProperty property = (ModelProperty) modelProperty;
+                            Element propertyElement = createPropertyElement(document, property);
+                            groupElement.appendChild(propertyElement);
+                            groupElement.appendChild(document.createTextNode("\n"));
+                        }
+                        if (modelProperty instanceof Group) {
+                            Group subgroup = (Group)modelProperty;
+                            Element subgroupElement = (Element) document.createElement("subgroup");
+                            subgroupElement.setAttribute("name", subgroup.getCanonicalName());
+
+                            Vector subgroupProperties = subgroup.getProperties();
+                            for (int k = 0; k < subgroupProperties.size(); k++) {
+                                Object subgroupProperty = subgroupProperties.get(k);
+
+                                if (subgroupProperty instanceof ModelProperty) {
+                                    ModelProperty property = (ModelProperty)subgroupProperty;
+                                    Element propertyElement = createPropertyElement(document, property);
+                                    subgroupElement.appendChild(propertyElement);
+                                    subgroupElement.appendChild(document.createTextNode("\n"));
+                                }
+                            }
+                            groupElement.appendChild(subgroupElement);
+                            groupElement.appendChild(document.createTextNode("\n"));
+                        }
                     }
                 }
                 element.appendChild(groupElement);
@@ -379,6 +384,31 @@ public class ModelTree extends JAMSTree {
         }
 
         return document;
+    }
+
+    private Element createPropertyElement(Document document, ModelProperty property) {
+        Element propertyElement = (Element) document.createElement("property");
+        propertyElement.setAttribute("component", property.component.getName());
+        if (property.var != null) {
+            propertyElement.setAttribute("attribute", property.var.name);
+            propertyElement.setAttribute("type", property.var.type.getSimpleName());
+        } else if (property.attribute != null) {
+            propertyElement.setAttribute("attribute", property.attribute.getName());
+            propertyElement.setAttribute("type", property.attribute.getType().getSimpleName());
+        } else {
+            propertyElement.setAttribute("attribute", "%enable%");
+            propertyElement.setAttribute("type", JUICE.JAMS_DATA_TYPES[0].getSimpleName());
+        }
+        propertyElement.setAttribute("default", property.defaultValue);
+        propertyElement.setAttribute("description", property.description);
+        propertyElement.setAttribute("name", property.name);
+        propertyElement.setAttribute("value", property.value);
+        propertyElement.setAttribute("range", "" + property.lowerBound + ";" + property.upperBound);
+        if (property.length > 0) {
+            propertyElement.setAttribute("length", "" + property.length);
+        }
+
+        return propertyElement;
     }
 
     private Element getSubDoc(JAMSNode rootNode, Document document) {

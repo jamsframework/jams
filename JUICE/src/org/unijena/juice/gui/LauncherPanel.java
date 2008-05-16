@@ -32,6 +32,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -44,6 +45,8 @@ import javax.swing.JTabbedPane;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;
 import org.unijena.juice.*;
+import org.unijena.juice.ModelProperties.Group;
+import org.unijena.juice.ModelProperties.ModelElement;
 import org.unijena.juice.ModelProperties.ModelProperty;
 
 /**
@@ -59,6 +62,7 @@ public class LauncherPanel extends JPanel {
     private JTabbedPane tabbedPane = new JTabbedPane();
     private HashMap<ModelProperty, InputComponent> inputMap = new HashMap<ModelProperty, InputComponent>();
     private ModelPropertyDlg propertyDlg = new ModelPropertyDlg(JUICE.getJuiceFrame());
+    private ModelSubgroupDlg subgroupDlg = new ModelSubgroupDlg(JUICE.getJuiceFrame());
     private GroupEditDlg groupEditDlg = new GroupEditDlg(JUICE.getJuiceFrame());
     private HashMap<ModelProperties.Group, JPanel> groupPanels;
     private HashMap<ModelProperties.Group, JScrollPane> groupPanes;
@@ -83,6 +87,14 @@ public class LauncherPanel extends JPanel {
         addPropertyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 addProperty();
+            }
+        });
+        
+        JButton addSubgroupButton = new JButton("Add Subgroup");
+        addSubgroupButton.setPreferredSize(BUTTON_DIMENSION);
+        addSubgroupButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addSubgroup();
             }
         });
         
@@ -141,12 +153,13 @@ public class LauncherPanel extends JPanel {
         innerButtonPanel.setLayout(gblButton);
         //innerButtonPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
         
-        LHelper.addGBComponent(innerButtonPanel, gblButton, addPropertyButton, 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(innerButtonPanel, gblButton, addGroupButton, 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(innerButtonPanel, gblButton, moveupGroupButton, 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(innerButtonPanel, gblButton, movedownGroupButton, 1, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(innerButtonPanel, gblButton, editGroupButton, 2, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(innerButtonPanel, gblButton, delGroupButton, 2, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(innerButtonPanel, gblButton, addPropertyButton,  0, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(innerButtonPanel, gblButton, addSubgroupButton,  0, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(innerButtonPanel, gblButton, addGroupButton,     1, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(innerButtonPanel, gblButton, editGroupButton,    1, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(innerButtonPanel, gblButton, moveupGroupButton,  2, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(innerButtonPanel, gblButton, movedownGroupButton,2, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(innerButtonPanel, gblButton, delGroupButton,     3, 0, 1, 1, 0, 0);
         
         mainButtonPanel.add(innerButtonPanel);
         
@@ -288,11 +301,15 @@ public class LauncherPanel extends JPanel {
         groupPanels.remove(group);
     }
     
-    public void updateGroup(ModelProperties.Group group) {
+    public void updateGroup(Group group) {
         
+        if (group.isSubGroup())
+        {
+            updateGroup(group.getGroup());
+            return;
+        }
         updateProperties();
-        
-        InputComponent ic;
+
         GridBagLayout gbl = new GridBagLayout();
         
         JPanel contentPanel = groupPanels.get(group);
@@ -300,77 +317,50 @@ public class LauncherPanel extends JPanel {
         contentPanel.removeAll();
         contentPanel.setLayout(gbl);
         
-        int y = 0;
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(" "), 3, 0, 1, 1, 1, 1);
+        int y = 1;
         
-        ArrayList<ModelProperty> properties = group.getProperties();
-        
+        Vector properties = group.getProperties();
         for (int j = 0; j < properties.size(); j++) {
-            ModelProperty property = properties.get(j);
-            
-            LHelper.addGBComponent(contentPanel, gbl, new JLabel(property.name), 0, y, 1, 1, 0, 0);
-            if (property.var != null) {
-                ic = LHelper.createInputComponent(property.var.type.getSimpleName());
-            } else if (property.attribute != null) {
-                ic = LHelper.createInputComponent(property.attribute.getType().getSimpleName());
-            } else {
-                ic = LHelper.createInputComponent(JUICE.JAMS_DATA_TYPES[0].getSimpleName());
+            Object modelElement = properties.get(j);
+
+            // <@todo> groups consists of subgroups and properties,
+            //          subgroups consists of properties
+            //          this could be recursive too
+            if (modelElement instanceof ModelProperty) {
+                
+                ModelProperty property = (ModelProperty)modelElement;
+                JPanel buttonPanel = createPropertyButtonPanel(contentPanel, gbl, property, y);
+                LHelper.addGBComponent(contentPanel, gbl, buttonPanel, 3, y, 1, 1, 1, 1);
             }
-            ic.setRange(property.lowerBound, property.upperBound);
-            ic.setLength(property.length);
-            ic.getComponent().setToolTipText(property.description);
-            ic.setValue(property.value);
-            
-            inputMap.put(property, ic);
-            LHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, y, 2, 1, 1, 1);
-            JPanel buttonPanel = new JPanel();
-            buttonPanel.setBorder(BorderFactory.createEmptyBorder());
-            
-            PropertyButton downButton = new PropertyButton(property);
-            downButton.setToolTipText("Move down");
-            downButton.setIcon(DOWN_ICON);
-            downButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    PropertyButton button = (PropertyButton) e.getSource();
-                    moveDownProperty(button.property);
+            if (modelElement instanceof Group) {
+                Group subgroup = (Group)modelElement;
+                Vector subgroupProperties = subgroup.getProperties();
+
+                int height = subgroupProperties.size() + 3;
+                
+                JPanel subgroupPanel = new JPanel(gbl);
+                subgroupPanel.setBorder(BorderFactory.createTitledBorder(subgroup.getCanonicalName()));
+                LHelper.addGBComponent(contentPanel, gbl, subgroupPanel, 0, y, 3, height, 1, 1);
+                JPanel sgButtonPanel = createSubgroupButtonPanel(subgroup);
+                LHelper.addGBComponent(contentPanel, gbl, sgButtonPanel, 3, y, 3, 1, 1, 1);
+                int row = y + 1;
+                for (int k = 0; k < subgroupProperties.size(); k++) {
+                    Object subgroupElement = subgroupProperties.get(k);
+
+                    if (subgroupElement instanceof ModelProperty) {
+                        row++;
+                       
+                        ModelProperty subgroupProperty = (ModelProperty)subgroupElement;
+                        JPanel buttonPanel = createPropertyButtonPanel(subgroupPanel, gbl, subgroupProperty, row);
+                        LHelper.addGBComponent(subgroupPanel, gbl, buttonPanel, 3, row, 3, 1, 1, 1);
+                    }
                 }
-            });
-            buttonPanel.add(downButton);
-            
-            PropertyButton upButton = new PropertyButton(property);
-            upButton.setToolTipText("Move up");
-            upButton.setIcon(UP_ICON);
-            upButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    PropertyButton button = (PropertyButton) e.getSource();
-                    moveUpProperty(button.property);
-                }
-            });
-            buttonPanel.add(upButton);
-            
-            PropertyButton delButton = new PropertyButton(property);
-            delButton.setToolTipText("Delete");
-            delButton.setText("-");
-            delButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    PropertyButton button = (PropertyButton) e.getSource();
-                    deleteProperty(button.property);
-                }
-            });
-            buttonPanel.add(delButton);
-            
-            PropertyButton editButton = new PropertyButton(property);
-            editButton.setToolTipText("Edit");
-            editButton.setText("...");
-            editButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    PropertyButton button = (PropertyButton) e.getSource();
-                    editProperty(button.property);
-                }
-            });
-            buttonPanel.add(editButton);
-            
-            LHelper.addGBComponent(contentPanel, gbl, buttonPanel, 3, y, 1, 1, 1, 1);
-            
+                row = row + 2;
+                LHelper.addGBComponent(contentPanel, gbl, new JLabel(" "), 3, row, 1, 1, 1, 1);
+                y = row;
+
+            }
             y++;
         }
         
@@ -406,48 +396,191 @@ public class LauncherPanel extends JPanel {
         }
     }
     
-    private void moveDownProperty(ModelProperty property) {
+/**
+ * createPropertyButtonPanel
+ * @param contentPanel - the content panel
+ * @param gbl - the layout
+ * @param property - the property
+ * @param row - row number of actual row
+ * @return buttonPanel
+ */
+    private JPanel createPropertyButtonPanel(JPanel contentPanel, GridBagLayout gbl, ModelProperty property, int row) {
+
+        JPanel buttonPanel = new JPanel();
+        InputComponent ic;
         
-        JPanel contentPanel = groupPanels.get(property.getGroup());
-        ArrayList<ModelProperty> list = property.getGroup().getProperties();
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(property.name), 0, row, 1, 1, 0, 0);
+        if (property.var != null) {
+            ic = LHelper.createInputComponent(property.var.type.getSimpleName());
+        } else if (property.attribute != null) {
+            ic = LHelper.createInputComponent(property.attribute.getType().getSimpleName());
+        } else {
+            ic = LHelper.createInputComponent(JUICE.JAMS_DATA_TYPES[0].getSimpleName());
+        }
+        ic.setRange(property.lowerBound, property.upperBound);
+        ic.setLength(property.length);
+        ic.getComponent().setToolTipText(property.description);
+        ic.setValue(property.value);
+
+        inputMap.put(property, ic);
+        LHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder());
+
+        ElementButton downButton = new ElementButton(property);
+        downButton.setToolTipText("Move down");
+        downButton.setIcon(DOWN_ICON);
+        downButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ElementButton button = (ElementButton) e.getSource();
+                moveDownElement(button.element);
+            }
+        });
+        buttonPanel.add(downButton);
+
+        ElementButton upButton = new ElementButton(property);
+        upButton.setToolTipText("Move up");
+        upButton.setIcon(UP_ICON);
+        upButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ElementButton button = (ElementButton) e.getSource();
+                moveUpElement(button.element);
+            }
+        });
+        buttonPanel.add(upButton);
+
+        ElementButton delButton = new ElementButton(property);
+        delButton.setToolTipText("Delete");
+        delButton.setText("-");
+        delButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ElementButton button = (ElementButton) e.getSource();
+                deleteElement(button.element);
+            }
+        });
+        buttonPanel.add(delButton);
+
+        ElementButton editButton = new ElementButton(property);
+        editButton.setToolTipText("Edit");
+        editButton.setText("...");
+        editButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ElementButton button = (ElementButton) e.getSource();
+                editProperty((ModelProperty)button.element);
+            }
+        });
+        buttonPanel.add(editButton);
+
+        return buttonPanel;
+    }
+
+
+    private JPanel createSubgroupButtonPanel(Group subgroup) {
+
+        JPanel buttonPanel = new JPanel();
         
-        int index = list.indexOf(property);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder());
+
+        ElementButton downButton = new ElementButton(subgroup);
+        downButton.setToolTipText("Move down");
+        downButton.setIcon(DOWN_ICON);
+        downButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ElementButton button = (ElementButton) e.getSource();
+                moveDownElement(button.element);
+            }
+        });
+        buttonPanel.add(downButton);
+
+        ElementButton upButton = new ElementButton(subgroup);
+        upButton.setToolTipText("Move up");
+        upButton.setIcon(UP_ICON);
+        upButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ElementButton button = (ElementButton) e.getSource();
+                moveUpElement(button.element);
+            }
+        });
+        buttonPanel.add(upButton);
+
+        ElementButton delButton = new ElementButton(subgroup);
+        delButton.setToolTipText("Delete");
+        delButton.setText("-");
+        delButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ElementButton button = (ElementButton) e.getSource();
+                deleteElement(button.element);
+            }
+        });
+        buttonPanel.add(delButton);
+
+        ElementButton editButton = new ElementButton(subgroup);
+        editButton.setToolTipText("Edit");
+        editButton.setText("...");
+        editButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ElementButton button = (ElementButton) e.getSource();
+                editSubgroup((Group)button.element);
+            }
+        });
+        buttonPanel.add(editButton);
+
+        return buttonPanel;
+    }
+
+    
+    private void moveDownElement(ModelElement element) {
+
+        Vector list = element.getGroup().getProperties();
+        int index = list.indexOf(element);
         if (index < list.size()-1) {
             list.remove(index);
-            list.add(index+1, property);
+            list.add(index+1, element);
         }
         
-        updateGroup(property.getGroup());
+        Group mainGroup = element.getMainGroup();
+        updateGroup(mainGroup);
+        JPanel contentPanel = groupPanels.get(mainGroup);
         contentPanel.updateUI();
     }
     
-    private void moveUpProperty(ModelProperty property) {
+    private void moveUpElement(ModelElement element) {
         
-        JPanel contentPanel = groupPanels.get(property.getGroup());
-        ArrayList<ModelProperty> list = property.getGroup().getProperties();
-        
-        int index = list.indexOf(property);
+        Vector list = element.getGroup().getProperties();
+        int index = list.indexOf(element);
         if (index > 0) {
             list.remove(index);
-            list.add(index-1, property);
+            list.add(index-1, element);
         }
         
-        updateGroup(property.getGroup());
+        Group mainGroup = element.getMainGroup();
+        updateGroup(mainGroup);
+        JPanel contentPanel = groupPanels.get(mainGroup);
         contentPanel.updateUI();
     }
     
-    private void deleteProperty(ModelProperty property) {
+    private void deleteElement(ModelElement element) {
         
-        JPanel contentPanel = groupPanels.get(property.getGroup());
-        ArrayList<ModelProperty> list = property.getGroup().getProperties();
+        Vector list = element.getGroup().getProperties();
         
+        // subgroup has to be empty
+        if (element instanceof Group)
+        {
+            Vector test = ((Group)element).getProperties();
+            if (test.size() > 0) {
+                LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Subgroup has to be empty.", "Deletion not possible");
+                return;
+            }
+        }
+
         int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), "Really delete this property?", "Delete property");
         if (result != JOptionPane.YES_OPTION) {
             return;
         }
-        list.remove(property);
+        list.remove(element);
         
-        updateGroup(property.getGroup());
+        Group mainGroup = element.getMainGroup();
+        JPanel contentPanel = groupPanels.get(mainGroup);
+        updateGroup(mainGroup);
         contentPanel.updateUI();
     }
     
@@ -459,7 +592,7 @@ public class LauncherPanel extends JPanel {
         }
         String groupName = tabbedPane.getTitleAt(index);
         
-        propertyDlg.update(view.getModelProperties().getGroupNames(), view.getComponentDescriptors(), null, groupName);
+        propertyDlg.update(view.getModelProperties().getAllGroupNames(), view.getComponentDescriptors(), null, groupName);
         propertyDlg.setVisible(true);
         
         if (propertyDlg.getResult() == ModelPropertyDlg.OK_RESULT) {
@@ -479,17 +612,42 @@ public class LauncherPanel extends JPanel {
             
             ModelProperties.Group group = view.getModelProperties().getGroup(newGroupName);
             view.getModelProperties().addProperty(group, property);
+            if (group.isSubGroup())
+                group = group.getGroup();
             
             updateGroup(group);
             groupPanels.get(group).updateUI();
         }
     }
     
+    private void addSubgroup() {
+        int index = tabbedPane.getSelectedIndex();
+        if (index < 0) {
+            return;
+        }
+        String groupName = tabbedPane.getTitleAt(index);
+        
+        subgroupDlg.update(view.getModelProperties().getGroupNames(), null, groupName);
+        subgroupDlg.setVisible(true);
+        
+        if (subgroupDlg.getResult() == ModelSubgroupDlg.OK_RESULT) {
+            
+            groupName = subgroupDlg.getGroup();
+            ModelProperties.Group group = view.getModelProperties().getGroup(groupName);
+            
+            String subgroubName = subgroupDlg.getName();
+
+            ModelProperties.Group subgroup = view.getModelProperties().createSubgroup(group, subgroubName);
+            updateGroup(group);
+            groupPanels.get(group).updateUI();
+        }
+    }
+
     private void editProperty(ModelProperty property) {
         
         ModelProperties.Group group = property.getGroup();
         
-        propertyDlg.update(view.getModelProperties().getGroupNames(), view.getComponentDescriptors(), property, group.getName());
+        propertyDlg.update(view.getModelProperties().getAllGroupNames(), view.getComponentDescriptors(), property, group.getName());
         propertyDlg.setVisible(true);
         
         if (propertyDlg.getResult() == ModelPropertyDlg.OK_RESULT) {
@@ -516,7 +674,32 @@ public class LauncherPanel extends JPanel {
             updateGroup(group);
         }
     }
-    
+
+    private void editSubgroup(Group subgroup) {
+        
+        ModelProperties.Group group = subgroup.getGroup();
+        
+        subgroupDlg.update(view.getModelProperties().getGroupNames(), subgroup, group.getName());
+        subgroupDlg.setVisible(true);
+        
+        if (subgroupDlg.getResult() == ModelSubgroupDlg.OK_RESULT) {
+            String newGroupName = subgroupDlg.getGroup();
+            
+            subgroup.name = subgroupDlg.getName();
+            
+            ModelProperties.Group newGroup = view.getModelProperties().getGroup(newGroupName);
+            
+            if (!newGroup.equals(group)) {
+                view.getModelProperties().removePropertyFromGroup(group, subgroup);
+                view.getModelProperties().addPropertyToGroup(newGroup, subgroup);
+                
+                updateGroup(newGroup);
+            }
+            
+            updateGroup(group);
+        }
+    }
+
     public boolean verifyInputs() {
         
         // verify all provided values
@@ -553,15 +736,15 @@ public class LauncherPanel extends JPanel {
         }
     }
     
-    class PropertyButton extends JButton {
+    class ElementButton extends JButton {
         
-        ModelProperty property;
+        ModelElement element;
         
-        public PropertyButton(ModelProperty property) {
+        public ElementButton(ModelElement element) {
             super();
             this.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
             this.setPreferredSize(new Dimension(20,14));
-            this.property = property;
+            this.element = element;
         }
     }
 }

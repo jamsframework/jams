@@ -57,6 +57,8 @@ import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
 import org.unijena.juice.*;
 import org.unijena.juice.ComponentDescriptor;
+import org.unijena.juice.ModelProperties.Group;
+import org.unijena.juice.ModelProperties.ModelProperty;
 import org.unijena.juice.gui.tree.ModelTree;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -445,7 +447,6 @@ public class ModelView {
     }
 
     public void setModelParameters(Element launcherNode) {
-
         Node node;
 
         if (launcherNode != null) {
@@ -453,62 +454,90 @@ public class ModelView {
             for (int gindex = 0; gindex < groupNodes.getLength(); gindex++) {
                 node = groupNodes.item(gindex);
                 Element groupElement = (Element) node;
-                String group = groupElement.getAttribute("name");
-                getModelProperties().addGroup(group);
+                String groupName = groupElement.getAttribute("name");
+                getModelProperties().addGroup(groupName);
+                Group group = getModelProperties().getGroup(groupName);
 
-                NodeList propertyNodes = groupElement.getElementsByTagName("property");
-                for (int pindex = 0; pindex < propertyNodes.getLength(); pindex++) {
-                    node = propertyNodes.item(pindex);
-                    Element propertyElement = (Element) node;
-
-                    ModelProperties.ModelProperty property = getModelProperties().createProperty();
-                    property.component = getComponentDescriptor(propertyElement.getAttribute("component"));
-
-                    if (property.component == null) {
-                        LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Component \"" + propertyElement.getAttribute("component") +
-                                "\" does not exist, but is referred in list of model parameters!\n" +
-                                "Will be removed when model is saved!", "Model loading error");
-                    } else {
-
-                        String attributeName = propertyElement.getAttribute("attribute");
-
-                        property.var = property.component.getComponentAttributes().get(attributeName);
-
-                        //in case this is a context component, check whether this refers to a context attribute
-                        if (property.attribute == null) {
-                            property.attribute = property.component.getContextAttributes().get(attributeName);
+                // @todo subgroups and properties recursive
+                NodeList groupChildNodes = groupElement.getChildNodes();
+                for (int pindex = 0; pindex < groupChildNodes.getLength(); pindex++) {
+                    node = groupChildNodes.item(pindex);
+                    if (node.getNodeName().equalsIgnoreCase("property") ) {
+                        Element propertyElement = (Element)node;
+                        ModelProperty property = getPropertyFromElement(propertyElement);
+                        if (property != null)
+                        {
+                            getModelProperties().addProperty(group, property);
                         }
+                    }
+                    if (node.getNodeName().equalsIgnoreCase("subgroup")) {
+                        Element subgroupElement = (Element)node;
+                        String subgroupName= subgroupElement.getAttribute("name");
+                        Group subgroup = getModelProperties().createSubgroup(group, subgroupName);
 
-                        //check wether the referred var is existing or not
-                        if ((property.attribute == null) && (property.var == null) && !attributeName.equals("%enable%")) {
-                            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Attribute " + attributeName +
-                                    " does not exist in component " + property.component.getName() +
-                                    ". Removing associated property!", "Model loading error");
-                            continue;
+                        NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
+                        for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
+                            Element propertyElement = (Element) propertyNodes.item(kindex);
+                            ModelProperty property = getPropertyFromElement(propertyElement);
+                            if (property != null)
+                            {
+                                getModelProperties().addProperty(subgroup, property);
+                            }
                         }
-
-                        property.defaultValue = propertyElement.getAttribute("default");
-                        property.description = propertyElement.getAttribute("description");
-                        property.name = propertyElement.getAttribute("name");
-                        property.value = propertyElement.getAttribute("value");
-                        String range = propertyElement.getAttribute("range");
-                        StringTokenizer tok = new StringTokenizer(range, ";");
-                        if (tok.countTokens() == 2) {
-                            property.lowerBound = Double.parseDouble(tok.nextToken());
-                            property.upperBound = Double.parseDouble(tok.nextToken());
-                        }
-                        String lenStr = propertyElement.getAttribute("length");
-                        if (lenStr != null && lenStr.length() > 0) {
-                            property.length = Integer.parseInt(lenStr);
-                        }
-
-                        getModelProperties().addProperty(getModelProperties().getGroup(group), property);
                     }
                 }
             }
         }
+        return;
     }    
-    
+ 
+    private ModelProperty getPropertyFromElement(Element propertyElement) {
+        ModelProperties.ModelProperty property = getModelProperties().createProperty();
+        property.component = getComponentDescriptor(propertyElement.getAttribute("component"));
+
+        if (property.component == null) {
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Component \"" + propertyElement.getAttribute("component") +
+                    "\" does not exist, but is referred in list of model parameters!\n" +
+                    "Will be removed when model is saved!", "Model loading error");
+            return null;
+        }
+
+        String attributeName = propertyElement.getAttribute("attribute");
+
+        property.var = property.component.getComponentAttributes().get(attributeName);
+
+        //in case this is a context component, check whether this refers to a context attribute
+        if (property.attribute == null) {
+            property.attribute = property.component.getContextAttributes().get(attributeName);
+        }
+
+        //check wether the referred var is existing or not
+        if ((property.attribute == null) && (property.var == null) && !attributeName.equals("%enable%")) {
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Attribute " + attributeName +
+                    " does not exist in component " + property.component.getName() +
+                    ". Removing associated property!", "Model loading error");
+            return null;
+        }
+
+        property.defaultValue = propertyElement.getAttribute("default");
+        property.description = propertyElement.getAttribute("description");
+        property.name = propertyElement.getAttribute("name");
+        property.value = propertyElement.getAttribute("value");
+        String range = propertyElement.getAttribute("range");
+        StringTokenizer tok = new StringTokenizer(range, ";");
+        if (tok.countTokens() == 2) {
+            property.lowerBound = Double.parseDouble(tok.nextToken());
+            property.upperBound = Double.parseDouble(tok.nextToken());
+        }
+        String lenStr = propertyElement.getAttribute("length");
+        if (lenStr != null && lenStr.length() > 0) {
+            property.length = Integer.parseInt(lenStr);
+        }
+
+        return property;
+        
+    }
+
     public Document getModelDoc() {
         return modelDoc;
     }
