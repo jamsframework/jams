@@ -521,7 +521,7 @@ public class JAMSLauncher extends JFrame {
             scrollPane = new JScrollPane(scrollPanel);
 
             Element groupElement = (Element) groups.item(i);
-            LHelper.addGBComponent(contentPanel, gbl, new JLabel(" "), 3, 0, 1, 0.5, 1, 1); // space line
+            LHelper.addGBComponent(contentPanel, gbl, new JLabel(" "), 3, 0, 1, 1, 1, 1); // space line
 
             int row = 1;
             NodeList groupChildNodes = groupElement.getChildNodes();
