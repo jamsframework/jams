@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -65,6 +66,7 @@ import org.unijena.jams.runtime.JAMSRuntime;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -501,7 +503,7 @@ public class JAMSLauncher extends JFrame {
         JPanel contentPanel, scrollPanel;
         JScrollPane scrollPane;
         GridBagLayout gbl;
-        InputComponent ic;
+        Node node;
 
         Element root = doc.getDocumentElement();
         setTitle(getBaseTitle() + ": " + root.getAttribute("name") + " [" + this.modelFilename + "]");
@@ -518,41 +520,40 @@ public class JAMSLauncher extends JFrame {
             scrollPanel.add(contentPanel);
             scrollPane = new JScrollPane(scrollPanel);
 
-            Element group = (Element) groups.item(i);
+            Element groupElement = (Element) groups.item(i);
+            LHelper.addGBComponent(contentPanel, gbl, new JLabel(" "), 3, 0, 1, 0.5, 1, 1); // space line
 
-            int y = 0;
-            NodeList properties = group.getElementsByTagName("property");
-            for (int j = 0; j < properties.getLength(); j++) {
-                Element property = (Element) properties.item(j);
-                // this.addSetting(property.getAttribute("component"),
-                // property.getAttribute("attribute"),
-                // property.getAttribute("value"));
-
-                LHelper.addGBComponent(contentPanel, gbl, new JLabel(property.getAttribute("name")), 0, y, 1, 1, 0, 0);
-                ic = LHelper.createInputComponent(property.getAttribute("type"));
-
-                StringTokenizer tok = new StringTokenizer(property.getAttribute("range"), ";");
-                if (tok.countTokens() == 2) {
-                    String lower = tok.nextToken();
-                    String upper = tok.nextToken();
-                    ic.setRange(Double.parseDouble(lower), Double.parseDouble(upper));
+            int row = 1;
+            NodeList groupChildNodes = groupElement.getChildNodes();
+            for (int pindex = 0; pindex < groupChildNodes.getLength(); pindex++) {
+                node = groupChildNodes.item(pindex);
+                if (node.getNodeName().equalsIgnoreCase("property") ) {
+                    Element propertyElement = (Element)node;
+                    drawProperty(contentPanel, scrollPane, gbl, propertyElement, row);
+                    row++;
                 }
-                String lenStr = property.getAttribute("length");
-                if (lenStr != null && lenStr.length() > 0) {
-                    ic.setLength(Integer.parseInt(lenStr));
+                if (node.getNodeName().equalsIgnoreCase("subgroup")) {
+                    Element subgroupElement = (Element)node;
+                    String subgroupName= subgroupElement.getAttribute("name");
+                    // create panel and draw it
+                    JPanel subgroupPanel = new JPanel(gbl);
+                    subgroupPanel.setBorder(BorderFactory.createTitledBorder(subgroupName));
+                    row++;
+                    LHelper.addGBComponent(contentPanel, gbl, subgroupPanel, 0, row, 3, 1, 1, 1);
+                    row++;
+                    NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
+                    for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
+                        Element propertyElement = (Element) propertyNodes.item(kindex);
+                        drawProperty(subgroupPanel, scrollPane, gbl, propertyElement, row);
+                        row++;
+                    }
+                    row = row + 2;
+                    LHelper.addGBComponent(contentPanel, gbl, new JLabel(" "), 3, row, 1, 1, 1, 1); // space line
+                    row++;
                 }
-
-                ic.getComponent().setToolTipText(property.getAttribute("description"));
-                ic.setValue(property.getAttribute("value"));
-
-                getInputMap().put(ic, property);
-                getGroupMap().put(ic, scrollPane);
-
-                LHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, y, 2, 1, 1, 1);
-                y++;
             }
 
-            tabbedPane.addTab(group.getAttribute("name"), scrollPane);
+            tabbedPane.addTab(groupElement.getAttribute("name"), scrollPane);
         }
 
         runButton.setEnabled(true);
@@ -561,6 +562,31 @@ public class JAMSLauncher extends JFrame {
         saveAsItem.setEnabled(true);
     }
 
+    private void drawProperty(JPanel contentPanel, JScrollPane scrollPane, GridBagLayout gbl, Element property, int row) {
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(property.getAttribute("name")), 0, row, 1, 1, 0, 0);
+        InputComponent ic =  LHelper.createInputComponent(property.getAttribute("type"));
+
+        StringTokenizer tok = new StringTokenizer(property.getAttribute("range"), ";");
+        if (tok.countTokens() == 2) {
+            String lower = tok.nextToken();
+            String upper = tok.nextToken();
+            ic.setRange(Double.parseDouble(lower), Double.parseDouble(upper));
+        }
+        String lenStr = property.getAttribute("length");
+        if (lenStr != null && lenStr.length() > 0) {
+            ic.setLength(Integer.parseInt(lenStr));
+        }
+
+        ic.getComponent().setToolTipText(property.getAttribute("description"));
+        ic.setValue(property.getAttribute("value"));
+
+        getInputMap().put(ic, property);
+        getGroupMap().put(ic, scrollPane);
+
+        LHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
+        
+        return;
+    }
     private boolean closeModel() {
 
         if (this.modelDocument == null) {
