@@ -86,4 +86,13 @@ public class JAMSTools {
     public static String[] arrayStringAsStringArray(String arrayString) {
         return toArray(arrayString, ";");
     }
+    
+    public static boolean isEmptyString(String theString) {
+        if ( theString == null ||
+             theString.length() == 0 ||
+             theString.trim().length() == 0)
+            return true;
+        else
+            return false;
+    }
 }
