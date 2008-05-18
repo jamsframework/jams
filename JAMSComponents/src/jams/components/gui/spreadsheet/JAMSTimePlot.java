@@ -322,6 +322,8 @@ public class JAMSTimePlot {
         dateAxis.setLabel(xAxisTitle);
         
         rightRenderer = getRenderer(renderer);
+        axisRIGHT.setInverted(inverted);
+        axisRIGHT.setLabel(nameRight);
         
         for(int k=0; k<c; k++){
 
@@ -341,21 +343,15 @@ public class JAMSTimePlot {
         
         if(corr == 0){
 
-            axisRIGHT.setInverted(inverted);
-            axisRIGHT.setLabel(nameRight);
-            
+                       
             axisLEFT.setVisible(false);
-            
-            
             plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
             plot.setRangeAxis(1, axisRIGHT);
             plot.setDataset(1, dataRight);
             plot.setRenderer(1, rightRenderer);
         } else {
             axisLEFT.setVisible(true);
-            axisRIGHT.setInverted(inverted);
-            axisRIGHT.setLabel(nameRight);
-
+            plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
             plot.setRangeAxis(1, axisRIGHT);
             plot.setDataset(1, dataRight);
             plot.setRenderer(1, rightRenderer);

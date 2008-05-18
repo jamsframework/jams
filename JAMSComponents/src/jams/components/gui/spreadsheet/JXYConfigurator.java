@@ -404,7 +404,7 @@ public class JXYConfigurator extends JFrame{
         }
         
         //initial data intervals
-        this.range = setInitialDataIntervals();
+        this.range = setDataIntervals();
         
         //set data intervals
         for(int k=0; k<propVector.size(); k++){
@@ -412,8 +412,10 @@ public class JXYConfigurator extends JFrame{
             prop = propVector.get(k);
             
             prop.setXIntervals(range);
-            prop.setDataSTART(this.row_start);
-            prop.setDataEND(this.row_end);
+            if(k == x_series_index){
+              prop.setDataSTART(this.row_start);
+              prop.setDataEND(this.row_end);
+            }
             prop.applyXYProperties();
             addPropGroup(propVector.get(k));
 
@@ -482,8 +484,8 @@ public class JXYConfigurator extends JFrame{
         }
         java.util.Arrays.sort(sorted_Row);       
     }
-    
-    public int[] setInitialDataIntervals(){
+      
+    public int[] setDataIntervals(){
         
 //        double row_start = (Double) table.getValueAt(rowSelection[0], x_series_col);
 //        double row_end = (Double) table.getValueAt(rowSelection[rowSelection.length - 1], x_series_col);
@@ -505,7 +507,7 @@ public class JXYConfigurator extends JFrame{
         
         int[] range = new int[2];  
         resortData(x_prop.getSelectedColumn());
-        range = setInitialDataIntervals();
+        range = setDataIntervals();
         this.range = range;
         x_prop.setXIntervals(range);
         x_prop.setDataSTART(this.row_start);
@@ -1421,8 +1423,8 @@ public class JXYConfigurator extends JFrame{
                 GraphProperties prop = propVector.get(i);
                 
                 prop.setXIntervals(range);
-                prop.setDataSTART(row_start);
-                prop.setDataEND(row_end);
+//                prop.setDataSTART(row_start);
+//                prop.setDataEND(row_end);
                 prop.applyXYProperties();
                 
 

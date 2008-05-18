@@ -136,7 +136,7 @@ public class GraphProperties {
     JButton downButton;
     
     JCheckBox invBox;
-    JRadioButton isXAxis;
+    JToggleButton isXAxis;
 
     JLabel nameLabel;
     
@@ -274,7 +274,7 @@ public class GraphProperties {
         remButton.setToolTipText("remove button");
         
         invBox = new JCheckBox("invert axis");
-        isXAxis = new JRadioButton("x");
+        isXAxis = new JRadioButton("set X");
         isXAxis.addActionListener(isXListener);
         
         addButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -774,7 +774,7 @@ public class GraphProperties {
         return invBox;
     }
     
-    public JRadioButton getIsXAxisButton(){
+    public JToggleButton getIsXAxisButton(){
         return isXAxis;
     }
     
@@ -943,18 +943,16 @@ public class GraphProperties {
                 cxyconf.downGraph(thisProp);
                 
                 //applyXYProperties();
-            }
-            
-            
-            
-            //setVisible(false);
+            }            
         }
     };
     
     ActionListener isXListener = new ActionListener(){
         public void actionPerformed(ActionEvent xe){
             
+            
             cxyconf.xChanged(thisProp);
+            cxyconf.setMaxDataIntervals(thisProp);
         }
     };
     

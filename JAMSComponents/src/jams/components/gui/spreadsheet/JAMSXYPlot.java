@@ -182,6 +182,8 @@ public class JAMSXYPlot {
             case 4:
                 XYDotRenderer dotR = new XYDotRenderer();
                 dotR.setDefaultEntityRadius(2);
+                dotR.setDotHeight(5);
+                dotR.setDotWidth(5);
                 r = dotR;
                 break;
       
@@ -279,10 +281,23 @@ public class JAMSXYPlot {
             }
         }
         if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
+        
+        if(corr == 1){
+            axisRIGHT.setVisible(false);
+            plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+            plot.setRangeAxis(0, axisLEFT);
+            plot.setDataset(0, dataLeft);
+            plot.setRenderer(0, leftRenderer);
+        } else {
+            axisRIGHT.setVisible(true);
+            plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+            plot.setRangeAxis(0, axisLEFT);
+            plot.setDataset(0, dataLeft);
+            plot.setRenderer(0, leftRenderer);
+            plot.mapDatasetToRangeAxis(0, 0);
+        }
+        
         plot.setDomainAxis(0, xAxis);
-        plot.setRangeAxis(0, axisLEFT);
-        plot.setDataset(0, dataLeft);
-        plot.setRenderer(0, leftRenderer);
         //plot.mapDatasetToDomainAxis(0, 0); //dataset einer achse zuordnen!
         
     }
@@ -298,8 +313,7 @@ public class JAMSXYPlot {
         dataRight = new XYSeriesCollection();
         
         
-        axisRIGHT.setInverted(inverted);
-        axisRIGHT.setLabel(nameRight);
+        
         xAxis.setLabel(xAxisTitle);
         
         rightRenderer = getRenderer(renderer);
@@ -323,12 +337,29 @@ public class JAMSXYPlot {
             }
         }
         if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
-        plot.setDomainAxis(0, xAxis);
-        plot.setRangeAxis(1, axisRIGHT);
-        plot.setDataset(1, dataRight);
-        plot.setRenderer(1, rightRenderer);
-        plot.mapDatasetToRangeAxis(1, 1);
+        
+        if(corr == 1){
+           
+            axisLEFT.setVisible(false);
+            axisRIGHT.setInverted(inverted);
+            axisRIGHT.setLabel(nameRight);
+            plot.setRangeAxis(1, axisRIGHT);
+            plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
+            plot.setDataset(1, dataRight);
+            plot.setRenderer(1, rightRenderer);
+        } else {
+            axisLEFT.setVisible(true);
+            axisRIGHT.setInverted(inverted);
+            axisRIGHT.setLabel(nameRight);
+            plot.setRangeAxis(1, axisRIGHT);
+            plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
+            plot.setDataset(1, dataRight);
+            plot.setRenderer(1, rightRenderer);
+            plot.mapDatasetToRangeAxis(1, 1);
+    
+        }
         plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
+        plot.setDomainAxis(0, xAxis);
 
     }
     
