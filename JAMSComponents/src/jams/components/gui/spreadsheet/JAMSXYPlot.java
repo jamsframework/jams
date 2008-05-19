@@ -269,7 +269,7 @@ public class JAMSXYPlot {
                     plot_count++;
                     GraphProperties prop = propVector.get(k);
                     dataLeft.addSeries(prop.getXYS());
-                    if(k-corr <= dataRight.getSeriesCount()){
+                    if(corr <= dataRight.getSeriesCount()){
                         dataRight.removeSeries(prop.getXYS());
                     }
                     leftRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
@@ -325,7 +325,7 @@ public class JAMSXYPlot {
                     plot_count++;
                     GraphProperties prop = propVector.get(k);
                     dataRight.addSeries(prop.getXYS());
-                    if( k-corr <=dataLeft.getSeriesCount()){
+                    if(corr <=dataLeft.getSeriesCount()){
                         dataLeft.removeSeries(prop.getXYS());
                     }
                     rightRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));

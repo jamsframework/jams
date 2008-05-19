@@ -324,9 +324,12 @@ public class GraphProperties {
 //        JTextField setLegend = new JTextField("Legend Entry", 14);
 
         String[] column = new String[table.getColumnCount()];
-        for(int i=0;i<table.getColumnCount();i++){      
-            column[i] = table.getColumnName(i);
-        }
+        Class test = table.getValueAt(0, 0).getClass();
+                   
+            for(int i=0;i<table.getColumnCount();i++){ 
+                    column[i] = table.getColumnName(i);      
+            }
+       
         
         
         

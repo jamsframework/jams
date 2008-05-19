@@ -265,11 +265,12 @@ public class JAMSTimePlot {
         
         for(int k=0; k<c; k++){ 
             
+            GraphProperties prop = propVector.get(k);
             if(propVector.get(k).getPosChoice().getSelectedItem() == "left"){
                 plot_count++;
-                GraphProperties prop = propVector.get(k);
+                //GraphProperties prop = propVector.get(k);
                 dataLeft.addSeries(prop.getTS());
-                if(k-corr <= dataRight.getSeriesCount()){
+                if(corr <= dataRight.getSeriesCount()){
                     dataRight.removeSeries(prop.getTS());
                 }
                 leftRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
@@ -286,7 +287,9 @@ public class JAMSTimePlot {
             plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
             plot.setRangeAxis(0, axisLEFT);
             plot.setDataset(0, dataLeft);
+            
             plot.setRenderer(0, leftRenderer);
+            plot.mapDatasetToRangeAxis(0, 0);
             
         } else {
         axisRIGHT.setVisible(true);
@@ -327,11 +330,12 @@ public class JAMSTimePlot {
         
         for(int k=0; k<c; k++){
 
+            GraphProperties prop = propVector.get(k);
             if(propVector.get(k).getPosChoice().getSelectedItem() == "right"){
                 plot_count++;
-                GraphProperties prop = propVector.get(k);
+                //GraphProperties prop = propVector.get(k);
                 dataRight.addSeries(prop.getTS());
-                if( k-corr <=dataLeft.getSeriesCount()){
+                if( corr <= dataLeft.getSeriesCount()){
                     dataLeft.removeSeries(prop.getTS());
                 }
                 rightRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
@@ -342,13 +346,13 @@ public class JAMSTimePlot {
         if((plot_count<2 || plot_count>2) && renderer == 7) rightRenderer = getRenderer(0);
         
         if(corr == 0){
-
-                       
+                 
             axisLEFT.setVisible(false);
             plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
             plot.setRangeAxis(1, axisRIGHT);
             plot.setDataset(1, dataRight);
             plot.setRenderer(1, rightRenderer);
+            plot.mapDatasetToRangeAxis(1, 1);
         } else {
             axisLEFT.setVisible(true);
             plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);

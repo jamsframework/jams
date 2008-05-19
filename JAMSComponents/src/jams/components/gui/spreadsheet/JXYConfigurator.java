@@ -327,7 +327,7 @@ public class JXYConfigurator extends JFrame{
 //        //createActionListener();
 //        
         //edTitleField.setColumns(20);
-        edTitleField.setText("Plot Title");
+        edTitleField.setText("XY Data Plot");
         edTitleField.setSize(40,10);
         edTitleField.addActionListener(plotbuttonclick);
         //edLeftField.setColumns(20);
@@ -382,6 +382,7 @@ public class JXYConfigurator extends JFrame{
                 prop.getUpButton().setEnabled(false);
                 prop.getDownButton().setEnabled(false);
             }else{
+                prop.getMaxButton().setEnabled(false);
                 prop.getDataChoiceSTART().setEnabled(false);
                 prop.getDataChoiceEND().setEnabled(false);
             }
@@ -401,6 +402,7 @@ public class JXYConfigurator extends JFrame{
             
             
             propVector.add(k,prop);
+            
         }
         
         //initial data intervals
@@ -716,7 +718,7 @@ public class JXYConfigurator extends JFrame{
             newProp.setPosition(dlg.getSide());
             i = dlg.getPosition();
             dlg.dispose();
-        
+            newProp.getDataChoice().setSelectedIndex(1);
         
         newProp.setColor(colour_cnt % 11);
         
@@ -725,6 +727,9 @@ public class JXYConfigurator extends JFrame{
             d_end = prop.getDataEND();
             newProp.setDataSTART(d_start);
             newProp.setDataEND(d_end);
+            newProp.getDataChoiceSTART().setEnabled(false);
+            newProp.getDataChoiceEND().setEnabled(false);
+            newProp.getMaxButton().setEnabled(false);
         }
         propVector.add(i,newProp);
   
@@ -896,6 +901,7 @@ public class JXYConfigurator extends JFrame{
                 propVector.get(i).getUpButton().setEnabled(true);
                 propVector.get(i).getDownButton().setEnabled(true);
                 propVector.get(i).getLegendField().setEnabled(true);
+                propVector.get(i).getMaxButton().setEnabled(false);
                 //propVector.get(i).applyXYProperties();
             }
             
@@ -915,6 +921,7 @@ public class JXYConfigurator extends JFrame{
         prop.getUpButton().setEnabled(false);
         prop.getDownButton().setEnabled(false);
         prop.getLegendField().setEnabled(false);
+        prop.getMaxButton().setEnabled(true);
         //prop.applyXYProperties();
     }
        

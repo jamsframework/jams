@@ -46,6 +46,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
     /** Creates a new instance of JAMSTableModel */
     
     public JAMSTableModel() {
+        
     }
     
     /* Konstruktor noch nicht auf time umgestellt!! */

@@ -316,7 +316,7 @@ public class JTSConfigurator extends JFrame{
 //        //createActionListener();
 //        
         //edTitleField.setColumns(20);
-        edTitleField.setText("Plot Title");
+        edTitleField.setText("Time Series Plot");
         edTitleField.setSize(40,10);
         edTitleField.addActionListener(plotbuttonclick);
         //edLeftField.setColumns(20);

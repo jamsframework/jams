@@ -417,21 +417,45 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     ActionListener plotAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
          
-             if(table.getValueAt(0, 0).getClass() == JAMSCalendar.class){     
-                openCTS();
+//             if(table.getValueAt(0, 0).getClass() == JAMSCalendar.class){     
+//                openCTS();
+             try{
+                 openCTS();
+             } catch (ClassCastException cce){
+                 if(timeRuns){
+                     table.setColumnSelectionInterval(1,table.getColumnCount()-1);
+                     openCTS();
+                 }
              }
+//             }
          } 
     };  
     
     ActionListener dataplotAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
              
-             Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
-             if(test == org.unijena.jams.data.JAMSCalendar.class){
+             
+             try{
+                 Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
+                 if(test == org.unijena.jams.data.JAMSCalendar.class){
+                    table.setColumnSelectionInterval(1, table.getColumnCount()-1);
+                     
+                 } 
+                 openCXYS();
                  
-             } else {
-                openCXYS();
+             } catch (ClassCastException cce){
+                 
+                 if(timeRuns){
+                     table.setColumnSelectionInterval(1, table.getColumnCount()-1);
+                     openCXYS();
+                 }
              }
+//             Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
+//             if(test == org.unijena.jams.data.JAMSCalendar.class){
+//                 
+//             } else {
+//                openCXYS();
+//             }
          } 
     };  
     
@@ -565,6 +589,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                     table = new JTable(this.tmodel);
                     this.table=table;
                     this.tableHeader = table.getTableHeader();
+                    table.getTableHeader().setReorderingAllowed(false);
                     HeaderHandler mouseListener = new HeaderHandler();
                     tableHeader.addMouseListener(mouseListener);
         
