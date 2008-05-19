@@ -75,9 +75,9 @@ public class AttributeRepository {
         return result;
     }
     
-    public ArrayList<ContextAttribute> getAttributesByType(Class type) {
+    public ArrayList<ContextAttribute> getAttributesByType(Class<?> type) {
         ArrayList<ContextAttribute> result = new ArrayList<ContextAttribute>();
-        for (Class subType : attributesByType.keySet()) {
+        for (Class<?> subType : attributesByType.keySet()) {
             if (type.isAssignableFrom(subType)) {
                 result.addAll(attributesByType.get(subType));
             }

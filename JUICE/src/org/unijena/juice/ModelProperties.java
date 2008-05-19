@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.juice;
 
 import java.util.Vector;
@@ -33,16 +32,16 @@ import org.unijena.jams.JAMSTools;
  * @author Sven Kralisch
  */
 public class ModelProperties {
-    
+
     //private HashMap<String, ArrayList<ModelProperty>> properties = new HashMap<String, ArrayList<ModelProperty>>();
     private HashMap<String, Group> groups = new HashMap<String, Group>();
     private ArrayList<Group> groupList = new ArrayList<Group>();
     private static String groupSeparator = "-";
 
     public boolean addProperty(Group group, ModelProperty p) {
-        
-        Vector properties = group.propertyList;
-        
+
+        Vector<Object> properties = group.propertyList;
+
         if (properties.contains(p)) {
             return false;
         } else {
@@ -51,12 +50,12 @@ public class ModelProperties {
             return true;
         }
     }
-    
+
     public void removePropertyFromGroup(Group group, ModelElement p) {
         group.propertyList.remove(p);
         p.group = null;
     }
-    
+
     public void addPropertyToGroup(Group group, ModelElement p) {
         group.propertyList.add(p);
         p.group = group;
@@ -66,12 +65,11 @@ public class ModelProperties {
         group.propertyList.add(index, p);
     }
 
-
     public void removeGroup(Group group) {
         groups.remove(group.name);
         groupList.remove(group);
     }
-    
+
     public boolean addGroup(String groupName) {
         if (groups.keySet().contains(groupName)) {
             return false;
@@ -83,9 +81,9 @@ public class ModelProperties {
             return true;
         }
     }
-    
+
     public boolean insertGroup(Group group, int index) {
-        if (index>=0 && index<=groupList.size()) {
+        if (index >= 0 && index <= groupList.size()) {
             groups.put(group.name, group);
             groupList.add(index, group);
             return true;
@@ -93,11 +91,11 @@ public class ModelProperties {
             return false;
         }
     }
-    
+
     public ModelProperty createProperty() {
         return new ModelProperty();
     }
-    
+
     public Group createSubgroup(Group theGroup, String theSubgroupName) {
         Group subgroup = new Group();
         subgroup.setSubGroup(true);
@@ -110,33 +108,34 @@ public class ModelProperties {
     public ArrayList<Group> getGroupList() {
         return groupList;
     }
-    
-/**
- * get group by name
- * name could be groupName-subgroupName
- * in this case get subgroup
- * @param groupName
- * @return group or subgroup
- */
+
+    /**
+     * get group by name
+     * name could be groupName-subgroupName
+     * in this case get subgroup
+     * @param groupName
+     * @return group or subgroup
+     */
     public Group getGroup(String groupName) {
-        if (groupName.indexOf(ModelProperties.groupSeparator) > 0)
-        {
+        if (groupName.indexOf(ModelProperties.groupSeparator) > 0) {
             String[] groupNames = JAMSTools.toArray(groupName, ModelProperties.groupSeparator);
             return getGroup(groupNames[0], groupNames[1]);
-        } else
+        } else {
             return groups.get(groupName);
+        }
     }
-    
+
     public Group getGroup(String groupName, String subgroupName) {
         Group group = getGroup(groupName);
-        if (JAMSTools.isEmptyString(subgroupName))
+        if (JAMSTools.isEmptyString(subgroupName)) {
             return group;
-        
-        for (Object modelElement: group.propertyList) {
+        }
+        for (Object modelElement : group.propertyList) {
             if (modelElement instanceof Group) {
                 Group subgroup = (Group) modelElement;
-                if (subgroup.name.equals(subgroupName))
+                if (subgroup.name.equals(subgroupName)) {
                     return (subgroup);
+                }
             }
         }
         return null;
@@ -145,11 +144,11 @@ public class ModelProperties {
     public Group getGroup(int index) {
         return groupList.get(index);
     }
-    
+
     public HashMap<String, Group> getGroups() {
         return groups;
     }
-    
+
     public boolean setGroupName(Group group, String name) {
         if (groups.keySet().contains(name)) {
             return false;
@@ -160,7 +159,7 @@ public class ModelProperties {
             return true;
         }
     }
-    
+
     public String[] getGroupNames() {
         String[] result = new String[groupList.size()];
         int i = 0;
@@ -170,34 +169,34 @@ public class ModelProperties {
         return result;
     }
 
-/**
- * get all group names inclusive subgroups
- * @return array of all groupName[.subGroupName]
- */
+    /**
+     * get all group names inclusive subgroups
+     * @return array of all groupName[.subGroupName]
+     */
     public String[] getAllGroupNames() {
 
-        Vector rv = new Vector();
-        
+        Vector<String> rv = new Vector<String>();
+
         for (Group group : groupList) {
             rv.add(group.getName());
-            for (Object modelElement: group.propertyList) {
+            for (Object modelElement : group.propertyList) {
                 if (modelElement instanceof Group) {
-                    rv.add( ((Group)modelElement).getName() );
+                    rv.add(((Group) modelElement).getName());
                 }
             }
         }
 
         String result[] = new String[rv.size()];
         int i = 0;
-        for (Object item: rv) {
+        for (Object item : rv) {
             result[i++] = (String) item;
         }
 
         return result;
     }
 
-
     public class ModelElement {
+
         public String name;
 
         public String getName() {
@@ -207,42 +206,42 @@ public class ModelProperties {
         public void setName(String name) {
             this.name = name;
         }
-
         private Group group;
+
         public Group getGroup() {
             return group;
         }
 
         public Group getMainGroup() {
             Group theGroup = getGroup();
-            if (theGroup.isSubGroup())
+            if (theGroup.isSubGroup()) {
                 return theGroup.getGroup();
-            else
+            } else {
                 return theGroup;
+            }
         }
 
         public void setGroup(Group group) {
             this.group = group;
         }
-
     }
 
-    
     public class ModelProperty extends ModelElement {
-        public String defaultValue, value, description;
+
+        public String defaultValue,  value,  description;
         public ComponentDescriptor component;
         public ComponentDescriptor.ComponentAttribute var;
         public ContextAttribute attribute;
-        public double lowerBound, upperBound;
+        public double lowerBound,  upperBound;
         public int length;
-
     }
-    
+
     public class Group extends ModelElement {
-        private Vector propertyList = new Vector();
+
+        private Vector<Object> propertyList = new Vector<Object>();
         private boolean subGroup = false;
-        
-        public Vector getProperties() {
+
+        public Vector<Object> getProperties() {
             return propertyList;
         }
 
@@ -256,16 +255,15 @@ public class ModelProperties {
 
         @Override
         public String getName() {
-            if (isSubGroup())
+            if (isSubGroup()) {
                 return getGroup().getName() + ModelProperties.groupSeparator + name;
-            else
+            } else {
                 return name;
+            }
         }
 
         public String getCanonicalName() {
             return name;
         }
     }
-
-    
 }
