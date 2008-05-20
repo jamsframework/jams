@@ -26,6 +26,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -55,7 +56,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.border.TitledBorder;
 import org.unijena.jams.*;
 import org.unijena.jams.gui.input.InputComponent;
 import org.unijena.jams.JAMSTools;
@@ -193,7 +196,7 @@ public class JAMSLauncher extends JFrame {
         };
 
         jfc = LHelper.getJFileChooser();
-        
+
         setupModelDlg = new WorkerDlg(this, "Setting up the model");
 
         this.propertyDlg = new PropertyDlg(this, getProperties());
@@ -527,17 +530,31 @@ public class JAMSLauncher extends JFrame {
             NodeList groupChildNodes = groupElement.getChildNodes();
             for (int pindex = 0; pindex < groupChildNodes.getLength(); pindex++) {
                 node = groupChildNodes.item(pindex);
-                if (node.getNodeName().equalsIgnoreCase("property") ) {
-                    Element propertyElement = (Element)node;
+                if (node.getNodeName().equalsIgnoreCase("property")) {
+                    Element propertyElement = (Element) node;
                     drawProperty(contentPanel, scrollPane, gbl, propertyElement, row);
                     row++;
                 }
                 if (node.getNodeName().equalsIgnoreCase("subgroup")) {
-                    Element subgroupElement = (Element)node;
-                    String subgroupName= subgroupElement.getAttribute("name");
-                    // create panel and draw it
+                    Element subgroupElement = (Element) node;
+                    String subgroupName = subgroupElement.getAttribute("name");
+
+                    // create the subgroup panel
                     JPanel subgroupPanel = new JPanel(gbl);
-                    subgroupPanel.setBorder(BorderFactory.createTitledBorder(subgroupName));
+
+                    // create some nice font for the border title
+                    Font titledBorderFont = (Font) UIManager.getDefaults().get("TitledBorder.font");
+                    int fontSize = titledBorderFont.getSize();
+                    if (titledBorderFont.getStyle() == Font.BOLD) {
+                        fontSize += 2;
+                    }
+                    Font newTitledBorderFont = new Font(titledBorderFont.getName(), Font.BOLD, fontSize);
+
+                    // create and set the border
+                    subgroupPanel.setBorder(BorderFactory.createTitledBorder(null, subgroupName,
+                            TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, newTitledBorderFont));
+
+                    // add the subgroup panel
                     row++;
                     LHelper.addGBComponent(contentPanel, gbl, subgroupPanel, 0, row, 3, 1, 1, 1);
                     row++;
@@ -549,6 +566,7 @@ public class JAMSLauncher extends JFrame {
                     }
                     row = row + 2;
                     LHelper.addGBComponent(contentPanel, gbl, new JLabel(" "), 3, row, 1, 1, 1, 1); // space line
+
                     row++;
                 }
             }
@@ -563,8 +581,13 @@ public class JAMSLauncher extends JFrame {
     }
 
     private void drawProperty(JPanel contentPanel, JScrollPane scrollPane, GridBagLayout gbl, Element property, int row) {
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(property.getAttribute("name")), 0, row, 1, 1, 0, 0);
-        InputComponent ic =  LHelper.createInputComponent(property.getAttribute("type"));
+
+        // create a label with the property's name and some space in front of it
+        JLabel nameLabel = new JLabel(property.getAttribute("name"));
+        nameLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        LHelper.addGBComponent(contentPanel, gbl, nameLabel, 0, row, 1, 1, 0, 0);
+        
+        InputComponent ic = LHelper.createInputComponent(property.getAttribute("type"));
 
         StringTokenizer tok = new StringTokenizer(property.getAttribute("range"), ";");
         if (tok.countTokens() == 2) {
@@ -584,9 +607,10 @@ public class JAMSLauncher extends JFrame {
         getGroupMap().put(ic, scrollPane);
 
         LHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
-        
+
         return;
     }
+
     private boolean closeModel() {
 
         if (this.modelDocument == null) {
@@ -650,9 +674,12 @@ public class JAMSLauncher extends JFrame {
         setupModelDlg.execute();
 
         // start the model
-        Thread t = new Thread() {
+        Thread t = new  
 
-            public void run() {
+              Thread() {
+
+                
+                public void run() {
 
                 runtime.runModel();
 

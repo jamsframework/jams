@@ -30,7 +30,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.unijena.jams.gui.JAMSSplash;
 import org.unijena.jams.gui.JAMSLauncher;
 import org.unijena.jams.runtime.*;
-import org.unijena.jams.model.*;
 import org.unijena.jams.io.*;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -48,7 +47,7 @@ public class JAMS {
     public static final int RUNSTATE_STOP = 0;
     public static final int RUNSTATE_RUN = 1;
     public static final Font STANDARD_FONT = new java.awt.Font("Courier", 0, 11);
-    public static final int SPLASH_DISPLAY_TIME = 0;
+    public static final int SPLASH_DISPLAY_TIME = 2000;
     private static JAMSCmdLine cmdLine;
 
     public static void handle(Exception ex) {
