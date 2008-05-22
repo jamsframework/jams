@@ -318,7 +318,6 @@ public class LauncherPanel extends JPanel {
         contentPanel.removeAll();
         contentPanel.setLayout(gbl);
 
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(" "), 3, 0, 1, 1, 1, 1);
         int y = 1;
 
         Vector properties = group.getProperties();
@@ -356,7 +355,10 @@ public class LauncherPanel extends JPanel {
                         TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, newTitledBorderFont));
                 
                 // add the subgroup panel
-                LHelper.addGBComponent(contentPanel, gbl, subgroupPanel, 0, y, 3, height, 1, 1);
+                LHelper.addGBComponent(contentPanel, gbl, subgroupPanel,
+                                            0, y, 3, height,
+                                            6, 2, 6, 2, 
+                                            1, 1);
                 
                 JPanel sgButtonPanel = createSubgroupButtonPanel(subgroup);
                 LHelper.addGBComponent(contentPanel, gbl, sgButtonPanel, 3, y, 3, 1, 1, 1);
@@ -373,7 +375,6 @@ public class LauncherPanel extends JPanel {
                     }
                 }
                 row = row + 2;
-                LHelper.addGBComponent(contentPanel, gbl, new JLabel(" "), 3, row, 1, 1, 1, 1);
                 y = row;
 
             }
