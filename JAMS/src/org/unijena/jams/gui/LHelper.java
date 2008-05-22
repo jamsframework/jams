@@ -58,10 +58,29 @@ public class LHelper {
 
     }
 
-    public static Component addGBComponent(Container cont, GridBagLayout gbl, Component c, int x, int y, int width, int height, double weightx, double weighty) {
+    public static Component addGBComponent ( Container cont, GridBagLayout gbl, Component c,
+                                             int x, int y, int width, int height, 
+                                             double weightx, double weighty ) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(0, 2, 2, 2);
+        gbc.insets = new Insets(2, 2, 2, 2);
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.gridwidth = width;
+        gbc.gridheight = height;
+        gbc.weightx = weightx;
+        gbc.weighty = weighty;
+        gbl.setConstraints(c, gbc);
+        return cont.add(c);
+    }
+
+    public static Component addGBComponent (Container cont, GridBagLayout gbl, Component c, 
+                                            int x, int y, int width, int height, 
+                                            int topInset, int leftInset, int bottomInset, int rightInset, 
+                                            double weightx, double weighty) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(topInset, leftInset, bottomInset, rightInset );
         gbc.gridx = x;
         gbc.gridy = y;
         gbc.gridwidth = width;

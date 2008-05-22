@@ -524,7 +524,6 @@ public class JAMSLauncher extends JFrame {
             scrollPane = new JScrollPane(scrollPanel);
 
             Element groupElement = (Element) groups.item(i);
-            LHelper.addGBComponent(contentPanel, gbl, new JLabel(" "), 3, 0, 1, 1, 1, 1); // space line
 
             int row = 1;
             NodeList groupChildNodes = groupElement.getChildNodes();
@@ -554,9 +553,13 @@ public class JAMSLauncher extends JFrame {
                     subgroupPanel.setBorder(BorderFactory.createTitledBorder(null, subgroupName,
                             TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, newTitledBorderFont));
 
+                    
                     // add the subgroup panel
                     row++;
-                    LHelper.addGBComponent(contentPanel, gbl, subgroupPanel, 0, row, 3, 1, 1, 1);
+                    LHelper.addGBComponent(contentPanel, gbl, subgroupPanel,
+                                            0, row, 3, 1,
+                                            6, 2, 6, 2, 
+                                            1, 1);
                     row++;
                     NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
                     for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
@@ -565,7 +568,6 @@ public class JAMSLauncher extends JFrame {
                         row++;
                     }
                     row = row + 2;
-                    LHelper.addGBComponent(contentPanel, gbl, new JLabel(" "), 3, row, 1, 1, 1, 1); // space line
 
                     row++;
                 }
