@@ -743,7 +743,9 @@ public class JXYConfigurator extends JFrame{
             newProp = propVector.get(k);
             newProp.setIndex(k);
             //prop.getPlotButton().addActionListener(plotbuttonclick);
-            
+            if(newProp.isXSeries()){
+                 x_series_index = k;
+            }
             addPropGroup(newProp);
             
             
@@ -751,6 +753,9 @@ public class JXYConfigurator extends JFrame{
             //graphpanel.add(propVector.get(k-1).getGraphPanel());
             
         }
+        xChanged(propVector.get(x_series_index));
+        setMaxDataIntervals(propVector.get(x_series_index));
+        
         finishGroupUI();
         //mainpanel.repaint();
         //frame.updateUI();
@@ -787,6 +792,8 @@ public class JXYConfigurator extends JFrame{
             
         }
         xChanged(propVector.get(x_series_index));
+        setMaxDataIntervals(propVector.get(x_series_index));
+        
         finishGroupUI();
         //mainpanel.updateUI();
 //        pack();
@@ -953,12 +960,14 @@ public class JXYConfigurator extends JFrame{
     updatePropVector();
             int l=0;
             int r=0;
+
             for(int i=0; i<propVector.size(); i++){
                 if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
-                    l++;
+                    if(!propVector.get(i).isXSeries()) l++;
+                    
                 }
                 if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
-                    r++;
+                    if(!propVector.get(i).isXSeries()) r++;
                 }
             }
             if(l>0){
@@ -966,6 +975,9 @@ public class JXYConfigurator extends JFrame{
             }
             if(r>0){
                 jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected()); 
+            }
+            if(r==0 && l==0){
+                jxys.plotEmpty();
             }
             
             jxys.setTitle(edTitleField.getText());

@@ -620,6 +620,7 @@ public class JTSConfigurator extends JFrame{
             if(r>0){
                 jts.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected()); 
             }
+            if(r==0 && l==0) jts.plotEmpty();
             
             jts.setTitle(edTitleField.getText());
             jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),

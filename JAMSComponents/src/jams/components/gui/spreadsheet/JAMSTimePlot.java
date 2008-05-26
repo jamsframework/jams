@@ -253,7 +253,7 @@ public class JAMSTimePlot {
     public void plotLeft(int renderer, String nameLeft, String xAxisTitle, boolean inverted){ //plotLeft(renderer, axisname, inverted)
         int plot_count = 0;
         int c = propVector.size();
-        int corr = 0;
+        int right = 0;
         dataLeft = new TimeSeriesCollection();
         DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
    
@@ -262,6 +262,8 @@ public class JAMSTimePlot {
         dateAxis.setLabel(xAxisTitle);
         
         leftRenderer = getRenderer(renderer);
+
+        //dataRight.removeAllSeries();
         
         for(int k=0; k<c; k++){ 
             
@@ -270,20 +272,25 @@ public class JAMSTimePlot {
                 plot_count++;
                 //GraphProperties prop = propVector.get(k);
                 dataLeft.addSeries(prop.getTS());
-                if(corr <= dataRight.getSeriesCount()){
-                    dataRight.removeSeries(prop.getTS());
-                }
-                leftRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
+                dataRight.removeSeries(prop.getTS());
+                
+                leftRenderer.setSeriesPaint(k-right,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
             }else{
-                corr++;
+                dataLeft.removeSeries(prop.getTS());
+                right++;
+//                if(right <= dataRight.getSeriesCount()){
+//                    dataRight.removeSeries(prop.getTS());
+//                }
             }
         }
         
         if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
         
         
-        if(corr == 0){
+        if(right == 0){
+            dataRight.removeAllSeries();
             axisRIGHT.setVisible(false);
+            axisLEFT.setVisible(true);
             plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
             plot.setRangeAxis(0, axisLEFT);
             plot.setDataset(0, dataLeft);
@@ -306,6 +313,34 @@ public class JAMSTimePlot {
         chart.setTitle(title);
     }
     
+    public void plotEmpty(){
+           
+        int plot_count = 0;
+        int c = propVector.size();
+        int corr = 0;
+        dataLeft = new TimeSeriesCollection();
+        //ValueAxis xAxis = plot.getDomainAxis();
+        
+        axisLEFT.setInverted(false);
+        axisLEFT.setLabel("Left axis title");
+        
+        leftRenderer = getRenderer(0);
+        
+        dataLeft.removeAllSeries();
+        dataRight.removeAllSeries();
+              
+        axisRIGHT.setVisible(false);
+        axisLEFT.setVisible(true);
+        plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+        plot.setRangeAxis(0, axisLEFT);
+        plot.setDataset(0, dataLeft);
+        plot.setRenderer(0, leftRenderer);
+        
+        plot.mapDatasetToRangeAxis(0, 0);
+
+  
+    }
+    
     public void setDateFormat(boolean yy, boolean mm, boolean dd, boolean hm){
         String timeFormat = ""; //"dd-MM-yyyy"
             if(dd){ timeFormat+= "dd. "; }
@@ -317,9 +352,10 @@ public class JAMSTimePlot {
     }
     
     public void plotRight(int renderer, String nameRight, String xAxisTitle, boolean inverted){
+        
         int plot_count = 0;
         int c = propVector.size();
-        int corr = 0;
+        int left = 0;
         dataRight = new TimeSeriesCollection();
         DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
         dateAxis.setLabel(xAxisTitle);
@@ -335,19 +371,20 @@ public class JAMSTimePlot {
                 plot_count++;
                 //GraphProperties prop = propVector.get(k);
                 dataRight.addSeries(prop.getTS());
-                if( corr <= dataLeft.getSeriesCount()){
-                    dataLeft.removeSeries(prop.getTS());
-                }
-                rightRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
+                dataLeft.removeSeries(prop.getTS());
+                
+                rightRenderer.setSeriesPaint(k-left,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
             }else{
-                corr++;
+                left++;
+                dataRight.removeSeries(prop.getTS());
             }
         }
         if((plot_count<2 || plot_count>2) && renderer == 7) rightRenderer = getRenderer(0);
         
-        if(corr == 0){
-                 
+        if(left == 0){
+            dataLeft.removeAllSeries();     
             axisLEFT.setVisible(false);
+            axisRIGHT.setVisible(true);
             plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
             plot.setRangeAxis(1, axisRIGHT);
             plot.setDataset(1, dataRight);

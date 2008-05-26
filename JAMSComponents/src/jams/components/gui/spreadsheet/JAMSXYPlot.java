@@ -45,6 +45,7 @@ import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
@@ -166,7 +167,10 @@ public class JAMSXYPlot {
                 break;
                 
             case 1:
-                r = new XYBarRenderer();
+                XYBarRenderer br = new XYBarRenderer();
+                br.setMargin(1);
+                r = br;
+                
                 break;
                 
             case 2:
@@ -260,6 +264,8 @@ public class JAMSXYPlot {
         axisLEFT.setLabel(nameLeft);
         xAxis.setLabel(xAxisTitle);
         
+        //dataRight.removeAllSeries();
+        
         leftRenderer = getRenderer(renderer);
         
         for(int k=0; k<c; k++){ 
@@ -269,9 +275,9 @@ public class JAMSXYPlot {
                     plot_count++;
                     GraphProperties prop = propVector.get(k);
                     dataLeft.addSeries(prop.getXYS());
-                    if(corr <= dataRight.getSeriesCount()){
+                    //
                         dataRight.removeSeries(prop.getXYS());
-                    }
+                    //}
                     leftRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
                 }else{
                     corr++;
@@ -282,8 +288,20 @@ public class JAMSXYPlot {
         }
         if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
         
-        if(corr == 1){
+        if(corr == 0){
+            dataRight.removeAllSeries();
             axisRIGHT.setVisible(false);
+            axisLEFT.setVisible(true);
+            plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+            plot.setRangeAxis(0, axisLEFT);
+            plot.setDataset(0, dataLeft);
+            plot.setRenderer(0, leftRenderer);
+        }
+        
+        if(corr == 1){
+            dataRight.removeAllSeries();
+            axisRIGHT.setVisible(false);
+            axisLEFT.setVisible(true);
             plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
             plot.setRangeAxis(0, axisLEFT);
             plot.setDataset(0, dataLeft);
@@ -300,6 +318,36 @@ public class JAMSXYPlot {
         plot.setDomainAxis(0, xAxis);
         //plot.mapDatasetToDomainAxis(0, 0); //dataset einer achse zuordnen!
         
+    }
+    
+    public void plotEmpty(){
+           
+        int plot_count = 0;
+        int c = propVector.size();
+        int corr = 0;
+        dataLeft = new XYSeriesCollection();
+        //ValueAxis xAxis = plot.getDomainAxis();
+        
+        axisLEFT.setInverted(false);
+        axisLEFT.setLabel("Left axis title");
+        xAxis.setLabel(xAxisTitle);
+        
+        leftRenderer = getRenderer(0);
+        
+        dataLeft.removeAllSeries();
+        dataRight.removeAllSeries();
+              
+        axisRIGHT.setVisible(false);
+        axisLEFT.setVisible(true);
+        plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+        plot.setRangeAxis(0, axisLEFT);
+        plot.setDataset(0, dataLeft);
+        plot.setRenderer(0, leftRenderer);
+        
+        plot.setDomainAxis(0, xAxis);
+        plot.mapDatasetToRangeAxis(0, 0);
+        plot.setDomainAxis(0, xAxis);
+  
     }
     
     public void setTitle(String title){
@@ -325,9 +373,9 @@ public class JAMSXYPlot {
                     plot_count++;
                     GraphProperties prop = propVector.get(k);
                     dataRight.addSeries(prop.getXYS());
-                    if(corr <=dataLeft.getSeriesCount()){
+                    //if(corr <=dataLeft.getSeriesCount()){
                         dataLeft.removeSeries(prop.getXYS());
-                    }
+                    //}
                     rightRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
                 } else {
                     corr++;
@@ -338,9 +386,21 @@ public class JAMSXYPlot {
         }
         if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
         
-        if(corr == 1){
-           
+        if(corr == 0){
+            dataLeft.removeAllSeries();
             axisLEFT.setVisible(false);
+            axisRIGHT.setVisible(true);
+            axisRIGHT.setInverted(inverted);
+            axisRIGHT.setLabel(nameRight);
+            plot.setRangeAxis(1, axisRIGHT);
+            plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
+            plot.setDataset(1, dataRight);
+            plot.setRenderer(1, rightRenderer);
+        }
+        if(corr == 1){
+            dataLeft.removeAllSeries();
+            axisLEFT.setVisible(false);
+            axisRIGHT.setVisible(true);
             axisRIGHT.setInverted(inverted);
             axisRIGHT.setLabel(nameRight);
             plot.setRangeAxis(1, axisRIGHT);
