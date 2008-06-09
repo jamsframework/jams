@@ -349,7 +349,7 @@ public class JTSConfigurator extends JFrame{
         
         for(int k=0;k<graphCount;k++){
             
-            GraphProperties prop = new GraphProperties(parent, table, this);
+            GraphProperties prop = new GraphProperties(this, table, this);
             //propVector.add(new GraphProperties(parent,table));
             
             prop.setIndex(k);
@@ -785,7 +785,7 @@ public class JTSConfigurator extends JFrame{
             
             group1.addComponent(prop.getDataChoice()).addComponent(lf).addGap(20);
             group2.addComponent(prop.getTimeChoiceSTART()).addComponent(prop.getTimeChoiceEND());
-            group3.addComponent(prop.getColorChoice()).addComponent(prop.getPosChoice());
+            group3.addComponent(prop.getCustomizeButton()).addComponent(prop.getPosChoice());
                        
 
             group9.addComponent(space3);
@@ -798,7 +798,7 @@ public class JTSConfigurator extends JFrame{
                         
             vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING)
             .addComponent(prop.getDataChoice()).addComponent(prop.getTimeChoiceSTART()).addComponent(space5)
-            .addComponent(prop.getColorChoice()));
+            .addComponent(prop.getCustomizeButton()));
             vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING)
             .addComponent(lf).addComponent(prop.getTimeChoiceEND()).addComponent(space6)
             .addComponent(prop.getPosChoice())
@@ -1112,6 +1112,8 @@ public class JTSConfigurator extends JFrame{
             //timePlot();
         }
     };
+    
+    
     
 
     

@@ -168,7 +168,11 @@ public class JAMSXYPlot {
                 
             case 1:
                 XYBarRenderer br = new XYBarRenderer();
-                br.setMargin(1);
+                br.setDrawBarOutline(true);
+                
+                //br.setBase(0.1);
+                //br.setUseYInterval(true);
+                br.setMargin(0.98);
                 r = br;
                 
                 break;
@@ -180,12 +184,18 @@ public class JAMSXYPlot {
             case 3:
                 lsr = new XYLineAndShapeRenderer();
                 lsr.setBaseShapesVisible(true);
+                lsr.setShapesFilled(true);
+                lsr.setSeriesLinesVisible(0, false);
+                //lsr.setDrawOutlines(false);
+                //lsr.setLegendLine(new java.awt.Rectangle(5,5));
                 r = lsr;
                 break;
                 
             case 4:
                 XYDotRenderer dotR = new XYDotRenderer();
                 dotR.setDefaultEntityRadius(2);
+                dotR.setSeriesShape(0, new java.awt.Rectangle(5,5));
+                //dotR.setSeriesShape(new java.awt.geom.RoundRectangle2D.Double());
                 dotR.setDotHeight(5);
                 dotR.setDotWidth(5);
                 r = dotR;

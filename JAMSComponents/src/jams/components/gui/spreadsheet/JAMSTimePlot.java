@@ -274,7 +274,10 @@ public class JAMSTimePlot {
                 dataLeft.addSeries(prop.getTS());
                 dataRight.removeSeries(prop.getTS());
                 
-                leftRenderer.setSeriesPaint(k-right,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
+                leftRenderer.setSeriesPaint(k-right, prop.getSeriesPaint());
+                leftRenderer.setSeriesStroke(k-right, prop.getSeriesStroke());
+                leftRenderer.setSeriesShape(k-right, prop.getSeriesShape());
+                //leftRenderer.setSeriesPaint(k-right,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
             }else{
                 dataLeft.removeSeries(prop.getTS());
                 right++;
@@ -373,7 +376,11 @@ public class JAMSTimePlot {
                 dataRight.addSeries(prop.getTS());
                 dataLeft.removeSeries(prop.getTS());
                 
-                rightRenderer.setSeriesPaint(k-left,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
+                rightRenderer.setSeriesPaint(k-left, prop.getSeriesPaint());
+                rightRenderer.setSeriesStroke(k-left, prop.getSeriesStroke());
+                rightRenderer.setSeriesShape(k-left, prop.getSeriesShape());
+                
+                //rightRenderer.setSeriesPaint(k-left,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
             }else{
                 left++;
                 dataRight.removeSeries(prop.getTS());
