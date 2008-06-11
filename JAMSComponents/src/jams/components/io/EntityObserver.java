@@ -31,9 +31,11 @@ import org.unijena.jams.model.*;
  * @author S. Kralisch
  */
 @JAMSComponentDescription(
-        title="Title",
-        author="Author",
-        description="Description"
+        title="EntityObserver",
+        author="Sven Kralisch",
+        description="Ouput an entities attributes and their values to the info " +
+        "log. The entity must be specified by providing the name and value of " +
+        "some identifying attribute."
         )
         public class EntityObserver extends JAMSComponent {
     
@@ -70,7 +72,7 @@ import org.unijena.jams.model.*;
                     s = String.format("%20s: %s", keys[i], e.getObject(keys[i].toString()));
                     getModel().getRuntime().println(s);
                 }
-                
+                return;
             }
         }
     }

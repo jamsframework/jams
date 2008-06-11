@@ -45,7 +45,7 @@ title="TimeOutput",
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "Data to be output"
+            description = "Date object to be output"
             )
             public JAMSCalendar value;
     

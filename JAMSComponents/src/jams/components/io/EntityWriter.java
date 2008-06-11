@@ -32,13 +32,12 @@ import org.unijena.jams.model.*;
  * @author S. Kralisch
  */
 @JAMSComponentDescription(
-title="Entity file writer (spatial)",
-        author="S. Kralisch",
-        description="This component can be used to output a number of selected entity " +
-        "attribute values at a certain point in time. The resulting CSV formatted ASCII " +
-        "file will contain one line per entity and one column per attribute. This " +
-        "component must be wrapped in a spatial, but not in a temporal context!"
-        )
+title = "Entity file writer (spatial)",
+author = "Sven Kralisch",
+description = "This component can be used to output a number of selected entity " +
+"attribute values at a certain point in time. The resulting CSV formatted ASCII " +
+"file will contain one line per entity and one column per attribute. This " +
+"component must be wrapped in a spatial, but not in a temporal context!")
         public class EntityWriter extends JAMSComponent {
     
     /*

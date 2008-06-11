@@ -13,13 +13,6 @@ package org.unijena.jams.data;
  *
  * @author ncb
  */
-public abstract class JAMSSerializableData  implements java.io.Serializable,JAMSData{
-    
-    /** Creates a new instance of JAMSSerializableData */
-    public JAMSSerializableData() {
-    }
-//    public void setValue(String key){
-//        
-//    }
-    
+public abstract class JAMSSerializableData  implements java.io.Serializable,JAMSData {
+        
 }

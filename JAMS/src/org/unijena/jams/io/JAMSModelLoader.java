@@ -377,12 +377,12 @@ public class JAMSModelLoader {
 
                 JAMSVarDescription jvd = fields[i].getAnnotation(JAMSVarDescription.class);
                 if (jvd.lowerBound() < jvd.upperBound()) {
-                    numericObject.setRange(jvd.lowerBound(), jvd.upperBound());
+                    //numericObject.setRange(jvd.lowerBound(), jvd.upperBound());
                 }
 
                 if (!jvd.unit().equals("")) {
                     try {
-                        numericObject.setUnit(jvd.unit());
+                        //numericObject.setUnit(jvd.unit());
                     } catch (IllegalArgumentException iaex) {
                         throw new ModelSpecificationException("Invalid unit string in component " + component.getClass().getName() + ": " + jvd.unit());
                     }

@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.components.io;
 
 import java.util.ArrayList;
@@ -31,40 +30,34 @@ import org.unijena.jams.model.*;
  *
  * @author S. Kralisch
  */
+@JAMSComponentDescription(title = "EntityCreator",
+author = "Sven Kralisch",
+description = "Creates a number of empty (holding no attributes) JAMSEntity " +
+        "objects and stores them in a JAMSEntityCollection object")
 public class EntityCreator extends JAMSComponent {
-    
+
     /*
      *  Component variables
      */
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    description = "Entities being created")
+    public JAMSEntityCollection entities;
     
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "Entities being created"
-            )
-            public JAMSEntityCollection entities;
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Number of entities to be created"
-            )
-            public JAMSDouble count;
-    
-    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    description = "Number of entities to be created")
+    public JAMSDouble count;
+
     /*
      *  Component runstages
      */
-    
     public void init() {
-        
+
         ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
-        
+
         for (int i = 0; i < count.getValue(); i++) {
             list.add(JAMSDataFactory.createEntity());
         }
-        
+
         entities.setEntities(list);
     }
-    
 }

@@ -40,11 +40,13 @@ public class JAMSDouble extends JAMSNumeric {
         this.value = value;
     }
 
+    /*
     public JAMSDouble(double value, double minValue, double maxValue, String unitString) {
         this.setValue(value);
         this.setUnit(unitString);
         this.setRange(minValue, maxValue);
     }
+    */
 
     public String toString() {
         return Double.toString(value);

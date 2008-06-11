@@ -30,9 +30,10 @@ import org.jscience.physics.units.Unit;
  */
 public abstract class JAMSNumeric extends JAMSSerializableData {
 
+    /*
     private NumericRange range = null;
     private Unit unit = null;
-
+    
     public NumericRange getRange() {
         return range;
     }
@@ -48,7 +49,7 @@ public abstract class JAMSNumeric extends JAMSSerializableData {
     public void setUnit(String unitString) {
         this.unit = Unit.valueOf(unitString);
     }
-
+    
     public class NumericRange {
 
         private double maxValue,  minValue;
@@ -66,4 +67,6 @@ public abstract class JAMSNumeric extends JAMSSerializableData {
             return minValue;
         }
     }
+    */
+
 }

@@ -14,7 +14,4 @@ package org.unijena.jams.data;
  */
 public class JAMSSerializable implements java.io.Serializable {
 
-    /** Creates a new instance of JAMSSerializable */
-    public JAMSSerializable() {
-    }
 }
