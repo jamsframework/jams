@@ -22,13 +22,14 @@
  */
 package org.unijena.jams.data;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSCalendar extends GregorianCalendar implements JAMSData {
+public class JAMSCalendar extends GregorianCalendar implements JAMSData, Serializable {
 
     private String formatString = "%1$tY-%1$tm-%1$td %1$tH:%1$tM";
     

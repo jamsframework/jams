@@ -26,7 +26,7 @@ package org.unijena.jams.data;
  *
  * @author S. Kralisch
  */
-public class JAMSFloat extends JAMSSerializableData {
+public class JAMSFloat extends JAMSNumeric {
 
     private float value;
 

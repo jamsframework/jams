@@ -24,12 +24,13 @@ package org.unijena.jams.data;
 
 import java.util.*;
 import com.vividsolutions.jts.geom.Geometry;
+import java.io.Serializable;
 
 /**
  *
  * @author S. Kralisch
  */
-class JAMSCheckedEntity implements JAMSEntity {
+class JAMSCheckedEntity implements JAMSEntity, Serializable {
 
     private HashMap<String, Object> values = new HashMap<String, Object>();
 

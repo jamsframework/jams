@@ -22,11 +22,13 @@
  */
 package org.unijena.jams.data;
 
+import java.io.Serializable;
+
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSString extends JAMSSerializableData {
+public class JAMSString implements JAMSData, Serializable {
 
     private String value;
     private int length;

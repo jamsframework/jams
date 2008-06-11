@@ -22,11 +22,13 @@
  */
 package org.unijena.jams.data;
 
+import java.io.Serializable;
+
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSSimpleDouble extends JAMSSerializableData/*implements JAMSDouble*/ {
+public class JAMSSimpleDouble implements JAMSData, Serializable/*implements JAMSDouble*/ {
 
     private double value;
 

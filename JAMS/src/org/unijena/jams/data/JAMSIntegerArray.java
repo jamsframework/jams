@@ -22,13 +22,14 @@
  */
 package org.unijena.jams.data;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSIntegerArray extends JAMSSerializableData {
+public class JAMSIntegerArray implements JAMSData, Serializable {
 
     private int[] value;
 

@@ -22,13 +22,14 @@
  */
 package org.unijena.jams.data;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSEntityCollection extends JAMSSerializableData {
+public class JAMSEntityCollection implements JAMSData, Serializable {
 
     protected ArrayList<JAMSEntity> entities = new ArrayList<JAMSEntity>();
     protected JAMSEntity[] entityArray;

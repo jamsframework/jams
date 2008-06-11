@@ -23,12 +23,13 @@
 package org.unijena.jams.data;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.io.Serializable;
 
 /**
  *
  * @author C. Schwartze
  */
-public class JAMSGeometry extends JAMSSerializableData {
+public class JAMSGeometry implements JAMSData, Serializable {
 
     private Geometry geo;
 

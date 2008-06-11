@@ -26,7 +26,7 @@ package org.unijena.jams.data;
  *
  * @author S. Kralisch
  */
-public class JAMSLong extends JAMSSerializableData {
+public class JAMSLong extends JAMSNumeric {
 
     private long value;
 

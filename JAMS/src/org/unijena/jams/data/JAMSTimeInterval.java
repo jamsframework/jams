@@ -22,13 +22,14 @@
  */
 package org.unijena.jams.data;
 
+import java.io.Serializable;
 import java.util.StringTokenizer;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSTimeInterval extends JAMSSerializableData {
+public class JAMSTimeInterval implements JAMSData, Serializable {
 
     protected JAMSCalendar start = new JAMSCalendar();
     protected JAMSCalendar end = new JAMSCalendar();
