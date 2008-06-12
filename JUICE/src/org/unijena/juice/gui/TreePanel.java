@@ -20,10 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -45,57 +45,59 @@ import org.unijena.juice.gui.tree.JAMSTree;
  * @author S. Kralisch
  */
 public class TreePanel extends JPanel {
-    
-    private static final Dimension BUTTON_DIMENSION = new Dimension(40,20);
-    
+
+    private static final Dimension BUTTON_DIMENSION = new Dimension(40, 20);
     private JScrollPane treeScrollPane = new JScrollPane();
     private JAMSTree tree;
     private JTextField searchText;
     private Enumeration nodeEnum = null;
     private String searchString = "";
+    private JPanel upperPanel = new JPanel();
+    private JPanel lowerPanel = new JPanel();
+    private JButton searchButton, expandButton, collapseButton;
     
-    
+
     /**
      * Creates a new instance of TreePanel
      */
     public TreePanel() {
         super();
-        
+
         this.setLayout(new BorderLayout());
-        
-        JPanel searchPanel = new JPanel();
-        JPanel collapsePanel = new JPanel();
-        
+
         searchText = new JTextField();
         searchText.setBorder(BorderFactory.createEtchedBorder());
         searchText.setEditable(true);
         searchText.setColumns(20);
         searchText.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent evt) {
                 TreePanel.this.searchText.selectAll();
                 searchComponent();
             }
         });
-        
-        JButton searchButton = new JButton("Search");
+
+        searchButton = new JButton("Search");
         searchButton.setMargin(new Insets(4, 4, 4, 4));
-        searchButton.setPreferredSize(new Dimension(60,20));
+        searchButton.setPreferredSize(new Dimension(60, 20));
         searchButton.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 searchComponent();
             }
         });
-        
-        searchPanel.setLayout(new BorderLayout());
+
+        upperPanel.setLayout(new BorderLayout());
         JPanel searchButtonPanel = new JPanel();
         searchButtonPanel.add(searchButton);
-        searchPanel.add(searchText, BorderLayout.CENTER);
-        searchPanel.add(searchButtonPanel, BorderLayout.SOUTH);
-        
-        
-        JButton expandButton = new JButton("+");
+        upperPanel.add(searchText, BorderLayout.CENTER);
+        upperPanel.add(searchButtonPanel, BorderLayout.SOUTH);
+
+
+        expandButton = new JButton("+");
         expandButton.setMargin(new Insets(4, 4, 4, 4));
         expandButton.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 if (tree != null) {
                     tree.expandAll();
@@ -104,10 +106,11 @@ public class TreePanel extends JPanel {
         });
         expandButton.setPreferredSize(BUTTON_DIMENSION);
         expandButton.setToolTipText("Expand Tree");
-        
-        JButton collapseButton = new JButton("-");
+
+        collapseButton = new JButton("-");
         collapseButton.setMargin(new Insets(4, 4, 4, 4));
         collapseButton.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 if (tree != null) {
                     tree.collapseAll();
@@ -117,31 +120,45 @@ public class TreePanel extends JPanel {
         collapseButton.setPreferredSize(BUTTON_DIMENSION);
         collapseButton.setToolTipText("Collapse Tree");
 
-        collapsePanel.add(expandButton);
-        collapsePanel.add(collapseButton);
-        
-        
-        this.add(searchPanel, BorderLayout.NORTH);
+        lowerPanel.add(expandButton);
+        lowerPanel.add(collapseButton);
+
+
+        this.add(upperPanel, BorderLayout.NORTH);
         this.add(treeScrollPane, BorderLayout.CENTER);
-        this.add(collapsePanel, BorderLayout.SOUTH);
+        this.add(lowerPanel, BorderLayout.SOUTH);
+    }
+
+    public void addCustomButton(JButton button, int width) {
+        button.setPreferredSize(new Dimension(width, BUTTON_DIMENSION.height));
+        lowerPanel.add(button);
+        lowerPanel.updateUI();
+    }
+
+    public void setEnabled(boolean enabled) {
+        searchButton.setEnabled(enabled);
+        searchText.setEditable(enabled);
+        for (Component c : lowerPanel.getComponents()) {
+            c.setEnabled(enabled);
+        }
     }
     
     private void searchComponent() {
-        
-        String newSearchString =  TreePanel.this.searchText.getText();
+
+        String newSearchString = TreePanel.this.searchText.getText();
         if (newSearchString.equals("")) {
             return;
         }
         JAMSNode rootNode = (JAMSNode) tree.getModel().getRoot();
-        
+
         if (!newSearchString.equals(searchString) || nodeEnum == null) {
             searchString = newSearchString;
             nodeEnum = rootNode.breadthFirstEnumeration();
         }
-        
+
         Object nodeObject;
         JAMSNode jamsNode;
-        
+
         while (nodeEnum.hasMoreElements()) {
             nodeObject = nodeEnum.nextElement();
             if (nodeObject.toString().toLowerCase().contains(searchString.toLowerCase())) {
@@ -154,17 +171,16 @@ public class TreePanel extends JPanel {
                 }
             }
         }
-        
+
         nodeEnum = rootNode.depthFirstEnumeration();
-        
+
         LHelper.showInfoDlg(JUICE.getJuiceFrame(), "Could not find further occurrences of \"" + searchString + "\".", "Info");
-        
+
     }
-    
+
     public void setTree(JAMSTree tree) {
         this.tree = tree;
         this.tree.setExpandsSelectedPaths(true);
         treeScrollPane.setViewportView(tree);
     }
-    
 }

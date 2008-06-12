@@ -55,7 +55,7 @@ public class JUICEFrame extends JFrame {
     private static final int DIVIDER_WIDTH = 9;
     private PropertyDlg propertyDlg;
     private JFileChooser jfc = LHelper.getJFileChooser();
-    private TreePanel libTreePanel = new TreePanel();
+    private TreePanel libTreePanel;
     private JDesktopPane modelPanel = new JDesktopPane();
     private JMenu windowMenu = new JMenu();
     private JMenuItem pasteModelParameterItem,  copyModelParameterItem;
@@ -103,6 +103,17 @@ public class JUICEFrame extends JFrame {
         propertyDlg = new PropertyDlg(this, JUICE.getJamsProperties());
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setCurrentDirectory(JUICE.getBaseDir());
+        
+        JButton reloadLibsButton = new JButton("Reload");
+        reloadLibsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JUICE.updateLibs();
+            }
+        });
+        
+        libTreePanel = new TreePanel();
+        libTreePanel.addCustomButton(reloadLibsButton, 80);
 
         JSplitPane mainSplitPane = new JSplitPane();
         mainSplitPane.setAutoscrolls(true);
@@ -150,10 +161,8 @@ public class JUICEFrame extends JFrame {
         JMenu modelMenu = new JMenu();
         JMenu logsMenu = new JMenu();
 
-        JMenuItem copyModelItem = new JMenuItem();
         pasteModelParameterItem = new JMenuItem();
         copyModelParameterItem = new JMenuItem();
-        JMenuItem pasteModelItem = new JMenuItem();
         JMenuItem editOptionsItem = new JMenuItem();
         JMenuItem loadOptionsItem = new JMenuItem();
         JMenuItem saveOptionsItem = new JMenuItem();
@@ -221,7 +230,7 @@ public class JUICEFrame extends JFrame {
         mainMenu.add(fileMenu);
 
         extrasMenu.setText("Extras");
-        editOptionsItem.setText("Edit Options");
+        editOptionsItem.setText("Edit JAMS Options");
         editOptionsItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -236,7 +245,7 @@ public class JUICEFrame extends JFrame {
         editOptionsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         extrasMenu.add(editOptionsItem);
 
-        loadOptionsItem.setText("Load Options");
+        loadOptionsItem.setText("Load JAMS Options");
         loadOptionsItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -258,7 +267,7 @@ public class JUICEFrame extends JFrame {
         });
         extrasMenu.add(loadOptionsItem);
 
-        saveOptionsItem.setText("Save Options");
+        saveOptionsItem.setText("Save JAMS Options");
         saveOptionsItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -438,6 +447,10 @@ public class JUICEFrame extends JFrame {
         JInternalFrame frame = modelPanel.getAllFrames()[0];
         ModelView view = ModelView.viewList.getMViews().get(frame);
         return view;
+    }
+
+    public TreePanel getLibTreePanel() {
+        return libTreePanel;
     }
 
     private class WindowItem extends JMenuItem {

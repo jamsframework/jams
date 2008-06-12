@@ -23,7 +23,6 @@
 
 package org.unijena.juice.gui.tree;
 
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
@@ -57,7 +56,6 @@ import org.unijena.juice.JUICE;
  */
 public class LibTree extends JAMSTree {
     
-    private String libFileNames = "";
     private static final String ROOT_NAME = "Model Components";
     private HashMap<Class, JDialog> compViewDlgs = new HashMap<Class, JDialog>();
     private JPopupMenu popup;
@@ -150,8 +148,6 @@ public class LibTree extends JAMSTree {
     }
     
     public void update(String libFileNames) {
-        if (!this.libFileNames.equals(libFileNames)) {
-            this.libFileNames = libFileNames;
             
             libsArray = JAMSTools.toArray(libFileNames, ";");
             this.setModel(null);
@@ -176,7 +172,6 @@ public class LibTree extends JAMSTree {
             t.start();
  */
             //setModel(new DefaultTreeModel(createLibTree(libsArray)));
-        }
     }
     
     private JAMSNode createLibTree(String[] libsArray) {

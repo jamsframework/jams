@@ -34,7 +34,6 @@ import org.unijena.jams.gui.JAMSSplash;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.WorkerDlg;
 import org.unijena.jams.runtime.JAMSClassLoader;
-import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
 import org.unijena.juice.gui.JUICEFrame;
 import org.unijena.juice.gui.ModelView;
@@ -101,16 +100,16 @@ public class JUICE {
             //juiceFrame.setVisible(true);
             
             libTree = new LibTree();
-            updateLibs();
+            JUICE.updateLibs();
             juiceFrame.setLibTree(libTree);
             
             if (cmdLine.getModelFileName() != null) {
                 juiceFrame.loadModel(cmdLine.getModelFileName());
             }
             
-            getJamsProperties().addObserver(jamsProperties.LIBS_IDENTIFIER, new Observer() {
+            getJamsProperties().addObserver(JAMSProperties.LIBS_IDENTIFIER, new Observer() {
                 public void update(Observable obs, Object obj) {
-                    updateLibs();
+                    JUICE.updateLibs();
                 }
             });
             
@@ -128,12 +127,14 @@ public class JUICE {
         }
     }
     
-    private static void updateLibs() {
+    public static void updateLibs() {
         loadLibsDlg.setTask(new Runnable() {
             public void run() {
                 try {
+                    JUICE.getJuiceFrame().getLibTreePanel().setEnabled(false);
                     JUICE.createClassLoader();
                     libTree.update(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER));
+                    JUICE.getJuiceFrame().getLibTreePanel().setEnabled(true);
                 } catch (Exception e) {}
             }
         });
@@ -147,8 +148,7 @@ public class JUICE {
         
         String[] libsArray = JAMSTools.toArray(libs, ";");
         
-        JAMSRuntime rt = new StandardRuntime();
-        JUICE.loader = JAMSClassLoader.createClassLoader(libsArray, rt);
+        JUICE.loader = JAMSClassLoader.createClassLoader(libsArray, new StandardRuntime());
         
             /*
              * This is the version the runtime is also using.

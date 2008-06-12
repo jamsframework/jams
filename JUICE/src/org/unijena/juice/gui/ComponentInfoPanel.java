@@ -132,13 +132,13 @@ public class ComponentInfoPanel extends JPanel {
                 
                 LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Type:"), 0, 0, 1, 1, 0, 0);
                 LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Access:"), 0, 1, 1, 1, 0, 0);
-                LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Update:"), 0, 2, 1, 1, 0, 0);
+                //LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Update:"), 0, 2, 1, 1, 0, 0);
                 LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Description:"), 0, 3, 1, 1, 0, 0);
                 LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Unit:"), 0, 4, 1, 1, 0, 0);
                 
                 LHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", field.getType().getName()), 1, 0, 1, 1, 1.0, 1.0);
                 LHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.access().toString()), 1, 1, 1, 1, 1.0, 1.0);
-                LHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.update().toString()), 1, 2, 1, 1, 1.0, 1.0);
+                //LHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.update().toString()), 1, 2, 1, 1, 1.0, 1.0);
                 LHelper.addGBComponent(fieldPanel, fieldLayout, getTextPane("", jvd.description(), 70), 1, 3, 1, 1, 1.0, 1.0);
                 LHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.unit()), 1, 4, 1, 1, 1.0, 1.0);
                 
