@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -90,7 +91,10 @@ public class TreePanel extends JPanel {
         upperPanel.setLayout(new BorderLayout());
         JPanel searchButtonPanel = new JPanel();
         searchButtonPanel.add(searchButton);
-        upperPanel.add(searchText, BorderLayout.CENTER);
+        JPanel searchFieldPanel = new JPanel();
+        searchFieldPanel.add(new JLabel("Search string: "));
+        searchFieldPanel.add(searchText);
+        upperPanel.add(searchFieldPanel, BorderLayout.CENTER);
         upperPanel.add(searchButtonPanel, BorderLayout.SOUTH);
 
 
