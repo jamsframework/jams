@@ -29,7 +29,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +55,7 @@ import org.unijena.jams.JAMSTools;
 import org.unijena.jams.ModelConfig;
 import org.unijena.jams.ModelPreprocessor;
 import org.unijena.jams.data.JAMSData;
+import org.unijena.jams.data.JAMSEntityCollection;
 import org.unijena.jams.io.JAMSModelLoader;
 import org.unijena.jams.model.JAMSGUIComponent;
 import org.unijena.jams.model.JAMSModel;
@@ -182,13 +190,15 @@ public class StandardRuntime implements JAMSRuntime {
         }
 
         long start = System.currentTimeMillis();
-
+                
         if (this.getRunState() == JAMS.RUNSTATE_RUN) {
             model.init();
         }
+               
         if (this.getRunState() == JAMS.RUNSTATE_RUN) {
             model.run();
         }
+                
         if (this.getRunState() == JAMS.RUNSTATE_RUN) {
             model.cleanup();
         }
@@ -412,6 +422,46 @@ public class StandardRuntime implements JAMSRuntime {
         guiComponents.add(component);
     }
 
+    public ByteArrayOutputStream GetRuntimeState(String fileName) {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        ObjectOutputStream objOut = null;
+        
+        try{
+            objOut = new ObjectOutputStream(outStream);
+            objOut.writeObject(this.model.getEntities());
+        }catch(IOException e){
+            sendErrorMsg("Unable to save model state because," + e.toString());
+        }
+        
+        try{
+            if (fileName != null) {
+                FileOutputStream fos = new FileOutputStream(fileName);
+                outStream.writeTo(fos);
+                fos.close();
+            }  
+        }catch(Exception e){
+            sendErrorMsg("Could not write model state to file, because" + e.toString());
+        }
+        
+        try{
+            objOut.close();
+            outStream.close();
+        }catch(IOException e){
+            sendErrorMsg("Unable to save model state, because" + e.toString());
+        }    
+        return outStream;
+    }
+    
+    public void SetRuntimeState(ByteArrayInputStream inStream) {
+        try{
+            ObjectInputStream objIn = new ObjectInputStream(inStream);
+            JAMSEntityCollection e = (JAMSEntityCollection)objIn.readObject();
+            this.model.setEntities(e);
+            objIn.close();
+        }catch(Exception e){
+            sendErrorMsg("Unable to deserializing jamsentity collection, because" + e.toString());
+        }
+    }
     public JFrame getFrame() {
         return frame;
     }
