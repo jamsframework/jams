@@ -207,6 +207,57 @@ public class JAMSTimePlot {
         return r;
     }
     
+//    private void customizeRenderer(XYItemRenderer renderer, int series, int type, java.awt.Stroke stroke, java.awt.Shape shape, java.awt.Paint color, boolean lines_vis, boolean shapes_vis) {
+//        XYItemRenderer r;
+//        switch (type) {
+//            case 0:
+//                
+//                renderer.setSeriesPaint(series, color);
+//                renderer.setSeriesStroke(series, stroke);
+//                renderer.setSeriesShape(series, shape);
+//                renderer.setSeriesShapesVisible(series, shapes_vis);
+//                renderer.setSeriesLinesVisible(series, lines_vis);
+//                renderer = lsr;
+//                break;
+//                
+//            case 1:
+//                r = new XYBarRenderer();
+//                break;
+//                
+//            case 2:
+//                r = new XYAreaRenderer();
+//                break;
+// 
+//            case 3:
+//                r = new XYStepRenderer();
+//                r.setSeriesPaint(series, color);
+//                r.setSeriesStroke(series, stroke);
+//                r.setSeriesShape(series, shape);
+//                
+//                break;
+//                
+//            case 4:
+//                r = new XYStepAreaRenderer();
+//                r.setSeriesPaint(series, color);
+//                r.setSeriesStroke(series, stroke);
+//                r.setSeriesShape(series, shape);
+//                break;
+//                
+//            case 5:
+//                r = new XYDifferenceRenderer();
+//                r.setSeriesPaint(series, color);
+//                r.setSeriesStroke(series, stroke);
+//                r.setSeriesShape(series, shape);
+//                break;
+//              
+//            default:
+//                lsr = new XYLineAndShapeRenderer();
+//                lsr.setBaseShapesVisible(true);
+//                r = lsr;
+//        }
+//        return r;
+//    }
+    
     
     public void createPlot() {
 
@@ -250,7 +301,7 @@ public class JAMSTimePlot {
         return this.propVector;
     }
         
-    public void plotLeft(int renderer, String nameLeft, String xAxisTitle, boolean inverted){ //plotLeft(renderer, axisname, inverted)
+    public void plotLeft(XYItemRenderer leftRenderer, String nameLeft, String xAxisTitle, boolean inverted){ //plotLeft(renderer, axisname, inverted)
         int plot_count = 0;
         int c = propVector.size();
         int right = 0;
@@ -261,7 +312,7 @@ public class JAMSTimePlot {
         axisLEFT.setLabel(nameLeft);
         dateAxis.setLabel(xAxisTitle);
         
-        leftRenderer = getRenderer(renderer);
+        //7leftRenderer = getRenderer(renderer);
 
         //dataRight.removeAllSeries();
         
@@ -274,9 +325,10 @@ public class JAMSTimePlot {
                 dataLeft.addSeries(prop.getTS());
                 dataRight.removeSeries(prop.getTS());
                 
-                leftRenderer.setSeriesPaint(k-right, prop.getSeriesPaint());
-                leftRenderer.setSeriesStroke(k-right, prop.getSeriesStroke());
-                leftRenderer.setSeriesShape(k-right, prop.getSeriesShape());
+//                leftRenderer.setSeriesPaint(k-right, prop.getSeriesPaint());
+//                leftRenderer.setSeriesStroke(k-right, prop.getSeriesStroke());
+//                leftRenderer.setSeriesShape(k-right, prop.getSeriesShape());
+                
                 //leftRenderer.setSeriesPaint(k-right,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
             }else{
                 dataLeft.removeSeries(prop.getTS());
@@ -287,7 +339,7 @@ public class JAMSTimePlot {
             }
         }
         
-        if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
+        //if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
         
         
         if(right == 0){
@@ -302,12 +354,12 @@ public class JAMSTimePlot {
             plot.mapDatasetToRangeAxis(0, 0);
             
         } else {
-        axisRIGHT.setVisible(true);
-        plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
-        plot.setRangeAxis(0, axisLEFT);
-        plot.setDataset(0, dataLeft);
-        plot.setRenderer(0, leftRenderer);
-        plot.mapDatasetToRangeAxis(0, 0);
+            axisRIGHT.setVisible(true);
+            plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+            plot.setRangeAxis(0, axisLEFT);
+            plot.setDataset(0, dataLeft);
+            plot.setRenderer(0, leftRenderer);
+            plot.mapDatasetToRangeAxis(0, 0);
         }
         
     }
@@ -354,7 +406,7 @@ public class JAMSTimePlot {
         dateAxis.setDateFormatOverride(new SimpleDateFormat(timeFormat));    
     }
     
-    public void plotRight(int renderer, String nameRight, String xAxisTitle, boolean inverted){
+    public void plotRight(XYItemRenderer rightRenderer, String nameRight, String xAxisTitle, boolean inverted){
         
         int plot_count = 0;
         int c = propVector.size();
@@ -363,7 +415,7 @@ public class JAMSTimePlot {
         DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
         dateAxis.setLabel(xAxisTitle);
         
-        rightRenderer = getRenderer(renderer);
+        //rightRenderer = getRenderer(renderer);
         axisRIGHT.setInverted(inverted);
         axisRIGHT.setLabel(nameRight);
         
@@ -376,9 +428,9 @@ public class JAMSTimePlot {
                 dataRight.addSeries(prop.getTS());
                 dataLeft.removeSeries(prop.getTS());
                 
-                rightRenderer.setSeriesPaint(k-left, prop.getSeriesPaint());
-                rightRenderer.setSeriesStroke(k-left, prop.getSeriesStroke());
-                rightRenderer.setSeriesShape(k-left, prop.getSeriesShape());
+//                rightRenderer.setSeriesPaint(k-left, prop.getSeriesPaint());
+//                rightRenderer.setSeriesStroke(k-left, prop.getSeriesStroke());
+//                rightRenderer.setSeriesShape(k-left, prop.getSeriesShape());
                 
                 //rightRenderer.setSeriesPaint(k-left,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
             }else{
@@ -386,7 +438,7 @@ public class JAMSTimePlot {
                 dataRight.removeSeries(prop.getTS());
             }
         }
-        if((plot_count<2 || plot_count>2) && renderer == 7) rightRenderer = getRenderer(0);
+        //if((plot_count<2 || plot_count>2) && renderer == 7) rightRenderer = getRenderer(0);
         
         if(left == 0){
             dataLeft.removeAllSeries();     
