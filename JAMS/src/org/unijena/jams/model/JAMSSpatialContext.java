@@ -40,14 +40,12 @@ import org.unijena.jams.data.*;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "List of spatial entities"
             )
             public JAMSEntityCollection entities;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Current spatial entity"
             )
             public JAMSEntity currentEntity;

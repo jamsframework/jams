@@ -25,9 +25,7 @@ package org.unijena.jams.gui.input;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import javax.swing.*;
-import org.unijena.jams.JAMSFileFilter;
 import org.unijena.jams.gui.*;
 
 /**
@@ -36,24 +34,22 @@ import org.unijena.jams.gui.*;
  */
 public class ListInput extends JPanel {
 
+    private static ImageIcon UP_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowup.png")).getImage().getScaledInstance(10, 5, Image.SCALE_SMOOTH));
+    private static ImageIcon DOWN_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowdown.png")).getImage().getScaledInstance(10, 5, Image.SCALE_SMOOTH));
     static final int BUTTON_SIZE = 21;
-    public static final int FILE_LIST = 0;
-    public static final int STRING_LIST = 1;
+    private static final Dimension BUTTON_DIMENSION = new Dimension(BUTTON_SIZE, BUTTON_SIZE);
     private JList listbox;
-    private JButton addButton;
-    private JButton removeButton;
-    private JScrollPane scrollPane;
+    private JButton addButton,  removeButton,  upButton,  downButton,  editButton;
+    protected JScrollPane scrollPane;
     private JFileChooser jfc;
-    private int type = FILE_LIST;
-    private ListData listData = new ListData();
+    protected ListData listData = new ListData();
+    private boolean orderButtons = true;
 
-    public ListInput(int type) {
-        this();
-        this.type = type;
+    public ListInput() {
+        this(true);
     }
 
-    // constructor of main frame
-    public ListInput() {
+    public ListInput(boolean orderButtons) {
 
         jfc = LHelper.getJFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -81,64 +77,88 @@ public class ListInput extends JPanel {
         // create some function buttons
         addButton = new JButton("+");
         addButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
-        addButton.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
+        addButton.setPreferredSize(BUTTON_DIMENSION);
         buttonPanel.add(addButton);
         addButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent event) {
-                // Get the text field value
-                String stringValue = null;
-
-                if (type == FILE_LIST) {
-                    Object o = getListbox().getSelectedValue();
-                    if (o != null) {
-                        File file = new File((String) o);
-
-                        jfc.setSelectedFile(file);
-                        jfc.setFileFilter(JAMSFileFilter.getJarFilter());
-                    }
-
-                    int result = jfc.showOpenDialog(ListInput.this);
-
-                    if (result == JFileChooser.APPROVE_OPTION) {
-                        stringValue = jfc.getSelectedFile().getAbsolutePath();
-                    }
-                } else {
-                    stringValue = LHelper.showInputDlg(ListInput.this, null, null);
-                }
-                // add this item to the list and refresh
-                if (stringValue != null && !listData.getValue().contains(stringValue)) {
-                    listData.addElement(stringValue);
-                    scrollPane.revalidate();
-                    scrollPane.repaint();
-                }
-
+                addItem();
             }
         });
 
         removeButton = new JButton("-");
         removeButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
-        removeButton.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
+        removeButton.setPreferredSize(BUTTON_DIMENSION);
         buttonPanel.add(removeButton);
         removeButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent event) {
-                //get the current selection
-                int selection = getListbox().getSelectedIndex();
-                if (selection >= 0) {
-                    // Add this item to the list and refresh
-                    listData.removeElementAt(selection);
-                    scrollPane.revalidate();
-                    scrollPane.repaint();
-
-                    //select the next item
-                    if (selection >= listData.getValue().size()) {
-                        selection = listData.getValue().size() - 1;
-                    }
-                    getListbox().setSelectedIndex(selection);
-                }
+                removeItem();
             }
         });
+
+        editButton = new JButton("...");
+        editButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
+        editButton.setPreferredSize(BUTTON_DIMENSION);
+        editButton.setToolTipText("Edit");
+        buttonPanel.add(editButton);
+        editButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                editItem();
+            }
+        });
+
+        if (orderButtons) {
+            upButton = new JButton();
+            upButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
+            upButton.setPreferredSize(BUTTON_DIMENSION);
+            upButton.setToolTipText("Move up");
+            upButton.setIcon(UP_ICON);
+            upButton.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    moveUp();
+                }
+            });
+
+            downButton = new JButton();
+            downButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
+            downButton.setPreferredSize(BUTTON_DIMENSION);
+            downButton.setToolTipText("Move down");
+            downButton.setIcon(DOWN_ICON);
+            downButton.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    moveDown();
+                }
+            });
+
+            buttonPanel.add(upButton);
+            buttonPanel.add(downButton);
+        }
+    }
+
+    private void moveUp() {
+        int index = listbox.getSelectedIndex();
+        if (index > 0) {
+            String tmp = listData.getElementAt(index - 1);
+            listData.setElementAt(index - 1, listData.getElementAt(index));
+            listData.setElementAt(index, tmp);
+            listbox.setSelectedIndex(index - 1);
+            listbox.updateUI();
+        }
+    }
+
+    private void moveDown() {
+        int index = listbox.getSelectedIndex();
+        if (index < listData.getValue().size() - 1) {
+            String tmp = listData.getElementAt(index + 1);
+            listData.setElementAt(index + 1, listData.getElementAt(index));
+            listData.setElementAt(index, tmp);
+            listbox.setSelectedIndex(index + 1);
+            listbox.updateUI();
+        }
     }
 
     public void addListDataObserver(Observer obs) {
@@ -168,24 +188,65 @@ public class ListInput extends JPanel {
         return listbox;
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         getListbox().setEnabled(enabled);
         addButton.setEnabled(enabled);
         removeButton.setEnabled(enabled);
+        upButton.setEnabled(enabled);
+        downButton.setEnabled(enabled);
     }
 
-    private class ListData extends Observable {
+    protected void addItem() {
+        // Get the text field value
+        String stringValue = LHelper.showInputDlg(ListInput.this, null, "New value", null);
+
+        // add this item to the list and refresh
+        if (stringValue != null && !listData.getValue().contains(stringValue)) {
+            listData.addElement(stringValue);
+            scrollPane.revalidate();
+            scrollPane.repaint();
+        }
+    }
+
+    protected void removeItem() {
+        //get the current selection
+        int selection = getListbox().getSelectedIndex();
+        if (selection >= 0) {
+            // remove this item from the list and refresh
+            listData.removeElementAt(selection);
+            scrollPane.revalidate();
+            scrollPane.repaint();
+
+            //select the next item
+            if (selection >= listData.getValue().size()) {
+                selection = listData.getValue().size() - 1;
+            }
+            getListbox().setSelectedIndex(selection);
+        }
+    }
+
+    protected void editItem() {
+        //get the current selection
+        int selection = getListbox().getSelectedIndex();
+        if (selection >= 0) {
+            // edit this item
+            String value = listData.getElementAt(selection);
+            value = LHelper.showInputDlg(ListInput.this, null, "New value", value);
+            if (value != null) {
+                listData.setElementAt(selection, value);
+                scrollPane.revalidate();
+                scrollPane.repaint();
+            }
+        }
+    }
+
+    protected class ListData extends Observable {
 
         private Vector<String> listData = new Vector<String>();
 
-        
-        
-
-           ; 
-            
-            
-             public void addElement(String s) {
+        public void addElement(String s) {
             listData.addElement(s);
             getListbox().setListData(listData);
             getListbox().setSelectedValue(s, true);
@@ -200,6 +261,14 @@ public class ListInput extends JPanel {
             this.notifyObservers();
         }
 
+        public String getElementAt(int selection) {
+            return listData.get(selection);
+        }
+
+        public void setElementAt(int selection, String s) {
+            listData.set(selection, s);
+        }
+
         public Vector<String> getValue() {
             return listData;
         }
@@ -210,11 +279,5 @@ public class ListInput extends JPanel {
             this.setChanged();
             this.notifyObservers();
         }
-    }
-
-    
-    
-
-;
-    
+    };
 }

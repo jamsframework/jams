@@ -40,14 +40,12 @@ import org.unijena.jams.data.*;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Time interval of temporal context"
             )
             public JAMSTimeInterval timeInterval;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Current date of temporal context"
             )
             public JAMSCalendar current;

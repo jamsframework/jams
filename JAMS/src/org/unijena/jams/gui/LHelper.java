@@ -134,6 +134,9 @@ public class LHelper {
     public static String showInputDlg(Component owner, String message, String initalValue) {
         return JOptionPane.showInputDialog(owner, message, initalValue);
     }
+    public static String showInputDlg(Component owner, String message, String title, String initalValue) {
+        return (String) JOptionPane.showInputDialog(owner, message, title, JOptionPane.QUESTION_MESSAGE, null, null, initalValue);
+    }
 
     public static InputComponent createInputComponent(String type) {
         InputComponent ic;

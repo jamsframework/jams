@@ -25,16 +25,15 @@ package org.unijena.jams.gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.*;
 import org.unijena.jams.*;
 import org.unijena.jams.gui.input.BooleanInput;
 import org.unijena.jams.gui.input.FileInput;
-import org.unijena.jams.gui.input.ListInput;
 import org.unijena.jams.gui.input.TextInput;
 import org.unijena.jams.JAMSTools;
+import org.unijena.jams.gui.input.FileListInput;
 
 /**
  *
@@ -43,7 +42,7 @@ import org.unijena.jams.JAMSTools;
 public class PropertyDlg extends JDialog {
 
     private static final int JCOMP_HEIGHT = 20;
-    private ListInput list;
+    private FileListInput list;
     private BooleanInput verboseCheck,  windowEnable,  windowOnTop,  errorDlg;
     private JSpinner debugSpinner;
     private FileInput infoFile,  errorFile;
@@ -73,7 +72,7 @@ public class PropertyDlg extends JDialog {
         int y = 0;
 
         LHelper.addGBComponent(contentPanel, gbl, new JLabel("Libraries:"), 0, y, 1, 1, 0, 0);
-        list = new ListInput();
+        list = new FileListInput();
         list.setPreferredSize(new Dimension(295, 130));
         LHelper.addGBComponent(contentPanel, gbl, list, 1, y, 1, 1, 1, 1);
 

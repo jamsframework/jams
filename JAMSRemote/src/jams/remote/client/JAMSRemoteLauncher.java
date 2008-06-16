@@ -107,7 +107,7 @@ public class JAMSRemoteLauncher extends JAMSLauncher {
     private void adapt() {
         
         Dimension size = this.getSize();
-        this.setPreferredSize(new Dimension(size.width+SERVER_PANEL_WIDTH, size.height+20));
+        this.setPreferredSize(new Dimension(size.width+SERVER_PANEL_WIDTH, size.height+50));
         
         JMenu logsMenu = getLogsMenu();
         JMenuItem serverInfoLogItem = new JMenuItem("Server info log");
@@ -134,7 +134,7 @@ public class JAMSRemoteLauncher extends JAMSLauncher {
         
         LHelper.addGBComponent(serverPanel, gbl, new JLabel("Server List:"), 0, 5, 1, 1, 0, 0);
         
-        serverList = new ListInput(ListInput.STRING_LIST);
+        serverList = new ListInput(false);
         serverList.setPreferredSize(new Dimension(100, 100));
         
         serverList.addListDataObserver(new Observer() {
