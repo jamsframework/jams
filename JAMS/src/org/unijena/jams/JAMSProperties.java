@@ -39,6 +39,7 @@ public class JAMSProperties extends Observable {
     public static final String SERVER_PASSWORD_IDENTIFIER = "serverpassword";
     public static final String SERVER_EXCLUDES_IDENTIFIER = "excludes";
     public static final String WORKSPACE_IDENTIFIER = "workspace";
+
     private Properties properties = new Properties();
     private String defaultFilename = "";
     private HashMap<String, JAMSProperty> propertyMap = new HashMap<String, JAMSProperty>();
@@ -136,7 +137,6 @@ public class JAMSProperties extends Observable {
         p.setProperty("guiconfig", "1");
         p.setProperty("guiconfigwidth", "600");
         p.setProperty("guiconfigheight", "600");
-        p.setProperty("helpbaseurl", "");
 
         JAMSProperties jp = new JAMSProperties(p);
         jp.setDefaultFilename(System.getProperty("user.dir") + System.getProperty("file.separator") + JAMSProperties.DEFAULT_FILENAME);
