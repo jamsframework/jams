@@ -96,7 +96,7 @@ public class JAMSLauncher extends JFrame {
     private JFileChooser jfc;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, "Info Log");
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, "Error Log");
-    private HelpDlg helpDlg = new HelpDlg(this);
+    private HelpDlg helpDlg;
     private JMenuBar mainMenu;
     private JMenu logsMenu;
     private String initialModelDocString = "";
@@ -154,6 +154,7 @@ public class JAMSLauncher extends JFrame {
             this.initialModelDocString = XMLIO.getStringFromDocument(this.modelDocument);
             this.modelFilename = modelFilename;
 
+            fillAttributes(this.getModelDocument());
             fillTabbedPane(this.getModelDocument());
 
         //LHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
@@ -202,6 +203,7 @@ public class JAMSLauncher extends JFrame {
         setupModelDlg = new WorkerDlg(this, "Setting up the model");
 
         this.propertyDlg = new PropertyDlg(this, getProperties());
+        this.helpDlg = new HelpDlg(this);
 
         this.setLocationByPlatform(true);
         this.setLayout(new BorderLayout());
@@ -511,8 +513,6 @@ public class JAMSLauncher extends JFrame {
         Node node;
 
         Element root = doc.getDocumentElement();
-        setTitle(getBaseTitle() + ": " + root.getAttribute("name") + " [" + this.modelFilename + "]");
-
         Element config = (Element) root.getElementsByTagName("launcher").item(0);
         NodeList groups = config.getElementsByTagName("group");
 
@@ -555,13 +555,13 @@ public class JAMSLauncher extends JFrame {
                     subgroupPanel.setBorder(BorderFactory.createTitledBorder(null, subgroupName,
                             TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, newTitledBorderFont));
 
-                    
+
                     // add the subgroup panel
                     row++;
                     LHelper.addGBComponent(contentPanel, gbl, subgroupPanel,
-                                            0, row, 3, 1,
-                                            6, 2, 6, 2, 
-                                            1, 1);
+                            0, row, 3, 1,
+                            6, 2, 6, 2,
+                            1, 1);
                     // help button?
                     HelpComponent helpComponent = new HelpComponent(subgroupElement);
                     if (!helpComponent.isEmpty()) {
@@ -569,13 +569,13 @@ public class JAMSLauncher extends JFrame {
                         HelpButton helpButton = createHelpButton(helpComponent);
                         helpPanel.add(helpButton);
                         LHelper.addGBComponent(contentPanel, gbl, helpPanel,
-                                            4, row, 1, 1,
-                                            1, 1, 1, 1, 
-                                            1, 1);
+                                4, row, 1, 1,
+                                1, 1, 1, 1,
+                                1, 1);
                     }
-                        
-                                            
-                    
+
+
+
                     row++;
                     NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
                     for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
@@ -604,7 +604,7 @@ public class JAMSLauncher extends JFrame {
         JLabel nameLabel = new JLabel(property.getAttribute("name"));
         nameLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
         LHelper.addGBComponent(contentPanel, gbl, nameLabel, 0, row, 1, 1, 0, 0);
-        
+
         InputComponent ic = LHelper.createInputComponent(property.getAttribute("type"));
 
         StringTokenizer tok = new StringTokenizer(property.getAttribute("range"), ";");
@@ -625,21 +625,29 @@ public class JAMSLauncher extends JFrame {
         getGroupMap().put(ic, scrollPane);
 
         LHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
-        
-                            // help button?
+
+        // help button?
         HelpComponent helpComponent = new HelpComponent(property);
         if (!helpComponent.isEmpty()) {
             JPanel helpPanel = new JPanel();
             HelpButton helpButton = createHelpButton(helpComponent);
             helpPanel.add(helpButton);
             LHelper.addGBComponent(contentPanel, gbl, helpPanel,
-                                3, row, 1, 1,
-                                1, 1, 1, 1, 
-                                1, 1);
+                    3, row, 1, 1,
+                    1, 1, 1, 1,
+                    1, 1);
         }
 
 
         return;
+    }
+
+    private void fillAttributes(final Document doc) {
+
+        Element root = doc.getDocumentElement();
+        setTitle(getBaseTitle() + ": " + root.getAttribute("name") + " [" + this.modelFilename + "]");
+        setHelpBaseUrl(root.getAttribute("helpbaseurl"));
+
     }
 
     private boolean closeModel() {
@@ -705,12 +713,9 @@ public class JAMSLauncher extends JFrame {
         setupModelDlg.execute();
 
         // start the model
-        Thread t = new  
+        Thread t = new Thread() {
 
-              Thread() {
-
-                
-                public void run() {
+            public void run() {
 
                 runtime.runModel();
 
@@ -787,34 +792,35 @@ public class JAMSLauncher extends JFrame {
     protected LogViewDlg getErrorDlg() {
         return errorDlg;
     }
-    
-    protected HelpButton createHelpButton(final HelpComponent helpComponent) {
+
+    protected String getHelpBaseUrl() {
+        return this.helpDlg.getBaseUrl();
+    }
+
+    protected void setHelpBaseUrl(String helpBaseUrl) {
+        this.helpDlg.setBaseUrl(helpBaseUrl);
+    }
+
+    protected HelpButton createHelpButton(HelpComponent helpComponent) {
         HelpButton helpButton = new HelpButton(helpComponent);
         helpButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
 
-                Thread t = new Thread() {
-
-                    public void run() {
-                        help(helpComponent);
-                        
-                    }
-                };
-                t.start();
+                HelpButton button = (HelpButton) e.getSource();
+                button.showHelp();
             }
         });
         helpButton.setEnabled(true);
         return helpButton;
-        
-    }
-    
-    public void help( HelpComponent helpComponent) {
-        helpDlg.setHelpComponent(helpComponent);
-        helpDlg.setVisible(true);
-        
+
     }
 
+    public void help(HelpComponent helpComponent) {
+        helpDlg.load(helpComponent);
+        helpDlg.setVisible(true);
+
+    }
 
     class HelpButton extends JButton {
 
@@ -823,12 +829,15 @@ public class JAMSLauncher extends JFrame {
         public HelpButton(HelpComponent helpComponent) {
             super();
             this.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-            this.setPreferredSize(new Dimension(20, 14));
+            this.setPreferredSize(new Dimension(20, 20));
             this.setIcon(HelpComponent.HELP_ICON);
             this.setToolTipText("Help");
             this.helpComponent = helpComponent;
 
         }
-    }
 
+        public void showHelp() {
+            help(helpComponent);
+        }
+    }
 }

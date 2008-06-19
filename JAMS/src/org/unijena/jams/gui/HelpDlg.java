@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.unijena.jams.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
@@ -13,28 +13,30 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
+import javax.swing.JTextPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import org.unijena.jams.JAMSTools;
 import org.unijena.jams.data.HelpComponent;
 
 /**
  *
  * @author Heiko Busch
  */
-    public class HelpDlg extends JDialog {
-    
-        public final static int OK_RESULT = 0;
-        public final static int CANCEL_RESULT = -1;
-        private JTextField helpURLField;
-        private HelpComponent helpComponent;
-        
-        public HelpDlg(Frame owner) {
-            super(owner);
-            setLocationRelativeTo(owner);
-            init();
-        }
+public class HelpDlg extends JDialog {
+
+    public final static int OK_RESULT = 0;
+    public final static int CANCEL_RESULT = -1;
+    private HelpComponent helpComponent;
+    private String baseUrl = "";
+    private JTextPane webPagePane;
+
+    public HelpDlg(Frame owner) {
+        super(owner);
+        setLocationRelativeTo(owner);
+        init();
+    }
 
     public HelpComponent getHelpComponent() {
         return helpComponent;
@@ -42,49 +44,78 @@ import org.unijena.jams.data.HelpComponent;
 
     public void setHelpComponent(HelpComponent helpComponent) {
         this.helpComponent = helpComponent;
-        helpURLField.setText(this.helpComponent.getHelpURL());
     }
 
-        
-        private void init() {
+    public String getBaseUrl() {
+        return baseUrl;
+    }
 
-            setModal(true);
-            this.setTitle("Help");
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 
-            this.setLayout(new BorderLayout());
-            GridBagLayout gbl = new GridBagLayout();
+    public void init() {
+        setModal(true);
+        this.setTitle("Help");
 
-            
-            
-            JPanel contentPanel = new JPanel();
-            contentPanel.setLayout(gbl);
+        this.setLayout(new BorderLayout());
+        GridBagLayout gbl = new GridBagLayout();
 
-            LHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
-            LHelper.addGBComponent(contentPanel, gbl, new JLabel("Help URL:"), 0, 1, 1, 1, 0, 0);
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(gbl);
 
-            helpURLField = new JTextField();
+        LHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
 
-            helpURLField.setPreferredSize(new Dimension(200, 20));
-            LHelper.addGBComponent(contentPanel, gbl, helpURLField, 1, 3, 2, 1, 0, 0);
+        JButton okButton = new JButton("OK");
+        ActionListener okListener = new ActionListener() {
 
-
-            JButton okButton = new JButton("OK");
-            ActionListener okListener = new ActionListener() {
-
-                public void actionPerformed(ActionEvent e) {
-                    setVisible(false);
-                }
-            };
-            okButton.addActionListener(okListener);
-            getRootPane().setDefaultButton(okButton);
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+            }
+        };
+        okButton.addActionListener(okListener);
+        getRootPane().setDefaultButton(okButton);
 
 
-            JPanel buttonPanel = new JPanel();
-            buttonPanel.add(okButton);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(okButton);
 
-            JScrollPane scrollPane = new JScrollPane(contentPanel);
-            getContentPane().add(scrollPane, BorderLayout.CENTER);
-            getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-            pack();
+        webPagePane = new JTextPane();
+        webPagePane.setEditable(false); // Start read-only
+        JScrollPane scrollPane = new JScrollPane(webPagePane);
+        scrollPane.setPreferredSize(new Dimension(600, 400));
+        getContentPane().add(scrollPane, BorderLayout.CENTER);
+        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+
+    }
+
+    public void load(HelpComponent helpComponent) {
+
+        setHelpComponent(helpComponent);
+
+        if (this.helpComponent.hasHelpText()) {
+            webPagePane.setContentType("text/plain");
+            webPagePane.setText(this.helpComponent.getHelpText());
         }
+        if (this.helpComponent.hasHelpURL()) {
+            String url = this.baseUrl;
+            if (!JAMSTools.isEmptyString(url)) {
+                url += "/";
+            }
+            url += this.helpComponent.getHelpURL();
+
+            try {
+                webPagePane.setContentType("text/html");
+                webPagePane.setPage(url);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(webPagePane, new String[]{
+                            "Unable to open file", url
+                        }, "File Open Error",
+                        JOptionPane.ERROR_MESSAGE);
+                setCursor(Cursor.getDefaultCursor());
+            }
+        }
+
+        pack();
     }
+}
