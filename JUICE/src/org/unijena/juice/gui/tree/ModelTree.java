@@ -308,6 +308,7 @@ public class ModelTree extends JAMSTree {
             rootElement.setAttribute("name", cd.getName());
             rootElement.setAttribute("author", view.getAuthor());
             rootElement.setAttribute("date", view.getDate());
+            rootElement.setAttribute("helpbaseurl", view.getHelpBaseUrl());
             rootElement.appendChild(document.createTextNode("\n"));
 
             document.appendChild(rootElement);
@@ -519,9 +520,9 @@ public class ModelTree extends JAMSTree {
 
         docRoot = modelDoc.getDocumentElement();
         modelName = docRoot.getAttribute("name");
-
         view.setAuthor(docRoot.getAttribute("author"));
         view.setDate(docRoot.getAttribute("date"));
+        view.setHelpBaseUrl(docRoot.getAttribute("helpbaseurl"));
 
         Node descriptionNode = docRoot.getElementsByTagName("description").item(0);
         if (descriptionNode != null) {

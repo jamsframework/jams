@@ -90,6 +90,7 @@ public class ModelView {
     private String author;
     private String date;
     private String description;
+    private String helpBaseUrl;
     private HashMap<String, ComponentDescriptor> componentDescriptors = new HashMap<String, ComponentDescriptor>();
     private TreePanel modelTreePanel;
     private JDesktopPane parentPanel;
@@ -606,6 +607,15 @@ public class ModelView {
         this.description = description;
     }
 
+    public String getHelpBaseUrl() {
+        return helpBaseUrl;
+    }
+
+    public void setHelpBaseUrl(String helpBaseUrl) {
+        this.helpBaseUrl = helpBaseUrl;
+    }
+
+    
     public ComponentDescriptor getComponentDescriptor(String name) {
         return this.getComponentDescriptors().get(name);
     }

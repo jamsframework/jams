@@ -35,14 +35,13 @@ import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.unijena.jams.gui.LHelper;
-import org.unijena.juice.*;
 
 /**
  *
  * @author S. Kralisch
  *
  * Panel that provides Swing components for defining model author,
- * date and description
+ * date, description and help-baseURL
  *
  */
 public class ModelEditPanel extends JPanel {
@@ -73,10 +72,12 @@ public class ModelEditPanel extends JPanel {
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Author:"), 1, 1, 1, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Date:"), 1, 2, 1, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Description:"), 1, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Help Base URL:"), 1, 4, 1, 1, 0, 0);
         
         LHelper.addGBComponent(componentPanel, mainLayout, getTextField("author", "", true), 2, 1, 1, 1, 1.0, 1.0);
         LHelper.addGBComponent(componentPanel, mainLayout, getTextField("date", "", true), 2, 2, 1, 1, 1.0, 1.0);
         LHelper.addGBComponent(componentPanel, mainLayout, getTextPane("description", "", 250, true), 2, 3, 1, 1, 1.0, 1.0);
+        LHelper.addGBComponent(componentPanel, mainLayout, getTextField("helpBaseUrl", "", true), 2, 4, 1, 1, 1.0, 1.0);
         
 
         textFields.get("author").getDocument().addDocumentListener(new DocumentListener() {
@@ -99,6 +100,17 @@ public class ModelEditPanel extends JPanel {
             }
             public void removeUpdate(DocumentEvent e) {
                 updateDate();
+            }
+        });
+        textFields.get("helpBaseUrl").getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                updateHelpBaseUrl();
+            }
+            public void insertUpdate(DocumentEvent e) {
+                updateHelpBaseUrl();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                updateHelpBaseUrl();
             }
         });
         textAreas.get("description").getDocument().addDocumentListener(new DocumentListener() {
@@ -136,6 +148,7 @@ public class ModelEditPanel extends JPanel {
     public void update() {
         textFields.get("author").setText(view.getAuthor());
         textFields.get("date").setText(view.getDate());
+        textFields.get("helpBaseUrl").setText(view.getHelpBaseUrl());
         textAreas.get("description").setText(view.getDescription());
     }
     
@@ -178,4 +191,9 @@ public class ModelEditPanel extends JPanel {
         view.setDescription(description);
     }
     
+    private void updateHelpBaseUrl() {
+        
+        String helpBaseUrl = textFields.get("helpBaseUrl").getText();
+        view.setHelpBaseUrl(helpBaseUrl);
+    }
 }
