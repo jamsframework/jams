@@ -44,6 +44,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.unijena.jams.JAMSTools;
+import org.unijena.jams.data.HelpComponent;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
@@ -335,16 +336,22 @@ public class ModelTree extends JAMSTree {
                             groupElement.appendChild(document.createTextNode("\n"));
                         }
                         if (modelProperty instanceof Group) {
-                            Group subgroup = (Group)modelProperty;
+                            Group subgroup = (Group) modelProperty;
                             Element subgroupElement = (Element) document.createElement("subgroup");
                             subgroupElement.setAttribute("name", subgroup.getCanonicalName());
+                            HelpComponent helpComponent = subgroup.getHelpComponent();
+                            if (!helpComponent.isEmpty()) {
+                                Element helpElement = helpComponent.createDOMElement(document);
+                                subgroupElement.appendChild(helpElement);
+                                subgroupElement.appendChild(document.createTextNode("\n"));
+                            }
 
                             Vector subgroupProperties = subgroup.getProperties();
                             for (int k = 0; k < subgroupProperties.size(); k++) {
                                 Object subgroupProperty = subgroupProperties.get(k);
 
                                 if (subgroupProperty instanceof ModelProperty) {
-                                    ModelProperty property = (ModelProperty)subgroupProperty;
+                                    ModelProperty property = (ModelProperty) subgroupProperty;
                                     Element propertyElement = createPropertyElement(document, property);
                                     subgroupElement.appendChild(propertyElement);
                                     subgroupElement.appendChild(document.createTextNode("\n"));
@@ -406,6 +413,13 @@ public class ModelTree extends JAMSTree {
         propertyElement.setAttribute("range", "" + property.lowerBound + ";" + property.upperBound);
         if (property.length > 0) {
             propertyElement.setAttribute("length", "" + property.length);
+        }
+
+        HelpComponent helpComponent = property.getHelpComponent();
+        if (!helpComponent.isEmpty()) {
+            Element helpElement = helpComponent.createDOMElement(document);
+            propertyElement.appendChild(helpElement);
+            propertyElement.appendChild(document.createTextNode("\n"));
         }
 
         return propertyElement;
