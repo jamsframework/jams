@@ -62,6 +62,7 @@ import javax.swing.border.TitledBorder;
 import org.unijena.jams.*;
 import org.unijena.jams.gui.input.InputComponent;
 import org.unijena.jams.JAMSTools;
+import org.unijena.jams.data.HelpComponent;
 import org.unijena.jams.io.XMLIO;
 import org.unijena.jams.io.XMLProcessor;
 import org.unijena.jams.runtime.StandardRuntime;
@@ -95,6 +96,7 @@ public class JAMSLauncher extends JFrame {
     private JFileChooser jfc;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, "Info Log");
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, "Error Log");
+    private HelpDlg helpDlg = new HelpDlg(this);
     private JMenuBar mainMenu;
     private JMenu logsMenu;
     private String initialModelDocString = "";
@@ -560,6 +562,20 @@ public class JAMSLauncher extends JFrame {
                                             0, row, 3, 1,
                                             6, 2, 6, 2, 
                                             1, 1);
+                    // help button?
+                    HelpComponent helpComponent = new HelpComponent(subgroupElement);
+                    if (!helpComponent.isEmpty()) {
+                        JPanel helpPanel = new JPanel();
+                        HelpButton helpButton = createHelpButton(helpComponent);
+                        helpPanel.add(helpButton);
+                        LHelper.addGBComponent(contentPanel, gbl, helpPanel,
+                                            4, row, 1, 1,
+                                            1, 1, 1, 1, 
+                                            1, 1);
+                    }
+                        
+                                            
+                    
                     row++;
                     NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
                     for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
@@ -609,6 +625,19 @@ public class JAMSLauncher extends JFrame {
         getGroupMap().put(ic, scrollPane);
 
         LHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
+        
+                            // help button?
+        HelpComponent helpComponent = new HelpComponent(property);
+        if (!helpComponent.isEmpty()) {
+            JPanel helpPanel = new JPanel();
+            HelpButton helpButton = createHelpButton(helpComponent);
+            helpPanel.add(helpButton);
+            LHelper.addGBComponent(contentPanel, gbl, helpPanel,
+                                3, row, 1, 1,
+                                1, 1, 1, 1, 
+                                1, 1);
+        }
+
 
         return;
     }
@@ -758,4 +787,48 @@ public class JAMSLauncher extends JFrame {
     protected LogViewDlg getErrorDlg() {
         return errorDlg;
     }
+    
+    protected HelpButton createHelpButton(final HelpComponent helpComponent) {
+        HelpButton helpButton = new HelpButton(helpComponent);
+        helpButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+                Thread t = new Thread() {
+
+                    public void run() {
+                        help(helpComponent);
+                        
+                    }
+                };
+                t.start();
+            }
+        });
+        helpButton.setEnabled(true);
+        return helpButton;
+        
+    }
+    
+    public void help( HelpComponent helpComponent) {
+        helpDlg.setHelpComponent(helpComponent);
+        helpDlg.setVisible(true);
+        
+    }
+
+
+    class HelpButton extends JButton {
+
+        HelpComponent helpComponent;
+
+        public HelpButton(HelpComponent helpComponent) {
+            super();
+            this.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+            this.setPreferredSize(new Dimension(20, 14));
+            this.setIcon(HelpComponent.HELP_ICON);
+            this.setToolTipText("Help");
+            this.helpComponent = helpComponent;
+
+        }
+    }
+
 }

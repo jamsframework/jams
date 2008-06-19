@@ -46,7 +46,7 @@ public class PropertyDlg extends JDialog {
     private BooleanInput verboseCheck,  windowEnable,  windowOnTop,  errorDlg;
     private JSpinner debugSpinner;
     private FileInput infoFile,  errorFile;
-    private TextInput windowHeight,  windowWidth;
+    private TextInput windowHeight,  windowWidth, helpBaseURL;
     private JAMSProperties properties;
     public static final int APPROVE_OPTION = 1;
     public static final int CANCEL_OPTION = 0;
@@ -140,6 +140,12 @@ public class PropertyDlg extends JDialog {
         windowHeight = new TextInput();
         windowHeight.getComponent().setPreferredSize(new Dimension(100, JCOMP_HEIGHT));
         LHelper.addGBComponent(contentPanel, gbl, windowHeight, 1, y, 1, 1, 1, 1);
+
+        y++;
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Help Base URL:"), 0, y, 1, 1, 0, 0);
+        helpBaseURL = new TextInput();
+        helpBaseURL.getComponent().setPreferredSize(new Dimension(300, JCOMP_HEIGHT));
+        LHelper.addGBComponent(contentPanel, gbl, helpBaseURL, 1, y, 1, 1, 1, 1);
 
         JButton okButton = new JButton("OK");
         okButton.addActionListener(new ActionListener() {
@@ -235,6 +241,7 @@ public class PropertyDlg extends JDialog {
 
         windowHeight.setValue(properties.getProperty("windowheight"));
         windowWidth.setValue(properties.getProperty("windowwidth"));
+        helpBaseURL.setValue(properties.getProperty("helpbaseurl"));
     }
 
     public void validateProperties() {
@@ -258,6 +265,7 @@ public class PropertyDlg extends JDialog {
         properties.setProperty("windowontop", windowOnTop.getValue());
         properties.setProperty("windowheight", windowHeight.getValue());
         properties.setProperty("windowwidth", windowWidth.getValue());
+        properties.setProperty("helpbaseurl", helpBaseURL.getValue());
     }
 
     public JAMSProperties getProperties() {
