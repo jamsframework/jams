@@ -24,6 +24,7 @@
 package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -41,6 +42,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
@@ -63,7 +65,8 @@ public class ModelPropertyDlg extends JDialog {
     
     private JComboBox groupCombo, componentCombo, varCombo;
     private HashMap<String, ComponentDescriptor> componentDescriptors;
-    private JTextField nameField, descriptionField;
+    private JTextField nameField, descriptionField, helpURLField;
+    private JTextArea helpTextField;
     private FloatInput lowField, upField;
     private IntegerInput lengthField;
     private int result = CANCEL_RESULT;
@@ -80,7 +83,6 @@ public class ModelPropertyDlg extends JDialog {
         this.setTitle("Model property editor");
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         
-        
         this.setLayout(new BorderLayout());
         GridBagLayout gbl = new GridBagLayout();
         JPanel contentPanel = new JPanel();
@@ -95,6 +97,8 @@ public class ModelPropertyDlg extends JDialog {
         LHelper.addGBComponent(contentPanel, gbl, new JLabel("Lower Boundary:"), 0, 6, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, new JLabel("Upper Boundary:"), 0, 7, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, new JLabel("Length:"), 0, 8, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Help URL:"), 0, 9, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Help Text:"), 0, 10, 1, 1, 0, 0);
         
         groupCombo = new JComboBox();
         LHelper.addGBComponent(contentPanel, gbl, groupCombo, 1, 1, 1, 1, 0, 0);
@@ -117,13 +121,21 @@ public class ModelPropertyDlg extends JDialog {
         lowField = new FloatInput();
         upField= new FloatInput();
         lengthField = new IntegerInput();
+        helpURLField = new JTextField();
+        helpTextField = new JTextArea();
         
         LHelper.addGBComponent(contentPanel, gbl, nameField, 1, 4, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, descriptionField, 1, 5, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, lowField.getComponent(), 1, 6, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, upField.getComponent(), 1, 7, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, lengthField.getComponent(), 1, 8, 1, 1, 0, 0);
+
+        helpURLField.setPreferredSize(new Dimension(200, 20));
+        LHelper.addGBComponent(contentPanel, gbl, helpURLField, 1, 9, 2, 1, 0, 0);
         
+        helpTextField.setColumns(30);
+        helpTextField.setRows(5);
+        LHelper.addGBComponent(contentPanel, gbl, helpTextField, 1, 10, 2, 1, 0, 0);
         
         JButton okButton = new JButton("OK");
         ActionListener okListener = new ActionListener() {
@@ -193,13 +205,10 @@ public class ModelPropertyDlg extends JDialog {
         if (property != null) {
             componentCombo.setSelectedItem(property.component.getName());
             
-            Class type;
             if (property.var != null) {
                 varCombo.setSelectedItem(property.var.name);
-                type = property.var.type;
             } else if (property.attribute != null) {
                 varCombo.setSelectedItem(property.attribute.getName());
-                type = property.attribute.getType();
             }
             
             nameField.setText(property.name);
@@ -208,12 +217,17 @@ public class ModelPropertyDlg extends JDialog {
             lowField.setValue("" + property.lowerBound);
             upField.setValue("" + property.upperBound);
             lengthField.setValue("" + property.length);
+            helpURLField.setText(property.getHelpComponent().getHelpURL());
+            helpTextField.setText(property.getHelpComponent().getHelpText());
         } else {
             nameField.setText("");
             descriptionField.setText("");
             lowField.setValue("");
             upField.setValue("");
             lengthField.setValue("");
+            helpURLField.setText("");
+            helpTextField.setText("");
+
             updateComponentVars(componentCombo.getSelectedItem());
         }
         
@@ -260,6 +274,14 @@ public class ModelPropertyDlg extends JDialog {
         return length;
     }
     
+    public String getHelpURL() {
+        return helpURLField.getText();
+    }
+
+    public String getHelpText() {
+        return helpTextField.getText();
+    }
+
     public ComponentDescriptor getComponent() {
         return componentDescriptors.get(componentCombo.getSelectedItem());
     }

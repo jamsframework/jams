@@ -50,6 +50,7 @@ import javax.swing.event.InternalFrameListener;
 import org.unijena.jams.JAMS;
 import org.unijena.jams.JAMSProperties;
 import org.unijena.jams.JAMSTools;
+import org.unijena.jams.data.HelpComponent;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.WorkerDlg;
 import org.unijena.jams.io.XMLIO;
@@ -58,8 +59,10 @@ import org.unijena.jams.runtime.StandardRuntime;
 import org.unijena.juice.*;
 import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.ModelProperties.Group;
+import org.unijena.juice.ModelProperties.ModelElement;
 import org.unijena.juice.ModelProperties.ModelProperty;
 import org.unijena.juice.gui.tree.ModelTree;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -474,6 +477,7 @@ public class ModelView {
                         Element subgroupElement = (Element)node;
                         String subgroupName= subgroupElement.getAttribute("name");
                         Group subgroup = getModelProperties().createSubgroup(group, subgroupName);
+                        setHelpComponent(subgroupElement, subgroup);
 
                         NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
                         for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
@@ -533,7 +537,8 @@ public class ModelView {
         if (lenStr != null && lenStr.length() > 0) {
             property.length = Integer.parseInt(lenStr);
         }
-
+        setHelpComponent(propertyElement, property);
+                
         return property;
         
     }
@@ -633,4 +638,12 @@ public class ModelView {
     public HashMap<String, ComponentDescriptor> getComponentDescriptors() {
         return componentDescriptors;
     }
-}
+
+    private void setHelpComponent(Element theElement, ModelElement theModelElement) throws DOMException {
+        // get help component from help node
+        HelpComponent helpComponent = new HelpComponent(theElement);
+        theModelElement.setHelpComponent(helpComponent);
+    }
+}    
+    
+    

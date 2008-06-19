@@ -24,6 +24,7 @@
 package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -36,9 +37,11 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import org.unijena.jams.gui.LHelper;
+import org.unijena.jams.gui.input.TextInput;
 import org.unijena.juice.ModelProperties.Group;
 
 /**
@@ -52,6 +55,8 @@ public class ModelSubgroupDlg extends JDialog {
     
     private JComboBox groupCombo;
     private JTextField nameField;
+    private JTextField helpURLField;
+    private JTextArea helpTextField;
     private int result = CANCEL_RESULT;
     
     public ModelSubgroupDlg(Frame owner) {
@@ -73,13 +78,24 @@ public class ModelSubgroupDlg extends JDialog {
         LHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, new JLabel("Group:"), 0, 1, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, new JLabel("Name:"), 0, 2, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Help URL:"), 0, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Help Text:"), 0, 4, 1, 1, 0, 0);
         
         groupCombo = new JComboBox();
         nameField = new JTextField();
+        helpURLField = new JTextField();
+        helpTextField = new JTextArea();
         
         LHelper.addGBComponent(contentPanel, gbl, groupCombo, 1, 1, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, nameField, 1, 2, 1, 1, 30, 0);
+
+        helpURLField.setPreferredSize(new Dimension(200, 20));
+        LHelper.addGBComponent(contentPanel, gbl, helpURLField, 1, 3, 2, 1, 0, 0);
         
+        helpTextField.setColumns(30);
+        helpTextField.setRows(5);
+        LHelper.addGBComponent(contentPanel, gbl, helpTextField, 1, 4, 2, 1, 0, 0);
+
         JButton okButton = new JButton("OK");
         ActionListener okListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -118,11 +134,13 @@ public class ModelSubgroupDlg extends JDialog {
         
         
         if (subgroup != null) {
-            
             nameField.setText(subgroup.name);
-            
+            helpURLField.setText(subgroup.getHelpComponent().getHelpURL());
+            helpTextField.setText(subgroup.getHelpComponent().getHelpText());
         } else {
             nameField.setText("");
+            helpURLField.setText("");
+            helpTextField.setText("");
         }
         
         pack();
@@ -138,6 +156,14 @@ public class ModelSubgroupDlg extends JDialog {
     
     public String getName() {
         return nameField.getText();
+    }
+
+    public String getHelpURL() {
+        return helpURLField.getText();
+    }
+
+    public String getHelpText() {
+        return helpTextField.getText();
     }
     
 }

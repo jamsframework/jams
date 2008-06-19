@@ -640,6 +640,9 @@ public class LauncherPanel extends JPanel {
             property.lowerBound = propertyDlg.getLowerBound();
             property.upperBound = propertyDlg.getUpperBound();
             property.length = propertyDlg.getLength();
+            property.getHelpComponent().setHelpURL(propertyDlg.getHelpURL());
+            property.getHelpComponent().setHelpText(propertyDlg.getHelpText());
+
             property.component = propertyDlg.getComponent();
             property.attribute = propertyDlg.getAttribute();
             property.var = propertyDlg.getVar();
@@ -672,6 +675,9 @@ public class LauncherPanel extends JPanel {
             String subgroubName = subgroupDlg.getName();
 
             ModelProperties.Group subgroup = view.getModelProperties().createSubgroup(group, subgroubName);
+            subgroup.getHelpComponent().setHelpURL(subgroupDlg.getHelpURL());
+            subgroup.getHelpComponent().setHelpText(subgroupDlg.getHelpText());
+
             updateGroup(group);
             groupPanels.get(group).updateUI();
         }
@@ -692,6 +698,8 @@ public class LauncherPanel extends JPanel {
             property.lowerBound = propertyDlg.getLowerBound();
             property.upperBound = propertyDlg.getUpperBound();
             property.length = propertyDlg.getLength();
+            property.getHelpComponent().setHelpURL(propertyDlg.getHelpURL());
+            property.getHelpComponent().setHelpText(propertyDlg.getHelpText());
             property.component = propertyDlg.getComponent();
             property.attribute = propertyDlg.getAttribute();
             property.var = propertyDlg.getVar();
@@ -720,6 +728,8 @@ public class LauncherPanel extends JPanel {
             String newGroupName = subgroupDlg.getGroup();
 
             subgroup.name = subgroupDlg.getName();
+            subgroup.getHelpComponent().setHelpURL(subgroupDlg.getHelpURL());
+            subgroup.getHelpComponent().setHelpText(subgroupDlg.getHelpText());
 
             ModelProperties.Group newGroup = view.getModelProperties().getGroup(newGroupName);
 
