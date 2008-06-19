@@ -26,6 +26,7 @@ import java.util.Vector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.unijena.jams.JAMSTools;
+import org.unijena.jams.data.HelpComponent;
 
 /**
  *
@@ -125,6 +126,12 @@ public class ModelProperties {
         }
     }
 
+    /**
+     * 
+     * @param groupName
+     * @param subgroupName
+     * @return
+     */
     public Group getGroup(String groupName, String subgroupName) {
         Group group = getGroup(groupName);
         if (JAMSTools.isEmptyString(subgroupName)) {
@@ -198,6 +205,13 @@ public class ModelProperties {
     public class ModelElement {
 
         public String name;
+        private Group group;
+        private HelpComponent helpComponent;
+
+        public ModelElement() {
+            this.helpComponent = new HelpComponent();
+        }
+        
 
         public String getName() {
             return name;
@@ -206,7 +220,6 @@ public class ModelProperties {
         public void setName(String name) {
             this.name = name;
         }
-        private Group group;
 
         public Group getGroup() {
             return group;
@@ -224,6 +237,15 @@ public class ModelProperties {
         public void setGroup(Group group) {
             this.group = group;
         }
+
+        public HelpComponent getHelpComponent() {
+            return helpComponent;
+        }
+
+        public void setHelpComponent(HelpComponent helpComponent) {
+            this.helpComponent = helpComponent;
+        }
+    
     }
 
     public class ModelProperty extends ModelElement {
@@ -234,12 +256,21 @@ public class ModelProperties {
         public ContextAttribute attribute;
         public double lowerBound,  upperBound;
         public int length;
+
+        public ModelProperty() {
+            super();
+        }
+        
     }
 
     public class Group extends ModelElement {
 
         private Vector<Object> propertyList = new Vector<Object>();
         private boolean subGroup = false;
+
+        public Group() {
+            super();
+        }
 
         public Vector<Object> getProperties() {
             return propertyList;
