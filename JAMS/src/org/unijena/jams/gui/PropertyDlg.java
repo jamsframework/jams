@@ -83,7 +83,7 @@ public class PropertyDlg extends JDialog {
         LHelper.addGBComponent(contentPanel, gbl, verboseCheck, 1, y, 1, 1, 1, 1);
 
         y++;
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Debug level:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Verbosity level:"), 0, y, 1, 1, 0, 0);
         debugSpinner = new JSpinner();
         JPanel spinnerPanel = new JPanel();
         spinnerPanel.setLayout(new BorderLayout());

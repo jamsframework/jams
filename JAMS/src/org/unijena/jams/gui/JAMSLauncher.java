@@ -574,8 +574,6 @@ public class JAMSLauncher extends JFrame {
                                 1, 1);
                     }
 
-
-
                     row++;
                     NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
                     for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
@@ -716,8 +714,11 @@ public class JAMSLauncher extends JFrame {
         Thread t = new Thread() {
 
             public void run() {
-
-                runtime.runModel();
+                try {
+                    runtime.runModel();
+                } catch (Exception e) {
+                    runtime.handle(e);
+                }
 
                 getInfoDlg().appendText("\n\n");
                 getErrorDlg().appendText("\n\n");
@@ -727,11 +728,7 @@ public class JAMSLauncher extends JFrame {
                 Runtime.getRuntime().gc();
             }
         };
-        try {
-            t.start();
-        } catch (Exception e) {
-            runtime.handle(e);
-        }
+        t.start();
     }
 
     private void saveModel() {

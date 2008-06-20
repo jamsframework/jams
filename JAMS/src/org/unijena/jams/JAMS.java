@@ -91,7 +91,7 @@ public class JAMS {
         }
 
         int guiConfig = Integer.parseInt(properties.getProperty("guiconfig", "0"));
-
+        
         if ((cmdLine.getModelFileName() == null)) {
             //see if at least GUI is enabled
             if (guiConfig == 1) {
@@ -136,7 +136,7 @@ public class JAMS {
             // do some search and replace on the input file and create new file if necessary
             String newModelFilename = XMLProcessor.modelDocConverter(modelFilename);
             if (!newModelFilename.equalsIgnoreCase(modelFilename)) {
-                info = "The model definition in \"" + modelFilename + "\" has been adapted in order to meet modifications of the JAMS model DTD.\nThe new definition has been stored in \"" + newModelFilename + "\" while your original file was left untouched.";
+                info = "The model definition in \"" + modelFilename + "\" has been adapted in order to meet modifications of the JAMS model schema.\nThe new definition has been stored in \"" + newModelFilename + "\" while your original file was left untouched.";
                 modelFilename = newModelFilename;
             }
 
@@ -148,21 +148,26 @@ public class JAMS {
                 }
             }
 
+            JAMSRuntime runtime = null;
             try {
-
                 Document modelDoc = XMLIO.getDocumentFromString(xmlString);
-                JAMSRuntime runtime = new StandardRuntime();
+                runtime = new StandardRuntime();
                 runtime.loadModel(modelDoc, properties);
 
                 if (!info.equals("")) {
                     runtime.println(info);
                 }
                 runtime.runModel();
-
             } catch (IOException ioe) {
                 System.out.println("The model definition file " + modelFilename + " could not be loaded!");
             } catch (SAXException se) {
                 System.out.println("The model definition file " + modelFilename + " contained errors!");
+            } catch (Exception ex) {
+                if (runtime != null) {
+                    runtime.handle(ex);
+                } else {
+                    ex.printStackTrace();
+                }
             }
 
         }

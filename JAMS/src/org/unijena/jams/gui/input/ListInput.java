@@ -36,7 +36,7 @@ public class ListInput extends JPanel {
 
     private static ImageIcon UP_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowup.png")).getImage().getScaledInstance(10, 5, Image.SCALE_SMOOTH));
     private static ImageIcon DOWN_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowdown.png")).getImage().getScaledInstance(10, 5, Image.SCALE_SMOOTH));
-    static final int BUTTON_SIZE = 21;
+    static final int BUTTON_SIZE = 17;
     private static final Dimension BUTTON_DIMENSION = new Dimension(BUTTON_SIZE, BUTTON_SIZE);
     private JList listbox;
     private JButton addButton,  removeButton,  upButton,  downButton,  editButton;
@@ -62,6 +62,27 @@ public class ListInput extends JPanel {
         // create a new listbox control
         listbox = new JList(listData.getValue());
         getListbox().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        listbox.addMouseListener(new MouseListener() {
+
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() > 1) {
+                    editItem();
+                }
+            }
+
+            public void mousePressed(MouseEvent e) {
+            }
+
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            public void mouseExited(MouseEvent e) {
+            }
+        });
 
         // add the listbox to a scrolling pane
         scrollPane = new JScrollPane();
