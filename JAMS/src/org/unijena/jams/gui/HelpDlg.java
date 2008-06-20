@@ -29,7 +29,15 @@ public class HelpDlg extends JDialog {
     public final static int OK_RESULT = 0;
     public final static int CANCEL_RESULT = -1;
     private HelpComponent helpComponent;
+
+    /**
+     * the base url coming from outside 
+     */
     private String baseUrl = "";
+    
+    /**
+     *  the pane to be filled with content
+     */
     private JTextPane webPagePane;
 
     public HelpDlg(Frame owner) {
@@ -54,8 +62,11 @@ public class HelpDlg extends JDialog {
         this.baseUrl = baseUrl;
     }
 
+   /**
+    * init the help dialog without filling content
+    */
     public void init() {
-        setModal(true);
+        setModal(false);
         this.setTitle("Help");
 
         this.setLayout(new BorderLayout());
@@ -89,6 +100,12 @@ public class HelpDlg extends JDialog {
 
     }
 
+/**
+ * load the content of helpComponent into webPagePane
+ * content could be text or url-page
+ * 
+ * @param helpComponent
+ */
     public void load(HelpComponent helpComponent) {
 
         setHelpComponent(helpComponent);
