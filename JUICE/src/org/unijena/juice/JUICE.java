@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.juice;
 
 import java.awt.*;
@@ -44,13 +43,12 @@ import org.unijena.juice.gui.tree.LibTree;
  * @author S. Kralisch
  */
 public class JUICE {
-    
+
     public static final Font STANDARD_FONT = new java.awt.Font("Arial", 0, 11);
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
     public static final int SCREEN_WIDTH = 1200;
     public static final int SCREEN_HEIGHT = 800;
     public static final String APP_TITLE = "JUICE";
-    
     private static JUICEFrame juiceFrame;
     private static JAMSProperties jamsProperties = JAMSProperties.createJAMSProperties();
     private static File baseDir = null;
@@ -59,21 +57,22 @@ public class JUICE {
     private static JUICECmdLine cmdLine;
     private static LibTree libTree;
     private static WorkerDlg loadLibsDlg;
-    
+
     public static void main(String args[]) throws Exception {
-        
+
         cmdLine = new JUICECmdLine(args);
-        
+
         try {
             if (System.getProperty("os.name").contains("Windows")) {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             }/* else {
-                PlasticLookAndFeel laf = new PlasticXPLookAndFeel();
-                PlasticLookAndFeel.setPlasticTheme(new com.jgoodies.looks.plastic.theme.ExperienceBlue());
-                Options.setPopupDropShadowEnabled(true);
-                UIManager.setLookAndFeel(laf);
-            }*/
-        } catch (Exception evt) {}
+        PlasticLookAndFeel laf = new PlasticXPLookAndFeel();
+        PlasticLookAndFeel.setPlasticTheme(new com.jgoodies.looks.plastic.theme.ExperienceBlue());
+        Options.setPopupDropShadowEnabled(true);
+        UIManager.setLookAndFeel(laf);
+        }*/
+        } catch (Exception evt) {
+        }
         try {
             //try to load property values from file
             if (cmdLine.getConfigFileName() != null) {
@@ -89,32 +88,33 @@ public class JUICE {
                     getJamsProperties().load(defaultFile);
                 }
             }
-            
+
             juiceFrame = new JUICEFrame();
-            
+
             loadLibsDlg = new WorkerDlg(juiceFrame, "Loading libraries");
-            
+
             JAMSSplash splash = new JAMSSplash();
             splash.show(juiceFrame, JAMS.SPLASH_DISPLAY_TIME);
             Thread.sleep(JAMS.SPLASH_DISPLAY_TIME);
             //juiceFrame.setVisible(true);
-            
+
             libTree = new LibTree();
             JUICE.updateLibs();
             juiceFrame.setLibTree(libTree);
-            
+
             if (cmdLine.getModelFileName() != null) {
                 juiceFrame.loadModel(cmdLine.getModelFileName());
             }
-            
+
             getJamsProperties().addObserver(JAMSProperties.LIBS_IDENTIFIER, new Observer() {
+
                 public void update(Observable obs, Object obj) {
                     JUICE.updateLibs();
                 }
             });
-            
+
         } catch (Exception e) {
-            
+
             //if something goes wrong that has not been handled until now, catch it here
             String s = "";
             StackTraceElement[] st = e.getStackTrace();
@@ -122,59 +122,59 @@ public class JUICE {
                 s += "        at " + ste.toString() + "\n";
             }
             LHelper.showErrorDlg(JUICE.getJuiceFrame(), "An error occured during JUICE execution:\n" + e.toString() + "\n" + s, "JUICE Error");
-            //            JUICE.getJuiceFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            
+        //            JUICE.getJuiceFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+
         }
     }
-    
+
     public static void updateLibs() {
         loadLibsDlg.setTask(new Runnable() {
+
             public void run() {
                 try {
                     JUICE.getJuiceFrame().getLibTreePanel().setEnabled(false);
                     JUICE.createClassLoader();
                     libTree.update(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER));
                     JUICE.getJuiceFrame().getLibTreePanel().setEnabled(true);
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
             }
         });
         loadLibsDlg.execute();
     }
-    
-    
-    
+
     private static void createClassLoader() {
         String libs = getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER);
-        
+
         String[] libsArray = JAMSTools.toArray(libs, ";");
-        
+
         JUICE.loader = JAMSClassLoader.createClassLoader(libsArray, new StandardRuntime());
-        
-            /*
-             * This is the version the runtime is also using.
-             * Disadvantage: changes to classes during JUICE runtime do not become visible since
-             * older classes are not beeing overwritten
-             *
-            try {
-                ClassManager.addLibs(libsArray, rt);
-                JUICE.loader = Thread.currentThread().getContextClassLoader();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-             *
-             *
-             
-            if (rt.getErrorLog().length()>0) {
-                System.out.println(rt.getErrorLog());
-            }
-            if (rt.getInfoLog().length()>0) {
-                System.out.println(rt.getInfoLog());
-            }
-             *
-             */
-        
+
+    /*
+     * This is the version the runtime is also using.
+     * Disadvantage: changes to classes during JUICE runtime do not become visible since
+     * older classes are not beeing overwritten
+     *
+    try {
+    ClassManager.addLibs(libsArray, rt);
+    JUICE.loader = Thread.currentThread().getContextClassLoader();
+    } catch (IOException ex) {
+    ex.printStackTrace();
     }
+     *
+     *
     
+    if (rt.getErrorLog().length()>0) {
+    System.out.println(rt.getErrorLog());
+    }
+    if (rt.getInfoLog().length()>0) {
+    System.out.println(rt.getInfoLog());
+    }
+     *
+     */
+
+    }
+
     public static Class[] getJAMSDataClasses() {
         ArrayList<Class> classes = new ArrayList<Class>();
         try {
@@ -199,35 +199,37 @@ public class JUICE {
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
-        
+
         Class[] classesA = new Class[classes.size()];
         classes.toArray(classesA);
         return classesA;
     }
-    
-    
+
     public static JAMSProperties getJamsProperties() {
         return JUICE.jamsProperties;
     }
-    
+
     public static void setJamsProperties(JAMSProperties jamsProperties) {
         JUICE.jamsProperties = jamsProperties;
     }
-    
+
     public static File getBaseDir() {
         return baseDir;
     }
-    
+
     public static ArrayList<ModelView> getModelViews() {
         return modelViews;
     }
-    
+
     public static JUICEFrame getJuiceFrame() {
         return juiceFrame;
     }
-    
+
     public static ClassLoader getLoader() {
         return loader;
     }
-    
+
+    public static void setStatusText(String status) {
+        JUICE.getJuiceFrame().getStatusLabel().setText(status);
+    }
 }

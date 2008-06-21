@@ -100,7 +100,7 @@ public class JAMSProperties extends Observable {
             propertyMap.put(key, property);
         }
 
-        if (!properties.getProperty(key).equals(value)) {
+        if ((properties.getProperty(key) == null) || (!properties.getProperty(key).equals(value))) {
             //something has changed
             properties.setProperty(key, value);
             property.setChanged();

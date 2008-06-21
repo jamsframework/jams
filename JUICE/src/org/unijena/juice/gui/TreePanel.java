@@ -28,17 +28,9 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Enumeration;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.tree.TreePath;
-import org.unijena.jams.gui.LHelper;
-import org.unijena.juice.*;
-import org.unijena.juice.gui.tree.JAMSNode;
 import org.unijena.juice.gui.tree.JAMSTree;
 
 /**
@@ -50,12 +42,8 @@ public class TreePanel extends JPanel {
     private static final Dimension BUTTON_DIMENSION = new Dimension(40, 20);
     private JScrollPane treeScrollPane = new JScrollPane();
     private JAMSTree tree;
-    private JTextField searchText;
-    private Enumeration nodeEnum = null;
-    private String searchString = "";
-    private JPanel upperPanel = new JPanel();
     private JPanel lowerPanel = new JPanel();
-    private JButton searchButton, expandButton, collapseButton;
+    private JButton expandButton, collapseButton;
     
 
     /**
@@ -65,38 +53,6 @@ public class TreePanel extends JPanel {
         super();
 
         this.setLayout(new BorderLayout());
-
-        searchText = new JTextField();
-        searchText.setBorder(BorderFactory.createEtchedBorder());
-        searchText.setEditable(true);
-        searchText.setColumns(20);
-        searchText.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent evt) {
-                TreePanel.this.searchText.selectAll();
-                searchComponent();
-            }
-        });
-
-        searchButton = new JButton("Search");
-        searchButton.setMargin(new Insets(4, 4, 4, 4));
-        searchButton.setPreferredSize(new Dimension(60, 20));
-        searchButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                searchComponent();
-            }
-        });
-
-        upperPanel.setLayout(new BorderLayout());
-        JPanel searchButtonPanel = new JPanel();
-        searchButtonPanel.add(searchButton);
-        JPanel searchFieldPanel = new JPanel();
-        searchFieldPanel.add(new JLabel("Search string: "));
-        searchFieldPanel.add(searchText);
-        upperPanel.add(searchFieldPanel, BorderLayout.CENTER);
-        upperPanel.add(searchButtonPanel, BorderLayout.SOUTH);
-
 
         expandButton = new JButton("+");
         expandButton.setMargin(new Insets(4, 4, 4, 4));
@@ -127,8 +83,6 @@ public class TreePanel extends JPanel {
         lowerPanel.add(expandButton);
         lowerPanel.add(collapseButton);
 
-
-        this.add(upperPanel, BorderLayout.NORTH);
         this.add(treeScrollPane, BorderLayout.CENTER);
         this.add(lowerPanel, BorderLayout.SOUTH);
     }
@@ -140,46 +94,9 @@ public class TreePanel extends JPanel {
     }
 
     public void setEnabled(boolean enabled) {
-        searchButton.setEnabled(enabled);
-        searchText.setEditable(enabled);
         for (Component c : lowerPanel.getComponents()) {
             c.setEnabled(enabled);
         }
-    }
-    
-    private void searchComponent() {
-
-        String newSearchString = TreePanel.this.searchText.getText();
-        if (newSearchString.equals("")) {
-            return;
-        }
-        JAMSNode rootNode = (JAMSNode) tree.getModel().getRoot();
-
-        if (!newSearchString.equals(searchString) || nodeEnum == null) {
-            searchString = newSearchString;
-            nodeEnum = rootNode.breadthFirstEnumeration();
-        }
-
-        Object nodeObject;
-        JAMSNode jamsNode;
-
-        while (nodeEnum.hasMoreElements()) {
-            nodeObject = nodeEnum.nextElement();
-            if (nodeObject.toString().toLowerCase().contains(searchString.toLowerCase())) {
-                jamsNode = (JAMSNode) nodeObject;
-                if ((jamsNode.getType() == JAMSNode.COMPONENT_NODE) || (jamsNode.getType() == JAMSNode.CONTEXT_NODE)) {
-                    TreePath resultPath = new TreePath(jamsNode.getPath());
-                    tree.scrollPathToVisible(resultPath);
-                    tree.setSelectionPath(resultPath);
-                    return;
-                }
-            }
-        }
-
-        nodeEnum = rootNode.depthFirstEnumeration();
-
-        LHelper.showInfoDlg(JUICE.getJuiceFrame(), "Could not find further occurrences of \"" + searchString + "\".", "Info");
-
     }
 
     public void setTree(JAMSTree tree) {

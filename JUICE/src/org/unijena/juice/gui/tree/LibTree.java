@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.juice.gui.tree;
 
 import java.awt.Dimension;
@@ -55,34 +54,37 @@ import org.unijena.juice.JUICE;
  * @author S. Kralisch
  */
 public class LibTree extends JAMSTree {
-    
+
     private static final String ROOT_NAME = "Model Components";
     private HashMap<Class, JDialog> compViewDlgs = new HashMap<Class, JDialog>();
     private JPopupMenu popup;
     private String[] libsArray;
-    
-    
+    private int contextCount,  componentCount;
+
     public LibTree() {
         super();
-        
+
         setEditable(false);
         new DefaultTreeTransferHandler(this, DnDConstants.ACTION_COPY);
-        
+
         JMenuItem detailItem = new JMenuItem("Show details");
         detailItem.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent evt) {
                 displayComponentDlg();
             }
         });
         popup = new JPopupMenu();
         popup.add(detailItem);
-        
+
         addMouseListener(new MouseAdapter() {
+
             public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == MouseEvent.BUTTON3) {
                     showPopup(evt);
                 }
             }
+
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() >= 2) {
                     displayComponentDlg();
@@ -90,99 +92,102 @@ public class LibTree extends JAMSTree {
             }
         });
     }
-    
+
     private void showPopup(MouseEvent evt) {
         TreePath p = this.getClosestPathForLocation(evt.getX(), evt.getY());
         this.setSelectionPath(p);
         JAMSNode node = (JAMSNode) this.getLastSelectedPathComponent();
         if (node != null) {
-            
+
             try {
                 Class<?> clazz = ((ComponentDescriptor) node.getUserObject()).getClazz();
                 if (clazz != null) {
                     popup.show(this, evt.getX(), evt.getY());
                 }
-            } catch (ClassCastException cce) {}
+            } catch (ClassCastException cce) {
+            }
         }
     }
-    
+
     private void displayComponentDlg() {
-        
-        JAMSNode node =  (JAMSNode) this.getLastSelectedPathComponent();
-        if (node == null)
+
+        JAMSNode node = (JAMSNode) this.getLastSelectedPathComponent();
+        if (node == null) {
             return;
-        
+        }
         try {
             Class<?> clazz = ((ComponentDescriptor) node.getUserObject()).getClazz();
             if (clazz != null) {
-                
+
                 if (compViewDlgs.containsKey(clazz)) {
                     compViewDlgs.get(clazz).setVisible(true);
                     return;
                 }
-                
+
                 JDialog compViewDlg = new JDialog((JFrame) this.getTopLevelAncestor());
                 compViewDlg.setLocationByPlatform(true);
                 compViewDlg.setTitle(clazz.getCanonicalName());
-                
+
                 compViewDlgs.put(clazz, compViewDlg);
                 compViewDlg.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 ComponentInfoPanel compView = new ComponentInfoPanel();
                 compViewDlg.add(new JScrollPane(compView));
-                
+
                 JAMSComponentDescription jcd = (JAMSComponentDescription) clazz.getAnnotation(JAMSComponentDescription.class);
                 if (jcd != null) {
                     compView.update(clazz.getCanonicalName(), jcd);
                 } else {
                     compView.reset(clazz.getCanonicalName());
                 }
-                
+
                 compView.update(clazz.getFields());
-                
+
                 compViewDlg.setPreferredSize(new Dimension(450, 600));
                 compViewDlg.pack();
                 compViewDlg.setVisible(true);
             }
-        } catch (ClassCastException cce) {}
-        
+        } catch (ClassCastException cce) {
+        }
+
     }
-    
+
     public void update(String libFileNames) {
-            
-            libsArray = JAMSTools.toArray(libFileNames, ";");
-            this.setModel(null);
-            
-            //            Thread t = new Thread() {
-            //                public void run() {
-            
-            //Cursor standardCursor = JUICE.getJuiceFrame().getCursor();
-            //JUICE.getJuiceFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
-            
-            JUICE.getJuiceFrame().getStatusLabel().setText("Loading libraries...");
-            LibTree.this.setVisible(false);
-            JAMSNode root = LibTree.this.createLibTree(LibTree.this.libsArray);
-            LibTree.this.setModel(new DefaultTreeModel(root));
-            JUICE.getJuiceFrame().getStatusLabel().setText("");
-            LibTree.this.collapseAll();
-            LibTree.this.setVisible(true);
-            
-            //JUICE.getJuiceFrame().setCursor(standardCursor);
+
+        libsArray = JAMSTools.toArray(libFileNames, ";");
+        this.setModel(null);
+
+        //            Thread t = new Thread() {
+        //                public void run() {
+
+        //Cursor standardCursor = JUICE.getJuiceFrame().getCursor();
+        //JUICE.getJuiceFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        contextCount = 0;
+        componentCount = 0;
+        JUICE.setStatusText("Loading libraries...");
+        LibTree.this.setVisible(false);
+        JAMSNode root = LibTree.this.createLibTree(LibTree.this.libsArray);
+        LibTree.this.setModel(new DefaultTreeModel(root));
+        LibTree.this.collapseAll();
+        LibTree.this.setVisible(true);
+        JUICE.setStatusText("Contexts:" + contextCount + " Components:" + componentCount);
+
+    //JUICE.getJuiceFrame().setCursor(standardCursor);
 /*                }
-            };
-            t.start();
- */
-            //setModel(new DefaultTreeModel(createLibTree(libsArray)));
+    };
+    t.start();
+     */
+    //setModel(new DefaultTreeModel(createLibTree(libsArray)));
     }
-    
+
     private JAMSNode createLibTree(String[] libsArray) {
-        
+
         JAMSNode root = new JAMSNode(ROOT_NAME, JAMSNode.LIBRARY_ROOT);
         JAMSNode jarNode;
-        
+
         for (int i = 0; i < libsArray.length; i++) {
             File file = new File(libsArray[i]);
-            
-            if (! file.exists()) {
+
+            if (!file.exists()) {
                 continue;
             }
             if (file.isDirectory()) {
@@ -201,68 +206,67 @@ public class LibTree extends JAMSTree {
                     root.add(jarNode);
                 }
             }
-            
+
         }
+
+        /*
         
-/*
- 
- 
+        
         while (stok.hasMoreTokens()) {
- 
-            jar = stok.nextToken();
-            jarNode = createJARNode(jar, loader);
-            if (jarNode != null)
-                root.add(jarNode);
+        
+        jar = stok.nextToken();
+        jarNode = createJARNode(jar, loader);
+        if (jarNode != null)
+        root.add(jarNode);
         }
- */
+         */
         return root;
     }
-    
+
     private JAMSNode createJARNode(String jar, ClassLoader loader) {
-        
+
         //System.out.println("loading " + jar);
         JAMSNode jarRoot = new JAMSNode(jar, JAMSNode.PACKAGE_NODE);
         ArrayList<Class> components = new ArrayList<Class>();
         JAMSNode compNode;
         String jarName = "", clazzName = "", clazzFullName = "";
-        
+
         try {
             JarFile jfile = new JarFile(jar);
             File file = new File(jar);
             //URLClassLoader loader = new URLClassLoader(new URL[]{file.toURL()});
             jarName = file.getCanonicalFile().getName();
             //jarRoot = new JAMSNode(jarName, JAMSNode.PACKAGE_NODE);
-            
+
             Enumeration jarentries = jfile.entries();
             while (jarentries.hasMoreElements()) {
                 String entry = jarentries.nextElement().toString();
                 if ((entry.endsWith(".class"))) {
-                    String classString = entry.substring(0,entry.length()-6);
+                    String classString = entry.substring(0, entry.length() - 6);
                     classString = classString.replaceAll("/", ".");
-                    
+
                     try {
-                        
+
                         // try to load the class and check if it's a subclass of JAMSComponent
                         Class<?> clazz = loader.loadClass(classString);
-                        
+
                         if (JAMSComponent.class.isAssignableFrom(clazz)) {
                             components.add(clazz);
                         }
-                        
+
                     } catch (ClassNotFoundException cnfe) {
-                        
+
                         LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Error while loading archive " + jarName + " (class " + classString +
                                 " could not be found)!", "Error while loading archive");
-                        
+
                     } catch (NoClassDefFoundError ncdfe) {
                         //System.out.println("failed: " + classString);
-                        // LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Missing class while loading component " + clazzFullName +
-                        //         " in archive " + jarName  + "!", "Error while loading archive");
-                        
+                        //LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Missing class while loading component " + clazzFullName +
+                        //        " in archive " + jarName + "!", "Error while loading archive");
                     }
                 }
             }
-            
+
             String oldPackage = "", newPackage;
             JAMSNode packageNode = null;
             for (Class clazz : components) {
@@ -272,45 +276,47 @@ public class LibTree extends JAMSTree {
                     jarRoot.add(packageNode);
                     oldPackage = newPackage;
                 }
-                
+
                 clazzName = clazz.getSimpleName();
                 clazzFullName = clazz.getName();
-                
+
                 if (!(clazzName.equals("JAMSComponent") || clazzName.equals("JAMSContext_") || clazzName.equals("JAMSGUIComponent") || clazzName.equals("JAMSModel"))) {
-                    
+
                     try {
-                        
+
                         ComponentDescriptor no = new ComponentDescriptor(clazz, this);
-                        
+
                         if (JAMSContext.class.isAssignableFrom(clazz)) {
                             compNode = new JAMSNode(no, JAMSNode.CONTEXT_NODE);
+                            contextCount++;
                         } else {
                             compNode = new JAMSNode(no, JAMSNode.COMPONENT_NODE);
+                            componentCount++;
                         }
-                        
+
                         packageNode.add(compNode);
-                        
+
                     } catch (NoClassDefFoundError ncdfe) {
-                        
+
                         LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Missing class while loading component " + clazzFullName +
-                                " in archive " + jarName  + "!", "Error while loading archive");
-                        
+                                " in archive " + jarName + "!", "Error while loading archive");
+
                     }
                 }
             }
-            
-            
+
+
         } catch (IOException ioe) {
-            
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Could not open file " + jar  + "!", "Error while loading archive");
+
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Could not open file " + jar + "!", "Error while loading archive");
             jarRoot = null;
-            
+
         }
-        
-        if (components.size()>0)
+
+        if (components.size() > 0) {
             return jarRoot;
-        else
+        } else {
             return null;
+        }
     }
-    
 }

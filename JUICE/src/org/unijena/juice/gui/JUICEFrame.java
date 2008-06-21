@@ -58,7 +58,7 @@ public class JUICEFrame extends JFrame {
     private TreePanel libTreePanel;
     private JDesktopPane modelPanel = new JDesktopPane();
     private JMenu windowMenu = new JMenu();
-    private JMenuItem pasteModelParameterItem,  copyModelParameterItem;
+    private JMenuItem pasteModelParameterItem,  copyModelParameterItem, searchModelItem;
     private JLabel statusLabel;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, "Info Log");
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, "Error Log");
@@ -103,15 +103,16 @@ public class JUICEFrame extends JFrame {
         propertyDlg = new PropertyDlg(this, JUICE.getJamsProperties());
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setCurrentDirectory(JUICE.getBaseDir());
-        
+
         JButton reloadLibsButton = new JButton("Reload");
         reloadLibsButton.addActionListener(new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 JUICE.updateLibs();
             }
         });
-        
+
         libTreePanel = new TreePanel();
         libTreePanel.addCustomButton(reloadLibsButton, 80);
 
@@ -229,8 +230,8 @@ public class JUICEFrame extends JFrame {
         fileMenu.add(exitItem);
         mainMenu.add(fileMenu);
 
-        extrasMenu.setText("Extras");
-        editOptionsItem.setText("Edit JAMS Options");
+        extrasMenu.setText("Edit");
+        editOptionsItem.setText("Options...");
         editOptionsItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -245,7 +246,7 @@ public class JUICEFrame extends JFrame {
         editOptionsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         extrasMenu.add(editOptionsItem);
 
-        loadOptionsItem.setText("Load JAMS Options");
+        loadOptionsItem.setText("Load Options...");
         loadOptionsItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -267,7 +268,7 @@ public class JUICEFrame extends JFrame {
         });
         extrasMenu.add(loadOptionsItem);
 
-        saveOptionsItem.setText("Save JAMS Options");
+        saveOptionsItem.setText("Save Options...");
         saveOptionsItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -288,7 +289,43 @@ public class JUICEFrame extends JFrame {
             }
         });
         extrasMenu.add(saveOptionsItem);
+
+        extrasMenu.add(new JSeparator());
+
+        JMenuItem searchLibItem = new JMenuItem();
+        searchLibItem.setText("Find in Libraries...");
+        searchLibItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+
+            }
+        });
+        extrasMenu.add(searchLibItem);
+
+        searchModelItem = new JMenuItem();
+        searchModelItem.setText("Find in Model...");
+        ModelView.viewList.addObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                if (ModelView.viewList.getViewList().size() > 0) {
+                    JUICEFrame.this.searchModelItem.setEnabled(true);
+                } else {
+                    JUICEFrame.this.searchModelItem.setEnabled(false);                    
+                }
+            }
+        });        
+        searchModelItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+
+            }
+        });
+        extrasMenu.add(searchModelItem);
+
         mainMenu.add(extrasMenu);
+
 
         modelMenu.setText("Model");
         copyModelParameterItem.setText("Copy Model Parameter");
