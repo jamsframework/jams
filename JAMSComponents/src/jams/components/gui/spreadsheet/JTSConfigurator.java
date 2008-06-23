@@ -372,8 +372,8 @@ public class JTSConfigurator extends JFrame{
             prop.setTimeEND(rows[rows.length - 1]);
             
             
-            prop.setColor(k%11);
-            colour_cnt = k;
+//            prop.setColor(k%11);
+//            colour_cnt = k;
             
 //            prop.setColor((String) colorchoice.getSelectedItem());
 //            prop.setPosition((String) poschoice.getSelectedItem());
@@ -657,10 +657,15 @@ public class JTSConfigurator extends JFrame{
                     switch(rLeft){
                         case 0:
                             lsr_L.setSeriesPaint(i-r, prop.getSeriesPaint());
+                            //lsr_L.setSeriesPaint(i-r, Color.black);
                             lsr_L.setSeriesStroke(i-r, prop.getSeriesStroke());
                             lsr_L.setSeriesShape(i-r, prop.getSeriesShape());
                             lsr_L.setSeriesShapesVisible(i-r, prop.getShapesVisible());
                             lsr_L.setSeriesLinesVisible(i-r, prop.getLinesVisible());
+                            lsr_L.setDrawOutlines(true);
+                            lsr_L.setUseOutlinePaint(true);
+                            lsr_L.setSeriesFillPaint(i-r, prop.getSeriesFillPaint());
+                            lsr_L.setUseFillPaint(true);
                             lsr_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
                             lsr_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
                             rendererLeft = lsr_L;
@@ -669,6 +674,7 @@ public class JTSConfigurator extends JFrame{
                         case 1:
                             brr_L.setSeriesPaint(i-r, prop.getSeriesPaint());
                             brr_L.setSeriesStroke(i-r, prop.getSeriesStroke());
+                            
                             brr_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
                             brr_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
                             
@@ -683,6 +689,7 @@ public class JTSConfigurator extends JFrame{
                             ar_L.setSeriesShape(i-r, prop.getSeriesShape());
                             ar_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
                             ar_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
+                            ar_L.setOutline(true);
                             //ar_L.setSeriesOu
                             
                             rendererLeft = ar_L;
@@ -693,8 +700,8 @@ public class JTSConfigurator extends JFrame{
                             str_L.setSeriesPaint(i-r, prop.getSeriesPaint());
                             str_L.setSeriesStroke(i-r, prop.getSeriesStroke());
                             str_L.setSeriesShape(i-r, prop.getSeriesShape());
-                            str_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
-                            str_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
+//                            str_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
+//                            str_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
                             
                             rendererLeft = str_L;
                             break;
@@ -705,6 +712,7 @@ public class JTSConfigurator extends JFrame{
                             sar_L.setSeriesShape(i-r, prop.getSeriesShape());
                             sar_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
                             sar_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
+                            sar_L.setOutline(true);
                             
                             rendererLeft = sar_L;
 
@@ -716,6 +724,10 @@ public class JTSConfigurator extends JFrame{
                             dfr_L.setSeriesShape(i-r, prop.getSeriesShape());
                             dfr_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
                             dfr_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
+                            dfr_L.setShapesVisible(prop.getShapesVisible());
+                            
+//                            dfr_L.setNegativePaint(prop.getNegativePaint());
+//                            dfr_L.setPositivePaint(prop.getNegativePaint());
                             
                             rendererLeft = dfr_L;
                             
@@ -745,6 +757,10 @@ public class JTSConfigurator extends JFrame{
                             lsr_R.setSeriesShape(i-l, prop.getSeriesShape());
                             lsr_R.setSeriesShapesVisible(i-l, prop.getShapesVisible());
                             lsr_R.setSeriesLinesVisible(i-l, prop.getLinesVisible());
+                            lsr_R.setDrawOutlines(true);
+                            lsr_R.setUseOutlinePaint(true);
+                            lsr_R.setSeriesFillPaint(i-r, prop.getSeriesFillPaint());
+                            lsr_R.setUseFillPaint(true);
                             lsr_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
                             lsr_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
                             
@@ -800,7 +816,7 @@ public class JTSConfigurator extends JFrame{
                             dfr_R.setSeriesShape(i-l, prop.getSeriesShape());
                             dfr_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
                             dfr_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
-                            
+                            dfr_R.setShapesVisible(prop.getShapesVisible());
                             rendererRight = dfr_R;
                             
                             break;

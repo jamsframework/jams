@@ -52,6 +52,7 @@ import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.*;
+import org.jfree.util.ShapeUtilities.*;
 import org.unijena.jams.data.JAMSBoolean;
 import org.unijena.jams.data.JAMSCalendar;
 import org.unijena.jams.data.JAMSDouble;
@@ -170,6 +171,7 @@ public class GraphProperties {
     Paint series_paint;
     Stroke series_outline_stroke;
     Paint series_outline_paint;
+    Paint series_fill_paint;
     
     boolean linesVisible;
     boolean shapesVisible;
@@ -896,8 +898,12 @@ public class GraphProperties {
         this.series_paint = paint;
     }
     
+    public void setSeriesFillPaint(Paint fill){
+        this.series_fill_paint = fill;
+    }
+    
     public void setSeriesOutlinePaint(Paint paint){
-        this.series_paint = paint;
+        this.series_outline_paint = paint;
     }
     
     public void setSeriesOutlineStroke(Stroke stroke){
@@ -940,10 +946,16 @@ public class GraphProperties {
         setSeriesOutlineStroke(new BasicStroke(width));  
     }
     
+     
     
-    private void setShape(int type){
-   
+    
+    private void setShape(int type, int size){
+        
+        int dim =  size;
+        
         switch(type){
+            
+            
             case 0: setSeriesShape(new java.awt.Rectangle(-3,-3,5,5));
                 break;
                 
@@ -952,13 +964,9 @@ public class GraphProperties {
                 setSeriesShape(circle);
                 break;
                 
-            case 2: java.awt.geom.Path2D.Double triangle = new java.awt.geom.Path2D.Double();
-                triangle.moveTo(0, 1);
-                triangle.lineTo(2, 2);
-                triangle.lineTo(0, 2);
-                triangle.lineTo(0, 1);
-                
-                setSeriesShape(triangle);
+            case 2: Shape triangle = org.jfree.util.ShapeUtilities.createUpTriangle(size);
+               setSeriesShape(triangle);
+               // setSeriesShape(triangle);
 //            case 2: setSeriesShape(new java.awt.Rectangle()); break;
 //            case 3: setSeriesShape(new java.awt.Rectangle()); break;
 //            case 4: setSeriesShape(new java.awt.Rectangle()); break;
@@ -978,6 +986,10 @@ public class GraphProperties {
     
     public Paint getSeriesPaint(){
         return this.series_paint;
+    }
+    
+    public Paint getSeriesFillPaint(){
+        return this.series_fill_paint;
     }
     
     public Stroke getSeriesOutlineStroke(){
@@ -1187,6 +1199,8 @@ public class GraphProperties {
         JLabel outline_paint_label;
         JLabel lines_visible_label;
         JLabel shapes_visible_label;
+        JLabel fill_label;
+        JLabel shape_size_label;
         
         JComboBox renderer_box;
         JComboBox stroke_box; //list for different strokes!
@@ -1194,15 +1208,18 @@ public class GraphProperties {
         JComboBox paint_box;
         JComboBox outline_stroke_box;
         JComboBox outline_paint_box;//color chooser!!
+        JComboBox fill_box;
         JCheckBox shapes_vis_box;
         JCheckBox lines_vis_box;
+        JComboBox shape_size_box;
         
         JButton ok_button;
         JButton apply_button;
         JButton cancel_button;
         
         final String[] STROKES = {"0.0", "0.5", "1.0", "2.0", "5.0"};
-        final String[] SHAPES = {"Square", "Circle"};//, "Square", "Star"};
+        final String[] SIZES = {"1", "3", "5", "7", "9", "12", "15"};
+        final String[] SHAPES = {"Square", "Circle", "Triangle"};//, "Square", "Star"};
         final String[] COLORS = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
         final String[] RENDERER = {"Line and Shape","Bar","Area","Step","StepArea","Difference"};
         
@@ -1221,10 +1238,12 @@ public class GraphProperties {
             colorpanel = new JPanel();
             buttonpanel = new JPanel();
             GridBagLayout gbl = new GridBagLayout();
+            BorderLayout brl = new BorderLayout();
             GridBagLayout option_gbl = new GridBagLayout();
             GridBagLayout button_gbl = new GridBagLayout();
 
-            setLayout(gbl);
+//            setLayout(gbl);
+            setLayout(brl);
             optionspanel.setLayout(option_gbl);
             
             ok_button = new JButton("OK");
@@ -1249,9 +1268,17 @@ public class GraphProperties {
             
             outline_stroke_label = new JLabel("Outline Stroke:");
             outline_stroke_box = new JComboBox(STROKES);
+            outline_stroke_box.setSelectedIndex(2);
             
             outline_paint_label = new JLabel("Outline Color:");
             outline_paint_box = new JComboBox(COLORS);
+            
+            fill_label = new JLabel("Color:");
+            fill_box = new JComboBox(COLORS);
+            
+            shape_size_label = new JLabel("Size");
+            shape_size_box = new JComboBox(SIZES);
+            shape_size_box.setEnabled(false);
             //paint_box.setSelectedIndex()
             lines_visible_label = new JLabel("Lines");
             lines_vis_box = new JCheckBox();
@@ -1261,33 +1288,43 @@ public class GraphProperties {
             shapes_vis_box.setSelected(true);
             
             //optionpanel
-         
-            LHelper.addGBComponent(optionspanel, option_gbl, stroke_label, 0, 0, 1, 1, 1, 1);
-            LHelper.addGBComponent(optionspanel, option_gbl, stroke_box,   1, 0, 1, 1, 1, 1);
-            LHelper.addGBComponent(optionspanel, option_gbl, shape_label,  0, 1, 1, 1, 1, 1);
-            LHelper.addGBComponent(optionspanel, option_gbl, shape_box,    1, 1, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Line"),    0, 0, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Symbol"),    3, 0, 1, 1, 1, 1);
+                //lines
+            LHelper.addGBComponent(optionspanel, option_gbl, stroke_label, 0, 1, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, stroke_box,   1, 1, 1, 1, 1, 1);
             LHelper.addGBComponent(optionspanel, option_gbl, paint_label,  0, 2, 1, 1, 1, 1);
             LHelper.addGBComponent(optionspanel, option_gbl, paint_box,    1, 2, 1, 1, 1, 1);
-//            LHelper.addGBComponent(optionspanel, option_gbl, outline_stroke_label,0, 3, 1, 1, 1, 1);
-//            LHelper.addGBComponent(optionspanel, option_gbl, outline_stroke_box,1, 3, 1, 1, 1, 1);
-//            LHelper.addGBComponent(optionspanel, option_gbl, outline_paint_label,0, 4, 1, 1, 1, 1);
-//            LHelper.addGBComponent(optionspanel, option_gbl, outline_stroke_box,1, 4, 1, 1, 1, 1);
-            LHelper.addGBComponent(optionspanel, option_gbl, lines_visible_label, 0, 5, 1, 1, 1, 1);
-            LHelper.addGBComponent(optionspanel, option_gbl, lines_vis_box,1, 5, 1, 1, 1, 1);
-            LHelper.addGBComponent(optionspanel, option_gbl, shapes_visible_label, 0, 6, 1, 1, 1, 1);
-            LHelper.addGBComponent(optionspanel, option_gbl, shapes_vis_box,1, 6, 1, 1, 1, 1);
-            
+            LHelper.addGBComponent(optionspanel, option_gbl, lines_visible_label, 0, 3, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, lines_vis_box,1, 3, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, shapes_visible_label, 0, 4, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, shapes_vis_box,1, 4, 1, 1, 1, 1);
+                //shapes
+            LHelper.addGBComponent(optionspanel, option_gbl, shape_label,  3, 1, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, shape_box,    4, 1, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, shape_size_label,3, 2, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, shape_size_box,4, 2, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, fill_label,    3, 3, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, fill_box,    4, 3, 1, 1, 1, 1);          
+            LHelper.addGBComponent(optionspanel, option_gbl, outline_stroke_label,3, 4, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, outline_stroke_box,4, 4, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, outline_paint_label,3, 5, 1, 1, 1, 1);
+            LHelper.addGBComponent(optionspanel, option_gbl, outline_paint_box,4, 5, 1, 1, 1, 1);
+                       
             //buttonpanel
             LHelper.addGBComponent(buttonpanel, button_gbl, ok_button, 0, 0, 1, 1, 1, 1);
             LHelper.addGBComponent(buttonpanel, button_gbl, cancel_button, 1, 0, 1, 1, 1, 1);
             
             //this-panel
-            LHelper.addGBComponent(this, gbl, optionspanel, 0, 0, 1, 6, 1, 1);
-            LHelper.addGBComponent(this, gbl, colorpanel  , 1, 0, 1, 5, 1, 1);
-            LHelper.addGBComponent(this, gbl, buttonpanel , 1, 5, 1, 1, 1, 1);
+//            LHelper.addGBComponent(this, gbl, optionspanel, 0, 0, 1, 6, 1, 1);
+//            LHelper.addGBComponent(this, gbl, colorpanel  , 1, 0, 1, 5, 1, 1);
+//            LHelper.addGBComponent(this, gbl, buttonpanel , 1, 5, 1, 1, 1, 1);
+            
+            add(optionspanel, brl.CENTER);
+            add(buttonpanel, brl.SOUTH);
             
             setStroke(stroke_box.getSelectedIndex());
-            setShape(shape_box.getSelectedIndex());
+            setShape(shape_box.getSelectedIndex(),5);
             setSeriesPaint(colorTable.get((String)paint_box.getSelectedItem()));
             setLinesVisible(lines_vis_box.isSelected());
             setShapesVisible(shapes_vis_box.isSelected());
@@ -1296,16 +1333,36 @@ public class GraphProperties {
             setVisible(false);
         }
         
+        public int getSize(int index){
+         int size;
+
+        switch(type){ //135791215
+            case 0: size = 1; break;
+            case 1: size = 3; break;
+            case 2: size = 5; break;
+            case 3: size = 7; break;
+            case 4: size = 9; break;
+            case 5: size = 12; break;
+            case 6: size = 15; break;
+            
+            default: size = 5; break;         
+        }
+        return size;
+    }
+        
         
 
         ActionListener ok = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 
                 setStroke(stroke_box.getSelectedIndex());
-                setShape(shape_box.getSelectedIndex());
-                //setSeriesPaint(colorTable.get((String)paint_box.getSelectedItem()));
-                setSeriesPaint(colorTable.get((String)paint_box.getItemAt(color)));
+                setShape(shape_box.getSelectedIndex(), getSize(shape_size_box.getSelectedIndex()));
+                setSeriesPaint(colorTable.get((String)paint_box.getSelectedItem()));
+                
+                //setSeriesPaint(colorTable.get((String)paint_box.getItemAt(color)));
                 setSeriesOutlinePaint(colorTable.get((String)outline_paint_box.getSelectedItem()));
+                setSeriesFillPaint(colorTable.get((String)fill_box.getSelectedItem()));
+                setOutlineStroke(outline_stroke_box.getSelectedIndex());
                 setLinesVisible(lines_vis_box.isSelected());
                 setShapesVisible(shapes_vis_box.isSelected());
                 result = true;
