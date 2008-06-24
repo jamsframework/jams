@@ -231,7 +231,7 @@ public class JUICEFrame extends JFrame {
         mainMenu.add(fileMenu);
 
         extrasMenu.setText("Edit");
-        editOptionsItem.setText("Options...");
+        editOptionsItem.setText("Edit Options...");
         editOptionsItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
