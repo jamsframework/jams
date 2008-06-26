@@ -23,6 +23,15 @@
 
 package org.unijena.jams.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import org.jfree.chart.entity.EntityCollection;
+import org.unijena.jams.data.JAMSEntityCollection;
 import org.unijena.jams.runtime.JAMSRuntime;
 
 /**
@@ -76,5 +85,77 @@ import org.unijena.jams.runtime.JAMSRuntime;
     
     public void setDate(String date) {
         this.date = date;
+    }
+    
+    private void CollectEntityCollections(JAMSContext currentContext,JAMSComponent position,HashMap<String,JAMSEntityCollection> collection){
+        currentContext.updateEntityData(position);
+        collection.put(currentContext.instanceName, currentContext.getEntities() );       
+                    
+        for (int i=0;i<currentContext.components.size();i++){
+            JAMSComponent c = (JAMSComponent)currentContext.getComponents().get(i);
+            if (c instanceof JAMSContext){
+                CollectEntityCollections((JAMSContext)c,position,collection);
+            }
+        }
+    }
+    
+    private void RestoreEntityCollections(JAMSContext currentContext,HashMap<String,JAMSEntityCollection> collection){
+        JAMSEntityCollection e = collection.get(currentContext.instanceName);
+        if (e != null){       
+            currentContext.setEntities(e);   
+            currentContext.initAccessors();
+        }                
+        for (int i=0;i<currentContext.components.size();i++){
+            JAMSComponent c = (JAMSComponent)currentContext.getComponents().get(i);
+            if (c instanceof JAMSContext){
+                RestoreEntityCollections((JAMSContext)c,collection);                
+            }
+        }           
+    }
+    
+    public ByteArrayOutputStream GetModelState(String fileName,JAMSComponent position) {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        ObjectOutputStream objOut = null;
+               
+        HashMap<String,JAMSEntityCollection> contextStates = new HashMap();        
+        CollectEntityCollections(this.getModel(),position,contextStates);
+
+        try{
+            objOut = new ObjectOutputStream(outStream);
+            objOut.writeObject(contextStates);
+        }catch(IOException e){
+            this.getRuntime().sendErrorMsg("Unable to save model state because," + e.toString());
+        }
+        
+        try{
+            if (fileName != null) {
+                FileOutputStream fos = new FileOutputStream(fileName);
+                outStream.writeTo(fos);
+                fos.close();
+            }  
+        }catch(Exception e){
+            this.getRuntime().sendErrorMsg("Could not write model state to file, because" + e.toString());
+        }
+        
+        try{
+            objOut.close();
+            outStream.close();
+        }catch(IOException e){
+            this.getRuntime().sendErrorMsg("Unable to save model state, because" + e.toString());
+        }    
+        return outStream;
+    }
+    
+    public void SetModelState(ByteArrayInputStream inStream) {
+        HashMap<String,JAMSEntityCollection> contextStates = null;        
+        try{
+                ObjectInputStream objIn = new ObjectInputStream(inStream);
+                contextStates = (HashMap<String,JAMSEntityCollection>)objIn.readObject();
+                
+                objIn.close();
+            }catch(Exception e){
+                this.getRuntime().sendErrorMsg("Unable to deserializing jamsentity collection, because" + e.toString());
+            }
+        RestoreEntityCollections(this.getModel(),contextStates);          
     }
 }

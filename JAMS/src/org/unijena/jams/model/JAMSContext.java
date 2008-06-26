@@ -31,6 +31,7 @@ package org.unijena.jams.model;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.Map.Entry;
 import org.unijena.jams.JAMS;
 import org.unijena.jams.data.*;
 import org.unijena.jams.dataaccess.*;
@@ -142,16 +143,11 @@ title="JAMS Component",
         });
     }
     */
-    public void init() {
-        
+    
+    public void initAccessors(){    
         attribs =  new  HashMap<String, JAMSData>();
-        daList = new ArrayList<JAMSEntityDataAccessor>();
-        runEnumerator = null;
-        //dataAccessors = new JAMSEntityDataAccessor[0];
         
-        if (!doRun) {
-            return;
-        }
+        daList = new ArrayList<JAMSEntityDataAccessor>();
         
         AccessSpec accessSpec;
         AttributeSpec attributeSpec;
@@ -237,6 +233,33 @@ title="JAMS Component",
             this.dataAccessors = daList.toArray(new JAMSEntityDataAccessor[daList.size()]);
         }
         
+        for (int i=0;i<daList.size();i++){
+            int index = 0;
+            while(index >= 0){
+                try{
+                    daList.get(i).setIndex(index);
+                    daList.get(i).read();
+                    
+                }catch(Exception e){
+                    break;
+                }
+                index++;                
+            }
+            daList.get(i).setIndex(0);
+        }
+    }
+    
+    public void init() {
+        attribs =  new  HashMap<String, JAMSData>();
+                
+        runEnumerator = null;
+        
+        if (!doRun) {
+            return;
+        }
+
+        initAccessors();
+        
         if (initCleanupEnumerator == null) {
             initCleanupEnumerator = getChildrenEnumerator();
         }
@@ -317,7 +340,7 @@ title="JAMS Component",
         
         //in case the components want to write access the objects, update the entity objects attributes
         for (int i = 0; i < dataAccessors.length; i++) {
-            if (dataAccessors[i].getAccessType() == JAMSEntityDataAccessor.WRITE_ACCESS) {
+            if (dataAccessors[i].getAccessType() != JAMSEntityDataAccessor.READ_ACCESS) {
                 for (int j = 0; j < getEntities().getEntities().size(); j++) {
                     dataAccessors[i].setIndex(j);
                     dataAccessors[i].write();
@@ -385,7 +408,7 @@ title="JAMS Component",
         
         public void reset() {
             index = 0;
-        }
+        }                
     }
     
     class RunEnumerator implements JAMSComponentEnumerator {
@@ -399,7 +422,7 @@ title="JAMS Component",
             boolean nextEntity = ee.hasNext();
             return (nextEntity || nextComp) ;
         }
-        
+                       
         public JAMSComponent next() {
             // check end of component elements list, if required switch to the next
             // entity and start with the new Component list again
@@ -419,6 +442,90 @@ title="JAMS Component",
             ce.reset();
             index = 0;
             updateDataAccessors(index);
+        }
+    }
+    
+    protected int componentAllreadyProcessed(JAMSComponent position, JAMSComponent component){
+        if (this.instanceName.equals(position.instanceName))
+            return 0;
+        if (this == component)                
+            return 1;
+        for (int j=0;j<this.components.size();j++){
+            JAMSComponent c = this.components.get(j);
+            if (c == position)
+                return 0;
+            if (c == component)                
+                return 1;
+            if (c instanceof JAMSContext){
+                JAMSContext context = (JAMSContext)c;
+                int result = context.componentAllreadyProcessed(position,component);
+                if (result == 0 || result == 1)
+                    return result;
+            }
+        }  
+        return 2;
+    }
+    //looks if component object contains valid data
+    protected int isValid(JAMSComponent position, Object componentObj){
+        /*three steps:
+        1. get name of attribute to componentObj in this context
+            <context> attribName specifies attribute fully
+        2. get name of components which use this attribute in write or read-write mode
+        3. look one of these components has allready been executed
+        */
+        
+        //seatch for attribname
+        Iterator<Entry<String,JAMSData>> iter = this.attribs.entrySet().iterator();
+        String attribName = null;
+        while (iter.hasNext()){
+            Entry<String,JAMSData> e = iter.next();
+            if ( (Object)e.getValue() == componentObj){
+                attribName = e.getKey();
+                break;
+            }
+        }
+        //search in accessSpecs for components which use this attrib
+        JAMSComponent component = null;
+        if (attribName != null){
+            for (int i=0;i<this.accessSpecs.size();i++){                
+                if ( this.accessSpecs.get(i).attributeName.compareTo(attribName) == 0){
+                    //do they write this attrib?
+                    if (this.accessSpecs.get(i).accessType != JAMSEntityDataAccessor.READ_ACCESS){
+                        component = this.accessSpecs.get(i).component;
+                        //has component been executed
+                        if (componentAllreadyProcessed(position,component) == 1)
+                            return 1;
+                    }
+                }
+            }                        
+        }
+        //look if there is an child context which uses this componentObj
+        for (int j=0;j<components.size();j++){
+            JAMSComponent c = components.get(j);
+            if (c.instanceName.equals(position.instanceName)){
+                return 0;
+            }
+            if (c instanceof JAMSContext){
+                if ( ((JAMSContext)components.get(j)).isValid(position,componentObj) == 1)
+                    return 1;
+            }
+        }    
+        return 2;
+    }
+    
+    //update entity data, but update data only, if data source component has allready been executed,
+    //which means that data source component is executed before currentComponent
+    protected void updateEntityData(JAMSComponent currentComponent) {                
+        //if this context has not been executed at all, exit
+        if (this.getModel().componentAllreadyProcessed(currentComponent, this) != 1)
+                return;
+        for (int i = 0; i < dataAccessors.length; i++) {
+            //get pointer to component data
+            Object componentObj = dataAccessors[i].getComponentObject();
+            //look if component data is already up to date
+            if (isValid(currentComponent,componentObj) == 1){
+                dataAccessors[i].write();
+            }
         }
     }
     
