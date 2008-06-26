@@ -45,7 +45,7 @@ public class JAMSModelSnapshot extends JAMSComponent{
             update = JAMSVarDescription.UpdateType.RUN,
             description = "Description"
             )
-            public JAMSBoolean snapshotFile;
+            public JAMSString snapshotFile;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
@@ -69,7 +69,7 @@ public class JAMSModelSnapshot extends JAMSComponent{
             
             if (takeSnapshot != null && takeSnapshot.getValue()){  
                 runtime.sendInfoMsg("Taking Snapshot");
-                snapshot = runtime.GetRuntimeState(fileName);
+                snapshot = this.getModel().GetModelState(fileName,this);
                 data.setObject("snapshot", snapshot);
             }
             if (loadSnapshot != null && loadSnapshot.getValue()){
@@ -96,7 +96,7 @@ public class JAMSModelSnapshot extends JAMSComponent{
                     snapShotByteArray = snapshot.toByteArray();
                 }                
                 runtime.sendInfoMsg("Restoring Snapshot");
-                runtime.SetRuntimeState(new ByteArrayInputStream(snapShotByteArray));
+                this.getModel().SetModelState(new ByteArrayInputStream(snapShotByteArray));
             }
         }else{
             this.getModel().getRuntime().println("Snapshoting not supported by runtime!");                        
