@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.model;
 
 import org.unijena.jams.data.*;
@@ -29,42 +28,34 @@ import org.unijena.jams.data.*;
  *
  * @author S. Kralisch
  */
+@JAMSComponentDescription(title = "JAMS spatial context",
+author = "Sven Kralisch",
+date = "2. August 2005",
+description = "This component represents a JAMS context which can be used to " +
+"represent spatial contexts in environmental models")
+public class JAMSSpatialContext extends JAMSContext {
 
-@JAMSComponentDescription(
-        title="JAMS spatial context",
-        author="Sven Kralisch",
-        date="2. August 2005",
-        description="This component represents a JAMS context which can be used to " +
-        "represent spatial contexts in environmental models")
-        public class JAMSSpatialContext extends JAMSContext {
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    description = "List of spatial entities")
+    public JAMSEntityCollection entities;
     
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            description = "List of spatial entities"
-            )
-            public JAMSEntityCollection entities;
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.WRITE,
-            description = "Current spatial entity"
-            )
-            public JAMSEntity currentEntity;
-    
-    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    description = "Current spatial entity")
+    public JAMSEntity currentEntity;
+
     public JAMSEntityCollection getEntities() {
         return entities;
     }
-    
+
     public void setEntities(JAMSEntityCollection entities) {
         this.entities = entities;
     }
-    
+
     public JAMSEntity getCurrentEntity() {
         return currentEntity;
     }
-    
+
     public void setCurrentEntity(JAMSEntity currentEntity) {
         this.currentEntity = currentEntity;
     }
-    
 }

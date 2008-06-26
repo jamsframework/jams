@@ -40,6 +40,7 @@ public class JAMSTree extends JTree {
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION); //set single selection for the Tree
         this.setSelectionRow(0);
         setCellRenderer(new JAMSTreeRenderer());
+        setDragEnabled(true);
     }
     
     public void autoscroll(Point cursorLocation)  {
