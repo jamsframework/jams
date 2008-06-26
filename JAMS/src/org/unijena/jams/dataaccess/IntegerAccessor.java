@@ -75,4 +75,8 @@ public class IntegerAccessor implements JAMSEntityDataAccessor {
     public int getAccessType() {
         return accessType;
     }    
+    
+    public Object getComponentObject(){
+        return this.componentObject;
+    }
 }

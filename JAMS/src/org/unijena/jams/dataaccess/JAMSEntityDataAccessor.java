@@ -37,4 +37,6 @@ public interface JAMSEntityDataAccessor {
     public void setIndex(int index);
     public void read();
     public void write();
+    
+    public Object getComponentObject();
 }

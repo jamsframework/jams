@@ -68,10 +68,18 @@ public class DoubleAccessor implements JAMSEntityDataAccessor {
     }
     
     public void write() {
-        entityObject[index].setValue(componentObject.getValue());
+        try{
+            entityObject[index].setValue(componentObject.getValue());
+        }catch(Exception e){
+            System.out.print("geht nicht");
+        }
     }
     
     public int getAccessType() {
         return accessType;
+    }
+    
+    public Object getComponentObject(){
+        return this.componentObject;
     }
 }
