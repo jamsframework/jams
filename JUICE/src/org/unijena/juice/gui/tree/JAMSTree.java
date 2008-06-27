@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.juice.gui.tree;
 
 import java.util.*;
@@ -30,9 +29,10 @@ import javax.swing.tree.*;
 import org.unijena.juice.ComponentDescriptor;
 
 public class JAMSTree extends JTree {
-    
+
     private Insets autoscrollInsets = new Insets(20, 20, 20, 20); // insets
-    
+    private Enumeration<TreePath> expandedPaths;
+
     public JAMSTree() {
         setAutoscrolls(true);
         setRootVisible(true);
@@ -42,41 +42,41 @@ public class JAMSTree extends JTree {
         setCellRenderer(new JAMSTreeRenderer());
         setDragEnabled(true);
     }
-    
-    public void autoscroll(Point cursorLocation)  {
+
+    public void autoscroll(Point cursorLocation) {
         Insets insets = getAutoscrollInsets();
         Rectangle outer = getVisibleRect();
-        Rectangle inner = new Rectangle(outer.x+insets.left, outer.y+insets.top, outer.width-(insets.left+insets.right), outer.height-(insets.top+insets.bottom));
-        if (!inner.contains(cursorLocation))  {
-            Rectangle scrollRect = new Rectangle(cursorLocation.x-insets.left, cursorLocation.y-insets.top,	insets.left+insets.right, insets.top+insets.bottom);
+        Rectangle inner = new Rectangle(outer.x + insets.left, outer.y + insets.top, outer.width - (insets.left + insets.right), outer.height - (insets.top + insets.bottom));
+        if (!inner.contains(cursorLocation)) {
+            Rectangle scrollRect = new Rectangle(cursorLocation.x - insets.left, cursorLocation.y - insets.top, insets.left + insets.right, insets.top + insets.bottom);
             scrollRectToVisible(scrollRect);
         }
     }
-    
+
     public boolean isPathEditable(TreePath path) {
         return false;
     }
-    
-    public Insets getAutoscrollInsets()  {
+
+    public Insets getAutoscrollInsets() {
         return (autoscrollInsets);
     }
-    
+
     public static JAMSNode makeDeepCopy(JAMSNode node, JAMSTree target) {
-        
+
         JAMSNode copy = node.clone(target);
         ComponentDescriptor cd = (ComponentDescriptor) copy.getUserObject();
         for (Enumeration e = node.children(); e.hasMoreElements();) {
-            copy.add(makeDeepCopy((JAMSNode)e.nextElement(), target));
+            copy.add(makeDeepCopy((JAMSNode) e.nextElement(), target));
         }
-        return(copy);
+        return (copy);
     }
-    
+
     class JAMSTreeRenderer extends DefaultTreeCellRenderer {
-        
+
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             TreeNode node = (TreeNode) value;
-            
+
             if (node instanceof JAMSNode) {
                 JAMSNode jNode = (JAMSNode) node;
                 setIcon(JAMSNode.NODE_ICON[jNode.getType()]);
@@ -84,7 +84,7 @@ public class JAMSTree extends JTree {
             return this;
         }
     }
-    
+
     public void expandAll() {
         int row = 0;
         while (row < this.getRowCount()) {
@@ -92,12 +92,25 @@ public class JAMSTree extends JTree {
             row++;
         }
     }
-    
+
     public void collapseAll() {
-        int row = this.getRowCount()-1;
+        int row = this.getRowCount() - 1;
         while (row > 0) {
             this.collapseRow(row);
             row--;
         }
     }
+    
+    public void saveExpandedState(TreePath sourcePath) {
+        expandedPaths = getExpandedDescendants(sourcePath);
+    }
+
+    public void restoreExpandedState() {
+        if (expandedPaths != null) {
+            while (expandedPaths.hasMoreElements()) {
+                TreePath tmpPath = (TreePath) (expandedPaths.nextElement());
+                expandPath(new TreePath(((DefaultMutableTreeNode) tmpPath.getLastPathComponent()).getPath()));
+            }
+        }
+    }    
 }

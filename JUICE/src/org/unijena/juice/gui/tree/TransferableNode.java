@@ -2,7 +2,6 @@ package org.unijena.juice.gui.tree;
 
 import java.awt.datatransfer.*;
 import java.util.*;
-import javax.swing.tree.*;
 
 public class TransferableNode implements Transferable {
 	public static final DataFlavor NODE_FLAVOR = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType, "Node");

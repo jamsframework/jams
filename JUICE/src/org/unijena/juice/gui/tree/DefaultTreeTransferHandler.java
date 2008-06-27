@@ -73,8 +73,6 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
 
     public boolean executeDrop(JAMSTree target, JAMSNode draggedNode, JAMSNode newParentNode, Vector expandedStates, int action) {
 
-        HashMap<String, HashSet<ComponentDescriptor>> pendingContexts = null;
-
         int position = 0;
 
         if (newParentNode.getType() == JAMSNode.COMPONENT_NODE) {
@@ -83,7 +81,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             position = newParentNode.getIndex(siblingNode);
             if (draggedNode.getParent().getIndex(draggedNode) < position) {
                 position--;
-            }            
+            }
         } else {
             position = newParentNode.getChildCount();
         }
@@ -103,6 +101,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             ((DefaultTreeModel) target.getModel()).insertNodeInto(newNode, newParentNode, position);
             TreePath treePath = new TreePath(newNode.getPath());
             int i = 0;
+
             for (Enumeration enumeration = newNode.depthFirstEnumeration(); enumeration.hasMoreElements(); i++) {
                 JAMSNode element = (JAMSNode) enumeration.nextElement();
                 TreePath path = new TreePath(element.getPath());
@@ -110,6 +109,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
                     target.expandPath(path);
                 }
             }
+
             target.scrollPathToVisible(treePath);
             target.setSelectionPath(treePath);
 
@@ -123,13 +123,15 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
                 }
             }
 
-            TreePath oldParentPath = new TreePath(((JAMSNode) draggedNode.getParent()).getPath());
+            target.saveExpandedState(new TreePath(target.getModel().getRoot()));
+
             draggedNode.removeFromParent();
             target.expandPath(new TreePath(newParentNode.getPath()));
 
             ((DefaultTreeModel) target.getModel()).insertNodeInto(draggedNode, newParentNode, position);
 
             TreePath treePath = new TreePath(draggedNode.getPath());
+
             int i = 0;
             for (Enumeration enumeration = draggedNode.depthFirstEnumeration(); enumeration.hasMoreElements(); i++) {
                 JAMSNode element = (JAMSNode) enumeration.nextElement();
@@ -138,8 +140,15 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
                     target.expandPath(path);
                 }
             }
+
             target.scrollPathToVisible(treePath);
             target.setSelectionPath(treePath);
+
+            TreePath newtreePath = new TreePath(draggedNode.getPath());
+            target.scrollPathToVisible(newtreePath);
+            target.setSelectionPath(newtreePath);
+
+
             return true;
         }
         return false;
