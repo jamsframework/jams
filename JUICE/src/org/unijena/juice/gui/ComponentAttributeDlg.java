@@ -77,6 +77,8 @@ public class ComponentAttributeDlg extends JDialog {
     
     /**
      * Creates a new instance of VarEditDlg
+     * @param owner
+     * @param view 
      */
     public ComponentAttributeDlg(Frame owner, ModelView view) {
         

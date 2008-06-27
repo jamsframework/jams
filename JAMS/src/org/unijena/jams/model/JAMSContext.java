@@ -121,7 +121,11 @@ title="JAMS Component",
         attributeSpecs.add(new AttributeSpec(attributeName, clazz, value));
     }
     
-    
+    /**
+     * 
+     * @param model
+     */
+    @Override
     public void setModel(JAMSModel model) {
         super.setModel(model);
         JAMSRuntime rt = getModel().getRuntime();
