@@ -721,8 +721,10 @@ public class ModelTree extends JAMSTree {
 
     @Override
     protected void setExpandedState(TreePath path, boolean state) {
-        // Ignore all collapse requests; collapse events will not be fired
 
+        // If smartExpand is true, expand only nodes that do not represent 
+        // simple JAMSContext objects. Nodes representing subclasses of 
+        // JAMSContext will be expanded
         if (smartExpand) {
             JAMSNode node = (JAMSNode) path.getLastPathComponent();
             if (node.getType() == JAMSNode.CONTEXT_NODE) {
