@@ -46,6 +46,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.unijena.jams.JAMSTools;
 import org.unijena.jams.data.HelpComponent;
 import org.unijena.jams.gui.LHelper;
+import org.unijena.jams.model.JAMSContext;
 import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
 import org.unijena.juice.ContextAttribute;
@@ -69,6 +70,7 @@ public class ModelTree extends JAMSTree {
     private ModelView view;
     private String modelName = NEW_MODEL_NAME;
     private JPopupMenu popup;
+    private boolean smartExpand = true;
 
     public ModelTree(ModelView view) {
         super();
@@ -493,7 +495,7 @@ public class ModelTree extends JAMSTree {
         this.setSelectionRow(0);
         this.displayComponentInfo();
         this.expandAll();
-
+        smartExpand = false;
     }
 
     private JAMSNode getModelTree() {
@@ -715,6 +717,22 @@ public class ModelTree extends JAMSTree {
 
     public ModelView getView() {
         return view;
+    }
+
+    @Override
+    protected void setExpandedState(TreePath path, boolean state) {
+        // Ignore all collapse requests; collapse events will not be fired
+
+        if (smartExpand) {
+            JAMSNode node = (JAMSNode) path.getLastPathComponent();
+            if (node.getType() == JAMSNode.CONTEXT_NODE) {
+                ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
+                if (cd.getClazz() == JAMSContext.class) {
+                    return;
+                }
+            }
+        }
+        super.setExpandedState(path, state);
     }
 
     class ModelLoadException extends Exception {

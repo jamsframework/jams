@@ -105,7 +105,7 @@ public class ComponentPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String oldName = textFields.get("name").getText();
-                String newName = LHelper.showInputDlg(JUICE.getJuiceFrame(), "New model name", oldName);
+                String newName = LHelper.showInputDlg(JUICE.getJuiceFrame(), "New component name", oldName);
                 if ((newName != null) && !newName.equals(oldName)) {
                     textFields.get("name").setText(newName);
                     setComponentName();
