@@ -40,6 +40,7 @@ public abstract class AbstractTreeTransferHandler implements DragGestureListener
         }
     }
 
+    @Override
     public void dragDropEnd(DragSourceDropEvent dsde) {
 
         if (drawImage) {
@@ -55,6 +56,7 @@ public abstract class AbstractTreeTransferHandler implements DragGestureListener
         }
     }
 
+    @Override
     public final void dragEnter(DragSourceDragEvent dsde) {
         int action = dsde.getDropAction();
         if (action == DnDConstants.ACTION_COPY) {
@@ -68,6 +70,7 @@ public abstract class AbstractTreeTransferHandler implements DragGestureListener
         }
     }
 
+    @Override
     public final void dragOver(DragSourceDragEvent dsde) {
         int action = dsde.getDropAction();
         if (action == DnDConstants.ACTION_COPY) {
@@ -81,6 +84,7 @@ public abstract class AbstractTreeTransferHandler implements DragGestureListener
         }
     }
 
+    @Override
     public final void dropActionChanged(DragSourceDragEvent dsde) {
         int action = dsde.getDropAction();
         if (action == DnDConstants.ACTION_COPY) {
@@ -94,11 +98,13 @@ public abstract class AbstractTreeTransferHandler implements DragGestureListener
         }
     }
 
+    @Override
     public final void dragExit(DragSourceEvent dse) {
         dse.getDragSourceContext().setCursor(DragSource.DefaultMoveNoDrop);
     }
 
     /* Methods for DragGestureListener */
+    @Override
     public final void dragGestureRecognized(DragGestureEvent dge) {
         TreePath path = tree.getSelectionPath();
         if (path != null) {
@@ -151,6 +157,7 @@ public abstract class AbstractTreeTransferHandler implements DragGestureListener
     }
 
     /* Methods for DropTargetListener */
+    @Override
     public final void dragEnter(DropTargetDragEvent dtde) {
         Point pt = dtde.getLocation();
         int action = dtde.getDropAction();
@@ -164,9 +171,11 @@ public abstract class AbstractTreeTransferHandler implements DragGestureListener
         }
     }
 
+    @Override
     public final void dragExit(DropTargetEvent dte) {
     }
 
+    @Override
     public final void dragOver(DropTargetDragEvent dtde) {
         Point pt = dtde.getLocation();
         int action = dtde.getDropAction();
@@ -181,6 +190,7 @@ public abstract class AbstractTreeTransferHandler implements DragGestureListener
         }
     }
 
+    @Override
     public final void dropActionChanged(DropTargetDragEvent dtde) {
         Point pt = dtde.getLocation();
         int action = dtde.getDropAction();
@@ -194,6 +204,7 @@ public abstract class AbstractTreeTransferHandler implements DragGestureListener
         }
     }
 
+    @Override
     public final void drop(DropTargetDropEvent dtde) {
         try {
             int action = dtde.getDropAction();
