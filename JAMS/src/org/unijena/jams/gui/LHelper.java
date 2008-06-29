@@ -28,6 +28,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.lang.reflect.Method;
 import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -52,15 +53,31 @@ public class LHelper {
     private static final int TEXTINPUT_WIDTH = 250;
     private static final int FILEINPUT_WIDTH = 250;
 
+    /**
+     * Remove swing component from container
+     * @param cont Container object
+     * @param c Component object
+     */
     public static void removeGBComponent(Container cont, Component c) {
-
         cont.remove(c);
-
     }
 
-    public static Component addGBComponent ( Container cont, GridBagLayout gbl, Component c,
-                                             int x, int y, int width, int height, 
-                                             double weightx, double weighty ) {
+    /**
+     * Add swing component to container using gridbag layout
+     * @param cont Container object
+     * @param gbl Gridbag layout object
+     * @param c Component to be added
+     * @param x X position
+     * @param y Y position
+     * @param width Component width 
+     * @param height Component height
+     * @param weightx Component weight in x direction
+     * @param weighty Component weight in y direction
+     * @return Component added
+     */    
+    public static Component addGBComponent(Container cont, GridBagLayout gbl, Component c,
+            int x, int y, int width, int height,
+            double weightx, double weighty) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(2, 2, 2, 2);
@@ -74,13 +91,30 @@ public class LHelper {
         return cont.add(c);
     }
 
-    public static Component addGBComponent (Container cont, GridBagLayout gbl, Component c, 
-                                            int x, int y, int width, int height, 
-                                            int topInset, int leftInset, int bottomInset, int rightInset, 
-                                            double weightx, double weighty) {
+    /**
+     * Add swing component to container using gridbag layout
+     * @param cont Container object
+     * @param gbl Gridbag layout object
+     * @param c Component to be added
+     * @param x X position
+     * @param y Y position
+     * @param width Component width 
+     * @param height Component height
+     * @param topInset Top inset
+     * @param leftInset Left inset
+     * @param bottomInset Bottom inset
+     * @param rightInset Right inset
+     * @param weightx Component weight in x direction
+     * @param weighty Component weight in y direction
+     * @return Component added
+     */    
+    public static Component addGBComponent(Container cont, GridBagLayout gbl, Component c,
+            int x, int y, int width, int height,
+            int topInset, int leftInset, int bottomInset, int rightInset,
+            double weightx, double weighty) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(topInset, leftInset, bottomInset, rightInset );
+        gbc.insets = new Insets(topInset, leftInset, bottomInset, rightInset);
         gbc.gridx = x;
         gbc.gridy = y;
         gbc.gridwidth = width;
@@ -91,6 +125,21 @@ public class LHelper {
         return cont.add(c);
     }
 
+    /**
+     * Add swing component to container using gridbag layout
+     * @param cont Container object
+     * @param gbl Gridbag layout object
+     * @param c Component to be added
+     * @param x X position
+     * @param y Y position
+     * @param width Component width 
+     * @param height Component height
+     * @param weightx Component weight in x direction
+     * @param weighty Component weight in y direction
+     * @param fill Defines how to resize the component
+     * @param anchor Defines where to place component exactly
+     * @return Component added
+     */
     public static Component addGBComponent(Container cont, GridBagLayout gbl, Component c, int x, int y, int width, int height, double weightx, double weighty, int fill, int anchor) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = fill;
@@ -106,6 +155,13 @@ public class LHelper {
         return cont.add(c);
     }
 
+    /**
+     * Show Yes-No-Cancel dialog
+     * @param owner
+     * @param message
+     * @param title
+     * @return
+     */
     public static int showYesNoCancelDlg(Component owner, String message, String title) {
         Object[] options = {"Yes", "No", "Cancel"};
         int result = JOptionPane.showOptionDialog(owner, message, title,
@@ -114,6 +170,13 @@ public class LHelper {
         return result;
     }
 
+    /**
+     * Show Yes-No dialog
+     * @param owner
+     * @param message
+     * @param title
+     * @return
+     */
     public static int showYesNoDlg(Component owner, String message, String title) {
         Object[] options = {"Yes", "No"};
         int result = JOptionPane.showOptionDialog(owner, message, title,
@@ -123,21 +186,54 @@ public class LHelper {
         return result;
     }
 
+    /**
+     * Show info dialog
+     * @param owner
+     * @param message
+     * @param title
+     */
     public static void showInfoDlg(Component owner, String message, String title) {
         JOptionPane.showMessageDialog(owner, message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Show error dialog
+     * @param owner
+     * @param message
+     * @param title
+     */
     public static void showErrorDlg(Component owner, String message, String title) {
         JOptionPane.showMessageDialog(owner, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
+    /**
+     * Show input dialog
+     * @param owner
+     * @param message
+     * @param initalValue
+     * @return
+     */
     public static String showInputDlg(Component owner, String message, String initalValue) {
         return JOptionPane.showInputDialog(owner, message, initalValue);
     }
+
+    /**
+     * Show input dialog
+     * @param owner
+     * @param message
+     * @param title
+     * @param initalValue
+     * @return
+     */
     public static String showInputDlg(Component owner, String message, String title, String initalValue) {
         return (String) JOptionPane.showInputDialog(owner, message, title, JOptionPane.QUESTION_MESSAGE, null, null, initalValue);
     }
 
+    /**
+     * Create swing input component based on data type
+     * @param type Data type
+     * @return InputComponent object
+     */
     public static InputComponent createInputComponent(String type) {
         InputComponent ic;
         if (type.equals("JAMSFileName")) {
@@ -167,16 +263,58 @@ public class LHelper {
         return ic;
     }
 
+    /**
+     * Create a new JFileChooser and support disabling of zipped folders 
+     * @return new JFileChooser
+     */
     public static JFileChooser getJFileChooser() {
-
         return new JFileChooser() {
-
             @Override
             public void updateUI() {
                 //putClientProperty("FileChooser.useShellFolder", Boolean.FALSE);
                 super.updateUI();
             }
         };
+    }
 
+    /**
+     * Open URL in systems default web browser on Windows, OSX and Unix/Linux.
+     * For Unix/Linux a number of different browsers are tested.
+     * Taken from BrowserLauncher2 project (http://sourceforge.net/projects/browserlaunch2).
+     * @param url URL to be opened
+     */
+    public static void openURL(String url) {
+
+        String osName = System.getProperty("os.name");
+        String errMsg = "Error attempting to launch web browser";
+
+        try {
+            if (osName.startsWith("Mac OS")) {
+                Class<?> fileMgr = Class.forName("com.apple.eio.FileManager");
+                Method openURL = fileMgr.getDeclaredMethod("openURL",
+                        new Class[]{String.class});
+                openURL.invoke(null, new Object[]{url});
+            } else if (osName.startsWith("Windows")) {
+                Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+            } else { //assume Unix or Linux
+                String[] browsers = {
+                    "firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"
+                };
+                String browser = null;
+                for (int count = 0; count < browsers.length && browser == null; count++) {
+                    if (Runtime.getRuntime().exec(
+                            new String[]{"which", browsers[count]}).waitFor() == 0) {
+                        browser = browsers[count];
+                    }
+                }
+                if (browser == null) {
+                    throw new Exception("Could not find web browser");
+                } else {
+                    Runtime.getRuntime().exec(new String[]{browser, url});
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, errMsg + ":\n" + e.getLocalizedMessage());
+        }
     }
 }
