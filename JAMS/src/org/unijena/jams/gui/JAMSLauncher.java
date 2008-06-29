@@ -815,8 +815,6 @@ public class JAMSLauncher extends JFrame {
 
     public void help(HelpComponent helpComponent) {
         helpDlg.load(helpComponent);
-        helpDlg.setVisible(true);
-
     }
 
     class HelpButton extends JButton {
