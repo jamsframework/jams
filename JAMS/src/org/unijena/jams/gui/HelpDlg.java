@@ -29,12 +29,10 @@ public class HelpDlg extends JDialog {
     public final static int OK_RESULT = 0;
     public final static int CANCEL_RESULT = -1;
     private HelpComponent helpComponent;
-
     /**
      * the base url coming from outside 
      */
     private String baseUrl = "";
-    
     /**
      *  the pane to be filled with content
      */
@@ -62,9 +60,9 @@ public class HelpDlg extends JDialog {
         this.baseUrl = baseUrl;
     }
 
-   /**
-    * init the help dialog without filling content
-    */
+    /**
+     * init the help dialog without filling content
+     */
     public void init() {
         setModal(false);
         this.setTitle("Help");
@@ -100,19 +98,20 @@ public class HelpDlg extends JDialog {
 
     }
 
-/**
- * load the content of helpComponent into webPagePane
- * content could be text or url-page
- * 
- * @param helpComponent
- */
+    /**
+     * load the content of helpComponent into webPagePane
+     * content could be text or url-page
+     * 
+     * @param helpComponent
+     */
     public void load(HelpComponent helpComponent) {
 
         setHelpComponent(helpComponent);
 
         if (this.helpComponent.hasHelpText()) {
-            webPagePane.setContentType("text/plain");
+            webPagePane.setContentType("text/html");
             webPagePane.setText(this.helpComponent.getHelpText());
+            this.setVisible(true);
         }
         if (this.helpComponent.hasHelpURL()) {
             String url = this.baseUrl;
@@ -122,8 +121,9 @@ public class HelpDlg extends JDialog {
             url += this.helpComponent.getHelpURL();
 
             try {
-                webPagePane.setContentType("text/html");
-                webPagePane.setPage(url);
+//                webPagePane.setContentType("text/html");
+//                webPagePane.setPage(url);
+                LHelper.openURL(url);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(webPagePane, new String[]{
                             "Unable to open file", url
