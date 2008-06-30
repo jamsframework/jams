@@ -32,7 +32,6 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Vector;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
@@ -65,11 +64,12 @@ public class LauncherPanel extends JPanel {
     private HashMap<ModelProperty, InputComponent> inputMap = new HashMap<ModelProperty, InputComponent>();
     private ModelPropertyDlg propertyDlg = new ModelPropertyDlg(JUICE.getJuiceFrame());
     private ModelSubgroupDlg subgroupDlg = new ModelSubgroupDlg(JUICE.getJuiceFrame());
-    private GroupEditDlg groupEditDlg = new GroupEditDlg(JUICE.getJuiceFrame());
+//    private GroupEditDlg groupEditDlg = new GroupEditDlg(JUICE.getJuiceFrame());
     private HashMap<ModelProperties.Group, JPanel> groupPanels;
     private HashMap<ModelProperties.Group, JScrollPane> groupPanes;
     private JPanel mainButtonPanel = new JPanel();
     private ModelView view;
+    private Font titledBorderFont;
 
     /**
      * JPanel providing visual builder for defining a JAMS models GUI
@@ -86,6 +86,14 @@ public class LauncherPanel extends JPanel {
 
         this.add(tabbedPane, BorderLayout.CENTER);
         this.add(mainButtonPanel, BorderLayout.NORTH);
+
+        // create some nice font for the border title
+        titledBorderFont = (Font) UIManager.getDefaults().get("TitledBorder.font");
+        int fontSize = titledBorderFont.getSize();
+        if (titledBorderFont.getStyle() == Font.BOLD) {
+            fontSize += 2;
+        }
+        titledBorderFont = new Font(titledBorderFont.getName(), Font.BOLD, fontSize);
 
         JButton addPropertyButton = new JButton("Add Property");
         addPropertyButton.setPreferredSize(BUTTON_DIMENSION);
@@ -337,28 +345,20 @@ public class LauncherPanel extends JPanel {
                 Vector subgroupProperties = subgroup.getProperties();
 
                 int height = subgroupProperties.size() + 3;
-                        
+
                 // create the subgroup panel
                 JPanel subgroupPanel = new JPanel(gbl);
-                
-                // create some nice font for the border title
-                Font titledBorderFont = (Font) UIManager.getDefaults().get("TitledBorder.font");
-                int fontSize = titledBorderFont.getSize();
-                if (titledBorderFont.getStyle() == Font.BOLD) {
-                    fontSize += 2;
-                }
-                Font newTitledBorderFont = new Font(titledBorderFont.getName(), Font.BOLD, fontSize);
-                
+
                 // create and set the border
-                subgroupPanel.setBorder(BorderFactory.createTitledBorder(null, subgroup.getCanonicalName(), 
-                        TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, newTitledBorderFont));
-                
+                subgroupPanel.setBorder(BorderFactory.createTitledBorder(null, subgroup.getCanonicalName(),
+                        TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, titledBorderFont));
+
                 // add the subgroup panel
                 LHelper.addGBComponent(contentPanel, gbl, subgroupPanel,
-                                            0, y, 3, height,
-                                            6, 2, 6, 2, 
-                                            1, 1);
-                
+                        0, y, 3, height,
+                        6, 2, 6, 2,
+                        1, 1);
+
                 JPanel sgButtonPanel = createSubgroupButtonPanel(subgroup);
                 LHelper.addGBComponent(contentPanel, gbl, sgButtonPanel, 3, y, 3, 1, 1, 1);
                 int row = y + 1;

@@ -257,13 +257,12 @@ public class StandardRuntime implements JAMSRuntime {
         }
 
         JToolBar toolBar = new JToolBar();
-        toolBar.setPreferredSize(new Dimension(0, 40));
+        toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
         stopButton = new JButton();
-        //stopButton.setText("Stop");
+        stopButton.setToolTipText("Stop model");
         stopButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelStop.png")));
         stopButton.setEnabled(true);
-        //stopButton.setPreferredSize(new Dimension(100, 30));
         stopButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent evt) {
@@ -274,10 +273,9 @@ public class StandardRuntime implements JAMSRuntime {
         toolBar.add(stopButton);
 
         closeButton = new JButton();
-        //closeButton.setText("Close");
+        closeButton.setToolTipText("Close window");
         closeButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Shutdown.png")));
         closeButton.setEnabled(false);
-        //closeButton.setPreferredSize(new Dimension(100, 30));
         closeButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent evt) {

@@ -22,7 +22,6 @@
  */
 package org.unijena.juice;
 
-import java.awt.*;
 import java.io.File;
 import java.util.*;
 import javax.swing.UIManager;
@@ -44,7 +43,6 @@ import org.unijena.juice.gui.tree.LibTree;
  */
 public class JUICE {
 
-    public static final Font STANDARD_FONT = new java.awt.Font("Arial", 0, 11);
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
     public static final int SCREEN_WIDTH = 1200;
     public static final int SCREEN_HEIGHT = 800;

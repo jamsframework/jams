@@ -29,6 +29,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -103,6 +104,7 @@ public class JAMSLauncher extends JFrame {
     private JAMSRuntime runtime;
     private Runnable modelLoading;
     private WorkerDlg setupModelDlg;
+    private Font titledBorderFont;
 
     public JAMSLauncher(JAMSProperties properties) {
         this.properties = properties;
@@ -201,6 +203,14 @@ public class JAMSLauncher extends JFrame {
         jfc = LHelper.getJFileChooser();
 
         setupModelDlg = new WorkerDlg(this, "Setting up the model");
+
+        // create some nice font for the border title
+        titledBorderFont = (Font) UIManager.getDefaults().get("TitledBorder.font");
+        int fontSize = titledBorderFont.getSize();
+        if (titledBorderFont.getStyle() == Font.BOLD) {
+            fontSize += 2;
+        }
+        titledBorderFont = new Font(titledBorderFont.getName(), Font.BOLD, fontSize);
 
         this.propertyDlg = new PropertyDlg(this, getProperties());
         this.helpDlg = new HelpDlg(this);
@@ -543,18 +553,9 @@ public class JAMSLauncher extends JFrame {
                     // create the subgroup panel
                     JPanel subgroupPanel = new JPanel(gbl);
 
-                    // create some nice font for the border title
-                    Font titledBorderFont = (Font) UIManager.getDefaults().get("TitledBorder.font");
-                    int fontSize = titledBorderFont.getSize();
-                    if (titledBorderFont.getStyle() == Font.BOLD) {
-                        fontSize += 2;
-                    }
-                    Font newTitledBorderFont = new Font(titledBorderFont.getName(), Font.BOLD, fontSize);
-
                     // create and set the border
                     subgroupPanel.setBorder(BorderFactory.createTitledBorder(null, subgroupName,
-                            TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, newTitledBorderFont));
-
+                            TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, titledBorderFont));
 
                     // add the subgroup panel
                     row++;
@@ -825,7 +826,9 @@ public class JAMSLauncher extends JFrame {
             super();
             this.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
             this.setPreferredSize(new Dimension(20, 20));
-            this.setIcon(HelpComponent.HELP_ICON);
+            this.setText("?");
+            this.setFont(titledBorderFont);
+            //this.setIcon(HelpComponent.HELP_ICON);
             this.setToolTipText("Help");
             this.helpComponent = helpComponent;
 

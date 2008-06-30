@@ -129,9 +129,10 @@ public class JUICEFrame extends JFrame {
         getContentPane().add(mainSplitPane, java.awt.BorderLayout.CENTER);
 
         JToolBar toolBar = new JToolBar();
-        toolBar.setPreferredSize(new Dimension(0, 40));
+        toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
         JButton modelNewButton = new JButton();
+        modelNewButton.setToolTipText("New model");
         modelNewButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelNew.png")));
         modelNewButton.addActionListener(new java.awt.event.ActionListener() {
 

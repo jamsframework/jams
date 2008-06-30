@@ -216,10 +216,11 @@ public class ModelView {
         frame.getContentPane().add(modelSplitPane, BorderLayout.CENTER);
 
         JToolBar toolBar = new JToolBar();
-        toolBar.setPreferredSize(new Dimension(0, 40));
+        toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
         modelRunButton = new JButton();
-        modelRunButton.setPreferredSize(new Dimension(40,40));
+        //modelRunButton.setPreferredSize(new Dimension(40,40));
+        modelRunButton.setToolTipText("Start model");
         modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         modelRunButton.addActionListener(new java.awt.event.ActionListener() {
 
