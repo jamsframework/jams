@@ -163,6 +163,10 @@ public class ComponentDescriptor {
     public Class getClazz() {
         return clazz;
     }
+    
+    public void setClazz(Class clazz) {
+        this.clazz = clazz;
+    }
 
     public HashMap<String, ComponentAttribute> getComponentAttributes() {
         return componentAttributes;

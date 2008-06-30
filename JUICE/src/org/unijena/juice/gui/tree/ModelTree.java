@@ -437,6 +437,9 @@ public class ModelTree extends JAMSTree {
             rootElement = (Element) document.createElement("component");
         } else if (rootNode.getType() == JAMSNode.CONTEXT_NODE) {
             rootElement = (Element) document.createElement("contextcomponent");
+        } else {
+            rootElement = (Element) document.createElement("contextcomponent");
+            //cd.setClazz(org.unijena.jams.model.JAMSContext.class);
         }
 
         rootElement.setAttribute("name", cd.getName());
