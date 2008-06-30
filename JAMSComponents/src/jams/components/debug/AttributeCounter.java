@@ -117,7 +117,7 @@ public class AttributeCounter extends JAMSComponent {
      *
      * @param aClass refers to a class which has a no-argument constructor.
      */
-    public static long getObjectSize(Class aClass) {
+    public static long getObjectSize(Class<?> aClass) {
         long result = 0;
 
         //if the class does not have a no-argument constructor, then
