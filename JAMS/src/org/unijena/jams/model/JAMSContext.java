@@ -121,11 +121,7 @@ title="JAMS Component",
         attributeSpecs.add(new AttributeSpec(attributeName, clazz, value));
     }
     
-    /**
-     * 
-     * @param model
-     */
-    @Override
+    
     public void setModel(JAMSModel model) {
         super.setModel(model);
         JAMSRuntime rt = getModel().getRuntime();
@@ -344,7 +340,7 @@ title="JAMS Component",
         
         //in case the components want to write access the objects, update the entity objects attributes
         for (int i = 0; i < dataAccessors.length; i++) {
-            if (dataAccessors[i].getAccessType() != JAMSEntityDataAccessor.READ_ACCESS) {
+            if (dataAccessors[i].getAccessType() == JAMSEntityDataAccessor.WRITE_ACCESS) {
                 for (int j = 0; j < getEntities().getEntities().size(); j++) {
                     dataAccessors[i].setIndex(j);
                     dataAccessors[i].write();
