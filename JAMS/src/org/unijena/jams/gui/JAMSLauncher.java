@@ -202,7 +202,7 @@ public class JAMSLauncher extends JFrame {
 
         jfc = LHelper.getJFileChooser();
 
-        setupModelDlg = new WorkerDlg(this, "Setting up the model");
+        setupModelDlg = new WorkerDlg(this, "Model Setup");
 
         // create some nice font for the border title
         titledBorderFont = (Font) UIManager.getDefaults().get("TitledBorder.font");

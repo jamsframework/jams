@@ -37,6 +37,7 @@ import org.unijena.jams.gui.AboutDlg;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.LogViewDlg;
 import org.unijena.jams.gui.PropertyDlg;
+import org.unijena.jams.gui.WorkerDlg;
 import org.unijena.jams.io.XMLIO;
 import org.unijena.juice.*;
 import org.unijena.juice.gui.tree.LibTree;
@@ -63,6 +64,9 @@ public class JUICEFrame extends JFrame {
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, "Info Log");
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, "Error Log");
     private Node modelProperties;
+    private WorkerDlg loadModelDlg;
+    private String modelPath;
+    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchModelAction,  searchLibsAction,  copyModelParamAction,  pasteModelParamAction,  infoLogAction,  errorLogAction,  wikiAction;
 
     public JUICEFrame() {
         init();
@@ -103,7 +107,7 @@ public class JUICEFrame extends JFrame {
             }
         });
 
-        Action editPrefsAction = new AbstractAction("Edit Preferences...") {
+        editPrefsAction = new AbstractAction("Edit Preferences...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -115,7 +119,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        Action reloadLibsAction = new AbstractAction("Reload") {
+        reloadLibsAction = new AbstractAction("Reload") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -123,7 +127,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        Action newModelAction = new AbstractAction("New Model") {
+        newModelAction = new AbstractAction("New Model") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -131,7 +135,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        Action loadPrefsAction = new AbstractAction("Load Preferences...") {
+        loadPrefsAction = new AbstractAction("Load Preferences...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -152,7 +156,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        Action savePrefsAction = new AbstractAction("Save Preferences...") {
+        savePrefsAction = new AbstractAction("Save Preferences...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -171,7 +175,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        Action loadModelAction = new AbstractAction("Open Model...") {
+        loadModelAction = new AbstractAction("Open Model...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -179,13 +183,12 @@ public class JUICEFrame extends JFrame {
                 int result = jfc.showOpenDialog(JUICEFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    String stringValue = jfc.getSelectedFile().getAbsolutePath();
-                    loadModel(stringValue);
+                    JUICEFrame.this.loadModel(jfc.getSelectedFile().getAbsolutePath());
                 }
             }
         };
 
-        Action saveModelAction = new AbstractAction("Save Model...") {
+        saveModelAction = new AbstractAction("Save Model...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -193,7 +196,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        Action saveAsModelAction = new AbstractAction("Save Model As...") {
+        saveAsModelAction = new AbstractAction("Save Model As...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -201,7 +204,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        Action exitAction = new AbstractAction("Exit") {
+        exitAction = new AbstractAction("Exit") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -209,7 +212,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        Action aboutAction = new AbstractAction("About") {
+        aboutAction = new AbstractAction("About") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -217,31 +220,31 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        Action searchModelAction = new AbstractAction("Find in Model...") {
+        searchModelAction = new AbstractAction("Find in Model...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
             }
         };
 
-        Action searchLibsAction = new AbstractAction("Find in Libraries...") {
+        searchLibsAction = new AbstractAction("Find in Libraries...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
             }
         };
 
-        Action copyModelParamAction = new AbstractAction("Copy Model Parameter") {
+        copyModelParamAction = new AbstractAction("Copy Model Parameter") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                pasteModelParameterItem.setEnabled(true);
+                pasteModelParamAction.setEnabled(true);
                 ModelView view = getCurrentView();
                 modelProperties = view.getModelDoc().getElementsByTagName("launcher").item(0).cloneNode(true);
             }
         };
 
-        Action pasteModelParamAction = new AbstractAction("Paste Model Parameter") {
+        pasteModelParamAction = new AbstractAction("Paste Model Parameter") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -251,7 +254,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        Action infoLogAction = new AbstractAction("Info Log...") {
+        infoLogAction = new AbstractAction("Info Log...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -259,7 +262,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        Action errorLogAction = new AbstractAction("Error Log...") {
+        errorLogAction = new AbstractAction("Error Log...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -267,7 +270,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        Action wikiAction = new AbstractAction("JAMS Wiki...") {
+        wikiAction = new AbstractAction("JAMS Wiki...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -277,7 +280,9 @@ public class JUICEFrame extends JFrame {
 
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(JUICE.APP_TITLE);
-        modelPanel.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
+        //modelPanel.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
+
+        loadModelDlg = new WorkerDlg(this, "Loading Model");
 
         propertyDlg = new PropertyDlg(this, JUICE.getJamsProperties());
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -322,20 +327,20 @@ public class JUICEFrame extends JFrame {
         infoLogButton.setText("");
         infoLogButton.setToolTipText("Show Info Log...");
         infoLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/InfoLog.png")));
-        toolBar.add(infoLogButton);        
-        
+        toolBar.add(infoLogButton);
+
         JButton errorLogButton = new JButton(errorLogAction);
         errorLogButton.setText("");
         errorLogButton.setToolTipText("Show Error Log...");
         errorLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ErrorLog.png")));
-        toolBar.add(errorLogButton);        
-        
+        toolBar.add(errorLogButton);
+
         JButton helpButton = new JButton(wikiAction);
         helpButton.setText("");
         helpButton.setToolTipText("JAMS Wiki...");
         helpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Browser.png")));
-        toolBar.add(helpButton);        
-        
+        toolBar.add(helpButton);
+
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
 
@@ -409,9 +414,15 @@ public class JUICEFrame extends JFrame {
             @Override
             public void update(Observable o, Object arg) {
                 if (ModelView.viewList.getViewList().size() > 0) {
-                    JUICEFrame.this.searchModelItem.setEnabled(true);
+                    JUICEFrame.this.searchModelAction.setEnabled(true);
+                    JUICEFrame.this.copyModelParamAction.setEnabled(true);
+                    if (modelProperties != null) {
+                        JUICEFrame.this.pasteModelParamAction.setEnabled(true);
+                    }
                 } else {
-                    JUICEFrame.this.searchModelItem.setEnabled(false);
+                    JUICEFrame.this.searchModelAction.setEnabled(false);
+                    JUICEFrame.this.copyModelParamAction.setEnabled(false);
+                    JUICEFrame.this.pasteModelParamAction.setEnabled(false);
                 }
             }
         });
@@ -428,7 +439,7 @@ public class JUICEFrame extends JFrame {
         modelMenu.add(copyModelParameterItem);
 
         pasteModelParameterItem = new JMenuItem(pasteModelParamAction);
-        pasteModelParameterItem.setEnabled(false);
+        pasteModelParamAction.setEnabled(false);
         modelMenu.add(pasteModelParameterItem);
 
 
@@ -500,7 +511,8 @@ public class JUICEFrame extends JFrame {
         setJMenuBar(mainMenu);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(Math.min(d.width, JUICE.SCREEN_WIDTH), Math.min(d.height, JUICE.SCREEN_HEIGHT));
-        
+        this.libTreePanel.requestFocus();
+
     }
 
     public void setLibTree(LibTree tree) {
@@ -512,20 +524,34 @@ public class JUICEFrame extends JFrame {
         mView.setTree(new ModelTree(mView));
         mView.setInitialState();
         mView.getFrame().setVisible(true);
+        mView.getFrame().requestFocus();
     }
 
     public void loadModel(String path) {
-        try {
-            Document modelDoc = XMLIO.getDocument(path);
-            ModelView mView = new ModelView(path, modelPanel);
-            mView.setModelDoc(modelDoc);
-            mView.setSavePath(new File(path));
-            mView.setTree(new ModelTree(mView));
-            mView.setInitialState();
-            mView.getFrame().setVisible(true);
-        } catch (FileNotFoundException fnfe) {
-            LHelper.showErrorDlg(this, "File " + path + " could not be loaded.", "File open error");
-        }
+        this.modelPath = path;
+        this.loadModel();
+    }
+
+    private void loadModel() {
+        loadModelDlg.setTask(new Runnable() {
+
+            public void run() {
+                String path = JUICEFrame.this.modelPath;
+                try {
+                    Document modelDoc = XMLIO.getDocument(path);
+                    ModelView mView = new ModelView(path, modelPanel);
+                    mView.setModelDoc(modelDoc);
+                    mView.setSavePath(new File(path));
+                    mView.setTree(new ModelTree(mView));
+                    mView.setInitialState();
+                    mView.getFrame().setVisible(true);
+                    mView.getFrame().requestFocus();
+                } catch (FileNotFoundException fnfe) {
+                    LHelper.showErrorDlg(JUICEFrame.this, "File " + path + " could not be loaded.", "File open error");
+                }
+            }
+        });
+        loadModelDlg.execute();
     }
 
     private void saveModelAs(ModelView view) {
@@ -554,6 +580,9 @@ public class JUICEFrame extends JFrame {
     }
 
     public ModelView getCurrentView() {
+        if (modelPanel.getAllFrames().length == 0) {
+            return null;
+        }
         JInternalFrame frame = modelPanel.getAllFrames()[0];
         ModelView view = ModelView.viewList.getMViews().get(frame);
         return view;

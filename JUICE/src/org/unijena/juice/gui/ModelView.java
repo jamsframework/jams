@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
@@ -142,9 +141,8 @@ public class ModelView {
             }
         };
 
-        setupModelDlg = new WorkerDlg(JUICE.getJuiceFrame(), "Setting up the model");
+        setupModelDlg = new WorkerDlg(JUICE.getJuiceFrame(), "Model Setup");
         //compEditPanel.setPreferredSize(new Dimension(200,200));
-        JPanel modelPanel = new JPanel();
 
         frame = new JInternalFrame();
 
@@ -158,63 +156,40 @@ public class ModelView {
         frame.setBounds(0, 0, 600, 600);
         frame.addInternalFrameListener(new InternalFrameListener() {
 
+            @Override
             public void internalFrameActivated(InternalFrameEvent evt) {
             }
 
+            @Override
             public void internalFrameClosed(InternalFrameEvent evt) {
             }
 
+            @Override
             public void internalFrameClosing(InternalFrameEvent evt) {
                 exit();
             }
 
+            @Override
             public void internalFrameDeactivated(InternalFrameEvent evt) {
             }
 
+            @Override
             public void internalFrameDeiconified(InternalFrameEvent evt) {
             }
 
+            @Override
             public void internalFrameIconified(InternalFrameEvent evt) {
             }
 
+            @Override
             public void internalFrameOpened(InternalFrameEvent evt) {
             }
         });
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-
-
-        JSplitPane modelSplitPane = new JSplitPane();
-        modelSplitPane.setAutoscrolls(true);
-        modelSplitPane.setContinuousLayout(true);
-        modelSplitPane.setLeftComponent(modelTreePanel);
-
-        //JSplitPane compEditSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-
-
-        /*
-        JSplitPane infoSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        infoSplitPane.setTopComponent(new JScrollPane(modelEditPanel));
-        infoSplitPane.setBottomComponent(new JScrollPane(launcherPanel));
-        infoSplitPane.setDividerLocation(400);
-         */
-        //compEditSplitPane.setBottomComponent(infoSplitPane);
-        //compEditSplitPane.setTopComponent(new JScrollPane(compEditPanel));
-        JTabbedPane tabPane = new JTabbedPane();
-        tabPane.addTab("Component", new JScrollPane(compEditPanel));
-        tabPane.addTab("Model metadata", new JScrollPane(modelEditPanel));
-        tabPane.addTab("Model parameter", new JScrollPane(launcherPanel));
         
-        //compEditSplitPane.setTopComponent(tabPane);
-        //compEditSplitPane.setBottomComponent(new JScrollPane(launcherPanel));
-        //compEditSplitPane.setDividerLocation(400);
-
-        modelSplitPane.setRightComponent(tabPane);
-        modelSplitPane.setDividerLocation(TREE_PANE_WIDTH);
-        modelSplitPane.setOneTouchExpandable(true);
-        modelSplitPane.setDividerSize(DIVIDER_WIDTH);
-
-        frame.getContentPane().add(modelSplitPane, BorderLayout.CENTER);
-
+        /*
+         * create the toolbar
+         */
         JToolBar toolBar = new JToolBar();
         toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
@@ -228,7 +203,7 @@ public class ModelView {
                 runModel();
             }
         });
-        modelRunButton.setEnabled(true);
+        modelRunButton.setEnabled(false);
         toolBar.add(modelRunButton);
 
         modelStopButton = new JButton();
@@ -241,7 +216,31 @@ public class ModelView {
         });
         modelStopButton.setEnabled(false);
         //toolBar.add(modelStopButton);
+        
+        /*
+         * create the splitpane
+         */
+        JSplitPane modelSplitPane = new JSplitPane();
+        modelSplitPane.setAutoscrolls(true);
+        modelSplitPane.setContinuousLayout(true);
+
+        JTabbedPane tabPane = new JTabbedPane();
+        tabPane.addTab("Component", new JScrollPane(compEditPanel));
+        tabPane.addTab("Model metadata", new JScrollPane(modelEditPanel));
+        tabPane.addTab("Model parameter", new JScrollPane(launcherPanel));
+
+        modelSplitPane.setLeftComponent(modelTreePanel);
+        modelSplitPane.setRightComponent(tabPane);
+        modelSplitPane.setDividerLocation(TREE_PANE_WIDTH);
+        modelSplitPane.setOneTouchExpandable(true);
+        modelSplitPane.setDividerSize(DIVIDER_WIDTH);
+
+
+        /*
+         * add everything to the frame
+         */
         frame.getContentPane().add(toolBar, BorderLayout.NORTH);
+        frame.getContentPane().add(modelSplitPane, BorderLayout.CENTER);
 
         ModelView.viewList.addView(frame, this);
 
@@ -359,8 +358,9 @@ public class ModelView {
         this.tree = tree;
         modelTreePanel.setTree(tree);
         updateLauncherPanel();
+        modelRunButton.setEnabled(true);
     }
-    
+
     public void updateLauncherPanel() {
         this.launcherPanel.updatePanel();
     }
@@ -402,10 +402,10 @@ public class ModelView {
 
         String[] sArray = JAMSTools.toArray(name, "_");
         if (sArray.length > 1) {
-            String suffix = "_" + sArray[sArray.length-1];
-            name = name.substring(0, name.length()-suffix.length());
+            String suffix = "_" + sArray[sArray.length - 1];
+            name = name.substring(0, name.length() - suffix.length());
         }
-        
+
         int i = 1;
         String result = name + "_" + i;
 
@@ -467,17 +467,16 @@ public class ModelView {
                 NodeList groupChildNodes = groupElement.getChildNodes();
                 for (int pindex = 0; pindex < groupChildNodes.getLength(); pindex++) {
                     node = groupChildNodes.item(pindex);
-                    if (node.getNodeName().equalsIgnoreCase("property") ) {
-                        Element propertyElement = (Element)node;
+                    if (node.getNodeName().equalsIgnoreCase("property")) {
+                        Element propertyElement = (Element) node;
                         ModelProperty property = getPropertyFromElement(propertyElement);
-                        if (property != null)
-                        {
+                        if (property != null) {
                             getModelProperties().addProperty(group, property);
                         }
                     }
                     if (node.getNodeName().equalsIgnoreCase("subgroup")) {
-                        Element subgroupElement = (Element)node;
-                        String subgroupName= subgroupElement.getAttribute("name");
+                        Element subgroupElement = (Element) node;
+                        String subgroupName = subgroupElement.getAttribute("name");
                         Group subgroup = getModelProperties().createSubgroup(group, subgroupName);
                         setHelpComponent(subgroupElement, subgroup);
 
@@ -485,8 +484,7 @@ public class ModelView {
                         for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
                             Element propertyElement = (Element) propertyNodes.item(kindex);
                             ModelProperty property = getPropertyFromElement(propertyElement);
-                            if (property != null)
-                            {
+                            if (property != null) {
                                 getModelProperties().addProperty(subgroup, property);
                             }
                         }
@@ -495,8 +493,8 @@ public class ModelView {
             }
         }
         return;
-    }    
- 
+    }
+
     private ModelProperty getPropertyFromElement(Element propertyElement) {
         ModelProperties.ModelProperty property = getModelProperties().createProperty();
         property.component = getComponentDescriptor(propertyElement.getAttribute("component"));
@@ -540,11 +538,11 @@ public class ModelView {
             property.length = Integer.parseInt(lenStr);
         }
         setHelpComponent(propertyElement, property);
-                
-        return property;
-        
-    }
 
+        return property;
+
+    }
+//!!!konsistente verwaltung!!!
     public Document getModelDoc() {
         return modelDoc;
     }
@@ -571,19 +569,18 @@ public class ModelView {
 
     /*
     public DataRepository getDataRepository(ComponentDescriptor context) {
-        DataRepository repo = dataRepositories.get(context);
-        if (repo == null) {
-            repo = new DataRepository(context);
-            dataRepositories.put(context, repo);
-        }
-        return repo;
+    DataRepository repo = dataRepositories.get(context);
+    if (repo == null) {
+    repo = new DataRepository(context);
+    dataRepositories.put(context, repo);
     }
-
+    return repo;
+    }
+    
     public HashMap<ComponentDescriptor, DataRepository> getDataRepositories() {
-        return dataRepositories;
+    return dataRepositories;
     }
      */
-
     public String getAuthor() {
         return author;
     }
@@ -616,7 +613,6 @@ public class ModelView {
         this.helpBaseUrl = helpBaseUrl;
     }
 
-    
     public ComponentDescriptor getComponentDescriptor(String name) {
         return this.getComponentDescriptors().get(name);
     }
@@ -632,8 +628,8 @@ public class ModelView {
 
     public void unRegisterComponentDescriptor(ComponentDescriptor cd) {
         this.getComponentDescriptors().remove(cd.getName());
-    }    
-    
+    }
+
     public void setInitialState() {
         this.initialDoc = tree.getModelDocument();
     }
@@ -645,7 +641,7 @@ public class ModelView {
     public void setModelProperties(ModelProperties modelProperties) {
         this.modelProperties = modelProperties;
     }
-    
+
     public HashMap<String, ComponentDescriptor> getComponentDescriptors() {
         return componentDescriptors;
     }

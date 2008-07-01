@@ -45,7 +45,7 @@ public class JUICE {
 
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
     public static final int SCREEN_WIDTH = 1200;
-    public static final int SCREEN_HEIGHT = 800;
+    public static final int SCREEN_HEIGHT = 850;
     public static final String APP_TITLE = "JUICE";
     private static JUICEFrame juiceFrame;
     private static JAMSProperties jamsProperties = JAMSProperties.createJAMSProperties();
@@ -89,7 +89,7 @@ public class JUICE {
 
             juiceFrame = new JUICEFrame();
 
-            loadLibsDlg = new WorkerDlg(juiceFrame, "Loading libraries");
+            loadLibsDlg = new WorkerDlg(juiceFrame, "Loading Libraries");
 
             JAMSSplash splash = new JAMSSplash();
             splash.show(juiceFrame, JAMS.SPLASH_DISPLAY_TIME);
