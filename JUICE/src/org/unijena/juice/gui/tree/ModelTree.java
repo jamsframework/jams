@@ -263,7 +263,7 @@ public class ModelTree extends JAMSTree {
         JAMSNode node = (JAMSNode) this.getLastSelectedPathComponent();
 
         if (node.getType() == JAMSNode.MODEL_ROOT) {
-            return;
+            //return;
         }
 
         if (node != null) {
@@ -285,7 +285,7 @@ public class ModelTree extends JAMSTree {
         }
     }
 
-    //Create a document from the model tree
+    // Create a XML document from the model tree
     public Document getModelDocument() {
 
         Document document = null;
@@ -396,6 +396,8 @@ public class ModelTree extends JAMSTree {
         return document;
     }
 
+    // return XML element representing a JAMS model property bases on a 
+    // ModelProperty object
     private Element createPropertyElement(Document document, ModelProperty property) {
         Element propertyElement = (Element) document.createElement("property");
         propertyElement.setAttribute("component", property.component.getName());
@@ -428,18 +430,23 @@ public class ModelTree extends JAMSTree {
         return propertyElement;
     }
 
+    // return XML document element representing subtree of a JAMSTree (JTree)
+    // whose root node is a given JAMSNode
     private Element getSubDoc(JAMSNode rootNode, Document document) {
 
         Element rootElement = null;
         ComponentDescriptor cd = (ComponentDescriptor) rootNode.getUserObject();
 
-        if (rootNode.getType() == JAMSNode.COMPONENT_NODE) {
-            rootElement = (Element) document.createElement("component");
-        } else if (rootNode.getType() == JAMSNode.CONTEXT_NODE) {
-            rootElement = (Element) document.createElement("contextcomponent");
-        } else {
-            rootElement = (Element) document.createElement("contextcomponent");
-            //cd.setClazz(org.unijena.jams.model.JAMSContext.class);
+        switch (rootNode.getType()) {
+            case JAMSNode.COMPONENT_NODE:
+                rootElement = (Element) document.createElement("component");
+                break;
+            case JAMSNode.CONTEXT_NODE:
+                rootElement = (Element) document.createElement("contextcomponent");
+                break;
+            case JAMSNode.MODEL_ROOT:
+                rootElement = (Element) document.createElement("contextcomponent");
+                cd.setClazz(org.unijena.jams.model.JAMSContext.class);
         }
 
         rootElement.setAttribute("name", cd.getName());
@@ -477,14 +484,11 @@ public class ModelTree extends JAMSTree {
             }
         }
 
-        if (rootNode.getType() == JAMSNode.CONTEXT_NODE) {
-
+        if ((rootNode.getType() == JAMSNode.CONTEXT_NODE) || (rootNode.getType() == JAMSNode.MODEL_ROOT)) {
             int childCount = rootNode.getChildCount();
             for (int i = 0; i < childCount; i++) {
-
                 rootElement.appendChild(getSubDoc((JAMSNode) rootNode.getChildAt(i), document));
                 rootElement.appendChild(document.createTextNode("\n"));
-
             }
         }
 

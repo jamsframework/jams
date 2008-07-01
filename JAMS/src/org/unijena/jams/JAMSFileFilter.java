@@ -37,7 +37,7 @@ public class JAMSFileFilter {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".jap");
         }
         public String getDescription() {
-            return "JAMS properties (*.jap)";
+            return "JAMS Preferences (*.jap)";
         }
     };
     private static FileFilter modelFilter = new FileFilter() {
@@ -45,7 +45,7 @@ public class JAMSFileFilter {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".jam") || f.getName().toLowerCase().endsWith(".xml");
         }
         public String getDescription() {
-            return "JAMS model (*.jam; *.xml)";
+            return "JAMS Model (*.jam; *.xml)";
         }
     };
 /*    private static FileFilter modelConfigFilter = new FileFilter() {
@@ -62,7 +62,7 @@ public class JAMSFileFilter {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".jar");
         }
         public String getDescription() {
-            return "Java archive (*.jar)";
+            return "Java Archive (*.jar)";
         }
     };
     

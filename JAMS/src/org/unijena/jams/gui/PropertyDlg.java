@@ -56,12 +56,12 @@ public class PropertyDlg extends JDialog {
 
         super(owner);
         this.setLayout(new BorderLayout());
-        this.setLocationRelativeTo(owner);
+        this.setLocationByPlatform(true);
         this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         this.properties = properties;
 
-        setTitle("JAMS Properties");
+        setTitle("JAMS Preferences");
         setModal(true);
 
         JPanel contentPanel = new JPanel();

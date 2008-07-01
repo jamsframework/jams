@@ -57,8 +57,8 @@ public class JUICEFrame extends JFrame {
     private JFileChooser jfc = LHelper.getJFileChooser();
     private TreePanel libTreePanel;
     private JDesktopPane modelPanel = new JDesktopPane();
-    private JMenu windowMenu = new JMenu();
-    private JMenuItem pasteModelParameterItem,  copyModelParameterItem, searchModelItem;
+    private JMenu windowMenu;
+    private JMenuItem pasteModelParameterItem,  copyModelParameterItem,  searchModelItem;
     private JLabel statusLabel;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, "Info Log");
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, "Error Log");
@@ -73,28 +73,207 @@ public class JUICEFrame extends JFrame {
 
         this.addWindowListener(new WindowListener() {
 
+            @Override
             public void windowActivated(WindowEvent e) {
             }
 
+            @Override
             public void windowClosed(WindowEvent e) {
             }
 
+            @Override
             public void windowClosing(WindowEvent e) {
                 exit();
             }
 
+            @Override
             public void windowDeactivated(WindowEvent e) {
             }
 
+            @Override
             public void windowDeiconified(WindowEvent e) {
             }
 
+            @Override
             public void windowIconified(WindowEvent e) {
             }
 
+            @Override
             public void windowOpened(WindowEvent e) {
             }
         });
+
+        Action editPrefsAction = new AbstractAction("Edit Preferences...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                propertyDlg.setProperties(JUICE.getJamsProperties());
+                propertyDlg.setVisible(true);
+                if (propertyDlg.getResult() == PropertyDlg.APPROVE_OPTION) {
+                    propertyDlg.validateProperties();
+                }
+            }
+        };
+
+        Action reloadLibsAction = new AbstractAction("Reload") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JUICE.updateLibs();
+            }
+        };
+
+        Action newModelAction = new AbstractAction("New Model") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                newModel();
+            }
+        };
+
+        Action loadPrefsAction = new AbstractAction("Load Preferences...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
+                int result = jfc.showOpenDialog(JUICEFrame.this);
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String stringValue = jfc.getSelectedFile().getAbsolutePath();
+                    try {
+                        JAMSProperties properties = JUICE.getJamsProperties();
+                        properties.load(stringValue);
+
+                    } catch (IOException ioe) {
+                        JAMS.handle(ioe);
+                    }
+                }
+            }
+        };
+
+        Action savePrefsAction = new AbstractAction("Save Preferences...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
+                int result = jfc.showSaveDialog(JUICEFrame.this);
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String stringValue = jfc.getSelectedFile().getAbsolutePath();
+                    try {
+                        JAMSProperties properties = JUICE.getJamsProperties();
+                        properties.save(stringValue);
+                    } catch (IOException ioe) {
+                        JAMS.handle(ioe);
+                    }
+                }
+            }
+        };
+
+        Action loadModelAction = new AbstractAction("Open Model...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jfc.setFileFilter(JAMSFileFilter.getModelFilter());
+                int result = jfc.showOpenDialog(JUICEFrame.this);
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String stringValue = jfc.getSelectedFile().getAbsolutePath();
+                    loadModel(stringValue);
+                }
+            }
+        };
+
+        Action saveModelAction = new AbstractAction("Save Model...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveModel(getCurrentView());
+            }
+        };
+
+        Action saveAsModelAction = new AbstractAction("Save Model As...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveModelAs(getCurrentView());
+            }
+        };
+
+        Action exitAction = new AbstractAction("Exit") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exit();
+            }
+        };
+
+        Action aboutAction = new AbstractAction("About") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AboutDlg(JUICEFrame.this).setVisible(true);
+            }
+        };
+
+        Action searchModelAction = new AbstractAction("Find in Model...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            }
+        };
+
+        Action searchLibsAction = new AbstractAction("Find in Libraries...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            }
+        };
+
+        Action copyModelParamAction = new AbstractAction("Copy Model Parameter") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pasteModelParameterItem.setEnabled(true);
+                ModelView view = getCurrentView();
+                modelProperties = view.getModelDoc().getElementsByTagName("launcher").item(0).cloneNode(true);
+            }
+        };
+
+        Action pasteModelParamAction = new AbstractAction("Paste Model Parameter") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ModelView view = getCurrentView();
+                view.setModelParameters((Element) modelProperties);
+                view.updateLauncherPanel();
+            }
+        };
+
+        Action infoLogAction = new AbstractAction("Info Log...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                infoDlg.setVisible(true);
+            }
+        };
+
+        Action errorLogAction = new AbstractAction("Error Log...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                errorDlg.setVisible(true);
+            }
+        };
+
+        Action wikiAction = new AbstractAction("JAMS Wiki...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LHelper.openURL(JAMS.WIKI_URL);
+            }
+        };
 
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(JUICE.APP_TITLE);
@@ -104,14 +283,7 @@ public class JUICEFrame extends JFrame {
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setCurrentDirectory(JUICE.getBaseDir());
 
-        JButton reloadLibsButton = new JButton("Reload");
-        reloadLibsButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JUICE.updateLibs();
-            }
-        });
+        JButton reloadLibsButton = new JButton(reloadLibsAction);
 
         libTreePanel = new TreePanel();
         libTreePanel.addCustomButton(reloadLibsButton, 80);
@@ -131,19 +303,45 @@ public class JUICEFrame extends JFrame {
         JToolBar toolBar = new JToolBar();
         toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
-        JButton modelNewButton = new JButton();
-        modelNewButton.setToolTipText("New model");
+        /*
+         * toolbar buttons
+         */
+        JButton modelNewButton = new JButton(newModelAction);
+        modelNewButton.setText("");
+        modelNewButton.setToolTipText("New Model");
         modelNewButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelNew.png")));
-        modelNewButton.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JUICEFrame.this.newModel();
-            }
-        });
         toolBar.add(modelNewButton);
 
+        JButton prefsButton = new JButton(editPrefsAction);
+        prefsButton.setText("");
+        prefsButton.setToolTipText("Edit Preferences...");
+        prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
+        toolBar.add(prefsButton);
+
+        JButton infoLogButton = new JButton(infoLogAction);
+        infoLogButton.setText("");
+        infoLogButton.setToolTipText("Show Info Log...");
+        infoLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/InfoLog.png")));
+        toolBar.add(infoLogButton);        
+        
+        JButton errorLogButton = new JButton(errorLogAction);
+        errorLogButton.setText("");
+        errorLogButton.setToolTipText("Show Error Log...");
+        errorLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ErrorLog.png")));
+        toolBar.add(errorLogButton);        
+        
+        JButton helpButton = new JButton(wikiAction);
+        helpButton.setText("");
+        helpButton.setToolTipText("JAMS Wiki...");
+        helpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Browser.png")));
+        toolBar.add(helpButton);        
+        
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
+
+        /*
+         * status panel
+         */
         JPanel statusPanel = new JPanel();
         statusPanel.setLayout(new java.awt.BorderLayout());
         statusPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -153,232 +351,107 @@ public class JUICEFrame extends JFrame {
         statusPanel.add(statusLabel, java.awt.BorderLayout.CENTER);
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
 
-        //Menu stuff
+        /*
+         * menu stuff
+         */
         JMenuBar mainMenu = new JMenuBar();
 
-        JMenuItem aboutItem = new JMenuItem();
-        JMenu fileMenu = new JMenu();
-        JMenu helpMenu = new JMenu();
-        JMenu extrasMenu = new JMenu();
-        JMenu modelMenu = new JMenu();
-        JMenu logsMenu = new JMenu();
+        /*
+         * file menu
+         */
+        JMenu fileMenu = new JMenu("File");
+        mainMenu.add(fileMenu);
 
-        pasteModelParameterItem = new JMenuItem();
-        copyModelParameterItem = new JMenuItem();
-        JMenuItem editOptionsItem = new JMenuItem();
-        JMenuItem loadOptionsItem = new JMenuItem();
-        JMenuItem saveOptionsItem = new JMenuItem();
-        JMenuItem loadModelItem = new JMenuItem();
-        JMenuItem newModelItem = new JMenuItem();
-        JMenuItem exitItem = new JMenuItem();
-        JMenuItem saveModelItem = new JMenuItem();
-        JMenuItem saveAsModelItem = new JMenuItem();
-
-        fileMenu.setText("File");
-        newModelItem.setText("New Model");
-        newModelItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent evt) {
-                newModel();
-            }
-        });
+        JMenuItem newModelItem = new JMenuItem(newModelAction);
         newModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
         fileMenu.add(newModelItem);
 
-        loadModelItem.setText("Load Model");
-        loadModelItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                jfc.setFileFilter(JAMSFileFilter.getModelFilter());
-                int result = jfc.showOpenDialog(JUICEFrame.this);
-
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    String stringValue = jfc.getSelectedFile().getAbsolutePath();
-                    loadModel(stringValue);
-                }
-            }
-        });
-        loadModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
+        JMenuItem loadModelItem = new JMenuItem(loadModelAction);
+        loadModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         fileMenu.add(loadModelItem);
 
-        saveModelItem.setText("Save Model");
-        saveModelItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                saveModel(getCurrentView());
-            }
-        });
+        JMenuItem saveModelItem = new JMenuItem(saveModelAction);
         saveModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
         fileMenu.add(saveModelItem);
 
-        saveAsModelItem.setText("Save Model As");
-        saveAsModelItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                saveModelAs(getCurrentView());
-            }
-        });
+        JMenuItem saveAsModelItem = new JMenuItem(saveAsModelAction);
+        saveAsModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
         fileMenu.add(saveAsModelItem);
 
-        exitItem.setText("Exit");
-        exitItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                exit();
-            }
-        });
+        JMenuItem exitItem = new JMenuItem(exitAction);
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         fileMenu.add(exitItem);
-        mainMenu.add(fileMenu);
 
-        extrasMenu.setText("Edit");
-        editOptionsItem.setText("Edit Options...");
-        editOptionsItem.addActionListener(new ActionListener() {
+        /*
+         * edit menu
+         */
+        JMenu extrasMenu = new JMenu("Edit");
+        mainMenu.add(extrasMenu);
 
-            public void actionPerformed(ActionEvent e) {
-                propertyDlg.setProperties(JUICE.getJamsProperties());
-                propertyDlg.setVisible(true);
-                if (propertyDlg.getResult() == PropertyDlg.APPROVE_OPTION) {
-                    propertyDlg.validateProperties();
-                }
+        JMenuItem editPrefsItem = new JMenuItem(editPrefsAction);
+        editPrefsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
+        extrasMenu.add(editPrefsItem);
 
-            }
-        });
-        editOptionsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
-        extrasMenu.add(editOptionsItem);
+        JMenuItem loadPrefsItem = new JMenuItem(loadPrefsAction);
+        extrasMenu.add(loadPrefsItem);
 
-        loadOptionsItem.setText("Load Options...");
-        loadOptionsItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-
-                jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
-                int result = jfc.showOpenDialog(JUICEFrame.this);
-
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    String stringValue = jfc.getSelectedFile().getAbsolutePath();
-                    try {
-                        JAMSProperties properties = JUICE.getJamsProperties();
-                        properties.load(stringValue);
-
-                    } catch (IOException ioe) {
-                        JAMS.handle(ioe);
-                    }
-                }
-            }
-        });
-        extrasMenu.add(loadOptionsItem);
-
-        saveOptionsItem.setText("Save Options...");
-        saveOptionsItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-
-                jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
-                int result = jfc.showSaveDialog(JUICEFrame.this);
-
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    String stringValue = jfc.getSelectedFile().getAbsolutePath();
-                    try {
-                        JAMSProperties prop = JUICE.getJamsProperties();
-                        prop.save(stringValue);
-                    } catch (IOException ioe) {
-                        JAMS.handle(ioe);
-                    }
-                }
-
-            }
-        });
-        extrasMenu.add(saveOptionsItem);
+        JMenuItem savePrefsItem = new JMenuItem(savePrefsAction);
+        extrasMenu.add(savePrefsItem);
 
         extrasMenu.add(new JSeparator());
 
-        JMenuItem searchLibItem = new JMenuItem();
-        searchLibItem.setText("Find in Libraries...");
-        searchLibItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-
-
-            }
-        });
+        JMenuItem searchLibItem = new JMenuItem(searchLibsAction);
         extrasMenu.add(searchLibItem);
 
-        searchModelItem = new JMenuItem();
-        searchModelItem.setText("Find in Model...");
+        searchModelItem = new JMenuItem(searchModelAction);
         ModelView.viewList.addObserver(new Observer() {
 
+            @Override
             public void update(Observable o, Object arg) {
                 if (ModelView.viewList.getViewList().size() > 0) {
                     JUICEFrame.this.searchModelItem.setEnabled(true);
                 } else {
-                    JUICEFrame.this.searchModelItem.setEnabled(false);                    
+                    JUICEFrame.this.searchModelItem.setEnabled(false);
                 }
-            }
-        });        
-        searchModelItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-
-
             }
         });
         extrasMenu.add(searchModelItem);
 
-        mainMenu.add(extrasMenu);
 
+        /*
+         * model menu
+         */
+        JMenu modelMenu = new JMenu("Model");
+        mainMenu.add(modelMenu);
 
-        modelMenu.setText("Model");
-        copyModelParameterItem.setText("Copy Model Parameter");
-        copyModelParameterItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                pasteModelParameterItem.setEnabled(true);
-                ModelView view = getCurrentView();
-                modelProperties = view.getModelDoc().getElementsByTagName("launcher").item(0).cloneNode(true);
-            }
-        });
+        copyModelParameterItem = new JMenuItem(copyModelParamAction);
         modelMenu.add(copyModelParameterItem);
 
-        pasteModelParameterItem.setText("Paste Model Parameter");
+        pasteModelParameterItem = new JMenuItem(pasteModelParamAction);
         pasteModelParameterItem.setEnabled(false);
-        pasteModelParameterItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                ModelView view = getCurrentView();
-                view.setModelParameters((Element) modelProperties);
-                view.updateLauncherPanel();
-            }
-        });
         modelMenu.add(pasteModelParameterItem);
 
 
-        mainMenu.add(modelMenu);
-
-
-        logsMenu.setText("Logs");
-        JMenuItem infoLogItem = new JMenuItem("Info log");
-        infoLogItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                infoDlg.setVisible(true);
-            }
-        });
-        logsMenu.add(infoLogItem);
-        JMenuItem errorLogItem = new JMenuItem("Error log");
-        errorLogItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                errorDlg.setVisible(true);
-            }
-        });
-        logsMenu.add(errorLogItem);
+        /*
+         * logs menu
+         */
+        JMenu logsMenu = new JMenu("Logs");
         mainMenu.add(logsMenu);
 
-        windowMenu.setText("Windows");
+        JMenuItem infoLogItem = new JMenuItem(infoLogAction);
+        logsMenu.add(infoLogItem);
+
+        JMenuItem errorLogItem = new JMenuItem(errorLogAction);
+        logsMenu.add(errorLogItem);
+
+        /*
+         * windows menu
+         */
+        windowMenu = new JMenu("Windows");
         windowMenu.setEnabled(false);
         ModelView.viewList.addObserver(new Observer() {
 
+            @Override
             public void update(Observable o, Object arg) {
                 JUICEFrame.this.windowMenu.removeAll();
                 ArrayList<ModelView> mViews = ModelView.viewList.getViewList();
@@ -387,6 +460,7 @@ public class JUICEFrame extends JFrame {
                     WindowItem windowItem = new WindowItem(frame.getTitle(), frame);
                     windowItem.addActionListener(new ActionListener() {
 
+                        @Override
                         public void actionPerformed(ActionEvent e) {
                             WindowItem item = (WindowItem) e.getSource();
                             try {
@@ -408,27 +482,25 @@ public class JUICEFrame extends JFrame {
         });
         mainMenu.add(windowMenu);
 
-
-        helpMenu.setText("Help");
-        aboutItem.setText("About");
-        aboutItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent evt) {
-                new AboutDlg(JUICEFrame.this).setVisible(true);
-            }
-        });
-        helpMenu.add(aboutItem);
+        /*
+         * help menu
+         */
+        JMenu helpMenu = new JMenu("Help");
         mainMenu.add(helpMenu);
 
+        JMenuItem wikiItem = new JMenuItem(wikiAction);
+        helpMenu.add(wikiItem);
+
+        JMenuItem aboutItem = new JMenuItem(aboutAction);
+        helpMenu.add(aboutItem);
+
+        /*
+         * set main menu and initial size
+         */
         setJMenuBar(mainMenu);
-
-        //pack();
-
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-
         setSize(Math.min(d.width, JUICE.SCREEN_WIDTH), Math.min(d.height, JUICE.SCREEN_HEIGHT));
-    //super.setExtendedState(Frame.MAXIMIZED_BOTH);
-
+        
     }
 
     public void setLibTree(LibTree tree) {

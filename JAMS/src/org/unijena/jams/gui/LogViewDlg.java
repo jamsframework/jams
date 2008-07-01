@@ -20,11 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.gui;
 
 import java.awt.*;
-import java.io.*;
 import javax.swing.*;
 
 /**
@@ -32,31 +30,33 @@ import javax.swing.*;
  * @author S. Kralisch
  */
 public class LogViewDlg extends JDialog {
-    
+
     private JTextArea textArea;
-    
+
     public LogViewDlg(Frame owner, int width, int height, String title) {
-        
+
         super(owner);
-        
+
         getContentPane().setLayout(new BorderLayout());
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setLocationByPlatform(true);
         setResizable(true);
-        
+
         textArea = new javax.swing.JTextArea();
         textArea.setEditable(false);
         textArea.setFont(new java.awt.Font("Arial", 0, 10));
-        
-        
+
+
         JScrollPane scrollPane = new javax.swing.JScrollPane();
         scrollPane.setPreferredSize(new Dimension(width, height));
         scrollPane.setViewportView(textArea);
         //contentPanel.add(scrollPane);
         getContentPane().add(scrollPane, BorderLayout.CENTER);
-        
+
         JButton closeButton = new JButton();
         closeButton.setText("Close");
         closeButton.addActionListener(new java.awt.event.ActionListener() {
+
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 LogViewDlg.this.setVisible(false);
             }
@@ -64,32 +64,30 @@ public class LogViewDlg extends JDialog {
         JButton clearButton = new JButton();
         clearButton.setText("Clear");
         clearButton.addActionListener(new java.awt.event.ActionListener() {
+
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 LogViewDlg.this.setText("");
             }
         });
-        
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(clearButton);
         buttonPanel.add(closeButton);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-        
+
         this.setTitle(title);
-        
+
         pack();
-        
-        Dimension d2 = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation(d2.width / 2 - getWidth() / 2, d2.height / 2 - getHeight() / 2);
     }
-    
+
     public void setText(String text) {
         textArea.setText(text);
     }
-    
+
     public String getText() {
         return textArea.getText();
     }
-    
+
     public void appendText(String text) {
         textArea.append(text);
     }
