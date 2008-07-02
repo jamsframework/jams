@@ -173,6 +173,8 @@ public class GraphProperties {
     Paint series_outline_paint;
     Paint series_fill_paint;
     
+    
+    boolean outlineVisible;
     boolean linesVisible;
     boolean shapesVisible;
     
@@ -227,6 +229,7 @@ public class GraphProperties {
         colorTable.put("gray", Color.gray);
         colorTable.put("lightgray", Color.lightGray);
         colorTable.put("black", Color.black);
+        colorTable.put("white", Color.WHITE);
         
         createPanel();
         applyTSProperties();
@@ -709,7 +712,7 @@ public class GraphProperties {
     
     public void setRendererType(int type){
         this.type = type;
-        typechoice.setSelectedIndex(type);
+        //typechoice.setSelectedIndex(type);
     }
     
     public void setTimeSTART(int index){
@@ -946,26 +949,61 @@ public class GraphProperties {
         setSeriesOutlineStroke(new BasicStroke(width));  
     }
     
+    public void setOutlineVisible(boolean state){
+        this.outlineVisible = state;
+    }
+    
+    public boolean getOutlineVisible(){
+        return this.outlineVisible;
+    }
      
     
     
     private void setShape(int type, int size){
         
         int dim =  size;
+        int coord;
+        coord = dim/2;
         
         switch(type){
             
             
-            case 0: setSeriesShape(new java.awt.Rectangle(-3,-3,5,5));
+            case 0: setSeriesShape(new java.awt.Rectangle(-coord,-coord,size,size));
                 break;
                 
             case 1: 
-                java.awt.geom.Ellipse2D.Double circle = new java.awt.geom.Ellipse2D.Double(-3,-3,5,5);
+                java.awt.geom.Ellipse2D.Double circle = new java.awt.geom.Ellipse2D.Double(-coord,-coord,size,size);
                 setSeriesShape(circle);
                 break;
                 
-            case 2: Shape triangle = org.jfree.util.ShapeUtilities.createUpTriangle(size);
-               setSeriesShape(triangle);
+            case 2: 
+                Shape up_triangle = org.jfree.util.ShapeUtilities.createUpTriangle(size);
+                setSeriesShape(up_triangle);
+                break;
+                
+            case 3: 
+                Shape down_triangle = org.jfree.util.ShapeUtilities.createDownTriangle(size);
+                setSeriesShape(down_triangle);
+                break;
+                
+             case 4: 
+                Shape diamond = org.jfree.util.ShapeUtilities.createDiamond(size);
+                setSeriesShape(diamond);
+                break;
+                
+             case 5: 
+                float t = size*0.1f; 
+                Shape diag_cross = org.jfree.util.ShapeUtilities.createDiagonalCross(size, t);
+                setSeriesShape(diag_cross);
+                break;
+                
+             case 6: 
+                Shape reg_cross = org.jfree.util.ShapeUtilities.createRegularCross(size, size);
+                setSeriesShape(reg_cross);
+                break;      
+                //Shape triangle = org.jfree.util.ShapeUtilities.createUpTriangle(size);
+               //setSeriesShape(org.jfree.util.ShapeUtilities.createUpTriangle(100f));
+               
                // setSeriesShape(triangle);
 //            case 2: setSeriesShape(new java.awt.Rectangle()); break;
 //            case 3: setSeriesShape(new java.awt.Rectangle()); break;
@@ -1132,6 +1170,16 @@ public class GraphProperties {
         public void actionPerformed(ActionEvent me){
             
             //CustomizeRendererDlg cr_dlg = new CustomizeRendererDlg();
+            
+            
+            if(getPosition() == "left"){
+                setRendererType(ctsconf.getRendererLeft());
+            }
+            if(getPosition() == "right"){
+                setRendererType(ctsconf.getRendererRight());
+            }
+            cr_dlg.handleGUI();
+            
             cr_dlg.setVisible(true);
         }
     };
@@ -1217,10 +1265,11 @@ public class GraphProperties {
         JButton apply_button;
         JButton cancel_button;
         
-        final String[] STROKES = {"0.0", "0.5", "1.0", "2.0", "5.0"};
-        final String[] SIZES = {"1", "3", "5", "7", "9", "12", "15"};
-        final String[] SHAPES = {"Square", "Circle", "Triangle"};//, "Square", "Star"};
+        final String[] STROKES = {"thin", "0.5", "1.0", "2.0", "5.0"};
+        final String[] SIZES = {"1", "2", "4", "6", "8", "10", "12"};
+        final String[] SHAPES = {"Square", "Circle", "Triangle up", "Triangle down", "Diamond", "Cross diagonal", "Cross regular"};//, "Square", "Star"};
         final String[] COLORS = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
+        final String[] SHAPE_COLORS = {"none","white","red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
         final String[] RENDERER = {"Line and Shape","Bar","Area","Step","StepArea","Difference"};
         
         public CustomizeRendererDlg(){
@@ -1261,24 +1310,28 @@ public class GraphProperties {
             
             shape_label = new JLabel("Shape:");
             shape_box = new JComboBox(SHAPES);
-            shape_box.setSelectedIndex(color);
+            shape_box.setSelectedIndex(0);
 
             paint_label = new JLabel("Color:");
             paint_box = new JComboBox(COLORS);
+            paint_box.setSelectedIndex(1);
             
             outline_stroke_label = new JLabel("Outline Stroke:");
             outline_stroke_box = new JComboBox(STROKES);
             outline_stroke_box.setSelectedIndex(2);
             
             outline_paint_label = new JLabel("Outline Color:");
-            outline_paint_box = new JComboBox(COLORS);
+            outline_paint_box = new JComboBox(SHAPE_COLORS);
+            outline_paint_box.setSelectedIndex(3);
             
             fill_label = new JLabel("Color:");
-            fill_box = new JComboBox(COLORS);
+            fill_box = new JComboBox(SHAPE_COLORS);
+            fill_box.setSelectedIndex(2);
             
             shape_size_label = new JLabel("Size");
             shape_size_box = new JComboBox(SIZES);
-            shape_size_box.setEnabled(false);
+            shape_size_box.setSelectedIndex(2);
+            //shape_size_box.setEnabled(false);
             //paint_box.setSelectedIndex()
             lines_visible_label = new JLabel("Lines");
             lines_vis_box = new JCheckBox();
@@ -1323,11 +1376,23 @@ public class GraphProperties {
             add(optionspanel, brl.CENTER);
             add(buttonpanel, brl.SOUTH);
             
+            //default values
             setStroke(stroke_box.getSelectedIndex());
-            setShape(shape_box.getSelectedIndex(),5);
+            setShape(shape_box.getSelectedIndex(), getSize(shape_size_box.getSelectedIndex()));
             setSeriesPaint(colorTable.get((String)paint_box.getSelectedItem()));
+            if(outline_paint_box.getSelectedIndex()==0){
+                setOutlineVisible(false);
+            }else{
+                setOutlineVisible(true);
+                setSeriesOutlinePaint(colorTable.get((String)outline_paint_box.getSelectedItem()));
+            }
+            setSeriesOutlinePaint(colorTable.get((String)outline_paint_box.getSelectedItem()));
+            setSeriesFillPaint(colorTable.get((String)fill_box.getSelectedItem()));
+            setOutlineStroke(outline_stroke_box.getSelectedIndex());
             setLinesVisible(lines_vis_box.isSelected());
             setShapesVisible(shapes_vis_box.isSelected());
+            
+            handleGUI();
             
             pack();
             setVisible(false);
@@ -1336,19 +1401,75 @@ public class GraphProperties {
         public int getSize(int index){
          int size;
 
-        switch(type){ //135791215
+        switch(index){ //135791215
             case 0: size = 1; break;
-            case 1: size = 3; break;
-            case 2: size = 5; break;
-            case 3: size = 7; break;
-            case 4: size = 9; break;
-            case 5: size = 12; break;
-            case 6: size = 15; break;
+            case 1: size = 2; break;
+            case 2: size = 4; break;
+            case 3: size = 6; break;
+            case 4: size = 8; break;
+            case 5: size = 10; break;
+            case 6: size = 12; break;
             
             default: size = 5; break;         
         }
         return size;
     }
+        
+        private void handleGUI(){
+            if(getRendererType() == 0){ //line and shape
+                 
+                //renderer_box.setEnabled(true);
+                stroke_box.setEnabled(true); //list for different strokes!
+                shape_box.setEnabled(true); //list for different shapes!!
+                paint_box.setEnabled(true);
+                outline_stroke_box.setEnabled(true);
+                outline_paint_box.setEnabled(true);//color chooser!!
+                fill_box.setEnabled(true);
+                shapes_vis_box.setEnabled(true);
+                lines_vis_box.setEnabled(true);
+                shape_size_box.setEnabled(true);
+            }
+            if(getRendererType() == 2){ //area
+                
+                //renderer_box.setEnabled(true);
+                stroke_box.setEnabled(true); //list for different strokes!
+                shape_box.setEnabled(false); //list for different shapes!!
+                paint_box.setEnabled(true);
+                outline_stroke_box.setEnabled(true);
+                outline_paint_box.setEnabled(true);//color chooser!!
+                fill_box.setEnabled(false);
+                shapes_vis_box.setEnabled(false);
+                lines_vis_box.setEnabled(false);
+                shape_size_box.setEnabled(false);
+            }
+            if(getRendererType() == 5){ //difference
+                
+                //renderer_box.setEnabled(true);
+                stroke_box.setEnabled(true); //list for different strokes!
+                shape_box.setEnabled(true); //list for different shapes!!
+                paint_box.setEnabled(true);
+                outline_stroke_box.setEnabled(false);
+                outline_paint_box.setEnabled(false);//color chooser!!
+                fill_box.setEnabled(false);
+                shapes_vis_box.setEnabled(true);
+                lines_vis_box.setEnabled(true);
+                shape_size_box.setEnabled(true);
+            }
+            
+            if(getRendererType() == 1 || getRendererType() == 3 || getRendererType() == 4){ //bars and steps
+                
+                //renderer_box.setEnabled(true);
+                stroke_box.setEnabled(true); //list for different strokes!
+                shape_box.setEnabled(false); //list for different shapes!!
+                paint_box.setEnabled(true);
+                outline_stroke_box.setEnabled(false);
+                outline_paint_box.setEnabled(false);//color chooser!!
+                fill_box.setEnabled(false);
+                shapes_vis_box.setEnabled(false);
+                lines_vis_box.setEnabled(false);
+                shape_size_box.setEnabled(false);
+            }
+        }
         
         
 
@@ -1360,7 +1481,13 @@ public class GraphProperties {
                 setSeriesPaint(colorTable.get((String)paint_box.getSelectedItem()));
                 
                 //setSeriesPaint(colorTable.get((String)paint_box.getItemAt(color)));
-                setSeriesOutlinePaint(colorTable.get((String)outline_paint_box.getSelectedItem()));
+               
+                if(outline_paint_box.getSelectedIndex()==0){
+                    setOutlineVisible(false);
+                }else{
+                    setOutlineVisible(true);
+                    setSeriesOutlinePaint(colorTable.get((String)outline_paint_box.getSelectedItem()));
+                }
                 setSeriesFillPaint(colorTable.get((String)fill_box.getSelectedItem()));
                 setOutlineStroke(outline_stroke_box.getSelectedIndex());
                 setLinesVisible(lines_vis_box.isSelected());
