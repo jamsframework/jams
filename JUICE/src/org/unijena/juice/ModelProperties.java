@@ -51,6 +51,11 @@ public class ModelProperties {
             return true;
         }
     }
+    
+    public void removeAll() {
+        groups = new HashMap<String, Group>();
+        groupList = new ArrayList<Group>();
+    }
 
     public void removePropertyFromGroup(Group group, ModelElement p) {
         group.propertyList.remove(p);

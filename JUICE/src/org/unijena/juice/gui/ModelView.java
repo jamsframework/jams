@@ -228,7 +228,7 @@ public class ModelView {
         JTabbedPane tabPane = new JTabbedPane();
         tabPane.addTab("Component", new JScrollPane(compEditPanel));
         tabPane.addTab("Model metadata", new JScrollPane(modelEditPanel));
-        tabPane.addTab("Model parameter", new JScrollPane(launcherPanel));
+        tabPane.addTab("Model GUI", new JScrollPane(launcherPanel));
 
         modelSplitPane.setLeftComponent(modelTreePanel);
         modelSplitPane.setRightComponent(tabPane);
@@ -424,6 +424,7 @@ public class ModelView {
         Node node;
 
         if (launcherNode != null) {
+            getModelProperties().removeAll();
             NodeList groupNodes = launcherNode.getElementsByTagName("group");
             for (int gindex = 0; gindex < groupNodes.getLength(); gindex++) {
                 node = groupNodes.item(gindex);

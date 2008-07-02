@@ -161,9 +161,9 @@ public class ComponentPanel extends JPanel {
         */
         
         varTableColumnIds.add("Name");
-        varTableColumnIds.add("Type (Access)");
+        varTableColumnIds.add("Type");
         varTableColumnIds.add("R/W");
-        varTableColumnIds.add("Context attribute");
+        varTableColumnIds.add("Context Attribute");
         varTableColumnIds.add("Value");
         
         varTableModel = new DefaultTableModel(varTableColumnIds, 0);
@@ -494,9 +494,8 @@ public class ComponentPanel extends JPanel {
         varTableModel.setDataVector(tableData, varTableColumnIds);
         
         varTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-        varTable.getColumnModel().getColumn(1).setPreferredWidth(100);
-        varTable.getColumnModel().getColumn(2).setMaxWidth(30);
-        varTable.getColumnModel().getColumn(2).setPreferredWidth(30);
+        varTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+        varTable.getColumnModel().getColumn(2).setMaxWidth(35);
         varTable.getColumnModel().getColumn(3).setPreferredWidth(150);
         
     }

@@ -26,7 +26,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
@@ -38,11 +37,9 @@ import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.LogViewDlg;
 import org.unijena.jams.gui.PropertyDlg;
 import org.unijena.jams.gui.WorkerDlg;
-import org.unijena.jams.io.XMLIO;
 import org.unijena.juice.*;
 import org.unijena.juice.gui.tree.LibTree;
 import org.unijena.juice.gui.tree.ModelTree;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -66,7 +63,7 @@ public class JUICEFrame extends JFrame {
     private Node modelProperties;
     private WorkerDlg loadModelDlg;
     private String modelPath;
-    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchModelAction,  searchLibsAction,  copyModelParamAction,  pasteModelParamAction,  infoLogAction,  errorLogAction,  wikiAction;
+    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchModelAction,  searchLibsAction,  copyModelGUIAction,  pasteModelGUIAction,  runModelAction,  infoLogAction,  errorLogAction,  wikiAction;
 
     public JUICEFrame() {
         init();
@@ -234,23 +231,33 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        copyModelParamAction = new AbstractAction("Copy Model Parameter") {
+        copyModelGUIAction = new AbstractAction("Copy Model GUI") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                pasteModelParamAction.setEnabled(true);
+                pasteModelGUIAction.setEnabled(true);
                 ModelView view = getCurrentView();
                 modelProperties = view.getModelDoc().getElementsByTagName("launcher").item(0).cloneNode(true);
             }
         };
 
-        pasteModelParamAction = new AbstractAction("Paste Model Parameter") {
+        pasteModelGUIAction = new AbstractAction("Paste Model GUI") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
                 view.setModelParameters((Element) modelProperties);
                 view.updateLauncherPanel();
+            }
+        };
+
+
+        runModelAction = new AbstractAction("Run Model") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ModelView view = getCurrentView();
+                view.runModel();
             }
         };
 
@@ -409,23 +416,6 @@ public class JUICEFrame extends JFrame {
         extrasMenu.add(searchLibItem);
 
         searchModelItem = new JMenuItem(searchModelAction);
-        ModelView.viewList.addObserver(new Observer() {
-
-            @Override
-            public void update(Observable o, Object arg) {
-                if (ModelView.viewList.getViewList().size() > 0) {
-                    JUICEFrame.this.searchModelAction.setEnabled(true);
-                    JUICEFrame.this.copyModelParamAction.setEnabled(true);
-                    if (modelProperties != null) {
-                        JUICEFrame.this.pasteModelParamAction.setEnabled(true);
-                    }
-                } else {
-                    JUICEFrame.this.searchModelAction.setEnabled(false);
-                    JUICEFrame.this.copyModelParamAction.setEnabled(false);
-                    JUICEFrame.this.pasteModelParamAction.setEnabled(false);
-                }
-            }
-        });
         extrasMenu.add(searchModelItem);
 
 
@@ -435,11 +425,15 @@ public class JUICEFrame extends JFrame {
         JMenu modelMenu = new JMenu("Model");
         mainMenu.add(modelMenu);
 
-        copyModelParameterItem = new JMenuItem(copyModelParamAction);
+        JMenuItem runModelItem = new JMenuItem(runModelAction);
+        runModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+        modelMenu.add(runModelItem);
+
+        copyModelParameterItem = new JMenuItem(copyModelGUIAction);
         modelMenu.add(copyModelParameterItem);
 
-        pasteModelParameterItem = new JMenuItem(pasteModelParamAction);
-        pasteModelParamAction.setEnabled(false);
+        pasteModelParameterItem = new JMenuItem(pasteModelGUIAction);
+        pasteModelGUIAction.setEnabled(false);
         modelMenu.add(pasteModelParameterItem);
 
 
@@ -504,6 +498,29 @@ public class JUICEFrame extends JFrame {
 
         JMenuItem aboutItem = new JMenuItem(aboutAction);
         helpMenu.add(aboutItem);
+
+        /*
+         * register observer for ModelView.viewList
+         */
+        ModelView.viewList.addObserver(new Observer() {
+
+            @Override
+            public void update(Observable o, Object arg) {
+                if (ModelView.viewList.getViewList().size() > 0) {
+                    JUICEFrame.this.searchModelAction.setEnabled(true);
+                    JUICEFrame.this.copyModelGUIAction.setEnabled(true);
+                    JUICEFrame.this.runModelAction.setEnabled(true);
+                    if (JUICEFrame.this.modelProperties != null) {
+                        JUICEFrame.this.pasteModelGUIAction.setEnabled(true);
+                    }
+                } else {
+                    JUICEFrame.this.searchModelAction.setEnabled(false);
+                    JUICEFrame.this.copyModelGUIAction.setEnabled(false);
+                    JUICEFrame.this.pasteModelGUIAction.setEnabled(false);
+                    JUICEFrame.this.runModelAction.setEnabled(false);
+                }
+            }
+        });
 
         /*
          * set main menu and initial size
