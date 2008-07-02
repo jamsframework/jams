@@ -26,6 +26,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.beans.PropertyVetoException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Observable;
@@ -135,7 +136,7 @@ public class ModelView {
                     });
 
                     // load the model
-                    runtime.loadModel(modelDoc, JUICE.getJamsProperties());
+                    runtime.loadModel(getModelDoc(), JUICE.getJamsProperties());
                 } catch (Exception e) {
                 }
             }
@@ -186,7 +187,7 @@ public class ModelView {
             }
         });
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        
+
         /*
          * create the toolbar
          */
@@ -216,7 +217,7 @@ public class ModelView {
         });
         modelStopButton.setEnabled(false);
         //toolBar.add(modelStopButton);
-        
+
         /*
          * create the splitpane
          */
@@ -294,38 +295,6 @@ public class ModelView {
         } catch (Exception e) {
             runtime.handle(e);
         }
-    }
-
-    public static void runModel(JAMSProperties properties, Document modelDoc) throws NumberFormatException {
-
-        // create the runtime
-        JAMSRuntime runtime = new StandardRuntime();
-
-        // add info and error log output
-        runtime.addInfoLogObserver(new Observer() {
-
-            public void update(Observable obs, Object obj) {
-                JUICE.getJuiceFrame().getInfoDlg().appendText(obj.toString());
-            }
-        });
-        runtime.addErrorLogObserver(new Observer() {
-
-            public void update(Observable obs, Object obj) {
-                JUICE.getJuiceFrame().getErrorDlg().appendText(obj.toString());
-            }
-        });
-
-        // load the model
-        runtime.loadModel(modelDoc, properties);
-
-        // start the model
-        runtime.runModel();
-
-        JUICE.getJuiceFrame().getInfoDlg().appendText("\n\n");
-        JUICE.getJuiceFrame().getErrorDlg().appendText("\n\n");
-
-        runtime = null;
-        Runtime.getRuntime().gc();
     }
 
     public static String getNextViewName() {
@@ -542,13 +511,31 @@ public class ModelView {
         return property;
 
     }
-//!!!konsistente verwaltung!!!
+
+    /**
+     * Return an XML document descibing the model.
+     * @return The XML document describing the model.
+     */
     public Document getModelDoc() {
-        return modelDoc;
+        launcherPanel.updateProperties();
+        if (!launcherPanel.verifyInputs()) {
+            return null;
+        }
+        return tree.getModelDocument();
     }
 
-    public void setModelDoc(Document modelDoc) {
-        this.modelDoc = modelDoc;
+    /**
+     * Loads a JAMS model from file
+     * @param fileName The file containing the models XML document.
+     */
+    public void loadModel(String fileName) {
+        try {
+            this.setSavePath(new File(fileName));
+            this.setTree(new ModelTree(this, XMLIO.getDocument(fileName)));
+        } catch (FileNotFoundException fnfe) {
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "File " + fileName + " could not be loaded.", "File open error");
+        }
+        this.setInitialState();
     }
 
     public JInternalFrame getFrame() {

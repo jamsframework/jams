@@ -72,15 +72,14 @@ public class ModelTree extends JAMSTree {
     private JPopupMenu popup;
     private boolean smartExpand = true;
 
-    public ModelTree(ModelView view) {
+    public ModelTree(ModelView view, Document modelDoc) {
         super();
         setEditable(true);
 
         new DefaultTreeTransferHandler(this, DnDConstants.ACTION_COPY_OR_MOVE);
         getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
         this.view = view;
-
-        updateModelTree();
+        updateModelTree(modelDoc);
 
         addTreeSelectionListener(new TreeSelectionListener() {
 
@@ -495,9 +494,9 @@ public class ModelTree extends JAMSTree {
         return rootElement;
     }
 
-    public void updateModelTree() {
+    public void updateModelTree(Document modelDoc) {
 
-        TreeModel model = new DefaultTreeModel(getModelTree());
+        TreeModel model = new DefaultTreeModel(getModelTree(modelDoc));
         setModel(model);
         this.setSelectionRow(0);
         this.displayComponentInfo();
@@ -505,11 +504,10 @@ public class ModelTree extends JAMSTree {
         smartExpand = false;
     }
 
-    private JAMSNode getModelTree() {
+    private JAMSNode getModelTree(Document modelDoc) {
 
         Node node;
         Element element, docRoot;
-        Document modelDoc = view.getModelDoc();
         Class<?> clazz;
 
         try {

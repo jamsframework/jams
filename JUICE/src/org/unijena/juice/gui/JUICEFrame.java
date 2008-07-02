@@ -521,7 +521,7 @@ public class JUICEFrame extends JFrame {
 
     private void newModel() {
         ModelView mView = new ModelView(modelPanel);
-        mView.setTree(new ModelTree(mView));
+        mView.setTree(new ModelTree(mView, null));
         mView.setInitialState();
         mView.getFrame().setVisible(true);
         mView.getFrame().requestFocus();
@@ -537,18 +537,10 @@ public class JUICEFrame extends JFrame {
 
             public void run() {
                 String path = JUICEFrame.this.modelPath;
-                try {
-                    Document modelDoc = XMLIO.getDocument(path);
-                    ModelView mView = new ModelView(path, modelPanel);
-                    mView.setModelDoc(modelDoc);
-                    mView.setSavePath(new File(path));
-                    mView.setTree(new ModelTree(mView));
-                    mView.setInitialState();
-                    mView.getFrame().setVisible(true);
-                    mView.getFrame().requestFocus();
-                } catch (FileNotFoundException fnfe) {
-                    LHelper.showErrorDlg(JUICEFrame.this, "File " + path + " could not be loaded.", "File open error");
-                }
+                ModelView mView = new ModelView(path, modelPanel);
+                mView.loadModel(path);
+                mView.getFrame().setVisible(true);
+                mView.getFrame().requestFocus();
             }
         });
         loadModelDlg.execute();
