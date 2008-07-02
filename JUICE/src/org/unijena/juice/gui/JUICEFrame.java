@@ -235,7 +235,7 @@ public class JUICEFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                pasteModelGUIAction.setEnabled(true);
+                getPasteModelGUIAction().setEnabled(true);
                 ModelView view = getCurrentView();
                 modelProperties = view.getModelDoc().getElementsByTagName("launcher").item(0).cloneNode(true);
             }
@@ -508,15 +508,15 @@ public class JUICEFrame extends JFrame {
             public void update(Observable o, Object arg) {
                 if (ModelView.viewList.getViewList().size() > 0) {
                     JUICEFrame.this.searchModelAction.setEnabled(true);
-                    JUICEFrame.this.copyModelGUIAction.setEnabled(true);
+                    JUICEFrame.this.getCopyModelGUIAction().setEnabled(true);
                     JUICEFrame.this.runModelAction.setEnabled(true);
                     if (JUICEFrame.this.modelProperties != null) {
-                        JUICEFrame.this.pasteModelGUIAction.setEnabled(true);
+                        JUICEFrame.this.getPasteModelGUIAction().setEnabled(true);
                     }
                 } else {
                     JUICEFrame.this.searchModelAction.setEnabled(false);
-                    JUICEFrame.this.copyModelGUIAction.setEnabled(false);
-                    JUICEFrame.this.pasteModelGUIAction.setEnabled(false);
+                    JUICEFrame.this.getCopyModelGUIAction().setEnabled(false);
+                    JUICEFrame.this.getPasteModelGUIAction().setEnabled(false);
                     JUICEFrame.this.runModelAction.setEnabled(false);
                 }
             }
@@ -599,6 +599,14 @@ public class JUICEFrame extends JFrame {
 
     public TreePanel getLibTreePanel() {
         return libTreePanel;
+    }
+
+    public Action getCopyModelGUIAction() {
+        return copyModelGUIAction;
+    }
+
+    public Action getPasteModelGUIAction() {
+        return pasteModelGUIAction;
     }
 
     private class WindowItem extends JMenuItem {

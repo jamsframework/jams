@@ -80,7 +80,6 @@ public class ModelView {
     private File savePath;
     private Document modelDoc;
     private Document initialDoc;
-    private JButton modelStopButton;
     private JButton modelRunButton;
     private ModelTree tree;
     private ComponentPanel compEditPanel;
@@ -207,16 +206,17 @@ public class ModelView {
         modelRunButton.setEnabled(false);
         toolBar.add(modelRunButton);
 
-        modelStopButton = new JButton();
-        modelStopButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelStop.png")));
-        modelStopButton.addActionListener(new java.awt.event.ActionListener() {
+        JButton copyGUIButton = new JButton(JUICE.getJuiceFrame().getCopyModelGUIAction());
+        copyGUIButton.setText("");
+        copyGUIButton.setToolTipText("Copy Model GUI");
+        copyGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Copy.png")));
+        toolBar.add(copyGUIButton);
 
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                //ModelExecutor.modelStop();
-            }
-        });
-        modelStopButton.setEnabled(false);
-        //toolBar.add(modelStopButton);
+        JButton pasteGUIButton = new JButton(JUICE.getJuiceFrame().getPasteModelGUIAction());
+        pasteGUIButton.setText("");
+        pasteGUIButton.setToolTipText("Paste Model GUI");
+        pasteGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Paste.png")));
+        toolBar.add(pasteGUIButton);
 
         /*
          * create the splitpane
