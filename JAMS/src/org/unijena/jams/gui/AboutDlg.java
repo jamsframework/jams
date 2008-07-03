@@ -23,6 +23,8 @@
 package org.unijena.jams.gui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.URL;
 import javax.swing.*;
@@ -37,13 +39,14 @@ public class AboutDlg extends JDialog {
 
     /**
      * Creates a new instance of AboutDlg
+     * @param owner
      */
     public AboutDlg(Frame owner) {
 
         super(owner);
 
-        getContentPane().setLayout(new java.awt.FlowLayout());
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         URL imgURL = ClassLoader.getSystemResource("resources/images/JAMSsplash.png");
@@ -53,52 +56,83 @@ public class AboutDlg extends JDialog {
         int x = img.getWidth(null);
         int y = img.getHeight(null);
 
-        URL textURL = ClassLoader.getSystemResource("resources/text/readme.txt");
-        String text = "";
+        String gplText = "", versionText = "";
         try {
+            URL textURL = ClassLoader.getSystemResource("resources/text/readme.txt");
             if (textURL != null) {
-                text = readContent(textURL.openStream());
+                gplText = readContent(textURL.openStream());
+            }
+            textURL = ClassLoader.getSystemResource("resources/text/version.txt");
+            if (textURL != null) {
+                versionText = readContent(textURL.openStream());
             }
         } catch (IOException ioe) {
         }
 
         JPanel contentPanel = new JPanel();
 //        contentPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        contentPanel.setLayout(new java.awt.FlowLayout());
-        java.awt.Dimension d = new java.awt.Dimension(x + 10, y + 230);
+        contentPanel.setLayout(new FlowLayout());
+        java.awt.Dimension d = new Dimension(x + 10, y + 250);
         contentPanel.setPreferredSize(d);
 
         getContentPane().add(contentPanel);
 
         JPanel gfxPanel = new JPanel() {
 
+            @Override
             public void paint(Graphics g) {
                 super.paint(g);
                 g.drawImage(img, 0, 0, this);
             }
         };
-        gfxPanel.setPreferredSize(new java.awt.Dimension(x, y));
-
+        gfxPanel.setPreferredSize(new Dimension(x, y));
         contentPanel.add(gfxPanel);
 
-        JTextArea textArea = new javax.swing.JTextArea();
-        textArea.setEditable(false);
-        textArea.setFont(new java.awt.Font("Arial", 0, 10));
-        textArea.setColumns(20);
-        textArea.setRows(5);
-        textArea.setText(text);
-        textArea.setCaretPosition(0);
+        /*
+         * version text
+         */
+        JTextArea versionTextArea = new JTextArea();
+        versionTextArea.setEditable(false);
+        versionTextArea.setFont(new Font("Arial", 0, 10));
+        int versionTextHeight = 16;
+        versionTextArea.setPreferredSize(new Dimension(x - 3, versionTextHeight));
+        versionTextArea.setText(versionText);
+        versionTextArea.setCaretPosition(0);
 
-        JScrollPane scrollPane = new javax.swing.JScrollPane();
-        scrollPane.setPreferredSize(new java.awt.Dimension(x + 1, 180));
-        scrollPane.setViewportView(textArea);
+        JPanel versionPanel = new JPanel();
+        versionPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        versionPanel.setBorder(BorderFactory.createEtchedBorder());
+        versionPanel.setPreferredSize(new java.awt.Dimension(x + 1, versionTextHeight + 4));
+        versionPanel.getInsets().set(0, 0, 0, 0);
+        versionPanel.add(versionTextArea);
+        contentPanel.add(versionPanel);
+
+        /*
+         * license text
+         */
+        JTextArea gplTextArea = new JTextArea();
+        gplTextArea.setEditable(false);
+        gplTextArea.setFont(new Font("Arial", 0, 10));
+        gplTextArea.setColumns(20);
+        gplTextArea.setRows(5);
+        gplTextArea.setText(gplText);
+        gplTextArea.setCaretPosition(0);
+
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setPreferredSize(new Dimension(x + 1, 180));
+        scrollPane.setViewportView(gplTextArea);
         contentPanel.add(scrollPane);
+
+        /*JLabel versionTextLabel = new JLabel();
+        versionTextLabel.setFont(new java.awt.Font("Arial", 0, 10));
+        versionTextLabel.setText("Test");*/
 
         JButton closeButton = new JButton();
         closeButton.setText("OK");
-        closeButton.addActionListener(new java.awt.event.ActionListener() {
+        closeButton.addActionListener(new ActionListener() {
 
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
                 AboutDlg.this.dispose();
             }
         });
@@ -107,7 +141,7 @@ public class AboutDlg extends JDialog {
         //this.setAlwaysOnTop(true);
         //this.setUndecorated(true);
         //this.setModal(true);
-        this.setTitle("JAMS: About");
+        this.setTitle("About");
 
         pack();
 
@@ -116,8 +150,11 @@ public class AboutDlg extends JDialog {
     }
 
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new  
 
+              Runnable() {
+
+                 @Override
             public void run() {
                 new AboutDlg(null).setVisible(true);
             }

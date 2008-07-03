@@ -257,7 +257,7 @@ public class StandardRuntime implements JAMSRuntime {
         }
 
         JToolBar toolBar = new JToolBar();
-        toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
+//        toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
         stopButton = new JButton();
         stopButton.setToolTipText("Stop model");

@@ -33,6 +33,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
@@ -137,14 +138,16 @@ public class ModelView {
 
                     // load the model
                     runtime.loadModel(getModelDoc(), JUICE.getJamsProperties());
+
                 } catch (Exception e) {
+                    runtime.handle(e);
                 }
             }
         };
-
+        // create worker dialog for model setup
         setupModelDlg = new WorkerDlg(JUICE.getJuiceFrame(), "Model Setup");
-        //compEditPanel.setPreferredSize(new Dimension(200,200));
 
+        // create the internal frame
         frame = new JInternalFrame();
 
         frame.setClosable(true);
@@ -192,7 +195,7 @@ public class ModelView {
          * create the toolbar
          */
         JToolBar toolBar = new JToolBar();
-        toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
+        //toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
         modelRunButton = new JButton();
         //modelRunButton.setPreferredSize(new Dimension(40,40));
@@ -261,16 +264,6 @@ public class ModelView {
     }
 
     public void runModel() {
-        /*
-        modelDoc = tree.getModelDocument();
-        JAMSLauncher launcher = new JAMSLauncher(modelDoc, JUICE.getJamsProperties());
-        launcher.setVisible(true);
-         */
-        launcherPanel.updateProperties();
-        if (!launcherPanel.verifyInputs()) {
-            return;
-        }
-        modelDoc = tree.getModelDocument();
 
         // first load the model via the modelLoading runnable
         setupModelDlg.setTask(modelLoading);

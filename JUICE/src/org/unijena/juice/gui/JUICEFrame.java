@@ -313,7 +313,7 @@ public class JUICEFrame extends JFrame {
         getContentPane().add(mainSplitPane, java.awt.BorderLayout.CENTER);
 
         JToolBar toolBar = new JToolBar();
-        toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
+        //toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
         /*
          * toolbar buttons
