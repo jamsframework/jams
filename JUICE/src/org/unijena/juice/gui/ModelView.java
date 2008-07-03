@@ -39,7 +39,6 @@ import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -48,7 +47,6 @@ import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import org.unijena.jams.JAMS;
-import org.unijena.jams.JAMSProperties;
 import org.unijena.jams.JAMSTools;
 import org.unijena.jams.data.HelpComponent;
 import org.unijena.jams.gui.LHelper;
@@ -115,6 +113,7 @@ public class ModelView {
 
         modelLoading = new Runnable() {
 
+            @Override
             public void run() {
                 try {
                     // create the runtime
@@ -123,12 +122,14 @@ public class ModelView {
                     // add info and error log output
                     runtime.addInfoLogObserver(new Observer() {
 
+                        @Override
                         public void update(Observable obs, Object obj) {
                             JUICE.getJuiceFrame().getInfoDlg().appendText(obj.toString());
                         }
                     });
                     runtime.addErrorLogObserver(new Observer() {
 
+                        @Override
                         public void update(Observable obs, Object obj) {
                             JUICE.getJuiceFrame().getErrorDlg().appendText(obj.toString());
                         }
@@ -199,6 +200,7 @@ public class ModelView {
         modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         modelRunButton.addActionListener(new java.awt.event.ActionListener() {
 
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 runModel();
             }
@@ -277,6 +279,7 @@ public class ModelView {
         // then execute it
         Thread t = new Thread() {
 
+            @Override
             public void run() {
 
                 // start the model
