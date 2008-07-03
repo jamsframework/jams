@@ -24,7 +24,6 @@ package org.unijena.jams;
 
 import java.awt.Font;
 import java.io.*;
-import java.util.*;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.unijena.jams.gui.JAMSSplash;
@@ -48,7 +47,7 @@ public class JAMS {
     public static final int RUNSTATE_RUN = 1;
     public static final Font STANDARD_FONT = new java.awt.Font("Courier", 0, 11);
     //public static final int TOOLBAR_HEIGHT = 38;
-    public static final int SPLASH_DISPLAY_TIME = 1000;
+    public static final int SPLASH_DISPLAY_TIME = 0;
     public static final String WIKI_URL = "http://jams.uni-jena.de/jamswiki";
     private static JAMSCmdLine cmdLine;
 
