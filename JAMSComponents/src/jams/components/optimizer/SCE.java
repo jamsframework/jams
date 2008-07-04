@@ -591,7 +591,9 @@ title="Title",
 	}
 	return -1;
     }
-    
+    //s forms the simplex
+    //sf function values of simplex
+    //bl lower bound, bu upper bound
     public double[] cceua( double s[][],double sf[],double bl[],double bu[]) {
 	int nps = s.length;
 	int nopt = s[0].length;

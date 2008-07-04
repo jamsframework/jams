@@ -29,7 +29,7 @@ import org.unijena.jams.model.JAMSVarDescription;
 @JAMSComponentDescription(
         title="NNOptimizer",
         author="Christian Fischer",
-        description="under construction!!"
+        description="under construction, do not use!!"
         )
 public class NNOptimizer extends JAMSContext {
     /*

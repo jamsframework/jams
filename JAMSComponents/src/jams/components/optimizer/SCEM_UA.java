@@ -27,7 +27,6 @@ import java.util.Random;
 import java.util.Vector;
 
 import java.util.StringTokenizer;
-import java.util.Collections;
 import org.unijena.jams.data.*;
 import org.unijena.jams.io.GenericDataWriter;
 import org.unijena.jams.model.*;
@@ -85,31 +84,24 @@ title="Title",
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "maximize efficiency?"
+            description = "optimization mode, 1 - minimization, 2 - maximization, 3 - max |f(x)|, 4 - min |f(x)|"
             )
-            public JAMSIntegerArray MaximizeEff;
+            public JAMSIntegerArray mode;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "maximize efficiency?"
+            description = "number of points in population, common values for are in the range [10;100]"
             )
             public JAMSInteger Population;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "maximize efficiency?"
+            description = "optimization parameter: number of complex, a common value for this is 2 or 3"
             )
             public JAMSInteger Complexes;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "The current hru entity"
-            )
-            public JAMSEntityCollection entities;
-    
+            
     JAMSDouble[] parameters;
     String[] parameterNames;
     String[] effNames;
@@ -328,11 +320,11 @@ title="Title",
         singleRun();
         
         for (int i=0;i<M;i++) {
-            if (MaximizeEff.getValue()[i] == 1)
+            if (mode.getValue()[i] == Optimizer.MODE_MINIMIZATION)
                 pset[N+i] = this.effValues[i].getValue();
-            else if (MaximizeEff.getValue()[i] == 2)
+            else if (mode.getValue()[i] == Optimizer.MODE_ABSMINIMIZATION)
                 pset[N+i] = Math.abs(this.effValues[i].getValue());
-            else if (MaximizeEff.getValue()[i] == 3)
+            else if (mode.getValue()[i] == Optimizer.MODE_ABSMAXIMIZATION)
                 pset[N+i] = -Math.abs(this.effValues[i].getValue());
             else
                 pset[N+i] = -this.effValues[i].getValue();
@@ -489,7 +481,7 @@ title="Title",
                 System.out.print(parameterNames[j] + ":" + D[i][j] + " ,");
             }
             for (int j=0;j<M;j++) {
-                if (MaximizeEff.getValue()[j] % 2 == 1) {
+                if (mode.getValue()[j] == Optimizer.MODE_MINIMIZATION || mode.getValue()[j] == Optimizer.MODE_ABSMINIMIZATION) {
                     System.out.print(effNames[j] + ":" + D[i][N+j] + " ,");
                 } else {
                     double outdata = -D[i][N+j];
