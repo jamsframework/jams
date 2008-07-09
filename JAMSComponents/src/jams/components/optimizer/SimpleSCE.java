@@ -128,6 +128,13 @@ title="Title",
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
+            description = "Maximum number of function evaluations"
+            )
+            public JAMSInteger maxn;
+    
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
             public JAMSString sceFileName;
@@ -802,7 +809,18 @@ title="Title",
         
         //double x0[] = {-1.295,2.659,1.1,0.1649};
         
-        bestpoint = sceua(x0,this.lowBound,this.upBound,maxn,kstop,pcento,peps,NumberOfComplexes.getValue(),iseed,iniflg);
+        int iNumberOfComplexes = 0;
+        if (NumberOfComplexes != null)
+            iNumberOfComplexes = NumberOfComplexes.getValue();
+        
+        if (iNumberOfComplexes < 0){
+            this.getModel().getRuntime().sendErrorMsg("NumberofComplexes: value not specified or out of bounds, set to default value");
+            iNumberOfComplexes = 2;
+        }
+        if (this.maxn != null){
+            maxn = this.maxn.getValue();
+        }
+        bestpoint = sceua(x0,this.lowBound,this.upBound,maxn,kstop,pcento,peps,iNumberOfComplexes,iseed,iniflg);
        
         bestx = new double[this.parameters.length];
         for (int i=0;i<this.parameters.length;i++) {
