@@ -95,6 +95,9 @@ public class VirtualWorkspace {
     public DataStore getDataStore(String dsTitle) {
 
         Document doc = dataStores.get(dsTitle);
+        if (doc == null) {
+            return null;
+        }
 
         DataStore store = null;
         String type = doc.getDocumentElement().getTagName();
@@ -147,9 +150,15 @@ public class VirtualWorkspace {
 
     public String dataStoreToString(String dsTitle) {
         DataStore store = this.getDataStore(dsTitle);
+        return dataStoreToString(store);
+    }
+    
+    public String dataStoreToString(DataStore store) {
+        if (store == null) {
+            return null;
+        }
         ASCIIConverter asciiConverter = new ASCIIConverter(store);
         String result = asciiConverter.toASCIIString();
-        store.close();
         return result;
     }
 
@@ -191,7 +200,7 @@ public class VirtualWorkspace {
 
         VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace"), runtime);
 
-        System.out.println(ws.dataStoreToString("tmean_timeseries"));
+        System.out.println(ws.dataStoreToString("tmin_local"));
         //ws.dataStoreToFile("tmean_timeseries", new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace/_tmean_dump.txt"));
         //ws.wsToFile();
     }

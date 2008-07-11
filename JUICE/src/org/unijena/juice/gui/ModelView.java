@@ -23,7 +23,6 @@
 package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,7 +32,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
@@ -52,6 +50,7 @@ import org.unijena.jams.JAMSTools;
 import org.unijena.jams.data.HelpComponent;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.WorkerDlg;
+import org.unijena.jams.io.ParameterProcessor;
 import org.unijena.jams.io.XMLIO;
 import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
@@ -99,7 +98,8 @@ public class ModelView {
     private static int viewCounter = 0;
     public static ViewList viewList = new ViewList();
     private JAMSRuntime runtime;
-
+    
+    
     public ModelView(JDesktopPane parentPanel) {
         this(getNextViewName(), parentPanel);
     }
@@ -351,6 +351,24 @@ public class ModelView {
             frame.setTitle(savePath.getAbsolutePath());
         }
         this.savePath = savePath;
+    }
+
+    public void loadParams(File paramsFile) {
+        try {
+            Document doc = ParameterProcessor.loadParams(getModelDoc(), paramsFile);
+            componentDescriptors = new HashMap<String, ComponentDescriptor>();
+            this.setTree(new ModelTree(this, doc));
+        } catch (Exception ex) {
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "File " + paramsFile.getName() + " could not be loaded.", "File open error");
+        }
+    }
+
+    public void saveParams(File paramsFile) {
+        try {
+            ParameterProcessor.saveParams(getModelDoc(), paramsFile);
+        } catch (Exception ex) {
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "File " + paramsFile.getName() + " could not be saved.", "File open error");
+        }
     }
 
     /*

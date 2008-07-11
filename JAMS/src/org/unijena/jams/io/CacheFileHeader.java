@@ -24,7 +24,6 @@
 package org.unijena.jams.io;
 
 import org.unijena.jams.data.JAMSCalendar;
-import org.unijena.jams.data.JAMSTimeInterval;
 
 /**
  *

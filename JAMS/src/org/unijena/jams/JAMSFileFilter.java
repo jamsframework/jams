@@ -65,6 +65,14 @@ public class JAMSFileFilter {
             return "Java Archive (*.jar)";
         }
     };
+    private static FileFilter parameterFilter = new FileFilter() {
+        public boolean accept(File f) {
+            return f.isDirectory() || f.getName().toLowerCase().endsWith(".jmp");
+        }
+        public String getDescription() {
+            return "JAMS Model Parameter (*.jmp)";
+        }
+    };
     
     public static FileFilter getPropertyFilter() {
         return propertyFilter;
@@ -72,6 +80,10 @@ public class JAMSFileFilter {
     
     public static FileFilter getModelFilter() {
         return modelFilter;
+    }
+
+    public static FileFilter getParameterFilter() {
+        return parameterFilter;
     }
     
 /*    public static FileFilter getModelConfigFilter() {

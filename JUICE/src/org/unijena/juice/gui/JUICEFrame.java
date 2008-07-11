@@ -37,6 +37,7 @@ import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.LogViewDlg;
 import org.unijena.jams.gui.PropertyDlg;
 import org.unijena.jams.gui.WorkerDlg;
+import org.unijena.jams.io.ParameterProcessor;
 import org.unijena.juice.*;
 import org.unijena.juice.gui.tree.LibTree;
 import org.unijena.juice.gui.tree.ModelTree;
@@ -55,7 +56,7 @@ public class JUICEFrame extends JFrame {
     private JFileChooser jfc = LHelper.getJFileChooser();
     private TreePanel libTreePanel;
     private JDesktopPane modelPanel = new JDesktopPane();
-    private JMenu windowMenu;
+    private JMenu windowMenu, modelMenu;
     private JMenuItem pasteModelParameterItem,  copyModelParameterItem,  searchModelItem;
     private JLabel statusLabel;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, "Info Log");
@@ -63,7 +64,7 @@ public class JUICEFrame extends JFrame {
     private Node modelProperties;
     private WorkerDlg loadModelDlg;
     private String modelPath;
-    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchModelAction,  searchLibsAction,  copyModelGUIAction,  pasteModelGUIAction,  runModelAction,  infoLogAction,  errorLogAction,  wikiAction;
+    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchModelAction,  searchLibsAction,  copyModelGUIAction,  pasteModelGUIAction,  loadModelParamAction,  saveModelParamAction,  runModelAction,  infoLogAction,  errorLogAction,  wikiAction;
 
     public JUICEFrame() {
         init();
@@ -251,6 +252,36 @@ public class JUICEFrame extends JFrame {
             }
         };
 
+        loadModelParamAction = new AbstractAction("Import Model Parameter") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                jfc.setFileFilter(JAMSFileFilter.getParameterFilter());
+                int result = jfc.showOpenDialog(JUICEFrame.this);
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String path = jfc.getSelectedFile().getAbsolutePath();
+                    File file = new File(path);
+                    getCurrentView().loadParams(file);
+                }
+            }
+        };
+
+        saveModelParamAction = new AbstractAction("Export Model Parameter") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jfc.setFileFilter(JAMSFileFilter.getParameterFilter());
+                int result = jfc.showSaveDialog(JUICEFrame.this);
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String path = jfc.getSelectedFile().getAbsolutePath();
+                    File file = new File(path);
+                    getCurrentView().saveParams(file);
+                }
+            }
+        };
 
         runModelAction = new AbstractAction("Run Model") {
 
@@ -422,12 +453,22 @@ public class JUICEFrame extends JFrame {
         /*
          * model menu
          */
-        JMenu modelMenu = new JMenu("Model");
+        modelMenu = new JMenu("Model");
+        modelMenu.setEnabled(false);
         mainMenu.add(modelMenu);
 
         JMenuItem runModelItem = new JMenuItem(runModelAction);
         runModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         modelMenu.add(runModelItem);
+
+        JMenuItem loadModelParamItem = new JMenuItem(loadModelParamAction);
+        //loadModelParamItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+        modelMenu.add(loadModelParamItem);
+
+        JMenuItem saveModelParamItem = new JMenuItem(saveModelParamAction);
+        //loadModelParamItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+        modelMenu.add(saveModelParamItem);
+
 
         copyModelParameterItem = new JMenuItem(copyModelGUIAction);
         modelMenu.add(copyModelParameterItem);
@@ -507,17 +548,9 @@ public class JUICEFrame extends JFrame {
             @Override
             public void update(Observable o, Object arg) {
                 if (ModelView.viewList.getViewList().size() > 0) {
-                    JUICEFrame.this.searchModelAction.setEnabled(true);
-                    JUICEFrame.this.getCopyModelGUIAction().setEnabled(true);
-                    JUICEFrame.this.runModelAction.setEnabled(true);
-                    if (JUICEFrame.this.modelProperties != null) {
-                        JUICEFrame.this.getPasteModelGUIAction().setEnabled(true);
-                    }
+                    JUICEFrame.this.modelMenu.setEnabled(true);
                 } else {
-                    JUICEFrame.this.searchModelAction.setEnabled(false);
-                    JUICEFrame.this.getCopyModelGUIAction().setEnabled(false);
-                    JUICEFrame.this.getPasteModelGUIAction().setEnabled(false);
-                    JUICEFrame.this.runModelAction.setEnabled(false);
+                    JUICEFrame.this.modelMenu.setEnabled(false);
                 }
             }
         });
@@ -550,9 +583,14 @@ public class JUICEFrame extends JFrame {
     }
 
     private void loadModel() {
-        loadModelDlg.setTask(new Runnable() {
+        loadModelDlg.setTask(new  
 
-            public void run() {
+              Runnable() {
+
+                   
+                     
+                
+                public void run() {
                 String path = JUICEFrame.this.modelPath;
                 ModelView mView = new ModelView(path, modelPanel);
                 mView.loadModel(path);
