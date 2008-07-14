@@ -263,7 +263,7 @@ public class JAMSXYPlot {
         return this.propVector;
     }
         
-    public void plotLeft(int renderer, String nameLeft, String xAxisTitle, boolean inverted){ //plotLeft(renderer, axisname, inverted)
+    public void plotLeft(XYItemRenderer leftRenderer, String nameLeft, String xAxisTitle, boolean inverted){ //plotLeft(renderer, axisname, inverted)
         int plot_count = 0;
         int c = propVector.size();
         int corr = 0;
@@ -276,7 +276,7 @@ public class JAMSXYPlot {
         
         //dataRight.removeAllSeries();
         
-        leftRenderer = getRenderer(renderer);
+        //leftRenderer = getRenderer(renderer);
         
         for(int k=0; k<c; k++){ 
             
@@ -288,7 +288,7 @@ public class JAMSXYPlot {
                     //
                         dataRight.removeSeries(prop.getXYS());
                     //}
-                    leftRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
+                    //leftRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
                 }else{
                     corr++;
                 }
@@ -296,7 +296,7 @@ public class JAMSXYPlot {
                 corr++;
             }
         }
-        if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
+        //if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
         
         if(corr == 0){
             dataRight.removeAllSeries();
@@ -364,7 +364,7 @@ public class JAMSXYPlot {
         chart.setTitle(title);
     }
     
-    public void plotRight(int renderer, String nameRight, String xAxisTitle, boolean inverted){
+    public void plotRight(XYItemRenderer rightRenderer, String nameRight, String xAxisTitle, boolean inverted){
         int plot_count = 0;
         int c = propVector.size();
         int corr = 0;
@@ -374,7 +374,7 @@ public class JAMSXYPlot {
         
         xAxis.setLabel(xAxisTitle);
         
-        rightRenderer = getRenderer(renderer);
+        //rightRenderer = getRenderer(renderer);
         
         for(int k=0; k<c; k++){
 
@@ -386,7 +386,7 @@ public class JAMSXYPlot {
                     //if(corr <=dataLeft.getSeriesCount()){
                         dataLeft.removeSeries(prop.getXYS());
                     //}
-                    rightRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
+                    //rightRenderer.setSeriesPaint(k-corr,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
                 } else {
                     corr++;
                 }
@@ -394,7 +394,7 @@ public class JAMSXYPlot {
                 corr++;
             }
         }
-        if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
+        //if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
         
         if(corr == 0){
             dataLeft.removeAllSeries();

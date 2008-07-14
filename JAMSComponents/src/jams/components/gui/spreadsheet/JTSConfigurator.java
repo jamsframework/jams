@@ -666,7 +666,7 @@ public class JTSConfigurator extends JFrame{
                             lsr_L.setSeriesShape(i-r, prop.getSeriesShape());
                             lsr_L.setSeriesShapesVisible(i-r, prop.getShapesVisible());
                             lsr_L.setSeriesLinesVisible(i-r, prop.getLinesVisible());
-                            lsr_L.setDrawOutlines(prop.getOutlineVisible());
+                            //lsr_L.setDrawOutlines(prop.getOutlineVisible());
                             lsr_L.setUseOutlinePaint(true);
                             lsr_L.setSeriesFillPaint(i-r, prop.getSeriesFillPaint());
                             lsr_L.setUseFillPaint(true);
@@ -762,7 +762,7 @@ public class JTSConfigurator extends JFrame{
                             lsr_R.setSeriesShape(i-l, prop.getSeriesShape());
                             lsr_R.setSeriesShapesVisible(i-l, prop.getShapesVisible());
                             lsr_R.setSeriesLinesVisible(i-l, prop.getLinesVisible());
-                            lsr_R.setDrawOutlines(prop.getOutlineVisible());
+                            //lsr_R.setDrawOutlines(prop.getOutlineVisible());
                             lsr_R.setUseOutlinePaint(true);
                             lsr_R.setSeriesFillPaint(i-r, prop.getSeriesFillPaint());
                             lsr_R.setUseFillPaint(true);
@@ -1030,13 +1030,13 @@ public class JTSConfigurator extends JFrame{
             
             group11.addComponent(space4);
             
-            group13.addComponent(prop.getRemButton());
+            group13.addComponent(prop.getColorLabel()).addComponent(prop.getRemButton());
             group14.addComponent(prop.getUpButton());
             group15.addComponent(prop.getDownButton());
                         
             vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING)
             .addComponent(prop.getDataChoice()).addComponent(prop.getTimeChoiceSTART()).addComponent(space5)
-            .addComponent(prop.getCustomizeButton()));
+            .addComponent(prop.getCustomizeButton()).addGap(10).addComponent(prop.getColorLabel()));
             vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING)
             .addComponent(lf).addComponent(prop.getTimeChoiceEND()).addComponent(space6)
             .addComponent(prop.getPosChoice())

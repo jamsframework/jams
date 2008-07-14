@@ -25,6 +25,15 @@ import javax.swing.BorderFactory.*;
 import javax.swing.border.*;
 import javax.swing.GroupLayout.*;
 
+import org.jfree.chart.renderer.xy.XYAreaRenderer;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
+import org.jfree.chart.renderer.xy.XYDotRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
+import org.jfree.chart.renderer.xy.XYStepRenderer;
+
 import java.io.*;
 
 import java.util.Iterator;
@@ -104,7 +113,8 @@ public class JXYConfigurator extends JFrame{
     private JTextField edRightField = new JTextField(14);
     private JTextField edXAxisField = new JTextField(14);
     
-    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Step","StepArea","Difference"};
+    //private String[] types = {"Line","Bar","Area","Line and Base","Dot","Step","StepArea","Difference"};
+    private String[] types = {"Line and Shape","Bar","Area","Step","StepArea","Difference"};
     
     private JComboBox rLeftBox = new JComboBox(types);
     private JComboBox rRightBox = new JComboBox(types);
@@ -362,7 +372,7 @@ public class JXYConfigurator extends JFrame{
         
         for(int k=0;k<graphCount;k++){
             
-            prop = new GraphProperties(parent, table, this);
+            prop = new GraphProperties(this, table, this);
             prop.setSelectedColumn(columns[k]);
             prop.setXSeries(columns[0]);
             prop.setSelectedRows(rows);
@@ -376,6 +386,7 @@ public class JXYConfigurator extends JFrame{
                 prop.getColorChoice().setEnabled(false);
                 prop.getPosChoice().setEnabled(false);
                 prop.getLegendField().setEnabled(false);
+                prop.getCustomizeButton().setEnabled(false);
                 
                 prop.getAddButton().setEnabled(false);
                 prop.getRemButton().setEnabled(false);
@@ -709,7 +720,7 @@ public class JXYConfigurator extends JFrame{
         
         int i = propVector.indexOf(prop);
         double d_start, d_end;
-        GraphProperties newProp = new GraphProperties(parent, table, this);
+        GraphProperties newProp = new GraphProperties(this, table, this);
         colour_cnt++;
         
         
@@ -881,6 +892,14 @@ public class JXYConfigurator extends JFrame{
         }
     }
     
+    public int getRendererLeft(){
+        return rLeftBox.getSelectedIndex();
+    }
+    
+    public int getRendererRight(){
+        return rRightBox.getSelectedIndex();
+    }
+    
     public void xChanged(GraphProperties prop){
         
         int index = propVector.indexOf(prop);
@@ -908,6 +927,7 @@ public class JXYConfigurator extends JFrame{
                 propVector.get(i).getUpButton().setEnabled(true);
                 propVector.get(i).getDownButton().setEnabled(true);
                 propVector.get(i).getLegendField().setEnabled(true);
+                propVector.get(i).getCustomizeButton().setEnabled(true);
                 propVector.get(i).getMaxButton().setEnabled(false);
                 //propVector.get(i).applyXYProperties();
             }
@@ -928,6 +948,7 @@ public class JXYConfigurator extends JFrame{
         prop.getUpButton().setEnabled(false);
         prop.getDownButton().setEnabled(false);
         prop.getLegendField().setEnabled(false);
+        prop.getCustomizeButton().setEnabled(false);
         prop.getMaxButton().setEnabled(true);
         //prop.applyXYProperties();
     }
@@ -939,42 +960,269 @@ public class JXYConfigurator extends JFrame{
 //        }
 //    }
     
-    public void plotGraph(GraphProperties prop){
-       
-            //propVector.get(i).applyProperties();
-//            if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
+//    public void plotGraph(GraphProperties prop){
+//       
+//            //propVector.get(i).applyProperties();
+////            if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
+////                jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
+////            }
+////            if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
+////                jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
+////            }
+//            if(prop.getPosChoice().getSelectedItem() == "left"){
 //                jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
 //            }
-//            if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
+//            if(prop.getPosChoice().getSelectedItem() == "right"){
 //                jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
 //            }
-            if(prop.getPosChoice().getSelectedItem() == "left"){
-                jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
-            }
-            if(prop.getPosChoice().getSelectedItem() == "right"){
-                jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
-            }
-    }    
+//    }    
     
     public void plotAllGraphs(){
     updatePropVector();
             int l=0;
             int r=0;
+            int corr=0;
+            
+            int rLeft = this.rLeftBox.getSelectedIndex();
+            int rRight = this.rRightBox.getSelectedIndex();
+            
+            XYItemRenderer rendererLeft = new XYLineAndShapeRenderer();
+            XYItemRenderer rendererRight = new XYLineAndShapeRenderer();
+            
+            XYLineAndShapeRenderer lsr_R = new XYLineAndShapeRenderer();
+            XYBarRenderer brr_R = new XYBarRenderer();
+            XYDifferenceRenderer dfr_R = new XYDifferenceRenderer();
+            XYAreaRenderer ar_R = new XYAreaRenderer();
+            XYStepRenderer str_R = new XYStepRenderer();
+            XYStepAreaRenderer sar_R = new XYStepAreaRenderer();
+            
+            XYLineAndShapeRenderer lsr_L = new XYLineAndShapeRenderer();
+            XYBarRenderer brr_L = new XYBarRenderer();
+            XYDifferenceRenderer dfr_L = new XYDifferenceRenderer();
+            XYAreaRenderer ar_L = new XYAreaRenderer();
+            XYStepRenderer str_L = new XYStepRenderer();
+            XYStepAreaRenderer sar_L = new XYStepAreaRenderer();
+            
+            GraphProperties prop;
+            //2 Renderer einfügen. Typ aus rLeftBox bzw rRightBox holen!
+            //Switch/Case Anweisung in den Configurator packen
+            //
+            
 
+            
+            
+            /////////////// In dieser Schleife Eigenschaften übernehmen!! /////////////
             for(int i=0; i<propVector.size(); i++){
-                if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
-                    if(!propVector.get(i).isXSeries()) l++;
+                
+                prop = propVector.get(i);
+                
+                if(prop.getPosChoice().getSelectedItem() == "left"){                   
+                    if(!propVector.get(i).isXSeries()) {
+                        l++;
+                    //prop.setRendererType(rLeft);
+                    
+                    switch(rLeft){
+                        
+                        case 0:
+                            lsr_L.setSeriesPaint(i-r-corr, prop.getSeriesPaint());
+                            //lsr_L.setSeriesPaint(i-r, Color.black);
+                            lsr_L.setSeriesStroke(i-r-corr, prop.getSeriesStroke());
+                            lsr_L.setSeriesShape(i-r-corr, prop.getSeriesShape());
+                            lsr_L.setSeriesShapesVisible(i-r-corr, prop.getShapesVisible());
+                            lsr_L.setSeriesLinesVisible(i-r-corr, prop.getLinesVisible());
+                            //lsr_L.setDrawOutlines(prop.getOutlineVisible());
+                            lsr_L.setUseOutlinePaint(true);
+                            lsr_L.setSeriesFillPaint(i-r-corr, prop.getSeriesFillPaint());
+                            lsr_L.setUseFillPaint(true);
+                            lsr_L.setSeriesOutlineStroke(i-r-corr, prop.getSeriesOutlineStroke());
+                            lsr_L.setSeriesOutlinePaint(i-r-corr, prop.getSeriesOutlinePaint());
+                            rendererLeft = lsr_L;
+                            break;
+                            
+                        case 1:
+                            brr_L.setSeriesPaint(i-r-corr, prop.getSeriesPaint());
+                            brr_L.setSeriesStroke(i-r-corr, prop.getSeriesStroke());
+                            
+                            brr_L.setSeriesOutlineStroke(i-r-corr, prop.getSeriesOutlineStroke());
+                            brr_L.setSeriesOutlinePaint(i-r-corr, prop.getSeriesOutlinePaint());
+                            
+                            
+                            rendererLeft = brr_L;
+                            //set Margin
+                            break;
+                            
+                        case 2:
+                            ar_L.setSeriesPaint(i-r-corr, prop.getSeriesPaint());
+                            ar_L.setSeriesStroke(i-r-corr, prop.getSeriesStroke());
+                            ar_L.setSeriesShape(i-r-corr, prop.getSeriesShape());
+                            ar_L.setSeriesOutlineStroke(i-r-corr, prop.getSeriesOutlineStroke());
+                            ar_L.setSeriesOutlinePaint(i-r-corr, prop.getSeriesOutlinePaint());
+                            ar_L.setOutline(prop.getOutlineVisible());
+                            //ar_L.setSeriesOu
+                            
+                            rendererLeft = ar_L;
+                            
+                            break;
+                        
+                        case 3:
+                            str_L.setSeriesPaint(i-r-corr, prop.getSeriesPaint());
+                            str_L.setSeriesStroke(i-r-corr, prop.getSeriesStroke());
+                            str_L.setSeriesShape(i-r-corr, prop.getSeriesShape());
+//                            str_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
+//                            str_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
+                            
+                            rendererLeft = str_L;
+                            break;
+                            
+                        case 4:
+                            sar_L.setSeriesPaint(i-r-corr, prop.getSeriesPaint());
+                            sar_L.setSeriesStroke(i-r-corr, prop.getSeriesStroke());
+                            sar_L.setSeriesShape(i-r-corr, prop.getSeriesShape());
+                            sar_L.setSeriesOutlineStroke(i-r-corr, prop.getSeriesOutlineStroke());
+                            sar_L.setSeriesOutlinePaint(i-r-corr, prop.getSeriesOutlinePaint());
+                            sar_L.setOutline(prop.getOutlineVisible());
+                            
+                            rendererLeft = sar_L;
+
+                            break;
+                            
+                        case 5:
+                            dfr_L.setSeriesPaint(i-r-corr, prop.getSeriesPaint());
+                            dfr_L.setSeriesStroke(i-r-corr, prop.getSeriesStroke());
+                            dfr_L.setSeriesShape(i-r-corr, prop.getSeriesShape());
+                            dfr_L.setSeriesOutlineStroke(i-r-corr, prop.getSeriesOutlineStroke());
+                            dfr_L.setSeriesOutlinePaint(i-r-corr, prop.getSeriesOutlinePaint());
+                            dfr_L.setShapesVisible(prop.getShapesVisible());
+                            
+                            
+//                            dfr_L.setNegativePaint(prop.getNegativePaint());
+//                            dfr_L.setPositivePaint(prop.getNegativePaint());
+                            
+                            rendererLeft = dfr_L;
+                            
+                            break;
+                        
+                         default:
+                            lsr_L.setSeriesPaint(i-r-corr, prop.getSeriesPaint());
+                            lsr_L.setSeriesStroke(i-r-corr, prop.getSeriesStroke());
+                            lsr_L.setSeriesShape(i-r-corr, prop.getSeriesShape());
+                            lsr_L.setSeriesShapesVisible(i-r-corr, prop.getShapesVisible());
+                            lsr_L.setSeriesLinesVisible(i-r-corr, prop.getLinesVisible());
+                            lsr_L.setSeriesOutlineStroke(i-r-corr, prop.getSeriesOutlineStroke());
+                            lsr_L.setSeriesOutlinePaint(i-r-corr, prop.getSeriesOutlinePaint());
+                            
+                            rendererLeft = lsr_L;
+                            break;
+                    }
+                    } else {
+                        corr++;
+                    }
                     
                 }
-                if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
+                if(prop.getPosChoice().getSelectedItem() == "right"){
                     if(!propVector.get(i).isXSeries()) r++;
+                    //prop.setRendererType(rRight);
+                    switch(rRight){
+                        case 0:
+                            lsr_R.setSeriesPaint(i-l-corr, prop.getSeriesPaint());
+                            lsr_R.setSeriesStroke(i-l-corr, prop.getSeriesStroke());
+                            lsr_R.setSeriesShape(i-l-corr, prop.getSeriesShape());
+                            lsr_R.setSeriesShapesVisible(i-l-corr, prop.getShapesVisible());
+                            lsr_R.setSeriesLinesVisible(i-l-corr, prop.getLinesVisible());
+                            //lsr_R.setDrawOutlines(prop.getOutlineVisible());
+                            lsr_R.setUseOutlinePaint(true);
+                            lsr_R.setSeriesFillPaint(i-r-corr, prop.getSeriesFillPaint());
+                            lsr_R.setUseFillPaint(true);
+                            lsr_R.setSeriesOutlineStroke(i-l-corr, prop.getSeriesOutlineStroke());
+                            lsr_R.setSeriesOutlinePaint(i-l-corr, prop.getSeriesOutlinePaint());
+                            
+                            rendererRight = lsr_R;
+                            break;
+                            
+                        case 1:
+                            brr_R.setSeriesPaint(i-l-corr, prop.getSeriesPaint());
+                            brr_R.setSeriesStroke(i-l-corr, prop.getSeriesStroke());
+                            brr_R.setSeriesOutlineStroke(i-l-corr, prop.getSeriesOutlineStroke());
+                            brr_R.setSeriesOutlinePaint(i-l-corr, prop.getSeriesOutlinePaint());
+                            
+                            rendererRight = brr_R;
+                            //set Margin
+                            break;
+                            
+                        case 2:
+                            ar_R.setSeriesPaint(i-l-corr, prop.getSeriesPaint());
+                            ar_R.setSeriesStroke(i-l-corr, prop.getSeriesStroke());
+                            ar_R.setSeriesShape(i-l-corr, prop.getSeriesShape());
+                            ar_R.setSeriesOutlineStroke(i-l-corr, prop.getSeriesOutlineStroke());
+                            ar_R.setSeriesOutlinePaint(i-l-corr, prop.getSeriesOutlinePaint());
+                            
+                            rendererRight = ar_R;
+                            
+                            break;
+                        
+                        case 3:
+                            str_R.setSeriesPaint(i-l-corr, prop.getSeriesPaint());
+                            str_R.setSeriesStroke(i-l-corr, prop.getSeriesStroke());
+                            str_R.setSeriesShape(i-l-corr, prop.getSeriesShape());
+                            str_R.setSeriesOutlineStroke(i-l-corr, prop.getSeriesOutlineStroke());
+                            str_R.setSeriesOutlinePaint(i-l-corr, prop.getSeriesOutlinePaint());
+                            
+                            rendererRight = str_R;
+                            
+                            break;
+                            
+                        case 4: 
+                            sar_R.setSeriesPaint(i-l-corr, prop.getSeriesPaint());
+                            sar_R.setSeriesStroke(i-l-corr, prop.getSeriesStroke());
+                            sar_R.setSeriesShape(i-l-corr, prop.getSeriesShape());
+                            sar_R.setSeriesOutlineStroke(i-l-corr, prop.getSeriesOutlineStroke());
+                            sar_R.setSeriesOutlinePaint(i-l-corr, prop.getSeriesOutlinePaint());
+                            
+                            rendererRight = sar_R;
+                            
+                            break;
+                            
+                        case 5:
+                            dfr_R.setSeriesPaint(i-l-corr, prop.getSeriesPaint());
+                            dfr_R.setSeriesStroke(i-l-corr, prop.getSeriesStroke());
+                            dfr_R.setSeriesShape(i-l-corr, prop.getSeriesShape());
+                            dfr_R.setSeriesOutlineStroke(i-l-corr, prop.getSeriesOutlineStroke());
+                            dfr_R.setSeriesOutlinePaint(i-l-corr, prop.getSeriesOutlinePaint());
+                            dfr_R.setShapesVisible(prop.getShapesVisible());
+                            rendererRight = dfr_R;
+                            
+                            break;
+                            
+                        default:
+                            lsr_R.setSeriesPaint(i-l-corr, prop.getSeriesPaint());
+                            lsr_R.setSeriesStroke(i-l-corr, prop.getSeriesStroke());
+                            lsr_R.setSeriesShape(i-l-corr, prop.getSeriesShape());
+                            lsr_R.setSeriesShapesVisible(i-l-corr, prop.getShapesVisible());
+                            lsr_R.setSeriesLinesVisible(i-l-corr, prop.getLinesVisible());
+                            lsr_R.setSeriesOutlineStroke(i-l-corr, prop.getSeriesOutlineStroke());
+                            lsr_R.setSeriesOutlinePaint(i-l-corr, prop.getSeriesOutlinePaint());
+                            
+                            rendererRight = lsr_R;
+                            break;
+                    }
+                    
                 }
             }
+
+//            for(int i=0; i<propVector.size(); i++){
+//                if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
+//                    if(!propVector.get(i).isXSeries()) l++;
+//                    
+//                }
+//                if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
+//                    if(!propVector.get(i).isXSeries()) r++;
+//                }
+//            }
             if(l>0){
-                jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
+                jxys.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
             }
             if(r>0){
-                jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected()); 
+                jxys.plotRight(rendererRight, edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected()); 
             }
             if(r==0 && l==0){
                 jxys.plotEmpty();
@@ -984,30 +1232,36 @@ public class JXYConfigurator extends JFrame{
     }
     
     public void handleRenderer(){
-        int r=0, l=0;
+        int r=0, l=0, c=0;
         for(int i=0; i<propVector.size(); i++){
                 
             if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
-                if(!propVector.get(i).isXSeries()) l++;
+                if(!propVector.get(i).isXSeries()){ l++;
+                } else {
+                    c++;
+                }
             }
             if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
-                if(!propVector.get(i).isXSeries()) r++;
+                if(!propVector.get(i).isXSeries()){ r++;
+                } else {
+                    c++;
+                }
             }
         }
         
-        if((l<2 || l>2) && rLeftBox.getItemCount()==8){
-            rLeftBox.removeItemAt(7);
+        if((l<2 || l>2) && rLeftBox.getItemCount()==6){
+            rLeftBox.removeItemAt(5);
         }
         
-        if((r<2 || r>2) && rRightBox.getItemCount()==8){
-            rRightBox.removeItemAt(7);
+        if((r<2 || r>2) && rRightBox.getItemCount()==6){
+            rRightBox.removeItemAt(5);
         }
  
-        if((l == 2) && rLeftBox.getItemCount()==7){
+        if((l == 2) && rLeftBox.getItemCount()==5){
             rLeftBox.addItem("Difference");
         }     
         
-        if((r == 2) && rRightBox.getItemCount()==7){
+        if((r == 2) && rRightBox.getItemCount()==5){
             rRightBox.addItem("Difference");
         } 
     }
@@ -1130,7 +1384,7 @@ public class JXYConfigurator extends JFrame{
             group1.addComponent(prop.getDataChoice()).addComponent(lf).addGap(20);
             group2.addComponent(prop.getDataChoiceSTART()).addComponent(prop.getDataChoiceEND());
             group3.addComponent(prop.getColorChoice()).addComponent(prop.getPosChoice());
-            group4.addComponent(prop.getMaxButton());
+            group4.addComponent(prop.getCustomizeButton()).addComponent(prop.getMaxButton());
             
             group9.addComponent(space3);
             group10.addComponent(prop.getIsXAxisButton());
@@ -1142,7 +1396,7 @@ public class JXYConfigurator extends JFrame{
                         
             vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING)
             .addComponent(prop.getDataChoice()).addComponent(prop.getDataChoiceSTART()).addComponent(space5)
-            .addComponent(prop.getColorChoice()).addComponent(space5).addComponent(prop.getIsXAxisButton()));
+            .addComponent(prop.getColorChoice()).addComponent(space5).addComponent(prop.getCustomizeButton()).addComponent(prop.getIsXAxisButton()));
             vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING)
             .addComponent(lf).addComponent(prop.getDataChoiceEND()).addComponent(prop.getMaxButton())
             .addComponent(prop.getPosChoice())
