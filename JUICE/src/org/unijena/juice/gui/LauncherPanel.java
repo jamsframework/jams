@@ -767,10 +767,11 @@ public class LauncherPanel extends JPanel {
                 return false;
             }
         }
+        updateProperties();
         return true;
     }
 
-    public void updateProperties() {
+    private void updateProperties() {
 
         // set values of properties to provided
         for (ModelProperty property : inputMap.keySet()) {

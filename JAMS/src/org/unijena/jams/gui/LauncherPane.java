@@ -1,6 +1,6 @@
 /*
- * ModelGUIDlg.java
- * Created on 12. Juli 2008, 01:44
+ * LauncherPane.java
+ * Created on 17. Juli 2008, 17:09
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -20,31 +20,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.juice.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Frame;
-import javax.swing.JDialog;
-import javax.swing.WindowConstants;
+package org.unijena.jams.gui;
+
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class ModelGUIDlg extends JDialog {
+public class LauncherPane extends JTabbedPane {
 
-    public ModelGUIDlg(Frame owner) {
-        super(owner);
-        setLocationRelativeTo(owner);
-        init();
+    public LauncherPane() {
     }
 
-    private void init() {
-
-        setModal(true);
-        this.setTitle("Model GUI editor");
-        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        this.setLayout(new BorderLayout());
-
-    }
 }

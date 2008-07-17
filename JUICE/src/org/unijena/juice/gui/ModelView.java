@@ -98,8 +98,8 @@ public class ModelView {
     private static int viewCounter = 0;
     public static ViewList viewList = new ViewList();
     private JAMSRuntime runtime;
-    
-    
+    private PanelDlg launcherPanelDlg;
+
     public ModelView(JDesktopPane parentPanel) {
         this(getNextViewName(), parentPanel);
     }
@@ -110,6 +110,17 @@ public class ModelView {
         compEditPanel = new ComponentPanel(this);
         modelEditPanel = new ModelEditPanel(this);
         launcherPanel = new LauncherPanel(this);
+        launcherPanelDlg = new PanelDlg(JUICE.getJuiceFrame(), "Model GUI", launcherPanel) {
+
+            @Override
+            public void processOK() {
+                launcherPanelDlg.setVisible(false);
+            }
+
+            @Override
+            public void processCancel() {
+            }
+        };
         modelTreePanel = new TreePanel();
 
         modelLoading = new Runnable() {
@@ -137,7 +148,12 @@ public class ModelView {
                     });
 
                     // load the model
-                    runtime.loadModel(getModelDoc(), JUICE.getJamsProperties());
+                    Document modelDoc = getModelDoc();
+                    if (modelDoc != null) {
+                        runtime.loadModel(modelDoc, JUICE.getJamsProperties());
+                    } else {
+                        runtime = null;
+                    }
 
                 } catch (Exception e) {
                     runtime.handle(e);
@@ -264,10 +280,21 @@ public class ModelView {
     }
 
     public void runModel() {
+        //launcherPanelDlg.setVisible(true);
 
-        // first load the model via the modelLoading runnable
+        // first check if provided parameter values are valid
+        /*if (!launcherPanel.verifyInputs()) {
+        return;
+        }*/
+
+        // then load the model via the modelLoading runnable
         setupModelDlg.setTask(modelLoading);
         setupModelDlg.execute();
+
+        // check if runtime has been created successfully
+        if (runtime == null) {
+            return;
+        }
 
         // then execute it
         Thread t = new Thread() {
@@ -302,9 +329,7 @@ public class ModelView {
 
         boolean result = false;
 
-        launcherPanel.updateProperties();
-
-        Document doc = tree.getModelDocument();
+        Document doc = getModelDoc();
 
         try {
             result = XMLIO.writeXmlFile(doc, savePath);
@@ -404,13 +429,7 @@ public class ModelView {
 
         boolean returnValue = false;
 
-        launcherPanel.updateProperties();
-
-        if (tree == null) {
-            return true;
-        }
-
-        String newXMLString = XMLIO.getStringFromDocument(tree.getModelDocument());
+        String newXMLString = XMLIO.getStringFromDocument(getModelDoc());
         String oldXMLString = XMLIO.getStringFromDocument(initialDoc);
 
         if (newXMLString.compareTo(oldXMLString) != 0) {
@@ -528,11 +547,13 @@ public class ModelView {
     }
 
     /**
-     * Return an XML document descibing the model.
+     * Return an XML document describing the model.
      * @return The XML document describing the model.
      */
     public Document getModelDoc() {
-        launcherPanel.updateProperties();
+        if (tree == null) {
+            return null;
+        }
         if (!launcherPanel.verifyInputs()) {
             return null;
         }

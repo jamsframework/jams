@@ -24,7 +24,6 @@
 package org.unijena.jams.gui.input;
 
 import javax.swing.JComponent;
-import org.unijena.jams.gui.*;
 
 /**
  *

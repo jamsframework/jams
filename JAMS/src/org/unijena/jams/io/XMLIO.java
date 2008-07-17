@@ -100,6 +100,9 @@ public class XMLIO {
     }
     
     public static String getStringFromDocument(Document doc) {
+        if (doc == null) {
+            return "";
+        }
         return xmlSerializerSun(doc);
     }
     

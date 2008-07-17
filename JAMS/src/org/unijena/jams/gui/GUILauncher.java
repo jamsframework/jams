@@ -1,5 +1,5 @@
 /*
- * JAMSLauncher.java
+ * GUILauncher.java
  * Created on 27. August 2006, 21:55
  *
  * This file is part of JAMS
@@ -29,7 +29,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -79,12 +78,12 @@ import org.xml.sax.SAXException;
  *
  * @author Sven Kralisch
  */
-public class JAMSLauncher extends JFrame {
+public class GUILauncher extends JFrame {
 
-    public static final int APPROVE_OPTION = 1;
-    public static final int EXIT_OPTION = 0;
+    //public static final int APPROVE_OPTION = 1;
+    //public static final int EXIT_OPTION = 0;
     private static final String baseTitle = "JAMS Launcher";
-    private int result = EXIT_OPTION;
+    //private int result = EXIT_OPTION;
     private Map<InputComponent, Element> inputMap;
     private Map<InputComponent, JScrollPane> groupMap;
     private String modelFilename;
@@ -106,18 +105,19 @@ public class JAMSLauncher extends JFrame {
     private WorkerDlg setupModelDlg;
     private Font titledBorderFont;
 
-    public JAMSLauncher(JAMSProperties properties) {
+    public GUILauncher(JAMSProperties properties) {
         this.properties = properties;
         init();
     }
 
-    public JAMSLauncher(String modelFilename, JAMSProperties properties, String cmdLineArgs) {
+    public GUILauncher(String modelFilename, JAMSProperties properties, String cmdLineArgs) {
         this(properties);
         loadModelDefinition(modelFilename, JAMSTools.toArray(cmdLineArgs, ";"));
     }
 
     protected void loadModelDefinition(String modelFilename, String[] args) {
 
+        // first close any already opened models
         if (!closeModel()) {
             return;
         }
@@ -134,7 +134,7 @@ public class JAMSLauncher extends JFrame {
             // first do search&replace on the input xml file
             String newModelFilename = XMLProcessor.modelDocConverter(modelFilename);
             if (!newModelFilename.equalsIgnoreCase(modelFilename)) {
-                LHelper.showInfoDlg(JAMSLauncher.this,
+                LHelper.showInfoDlg(GUILauncher.this,
                         "The model definition in \"" + modelFilename + "\" has been adapted in order to meet modifications of the JAMS model DTD.\nThe new definition has been stored in \"" + newModelFilename + "\" while your original file was left untouched.", "Info");
                 this.modelFilename = newModelFilename;
             } else {
@@ -159,12 +159,12 @@ public class JAMSLauncher extends JFrame {
             fillAttributes(this.getModelDocument());
             fillTabbedPane(this.getModelDocument());
 
-        //LHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
+        //LHelper.showInfoDlg(GUILauncher.this, "Model has been successfully loaded!", "Info");
 
         } catch (IOException ioe) {
-            LHelper.showErrorDlg(JAMSLauncher.this, "The specified model configuration file \"" + modelFilename + "\" could not be found!", "Error");
+            LHelper.showErrorDlg(GUILauncher.this, "The specified model configuration file \"" + modelFilename + "\" could not be found!", "Error");
         } catch (SAXException se) {
-            LHelper.showErrorDlg(JAMSLauncher.this, "The specified model configuration file \"" + modelFilename + "\" contains errors!", "Error");
+            LHelper.showErrorDlg(GUILauncher.this, "The specified model configuration file \"" + modelFilename + "\" contains errors!", "Error");
         }
     }
 
@@ -174,7 +174,14 @@ public class JAMSLauncher extends JFrame {
 
             public void run() {
 
-                // create a copy of the model document
+                // check if provided values are valid
+                if (!verifyInputs()) {
+                    runtime = null;
+                    return;
+                }
+                updateProperties();
+
+                // create a copy of the model document                
                 Document modelDocCopy = (Document) getModelDocument().cloneNode(true);
 
                 // create the runtime
@@ -184,14 +191,14 @@ public class JAMSLauncher extends JFrame {
                 runtime.addInfoLogObserver(new Observer() {
 
                     public void update(Observable obs, Object obj) {
-                        JAMSLauncher.this.getInfoDlg().appendText(obj.toString());
+                        GUILauncher.this.getInfoDlg().appendText(obj.toString());
                     }
                 });
                 runtime.addErrorLogObserver(new Observer() {
 
                     public void update(Observable obs, Object obj) {
-//                        LHelper.showErrorDlg(JAMSLauncher.this, "An error has occurred! Please check the error log for further information!", "JAMS Error");
-                        JAMSLauncher.this.getErrorDlg().appendText(obj.toString());
+//                        LHelper.showErrorDlg(GUILauncher.this, "An error has occurred! Please check the error log for further information!", "JAMS Error");
+                        GUILauncher.this.getErrorDlg().appendText(obj.toString());
                     }
                 });
 
@@ -220,34 +227,7 @@ public class JAMSLauncher extends JFrame {
         int width = Integer.parseInt(getProperties().getProperty("guiconfigwidth", "600"));
         int height = Integer.parseInt(getProperties().getProperty("guiconfigheight", "400"));
         this.setPreferredSize(new Dimension(width, height));
-
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-
-        this.addWindowListener(new WindowListener() {
-
-            public void windowActivated(WindowEvent e) {
-            }
-
-            public void windowClosed(WindowEvent e) {
-            }
-
-            public void windowClosing(WindowEvent e) {
-                exit();
-            }
-
-            public void windowDeactivated(WindowEvent e) {
-            }
-
-            public void windowDeiconified(WindowEvent e) {
-            }
-
-            public void windowIconified(WindowEvent e) {
-            }
-
-            public void windowOpened(WindowEvent e) {
-            }
-        });
-
         this.setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         this.setTitle(getBaseTitle());
 
@@ -320,14 +300,14 @@ public class JAMSLauncher extends JFrame {
             public void actionPerformed(ActionEvent evt) {
 
                 File file = null;
-                if (JAMSLauncher.this.modelFilename != null) {
-                    file = new File(JAMSLauncher.this.modelFilename);
+                if (GUILauncher.this.modelFilename != null) {
+                    file = new File(GUILauncher.this.modelFilename);
                 } else {
                     file = new File(System.getProperty("user.dir"));
                 }
                 jfc.setCurrentDirectory(file);
                 jfc.setFileFilter(JAMSFileFilter.getModelFilter());
-                if (jfc.showOpenDialog(JAMSLauncher.this) == JFileChooser.APPROVE_OPTION) {
+                if (jfc.showOpenDialog(GUILauncher.this) == JFileChooser.APPROVE_OPTION) {
 
                     String modelFilename = jfc.getSelectedFile().getAbsolutePath();
                     loadModelDefinition(modelFilename, null);
@@ -355,8 +335,8 @@ public class JAMSLauncher extends JFrame {
             public void actionPerformed(ActionEvent evt) {
 
                 File file = null;
-                if (JAMSLauncher.this.modelFilename != null) {
-                    file = new File(JAMSLauncher.this.modelFilename);
+                if (GUILauncher.this.modelFilename != null) {
+                    file = new File(GUILauncher.this.modelFilename);
                 } else {
                     file = new File(System.getProperty("user.dir"));
                 }
@@ -364,8 +344,8 @@ public class JAMSLauncher extends JFrame {
                 jfc.setCurrentDirectory(file);
 
                 jfc.setFileFilter(JAMSFileFilter.getModelFilter());
-                if (jfc.showSaveDialog(JAMSLauncher.this) == JFileChooser.APPROVE_OPTION) {
-                    JAMSLauncher.this.modelFilename = jfc.getSelectedFile().getAbsolutePath();
+                if (jfc.showSaveDialog(GUILauncher.this) == JFileChooser.APPROVE_OPTION) {
+                    GUILauncher.this.modelFilename = jfc.getSelectedFile().getAbsolutePath();
                     saveModel();
                 }
             }
@@ -406,7 +386,7 @@ public class JAMSLauncher extends JFrame {
 
                 jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
                 jfc.setSelectedFile(new File(getProperties().getDefaultFilename()));
-                int result = jfc.showOpenDialog(JAMSLauncher.this);
+                int result = jfc.showOpenDialog(GUILauncher.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String stringValue = jfc.getSelectedFile().getAbsolutePath();
@@ -427,7 +407,7 @@ public class JAMSLauncher extends JFrame {
 
                 jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
                 jfc.setSelectedFile(new File(getProperties().getDefaultFilename()));
-                int result = jfc.showSaveDialog(JAMSLauncher.this);
+                int result = jfc.showSaveDialog(GUILauncher.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String stringValue = jfc.getSelectedFile().getAbsolutePath();
@@ -649,17 +629,33 @@ public class JAMSLauncher extends JFrame {
 
     }
 
+    private void updateProperties() {
+        //check if model definition has been modified
+        for (InputComponent ic : getInputMap().keySet()) {
+            Element element = getInputMap().get(ic);
+            if (ic.verify()) {
+                element.setAttribute("value", ic.getValue());
+            }
+        }
+    }
+
     private boolean closeModel() {
 
         if (this.modelDocument == null) {
             return true;
         }
 
-        //check if model definition has been modified
-        for (InputComponent ic : getInputMap().keySet()) {
-            Element element = getInputMap().get(ic);
-            element.setAttribute("value", ic.getValue());
+        // check for invalid parameter values
+        if (!verifyInputs()) {
+            int result = LHelper.showYesNoDlg(this, "Found invalid parameter values " +
+                    "which won't be saved. Proceed anyway?", "Invalid parameter values");
+            if (result == JOptionPane.NO_OPTION) {
+                return false;
+            }
         }
+        
+        // update all properties
+        updateProperties();
 
         if (this.modelDocument != null) {
             String modelDocString = XMLIO.getStringFromDocument(this.modelDocument);
@@ -676,7 +672,6 @@ public class JAMSLauncher extends JFrame {
     }
 
     private void exit() {
-
         //close the current model
         if (!closeModel()) {
             return;
@@ -696,20 +691,14 @@ public class JAMSLauncher extends JFrame {
 
     protected void runModel() {
 
-        // check if provided values are valid
-        if (!verifyInputs()) {
-            return;
-        }
-
-        // set values of document elements to provided
-        for (InputComponent ic : getInputMap().keySet()) {
-            Element element = getInputMap().get(ic);
-            element.setAttribute("value", ic.getValue());
-        }
-
         // first load the model via the modelLoading runnable
         setupModelDlg.setTask(modelLoading);
         setupModelDlg.execute();
+
+        // check if runtime has been created successfully
+        if (runtime == null) {
+            return;
+        }
 
         // start the model
         Thread t = new Thread() {
@@ -734,21 +723,16 @@ public class JAMSLauncher extends JFrame {
 
     private void saveModel() {
 
-        for (InputComponent ic : getInputMap().keySet()) {
-            Element element = getInputMap().get(ic);
-            element.setAttribute("value", ic.getValue());
-        }
+        // update all properties
+        updateProperties();
+        
         try {
             XMLIO.writeXmlFile(getModelDocument(), modelFilename);
         } catch (IOException ioe) {
-            LHelper.showErrorDlg(JAMSLauncher.this, "Error saving configuration to " + JAMSLauncher.this.modelFilename, "Error");
+            LHelper.showErrorDlg(GUILauncher.this, "Error saving configuration to " + GUILauncher.this.modelFilename, "Error");
             return;
         }
-        LHelper.showInfoDlg(JAMSLauncher.this, "Configuration has been saved to " + JAMSLauncher.this.modelFilename, "Info");
-    }
-
-    public int getResult() {
-        return result;
+        //LHelper.showInfoDlg(GUILauncher.this, "Configuration has been saved to " + GUILauncher.this.modelFilename, "Info");
     }
 
     protected String getBaseTitle() {
