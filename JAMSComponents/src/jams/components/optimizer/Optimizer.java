@@ -9,8 +9,6 @@
 package jams.components.optimizer;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Comparator;
@@ -21,7 +19,7 @@ import org.unijena.jams.JAMS;
 import org.unijena.jams.data.*;
 import org.unijena.jams.model.JAMSComponent;
 import org.unijena.jams.model.JAMSContext;
-import org.unijena.jams.runtime.StandardRuntime;
+import org.unijena.jams.model.Snapshot;
 
 /**
  *
@@ -73,7 +71,7 @@ public abstract class Optimizer extends JAMSContext {
         public String toString() {
             String s = "";
             for (int i = 0; i < x.length; i++) {
-                s += x[i] + " ";
+                s += x[i] + "\t";
             }
             return (s += fx);
         }
@@ -117,6 +115,13 @@ public abstract class Optimizer extends JAMSContext {
     public void init(String parameterIDs, String boundaries, String dirName, JAMSDouble effValue, int mode) {
         init( parameterIDs,  boundaries,  dirName,  effValue,  mode,null);
     }
+    
+    public void RefreshDataHandles(){
+        for (int i=0;i<parameterNames.length;i++){
+            parameters[i] = (JAMSDouble) getModel().getRuntime().getDataHandles().get(parameterNames[i]);
+        }
+    }
+    
     public void init(String parameterIDs, String boundaries, String dirName, JAMSDouble effValue, int mode,JAMSEntity snapshot) {
         this.snapshot = snapshot;
         this.mode = mode;
@@ -130,11 +135,10 @@ public abstract class Optimizer extends JAMSContext {
         i = 0;
         while (tok.hasMoreTokens()) {
             key = tok.nextToken();
-            parameterNames[i] = key;
-            parameters[i] = (JAMSDouble) getModel().getRuntime().getDataHandles().get(key);
+            parameterNames[i] = key;            
             i++;
         }
-
+        RefreshDataHandles();
         //retreiving boundaries
         tok = new StringTokenizer(boundaries, ";");
         int n = tok.countTokens();
@@ -181,16 +185,25 @@ public abstract class Optimizer extends JAMSContext {
 
     public double funct(double x[]) {
         double value = 0;
-        
+        //unbedingt bessere variante finden!!                
         if (snapshot != null) {
+            if (!this.snapshot.existsAttribute("snapshot")){
+                if (this instanceof SimpleSCE){
+                    SimpleSCE s = (SimpleSCE)this;
+                    snapshot = s.snapshot;
+                }
+                if (this instanceof BranchAndBound){
+                    BranchAndBound s = (BranchAndBound)this;
+                    snapshot = s.snapshot;
+                }
+            }
             try {
-                ByteArrayOutputStream out = (ByteArrayOutputStream) snapshot.getObject("snapshot");
-                this.getModel().SetModelState(new ByteArrayInputStream(out.toByteArray()));
+                this.getModel().SetModelState((Snapshot) snapshot.getObject("snapshot"));
             } catch (Exception e) {
-                System.out.println(e.toString());
+                this.getModel().getRuntime().sendHalt(e.toString());                
             }
         }
-
+        RefreshDataHandles();
         if (GoalFunction == null) {
             for (int j = 0; j < parameters.length; j++) {
                 parameters[j].setValue(x[j]);

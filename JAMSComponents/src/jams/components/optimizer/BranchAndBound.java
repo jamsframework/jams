@@ -483,8 +483,12 @@ public class BranchAndBound extends Optimizer{
             
             System.out.println("Processing next cube:\nR:" + R.toString() + "\nMinimum:" + gamma + "\nk:" + k + "\nSampleCount:" + currentSampleCount);            
             
-            SaveCubes(cubes,"cubedump" + xCount + ".dat");
-            
+            //SaveCubes(cubes,"cubedump" + xCount + ".dat");
+            if (this.maxn != null){
+                if ( this.SampleList.size() >= this.maxn.getValue() ){
+                    break;
+                }
+            }
             //current minimum and lower approximation are close
             if (gamma - my < epsilon1){
                 //break;

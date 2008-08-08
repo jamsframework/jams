@@ -6,11 +6,9 @@
 package jams.components.tools;
 
 import org.unijena.jams.model.*;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import org.unijena.jams.data.JAMSBoolean;
 import org.unijena.jams.data.JAMSEntity;
+import org.unijena.jams.data.JAMSInteger;
 import org.unijena.jams.data.JAMSString;
 import org.unijena.jams.runtime.StandardRuntime;
 
@@ -54,12 +52,21 @@ public class JAMSModelSnapshot extends JAMSComponent{
             )
             public JAMSEntity data;
     
-    ByteArrayOutputStream snapshot = null;
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "Description"
+            )
+            public JAMSBoolean holdInMemory;
     
-    public void init() {          
-    }
-    
-    public void run(){
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "Description"
+            )
+            public JAMSInteger freezeState;
+        
+    public void freeze(){
         if (this.getModel().getRuntime() instanceof StandardRuntime){
             StandardRuntime runtime = (StandardRuntime)this.getModel().getRuntime();
             
@@ -67,39 +74,39 @@ public class JAMSModelSnapshot extends JAMSComponent{
             if (dirName != null && snapshotFile != null)
                 fileName = dirName.getValue() + "/" + snapshotFile.getValue();
             
-            if (takeSnapshot != null && takeSnapshot.getValue()){  
-                runtime.sendInfoMsg("Taking Snapshot");
-                snapshot = this.getModel().GetModelState(fileName,this);
+            if (takeSnapshot != null && takeSnapshot.getValue()){                  
+                runtime.sendInfoMsg("Taking Snapshot" + " (" + this.instanceName + ")");                
+                Snapshot snapshot = this.getModel().GetModelState(holdInMemory != null && holdInMemory.getValue(),
+                        fileName,this);                               
                 data.setObject("snapshot", snapshot);
             }
-            if (loadSnapshot != null && loadSnapshot.getValue()){
-                byte snapShotByteArray[] = null;
-                if (fileName != null){
-                    try{
-                        FileInputStream fis = new FileInputStream(fileName);
-                        snapShotByteArray = new byte[fis.available()];
-                        fis.read(snapShotByteArray);
-                        fis.close();                       
-                    }catch(Exception e){
-                        this.getModel().getRuntime().println("Could not open or read snapshot file, because " + e.toString());
-                    }
-                }else{
-                    if (data != null){
-                        if (data.existsAttribute("snapshot")){
-                            try{
-                                snapshot = (ByteArrayOutputStream)data.getObject("snapshot");
-                            }catch(Exception e){
-                                
-                            }
-                        }
-                    }
-                    snapShotByteArray = snapshot.toByteArray();
-                }                
-                runtime.sendInfoMsg("Restoring Snapshot");
-                this.getModel().SetModelState(new ByteArrayInputStream(snapShotByteArray));
+            if (loadSnapshot != null && loadSnapshot.getValue()){                
+                Snapshot snapshot = null;
+                try{
+                    snapshot = (Snapshot)data.getObject("snapshot");                
+                }catch(Exception e){
+                    System.out.println("Entity does not contain any snapshot-data," + e.toString());
+                }
+                runtime.sendInfoMsg("Restoring Snapshot" + " (" + this.instanceName + ")");
+                this.getModel().SetModelState(snapshot);
             }
         }else{
             this.getModel().getRuntime().println("Snapshoting not supported by runtime!");                        
-        }       
+        } 
+    }
+    
+    public void init() {          
+        if (freezeState.getValue() == 0)
+            freeze();
+    }
+    
+    public void run(){        
+        if (freezeState.getValue() == 1)
+            freeze();
+    }
+    
+    public void cleanup(){        
+        if (freezeState.getValue() == 2)
+            freeze();
     }
 }
