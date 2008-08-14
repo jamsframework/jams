@@ -55,6 +55,7 @@ import org.unijena.jams.ModelPreprocessor;
 import org.unijena.jams.data.JAMSData;
 import org.unijena.jams.data.JAMSEntityCollection;
 import org.unijena.jams.io.JAMSModelLoader;
+import org.unijena.jams.io.ParameterProcessor;
 import org.unijena.jams.model.JAMSGUIComponent;
 import org.unijena.jams.model.JAMSModel;
 import org.w3c.dom.Document;
@@ -147,14 +148,15 @@ public class StandardRuntime implements JAMSRuntime {
         classLoader = JAMSClassLoader.createClassLoader(libs, this);
 
         // create model config object from config document
-        ModelConfig config = new ModelConfig(modelDocument);
+        //ModelConfig config = new ModelConfig(modelDocument);
 
         // create preprocessor
-        ModelPreprocessor preProc = new ModelPreprocessor(modelDocument, config, this);
+        //ModelPreprocessor preProc = new ModelPreprocessor(modelDocument, config, this);
 
         // run preprocessor
-        preProc.process();
-
+        //preProc.process();
+        ParameterProcessor.preProcess(modelDocument);
+        
         // load the model
         JAMSModelLoader modelLoader = new JAMSModelLoader(modelDocument, null, this);
         this.model = modelLoader.getModel();

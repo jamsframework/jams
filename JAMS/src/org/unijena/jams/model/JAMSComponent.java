@@ -21,49 +21,53 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.model;
+
+import org.unijena.jams.data.JAMSBoolean;
 
 /**
  *
  * @author S. Kralisch
  */
-
-@JAMSComponentDescription(
-        title="JAMS Component",
-        author="Sven Kralisch",
-        date="27. Juni 2005",
-        description="This component represents a JAMS component which are the model building blocks in JAMS")
-        public class JAMSComponent {
+@JAMSComponentDescription(title = "JAMS Component",
+author = "Sven Kralisch",
+date = "27. Juni 2005",
+description = "This component represents a JAMS component which are the model building blocks in JAMS")
+public class JAMSComponent {
     
     protected String instanceName = getClass().getName();
     private JAMSContext context = null;
     private JAMSModel model = null;
-    
-    public void init() throws Exception {}
-    public void run() throws Exception {}
-    public void cleanup() throws Exception {}
-        
+
+    public void init() throws Exception {
+    }
+
+    public void run() throws Exception {
+    }
+
+    public void cleanup() throws Exception {
+    }
+
     public String getInstanceName() {
         return instanceName;
     }
-    
+
     public void setInstanceName(String instanceName) {
         this.instanceName = instanceName;
     }
-        
+
     public JAMSContext getContext() {
         return context;
     }
-    
+
     public void setContext(JAMSContext context) {
         this.context = context;
     }
-    
+
     public JAMSModel getModel() {
         return model;
     }
-    
+
     public void setModel(JAMSModel model) {
         this.model = model;
     }

@@ -27,7 +27,8 @@ import java.io.*;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.unijena.jams.gui.JAMSSplash;
-import org.unijena.jams.gui.GUILauncher;
+import org.unijena.jams.gui.LauncherFrame;
+import org.unijena.jams.gui.PlainGUILauncher;
 import org.unijena.jams.runtime.*;
 import org.unijena.jams.io.*;
 import org.w3c.dom.Document;
@@ -92,7 +93,7 @@ public class JAMS {
         }
 
         int guiConfig = Integer.parseInt(properties.getProperty("guiconfig", "0"));
-        
+
         if ((cmdLine.getModelFileName() == null)) {
             //see if at least GUI is enabled
             if (guiConfig == 1) {
@@ -111,7 +112,7 @@ public class JAMS {
 
     public static void startJAMS(JAMSProperties properties) {
         JAMSSplash splash = new JAMSSplash();
-        splash.show(new GUILauncher(properties), SPLASH_DISPLAY_TIME);
+        splash.show(new LauncherFrame(properties), SPLASH_DISPLAY_TIME);
     }
 
     public static void startJAMS(JAMSProperties properties, String modelFilename, String cmdLineParameterValues) {
@@ -121,7 +122,11 @@ public class JAMS {
         if (guiConfig == 1) {
 
             JAMSSplash splash = new JAMSSplash();
-            splash.show(new GUILauncher(modelFilename, properties, cmdLineParameterValues), SPLASH_DISPLAY_TIME);
+//            splash.show(new LauncherFrame(modelFilename, properties, cmdLineParameterValues), SPLASH_DISPLAY_TIME);
+            try {
+                splash.show(new LauncherFrame(properties, modelFilename, cmdLineParameterValues), SPLASH_DISPLAY_TIME);
+            } catch (Exception e) {
+            }
 
         } else {
 

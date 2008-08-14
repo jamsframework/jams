@@ -49,6 +49,7 @@ import org.unijena.jams.JAMS;
 import org.unijena.jams.JAMSTools;
 import org.unijena.jams.data.HelpComponent;
 import org.unijena.jams.gui.LHelper;
+import org.unijena.jams.gui.PlainGUILauncher;
 import org.unijena.jams.gui.WorkerDlg;
 import org.unijena.jams.io.ParameterProcessor;
 import org.unijena.jams.io.XMLIO;
@@ -78,7 +79,7 @@ public class ModelView {
     private File savePath;
     private Document modelDoc;
     private Document initialDoc;
-    private JButton modelRunButton;
+    private JButton modelRunButton,  modelGUIRunButton;
     private ModelTree tree;
     private ComponentPanel compEditPanel;
     //private HashMap<ComponentDescriptor, DataRepository> dataRepositories = new HashMap<ComponentDescriptor, DataRepository>();
@@ -227,6 +228,21 @@ public class ModelView {
         modelRunButton.setEnabled(false);
         toolBar.add(modelRunButton);
 
+
+        modelGUIRunButton = new JButton();
+        //modelRunButton.setPreferredSize(new Dimension(40,40));
+        modelGUIRunButton.setToolTipText("Start model in Launcher");
+        modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
+        modelGUIRunButton.addActionListener(new java.awt.event.ActionListener() {
+
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                runModelGUI();
+            }
+        });
+        modelGUIRunButton.setEnabled(false);
+        toolBar.add(modelGUIRunButton);
+
         JButton copyGUIButton = new JButton(JUICE.getJuiceFrame().getCopyModelGUIAction());
         copyGUIButton.setText("");
         copyGUIButton.setToolTipText("Copy Model GUI");
@@ -272,11 +288,19 @@ public class ModelView {
             frame.setSelected(true);
             if (firstFrame) {
                 frame.setMaximum(true);
-                firstFrame = false;
+                //firstFrame = false;
             }
         } catch (PropertyVetoException pve) {
             JAMS.handle(pve);
         }
+    }
+
+    public void runModelGUI() {
+        
+        PlainGUILauncher launcher = new PlainGUILauncher(JUICE.getJamsProperties(), getModelDoc());
+        launcher.setVisible(true);
+        
+        //runtime.loadModel(modelDoc, JUICE.getJamsProperties());
     }
 
     public void runModel() {
@@ -349,6 +373,7 @@ public class ModelView {
         modelTreePanel.setTree(tree);
         updateLauncherPanel();
         modelRunButton.setEnabled(true);
+        modelGUIRunButton.setEnabled(true);
     }
 
     public void updateLauncherPanel() {
@@ -554,9 +579,11 @@ public class ModelView {
         if (tree == null) {
             return null;
         }
+        /*
         if (!launcherPanel.verifyInputs()) {
             return null;
         }
+        */
         return tree.getModelDocument();
     }
 

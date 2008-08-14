@@ -1,6 +1,6 @@
 /*
- * LauncherPane.java
- * Created on 17. Juli 2008, 17:09
+ * PlainGUILauncher.java
+ * Created on 18. Juli 2008, 22:16
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -20,19 +20,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.gui;
 
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import org.unijena.jams.JAMSProperties;
+import org.w3c.dom.Document;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class LauncherPane extends JTabbedPane {
+public class PlainGUILauncher extends LauncherFrame {
 
-    public LauncherPane() {
+    public PlainGUILauncher(JAMSProperties properties, Document modelDoc) {
+        super(properties);
+        loadModelDefinition(modelDoc);
+
     }
 
+    @Override
+    protected void createMenu() {
+    }
 }
