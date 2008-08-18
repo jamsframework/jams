@@ -456,6 +456,10 @@ public class StandardRuntime implements JAMSRuntime {
         return outStream;
     }
     
+    public JAMSModel getModel(){
+        return this.model;
+    }
+    
     public void SetRuntimeState(ByteArrayInputStream inStream) {
         try{
             ObjectInputStream objIn = new ObjectInputStream(inStream);
