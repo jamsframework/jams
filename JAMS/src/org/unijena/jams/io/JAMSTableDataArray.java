@@ -23,12 +23,13 @@
  */
 package org.unijena.jams.io;
 
+import java.io.Serializable;
 import org.unijena.jams.data.*;
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSTableDataArray {
+public class JAMSTableDataArray implements Serializable {
     
     private JAMSCalendar time;
     private String[] values;
