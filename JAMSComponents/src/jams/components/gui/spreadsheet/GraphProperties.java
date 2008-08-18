@@ -1307,9 +1307,13 @@ public class GraphProperties {
         JSeparator divider;
         
         //JButton stroke_button;
-        ColorButton stroke_button;
-        ColorButton fill_button;
-        ColorButton outline_button;
+//        ColorButton stroke_button;
+//        ColorButton fill_button;
+//        ColorButton outline_button;
+        
+        JButton stroke_button;
+        JButton fill_button;
+        JButton outline_button;
         
         JButton ok_button;
         JButton apply_button;
@@ -1431,9 +1435,21 @@ public class GraphProperties {
             
             divider = new JSeparator(JSeparator.VERTICAL);
             
-            stroke_button = new ColorButton(line_color);
-            fill_button = new ColorButton(shape_fill);
-            outline_button = new ColorButton(outline_color);
+//            stroke_button = new ColorButton(line_color);
+//            fill_button = new ColorButton(shape_fill);
+//            outline_button = new ColorButton(outline_color);
+            
+            stroke_button = new JButton("color");
+            fill_button = new JButton("color");
+            outline_button = new JButton("color");
+            
+            stroke_button.setBackground(line_color);
+            fill_button.setBackground(this.shape_fill);
+            outline_button.setBackground(this.outline_color);
+            
+            stroke_button.setSize(15,15);
+            fill_button.setSize(15,15);
+            outline_button.setSize(15,15);
             
             stroke_button.addActionListener(stroke_button_listener);
             fill_button.addActionListener(fill_button_listener);
@@ -1644,21 +1660,21 @@ public class GraphProperties {
         ActionListener stroke_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 line_color = JColorChooser.showDialog(thiscrd, "choose Color", line_color);
-                stroke_button.setColor(line_color);
+                stroke_button.setBackground(line_color);
             }
         };
         
         ActionListener fill_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 shape_fill = JColorChooser.showDialog(thiscrd, "choose Color", shape_fill);   
-                fill_button.setColor(shape_fill);
+                fill_button.setBackground(shape_fill);
             }
         };
         
         ActionListener outline_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 outline_color = JColorChooser.showDialog(thiscrd, "choose Color", outline_color);
-                outline_button.setColor(outline_color);
+                outline_button.setBackground(outline_color);
             }
         };
         

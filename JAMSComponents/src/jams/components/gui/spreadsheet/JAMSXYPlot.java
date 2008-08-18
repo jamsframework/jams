@@ -23,11 +23,9 @@
 
 package jams.components.gui.spreadsheet;
 
-import java.awt.FlowLayout;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Vector;
 import javax.swing.JButton;
@@ -35,17 +33,13 @@ import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.SegmentedTimeline;
-import org.jfree.chart.axis.Timeline;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
@@ -53,17 +47,6 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.xy.*;
-import org.jfree.data.time.Second;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
-import org.unijena.jams.data.JAMSBoolean;
-import org.unijena.jams.data.JAMSCalendar;
-import org.unijena.jams.data.JAMSDouble;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.data.JAMSStringArray;
-import org.unijena.jams.model.JAMSGUIComponent;
-import org.unijena.jams.model.JAMSVarDescription;
 
 /**
  *
@@ -155,6 +138,11 @@ public class JAMSXYPlot {
     
     public JFreeChart getChart(){
         return chart;
+    }
+    
+    public BufferedImage getBufferedImage(int w, int h){
+        BufferedImage bi = chart.createBufferedImage(w, h);
+        return bi;
     }
     
     private XYItemRenderer getRenderer(int type) {

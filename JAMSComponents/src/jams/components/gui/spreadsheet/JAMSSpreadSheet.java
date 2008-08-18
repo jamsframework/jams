@@ -142,7 +142,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     /* Testvalues
      */
  
-    /* Constructer */
+    /* Constructor */
     public JAMSSpreadSheet() {
     }
     

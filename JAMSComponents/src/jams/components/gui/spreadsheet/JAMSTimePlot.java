@@ -23,11 +23,12 @@
 
 package jams.components.gui.spreadsheet;
 
-import java.awt.FlowLayout;
+import com.sun.image.codec.jpeg.JPEGCodec;
+import com.sun.image.codec.jpeg.JPEGEncodeParam;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
 import javax.swing.JButton;
@@ -37,8 +38,6 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.SegmentedTimeline;
-import org.jfree.chart.axis.Timeline;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.XYPlot;
@@ -51,17 +50,11 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
-import org.jfree.data.time.Second;
-import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.unijena.jams.data.JAMSBoolean;
-import org.unijena.jams.data.JAMSCalendar;
-import org.unijena.jams.data.JAMSDouble;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.data.JAMSStringArray;
-import org.unijena.jams.model.JAMSGUIComponent;
-import org.unijena.jams.model.JAMSVarDescription;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  *
@@ -91,6 +84,7 @@ public class JAMSTimePlot {
     XYPlot plot;
     JFreeChart chart;
     JPanel panel;
+    
     JButton saveButton;
 
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
@@ -145,6 +139,31 @@ public class JAMSTimePlot {
         //createPlot();
         
         return chartPanel;
+    }
+    
+    public BufferedImage getBufferedImage(int width, int height){
+        BufferedImage bi = chart.createBufferedImage(width, height);
+        return bi;
+    }
+    
+    public void savePicture(File file, int width, int height){
+        
+        BufferedImage bi = chart.createBufferedImage(width, height);
+        
+        try{
+	    // jpeg encoding
+            
+            FileOutputStream out = new FileOutputStream(file);
+            
+            //ByteArrayOutputStream out = new ByteArrayOutputStream();
+            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+            JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bi); 
+            param.setQuality(1.0f, false);
+            encoder.setJPEGEncodeParam(param);
+            encoder.encode(bi);
+        }
+        catch(Exception ex){
+        }
     }
     
     public JPanel getPanel() {
@@ -271,12 +290,18 @@ public class JAMSTimePlot {
                 false);
         
         chartPanel = new ChartPanel(chart, true);
+        
+//        chartPanel.setMinimumDrawHeight(4096);
+//        chartPanel.setMinimumDrawWidth(4096);
+//        chartPanel.setSize(4096, 4096);
         chartPanel.setBackground(Color.WHITE);
         
         panel = new JPanel();
-            panel.setLayout(new BorderLayout());
+//        panel.setSize(4096,4096);
+        panel.setLayout(new BorderLayout());
         //panel.setBackground(Color.WHITE);
         panel.add(chartPanel, BorderLayout.CENTER);
+        panel.add(chartPanel);
         
         plot = chart.getXYPlot();
         
