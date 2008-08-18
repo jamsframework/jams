@@ -31,6 +31,18 @@ import java.util.StringTokenizer;
  */
 public class JAMSTools {
 
+    public static String CreateAbsoluteFileName(String dirName,String fileName){        
+        //if relativ path is provide, make absolute path!
+        if (dirName.isEmpty()){
+            dirName = System.getProperty("user.dir");
+        }
+        //if directory is not terminated with slash, add slash
+        if (dirName.charAt(dirName.length()-1) != '/' && dirName.charAt(dirName.length()-1) != '\\'){
+            return dirName + "/" + fileName;
+        }                
+        return dirName + fileName;
+    }
+    
     public static String[] toArray(String str) {
         return toArray(str, null);
     }

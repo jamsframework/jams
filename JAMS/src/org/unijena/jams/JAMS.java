@@ -166,7 +166,7 @@ public class JAMS {
                 }
                 runtime.runModel();
             } catch (IOException ioe) {
-                System.out.println("The model definition file " + modelFilename + " could not be loaded!");
+                System.out.println("The model definition file " + modelFilename + " could not be loaded, because: " + ioe.toString());                
             } catch (SAXException se) {
                 System.out.println("The model definition file " + modelFilename + " contained errors!");
             } catch (Exception ex) {

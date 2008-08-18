@@ -79,6 +79,12 @@ public class StandardRuntime implements JAMSRuntime {
     private boolean guiEnabled = false;
     private ClassLoader classLoader;
 
+    public void deleteErrorLogObservers() {
+        errorLog.deleteObservers();
+    }
+    public void deleteInfoLogObservers() {
+        infoLog.deleteObservers();
+    }
     public void loadModel(Document modelDocument, JAMSProperties properties) {
 
         long start = System.currentTimeMillis();

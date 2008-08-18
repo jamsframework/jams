@@ -459,14 +459,14 @@ title="JAMS Component",
         ContextAttributeReadWriteSet(JAMSEntityCollection entities){
             this.entities_id = entities;
             
-            writeAccessComponents = new Hashtable();
-            readAccessComponents = new Hashtable();
+            writeAccessComponents = new Hashtable<String,HashSet<String>>();
+            readAccessComponents = new Hashtable<String,HashSet<String>>();
         }
         
     }
     
     public Hashtable<String, HashSet<String>> getDependencyGraph() {
-        Hashtable<String, HashSet<String>> edges = new Hashtable();
+        Hashtable<String, HashSet<String>> edges = new Hashtable<String, HashSet<String>>();
 
         //for each independed context, get read/write access components
         //and create an edge from read to write component!
@@ -507,7 +507,7 @@ title="JAMS Component",
                         if (edges.containsKey(readAccessComponent)) {
                             edges.get(readAccessComponent).add(writeAccessComponent);
                         } else {
-                            HashSet<String> list = new HashSet();
+                            HashSet<String> list = new HashSet<String>();
                             list.add(writeAccessComponent);
                             edges.put(readAccessComponent, list);
                         }
@@ -520,7 +520,7 @@ title="JAMS Component",
     }
     
     public Set<String> CollectAttributeWritingComponents(String attr){
-        HashSet<String> set = new HashSet();
+        HashSet<String> set = new HashSet<String>();
         for (int i=0;i<this.accessSpecs.size();i++){
             if (accessSpecs.get(i).attributeName.equals(attr)){
                 if (accessSpecs.get(i).accessType != JAMSEntityDataAccessor.READ_ACCESS)
@@ -543,7 +543,7 @@ title="JAMS Component",
         this.initAccessors();
         
         
-        HashSet<ContextAttributeReadWriteSet> ConAttrRWSets = new HashSet();
+        HashSet<ContextAttributeReadWriteSet> ConAttrRWSets = new HashSet<ContextAttributeReadWriteSet>();
         ContextAttributeReadWriteSet ConAttrRWSet = new ContextAttributeReadWriteSet(this.getEntities());
         
         ConAttrRWSets.add(ConAttrRWSet);
@@ -575,7 +575,7 @@ title="JAMS Component",
                     if (readAccessComponents.containsKey(attrName))                    
                         readAccessComponents.get(attrName).add(as.component.instanceName);
                     else{
-                        HashSet<String> set = new HashSet();
+                        HashSet<String> set = new HashSet<String>();
                         set.add(as.component.instanceName);
                         readAccessComponents.put(attrName,set);
                     }
@@ -584,7 +584,7 @@ title="JAMS Component",
                     if (writeAccessComponents.containsKey(attrName))                    
                         writeAccessComponents.get(attrName).add(as.component.instanceName);
                     else{
-                        HashSet<String> set = new HashSet();
+                        HashSet<String> set = new HashSet<String>();
                         set.add(as.component.instanceName);
                         set.add(this.getInstanceName());
                         writeAccessComponents.put(attrName,set);
@@ -606,7 +606,7 @@ title="JAMS Component",
         //it is possible, that two contexts with different name are working on the
         //same data set iff the entity ids are equal
         //in this case the read/write sets have to be unified
-        HashSet<ContextAttributeReadWriteSet> mergedCDGs = new HashSet();
+        HashSet<ContextAttributeReadWriteSet> mergedCDGs = new HashSet<ContextAttributeReadWriteSet>();
         
         Iterator<ContextAttributeReadWriteSet> iter = ConAttrRWSets.iterator();
         while(iter.hasNext()){
