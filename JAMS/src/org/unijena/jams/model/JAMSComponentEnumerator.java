@@ -23,13 +23,15 @@
 
 package org.unijena.jams.model;
 
+import java.io.Serializable;
+
 
         
 /**
  *
  * @author S. Kralisch
  */
-public interface JAMSComponentEnumerator {
+public interface JAMSComponentEnumerator extends Serializable{
     
     boolean hasNext();
     JAMSComponent next();
