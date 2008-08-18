@@ -132,9 +132,13 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
     }
 
     public boolean existsAttribute(String name) {
+        try{
         if (values.containsKey(name)) {
             return true;
         } else {
+            return false;
+        }}catch(NullPointerException e){
+            System.out.print("test");
             return false;
         }
     }
