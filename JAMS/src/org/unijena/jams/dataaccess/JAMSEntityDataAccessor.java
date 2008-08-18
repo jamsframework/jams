@@ -23,11 +23,13 @@
 
 package org.unijena.jams.dataaccess;
 
+import java.io.Serializable;
+
 /**
  *
  * @author S. Kralisch
  */
-public interface JAMSEntityDataAccessor {
+public interface JAMSEntityDataAccessor extends Serializable{
 
     public static final int READ_ACCESS = 0;
     public static final int WRITE_ACCESS = 1;
