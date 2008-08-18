@@ -1,5 +1,6 @@
 package jams.components.gui;
 
+import jams.components.io.JAMSAscGridReader;
 import jams.components.io.ShapeTool;
 
 import java.awt.BasicStroke;

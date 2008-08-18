@@ -9,6 +9,7 @@
 
 package jams.components.gui;
 
+import jams.components.io.JAMSAscGridReader;
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.applet.Applet;
@@ -451,11 +452,11 @@ public class Styled3DMapPane extends Applet {
         img = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = img.createGraphics();
         
-        double xs = this.agr.x11corner;
-        double ys = this.agr.y11corner;
-        double xe = xs + this.agr.ncols*this.agr.cellsize;
-        double ye = ys + this.agr.nrows*this.agr.cellsize;
-        
+        double xs = this.agr.GetX11Corner();
+        double ys = this.agr.GetY11Corner();
+        double xe = xs + this.agr.GetNumberOfColums()*this.agr.GetCellSize();
+        double ye = ys + this.agr.GetNumberOfRows()*this.agr.GetCellSize();
+        double cellsize = this.agr.GetCellSize();
         envelope = new Envelope(/*xs,xe,ys,ye*/);
         /*envelope.init(xs,xe,ys,ye);	*/
         for (MapLayer mapLayer : map.getLayers()) {
@@ -466,10 +467,10 @@ public class Styled3DMapPane extends Applet {
             }
         }
         
-        xs = (int)(envelope.getMinX()/this.agr.cellsize)*this.agr.cellsize;
-        xe = (int)(envelope.getMaxX()/this.agr.cellsize)*this.agr.cellsize;
-        ys = (int)(envelope.getMinY()/this.agr.cellsize)*this.agr.cellsize;
-        ye = (int)(envelope.getMaxY()/this.agr.cellsize)*this.agr.cellsize;
+        xs = (int)(envelope.getMinX()/cellsize)*cellsize;
+        xe = (int)(envelope.getMaxX()/cellsize)*cellsize;
+        ys = (int)(envelope.getMinY()/cellsize)*cellsize;
+        ye = (int)(envelope.getMaxY()/cellsize)*cellsize;
         envelope = new Envelope(xs,xe,ys,ye);
         bound = new Rectangle();
         bound.x = 0;
