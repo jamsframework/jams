@@ -76,7 +76,6 @@ public class ImplicitFiltering extends PatternSearch{
                     x_test[t] = Simplex[0].x[t] + d_test[t];
                 }
                 double value_test = f.f(x_test);
-                        
                 Sample Sample_test = new Sample(x_test,value_test);
                 if (method != 2){
                     if (value_test < Simplex[0].fx){

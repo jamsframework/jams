@@ -24,7 +24,7 @@ import org.unijena.jams.model.JAMSComponent;
 import org.unijena.jams.model.JAMSComponentDescription;
 import org.unijena.jams.model.JAMSContext;
 import org.unijena.jams.model.JAMSVarDescription;
-import org.unijena.predictionnet.GaussianLearner;
+import jams.components.machineLearning.GaussianLearner;
 
 /**
  *

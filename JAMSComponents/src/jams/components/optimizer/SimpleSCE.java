@@ -29,8 +29,6 @@ import jams.components.optimizer.DirectSearchMethods.MDS;
 import jams.components.optimizer.DirectSearchMethods.NelderMead;
 import jams.components.optimizer.DirectSearchMethods.PatternSearch;
 import jams.components.optimizer.Optimizer.AbstractFunction;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 import org.unijena.jams.data.*;
@@ -38,7 +36,7 @@ import org.unijena.jams.io.GenericDataWriter;
 import org.unijena.jams.model.*;
 import java.util.Arrays.*;
 import java.util.StringTokenizer;
-import org.unijena.jams.runtime.StandardRuntime;
+import org.unijena.jams.JAMSTools;
 
 /**
  *
@@ -210,8 +208,8 @@ title="Title",
                 this.getModel().getRuntime().sendHalt("SimpleSCE: LinearConstraintMatrixA must have the same number of columns as thera are parameters");
             }
         }
-        //initialising output file
-        writer = new GenericDataWriter(dirName.getValue()+"/"+sceFileName.getValue());
+        //initialising output file        
+        writer = new GenericDataWriter(JAMSTools.CreateAbsoluteFileName(dirName.getValue(),sceFileName.getValue()));
         writer.addComment("SCE output");
         for(int p = 0; p < this.parameterNames.length; p++){
             writer.addColumn(this.parameterNames[p]);
@@ -452,7 +450,6 @@ title="Title",
             b.set(i, 0,  -bl[i]);
             b.set(i+n, 0, bu[i]);
         }
-        
         Sample nextSample = SearchMethod.step(eval, Simplex, A, b, lowBound, upBound);
         
         double result[] = new double[n+1];
@@ -461,6 +458,65 @@ title="Title",
         }
         result[n] = nextSample.fx;
         return result;               
+    }
+    
+    void EvolveSubPopulation(int nspl,int nps,int npg,int nopt,double cx[][],double cf[],double[] bu,double[] bl){
+        //Evolve sub-population igs for nspl steps:
+        for (int loop=0;loop<nspl;loop++) {
+            // Select simplex by sampling the complex according to a linear
+            // probability distribution
+            int lcs[] = new int[nps];
+            lcs[0] = 0;
+            for (int k3=1;k3<nps;k3++) {
+                int lpos = 0;
+                for (int iter=0;iter<1000;iter++) {
+                    lpos = (int)Math.floor(npg+0.5-Math.sqrt((npg+0.5)*(npg+0.5) - npg*(npg+1)*Custom_rand()));
+                    //wirklich nötig??
+                    int idx = find(lcs,0,k3,lpos);
+                    if (idx == -1) {
+                        break;
+                    }
+                }
+            lcs[k3] = lpos;
+            }
+            sort(lcs);
+                        
+            // Construct the simplex:
+            double s[][] = new double[nps][nopt];
+            double sf[]  = new double[nps];
+            for (int i=0;i<nps;i++) {
+                for (int j=0;j<nopt;j++) {
+                    s[i][j] = cx[lcs[i]][j];
+                }
+                sf[i] = cf[lcs[i]];
+            }
+                        
+            double snew[] = new double[nopt];
+            double fnew;
+                        
+            double xnew[] = cceua(s,sf,bl,bu);
+                                                
+            for (int i=0;i<nopt;i++) {
+                snew[i] = xnew[i];
+                }
+            fnew = xnew[nopt];
+                        
+            // Replace the worst point in Simplex with the new point:
+            s[nps-1] = snew;
+            sf[nps-1] = fnew;
+                        
+            //Replace the simplex into the complex;
+            for (int i=0;i<nps;i++) {
+                for (int j=0;j<nopt;j++) {
+                    cx[lcs[i]][j] = s[i][j];
+                }
+            cf[lcs[i]] = sf[i];
+            }
+                        
+        // Sort the complex;
+        sort(cx,cf);
+        // End of Inner Loop for Competitive Evolution of Simplexes
+        }
     }
     
     public double[] sceua(double[] x0,double[] bl,double []bu,int maxn,int kstop,double pcento,double peps,int ngs,int iseed,int iniflg) {
@@ -607,67 +663,8 @@ title="Title",
                         cf[k1[i]] = xf[k2[i]];
                     }
                     
-                    //Evolve sub-population igs for nspl steps:
-                    for (int loop=0;loop<nspl;loop++) {
-                        // Select simplex by sampling the complex according to a linear
-                        // probability distribution
-                        int lcs[] = new int[nps];
-                        lcs[0] = 0;
-                        for (int k3=1;k3<nps;k3++) {
-                            int lpos = 0;
-                            for (int iter=0;iter<1000;iter++) {
-                                lpos = (int)Math.floor(npg+0.5-Math.sqrt((npg+0.5)*(npg+0.5) - npg*(npg+1)*Custom_rand()));
-                                //wirklich nötig??
-                                int idx = find(lcs,0,k3,lpos);
-                                if (idx == -1) {
-                                    break;
-                                }
-                            }
-                            lcs[k3] = lpos;
-                        }
-                        sort(lcs);
-                        
-                        // Construct the simplex:
-                        double s[][] = new double[nps][nopt];
-                        double sf[]  = new double[nps];
-                        for (int i=0;i<nps;i++) {
-                            for (int j=0;j<nopt;j++) {
-                                s[i][j] = cx[lcs[i]][j];
-                            }
-                            sf[i] = cf[lcs[i]];
-                        }
-                        
-                        double snew[] = new double[nopt];
-                        double fnew;
-                        
-                        double xnew[] = cceua(s,sf,bl,bu);
-                        //double xnew[] = cceua2(s,sf,bl,bu);
-                        
-                        //System.out.println(xnew2[0]);
-                        
-                        //icall aktualisieren!!!
-                        
-                        for (int i=0;i<nopt;i++) {
-                            snew[i] = xnew[i];
-                        }
-                        fnew = xnew[nopt];
-                        
-                        // Replace the worst point in Simplex with the new point:
-                        s[nps-1] = snew;
-                        sf[nps-1] = fnew;
-                        
-                        //Replace the simplex into the complex;
-                        for (int i=0;i<nps;i++) {
-                            for (int j=0;j<nopt;j++) {
-                                cx[lcs[i]][j] = s[i][j];
-                            }
-                            cf[lcs[i]] = sf[i];
-                        }
-                        
-                        // Sort the complex;
-                        sort(cx,cf);
-                        // End of Inner Loop for Competitive Evolution of Simplexes
-                    }
+                    EvolveSubPopulation(nspl,nps,npg,nopt,cx,cf,bu,bl);
+                    
                     // Replace the complex back into the population;
                     for (int i=0;i<npg;i++) {
                         for (int j=0;j<nopt;j++) {

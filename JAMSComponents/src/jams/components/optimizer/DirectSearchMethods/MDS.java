@@ -122,7 +122,6 @@ public class MDS extends PatternSearch{
                 Matrix x_new = x0.plus(d);
          
                 double value = f.f(x_new.getColumnPackedCopy());
-                
                 Sample sample_new = new Sample(x_new.getColumnPackedCopy(),value);
                 if (i+1 < Simplex.length)
                     Simplex[i+1] = sample_new;

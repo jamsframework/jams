@@ -9,7 +9,6 @@
 
 package jams.components.optimizer;
 
-import Jama.Matrix;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,6 +16,7 @@ import java.util.Stack;
 import java.util.Vector;
 import org.unijena.jams.JAMS;
 import org.unijena.jams.data.*;
+import org.unijena.jams.io.SerializableBufferedWriter;
 import org.unijena.jams.model.JAMSComponentDescription;
 import org.unijena.jams.model.JAMSVarDescription;
 
@@ -110,7 +110,7 @@ public class BranchAndBound extends Optimizer{
             )
             public JAMSEntity snapshot;
     
-    BufferedWriter writer = null;
+    SerializableBufferedWriter writer = null;
     final double Version = 2.0;
     
     @SuppressWarnings("unchecked")
@@ -121,7 +121,7 @@ public class BranchAndBound extends Optimizer{
         super.init(this.parameterIDs.getValue(),this.boundaries.getValue(),dirName.toString(),effValue,mode.getValue(),snapshot);
                 
         try {
-            writer = new BufferedWriter(new FileWriter(this.dirName + "/" + SampleDumpFileName.getValue()));
+            writer = new SerializableBufferedWriter(new FileWriter(this.dirName + "/" + SampleDumpFileName.getValue()));
         } catch (IOException ioe) {
             JAMS.handle(ioe);
         }
@@ -587,6 +587,11 @@ public class BranchAndBound extends Optimizer{
                     if ( Ldiff < bestLdiff){
                         best = i;
                         bestLdiff = Ldiff;
+                    }
+                    if ( xCount % 20 == 19){
+                        best = 0;
+                        bestLdiff = Ldiff;
+                        break;
                     }
                     /*
                     //falls das nicht der fall ist kann man i verwerfen

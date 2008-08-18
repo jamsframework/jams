@@ -20,6 +20,7 @@ import org.unijena.jams.data.*;
 import org.unijena.jams.model.JAMSComponent;
 import org.unijena.jams.model.JAMSContext;
 import org.unijena.jams.model.Snapshot;
+import org.unijena.jams.io.SerializableBufferedWriter;
 
 /**
  *
@@ -35,7 +36,7 @@ public abstract class Optimizer extends JAMSContext {
     /*************************
      * first some very useful nested classes     
      *************************/    //capsulating class for goal functions
-    public abstract class AbstractFunction {
+    public static abstract class AbstractFunction {
 
         public abstract double f(double x[]);
     }
@@ -44,7 +45,7 @@ public abstract class Optimizer extends JAMSContext {
 
         public double[] x;
         public double fx;
-        static public BufferedWriter writer = null;
+        static public SerializableBufferedWriter writer = null;
         static public Vector<Sample> SampleList = null;
 
         public Sample(double[] x, double fx) {
@@ -104,7 +105,7 @@ public abstract class Optimizer extends JAMSContext {
     public int n;
     int mode;
     int currentSampleCount;
-    Random generator = new Random();
+    static Random generator = new Random();
     AbstractFunction GoalFunction = null;
     JAMSEntity snapshot = null;
 
@@ -281,9 +282,9 @@ public abstract class Optimizer extends JAMSContext {
     }*/
 
     public void WriteRegularSampling(String file, int index1, int index2) {
-        BufferedWriter writer = null;
+        SerializableBufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new FileWriter(this.dirName + "\\" + file));
+            writer = new SerializableBufferedWriter(new FileWriter(this.dirName + "\\" + file));
         } catch (IOException ioe) {
             JAMS.handle(ioe);
         }
