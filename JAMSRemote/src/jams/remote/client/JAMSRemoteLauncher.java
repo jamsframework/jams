@@ -58,6 +58,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.unijena.jams.JAMSProperties;
 import org.unijena.jams.JAMSTools;
+import org.unijena.jams.gui.GUILauncher;
 import org.unijena.jams.gui.LauncherFrame;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.LogViewDlg;
@@ -70,9 +71,9 @@ import org.w3c.dom.Element;
  *
  * @author Sven Kralisch
  */
-public class JAMSRemoteLauncher extends LauncherFrame {
+public class JAMSRemoteLauncher extends GUILauncher {
     
-    private static final String BASE_TITLE = "JAMS Remote Launcher";
+    protected static final String BASE_TITLE = "JAMS Remote Launcher";
     private static final String CONNECTED_BUTTON_TEXT = "Close Connection";
     private static final String CLOSED_BUTTON_TEXT = "Connect to Server";
     private static final int SERVER_PANEL_WIDTH = 200;
@@ -100,7 +101,7 @@ public class JAMSRemoteLauncher extends LauncherFrame {
     }
     
     public JAMSRemoteLauncher(String modelFilename, JAMSProperties properties, String cmdLineArgs) {
-        super( modelFilename, properties, cmdLineArgs);
+        super(properties, modelFilename, cmdLineArgs);
         adapt();
     }
     
