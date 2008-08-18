@@ -23,6 +23,7 @@
 
 package org.unijena.jams.runtime;
 
+import java.io.Serializable;
 import java.util.*;
 import javax.swing.JFrame;
 import org.unijena.jams.JAMSProperties;
@@ -34,7 +35,7 @@ import org.w3c.dom.Document;
  *
  * @author S. Kralisch
  */
-public interface JAMSRuntime {
+public interface JAMSRuntime extends Serializable {
     
     
     public int getDebugLevel();
@@ -52,7 +53,9 @@ public interface JAMSRuntime {
     public void addInfoLogObserver(Observer o);
     public void addErrorLogObserver(Observer o);
     public void deleteInfoLogObserver(Observer o);
+    public void deleteInfoLogObservers();
     public void deleteErrorLogObserver(Observer o);
+    public void deleteErrorLogObservers();
     public String getErrorLog();
     public String getInfoLog();
     public void sendErrorMsg(String str);

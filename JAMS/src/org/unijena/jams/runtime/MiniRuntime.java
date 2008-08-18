@@ -148,6 +148,10 @@ public class MiniRuntime implements JAMSRuntime {
     public void deleteInfoLogObserver(Observer o) {
         infoLog.deleteObserver(o);
     }
+    
+    public void deleteInfoLogObservers() {
+        infoLog.deleteObservers();
+    }
 
     public void addErrorLogObserver(Observer o) {
         errorLog.addObserver(o);
@@ -155,6 +159,10 @@ public class MiniRuntime implements JAMSRuntime {
 
     public void deleteErrorLogObserver(Observer o) {
         errorLog.deleteObserver(o);
+    }
+    
+    public void deleteErrorLogObservers() {
+        errorLog.deleteObservers();
     }
 
     public String getErrorLog() {

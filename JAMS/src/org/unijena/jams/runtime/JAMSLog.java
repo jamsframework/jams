@@ -23,13 +23,14 @@
 
 package org.unijena.jams.runtime;
 
+import java.io.Serializable;
 import java.util.Observable;
 
 /**
  *
  * @author Sven Kralisch
  */
-public class JAMSLog extends Observable {
+public class JAMSLog extends Observable implements Serializable {
     
     StringBuffer logString = new StringBuffer();
     String lastString;
