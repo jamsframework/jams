@@ -629,7 +629,8 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
 //////        panel.setLayout(panellayout);
               panel.setLayout(new BorderLayout(10,10));
               JPanel controlpanel = new JPanel();
-              controlpanel.setLayout(new GridLayout(8,1,24,24));
+              GridBagLayout gbl = new GridBagLayout();
+              controlpanel.setLayout(gbl);
               JPanel headerpanel = new JPanel();
               headerpanel.setLayout(new GridLayout(1,2));
 //////        tmodel = new JAMSTableModel();
@@ -652,17 +653,17 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         makeTable();
         //panel.add(scrollpane,grid);
 
-//////        /*
-
-//////
-//////
-//////        /* JLabels */
-//////        /* Header */
-              controlpanel.add(openbutton);
-              controlpanel.add(savebutton);
-              controlpanel.add(onthefly);
-              controlpanel.add(plotButton);
-              controlpanel.add(dataplotButton);
+            LHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 0, 1, 1, 0, 0);
+            LHelper.addGBComponent(controlpanel, gbl, savebutton,   0, 1, 1, 2, 0, 0);
+            LHelper.addGBComponent(controlpanel, gbl, onthefly,  0, 2, 1, 1, 0, 0);
+            LHelper.addGBComponent(controlpanel, gbl, plotButton,  0, 3, 1, 1, 0, 0);
+            LHelper.addGBComponent(controlpanel, gbl, dataplotButton,  0, 4, 1, 1, 0, 0);
+              
+//              controlpanel.add(openbutton);
+//              controlpanel.add(savebutton);
+//              controlpanel.add(onthefly);
+//              controlpanel.add(plotButton);
+//              controlpanel.add(dataplotButton);
               
               //openbutton.setEnabled(false);
               openbutton.addActionListener(openAction);
