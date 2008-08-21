@@ -312,7 +312,6 @@ public class ModelView {
         /*if (!launcherPanel.verifyInputs()) {
         return;
         }*/
-        launcherPanel.updateProperties();
 
         // then load the model via the modelLoading runnable
         setupModelDlg.setTask(modelLoading);
@@ -606,6 +605,7 @@ public class ModelView {
         return null;
         }
          */
+        launcherPanel.updateProperties();
         return tree.getModelDocument();
     }
 
