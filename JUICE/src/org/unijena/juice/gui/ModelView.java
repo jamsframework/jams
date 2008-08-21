@@ -417,9 +417,14 @@ public class ModelView {
 
     public void saveParams(File paramsFile) {
         try {
-            ParameterProcessor.saveParams(getModelDoc(), paramsFile);
+            String path = null;
+            if (getSavePath() != null) {
+                path = getSavePath().getAbsolutePath();
+            }
+            ParameterProcessor.saveParams(getModelDoc(), paramsFile, 
+                    JUICE.getJamsProperties().getProperty("username"), path);
         } catch (Exception ex) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "File " + paramsFile.getName() + " could not be saved.", "File open error");
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "File " + paramsFile.getName() + " could not be saved.", "File saving error");
         }
     }
 

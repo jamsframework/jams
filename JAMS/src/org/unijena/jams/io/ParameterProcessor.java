@@ -89,9 +89,11 @@ public class ParameterProcessor {
      * are provided with a value at model start, to a file.
      * @param model The model document whose parameters are to be saved.
      * @param paramsFile The file that will contain the saved parameter values.
+     * @param userName User name - will be stored in comments
+     * @param modelFileName Model file name - will be stored in comments
      * @throws java.io.IOException
      */
-    static public void saveParams(Document model, File paramsFile) throws IOException {
+    static public void saveParams(Document model, File paramsFile, String userName, String modelFileName) throws IOException {
 
         HashMap<String, HashMap<String, Element>> componentHash = getAttributeHash(model);
         Properties params = new Properties();
@@ -104,8 +106,20 @@ public class ParameterProcessor {
                 params.setProperty(componentName + "." + attribute.getAttribute("name"), attribute.getAttribute("value"));
             }
         }
-
-        params.store(new FileOutputStream(paramsFile), "JAMS model parameter file");
+        
+        String userNameString = System.getProperty("user.name");
+        if ((userName != null) && !userName.equals("")) {
+            userNameString +=  " <" + userName + ">";
+        }
+        
+        String modelNameString = model.getDocumentElement().getAttribute("name");
+        if ((modelFileName != null) && !modelFileName.equals("")) {
+            modelNameString +=  " <" + modelFileName + ">";
+        }
+        
+        
+        params.store(new FileOutputStream(paramsFile), "JAMS model parameter file" +
+                "\nUser: " + userNameString + "\nModel: " + modelNameString);
     }
 
     /**

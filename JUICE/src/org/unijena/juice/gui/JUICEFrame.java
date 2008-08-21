@@ -37,7 +37,6 @@ import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.LogViewDlg;
 import org.unijena.jams.gui.PropertyDlg;
 import org.unijena.jams.gui.WorkerDlg;
-import org.unijena.jams.io.ParameterProcessor;
 import org.unijena.juice.*;
 import org.unijena.juice.gui.tree.LibTree;
 import org.unijena.juice.gui.tree.ModelTree;
