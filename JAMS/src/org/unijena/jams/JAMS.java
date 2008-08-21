@@ -50,6 +50,7 @@ public class JAMS {
     public static final int SPLASH_DISPLAY_TIME = 0;
     public static final String WIKI_URL = "http://jams.uni-jena.de/jamswiki";
     private static JAMSCmdLine cmdLine;
+    private static File baseDir = null;    
 
     public static void handle(Exception ex) {
         handle(ex, true);
@@ -82,9 +83,11 @@ public class JAMS {
         if (cmdLine.getConfigFileName() != null) {
             //check for file provided at command line
             properties.load(cmdLine.getConfigFileName());
+            baseDir = new File(cmdLine.getConfigFileName()).getParentFile();
         } else {
             //check for default file
             String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMSProperties.DEFAULT_FILENAME;
+            baseDir = new File(System.getProperty("user.dir"));
             File file = new File(defaultFile);
             if (file.exists()) {
                 properties.load(defaultFile);
@@ -164,7 +167,7 @@ public class JAMS {
                 }
                 runtime.runModel();
             } catch (IOException ioe) {
-                System.out.println("The model definition file " + modelFilename + " could not be loaded, because: " + ioe.toString());                
+                System.out.println("The model definition file " + modelFilename + " could not be loaded, because: " + ioe.toString());
             } catch (SAXException se) {
                 System.out.println("The model definition file " + modelFilename + " contained errors!");
             } catch (Exception ex) {
@@ -177,4 +180,8 @@ public class JAMS {
 
         }
     }
+    
+    public static File getBaseDir() {
+        return baseDir;
+    }    
 }

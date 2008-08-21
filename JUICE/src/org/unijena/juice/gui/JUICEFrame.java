@@ -55,7 +55,7 @@ public class JUICEFrame extends JFrame {
     private JFileChooser jfc = LHelper.getJFileChooser();
     private TreePanel libTreePanel;
     private JDesktopPane modelPanel = new JDesktopPane();
-    private JMenu windowMenu, modelMenu;
+    private JMenu windowMenu,  modelMenu;
     private JMenuItem pasteModelParameterItem,  copyModelParameterItem,  searchModelItem;
     private JLabel statusLabel;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, "Info Log");
@@ -63,7 +63,7 @@ public class JUICEFrame extends JFrame {
     private Node modelProperties;
     private WorkerDlg loadModelDlg;
     private String modelPath;
-    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchModelAction,  searchLibsAction,  copyModelGUIAction,  pasteModelGUIAction,  loadModelParamAction,  saveModelParamAction,  runModelAction,  infoLogAction,  errorLogAction,  wikiAction;
+    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchModelAction,  searchLibsAction,  copyModelGUIAction,  pasteModelGUIAction,  loadModelParamAction,  saveModelParamAction,  runModelAction,  runModelFromLauncherAction,  infoLogAction,  errorLogAction,  wikiAction;
 
     public JUICEFrame() {
         init();
@@ -185,7 +185,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        saveModelAction = new AbstractAction("Save Model...") {
+        saveModelAction = new AbstractAction("Save Model") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -251,7 +251,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        loadModelParamAction = new AbstractAction("Import Model Parameter") {
+        loadModelParamAction = new AbstractAction("Load Model Parameter...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -267,7 +267,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        saveModelParamAction = new AbstractAction("Export Model Parameter") {
+        saveModelParamAction = new AbstractAction("Save Model Parameter...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -288,6 +288,15 @@ public class JUICEFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
                 view.runModel();
+            }
+        };
+
+        runModelFromLauncherAction = new AbstractAction("Run Model from Launcher...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ModelView view = getCurrentView();
+                view.runModelFromLauncher();
             }
         };
 
@@ -460,6 +469,11 @@ public class JUICEFrame extends JFrame {
         runModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         modelMenu.add(runModelItem);
 
+        JMenuItem runModelInLauncherItem = new JMenuItem(runModelFromLauncherAction);
+        modelMenu.add(runModelInLauncherItem);
+
+        modelMenu.add(new JSeparator());
+
         JMenuItem loadModelParamItem = new JMenuItem(loadModelParamAction);
         //loadModelParamItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         modelMenu.add(loadModelParamItem);
@@ -468,6 +482,7 @@ public class JUICEFrame extends JFrame {
         //loadModelParamItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         modelMenu.add(saveModelParamItem);
 
+        modelMenu.add(new JSeparator());
 
         copyModelParameterItem = new JMenuItem(copyModelGUIAction);
         modelMenu.add(copyModelParameterItem);
@@ -548,8 +563,14 @@ public class JUICEFrame extends JFrame {
             public void update(Observable o, Object arg) {
                 if (ModelView.viewList.getViewList().size() > 0) {
                     JUICEFrame.this.modelMenu.setEnabled(true);
+                    JUICEFrame.this.saveModelAction.setEnabled(true);
+                    JUICEFrame.this.saveAsModelAction.setEnabled(true);
+                    JUICEFrame.this.searchModelAction.setEnabled(true);
                 } else {
                     JUICEFrame.this.modelMenu.setEnabled(false);
+                    JUICEFrame.this.saveModelAction.setEnabled(false);
+                    JUICEFrame.this.saveAsModelAction.setEnabled(false);
+                    JUICEFrame.this.searchModelAction.setEnabled(false);
                 }
             }
         });
@@ -582,14 +603,9 @@ public class JUICEFrame extends JFrame {
     }
 
     private void loadModel() {
-        loadModelDlg.setTask(new  
+        loadModelDlg.setTask(new Runnable() {
 
-              Runnable() {
-
-                   
-                     
-                
-                public void run() {
+            public void run() {
                 String path = JUICEFrame.this.modelPath;
                 ModelView mView = new ModelView(path, modelPanel);
                 mView.loadModel(path);
@@ -644,6 +660,14 @@ public class JUICEFrame extends JFrame {
 
     public Action getPasteModelGUIAction() {
         return pasteModelGUIAction;
+    }
+
+    public Action getRunModelAction() {
+        return runModelAction;
+    }
+
+    public Action getRunModelFromLauncherAction() {
+        return runModelFromLauncherAction;
     }
 
     private class WindowItem extends JMenuItem {

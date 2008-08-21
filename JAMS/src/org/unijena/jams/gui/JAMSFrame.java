@@ -24,17 +24,20 @@ package org.unijena.jams.gui;
 
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import org.unijena.jams.*;
+import org.unijena.jams.io.ParameterProcessor;
 import org.unijena.jams.io.XMLIO;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -47,13 +50,14 @@ import org.w3c.dom.Element;
 public class JAMSFrame extends JAMSLauncher {
 
     private JMenuBar mainMenu;
-    private JMenu logsMenu;
+    private JMenu logsMenu,  modelMenu;
     private JMenuItem saveItem,  saveAsItem;
     private JFileChooser jfc;
     private PropertyDlg propertyDlg;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, "Info Log");
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, "Error Log");
     private String modelFilename;
+    private Action editPrefsAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  loadModelParamAction,  saveModelParamAction,  infoLogAction,  errorLogAction;
 
 
     /*
@@ -97,111 +101,37 @@ public class JAMSFrame extends JAMSLauncher {
             return;
         }
         super.loadModelDefinition(modelFilename, args);
+        saveModelAction.setEnabled(true);
+        saveAsModelAction.setEnabled(true);
+        modelMenu.setEnabled(true);
+        getRunModelAction().setEnabled(true);
     }
 
     protected void init() throws HeadlessException, DOMException, NumberFormatException {
 
-        // create additional dialogs
-        this.propertyDlg = new PropertyDlg(this, getProperties());
-        jfc = LHelper.getJFileChooser();
+        super.init();
 
-        // menu stuff
-        mainMenu = new JMenuBar();
+        getRunModelAction().setEnabled(false);
 
-        JMenu fileMenu = new JMenu("File");
+        // define some actions
+        editPrefsAction = new AbstractAction("Edit Preferences...") {
 
-        JMenuItem loadItem = new JMenuItem("Load Model");
-        loadItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent evt) {
-
-                File file = null;
-                if (modelFilename != null) {
-                    file = new File(modelFilename);
-                } else {
-                    file = new File(System.getProperty("user.dir"));
-                }
-                jfc.setCurrentDirectory(file);
-                jfc.setFileFilter(JAMSFileFilter.getModelFilter());
-                if (jfc.showOpenDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
-
-                    modelFilename = jfc.getSelectedFile().getAbsolutePath();
-                    loadModelDefinition(modelFilename, null);
-
-                }
-            }
-        });
-        loadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
-        fileMenu.add(loadItem);
-
-        saveItem = new JMenuItem("Save Model");
-        saveItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent evt) {
-                saveModel();
-            }
-        });
-        saveItem.setEnabled(false);
-        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
-        fileMenu.add(saveItem);
-
-        saveAsItem = new JMenuItem("Save Model As...");
-        saveAsItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent evt) {
-
-                File file = null;
-                if (modelFilename != null) {
-                    file = new File(modelFilename);
-                } else {
-                    file = new File(System.getProperty("user.dir"));
-                }
-
-                jfc.setCurrentDirectory(file);
-
-                jfc.setFileFilter(JAMSFileFilter.getModelFilter());
-                if (jfc.showSaveDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
-                    modelFilename = jfc.getSelectedFile().getAbsolutePath();
-                    saveModel();
-                }
-            }
-        });
-        saveAsItem.setEnabled(false);
-        fileMenu.add(saveAsItem);
-
-        JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent evt) {
-                exit();
-            }
-        });
-        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
-        fileMenu.add(exitItem);
-        getMainMenu().add(fileMenu);
-
-        JMenu editMenu = new JMenu("Extras");
-        JMenuItem editOptionsItem = new JMenuItem("Edit Options");
-        editOptionsItem.addActionListener(new ActionListener() {
-
+            @Override
             public void actionPerformed(ActionEvent e) {
                 propertyDlg.setProperties(getProperties());
                 propertyDlg.setVisible(true);
                 if (propertyDlg.getResult() == PropertyDlg.APPROVE_OPTION) {
                     propertyDlg.validateProperties();
                 }
-
             }
-        });
-        editMenu.add(editOptionsItem);
+        };
 
-        JMenuItem loadOptionsItem = new JMenuItem("Load Options");
-        loadOptionsItem.addActionListener(new ActionListener() {
+        loadPrefsAction = new AbstractAction("Load Preferences...") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
-
                 jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
-                jfc.setSelectedFile(new File(getProperties().getDefaultFilename()));
+                //jfc.setSelectedFile(new File(getProperties().getDefaultFilename()));
                 int result = jfc.showOpenDialog(JAMSFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -213,16 +143,14 @@ public class JAMSFrame extends JAMSLauncher {
                     }
                 }
             }
-        });
-        editMenu.add(loadOptionsItem);
+        };
 
-        JMenuItem saveOptionsItem = new JMenuItem("Save Options as...");
-        saveOptionsItem.addActionListener(new ActionListener() {
+        savePrefsAction = new AbstractAction("Save Preferences...") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
-
                 jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
-                jfc.setSelectedFile(new File(getProperties().getDefaultFilename()));
+                //jfc.setSelectedFile(new File(getProperties().getDefaultFilename()));
                 int result = jfc.showSaveDialog(JAMSFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -234,44 +162,213 @@ public class JAMSFrame extends JAMSLauncher {
                     }
                 }
             }
-        });
-        editMenu.add(saveOptionsItem);
-        getMainMenu().add(editMenu);
+        };
 
-        logsMenu = new JMenu("Logs");
-        JMenuItem infoLogItem = new JMenuItem("Model info log");
-        infoLogItem.addActionListener(new ActionListener() {
+        loadModelAction = new AbstractAction("Open Model...") {
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jfc.setFileFilter(JAMSFileFilter.getModelFilter());
+                if (jfc.showOpenDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
+
+                    modelFilename = jfc.getSelectedFile().getAbsolutePath();
+                    loadModelDefinition(modelFilename, null);
+
+                }
+            }
+        };
+
+        saveModelAction = new AbstractAction("Save Model") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveModel();
+            }
+        };
+        saveModelAction.setEnabled(false);
+
+        saveAsModelAction = new AbstractAction("Save Model As...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jfc.setFileFilter(JAMSFileFilter.getModelFilter());
+                if (jfc.showSaveDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
+                    modelFilename = jfc.getSelectedFile().getAbsolutePath();
+                    saveModel();
+                }
+            }
+        };
+        saveAsModelAction.setEnabled(false);
+
+        exitAction = new AbstractAction("Exit") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exit();
+            }
+        };
+
+        aboutAction = new AbstractAction("About") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AboutDlg(JAMSFrame.this).setVisible(true);
+            }
+        };
+
+        loadModelParamAction = new AbstractAction("Load Model Parameter...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                File file = null;
+                jfc.setFileFilter(JAMSFileFilter.getParameterFilter());
+                int result = jfc.showOpenDialog(JAMSFrame.this);
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String path = jfc.getSelectedFile().getAbsolutePath();
+                    loadParams(new File(path));
+                }
+            }
+        };
+
+        saveModelParamAction = new AbstractAction("Save Model Parameter...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                /*File file = null;
+                if (modelFilename != null) {
+                    file = new File(modelFilename);
+                } else {
+                    file = new File(System.getProperty("user.dir"));
+                }
+                jfc.setCurrentDirectory(file);*/
+                jfc.setFileFilter(JAMSFileFilter.getParameterFilter());
+                int result = jfc.showSaveDialog(JAMSFrame.this);
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String path = jfc.getSelectedFile().getAbsolutePath();
+                    saveParams(new File(path));
+                }
+            }
+        };
+
+        infoLogAction = new AbstractAction("Info Log...") {
+
+            @Override
             public void actionPerformed(ActionEvent e) {
                 getInfoDlg().setVisible(true);
             }
-        });
-        getLogsMenu().add(infoLogItem);
-        JMenuItem errorLogItem = new JMenuItem("Model error log");
-        errorLogItem.addActionListener(new ActionListener() {
+        };
 
+        errorLogAction = new AbstractAction("Error Log...") {
+
+            @Override
             public void actionPerformed(ActionEvent e) {
                 getErrorDlg().setVisible(true);
             }
-        });
+        };
+
+        // create additional dialogs
+        this.propertyDlg = new PropertyDlg(this, getProperties());
+        jfc = LHelper.getJFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setCurrentDirectory(JAMS.getBaseDir());
+
+        // menu stuff
+        mainMenu = new JMenuBar();
+
+        // file menu
+        JMenu fileMenu = new JMenu("File");
+
+        JMenuItem loadItem = new JMenuItem(loadModelAction);
+        loadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+        fileMenu.add(loadItem);
+
+        saveItem = new JMenuItem(saveModelAction);
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+        fileMenu.add(saveItem);
+
+        saveAsItem = new JMenuItem(saveAsModelAction);
+        saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+        fileMenu.add(saveAsItem);
+
+        JMenuItem exitItem = new JMenuItem(exitAction);
+        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+        fileMenu.add(exitItem);
+        getMainMenu().add(fileMenu);
+
+        // extras menu
+        JMenu editMenu = new JMenu("Extras");
+
+        JMenuItem editOptionsItem = new JMenuItem(editPrefsAction);
+        editOptionsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
+        editMenu.add(editOptionsItem);
+
+        JMenuItem loadOptionsItem = new JMenuItem(loadPrefsAction);
+        editMenu.add(loadOptionsItem);
+
+        JMenuItem saveOptionsItem = new JMenuItem(savePrefsAction);
+        editMenu.add(saveOptionsItem);
+        getMainMenu().add(editMenu);
+
+        // model menu
+        modelMenu = new JMenu("Model");
+        modelMenu.setEnabled(false);
+        mainMenu.add(modelMenu);
+
+        JMenuItem runModelItem = new JMenuItem(getRunModelAction());
+        runModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+        modelMenu.add(runModelItem);
+
+        modelMenu.add(new JSeparator());
+
+        JMenuItem loadModelParamItem = new JMenuItem(loadModelParamAction);
+        //loadModelParamItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+        modelMenu.add(loadModelParamItem);
+
+        JMenuItem saveModelParamItem = new JMenuItem(saveModelParamAction);
+        //loadModelParamItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+        modelMenu.add(saveModelParamItem);
+
+        // logs menu
+        logsMenu = new JMenu("Logs");
+
+        JMenuItem infoLogItem = new JMenuItem(infoLogAction);
+        getLogsMenu().add(infoLogItem);
+
+        JMenuItem errorLogItem = new JMenuItem(errorLogAction);
         getLogsMenu().add(errorLogItem);
         getMainMenu().add(getLogsMenu());
 
+        // help menu
         JMenu helpMenu = new JMenu("Help");
-        JMenuItem aboutItem = new JMenuItem("About");
-        aboutItem.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent evt) {
-                new AboutDlg(JAMSFrame.this).setVisible(true);
-            }
-        });
+        JMenuItem aboutItem = new JMenuItem(aboutAction);
         helpMenu.add(aboutItem);
         getMainMenu().add(helpMenu);
 
         setJMenuBar(getMainMenu());
 
-        super.init();
+    }
 
+    public void loadParams(File paramsFile) {
+        try {
+            ParameterProcessor.loadParams(getModelDocument(), paramsFile);
+            loadModelDefinition(getModelDocument());
+        } catch (Exception ex) {
+            LHelper.showErrorDlg(this, "File " + paramsFile.getName() + " could not be loaded.", "File open error");
+        }
+    }
+
+    public void saveParams(File paramsFile) {
+        try {
+            ParameterProcessor.saveParams(getModelDocument(), paramsFile,
+                    getProperties().getProperty("username"), modelFilename);
+        } catch (Exception ex) {
+            LHelper.showErrorDlg(this, "File " + paramsFile.getName() + " could not be saved.", "File saving error");
+        }
     }
 
     protected void processInfoLog(String logText) {
@@ -339,6 +436,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         try {
             XMLIO.writeXmlFile(getModelDocument(), modelFilename);
+            fillAttributes(getModelDocument());
         } catch (IOException ioe) {
             LHelper.showErrorDlg(JAMSFrame.this, "Error saving configuration to " + modelFilename, "Error");
             return;

@@ -77,8 +77,7 @@ public class ModelView {
     private static final int DIVIDER_WIDTH = 9;
     private JInternalFrame frame;
     private File savePath;
-    private Document modelDoc;
-    private Document initialDoc;
+    private Document modelDoc,  initialDoc;
     private JButton modelRunButton,  modelGUIRunButton;
     private ModelTree tree;
     private ComponentPanel compEditPanel;
@@ -111,7 +110,7 @@ public class ModelView {
         compEditPanel = new ComponentPanel(this);
         modelEditPanel = new ModelEditPanel(this);
         launcherPanel = new LauncherPanel(this);
-        launcherPanelDlg = new PanelDlg(JUICE.getJuiceFrame(), "Model GUI", launcherPanel) {
+        launcherPanelDlg = new PanelDlg(JUICE.getJuiceFrame(), "GUI Builder", launcherPanel) {
 
             @Override
             public void processOK() {
@@ -214,33 +213,16 @@ public class ModelView {
         JToolBar toolBar = new JToolBar();
         //toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
-        modelRunButton = new JButton();
-        //modelRunButton.setPreferredSize(new Dimension(40,40));
+        modelRunButton = new JButton(JUICE.getJuiceFrame().getRunModelAction());
+        modelRunButton.setText("");
         modelRunButton.setToolTipText("Run model");
         modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
-        modelRunButton.addActionListener(new java.awt.event.ActionListener() {
-
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                runModel();
-            }
-        });
-        modelRunButton.setEnabled(false);
         toolBar.add(modelRunButton);
 
-
-        modelGUIRunButton = new JButton();
-        //modelRunButton.setPreferredSize(new Dimension(40,40));
+        modelGUIRunButton = new JButton(JUICE.getJuiceFrame().getRunModelFromLauncherAction());
+        modelGUIRunButton.setText("");
         modelGUIRunButton.setToolTipText("Run model from JAMS Launcher");
         modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
-        modelGUIRunButton.addActionListener(new java.awt.event.ActionListener() {
-
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                runModelInLauncher();
-            }
-        });
-        modelGUIRunButton.setEnabled(false);
         toolBar.add(modelGUIRunButton);
 
         JButton copyGUIButton = new JButton(JUICE.getJuiceFrame().getCopyModelGUIAction());
@@ -265,7 +247,7 @@ public class ModelView {
         JTabbedPane tabPane = new JTabbedPane();
         tabPane.addTab("Component", new JScrollPane(compEditPanel));
         tabPane.addTab("Model metadata", new JScrollPane(modelEditPanel));
-        tabPane.addTab("Model GUI", new JScrollPane(launcherPanel));
+        tabPane.addTab("GUI Builder", new JScrollPane(launcherPanel));
 
         modelSplitPane.setLeftComponent(modelTreePanel);
         modelSplitPane.setRightComponent(tabPane);
@@ -295,12 +277,11 @@ public class ModelView {
         }
     }
 
-
     /**
      * This method will create a JAMSLauncher window with the current model 
      * loaded
      */
-    public void runModelInLauncher() {
+    public void runModelFromLauncher() {
         launcherPanel.updateProperties();
         JAMSLauncher launcher = new JAMSLauncher(JUICE.getJamsProperties(), getModelDoc());
         launcher.setVisible(true);
@@ -421,7 +402,7 @@ public class ModelView {
             if (getSavePath() != null) {
                 path = getSavePath().getAbsolutePath();
             }
-            ParameterProcessor.saveParams(getModelDoc(), paramsFile, 
+            ParameterProcessor.saveParams(getModelDoc(), paramsFile,
                     JUICE.getJamsProperties().getProperty("username"), path);
         } catch (Exception ex) {
             LHelper.showErrorDlg(JUICE.getJuiceFrame(), "File " + paramsFile.getName() + " could not be saved.", "File saving error");
@@ -553,7 +534,7 @@ public class ModelView {
 
 
         //check wether the referred parameter is existing or not
-        if ((property.attribute == null) && (property.var == null) && 
+        if ((property.attribute == null) && (property.var == null) &&
                 !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
             LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Attribute " + attributeName +
                     " does not exist in component " + property.component.getName() +

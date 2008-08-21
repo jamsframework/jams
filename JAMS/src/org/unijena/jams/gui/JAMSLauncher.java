@@ -40,6 +40,8 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -87,6 +89,7 @@ public class JAMSLauncher extends JFrame {
     private Runnable modelLoading;
     private WorkerDlg setupModelDlg;
     private Font titledBorderFont;
+    private Action runModelAction;
 
     public JAMSLauncher(JAMSProperties properties) {
         this.properties = properties;
@@ -193,6 +196,23 @@ public class JAMSLauncher extends JFrame {
             }
         };
 
+        runModelAction = new AbstractAction("Run Model") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Thread t = new Thread() {
+
+                    public void run() {
+                        runModel();
+
+                        // collect some garbage ;)
+                        Runtime.getRuntime().gc();
+                    }
+                };
+                t.start();
+            }
+        };
+
         setupModelDlg = new WorkerDlg(this, "Model Setup");
 
         // create some nice font for the border title
@@ -223,8 +243,6 @@ public class JAMSLauncher extends JFrame {
             }
 
             public void windowClosing(WindowEvent e) {
-
-
                 exit();
             }
 
@@ -241,25 +259,9 @@ public class JAMSLauncher extends JFrame {
             }
         });
 
-        runButton = new JButton();
+        runButton = new JButton(runModelAction);
+        runButton.setText("");
         runButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
-        runButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(
-                    ActionEvent e) {
-
-                Thread t = new Thread() {
-
-                    public void run() {
-                        runModel();
-
-                        // collect some garbage ;)
-                        Runtime.getRuntime().gc();
-                    }
-                };
-                t.start();
-            }
-        });
         runButton.setEnabled(false);
 
         tabbedPane.setTabPlacement(JTabbedPane.LEFT);
@@ -543,10 +545,6 @@ public class JAMSLauncher extends JFrame {
         return groupMap;
     }
 
-    protected JButton getRunButton() {
-        return runButton;
-    }
-
     protected Document getModelDocument() {
         return modelDocument;
     }
@@ -585,6 +583,10 @@ public class JAMSLauncher extends JFrame {
         return initialModelDocString;
     }
 
+    protected Action getRunModelAction() {
+        return runModelAction;
+    }
+
     class HelpButton extends JButton {
 
         HelpComponent helpComponent;
@@ -605,7 +607,7 @@ public class JAMSLauncher extends JFrame {
             help(helpComponent);
         }
     }
-    
+
     public static void main(String[] args) throws Exception {
         JAMSProperties props = new JAMSProperties();
         props.load("D:/jamsapplication/nsk.jap");
@@ -643,5 +645,5 @@ public class JAMSLauncher extends JFrame {
             }
         });
         launcher.setVisible(true);
-    }    
+    }
 }

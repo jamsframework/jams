@@ -126,7 +126,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         });
         logsMenu.add(serverErrorLogItem);
         
-        getRunButton().setEnabled(false);
+        getRunModelAction().setEnabled(false);
         
         JPanel serverPanel = new JPanel();
         GridBagLayout gbl = new GridBagLayout();
@@ -408,7 +408,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             cleanWSButton.setEnabled(true);
             cleanAccountButton.setEnabled(true);
             updateLogsButton.setEnabled(true);
-            getRunButton().setEnabled(true);
+            getRunModelAction().setEnabled(true);
         } else {
             serverInfoDlg.appendText("Failed connecting to server!\n");
         }
@@ -431,7 +431,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             downloadButton.setEnabled(false);
             cleanAccountButton.setEnabled(false);
             updateLogsButton.setEnabled(false);
-            getRunButton().setEnabled(false);
+            getRunModelAction().setEnabled(false);
         } catch (IOException ex) {
             client.getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()));
         }
@@ -642,11 +642,11 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         
         getInfoDlg().setText("");
         getErrorDlg().setText("");
-        getRunButton().setEnabled(false);
+        getRunModelAction().setEnabled(false);
         
         // check if provided values are valid
         if (!verifyInputs()) {
-            getRunButton().setEnabled(true);
+            getRunModelAction().setEnabled(true);
             return;
         }
         
@@ -674,7 +674,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             XMLIO.writeXmlFile(getModelDocument(), localModelFilename);
         } catch (IOException ex) {
             client.getErrorLog().print("Model definition file " + localModelFilename + " could not be written!\n");
-            getRunButton().setEnabled(true);
+            getRunModelAction().setEnabled(true);
             return;
         }
         
@@ -685,7 +685,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         } catch (IOException ex) {
             client.getErrorLog().print("Model definition file " + localModelFilename + " could not be" +
                     "transfered to server!\n");
-            getRunButton().setEnabled(true);
+            getRunModelAction().setEnabled(true);
             return;
         }
         
@@ -706,7 +706,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             client.getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()));
             client.getInfoLog().print("Remote execution failed\n");
         }
-        getRunButton().setEnabled(true);
+        getRunModelAction().setEnabled(true);
     }
     
     protected String getBaseTitle() {
