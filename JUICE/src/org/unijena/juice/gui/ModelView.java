@@ -48,8 +48,8 @@ import javax.swing.event.InternalFrameListener;
 import org.unijena.jams.JAMS;
 import org.unijena.jams.JAMSTools;
 import org.unijena.jams.data.HelpComponent;
+import org.unijena.jams.gui.JAMSLauncher;
 import org.unijena.jams.gui.LHelper;
-import org.unijena.jams.gui.PlainGUILauncher;
 import org.unijena.jams.gui.WorkerDlg;
 import org.unijena.jams.io.ParameterProcessor;
 import org.unijena.jams.io.XMLIO;
@@ -216,7 +216,7 @@ public class ModelView {
 
         modelRunButton = new JButton();
         //modelRunButton.setPreferredSize(new Dimension(40,40));
-        modelRunButton.setToolTipText("Start model");
+        modelRunButton.setToolTipText("Run model");
         modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         modelRunButton.addActionListener(new java.awt.event.ActionListener() {
 
@@ -231,13 +231,13 @@ public class ModelView {
 
         modelGUIRunButton = new JButton();
         //modelRunButton.setPreferredSize(new Dimension(40,40));
-        modelGUIRunButton.setToolTipText("Start model in Launcher");
-        modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
+        modelGUIRunButton.setToolTipText("Run model from JAMS Launcher");
+        modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
         modelGUIRunButton.addActionListener(new java.awt.event.ActionListener() {
 
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                runModelGUI();
+                runModelInLauncher();
             }
         });
         modelGUIRunButton.setEnabled(false);
@@ -288,28 +288,31 @@ public class ModelView {
             frame.setSelected(true);
             if (firstFrame) {
                 frame.setMaximum(true);
-                //firstFrame = false;
+            //firstFrame = false;
             }
         } catch (PropertyVetoException pve) {
             JAMS.handle(pve);
         }
     }
 
-    public void runModelGUI() {
-        
-        PlainGUILauncher launcher = new PlainGUILauncher(JUICE.getJamsProperties(), getModelDoc());
+
+    /**
+     * This method will create a JAMSLauncher window with the current model 
+     * loaded
+     */
+    public void runModelInLauncher() {
+        launcherPanel.updateProperties();
+        JAMSLauncher launcher = new JAMSLauncher(JUICE.getJamsProperties(), getModelDoc());
         launcher.setVisible(true);
-        
-        //runtime.loadModel(modelDoc, JUICE.getJamsProperties());
     }
 
     public void runModel() {
-        //launcherPanelDlg.setVisible(true);
 
         // first check if provided parameter values are valid
         /*if (!launcherPanel.verifyInputs()) {
         return;
         }*/
+        launcherPanel.updateProperties();
 
         // then load the model via the modelLoading runnable
         setupModelDlg.setTask(modelLoading);
@@ -535,26 +538,45 @@ public class ModelView {
         }
 
         String attributeName = propertyElement.getAttribute("attribute");
-
-        property.var = property.component.getComponentAttributes().get(attributeName);
-
-        //in case this is a context component, check whether this refers to a context attribute
-        if (property.attribute == null) {
+        if (attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
+            property.value = propertyElement.getAttribute("value");
+        } else {
+            // could refer to a component var or a context attribute
+            // only one of them will be != null
+            property.var = property.component.getComponentAttributes().get(attributeName);
             property.attribute = property.component.getContextAttributes().get(attributeName);
         }
 
-        //check wether the referred var is existing or not
-        if ((property.attribute == null) && (property.var == null) && !attributeName.equals("%enable%")) {
+
+        //check wether the referred parameter is existing or not
+        if ((property.attribute == null) && (property.var == null) && 
+                !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
             LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Attribute " + attributeName +
                     " does not exist in component " + property.component.getName() +
                     ". Removing associated property!", "Model loading error");
             return null;
         }
 
-        property.defaultValue = propertyElement.getAttribute("default");
+        // not used anymore
+        //property.defaultValue = propertyElement.getAttribute("default");
+
+        // set description and name
         property.description = propertyElement.getAttribute("description");
         property.name = propertyElement.getAttribute("name");
-        property.value = propertyElement.getAttribute("value");
+
+        // keep compatibility to old launcher behaviour
+        // if there is still a value given and it is not an 'enable' attribute, 
+        // then copy the value to the regarding component attribute
+        if (propertyElement.hasAttribute("value") && !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
+            String valueString = propertyElement.getAttribute("value");
+            if (property.var != null) {
+                property.var.setValue(valueString);
+            } else {
+                property.attribute.setValue(valueString);
+            }
+        }
+
+
         String range = propertyElement.getAttribute("range");
         StringTokenizer tok = new StringTokenizer(range, ";");
         if (tok.countTokens() == 2) {
@@ -581,9 +603,9 @@ public class ModelView {
         }
         /*
         if (!launcherPanel.verifyInputs()) {
-            return null;
+        return null;
         }
-        */
+         */
         return tree.getModelDocument();
     }
 

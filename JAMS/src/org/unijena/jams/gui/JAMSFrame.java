@@ -44,7 +44,7 @@ import org.w3c.dom.Element;
  *
  * @author Sven Kralisch
  */
-public class GUILauncher extends LauncherPane {
+public class JAMSFrame extends JAMSLauncher {
 
     private JMenuBar mainMenu;
     private JMenu logsMenu;
@@ -79,11 +79,11 @@ public class GUILauncher extends LauncherPane {
     private WorkerDlg setupModelDlg;
     private Font titledBorderFont;
      */
-    public GUILauncher(JAMSProperties properties) {
+    public JAMSFrame(JAMSProperties properties) {
         super(properties);
     }
 
-    public GUILauncher(JAMSProperties properties, String modelFilename, String cmdLineArgs) {
+    public JAMSFrame(JAMSProperties properties, String modelFilename, String cmdLineArgs) {
         //super(properties, modelFilename, cmdLineArgs);
         this(properties);
         this.modelFilename = modelFilename;
@@ -123,7 +123,7 @@ public class GUILauncher extends LauncherPane {
                 }
                 jfc.setCurrentDirectory(file);
                 jfc.setFileFilter(JAMSFileFilter.getModelFilter());
-                if (jfc.showOpenDialog(GUILauncher.this) == JFileChooser.APPROVE_OPTION) {
+                if (jfc.showOpenDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
 
                     String modelFilename = jfc.getSelectedFile().getAbsolutePath();
                     loadModelDefinition(modelFilename, null);
@@ -160,7 +160,7 @@ public class GUILauncher extends LauncherPane {
                 jfc.setCurrentDirectory(file);
 
                 jfc.setFileFilter(JAMSFileFilter.getModelFilter());
-                if (jfc.showSaveDialog(GUILauncher.this) == JFileChooser.APPROVE_OPTION) {
+                if (jfc.showSaveDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
                     modelFilename = jfc.getSelectedFile().getAbsolutePath();
                     saveModel();
                 }
@@ -202,7 +202,7 @@ public class GUILauncher extends LauncherPane {
 
                 jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
                 jfc.setSelectedFile(new File(getProperties().getDefaultFilename()));
-                int result = jfc.showOpenDialog(GUILauncher.this);
+                int result = jfc.showOpenDialog(JAMSFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String stringValue = jfc.getSelectedFile().getAbsolutePath();
@@ -223,7 +223,7 @@ public class GUILauncher extends LauncherPane {
 
                 jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
                 jfc.setSelectedFile(new File(getProperties().getDefaultFilename()));
-                int result = jfc.showSaveDialog(GUILauncher.this);
+                int result = jfc.showSaveDialog(JAMSFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String stringValue = jfc.getSelectedFile().getAbsolutePath();
@@ -262,7 +262,7 @@ public class GUILauncher extends LauncherPane {
         aboutItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent evt) {
-                new AboutDlg(GUILauncher.this).setVisible(true);
+                new AboutDlg(JAMSFrame.this).setVisible(true);
             }
         });
         helpMenu.add(aboutItem);
@@ -275,11 +275,11 @@ public class GUILauncher extends LauncherPane {
     }
 
     protected void processInfoLog(String logText) {
-        GUILauncher.this.getInfoDlg().appendText(logText);
+        JAMSFrame.this.getInfoDlg().appendText(logText);
     }
 
     protected void processErrorLog(String logText) {
-        GUILauncher.this.getErrorDlg().appendText(logText);
+        JAMSFrame.this.getErrorDlg().appendText(logText);
     }
 
     protected void exit() {
@@ -340,7 +340,7 @@ public class GUILauncher extends LauncherPane {
         try {
             XMLIO.writeXmlFile(getModelDocument(), modelFilename);
         } catch (IOException ioe) {
-            LHelper.showErrorDlg(GUILauncher.this, "Error saving configuration to " + modelFilename, "Error");
+            LHelper.showErrorDlg(JAMSFrame.this, "Error saving configuration to " + modelFilename, "Error");
             return;
         }
     //LHelper.showInfoDlg(LauncherFrame.this, "Configuration has been saved to " + LauncherFrame.this.modelFilename, "Info");

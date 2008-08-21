@@ -46,6 +46,7 @@ import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import org.unijena.jams.gui.LHelper;
 import org.unijena.jams.gui.input.InputComponent;
+import org.unijena.jams.io.ParameterProcessor;
 import org.unijena.juice.*;
 import org.unijena.juice.ModelProperties.Group;
 import org.unijena.juice.ModelProperties.ModelElement;
@@ -442,6 +443,12 @@ public class LauncherPanel extends JPanel {
         ic.getComponent().setToolTipText(property.description);
         ic.setValue(property.value);
 
+        if ((property.attribute == null) && (property.var == null)) {
+            ic.getComponent().setEnabled(true);            
+        } else {
+            ic.getComponent().setEnabled(false);
+        }
+
         inputMap.put(property, ic);
         LHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder());
@@ -771,7 +778,7 @@ public class LauncherPanel extends JPanel {
         return true;
     }
 
-    private void updateProperties() {
+    public void updateProperties() {
 
         // set values of properties to provided
         for (ModelProperty property : inputMap.keySet()) {

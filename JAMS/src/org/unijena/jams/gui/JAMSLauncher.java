@@ -1,5 +1,5 @@
 /*
- * LauncherPane.java
+ * JAMSLauncher.java
  * Created on 14. August 2008, 13:37
  *
  * This file is part of JAMS
@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.gui;
 
 import java.awt.BorderLayout;
@@ -73,7 +72,7 @@ import org.xml.sax.SAXException;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class LauncherPane extends JFrame {
+public class JAMSLauncher extends JFrame {
 
     protected static final String BASE_TITLE = "JAMS Launcher";
     private Map<InputComponent, Element> inputMap;
@@ -88,17 +87,18 @@ public class LauncherPane extends JFrame {
     private Runnable modelLoading;
     private WorkerDlg setupModelDlg;
     private Font titledBorderFont;
-    
-    public static void main(String[] args) {
-        new LauncherPane(new JAMSProperties()).setVisible(true);
-    }
-    
-    public LauncherPane(JAMSProperties properties) {
+
+    public JAMSLauncher(JAMSProperties properties) {
         this.properties = properties;
         init();
     }
 
-    public LauncherPane(JAMSProperties properties, String modelFilename, String cmdLineArgs) {
+    public JAMSLauncher(JAMSProperties properties, Document modelDocument) {
+        this(properties);
+        loadModelDefinition(modelDocument);
+    }
+
+    public JAMSLauncher(JAMSProperties properties, String modelFilename, String cmdLineArgs) {
         this(properties);
         loadModelDefinition(modelFilename, JAMSTools.toArray(cmdLineArgs, ";"));
     }
@@ -123,7 +123,7 @@ public class LauncherPane extends JFrame {
             // first do search&replace on the input xml file
             String newModelFilename = XMLProcessor.modelDocConverter(modelFilename);
             if (!newModelFilename.equalsIgnoreCase(modelFilename)) {
-                LHelper.showInfoDlg(LauncherPane.this,
+                LHelper.showInfoDlg(JAMSLauncher.this,
                         "The model definition in \"" + modelFilename + "\" has been adapted in order to meet modifications of the JAMS model DTD.\nThe new definition has been stored in \"" + newModelFilename + "\" while your original file was left untouched.", "Info");
             }
 
@@ -144,12 +144,12 @@ public class LauncherPane extends JFrame {
             fillAttributes(this.getModelDocument());
             fillTabbedPane(this.getModelDocument());
 
-        //LHelper.showInfoDlg(LauncherPane.this, "Model has been successfully loaded!", "Info");
+        //LHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
 
         } catch (IOException ioe) {
-            LHelper.showErrorDlg(LauncherPane.this, "The specified model configuration file \"" + modelFilename + "\" could not be found!", "Error");
+            LHelper.showErrorDlg(JAMSLauncher.this, "The specified model configuration file \"" + modelFilename + "\" could not be found!", "Error");
         } catch (SAXException se) {
-            LHelper.showErrorDlg(LauncherPane.this, "The specified model configuration file \"" + modelFilename + "\" contains errors!", "Error");
+            LHelper.showErrorDlg(JAMSLauncher.this, "The specified model configuration file \"" + modelFilename + "\" contains errors!", "Error");
         }
     }
 
@@ -179,13 +179,14 @@ public class LauncherPane extends JFrame {
                         processInfoLog(obj.toString());
                     }
                 });
-                runtime.addErrorLogObserver(new Observer() {
+                runtime.addErrorLogObserver(
+                        new Observer() {
 
-                    public void update(Observable obs, Object obj) {
-//                        LHelper.showErrorDlg(LauncherPane.this, "An error has occurred! Please check the error log for further information!", "JAMS Error");
-                        processErrorLog(obj.toString());
-                    }
-                });
+                            public void update(Observable obs, Object obj) {
+//                        LHelper.showErrorDlg(JAMSLauncher.this, "An error has occurred! Please check the error log for further information!", "JAMS Error");
+                                processErrorLog(obj.toString());
+                            }
+                        });
 
                 // load the model
                 runtime.loadModel(modelDocCopy, getProperties());
@@ -222,6 +223,8 @@ public class LauncherPane extends JFrame {
             }
 
             public void windowClosing(WindowEvent e) {
+
+
                 exit();
             }
 
@@ -242,7 +245,8 @@ public class LauncherPane extends JFrame {
         runButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         runButton.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(
+                    ActionEvent e) {
 
                 Thread t = new Thread() {
 
@@ -602,5 +606,42 @@ public class LauncherPane extends JFrame {
         }
     }
     
-    
+    public static void main(String[] args) throws Exception {
+        JAMSProperties props = new JAMSProperties();
+        props.load("D:/jamsapplication/nsk.jap");
+        JAMSLauncher launcher = new JAMSLauncher(props, "D:/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam", "");
+//        JAMSLauncher launcher = new JAMSLauncher(props, "D:/jamsapplication/test.jam", "");
+        launcher.addWindowListener(new WindowListener() {
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+            }
+        });
+        launcher.setVisible(true);
+    }    
 }

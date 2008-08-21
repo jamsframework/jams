@@ -255,7 +255,7 @@ public class ModelProperties {
 
     public class ModelProperty extends ModelElement {
 
-        public String defaultValue,  value,  description;
+        public String value,  description;
         public ComponentDescriptor component;
         public ComponentDescriptor.ComponentAttribute var;
         public ContextAttribute attribute;

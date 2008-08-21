@@ -677,7 +677,9 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
               panel.add(headerpanel, BorderLayout.NORTH);
               
               panel.add(scrollpane, BorderLayout.CENTER);
-              panel.add(controlpanel,BorderLayout.EAST);
+              JPanel helper = new JPanel();
+              helper.add(controlpanel);
+              panel.add(helper, BorderLayout.EAST);
               
               
           }

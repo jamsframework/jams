@@ -46,6 +46,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.unijena.jams.JAMSTools;
 import org.unijena.jams.data.HelpComponent;
 import org.unijena.jams.gui.LHelper;
+import org.unijena.jams.io.ParameterProcessor;
 import org.unijena.jams.model.JAMSContext;
 import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
@@ -395,7 +396,7 @@ public class ModelTree extends JAMSTree {
         return document;
     }
 
-    // return XML element representing a JAMS model property bases on a 
+    // return XML element representing a JAMS model property based on a 
     // ModelProperty object
     private Element createPropertyElement(Document document, ModelProperty property) {
         Element propertyElement = (Element) document.createElement("property");
@@ -407,13 +408,14 @@ public class ModelTree extends JAMSTree {
             propertyElement.setAttribute("attribute", property.attribute.getName());
             propertyElement.setAttribute("type", property.attribute.getType().getSimpleName());
         } else {
-            propertyElement.setAttribute("attribute", "%enable%");
+            propertyElement.setAttribute("attribute", ParameterProcessor.COMPONENT_ENABLE_VALUE);
             propertyElement.setAttribute("type", JUICE.JAMS_DATA_TYPES[0].getSimpleName());
+            propertyElement.setAttribute("value", property.value);
         }
-        propertyElement.setAttribute("default", property.defaultValue);
+        //propertyElement.setAttribute("default", property.defaultValue);
         propertyElement.setAttribute("description", property.description);
         propertyElement.setAttribute("name", property.name);
-        propertyElement.setAttribute("value", property.value);
+        //propertyElement.setAttribute("value", property.value);
         propertyElement.setAttribute("range", "" + property.lowerBound + ";" + property.upperBound);
         if (property.length > 0) {
             propertyElement.setAttribute("length", "" + property.length);
