@@ -125,7 +125,7 @@ public class JAMSFrame extends JAMSLauncher {
                 jfc.setFileFilter(JAMSFileFilter.getModelFilter());
                 if (jfc.showOpenDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
 
-                    String modelFilename = jfc.getSelectedFile().getAbsolutePath();
+                    modelFilename = jfc.getSelectedFile().getAbsolutePath();
                     loadModelDefinition(modelFilename, null);
 
                 }
