@@ -25,10 +25,7 @@ package jams.components.machineLearning;
 
 import org.unijena.jams.data.*;
 import org.unijena.jams.model.*;
-import org.unijena.jams.io.*;
 import java.util.*;
-import java.io.*;
-import org.unijena.jams.JAMS;
 
 /**
  *

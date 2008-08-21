@@ -9,16 +9,7 @@
 
 package jams.components.machineLearning;
 
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.*;
-import java.util.*;
-import java.io.*;
-import org.unijena.jams.JAMS;
-import java.util.Random;
-import Jama.*;
 import Jama.Matrix;
-import Jama.LUDecomposition;
-import Jama.util.Maths;
 
 public class LinearRegression extends Learner{
     public double InterpolationSize;
