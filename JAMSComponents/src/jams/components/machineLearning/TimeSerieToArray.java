@@ -23,7 +23,6 @@
 
 package jams.components.machineLearning;
 
-import org.unijena.j2k.statistics.*;
 import org.unijena.jams.data.*;
 import org.unijena.jams.model.*;
 import org.unijena.jams.io.*;

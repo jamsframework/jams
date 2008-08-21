@@ -9,7 +9,6 @@
 
 package jams.components.machineLearning;
 
-import org.unijena.j2k.*;
 import org.unijena.jams.data.*;
 import org.unijena.jams.model.*;
 import java.util.*;
