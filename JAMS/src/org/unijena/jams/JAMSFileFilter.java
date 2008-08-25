@@ -74,6 +74,19 @@ public class JAMSFileFilter {
         }
     };
     
+    private static FileFilter epsFilter = new FileFilter() {
+        public boolean accept(File f) {
+            return f.isDirectory() || f.getName().toLowerCase().endsWith(".eps");
+        }
+        public String getDescription() {
+            return "Encapsulated Postscript (*.eps)";
+        }
+    };
+    
+    public static FileFilter getEpsFilter() {
+        return epsFilter;
+    }
+
     public static FileFilter getPropertyFilter() {
         return propertyFilter;
     }
