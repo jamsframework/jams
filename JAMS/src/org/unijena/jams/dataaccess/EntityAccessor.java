@@ -22,7 +22,6 @@
  */
 package org.unijena.jams.dataaccess;
 
-import java.util.HashMap;
 import org.unijena.jams.data.*;
 
 /**

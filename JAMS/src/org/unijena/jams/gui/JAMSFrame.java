@@ -404,7 +404,7 @@ public class JAMSFrame extends JAMSLauncher {
         }
 
         // check for invalid parameter values
-        if (!verifyInputs()) {
+        if (!verifyInputs(false)) {
             int result = LHelper.showYesNoDlg(this, "Found invalid parameter values " +
                     "which won't be saved. Proceed anyway?", "Invalid parameter values");
             if (result == JOptionPane.NO_OPTION) {

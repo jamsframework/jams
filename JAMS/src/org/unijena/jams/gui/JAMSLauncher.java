@@ -285,6 +285,10 @@ public class JAMSLauncher extends JFrame {
     }
 
     protected boolean verifyInputs() {
+        return verifyInputs(true);
+    }
+
+    protected boolean verifyInputs(boolean runModel) {
         // verify all provided values
         for (InputComponent ic : getInputMap().keySet()) {
             if (!ic.verify()) {
@@ -294,10 +298,15 @@ public class JAMSLauncher extends JFrame {
                 Color oldColor = ic.getComponent().getBackground();
                 ic.getComponent().setBackground(new Color(255, 0, 0));
 
+                String info = "";
+                if (runModel) {
+                    info = " Stopping model execution.";
+                }
+
                 if (ic.getErrorCode() == InputComponent.INPUT_OUT_OF_RANGE) {
-                    LHelper.showErrorDlg(this, "Selected value out of range!", "Range error");
+                    LHelper.showErrorDlg(this, "Selected value out of range!" + info, "Range error");
                 } else {
-                    LHelper.showErrorDlg(this, "Invalid value!", "Format error");
+                    LHelper.showErrorDlg(this, "Invalid value found!" + info, "Format error");
                 }
 
                 ic.getComponent().setBackground(oldColor);

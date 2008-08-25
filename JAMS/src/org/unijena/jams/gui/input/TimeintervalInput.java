@@ -211,7 +211,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         //1996-11-01 7:30 2000-10-31 7:30 6 1
 
         JAMSTimeInterval ti = new JAMSTimeInterval();
-        if (value != "") {
+        if ((value != null) && !value.equals("")) {
             ti.setValue(value);
         }
 

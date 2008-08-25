@@ -138,7 +138,7 @@ public class CalendarInput extends JPanel implements InputComponent {
 
         JAMSCalendar cal = new JAMSCalendar();
 
-        if (value != "") {
+        if ((value != null) && !value.equals("")) {
             cal.setValue(value);
         }
 
