@@ -336,11 +336,12 @@ public class LauncherPanel extends JPanel {
             //          subgroups consists of properties
             //          this could be recursive too
             if (modelElement instanceof ModelProperty) {
-
                 ModelProperty property = (ModelProperty) modelElement;
+
                 JPanel buttonPanel = createPropertyButtonPanel(contentPanel, gbl, property, y);
                 LHelper.addGBComponent(contentPanel, gbl, buttonPanel, 3, y, 1, 1, 1, 1);
             }
+            
             if (modelElement instanceof Group) {
                 Group subgroup = (Group) modelElement;
                 Vector subgroupProperties = subgroup.getProperties();
@@ -444,7 +445,7 @@ public class LauncherPanel extends JPanel {
         ic.setValue(property.value);
 
         if ((property.attribute == null) && (property.var == null)) {
-            ic.getComponent().setEnabled(true);            
+            ic.getComponent().setEnabled(true);
         } else {
             ic.getComponent().setEnabled(false);
         }
@@ -607,7 +608,7 @@ public class LauncherPanel extends JPanel {
         if (element instanceof Group) {
             Vector test = ((Group) element).getProperties();
             if (test.size() > 0) {
-                LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Subgroup has to be empty.", "Deletion not possible");
+                LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Subgroup needs to be empty.", "Deletion not possible");
                 return;
             }
         }
@@ -748,34 +749,6 @@ public class LauncherPanel extends JPanel {
 
             updateGroup(group);
         }
-    }
-
-    public boolean verifyInputs() {
-
-        // verify all provided values
-        for (ModelProperty p : inputMap.keySet()) {
-            InputComponent ic = inputMap.get(p);
-            if (!ic.verify()) {
-
-                // find containing scroll pane and select it
-                JScrollPane scrollPane = groupPanes.get(p.getGroup());
-                tabbedPane.setSelectedComponent(scrollPane);
-
-                Color oldColor = ic.getComponent().getBackground();
-                ic.getComponent().setBackground(new Color(255, 0, 0));
-
-                if (ic.getErrorCode() == InputComponent.INPUT_OUT_OF_RANGE) {
-                    LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Selected value out of range!", "Range error");
-                } else {
-                    LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Invalid value!", "Format error");
-                }
-
-                ic.getComponent().setBackground(oldColor);
-                return false;
-            }
-        }
-        updateProperties();
-        return true;
     }
 
     public void updateProperties() {
