@@ -232,6 +232,10 @@ public class GraphProperties {
         colorTable.put("black", Color.black);
         colorTable.put("white", Color.WHITE);
         
+       
+                
+           
+        
         createPanel();
         applyTSProperties();
         
@@ -905,14 +909,17 @@ public class GraphProperties {
     
     public void setSeriesPaint(Paint paint){
         this.series_paint = paint;
+        cr_dlg.updateColors();
     }
     
     public void setSeriesFillPaint(Paint fill){
         this.series_fill_paint = fill;
+        cr_dlg.updateColors();
     }
     
     public void setSeriesOutlinePaint(Paint paint){
         this.series_outline_paint = paint;
+        cr_dlg.updateColors();
     }
     
     public void setSeriesOutlineStroke(Stroke stroke){
@@ -1342,12 +1349,30 @@ public class GraphProperties {
             Point parentloc = parent.getLocation();
             setLocation(parentloc.x + 50, parentloc.y + 50);
             
+            try{
+                line_color = (Color) getSeriesPaint();
+                shape_fill = (Color) getSeriesFillPaint();
+                outline_color = (Color) getSeriesOutlinePaint();
+            }catch(Exception cce){
+                line_color = Color.RED;
+                shape_fill = Color.RED;
+                outline_color = Color.GRAY;
+            }
             
-            line_color = Color.RED;
-            shape_fill = Color.MAGENTA;
-            outline_color = Color.BLUE;
             
             createPanel();
+        }
+        
+        void updateColors(){
+            
+            line_color = (Color) getSeriesPaint();
+            shape_fill = (Color) getSeriesFillPaint();
+            outline_color = (Color) getSeriesOutlinePaint();
+            
+            stroke_button.setBackground(line_color);
+            fill_button.setBackground(shape_fill);
+            outline_button.setBackground(outline_color);
+            
         }
         
         void createPanel(){
@@ -1444,8 +1469,8 @@ public class GraphProperties {
             outline_button = new JButton("color");
             
             stroke_button.setBackground(line_color);
-            fill_button.setBackground(this.shape_fill);
-            outline_button.setBackground(this.outline_color);
+            fill_button.setBackground(shape_fill);
+            outline_button.setBackground(outline_color);
             
             stroke_button.setSize(15,15);
             fill_button.setSize(15,15);
@@ -1497,7 +1522,7 @@ public class GraphProperties {
             //default values
             setStroke(stroke_slider.getValue());
             setShape(shape_box.getSelectedIndex(), shape_slider.getValue());
-            setSeriesPaint(line_color);
+            //setSeriesPaint(line_color);
 //            if(outline_paint_box.getSelectedIndex()==0){
 //                setOutlineVisible(false);
 //            }else{
@@ -1505,8 +1530,8 @@ public class GraphProperties {
 //                setSeriesOutlinePaint(colorTable.get((String)outline_paint_box.getSelectedItem()));
 //            }
             
-            setSeriesOutlinePaint(outline_color);
-            setSeriesFillPaint(shape_fill);
+            //setSeriesOutlinePaint(outline_color);
+            //setSeriesFillPaint(shape_fill);
             setOutlineStroke(outline_slider.getValue());
             setLinesVisible(lines_vis_box.isSelected());
             setShapesVisible(shapes_vis_box.isSelected());

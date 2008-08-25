@@ -23,11 +23,12 @@
 
 package jams.components.gui.spreadsheet;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+//import com.sun.image.codec.jpeg.JPEGCodec;
+//import com.sun.image.codec.jpeg.JPEGEncodeParam;
+//import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Vector;
@@ -52,9 +53,10 @@ import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.time.TimeSeriesCollection;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
+import org.apache.xmlgraphics.java2d.ps.*;
 
 /**
  *
@@ -146,25 +148,43 @@ public class JAMSTimePlot {
         return bi;
     }
     
-    public void savePicture(File file, int width, int height){
+//    public void savePicture(File file, int width, int height){
+//        
+//        BufferedImage bi = chart.createBufferedImage(width, height);
+//        
+//        try{
+//	    // jpeg encoding
+//            
+//            FileOutputStream out = new FileOutputStream(file);
+//            
+//            //ByteArrayOutputStream out = new ByteArrayOutputStream();
+//            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+//            JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bi); 
+//            param.setQuality(1.0f, false);
+//            encoder.setJPEGEncodeParam(param);
+//            encoder.encode(bi);
+//        }
+//        catch(Exception ex){
+//        }
+//    }
+    
+    public void saveAsEPS(File outfile){
         
-        BufferedImage bi = chart.createBufferedImage(width, height);
+     try{ 
         
-        try{
-	    // jpeg encoding
-            
-            FileOutputStream out = new FileOutputStream(file);
-            
-            //ByteArrayOutputStream out = new ByteArrayOutputStream();
-            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-            JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bi); 
-            param.setQuality(1.0f, false);
-            encoder.setJPEGEncodeParam(param);
-            encoder.encode(bi);
-        }
-        catch(Exception ex){
-        }
-    }
+      OutputStream out = new java.io.FileOutputStream(outfile);
+      EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
+      g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
+      int width = 600;
+      int height = 400;
+      g2d.setupDocument(out, width, height); //400pt x 200pt
+      this.chart.draw(g2d,new Rectangle(width,height));
+      g2d.finish();
+      out.flush();
+      out.close();
+      
+      }catch(Exception fnfe){}
+   } 
     
     public JPanel getPanel() {
         

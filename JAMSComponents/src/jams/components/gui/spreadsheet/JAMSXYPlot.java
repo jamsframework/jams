@@ -25,11 +25,15 @@ package jams.components.gui.spreadsheet;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -144,6 +148,24 @@ public class JAMSXYPlot {
         BufferedImage bi = chart.createBufferedImage(w, h);
         return bi;
     }
+    
+    public void saveAsEPS( File outfile){
+        
+     try{ 
+        
+      OutputStream out = new java.io.FileOutputStream(outfile);
+      EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
+      g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
+      int width = 600;
+      int height = 400;
+      g2d.setupDocument(out, width, height); //400pt x 200pt
+      this.chart.draw(g2d,new Rectangle(width,height));
+      g2d.finish();
+      out.flush();
+      out.close();
+      
+      }catch(Exception fnfe){}
+   } 
     
     private XYItemRenderer getRenderer(int type) {
         XYItemRenderer r;

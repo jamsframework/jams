@@ -9,9 +9,9 @@
 
 package jams.components.gui.spreadsheet;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+//import com.sun.image.codec.jpeg.JPEGCodec;
+//import com.sun.image.codec.jpeg.JPEGEncodeParam;
+//import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Vector;
@@ -19,7 +19,6 @@ import java.awt.event.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import javax.swing.*;
 import javax.swing.BorderFactory.*;
 import javax.swing.border.*;
@@ -32,6 +31,7 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
+import org.unijena.jams.JAMSFileFilter;
 
 
 
@@ -92,7 +92,7 @@ public class JXYConfigurator extends JFrame{
     private String[] headers;
     
     //Hi Res Box
-    private HiResDlg hiresDlg;
+//    private HiResDlg hiresDlg;
     
     private JLabel edTitle = new JLabel("Plot Title: ");
     private JLabel edLeft  = new JLabel("Left axis title: ");
@@ -122,7 +122,7 @@ public class JXYConfigurator extends JFrame{
     
     private JButton applyButton = new JButton("Apply");
     private JButton addButton = new JButton("Add Graph");
-    private JButton saveButton = new JButton("High Resolution");
+    private JButton saveButton = new JButton("EPS export");
     
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
     private JAMSXYPlot jxys = new JAMSXYPlot();
@@ -369,6 +369,9 @@ public class JXYConfigurator extends JFrame{
         
         GraphProperties prop;
         
+        String[] colors;
+        int color_cnt;
+        
         for(int k=0;k<graphCount;k++){
             
             prop = new GraphProperties(this, table, this);
@@ -401,8 +404,12 @@ public class JXYConfigurator extends JFrame{
                 prop.getUpButton().setEnabled(true);
                 prop.getDownButton().setEnabled(true);
 
-            prop.setColor(k%11);
-            colour_cnt=k;
+            if(k<9) color_cnt = k;
+            else color_cnt = 0;
+            colors = getColorScheme(color_cnt);
+            prop.setSeriesPaint(colorTable.get(colors[0]));
+            prop.setSeriesFillPaint(colorTable.get(colors[1]));
+            prop.setSeriesOutlinePaint(colorTable.get(colors[2]));
             
 //            prop.setColor((String) colorchoice.getSelectedItem());
 //            prop.setPosition((String) poschoice.getSelectedItem());
@@ -428,6 +435,8 @@ public class JXYConfigurator extends JFrame{
               prop.setDataSTART(this.row_start);
               prop.setDataEND(this.row_end);
             }
+            
+            
             prop.applyXYProperties();
             addPropGroup(propVector.get(k));
 
@@ -712,6 +721,59 @@ public class JXYConfigurator extends JFrame{
         }
         this.range = range;
         return range;
+    }
+    
+    private String[] getColorScheme(int scheme){
+        
+        String[] colors = new String[3]; //0 series, 1 fill, 2 outline
+        
+        switch(scheme){
+            case 0: colors[0] = "red";
+                    colors[1] = "red";
+                    colors[2] = "gray";
+                    break;
+            
+            case 1: colors[0] = "blue";
+                    colors[1] = "blue";
+                    colors[2] = "black";
+                    break;
+            
+            case 2: colors[0] = "green";
+                    colors[1] = "green";
+                    colors[2] = "gray";
+                    break;
+            
+            case 3: colors[0] = "black";
+                    colors[1] = "black";
+                    colors[2] = "yellow";
+                    break;
+            
+            case 4: colors[0] = "orange";
+                    colors[1] = "orange";
+                    colors[2] = "cyan";
+                    break;
+                    
+            case 5: colors[0] = "cyan";
+                    colors[1] = "cyan";
+                    colors[2] = "black";
+                    break;
+                    
+            case 6: colors[0] = "magenta";
+                    colors[1] = "yellow";
+                    colors[2] = "magenta";
+                    break;
+                    
+            case 7: colors[0] = "lightgray";
+                    colors[1] = "orange";
+                    colors[2] = "lightgray";
+                    break;     
+       
+            default:    colors[0] = "red";
+                        colors[1] = "blue";
+                        colors[2] = "red";
+                     break;        
+        }
+        return colors;
     }
     
     public void addGraph(GraphProperties prop){
@@ -1497,11 +1559,11 @@ public class JXYConfigurator extends JFrame{
         
     }
     
-    public void showHiRes(){
-  
-            hiresDlg = new HiResDlg();
-            hiresDlg.setVisible(true);
-    }
+//    public void showHiRes(){
+//  
+//            hiresDlg = new HiResDlg();
+//            hiresDlg.setVisible(true);
+//    }
 
     
 //    public void timePlot(){
@@ -1722,24 +1784,22 @@ public class JXYConfigurator extends JFrame{
         }
     };
     
-    ActionListener saveImageAction = new ActionListener(){
+       
+        ActionListener saveImageAction = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
             
-            showHiRes();
-            
-            
-            
-//            JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
-//            int returnVal = chooser.showSaveDialog(thisDlg);
-//            File file = chooser.getSelectedFile();
-//            
-//            int width = 3000;
-//            int height = 2000;
-//            
-//            jts.savePicture(file, width, height);
-            
+//            showHiRes();
+            try{
+                JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
+                chooser.setFileFilter(JAMSFileFilter.getEpsFilter());
+                int returnVal = chooser.showSaveDialog(thisDlg);
+                File file = chooser.getSelectedFile();
+                jxys.saveAsEPS(file);
+            }catch(Exception ex){}
+ 
         }
     };
+            
     
     
     
@@ -1783,132 +1843,132 @@ public class JXYConfigurator extends JFrame{
         }  
     }
     
-    private class HiResDlg extends JDialog{
-            
-            HiResPanel hiresPanel;
-            JScrollPane hiresPane;
-            JLabel w_label;
-            JLabel h_label;
-            JTextField w_field;
-            JTextField h_field;
-            ;
-            
-            BufferedImage bi;
-
-            int w = 1024;
-            int h = 768;
-            Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-            
-            JButton createButton = new JButton("Create Image");
-            JButton saveJPEG = new JButton("Export as JPEG");
-            JPanel buttonPanel = new JPanel();
-            
-            public HiResDlg(){
-                super(thisDlg, "High Resolution JPEG Export");
-                setDefaultCloseOperation(this.DISPOSE_ON_CLOSE);
-                createGUI();
-            }
-            
-            private void createGUI(){
-                
-                screen.height = screen.height - 28;
-
-                saveJPEG.addActionListener(saveJPEGListener);
-                createButton.addActionListener(createImageListener);
-                setSize(screen);
-                setLayout( new BorderLayout());
-                
-                w_label = new JLabel("width");
-                w_field= new JTextField("1024");
-                h_label = new JLabel("height");
-                h_field= new JTextField("768");
-                
-                
-                createImage();
-                
-                buttonPanel.setLayout(new FlowLayout());
-                buttonPanel.add(w_label);
-                buttonPanel.add(w_field);
-                buttonPanel.add(h_label);
-                buttonPanel.add(h_field);
-                buttonPanel.add(createButton);
-                buttonPanel.add(saveJPEG);
-                
-//                hiresPanel.paint(jts.getBufferedImage(2000, 3000).createGraphics());
-                hiresPane = new JScrollPane(hiresPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-                //hiresPane.setPreferredSize(new Dimension(1024, 768));
-                hiresPane.createVerticalScrollBar();
-                hiresPane.createHorizontalScrollBar();
-                
-                add(buttonPanel, BorderLayout.NORTH);
-                add(hiresPane, BorderLayout.CENTER);
-                //hiresDlg.pack();
-                
-            }
-            private void createImage(){
-                
-                bi = jxys.getBufferedImage(w, h);
-                
-                hiresPanel = new HiResPanel(bi);
-                hiresPanel.setPreferredSize(new Dimension(w, h));
-            }
-            
-            private void readSize(){
-                try{
-                    w = new Integer(w_field.getText());
-                    h = new Integer(h_field.getText());
-                } catch(NumberFormatException ne){
-                    w = 1024;
-                    h = 768;
-                }
-            }
-            
-            public void saveJPEG(BufferedImage bi){
-        
-        try{
-            JFileChooser chooser = new JFileChooser();
-            int returnVal = chooser.showSaveDialog(thisDlg);
-            
-            File file = chooser.getSelectedFile();
-        
-	    // jpeg encoding
-            
-            FileOutputStream out = new FileOutputStream(file);
-            
-            //ByteArrayOutputStream out = new ByteArrayOutputStream();
-            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-            JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bi); 
-            param.setQuality(1.0f, false);
-            encoder.setJPEGEncodeParam(param);
-            encoder.encode(bi);
-        }
-        catch(Exception ex){
-        }
-            
-            
-    }
-            
-    ActionListener createImageListener = new ActionListener(){
-                public void actionPerformed(ActionEvent e) {
-                    
-                    
-                    readSize();
-                    createImage();
-                    
-                    hiresPanel.repaint();
-                    hiresPane.setViewportView(hiresPanel);
-                    repaint();
-                    
-                    
-                }
-            };
-            
-            ActionListener saveJPEGListener = new ActionListener(){
-                public void actionPerformed(ActionEvent e) {
-                    saveJPEG(bi);
-                }
-            };
-    }
+//    private class HiResDlg extends JDialog{
+//            
+//            HiResPanel hiresPanel;
+//            JScrollPane hiresPane;
+//            JLabel w_label;
+//            JLabel h_label;
+//            JTextField w_field;
+//            JTextField h_field;
+//            ;
+//            
+//            BufferedImage bi;
+//
+//            int w = 1024;
+//            int h = 768;
+//            Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+//            
+//            JButton createButton = new JButton("Create Image");
+//            JButton saveJPEG = new JButton("Export as JPEG");
+//            JPanel buttonPanel = new JPanel();
+//            
+//            public HiResDlg(){
+//                super(thisDlg, "High Resolution JPEG Export");
+//                setDefaultCloseOperation(this.DISPOSE_ON_CLOSE);
+//                createGUI();
+//            }
+//            
+//            private void createGUI(){
+//                
+//                screen.height = screen.height - 28;
+//
+//                saveJPEG.addActionListener(saveJPEGListener);
+//                createButton.addActionListener(createImageListener);
+//                setSize(screen);
+//                setLayout( new BorderLayout());
+//                
+//                w_label = new JLabel("width");
+//                w_field= new JTextField("1024");
+//                h_label = new JLabel("height");
+//                h_field= new JTextField("768");
+//                
+//                
+//                createImage();
+//                
+//                buttonPanel.setLayout(new FlowLayout());
+//                buttonPanel.add(w_label);
+//                buttonPanel.add(w_field);
+//                buttonPanel.add(h_label);
+//                buttonPanel.add(h_field);
+//                buttonPanel.add(createButton);
+//                buttonPanel.add(saveJPEG);
+//                
+////                hiresPanel.paint(jts.getBufferedImage(2000, 3000).createGraphics());
+//                hiresPane = new JScrollPane(hiresPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+//                //hiresPane.setPreferredSize(new Dimension(1024, 768));
+//                hiresPane.createVerticalScrollBar();
+//                hiresPane.createHorizontalScrollBar();
+//                
+//                add(buttonPanel, BorderLayout.NORTH);
+//                add(hiresPane, BorderLayout.CENTER);
+//                //hiresDlg.pack();
+//                
+//            }
+//            private void createImage(){
+//                
+//                bi = jxys.getBufferedImage(w, h);
+//                
+//                hiresPanel = new HiResPanel(bi);
+//                hiresPanel.setPreferredSize(new Dimension(w, h));
+//            }
+//            
+//            private void readSize(){
+//                try{
+//                    w = new Integer(w_field.getText());
+//                    h = new Integer(h_field.getText());
+//                } catch(NumberFormatException ne){
+//                    w = 1024;
+//                    h = 768;
+//                }
+//            }
+//            
+//            public void saveJPEG(BufferedImage bi){
+//        
+//        try{
+//            JFileChooser chooser = new JFileChooser();
+//            int returnVal = chooser.showSaveDialog(thisDlg);
+//            
+//            File file = chooser.getSelectedFile();
+//        
+//	    // jpeg encoding
+//            
+//            FileOutputStream out = new FileOutputStream(file);
+//            
+//            //ByteArrayOutputStream out = new ByteArrayOutputStream();
+//            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+//            JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bi); 
+//            param.setQuality(1.0f, false);
+//            encoder.setJPEGEncodeParam(param);
+//            encoder.encode(bi);
+//        }
+//        catch(Exception ex){
+//        }
+//            
+//            
+//    }
+//            
+//    ActionListener createImageListener = new ActionListener(){
+//                public void actionPerformed(ActionEvent e) {
+//                    
+//                    
+//                    readSize();
+//                    createImage();
+//                    
+//                    hiresPanel.repaint();
+//                    hiresPane.setViewportView(hiresPanel);
+//                    repaint();
+//                    
+//                    
+//                }
+//            };
+//            
+//            ActionListener saveJPEGListener = new ActionListener(){
+//                public void actionPerformed(ActionEvent e) {
+//                    saveJPEG(bi);
+//                }
+//            };
+//    }
     
     private class AddGraphDlg extends JDialog{
  

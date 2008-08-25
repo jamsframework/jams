@@ -629,6 +629,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
 //////        panel.setLayout(panellayout);
               panel.setLayout(new BorderLayout(10,10));
               JPanel controlpanel = new JPanel();
+              JPanel helperpanel = new JPanel();
               GridBagLayout gbl = new GridBagLayout();
               controlpanel.setLayout(gbl);
               JPanel headerpanel = new JPanel();
@@ -673,13 +674,12 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
               
               headerpanel.add(titleLabel);
               headerpanel.add(headerlabel);
-        
+              helperpanel.add(controlpanel);
+              
               panel.add(headerpanel, BorderLayout.NORTH);
               
               panel.add(scrollpane, BorderLayout.CENTER);
-              JPanel helper = new JPanel();
-              helper.add(controlpanel);
-              panel.add(helper, BorderLayout.EAST);
+              panel.add(helperpanel,BorderLayout.EAST);
               
               
           }
