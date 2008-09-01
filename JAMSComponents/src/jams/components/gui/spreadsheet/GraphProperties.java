@@ -116,6 +116,11 @@ public class GraphProperties {
     int[] rowSelection;
     int x_series_col;
     
+    int stroke_type;
+    int shape_type;
+    int size_type;
+    int outline_type;
+    
     double data_range_start;
     double data_range_end;
     
@@ -168,10 +173,10 @@ public class GraphProperties {
     //Variables for renderer options
     Stroke series_stroke;
     Shape series_shape;
-    Paint series_paint;
+    Color series_paint;
     Stroke series_outline_stroke;
-    Paint series_outline_paint;
-    Paint series_fill_paint;
+    Color series_outline_paint;
+    Color series_fill_paint;
     
     ColorLabel colorlabel;
     
@@ -907,17 +912,17 @@ public class GraphProperties {
         this.series_shape = shape;
     }
     
-    public void setSeriesPaint(Paint paint){
+    public void setSeriesPaint(Color paint){
         this.series_paint = paint;
         cr_dlg.updateColors();
     }
     
-    public void setSeriesFillPaint(Paint fill){
+    public void setSeriesFillPaint(Color fill){
         this.series_fill_paint = fill;
         cr_dlg.updateColors();
     }
     
-    public void setSeriesOutlinePaint(Paint paint){
+    public void setSeriesOutlinePaint(Color paint){
         this.series_outline_paint = paint;
         cr_dlg.updateColors();
     }
@@ -934,7 +939,8 @@ public class GraphProperties {
         this.shapesVisible = flag;
     }
     
-    private void setStroke(int type){
+    public void setStroke(int type){
+        stroke_type = type;
         float width;
         
         switch(type){
@@ -957,7 +963,9 @@ public class GraphProperties {
         setSeriesStroke(new BasicStroke(width));  
     }
     
-    private void setOutlineStroke(int type){
+    public void setOutlineStroke(int type){
+        
+        outline_type = type;
         float width;
         
         switch(type){
@@ -989,7 +997,10 @@ public class GraphProperties {
      
     
     
-    private void setShape(int type, int size){
+    public void setShape(int type, int size){
+        
+        shape_type = type;
+        size_type = size;
         
         int dim =  size;
         int coord;
@@ -1044,6 +1055,21 @@ public class GraphProperties {
        
     }
     
+    public int getStrokeType(){
+        return stroke_type;
+    }
+    
+    public int getShapeType(){
+        return shape_type;
+    }
+    
+    public int getSizeType(){
+        return size_type;
+    }
+    
+    public int getOutlineType(){        
+        return outline_type;
+    }    
     
     public Stroke getSeriesStroke(){
         return this.series_stroke;
@@ -1053,11 +1079,11 @@ public class GraphProperties {
         return this.series_shape;
     }
     
-    public Paint getSeriesPaint(){
+    public Color getSeriesPaint(){
         return this.series_paint;
     }
     
-    public Paint getSeriesFillPaint(){
+    public Color getSeriesFillPaint(){
         return this.series_fill_paint;
     }
     
@@ -1065,7 +1091,7 @@ public class GraphProperties {
         return this.series_outline_stroke;
     }
     
-    public Paint getSeriesOutlinePaint(){
+    public Color getSeriesOutlinePaint(){
         return this.series_outline_paint;
     }
     
