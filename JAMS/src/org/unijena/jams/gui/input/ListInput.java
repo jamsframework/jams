@@ -62,7 +62,7 @@ public class ListInput extends JPanel {
         // create a new listbox control
         listbox = new JList(listData.getValue());
         getListbox().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+
         listbox.addMouseListener(new MouseListener() {
 
             public void mouseClicked(MouseEvent e) {
@@ -215,8 +215,13 @@ public class ListInput extends JPanel {
         getListbox().setEnabled(enabled);
         addButton.setEnabled(enabled);
         removeButton.setEnabled(enabled);
-        upButton.setEnabled(enabled);
-        downButton.setEnabled(enabled);
+        editButton.setEnabled(enabled);
+        if (upButton != null) {
+            upButton.setEnabled(enabled);
+        }
+        if (downButton != null) {
+            downButton.setEnabled(enabled);
+        }
     }
 
     protected void addItem() {

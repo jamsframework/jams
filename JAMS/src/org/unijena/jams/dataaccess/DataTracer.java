@@ -1,6 +1,6 @@
 /*
- * DataWriter.java
- * Created on 21. März 2008, 13:32
+ * DataTracer.java
+ * Created on 28. August 2008, 13:40
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -20,20 +20,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package rbis.virtualws.plugins;
 
-import rbis.virtualws.DataSet;
+package org.unijena.jams.dataaccess;
 
 /**
  *
- * @author Sven Kralisch
+ * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public interface DataWriter {
-    
-    public int init();
+public class DataTracer {
 
-    public int cleanup();
+    public DataTracer() {
+    }
 
-    public int writeData(DataSet[] data);
-    
 }

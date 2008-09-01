@@ -30,7 +30,7 @@ import org.unijena.jams.data.*;
  *
  * @author S. Kralisch
  */
-public class IntegerAccessor implements JAMSEntityDataAccessor {
+public class IntegerAccessor implements DataAccessor {
     
     JAMSInteger componentObject;
     JAMSInteger[] entityObject;
@@ -47,7 +47,7 @@ public class IntegerAccessor implements JAMSEntityDataAccessor {
                     entityObject[i] = (JAMSInteger) entities[i].getObject(attributeName);
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {}
             } else {
-                if (accessType != JAMSEntityDataAccessor.READ_ACCESS) {
+                if (accessType != DataAccessor.READ_ACCESS) {
                     entityObject[i] = new JAMSInteger();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {

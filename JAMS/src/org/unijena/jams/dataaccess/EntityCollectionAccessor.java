@@ -29,7 +29,7 @@ import org.unijena.jams.data.*;
  *
  * @author S. Kralisch
  */
-public class EntityCollectionAccessor implements JAMSEntityDataAccessor {
+public class EntityCollectionAccessor implements DataAccessor {
     
     JAMSEntityCollection componentObject;
     JAMSEntityCollection[] entityObject;
@@ -46,7 +46,7 @@ public class EntityCollectionAccessor implements JAMSEntityDataAccessor {
                     entityObject[i] = (JAMSEntityCollection) entities[i].getObject(attributeName);
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {}
             } else {
-                if (accessType != JAMSEntityDataAccessor.READ_ACCESS) {
+                if (accessType != DataAccessor.READ_ACCESS) {
                     entityObject[i] = new JAMSEntityCollection();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {

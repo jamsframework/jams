@@ -1,5 +1,5 @@
 /*
- * JAMSEntityDataAccessor.java
+ * DataAccessor.java
  * Created on 29. Dezember 2005, 11:29
  *
  * This file is part of JAMS
@@ -29,7 +29,7 @@ import java.io.Serializable;
  *
  * @author S. Kralisch
  */
-public interface JAMSEntityDataAccessor extends Serializable{
+public interface DataAccessor extends Serializable{
 
     public static final int READ_ACCESS = 0;
     public static final int WRITE_ACCESS = 1;

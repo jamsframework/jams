@@ -1,6 +1,6 @@
 /*
- * DataWriter.java
- * Created on 21. März 2008, 13:32
+ * J2KTSFileReader.java
+ * Created on 25. August 2008, 16:50
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -20,20 +20,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package rbis.virtualws.plugins;
 
-import rbis.virtualws.DataSet;
+package rbis.virtualws.plugins;
 
 /**
  *
- * @author Sven Kralisch
+ * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public interface DataWriter {
-    
-    public int init();
+public class J2KTSFileReader {
 
-    public int cleanup();
+    public J2KTSFileReader() {
+    }
 
-    public int writeData(DataSet[] data);
-    
 }

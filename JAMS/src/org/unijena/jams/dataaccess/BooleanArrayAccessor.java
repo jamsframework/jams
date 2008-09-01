@@ -30,7 +30,7 @@ import org.unijena.jams.data.*;
  *
  * @author S. Kralisch
  */
-public class BooleanArrayAccessor implements JAMSEntityDataAccessor {
+public class BooleanArrayAccessor implements DataAccessor {
     
     JAMSBooleanArray componentObject;
     JAMSBooleanArray[] entityObject;
@@ -47,7 +47,7 @@ public class BooleanArrayAccessor implements JAMSEntityDataAccessor {
                     entityObject[i] = (JAMSBooleanArray) entities[i].getObject(attributeName);
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {}
             } else {
-                if (accessType != JAMSEntityDataAccessor.READ_ACCESS) {
+                if (accessType != DataAccessor.READ_ACCESS) {
                     entityObject[i] = new JAMSBooleanArray();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {

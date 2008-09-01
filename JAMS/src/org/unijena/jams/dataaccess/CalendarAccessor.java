@@ -29,7 +29,7 @@ import org.unijena.jams.data.*;
  *
  * @author S. Kralisch
  */
-public class CalendarAccessor implements JAMSEntityDataAccessor {
+public class CalendarAccessor implements DataAccessor {
     
     JAMSCalendar componentObject;
     JAMSCalendar[] entityObject;
@@ -46,7 +46,7 @@ public class CalendarAccessor implements JAMSEntityDataAccessor {
                     entityObject[i] = (JAMSCalendar) entities[i].getObject(attributeName);
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {}
             } else {
-                if (accessType != JAMSEntityDataAccessor.READ_ACCESS) {
+                if (accessType != DataAccessor.READ_ACCESS) {
                     entityObject[i] = new JAMSCalendar();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {

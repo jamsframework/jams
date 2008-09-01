@@ -56,9 +56,10 @@ title="JAMS Component",
     
     protected ArrayList<AccessSpec> accessSpecs = new ArrayList<AccessSpec>();
     protected ArrayList<AttributeSpec> attributeSpecs = new ArrayList<AttributeSpec>();
-    protected JAMSEntityDataAccessor[] dataAccessors = new JAMSEntityDataAccessor[0];
-    protected ArrayList<JAMSEntityDataAccessor> daList = new ArrayList<JAMSEntityDataAccessor>();
+    protected DataAccessor[] dataAccessors = new DataAccessor[0];
+    protected ArrayList<DataAccessor> daList = new ArrayList<DataAccessor>();
     protected HashMap<String, JAMSData> attribs = new  HashMap<String, JAMSData>();
+    private ArrayList<DataTracer> tracerList = new ArrayList<DataTracer>();
     
     protected boolean doRun = true;
     
@@ -148,7 +149,7 @@ title="JAMS Component",
     public void initAccessors(){    
         attribs =  new  HashMap<String, JAMSData>();
         
-        daList = new ArrayList<JAMSEntityDataAccessor>();
+        daList = new ArrayList<DataAccessor>();
         
         AccessSpec accessSpec;
         AttributeSpec attributeSpec;
@@ -233,7 +234,7 @@ title="JAMS Component",
         }
         
         if (daList.size()>0) {
-            this.dataAccessors = daList.toArray(new JAMSEntityDataAccessor[daList.size()]);
+            this.dataAccessors = daList.toArray(new DataAccessor[daList.size()]);
         }
         
         for (int i=0;i<daList.size();i++){
@@ -283,7 +284,7 @@ title="JAMS Component",
     
     protected JAMSData getDataObject(final JAMSEntity[] ea, final Class clazz, final String attributeName, final int accessType, JAMSData componentObject) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {
         JAMSData dataObject;
-        JAMSEntityDataAccessor da = null;
+        DataAccessor da = null;
         
         dataObject = attribs.get(attributeName);
         if (dataObject == null) {
@@ -345,7 +346,7 @@ title="JAMS Component",
         
         //in case the components want to write access the objects, update the entity objects attributes
         for (int i = 0; i < dataAccessors.length; i++) {
-            if (dataAccessors[i].getAccessType() == JAMSEntityDataAccessor.WRITE_ACCESS) {
+            if (dataAccessors[i].getAccessType() == DataAccessor.WRITE_ACCESS) {
                 for (int j = 0; j < getEntities().getEntities().size(); j++) {
                     dataAccessors[i].setIndex(j);
                     dataAccessors[i].write();
@@ -523,7 +524,7 @@ title="JAMS Component",
         HashSet<String> set = new HashSet<String>();
         for (int i=0;i<this.accessSpecs.size();i++){
             if (accessSpecs.get(i).attributeName.equals(attr)){
-                if (accessSpecs.get(i).accessType != JAMSEntityDataAccessor.READ_ACCESS)
+                if (accessSpecs.get(i).accessType != DataAccessor.READ_ACCESS)
                     set.add(accessSpecs.get(i).component.getInstanceName());
             }
         }
@@ -571,7 +572,7 @@ title="JAMS Component",
                     System.out.print("Cant get class of variable " + as.varName + " of component + " + as.component.instanceName + " because:" + e.toString());
                 }
                 
-                if (as.accessType == JAMSEntityDataAccessor.READ_ACCESS || as.accessType == JAMSEntityDataAccessor.READWRITE_ACCESS || isEntity){                        
+                if (as.accessType == DataAccessor.READ_ACCESS || as.accessType == DataAccessor.READWRITE_ACCESS || isEntity){                        
                     if (readAccessComponents.containsKey(attrName))                    
                         readAccessComponents.get(attrName).add(as.component.instanceName);
                     else{
@@ -580,7 +581,7 @@ title="JAMS Component",
                         readAccessComponents.put(attrName,set);
                     }
                 }
-                if (as.accessType == JAMSEntityDataAccessor.WRITE_ACCESS || as.accessType == JAMSEntityDataAccessor.READWRITE_ACCESS || isEntity){                        
+                if (as.accessType == DataAccessor.WRITE_ACCESS || as.accessType == DataAccessor.READWRITE_ACCESS || isEntity){                        
                     if (writeAccessComponents.containsKey(attrName))                    
                         writeAccessComponents.get(attrName).add(as.component.instanceName);
                     else{
@@ -689,7 +690,7 @@ title="JAMS Component",
             for (int i=0;i<this.accessSpecs.size();i++){                
                 if ( this.accessSpecs.get(i).attributeName.compareTo(attribName) == 0){
                     //do they write this attrib?
-                    if (this.accessSpecs.get(i).accessType != JAMSEntityDataAccessor.READ_ACCESS){
+                    if (this.accessSpecs.get(i).accessType != DataAccessor.READ_ACCESS){
                         component = this.accessSpecs.get(i).component;
                         //has component been executed
                         if (componentAllreadyProcessed(position,component) == 1)
@@ -744,6 +745,10 @@ title="JAMS Component",
             //read entity data before execution
             dataAccessors[i].read();
         }
+    }
+    
+    public void registerDataTracer(DataTracer tracer) {
+        tracerList.add(tracer);
     }
     
     public long getNumberOfIterations() {

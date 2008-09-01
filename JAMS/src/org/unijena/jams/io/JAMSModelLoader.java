@@ -23,7 +23,7 @@
 package org.unijena.jams.io;
 
 import java.util.*;
-import org.unijena.jams.dataaccess.JAMSEntityDataAccessor;
+import org.unijena.jams.dataaccess.DataAccessor;
 import org.unijena.jams.model.*;
 import org.w3c.dom.*;
 import java.lang.reflect.*;
@@ -285,11 +285,11 @@ public class JAMSModelLoader {
                             attributeName = element.getAttribute("attribute");
 
                             if (jvd.access() == JAMSVarDescription.AccessType.READ) {
-                                sc.addAccess(component, varName, attributeName, JAMSEntityDataAccessor.READ_ACCESS);
+                                sc.addAccess(component, varName, attributeName, DataAccessor.READ_ACCESS);
                             } else if (jvd.access() == JAMSVarDescription.AccessType.WRITE) {
-                                sc.addAccess(component, varName, attributeName, JAMSEntityDataAccessor.WRITE_ACCESS);
+                                sc.addAccess(component, varName, attributeName, DataAccessor.WRITE_ACCESS);
                             } else if (jvd.access() == JAMSVarDescription.AccessType.READWRITE) {
-                                sc.addAccess(component, varName, attributeName, JAMSEntityDataAccessor.READWRITE_ACCESS);
+                                sc.addAccess(component, varName, attributeName, DataAccessor.READWRITE_ACCESS);
                             }
                         }
                     /*
