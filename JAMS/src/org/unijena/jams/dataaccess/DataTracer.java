@@ -20,8 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package org.unijena.jams.dataaccess;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import org.unijena.jams.data.JAMSData;
+import org.unijena.jams.model.JAMSContext;
 
 /**
  *
@@ -29,7 +33,41 @@ package org.unijena.jams.dataaccess;
  */
 public class DataTracer {
 
-    public DataTracer() {
+    private JAMSData[] dataObjects;
+    private ArrayList<String> attributeNames = new ArrayList<String>();
+    private JAMSContext context;
+
+    public DataTracer(JAMSContext context) {
+        this.context = context;
     }
 
+    public void registerAttribute(String attributeName) {
+        attributeNames.add(attributeName);
+    }
+
+    public String[] init(HashMap<String, JAMSData> dataObjectHash) {
+
+        ArrayList<String> missingAttributes = new ArrayList<String>();
+        ArrayList<JAMSData> objectList = new ArrayList<JAMSData>();
+
+        for (String attributeName : attributeNames) {
+            JAMSData dataObject = dataObjectHash.get(attributeName);
+            if (dataObject != null) {
+                objectList.add(dataObject);
+            } else {
+                missingAttributes.add(attributeName);
+            }
+        }
+        this.dataObjects = objectList.toArray(new JAMSData[objectList.size()]);
+        return missingAttributes.toArray(new String[missingAttributes.size()]);
+    }
+
+    public JAMSData[] getDataObjects() {
+        return dataObjects;
+    }
+    
+    public void println(String str) {
+        System.out.println(str);
+    }
+    
 }

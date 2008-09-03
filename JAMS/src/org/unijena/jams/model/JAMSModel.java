@@ -136,7 +136,7 @@ public class JAMSModel extends JAMSContext {
 
             objIn.close();
         } catch (Exception e) {
-            this.getRuntime().sendErrorMsg("Unable to deserializing jamsentity collection, because" + e.toString());
+            this.getRuntime().sendErrorMsg("Unable to deserialize jamsentity collection, because" + e.toString());
         }
         RestoreEntityCollections(this.getModel(), contextStates);
     }

@@ -50,8 +50,6 @@ import javax.swing.JToolBar;
 import org.unijena.jams.JAMS;
 import org.unijena.jams.JAMSProperties;
 import org.unijena.jams.JAMSTools;
-import org.unijena.jams.ModelConfig;
-import org.unijena.jams.ModelPreprocessor;
 import org.unijena.jams.data.JAMSData;
 import org.unijena.jams.data.JAMSEntityCollection;
 import org.unijena.jams.io.JAMSModelLoader;

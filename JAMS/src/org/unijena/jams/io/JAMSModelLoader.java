@@ -104,7 +104,7 @@ public class JAMSModelLoader {
         for (int index = 0; index < childs.getLength(); index++) {
             node = childs.item(index);
             if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
-                element = (Element) node;
+                element = (Element) node; //3.
                 try {
 
                     topComponent = loadComponent(element, jamsModel);
@@ -175,7 +175,7 @@ public class JAMSModelLoader {
 
         for (int index = 0; index < childs.getLength(); index++) {
 
-            Node node = childs.item(index);
+            Node node = childs.item(index);//6
 
             if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
 
@@ -191,15 +191,6 @@ public class JAMSModelLoader {
             jamsModel.getRuntime().addGUIComponent(guiComponent);
             }
              */
-
-            } else if (node.getNodeName().equals("attribute")) {
-
-                if (!JAMSContext.class.isAssignableFrom(component.getClass())) {
-                    throw new ModelSpecificationException("Attribute tag can only be used inside context components! (component " + componentName + ")");
-                }
-
-                Element element = (Element) node;
-                ((JAMSContext) component).addAttribute(element.getAttribute("name"), element.getAttribute("class"), element.getAttribute("value"));
 
             } else if (node.getNodeName().equals("var")) {
 
@@ -291,7 +282,9 @@ public class JAMSModelLoader {
                             } else if (jvd.access() == JAMSVarDescription.AccessType.READWRITE) {
                                 sc.addAccess(component, varName, attributeName, DataAccessor.READWRITE_ACCESS);
                             }
+
                         }
+
                     /*
                     if (jvd.update() == JAMSVarDescription.UpdateType.INIT) {
                     JAMSData data = (JAMSData) field.get(component);
@@ -317,7 +310,28 @@ public class JAMSModelLoader {
                     jamsModel.getRuntime().handle(ex);
                 }
 
-            } // JAMS var declaration
+            // JAMS var declaration
+
+            } else if (node.getNodeName().equals("attribute")) {
+
+                if (!JAMSContext.class.isAssignableFrom(component.getClass())) {
+                    throw new ModelSpecificationException("Attribute tag can only be used inside context components! (component " + componentName + ")");
+                }
+
+                Element element = (Element) node;
+                ((JAMSContext) component).addAttribute(element.getAttribute("name"), element.getAttribute("class"), element.getAttribute("value"));
+
+            } else if (node.getNodeName().equals("trace")) {
+
+                if (!JAMSContext.class.isAssignableFrom(component.getClass())) {
+                    throw new ModelSpecificationException("Trace tag can only be used inside context components! (component " + componentName + ")");
+                }
+
+                Element element = (Element) node;
+                ((JAMSContext) component).getDataTracer().registerAttribute(element.getAttribute("attribute"));
+                jamsModel.getRuntime().println("Registering trace for " + component.getInstanceName() + "->" + element.getAttribute("attribute"), JAMS.STANDARD);
+
+            }
         }
         if (component instanceof JAMSContext) {
             ((JAMSContext) component).setComponents(childComponentList);

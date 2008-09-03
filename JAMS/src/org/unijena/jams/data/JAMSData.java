@@ -22,8 +22,6 @@
  */
 package org.unijena.jams.data;
 
-import java.io.Serializable;
-
 /**
  *
  * @author S. Kralisch
