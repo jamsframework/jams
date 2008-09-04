@@ -31,7 +31,7 @@ import org.unijena.jams.model.JAMSContext;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class DataTracer {
+public abstract class DataTracer {
 
     private JAMSData[] dataObjects;
     private ArrayList<String> attributeNames = new ArrayList<String>();
@@ -66,8 +66,13 @@ public class DataTracer {
         return dataObjects;
     }
     
-    public void println(String str) {
-        System.out.println(str);
-    }
+    /**
+     * This method contains code to be executed as traced JAMSData change
+     */
+    public abstract void update();
+
+    public abstract void startMark();
+    
+    public abstract void endMark();
     
 }

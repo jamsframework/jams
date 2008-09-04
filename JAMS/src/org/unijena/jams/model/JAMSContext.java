@@ -54,7 +54,7 @@ public class JAMSContext extends JAMSComponent {
     protected DataAccessor[] dataAccessors = new DataAccessor[0];
     protected ArrayList<DataAccessor> daList = new ArrayList<DataAccessor>();
     protected HashMap<String, JAMSData> attribs;
-    private DataTracer dataTracer;
+    protected DataTracer dataTracer;
     protected boolean doRun = true;
 
     public JAMSContext() {
@@ -66,7 +66,21 @@ public class JAMSContext extends JAMSComponent {
         getEntities().setEntities(list);
 
         attribs = new HashMap<String, JAMSData>();
-        dataTracer = new DataTracer(this);
+        dataTracer = new DataTracer(this) {
+
+            @Override
+            public void update() {
+            }
+
+            @Override
+            public void startMark() {
+            }
+
+            @Override
+            public void endMark() {
+            }
+            
+        };
     }
 
     public void exchange(int i, int j) {

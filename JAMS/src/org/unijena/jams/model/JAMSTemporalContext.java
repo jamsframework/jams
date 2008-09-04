@@ -42,21 +42,36 @@ public class JAMSTemporalContext extends JAMSContext {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "Current date of temporal context")
     public JAMSCalendar current;
-    
     private JAMSCalendar lastValue;
-    private DataTracer dataTracer;
 
     public JAMSTemporalContext() {
-        current = new JAMSCalendar();
-    }
 
-    public JAMSTemporalContext(JAMSTimeInterval timeInterval) {
-        this();
-        this.timeInterval = timeInterval;
-    }
+        dataTracer = new DataTracer(this) {
 
-    public JAMSTemporalContext(JAMSCalendar start, JAMSCalendar end, int timeUnit, int timeUnitCount) {
-        this.timeInterval = new JAMSTimeInterval(start, end, timeUnit, timeUnitCount);
+            @Override
+            public void update() {
+
+                if (getDataObjects().length == 0) {
+                    return;
+                }
+
+                String result = current.toString() + "\t";
+                for (JAMSData dataObject : dataTracer.getDataObjects()) {
+                    result += dataObject.toString();
+                }
+                System.out.println(result);
+            }
+
+            @Override
+            public void startMark() {
+                System.out.println("$start(" + getInstanceName() + ")");
+            }
+
+            @Override
+            public void endMark() {
+                System.out.println("$end(" + getInstanceName() + ")");
+            }
+        };
     }
 
     @Override
@@ -65,7 +80,6 @@ public class JAMSTemporalContext extends JAMSContext {
         lastValue = timeInterval.getEnd().clone();
         lastValue.add(timeInterval.getTimeUnit(), -timeInterval.getTimeUnitCount());
         lastValue.add(JAMSCalendar.MILLISECOND, 1);
-        dataTracer = getDataTracer();
     }
 
     @Override
@@ -80,20 +94,10 @@ public class JAMSTemporalContext extends JAMSContext {
 
     @Override
     public void run() {
+        dataTracer.startMark();
         super.run();
-        tracerOutput();
-    }
-
-    private void tracerOutput() {
-        if (dataTracer.getDataObjects().length == 0) {
-            return;
-        }
-        
-        String result = current.toString() + "\t";
-        for (JAMSData dataObject : dataTracer.getDataObjects()) {
-            result += dataObject.toString();
-        }
-        dataTracer.println(result);
+        dataTracer.update();
+        dataTracer.endMark();
     }
 
     class RunEnumerator implements JAMSComponentEnumerator {
@@ -114,7 +118,7 @@ public class JAMSTemporalContext extends JAMSContext {
             // timestep start with the new Component list again
             if (!ce.hasNext() && current.before(lastValue)) {
 
-                tracerOutput();
+                dataTracer.update();
 
                 current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
                 ce.reset();

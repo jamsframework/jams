@@ -433,7 +433,7 @@ public class JAMSModelLoader {
             data = (JAMSData) Class.forName("org.unijena.jams.data.JAMSSimpleDouble").newInstance();
         } else {
             data = (JAMSData) clazz.newInstance();
-        // System.out.println(className);System.exit(0);
+        // System.out.update(className);System.exit(0);
         }
 
         return data;
