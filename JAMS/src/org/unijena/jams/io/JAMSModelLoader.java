@@ -212,7 +212,7 @@ public class JAMSModelLoader {
                         jamsModel.getRuntime().println("     " + componentName + " var declaration: " + varName + " (" + varClassName + ", " + jvd.access() + ")", JAMS.VERBOSE);
 
                         /*
-                        if ((jvd.update() == JAMSVarDescription.UpdateType.INIT) && ((jvd.access() != JAMSVarDescription.AccessType.READ) || element.hasAttribute("attribute"))) {
+                        if ((jvd.trace() == JAMSVarDescription.UpdateType.INIT) && ((jvd.access() != JAMSVarDescription.AccessType.READ) || element.hasAttribute("attribute"))) {
                         throw new ModelSpecificationException("Component " + componentName + ": Variable " + varName + " can only be set using \"value\" or \"globvar\"!");
                         }
                          */
@@ -286,7 +286,7 @@ public class JAMSModelLoader {
                         }
 
                     /*
-                    if (jvd.update() == JAMSVarDescription.UpdateType.INIT) {
+                    if (jvd.trace() == JAMSVarDescription.UpdateType.INIT) {
                     JAMSData data = (JAMSData) field.get(component);
                     String id = componentName + "." + varName;
                     jamsModel.getRuntime().getDataHandles().put(id, data);
@@ -433,7 +433,6 @@ public class JAMSModelLoader {
             data = (JAMSData) Class.forName("org.unijena.jams.data.JAMSSimpleDouble").newInstance();
         } else {
             data = (JAMSData) clazz.newInstance();
-        // System.out.update(className);System.exit(0);
         }
 
         return data;

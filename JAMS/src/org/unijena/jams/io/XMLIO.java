@@ -36,6 +36,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.unijena.jams.JAMS;
 import org.w3c.dom.*;
 
 /**
@@ -62,18 +63,15 @@ public class XMLIO {
             
         } catch (SAXException sxe) {
             // Error generated during parsing
-            Exception  x = sxe;
-            if (sxe.getException() != null)
-                x = sxe.getException();
-            x.printStackTrace();
+            JAMS.handle(sxe);
             
         } catch (ParserConfigurationException pce) {
             // Parser with specified options can't be built
-            pce.printStackTrace();
+            JAMS.handle(pce);
             
         } catch (IOException ioe) {
             // I/O error
-            org.unijena.jams.JAMS.handle(ioe);
+            JAMS.handle(ioe);
         }
         
         return document;

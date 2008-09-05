@@ -41,32 +41,64 @@ import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXParseException;
 import rbis.virtualws.stores.ASCIIConverter;
 
 public class VirtualWorkspace {
 
     private String wsTitle;
-    private HashMap<String, Document> dataStores = new HashMap<String, Document>();
+    private HashMap<String, Document> inDataStores = new HashMap<String, Document>();
+    private HashMap<String, Document> outDataStores = new HashMap<String, Document>();
     private JAMSRuntime runtime = new StandardRuntime();
     private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-    private File directory = null;
+    private File directory,  inputDirectory,  outputDirectory = null;
 
     public VirtualWorkspace(File directory, JAMSRuntime runtime) {
         this.runtime = runtime;
-        if (!directory.isDirectory()) {
-            this.getRuntime().sendErrorMsg("Error adding datastores: \"" + directory.getAbsolutePath() + "\" is not a directory!");
+        if (!isValid(directory)) {
+            this.getRuntime().sendErrorMsg("Error adding datastores: \"" +
+                    directory.getAbsolutePath() + "\" not a valid datastore or wrong permissions!");
         } else {
-            this.directory = directory;
             this.createDataStores();
         }
     }
 
-    public String addDataStore(Document doc) {
+    private boolean isValid(File directory) {
+        if (!directory.isDirectory()) {
+            return false;
+        }
+
+        try {
+            File inDir = new File(directory, "input");
+            File outDir = new File(directory, "output");
+
+            inDir.mkdir();
+            outDir.mkdir();
+
+            this.directory = directory;
+            this.inputDirectory = inDir;
+            this.outputDirectory = outDir;
+            return true;
+        } catch (SecurityException se) {
+            return false;
+        }
+    }
+
+    public String addInputDataStore(Document doc) {
         Element root = doc.getDocumentElement();
         String id = root.getAttribute("id");
-        dataStores.put(id, doc);
+
+        inDataStores.put(id, doc);
         return id;
     }
+    
+    public String addOutputDataStore(Document doc) {
+        Element root = doc.getDocumentElement();
+        String id = root.getAttribute("id");
+
+        outDataStores.put(id, doc);
+        return id;
+    }    
 
     public void reload() {
     }
@@ -84,16 +116,16 @@ public class VirtualWorkspace {
     }
 
     public Set<String> getDataStoreNames() {
-        return this.dataStores.keySet();
+        return this.inDataStores.keySet();
     }
 
     public void removeDataStore(DataStore store) {
-        dataStores.remove(store);
+        inDataStores.remove(store);
     }
 
     public DataStore getDataStore(String dsTitle) {
 
-        Document doc = dataStores.get(dsTitle);
+        Document doc = inDataStores.get(dsTitle);
         if (doc == null) {
             return null;
         }
@@ -133,18 +165,35 @@ public class VirtualWorkspace {
             }
         };
 
-        File[] children = directory.listFiles(filter);
-        for (File child : children) {
+        File[] inChildren = inputDirectory.listFiles(filter);
+        for (File child : inChildren) {
             try {
 
                 Document doc = XMLIO.getDocument(child.getAbsolutePath());
-                String storeID = this.addDataStore(doc);
+                String storeID = this.addInputDataStore(doc);
                 this.getRuntime().println("Added store \"" + storeID + "\" from \"" + child.getAbsolutePath() + "\"", JAMS.VERBOSE);
 
             } catch (FileNotFoundException fnfe) {
                 this.getRuntime().sendErrorMsg("Error reading datastore \"" + child.getAbsolutePath() + "\"!");
+            } catch (SAXParseException spe) {
+                this.getRuntime().sendErrorMsg("Error reading datastore \"" + child.getAbsolutePath() + "\"!");
             }
         }
+        
+        File[] outChildren = outputDirectory.listFiles(filter);
+        for (File child : outChildren) {
+            try {
+
+                Document doc = XMLIO.getDocument(child.getAbsolutePath());
+                String storeID = this.addOutputDataStore(doc);
+                this.getRuntime().println("Added store \"" + storeID + "\" from \"" + child.getAbsolutePath() + "\"", JAMS.VERBOSE);
+
+            } catch (FileNotFoundException fnfe) {
+                this.getRuntime().sendErrorMsg("Error reading datastore \"" + child.getAbsolutePath() + "\"!");
+            } catch (SAXParseException spe) {
+                this.getRuntime().sendErrorMsg("Error reading datastore \"" + child.getAbsolutePath() + "\"!");
+            }
+        }        
     }
 
     public String dataStoreToString(String dsTitle) {
@@ -183,7 +232,7 @@ public class VirtualWorkspace {
     public static void main(String[] args) throws IOException {
 
         JAMSRuntime runtime = new StandardRuntime();
-        runtime.setDebugLevel(JAMS.STANDARD);
+        runtime.setDebugLevel(JAMS.VERBOSE);
         runtime.addErrorLogObserver(new Observer() {
 
             public void update(Observable o, Object arg) {
@@ -197,13 +246,13 @@ public class VirtualWorkspace {
             }
         });
 
-        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace"), runtime);
+        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/vworkspace"), runtime);
 
         System.out.println(ws.dataStoreToString("tmin_local"));
-        ws.dataStoreToFile("tmin_local", new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace/_tmin_dump.txt"));
+        ws.dataStoreToFile("tmin_local", new File("D:/jamsapplication/vworkspace/_tmin_dump.txt"));
 
 //        System.out.println(ws.dataStoreToString("tmean_timeseries"));
-//        ws.dataStoreToFile("tmean_timeseries", new File("D:/jamsapplication/JAMS-Gehlberg/data/vworkspace/_tmean_dump.txt"));
+//        ws.dataStoreToFile("tmean_timeseries", new File("D:/jamsapplication/vworkspace/_tmean_dump.txt"));
 //        ws.wsToFile();
     }
 }

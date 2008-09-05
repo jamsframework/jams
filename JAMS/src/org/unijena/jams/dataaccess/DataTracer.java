@@ -65,14 +65,21 @@ public abstract class DataTracer {
     public JAMSData[] getDataObjects() {
         return dataObjects;
     }
-    
+
     /**
      * This method contains code to be executed as traced JAMSData change
      */
-    public abstract void update();
+    public abstract void trace();
 
-    public abstract void startMark();
+    public void setStartMark() {
+        output("@start{" + context.getInstanceName() + "}\n");
+    }
+
+    public void setEndMark() {
+        output("@end{" + context.getInstanceName() + "}\n");
+    }
     
-    public abstract void endMark();
-    
+    protected void output(String str) {
+        System.out.print(str);
+    }
 }

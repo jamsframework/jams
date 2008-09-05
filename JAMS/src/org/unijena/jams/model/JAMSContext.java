@@ -69,17 +69,8 @@ public class JAMSContext extends JAMSComponent {
         dataTracer = new DataTracer(this) {
 
             @Override
-            public void update() {
-            }
-
-            @Override
-            public void startMark() {
-            }
-
-            @Override
-            public void endMark() {
-            }
-            
+            public void trace() {
+            }            
         };
     }
 
@@ -353,7 +344,7 @@ public class JAMSContext extends JAMSComponent {
 
     protected void initEntityData() {
 
-        //in case the components want to write access the objects, update the entity objects attributes
+        //in case the components want to write access the objects, trace the entity objects attributes
         for (int i = 0; i < dataAccessors.length; i++) {
             if (dataAccessors[i].getAccessType() == DataAccessor.WRITE_ACCESS) {
                 for (int j = 0; j < getEntities().getEntities().size(); j++) {
@@ -743,7 +734,7 @@ public class JAMSContext extends JAMSComponent {
     }
 
     /*
-     * update entity data, but update data only, if data source component has allready been executed,
+     * trace entity data, but trace data only, if data source component has allready been executed,
      * which means that data source component is executed before currentComponent
      * used when making a model snapshot
      */

@@ -49,7 +49,7 @@ public class JAMSTemporalContext extends JAMSContext {
         dataTracer = new DataTracer(this) {
 
             @Override
-            public void update() {
+            public void trace() {
 
                 if (getDataObjects().length == 0) {
                     return;
@@ -59,18 +59,9 @@ public class JAMSTemporalContext extends JAMSContext {
                 for (JAMSData dataObject : dataTracer.getDataObjects()) {
                     result += dataObject.toString();
                 }
-                System.out.println(result);
+                output(result + "\n");
             }
 
-            @Override
-            public void startMark() {
-                System.out.println("$start(" + getInstanceName() + ")");
-            }
-
-            @Override
-            public void endMark() {
-                System.out.println("$end(" + getInstanceName() + ")");
-            }
         };
     }
 
@@ -94,10 +85,10 @@ public class JAMSTemporalContext extends JAMSContext {
 
     @Override
     public void run() {
-        dataTracer.startMark();
+        dataTracer.setStartMark();
         super.run();
-        dataTracer.update();
-        dataTracer.endMark();
+        dataTracer.trace();
+        dataTracer.setEndMark();
     }
 
     class RunEnumerator implements JAMSComponentEnumerator {
@@ -118,7 +109,7 @@ public class JAMSTemporalContext extends JAMSContext {
             // timestep start with the new Component list again
             if (!ce.hasNext() && current.before(lastValue)) {
 
-                dataTracer.update();
+                dataTracer.trace();
 
                 current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
                 ce.reset();
