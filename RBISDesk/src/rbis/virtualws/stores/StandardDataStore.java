@@ -45,14 +45,13 @@ public abstract class StandardDataStore implements DataStore {
     protected VirtualWorkspace ws;
     protected DataSetDefinition dsd;
     protected int bufferSize = 0;
-    private String id,  description = "",  respParty;
+    private String id,  description = "";
 
     public StandardDataStore(VirtualWorkspace ws, Document doc) {
         this.doc = doc;
         this.ws = ws;
 
         this.id = doc.getDocumentElement().getAttribute("id");
-        this.respParty = doc.getDocumentElement().getAttribute("respparty");
 
         Node descriptionNode = doc.getDocumentElement().getElementsByTagName("description").item(0);
         if (descriptionNode != null) {
@@ -223,9 +222,5 @@ public abstract class StandardDataStore implements DataStore {
 
     public DataReader getDataIO(String id) {
         return dataIO.get(id);
-    }
-
-    public String getRespParty() {
-        return respParty;
     }
 }

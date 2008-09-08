@@ -188,6 +188,10 @@ public class JAMSContext extends JAMSComponent {
                     clazz = null;
                 }
                 if (clazz.isArray()) {
+                    
+                    if (accessSpec.component.getInstanceName().equals("JAMSDataWriter")) {
+                        System.out.println("");
+                    }
 
                     String className = clazz.getCanonicalName();
                     className = className.substring(0, className.length() - 2);
@@ -199,7 +203,6 @@ public class JAMSContext extends JAMSComponent {
                     JAMSData[] array = (JAMSData[]) Array.newInstance(componentClass, count);
 
                     for (int i = 0; i < count; i++) {
-                        //array[i] = (JAMSData) componentClass.newInstance();
                         array[i] = getDataObject(entityArray, componentClass, tok.nextToken(), accessSpec.accessType, null);
                     }
                     accessSpec.component.getClass().getDeclaredField(accessSpec.varName).set(accessSpec.component, array);
@@ -333,6 +336,8 @@ public class JAMSContext extends JAMSComponent {
                 da = new CalendarAccessor(ea, dataObject, attributeName, accessType);
             } else if (clazz.equals(JAMSDocument.class)) {
                 da = new DocumentAccessor(ea, dataObject, attributeName, accessType);
+            } else if (clazz.equals(JAMSObject.class)) {
+                da = new ObjectAccessor(ea, dataObject, attributeName, accessType);
             } else {
                 getModel().getRuntime().sendHalt("Class " + clazz.getCanonicalName() + " not supported!");
             }

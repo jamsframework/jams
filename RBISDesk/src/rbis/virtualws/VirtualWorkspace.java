@@ -175,8 +175,6 @@ public class VirtualWorkspace {
 
             } catch (FileNotFoundException fnfe) {
                 this.getRuntime().sendErrorMsg("Error reading datastore \"" + child.getAbsolutePath() + "\"!");
-            } catch (SAXParseException spe) {
-                this.getRuntime().sendErrorMsg("Error reading datastore \"" + child.getAbsolutePath() + "\"!");
             }
         }
         
@@ -189,8 +187,6 @@ public class VirtualWorkspace {
                 this.getRuntime().println("Added store \"" + storeID + "\" from \"" + child.getAbsolutePath() + "\"", JAMS.VERBOSE);
 
             } catch (FileNotFoundException fnfe) {
-                this.getRuntime().sendErrorMsg("Error reading datastore \"" + child.getAbsolutePath() + "\"!");
-            } catch (SAXParseException spe) {
                 this.getRuntime().sendErrorMsg("Error reading datastore \"" + child.getAbsolutePath() + "\"!");
             }
         }        

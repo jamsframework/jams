@@ -85,10 +85,10 @@ public class JAMSTemporalContext extends JAMSContext {
 
     @Override
     public void run() {
-        dataTracer.setStartMark();
+        //dataTracer.setStartMark();
         super.run();
-        dataTracer.trace();
-        dataTracer.setEndMark();
+        //dataTracer.trace();
+        //dataTracer.setEndMark();
     }
 
     class RunEnumerator implements JAMSComponentEnumerator {

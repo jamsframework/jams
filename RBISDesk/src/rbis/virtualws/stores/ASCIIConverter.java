@@ -69,7 +69,6 @@ public class ASCIIConverter {
         JAMSCalendar creationDate = new JAMSCalendar();
         creationDate.setValue(new GregorianCalendar());
         target.append("#DATE: " + creationDate + "\n");
-        target.append("#RESPPARTY: " + store.getRespParty() + "\n");
         target.append("#DESCRIPTION:\n");
         String description = store.getDescription();
         if (!description.equals("")) {

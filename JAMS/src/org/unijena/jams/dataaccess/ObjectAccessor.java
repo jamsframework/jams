@@ -1,9 +1,9 @@
 /*
  * ObjectAccessor.java
- * Created on 22. MÃ¤rz 2006, 08:33
+ * Created on 22. März 2006, 08:33
  *
  * This file is part of JAMS
- * Copyright (C) 2005 FSU Jena
+ * Copyright (C) 2006 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,23 +31,23 @@ import org.unijena.jams.data.*;
  */
 public class ObjectAccessor implements DataAccessor {
     
-    Object componentObject;
-    Object[] entityObject;
+    JAMSObject componentObject;
+    JAMSObject[] entityObject;
     int index;
     int accessType;
     
     public ObjectAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
                 
         //get the entities' data objects
-        entityObject = new Object[entities.length];
+        entityObject = new JAMSObject[entities.length];
         for (int i = 0; i < entities.length; i++) {
             if (entities[i].existsAttribute(attributeName)) {
                 try {
-                    entityObject[i] = entities[i].getObject(attributeName);
+                    entityObject[i] = (JAMSObject) entities[i].getObject(attributeName);
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {}
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
-                    entityObject[i] = new Object();
+                    entityObject[i] = new JAMSObject();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
                     throw new JAMSEntity.NoSuchAttributeException("Attribute " + attributeName + " does not exist!");
@@ -56,7 +56,7 @@ public class ObjectAccessor implements DataAccessor {
         }
         
         this.accessType = accessType;
-        this.componentObject = dataObject;
+        this.componentObject = (JAMSObject) dataObject;
     }    
     
     public void setIndex(int index) {
@@ -75,7 +75,7 @@ public class ObjectAccessor implements DataAccessor {
         return accessType;
     }    
     
-    public Object getComponentObject(){
+    public JAMSObject getComponentObject(){
         return this.componentObject;
     }
 }
