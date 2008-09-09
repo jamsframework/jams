@@ -28,7 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import org.unijena.jams.data.JAMSObject;
+import org.unijena.jams.data.JAMSData;
 import org.unijena.jams.data.JAMSString;
 import org.unijena.jams.data.JAMSStringArray;
 import org.unijena.jams.model.JAMSComponent;
@@ -58,7 +58,7 @@ public class JAMSDataWriter extends JAMSComponent {
     public JAMSStringArray header;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Attributes to be written")
-    public JAMSObject[] attributes;
+    public JAMSData[] attributes;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Comment")
     public JAMSString comment;
@@ -88,8 +88,8 @@ public class JAMSDataWriter extends JAMSComponent {
 
             writer.newLine();
 
-            for (JAMSObject o : attributes) {
-                writer.write(o.toString() + "\t");
+            for (JAMSData attribute : attributes) {
+                writer.write(attribute.toString() + "\t");
             }
 
             writer.close();

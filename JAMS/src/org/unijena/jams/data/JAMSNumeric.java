@@ -22,11 +22,13 @@
  */
 package org.unijena.jams.data;
 
+import java.io.Serializable;
+
 /**
  *
  * @author S. Kralisch
  */
-public abstract class JAMSNumeric extends JAMSObject {
+public abstract class JAMSNumeric implements JAMSData, Serializable {
 
     /*
     private NumericRange range = null;

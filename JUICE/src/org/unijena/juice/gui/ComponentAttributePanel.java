@@ -361,6 +361,7 @@ public class ComponentAttributePanel extends JPanel {
             attributeList.setEnabled(false);
         } else {
             attributeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            attributeList.setEnabled(true);
         }
 
 

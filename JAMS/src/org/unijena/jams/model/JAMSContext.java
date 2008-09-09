@@ -336,8 +336,6 @@ public class JAMSContext extends JAMSComponent {
                 da = new CalendarAccessor(ea, dataObject, attributeName, accessType);
             } else if (clazz.equals(JAMSDocument.class)) {
                 da = new DocumentAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSObject.class)) {
-                da = new ObjectAccessor(ea, dataObject, attributeName, accessType);
             } else {
                 getModel().getRuntime().sendHalt("Class " + clazz.getCanonicalName() + " not supported!");
             }
