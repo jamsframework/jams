@@ -69,16 +69,18 @@ public class JAMSModelLoader {
 
         root = modelDoc.getDocumentElement();
 
-        jamsModel.getRuntime().println("*************************************", JAMS.STANDARD);
-        jamsModel.getRuntime().println("model  : " + root.getAttribute("name"), JAMS.STANDARD);
-        jamsModel.getRuntime().println("author : " + root.getAttribute("author"), JAMS.STANDARD);
-        jamsModel.getRuntime().println("date   : " + root.getAttribute("date"), JAMS.STANDARD);
-        jamsModel.getRuntime().println("*************************************", JAMS.STANDARD);
-
         jamsModel.setName(root.getAttribute("name"));
         jamsModel.setInstanceName(root.getAttribute("name"));
         jamsModel.setAuthor(root.getAttribute("author"));
         jamsModel.setDate(root.getAttribute("date"));
+        jamsModel.setWorkspace(root.getAttribute("workspace"));
+
+        jamsModel.getRuntime().println("*************************************", JAMS.STANDARD);
+        jamsModel.getRuntime().println("model     : " + jamsModel.getName(), JAMS.STANDARD);
+        jamsModel.getRuntime().println("workspace : " + jamsModel.getWorkspace(), JAMS.STANDARD);
+        jamsModel.getRuntime().println("author    : " + jamsModel.getAuthor(), JAMS.STANDARD);
+        jamsModel.getRuntime().println("date      : " + jamsModel.getDate(), JAMS.STANDARD);
+        jamsModel.getRuntime().println("*************************************", JAMS.STANDARD);
 
         NodeList childs = root.getChildNodes();
 

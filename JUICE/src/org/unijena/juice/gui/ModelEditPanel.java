@@ -35,6 +35,8 @@ import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.unijena.jams.gui.LHelper;
+import org.unijena.jams.gui.input.FileInput;
+import org.unijena.jams.gui.input.ValueChangeListener;
 
 /**
  *
@@ -54,6 +56,7 @@ public class ModelEditPanel extends JPanel {
     private JPanel componentPanel;
     private GridBagLayout mainLayout;
     private ModelView view;
+    private FileInput workspaceInput;
     
     public ModelEditPanel(ModelView view) {
         super();
@@ -69,16 +72,27 @@ public class ModelEditPanel extends JPanel {
         mainLayout = new GridBagLayout();
         componentPanel.setLayout(mainLayout);
         
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Workspace:"), 1, 0, 1, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Author:"), 1, 1, 1, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Date:"), 1, 2, 1, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Description:"), 1, 3, 1, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Help Base URL:"), 1, 4, 1, 1, 0, 0);
         
+        workspaceInput = new FileInput(true);
+        
+        LHelper.addGBComponent(componentPanel, mainLayout, workspaceInput, 2, 0, 1, 1, 1.0, 1.0);
         LHelper.addGBComponent(componentPanel, mainLayout, getTextField("author", "", true), 2, 1, 1, 1, 1.0, 1.0);
         LHelper.addGBComponent(componentPanel, mainLayout, getTextField("date", "", true), 2, 2, 1, 1, 1.0, 1.0);
         LHelper.addGBComponent(componentPanel, mainLayout, getTextPane("description", "", 250, true), 2, 3, 1, 1, 1.0, 1.0);
         LHelper.addGBComponent(componentPanel, mainLayout, getTextField("helpBaseUrl", "", true), 2, 4, 1, 1, 1.0, 1.0);
-        
+
+        workspaceInput.addValueChangeListener(new ValueChangeListener() {
+
+            @Override
+            public void valueChanged() {
+                view.setWorkspace(workspaceInput.getValue());
+            }
+        });
 
         textFields.get("author").getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
@@ -150,6 +164,7 @@ public class ModelEditPanel extends JPanel {
         textFields.get("date").setText(view.getDate());
         textFields.get("helpBaseUrl").setText(view.getHelpBaseUrl());
         textAreas.get("description").setText(view.getDescription());
+        workspaceInput.setValue(view.getWorkspace());
     }
     
     public JTextField getTextField(String key, String value, boolean editable) {

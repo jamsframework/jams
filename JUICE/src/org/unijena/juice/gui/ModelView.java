@@ -84,10 +84,7 @@ public class ModelView {
     //private HashMap<ComponentDescriptor, DataRepository> dataRepositories = new HashMap<ComponentDescriptor, DataRepository>();
     private LauncherPanel launcherPanel;
     private ModelEditPanel modelEditPanel;
-    private String author;
-    private String date;
-    private String description;
-    private String helpBaseUrl;
+    private String author, date, description, helpBaseUrl, workspace;
     private HashMap<String, ComponentDescriptor> componentDescriptors = new HashMap<String, ComponentDescriptor>();
     private TreePanel modelTreePanel;
     private JDesktopPane parentPanel;
@@ -245,8 +242,8 @@ public class ModelView {
         modelSplitPane.setContinuousLayout(true);
 
         JTabbedPane tabPane = new JTabbedPane();
-        tabPane.addTab("Component", new JScrollPane(compEditPanel));
-        tabPane.addTab("Model metadata", new JScrollPane(modelEditPanel));
+        tabPane.addTab("Model configuration", new JScrollPane(modelEditPanel));
+        tabPane.addTab("Component configuration", new JScrollPane(compEditPanel));
         tabPane.addTab("GUI Builder", new JScrollPane(launcherPanel));
 
         modelSplitPane.setLeftComponent(modelTreePanel);
@@ -670,6 +667,14 @@ public class ModelView {
     public void setHelpBaseUrl(String helpBaseUrl) {
         this.helpBaseUrl = helpBaseUrl;
     }
+    
+    public String getWorkspace() {
+        return workspace;
+    }
+
+    public void setWorkspace(String workspace) {
+        this.workspace = workspace;
+    }    
 
     public ComponentDescriptor getComponentDescriptor(String name) {
         return this.getComponentDescriptors().get(name);

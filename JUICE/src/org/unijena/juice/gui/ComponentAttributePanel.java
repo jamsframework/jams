@@ -34,6 +34,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.StringTokenizer;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -253,9 +254,9 @@ public class ComponentAttributePanel extends JPanel {
                 /*
                 String[] values = JAMSTools.arrayStringAsStringArray(var.getAttribute());
                 for (String value : values) {
-                    attributeList.setSelectedValue(value, true);
+                attributeList.setSelectedValue(value, true);
                 }
-                */
+                 */
                 customAttributeText.setText(var.getAttribute());
             } else {
                 attributeList.setSelectedValue(var.getAttribute().toString(), true);
@@ -337,8 +338,13 @@ public class ComponentAttributePanel extends JPanel {
 
         AttributeRepository repo = context.getDataRepository();
         //ArrayList<Attribute> attributes = repo.getAttributesByType(type);
+                
         ArrayList<ContextAttribute> attributes = repo.getUniqueAttributesByType(type);
 
+        if (type.isArray()) {
+            //attributes.addAll(repo.getUniqueAttributesByType(type.getComponentType()));
+        }
+        
         DefaultListModel lModel = new DefaultListModel();
         if (attributes != null) {
 
@@ -351,8 +357,20 @@ public class ComponentAttributePanel extends JPanel {
                 }
             });
 
+            //add all elements to the list model
             for (int i = 0; i < attributes.size(); i++) {
-                lModel.addElement(attributes.get(i).toString());
+
+                String attributeName = attributes.get(i).toString();
+
+                if (false && attributeName.contains(";")) {
+                    StringTokenizer tok = new StringTokenizer(attributeName, ";");
+                    while (tok.hasMoreTokens()) {
+                        lModel.addElement(tok.nextToken());
+                    }
+                } else {
+                    lModel.addElement(attributeName);
+                }
+
             }
         }
 

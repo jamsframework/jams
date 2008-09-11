@@ -24,12 +24,9 @@ package org.unijena.jams.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.HashMap;
 import org.unijena.jams.data.JAMSEntityCollection;
 import org.unijena.jams.runtime.JAMSRuntime;
@@ -45,7 +42,9 @@ description = "This component represents a JAMS model which is special type of c
 public class JAMSModel extends JAMSContext {
 
     private JAMSRuntime runtime;
-    private String name,  author,  date;
+    private String name,  author,  date, workspaceDir;
+    private 
+
 
     /** Creates a new instance of JAMSModel */
     public JAMSModel(JAMSRuntime runtime) {
@@ -84,6 +83,15 @@ public class JAMSModel extends JAMSContext {
         this.date = date;
     }
 
+    public String getWorkspaceDir() {
+        return workspaceDir;
+    }
+
+    public void setWorkspaceDir(String workspaceDir) {
+        !!!hier inputds erzeugen!!!
+        this.workspaceDir = workspaceDir;
+    }
+    
     private void CollectEntityCollections(JAMSContext currentContext, JAMSComponent position, HashMap<String, JAMSEntityCollection> collection) {
         currentContext.updateEntityData(position);
         collection.put(currentContext.instanceName, currentContext.getEntities());
@@ -140,4 +148,5 @@ public class JAMSModel extends JAMSContext {
         }
         RestoreEntityCollections(this.getModel(), contextStates);
     }
+
 }
