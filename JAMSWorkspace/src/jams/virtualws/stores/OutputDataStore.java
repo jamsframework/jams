@@ -25,7 +25,6 @@ package jams.virtualws.stores;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.virtualws.VirtualWorkspace;
 
@@ -35,16 +34,15 @@ import jams.virtualws.VirtualWorkspace;
  */
 public class OutputDataStore {
     
-    private static final String CONTEXT_STRING = "context";
     private static final String TRACE_STRING = "trace";
     private static final String ATTRIBUTE_STRING = "attribute";
-    private String context;
+    private String title;
     private String[] attributes;
 
-    public OutputDataStore(VirtualWorkspace ws, Document doc) {
+    public OutputDataStore(VirtualWorkspace ws, Document doc, String title) {
         
+        this.title = title;
         Element root = doc.getDocumentElement();
-        context = root.getAttribute(CONTEXT_STRING);
         NodeList traceNodes = root.getElementsByTagName(TRACE_STRING);
         
         int length = traceNodes.getLength();
@@ -57,8 +55,8 @@ public class OutputDataStore {
         
     }
 
-    public String getContext() {
-        return context;
+    public String getTitle() {
+        return title;
     }
 
     public String[] getAttributes() {

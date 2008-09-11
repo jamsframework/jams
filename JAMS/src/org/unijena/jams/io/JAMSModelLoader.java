@@ -323,7 +323,7 @@ public class JAMSModelLoader {
                 Element element = (Element) node;
                 ((JAMSContext) component).addAttribute(element.getAttribute("name"), element.getAttribute("class"), element.getAttribute("value"));
 
-            } else if (node.getNodeName().equals("trace")) {
+            } /*else if (node.getNodeName().equals("trace")) {
 
                 if (!JAMSContext.class.isAssignableFrom(component.getClass())) {
                     throw new ModelSpecificationException("Trace tag can only be used inside context components! (component " + componentName + ")");
@@ -333,7 +333,7 @@ public class JAMSModelLoader {
                 ((JAMSContext) component).getDataTracer().registerAttribute(element.getAttribute("attribute"));
                 jamsModel.getRuntime().println("Registering trace for " + component.getInstanceName() + "->" + element.getAttribute("attribute"), JAMS.STANDARD);
 
-            }
+            }*/
         }
         if (component instanceof JAMSContext) {
             ((JAMSContext) component).setComponents(childComponentList);

@@ -36,6 +36,7 @@ public abstract class DataTracer {
     private JAMSData[] dataObjects;
     private ArrayList<String> attributeNames = new ArrayList<String>();
     private JAMSContext context;
+    private JAMSContext[] parents;
 
     public DataTracer(JAMSContext context) {
         this.context = context;
@@ -58,7 +59,13 @@ public abstract class DataTracer {
                 missingAttributes.add(attributeName);
             }
         }
+        attributeNames.removeAll(missingAttributes);
         this.dataObjects = objectList.toArray(new JAMSData[objectList.size()]);
+
+        if (this.dataObjects.length > 0) {
+            createHeader();
+        }
+
         return missingAttributes.toArray(new String[missingAttributes.size()]);
     }
 
@@ -66,19 +73,53 @@ public abstract class DataTracer {
         return dataObjects;
     }
 
+    private void createHeader() {
+
+        JAMSContext parent = context;
+        ArrayList<JAMSContext> parentList = new ArrayList<JAMSContext>();
+        while (parent != context.getModel()) {
+            parent = parent.getContext();
+
+            // only ancestors with more than one iteration are considered
+            // in order to consider also contexts whose number of executions are
+            // still unknown (e.g. parameter sampler), we check for !=1
+            if (parent.getNumberOfIterations() != 1) {
+                parentList.add(parent);
+            }
+        }
+        this.parents = parentList.toArray(new JAMSContext[parentList.size()]);
+
+
+        output("@context\n");
+        output(this.context.getClass().getName() + "\t" + this.context.getInstanceName() + "\t" + context.getNumberOfIterations() + "\n");
+        output("@attributes\n");
+        for (String attributeName : this.attributeNames) {
+            output(attributeName + "\t");
+        }
+        output("\n");
+        output("@ancestors\n");
+
+        for (JAMSContext p : this.parents) {
+            output(p.getClass().getName() + "\t" + p.getInstanceName() + "\t" + p.getNumberOfIterations() + "\n");
+        }
+    }
+
     /**
-     * This method contains code to be executed as traced JAMSData change
+     * This method contains code to be executed as traced JAMSData objects change
      */
     public abstract void trace();
 
     public void setStartMark() {
-        output("@start{" + context.getInstanceName() + "}\n");
+        output("@start\n");
+        for (JAMSContext parent : parents) {
+            output(parent.getTraceMark() + "\n");
+        }
     }
 
     public void setEndMark() {
-        output("@end{" + context.getInstanceName() + "}\n");
+        output("@end\n");
     }
-    
+
     protected void output(String str) {
         System.out.print(str);
     }

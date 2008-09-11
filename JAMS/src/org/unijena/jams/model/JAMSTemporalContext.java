@@ -46,7 +46,7 @@ public class JAMSTemporalContext extends JAMSContext {
 
     public JAMSTemporalContext() {
 
-        dataTracer = new DataTracer(this) {
+/*        dataTracer = new DataTracer(this) {
 
             @Override
             public void trace() {
@@ -63,6 +63,7 @@ public class JAMSTemporalContext extends JAMSContext {
             }
 
         };
+ */
     }
 
     @Override
@@ -82,19 +83,16 @@ public class JAMSTemporalContext extends JAMSContext {
     public long getNumberOfIterations() {
         return timeInterval.getNumberOfTimesteps();
     }
-
+    
     @Override
-    public void run() {
-        //dataTracer.setStartMark();
-        super.run();
-        //dataTracer.trace();
-        //dataTracer.setEndMark();
-    }
+    public String getTraceMark() {
+        return current.toString();
+    }    
 
     class RunEnumerator implements JAMSComponentEnumerator {
 
         JAMSComponentEnumerator ce = getChildrenEnumerator();
-        DataTracer dataTracer = getDataTracer();
+        //DataTracer dataTracer = getDataTracer();
 
         @Override
         public boolean hasNext() {
@@ -109,7 +107,7 @@ public class JAMSTemporalContext extends JAMSContext {
             // timestep start with the new Component list again
             if (!ce.hasNext() && current.before(lastValue)) {
 
-                dataTracer.trace();
+                runTrace();
 
                 current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
                 ce.reset();

@@ -27,6 +27,7 @@ package org.unijena.jams.model;
  *
  * @author S. Kralisch
  */
+import jams.virtualws.stores.OutputDataStore;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
@@ -66,12 +67,7 @@ public class JAMSContext extends JAMSComponent {
         getEntities().setEntities(list);
 
         attribs = new HashMap<String, JAMSData>();
-        dataTracer = new DataTracer(this) {
 
-            @Override
-            public void trace() {
-            }            
-        };
     }
 
     public void exchange(int i, int j) {
@@ -188,10 +184,6 @@ public class JAMSContext extends JAMSComponent {
                     clazz = null;
                 }
                 if (clazz.isArray()) {
-                    
-                    if (accessSpec.component.getInstanceName().equals("JAMSDataWriter")) {
-                        System.out.println("");
-                    }
 
                     String className = clazz.getCanonicalName();
                     className = className.substring(0, className.length() - 2);
@@ -245,14 +237,64 @@ public class JAMSContext extends JAMSComponent {
             }
             daList.get(i).setIndex(0);
         }
+    }
 
+    private DataTracer createDataTracer() {
+        return new DataTracer(this) {
+
+            @Override
+            public void trace() {
+            }
+        };
+    }
+
+    protected void runTrace() {
+        if (dataTracer != null) {
+            dataTracer.trace();
+        }
+    }
+
+    protected void initTrace() {
+        if (dataTracer != null) {
+            dataTracer.setStartMark();
+        }
+    }
+
+    protected void cleanupTrace() {
+        if (dataTracer != null) {
+            dataTracer.setEndMark();
+        }
+    }
+    
+    public String getTraceMark() {
+        return Long.toString(currentEntity.getId());
+    }
+
+    private void setupDataTracer() {
+
+        OutputDataStore store = getModel().getOutputDataStore(this.getInstanceName());
+
+        if ((store == null) || (store.getAttributes().length==0)) {
+            dataTracer = null;
+            return;
+        }
+
+        dataTracer = createDataTracer();
+
+        for (String attributeName : store.getAttributes()) {
+            dataTracer.registerAttribute(attributeName);
+        }
 
         String[] result = dataTracer.init(attribs);
         if (result.length != 0) {
             for (String s : result) {
-                getModel().getRuntime().sendErrorMsg("Can't trace attribute " + s + " in " + this.getInstanceName() + " (not found)!");
+                getModel().getRuntime().sendErrorMsg("Can't trace attribute \"" + s + "\" in context \"" + this.getInstanceName() + "\" (not found)!");
+            }
+            if (dataTracer.getDataObjects().length == 0) {
+                dataTracer = null;
             }
         }
+       
     }
 
     public void init() {
@@ -265,7 +307,12 @@ public class JAMSContext extends JAMSComponent {
             return;
         }
 
+        // setup accessors for data exchange between context attributes and
+        // component attributes
         initAccessors();
+
+        // setup data tracer -- needed for data output to output-datastores
+        setupDataTracer();
 
         if (initCleanupEnumerator == null) {
             initCleanupEnumerator = getChildrenEnumerator();
@@ -360,6 +407,8 @@ public class JAMSContext extends JAMSComponent {
 
     public void run() {
 
+        initTrace();
+
         //initEntityData();
 
         if (runEnumerator == null) {
@@ -378,6 +427,10 @@ public class JAMSContext extends JAMSComponent {
         }
 
         updateEntityData();
+
+        runTrace();
+        cleanupTrace();
+
     }
 
     public void cleanup() {
@@ -400,10 +453,6 @@ public class JAMSContext extends JAMSComponent {
         ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
         list.add(JAMSDataFactory.createEntity());
 
-    }
-
-    public DataTracer getDataTracer() {
-        return dataTracer;
     }
 
     class ChildrenEnumerator implements JAMSComponentEnumerator {
@@ -545,6 +594,7 @@ public class JAMSContext extends JAMSComponent {
     }
     //create a list for each attribute containing all components which have
     //read and write access to
+
     public HashSet<ContextAttributeReadWriteSet> getAttributeReadWriteSet() {
         //this is necessary!
         this.initAccessors();
@@ -576,7 +626,7 @@ public class JAMSContext extends JAMSComponent {
                     }
                 } catch (Exception e) {
                     //this is not a big issue
-                    System.out.print("Cant get class of variable " + as.varName + " of component + " + as.component.instanceName + " because:" + e.toString());
+                    getModel().getRuntime().println("Cant get class of variable " + as.varName + " of component + " + as.component.instanceName + " because:" + e.toString());
                 }
 
                 if (as.accessType == DataAccessor.READ_ACCESS || as.accessType == DataAccessor.READWRITE_ACCESS || isEntity) {
@@ -781,16 +831,62 @@ public class JAMSContext extends JAMSComponent {
 
     protected class AttributeSpec implements Serializable {
 
-        String attributeName, className, value;
+         String 
+         
+         attributeName, className,
 
-        public AttributeSpec(String attributeName, String className, String value) {
+         value ;     
+              
+              
+              
+        
+    
+
+    public   AttributeSpec
+              
+
+         
+         
+         
+         
+
+         (String attributeName, String className, String value    ) {
             this.attributeName = attributeName;
             this.className = className;
             this.value = value;
+
+              
         }
     }
 
-    protected class AccessSpec implements Serializable {
+    protected    
+         
+    
+
+        
+        class  AccessSpec 
+    
+
+       
+         
+    
+
+        
+          
+    
+
+
+    
+
+       
+         
+    
+
+        
+          
+    
+
+implements Serializable {
 
         JAMSComponent component;
         String varName;

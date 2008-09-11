@@ -89,11 +89,19 @@ public class JAMSModel extends JAMSContext {
     }
 
     public void setWorkspaceDir(String workspaceDir) {
+        
+        if (workspaceDir.equals("")) {
+            return;
+        }
+        
         this.workspaceDir = workspaceDir;
         this.workspace = new VirtualWorkspace(new File(workspaceDir), runtime);
     }
     
     public OutputDataStore getOutputDataStore(String title) {
+        if (this.workspace == null) {
+            return null;
+        }
         return this.workspace.getOutputDataStore(title);
     }
 

@@ -45,12 +45,7 @@ public class ModelPreprocessor {
         this.modelDoc = modelDoc;
         this.config = config;
         this.rt = rt;
-/*
-        Element var = findElement("J2KProcessSnow", "g_factor");
-        if (var != null) {
-            System.out.println(var.getAttribute("value"));
-        }
- */
+
     }
     
     

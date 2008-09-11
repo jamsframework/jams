@@ -150,7 +150,7 @@ public class VirtualWorkspace {
             return null;
         }
 
-        return new OutputDataStore(this, doc);
+        return new OutputDataStore(this, doc, dsTitle);
     }
 
     public String getTitle() {
@@ -254,7 +254,7 @@ public class VirtualWorkspace {
 //        ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/vworkspace/_tmin_dump.txt"));
         
         OutputDataStore store = ws.getOutputDataStore("TimeLoop");
-        System.out.println(store.getContext());
+        System.out.println(store.getTitle());
         for (String attribute : store.getAttributes()) {
             System.out.println(attribute);
         }

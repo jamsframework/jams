@@ -22,6 +22,7 @@
  */
 package org.unijena.jams;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.StringTokenizer;
 
@@ -31,15 +32,14 @@ import java.util.StringTokenizer;
  */
 public class JAMSTools {
 
-    public static String CreateAbsoluteFileName(String dirName,String fileName){        
-        //if relativ path is provide, make absolute path!
+    public static String CreateAbsoluteFileName(String dirName, String fileName){        
+        //if relative path is provided, make absolute path!
         if (dirName.isEmpty()){
             dirName = System.getProperty("user.dir");
         }
-        //if directory is not terminated with slash, add slash
-        if (dirName.charAt(dirName.length()-1) != '/' && dirName.charAt(dirName.length()-1) != '\\'){
-            return dirName + "/" + fileName;
-        }                
+        //in case directory is not terminated with slash, add slash
+        dirName += File.separator;
+
         return dirName + fileName;
     }
     

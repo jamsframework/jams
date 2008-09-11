@@ -203,7 +203,6 @@ public class TimeintervalInput extends JPanel implements InputComponent {
                 0));
         ti.setTimeUnit(fieldMap.get(timeUnit.getSelectedIndex()));
         ti.setTimeUnitCount(Integer.parseInt(tuCount.getText()));
-        //System.out.println(ti);System.exit(0);
         return ti.toString();
     }
 

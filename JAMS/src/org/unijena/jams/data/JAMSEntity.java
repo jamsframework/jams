@@ -62,6 +62,10 @@ public interface JAMSEntity extends JAMSData {
     public void setValue(HashMap<String, Object> value);
 
     public HashMap<String, Object> getValue();
+    
+    public long getId();
+    
+    public void setId(long id);
 
     public class NoSuchAttributeException extends Exception {
 
