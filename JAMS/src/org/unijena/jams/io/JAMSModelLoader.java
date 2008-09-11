@@ -73,11 +73,11 @@ public class JAMSModelLoader {
         jamsModel.setInstanceName(root.getAttribute("name"));
         jamsModel.setAuthor(root.getAttribute("author"));
         jamsModel.setDate(root.getAttribute("date"));
-        jamsModel.setWorkspace(root.getAttribute("workspace"));
+        jamsModel.setWorkspaceDir(root.getAttribute("workspace"));
 
         jamsModel.getRuntime().println("*************************************", JAMS.STANDARD);
         jamsModel.getRuntime().println("model     : " + jamsModel.getName(), JAMS.STANDARD);
-        jamsModel.getRuntime().println("workspace : " + jamsModel.getWorkspace(), JAMS.STANDARD);
+        jamsModel.getRuntime().println("workspace : " + jamsModel.getWorkspaceDir(), JAMS.STANDARD);
         jamsModel.getRuntime().println("author    : " + jamsModel.getAuthor(), JAMS.STANDARD);
         jamsModel.getRuntime().println("date      : " + jamsModel.getDate(), JAMS.STANDARD);
         jamsModel.getRuntime().println("*************************************", JAMS.STANDARD);

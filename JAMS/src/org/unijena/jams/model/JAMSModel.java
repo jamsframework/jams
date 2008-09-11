@@ -22,8 +22,11 @@
  */
 package org.unijena.jams.model;
 
+import jams.virtualws.VirtualWorkspace;
+import jams.virtualws.stores.OutputDataStore;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -42,11 +45,9 @@ description = "This component represents a JAMS model which is special type of c
 public class JAMSModel extends JAMSContext {
 
     private JAMSRuntime runtime;
-    private String name,  author,  date, workspaceDir;
-    private 
+    private String name,  author,  date,  workspaceDir;
+    private VirtualWorkspace workspace;
 
-
-    /** Creates a new instance of JAMSModel */
     public JAMSModel(JAMSRuntime runtime) {
         this.runtime = runtime;
     }
@@ -88,10 +89,14 @@ public class JAMSModel extends JAMSContext {
     }
 
     public void setWorkspaceDir(String workspaceDir) {
-        !!!hier inputds erzeugen!!!
         this.workspaceDir = workspaceDir;
+        this.workspace = new VirtualWorkspace(new File(workspaceDir), runtime);
     }
     
+    public OutputDataStore getOutputDataStore(String title) {
+        return this.workspace.getOutputDataStore(title);
+    }
+
     private void CollectEntityCollections(JAMSContext currentContext, JAMSComponent position, HashMap<String, JAMSEntityCollection> collection) {
         currentContext.updateEntityData(position);
         collection.put(currentContext.instanceName, currentContext.getEntities());
@@ -107,7 +112,7 @@ public class JAMSModel extends JAMSContext {
     private void RestoreEntityCollections(JAMSContext currentContext, HashMap<String, JAMSEntityCollection> collection) {
         JAMSEntityCollection e = collection.get(currentContext.instanceName);
         if (e != null) {
-            currentContext.setEntities(e);            
+            currentContext.setEntities(e);
         }
         for (int i = 0; i < currentContext.components.size(); i++) {
             JAMSComponent c = (JAMSComponent) currentContext.getComponents().get(i);
@@ -117,8 +122,8 @@ public class JAMSModel extends JAMSContext {
         }
         currentContext.initAccessors();
     }
-        
-    public Snapshot GetModelState(boolean holdInMemory,String fileName, JAMSComponent position) {
+
+    public Snapshot GetModelState(boolean holdInMemory, String fileName, JAMSComponent position) {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         ObjectOutputStream objOut = null;
 
@@ -131,10 +136,10 @@ public class JAMSModel extends JAMSContext {
         } catch (IOException e) {
             this.getRuntime().sendErrorMsg("Unable to save model state because," + e.toString());
         }
-                        
-        return new Snapshot(holdInMemory,outStream.toByteArray(),fileName);
+
+        return new Snapshot(holdInMemory, outStream.toByteArray(), fileName);
     }
-        
+
     @SuppressWarnings("unchecked")
     public void SetModelState(Snapshot inData) {
         HashMap<String, JAMSEntityCollection> contextStates = null;
@@ -148,5 +153,4 @@ public class JAMSModel extends JAMSContext {
         }
         RestoreEntityCollections(this.getModel(), contextStates);
     }
-
 }

@@ -250,8 +250,8 @@ public class VirtualWorkspace {
 
         VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/vworkspace"), runtime);
 
-        System.out.println(ws.dataStoreToString("tmin_local"));
-        ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/vworkspace/_tmin_dump.txt"));
+//        System.out.println(ws.dataStoreToString("tmin_local"));
+//        ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/vworkspace/_tmin_dump.txt"));
         
         OutputDataStore store = ws.getOutputDataStore("TimeLoop");
         System.out.println(store.getContext());
