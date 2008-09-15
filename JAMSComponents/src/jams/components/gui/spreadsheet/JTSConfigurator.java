@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
+import java.util.StringTokenizer;
 import javax.swing.*;
 import javax.swing.BorderFactory.*;
 import javax.swing.border.*;
@@ -397,6 +398,8 @@ public class JTSConfigurator extends JFrame{
             prop.setSeriesFillPaint(colorTable.get(colors[1]));
             prop.setSeriesOutlinePaint(colorTable.get(colors[2]));
             
+            
+            
 //            colour_cnt = k;
             
 //            prop.setColor((String) colorchoice.getSelectedItem());
@@ -516,7 +519,9 @@ public class JTSConfigurator extends JFrame{
         int i = propVector.indexOf(prop);
         int t_s, t_e;
         GraphProperties newProp = new GraphProperties(this, table, this);
-        colour_cnt++;
+        
+        
+        //colour_cnt++;
         
         
         
@@ -525,8 +530,10 @@ public class JTSConfigurator extends JFrame{
             i = dlg.getPosition();
             dlg.dispose();
         
-        
-        newProp.setColor(colour_cnt % 11);
+        newProp.setSeriesPaint(colorTable.get(getColorScheme(i)[0]));
+        newProp.setSeriesFillPaint(colorTable.get(getColorScheme(i)[1]));
+        newProp.setSeriesOutlinePaint(colorTable.get(getColorScheme(i)[2]));
+        //newProp.setColor(colour_cnt % 11);
         
         if(i>=0){
             t_s = prop.getTimeChoiceSTART().getSelectedIndex();
@@ -840,7 +847,7 @@ public class JTSConfigurator extends JFrame{
                             lsr_R.setSeriesLinesVisible(i-l, prop.getLinesVisible());
                             //lsr_R.setDrawOutlines(prop.getOutlineVisible());
                             lsr_R.setUseOutlinePaint(true);
-                            lsr_R.setSeriesFillPaint(i-r, prop.getSeriesFillPaint());
+                            lsr_R.setSeriesFillPaint(i-l, prop.getSeriesFillPaint());
                             lsr_R.setUseFillPaint(true);
                             lsr_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
                             lsr_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
@@ -1188,34 +1195,38 @@ public class JTSConfigurator extends JFrame{
         }
     }
      */
-    private void editProperties(){
-        JDialog propDlg = new JDialog(parent,"Properties");
-        int ct = headers.length;
-        
-        JLabel[] labels = new JLabel[ct];
-        JTextField[] textFields = new JTextField[ct];
-        JPanel[] inputpanels = new JPanel[ct];
-        
-        JPanel proppanel = new JPanel();
-        proppanel.setLayout(new GridLayout(ct,1));
-        
-        for(int i=0; i<ct ; i++){
-            labels[i] = new JLabel(headers[i]);
-            textFields[i] = new JTextField(headers[i]);
-            inputpanels[i] = new JPanel();
-            inputpanels[i].setLayout(new FlowLayout());
-            inputpanels[i].add(labels[i]);
-            inputpanels[i].add(textFields[i]);
-        }
-        
-        
-        JScrollPane propPane = new JScrollPane(proppanel);    
-    }
+//    private void editProperties(){
+//        JDialog propDlg = new JDialog(parent,"Properties");
+//        int ct = headers.length;
+//        
+//        JLabel[] labels = new JLabel[ct];
+//        JTextField[] textFields = new JTextField[ct];
+//        JPanel[] inputpanels = new JPanel[ct];
+//        
+//        JPanel proppanel = new JPanel();
+//        proppanel.setLayout(new GridLayout(ct,1));
+//        
+//        for(int i=0; i<ct ; i++){
+//            labels[i] = new JLabel(headers[i]);
+//            textFields[i] = new JTextField(headers[i]);
+//            inputpanels[i] = new JPanel();
+//            inputpanels[i].setLayout(new FlowLayout());
+//            inputpanels[i].add(labels[i]);
+//            inputpanels[i].add(textFields[i]);
+//        }
+//        
+//        
+//        JScrollPane propPane = new JScrollPane(proppanel);    
+//    }
     
     private void saveTemplate(){
         
         Properties properties = new Properties();
+        int no_of_props = propVector.size();
         
+        String names = "";
+        String name;
+        String number = ""+no_of_props;
         String stroke_type;
         String stroke_color_R;
         String stroke_color_G;
@@ -1232,51 +1243,56 @@ public class JTSConfigurator extends JFrame{
         String outline_color_G;
         String outline_color_B;
         
-        int no_of_props = propVector.size();
+        
         
         for(int i=0; i<no_of_props; i++ ){
             
             GraphProperties gprop = propVector.get(i);
             
+            //Header Name
+            name = gprop.getName();
+            names = names + "," + name;
+            
+            
             //STROKE
             stroke_type = ""+ gprop.getStrokeType();
-            properties.setProperty("gprop" + i + ".linestroke", stroke_type);
+            properties.setProperty(name + ".linestroke", stroke_type);
             //STROKE COLOR
             stroke_color_R = "" + gprop.getSeriesPaint().getRed();
-            properties.setProperty("gprop" + i + ".linecolor_R", stroke_color_R);
+            properties.setProperty(name + ".linecolor_R", stroke_color_R);
             stroke_color_G = "" + gprop.getSeriesPaint().getGreen();
-            properties.setProperty("gprop" + i + ".linecolor_G", stroke_color_G);
+            properties.setProperty(name + ".linecolor_G", stroke_color_G);
             stroke_color_B = "" + gprop.getSeriesPaint().getBlue();
-            properties.setProperty("gprop" + i + ".linecolor_B", stroke_color_B);
+            properties.setProperty(name + ".linecolor_B", stroke_color_B);
             //LINES VISIBLE
             lines_vis = ""+gprop.getLinesVisible();
-            properties.setProperty("gprop" + i + ".linesvisible", lines_vis);
+            properties.setProperty(name + ".linesvisible", lines_vis);
             //SHAPES VISIBLE
             shapes_vis = ""+gprop.getShapesVisible();
-            properties.setProperty("gprop" + i + ".shapesvisible", shapes_vis);
+            properties.setProperty(name + ".shapesvisible", shapes_vis);
             //SHAPE TYPE
             shape_type = "" + gprop.getShapeType();
-            properties.setProperty("gprop" + i + ".shapetype", shape_type);
+            properties.setProperty(name + ".shapetype", shape_type);
             //SHAPE SIZE
             size_type = "" + gprop.getSizeType();
-            properties.setProperty("gprop" + i + ".shapesize", size_type);
+            properties.setProperty(name + ".shapesize", size_type);
             //SHAPE COLOR
             shape_color_R = "" + gprop.getSeriesFillPaint().getRed();
-            properties.setProperty("gprop" + i + ".shapecolor_R", shape_color_R);
+            properties.setProperty(name + ".shapecolor_R", shape_color_R);
             shape_color_G = "" + gprop.getSeriesFillPaint().getGreen();
-            properties.setProperty("gprop" + i + ".shapecolor_G", shape_color_G);
+            properties.setProperty(name + ".shapecolor_G", shape_color_G);
             shape_color_B = "" + gprop.getSeriesFillPaint().getBlue();
-            properties.setProperty("gprop" + i + ".shapecolor_B", shape_color_B);
+            properties.setProperty(name + ".shapecolor_B", shape_color_B);
             //OUTLINE STROKE
             outline_type = "" + gprop.getOutlineType();
-            properties.setProperty("gprop" + i + ".outlinestroke", outline_type);
+            properties.setProperty(name + ".outlinestroke", outline_type);
             //OUTLINE COLOR
             outline_color_R = "" + gprop.getSeriesFillPaint().getRed();
-            properties.setProperty("gprop" + i + ".outlinecolor_R", outline_color_R);
+            properties.setProperty(name + ".outlinecolor_R", outline_color_R);
             outline_color_G = "" + gprop.getSeriesFillPaint().getGreen();
-            properties.setProperty("gprop" + i + ".outlinecolor_G", outline_color_G);
+            properties.setProperty(name + ".outlinecolor_G", outline_color_G);
             outline_color_B = "" + gprop.getSeriesFillPaint().getBlue();
-            properties.setProperty("gprop" + i + ".outlinecolor_B", outline_color_B);
+            properties.setProperty(name + ".outlinecolor_B", outline_color_B);
         }
         
         //Save Parameter File
@@ -1295,9 +1311,16 @@ public class JTSConfigurator extends JFrame{
     
     private void loadTemplate(){
         
-        int no_of_props = propVector.size();
+        propVector = new Vector<GraphProperties>();
+        //int no_of_props = propVector.size();
         
         Properties properties = new Properties();
+        String[] namearray;
+        String names;
+        String name;
+        int no_of_props;
+        
+
         try{
             JFileChooser chooser = new JFileChooser();
             int returnVal = chooser.showOpenDialog(thisDlg);
@@ -1308,36 +1331,62 @@ public class JTSConfigurator extends JFrame{
             
         }catch(Exception fnfexc){};
         
+        names = properties.getProperty("names");
+        no_of_props = new Integer(properties.getProperty("number"));
+        namearray = new String[no_of_props];
+        StringTokenizer nameTokenizer = new StringTokenizer(names, ",");
+    
         for(int i=0; i<no_of_props; i++ ){
             
-            GraphProperties gprop = propVector.get(i);
+            GraphProperties gprop = new GraphProperties(this, this.table, this);
             
-            //STROKE
-            gprop.setStroke(new Integer(properties.getProperty("gprop" + i + ".linestroke")));
+            if(nameTokenizer.hasMoreTokens()){
             
-            //STROKE COLOR
-            gprop.setSeriesPaint(new Color(new Integer(properties.getProperty("gprop" + i + ".linecolor_R")),
-                                            new Integer(properties.getProperty("gprop" + i + ".linecolor_G")),
-                                            new Integer(properties.getProperty("gprop" + i + ".linecolor_B"))));
-            //LINES VISIBLE
-            gprop.setLinesVisible(new Boolean(properties.getProperty("gprop" + i + ".linesvisible")));
-            //SHAPES VISIBLE
-            gprop.setShapesVisible(new Boolean(properties.getProperty("gprop" + i + ".shapesvisible")));
-            //SHAPE TYPE AND SIZE
-            gprop.setShape(new Integer(properties.getProperty("gprop" + i + ".shapetype")),
-                            new Integer(properties.getProperty("gprop" + i + ".shapesize")));
-            //SHAPE COLOR
-            gprop.setSeriesFillPaint(new Color(new Integer(properties.getProperty("gprop" + i + ".shapecolor_R")),
-                                            new Integer(properties.getProperty("gprop" + i + ".shapecolor_G")),
-                                            new Integer(properties.getProperty("gprop" + i + ".shapecolor_B"))));
-            //OUTLINE STROKE
-            gprop.setOutlineStroke(new Integer(properties.getProperty("gprop" + i + ".outlinestroke")));
-            //OUTLINE COLOR
-            gprop.setSeriesPaint(new Color(new Integer(properties.getProperty("gprop" + i + ".outlinecolor_R")),
-                                            new Integer(properties.getProperty("gprop" + i + ".outlinecolor_G")),
-                                            new Integer(properties.getProperty("gprop" + i + ".outlinecolor_B"))));
-        }
-        
+                    name = nameTokenizer.nextToken();
+                
+                for(int k = 0; k<table.getColumnCount(); k++){
+                    if(table.getColumnName(k) == name){
+                        gprop.setSelectedColumn(k);
+                    } else {
+                        break;
+                    }
+                }
+                gprop.setSelectedRows(table.getSelectedRows());
+                gprop.setTimeSTART(table.getSelectedRows()[0]);
+                gprop.setTimeEND(table.getSelectedRows()[table.getRowCount()-1]);
+                gprop.setName(name);
+                gprop.setLegendName(name);
+
+                //STROKE
+                gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke")));
+
+                //STROKE COLOR
+                gprop.setSeriesPaint(new Color(new Integer(properties.getProperty(name + ".linecolor_R")),
+                                                new Integer(properties.getProperty(name + ".linecolor_G")),
+                                                new Integer(properties.getProperty(name + ".linecolor_B"))));
+                //LINES VISIBLE
+                gprop.setLinesVisible(new Boolean(properties.getProperty(name + ".linesvisible")));
+                //SHAPES VISIBLE
+                gprop.setShapesVisible(new Boolean(properties.getProperty(name + ".shapesvisible")));
+                //SHAPE TYPE AND SIZE
+                gprop.setShape(new Integer(properties.getProperty(name + ".shapetype")),
+                                new Integer(properties.getProperty(name + ".shapesize")));
+                //SHAPE COLOR
+                gprop.setSeriesFillPaint(new Color(new Integer(properties.getProperty(name + ".shapecolor_R")),
+                                                new Integer(properties.getProperty(name + ".shapecolor_G")),
+                                                new Integer(properties.getProperty(name + ".shapecolor_B"))));
+                //OUTLINE STROKE
+                gprop.setOutlineStroke(new Integer(properties.getProperty(name + ".outlinestroke")));
+                //OUTLINE COLOR
+                gprop.setSeriesPaint(new Color(new Integer(properties.getProperty(name + ".outlinecolor_R")),
+                                                new Integer(properties.getProperty(name + ".outlinecolor_G")),
+                                                new Integer(properties.getProperty(name + ".outlinecolor_B"))));
+                
+                gprop.applyTSProperties();
+            }
+
+            }
+
         plotAllGraphs();
         
     }

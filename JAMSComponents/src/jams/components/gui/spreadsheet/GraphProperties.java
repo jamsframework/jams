@@ -914,17 +914,17 @@ public class GraphProperties {
     
     public void setSeriesPaint(Color paint){
         this.series_paint = paint;
-        cr_dlg.updateColors();
+        cr_dlg.setStrokeButtonColor(paint);
     }
     
     public void setSeriesFillPaint(Color fill){
         this.series_fill_paint = fill;
-        cr_dlg.updateColors();
+        cr_dlg.setFillButtonColor(fill);
     }
     
     public void setSeriesOutlinePaint(Color paint){
         this.series_outline_paint = paint;
-        cr_dlg.updateColors();
+        cr_dlg.setOutlineButtonColor(paint);
     }
     
     public void setSeriesOutlineStroke(Stroke stroke){
@@ -1391,14 +1391,26 @@ public class GraphProperties {
         
         void updateColors(){
             
-            line_color = (Color) getSeriesPaint();
-            shape_fill = (Color) getSeriesFillPaint();
-            outline_color = (Color) getSeriesOutlinePaint();
+            line_color = getSeriesPaint();
+            shape_fill = getSeriesFillPaint();
+            outline_color = getSeriesOutlinePaint();
             
             stroke_button.setBackground(line_color);
             fill_button.setBackground(shape_fill);
             outline_button.setBackground(outline_color);
             
+        }
+        
+        public void setStrokeButtonColor(Color lc){
+            stroke_button.setBackground(lc);
+        }
+        
+        public void setFillButtonColor(Color fc){
+            fill_button.setBackground(fc);
+        }
+        
+        public void setOutlineButtonColor(Color oc){
+            outline_button.setBackground(oc);
         }
         
         void createPanel(){
@@ -1568,24 +1580,6 @@ public class GraphProperties {
             setVisible(false);
         }
         
-//        public int getSize(int index){
-//         int size;
-//         
-//         
-//
-//        switch(index){ //135791215
-//            case 0: size = 1; break;
-//            case 1: size = 2; break;
-//            case 2: size = 4; break;
-//            case 3: size = 6; break;
-//            case 4: size = 8; break;
-//            case 5: size = 10; break;
-//            case 6: size = 12; break;
-//            
-//            default: size = 5; break;         
-//        }
-//        return size;
-//    }
         
         private void handleGUI(){
             if(getRendererType() == 0){ //line and shape
@@ -1651,19 +1645,10 @@ public class GraphProperties {
                 setStroke(stroke_slider.getValue());
                 setShape(shape_box.getSelectedIndex(), shape_slider.getValue());
                 //setSeriesPaint(colorTable.get((String)paint_box.getSelectedItem()));
-                setSeriesPaint(line_color);
-                
-                //setSeriesPaint(colorTable.get((String)paint_box.getItemAt(color)));
-               
-//                if(outline_paint_box.getSelectedIndex()==0){
-//                    setOutlineVisible(false);
-//                }else{
-//                    setOutlineVisible(true);
-//                    setSeriesOutlinePaint(colorTable.get((String)outline_paint_box.getSelectedItem()));
-//                }
-                setSeriesOutlinePaint(outline_color);
+                //setSeriesPaint(series_paint);
+                //setSeriesOutlinePaint(series_outline_paint);
                 //setSeriesFillPaint(colorTable.get((String)fill_box.getSelectedItem()));
-                setSeriesFillPaint(shape_fill);
+                //setSeriesFillPaint(series_fill_paint);
                 setOutlineStroke(outline_slider.getValue());
                 setLinesVisible(lines_vis_box.isSelected());
                 setShapesVisible(shapes_vis_box.isSelected());
@@ -1671,10 +1656,14 @@ public class GraphProperties {
                 
                 colorlabel.setSymbol(getSeriesShape(), shape_fill, outline_color);
                 
+                
                 //ACHTUNG!!! Typen-Abhängig! XY oder TS?
                 if(plotType == 0) ctsconf.plotAllGraphs();  
                 if(plotType == 1) cxyconf.plotAllGraphs();
+ 
                 setVisible(false);
+                
+                updateColors();
             }
         };
         
@@ -1683,49 +1672,44 @@ public class GraphProperties {
                 setStroke(stroke_slider.getValue());
                 setShape(shape_box.getSelectedIndex(), shape_slider.getValue());
                 //setSeriesPaint(colorTable.get((String)paint_box.getSelectedItem()));
-                setSeriesPaint(line_color);
-                
-                //setSeriesPaint(colorTable.get((String)paint_box.getItemAt(color)));
-               
-//                if(outline_paint_box.getSelectedIndex()==0){
-//                    setOutlineVisible(false);
-//                }else{
-//                    setOutlineVisible(true);
-//                    setSeriesOutlinePaint(colorTable.get((String)outline_paint_box.getSelectedItem()));
-//                }
-                setSeriesOutlinePaint(outline_color);
+                //setSeriesPaint(line_color);
+                //setSeriesOutlinePaint(outline_color);
                 //setSeriesFillPaint(colorTable.get((String)fill_box.getSelectedItem()));
-                setSeriesFillPaint(shape_fill);
+                //setSeriesFillPaint(shape_fill);
                 setOutlineStroke(outline_slider.getValue());
                 setLinesVisible(lines_vis_box.isSelected());
                 setShapesVisible(shapes_vis_box.isSelected());
                 result = true;
                 
+                
+                
                 //ACHTUNG!!! Typen-Abhängig! XY oder TS?
                 if(plotType == 0) ctsconf.plotAllGraphs();  
                 if(plotType == 1) cxyconf.plotAllGraphs();
-                                         
+                
+                updateColors();
+                
             }
         };
         
         ActionListener stroke_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                line_color = JColorChooser.showDialog(thiscrd, "choose Color", line_color);
-                stroke_button.setBackground(line_color);
+                series_paint = JColorChooser.showDialog(thiscrd, "choose Color", line_color);
+                stroke_button.setBackground(series_paint);
             }
         };
         
         ActionListener fill_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                shape_fill = JColorChooser.showDialog(thiscrd, "choose Color", shape_fill);   
-                fill_button.setBackground(shape_fill);
+                series_fill_paint = JColorChooser.showDialog(thiscrd, "choose Color", shape_fill);
+                fill_button.setBackground(series_fill_paint);
             }
         };
         
         ActionListener outline_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                outline_color = JColorChooser.showDialog(thiscrd, "choose Color", outline_color);
-                outline_button.setBackground(outline_color);
+                series_outline_paint = JColorChooser.showDialog(thiscrd, "choose Color", outline_color);
+                outline_button.setBackground(series_outline_paint);
             }
         };
         
