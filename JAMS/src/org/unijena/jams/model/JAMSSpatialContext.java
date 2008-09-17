@@ -23,6 +23,7 @@
 package org.unijena.jams.model;
 
 import org.unijena.jams.data.*;
+import org.unijena.jams.dataaccess.DataTracer;
 
 /**
  *
@@ -57,5 +58,5 @@ public class JAMSSpatialContext extends JAMSContext {
 
     public void setCurrentEntity(JAMSEntity currentEntity) {
         this.currentEntity = currentEntity;
-    }
+    }    
 }

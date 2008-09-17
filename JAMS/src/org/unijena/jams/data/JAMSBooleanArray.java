@@ -57,4 +57,18 @@ public class JAMSBooleanArray implements JAMSData, Serializable {
         }
         this.value = values;
     }
+    
+    public String toString() {
+        String s = "";
+        if (value == null || value.length == 0) {
+            s = "null";
+        } else {
+            s += value[0];
+            for (int i = 1; i < value.length; i++) {
+                s += "," + value[i];
+            }
+        }
+        return s;
+    }
+    
 }

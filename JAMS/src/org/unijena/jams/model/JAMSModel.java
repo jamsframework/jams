@@ -84,10 +84,6 @@ public class JAMSModel extends JAMSContext {
         this.date = date;
     }
 
-    public String getWorkspaceDir() {
-        return workspaceDir;
-    }
-
     public void setWorkspaceDir(String workspaceDir) {
         
         if (workspaceDir.equals("")) {
@@ -97,6 +93,10 @@ public class JAMSModel extends JAMSContext {
         this.workspaceDir = workspaceDir;
         this.workspace = new VirtualWorkspace(new File(workspaceDir), runtime);
     }
+    
+    public VirtualWorkspace getWorkspace() {
+        return workspace;
+    }    
     
     public OutputDataStore getOutputDataStore(String title) {
         if (this.workspace == null) {

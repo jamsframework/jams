@@ -239,11 +239,18 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
-    private DataTracer createDataTracer() {
-        return new DataTracer(this) {
+    protected DataTracer createDataTracer(OutputDataStore store) {
+        return new DataTracer(this, store) {
 
             @Override
             public void trace() {
+                output(getCurrentEntity().getId());
+                output("\t");
+                for (JAMSData dataObject : dataTracer.getDataObjects()) {
+                    output(dataObject);
+                    output("\t");
+                }
+                output("\n");
             }
         };
     }
@@ -266,6 +273,12 @@ public class JAMSContext extends JAMSComponent {
         }
     }
     
+    protected void closeTrace() {
+        if (dataTracer != null) {
+            dataTracer.close();
+        }
+    }    
+
     public String getTraceMark() {
         return Long.toString(currentEntity.getId());
     }
@@ -274,12 +287,12 @@ public class JAMSContext extends JAMSComponent {
 
         OutputDataStore store = getModel().getOutputDataStore(this.getInstanceName());
 
-        if ((store == null) || (store.getAttributes().length==0)) {
+        if ((store == null) || (store.getAttributes().length == 0)) {
             dataTracer = null;
             return;
         }
 
-        dataTracer = createDataTracer();
+        dataTracer = createDataTracer(store);
 
         for (String attributeName : store.getAttributes()) {
             dataTracer.registerAttribute(attributeName);
@@ -294,7 +307,7 @@ public class JAMSContext extends JAMSComponent {
                 dataTracer = null;
             }
         }
-       
+
     }
 
     public void init() {
@@ -453,6 +466,8 @@ public class JAMSContext extends JAMSComponent {
         ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
         list.add(JAMSDataFactory.createEntity());
 
+
+        closeTrace();
     }
 
     class ChildrenEnumerator implements JAMSComponentEnumerator {
@@ -490,6 +505,7 @@ public class JAMSContext extends JAMSComponent {
             // entity and start with the new Component list again
             if (!ce.hasNext() && ee.hasNext()) {
                 updateEntityData();
+                runTrace();
                 setCurrentEntity(ee.next());
                 index++;
                 updateDataAccessors(index);
@@ -832,7 +848,6 @@ public class JAMSContext extends JAMSComponent {
     protected class AttributeSpec implements Serializable {
 
          String 
-         
          attributeName, className,
 
          value ;     
@@ -842,18 +857,18 @@ public class JAMSContext extends JAMSComponent {
         
     
 
-    public   AttributeSpec
-              
+    public   AttributeSpec   
 
          
          
          
          
 
-         (String attributeName, String className, String value    ) {
+         (String attributeName, String className, String value  ) {
             this.attributeName = attributeName;
             this.className = className;
             this.value = value;
+
 
               
         }
@@ -865,17 +880,6 @@ public class JAMSContext extends JAMSComponent {
 
         
         class  AccessSpec 
-    
-
-       
-         
-    
-
-        
-          
-    
-
-
     
 
        

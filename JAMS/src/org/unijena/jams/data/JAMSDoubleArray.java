@@ -46,10 +46,9 @@ public class JAMSDoubleArray implements JAMSData, Serializable {
         } else {
             s += value[0];
             for (int i = 1; i < value.length; i++) {
-                s += ", " + value[i];
+                s += "," + value[i];
             }
         }
-        s += "";
         return s;
     }
 

@@ -33,7 +33,7 @@ import java.io.Serializable;
 class JAMSCheckedEntity implements JAMSEntity, Serializable {
 
     private HashMap<String, Object> values = new HashMap<String, Object>();
-    private long id;
+    private long id = -1;
     
     public void setFloat(String name, float attribute) {
         JAMSFloat v = (JAMSFloat) this.values.get(name);

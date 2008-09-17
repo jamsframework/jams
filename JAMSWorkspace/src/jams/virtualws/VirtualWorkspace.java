@@ -117,7 +117,7 @@ public class VirtualWorkspace {
     public Set<String> getOutputDataStoreIDs() {
         return this.outputDataStores.keySet();
     }
-    
+
     public void removeDataStore(InputDataStore store) {
         inputDataStores.remove(store);
     }
@@ -150,7 +150,13 @@ public class VirtualWorkspace {
             return null;
         }
 
-        return new OutputDataStore(this, doc, dsTitle);
+        OutputDataStore ods;
+        try {
+            ods = new OutputDataStore(this, doc, dsTitle);
+        } catch (IOException ioe) {
+            ods = null;
+        }
+        return ods;
     }
 
     public String getTitle() {
@@ -252,7 +258,7 @@ public class VirtualWorkspace {
 
 //        System.out.println(ws.dataStoreToString("tmin_local"));
 //        ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/vworkspace/_tmin_dump.txt"));
-        
+
         OutputDataStore store = ws.getOutputDataStore("TimeLoop");
         System.out.println(store.getTitle());
         for (String attribute : store.getAttributes()) {
@@ -262,6 +268,18 @@ public class VirtualWorkspace {
 //        System.out.println(ws.dataStoreToString("tmean_timeseries"));
 //        ws.inputDataStoreToFile("tmean_timeseries", new File("D:/jamsapplication/vworkspace/_tmean_dump.txt"));
 //        ws.wsToFile();
+    }
+
+    public File getDirectory() {
+        return directory;
+    }
+
+    public File getInputDirectory() {
+        return inputDirectory;
+    }
+
+    public File getOutputDirectory() {
+        return outputDirectory;
     }
 }
 

@@ -20,39 +20,49 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.virtualws.stores;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import jams.virtualws.VirtualWorkspace;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 public class OutputDataStore {
-    
+
     private static final String TRACE_STRING = "trace";
     private static final String ATTRIBUTE_STRING = "attribute";
     private String title;
     private String[] attributes;
+    private BufferedWriter writer;
+    ObjectOutputStream oos;
+    File outputFile;
 
-    public OutputDataStore(VirtualWorkspace ws, Document doc, String title) {
-        
+    public OutputDataStore(VirtualWorkspace ws, Document doc, String title) throws IOException {
+
         this.title = title;
         Element root = doc.getDocumentElement();
         NodeList traceNodes = root.getElementsByTagName(TRACE_STRING);
-        
+
         int length = traceNodes.getLength();
         attributes = new String[length];
-        
+
         for (int i = 0; i < length; i++) {
             Element traceElement = (Element) traceNodes.item(i);
             attributes[i] = traceElement.getAttribute(ATTRIBUTE_STRING);
         }
-        
+
+
+        outputFile = new File(ws.getOutputDirectory().getPath() + File.separator + title + ".dat");
+        writer = new BufferedWriter(new FileWriter(outputFile));
     }
 
     public String getTitle() {
@@ -63,4 +73,17 @@ public class OutputDataStore {
         return attributes;
     }
 
+    public void write(Object o) {
+        try {
+            writer.write(o.toString());
+        } catch (IOException ioe) {
+        }
+    }
+
+    public void close() {
+        try {
+            writer.close();
+        } catch (IOException ioe) {
+        }
+    }
 }

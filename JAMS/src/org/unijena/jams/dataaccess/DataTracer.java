@@ -22,6 +22,7 @@
  */
 package org.unijena.jams.dataaccess;
 
+import jams.virtualws.stores.OutputDataStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.unijena.jams.data.JAMSData;
@@ -37,9 +38,11 @@ public abstract class DataTracer {
     private ArrayList<String> attributeNames = new ArrayList<String>();
     private JAMSContext context;
     private JAMSContext[] parents;
+    private OutputDataStore store;
 
-    public DataTracer(JAMSContext context) {
+    public DataTracer(JAMSContext context, OutputDataStore store) {
         this.context = context;
+        this.store = store;
     }
 
     public void registerAttribute(String attributeName) {
@@ -93,15 +96,17 @@ public abstract class DataTracer {
         output("@context\n");
         output(this.context.getClass().getName() + "\t" + this.context.getInstanceName() + "\t" + context.getNumberOfIterations() + "\n");
         output("@attributes\n");
+        output("ID\t");
         for (String attributeName : this.attributeNames) {
             output(attributeName + "\t");
         }
-        output("\n");
-        output("@ancestors\n");
 
+        output("\n@ancestors\n");
         for (JAMSContext p : this.parents) {
             output(p.getClass().getName() + "\t" + p.getInstanceName() + "\t" + p.getNumberOfIterations() + "\n");
         }
+
+        output("@data\n");
     }
 
     /**
@@ -110,17 +115,23 @@ public abstract class DataTracer {
     public abstract void trace();
 
     public void setStartMark() {
-        output("@start\n");
+
         for (JAMSContext parent : parents) {
-            output(parent.getTraceMark() + "\n");
+            output(parent.getInstanceName() + "\t" + parent.getTraceMark() + "\n");
         }
+        output("@start\n");
     }
 
     public void setEndMark() {
         output("@end\n");
     }
 
-    protected void output(String str) {
-        System.out.print(str);
+    protected void output(Object o) {
+        
+        store.write(o);
+    }
+    
+    public void close() {
+        store.close();
     }
 }

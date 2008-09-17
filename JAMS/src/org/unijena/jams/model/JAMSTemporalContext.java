@@ -22,6 +22,7 @@
  */
 package org.unijena.jams.model;
 
+import jams.virtualws.stores.OutputDataStore;
 import org.unijena.jams.data.*;
 import org.unijena.jams.dataaccess.DataTracer;
 
@@ -44,26 +45,21 @@ public class JAMSTemporalContext extends JAMSContext {
     public JAMSCalendar current;
     private JAMSCalendar lastValue;
 
-    public JAMSTemporalContext() {
-
-/*        dataTracer = new DataTracer(this) {
+    @Override
+    protected DataTracer createDataTracer(OutputDataStore store) {
+        return new DataTracer(this, store) {
 
             @Override
             public void trace() {
-
-                if (getDataObjects().length == 0) {
-                    return;
-                }
-
-                String result = current.toString() + "\t";
+                output(current);
+                output("\t");
                 for (JAMSData dataObject : dataTracer.getDataObjects()) {
-                    result += dataObject.toString();
+                    output(dataObject);
+                    output("\t");
                 }
-                output(result + "\n");
+                output("\n");
             }
-
         };
- */
     }
 
     @Override
@@ -83,11 +79,11 @@ public class JAMSTemporalContext extends JAMSContext {
     public long getNumberOfIterations() {
         return timeInterval.getNumberOfTimesteps();
     }
-    
+
     @Override
     public String getTraceMark() {
         return current.toString();
-    }    
+    }
 
     class RunEnumerator implements JAMSComponentEnumerator {
 
@@ -106,9 +102,7 @@ public class JAMSTemporalContext extends JAMSContext {
             // check end of component elements list, if required switch to the next
             // timestep start with the new Component list again
             if (!ce.hasNext() && current.before(lastValue)) {
-
                 runTrace();
-
                 current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
                 ce.reset();
             }

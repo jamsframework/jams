@@ -34,21 +34,21 @@ import org.unijena.jams.JAMS;
  * @author S. Kralisch
  */
 public class GenericDataWriter {
-    
+
     private String fileName;
     public BufferedWriter writer;
     private ArrayList<String> header = new ArrayList<String>();
     private ArrayList<String> comments = new ArrayList<String>();
     private ArrayList<Object> data;
     private boolean headerClosed = false;
-    
+
     public GenericDataWriter() {
     }
-    
+
     public GenericDataWriter(String fileName) {
         setFileName(fileName);
     }
-    
+
     private void openFile() {
         try {
             writer = new BufferedWriter(new FileWriter(fileName));
@@ -56,51 +56,54 @@ public class GenericDataWriter {
             JAMS.handle(ioe);
         }
     }
-    
-    public void flush(){
+
+    public void flush() {
         try {
             writer.flush();
         } catch (IOException ioe) {
             JAMS.handle(ioe);
         }
     }
-    
+
     public String getFileName() {
         return fileName;
     }
-    
+
     public void setFileName(String fileName) {
         this.fileName = fileName;
         openFile();
     }
-    
+
     public void addColumn(String name) {
-        if (!headerClosed)
+        if (!headerClosed) {
             header.add(name);
+        }
     }
-    
+
     public void addComment(String comment) {
-        if (!headerClosed)
-            comments.add("# "+comment);
+        if (!headerClosed) {
+            comments.add("# " + comment);
+        }
     }
-    
+
     public void writeHeader() {
-        
+
         Iterator<String> i;
         String s = "";
-        
+
         i = comments.iterator();
         while (i.hasNext()) {
-            s += i.next()+"\n";
+            s += i.next() + "\n";
         }
-        
+
 //        String s = "#JAMS output file\n#\n";
         //s += "#";
         i = header.iterator();
-        if (i.hasNext())
+        if (i.hasNext()) {
             s += i.next();
+        }
         while (i.hasNext()) {
-            s += "\t"+i.next();
+            s += "\t" + i.next();
         }
         try {
             writer.write(s);
@@ -111,20 +114,20 @@ public class GenericDataWriter {
         headerClosed = true;
         data = new ArrayList<Object>(header.size());
     }
-    
+
     public void addData(Object o) {
         data.add(o);
     }
-    
+
     public void addData(double val, int prec) {
         String fStr = null;
-        fStr = "%."+prec+"f";
-        
-        String dStr = String.format(Locale.US,fStr,val);
+        fStr = "%." + prec + "f";
+
+        String dStr = String.format(Locale.US, fStr, val);
         data.add(dStr);
     }
-    
-    public void writeLine(String line){
+
+    public void writeLine(String line) {
         try {
             writer.write(line);
             writer.newLine();
@@ -132,27 +135,28 @@ public class GenericDataWriter {
             JAMS.handle(ioe);
         }
     }
-    
-    public void write(String line){
+
+    public void write(String line) {
         try {
             writer.write(line);
         } catch (IOException ioe) {
             JAMS.handle(ioe);
         }
     }
-    
+
     public void writeData() throws RuntimeException {
-        
+
         String s = "";
-        
+
         if (data.size() != header.size()) {
             throw new RuntimeException("Wrong number of output columns!");
         } else {
             Iterator<Object> i = data.iterator();
-            if (i.hasNext())
+            if (i.hasNext()) {
                 s = i.next().toString();
+            }
             while (i.hasNext()) {
-                s += "\t"+i.next().toString();
+                s += "\t" + i.next().toString();
             }
             try {
                 writer.write(s);
@@ -163,11 +167,11 @@ public class GenericDataWriter {
             data.clear();
         }
     }
-    
+
     public void writeData(int prec) throws RuntimeException {
-        
+
         String s = "";
-        
+
         if (data.size() != header.size()) {
             throw new RuntimeException("Wrong number of output columns!");
         } else {
@@ -175,11 +179,12 @@ public class GenericDataWriter {
             //date first
             if (i.hasNext()) {
                 s = i.next().toString();
-            } while (i.hasNext()) {
-                double val = ((JAMSDouble)i.next()).getValue();
-                String dStr = String.format(Locale.US,"%." + prec + "f",val);
-                s += "\t"+dStr;
-                //s += "\t"+i.next().toString();
+            }
+            while (i.hasNext()) {
+                double val = ((JAMSDouble) i.next()).getValue();
+                String dStr = String.format(Locale.US, "%." + prec + "f", val);
+                s += "\t" + dStr;
+            //s += "\t"+i.next().toString();
             }
             try {
                 writer.write(s);
@@ -190,7 +195,7 @@ public class GenericDataWriter {
             data.clear();
         }
     }
-    
+
     public void close() {
         try {
             writer.flush();
