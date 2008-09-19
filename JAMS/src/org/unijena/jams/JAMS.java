@@ -49,8 +49,9 @@ public class JAMS {
     //public static final int TOOLBAR_HEIGHT = 38;
     public static final int SPLASH_DISPLAY_TIME = 0;
     public static final String WIKI_URL = "http://jams.uni-jena.de/jamswiki";
+    public static final String DEFAULT_PARAMETER_FILE_NAME = "model.jmp";
     private static JAMSCmdLine cmdLine;
-    private static File baseDir = null;    
+    private static File baseDir = null;
 
     public static void handle(Exception ex) {
         handle(ex, true);
@@ -180,8 +181,8 @@ public class JAMS {
 
         }
     }
-    
+
     public static File getBaseDir() {
         return baseDir;
-    }    
+    }
 }

@@ -30,6 +30,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -76,14 +77,24 @@ public class StandardRuntime implements JAMSRuntime {
     private PrintStream infoStream,  errorStream;
     private boolean guiEnabled = false;
     private ClassLoader classLoader;
+    private Document modelDocument = null;
+    private JAMSProperties properties = null;
 
+    @Override
     public void deleteErrorLogObservers() {
         errorLog.deleteObservers();
     }
+
+    @Override
     public void deleteInfoLogObservers() {
         infoLog.deleteObservers();
     }
+
+    @Override
     public void loadModel(Document modelDocument, JAMSProperties properties) {
+
+        this.modelDocument = modelDocument;
+        this.properties = properties;
 
         long start = System.currentTimeMillis();
 
@@ -97,12 +108,14 @@ public class StandardRuntime implements JAMSRuntime {
             // add info and error log output
             this.addInfoLogObserver(new Observer() {
 
+                @Override
                 public void update(Observable obs, Object obj) {
                     System.out.print(obj);
                 }
             });
             this.addErrorLogObserver(new Observer() {
 
+                @Override
                 public void update(Observable obs, Object obj) {
                     System.out.print(obj);
                 }
@@ -115,6 +128,7 @@ public class StandardRuntime implements JAMSRuntime {
             // add error log output via JDialog
             this.addErrorLogObserver(new Observer() {
 
+                @Override
                 public void update(Observable obs, Object obj) {
 
                     Object[] options = {"OK", "OK, skip other messages"};
@@ -160,9 +174,9 @@ public class StandardRuntime implements JAMSRuntime {
         // run preprocessor
         //preProc.process();
         ParameterProcessor.preProcess(modelDocument);
-        
+
         // load the model
-        ModelLoader modelLoader = new ModelLoader(modelDocument, null, this);
+        ModelLoader modelLoader = new ModelLoader(modelDocument, null, this, properties);
         this.model = modelLoader.getModel();
 
         // create GUI if needed
@@ -182,6 +196,7 @@ public class StandardRuntime implements JAMSRuntime {
         Runtime.getRuntime().gc();
     }
 
+    @Override
     public void runModel() {
 
         //check if runstate is on "run"
@@ -194,15 +209,15 @@ public class StandardRuntime implements JAMSRuntime {
         }
 
         long start = System.currentTimeMillis();
-                
+
         if (this.getRunState() == JAMS.RUNSTATE_RUN) {
             model.init();
         }
-               
+
         if (this.getRunState() == JAMS.RUNSTATE_RUN) {
             model.run();
         }
-                
+
         if (this.getRunState() == JAMS.RUNSTATE_RUN) {
             model.cleanup();
         }
@@ -224,9 +239,10 @@ public class StandardRuntime implements JAMSRuntime {
 
         model = null;
         classLoader = null;
-        Runtime.getRuntime().gc();        
+        Runtime.getRuntime().gc();
     }
 
+    @Override
     public void initGUI(String title, boolean ontop, int width, int height) {
 
         if (guiComponents.size() == 0) {
@@ -269,6 +285,7 @@ public class StandardRuntime implements JAMSRuntime {
         stopButton.setEnabled(true);
         stopButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent evt) {
                 StandardRuntime.this.sendHalt();
                 stopButton.setEnabled(false);
@@ -282,6 +299,7 @@ public class StandardRuntime implements JAMSRuntime {
         closeButton.setEnabled(false);
         closeButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent evt) {
                 StandardRuntime.this.sendHalt();
                 frame.dispose();
@@ -293,6 +311,7 @@ public class StandardRuntime implements JAMSRuntime {
 
         frame.addWindowListener(new WindowAdapter() {
 
+            @Override
             public void windowClosing(WindowEvent e) {
                 StandardRuntime.this.sendHalt();
                 frame.dispose();
@@ -302,6 +321,7 @@ public class StandardRuntime implements JAMSRuntime {
 
         this.addRunStateObserver(new Observer() {
 
+            @Override
             public void update(Observable obs, Object obj) {
                 stopButton.setEnabled(false);
                 if (StandardRuntime.this.getRunState() == JAMS.RUNSTATE_STOP) {
@@ -315,6 +335,7 @@ public class StandardRuntime implements JAMSRuntime {
 
     }
 
+    @Override
     public HashMap<String, JAMSData> getDataHandles() {
         return dataHandles;
     }
@@ -323,32 +344,39 @@ public class StandardRuntime implements JAMSRuntime {
         this.dataHandles = dataHandles;
     }
 
+    @Override
     public void println(String s, int debugLevel) {
         if (debugLevel <= getDebugLevel()) {
             sendInfoMsg(s);
         }
     }
 
+    @Override
     public void println(String s) {
         sendInfoMsg(s);
     }
 
+    @Override
     public int getDebugLevel() {
         return debugLevel;
     }
 
+    @Override
     public void setDebugLevel(int aDebugLevel) {
         debugLevel = aDebugLevel;
     }
 
+    @Override
     public void handle(Exception ex) {
         handle(ex, null, false);
     }
 
+    @Override
     public void handle(Exception ex, String cName) {
         handle(ex, cName, false);
     }
 
+    @Override
     public void handle(Exception ex, boolean proceed) {
         handle(ex, null, proceed);
     }
@@ -371,103 +399,129 @@ public class StandardRuntime implements JAMSRuntime {
         }
     }
 
+    @Override
     public void sendHalt() {
         runState.setState(JAMS.RUNSTATE_STOP);
     }
 
+    @Override
     public void sendHalt(String str) {
         sendErrorMsg(str);
         sendHalt();
     }
 
+    @Override
     public void sendErrorMsg(String str) {
         errorLog.print("ERROR: " + str + "\n");
     }
 
+    @Override
     public void sendInfoMsg(String str) {
         infoLog.print("INFO: " + str + "\n");
     }
 
+    @Override
     public void addRunStateObserver(Observer o) {
         runState.addObserver(o);
     }
 
+    @Override
     public int getRunState() {
         return runState.getState();
     }
 
+    @Override
     public void addInfoLogObserver(Observer o) {
         infoLog.addObserver(o);
     }
 
+    @Override
     public void deleteInfoLogObserver(Observer o) {
         infoLog.deleteObserver(o);
     }
 
+    @Override
     public void addErrorLogObserver(Observer o) {
         errorLog.addObserver(o);
     }
 
+    @Override
     public void deleteErrorLogObserver(Observer o) {
         errorLog.deleteObserver(o);
     }
 
+    @Override
     public String getErrorLog() {
         return errorLog.getLogString();
     }
 
+    @Override
     public String getInfoLog() {
         return infoLog.getLogString();
     }
 
+    @Override
     public void addGUIComponent(JAMSGUIComponent component) {
         guiComponents.add(component);
+    }
+
+    public void saveModelParameter() {
+        // save the model's parameter set to the workspace output dir
+        try {
+            File modelFile = new File(this.model.getWorkspace().getOutputDataDirectory().getPath() +
+                    File.separator + JAMS.DEFAULT_PARAMETER_FILE_NAME);
+            ParameterProcessor.saveParams(this.modelDocument, modelFile, this.properties.getProperty("username"), null);
+        } catch (IOException ioe) {
+            getModel().getRuntime().handle(ioe);
+        }
     }
 
     public ByteArrayOutputStream GetRuntimeState(String fileName) {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         ObjectOutputStream objOut = null;
-        
-        try{
+
+        try {
             objOut = new ObjectOutputStream(outStream);
             objOut.writeObject(this.model.getEntities());
-        }catch(IOException e){
+        } catch (IOException e) {
             sendErrorMsg("Unable to save model state because," + e.toString());
         }
-        
-        try{
+
+        try {
             if (fileName != null) {
                 FileOutputStream fos = new FileOutputStream(fileName);
                 outStream.writeTo(fos);
                 fos.close();
-            }  
-        }catch(Exception e){
+            }
+        } catch (Exception e) {
             sendErrorMsg("Could not write model state to file, because" + e.toString());
         }
-        
-        try{
+
+        try {
             objOut.close();
             outStream.close();
-        }catch(IOException e){
+        } catch (IOException e) {
             sendErrorMsg("Unable to save model state, because" + e.toString());
-        }    
+        }
         return outStream;
     }
-    
-    public JAMSModel getModel(){
+
+    public JAMSModel getModel() {
         return this.model;
     }
-    
+
     public void SetRuntimeState(ByteArrayInputStream inStream) {
-        try{
+        try {
             ObjectInputStream objIn = new ObjectInputStream(inStream);
-            JAMSEntityCollection e = (JAMSEntityCollection)objIn.readObject();
+            JAMSEntityCollection e = (JAMSEntityCollection) objIn.readObject();
             this.model.setEntities(e);
             objIn.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             sendErrorMsg("Unable to deserializing jamsentity collection, because" + e.toString());
         }
     }
+
+    @Override
     public JFrame getFrame() {
         return frame;
     }
@@ -487,6 +541,7 @@ public class StandardRuntime implements JAMSRuntime {
         }
     }
 
+    @Override
     public ClassLoader getClassLoader() {
         return classLoader;
     }

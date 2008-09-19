@@ -188,13 +188,7 @@ public class VirtualWorkspace {
             return null;
         }
 
-        OutputDataStore ods;
-        try {
-            ods = new OutputDataStore(this, doc, dsTitle);
-        } catch (IOException ioe) {
-            ods = null;
-        }
-        return ods;
+        return new OutputDataStore(this, doc, dsTitle);
     }
 
     public String getTitle() {
@@ -215,9 +209,11 @@ public class VirtualWorkspace {
 
     private void createDataStores() {
 
-        FileFilter filter = new FileFilter() {
+        FileFilter filter = new  
 
-            public boolean accept(File pathname) {
+              FileFilter( ) {
+
+                 public boolean accept(File pathname) {
                 if (pathname.getPath().endsWith(".xml")) {
                     return true;
                 } else {
@@ -287,13 +283,20 @@ public class VirtualWorkspace {
 
         JAMSRuntime runtime = new StandardRuntime();
         runtime.setDebugLevel(JAMS.VERBOSE);
-        runtime.addErrorLogObserver(new Observer() {
+        runtime.addErrorLogObserver(new  
 
-            public void update(Observable o, Object arg) {
+              Observer(   ) {
+
+                
+            
+        
+          
+
+            public  void update(Observable o, Object arg) {
                 System.out.print(arg);
             }
         });
-        runtime.addInfoLogObserver(new Observer() {
+        runtime     .addInfoLogObserver(new Observer() {
 
             public void update(Observable o, Object arg) {
                 System.out.print(arg);
@@ -328,7 +331,7 @@ public class VirtualWorkspace {
         return outputDirectory;
     }
 
-    public File getOutputDataDirectory(boolean increment) {
+    public File getOutputDataDirectory() {
         return outputDataDirectory;
     }
 }

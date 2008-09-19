@@ -283,7 +283,7 @@ public class ModelView {
         JAMSLauncher launcher = new JAMSLauncher(JUICE.getJamsProperties(), getModelDoc());
         launcher.setVisible(true);
     }
-
+    
     public void runModel() {
 
         // first check if provided parameter values are valid

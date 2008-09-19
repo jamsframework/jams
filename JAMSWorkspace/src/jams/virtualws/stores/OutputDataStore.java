@@ -43,12 +43,13 @@ public class OutputDataStore {
     private String title;
     private String[] attributes;
     private BufferedWriter writer;
-    ObjectOutputStream oos;
-    File outputFile;
+    private VirtualWorkspace ws;
 
-    public OutputDataStore(VirtualWorkspace ws, Document doc, String title) throws IOException {
+    public OutputDataStore(VirtualWorkspace ws, Document doc, String title) {
 
         this.title = title;
+        this.ws = ws;
+
         Element root = doc.getDocumentElement();
         NodeList traceNodes = root.getElementsByTagName(TRACE_STRING);
 
@@ -59,12 +60,6 @@ public class OutputDataStore {
             Element traceElement = (Element) traceNodes.item(i);
             attributes[i] = traceElement.getAttribute(ATTRIBUTE_STRING);
         }
-
-        File outputDirectory = ws.getOutputDataDirectory(true);
-        outputDirectory.mkdirs();
-        
-        outputFile = new File(outputDirectory.getPath() + File.separator + title + ".dat");
-        writer = new BufferedWriter(new FileWriter(outputFile));
     }
 
     public String getTitle() {
@@ -75,17 +70,19 @@ public class OutputDataStore {
         return attributes;
     }
 
-    public void write(Object o) {
-        try {
-            writer.write(o.toString());
-        } catch (IOException ioe) {
-        }
+    public void open() throws IOException {
+        File outputDirectory = ws.getOutputDataDirectory();
+        outputDirectory.mkdirs();
+
+        File outputFile = new File(outputDirectory.getPath() + File.separator + title + ".dat");
+        writer = new BufferedWriter(new FileWriter(outputFile));
     }
 
-    public void close() {
-        try {
-            writer.close();
-        } catch (IOException ioe) {
-        }
+    public void write(Object o) throws IOException {
+        writer.write(o.toString());
+    }
+
+    public void close() throws IOException {
+        writer.close();
     }
 }

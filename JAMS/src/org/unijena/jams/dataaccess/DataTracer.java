@@ -23,6 +23,7 @@
 package org.unijena.jams.dataaccess;
 
 import jams.virtualws.stores.OutputDataStore;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.unijena.jams.data.JAMSData;
@@ -78,6 +79,13 @@ public abstract class DataTracer {
 
     private void createHeader() {
 
+        try {
+            store.open();
+        } catch (IOException ioe) {
+            context.getModel().getRuntime().sendErrorMsg("Error creating data output directory!");
+            return;
+        }
+
         JAMSContext parent = context;
         ArrayList<JAMSContext> parentList = new ArrayList<JAMSContext>();
         while (parent != context.getModel()) {
@@ -127,11 +135,16 @@ public abstract class DataTracer {
     }
 
     protected void output(Object o) {
-        
-        store.write(o);
+        try {
+            store.write(o);
+        } catch (IOException ioe) {
+        }
     }
-    
+
     public void close() {
-        store.close();
+        try {
+            store.close();
+        } catch (IOException ioe) {
+        }
     }
 }

@@ -47,7 +47,11 @@ public class MiniRuntime implements JAMSRuntime {
     private JAMSLog errorLog = new JAMSLog();
     private JAMSLog infoLog = new JAMSLog();
 
-    /** Creates a new instance of MiniRuntime */
+    /** 
+     * Creates a new instance of MiniRuntime. This Runtime can be used to
+     * test a single component without model, e.g. for debugging purposes.
+     * @param component The component to be tested
+     */
     public MiniRuntime(JAMSComponent component) {
         JAMSModel model = new JAMSModel(this);
         component.setModel(model);
@@ -65,40 +69,49 @@ public class MiniRuntime implements JAMSRuntime {
 
     }
 
+    @Override
     public int getDebugLevel() {
         return this.debugLevel;
     }
 
+    @Override
     public void setDebugLevel(int aDebugLevel) {
         this.debugLevel = aDebugLevel;
     }
 
+    @Override
     public void sendInfoMsg(String str) {
         infoLog.print("INFO: " + str + "\n");
     }
-    
+
+    @Override
     public void sendErrorMsg(String str) {
         errorLog.print("ERROR: " + str + "\n");
-    }    
+    }
 
+    @Override
     public void println(String s, int debugLevel) {
         if (debugLevel <= getDebugLevel()) {
             sendInfoMsg(s);
         }
     }
 
+    @Override
     public void println(String s) {
         sendInfoMsg(s);
     }
 
+    @Override
     public void handle(Exception ex) {
         handle(ex, null, false);
     }
 
+    @Override
     public void handle(Exception ex, String cName) {
         handle(ex, cName, false);
     }
 
+    @Override
     public void handle(Exception ex, boolean proceed) {
         handle(ex, null, proceed);
     }
@@ -125,71 +138,94 @@ public class MiniRuntime implements JAMSRuntime {
         return new HashMap<String, JAMSData>();
     }
 
+    @Override
     public void sendHalt() {
         System.exit(0);
     }
 
+    @Override
     public void sendHalt(String str) {
         sendErrorMsg(str);
         sendHalt();
     }
 
+    @Override
     public int getRunState() {
         return -1;
     }
 
+    @Override
     public void addRunStateObserver(Observer o) {
     }
 
+    @Override
     public void addInfoLogObserver(Observer o) {
         infoLog.addObserver(o);
     }
 
+    @Override
     public void deleteInfoLogObserver(Observer o) {
         infoLog.deleteObserver(o);
     }
-    
+
+    @Override
     public void deleteInfoLogObservers() {
         infoLog.deleteObservers();
     }
 
+    @Override
     public void addErrorLogObserver(Observer o) {
         errorLog.addObserver(o);
     }
 
+    @Override
     public void deleteErrorLogObserver(Observer o) {
         errorLog.deleteObserver(o);
     }
-    
+
+    @Override
     public void deleteErrorLogObservers() {
         errorLog.deleteObservers();
     }
 
+    @Override
     public String getErrorLog() {
         return errorLog.getLogString();
     }
 
+    @Override
     public String getInfoLog() {
         return infoLog.getLogString();
     }
 
+    @Override
     public void addGUIComponent(JAMSGUIComponent component) {
     }
 
+    @Override
     public void initGUI(String title, boolean ontop, int width, int height) {
     }
 
+    @Override
     public JFrame getFrame() {
         return null;
     }
 
+    @Override
     public void runModel() {
     }
 
+    @Override
     public void loadModel(Document modelDocument, JAMSProperties properties) {
     }
 
+    @Override
     public ClassLoader getClassLoader() {
         return ClassLoader.getSystemClassLoader();
+    }
+
+    @Override
+    public void saveModelParameter() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

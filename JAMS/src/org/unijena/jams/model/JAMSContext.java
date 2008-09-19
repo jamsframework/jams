@@ -28,6 +28,7 @@ package org.unijena.jams.model;
  * @author S. Kralisch
  */
 import jams.virtualws.stores.OutputDataStore;
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
@@ -342,6 +343,11 @@ public class JAMSContext extends JAMSComponent {
             if (dataTracer.getDataObjects().length == 0) {
                 dataTracer = null;
             }
+        }
+
+        // save current model parameter to workspace output directory
+        if (dataTracer != null) {
+            getModel().getRuntime().saveModelParameter();
         }
 
     }
