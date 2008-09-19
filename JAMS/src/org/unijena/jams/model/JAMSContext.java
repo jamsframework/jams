@@ -201,7 +201,14 @@ public class JAMSContext extends JAMSComponent {
 
                 } else {
 
-                    //maybe the component's data object already has a value assigned, so get it
+                    /* 
+                     * maybe the component's data object already has a value 
+                     * assigned, so get it, but
+                     * problem in case of a repeated execution of the whole
+                     * model w/o newly creating the components with their initial
+                     * attribute values -- they would keep their old attribute
+                     * value introducing a model memory :/ -- better use null instead..
+                     */
                     JAMSData componentObject = null;//(JAMSData) accessSpec.component.getClass().getDeclaredField(accessSpec.varName).get(accessSpec.component);
                     //JAMSData componentObject = (JAMSData) accessSpec.component.getClass().getDeclaredField(accessSpec.varName).get(accessSpec.component);
 
@@ -217,26 +224,31 @@ public class JAMSContext extends JAMSComponent {
                 getModel().getRuntime().sendErrorMsg("Error occured in " + accessSpec.component.getInstanceName() + ": " + accessSpec.varName);
                 getModel().getRuntime().handle(e, false);
             }
-        }
 
-        if (daList.size() > 0) {
-            this.dataAccessors = daList.toArray(new DataAccessor[daList.size()]);
-        }
-
-        for (int i = 0; i < daList.size(); i++) {
-            int index = 0;
-            while (index >= 0) {
-                try {
-                    daList.get(i).setIndex(index);
-                    daList.get(i).read();
-
-                } catch (Exception e) {
-                    break;
-                }
-                index++;
+            // create DataAccessor array from DataAccessor list
+            if (daList.size() > 0) {
+                this.dataAccessors = daList.toArray(new DataAccessor[daList.size()]);
             }
-            daList.get(i).setIndex(0);
         }
+
+    /* 
+     * removed by Sven -- what's that good for??
+     * 
+    for (int i = 0; i < daList.size(); i++) {
+    int index = 0;
+    while (index >= 0) {
+    try {
+    daList.get(i).setIndex(index);
+    daList.get(i).read();
+    
+    } catch (Exception e) {
+    break;
+    }
+    index++;
+    }
+    daList.get(i).setIndex(0);
+    }
+     */
     }
 
     protected DataTracer createDataTracer(OutputDataStore store) {
@@ -272,12 +284,12 @@ public class JAMSContext extends JAMSComponent {
             dataTracer.setEndMark();
         }
     }
-    
+
     protected void closeTrace() {
         if (dataTracer != null) {
             dataTracer.close();
         }
-    }    
+    }
 
     public String getTraceMark() {
         return Long.toString(currentEntity.getId());
@@ -294,8 +306,32 @@ public class JAMSContext extends JAMSComponent {
 
         dataTracer = createDataTracer(store);
 
+        JAMSEntity[] ea = getEntities().getEntityArray();
+
         for (String attributeName : store.getAttributes()) {
+
             dataTracer.registerAttribute(attributeName);
+            try {
+                JAMSData attribute = (JAMSData) ea[0].getObject(attributeName);
+                if (attribute == null) {
+                    continue;
+                }
+                Class clazz = attribute.getClass();
+                getDataObject(ea, clazz, attributeName, DataAccessor.READ_ACCESS, null);
+            } catch (JAMSEntity.NoSuchAttributeException nsae) {
+                // will do nothing here since this will be handled at 
+                // the DataTracer's init method below..
+            } catch (Exception e) {
+                getModel().getRuntime().sendErrorMsg("Error while trying to trace " + attributeName + ": " + this.getInstanceName());
+                getModel().getRuntime().handle(e, false);
+            }
+        }
+
+        // check if new dataAccessor objects where added
+        // if so, create new array from list
+        if (this.daList.size() > this.dataAccessors.length) {
+            // create DataAccessor array from DataAccessor list
+            this.dataAccessors = daList.toArray(new DataAccessor[daList.size()]);
         }
 
         String[] result = dataTracer.init(attribs);
@@ -327,10 +363,12 @@ public class JAMSContext extends JAMSComponent {
         // setup data tracer -- needed for data output to output-datastores
         setupDataTracer();
 
+        // create the init/cleanup enumerator (i.e. one invocation for every component)
         if (initCleanupEnumerator == null) {
             initCleanupEnumerator = getChildrenEnumerator();
         }
 
+        // initialize init/cleanup enumerator and start iteration
         initCleanupEnumerator.reset();
         while (initCleanupEnumerator.hasNext() && doRun) {
             JAMSComponent comp = initCleanupEnumerator.next();
@@ -400,7 +438,9 @@ public class JAMSContext extends JAMSComponent {
                 getModel().getRuntime().sendHalt("Class " + clazz.getCanonicalName() + " not supported!");
             }
 
-            daList.add(da);
+            if (da != null) {
+                daList.add(da);
+            }
         }
         return dataObject;
     }
@@ -508,7 +548,7 @@ public class JAMSContext extends JAMSComponent {
                 runTrace();
                 setCurrentEntity(ee.next());
                 index++;
-                updateDataAccessors(index);
+                updateComponentData(index);
                 ce.reset();
             }
             return ce.next();
@@ -519,7 +559,7 @@ public class JAMSContext extends JAMSComponent {
             setCurrentEntity(getEntities().getCurrent());
             ce.reset();
             index = 0;
-            updateDataAccessors(index);
+            updateComponentData(index);
         }
     }
 
@@ -833,7 +873,7 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
-    protected void updateDataAccessors(int index) {
+    protected void updateComponentData(int index) {
         for (int i = 0; i < dataAccessors.length; i++) {
             dataAccessors[i].setIndex(index);
             //read entity data before execution
@@ -847,50 +887,16 @@ public class JAMSContext extends JAMSComponent {
 
     protected class AttributeSpec implements Serializable {
 
-         String 
-         attributeName, className,
+        String attributeName, className, value;
 
-         value ;     
-              
-              
-              
-        
-    
-
-    public   AttributeSpec   
-
-         
-         
-         
-         
-
-         (String attributeName, String className, String value  ) {
+        public AttributeSpec(String attributeName, String className, String value) {
             this.attributeName = attributeName;
             this.className = className;
             this.value = value;
-
-
-              
         }
     }
 
-    protected    
-         
-    
-
-        
-        class  AccessSpec 
-    
-
-       
-         
-    
-
-        
-          
-    
-
-implements Serializable {
+    protected class AccessSpec implements Serializable {
 
         JAMSComponent component;
         String varName;

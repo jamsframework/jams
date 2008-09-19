@@ -134,7 +134,7 @@ public class JAMSConcurrentContext extends JAMSContext {
                 updateEntityData();
                 setCurrentEntity(ee.next());
                 index++;
-                updateDataAccessors(index);
+                updateComponentData(index);
             }
             return null;
         }
@@ -143,7 +143,7 @@ public class JAMSConcurrentContext extends JAMSContext {
             ee.reset();
             setCurrentEntity(getEntities().getCurrent());
             index = 0;
-            updateDataAccessors(index);
+            updateComponentData(index);
         }
     }
 }

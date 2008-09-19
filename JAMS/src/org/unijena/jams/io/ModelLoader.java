@@ -1,5 +1,5 @@
 /*
- * JAMSModelLoader.java
+ * ModelLoader.java
  * Created on 26. September 2005, 16:55
  *
  * This file is part of JAMS
@@ -35,14 +35,14 @@ import org.unijena.jams.runtime.JAMSRuntime;
  *
  * @author S. Kralisch
  */
-public class JAMSModelLoader {
+public class ModelLoader {
 
     private HashMap<String, JAMSComponent> componentRepository = new HashMap<String, JAMSComponent>();
     private HashMap<String, String> constants = new HashMap<String, String>();
     private ClassLoader loader;
     private JAMSModel jamsModel;
 
-    public JAMSModelLoader(Document modelDoc, String[] globvars, JAMSRuntime rt) {
+    public ModelLoader(Document modelDoc, String[] globvars, JAMSRuntime rt) {
 
         this.loader = rt.getClassLoader();
 

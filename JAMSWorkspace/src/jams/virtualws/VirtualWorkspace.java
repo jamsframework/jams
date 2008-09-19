@@ -43,23 +43,53 @@ import org.unijena.jams.runtime.StandardRuntime;
 import org.w3c.dom.Document;
 import jams.virtualws.stores.ASCIIConverter;
 import jams.virtualws.stores.OutputDataStore;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Properties;
 
 public class VirtualWorkspace {
 
-    private String wsTitle;
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
     private JAMSRuntime runtime = new StandardRuntime();
     private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-    private File directory,  inputDirectory,  outputDirectory = null;
+    private File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory;
+    private Properties properties = new Properties();
 
     public VirtualWorkspace(File directory, JAMSRuntime runtime) {
         this.runtime = runtime;
+        this.directory = directory;
+        loadConfig();
+
         if (!isValid(directory)) {
             this.getRuntime().sendErrorMsg("Error adding datastores: \"" +
                     directory.getAbsolutePath() + "\" not a valid datastore or wrong permissions!");
         } else {
             this.createDataStores();
+        }
+    }
+
+    public void loadConfig() {
+        try {
+            File file = new File(directory.getPath() + File.separator + "config.txt");
+            BufferedInputStream is = new BufferedInputStream(new FileInputStream(file));
+            properties.load(is);
+        } catch (IOException ioe) {
+            runtime.handle(ioe);
+        }
+    }
+
+    public void saveConfig() {
+        try {
+            File file = new File(directory.getPath() + File.separator + "config.txt");
+            BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+            properties.store(os, "JAMS workspace config");
+        } catch (IOException ioe) {
+            runtime.handle(ioe);
         }
     }
 
@@ -72,12 +102,20 @@ public class VirtualWorkspace {
             File inDir = new File(directory, "input");
             File outDir = new File(directory, "output");
 
-            inDir.mkdir();
-            outDir.mkdir();
+            inDir.mkdirs();
+            outDir.mkdirs();
 
-            this.directory = directory;
             this.inputDirectory = inDir;
             this.outputDirectory = outDir;
+
+            if (this.isIncremental()) {
+                Calendar cal = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
+                this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + sdf.format(cal.getTime()));
+            } else {
+                this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + "current");
+            }
+
             return true;
         } catch (SecurityException se) {
             return false;
@@ -160,11 +198,19 @@ public class VirtualWorkspace {
     }
 
     public String getTitle() {
-        return wsTitle;
+        return properties.getProperty("title");
     }
 
     public void setTitle(String title) {
-        this.wsTitle = title;
+        properties.setProperty("title", title);
+    }
+
+    public boolean isIncremental() {
+        return Boolean.parseBoolean(properties.getProperty("incremental"));
+    }
+
+    public void setIncremental(boolean inc) {
+        properties.setProperty("incremental", Boolean.toString(inc));
     }
 
     private void createDataStores() {
@@ -278,8 +324,12 @@ public class VirtualWorkspace {
         return inputDirectory;
     }
 
-    public File getOutputDirectory() {
+    public File getOutputDirectory(boolean increment) {
         return outputDirectory;
+    }
+
+    public File getOutputDataDirectory(boolean increment) {
+        return outputDataDirectory;
     }
 }
 

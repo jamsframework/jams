@@ -52,7 +52,7 @@ import org.unijena.jams.JAMSProperties;
 import org.unijena.jams.JAMSTools;
 import org.unijena.jams.data.JAMSData;
 import org.unijena.jams.data.JAMSEntityCollection;
-import org.unijena.jams.io.JAMSModelLoader;
+import org.unijena.jams.io.ModelLoader;
 import org.unijena.jams.io.ParameterProcessor;
 import org.unijena.jams.model.JAMSGUIComponent;
 import org.unijena.jams.model.JAMSModel;
@@ -162,7 +162,7 @@ public class StandardRuntime implements JAMSRuntime {
         ParameterProcessor.preProcess(modelDocument);
         
         // load the model
-        JAMSModelLoader modelLoader = new JAMSModelLoader(modelDocument, null, this);
+        ModelLoader modelLoader = new ModelLoader(modelDocument, null, this);
         this.model = modelLoader.getModel();
 
         // create GUI if needed

@@ -60,8 +60,10 @@ public class OutputDataStore {
             attributes[i] = traceElement.getAttribute(ATTRIBUTE_STRING);
         }
 
-
-        outputFile = new File(ws.getOutputDirectory().getPath() + File.separator + title + ".dat");
+        File outputDirectory = ws.getOutputDataDirectory(true);
+        outputDirectory.mkdirs();
+        
+        outputFile = new File(outputDirectory.getPath() + File.separator + title + ".dat");
         writer = new BufferedWriter(new FileWriter(outputFile));
     }
 

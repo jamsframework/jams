@@ -95,18 +95,18 @@ public abstract class DataTracer {
 
         output("@context\n");
         output(this.context.getClass().getName() + "\t" + this.context.getInstanceName() + "\t" + context.getNumberOfIterations() + "\n");
+
+        output("@ancestors\n");
+        for (JAMSContext p : this.parents) {
+            output(p.getClass().getName() + "\t" + p.getInstanceName() + "\t" + p.getNumberOfIterations() + "\n");
+        }
+
         output("@attributes\n");
         output("ID\t");
         for (String attributeName : this.attributeNames) {
             output(attributeName + "\t");
         }
-
-        output("\n@ancestors\n");
-        for (JAMSContext p : this.parents) {
-            output(p.getClass().getName() + "\t" + p.getInstanceName() + "\t" + p.getNumberOfIterations() + "\n");
-        }
-
-        output("@data\n");
+        output("\n@data\n");
     }
 
     /**
