@@ -42,12 +42,14 @@ import org.unijena.jams.runtime.JAMSRuntime;
 import org.unijena.jams.runtime.StandardRuntime;
 import org.w3c.dom.Document;
 import jams.virtualws.stores.ASCIIConverter;
+import jams.virtualws.stores.DataStore;
 import jams.virtualws.stores.OutputDataStore;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
 
@@ -59,6 +61,7 @@ public class VirtualWorkspace {
     private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
     private File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory;
     private Properties properties = new Properties();
+    private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
 
     public VirtualWorkspace(File directory, JAMSRuntime runtime) {
         this.runtime = runtime;
@@ -188,7 +191,19 @@ public class VirtualWorkspace {
             return null;
         }
 
-        return new OutputDataStore(this, doc, dsTitle);
+        OutputDataStore store = new OutputDataStore(this, doc, dsTitle);
+        currentStores.add(store);
+        return store;
+    }
+
+    public void close() {
+        for (DataStore store : currentStores) {
+            try {
+                store.close();
+            } catch (IOException ioe) {
+                runtime.handle(ioe);
+            }
+        }
     }
 
     public String getTitle() {
@@ -209,11 +224,9 @@ public class VirtualWorkspace {
 
     private void createDataStores() {
 
-        FileFilter filter = new  
+        FileFilter filter = new FileFilter() {
 
-              FileFilter( ) {
-
-                 public boolean accept(File pathname) {
+            public boolean accept(File pathname) {
                 if (pathname.getPath().endsWith(".xml")) {
                     return true;
                 } else {
@@ -283,20 +296,13 @@ public class VirtualWorkspace {
 
         JAMSRuntime runtime = new StandardRuntime();
         runtime.setDebugLevel(JAMS.VERBOSE);
-        runtime.addErrorLogObserver(new  
+        runtime.addErrorLogObserver(new Observer() {
 
-              Observer(   ) {
-
-                
-            
-        
-          
-
-            public  void update(Observable o, Object arg) {
+            public void update(Observable o, Object arg) {
                 System.out.print(arg);
             }
         });
-        runtime     .addInfoLogObserver(new Observer() {
+        runtime.addInfoLogObserver(new Observer() {
 
             public void update(Observable o, Object arg) {
                 System.out.print(arg);
@@ -309,7 +315,7 @@ public class VirtualWorkspace {
 //        ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/vworkspace/_tmin_dump.txt"));
 
         OutputDataStore store = ws.getOutputDataStore("TimeLoop");
-        System.out.println(store.getTitle());
+        System.out.println(store.getID());
         for (String attribute : store.getAttributes()) {
             System.out.println(attribute);
         }

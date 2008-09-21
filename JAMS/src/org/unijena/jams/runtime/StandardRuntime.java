@@ -221,6 +221,10 @@ public class StandardRuntime implements JAMSRuntime {
         if (this.getRunState() == JAMS.RUNSTATE_RUN) {
             model.cleanup();
         }
+        
+        if (model.getWorkspace() != null) {
+            model.getWorkspace().close();
+        }
 
         long end = System.currentTimeMillis();
         this.println("JAMS model execution time: " + (end - start) + " ms", JAMS.STANDARD);

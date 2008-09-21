@@ -36,7 +36,7 @@ import jams.virtualws.plugins.DataReader;
  *
  * @author Sven Kralisch
  */
-public class TableDataStore extends StandardDataStore {
+public class TableDataStore extends StandardInputDataStore {
 
     protected int currentPosition,  maxPosition;
     protected Set<DataReader> dataIOSet = new HashSet<DataReader>();

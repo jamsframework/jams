@@ -30,24 +30,23 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class OutputDataStore {
+public class OutputDataStore implements DataStore {
 
     private static final String TRACE_STRING = "trace";
     private static final String ATTRIBUTE_STRING = "attribute";
-    private String title;
+    private String id;
     private String[] attributes;
     private BufferedWriter writer;
     private VirtualWorkspace ws;
 
-    public OutputDataStore(VirtualWorkspace ws, Document doc, String title) {
+    public OutputDataStore(VirtualWorkspace ws, Document doc, String id) {
 
-        this.title = title;
+        this.id = id;
         this.ws = ws;
 
         Element root = doc.getDocumentElement();
@@ -62,8 +61,8 @@ public class OutputDataStore {
         }
     }
 
-    public String getTitle() {
-        return title;
+    public String getID() {
+        return id;
     }
 
     public String[] getAttributes() {
@@ -74,7 +73,7 @@ public class OutputDataStore {
         File outputDirectory = ws.getOutputDataDirectory();
         outputDirectory.mkdirs();
 
-        File outputFile = new File(outputDirectory.getPath() + File.separator + title + ".dat");
+        File outputFile = new File(outputDirectory.getPath() + File.separator + id + ".dat");
         writer = new BufferedWriter(new FileWriter(outputFile));
     }
 
@@ -83,6 +82,8 @@ public class OutputDataStore {
     }
 
     public void close() throws IOException {
-        writer.close();
+        if (writer != null) {
+            writer.close();
+        }
     }
 }

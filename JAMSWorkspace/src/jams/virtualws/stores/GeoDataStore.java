@@ -29,7 +29,7 @@ import org.w3c.dom.Document;
  *
  * @author Sven Kralisch
  */
-public class GeoDataStore extends StandardDataStore {
+public class GeoDataStore extends StandardInputDataStore {
 
     //private Polygon extend;
     public GeoDataStore(VirtualWorkspace ws, Document doc) {

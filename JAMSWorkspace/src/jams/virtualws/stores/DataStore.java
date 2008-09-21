@@ -1,6 +1,6 @@
-    /*
- * InputDataStore.java
- * Created on 23. Januar 2008, 15:46
+/*
+ * DataStore.java
+ * Created on 21. September 2008, 22:38
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -22,21 +22,15 @@
  */
 package jams.virtualws.stores;
 
-import jams.virtualws.*;
+import java.io.IOException;
 
 /**
  *
- * @author Sven Kralisch
+ * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public interface InputDataStore extends DataStore {
+public interface DataStore {
 
-    public String getDescription();
+    public String getID();
 
-    public boolean hasNext();
-
-    public DataSet getNext();
-
-    public DataSetDefinition getDataSetDefinition();
-    
+    public void close() throws IOException;
 }
-

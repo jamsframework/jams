@@ -1,5 +1,5 @@
 /*
- * StandardDataStore.java
+ * StandardInputDataStore.java
  * Created on 4. Februar 2008, 23:21
  *
  * This file is part of JAMS
@@ -38,7 +38,7 @@ import jams.virtualws.plugins.DataReader;
  *
  * @author Sven Kralisch
  */
-public abstract class StandardDataStore implements InputDataStore {
+public abstract class StandardInputDataStore implements InputDataStore {
 
     protected Document doc;
     protected HashMap<String, DataReader> dataIO;
@@ -47,7 +47,7 @@ public abstract class StandardDataStore implements InputDataStore {
     protected int bufferSize = 0;
     private String id,  description = "";
 
-    public StandardDataStore(VirtualWorkspace ws, Document doc) {
+    public StandardInputDataStore(VirtualWorkspace ws, Document doc) {
         this.doc = doc;
         this.ws = ws;
 

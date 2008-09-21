@@ -286,12 +286,6 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
-    protected void closeTrace() {
-        if (dataTracer != null) {
-            dataTracer.close();
-        }
-    }
-
     public String getTraceMark() {
         return Long.toString(currentEntity.getId());
     }
@@ -500,7 +494,7 @@ public class JAMSContext extends JAMSComponent {
 
         initCleanupEnumerator.reset();
 
-        while (initCleanupEnumerator.hasNext()) {
+        while (initCleanupEnumerator.hasNext() && doRun) {
             JAMSComponent comp = initCleanupEnumerator.next();
             try {
                 comp.cleanup();
@@ -512,8 +506,6 @@ public class JAMSContext extends JAMSComponent {
         ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
         list.add(JAMSDataFactory.createEntity());
 
-
-        closeTrace();
     }
 
     class ChildrenEnumerator implements JAMSComponentEnumerator {
