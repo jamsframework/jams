@@ -1236,20 +1236,20 @@ public class JTSConfigurator extends JFrame{
         String name;
         String number = ""+no_of_props;
         String stroke_type;
-        String stroke_color_R;
-        String stroke_color_G;
-        String stroke_color_B;
+        String stroke_color;
+        //String stroke_color_G;
+        //String stroke_color_B;
         String lines_vis;
         String shapes_vis;
         String shape_type;
         String size_type;
-        String shape_color_R;
-        String shape_color_G;
-        String shape_color_B;
+        String shape_color;
+        //String shape_color_G;
+        //String shape_color_B;
         String outline_type;
-        String outline_color_R;
-        String outline_color_G;
-        String outline_color_B;
+        String outline_color;
+        //String outline_color_G;
+        //String outline_color_B;
         
         
         //Header Name
@@ -1288,12 +1288,13 @@ public class JTSConfigurator extends JFrame{
             stroke_type = ""+ gprop.getStrokeType();
             properties.setProperty(name + ".linestroke", stroke_type);
             //STROKE COLOR
-            stroke_color_R = "" + gprop.getSeriesPaint().getRed();
-            properties.setProperty(name + ".linecolor_R", stroke_color_R);
-            stroke_color_G = "" + gprop.getSeriesPaint().getGreen();
-            properties.setProperty(name + ".linecolor_G", stroke_color_G);
-            stroke_color_B = "" + gprop.getSeriesPaint().getBlue();
-            properties.setProperty(name + ".linecolor_B", stroke_color_B);
+            stroke_color = "" + gprop.getSeriesPaint().getRed() + "," + gprop.getSeriesPaint().getGreen() + "," + gprop.getSeriesPaint().getBlue();
+            //stroke_color_R = "" + gprop.getSeriesPaint().getRed();
+            properties.setProperty(name + ".linecolor", stroke_color);
+            //stroke_color_G = "" + gprop.getSeriesPaint().getGreen();
+            //properties.setProperty(name + ".linecolor_G", stroke_color_G);
+            //stroke_color_B = "" + gprop.getSeriesPaint().getBlue();
+            //properties.setProperty(name + ".linecolor_B", stroke_color_B);
             //LINES VISIBLE
             lines_vis = ""+gprop.getLinesVisible();
             properties.setProperty(name + ".linesvisible", lines_vis);
@@ -1307,22 +1308,22 @@ public class JTSConfigurator extends JFrame{
             size_type = "" + gprop.getSizeType();
             properties.setProperty(name + ".shapesize", size_type);
             //SHAPE COLOR
-            shape_color_R = "" + gprop.getSeriesFillPaint().getRed();
-            properties.setProperty(name + ".shapecolor_R", shape_color_R);
-            shape_color_G = "" + gprop.getSeriesFillPaint().getGreen();
-            properties.setProperty(name + ".shapecolor_G", shape_color_G);
-            shape_color_B = "" + gprop.getSeriesFillPaint().getBlue();
-            properties.setProperty(name + ".shapecolor_B", shape_color_B);
+            shape_color = "" + gprop.getSeriesFillPaint().getRed() + "," + gprop.getSeriesFillPaint().getGreen() + "," + gprop.getSeriesFillPaint().getBlue();
+            properties.setProperty(name + ".shapecolor", shape_color);
+//            shape_color_G = "" + gprop.getSeriesFillPaint().getGreen();
+//            properties.setProperty(name + ".shapecolor_G", shape_color_G);
+//            shape_color_B = "" + gprop.getSeriesFillPaint().getBlue();
+//            properties.setProperty(name + ".shapecolor_B", shape_color_B);
             //OUTLINE STROKE
             outline_type = "" + gprop.getOutlineType();
             properties.setProperty(name + ".outlinestroke", outline_type);
             //OUTLINE COLOR
-            outline_color_R = "" + gprop.getSeriesFillPaint().getRed();
-            properties.setProperty(name + ".outlinecolor_R", outline_color_R);
-            outline_color_G = "" + gprop.getSeriesFillPaint().getGreen();
-            properties.setProperty(name + ".outlinecolor_G", outline_color_G);
-            outline_color_B = "" + gprop.getSeriesFillPaint().getBlue();
-            properties.setProperty(name + ".outlinecolor_B", outline_color_B);
+            outline_color = "" + gprop.getSeriesFillPaint().getRed()+","+gprop.getSeriesFillPaint().getGreen()+","+gprop.getSeriesFillPaint().getBlue();
+            properties.setProperty(name + ".outlinecolor", outline_color);
+//            outline_color_G = "" + gprop.getSeriesFillPaint().getGreen();
+//            properties.setProperty(name + ".outlinecolor_G", outline_color_G);
+//            outline_color_B = "" + gprop.getSeriesFillPaint().getBlue();
+//            properties.setProperty(name + ".outlinecolor_B", outline_color_B);
         }
         properties.setProperty("names", names);
         
@@ -1349,6 +1350,7 @@ public class JTSConfigurator extends JFrame{
         String[] namearray;
         String names;
         String name;
+        String stroke_color;
         int no_of_props;
 
 
@@ -1400,9 +1402,13 @@ public class JTSConfigurator extends JFrame{
                 gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke")));
 
                 //STROKE COLOR
-                gprop.setSeriesPaint(new Color(new Integer(properties.getProperty(name + ".linecolor_R")),
-                        new Integer(properties.getProperty(name + ".linecolor_G")),
-                        new Integer(properties.getProperty(name + ".linecolor_B"))));
+                stroke_color = properties.getProperty(name + ".linecolor");
+                
+                StringTokenizer colorTokenizer = new StringTokenizer(stroke_color, ",");
+                
+                gprop.setSeriesPaint(new Color(new Integer(colorTokenizer.nextToken()),
+                        new Integer(colorTokenizer.nextToken()),
+                        new Integer(colorTokenizer.nextToken())));
                 //LINES VISIBLE
                 gprop.setLinesVisible(new Boolean(properties.getProperty(name + ".linesvisible")));
                 //SHAPES VISIBLE
