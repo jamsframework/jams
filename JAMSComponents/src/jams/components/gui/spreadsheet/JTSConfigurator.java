@@ -1351,6 +1351,8 @@ public class JTSConfigurator extends JFrame{
         String names;
         String name;
         String stroke_color;
+        String shape_color;
+        String outline_color;
         int no_of_props;
 
 
@@ -1417,15 +1419,20 @@ public class JTSConfigurator extends JFrame{
                 gprop.setShape(new Integer(properties.getProperty(name + ".shapetype")),
                         new Integer(properties.getProperty(name + ".shapesize")));
                 //SHAPE COLOR
-                gprop.setSeriesFillPaint(new Color(new Integer(properties.getProperty(name + ".shapecolor_R")),
-                        new Integer(properties.getProperty(name + ".shapecolor_G")),
-                        new Integer(properties.getProperty(name + ".shapecolor_B"))));
+                shape_color = properties.getProperty(name + ".shapecolor");
+                colorTokenizer = new StringTokenizer(shape_color, ",");
+                
+                gprop.setSeriesFillPaint(new Color(new Integer(colorTokenizer.nextToken()),
+                        new Integer(colorTokenizer.nextToken()),
+                        new Integer(colorTokenizer.nextToken())));
                 //OUTLINE STROKE
                 gprop.setOutlineStroke(new Integer(properties.getProperty(name + ".outlinestroke")));
                 //OUTLINE COLOR
-                gprop.setSeriesPaint(new Color(new Integer(properties.getProperty(name + ".outlinecolor_R")),
-                        new Integer(properties.getProperty(name + ".outlinecolor_G")),
-                        new Integer(properties.getProperty(name + ".outlinecolor_B"))));
+                outline_color = properties.getProperty(name + ".outlinecolor");
+                colorTokenizer = new StringTokenizer(outline_color, ",");
+                gprop.setSeriesPaint(new Color(new Integer(colorTokenizer.nextToken()),
+                        new Integer(colorTokenizer.nextToken()),
+                        new Integer(colorTokenizer.nextToken())));
 
                 gprop.applyTSProperties();
                 
