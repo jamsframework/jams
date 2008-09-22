@@ -429,6 +429,7 @@ public class GraphProperties {
             value = (Double) table.getValueAt(i, selectedColumn);
             ts.add(new Second(new Date(time.getTimeInMillis())), value);
         }
+        cr_dlg.updateColors();
     }
     
     public void applyXYProperties(){
@@ -682,8 +683,8 @@ public class GraphProperties {
     
     public void setSelectedColumn(int col){
         this.selectedColumn = col;
-        setColumn.setSelectedIndex(col);
-        nameLabel.setText((String)setColumn.getSelectedItem());
+        this.setColumn.setSelectedIndex(col);
+        this.nameLabel.setText((String)setColumn.getSelectedItem());
     }
     
     public void setSelectedRows(int[] rows){
@@ -715,6 +716,8 @@ public class GraphProperties {
     public void setPosition(String position){
         this.position = position;
         poschoice.setSelectedItem(position);
+//        if(position.equals("left")) poschoice.setSelectedIndex(0);
+//        if(position.equals("right")) poschoice.setSelectedIndex(1);
     }
     
     public void setRendererType(int type){
@@ -775,7 +778,7 @@ public class GraphProperties {
     }
     
     public String getPosition(){
-        return this.position;
+        return (String) getPosChoice().getSelectedItem();
     }
     
     public int getRendererType(){
@@ -1389,7 +1392,7 @@ public class GraphProperties {
             createPanel();
         }
         
-        void updateColors(){
+        public void updateColors(){
             
             line_color = getSeriesPaint();
             shape_fill = getSeriesFillPaint();

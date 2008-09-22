@@ -971,9 +971,17 @@ public class JTSConfigurator extends JFrame{
     public int getRendererLeft(){
         return rLeftBox.getSelectedIndex();
     }
-    
+
     public int getRendererRight(){
         return rRightBox.getSelectedIndex();
+    }
+    
+    public void setRendererLeft(int type){
+        rLeftBox.setSelectedIndex(type);    
+    }
+    
+    public void setRendererRight(int type){
+        rRightBox.setSelectedIndex(type);
     }
     
     private void createOptionPanel(){
@@ -1244,16 +1252,38 @@ public class JTSConfigurator extends JFrame{
         String outline_color_B;
         
         
+        //Header Name
+            
+        
+        properties.setProperty("number", number);
         
         for(int i=0; i<no_of_props; i++ ){
             
             GraphProperties gprop = propVector.get(i);
             
-            //Header Name
+            //Titles
+            properties.setProperty("title", edTitleField.getText());
+            properties.setProperty("axisLTitle", edLeftField.getText());
+            properties.setProperty("axisRTitle", edRightField.getText());
+            properties.setProperty("xAxisTitle", edXAxisField.getText());
+            //RENDERER
+            properties.setProperty("renderer_left", ""+rLeftBox.getSelectedIndex());
+            properties.setProperty("renderer_right", ""+rRightBox.getSelectedIndex());
+            properties.setProperty("inv_left", ""+invLeftBox.isSelected());
+            properties.setProperty("inv_right", ""+invRightBox.isSelected());
+            
+            //TimeFormat
+            properties.setProperty("timeFormat_yy", ""+timeFormat_yy.isSelected());
+            properties.setProperty("timeFormat_mmy", ""+timeFormat_mm.isSelected());
+            properties.setProperty("timeFormat_dd", ""+timeFormat_dd.isSelected());
+            properties.setProperty("timeFormat_hm", ""+timeFormat_hm.isSelected());
+            
             name = gprop.getName();
-            names = names + "," + name;
+            if(i==0) names = name;
+            else names = names + "," + name;
             
-            
+            //POSITION left/right
+            properties.setProperty(name + ".position", gprop.getPosition());
             //STROKE
             stroke_type = ""+ gprop.getStrokeType();
             properties.setProperty(name + ".linestroke", stroke_type);
@@ -1294,6 +1324,7 @@ public class JTSConfigurator extends JFrame{
             outline_color_B = "" + gprop.getSeriesFillPaint().getBlue();
             properties.setProperty(name + ".outlinecolor_B", outline_color_B);
         }
+        properties.setProperty("names", names);
         
         //Save Parameter File
         
@@ -1309,51 +1340,59 @@ public class JTSConfigurator extends JFrame{
         }catch(Exception fnfex){};   
     }
     
-    private void loadTemplate(){
-        
-        propVector = new Vector<GraphProperties>();
+    private void loadTemplate() {
+
+        this.propVector = new Vector<GraphProperties>();
         //int no_of_props = propVector.size();
-        
+
         Properties properties = new Properties();
         String[] namearray;
         String names;
         String name;
         int no_of_props;
-        
 
-        try{
+
+        try {
             JFileChooser chooser = new JFileChooser();
             int returnVal = chooser.showOpenDialog(thisDlg);
             File file = chooser.getSelectedFile();
             FileInputStream fin = new FileInputStream(file);
             properties.load(fin);
             fin.close();
-            
-        }catch(Exception fnfexc){};
-        
+
+        } catch (Exception fnfexc) {
+        }
+
         names = properties.getProperty("names");
         no_of_props = new Integer(properties.getProperty("number"));
+        
+        this.graphCount = no_of_props;
         namearray = new String[no_of_props];
         StringTokenizer nameTokenizer = new StringTokenizer(names, ",");
-    
-        for(int i=0; i<no_of_props; i++ ){
-            
+        
+        initGroupUI();
+        
+        for (int i = 0; i < no_of_props; i++) {
+
             GraphProperties gprop = new GraphProperties(this, this.table, this);
-            
-            if(nameTokenizer.hasMoreTokens()){
-            
-                    name = nameTokenizer.nextToken();
-                
-                for(int k = 0; k<table.getColumnCount(); k++){
-                    if(table.getColumnName(k) == name){
+
+            if (nameTokenizer.hasMoreTokens()) {
+
+                name = nameTokenizer.nextToken();
+
+                for (int k = 0; k < table.getColumnCount(); k++) {
+                    if (table.getColumnName(k).equals(name)) { //stringcompare?
+                        
                         gprop.setSelectedColumn(k);
-                    } else {
                         break;
                     }
                 }
-                gprop.setSelectedRows(table.getSelectedRows());
-                gprop.setTimeSTART(table.getSelectedRows()[0]);
-                gprop.setTimeEND(table.getSelectedRows()[table.getRowCount()-1]);
+                
+                //POSITION left/right
+                gprop.setPosition(properties.getProperty(name + ".position"));
+                //INTERVAL
+                gprop.setTimeSTART(0);
+                gprop.setTimeEND(table.getRowCount() - 1);
                 gprop.setName(name);
                 gprop.setLegendName(name);
 
@@ -1362,33 +1401,61 @@ public class JTSConfigurator extends JFrame{
 
                 //STROKE COLOR
                 gprop.setSeriesPaint(new Color(new Integer(properties.getProperty(name + ".linecolor_R")),
-                                                new Integer(properties.getProperty(name + ".linecolor_G")),
-                                                new Integer(properties.getProperty(name + ".linecolor_B"))));
+                        new Integer(properties.getProperty(name + ".linecolor_G")),
+                        new Integer(properties.getProperty(name + ".linecolor_B"))));
                 //LINES VISIBLE
                 gprop.setLinesVisible(new Boolean(properties.getProperty(name + ".linesvisible")));
                 //SHAPES VISIBLE
                 gprop.setShapesVisible(new Boolean(properties.getProperty(name + ".shapesvisible")));
                 //SHAPE TYPE AND SIZE
                 gprop.setShape(new Integer(properties.getProperty(name + ".shapetype")),
-                                new Integer(properties.getProperty(name + ".shapesize")));
+                        new Integer(properties.getProperty(name + ".shapesize")));
                 //SHAPE COLOR
                 gprop.setSeriesFillPaint(new Color(new Integer(properties.getProperty(name + ".shapecolor_R")),
-                                                new Integer(properties.getProperty(name + ".shapecolor_G")),
-                                                new Integer(properties.getProperty(name + ".shapecolor_B"))));
+                        new Integer(properties.getProperty(name + ".shapecolor_G")),
+                        new Integer(properties.getProperty(name + ".shapecolor_B"))));
                 //OUTLINE STROKE
                 gprop.setOutlineStroke(new Integer(properties.getProperty(name + ".outlinestroke")));
                 //OUTLINE COLOR
                 gprop.setSeriesPaint(new Color(new Integer(properties.getProperty(name + ".outlinecolor_R")),
-                                                new Integer(properties.getProperty(name + ".outlinecolor_G")),
-                                                new Integer(properties.getProperty(name + ".outlinecolor_B"))));
-                
+                        new Integer(properties.getProperty(name + ".outlinecolor_G")),
+                        new Integer(properties.getProperty(name + ".outlinecolor_B"))));
+
                 gprop.applyTSProperties();
+                
             }
-
-            }
-
-        plotAllGraphs();
+            propVector.add(gprop);
+            addPropGroup(gprop);
+        }
+        //Titles
+            edTitleField.setText(properties.getProperty("title"));
+            edLeftField.setText(properties.getProperty("axisLTitle"));
+            edRightField.setText(properties.getProperty("axisRTitle"));
+            edXAxisField.setText(properties.getProperty("xAxisTitle"));
+            //RENDERER
+            rLeftBox.setSelectedIndex(new Integer(properties.getProperty("renderer_left")));
+            rRightBox.setSelectedIndex(new Integer(properties.getProperty("renderer_right")));
+            invLeftBox.setSelected(new Boolean(properties.getProperty("inv_left")));
+            invRightBox.setSelected(new Boolean(properties.getProperty("inv_right")));
+            
+            //TimeFormat
+            timeFormat_yy.setSelected(new Boolean(properties.getProperty("timeFormat_yy")));
+            timeFormat_mm.setSelected(new Boolean(properties.getProperty("timeFormat_mmy")));
+            timeFormat_dd.setSelected(new Boolean(properties.getProperty("timeFormat_dd")));
+            timeFormat_hm.setSelected(new Boolean(properties.getProperty("timeFormat_hm")));
         
+        
+        finishGroupUI();
+        
+        jts.setPropVector(propVector);
+//        jts.createPlot();
+//        handleRenderer();
+        
+         
+        
+        
+        plotAllGraphs();
+
     }
     
 //    public void showHiRes(){
@@ -1695,133 +1762,7 @@ public class JTSConfigurator extends JFrame{
         }  
     }
     
-//    private class HiResDlg extends JDialog{
-//            
-//            HiResPanel hiresPanel;
-//            JScrollPane hiresPane;
-//            JLabel w_label;
-//            JLabel h_label;
-//            JTextField w_field;
-//            JTextField h_field;
-//            ;
-//            
-//            BufferedImage bi;
-//
-//            int w = 1024;
-//            int h = 768;
-//            Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-//            
-//            JButton createButton = new JButton("Create Image");
-//            JButton saveJPEG = new JButton("Export as JPEG");
-//            JPanel buttonPanel = new JPanel();
-//            
-//            public HiResDlg(){
-//                super(thisDlg, "High Resolution JPEG Export");
-//                setDefaultCloseOperation(this.DISPOSE_ON_CLOSE);
-//                createGUI();
-//            }
-//            
-//            private void createGUI(){
-//                
-//                screen.height = screen.height - 28;
-//
-//                saveJPEG.addActionListener(saveJPEGListener);
-//                createButton.addActionListener(createImageListener);
-//                setSize(screen);
-//                setLayout( new BorderLayout());
-//                
-//                w_label = new JLabel("width");
-//                w_field= new JTextField("1024");
-//                h_label = new JLabel("height");
-//                h_field= new JTextField("768");
-//                
-//                
-//                createImage();
-//                
-//                buttonPanel.setLayout(new FlowLayout());
-//                buttonPanel.add(w_label);
-//                buttonPanel.add(w_field);
-//                buttonPanel.add(h_label);
-//                buttonPanel.add(h_field);
-//                buttonPanel.add(createButton);
-//                buttonPanel.add(saveJPEG);
-//                
-////                hiresPanel.paint(jts.getBufferedImage(2000, 3000).createGraphics());
-//                hiresPane = new JScrollPane(hiresPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-//                //hiresPane.setPreferredSize(new Dimension(1024, 768));
-//                hiresPane.createVerticalScrollBar();
-//                hiresPane.createHorizontalScrollBar();
-//                
-//                add(buttonPanel, BorderLayout.NORTH);
-//                add(hiresPane, BorderLayout.CENTER);
-//                //hiresDlg.pack();
-//                
-//            }
-//            private void createImage(){
-//                
-//                bi = jts.getBufferedImage(w, h);
-//                
-//                hiresPanel = new HiResPanel(bi);
-//                hiresPanel.setPreferredSize(new Dimension(w, h));
-//            }
-//            
-//            private void readSize(){
-//                try{
-//                    w = new Integer(w_field.getText());
-//                    h = new Integer(h_field.getText());
-//                } catch(NumberFormatException ne){
-//                    w = 1024;
-//                    h = 768;
-//                }
-//            }
-//            
-//            public void saveJPEG(BufferedImage bi){
-//        
-//        try{
-//            JFileChooser chooser = new JFileChooser();
-//            int returnVal = chooser.showSaveDialog(thisDlg);
-//            
-//            File file = chooser.getSelectedFile();
-//        
-//	    // jpeg encoding
-//            
-//            FileOutputStream out = new FileOutputStream(file);
-//            
-//            //ByteArrayOutputStream out = new ByteArrayOutputStream();
-//            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-//            JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bi); 
-//            param.setQuality(1.0f, false);
-//            encoder.setJPEGEncodeParam(param);
-//            encoder.encode(bi);
-//        }
-//        catch(Exception ex){
-//        }
-//            bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-//            
-//            
-//    }
-//            
-//            ActionListener createImageListener = new ActionListener(){
-//                public void actionPerformed(ActionEvent e) {
-//                    
-//                    
-//                    readSize();
-//                    createImage();
-//                    
-//                    hiresPanel.repaint();
-//                    hiresPane.setViewportView(hiresPanel);
-//                    repaint();
-//                    
-//                    
-//                }
-//            };
-//            
-//            ActionListener saveJPEGListener = new ActionListener(){
-//                public void actionPerformed(ActionEvent e) {
-//                    saveJPEG(bi);
-//                }
-//            };
-//    }
+
     
     private class AddGraphDlg extends JDialog{
  
