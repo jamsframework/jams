@@ -111,7 +111,7 @@ public class VirtualWorkspace {
             this.inputDirectory = inDir;
             this.outputDirectory = outDir;
 
-            if (this.isIncremental()) {
+            if (this.isPersistent()) {
                 Calendar cal = Calendar.getInstance();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
                 this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + sdf.format(cal.getTime()));
@@ -214,12 +214,12 @@ public class VirtualWorkspace {
         properties.setProperty("title", title);
     }
 
-    public boolean isIncremental() {
-        return Boolean.parseBoolean(properties.getProperty("incremental"));
+    public boolean isPersistent() {
+        return Boolean.parseBoolean(properties.getProperty("persistent"));
     }
 
-    public void setIncremental(boolean inc) {
-        properties.setProperty("incremental", Boolean.toString(inc));
+    public void setPersistent(boolean inc) {
+        properties.setProperty("persistent", Boolean.toString(inc));
     }
 
     private void createDataStores() {
@@ -311,15 +311,15 @@ public class VirtualWorkspace {
 
         VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/vworkspace"), runtime);
 
-//        System.out.println(ws.dataStoreToString("tmin_local"));
-//        ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/vworkspace/_tmin_dump.txt"));
-
+        System.out.println(ws.dataStoreToString("tmin_local"));
+        ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/vworkspace/_tmin_dump.txt"));
+/*
         OutputDataStore store = ws.getOutputDataStore("TimeLoop");
         System.out.println(store.getID());
         for (String attribute : store.getAttributes()) {
             System.out.println(attribute);
         }
-
+*/
 //        System.out.println(ws.dataStoreToString("tmean_timeseries"));
 //        ws.inputDataStoreToFile("tmean_timeseries", new File("D:/jamsapplication/vworkspace/_tmean_dump.txt"));
 //        ws.wsToFile();

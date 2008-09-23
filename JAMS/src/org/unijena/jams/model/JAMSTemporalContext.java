@@ -47,7 +47,7 @@ public class JAMSTemporalContext extends JAMSContext {
 
     @Override
     protected DataTracer createDataTracer(OutputDataStore store) {
-        return new DataTracer(this, store) {
+        return new DataTracer(this, store, current.getClass()) {
 
             @Override
             public void trace() {

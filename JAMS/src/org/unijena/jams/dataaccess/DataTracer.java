@@ -40,16 +40,40 @@ public abstract class DataTracer {
     private JAMSContext context;
     private JAMSContext[] parents;
     private OutputDataStore store;
+    private Class idClazz;
 
-    public DataTracer(JAMSContext context, OutputDataStore store) {
+    
+    /**
+     * DataTracer constructor
+     * @param context The context that the attributes belong to
+     * @param store The belonging datastore object which provides the attribute 
+     *              names and output functionality
+     * @param idClazz The type of the ID field, needed for type output
+     */
+    public DataTracer(JAMSContext context, OutputDataStore store, Class idClazz) {
         this.context = context;
         this.store = store;
+        this.idClazz = idClazz;
     }
 
+    /**
+     * Register the name of an attribute that should be traced later on.
+     * @param attributeName The attribute's name
+     */
     public void registerAttribute(String attributeName) {
         attributeNames.add(attributeName);
     }
 
+    /**
+     * Initialize the DataTracer, i.e. get the data objects to be traced from
+     * the provided dataObjectHash, open the store and output some metadata 
+     * to the store. Nothing will be written to the store as no attribute
+     * names are provided or none of them are found in the dataObjectHash.
+     * @param dataObjectHash A HashMap containing the data objects that can be
+     * accessed by their name
+     * @return A string array containing the attribute names that could not be 
+     * found.
+     */
     public String[] init(HashMap<String, JAMSData> dataObjectHash) {
 
         ArrayList<String> missingAttributes = new ArrayList<String>();
@@ -73,6 +97,10 @@ public abstract class DataTracer {
         return missingAttributes.toArray(new String[missingAttributes.size()]);
     }
 
+    /**
+     * 
+     * @return The data objects that are traced by this DataTracer.
+     */
     public JAMSData[] getDataObjects() {
         return dataObjects;
     }
@@ -114,6 +142,13 @@ public abstract class DataTracer {
         for (String attributeName : this.attributeNames) {
             output(attributeName + "\t");
         }
+
+        output("\n@types\n");
+        output(idClazz.getSimpleName() + "\t");
+        for (JAMSData dataObject : this.dataObjects) {
+            output(dataObject.getClass().getSimpleName() + "\t");
+        }
+        
         output("\n@data\n");
     }
 
@@ -122,6 +157,13 @@ public abstract class DataTracer {
      */
     public abstract void trace();
 
+    
+    /**
+     * Output some mark at the beginning of the contexts output within it's
+     * run() method. If this context has parent contexts with more than
+     * one iteration, some status information of those parent contexts are
+     * provided here as well (JAMSContext::getTraceMark()).
+     */
     public void setStartMark() {
 
         for (JAMSContext parent : parents) {
@@ -130,6 +172,10 @@ public abstract class DataTracer {
         output("@start\n");
     }
 
+    /**
+     * Output some mark at the end of the contexts output within it's run()
+     * method.
+     */
     public void setEndMark() {
         output("@end\n");
     }
@@ -141,6 +187,10 @@ public abstract class DataTracer {
         }
     }
 
+    /**
+     * Closes the store belonging to this DataTracer, i.e. calls the store's
+     * close() method.
+     */
     public void close() {
         try {
             store.close();

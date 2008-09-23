@@ -253,7 +253,7 @@ public class JAMSContext extends JAMSComponent {
     }
 
     protected DataTracer createDataTracer(OutputDataStore store) {
-        return new DataTracer(this, store) {
+        return new DataTracer(this, store, JAMSLong.class) {
 
             @Override
             public void trace() {
