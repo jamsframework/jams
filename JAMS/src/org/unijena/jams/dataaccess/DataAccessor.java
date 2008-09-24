@@ -24,6 +24,7 @@
 package org.unijena.jams.dataaccess;
 
 import java.io.Serializable;
+import org.unijena.jams.data.JAMSData;
 
 /**
  *
@@ -40,5 +41,5 @@ public interface DataAccessor extends Serializable{
     public void read();
     public void write();
     
-    public Object getComponentObject();
+    public JAMSData getComponentObject();
 }

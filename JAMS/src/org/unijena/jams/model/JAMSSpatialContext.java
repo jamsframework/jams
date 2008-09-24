@@ -23,7 +23,7 @@
 package org.unijena.jams.model;
 
 import org.unijena.jams.data.*;
-import org.unijena.jams.dataaccess.DataTracer;
+import org.unijena.jams.io.DataTracer.DataTracer;
 
 /**
  *

@@ -24,7 +24,9 @@ package org.unijena.jams.model;
 
 import jams.virtualws.stores.OutputDataStore;
 import org.unijena.jams.data.*;
-import org.unijena.jams.dataaccess.DataTracer;
+import org.unijena.jams.dataaccess.DataAccessor;
+import org.unijena.jams.io.DataTracer.DataTracer;
+import org.unijena.jams.io.DataTracer.StandardTracer;
 
 /**
  *
@@ -47,14 +49,14 @@ public class JAMSTemporalContext extends JAMSContext {
 
     @Override
     protected DataTracer createDataTracer(OutputDataStore store) {
-        return new DataTracer(this, store, current.getClass()) {
+        return new StandardTracer(this, store, current.getClass()) {
 
             @Override
             public void trace() {
                 output(current);
                 output("\t");
-                for (JAMSData dataObject : dataTracer.getDataObjects()) {
-                    output(dataObject);
+                for (DataAccessor dataAccessor : getAccessorObjects()) {
+                    output(dataAccessor.getComponentObject());
                     output("\t");
                 }
                 output("\n");

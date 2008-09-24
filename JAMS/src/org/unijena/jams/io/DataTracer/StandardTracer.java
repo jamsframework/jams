@@ -1,5 +1,5 @@
 /*
- * DataTracer.java
+ * StandardTracer.java
  * Created on 28. August 2008, 13:40
  *
  * This file is part of JAMS
@@ -20,29 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.dataaccess;
+package org.unijena.jams.io.DataTracer;
 
 import jams.virtualws.stores.OutputDataStore;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.unijena.jams.data.JAMSData;
+import org.unijena.jams.data.JAMSEntity;
+import org.unijena.jams.dataaccess.DataAccessor;
 import org.unijena.jams.model.JAMSContext;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public abstract class DataTracer {
+public class StandardTracer implements DataTracer {
 
-    private JAMSData[] dataObjects;
+    private DataAccessor[] accessorObjects;
     private ArrayList<String> attributeNames = new ArrayList<String>();
-    private JAMSContext context;
+    protected JAMSContext context;
     private JAMSContext[] parents;
-    private OutputDataStore store;
+    protected OutputDataStore store;
     private Class idClazz;
 
-    
     /**
      * DataTracer constructor
      * @param context The context that the attributes belong to
@@ -50,7 +50,7 @@ public abstract class DataTracer {
      *              names and output functionality
      * @param idClazz The type of the ID field, needed for type output
      */
-    public DataTracer(JAMSContext context, OutputDataStore store, Class idClazz) {
+    public StandardTracer(JAMSContext context, OutputDataStore store, Class idClazz) {
         this.context = context;
         this.store = store;
         this.idClazz = idClazz;
@@ -74,23 +74,24 @@ public abstract class DataTracer {
      * @return A string array containing the attribute names that could not be 
      * found.
      */
-    public String[] init(HashMap<String, JAMSData> dataObjectHash) {
+    @Override
+    public String[] init(HashMap<String, DataAccessor> dataObjectHash) {
 
         ArrayList<String> missingAttributes = new ArrayList<String>();
-        ArrayList<JAMSData> objectList = new ArrayList<JAMSData>();
+        ArrayList<DataAccessor> accessorList = new ArrayList<DataAccessor>();
 
         for (String attributeName : attributeNames) {
-            JAMSData dataObject = dataObjectHash.get(attributeName);
-            if (dataObject != null) {
-                objectList.add(dataObject);
+            DataAccessor dataAccessor = dataObjectHash.get(attributeName);
+            if (dataAccessor != null) {
+                accessorList.add(dataAccessor);
             } else {
                 missingAttributes.add(attributeName);
             }
         }
         attributeNames.removeAll(missingAttributes);
-        this.dataObjects = objectList.toArray(new JAMSData[objectList.size()]);
+        this.accessorObjects = accessorList.toArray(new DataAccessor[accessorList.size()]);
 
-        if (this.dataObjects.length > 0) {
+        if (this.accessorObjects.length > 0) {
             createHeader();
         }
 
@@ -101,8 +102,8 @@ public abstract class DataTracer {
      * 
      * @return The data objects that are traced by this DataTracer.
      */
-    public JAMSData[] getDataObjects() {
-        return dataObjects;
+    public DataAccessor[] getAccessorObjects() {
+        return accessorObjects;
     }
 
     private void createHeader() {
@@ -145,18 +146,35 @@ public abstract class DataTracer {
 
         output("\n@types\n");
         output(idClazz.getSimpleName() + "\t");
-        for (JAMSData dataObject : this.dataObjects) {
-            output(dataObject.getClass().getSimpleName() + "\t");
+        for (DataAccessor accessorObject : this.accessorObjects) {
+            output(accessorObject.getComponentObject().getClass().getSimpleName() + "\t");
         }
-        
+
         output("\n@data\n");
     }
 
     /**
      * This method contains code to be executed as traced JAMSData objects change
      */
-    public abstract void trace();
+    @Override
+    public void trace() {
+       
+        DataAccessor[] dataAccessors = getAccessorObjects();
+        JAMSEntity[] entities = context.getEntities().getEntityArray();
+        for (int j = 0; j < entities.length; j++) {
 
+            output(entities[j].getId());
+            output("\t");
+
+            for (int i = 0; i < dataAccessors.length; i++) {
+                dataAccessors[i].setIndex(j);
+                dataAccessors[i].read();
+                output(dataAccessors[i].getComponentObject());
+                output("\t");
+            }
+            output("\n");
+        }
+    }
     
     /**
      * Output some mark at the beginning of the contexts output within it's
@@ -164,6 +182,7 @@ public abstract class DataTracer {
      * one iteration, some status information of those parent contexts are
      * provided here as well (JAMSContext::getTraceMark()).
      */
+    @Override
     public void setStartMark() {
 
         for (JAMSContext parent : parents) {
@@ -176,6 +195,7 @@ public abstract class DataTracer {
      * Output some mark at the end of the contexts output within it's run()
      * method.
      */
+    @Override
     public void setEndMark() {
         output("@end\n");
     }
@@ -191,6 +211,7 @@ public abstract class DataTracer {
      * Closes the store belonging to this DataTracer, i.e. calls the store's
      * close() method.
      */
+    @Override
     public void close() {
         try {
             store.close();

@@ -27,8 +27,8 @@ package org.unijena.jams.model;
  *
  * @author S. Kralisch
  */
+import org.unijena.jams.io.DataTracer.DataTracer;
 import jams.virtualws.stores.OutputDataStore;
-import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
@@ -37,6 +37,7 @@ import org.unijena.jams.JAMS;
 import org.unijena.jams.data.*;
 import org.unijena.jams.dataaccess.*;
 import org.unijena.jams.dataaccess.CalendarAccessor;
+import org.unijena.jams.io.DataTracer.StandardTracer;
 import org.unijena.jams.runtime.JAMSRuntime;
 
 @JAMSComponentDescription(title = "JAMS Component",
@@ -54,7 +55,7 @@ public class JAMSContext extends JAMSComponent {
     protected ArrayList<AccessSpec> accessSpecs = new ArrayList<AccessSpec>();
     protected ArrayList<AttributeSpec> attributeSpecs = new ArrayList<AttributeSpec>();
     protected DataAccessor[] dataAccessors = new DataAccessor[0];
-    protected ArrayList<DataAccessor> daList = new ArrayList<DataAccessor>();
+    protected HashMap<String, DataAccessor> daHash;
     protected HashMap<String, JAMSData> attribs;
     protected DataTracer dataTracer;
     protected boolean doRun = true;
@@ -137,7 +138,7 @@ public class JAMSContext extends JAMSComponent {
 
         attribs = new HashMap<String, JAMSData>();
 
-        daList = new ArrayList<DataAccessor>();
+        daHash = new HashMap<String, DataAccessor>();
 
         AccessSpec accessSpec;
         AttributeSpec attributeSpec;
@@ -227,13 +228,13 @@ public class JAMSContext extends JAMSComponent {
             }
 
             // create DataAccessor array from DataAccessor list
-            if (daList.size() > 0) {
-                this.dataAccessors = daList.toArray(new DataAccessor[daList.size()]);
+//            if (daList.size() > 0) {
+            if (daHash.size() > 0) {
+                this.dataAccessors = daHash.values().toArray(new DataAccessor[daHash.size()]);
             }
         }
-
     /* 
-     * removed by Sven -- what's that good for??
+     * removed by Sven -- what's that been useful for??
      * 
     for (int i = 0; i < daList.size(); i++) {
     int index = 0;
@@ -253,19 +254,7 @@ public class JAMSContext extends JAMSComponent {
     }
 
     protected DataTracer createDataTracer(OutputDataStore store) {
-        return new DataTracer(this, store, JAMSLong.class) {
-
-            @Override
-            public void trace() {
-                output(getCurrentEntity().getId());
-                output("\t");
-                for (JAMSData dataObject : dataTracer.getDataObjects()) {
-                    output(dataObject);
-                    output("\t");
-                }
-                output("\n");
-            }
-        };
+        return new StandardTracer(this, store, JAMSLong.class);
     }
 
     protected void runTrace() {
@@ -324,17 +313,20 @@ public class JAMSContext extends JAMSComponent {
 
         // check if new dataAccessor objects where added
         // if so, create new array from list
-        if (this.daList.size() > this.dataAccessors.length) {
+        if (this.daHash.size() > this.dataAccessors.length) {
             // create DataAccessor array from DataAccessor list
-            this.dataAccessors = daList.toArray(new DataAccessor[daList.size()]);
+//            this.dataAccessors = daList.toArray(new DataAccessor[daList.size()]);
+            this.dataAccessors = daHash.values().toArray(new DataAccessor[daHash.size()]);
         }
 
-        String[] result = dataTracer.init(attribs);
+//        String[] result = dataTracer.init(attribs);
+        String[] result = dataTracer.init(daHash);
+        
         if (result.length != 0) {
             for (String s : result) {
                 getModel().getRuntime().sendErrorMsg("Can't trace attribute \"" + s + "\" in context \"" + this.getInstanceName() + "\" (not found)!");
             }
-            if (dataTracer.getDataObjects().length == 0) {
+            if (dataTracer.getAccessorObjects().length == 0) {
                 dataTracer = null;
             }
         }
@@ -439,7 +431,8 @@ public class JAMSContext extends JAMSComponent {
             }
 
             if (da != null) {
-                daList.add(da);
+                daHash.put(attributeName, da);
+//                daList.add(da);
             }
         }
         return dataObject;
@@ -543,7 +536,6 @@ public class JAMSContext extends JAMSComponent {
             // entity and start with the new Component list again
             if (!ce.hasNext() && ee.hasNext()) {
                 updateEntityData();
-                runTrace();
                 setCurrentEntity(ee.next());
                 index++;
                 updateComponentData(index);
@@ -841,7 +833,7 @@ public class JAMSContext extends JAMSComponent {
     }
 
     /*
-     * trace entity data, but trace data only, if data source component has allready been executed,
+     * trace entity data, but trace data only, if data source component has already been executed,
      * which means that data source component is executed before currentComponent
      * used when making a model snapshot
      */
@@ -885,7 +877,7 @@ public class JAMSContext extends JAMSComponent {
 
     protected class AttributeSpec implements Serializable {
 
-        String attributeName, className, value;
+        String attributeName,className ,value ;
 
         public AttributeSpec(String attributeName, String className, String value) {
             this.attributeName = attributeName;

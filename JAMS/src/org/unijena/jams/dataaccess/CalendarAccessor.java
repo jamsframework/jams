@@ -75,7 +75,7 @@ public class CalendarAccessor implements DataAccessor {
         return accessType;
     }   
     
-    public Object getComponentObject(){
+    public JAMSData getComponentObject(){
         return this.componentObject;
     }
 }

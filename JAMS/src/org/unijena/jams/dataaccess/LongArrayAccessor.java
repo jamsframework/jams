@@ -75,7 +75,7 @@ public class LongArrayAccessor implements DataAccessor {
         return accessType;
     }   
     
-    public Object getComponentObject(){
+    public JAMSData getComponentObject(){
         return this.componentObject;
     }
 }

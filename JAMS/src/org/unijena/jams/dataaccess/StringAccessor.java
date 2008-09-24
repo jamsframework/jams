@@ -75,7 +75,7 @@ public class StringAccessor implements DataAccessor {
         return accessType;
     }  
     
-    public Object getComponentObject(){
+    public JAMSData getComponentObject(){
         return this.componentObject;
     }
 }
