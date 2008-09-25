@@ -135,15 +135,15 @@ public class JAMSContext extends JAMSComponent {
             }
         });
     }
-    
-    public Field getField(Class clazz,String name){
-        try{
+
+    private Field getField(Class clazz, String name) {
+        try {
             return clazz.getDeclaredField(name);
-        }catch(NoSuchFieldException e){
-            return getField(clazz.getSuperclass(),name);
+        } catch (NoSuchFieldException e) {
+            return getField(clazz.getSuperclass(), name);
         }
     }
-    
+
     public void initAccessors() {
 
         attribs = new HashMap<String, JAMSData>();
@@ -190,8 +190,8 @@ public class JAMSContext extends JAMSComponent {
 
             try {
 
-                clazz = getField(accessSpec.component.getClass(),accessSpec.varName).getType();
-                
+                clazz = getField(accessSpec.component.getClass(), accessSpec.varName).getType();
+
                 if (clazz == null) {
                     clazz = null;
                 }
@@ -209,8 +209,8 @@ public class JAMSContext extends JAMSComponent {
                     for (int i = 0; i < count; i++) {
                         array[i] = getDataObject(entityArray, componentClass, tok.nextToken(), accessSpec.accessType, null);
                     }
-                    //accessSpec.component.getClass().getDeclaredField(accessSpec.varName).set(accessSpec.component, array);
-                    getField(accessSpec.component.getClass(),accessSpec.varName).set(accessSpec.component, array);
+
+                    getField(accessSpec.component.getClass(), accessSpec.varName).set(accessSpec.component, array);
 
                 } else {
 
@@ -229,9 +229,7 @@ public class JAMSContext extends JAMSComponent {
                     dataObject = getDataObject(entityArray, clazz, accessSpec.attributeName, accessSpec.accessType, componentObject);
 
                     //assign the dataObject to the component
-                    //accessSpec.component.getClass().getDeclaredField(accessSpec.varName).set(accessSpec.component, dataObject);
-                    getField(accessSpec.component.getClass(),accessSpec.varName).set(accessSpec.component, dataObject);
-                    //accessSpec.component.getDeclaredField().set(accessSpec.component, dataObject);
+                    getField(accessSpec.component.getClass(), accessSpec.varName).set(accessSpec.component, dataObject);
 
 
                 }
@@ -241,29 +239,10 @@ public class JAMSContext extends JAMSComponent {
             }
 
             // create DataAccessor array from DataAccessor list
-//            if (daList.size() > 0) {
             if (daHash.size() > 0) {
                 this.dataAccessors = daHash.values().toArray(new DataAccessor[daHash.size()]);
             }
         }
-    /* 
-     * removed by Sven -- what's that been useful for??
-     * 
-    for (int i = 0; i < daList.size(); i++) {
-    int index = 0;
-    while (index >= 0) {
-    try {
-    daList.get(i).setIndex(index);
-    daList.get(i).read();
-    
-    } catch (Exception e) {
-    break;
-    }
-    index++;
-    }
-    daList.get(i).setIndex(0);
-    }
-     */
     }
 
     public String getTraceMark() {
@@ -284,18 +263,6 @@ public class JAMSContext extends JAMSComponent {
             return;
         }
 
-        //is this loop necessary??
-        /*for (int i=0;i<daList.size();i++){
-            int index = 0;
-            while(index >= 0){
-                try{
-                    daList.get(i).setIndex(index);
-                    daList.get(i).read();
-                    
-                }catch(Exception e){
-                    break;
-=======
-
         // make sure there are accessors for all attributes        
         JAMSEntity[] entityArray = getEntities().getEntityArray();
         for (String attributeName : store.getAttributes()) {
@@ -304,7 +271,6 @@ public class JAMSContext extends JAMSComponent {
                 JAMSData attribute = (JAMSData) entityArray[0].getObject(attributeName);
                 if (attribute == null) {
                     continue;
->>>>>>> .r1008
                 }
                 Class clazz = attribute.getClass();
                 getDataObject(entityArray, clazz, attributeName, DataAccessor.READ_ACCESS, null);
@@ -317,7 +283,7 @@ public class JAMSContext extends JAMSComponent {
                 getModel().getRuntime().sendErrorMsg("Error while trying to trace " + attributeName + ": " + this.getInstanceName());
                 getModel().getRuntime().handle(e, false);
             }
-        }*/
+        }
 
         // check if new dataAccessor objects where added
         // if so, create new array from list
@@ -440,7 +406,6 @@ public class JAMSContext extends JAMSComponent {
 
             if (da != null) {
                 daHash.put(attributeName, da);
-//                daList.add(da);
             }
         }
         return dataObject;
@@ -461,7 +426,7 @@ public class JAMSContext extends JAMSComponent {
 
     public void run() {
 
-        dataTracer.setStartMark();
+        dataTracer.startMark();
 
         //initEntityData();
 
@@ -483,7 +448,7 @@ public class JAMSContext extends JAMSComponent {
         updateEntityData();
 
         dataTracer.trace();
-        dataTracer.setEndMark();
+        dataTracer.endMark();
 
     }
 
@@ -888,16 +853,20 @@ public class JAMSContext extends JAMSComponent {
 
     protected class AttributeSpec implements Serializable {
 
-        String attributeName, className, value;
+        String attributeName, className,
+                value;
 
         public AttributeSpec(String attributeName, String className, String value) {
             this.attributeName = attributeName;
             this.className = className;
             this.value = value;
+
+
         }
     }
 
-    protected class AccessSpec implements Serializable {
+    protected class AccessSpec
+            implements Serializable {
 
         JAMSComponent component;
         String varName;
