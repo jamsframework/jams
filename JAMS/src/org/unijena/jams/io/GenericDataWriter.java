@@ -33,10 +33,10 @@ import org.unijena.jams.JAMS;
  *
  * @author S. Kralisch
  */
-public class GenericDataWriter {
+public class GenericDataWriter implements Serializable{
 
     private String fileName;
-    public BufferedWriter writer;
+    public SerializableBufferedWriter writer;
     private ArrayList<String> header = new ArrayList<String>();
     private ArrayList<String> comments = new ArrayList<String>();
     private ArrayList<Object> data;
@@ -51,7 +51,7 @@ public class GenericDataWriter {
 
     private void openFile() {
         try {
-            writer = new BufferedWriter(new FileWriter(fileName));
+            writer = new SerializableBufferedWriter(new FileWriter(fileName));
         } catch (IOException ioe) {
             JAMS.handle(ioe);
         }

@@ -65,7 +65,7 @@ public class JAMS {
     }
 
     public static void main(String[] args) throws Exception {
-
+        System.out.print(System.getProperty ("java.class.path"));
         cmdLine = new JAMSCmdLine(args);
 
         if (System.getProperty("os.name").contains("Windows")) {
@@ -118,8 +118,7 @@ public class JAMS {
         splash.show(new JAMSFrame(properties), SPLASH_DISPLAY_TIME);
     }
 
-    public static void startJAMS(JAMSProperties properties, String modelFilename, String cmdLineParameterValues) {
-
+    public static void startJAMS(JAMSProperties properties, String modelFilename, String cmdLineParameterValues) {        
         int guiConfig = Integer.parseInt(properties.getProperty("guiconfig", "0"));
 
         if (guiConfig == 1) {

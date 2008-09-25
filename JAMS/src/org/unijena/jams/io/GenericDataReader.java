@@ -34,9 +34,9 @@ import org.unijena.jams.data.*;
  * @author S. Kralisch
  */
 
-public class GenericDataReader implements JAMSTableDataStore {
+public class GenericDataReader implements JAMSTableDataStore, Serializable {
     
-    BufferedReader reader;
+    SerializableBufferedReader reader;
     String fileName;
     boolean timeParse;
     String nextString = "";
@@ -73,7 +73,7 @@ public class GenericDataReader implements JAMSTableDataStore {
     
     private void createReader() {
         try {
-            reader = new BufferedReader(new FileReader(fileName));
+            reader = new SerializableBufferedReader(new FileReader(fileName));
         } catch (IOException ioe) {
             JAMS.handle(ioe);
         }
