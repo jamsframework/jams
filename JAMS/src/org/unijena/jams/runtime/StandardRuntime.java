@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ListIterator;
@@ -63,7 +64,7 @@ import org.w3c.dom.Document;
  *
  * @author S. Kralisch
  */
-public class StandardRuntime implements JAMSRuntime {
+public class StandardRuntime implements JAMSRuntime,Serializable {
 
     private HashMap<String, JAMSData> dataHandles = new HashMap<String, JAMSData>();
     private JAMSLog errorLog = new JAMSLog();
@@ -74,9 +75,11 @@ public class StandardRuntime implements JAMSRuntime {
     private JButton stopButton,  closeButton;
     private JFrame frame;
     private JAMSModel model;
-    private PrintStream infoStream,  errorStream;
+    transient private PrintStream infoStream,  errorStream;
     private boolean guiEnabled = false;
     private ClassLoader classLoader;
+    private String[] libs;
+    
     private Document modelDocument = null;
     private JAMSProperties properties = null;
 
@@ -160,7 +163,7 @@ public class StandardRuntime implements JAMSRuntime {
         }
 
         // get libraries specified in properties
-        String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
+        libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
 
         // load the libraries and create the class loader
         classLoader = JAMSClassLoader.createClassLoader(libs, this);
@@ -194,6 +197,11 @@ public class StandardRuntime implements JAMSRuntime {
 
         classLoader = null;
         Runtime.getRuntime().gc();
+    }
+
+    @Override
+    public String[] getLibs(){
+        return libs;
     }
 
     @Override
@@ -531,7 +539,7 @@ public class StandardRuntime implements JAMSRuntime {
         return frame;
     }
 
-    class RunState extends Observable {
+    class RunState extends Observable implements Serializable {
 
         private int state = JAMS.RUNSTATE_RUN;
 

@@ -31,6 +31,7 @@ import org.unijena.jams.io.DataTracer.DataTracer;
 import jams.virtualws.stores.OutputDataStore;
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.Map.Entry;
 import org.unijena.jams.JAMS;
@@ -134,7 +135,15 @@ public class JAMSContext extends JAMSComponent {
             }
         });
     }
-
+    
+    public Field getField(Class clazz,String name){
+        try{
+            return clazz.getDeclaredField(name);
+        }catch(NoSuchFieldException e){
+            return getField(clazz.getSuperclass(),name);
+        }
+    }
+    
     public void initAccessors() {
 
         attribs = new HashMap<String, JAMSData>();
@@ -181,7 +190,8 @@ public class JAMSContext extends JAMSComponent {
 
             try {
 
-                clazz = accessSpec.component.getClass().getDeclaredField(accessSpec.varName).getType();
+                clazz = getField(accessSpec.component.getClass(),accessSpec.varName).getType();
+                
                 if (clazz == null) {
                     clazz = null;
                 }
@@ -199,7 +209,8 @@ public class JAMSContext extends JAMSComponent {
                     for (int i = 0; i < count; i++) {
                         array[i] = getDataObject(entityArray, componentClass, tok.nextToken(), accessSpec.accessType, null);
                     }
-                    accessSpec.component.getClass().getDeclaredField(accessSpec.varName).set(accessSpec.component, array);
+                    //accessSpec.component.getClass().getDeclaredField(accessSpec.varName).set(accessSpec.component, array);
+                    getField(accessSpec.component.getClass(),accessSpec.varName).set(accessSpec.component, array);
 
                 } else {
 
@@ -218,7 +229,9 @@ public class JAMSContext extends JAMSComponent {
                     dataObject = getDataObject(entityArray, clazz, accessSpec.attributeName, accessSpec.accessType, componentObject);
 
                     //assign the dataObject to the component
-                    accessSpec.component.getClass().getDeclaredField(accessSpec.varName).set(accessSpec.component, dataObject);
+                    //accessSpec.component.getClass().getDeclaredField(accessSpec.varName).set(accessSpec.component, dataObject);
+                    getField(accessSpec.component.getClass(),accessSpec.varName).set(accessSpec.component, dataObject);
+                    //accessSpec.component.getDeclaredField().set(accessSpec.component, dataObject);
 
 
                 }
@@ -271,6 +284,18 @@ public class JAMSContext extends JAMSComponent {
             return;
         }
 
+        //is this loop necessary??
+        /*for (int i=0;i<daList.size();i++){
+            int index = 0;
+            while(index >= 0){
+                try{
+                    daList.get(i).setIndex(index);
+                    daList.get(i).read();
+                    
+                }catch(Exception e){
+                    break;
+=======
+
         // make sure there are accessors for all attributes        
         JAMSEntity[] entityArray = getEntities().getEntityArray();
         for (String attributeName : store.getAttributes()) {
@@ -279,6 +304,7 @@ public class JAMSContext extends JAMSComponent {
                 JAMSData attribute = (JAMSData) entityArray[0].getObject(attributeName);
                 if (attribute == null) {
                     continue;
+>>>>>>> .r1008
                 }
                 Class clazz = attribute.getClass();
                 getDataObject(entityArray, clazz, attributeName, DataAccessor.READ_ACCESS, null);
@@ -291,7 +317,7 @@ public class JAMSContext extends JAMSComponent {
                 getModel().getRuntime().sendErrorMsg("Error while trying to trace " + attributeName + ": " + this.getInstanceName());
                 getModel().getRuntime().handle(e, false);
             }
-        }
+        }*/
 
         // check if new dataAccessor objects where added
         // if so, create new array from list
@@ -802,7 +828,6 @@ public class JAMSContext extends JAMSComponent {
                 }
             }
         }
-
         //look if there is an child context which uses this componentObj
         for (int j = 0; j < components.size(); j++) {
             JAMSComponent c = components.get(j);

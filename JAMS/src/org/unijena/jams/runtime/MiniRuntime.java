@@ -223,6 +223,11 @@ public class MiniRuntime implements JAMSRuntime {
     public ClassLoader getClassLoader() {
         return ClassLoader.getSystemClassLoader();
     }
+    
+    @Override
+    public String[] getLibs(){
+        return null;
+    }
 
     @Override
     public void saveModelParameter() {
