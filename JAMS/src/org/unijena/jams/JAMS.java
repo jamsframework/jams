@@ -65,7 +65,7 @@ public class JAMS {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.print(System.getProperty ("java.class.path"));
+
         cmdLine = new JAMSCmdLine(args);
 
         if (System.getProperty("os.name").contains("Windows")) {
