@@ -37,8 +37,8 @@ import java.io.IOException;
  */
 public class OutputDataStore implements DataStore {
 
-    private static final String TRACE_STRING = "trace";
-    private static final String ATTRIBUTE_STRING = "attribute";
+    private static final String TRACE_STRING = "attribute";
+    private static final String ATTRIBUTE_STRING = "id";
     private String id;
     private String[] attributes;
     private BufferedWriter writer;
