@@ -37,7 +37,7 @@ import org.unijena.jams.model.JAMSContext;
 public class StandardTracer implements DataTracer {
 
     private DataAccessor[] accessorObjects;
-    private ArrayList<String> attributeNames = new ArrayList<String>();
+    private ArrayList<String> attributeNames;
     protected JAMSContext context;
     private JAMSContext[] parents;
     protected OutputDataStore store;
@@ -46,64 +46,37 @@ public class StandardTracer implements DataTracer {
     /**
      * DataTracer constructor
      * @param context The context that the attributes belong to
-     * @param store The belonging datastore object which provides the attribute 
-     *              names and output functionality
      * @param idClazz The type of the ID field, needed for type output
      */
-    public StandardTracer(JAMSContext context, OutputDataStore store, Class idClazz) {
+    public StandardTracer(JAMSContext context, Class idClazz) {
         this.context = context;
-        this.store = store;
+        this.store = context.getModel().getOutputDataStore(context.getInstanceName());
         this.idClazz = idClazz;
+
+        // Initialize the DataTracer, i.e. get the data objects to be traced from
+        // the provided dataObjectHash, open the store and output some metadata 
+        // to the store. Nothing will be written to the store as no attribute
+        // names are provided or none of them are found in the dataObjectHash.
+        init(context.getDaHash());
     }
 
-    /**
-     * Register the name of an attribute that should be traced later on.
-     * @param attributeName The attribute's name
-     */
-    public void registerAttribute(String attributeName) {
-        attributeNames.add(attributeName);
-    }
+    private void init(HashMap<String, DataAccessor> dataObjectHash) {
 
-    /**
-     * Initialize the DataTracer, i.e. get the data objects to be traced from
-     * the provided dataObjectHash, open the store and output some metadata 
-     * to the store. Nothing will be written to the store as no attribute
-     * names are provided or none of them are found in the dataObjectHash.
-     * @param dataObjectHash A HashMap containing the data objects that can be
-     * accessed by their name
-     * @return A string array containing the attribute names that could not be 
-     * found.
-     */
-    @Override
-    public String[] init(HashMap<String, DataAccessor> dataObjectHash) {
+        ArrayList<DataAccessor> accessorObjectList = new ArrayList<DataAccessor>();
+        this.attributeNames = new ArrayList<String>();
 
-        ArrayList<String> missingAttributes = new ArrayList<String>();
-        ArrayList<DataAccessor> accessorList = new ArrayList<DataAccessor>();
-
-        for (String attributeName : attributeNames) {
+        for (String attributeName : store.getAttributes()) {
             DataAccessor dataAccessor = dataObjectHash.get(attributeName);
             if (dataAccessor != null) {
-                accessorList.add(dataAccessor);
-            } else {
-                missingAttributes.add(attributeName);
+                accessorObjectList.add(dataAccessor);
+                attributeNames.add(attributeName);
             }
         }
-        attributeNames.removeAll(missingAttributes);
-        this.accessorObjects = accessorList.toArray(new DataAccessor[accessorList.size()]);
+        this.accessorObjects = accessorObjectList.toArray(new DataAccessor[accessorObjectList.size()]);
 
         if (this.accessorObjects.length > 0) {
             createHeader();
         }
-
-        return missingAttributes.toArray(new String[missingAttributes.size()]);
-    }
-
-    /**
-     * 
-     * @return The data objects that are traced by this DataTracer.
-     */
-    public DataAccessor[] getAccessorObjects() {
-        return accessorObjects;
     }
 
     private void createHeader() {
@@ -153,13 +126,29 @@ public class StandardTracer implements DataTracer {
         output("\n@data\n");
     }
 
+    protected void output(Object o) {
+        try {
+            store.write(o);
+        } catch (IOException ioe) {
+        }
+    }
+
+    /**
+     * 
+     * @return The data objects that are traced by this DataTracer.
+     */
+    @Override
+    public DataAccessor[] getAccessorObjects() {
+        return accessorObjects;
+    }
+
     /**
      * This method contains code to be executed as traced JAMSData objects change
      */
     @Override
     public void trace() {
-       
-        DataAccessor[] dataAccessors = getAccessorObjects();
+
+        DataAccessor[] dataAccessors = this.accessorObjects;
         JAMSEntity[] entities = context.getEntities().getEntityArray();
         for (int j = 0; j < entities.length; j++) {
 
@@ -175,7 +164,7 @@ public class StandardTracer implements DataTracer {
             output("\n");
         }
     }
-    
+
     /**
      * Output some mark at the beginning of the contexts output within it's
      * run() method. If this context has parent contexts with more than
@@ -198,13 +187,6 @@ public class StandardTracer implements DataTracer {
     @Override
     public void setEndMark() {
         output("@end\n");
-    }
-
-    protected void output(Object o) {
-        try {
-            store.write(o);
-        } catch (IOException ioe) {
-        }
     }
 
     /**

@@ -84,20 +84,27 @@ public class JAMSModel extends JAMSContext {
         this.date = date;
     }
 
+    @Override
+    public void init() {
+        super.init();
+        // save current model parameter to workspace output directory
+        getRuntime().saveModelParameter();
+    }
+
     public void setWorkspaceDir(String workspaceDir) {
-        
+
         if (workspaceDir.equals("")) {
             return;
         }
-        
+
         this.workspaceDir = workspaceDir;
         this.workspace = new VirtualWorkspace(new File(workspaceDir), runtime);
     }
-    
+
     public VirtualWorkspace getWorkspace() {
         return workspace;
-    }    
-    
+    }
+
     public OutputDataStore getOutputDataStore(String title) {
         if (this.workspace == null) {
             return null;

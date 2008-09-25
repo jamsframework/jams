@@ -48,8 +48,8 @@ public class JAMSTemporalContext extends JAMSContext {
     private JAMSCalendar lastValue;
 
     @Override
-    protected DataTracer createDataTracer(OutputDataStore store) {
-        return new StandardTracer(this, store, current.getClass()) {
+    protected DataTracer createDataTracer() {
+        return new StandardTracer(this, JAMSLong.class) {
 
             @Override
             public void trace() {
@@ -104,7 +104,7 @@ public class JAMSTemporalContext extends JAMSContext {
             // check end of component elements list, if required switch to the next
             // timestep start with the new Component list again
             if (!ce.hasNext() && current.before(lastValue)) {
-                runTrace();
+                dataTracer.trace();
                 current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
                 ce.reset();
             }

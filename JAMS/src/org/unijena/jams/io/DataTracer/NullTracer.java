@@ -22,7 +22,6 @@
  */
 package org.unijena.jams.io.DataTracer;
 
-import java.util.HashMap;
 import org.unijena.jams.dataaccess.DataAccessor;
 
 /**
@@ -36,11 +35,6 @@ public class NullTracer implements DataTracer {
     }
 
     @Override
-    public String[] init(HashMap<String, DataAccessor> dataObjectHash) {
-        return new String[0];
-    }
-
-    @Override
     public void setStartMark() {
     }
 
@@ -50,10 +44,6 @@ public class NullTracer implements DataTracer {
 
     @Override
     public void close() {
-    }
-
-    @Override
-    public void registerAttribute(String attributeName) {
     }
 
     @Override

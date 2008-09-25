@@ -474,6 +474,7 @@ public class StandardRuntime implements JAMSRuntime {
         try {
             File modelFile = new File(this.model.getWorkspace().getOutputDataDirectory().getPath() +
                     File.separator + JAMS.DEFAULT_PARAMETER_FILE_NAME);
+            modelFile.getParentFile().mkdirs();
             ParameterProcessor.saveParams(this.modelDocument, modelFile, this.properties.getProperty("username"), null);
         } catch (IOException ioe) {
             getModel().getRuntime().handle(ioe);

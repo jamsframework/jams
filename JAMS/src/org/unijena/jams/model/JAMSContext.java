@@ -37,6 +37,7 @@ import org.unijena.jams.JAMS;
 import org.unijena.jams.data.*;
 import org.unijena.jams.dataaccess.*;
 import org.unijena.jams.dataaccess.CalendarAccessor;
+import org.unijena.jams.io.DataTracer.NullTracer;
 import org.unijena.jams.io.DataTracer.StandardTracer;
 import org.unijena.jams.runtime.JAMSRuntime;
 
@@ -55,7 +56,7 @@ public class JAMSContext extends JAMSComponent {
     protected ArrayList<AccessSpec> accessSpecs = new ArrayList<AccessSpec>();
     protected ArrayList<AttributeSpec> attributeSpecs = new ArrayList<AttributeSpec>();
     protected DataAccessor[] dataAccessors = new DataAccessor[0];
-    protected HashMap<String, DataAccessor> daHash;
+    private HashMap<String, DataAccessor> daHash;
     protected HashMap<String, JAMSData> attribs;
     protected DataTracer dataTracer;
     protected boolean doRun = true;
@@ -137,7 +138,6 @@ public class JAMSContext extends JAMSComponent {
     public void initAccessors() {
 
         attribs = new HashMap<String, JAMSData>();
-
         daHash = new HashMap<String, DataAccessor>();
 
         AccessSpec accessSpec;
@@ -253,58 +253,40 @@ public class JAMSContext extends JAMSComponent {
      */
     }
 
-    protected DataTracer createDataTracer(OutputDataStore store) {
-        return new StandardTracer(this, store, JAMSLong.class);
-    }
-
-    protected void runTrace() {
-        if (dataTracer != null) {
-            dataTracer.trace();
-        }
-    }
-
-    protected void initTrace() {
-        if (dataTracer != null) {
-            dataTracer.setStartMark();
-        }
-    }
-
-    protected void cleanupTrace() {
-        if (dataTracer != null) {
-            dataTracer.setEndMark();
-        }
-    }
-
     public String getTraceMark() {
         return Long.toString(currentEntity.getId());
     }
 
+    protected DataTracer createDataTracer() {
+        return new StandardTracer(this, JAMSLong.class);
+    }
+
     private void setupDataTracer() {
 
+        // get the output store if existing
         OutputDataStore store = getModel().getOutputDataStore(this.getInstanceName());
-
         if ((store == null) || (store.getAttributes().length == 0)) {
-            dataTracer = null;
+            // if there is no store create a NullTracer (does nothing) and exit
+            this.dataTracer = new NullTracer();
             return;
         }
 
-        dataTracer = createDataTracer(store);
-
-        JAMSEntity[] ea = getEntities().getEntityArray();
-
+        // make sure there are accessors for all attributes        
+        JAMSEntity[] entityArray = getEntities().getEntityArray();
         for (String attributeName : store.getAttributes()) {
 
-            dataTracer.registerAttribute(attributeName);
             try {
-                JAMSData attribute = (JAMSData) ea[0].getObject(attributeName);
+                JAMSData attribute = (JAMSData) entityArray[0].getObject(attributeName);
                 if (attribute == null) {
                     continue;
                 }
                 Class clazz = attribute.getClass();
-                getDataObject(ea, clazz, attributeName, DataAccessor.READ_ACCESS, null);
+                getDataObject(entityArray, clazz, attributeName, DataAccessor.READ_ACCESS, null);
             } catch (JAMSEntity.NoSuchAttributeException nsae) {
-                // will do nothing here since this will be handled at 
-                // the DataTracer's init method below..
+                getModel().getRuntime().sendErrorMsg("Can't trace attribute \"" + attributeName +
+                        "\" in context \"" + this.getInstanceName() + "\" (not found)!");
+            // will do nothing here since this will be handled at 
+            // the DataTracer's init method below..
             } catch (Exception e) {
                 getModel().getRuntime().sendErrorMsg("Error while trying to trace " + attributeName + ": " + this.getInstanceName());
                 getModel().getRuntime().handle(e, false);
@@ -314,30 +296,19 @@ public class JAMSContext extends JAMSComponent {
         // check if new dataAccessor objects where added
         // if so, create new array from list
         if (this.daHash.size() > this.dataAccessors.length) {
-            // create DataAccessor array from DataAccessor list
-//            this.dataAccessors = daList.toArray(new DataAccessor[daList.size()]);
             this.dataAccessors = daHash.values().toArray(new DataAccessor[daHash.size()]);
         }
 
-//        String[] result = dataTracer.init(attribs);
-        String[] result = dataTracer.init(daHash);
-        
-        if (result.length != 0) {
-            for (String s : result) {
-                getModel().getRuntime().sendErrorMsg("Can't trace attribute \"" + s + "\" in context \"" + this.getInstanceName() + "\" (not found)!");
-            }
-            if (dataTracer.getAccessorObjects().length == 0) {
-                dataTracer = null;
-            }
-        }
+        this.dataTracer = createDataTracer();
 
-        // save current model parameter to workspace output directory
-        if (dataTracer != null) {
-            getModel().getRuntime().saveModelParameter();
+        if (this.dataTracer.getAccessorObjects().length == 0) {
+            this.dataTracer = new NullTracer();
+            return;
         }
 
     }
 
+    @Override
     public void init() {
 
         attribs = new HashMap<String, JAMSData>();
@@ -373,6 +344,17 @@ public class JAMSContext extends JAMSComponent {
         }
 
         initEntityData();
+    }
+
+    public void registerAccessor(Class clazz, String attributeName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {
+
+        getDataObject(this.getEntities().getEntityArray(), clazz, attributeName, DataAccessor.READ_ACCESS, null);
+
+        // check if new dataAccessor objects where added
+        // if so, create new array from list
+        if (this.daHash.size() > this.dataAccessors.length) {
+            this.dataAccessors = daHash.values().toArray(new DataAccessor[daHash.size()]);
+        }
     }
 
     protected JAMSData getDataObject(final JAMSEntity[] ea, final Class clazz, final String attributeName, final int accessType, JAMSData componentObject) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {
@@ -453,7 +435,7 @@ public class JAMSContext extends JAMSComponent {
 
     public void run() {
 
-        initTrace();
+        dataTracer.setStartMark();
 
         //initEntityData();
 
@@ -474,8 +456,8 @@ public class JAMSContext extends JAMSComponent {
 
         updateEntityData();
 
-        runTrace();
-        cleanupTrace();
+        dataTracer.trace();
+        dataTracer.setEndMark();
 
     }
 
@@ -499,6 +481,10 @@ public class JAMSContext extends JAMSComponent {
         ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
         list.add(JAMSDataFactory.createEntity());
 
+    }
+
+    public HashMap<String, DataAccessor> getDaHash() {
+        return daHash;
     }
 
     class ChildrenEnumerator implements JAMSComponentEnumerator {
@@ -877,7 +863,7 @@ public class JAMSContext extends JAMSComponent {
 
     protected class AttributeSpec implements Serializable {
 
-        String attributeName,className ,value ;
+        String attributeName, className, value;
 
         public AttributeSpec(String attributeName, String className, String value) {
             this.attributeName = attributeName;

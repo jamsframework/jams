@@ -22,7 +22,6 @@
  */
 package org.unijena.jams.io.DataTracer;
 
-import java.util.HashMap;
 import org.unijena.jams.dataaccess.DataAccessor;
 
 /**
@@ -32,10 +31,6 @@ import org.unijena.jams.dataaccess.DataAccessor;
 public interface DataTracer {
 
     public DataAccessor[] getAccessorObjects();
-
-    public void registerAttribute(String attributeName);
-
-    public String[] init(HashMap<String, DataAccessor> dataObjectHash);
 
     public void trace();
 
