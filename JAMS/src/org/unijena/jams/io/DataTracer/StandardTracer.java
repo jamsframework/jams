@@ -172,7 +172,7 @@ public class StandardTracer implements DataTracer {
      * provided here as well (JAMSContext::getTraceMark()).
      */
     @Override
-    public void setStartMark() {
+    public void startMark() {
 
         for (JAMSContext parent : parents) {
             output(parent.getInstanceName() + "\t" + parent.getTraceMark() + "\n");
@@ -185,7 +185,7 @@ public class StandardTracer implements DataTracer {
      * method.
      */
     @Override
-    public void setEndMark() {
+    public void endMark() {
         output("@end\n");
     }
 

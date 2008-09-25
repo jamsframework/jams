@@ -853,20 +853,16 @@ public class JAMSContext extends JAMSComponent {
 
     protected class AttributeSpec implements Serializable {
 
-        String attributeName, className,
-                value;
+        String attributeName, className, value;
 
         public AttributeSpec(String attributeName, String className, String value) {
             this.attributeName = attributeName;
             this.className = className;
             this.value = value;
-
-
         }
     }
 
-    protected class AccessSpec
-            implements Serializable {
+    protected class AccessSpec implements Serializable {
 
         JAMSComponent component;
         String varName;

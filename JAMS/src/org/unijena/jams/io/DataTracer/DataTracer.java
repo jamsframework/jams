@@ -34,9 +34,9 @@ public interface DataTracer {
 
     public void trace();
 
-    public void setStartMark();
+    public void startMark();
 
-    public void setEndMark();
+    public void endMark();
 
     public void close();
 }

@@ -35,11 +35,11 @@ public class NullTracer implements DataTracer {
     }
 
     @Override
-    public void setStartMark() {
+    public void startMark() {
     }
 
     @Override
-    public void setEndMark() {
+    public void endMark() {
     }
 
     @Override
