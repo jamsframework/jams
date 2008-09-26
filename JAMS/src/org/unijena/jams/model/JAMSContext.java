@@ -34,12 +34,13 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
 import org.unijena.jams.JAMS;
 import org.unijena.jams.data.*;
 import org.unijena.jams.dataaccess.*;
 import org.unijena.jams.dataaccess.CalendarAccessor;
 import org.unijena.jams.io.DataTracer.NullTracer;
-import org.unijena.jams.io.DataTracer.StandardTracer;
+import org.unijena.jams.io.DataTracer.AbstractTracer;
 import org.unijena.jams.runtime.JAMSRuntime;
 
 @JAMSComponentDescription(title = "JAMS Component",
@@ -249,8 +250,67 @@ public class JAMSContext extends JAMSComponent {
         return Long.toString(currentEntity.getId());
     }
 
-    protected DataTracer createDataTracer() {
-        return new StandardTracer(this, JAMSLong.class);
+    protected DataTracer createDataTracer(OutputDataStore store) {
+
+        // create a DataTracer which is suited for this context
+        if (store.getFilters().length == 0) {
+            return new AbstractTracer(this, JAMSLong.class) {
+
+                @Override
+                public void trace() {
+                    DataAccessor[] dataAccessors = this.accessorObjects;
+                    JAMSEntity[] entities = context.getEntities().getEntityArray();
+                    for (int j = 0; j < entities.length; j++) {
+
+                        output(entities[j].getId());
+                        output("\t");
+
+                        for (int i = 0; i < dataAccessors.length; i++) {
+                            dataAccessors[i].setIndex(j);
+                            dataAccessors[i].read();
+                            output(dataAccessors[i].getComponentObject());
+                            output("\t");
+                        }
+                        output("\n");
+                    }
+                }
+            };
+        } else {
+            return new AbstractTracer(this, JAMSLong.class) {
+
+                @Override
+                public void trace() {
+                    
+                    DataAccessor[] dataAccessors = this.accessorObjects;
+                    JAMSEntity[] entities = context.getEntities().getEntityArray();
+                    for (int j = 0; j < entities.length; j++) {
+                        
+                        boolean doBreak = false;                        
+                        for (OutputDataStore.Filter filter : store.getFilters()) {
+                            Matcher matcher = filter.getPattern().matcher(Long.toString(entities[j].getId()));
+                            if (matcher.matches()) {
+                                doBreak = false;
+                                break;
+                            }
+                        }
+                        if (doBreak) {
+                            continue;
+                        }
+                        
+                        output(entities[j].getId());
+                        output("\t");
+
+                        for (int i = 0; i < dataAccessors.length; i++) {
+                            dataAccessors[i].setIndex(j);
+                            dataAccessors[i].read();
+                            output(dataAccessors[i].getComponentObject());
+                            output("\t");
+                        }
+                        output("\n");
+                    }
+                }
+            };
+        }
     }
 
     private void setupDataTracer() {
@@ -291,7 +351,7 @@ public class JAMSContext extends JAMSComponent {
             this.dataAccessors = daHash.values().toArray(new DataAccessor[daHash.size()]);
         }
 
-        this.dataTracer = createDataTracer();
+        this.dataTracer = createDataTracer(store);
 
         if (this.dataTracer.getAccessorObjects().length == 0) {
             this.dataTracer = new NullTracer();
@@ -853,16 +913,48 @@ public class JAMSContext extends JAMSComponent {
 
     protected class AttributeSpec implements Serializable {
 
-        String attributeName, className, value;
+         String 
+         attributeName, className,
 
-        public AttributeSpec(String attributeName, String className, String value) {
+         value ;     
+              
+              
+              
+        
+    
+
+    public   AttributeSpec   
+
+         
+         
+         
+         
+
+         (String attributeName, String className, String value  ) {
             this.attributeName = attributeName;
             this.className = className;
             this.value = value;
+              
         }
     }
 
-    protected class AccessSpec implements Serializable {
+    protected    
+         
+    
+
+        
+        class  AccessSpec 
+    
+
+       
+         
+    
+
+        
+          
+    
+
+implements Serializable {
 
         JAMSComponent component;
         String varName;

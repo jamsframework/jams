@@ -46,6 +46,10 @@ import java.io.Serializable;
     public void run() throws Exception {}
     public void cleanup() throws Exception {}
         
+    /**
+     * Get the name of this component instance
+     * @return The component's instance name
+     */
     public String getInstanceName() {
         return instanceName;
     }
@@ -54,6 +58,11 @@ import java.io.Serializable;
         this.instanceName = instanceName;
     }
         
+    /**
+     * Gets the parent context of this component
+     * @return The parent context of this component, null if this is a model
+     * context
+     */
     public JAMSContext getContext() {
         return context;
     }

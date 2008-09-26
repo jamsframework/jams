@@ -30,6 +30,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.regex.Pattern;
+import org.unijena.jams.model.JAMSContext;
 
 /**
  *
@@ -38,9 +40,13 @@ import java.io.IOException;
 public class OutputDataStore implements DataStore {
 
     private static final String TRACE_STRING = "attribute";
+    private static final String FILTER_STRING = "filter";
+    private static final String CONTEXT_STRING = "context";
+    private static final String EXPRESSION_STRING = "expression";
     private static final String ATTRIBUTE_STRING = "id";
     private String id;
     private String[] attributes;
+    private Filter[] filters;
     private BufferedWriter writer;
     private VirtualWorkspace ws;
 
@@ -50,14 +56,22 @@ public class OutputDataStore implements DataStore {
         this.ws = ws;
 
         Element root = doc.getDocumentElement();
-        NodeList traceNodes = root.getElementsByTagName(TRACE_STRING);
 
+        NodeList traceNodes = root.getElementsByTagName(TRACE_STRING);
         int length = traceNodes.getLength();
         attributes = new String[length];
-
         for (int i = 0; i < length; i++) {
             Element traceElement = (Element) traceNodes.item(i);
             attributes[i] = traceElement.getAttribute(ATTRIBUTE_STRING);
+        }
+
+        NodeList filterNodes = root.getElementsByTagName(FILTER_STRING);
+        length = filterNodes.getLength();
+        filters = new Filter[length];
+        for (int i = 0; i < length; i++) {
+            Element filterElement = (Element) filterNodes.item(i);
+            filters[i] = new Filter(filterElement.getAttribute(CONTEXT_STRING),
+                    filterElement.getAttribute(EXPRESSION_STRING));
         }
     }
 
@@ -84,6 +98,46 @@ public class OutputDataStore implements DataStore {
     public void close() throws IOException {
         if (writer != null) {
             writer.close();
+        }
+    }
+
+    public Filter[] getFilters() {
+        return filters;
+    }
+
+    public class Filter {
+
+        private String contextName,  expression;
+        private Pattern pattern = null;
+        private JAMSContext context = null;
+
+        public Filter(String contextName, String expression) {
+            this.contextName = contextName;
+            this.expression = expression;
+        }
+
+        public String getContextName() {
+            return contextName;
+        }
+
+        public String getExpression() {
+            return expression;
+        }
+
+        public Pattern getPattern() {
+            return pattern;
+        }
+
+        public void setPattern(Pattern pattern) {
+            this.pattern = pattern;
+        }
+
+        public JAMSContext getContext() {
+            return context;
+        }
+
+        public void setContext(JAMSContext context) {
+            this.context = context;
         }
     }
 }

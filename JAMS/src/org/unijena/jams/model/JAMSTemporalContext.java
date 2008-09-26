@@ -26,7 +26,7 @@ import jams.virtualws.stores.OutputDataStore;
 import org.unijena.jams.data.*;
 import org.unijena.jams.dataaccess.DataAccessor;
 import org.unijena.jams.io.DataTracer.DataTracer;
-import org.unijena.jams.io.DataTracer.StandardTracer;
+import org.unijena.jams.io.DataTracer.AbstractTracer;
 
 /**
  *
@@ -48,8 +48,8 @@ public class JAMSTemporalContext extends JAMSContext {
     private JAMSCalendar lastValue;
 
     @Override
-    protected DataTracer createDataTracer() {
-        return new StandardTracer(this, JAMSLong.class) {
+    protected DataTracer createDataTracer(OutputDataStore store) {
+        return new AbstractTracer(this, JAMSLong.class) {
 
             @Override
             public void trace() {

@@ -55,6 +55,7 @@ import java.util.Properties;
 
 public class VirtualWorkspace {
 
+    private static final String CONFIG_FILE_NAME = "config.txt";
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
     private JAMSRuntime runtime = new StandardRuntime();
@@ -78,9 +79,16 @@ public class VirtualWorkspace {
 
     public void loadConfig() {
         try {
-            File file = new File(directory.getPath() + File.separator + "config.txt");
-            BufferedInputStream is = new BufferedInputStream(new FileInputStream(file));
-            properties.load(is);
+            
+            properties.setProperty("description", "");
+            properties.setProperty("title", "");
+            properties.setProperty("persistent", "false");
+
+            File file = new File(directory.getPath() + File.separator + CONFIG_FILE_NAME);
+            if (file.exists()) {
+                BufferedInputStream is = new BufferedInputStream(new FileInputStream(file));
+                properties.load(is);
+            }
         } catch (IOException ioe) {
             runtime.handle(ioe);
         }
@@ -88,7 +96,7 @@ public class VirtualWorkspace {
 
     public void saveConfig() {
         try {
-            File file = new File(directory.getPath() + File.separator + "config.txt");
+            File file = new File(directory.getPath() + File.separator + CONFIG_FILE_NAME);
             BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(file));
             properties.store(os, "JAMS workspace config");
         } catch (IOException ioe) {
@@ -313,13 +321,13 @@ public class VirtualWorkspace {
 
         System.out.println(ws.dataStoreToString("tmin_local"));
         ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/vworkspace/_tmin_dump.txt"));
-/*
-        OutputDataStore store = ws.getOutputDataStore("TimeLoop");
-        System.out.println(store.getID());
-        for (String attribute : store.getAttributes()) {
-            System.out.println(attribute);
-        }
-*/
+    /*
+    OutputDataStore store = ws.getOutputDataStore("TimeLoop");
+    System.out.println(store.getID());
+    for (String attribute : store.getAttributes()) {
+    System.out.println(attribute);
+    }
+     */
 //        System.out.println(ws.dataStoreToString("tmean_timeseries"));
 //        ws.inputDataStoreToFile("tmean_timeseries", new File("D:/jamsapplication/vworkspace/_tmean_dump.txt"));
 //        ws.wsToFile();

@@ -1,5 +1,5 @@
 /*
- * StandardTracer.java
+ * AbstractTracer.java
  * Created on 28. August 2008, 13:40
  *
  * This file is part of JAMS
@@ -26,7 +26,7 @@ import jams.virtualws.stores.OutputDataStore;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.unijena.jams.data.JAMSEntity;
+import java.util.regex.Pattern;
 import org.unijena.jams.dataaccess.DataAccessor;
 import org.unijena.jams.model.JAMSContext;
 
@@ -34,9 +34,9 @@ import org.unijena.jams.model.JAMSContext;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class StandardTracer implements DataTracer {
+public abstract class AbstractTracer implements DataTracer {
 
-    private DataAccessor[] accessorObjects;
+    protected DataAccessor[] accessorObjects;
     private ArrayList<String> attributeNames;
     protected JAMSContext context;
     private JAMSContext[] parents;
@@ -48,7 +48,7 @@ public class StandardTracer implements DataTracer {
      * @param context The context that the attributes belong to
      * @param idClazz The type of the ID field, needed for type output
      */
-    public StandardTracer(JAMSContext context, Class idClazz) {
+    public AbstractTracer(JAMSContext context, Class idClazz) {
         this.context = context;
         this.store = context.getModel().getOutputDataStore(context.getInstanceName());
         this.idClazz = idClazz;
@@ -74,6 +74,19 @@ public class StandardTracer implements DataTracer {
         }
         this.accessorObjects = accessorObjectList.toArray(new DataAccessor[accessorObjectList.size()]);
 
+        for (OutputDataStore.Filter filter : store.getFilters()) {
+            
+            JAMSContext superContext = context;
+            while (superContext != null) {
+                superContext = context.getContext();
+                if (superContext.getInstanceName().equals(filter.getContextName())) {
+                    filter.setPattern(Pattern.compile(filter.getExpression()));
+                    filter.setContext(superContext);
+                    break;
+                }
+            }            
+        }
+        
         if (this.accessorObjects.length > 0) {
             createHeader();
         }
@@ -146,24 +159,7 @@ public class StandardTracer implements DataTracer {
      * This method contains code to be executed as traced JAMSData objects change
      */
     @Override
-    public void trace() {
-
-        DataAccessor[] dataAccessors = this.accessorObjects;
-        JAMSEntity[] entities = context.getEntities().getEntityArray();
-        for (int j = 0; j < entities.length; j++) {
-
-            output(entities[j].getId());
-            output("\t");
-
-            for (int i = 0; i < dataAccessors.length; i++) {
-                dataAccessors[i].setIndex(j);
-                dataAccessors[i].read();
-                output(dataAccessors[i].getComponentObject());
-                output("\t");
-            }
-            output("\n");
-        }
-    }
+    public abstract void trace();
 
     /**
      * Output some mark at the beginning of the contexts output within it's
