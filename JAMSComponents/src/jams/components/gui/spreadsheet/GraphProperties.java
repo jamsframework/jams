@@ -485,151 +485,7 @@ public class GraphProperties {
         return index;
     }
  
-//    public int[] setInitialDataIntervals(){
-//        
-////        double row_start = (Double) table.getValueAt(rowSelection[0], x_series_col);
-////        double row_end = (Double) table.getValueAt(rowSelection[rowSelection.length - 1], x_series_col);
-//        int[] range = new int[2];
-//        
-//        double row_start = cxyconf.sorted_Row[0].col[x_series_col];
-//        double row_end = data[data.length -1].x;
-//        range[0] = 0;
-//        range[1] = data.length - 1;
-//        
-//        double start, end;
-//        
-////        for(int i=0; i<rowSelection.length; i++){
-////            start = (Double) table.getValueAt(rowSelection[i], x_series_col);
-////            end = (Double) table.getValueAt(rowSelection[i], x_series_col);
-////            if(start < row_start) row_start = start;
-////            if(end > row_end) row_end = end;
-////        }
-//        
-//        for(int i=0; i<data.length; i++){
-//            start = data[i].x;
-//            end = data[i].x;
-//            if(start < row_start){ 
-//                
-//                range[0] = i;
-//                row_start = start;
-//                    
-//            }
-//            if(end > row_end){
-//                range[1] = i;
-//                row_end = end;
-//            }
-//        }
-//        setDataSTART(row_start);
-//        setDataEND(row_end);
-//        
-//        return range;
-//        
-//        
-//    }
-    
-//    public int[] setPossibleDataIntervals(){
-//        double possible_start, possible_end;
-//        
-//        //int[] d_range = new int[2];  //end index
-//        
-//        double start = readDataSTART();
-//        double end = readDataEND();
-//        
-//        possible_start = readDataSTART();
-//        possible_end = readDataEND();
-//        
-//        double start_diff, end_diff, start_diff_min, end_diff_min; 
-//        start_diff_min = Math.abs(data[0].x - start);
-//        end_diff_min = Math.abs(data[0].x - end);
-//        //start = data[0].x;
-//        //end = data[data.length -1].x;
-//        
-//        
-//        for(int i=0; i<data.length; i++){
-//            
-//            start_diff = Math.abs(data[i].x - start);
-//            end_diff = Math.abs(data[i].x - end);
-//            
-//            if(start_diff < start_diff_min){
-//                start_diff_min = start_diff;
-//                possible_start = data[i].x;
-//                d_range[0] = i;
-//            }
-//            if(end_diff < end_diff_min){
-//                end_diff_min = end_diff;
-//                possible_end = data[i].x;
-//                d_range[1] = i;
-//            }
-//        }
-//
-//        setDataSTART(possible_start);
-//        setDataEND(possible_end);
-////        if(possible_start >= possible_end){
-////            datachoice_END.setText(""+possible_start);
-////        }
-//        return d_range;
-//    }
-    
-//     public int[] setPossibleDataIntervals(){
-//        double possible_start, possible_end;
-//        
-//        int[] range = new int[2];
-//        
-//        double start = readDataSTART();
-//        double end = readDataEND();
-//
-//        int i=0;
-//        boolean out_of_boundaries = (start < data[0].x) || (start > data[data.length -1].x);
-//        
-//        if(end < start) end = start;
-//        
-//        if(!out_of_boundaries){
-//            
-//            while(!(start >= data[i].x && start <= data[i+1].x)){
-//                i++;
-//            }
-//            start = data[i].x;
-//            range[0] = i;
-//        }else{
-//            if(start < data[0].x){
-//                start = data[0].x;
-//                range[0] = 0;
-//            }
-//            if(start > data[0].x){
-//                start = data[data.length -1].x;
-//                range[0] = data.length -1;
-//            }
-//        }
-//
-//        setDataSTART(start);
-//        
-//        
-//        out_of_boundaries = (end < data[0].x) || (end > data[data.length -1].x);
-//        if(!out_of_boundaries){
-//            
-//            while(!(end >= data[i].x && end <= data[i+1].x)){
-//                i++;
-//            }
-//            end = data[i].x;
-//            range[1] = i;
-//            
-//        }else{
-//            if(end < data[0].x){
-//                end = data[0].x;
-//                range[1] = 0;
-//            }
-//            if(end > data[0].x){
-//                end = data[data.length -1].x;
-//                range[1] = data.length -1;
-//            }
-//        }
-//        setDataEND(end);
-////        if(possible_end >= possible_end){
-////            datachoice_END.setText(""+possible_end);
-////        }
-//        d_range = range;
-//        return d_range;
-//    }
+
     
     private void setPossibleTimeIntervals(){
         int s = timechoice_START.getSelectedIndex();
@@ -696,11 +552,11 @@ public class GraphProperties {
 //        colorchoice.setSelectedItem(color);
 //    }
     
-    public void setColor(int index){
-        
-        //colorchoice.setSelectedIndex(index);
-        this.color = index;
-    }
+//    public void setColor(int index){
+//        
+//        //colorchoice.setSelectedIndex(index);
+//        this.color = index;
+//    }
     
     public void setLegendName(String legendName){
         this.legendName = legendName;
@@ -925,9 +781,9 @@ public class GraphProperties {
         cr_dlg.setFillButtonColor(fill);
     }
     
-    public void setSeriesOutlinePaint(Color paint){
-        this.series_outline_paint = paint;
-        cr_dlg.setOutlineButtonColor(paint);
+    public void setSeriesOutlinePaint(Color out){
+        this.series_outline_paint = out;
+        cr_dlg.setOutlineButtonColor(out);
     }
     
     public void setSeriesOutlineStroke(Stroke stroke){
@@ -1652,6 +1508,9 @@ public class GraphProperties {
                 //setSeriesOutlinePaint(series_outline_paint);
                 //setSeriesFillPaint(colorTable.get((String)fill_box.getSelectedItem()));
                 //setSeriesFillPaint(series_fill_paint);
+                setSeriesPaint(line_color);
+                setSeriesFillPaint(shape_fill);
+                setSeriesOutlinePaint(outline_color);
                 setOutlineStroke(outline_slider.getValue());
                 setLinesVisible(lines_vis_box.isSelected());
                 setShapesVisible(shapes_vis_box.isSelected());
@@ -1679,6 +1538,10 @@ public class GraphProperties {
                 //setSeriesOutlinePaint(outline_color);
                 //setSeriesFillPaint(colorTable.get((String)fill_box.getSelectedItem()));
                 //setSeriesFillPaint(shape_fill);
+                setSeriesPaint(line_color);
+                setSeriesFillPaint(shape_fill);
+                setSeriesOutlinePaint(outline_color);
+                
                 setOutlineStroke(outline_slider.getValue());
                 setLinesVisible(lines_vis_box.isSelected());
                 setShapesVisible(shapes_vis_box.isSelected());
@@ -1697,22 +1560,34 @@ public class GraphProperties {
         
         ActionListener stroke_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                series_paint = JColorChooser.showDialog(thiscrd, "choose Color", line_color);
-                stroke_button.setBackground(series_paint);
+                Color new_line_color = JColorChooser.showDialog(thiscrd, "choose Color", line_color);
+                if(line_color != null){
+                    line_color = new_line_color;
+                }
+ 
+                stroke_button.setBackground(line_color);
             }
         };
         
         ActionListener fill_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                series_fill_paint = JColorChooser.showDialog(thiscrd, "choose Color", shape_fill);
-                fill_button.setBackground(series_fill_paint);
+                Color new_shape_fill = JColorChooser.showDialog(thiscrd, "choose Color", shape_fill);
+                if(shape_fill != null){
+                    shape_fill = new_shape_fill;
+                }
+                fill_button.setBackground(shape_fill);
             }
         };
         
         ActionListener outline_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                series_outline_paint = JColorChooser.showDialog(thiscrd, "choose Color", outline_color);
-                outline_button.setBackground(series_outline_paint);
+                Color new_outline_color = JColorChooser.showDialog(thiscrd, "choose Color", outline_color);
+                if(new_outline_color != null){
+                    outline_color = new_outline_color;
+                }
+                
+                outline_button.setBackground(outline_color);
+                
             }
         };
         

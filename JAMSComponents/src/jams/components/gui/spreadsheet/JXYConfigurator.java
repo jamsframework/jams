@@ -796,7 +796,7 @@ public class JXYConfigurator extends JFrame{
             dlg.dispose();
             newProp.getDataChoice().setSelectedIndex(1);
         
-        newProp.setColor(colour_cnt % 11);
+        //newProp.setColor(colour_cnt % 11);
         
         if(i>0){
             d_start = prop.getDataSTART();
