@@ -1401,10 +1401,10 @@ public class JTSConfigurator extends JFrame{
                 gprop.setLegendName(name);
 
                 //STROKE
-                gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke")));
+                gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke","2")));
 
                 //STROKE COLOR
-                stroke_color = properties.getProperty(name + ".linecolor");
+                stroke_color = properties.getProperty(name + ".linecolor","255,0,0");
                 
                 StringTokenizer colorTokenizer = new StringTokenizer(stroke_color, ",");
                 
@@ -1416,23 +1416,26 @@ public class JTSConfigurator extends JFrame{
                 //SHAPES VISIBLE
                 gprop.setShapesVisible(new Boolean(properties.getProperty(name + ".shapesvisible")));
                 //SHAPE TYPE AND SIZE
-                gprop.setShape(new Integer(properties.getProperty(name + ".shapetype")),
+                gprop.setShape(new Integer(properties.getProperty(name + ".shapetype","0")),
                         new Integer(properties.getProperty(name + ".shapesize")));
                 //SHAPE COLOR
-                shape_color = properties.getProperty(name + ".shapecolor");
-                colorTokenizer = new StringTokenizer(shape_color, ",");
+                shape_color = properties.getProperty(name + ".shapecolor","255,0,0");
                 
-                gprop.setSeriesFillPaint(new Color(new Integer(colorTokenizer.nextToken()),
-                        new Integer(colorTokenizer.nextToken()),
-                        new Integer(colorTokenizer.nextToken())));
+                StringTokenizer shapeTokenizer = new StringTokenizer(shape_color, ",");
+                
+                gprop.setSeriesFillPaint(new Color(new Integer(shapeTokenizer.nextToken()),
+                        new Integer(shapeTokenizer.nextToken()),
+                        new Integer(shapeTokenizer.nextToken())));
                 //OUTLINE STROKE
                 gprop.setOutlineStroke(new Integer(properties.getProperty(name + ".outlinestroke")));
                 //OUTLINE COLOR
-                outline_color = properties.getProperty(name + ".outlinecolor");
-                colorTokenizer = new StringTokenizer(outline_color, ",");
-                gprop.setSeriesPaint(new Color(new Integer(colorTokenizer.nextToken()),
-                        new Integer(colorTokenizer.nextToken()),
-                        new Integer(colorTokenizer.nextToken())));
+                outline_color = properties.getProperty(name + ".outlinecolor","255,0,0");
+                
+                StringTokenizer outTokenizer = new StringTokenizer(outline_color, ",");
+                
+                gprop.setSeriesPaint(new Color(new Integer(outTokenizer.nextToken()),
+                        new Integer(outTokenizer.nextToken()),
+                        new Integer(outTokenizer.nextToken())));
 
                 gprop.applyTSProperties();
                 
