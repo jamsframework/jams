@@ -102,7 +102,7 @@ public class JAMSTemporalContext extends JAMSContext {
 
         JAMSComponentEnumerator ce = getChildrenEnumerator();
         //DataTracer dataTracer = getDataTracer();
-
+        
         @Override
         public boolean hasNext() {
             boolean nextTime = current.before(lastValue);
