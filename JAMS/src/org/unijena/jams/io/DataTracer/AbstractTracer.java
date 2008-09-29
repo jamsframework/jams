@@ -75,18 +75,18 @@ public abstract class AbstractTracer implements DataTracer {
         this.accessorObjects = accessorObjectList.toArray(new DataAccessor[accessorObjectList.size()]);
 
         for (OutputDataStore.Filter filter : store.getFilters()) {
-            
+
             JAMSContext superContext = context;
             while (superContext != null) {
-                superContext = context.getContext();
                 if (superContext.getInstanceName().equals(filter.getContextName())) {
                     filter.setPattern(Pattern.compile(filter.getExpression()));
                     filter.setContext(superContext);
                     break;
                 }
-            }            
+                superContext = context.getContext();
+            }
         }
-        
+
         if (this.accessorObjects.length > 0) {
             createHeader();
         }
@@ -115,13 +115,17 @@ public abstract class AbstractTracer implements DataTracer {
         }
         this.parents = parentList.toArray(new JAMSContext[parentList.size()]);
 
-
         output("@context\n");
         output(this.context.getClass().getName() + "\t" + this.context.getInstanceName() + "\t" + context.getNumberOfIterations() + "\n");
 
         output("@ancestors\n");
         for (JAMSContext p : this.parents) {
             output(p.getClass().getName() + "\t" + p.getInstanceName() + "\t" + p.getNumberOfIterations() + "\n");
+        }
+
+        output("@filters\n");
+        for (OutputDataStore.Filter filter : store.getFilters()) {
+            output(filter.getContextName() + "\t" + filter.getExpression() + "\n");
         }
 
         output("@attributes\n");

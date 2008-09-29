@@ -23,6 +23,7 @@
 package org.unijena.jams.model;
 
 import jams.virtualws.stores.OutputDataStore;
+import java.util.regex.Matcher;
 import org.unijena.jams.data.*;
 import org.unijena.jams.dataaccess.DataAccessor;
 import org.unijena.jams.io.DataTracer.DataTracer;
@@ -53,6 +54,16 @@ public class JAMSTemporalContext extends JAMSContext {
 
             @Override
             public void trace() {
+
+                // check for filters on other contexts first
+                for (OutputDataStore.Filter filter : store.getFilters()) {
+                    String s = filter.getContext().getTraceMark();
+                    Matcher matcher = filter.getPattern().matcher(s);
+                    if (!matcher.matches()) {
+                        return;
+                    }
+                }
+
                 output(current);
                 output("\t");
                 for (DataAccessor dataAccessor : getAccessorObjects()) {

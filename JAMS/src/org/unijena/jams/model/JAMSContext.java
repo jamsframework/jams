@@ -280,23 +280,39 @@ public class JAMSContext extends JAMSComponent {
 
                 @Override
                 public void trace() {
-                    
+
+                    // check for filters on other contexts first
+                    for (OutputDataStore.Filter filter : store.getFilters()) {
+                        if (filter.getContext() != JAMSContext.this) {
+                            String s = filter.getContext().getTraceMark();
+                            Matcher matcher = filter.getPattern().matcher(s);
+                            if (!matcher.matches()) {
+                                return;
+                            }
+                        }
+                    }
+
                     DataAccessor[] dataAccessors = this.accessorObjects;
                     JAMSEntity[] entities = context.getEntities().getEntityArray();
                     for (int j = 0; j < entities.length; j++) {
-                        
-                        boolean doBreak = false;                        
+
+                        boolean doBreak = false;
+
+                        // take care of filters in this context
                         for (OutputDataStore.Filter filter : store.getFilters()) {
-                            Matcher matcher = filter.getPattern().matcher(Long.toString(entities[j].getId()));
-                            if (matcher.matches()) {
-                                doBreak = false;
-                                break;
+                            if (filter.getContext() == JAMSContext.this) {
+                                String s = Long.toString(entities[j].getId());
+                                Matcher matcher = filter.getPattern().matcher(s);
+                                if (!matcher.matches()) {
+                                    doBreak = true;
+                                }
                             }
                         }
+                        
                         if (doBreak) {
                             continue;
                         }
-                        
+
                         output(entities[j].getId());
                         output("\t");
 
@@ -913,48 +929,20 @@ public class JAMSContext extends JAMSComponent {
 
     protected class AttributeSpec implements Serializable {
 
-         String 
-         attributeName, className,
+        String attributeName, className,
+                value;
 
-         value ;     
-              
-              
-              
-        
-    
-
-    public   AttributeSpec   
-
-         
-         
-         
-         
-
-         (String attributeName, String className, String value  ) {
+        public AttributeSpec(String attributeName, String className, String value) {
             this.attributeName = attributeName;
             this.className = className;
             this.value = value;
-              
+
+
         }
     }
 
-    protected    
-         
-    
-
-        
-        class  AccessSpec 
-    
-
-       
-         
-    
-
-        
-          
-    
-
-implements Serializable {
+    protected class AccessSpec
+            implements Serializable {
 
         JAMSComponent component;
         String varName;
