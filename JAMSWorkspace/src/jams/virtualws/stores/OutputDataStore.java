@@ -72,7 +72,7 @@ public class OutputDataStore implements DataStore {
             Element filterElement = (Element) filterNodes.item(i);
             filters[i] = new Filter(filterElement.getAttribute(CONTEXT_STRING),
                     filterElement.getAttribute(EXPRESSION_STRING));
-        }
+        }        
     }
 
     public String getID() {

@@ -46,11 +46,12 @@ public abstract class AbstractTracer implements DataTracer {
     /**
      * DataTracer constructor
      * @param context The context that the attributes belong to
-     * @param idClazz The type of the ID field, needed for type output
+     * @param store The store that should be used by the DataTracer 
+     * @param idClazz The type of the ID attribute, needed for type output
      */
-    public AbstractTracer(JAMSContext context, Class idClazz) {
+    public AbstractTracer(JAMSContext context, OutputDataStore store, Class idClazz) {
         this.context = context;
-        this.store = context.getModel().getOutputDataStore(context.getInstanceName());
+        this.store = store;
         this.idClazz = idClazz;
 
         // Initialize the DataTracer, i.e. get the data objects to be traced from

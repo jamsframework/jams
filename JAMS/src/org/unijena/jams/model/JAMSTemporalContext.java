@@ -50,7 +50,7 @@ public class JAMSTemporalContext extends JAMSContext {
 
     @Override
     protected DataTracer createDataTracer(OutputDataStore store) {
-        return new AbstractTracer(this, JAMSLong.class) {
+        return new AbstractTracer(this, store, JAMSLong.class) {
 
             @Override
             public void trace() {
@@ -101,8 +101,8 @@ public class JAMSTemporalContext extends JAMSContext {
     class RunEnumerator implements JAMSComponentEnumerator {
 
         JAMSComponentEnumerator ce = getChildrenEnumerator();
-        //DataTracer dataTracer = getDataTracer();
-        
+        //DataTracer dataTracers = getDataTracer();
+
         @Override
         public boolean hasNext() {
             boolean nextTime = current.before(lastValue);
@@ -115,7 +115,9 @@ public class JAMSTemporalContext extends JAMSContext {
             // check end of component elements list, if required switch to the next
             // timestep start with the new Component list again
             if (!ce.hasNext() && current.before(lastValue)) {
-                dataTracer.trace();
+                for (DataTracer dataTracer : dataTracers) {
+                    dataTracer.trace();
+                }
                 current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
                 ce.reset();
             }

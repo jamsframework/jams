@@ -105,11 +105,11 @@ public class JAMSModel extends JAMSContext {
         return workspace;
     }
 
-    public OutputDataStore getOutputDataStore(String title) {
+    public OutputDataStore[] getOutputDataStores(String contextName) {
         if (this.workspace == null) {
             return null;
         }
-        return this.workspace.getOutputDataStore(title);
+        return this.workspace.getOutputDataStores(contextName);
     }
 
     private void CollectEntityCollections(JAMSContext currentContext, JAMSComponent position, HashMap<String, JAMSEntityCollection> collection) {

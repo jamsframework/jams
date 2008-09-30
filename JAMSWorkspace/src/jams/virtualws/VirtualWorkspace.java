@@ -56,8 +56,10 @@ import java.util.Properties;
 public class VirtualWorkspace {
 
     private static final String CONFIG_FILE_NAME = "config.txt";
+    private static final String CONTEXT_ATTRIBUTE_NAME = "context";
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
+    private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
     private JAMSRuntime runtime = new StandardRuntime();
     private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
     private File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory;
@@ -79,7 +81,7 @@ public class VirtualWorkspace {
 
     public void loadConfig() {
         try {
-            
+
             properties.setProperty("description", "");
             properties.setProperty("title", "");
             properties.setProperty("persistent", "false");
@@ -144,6 +146,10 @@ public class VirtualWorkspace {
         return id;
     }
 
+    private String getContextName(Document doc) {
+        return doc.getDocumentElement().getAttribute(CONTEXT_ATTRIBUTE_NAME);
+    }
+
     public void reload() {
     }
 
@@ -192,16 +198,25 @@ public class VirtualWorkspace {
         return store;
     }
 
-    public OutputDataStore getOutputDataStore(String dsTitle) {
+    public OutputDataStore[] getOutputDataStores(String contextName) {
 
-        Document doc = outputDataStores.get(dsTitle);
-        if (doc == null) {
-            return null;
+        ArrayList<String> stores = contextStores.get(contextName);
+
+        if (stores == null) {
+            return new OutputDataStore[0];
         }
 
-        OutputDataStore store = new OutputDataStore(this, doc, dsTitle);
-        currentStores.add(store);
-        return store;
+        OutputDataStore[] result = new OutputDataStore[stores.size()];
+        int i = 0;
+        for (String storeID : stores) {
+            Document doc = outputDataStores.get(storeID);
+            OutputDataStore store = new OutputDataStore(this, doc, storeID);
+            currentStores.add(store);
+            result[i] = store;
+            i++;
+        }
+
+        return result;
     }
 
     public void close() {
@@ -261,9 +276,20 @@ public class VirtualWorkspace {
         for (File child : outChildren) {
             try {
 
-                String storeID = getStoreID(child);
                 Document doc = XMLIO.getDocument(child.getAbsolutePath());
+
+                String storeID = getStoreID(child);
+                String contextName = getContextName(doc);
+
                 outputDataStores.put(storeID, doc);
+
+                ArrayList<String> stores = contextStores.get(contextName);
+                if (stores == null) {
+                    stores = new ArrayList<String>();
+                    contextStores.put(contextName, stores);
+                }
+                stores.add(storeID);
+
                 this.getRuntime().println("Added output store \"" + storeID + "\" from \"" + child.getAbsolutePath() + "\"", JAMS.VERBOSE);
 
             } catch (FileNotFoundException fnfe) {
