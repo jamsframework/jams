@@ -72,8 +72,8 @@ public class VirtualWorkspace {
         loadConfig();
 
         if (!isValid(directory)) {
-            this.getRuntime().sendErrorMsg("Error adding datastores: \"" +
-                    directory.getAbsolutePath() + "\" not a valid datastore or wrong permissions!");
+            this.getRuntime().sendHalt("Error during model setup: \"" +
+                    directory.getAbsolutePath() + "\" is not a valid datastore!");
         } else {
             this.createDataStores();
         }

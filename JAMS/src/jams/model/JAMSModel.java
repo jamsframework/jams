@@ -45,7 +45,7 @@ description = "This component represents a JAMS model which is special type of c
 public class JAMSModel extends JAMSContext {
 
     private JAMSRuntime runtime;
-    private String name,  author,  date,  workspaceDir;
+    private String name,  author,  date;
     private VirtualWorkspace workspace;
 
     public JAMSModel(JAMSRuntime runtime) {
@@ -92,12 +92,6 @@ public class JAMSModel extends JAMSContext {
     }
 
     public void setWorkspaceDir(String workspaceDir) {
-
-        if (workspaceDir.equals("")) {
-            return;
-        }
-
-        this.workspaceDir = workspaceDir;
         this.workspace = new VirtualWorkspace(new File(workspaceDir), runtime);
     }
 

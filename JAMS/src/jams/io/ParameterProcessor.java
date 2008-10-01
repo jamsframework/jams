@@ -173,6 +173,13 @@ public class ParameterProcessor {
 
             componentHash.put(element.getAttribute("name"), attributeHash);
         }
+        
+        // take care for the models workspace property
+        Element root = model.getDocumentElement();
+        HashMap<String, Element> attributeHash = componentHash.get(root.getAttribute("name"));
+        Element workspaceElement = (Element) root.getElementsByTagName("workspace").item(0);
+        attributeHash.put("workspace", workspaceElement);        
+        
         /*
         NodeList componentList = root.getElementsByTagName("component");
         for (int i = 0; i < componentList.getLength(); i++) {

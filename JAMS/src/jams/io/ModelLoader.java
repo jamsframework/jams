@@ -76,7 +76,9 @@ public class ModelLoader {
         jamsModel.setInstanceName(root.getAttribute("name"));
         jamsModel.setAuthor(root.getAttribute("author"));
         jamsModel.setDate(root.getAttribute("date"));
-        jamsModel.setWorkspaceDir(root.getAttribute("workspace"));
+        
+        Element workspaceElement = (Element) root.getElementsByTagName("workspace").item(0);
+        jamsModel.setWorkspaceDir(workspaceElement.getAttribute("value"));
         
         jamsModel.getRuntime().println("*************************************", JAMS.STANDARD);
         jamsModel.getRuntime().println("model     : " + jamsModel.getName(), JAMS.STANDARD);
