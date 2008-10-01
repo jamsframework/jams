@@ -25,10 +25,10 @@ package jams.remote.client;
 
 import java.io.File;
 import javax.swing.UIManager;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.JAMSCmdLine;
-import org.unijena.jams.JAMSProperties;
-import org.unijena.jams.gui.JAMSSplash;
+import jams.JAMS;
+import jams.JAMSCmdLine;
+import jams.JAMSProperties;
+import jams.gui.JAMSSplash;
 
 /**
  *

@@ -23,9 +23,9 @@
 
 package jams.components.io;
 
-import org.unijena.jams.data.*;
-import org.unijena.jams.io.GenericDataWriter;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.io.GenericDataWriter;
+import jams.model.*;
 
 /**
  *
@@ -43,13 +43,6 @@ description = "This component can be used to output a number of selected entity 
     /*
      *  Component variables
      */
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Data file directory name"
-            )
-            public JAMSString dirName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -75,7 +68,7 @@ description = "This component can be used to output a number of selected entity 
     private GenericDataWriter writer;
     
     public void init() {
-        writer = new GenericDataWriter(dirName.getValue()+"/"+fileName.getValue());
+        writer = new GenericDataWriter(getModel().getWorkspaceDirectory().getPath()+"/"+fileName.getValue());
         
         writer.addComment("Entity attribute values");
         writer.addComment("");
@@ -95,7 +88,7 @@ description = "This component can be used to output a number of selected entity 
         
         try {
             writer.writeData();
-        } catch (org.unijena.jams.runtime.RuntimeException jre) {
+        } catch (jams.runtime.RuntimeException jre) {
             getModel().getRuntime().println(jre.getMessage());
         }
     }

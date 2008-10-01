@@ -31,9 +31,9 @@ import java.util.Arrays;
 import java.util.Random;
 
 import java.util.StringTokenizer;
-import org.unijena.jams.data.*;
-import org.unijena.jams.io.GenericDataWriter;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.io.GenericDataWriter;
+import jams.model.*;
 import java.util.Arrays.*;
 
 /**
@@ -142,14 +142,7 @@ title="Title",
             description = "Flag for enabling/disabling this sampler"
             )
             public JAMSBoolean enable;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Data file directory name"
-            )
-            public JAMSString dirName;
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
@@ -310,7 +303,7 @@ title="Title",
             }
             
             //initialising output file
-            writer = new GenericDataWriter(dirName.getValue()+"/"+sceFileName.getValue());
+            writer = new GenericDataWriter(getModel().getWorkspaceDirectory().getPath()+"/"+sceFileName.getValue());
             writer.addComment("SCE output");
             for(int p = 0; p < this.parameterNames.length; p++){
                 writer.addColumn(this.parameterNames[p]);
@@ -970,7 +963,7 @@ title="Title",
             retVal[i] = bestx[i];
         retVal[nopt] = bestf;
 	return retVal;
-        } catch (org.unijena.jams.runtime.RuntimeException ex) {
+        } catch (jams.runtime.RuntimeException ex) {
                 ex.printStackTrace();
             }
     return null;

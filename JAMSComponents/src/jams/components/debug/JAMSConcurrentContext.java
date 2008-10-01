@@ -22,16 +22,16 @@
  */
 package jams.components.debug;
 
-import org.unijena.jams.data.JAMSEntity;
-import org.unijena.jams.data.JAMSEntityCollection;
-import org.unijena.jams.data.JAMSEntityEnumerator;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSComponentEnumerator;
-import org.unijena.jams.model.JAMSContext;
-import org.unijena.jams.model.JAMSVarDescription;
-import org.unijena.jams.runtime.concurrent.RunnableComponent;
-import org.unijena.jams.runtime.concurrent.TaskExecutor;
+import jams.data.JAMSEntity;
+import jams.data.JAMSEntityCollection;
+import jams.data.JAMSEntityEnumerator;
+import jams.data.JAMSInteger;
+import jams.model.JAMSComponent;
+import jams.model.JAMSComponentEnumerator;
+import jams.model.JAMSContext;
+import jams.model.JAMSVarDescription;
+import jams.runtime.concurrent.RunnableComponent;
+import jams.runtime.concurrent.TaskExecutor;
 
 /**
  *

@@ -24,8 +24,8 @@
 package jams.components.optimizer.gradient;
 
 import java.util.*;
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.model.*;
 import java.io.*;
 
 /**
@@ -77,14 +77,7 @@ import java.io.*;
             description = "file with optimization information and best parameter set"
             )
             public JAMSString resultFile;
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "workspace directory"
-            )
-            public JAMSString dirName;
-    
+
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
@@ -506,7 +499,7 @@ import java.io.*;
 	
 	//try to open output file
 	try {
-	    writer = new BufferedWriter(new FileWriter(this.dirName.getValue() + resultFile.getValue()));
+	    writer = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + resultFile.getValue()));
 	}
 	catch (Exception e) {
 	    System.out.println("Could not open result file, becauce:" + e.toString());

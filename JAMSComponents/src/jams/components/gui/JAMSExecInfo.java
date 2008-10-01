@@ -23,12 +23,12 @@
 
 package jams.components.gui;
 
-import org.unijena.jams.model.*;
+import jams.model.*;
 import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
-import org.unijena.jams.JAMS;
+import jams.JAMS;
 
 /**
  *

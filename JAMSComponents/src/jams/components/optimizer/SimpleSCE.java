@@ -31,12 +31,12 @@ import jams.components.optimizer.DirectSearchMethods.PatternSearch;
 import jams.components.optimizer.Optimizer.AbstractFunction;
 import java.util.Arrays;
 
-import org.unijena.jams.data.*;
-import org.unijena.jams.io.GenericDataWriter;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.io.GenericDataWriter;
+import jams.model.*;
 import java.util.Arrays.*;
 import java.util.StringTokenizer;
-import org.unijena.jams.JAMSTools;
+import jams.JAMSTools;
 
 /**
  *
@@ -115,14 +115,7 @@ title="Title",
             description = "Flag for enabling/disabling this sampler"
             )
             public JAMSBoolean enable;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Data file directory name"
-            )
-            public JAMSString dirName;
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
@@ -157,7 +150,7 @@ title="Title",
     public void init() {
         if (!enable.getValue())
             return;
-        super.init(parameterIDs.getValue(), boundaries.getValue(), dirName.getValue(), effValue, this.mode.getValue(),snapshot);
+        super.init(parameterIDs.getValue(), boundaries.getValue(), getModel().getWorkspaceDirectory().getPath(), effValue, this.mode.getValue(),snapshot);
                     
         if (LinearConstraintMatrixA != null && LinearConstraintVectorB != null){
             StringTokenizer tok = new StringTokenizer(LinearConstraintMatrixA.getValue(),";");
@@ -209,7 +202,7 @@ title="Title",
             }
         }
         //initialising output file        
-        writer = new GenericDataWriter(JAMSTools.CreateAbsoluteFileName(dirName.getValue(),sceFileName.getValue()));
+        writer = new GenericDataWriter(JAMSTools.CreateAbsoluteFileName(getModel().getWorkspaceDirectory().getPath(),sceFileName.getValue()));
         writer.addComment("SCE output");
         for(int p = 0; p < this.parameterNames.length; p++){
             writer.addColumn(this.parameterNames[p]);
@@ -778,7 +771,7 @@ title="Title",
                 result[i] = bestx[i];
             result[bestx.length] = bestf;
             return result;
-        } catch (org.unijena.jams.runtime.RuntimeException ex) {
+        } catch (jams.runtime.RuntimeException ex) {
             ex.printStackTrace();
         }
         return null;

@@ -29,9 +29,9 @@ import java.util.Random;
 import java.util.*;
 
 import java.util.StringTokenizer;
-import org.unijena.jams.data.*;
-import org.unijena.jams.io.GenericDataWriter;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.io.GenericDataWriter;
+import jams.model.*;
 import java.util.Arrays.*;
 
 /**
@@ -93,13 +93,6 @@ title="Title",
             description = "Flag for enabling/disabling this sampler"
             )
             public JAMSBoolean enable;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Data file directory name"
-            )
-            public JAMSString dirName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -215,7 +208,7 @@ title="Title",
             M = effNames.length;
             //initialising output file
             
-            writer = new GenericDataWriter(dirName.getValue()+"/"+fileName.getValue());
+            writer = new GenericDataWriter(getModel().getWorkspaceDirectory().getPath()+"/"+fileName.getValue());
             writer.addComment("MOCOM output start: ");
             
             for(int p = 0; p < this.parameterNames.length; p++){

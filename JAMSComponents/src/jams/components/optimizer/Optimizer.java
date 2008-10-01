@@ -15,12 +15,12 @@ import java.util.Comparator;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSContext;
-import org.unijena.jams.model.Snapshot;
-import org.unijena.jams.io.SerializableBufferedWriter;
+import jams.JAMS;
+import jams.data.*;
+import jams.model.JAMSComponent;
+import jams.model.JAMSContext;
+import jams.model.Snapshot;
+import jams.io.SerializableBufferedWriter;
 
 /**
  *

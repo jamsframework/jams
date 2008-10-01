@@ -53,16 +53,16 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.*;
 import org.jfree.util.ShapeUtilities.*;
-import org.unijena.jams.data.JAMSBoolean;
-import org.unijena.jams.data.JAMSCalendar;
-import org.unijena.jams.data.JAMSDouble;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.data.JAMSStringArray;
-import org.unijena.jams.model.JAMSGUIComponent;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.data.JAMSBoolean;
+import jams.data.JAMSCalendar;
+import jams.data.JAMSDouble;
+import jams.data.JAMSInteger;
+import jams.data.JAMSString;
+import jams.data.JAMSStringArray;
+import jams.model.JAMSGUIComponent;
+import jams.model.JAMSVarDescription;
 
-import org.unijena.jams.gui.LHelper;
+import jams.gui.LHelper;
 
 
 public class GraphProperties {

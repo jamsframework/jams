@@ -72,13 +72,13 @@ import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
-import org.unijena.jams.data.JAMSEntity;
-import org.unijena.jams.data.JAMSEntityCollection;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.data.JAMSStringArray;
-import org.unijena.jams.model.JAMSGUIComponent;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.data.JAMSEntity;
+import jams.data.JAMSEntityCollection;
+import jams.data.JAMSInteger;
+import jams.data.JAMSString;
+import jams.data.JAMSStringArray;
+import jams.model.JAMSGUIComponent;
+import jams.model.JAMSVarDescription;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -97,9 +97,6 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "ID of a style in the SLD-File")
     public JAMSInteger styleID;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Data file directory name")
-    public JAMSString dirName;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.RUN, description = "Collection of hru objects")
     public JAMSEntityCollection hrus;
@@ -174,7 +171,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
         for (int i = 0; i <= 2; i++) {
             if (!otherLayers[i].equals("")) {
                 try {
-                    java.io.File shpFile = new java.io.File(dirName.getValue()
+                    java.io.File shpFile = new java.io.File(getModel().getWorkspaceDirectory().getPath()
                     + "/" + otherLayers[i]);
                     java.net.URL shpUrl = shpFile.toURI().toURL();
                     String sourcename = shpFile.getName().split("\\.")[0];

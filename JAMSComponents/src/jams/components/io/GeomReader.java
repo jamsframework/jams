@@ -3,16 +3,14 @@ package jams.components.io;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.geotools.data.FeatureReader;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.Feature;
 
-import org.unijena.jams.data.JAMSEntity;
-import org.unijena.jams.data.JAMSEntityCollection;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.data.JAMSEntity;
+import jams.data.JAMSEntityCollection;
+import jams.data.JAMSString;
+import jams.model.JAMSComponent;
+import jams.model.JAMSVarDescription;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -22,13 +20,6 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 
 public class GeomReader extends JAMSComponent {
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Data file directory name"
-            )
-            public JAMSString dirName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -59,9 +50,10 @@ public class GeomReader extends JAMSComponent {
             public JAMSString baseShape;
     
     public void run() throws Exception {
-    	java.net.URL shapeUrl = (new java.io.File(dirName.getValue()+"/"+shapeFileName.getValue()).toURI().toURL());
+        
+    	java.net.URL shapeUrl = (new java.io.File(getModel().getWorkspaceDirectory().getPath()+"/"+shapeFileName.getValue()).toURI().toURL());
         ShapefileDataStore store = new ShapefileDataStore(shapeUrl);
-        baseShape.setValue(dirName.getValue()+"/"+shapeFileName.getValue()+";"+idName);
+        baseShape.setValue(getModel().getWorkspaceDirectory().getPath()+"/"+shapeFileName.getValue()+";"+idName);
         
         Iterator reader = store.getFeatureSource(store.getTypeNames()[0]).getFeatures().iterator();
         

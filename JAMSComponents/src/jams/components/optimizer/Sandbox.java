@@ -14,13 +14,13 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.data.JAMSBoolean;
-import org.unijena.jams.data.JAMSDouble;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.model.JAMSComponentDescription;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.JAMS;
+import jams.data.JAMSBoolean;
+import jams.data.JAMSDouble;
+import jams.data.JAMSInteger;
+import jams.data.JAMSString;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 
 //import jams.components.optimizer.
 @JAMSComponentDescription(
@@ -80,14 +80,7 @@ public class Sandbox extends Optimizer{
             description = "Flag for enabling/disabling this sampler"
             )
             public JAMSBoolean enable;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Data file directory name"
-            )
-            public JAMSString dirName;
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
@@ -117,10 +110,10 @@ public class Sandbox extends Optimizer{
     Vector<Sample> SampleList = new Vector<Sample>();
     
     public void init(){
-        super.init(this.parameterIDs.getValue(),this.boundaries.getValue(),dirName.toString(),effValue,mode.getValue());
+        super.init(this.parameterIDs.getValue(),this.boundaries.getValue(),getModel().getWorkspaceDirectory().getPath(),effValue,mode.getValue());
                 
         try {
-            writer = new BufferedWriter(new FileWriter(this.dirName + "/" + SampleDumpFileName.getValue()));
+            writer = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + SampleDumpFileName.getValue()));
         } catch (IOException ioe) {
             JAMS.handle(ioe);
         }

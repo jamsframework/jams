@@ -43,11 +43,11 @@ import javax.swing.tree.TreeSelectionModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.data.HelpComponent;
-import org.unijena.jams.gui.LHelper;
-import org.unijena.jams.io.ParameterProcessor;
-import org.unijena.jams.model.JAMSContext;
+import jams.JAMSTools;
+import jams.data.HelpComponent;
+import jams.gui.LHelper;
+import jams.io.ParameterProcessor;
+import jams.model.JAMSContext;
 import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
 import org.unijena.juice.ContextAttribute;
@@ -68,7 +68,7 @@ import org.w3c.dom.NodeList;
 public class ModelTree extends JAMSTree {
 
     private static final String NEW_MODEL_NAME = "New Model";
-    private static final String MODEL_CLASS_NAME = "org.unijena.jams.model.JAMSModel";
+    private static final String MODEL_CLASS_NAME = "jams.model.JAMSModel";
     private ModelView view;
     private String modelName = NEW_MODEL_NAME;
     private JPopupMenu popup;
@@ -449,7 +449,7 @@ public class ModelTree extends JAMSTree {
                 break;
             case JAMSNode.MODEL_ROOT:
                 rootElement = (Element) document.createElement("contextcomponent");
-                cd.setClazz(org.unijena.jams.model.JAMSContext.class);
+                cd.setClazz(jams.model.JAMSContext.class);
         }
 
         rootElement.setAttribute("name", cd.getName());

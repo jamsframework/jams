@@ -25,9 +25,9 @@ package jams.components.tools;
 
 import java.util.Random;
 import java.util.StringTokenizer;
-import org.unijena.jams.data.*;
-import org.unijena.jams.io.GenericDataWriter;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.io.GenericDataWriter;
+import jams.model.*;
 
 /**
  *
@@ -240,7 +240,7 @@ import org.unijena.jams.model.*;
                     writer.addData(this.effMethod[e].getValue());
                 try{
                     writer.writeData();
-                }catch(org.unijena.jams.runtime.RuntimeException e){
+                }catch(jams.runtime.RuntimeException e){
                     
                 }
                 /*

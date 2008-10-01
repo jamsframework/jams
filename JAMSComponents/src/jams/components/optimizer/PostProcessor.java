@@ -5,8 +5,8 @@
 
 package jams.components.optimizer;
 
-import org.unijena.jams.model.*;
-import org.unijena.jams.data.*;
+import jams.model.*;
+import jams.data.*;
 /**
  *
  * @author Christian Fischer

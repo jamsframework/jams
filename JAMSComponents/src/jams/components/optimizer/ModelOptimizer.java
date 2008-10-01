@@ -14,11 +14,11 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
-import org.unijena.jams.JAMSProperties;
-import org.unijena.jams.data.*;
-import org.unijena.jams.io.XMLIO;
-import org.unijena.jams.model.*;
-import org.unijena.jams.runtime.StandardRuntime;
+import jams.JAMSProperties;
+import jams.data.*;
+import jams.io.XMLIO;
+import jams.model.*;
+import jams.runtime.StandardRuntime;
 import org.w3c.dom.*;
 
 /**
@@ -32,13 +32,6 @@ public class ModelOptimizer extends JAMSComponent{
             description = "Description"
             )
             public JAMSDocument model;
-    
-     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Description"
-            )
-            public JAMSString dirName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -355,7 +348,6 @@ public class ModelOptimizer extends JAMSComponent{
         
         AddAttribute(ModelSnapshot, "takeSnapshot", "true", null, true);
         AddAttribute(ModelSnapshot, "loadSnapshot", "false", null, true);
-        AddAttribute(ModelSnapshot, "dirName", dirName.getValue(), null, true);
         AddAttribute(ModelSnapshot, "data", "HRUReducerSnapshot", null, false);
         AddAttribute(ModelSnapshot, "holdInMemory","true",null,true);      
         AddAttribute(ModelSnapshot, "freezeState","0",null,true);      
@@ -478,12 +470,12 @@ public class ModelOptimizer extends JAMSComponent{
             Element Optimizer,Element snapshot){
         //add timeIntervalAttributes
         Element TimeIntervalAttribute1 = doc.createElement("attribute");
-        TimeIntervalAttribute1.setAttribute("class", "org.unijena.jams.data.JAMSTimeInterval");
+        TimeIntervalAttribute1.setAttribute("class", "jams.data.JAMSTimeInterval");
         TimeIntervalAttribute1.setAttribute("name", "initialisationTimeInterval");
         TimeIntervalAttribute1.setAttribute("value", initialisationTimeInterval.toString());
         
         Element TimeIntervalAttribute2 = doc.createElement("attribute");
-        TimeIntervalAttribute2.setAttribute("class", "org.unijena.jams.data.JAMSTimeInterval");
+        TimeIntervalAttribute2.setAttribute("class", "jams.data.JAMSTimeInterval");
         TimeIntervalAttribute2.setAttribute("name", "calibrationTimeInterval");
         TimeIntervalAttribute2.setAttribute("value", calibrationTimeInterval.toString());
         
@@ -771,10 +763,7 @@ public class ModelOptimizer extends JAMSComponent{
         
         AddAttribute(innerTimeContextOptimizer,"maxn",Integer.toString(maxn.getValue()),null,true);
         AddAttribute(outerTimeContextOptimizer,"maxn",Integer.toString(maxn.getValue()),null,true);
-        
-        AddAttribute(innerTimeContextOptimizer,"dirName",this.dirName.getValue(),null,true);
-        AddAttribute(outerTimeContextOptimizer,"dirName",this.dirName.getValue(),null,true);
-        
+                
         AddAttribute(innerTimeContextOptimizer,"SampleDumpFileName","samples_innerTimeContext.dat",null,true);
         AddAttribute(outerTimeContextOptimizer,"SampleDumpFileName","samples_outerTimeContext.dat",null,true);
         
@@ -799,10 +788,7 @@ public class ModelOptimizer extends JAMSComponent{
         
         AddAttribute(innerTimeModelSnapshot,"loadSnapshot","false",null,true);
         AddAttribute(outerTimeModelSnapshot,"loadSnapshot","false",null,true);
-        
-        AddAttribute(innerTimeModelSnapshot,"dirName",dirName.getValue(),null,true);
-        AddAttribute(outerTimeModelSnapshot,"dirName",dirName.getValue(),null,true);
-        
+
         AddAttribute(innerTimeModelSnapshot,"data","innerTimeOptimizerSnapshot",null,false);
         AddAttribute(outerTimeModelSnapshot,"data","outerTimeOptimizerSnapshot",null,false);
             
@@ -855,7 +841,7 @@ public class ModelOptimizer extends JAMSComponent{
         
                
         try{
-            XMLIO.writeXmlFile(doc, this.dirName + this.resultingModelFile.getValue());
+            XMLIO.writeXmlFile(doc, getModel().getWorkspaceDirectory().getPath() + this.resultingModelFile.getValue());
         }catch(Exception e){
             System.out.println(e.toString());
         }                                     

@@ -9,7 +9,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
-import org.unijena.jams.model.JAMSContext;
+import jams.model.JAMSContext;
 import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
 import org.unijena.juice.gui.ContextReplaceDlg;

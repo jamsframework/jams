@@ -16,9 +16,9 @@ import java.util.Random;
 import java.util.*;
 
 import java.util.StringTokenizer;
-import org.unijena.jams.data.*;
-import org.unijena.jams.io.GenericDataWriter;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.io.GenericDataWriter;
+import jams.model.*;
 import java.util.Arrays.*;
 
 /**

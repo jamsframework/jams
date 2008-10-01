@@ -12,16 +12,12 @@ package jams.components.optimizer;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Random;
-import java.util.StringTokenizer;
 import java.util.Vector;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.data.*;
-import org.unijena.jams.io.GenericDataWriter;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSComponentDescription;
-import org.unijena.jams.model.JAMSContext;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.JAMS;
+import jams.data.*;
+import jams.io.GenericDataWriter;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 import jams.components.machineLearning.GaussianLearner;
 
 //import jams.components.optimizer.
@@ -82,13 +78,6 @@ public class GPSearch extends Optimizer {
             description = "Flag for enabling/disabling this sampler"
             )
             public JAMSBoolean enable;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Data file directory name"
-            )
-            public JAMSString dirName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -162,7 +151,7 @@ public class GPSearch extends Optimizer {
     int iterationCounter = 0;
     
     public void init() {
-        super.init(this.parameterIDs.getValue(),this.boundaries.getValue(),dirName.toString(),effValue,mode.getValue());        
+        super.init(this.parameterIDs.getValue(),this.boundaries.getValue(),getModel().getWorkspaceDirectory().getPath(),effValue,mode.getValue());        
     }
                               
     double TransformAndEvaluate(double []in){
@@ -252,7 +241,7 @@ public class GPSearch extends Optimizer {
     public void WriteSamples(Vector<Double> sampleValue,Vector<double[]> samplePoint,String file){           
         BufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new FileWriter(this.dirName + "/" + file));
+            writer = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + file));
         } catch (IOException ioe) {
             JAMS.handle(ioe);
         }
@@ -286,8 +275,8 @@ public class GPSearch extends Optimizer {
         BufferedWriter writer_mean = null;
         BufferedWriter writer_var = null;
         try {
-            writer_mean = new BufferedWriter(new FileWriter(this.dirName + "/" + GPmeanFile));
-            writer_var = new BufferedWriter(new FileWriter(this.dirName + "/" + GPvarFile));
+            writer_mean = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + GPmeanFile));
+            writer_var = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + GPvarFile));
         } catch (IOException ioe) {
             JAMS.handle(ioe);
         }                        
@@ -329,7 +318,7 @@ public class GPSearch extends Optimizer {
         
         BufferedWriter writer_prob = null;
         try {
-            writer_prob = new BufferedWriter(new FileWriter(this.dirName + "/" + GPprobFile));
+            writer_prob = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + GPprobFile));
         } catch (IOException ioe) {
             JAMS.handle(ioe);
         }     

@@ -25,8 +25,8 @@ package org.unijena.juice;
 import java.util.Vector;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.data.HelpComponent;
+import jams.JAMSTools;
+import jams.data.HelpComponent;
 
 /**
  *

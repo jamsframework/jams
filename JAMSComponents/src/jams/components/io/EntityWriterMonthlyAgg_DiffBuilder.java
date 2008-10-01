@@ -25,10 +25,10 @@ package jams.components.io;
 
 import java.util.Locale;
 import java.util.Calendar;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.*;
-import org.unijena.jams.io.*;
+import jams.JAMS;
+import jams.data.*;
+import jams.model.*;
+import jams.io.*;
 
 /**
  *
@@ -52,13 +52,6 @@ title="Entity file writer (spatial+monthly)",
             description = "EntitySet"
             )
             public JAMSEntityCollection entities;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Data file directory name"
-            )
-            public JAMSString dirName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -219,7 +212,7 @@ title="Entity file writer (spatial+monthly)",
         this.aggTimeInterval.setEnd(agg_ed);
         
         
-        writer = new GenericDataWriter(dirName.getValue()+"/"+fileName.getValue());
+        writer = new GenericDataWriter(getModel().getWorkspaceDirectory().getPath()+"/"+fileName.getValue());
         
         timeInterval2 = new JAMSTimeInterval(this.aggTimeInterval.getStart(), this.aggTimeInterval.getEnd(), (int) JAMSCalendar.MONTH, 1);
         
@@ -449,7 +442,7 @@ title="Entity file writer (spatial+monthly)",
                 }
                 writer.writeData();
             }
-        } catch (org.unijena.jams.runtime.RuntimeException jre) {
+        } catch (jams.runtime.RuntimeException jre) {
             getModel().getRuntime().handle(jre);
         }
         writer.flush();

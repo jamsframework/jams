@@ -1,7 +1,7 @@
 package jams.components.machineLearning;
 
-import org.unijena.jams.model.*;
-import org.unijena.jams.data.*;
+import jams.model.*;
+import jams.data.*;
 import java.util.Random;
 
 /**

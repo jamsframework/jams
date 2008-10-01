@@ -26,8 +26,8 @@ package jams.components.io;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.model.*;
 import java.util.*;
 
 /**
@@ -35,13 +35,6 @@ import java.util.*;
  * @author S. Kralisch
  */
 public class StandardEntityReader extends JAMSComponent {
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Workspace directory name"
-            )
-            public JAMSString dirName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -59,7 +52,7 @@ public class StandardEntityReader extends JAMSComponent {
     
     
     public void init() throws JAMSEntity.NoSuchAttributeException {
-        hrus.setEntities(readParas(dirName.getValue() + "/" + hruFileName.getValue()));
+        hrus.setEntities(readParas(getModel().getWorkspaceDirectory().getPath() + "/" + hruFileName.getValue()));
     }
     
     public ArrayList<JAMSEntity> readParas(String fileName) {

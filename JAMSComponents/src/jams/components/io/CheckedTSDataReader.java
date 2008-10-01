@@ -23,15 +23,15 @@
 
 package jams.components.io;
 
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.model.*;
 import java.util.*;
 import java.io.*;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.io.GenericDataReader;
-import org.unijena.jams.io.JAMSTableDataArray;
-import org.unijena.jams.io.JAMSTableDataConverter;
-import org.unijena.jams.io.JAMSTableDataStore;
+import jams.JAMS;
+import jams.io.GenericDataReader;
+import jams.io.JAMSTableDataArray;
+import jams.io.JAMSTableDataConverter;
+import jams.io.JAMSTableDataStore;
 
 /**
  *
@@ -45,13 +45,6 @@ public class CheckedTSDataReader extends JAMSComponent {
             description = "Data file name"
             )
             public JAMSString dataFileName;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Data file directory name"
-            )
-            public JAMSString dirName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -145,7 +138,7 @@ public class CheckedTSDataReader extends JAMSComponent {
         double[] statelev = null;
         
         
-        String fileName = dirName.getValue()+"/"+dataFileName.getValue();
+        String fileName = getModel().getWorkspaceDirectory().getPath()+"/"+dataFileName.getValue();
         String line = "#";
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -240,7 +233,7 @@ public class CheckedTSDataReader extends JAMSComponent {
             getModel().getRuntime().handle(ioe);
         }
         
-        store = new GenericDataReader(dirName.getValue()+"/"+dataFileName.getValue(), true, headerLineCount+1);
+        store = new GenericDataReader(getModel().getWorkspaceDirectory().getPath()+"/"+dataFileName.getValue(), true, headerLineCount+1);
         
         timeUnit = timeInterval.getTimeUnit();
         

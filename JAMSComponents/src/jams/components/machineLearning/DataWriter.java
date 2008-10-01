@@ -9,7 +9,7 @@
 
 package jams.components.machineLearning;
 import java.io.*;
-import org.unijena.jams.io.SerializableBufferedWriter;
+import jams.io.SerializableBufferedWriter;
 
 /**
  *

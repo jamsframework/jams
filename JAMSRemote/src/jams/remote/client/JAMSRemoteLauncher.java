@@ -56,14 +56,14 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.unijena.jams.JAMSProperties;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.gui.JAMSFrame;
-import org.unijena.jams.gui.LHelper;
-import org.unijena.jams.gui.LogViewDlg;
-import org.unijena.jams.gui.input.InputComponent;
-import org.unijena.jams.gui.input.ListInput;
-import org.unijena.jams.io.XMLIO;
+import jams.JAMSProperties;
+import jams.JAMSTools;
+import jams.gui.JAMSFrame;
+import jams.gui.LHelper;
+import jams.gui.LogViewDlg;
+import jams.gui.input.InputComponent;
+import jams.gui.input.ListInput;
+import jams.io.XMLIO;
 import org.w3c.dom.Element;
 
 /**

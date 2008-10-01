@@ -40,8 +40,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import org.unijena.jams.gui.LHelper;
-import org.unijena.jams.gui.input.TextInput;
+import jams.gui.LHelper;
+import jams.gui.input.TextInput;
 import org.unijena.juice.ModelProperties.Group;
 
 /**

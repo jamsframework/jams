@@ -34,9 +34,9 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.unijena.jams.gui.LHelper;
-import org.unijena.jams.gui.input.FileInput;
-import org.unijena.jams.gui.input.ValueChangeListener;
+import jams.gui.LHelper;
+import jams.gui.input.FileInput;
+import jams.gui.input.ValueChangeListener;
 
 /**
  *

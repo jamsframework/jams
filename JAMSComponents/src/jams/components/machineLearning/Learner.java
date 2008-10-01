@@ -11,9 +11,9 @@
 package jams.components.machineLearning;
 
 import java.util.*;
-import org.unijena.jams.data.JAMSEntity;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.data.JAMSEntity;
+import jams.model.JAMSComponent;
+import jams.model.JAMSVarDescription;
 /**
  *
  * @author Christian(web)

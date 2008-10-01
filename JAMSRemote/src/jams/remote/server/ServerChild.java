@@ -37,12 +37,12 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Observable;
 import java.util.Observer;
-import org.unijena.jams.JAMSProperties;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.io.XMLIO;
-import org.unijena.jams.io.XMLProcessor;
-import org.unijena.jams.runtime.JAMSRuntime;
-import org.unijena.jams.runtime.StandardRuntime;
+import jams.JAMSProperties;
+import jams.JAMSTools;
+import jams.io.XMLIO;
+import jams.io.XMLProcessor;
+import jams.runtime.JAMSRuntime;
+import jams.runtime.StandardRuntime;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 

@@ -24,7 +24,7 @@
 package org.unijena.juice;
 
 import java.util.HashMap;
-import org.unijena.jams.gui.LHelper;
+import jams.gui.LHelper;
 import org.unijena.juice.gui.tree.*;
 
 /**

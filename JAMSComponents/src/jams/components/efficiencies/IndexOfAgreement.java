@@ -9,8 +9,8 @@
 
 package jams.components.efficiencies;
 
-import org.unijena.jams.JAMS;
-import org.unijena.jams.model.JAMSModel;
+import jams.JAMS;
+import jams.model.JAMSModel;
 
 /**
  *

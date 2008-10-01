@@ -28,12 +28,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import org.unijena.jams.data.JAMSData;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.data.JAMSStringArray;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSComponentDescription;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.data.JAMSData;
+import jams.data.JAMSString;
+import jams.data.JAMSStringArray;
+import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 
 /**
  *
@@ -47,9 +47,6 @@ public class JAMSDataWriter extends JAMSComponent {
     /*
      *  Component variables
      */
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Name of output directory")
-    public JAMSString dirName;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Name of output file")
     public JAMSString outputFile;
@@ -68,7 +65,7 @@ public class JAMSDataWriter extends JAMSComponent {
         BufferedWriter writer;
 
         try {
-            writer = new BufferedWriter(new FileWriter(dirName.getValue() + File.separator + outputFile.getValue()));
+            writer = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + File.separator + outputFile.getValue()));
 
             writer.write("#JAMSDataWriter output file");
             writer.newLine();

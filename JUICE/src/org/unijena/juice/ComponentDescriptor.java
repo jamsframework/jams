@@ -24,8 +24,8 @@ package org.unijena.juice;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import org.unijena.jams.gui.LHelper;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.gui.LHelper;
+import jams.model.JAMSVarDescription;
 import org.unijena.juice.gui.ModelView;
 import org.unijena.juice.gui.tree.*;
 

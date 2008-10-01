@@ -45,7 +45,7 @@ import org.geotools.feature.FeatureTypeBuilder;
 import org.geotools.feature.GeometryAttributeType;
 import org.geotools.feature.IllegalAttributeException;
 import org.geotools.feature.SchemaException;
-import org.unijena.jams.data.JAMSString;
+import jams.data.JAMSString;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 

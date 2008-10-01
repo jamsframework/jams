@@ -23,12 +23,12 @@
 package jams.components.debug;
 
 import java.util.HashMap;
-import org.unijena.jams.data.JAMSEntity;
-import org.unijena.jams.data.JAMSEntityCollection;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSComponentDescription;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.data.JAMSEntity;
+import jams.data.JAMSEntityCollection;
+import jams.data.JAMSInteger;
+import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 
 /**
  *

@@ -25,10 +25,10 @@ package jams.components.optimizer.gradient;
 
 import java.util.Random;
 import java.util.StringTokenizer;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.data.*;
-import org.unijena.jams.io.GenericDataWriter;
-import org.unijena.jams.model.*;
+import jams.JAMS;
+import jams.data.*;
+import jams.io.GenericDataWriter;
+import jams.model.*;
 
 /**
  *

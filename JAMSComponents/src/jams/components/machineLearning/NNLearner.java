@@ -11,8 +11,8 @@ package jams.components.machineLearning;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.model.*;
 import java.util.*;
 import Jama.*;
 import Jama.Matrix;

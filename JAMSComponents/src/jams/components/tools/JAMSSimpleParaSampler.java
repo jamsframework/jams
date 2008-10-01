@@ -23,8 +23,8 @@
 
 package jams.components.tools;
 
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.model.*;
 
 /**
  *
@@ -44,11 +44,11 @@ import org.unijena.jams.model.*;
         "space.</br>" +
         "An example application of the JAMSSimpleParaSampler could look as follows:</br>" +
         "<code>" +
-        "<compoundcomponent class=\"org.unijena.jams.tools.JAMSSimpleParaSampler\" name=\"ParaSampler1\"></br>" +
+        "<compoundcomponent class=\"jams.tools.JAMSSimpleParaSampler\" name=\"ParaSampler1\"></br>" +
         "    <jamsvar name=\"lowerBound\" value=\"3\"/></br>" +
         "    <jamsvar name=\"upperBound\" value=\"4\"/></br>" +
         "    <jamsvar name=\"count\" value=\"3\"/></br>" +
-        "    <compoundcomponent class=\"org.unijena.jams.tools.JAMSSimpleParaSampler\" name=\"ParaSampler1\"></br>" +
+        "    <compoundcomponent class=\"jams.tools.JAMSSimpleParaSampler\" name=\"ParaSampler1\"></br>" +
         "        <jamsvar name=\"lowerBound\" value=\"3\"/></br>" +
         "        <jamsvar name=\"upperBound\" value=\"4\"/></br>" +
         "        <jamsvar name=\"count\" value=\"3\"/></br>" +

@@ -43,8 +43,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
-import org.unijena.jams.gui.LHelper;
-import org.unijena.jams.gui.input.InputComponent;
+import jams.gui.LHelper;
+import jams.gui.input.InputComponent;
 import org.unijena.juice.*;
 
 /**

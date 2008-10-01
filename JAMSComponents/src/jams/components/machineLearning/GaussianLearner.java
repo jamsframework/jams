@@ -10,15 +10,15 @@
 package jams.components.machineLearning;
 
 
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.model.*;
 import java.io.*;
 import Jama.*;
 import Jama.Matrix;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.StringTokenizer;
-import org.unijena.jams.io.GenericDataWriter;
+import jams.io.GenericDataWriter;
 import jams.components.machineLearning.kernels.*;
 
 public class GaussianLearner extends Learner  {

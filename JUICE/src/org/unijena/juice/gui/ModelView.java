@@ -45,16 +45,18 @@ import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.data.HelpComponent;
-import org.unijena.jams.gui.JAMSLauncher;
-import org.unijena.jams.gui.LHelper;
-import org.unijena.jams.gui.WorkerDlg;
-import org.unijena.jams.io.ParameterProcessor;
-import org.unijena.jams.io.XMLIO;
-import org.unijena.jams.runtime.JAMSRuntime;
-import org.unijena.jams.runtime.StandardRuntime;
+import jams.JAMS;
+import jams.JAMSTools;
+import jams.data.HelpComponent;
+import jams.gui.JAMSFrame;
+import jams.gui.JAMSLauncher;
+import jams.gui.LHelper;
+import jams.gui.WorkerDlg;
+import jams.io.ParameterProcessor;
+import jams.io.XMLIO;
+import jams.io.XMLProcessor;
+import jams.runtime.JAMSRuntime;
+import jams.runtime.StandardRuntime;
 import org.unijena.juice.*;
 import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.ModelProperties.Group;
@@ -598,6 +600,15 @@ public class ModelView {
      */
     public void loadModel(String fileName) {
         try {
+            
+            // first do search&replace on the input xml file
+            String newModelFilename = XMLProcessor.modelDocConverter(fileName);
+            if (!newModelFilename.equalsIgnoreCase(fileName)) {
+                LHelper.showInfoDlg(JUICE.getJuiceFrame(),
+                        "The model definition in \"" + fileName + "\" has been adapted in order to meet changes in the JAMS model specification.\nThe new definition has been stored in \"" + newModelFilename + "\" while your original file was left untouched.", "Info");
+            }
+            fileName = newModelFilename;
+            
             this.setSavePath(new File(fileName));
             this.setTree(new ModelTree(this, XMLIO.getDocument(fileName)));
         } catch (FileNotFoundException fnfe) {

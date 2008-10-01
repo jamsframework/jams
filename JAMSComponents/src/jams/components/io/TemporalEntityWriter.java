@@ -23,9 +23,9 @@
 
 package jams.components.io;
 
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.*;
-import org.unijena.jams.io.*;
+import jams.data.*;
+import jams.model.*;
+import jams.io.*;
 
 /**
  *
@@ -62,13 +62,6 @@ title="Entity file writer (temporal)",
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Data file directory name"
-            )
-            public JAMSString dirName;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
             public JAMSString fileName;
@@ -94,7 +87,7 @@ title="Entity file writer (temporal)",
      */
     
     public void init() throws JAMSEntity.NoSuchAttributeException {
-        writer = new GenericDataWriter(dirName.getValue()+"/"+fileName.getValue());
+        writer = new GenericDataWriter(getModel().getWorkspaceDirectory().getPath()+"/"+fileName.getValue());
         writer.addComment("JAMS entity output from TemporalEntityWriter");
         writer.addComment("Attribute name: " + dataAttributeName);
         writer.addComment("");
@@ -122,7 +115,7 @@ title="Entity file writer (temporal)",
         
         try {
             writer.writeData();
-        } catch (org.unijena.jams.runtime.RuntimeException jre) {
+        } catch (jams.runtime.RuntimeException jre) {
             getModel().getRuntime().handle(jre);
         }
     }

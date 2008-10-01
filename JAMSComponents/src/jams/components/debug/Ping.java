@@ -23,8 +23,8 @@
 
 package jams.components.debug;
 
-import org.unijena.jams.JAMS;
-import org.unijena.jams.model.*;
+import jams.JAMS;
+import jams.model.*;
 
 /**
  *

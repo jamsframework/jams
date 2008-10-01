@@ -30,9 +30,9 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.text.SimpleAttributeSet;
-import org.unijena.jams.gui.LHelper;
-import org.unijena.jams.model.JAMSComponentDescription;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.gui.LHelper;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 import org.unijena.juice.*;
 
 /**

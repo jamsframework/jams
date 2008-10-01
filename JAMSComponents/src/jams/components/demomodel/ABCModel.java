@@ -1,7 +1,7 @@
 package jams.components.demomodel;
 
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.model.*;
 
 /**
  *

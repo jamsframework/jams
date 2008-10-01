@@ -23,7 +23,7 @@
 
 package org.unijena.juice;
 
-import org.unijena.jams.CmdLineParser;
+import jams.CmdLineParser;
 
 /**
  *

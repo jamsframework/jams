@@ -20,8 +20,8 @@ import javax.swing.table.*;
 
 import java.io.*;
 
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.model.*;
 
 //import jams.components.*;
 

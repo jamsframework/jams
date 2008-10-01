@@ -14,11 +14,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Stack;
 import java.util.Vector;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.data.*;
-import org.unijena.jams.io.SerializableBufferedWriter;
-import org.unijena.jams.model.JAMSComponentDescription;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.JAMS;
+import jams.data.*;
+import jams.io.SerializableBufferedWriter;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 
 @JAMSComponentDescription(
         title="Branch and Bound Optimizer",
@@ -78,13 +78,6 @@ public class BranchAndBound extends Optimizer{
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Data file directory name"
-            )
-            public JAMSString dirName;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
             public JAMSString outputFileName;
@@ -118,10 +111,10 @@ public class BranchAndBound extends Optimizer{
     }
     
     public void init(){
-        super.init(this.parameterIDs.getValue(),this.boundaries.getValue(),dirName.toString(),effValue,mode.getValue(),snapshot);
+        super.init(this.parameterIDs.getValue(),this.boundaries.getValue(),getModel().getWorkspaceDirectory().getPath(),effValue,mode.getValue(),snapshot);
                 
         try {
-            writer = new SerializableBufferedWriter(new FileWriter(this.dirName + "/" + SampleDumpFileName.getValue()));
+            writer = new SerializableBufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + SampleDumpFileName.getValue()));
         } catch (IOException ioe) {
             JAMS.handle(ioe);
         }
@@ -421,7 +414,7 @@ public class BranchAndBound extends Optimizer{
     
     void SaveCubes(Vector<HyperCube> cubes,String fileName){
         try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(this.dirName + "/info/" + fileName));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/info/" + fileName));
             for (int i=0;i<cubes.size();i++){
                 writer.write(cubes.get(i).compactDescriptionString());
             }

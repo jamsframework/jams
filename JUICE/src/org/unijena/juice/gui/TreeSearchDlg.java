@@ -32,7 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.swing.tree.TreePath;
-import org.unijena.jams.gui.LHelper;
+import jams.gui.LHelper;
 import org.unijena.juice.JUICE;
 import org.unijena.juice.gui.tree.JAMSNode;
 import org.unijena.juice.gui.tree.JAMSTree;

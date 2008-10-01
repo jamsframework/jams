@@ -50,9 +50,9 @@ import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.JAMSGUIComponent;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.data.*;
+import jams.model.JAMSGUIComponent;
+import jams.model.JAMSVarDescription;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
@@ -71,9 +71,6 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "ID of a style in the SLD-File")
     public JAMSInteger styleID;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Data file directory name")
-    public JAMSString dirName;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.RUN, description = "Collection of hru objects")
     public JAMSEntityCollection hrus;
@@ -172,7 +169,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
         for (int i = 0; i <= 2; i++) {
             if (!otherLayers[i].equals("")) {
                 try {
-                    java.io.File shpFile = new java.io.File(dirName.getValue()
+                    java.io.File shpFile = new java.io.File(getModel().getWorkspaceDirectory().getPath()
                     + "/" + otherLayers[i]);
                     java.net.URL shpUrl = shpFile.toURI().toURL();
                     String sourcename = shpFile.getName().split("\\.")[0];
@@ -253,7 +250,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
         if (mp == null)
             mp = new Styled3DMapPane();
         info.setText("3D Map Pane ... loading map");
-        asg = new JAMSAscGridReader(this.dirName + "/" + this.heightMap.toString());
+        asg = new JAMSAscGridReader(getModel().getWorkspaceDirectory().getPath() + "/" + this.heightMap.toString());
         boolean light = true;
         int Resolution = 256;
         

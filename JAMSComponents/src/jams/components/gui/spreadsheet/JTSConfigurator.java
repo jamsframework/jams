@@ -36,8 +36,8 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 
-import org.unijena.jams.JAMSFileFilter;
-import org.unijena.jams.gui.LHelper;
+import jams.JAMSFileFilter;
+import jams.gui.LHelper;
 
 
 /**

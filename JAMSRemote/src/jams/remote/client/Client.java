@@ -34,8 +34,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Observer;
 import java.util.StringTokenizer;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.runtime.JAMSLog;
+import jams.JAMSTools;
+import jams.runtime.JAMSLog;
 
 /**
  *

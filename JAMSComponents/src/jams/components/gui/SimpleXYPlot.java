@@ -34,12 +34,12 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.unijena.jams.data.JAMSBoolean;
-import org.unijena.jams.data.JAMSDouble;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.model.JAMSGUIComponent;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.data.JAMSBoolean;
+import jams.data.JAMSDouble;
+import jams.data.JAMSInteger;
+import jams.data.JAMSString;
+import jams.model.JAMSGUIComponent;
+import jams.model.JAMSVarDescription;
 import org.jfree.data.xy.*;
 
 /**

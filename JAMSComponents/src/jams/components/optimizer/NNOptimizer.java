@@ -15,15 +15,15 @@ import jams.components.optimizer.nn.Neuron;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import org.unijena.jams.data.JAMSBoolean;
-import org.unijena.jams.data.JAMSDouble;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.io.GenericDataWriter;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSComponentDescription;
-import org.unijena.jams.model.JAMSContext;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.data.JAMSBoolean;
+import jams.data.JAMSDouble;
+import jams.data.JAMSInteger;
+import jams.data.JAMSString;
+import jams.io.GenericDataWriter;
+import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSContext;
+import jams.model.JAMSVarDescription;
 
 //import jams.components.optimizer.
 @JAMSComponentDescription(
@@ -83,13 +83,6 @@ public class NNOptimizer extends JAMSContext {
             description = "Flag for enabling/disabling this sampler"
             )
             public JAMSBoolean enable;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Data file directory name"
-            )
-            public JAMSString dirName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -170,7 +163,7 @@ public class NNOptimizer extends JAMSContext {
         }
             
         //initialising output file
-        writer = new GenericDataWriter(dirName.getValue()+"/"+outputFileName.getValue());
+        writer = new GenericDataWriter(getModel().getWorkspaceDirectory().getPath()+"/"+outputFileName.getValue());
         writer.addComment("SCE output");
         for(int p = 0; p < this.parameterNames.length; p++){
             writer.addColumn(this.parameterNames[p]);

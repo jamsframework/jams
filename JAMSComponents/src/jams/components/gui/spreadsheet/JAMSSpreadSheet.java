@@ -21,8 +21,8 @@ import java.awt.Cursor.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.io.*;
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.model.*;
 
 import org.jfree.data.time.Second;
 
@@ -32,10 +32,10 @@ import org.jfree.chart.*;
 //not used yet
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.unijena.jams.gui.LHelper;
+import jams.gui.LHelper;
 
 //import jams.components.*;
-//import org.unijena.jams.model;
+//import jams.model;
 /*
  *
  * @author Robert Riedel
@@ -437,7 +437,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
              
              try{
                  Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
-                 if(test == org.unijena.jams.data.JAMSCalendar.class){
+                 if(test == jams.data.JAMSCalendar.class){
                     table.setColumnSelectionInterval(1, table.getColumnCount()-1);
                      
                  } 
@@ -451,7 +451,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                  }
              }
 //             Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
-//             if(test == org.unijena.jams.data.JAMSCalendar.class){
+//             if(test == jams.data.JAMSCalendar.class){
 //                 
 //             } else {
 //                openCXYS();
