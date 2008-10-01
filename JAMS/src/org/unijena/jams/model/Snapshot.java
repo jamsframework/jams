@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.unijena.jams.model;
+package jams.model;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

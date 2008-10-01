@@ -20,16 +20,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams;
+package jams;
 
 import java.awt.Font;
 import java.io.*;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import org.unijena.jams.gui.JAMSFrame;
-import org.unijena.jams.gui.JAMSSplash;
-import org.unijena.jams.runtime.*;
-import org.unijena.jams.io.*;
+import jams.gui.JAMSFrame;
+import jams.gui.JAMSSplash;
+import jams.runtime.*;
+import jams.io.*;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 

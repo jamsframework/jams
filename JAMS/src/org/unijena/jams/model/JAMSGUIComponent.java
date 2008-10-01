@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.jams.model;
+package jams.model;
 
 import javax.swing.JPanel;
 

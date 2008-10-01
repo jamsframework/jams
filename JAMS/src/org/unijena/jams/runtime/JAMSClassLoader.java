@@ -20,14 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.runtime;
+package jams.runtime;
 
 import java.util.*;
 import java.net.*;
 import java.io.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-import org.unijena.jams.JAMS;
+import jams.JAMS;
 
 public class JAMSClassLoader extends URLClassLoader {
     

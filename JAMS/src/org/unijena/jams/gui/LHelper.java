@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.gui;
+package jams.gui;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -32,15 +32,15 @@ import java.lang.reflect.Method;
 import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import org.unijena.jams.gui.input.BooleanInput;
-import org.unijena.jams.gui.input.CalendarInput;
-import org.unijena.jams.gui.input.FileInput;
-import org.unijena.jams.gui.input.FloatInput;
-import org.unijena.jams.gui.input.InputComponent;
-import org.unijena.jams.gui.input.IntegerInput;
-//import org.unijena.jams.gui.input.IntegerArrayInput;
-import org.unijena.jams.gui.input.TextInput;
-import org.unijena.jams.gui.input.TimeintervalInput;
+import jams.gui.input.BooleanInput;
+import jams.gui.input.CalendarInput;
+import jams.gui.input.FileInput;
+import jams.gui.input.FloatInput;
+import jams.gui.input.InputComponent;
+import jams.gui.input.IntegerInput;
+//import jams.gui.input.IntegerArrayInput;
+import jams.gui.input.TextInput;
+import jams.gui.input.TimeintervalInput;
 
 /**
  *

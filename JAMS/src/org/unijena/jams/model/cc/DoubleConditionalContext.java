@@ -20,10 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.model.cc;
+package jams.model.cc;
 
-import org.unijena.jams.model.*;
-import org.unijena.jams.data.JAMSDouble;
+import jams.model.*;
+import jams.data.JAMSDouble;
 
 /**
  *

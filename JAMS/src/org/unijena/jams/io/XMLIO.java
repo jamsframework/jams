@@ -22,7 +22,7 @@
  *
  */
 
-package org.unijena.jams.io;
+package jams.io;
 
 import javax.xml.parsers.*;
 import org.xml.sax.*;
@@ -36,7 +36,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.unijena.jams.JAMS;
+import jams.JAMS;
 import org.w3c.dom.*;
 
 /**

@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.jams.gui.input;
+package jams.gui.input;
 
 /**
  *

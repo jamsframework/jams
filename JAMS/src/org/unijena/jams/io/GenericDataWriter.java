@@ -21,13 +21,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.io;
+package jams.io;
 
 import java.io.*;
 import java.util.*;
-import org.unijena.jams.data.*;
-import org.unijena.jams.runtime.RuntimeException;
-import org.unijena.jams.JAMS;
+import jams.data.*;
+import jams.runtime.RuntimeException;
+import jams.JAMS;
 
 /**
  *

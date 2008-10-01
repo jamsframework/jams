@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.model;
+package jams.model;
 
 /**
  *
@@ -29,11 +29,11 @@ package org.unijena.jams.model;
  */
 import java.lang.reflect.Array;
 import java.util.*;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.data.*;
-import org.unijena.jams.dataaccess.*;
-import org.unijena.jams.dataaccess.CalendarAccessor;
-import org.unijena.jams.runtime.JAMSRuntime;
+import jams.JAMS;
+import jams.data.*;
+import jams.dataaccess.*;
+import jams.dataaccess.CalendarAccessor;
+import jams.runtime.JAMSRuntime;
 
 @JAMSComponentDescription(title = "JAMS Component", author = "Sven Kralisch", date = "27. Juni 2005", description = "This component represents a JAMS context which is the top level " +
 "component of every component hierarchie in JAMS")
@@ -258,7 +258,7 @@ public class JAMSContext extends JAMSComponent {
             if (componentObject != null) {
                 dataObject = componentObject;
             } else {
-                if (clazz.getName().equals("org.unijena.jams.data.JAMSEntity")) {
+                if (clazz.getName().equals("jams.data.JAMSEntity")) {
                     dataObject = (JAMSData) JAMSDataFactory.createEntity();
                 } else {
                     dataObject = (JAMSData) clazz.newInstance();

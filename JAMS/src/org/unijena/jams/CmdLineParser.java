@@ -1,4 +1,4 @@
-package org.unijena.jams;
+package jams;
 
 import java.text.NumberFormat;
 import java.text.ParseException;

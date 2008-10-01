@@ -20,14 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.model;
+package jams.model;
 
-import jams.virtualws.stores.OutputDataStore;
+import jams.workspace.stores.OutputDataStore;
 import java.util.regex.Matcher;
-import org.unijena.jams.data.*;
-import org.unijena.jams.dataaccess.DataAccessor;
-import org.unijena.jams.io.DataTracer.DataTracer;
-import org.unijena.jams.io.DataTracer.AbstractTracer;
+import jams.data.*;
+import jams.dataaccess.DataAccessor;
+import jams.io.DataTracer.DataTracer;
+import jams.io.DataTracer.AbstractTracer;
 
 /**
  *

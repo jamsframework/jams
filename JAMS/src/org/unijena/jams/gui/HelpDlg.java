@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.unijena.jams.gui;
+package jams.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -17,8 +17,8 @@ import javax.swing.JTextPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.data.HelpComponent;
+import jams.JAMSTools;
+import jams.data.HelpComponent;
 
 /**
  *

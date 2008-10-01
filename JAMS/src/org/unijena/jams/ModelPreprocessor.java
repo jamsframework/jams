@@ -21,11 +21,11 @@
  *
  */
 
-package org.unijena.jams;
+package jams;
 
 import java.util.ArrayList;
-import org.unijena.jams.ModelConfig.Setting;
-import org.unijena.jams.runtime.JAMSRuntime;
+import jams.ModelConfig.Setting;
+import jams.runtime.JAMSRuntime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

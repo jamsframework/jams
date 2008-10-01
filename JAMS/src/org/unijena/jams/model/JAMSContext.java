@@ -21,27 +21,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.model;
+package jams.model;
 
 /**
  *
  * @author S. Kralisch
  */
-import org.unijena.jams.io.DataTracer.DataTracer;
-import jams.virtualws.stores.OutputDataStore;
+import jams.io.DataTracer.DataTracer;
+import jams.workspace.stores.OutputDataStore;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.data.*;
-import org.unijena.jams.dataaccess.*;
-import org.unijena.jams.dataaccess.CalendarAccessor;
-import org.unijena.jams.io.DataTracer.NullTracer;
-import org.unijena.jams.io.DataTracer.AbstractTracer;
-import org.unijena.jams.runtime.JAMSRuntime;
+import jams.JAMS;
+import jams.data.*;
+import jams.dataaccess.*;
+import jams.dataaccess.CalendarAccessor;
+import jams.io.DataTracer.NullTracer;
+import jams.io.DataTracer.AbstractTracer;
+import jams.runtime.JAMSRuntime;
 
 @JAMSComponentDescription(title = "JAMS Component",
 author = "Sven Kralisch",
@@ -445,7 +445,7 @@ public class JAMSContext extends JAMSComponent {
             if (componentObject != null) {
                 dataObject = componentObject;
             } else {
-                if (clazz.getName().equals("org.unijena.jams.data.JAMSEntity")) {
+                if (clazz.getName().equals("jams.data.JAMSEntity")) {
                     dataObject = (JAMSData) JAMSDataFactory.createEntity();
                 } else {
                     dataObject = (JAMSData) clazz.newInstance();
@@ -733,7 +733,7 @@ public class JAMSContext extends JAMSComponent {
                 boolean isEntity = false;
                 try {
                     Class clazz = as.component.getClass().getDeclaredField(as.varName).getType();
-                    if (clazz.getName().equals("org.unijena.jams.data.JAMSEntity") || clazz.getName().equals("org.unijena.jams.data.JAMSEntityCollection")) {
+                    if (clazz.getName().equals("jams.data.JAMSEntity") || clazz.getName().equals("jams.data.JAMSEntityCollection")) {
                         isEntity = true;
                     }
                 } catch (Exception e) {

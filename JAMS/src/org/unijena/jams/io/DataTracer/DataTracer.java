@@ -20,9 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.io.DataTracer;
+package jams.io.DataTracer;
 
-import org.unijena.jams.dataaccess.DataAccessor;
+import jams.dataaccess.DataAccessor;
 
 /**
  *

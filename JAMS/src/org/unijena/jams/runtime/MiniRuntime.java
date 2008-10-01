@@ -20,20 +20,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.runtime;
+package jams.runtime;
 
 import java.awt.BorderLayout;
 import java.util.HashMap;
 import java.util.Observer;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.JAMSProperties;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.data.JAMSData;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSGUIComponent;
-import org.unijena.jams.model.JAMSModel;
+import jams.JAMS;
+import jams.JAMSProperties;
+import jams.JAMSTools;
+import jams.data.JAMSData;
+import jams.model.JAMSComponent;
+import jams.model.JAMSGUIComponent;
+import jams.model.JAMSModel;
 import org.w3c.dom.Document;
 
 /**

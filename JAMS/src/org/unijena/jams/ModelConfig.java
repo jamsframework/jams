@@ -21,12 +21,12 @@
  *
  */
 
-package org.unijena.jams;
+package jams;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.unijena.jams.io.XMLIO;
+import jams.io.XMLIO;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

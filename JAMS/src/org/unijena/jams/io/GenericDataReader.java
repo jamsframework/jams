@@ -22,12 +22,12 @@
  *
  */
 
-package org.unijena.jams.io;
+package jams.io;
 
 import java.util.*;
 import java.io.*;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.data.*;
+import jams.JAMS;
+import jams.data.*;
 
 /**
  *

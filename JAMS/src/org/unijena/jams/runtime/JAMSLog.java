@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.jams.runtime;
+package jams.runtime;
 
 import java.io.Serializable;
 import java.util.Observable;

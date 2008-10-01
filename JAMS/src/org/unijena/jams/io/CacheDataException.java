@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package org.unijena.jams.io;
+package jams.io;
 
 import java.io.IOException;
 

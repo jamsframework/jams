@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.gui;
+package jams.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -54,15 +54,15 @@ import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
-import org.unijena.jams.*;
-import org.unijena.jams.gui.input.InputComponent;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.data.HelpComponent;
-import org.unijena.jams.io.ParameterProcessor;
-import org.unijena.jams.io.XMLIO;
-import org.unijena.jams.io.XMLProcessor;
-import org.unijena.jams.runtime.StandardRuntime;
-import org.unijena.jams.runtime.JAMSRuntime;
+import jams.*;
+import jams.gui.input.InputComponent;
+import jams.JAMSTools;
+import jams.data.HelpComponent;
+import jams.io.ParameterProcessor;
+import jams.io.XMLIO;
+import jams.io.XMLProcessor;
+import jams.runtime.StandardRuntime;
+import jams.runtime.JAMSRuntime;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -79,12 +79,12 @@ public class JAMSLauncher extends JFrame {
     protected static final String BASE_TITLE = "JAMS Launcher";
     private Map<InputComponent, Element> inputMap;
     private Map<InputComponent, JScrollPane> groupMap;
-    private Document modelDocument = null;
+    protected Document modelDocument = null;
     private JTabbedPane tabbedPane = new JTabbedPane();
     private JAMSProperties properties;
     private JButton runButton;
     private HelpDlg helpDlg;
-    private String initialModelDocString = "";
+    protected String initialModelDocString = "";
     private JAMSRuntime runtime;
     private Runnable modelLoading;
     private WorkerDlg setupModelDlg;
@@ -101,59 +101,10 @@ public class JAMSLauncher extends JFrame {
         loadModelDefinition(modelDocument);
     }
 
-    public JAMSLauncher(JAMSProperties properties, String modelFilename, String cmdLineArgs) {
-        this(properties);
-        loadModelDefinition(modelFilename, JAMSTools.toArray(cmdLineArgs, ";"));
-    }
-
     protected void loadModelDefinition(Document modelDocument) {
         this.modelDocument = modelDocument;
         fillAttributes(this.getModelDocument());
         fillTabbedPane(modelDocument);
-    }
-
-    protected void loadModelDefinition(String modelFilename, String[] args) {
-
-        try {
-
-            //check if file exists
-            File file = new File(modelFilename);
-            if (!file.exists()) {
-                LHelper.showErrorDlg(this, "Model file " + modelFilename + " could not be found!", "File open error");
-                return;
-            }
-
-            // first do search&replace on the input xml file
-            String newModelFilename = XMLProcessor.modelDocConverter(modelFilename);
-            if (!newModelFilename.equalsIgnoreCase(modelFilename)) {
-                LHelper.showInfoDlg(JAMSLauncher.this,
-                        "The model definition in \"" + modelFilename + "\" has been adapted in order to meet modifications of the JAMS model DTD.\nThe new definition has been stored in \"" + newModelFilename + "\" while your original file was left untouched.", "Info");
-            }
-
-            // create string from input model definition file and replace "%x" occurences by cmd line data
-
-            String xmlString = JAMSTools.fileToString(modelFilename);
-            if (args != null) {
-                for (int i = 0; i < args.length; i++) {
-                    xmlString = xmlString.replaceAll("%" + i, args[i]);
-                }
-            }
-
-            // finally, create the model document from the string
-
-            this.modelDocument = XMLIO.getDocumentFromString(xmlString);
-            this.initialModelDocString = XMLIO.getStringFromDocument(this.modelDocument);
-
-            fillAttributes(this.getModelDocument());
-            fillTabbedPane(this.getModelDocument());
-
-        //LHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
-
-        } catch (IOException ioe) {
-            LHelper.showErrorDlg(JAMSLauncher.this, "The specified model configuration file \"" + modelFilename + "\" could not be found!", "Error");
-        } catch (SAXException se) {
-            LHelper.showErrorDlg(JAMSLauncher.this, "The specified model configuration file \"" + modelFilename + "\" contains errors!", "Error");
-        }
     }
 
     protected void init() throws HeadlessException, DOMException, NumberFormatException {
@@ -316,7 +267,7 @@ public class JAMSLauncher extends JFrame {
         return true;
     }
 
-    private void fillTabbedPane(final Document doc) {
+    protected void fillTabbedPane(final Document doc) {
 
         // create the component hash
         HashMap<String, HashMap<String, Element>> componentHash =
@@ -615,44 +566,5 @@ public class JAMSLauncher extends JFrame {
         public void showHelp() {
             help(helpComponent);
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        JAMSProperties props = new JAMSProperties();
-        props.load("D:/jamsapplication/nsk.jap");
-        JAMSLauncher launcher = new JAMSLauncher(props, "D:/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam", "");
-//        JAMSLauncher launcher = new JAMSLauncher(props, "D:/jamsapplication/test.jam", "");
-        launcher.addWindowListener(new WindowListener() {
-
-            @Override
-            public void windowOpened(WindowEvent e) {
-            }
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-            }
-
-            @Override
-            public void windowIconified(WindowEvent e) {
-            }
-
-            @Override
-            public void windowDeiconified(WindowEvent e) {
-            }
-
-            @Override
-            public void windowActivated(WindowEvent e) {
-            }
-
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-            }
-        });
-        launcher.setVisible(true);
     }
 }

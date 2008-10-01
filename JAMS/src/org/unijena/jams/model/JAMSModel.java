@@ -20,10 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.model;
+package jams.model;
 
-import jams.virtualws.VirtualWorkspace;
-import jams.virtualws.stores.OutputDataStore;
+import jams.workspace.VirtualWorkspace;
+import jams.workspace.stores.OutputDataStore;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,8 +31,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
-import org.unijena.jams.data.JAMSEntityCollection;
-import org.unijena.jams.runtime.JAMSRuntime;
+import jams.data.JAMSEntityCollection;
+import jams.runtime.JAMSRuntime;
 
 /**
  *
@@ -104,14 +104,26 @@ public class JAMSModel extends JAMSContext {
     public VirtualWorkspace getWorkspace() {
         return workspace;
     }
+    
+    public File getWorkspaceDirectory() {
+        return workspace.getDirectory();
+    }
 
+    public File getOutputDataDirectory() {
+        return workspace.getOutputDataDirectory();
+    }
+
+    public File getInputDirectory() {
+        return workspace.getInputDirectory();
+    }
+    
     public OutputDataStore[] getOutputDataStores(String contextName) {
         if (this.workspace == null) {
             return null;
         }
         return this.workspace.getOutputDataStores(contextName);
     }
-
+    
     private void CollectEntityCollections(JAMSContext currentContext, JAMSComponent position, HashMap<String, JAMSEntityCollection> collection) {
         currentContext.updateEntityData(position);
         collection.put(currentContext.instanceName, currentContext.getEntities());

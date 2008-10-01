@@ -20,17 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.io;
+package jams.io;
 
 import java.util.*;
-import org.unijena.jams.dataaccess.DataAccessor;
-import org.unijena.jams.model.*;
+import jams.dataaccess.DataAccessor;
+import jams.model.*;
 import org.w3c.dom.*;
 import java.lang.reflect.*;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.JAMSProperties;
-import org.unijena.jams.data.*;
-import org.unijena.jams.runtime.JAMSRuntime;
+import jams.JAMS;
+import jams.JAMSProperties;
+import jams.data.*;
+import jams.runtime.JAMSRuntime;
 
 /**
  *
@@ -80,7 +80,7 @@ public class ModelLoader {
         
         jamsModel.getRuntime().println("*************************************", JAMS.STANDARD);
         jamsModel.getRuntime().println("model     : " + jamsModel.getName(), JAMS.STANDARD);
-        jamsModel.getRuntime().println("workspace : " + jamsModel.getWorkspace().getDirectory(), JAMS.STANDARD);
+        jamsModel.getRuntime().println("workspace : " + jamsModel.getWorkspaceDirectory(), JAMS.STANDARD);
         jamsModel.getRuntime().println("author    : " + jamsModel.getAuthor(), JAMS.STANDARD);
         jamsModel.getRuntime().println("date      : " + jamsModel.getDate(), JAMS.STANDARD);
         jamsModel.getRuntime().println("*************************************", JAMS.STANDARD);
@@ -436,7 +436,7 @@ public class ModelLoader {
         } else if (className.equals("JAMSBoolean")) {
             data = (JAMSData) clazz.newInstance();
         } else if (className.equals("JAMSDouble")) {
-            data = (JAMSData) Class.forName("org.unijena.jams.data.JAMSSimpleDouble").newInstance();
+            data = (JAMSData) Class.forName("jams.data.JAMSSimpleDouble").newInstance();
         } else {
             data = (JAMSData) clazz.newInstance();
         }

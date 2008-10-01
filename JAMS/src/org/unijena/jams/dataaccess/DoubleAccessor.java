@@ -21,9 +21,9 @@
  *
  */
 
-package org.unijena.jams.dataaccess;
+package jams.dataaccess;
 
-import org.unijena.jams.data.*;
+import jams.data.*;
 
 /**
  *

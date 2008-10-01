@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.gui;
+package jams.gui;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

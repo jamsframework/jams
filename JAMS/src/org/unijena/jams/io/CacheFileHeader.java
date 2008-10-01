@@ -21,9 +21,9 @@
  *
  */
 
-package org.unijena.jams.io;
+package jams.io;
 
-import org.unijena.jams.data.JAMSCalendar;
+import jams.data.JAMSCalendar;
 
 /**
  *

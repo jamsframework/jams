@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.jams.gui;
+package jams.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

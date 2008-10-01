@@ -3,18 +3,18 @@
  * and open the template in the editor.
  */
 
-package org.unijena.jams.io;
+package jams.io;
 
 import java.io.File;
 import java.io.IOException;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.data.JAMSDocument;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.io.XMLIO;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSVarDescription;
-import org.unijena.jams.runtime.JAMSRuntime;
-import org.unijena.jams.runtime.StandardRuntime;
+import jams.JAMSTools;
+import jams.data.JAMSDocument;
+import jams.data.JAMSString;
+import jams.io.XMLIO;
+import jams.model.JAMSComponent;
+import jams.model.JAMSVarDescription;
+import jams.runtime.JAMSRuntime;
+import jams.runtime.StandardRuntime;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 

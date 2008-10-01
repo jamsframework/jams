@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.jams.io;
+package jams.io;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import org.unijena.jams.data.JAMSTimeInterval;
+import jams.data.JAMSTimeInterval;
 
 /**
  *

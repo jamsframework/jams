@@ -22,7 +22,7 @@
  *
  */
 
-package org.unijena.jams.model;
+package jams.model;
 
 import java.io.Serializable;
 

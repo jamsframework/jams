@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.jams.io;
+package jams.io;
 
 import java.io.*;
 
@@ -31,8 +31,8 @@ import java.io.*;
  */
 public class XMLProcessor {
     
-    static String[] regex = {"jamsvar class=\".*\" name", "compoundcomponent", "jamsvar", "providervar", "spatattrib", "provider=", "org\\.unijena\\.jams\\.gui", "org\\.unijena\\.jamscomponents"};
-    static String[] replace = {"jamsvar name", "contextcomponent", "var", "cvar", "attribute", "context=", "jams.components.gui", "jams.components"};
+    static String[] regex = {"jamsvar class=\".*\" name", "compoundcomponent", "jamsvar", "providervar", "spatattrib", "provider=", "org\\.unijena\\.jams\\.gui", "org\\.unijena\\.jamscomponents", "org\\.unijena\\.jams\\."};
+    static String[] replace = {"jamsvar name", "contextcomponent", "var", "cvar", "attribute", "context=", "jams.components.gui", "jams.components", "jams."};
 /*    static String[] regex = {"jamsvar class=\".*\" "};
     static String[] replace = {"jamsvar "};
  */

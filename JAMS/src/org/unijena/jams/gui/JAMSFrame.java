@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.gui;
+package jams.gui;
 
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -36,12 +36,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import org.unijena.jams.*;
-import org.unijena.jams.io.ParameterProcessor;
-import org.unijena.jams.io.XMLIO;
+import jams.*;
+import jams.io.ParameterProcessor;
+import jams.io.XMLIO;
+import jams.io.XMLProcessor;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -90,7 +92,6 @@ public class JAMSFrame extends JAMSLauncher {
     public JAMSFrame(JAMSProperties properties, String modelFilename, String cmdLineArgs) {
         //super(properties, modelFilename, cmdLineArgs);
         this(properties);
-        this.modelFilename = modelFilename;
         loadModelDefinition(modelFilename, JAMSTools.toArray(cmdLineArgs, ";"));
     }
 
@@ -100,11 +101,53 @@ public class JAMSFrame extends JAMSLauncher {
         if (!closeModel()) {
             return;
         }
-        super.loadModelDefinition(modelFilename, args);
-        saveModelAction.setEnabled(true);
-        saveAsModelAction.setEnabled(true);
-        modelMenu.setEnabled(true);
-        getRunModelAction().setEnabled(true);
+
+        try {
+
+            //check if file exists
+            File file = new File(modelFilename);
+            if (!file.exists()) {
+                LHelper.showErrorDlg(this, "Model file " + modelFilename + " could not be found!", "File open error");
+                return;
+            }
+
+            // first do search&replace on the input xml file
+            String newModelFilename = XMLProcessor.modelDocConverter(modelFilename);
+            if (!newModelFilename.equalsIgnoreCase(modelFilename)) {
+                LHelper.showInfoDlg(JAMSFrame.this,
+                        "The model definition in \"" + modelFilename + "\" has been adapted in order to meet changes in the JAMS model specification.\nThe new definition has been stored in \"" + newModelFilename + "\" while your original file was left untouched.", "Info");
+            }
+
+            modelFilename = newModelFilename;
+            // create string from input model definition file and replace "%x" occurences by cmd line data
+
+            String xmlString = JAMSTools.fileToString(modelFilename);
+            if (args != null) {
+                for (int i = 0; i < args.length; i++) {
+                    xmlString = xmlString.replaceAll("%" + i, args[i]);
+                }
+            }
+
+            // finally, create the model document from the string
+            this.modelFilename = modelFilename;
+            this.modelDocument = XMLIO.getDocumentFromString(xmlString);
+            this.initialModelDocString = XMLIO.getStringFromDocument(this.modelDocument);
+
+            fillAttributes(this.getModelDocument());
+            fillTabbedPane(this.getModelDocument());
+
+            saveModelAction.setEnabled(true);
+            saveAsModelAction.setEnabled(true);
+            modelMenu.setEnabled(true);
+            getRunModelAction().setEnabled(true);
+
+        //LHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
+
+        } catch (IOException ioe) {
+            LHelper.showErrorDlg(JAMSFrame.this, "The specified model configuration file \"" + modelFilename + "\" could not be found!", "Error");
+        } catch (SAXException se) {
+            LHelper.showErrorDlg(JAMSFrame.this, "The specified model configuration file \"" + modelFilename + "\" contains errors!", "Error");
+        }
     }
 
     protected void init() throws HeadlessException, DOMException, NumberFormatException {
@@ -239,9 +282,9 @@ public class JAMSFrame extends JAMSLauncher {
 
                 /*File file = null;
                 if (modelFilename != null) {
-                    file = new File(modelFilename);
+                file = new File(modelFilename);
                 } else {
-                    file = new File(System.getProperty("user.dir"));
+                file = new File(System.getProperty("user.dir"));
                 }
                 jfc.setCurrentDirectory(file);*/
                 jfc.setFileFilter(JAMSFileFilter.getParameterFilter());

@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.runtime;
+package jams.runtime;
 
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
@@ -49,15 +49,15 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.JAMSProperties;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.data.JAMSData;
-import org.unijena.jams.data.JAMSEntityCollection;
-import org.unijena.jams.io.ModelLoader;
-import org.unijena.jams.io.ParameterProcessor;
-import org.unijena.jams.model.JAMSGUIComponent;
-import org.unijena.jams.model.JAMSModel;
+import jams.JAMS;
+import jams.JAMSProperties;
+import jams.JAMSTools;
+import jams.data.JAMSData;
+import jams.data.JAMSEntityCollection;
+import jams.io.ModelLoader;
+import jams.io.ParameterProcessor;
+import jams.model.JAMSGUIComponent;
+import jams.model.JAMSModel;
 import org.w3c.dom.Document;
 
 /**

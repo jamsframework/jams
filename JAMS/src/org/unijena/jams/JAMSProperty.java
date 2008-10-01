@@ -21,7 +21,7 @@
  *
  */
 
-package org.unijena.jams;
+package jams;
 
 import java.util.Observable;
 

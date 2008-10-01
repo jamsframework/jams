@@ -21,10 +21,10 @@
  *
  */
 
-package org.unijena.jams.dataaccess;
+package jams.dataaccess;
 
 import java.io.Serializable;
-import org.unijena.jams.data.JAMSData;
+import jams.data.JAMSData;
 
 /**
  *

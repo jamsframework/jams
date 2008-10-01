@@ -20,9 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.runtime.concurrent;
+package jams.runtime.concurrent;
 
-import org.unijena.jams.model.JAMSComponent;
+import jams.model.JAMSComponent;
 
 /**
  *

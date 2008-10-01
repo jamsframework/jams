@@ -6,7 +6,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package org.unijena.jams.data;
+package jams.data;
 
 import java.io.*;
 

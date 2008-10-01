@@ -22,7 +22,7 @@
  *
  */
 
-package org.unijena.jams.io;
+package jams.io;
 
 /**
  *

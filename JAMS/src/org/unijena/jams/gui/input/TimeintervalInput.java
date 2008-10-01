@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package org.unijena.jams.gui.input;
+package jams.gui.input;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -37,9 +37,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.unijena.jams.data.JAMSCalendar;
-import org.unijena.jams.data.JAMSTimeInterval;
-import org.unijena.jams.gui.*;
+import jams.data.JAMSCalendar;
+import jams.data.JAMSTimeInterval;
+import jams.gui.*;
 
 /**
  *

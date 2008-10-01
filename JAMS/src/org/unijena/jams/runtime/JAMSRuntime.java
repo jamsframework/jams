@@ -21,14 +21,14 @@
  *
  */
 
-package org.unijena.jams.runtime;
+package jams.runtime;
 
 import java.io.Serializable;
 import java.util.*;
 import javax.swing.JFrame;
-import org.unijena.jams.JAMSProperties;
-import org.unijena.jams.data.JAMSData;
-import org.unijena.jams.model.JAMSGUIComponent;
+import jams.JAMSProperties;
+import jams.data.JAMSData;
+import jams.model.JAMSGUIComponent;
 import org.w3c.dom.Document;
 
 /**
