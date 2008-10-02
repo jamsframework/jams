@@ -22,6 +22,7 @@
  */
 package jams.model;
 
+import jams.data.JAMSDirName;
 import jams.workspace.VirtualWorkspace;
 import jams.workspace.stores.OutputDataStore;
 import java.io.ByteArrayInputStream;
@@ -41,11 +42,15 @@ import jams.runtime.JAMSRuntime;
 @JAMSComponentDescription(title = "JAMS model",
 author = "Sven Kralisch",
 date = "26. September 2005",
-description = "This component represents a JAMS model which is special type of context component")
+description = "This component represents a JAMS model which is a special type of context component")
 public class JAMSModel extends JAMSContext {
-
+/*
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    description = "Model workspace directory")
+    public JAMSDirName workspaceDirectory;
+*/
     private JAMSRuntime runtime;
-    private String name,  author,  date;
+    private String name, author, date;
     private VirtualWorkspace workspace;
 
     public JAMSModel(JAMSRuntime runtime) {
@@ -66,6 +71,7 @@ public class JAMSModel extends JAMSContext {
 
     public void setName(String name) {
         this.name = name;
+        this.setInstanceName(name);
     }
 
     public String getAuthor() {
@@ -92,16 +98,13 @@ public class JAMSModel extends JAMSContext {
     }
 
     public void setWorkspaceDir(String workspaceDir) {
-        if (workspaceDir.isEmpty()){
-            workspaceDir = System.getProperty("user.dir");
-        }
         this.workspace = new VirtualWorkspace(new File(workspaceDir), runtime);
     }
 
     public VirtualWorkspace getWorkspace() {
         return workspace;
     }
-    
+
     public File getWorkspaceDirectory() {
         return workspace.getDirectory();
     }
@@ -113,14 +116,14 @@ public class JAMSModel extends JAMSContext {
     public File getInputDirectory() {
         return workspace.getInputDirectory();
     }
-    
+
     public OutputDataStore[] getOutputDataStores(String contextName) {
         if (this.workspace == null) {
             return null;
         }
         return this.workspace.getOutputDataStores(contextName);
     }
-    
+
     private void CollectEntityCollections(JAMSContext currentContext, JAMSComponent position, HashMap<String, JAMSEntityCollection> collection) {
         currentContext.updateEntityData(position);
         collection.put(currentContext.instanceName, currentContext.getEntities());

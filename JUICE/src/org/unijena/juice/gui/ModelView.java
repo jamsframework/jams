@@ -48,6 +48,7 @@ import javax.swing.event.InternalFrameListener;
 import jams.JAMS;
 import jams.JAMSTools;
 import jams.data.HelpComponent;
+import jams.data.JAMSDirName;
 import jams.gui.JAMSFrame;
 import jams.gui.JAMSLauncher;
 import jams.gui.LHelper;
@@ -55,6 +56,7 @@ import jams.gui.WorkerDlg;
 import jams.io.ParameterProcessor;
 import jams.io.XMLIO;
 import jams.io.XMLProcessor;
+import jams.model.JAMSModel;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import org.unijena.juice.*;
@@ -531,13 +533,16 @@ public class ModelView {
             property.attribute = property.component.getContextAttributes().get(attributeName);
         }
 
+        if (attributeName.equals("workspace") && (property.component.getClazz() == JAMSModel.class)) {
+            property.var = property.component.createComponentAttribute(attributeName, JAMSDirName.class, ComponentDescriptor.ComponentAttribute.READ_ACCESS);
+        }
 
         //check wether the referred parameter is existing or not
         if ((property.attribute == null) && (property.var == null) &&
                 !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
             LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Attribute " + attributeName +
                     " does not exist in component " + property.component.getName() +
-                    ". Removing associated property!", "Model loading error");
+                    ". Removing visual editor!", "Model loading error");
             return null;
         }
 

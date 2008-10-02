@@ -22,9 +22,11 @@
  */
 package org.unijena.juice;
 
+import jams.data.JAMSDirName;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import jams.gui.LHelper;
+import jams.model.JAMSModel;
 import jams.model.JAMSVarDescription;
 import org.unijena.juice.gui.ModelView;
 import org.unijena.juice.gui.tree.*;
@@ -200,6 +202,10 @@ public class ComponentDescriptor {
 
     public AttributeRepository getDataRepository() {
         return dataRepository;
+    }
+    
+    public ComponentAttribute createComponentAttribute(String name, Class type, int accessType) {
+        return new ComponentAttribute(name, type, accessType);
     }
 
     public class ComponentAttribute {

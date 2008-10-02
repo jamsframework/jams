@@ -242,7 +242,10 @@ public class ComponentAttributePanel extends JPanel {
         if (var.getContextAttribute() == null) {
             linkButton.setSelected(false);
             linkText.setText("");
-            contextCombo.setSelectedIndex(0);
+
+            if (contextCombo.getItemCount() > 0) {
+                contextCombo.setSelectedIndex(0);
+            }
             //contextCombo.setSelectedItem(null);
             attributeList.setSelectedValue(null, true);
         } else {
@@ -336,15 +339,19 @@ public class ComponentAttributePanel extends JPanel {
 
         ComponentDescriptor context = (ComponentDescriptor) contextCombo.getSelectedItem();
 
+        if (context == null) {
+            return;
+        }
+
         AttributeRepository repo = context.getDataRepository();
         //ArrayList<Attribute> attributes = repo.getAttributesByType(type);
-                
+
         ArrayList<ContextAttribute> attributes = repo.getUniqueAttributesByType(type);
 
         if (type.isArray()) {
             //attributes.addAll(repo.getUniqueAttributesByType(type.getComponentType()));
         }
-        
+
         DefaultListModel lModel = new DefaultListModel();
         if (attributes != null) {
 

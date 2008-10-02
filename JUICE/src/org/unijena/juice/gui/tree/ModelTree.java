@@ -55,7 +55,6 @@ import org.unijena.juice.JUICE;
 import org.unijena.juice.ModelProperties.ModelProperty;
 import org.unijena.juice.ModelProperties.Group;
 import org.unijena.juice.gui.ModelView;
-import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
