@@ -182,6 +182,8 @@ public class JAMSContext extends JAMSComponent {
                 getModel().getRuntime().handle(ie, false);
             } catch (IllegalAccessException iae) {
                 getModel().getRuntime().handle(iae, false);
+            } catch (Exception e) {
+                getModel().getRuntime().handle(e, false);
             }
         }
 

@@ -48,12 +48,13 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
 
-public class VirtualWorkspace {
+public class VirtualWorkspace implements Serializable {
 
     private static final String CONFIG_FILE_NAME = "config.txt";
     private static final String CONTEXT_ATTRIBUTE_NAME = "context";
@@ -61,8 +62,8 @@ public class VirtualWorkspace {
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
     private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
     private JAMSRuntime runtime = new StandardRuntime();
-    private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-    private File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory;
+    transient private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+    transient private File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory;
     private Properties properties = new Properties();
     private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
 
@@ -245,6 +246,10 @@ public class VirtualWorkspace {
         properties.setProperty("persistent", Boolean.toString(inc));
     }
 
+    public void moveTo(File directory){
+        this.directory = directory;
+    }
+    
     private void createDataStores() {
 
         FileFilter filter = new FileFilter() {

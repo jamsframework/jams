@@ -92,6 +92,9 @@ public class JAMSModel extends JAMSContext {
     }
 
     public void setWorkspaceDir(String workspaceDir) {
+        if (workspaceDir.isEmpty()){
+            workspaceDir = System.getProperty("user.dir");
+        }
         this.workspace = new VirtualWorkspace(new File(workspaceDir), runtime);
     }
 

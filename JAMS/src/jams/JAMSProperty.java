@@ -23,13 +23,14 @@
 
 package jams;
 
+import java.io.Serializable;
 import java.util.Observable;
 
 /**
  *
  * @author Sven Kralisch
  */
-public class JAMSProperty extends Observable {
+public class JAMSProperty extends Observable implements Serializable{
     
     private String name;
     
