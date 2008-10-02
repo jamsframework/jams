@@ -67,8 +67,8 @@ public class JAMSUnitConverter extends JAMSComponent {
             )
             public JAMSDouble outValue;
      
-     Unit in, out;
-     Converter conv;
+     transient Unit in, out;
+     transient Converter conv;
      
      public void init() {
          in = Unit.valueOf(this.inUnit.getValue());

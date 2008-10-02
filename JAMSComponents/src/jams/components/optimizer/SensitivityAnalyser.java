@@ -17,13 +17,13 @@ import java.io.IOException;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import jams.JAMS;
-import jams.data.*;
-import jams.io.GenericDataWriter;
-import jams.model.JAMSComponent;
-import jams.model.JAMSComponentDescription;
-import jams.model.JAMSContext;
-import jams.model.JAMSVarDescription;
+import org.unijena.jams.JAMS;
+import org.unijena.jams.data.*;
+import org.unijena.jams.io.GenericDataWriter;
+import org.unijena.jams.model.JAMSComponent;
+import org.unijena.jams.model.JAMSComponentDescription;
+import org.unijena.jams.model.JAMSContext;
+import org.unijena.jams.model.JAMSVarDescription;
 import jams.components.machineLearning.GaussianLearner;
 
 /**
@@ -62,6 +62,13 @@ public class SensitivityAnalyser extends Optimizer{
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
+            description = "Data file directory name"
+            )
+            public JAMSString dirName;
+    
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
             public JAMSString outputFileName;
@@ -74,7 +81,7 @@ public class SensitivityAnalyser extends Optimizer{
             public JAMSInteger method;
     
     public void init(){            
-        super.init(this.parameterIDs.getValue(),this.boundaries.getValue(),getModel().getWorkspaceDirectory().getPath(),effValue,Optimizer.MODE_MINIMIZATION);            
+        super.init();            
     }
     
     GaussianLearner CreateGPModel(Vector<double[]> samplePoint,Vector<Double> sampleValue){        
@@ -167,7 +174,7 @@ public class SensitivityAnalyser extends Optimizer{
         
         BufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + this.outputFileName.getValue()));
+            writer = new BufferedWriter(new FileWriter(this.dirName + "/" + this.outputFileName.getValue()));
             writer.write(infoString);
             writer.close();
         } catch (IOException ioe) {
@@ -231,7 +238,7 @@ public class SensitivityAnalyser extends Optimizer{
         
         BufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + this.outputFileName.getValue()));
+            writer = new BufferedWriter(new FileWriter(this.dirName + "/" + this.outputFileName.getValue()));
             writer.write(infoString);
             writer.close();
         } catch (IOException ioe) {

@@ -11,14 +11,14 @@ package jams.components.optimizer;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Vector;
-import jams.JAMS;
-import jams.data.*;
-import jams.io.SerializableBufferedWriter;
-import jams.model.JAMSComponentDescription;
-import jams.model.JAMSVarDescription;
+import org.unijena.jams.JAMSTools;
+import org.unijena.jams.data.*;
+import org.unijena.jams.io.DataTracer.DataTracer;
+import org.unijena.jams.io.DataTracer.StandardTracer;
+import org.unijena.jams.model.JAMSComponentDescription;
 
 @JAMSComponentDescription(
         title="Branch and Bound Optimizer",
@@ -26,121 +26,47 @@ import jams.model.JAMSVarDescription;
         description="Performs a branch and bound optimization. Advantage: It can be shown, that this method will find the global optimum. Disadvantage: This method usally requires many function evaluations. So it should only be used, if model execution is very fast"
         )
 public class BranchAndBound extends Optimizer{
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "List of parameter identifiers to be sampled"
-            )
-            public JAMSString parameterIDs;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "List of parameter value bounaries corresponding to parameter identifiers"
-            )
-            public JAMSString boundaries;
-           
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "objective function name"
-            )
-            public JAMSString effMethodName;
-            
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "the prediction series"
-            )
-            public JAMSDouble effValue;
-        
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "optimization mode, 1 - minimization, 2 - maximization, 3 - max |f(x)|, 4 - min |f(x)|"
-            )
-            public JAMSInteger mode;
-          
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "maximum numer of function evaluations"
-            )
-            public JAMSInteger maxn;
-        
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Flag for enabling/disabling this sampler"
-            )
-            public JAMSBoolean enable;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Output file name"
-            )
-            public JAMSString outputFileName;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "if this file name is specified, then a regular sampling will be performed"
-            )
-            public JAMSString regularSampleFileName;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "this file will contain a list with every sampled point"
-            )
-            public JAMSString SampleDumpFileName;
-
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "if you dont want to execute the jams model completly in every iteration, you can specify a JAMS - Snapshot which is loaded before execution"
-            )
-            public JAMSEntity snapshot;
-    
-    SerializableBufferedWriter writer = null;
-    final double Version = 2.0;
-    
+                    
     @SuppressWarnings("unchecked")
     public BranchAndBound() {
     }
     
     public void init(){
-        super.init(this.parameterIDs.getValue(),this.boundaries.getValue(),getModel().getWorkspaceDirectory().getPath(),effValue,mode.getValue(),snapshot);
-                
-        try {
-            writer = new SerializableBufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + SampleDumpFileName.getValue()));
-        } catch (IOException ioe) {
-            JAMS.handle(ioe);
-        }
+        super.init();
+/*             
+        if (SampleDumpFileName != null){
+            try {            
+                String fileName = SampleDumpFileName.getValue();            
+                writer = new SerializableBufferedWriter(new FileWriter(JAMSTools.CreateAbsoluteFileName(this.dirName.getValue(),fileName)));
+            } catch (IOException ioe) {
+                JAMS.handle(ioe);
+            }
+        }*/
     }
-    
-    Vector<Sample> SampleList = new Vector<Sample>();
-    
-    //public void writePartition(Str)
-    
+           
     public class HyperCube{
         protected Sample a;
         protected Sample b;
         protected Sample midPoint;
         protected double L;
         
+        protected ArrayList<Sample> InCubeSamples;
+        
         public double goodOneFactor;
         protected HyperCube parent;
         
         protected double highestLowBound;
         
-        HyperCube(Sample a,Sample b,Sample midPoint,HyperCube parent,double L){
+        HyperCube(Sample a,Sample b,Sample midPoint,HyperCube parent){
             this.a = a;
             this.b = b;
             this.midPoint = midPoint;
-            this.parent = parent;
-            this.L = L;
+            this.parent = parent;            
+            this.InCubeSamples = new ArrayList<Sample>();
+            InCubeSamples.add(a);
+            InCubeSamples.add(b);
+            InCubeSamples.add(midPoint);
+            this.L = ApproxL(a,b,this);            
             if (parent!=null)
                 highestLowBound = Math.max(Math.max(-1000000000000.0,
                                             Math.max(a.fx,b.fx)-VectorNorm2(VectorMul(VectorSub(b.x,a.x),L))),
@@ -148,12 +74,12 @@ public class BranchAndBound extends Optimizer{
                                     
             double minimum = Math.min(Math.min(a.fx, b.fx), midPoint.fx);
             if (highestLowBound > minimum)   highestLowBound = minimum;
-            
-            if (parent!=null)
-                parent.Update(minimum);
-            
-            goodOneFactor = ( (midPoint.fx - a.fx) + (midPoint.fx - b.fx));
-            
+                        
+            goodOneFactor = ( (midPoint.fx - a.fx) + (midPoint.fx - b.fx));                        
+        }
+        
+        public void AddCubeSample(Sample x){           
+            this.InCubeSamples.add(x);
         }
         
         double CalculateLForTarget(double target){
@@ -163,23 +89,11 @@ public class BranchAndBound extends Optimizer{
                                     
             return Math.min(L_theo1, L_theo2);
         }
-        
-        void Update(double childMinimum){
-            /*if (highestLowBound > childMinimum){
-                highestLowBound = childMinimum;
-                
-                //look which L value can realize highestLowBound
-                L = CalculateLForTarget(highestLowBound);
-                
-                if (parent!=null)
-                    parent.Update(childMinimum);
-            }*/
-        }
-        
+                        
         double bound(){
             return this.highestLowBound;
         }
-        
+                        
         public String compactDescriptionString(){
             String s = "";
             s += a.x[0] + "\t";
@@ -290,36 +204,33 @@ public class BranchAndBound extends Optimizer{
     }
     double test=0;
     @SuppressWarnings("unchecked")
-    public double ApproxL(Sample a,Sample b){
+    public double ApproxL(Sample a,Sample b,HyperCube myCube){
         super.lowBound = a.x;
         super.upBound  = b.x;
-        
-        Vector<Sample> list = new Vector<Sample>();
-
-        list.add(a);
-        list.add(b);
-        for (int i=0;i<SampleList.size();i++){
-            Sample x = SampleList.get(i);
-            if (VectorLessEq(a.x,x.x) && VectorLessEq(x.x,b.x) && !list.contains(x)){
-                boolean contains = false;
-                for (int j=0;j<list.size();j++){
-                    if (VectorNorm(VectorSub(list.get(j).x,x.x))<0.0001){
-                        contains = true;
-                        break;
+                
+        ArrayList<Sample> list = myCube.InCubeSamples;        
+        if (myCube.parent != null){
+            for (int i=0;i<myCube.parent.InCubeSamples.size();i++){
+                Sample x = myCube.parent.InCubeSamples.get(i);
+                if (VectorLessEq(a.x,x.x) && VectorLessEq(x.x,b.x) && !list.contains(x)){
+                    boolean contains = false;
+                    for (int j=0;j<list.size();j++){
+                        if (VectorNorm(VectorSub(list.get(j).x,x.x))<0.0001){
+                            contains = true;
+                            break;
+                        }
                     }
+                    if (!contains)
+                        myCube.AddCubeSample(x);
                 }
-                if (!contains)
-                    list.add(x);
             }
         }
         while(list.size() < 3*n+1){
-            System.out.println("random trail .. ");
-            double c[] = super.RandomSampler();
-            double y = this.funct(c);
-            if (y<a.fx&&y<b.fx){
-                test = a.fx-y + b.fx-y;
+            Sample rnd_point = getSample(RandomSampler());            
+            if (rnd_point.fx<a.fx&&rnd_point.fx<b.fx){
+                test = a.fx-rnd_point.fx + b.fx-rnd_point.fx;
             }
-            list.add(new Sample(c,y));
+            myCube.AddCubeSample(rnd_point);
         }
         /*double L = 0;
         for (int i=0;i<list.size();i++){
@@ -392,7 +303,7 @@ public class BranchAndBound extends Optimizer{
         //single value L
         double variance = 0;
         double mean = 0;
-        Stack<Double> tmp = new Stack<Double>();
+        //Stack<Double> tmp = new Stack<Double>();
         
         double sL = 0;
         double size = (list.size()-1)*(list.size())/2.0;
@@ -401,20 +312,23 @@ public class BranchAndBound extends Optimizer{
                 double d = VectorNorm2(VectorSub(list.get(i).x,list.get(j).x));
                 sL = Math.max(Math.abs((list.get(i).fx-list.get(j).fx)/d), sL);
                 mean += sL;
-                tmp.push(new Double(sL));
+                //tmp.push(new Double(sL));
             }
         }
         mean /= size;
-        while(!tmp.empty()){
+        /*while(!tmp.empty()){
             variance += Math.pow(tmp.pop().doubleValue()-mean,2);
-        }
-        variance /= (size-1);
+        }*/
+        //variance /= (size-1);
+        //System.out.println("sL:" + sL);
         return sL;//+1.0*Math.sqrt(variance);
     }
     
-    void SaveCubes(Vector<HyperCube> cubes,String fileName){
+    void SaveCubes(Vector<HyperCube> cubes,String param_fileName){
         try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/info/" + fileName));
+            String fileName = param_fileName;
+                     
+            BufferedWriter writer = new BufferedWriter(new FileWriter(JAMSTools.CreateAbsoluteFileName(this.dirName.getValue(),"/info/" + fileName)));
             for (int i=0;i<cubes.size();i++){
                 writer.write(cubes.get(i).compactDescriptionString());
             }
@@ -425,30 +339,28 @@ public class BranchAndBound extends Optimizer{
     }
     
     public void run() {
+        Vector<Sample> Q = new Vector<Sample>();
+        Vector<HyperCube> cubes = new Vector<HyperCube>();
+                
         int xCount = 0;
         final double epsilon1 = 0.1; //app-error
         boolean stop = false;
         double gamma, myR, my;        
         int k=1;                                
-        //List of samples
-        Sample.SampleList = this.SampleList;
-        Vector<Sample> Q = new Vector<Sample>();
-        Vector<HyperCube> cubes = new Vector<HyperCube>();
-        
-        Sample.writer = this.writer;
-        
-        if (regularSampleFileName != null)
-            WriteRegularSampling(regularSampleFileName.getValue(),0,1);      
-        
-        Sample a = new Sample(super.lowBound,funct(super.lowBound));
-        Sample b = new Sample(super.upBound,funct(super.upBound));
+
+        getModel().getRuntime().sendInfoMsg("***************************");
+        getModel().getRuntime().sendInfoMsg("****start optimization ****");
+        getModel().getRuntime().sendInfoMsg("***************************");
+                        
+        Sample a = getSample(super.lowBound);
+        Sample b = getSample(super.upBound);
                 
         //add upperleft und lowerright corner of cube
         Q.add(a);        
         Q.add(b);        
         //midpoint xr
         double xR_tmp[] = VectorMul(VectorAdd(lowBound,upBound),0.5);
-        Sample xR = new Sample(xR_tmp,funct(xR_tmp));        
+        Sample xR = getSample(xR_tmp);
         Q.add(xR);
         
         //gamma holds minimum of samples
@@ -457,31 +369,32 @@ public class BranchAndBound extends Optimizer{
         gamma = v.fx;
         
         //calculate a lower approximation my        
-        double L = ApproxL(a,b);
+        HyperCube R = new HyperCube(a,b,xR,null);                
+        cubes.add(R);
+        
+        double L = R.L; 
 
         myR = Math.max(Math.max(a.fx,b.fx) - VectorNorm(VectorMul(VectorSub(a.x,b.x),L)),
                         xR.fx - (VectorNorm(VectorMul(VectorSub(a.x,b.x),L))/2.0));
         my = myR;        
-        HyperCube R = new HyperCube(a,b,xR,null,L);                
-        cubes.add(R);
-        
+                
         Stack<HyperCube> queue = new Stack<HyperCube>();
         queue.push(R);
-        
+                                                       
         while (!stop){    
             R = queue.pop();
             a = R.a;
             b = R.b;
             my = R.highestLowBound;
             
-            System.out.println("Processing next cube:\nR:" + R.toString() + "\nMinimum:" + gamma + "\nk:" + k + "\nSampleCount:" + currentSampleCount);            
+            //System.out.println("Processing next cube:\nR:" + R.toString() + "\nMinimum:" + gamma + "\nk:" + k + "\nSampleCount:" + currentSampleCount);            
             
             //SaveCubes(cubes,"cubedump" + xCount + ".dat");
             if (this.maxn != null){
-                if ( this.SampleList.size() >= this.maxn.getValue() ){
+                if ( this.sampleList.size() >= this.maxn.getValue() ){                    
                     break;
                 }
-            }
+            }                                    
             //current minimum and lower approximation are close
             if (gamma - my < epsilon1){
                 //break;
@@ -509,19 +422,21 @@ public class BranchAndBound extends Optimizer{
                     a2_tmp[i] = a.x[i];
                 }
             }
-            Sample b1 = new Sample(b1_tmp,funct(b1_tmp));
-            Sample a2 = new Sample(a2_tmp,funct(a2_tmp));
+            Sample b1 = getSample(b1_tmp);
+            Sample a2 = getSample(a2_tmp);
             
             double xR1_tmp[] = VectorMul(VectorAdd(a1.x,b1.x),0.5);   
             double xR2_tmp[] = VectorMul(VectorAdd(a2.x,b2.x),0.5);   
             
-            Sample xR1 = new Sample(xR1_tmp,funct(xR1_tmp));
-            Sample xR2 = new Sample(xR2_tmp,funct(xR2_tmp));
+            Sample xR1 = getSample(xR1_tmp);
+            Sample xR2 = getSample(xR2_tmp);
 
             //approx L
-            double L1 = ApproxL(a1,b1);
+            HyperCube R1 = new HyperCube(a1,b1,xR1,R);   
+            double L1 = R1.L;
             double tmp1 = test;
-            double L2 = ApproxL(a2,b2);
+            HyperCube R2 = new HyperCube(a2,b2,xR2,R);   
+            double L2 = R2.L;
             double tmp2 = test;
             
             Q.clear();
@@ -534,12 +449,10 @@ public class BranchAndBound extends Optimizer{
             IndexWithMinimum = getMin(Q);
             v = Q.get(IndexWithMinimum);
             gamma = v.fx;
-            
-            HyperCube R1 = new HyperCube(a1,b1,xR1,R,L1);   
+                        
             if (R1.goodOneFactor < tmp1)
                 R1.goodOneFactor = tmp1;
-            
-            HyperCube R2 = new HyperCube(a2,b2,xR2,R,L2);   
+                        
             if (R2.goodOneFactor < tmp2)
                 R2.goodOneFactor = tmp2;
             cubes.remove(R);
@@ -613,7 +526,7 @@ public class BranchAndBound extends Optimizer{
                     if (IndexForT[i] == IndexForT[j])
                         IndexForT[j] = -1;                    
                 }
-                System.out.println("add T =" + T[i]);
+                //System.out.println("add T =" + T[i]);
                 queue.push(cubes.get(IndexForT[i]));
             }
                         
@@ -625,16 +538,8 @@ public class BranchAndBound extends Optimizer{
                 a = R.a;
                 b = R.b;
                 my = R.bound;        */
-                
-            if (k>=this.maxn.getValue())
-                break;
+                            
             k++;
-        }
-        try{
-            writer.close();
-        }catch(Exception e){
-            System.out.println(e.toString());
-        }
-    }
-    
+        }        
+    }    
 }

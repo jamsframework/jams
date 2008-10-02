@@ -7,6 +7,7 @@ package jams.components.optimizer.DirectSearchMethods;
 
 import Jama.Matrix;
 import jams.components.optimizer.LinearConstraintDirectPatternSearch;
+import jams.components.optimizer.Optimizer;
 import jams.components.optimizer.Optimizer.AbstractFunction;
 import jams.components.optimizer.Optimizer.Sample;
 import jams.components.optimizer.Optimizer.SampleComperator;
@@ -19,7 +20,8 @@ import java.util.Vector;
  */
 @SuppressWarnings("unchecked")
 public class NelderMead extends PatternSearch{
-    public Sample step(AbstractFunction f,Sample[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]){
+    public Sample step(Optimizer context,Sample[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]){
+
         //sort simplex        
         java.util.Arrays.sort(Simplex,new SampleComperator(false));
 
@@ -74,7 +76,7 @@ public class NelderMead extends PatternSearch{
         }
         
         Vector<Matrix> P_i = LCDPS.UpdateDirections(Simplex[0], P, 1.0);
-        Sample next = super.step(f,Simplex[0],Simplex[n-1],P_i);
+        Sample next = super.step(context,Simplex[0],Simplex[n-1],P_i);
         if (next != null)
             return next;  
         //get random point
@@ -94,10 +96,10 @@ public class NelderMead extends PatternSearch{
             }
             feasible = LCDPS.FeasibleDirection(new Matrix(x,m), new Matrix(x,m), 0.0);
         }
-        return new Sample(x,f.f(x));
+        return context.getSample(x);
     }
     
-    public Sample search(AbstractFunction f,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb){
+    public Sample search(Optimizer f,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb){
         return null;
     }
 }

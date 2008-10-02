@@ -7,6 +7,7 @@ package jams.components.optimizer.DirectSearchMethods;
 
 import Jama.Matrix;
 import jams.components.optimizer.LinearConstraintDirectPatternSearch;
+import jams.components.optimizer.Optimizer;
 import jams.components.optimizer.Optimizer.AbstractFunction;
 import jams.components.optimizer.Optimizer.Sample;
 import jams.components.optimizer.Optimizer.SampleComperator;
@@ -20,7 +21,7 @@ import java.util.Vector;
 @SuppressWarnings("unchecked")
 public class MDS extends PatternSearch{
 
-    public Sample step(AbstractFunction f,Sample[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]){                                 
+    public Sample step(Optimizer context,Sample[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]){                                 
         if (Generator == null){
             Generator = new Random();
         }
@@ -56,12 +57,11 @@ public class MDS extends PatternSearch{
         for (int i=0;i<m-1/*P_i.size()*/;i++){
             Matrix d = P.getMatrix(0, n-1,i,i);//P_i.get(i);
             Matrix x_new = x0.plus(d);
-         
-            double value = f.f(x_new.getColumnPackedCopy());
+                     
             if (i<m-1){
-                reflection[i] = new Sample(x_new.getColumnPackedCopy(),value);
+                reflection[i] = context.getSample(x_new.getColumnPackedCopy());
             
-                if (value < best.fx){
+                if (reflection[i].fx < best.fx){
                     successful = true;
                     best = reflection[i];
                 }
@@ -84,11 +84,10 @@ public class MDS extends PatternSearch{
             for (int i=0;i<m-1/*P_i_expand.size()*/;i++){
                 Matrix d = P_expand.getMatrix(0, n-1,i,i);//P_i_expand.get(i);
                 Matrix x_new = x0.plus(d);
-         
-                double value = f.f(x_new.getColumnPackedCopy());
+                         
                 if (i<m-1){
-                    expansion[i] = new Sample(x_new.getColumnPackedCopy(),value);
-                    if (value < best.fx){                   
+                    expansion[i] = context.getSample(x_new.getColumnPackedCopy());
+                    if (expansion[i].fx < best.fx){                   
                         best = expansion[i];
                         expansion_successful = true;
                     }   
@@ -120,12 +119,11 @@ public class MDS extends PatternSearch{
             for (int i=0;i<m-1/*P_i_contract.size()*/;i++){
                 Matrix d = P_contract.getMatrix(0, n-1,i,i);//P_i_contract.get(i);
                 Matrix x_new = x0.plus(d);
-         
-                double value = f.f(x_new.getColumnPackedCopy());
-                Sample sample_new = new Sample(x_new.getColumnPackedCopy(),value);
+                         
+                Sample sample_new = context.getSample(x_new.getColumnPackedCopy());
                 if (i+1 < Simplex.length)
                     Simplex[i+1] = sample_new;
-                if (value < best.fx){                   
+                if (sample_new.fx < best.fx){                   
                     best = sample_new;
                 }
             }
@@ -133,7 +131,7 @@ public class MDS extends PatternSearch{
         }                
     }
 
-    public Sample search(AbstractFunction f,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb){
+    public Sample search(Optimizer context,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb){
         return null;
     }
 }

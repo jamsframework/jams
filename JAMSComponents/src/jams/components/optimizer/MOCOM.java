@@ -45,6 +45,33 @@ title="Title",
         )
         public class MOCOM extends JAMSContext {
 
+    public class MOCOM_Comparator implements Comparator {
+
+    private int col = 0;
+    private int order = 1;
+    
+    public MOCOM_Comparator(int col,boolean decreasing_order) {
+	this.col = col;
+	if (decreasing_order)
+	    order = -1;
+	else
+	    order = 1;
+    }
+
+    public int compare(Object d1, Object d2) {
+
+        double[] b1 = (double [])d1;
+        double[] b2 = (double [])d2;
+        
+	if (b1[col] < b2[col])
+	    return -1*order;
+	else if (b1[col] == b2[col])
+	    return 0*order;
+	else
+	    return 1*order;
+    }        
+} 
+    
     //matlab zufallszahlen .. 
     int randcounter = 0;
   

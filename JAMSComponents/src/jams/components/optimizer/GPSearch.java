@@ -29,10 +29,12 @@ import jams.components.machineLearning.GaussianLearner;
 public class GPSearch extends Optimizer {
     /*
      *  Component variables
-     */    
+     */            
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
+<<<<<<< .mine
+=======
             description = "List of parameter identifiers to be sampled"
             )
             public JAMSString parameterIDs;
@@ -82,6 +84,7 @@ public class GPSearch extends Optimizer {
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
+>>>>>>> .r1028
             description = "Output file name"
             )
             public JAMSString outputFileName;
@@ -92,28 +95,14 @@ public class GPSearch extends Optimizer {
             description = "Output file name"
             )
             public JAMSString modelGridFileName;
-    
+            
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Output file name"
-            )
-            public JAMSBoolean writeModelGrid;
-    
-     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
             public JAMSBoolean writeGPData;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Output file name"
-            )
-            public JAMSString SampleDumpFileName;
-    
+            
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
@@ -151,7 +140,11 @@ public class GPSearch extends Optimizer {
     int iterationCounter = 0;
     
     public void init() {
+<<<<<<< .mine
+        super.init();        
+=======
         super.init(this.parameterIDs.getValue(),this.boundaries.getValue(),getModel().getWorkspaceDirectory().getPath(),effValue,mode.getValue());        
+>>>>>>> .r1028
     }
                               
     double TransformAndEvaluate(double []in){
@@ -373,11 +366,9 @@ public class GPSearch extends Optimizer {
             function.target = target;
             function.method = method;
             
-            double solution[] = sce.offlineRun(startpoint,normedLowBound,normedUpBound,3,Optimizer.MODE_MAXIMIZATION,10000,12,0.05,0.0001,function);            
+            Sample solution = sce.offlineRun(startpoint,normedLowBound,normedUpBound,3,Optimizer.MODE_MAXIMIZATION,10000,12,0.05,0.0001,function);            
             
-            for (int i=0;i<n;i++){
-                best[i] = solution[i];
-            }           
+            best = solution.x;       
         }else{
             GaussEffFunction function = new GaussEffFunction();
             function.GP = GP;
@@ -453,10 +444,7 @@ public class GPSearch extends Optimizer {
     
     public void initalPhase(){
         GaussianLearner.BuildGaussDistributionTable();
-        //zeige wahres modell!
-        if (writeModelGrid.getValue())        
-            WriteRegularSampling(modelGridFileName.getValue(),0,1);
-        
+                
         for (int i=0;i<n*initalSampleSize;i++){
             double nextSample[] = this.RandomSampler();
             for (int j=0;j<n;j++){
@@ -565,9 +553,7 @@ public class GPSearch extends Optimizer {
                     System.out.println(nextSample[j] + " ");                    
                 }
                 System.out.println("value:" + value);
-            }
-            WriteSamples(sampleValue,samplePoint,SampleDumpFileName.getValue());
-                        
+            }                        
             System.out.println("Evaluations:" + this.currentSampleCount + "\nMinimum:" + minValue);
             if (currentSampleCount > this.maxn.getValue())
                 return;

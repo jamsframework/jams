@@ -14,13 +14,13 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
-import jams.JAMS;
-import jams.data.JAMSBoolean;
-import jams.data.JAMSDouble;
-import jams.data.JAMSInteger;
-import jams.data.JAMSString;
-import jams.model.JAMSComponentDescription;
-import jams.model.JAMSVarDescription;
+import org.unijena.jams.JAMS;
+import org.unijena.jams.data.JAMSBoolean;
+import org.unijena.jams.data.JAMSDouble;
+import org.unijena.jams.data.JAMSInteger;
+import org.unijena.jams.data.JAMSString;
+import org.unijena.jams.model.JAMSComponentDescription;
+import org.unijena.jams.model.JAMSVarDescription;
 
 //import jams.components.optimizer.
 @JAMSComponentDescription(
@@ -80,7 +80,14 @@ public class Sandbox extends Optimizer{
             description = "Flag for enabling/disabling this sampler"
             )
             public JAMSBoolean enable;
-
+    
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Data file directory name"
+            )
+            public JAMSString dirName;
+    
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
@@ -106,14 +113,12 @@ public class Sandbox extends Optimizer{
     final double Version = 1.0;
     
     final int initalSampleSize = 50;
-    
-    Vector<Sample> SampleList = new Vector<Sample>();
-    
+            
     public void init(){
-        super.init(this.parameterIDs.getValue(),this.boundaries.getValue(),getModel().getWorkspaceDirectory().getPath(),effValue,mode.getValue());
-                
+        super.init();
+                        
         try {
-            writer = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + SampleDumpFileName.getValue()));
+            writer = new BufferedWriter(new FileWriter(this.dirName + "/" + SampleDumpFileName.getValue()));
         } catch (IOException ioe) {
             JAMS.handle(ioe);
         }
@@ -127,18 +132,13 @@ public class Sandbox extends Optimizer{
         return this.funct(value);
     }
     
-    public void initalPhase(){
-        //zeige wahres modell!
-        if (modelGridFileName != null)        
-            WriteRegularSampling(modelGridFileName.getValue(),0,1);
-        
+    public void initalPhase(){                
         for (int i=0;i<n*initalSampleSize;i++){
             double nextSample[] = this.RandomSampler();
             for (int j=0;j<n;j++){
                 nextSample[j] = (nextSample[j] - lowBound[j])/(upBound[j]-lowBound[j]);
             }
-
-            SampleList.add(new Sample(nextSample,TransformAndEvaluate(nextSample)));
+            this.getSample(nextSample);            
         }
         
     }
@@ -173,8 +173,8 @@ public class Sandbox extends Optimizer{
                 nearest[i] = new DoubleIndex(1000000000.0,i);
             }
             
-            for (int i=0;i<SampleList.size();i++){
-                double dist = norm(x,SampleList.get(i).x);
+            for (int i=0;i<sampleList.size();i++){
+                double dist = norm(x,sampleList.get(i).x);
                 DoubleIndex cmp = new DoubleIndex(0,-1);
                                 
                 for (int j=0;j<neighbours;j++){
@@ -194,12 +194,12 @@ public class Sandbox extends Optimizer{
             for (int i=0;i<neighbours;i++){
                 boolean isIn = false;
                 for (int j=0;j<tmp_list.size();j++){
-                    double d = norm(tmp_list.get(j).x,SampleList.get(i).x);
+                    double d = norm(tmp_list.get(j).x,sampleList.get(i).x);
                     if (d < 0.000001)
                         isIn = true;
                 }
                 if (!isIn)
-                    tmp_list.add(SampleList.get(i));                
+                    tmp_list.add(sampleList.get(i));                
             }
             Matrix L = null;                
             Matrix V = new Matrix(tmp_list.size(),n+1);
@@ -236,7 +236,7 @@ public class Sandbox extends Optimizer{
         }
     }
     
-    public double[] FindMostProbablePoint(){
+    public Sample FindMostProbablePoint(){
         SandBoxEffFunction function = new SandBoxEffFunction();
         
         SimpleSCE sce = new SimpleSCE();
@@ -261,11 +261,10 @@ public class Sandbox extends Optimizer{
                 localFactor = 2.0;
             if (counter % 3 == 2)
                 localFactor = 0.5;
-            double next[] = FindMostProbablePoint();
-            Sample test = new Sample(next,this.funct(next));
-            SampleList.add(test);
+            double next[] = FindMostProbablePoint().x;
+            Sample test = this.getSample(next);            
             best = Math.min(test.fx, best);
-            System.out.println("BestValue:" + best + "\nk:" + SampleList.size() + "\nMyPoint:" + test.fx);
+            System.out.println("BestValue:" + best + "\nk:" + sampleList.size() + "\nMyPoint:" + test.fx);
             counter++;
         }
     }
