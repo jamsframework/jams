@@ -32,15 +32,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.unijena.jams.data.*;
-import org.unijena.jams.io.GenericDataWriter;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.io.GenericDataWriter;
+import jams.model.*;
 import java.util.Arrays.*;
 import java.util.Comparator;
 import java.util.StringTokenizer;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.io.SerializableBufferedWriter;
+import jams.JAMS;
+import jams.JAMSTools;
+import jams.io.SerializableBufferedWriter;
 
 /**
  *

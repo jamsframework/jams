@@ -15,14 +15,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import org.unijena.jams.data.*;
-import org.unijena.jams.data.JAMSEntity;
-import org.unijena.jams.data.JAMSEntity.NoSuchAttributeException;
-import org.unijena.jams.data.JAMSEntityCollection;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSContext;
-import org.unijena.jams.model.JAMSVarDescription;
-import org.unijena.jams.model.Snapshot;
+import jams.data.*;
+import jams.data.JAMSEntity;
+import jams.data.JAMSEntity.NoSuchAttributeException;
+import jams.data.JAMSEntityCollection;
+import jams.model.JAMSComponent;
+import jams.model.JAMSContext;
+import jams.model.JAMSVarDescription;
+import jams.model.Snapshot;
 
 /**
  *

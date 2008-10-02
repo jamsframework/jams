@@ -14,13 +14,13 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.data.JAMSBoolean;
-import org.unijena.jams.data.JAMSDouble;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.model.JAMSComponentDescription;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.JAMS;
+import jams.data.JAMSBoolean;
+import jams.data.JAMSDouble;
+import jams.data.JAMSInteger;
+import jams.data.JAMSString;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 
 //import jams.components.optimizer.
 @JAMSComponentDescription(

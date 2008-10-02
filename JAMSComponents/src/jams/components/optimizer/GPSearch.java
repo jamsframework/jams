@@ -33,58 +33,6 @@ public class GPSearch extends Optimizer {
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-<<<<<<< .mine
-=======
-            description = "List of parameter identifiers to be sampled"
-            )
-            public JAMSString parameterIDs;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "List of parameter value bounaries corresponding to parameter identifiers"
-            )
-            public JAMSString boundaries;
-           
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "objective function name"
-            )
-            public JAMSString effMethodName;
-            
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "the prediction series"
-            )
-            public JAMSDouble effValue;
-        
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "optimization mode"
-            )
-            public JAMSInteger mode;
-          
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "maximum runs"
-            )
-            public JAMSInteger maxn;
-        
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Flag for enabling/disabling this sampler"
-            )
-            public JAMSBoolean enable;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
->>>>>>> .r1028
             description = "Output file name"
             )
             public JAMSString outputFileName;
@@ -140,11 +88,7 @@ public class GPSearch extends Optimizer {
     int iterationCounter = 0;
     
     public void init() {
-<<<<<<< .mine
         super.init();        
-=======
-        super.init(this.parameterIDs.getValue(),this.boundaries.getValue(),getModel().getWorkspaceDirectory().getPath(),effValue,mode.getValue());        
->>>>>>> .r1028
     }
                               
     double TransformAndEvaluate(double []in){

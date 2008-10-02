@@ -11,13 +11,13 @@ package jams.components.optimizer;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import org.unijena.jams.data.JAMSDouble;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSComponentDescription;
-import org.unijena.jams.model.JAMSContext;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.data.JAMSDouble;
+import jams.data.JAMSInteger;
+import jams.data.JAMSString;
+import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSContext;
+import jams.model.JAMSVarDescription;
 
 //import jams.components.optimizer.
 @JAMSComponentDescription(

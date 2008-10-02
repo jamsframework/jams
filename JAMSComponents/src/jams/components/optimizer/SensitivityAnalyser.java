@@ -17,13 +17,13 @@ import java.io.IOException;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.data.*;
-import org.unijena.jams.io.GenericDataWriter;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSComponentDescription;
-import org.unijena.jams.model.JAMSContext;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.JAMS;
+import jams.data.*;
+import jams.io.GenericDataWriter;
+import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSContext;
+import jams.model.JAMSVarDescription;
 import jams.components.machineLearning.GaussianLearner;
 
 /**

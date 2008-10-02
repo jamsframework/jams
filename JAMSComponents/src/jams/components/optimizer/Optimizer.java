@@ -12,14 +12,14 @@ import java.util.Comparator;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import org.unijena.jams.data.*;
-import org.unijena.jams.dataaccess.DataAccessor;
-import org.unijena.jams.io.DataTracer.DataTracer;
-import org.unijena.jams.io.DataTracer.StandardTracer;
-import org.unijena.jams.model.JAMSComponent;
-import org.unijena.jams.model.JAMSContext;
-import org.unijena.jams.model.Snapshot;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.data.*;
+import jams.dataaccess.DataAccessor;
+import jams.io.DataTracer.DataTracer;
+import jams.io.DataTracer.*;
+import jams.model.JAMSComponent;
+import jams.model.JAMSContext;
+import jams.model.Snapshot;
+import jams.model.JAMSVarDescription;
 
 /**
  *
@@ -264,7 +264,7 @@ public abstract class Optimizer extends JAMSContext {
         return current;
     }
     
-    @Override
+/*    @Override
     protected DataTracer createDataTracer() {
         return new StandardTracer(this, JAMSLong.class) {
             @Override
@@ -277,12 +277,12 @@ public abstract class Optimizer extends JAMSContext {
                 output("\n");
             }
         };
-    }
+    }*/
     
-    @Override
+    /*@Override
     public String getTraceMark() {
         return buildMark();
-    }
+    }*/
     
     public double funct(double x[]) {        
         double value = 0.0;     

@@ -18,10 +18,10 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.JAMSComponentDescription;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.JAMS;
+import jams.data.*;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 
 @JAMSComponentDescription(
         title="Branch and Bound Optimizer",

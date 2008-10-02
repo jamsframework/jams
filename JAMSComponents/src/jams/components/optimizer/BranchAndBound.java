@@ -14,11 +14,8 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Vector;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.data.*;
-import org.unijena.jams.io.DataTracer.DataTracer;
-import org.unijena.jams.io.DataTracer.StandardTracer;
-import org.unijena.jams.model.JAMSComponentDescription;
+import jams.JAMSTools;
+import jams.model.JAMSComponentDescription;
 
 @JAMSComponentDescription(
         title="Branch and Bound Optimizer",

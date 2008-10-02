@@ -14,10 +14,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.model.JAMSComponentDescription;
+import jams.JAMS;
+import jams.JAMSTools;
+import jams.data.JAMSInteger;
+import jams.model.JAMSComponentDescription;
 @JAMSComponentDescription(
         title="GutmanMethod",
         author="Christian Fischer",

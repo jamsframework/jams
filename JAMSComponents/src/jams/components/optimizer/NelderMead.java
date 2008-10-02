@@ -15,18 +15,16 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.Vector;
-import org.unijena.jams.JAMS;
-import org.unijena.jams.JAMSTools;
-import org.unijena.jams.data.JAMSBoolean;
-import org.unijena.jams.data.JAMSDouble;
-import org.unijena.jams.data.JAMSEntity;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.io.SerializableBufferedWriter;
-import org.unijena.jams.model.JAMSComponentDescription;
-import org.unijena.jams.model.JAMSVarDescription;
-import sun.nio.cs.Surrogate.Generator;
-import sun.nio.cs.Surrogate.Generator;
+import jams.JAMS;
+import jams.JAMSTools;
+import jams.data.JAMSBoolean;
+import jams.data.JAMSDouble;
+import jams.data.JAMSEntity;
+import jams.data.JAMSInteger;
+import jams.data.JAMSString;
+import jams.io.SerializableBufferedWriter;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 
 @SuppressWarnings("unchecked")
 @JAMSComponentDescription(
