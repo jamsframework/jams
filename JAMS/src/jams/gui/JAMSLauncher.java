@@ -392,7 +392,6 @@ public class JAMSLauncher extends JFrame {
         } else {
 
             // case 3: attribute does not exist, property removed
-
             property.getParentNode().removeChild(property);
             LHelper.showInfoDlg(this, "Attribute " + attributeName + " does not " +
                     "exist in component " + componentName + "! Removing visual editor!", "Info");

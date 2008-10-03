@@ -44,11 +44,10 @@ author = "Sven Kralisch",
 date = "26. September 2005",
 description = "This component represents a JAMS model which is a special type of context component")
 public class JAMSModel extends JAMSContext {
-/*
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Model workspace directory")
-    public JAMSDirName workspaceDirectory;
-*/
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
+    public JAMSDirName workspaceDirectory = new JAMSDirName();
+
     private JAMSRuntime runtime;
     private String name, author, date;
     private VirtualWorkspace workspace;
@@ -92,13 +91,29 @@ public class JAMSModel extends JAMSContext {
 
     @Override
     public void init() {
-        super.init();
+        
+        // check if workspace directory was specified
+        if (workspaceDirectory.getValue() == null) {
+            runtime.sendHalt("No workspace directory specified, stopping execution!");
+            return;
+        }
+        
+        // prepare workspace
+        this.workspace = new VirtualWorkspace(new File(workspaceDirectory.getValue()), runtime);
+        if (!workspace.isValid()) {
+            this.getRuntime().sendHalt("Error during model setup: \"" +
+                    workspace.getDirectory().getAbsolutePath() + "\" is not a valid datastore!");
+            return;
+        }
+                
         // save current model parameter to workspace output directory
         getRuntime().saveModelParameter();
+        
+        super.init();
     }
 
-    public void setWorkspaceDir(String workspaceDir) {
-        this.workspace = new VirtualWorkspace(new File(workspaceDir), runtime);
+    public void setWorkspaceDirectory(String workspaceDirectory) {
+        this.workspaceDirectory.setValue(workspaceDirectory);
     }
 
     public VirtualWorkspace getWorkspace() {

@@ -42,14 +42,13 @@ import jams.gui.input.ValueChangeListener;
  *
  * @author S. Kralisch
  *
- * Panel that provides Swing components for defining model author,
+ * Panel that provides swing components for defining model author,
  * date, description and help-baseURL
  *
  */
 public class ModelEditPanel extends JPanel {
     
-    private static final int TEXTAREA_WIDTH = 295;
-    private static final String DEFAULT_STRING = "[none]";
+    private static final int TEXTAREA_WIDTH = 450, TEXTAREA_HEIGHT = 150;
     
     private HashMap<String, JTextField> textFields = new HashMap<String, JTextField>();
     private HashMap<String, JTextPane> textAreas = new HashMap<String, JTextPane>();
@@ -75,16 +74,16 @@ public class ModelEditPanel extends JPanel {
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Workspace:"), 1, 0, 1, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Author:"), 1, 1, 1, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Date:"), 1, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Description:"), 1, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Help Base URL:"), 1, 4, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Help Base URL:"), 1, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Description:"), 1, 4, 1, 1, 0, 0);
         
         workspaceInput = new FileInput(true);
         
         LHelper.addGBComponent(componentPanel, mainLayout, workspaceInput, 2, 0, 1, 1, 1.0, 1.0);
         LHelper.addGBComponent(componentPanel, mainLayout, getTextField("author", "", true), 2, 1, 1, 1, 1.0, 1.0);
         LHelper.addGBComponent(componentPanel, mainLayout, getTextField("date", "", true), 2, 2, 1, 1, 1.0, 1.0);
-        LHelper.addGBComponent(componentPanel, mainLayout, getTextPane("description", "", 250, true), 2, 3, 1, 1, 1.0, 1.0);
-        LHelper.addGBComponent(componentPanel, mainLayout, getTextField("helpBaseUrl", "", true), 2, 4, 1, 1, 1.0, 1.0);
+        LHelper.addGBComponent(componentPanel, mainLayout, getTextField("helpBaseUrl", "", true), 2, 3, 1, 1, 1.0, 1.0);
+        LHelper.addGBComponent(componentPanel, mainLayout, getTextPane("description", "", true), 2, 4, 2, 1, 1.0, 1.0);
 
         workspaceInput.addValueChangeListener(new ValueChangeListener() {
 
@@ -177,13 +176,13 @@ public class ModelEditPanel extends JPanel {
         return text;
     }
     
-    public JScrollPane getTextPane(String key, String value, int height, boolean editable) {
+    public JScrollPane getTextPane(String key, String value, boolean editable) {
         JTextPane textPane = new JTextPane();
         textPane.setContentType("text/plain");
         textPane.setEditable(editable);
         textPane.setText(value);
         JScrollPane scroll = new JScrollPane(textPane);
-        scroll.setPreferredSize(new Dimension(TEXTAREA_WIDTH, height));
+        scroll.setPreferredSize(new Dimension(TEXTAREA_WIDTH, TEXTAREA_HEIGHT));
         textAreas.put(key, textPane);
         return scroll;
     }

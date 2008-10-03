@@ -48,13 +48,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
 
-public class VirtualWorkspace implements Serializable {
+public class VirtualWorkspace {
 
     private static final String CONFIG_FILE_NAME = "config.txt";
     private static final String CONTEXT_ATTRIBUTE_NAME = "context";
@@ -62,8 +61,8 @@ public class VirtualWorkspace implements Serializable {
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
     private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
     private JAMSRuntime runtime = new StandardRuntime();
-    transient private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-    transient private File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory;
+    private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+    private File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory;
     private Properties properties = new Properties();
     private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
 
@@ -72,10 +71,7 @@ public class VirtualWorkspace implements Serializable {
         this.directory = directory;
         loadConfig();
 
-        if (!isValid(directory)) {
-            this.getRuntime().sendHalt("Error during model setup: \"" +
-                    directory.getAbsolutePath() + "\" is not a valid datastore!");
-        } else {
+        if (isValid()) {
             this.createDataStores();
         }
     }
@@ -107,7 +103,8 @@ public class VirtualWorkspace implements Serializable {
         }
     }
 
-    private boolean isValid(File directory) {
+    public boolean isValid() {
+
         if (!directory.isDirectory()) {
             return false;
         }
@@ -246,10 +243,6 @@ public class VirtualWorkspace implements Serializable {
         properties.setProperty("persistent", Boolean.toString(inc));
     }
 
-    public void moveTo(File directory){
-        this.directory = directory;
-    }
-    
     private void createDataStores() {
 
         FileFilter filter = new FileFilter() {

@@ -69,7 +69,7 @@ public class FileInput extends JPanel implements InputComponent {
 
         addButton = new JButton("...");
         addButton.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
-        addButton.setMargin(new java.awt.Insets(10, 10, 10, 10));
+        //addButton.setMargin(new java.awt.Insets(10, 10, 10, 10));
 
         jfc = LHelper.getJFileChooser();
 

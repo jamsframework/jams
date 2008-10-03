@@ -76,8 +76,8 @@ public class ModelLoader {
         jamsModel.setAuthor(root.getAttribute("author"));
         jamsModel.setDate(root.getAttribute("date"));
         
-        Element workspaceElement = (Element) root.getElementsByTagName("workspace").item(0);
-        jamsModel.setWorkspaceDir(workspaceElement.getAttribute("value"));
+        /*Element workspaceElement = (Element) root.getElementsByTagName("workspace").item(0);
+        jamsModel.setWorkspaceDirectory(workspaceElement.getAttribute("value"));*/
         
 
         NodeList childs = root.getChildNodes();
@@ -101,14 +101,14 @@ public class ModelLoader {
             if (node.getNodeName().equals("var")) {
                 element = (Element) node;
                 if (element.getAttribute("name").equals("workspaceDirectory")) {
-                    jamsModel.setWorkspaceDir(element.getAttribute("value"));
+                    jamsModel.setWorkspaceDirectory(element.getAttribute("value"));
                 }
             }
         }
 
         jamsModel.getRuntime().println("*************************************", JAMS.STANDARD);
         jamsModel.getRuntime().println("model     : " + jamsModel.getName(), JAMS.STANDARD);
-        jamsModel.getRuntime().println("workspace : " + jamsModel.getWorkspaceDirectory(), JAMS.STANDARD);
+        jamsModel.getRuntime().println("workspace : " + jamsModel.workspaceDirectory.getValue(), JAMS.STANDARD);
         jamsModel.getRuntime().println("author    : " + jamsModel.getAuthor(), JAMS.STANDARD);
         jamsModel.getRuntime().println("date      : " + jamsModel.getDate(), JAMS.STANDARD);
         jamsModel.getRuntime().println("*************************************", JAMS.STANDARD);

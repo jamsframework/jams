@@ -311,13 +311,17 @@ public class ModelTree extends JAMSTree {
             rootElement.setAttribute("author", view.getAuthor());
             rootElement.setAttribute("date", view.getDate());
             rootElement.setAttribute("helpbaseurl", view.getHelpBaseUrl());
-            rootElement.setAttribute("workspace", view.getWorkspace());
             rootElement.appendChild(document.createTextNode("\n"));
 
             document.appendChild(rootElement);
 
             element = (Element) document.createElement("description");
             element.appendChild(document.createCDATASection(view.getDescription()));
+            rootElement.appendChild(element);
+
+            element = (Element) document.createElement("var");
+            element.setAttribute("name", "workspaceDirectory");
+            element.setAttribute("value", view.getWorkspace());
             rootElement.appendChild(element);
 
             rootElement.appendChild(document.createTextNode("\n"));
@@ -330,8 +334,8 @@ public class ModelTree extends JAMSTree {
                 if (properties != null) {
                     for (Object modelProperty : properties) {
 
-                        // <@todo> groups consists of subgroups and properties,
-                        //          subgroups consists of properties
+                        // <@todo> groups consist of subgroups and properties,
+                        //          subgroups consist of properties
                         //          this could be recursive too
                         if (modelProperty instanceof ModelProperty) {
                             ModelProperty property = (ModelProperty) modelProperty;
@@ -533,12 +537,10 @@ public class ModelTree extends JAMSTree {
         view.setAuthor(docRoot.getAttribute("author"));
         view.setDate(docRoot.getAttribute("date"));
         view.setHelpBaseUrl(docRoot.getAttribute("helpbaseurl"));
-        view.setWorkspace(docRoot.getAttribute("workspace"));
 
         Node descriptionNode = docRoot.getElementsByTagName("description").item(0);
         if (descriptionNode != null) {
             view.setDescription(descriptionNode.getTextContent());
-            view.getModelEditPanel().update();
         }
 
         //create the tree's root node
@@ -568,8 +570,15 @@ public class ModelTree extends JAMSTree {
 
             } else if (node.getNodeName().equals("attribute")) {
                 addContextAttribute(cd, (Element) node);
+            } else if (node.getNodeName().equals("var")) {
+                element = (Element) node;
+                if (element.getAttribute("name").equals("workspaceDirectory")) {
+                    view.setWorkspace(element.getAttribute("value"));
+                }
             }
         }
+        view.getModelEditPanel().update();
+
 
         //handle the launcher node
 

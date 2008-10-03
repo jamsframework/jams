@@ -108,8 +108,8 @@ public class ModelView {
     public ModelView(String title, JDesktopPane parentPanel) {
 
         this.parentPanel = parentPanel;
-        compEditPanel = new ComponentPanel(this);
         modelEditPanel = new ModelEditPanel(this);
+        compEditPanel = new ComponentPanel(this);
         launcherPanel = new LauncherPanel(this);
         launcherPanelDlg = new PanelDlg(JUICE.getJuiceFrame(), "GUI Builder", launcherPanel) {
 
@@ -246,7 +246,7 @@ public class ModelView {
         modelSplitPane.setContinuousLayout(true);
 
         JTabbedPane tabPane = new JTabbedPane();
-        tabPane.addTab("Model configuration", new JScrollPane(modelEditPanel));
+        //tabPane.addTab("Model configuration", new JScrollPane(modelEditPanel));
         tabPane.addTab("Component configuration", new JScrollPane(compEditPanel));
         tabPane.addTab("GUI Builder", new JScrollPane(launcherPanel));
 
@@ -532,11 +532,11 @@ public class ModelView {
             property.var = property.component.getComponentAttributes().get(attributeName);
             property.attribute = property.component.getContextAttributes().get(attributeName);
         }
-
+/*
         if (attributeName.equals("workspace") && (property.component.getClazz() == JAMSModel.class)) {
             property.var = property.component.createComponentAttribute(attributeName, JAMSDirName.class, ComponentDescriptor.ComponentAttribute.READ_ACCESS);
         }
-
+*/
         //check wether the referred parameter is existing or not
         if ((property.attribute == null) && (property.var == null) &&
                 !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
