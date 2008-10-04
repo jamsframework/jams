@@ -61,8 +61,8 @@ public class VirtualWorkspace {
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
     private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
     private JAMSRuntime runtime = new StandardRuntime();
-    private ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-    private File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory;
+    transient ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+    transient File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory;
     private Properties properties = new Properties();
     private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
 

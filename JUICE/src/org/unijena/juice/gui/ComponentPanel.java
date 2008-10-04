@@ -104,6 +104,7 @@ public class ComponentPanel extends JPanel {
 
         JButton nameEditButton = new JButton("...");
         nameEditButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        nameEditButton.setPreferredSize(new Dimension(20, 20));
         nameEditButton.addActionListener(new ActionListener() {
 
             @Override

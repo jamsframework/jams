@@ -36,7 +36,7 @@ import jams.gui.*;
  */
 public class FileInput extends JPanel implements InputComponent {
 
-    static final int BUTTON_SIZE = 21;
+    static final int BUTTON_SIZE = 20;
     private JTextField textField;
     private JButton addButton;
     private JFileChooser jfc;
@@ -60,23 +60,13 @@ public class FileInput extends JPanel implements InputComponent {
         textField.setBorder(BorderFactory.createEtchedBorder());
         add(textField, BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBorder(BorderFactory.createEtchedBorder());
-        buttonPanel.setPreferredSize(new Dimension(BUTTON_SIZE + 5, BUTTON_SIZE + 5));
-        buttonPanel.setLayout(new FlowLayout());
-        add(buttonPanel, BorderLayout.EAST);
-
+        jfc = LHelper.getJFileChooser();
 
         addButton = new JButton("...");
         addButton.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
-        //addButton.setMargin(new java.awt.Insets(10, 10, 10, 10));
-
-        jfc = LHelper.getJFileChooser();
-
-        buttonPanel.add(addButton);
-        add(addButton, BorderLayout.EAST);
         addButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent event) {
 
                 int result = jfc.showOpenDialog(FileInput.this);
@@ -87,6 +77,8 @@ public class FileInput extends JPanel implements InputComponent {
                 }
             }
         });
+        add(addButton, BorderLayout.EAST);
+
     }
 
     public void setFile(String fileName) {
@@ -94,8 +86,15 @@ public class FileInput extends JPanel implements InputComponent {
             fileName = "";
         }
         textField.setText(fileName);
-        File file = new File(fileName).getParentFile();
-        jfc.setCurrentDirectory(file);
+        File file = new File(fileName);
+        if (file.exists()) {
+            // try to change to that dir
+            if (file.isDirectory()) {
+                jfc.setCurrentDirectory(file);
+            } else {
+                jfc.setCurrentDirectory(file.getParentFile());
+            }
+        }
     }
 
     public String getFileName() {
@@ -136,8 +135,9 @@ public class FileInput extends JPanel implements InputComponent {
     }
 
     public void setLength(int length) {
+        textField.setColumns(length);
     }
-
+    
     public void addValueChangeListener(ValueChangeListener l) {
         this.l = l;
         this.textField.getDocument().addDocumentListener(new DocumentListener() {

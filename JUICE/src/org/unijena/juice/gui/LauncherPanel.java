@@ -23,7 +23,6 @@
 package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -46,7 +45,6 @@ import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import jams.gui.LHelper;
 import jams.gui.input.InputComponent;
-import jams.io.ParameterProcessor;
 import org.unijena.juice.*;
 import org.unijena.juice.ModelProperties.Group;
 import org.unijena.juice.ModelProperties.ModelElement;

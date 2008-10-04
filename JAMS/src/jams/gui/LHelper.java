@@ -144,7 +144,7 @@ public class LHelper {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = fill;
         gbc.anchor = anchor;
-        gbc.insets = new Insets(0, 2, 2, 2);
+        gbc.insets = new Insets(2, 2, 2, 2);
         gbc.gridx = x;
         gbc.gridy = y;
         gbc.gridwidth = width;
@@ -256,10 +256,10 @@ public class LHelper {
             ic.getComponent().setPreferredSize(new Dimension(NUMBERINPUT_WIDTH, JCOMP_HEIGHT));
         } else {
             ic = new TextInput();
-            ic.getComponent().setPreferredSize(new Dimension(TEXTINPUT_WIDTH, JCOMP_HEIGHT));
+            ic.getComponent().setPreferredSize(new Dimension(TEXTINPUT_WIDTH, JCOMP_HEIGHT));ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
         }
 
-        ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
+        //ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
         return ic;
     }
 
