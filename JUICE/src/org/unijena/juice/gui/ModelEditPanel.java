@@ -22,9 +22,7 @@
  */
 package org.unijena.juice.gui;
 
-import jams.data.JAMSCalendar;
 import jams.data.JAMSDirName;
-import jams.data.JAMSFileName;
 import jams.data.JAMSString;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -56,7 +54,6 @@ public class ModelEditPanel extends JPanel {
     private ModelView view;
     private InputComponent workspace,  author,  date,  helpBaseURL;
     private JTextPane description;
-    private boolean adjusting = false;
 
     public ModelEditPanel(ModelView view) {
         super();
