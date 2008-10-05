@@ -50,9 +50,7 @@ import javax.swing.table.DefaultTableModel;
 import jams.gui.LHelper;
 import jams.model.JAMSModel;
 import java.awt.Font;
-import java.util.Enumeration;
 import javax.swing.UIManager;
-import javax.swing.plaf.FontUIResource;
 import org.unijena.juice.*;
 import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
@@ -388,7 +386,6 @@ public class ComponentPanel extends JPanel {
         if (tmpSelectedAttrRow >= 0) {
             attributeTable.setRowSelectionInterval(tmpSelectedAttrRow, tmpSelectedAttrRow);
         }
-
     }
 
     /*    
