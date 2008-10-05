@@ -525,7 +525,7 @@ public class JAMSContext extends JAMSComponent {
         }
 
         runEnumerator.reset();
-        while (runEnumerator.hasNext() && doRun) {
+        while (runEnumerator.hasNext() && !components.isEmpty() && doRun) {
             JAMSComponent comp = runEnumerator.next();
             //comp.updateRun();
             try {

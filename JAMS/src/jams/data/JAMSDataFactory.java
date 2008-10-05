@@ -22,6 +22,8 @@
  */
 package jams.data;
 
+import jams.runtime.JAMSRuntime;
+
 /**
  *
  * @author S. Kralisch
@@ -44,5 +46,19 @@ public class JAMSDataFactory {
         JAMSData dataObject = (JAMSData) clazz.newInstance();
 
         return dataObject;
+    }
+
+    public static JAMSData getInstance(String className, JAMSRuntime rt) {
+        JAMSData object = null;
+        try {
+            object = getData(className);
+        } catch (ClassNotFoundException cnfe) {
+            rt.handle(cnfe);
+        } catch (InstantiationException ie) {
+            rt.handle(ie);
+        } catch (IllegalAccessException iae) {
+            rt.handle(iae);
+        }
+        return object;
     }
 }
