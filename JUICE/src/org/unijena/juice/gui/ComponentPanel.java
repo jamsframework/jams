@@ -49,6 +49,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import jams.gui.LHelper;
 import jams.model.JAMSModel;
+import java.awt.Font;
+import java.util.Enumeration;
+import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
 import org.unijena.juice.*;
 import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
@@ -61,9 +65,10 @@ import org.unijena.juice.ContextAttribute;
  */
 public class ComponentPanel extends JPanel {
 
-    private static final String DEFAULT_STRING = "[none]";
-    private static final String ATTR_CONFIG_STRING = "Attribute configuration";
-    private static final String MODEL_CONFIG_STRING = "Model configuration";
+    private static final String DEFAULT_STRING = "[none]",
+            ATTR_CONFIG_STRING = "Attribute configuration:", 
+            MODEL_CONFIG_STRING = "Model configuration:",
+            ATTR_OVERVIEW_STRING = "Attribute overview:";
     private static final Dimension BUTTON_DIMENSION = new Dimension(70, 20);
     private static final Dimension TABLE_DIMENSION = new Dimension(500, 200);
     private ComponentDescriptor componentDescriptor = null;
@@ -96,11 +101,20 @@ public class ComponentPanel extends JPanel {
         componentPanel = new JPanel();
         //setBorder(BorderFactory.createTitledBorder("Component Properties"));
 
+        // create some bold font for the labels
+        Font labelFont = (Font) UIManager.getDefaults().get("Label.font");
+        labelFont = new Font(labelFont.getName(), Font.BOLD, labelFont.getSize()+1);                
+        
         GridBagLayout mainLayout = new GridBagLayout();
         componentPanel.setLayout(mainLayout);
+        
+        JLabel nameLabel = new JLabel("Name:");
+        nameLabel.setFont(labelFont);
+        JLabel typeLabel = new JLabel("Type:");
+        typeLabel.setFont(labelFont);
 
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Name:"), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Type:"), 0, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, nameLabel, 0, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, typeLabel, 0, 1, 1, 1, 0, 0);
 
         JButton nameEditButton = new JButton("...");
         nameEditButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
@@ -291,10 +305,15 @@ public class ComponentPanel extends JPanel {
 
         attributeConfigPanel = new ComponentAttributePanel(view);
         configLabel = new JLabel(MODEL_CONFIG_STRING);
+        configLabel.setFont(labelFont);
+        
         switchPanel = new JPanel();
+        
+        JLabel attrOverviewLabel = new JLabel(ATTR_OVERVIEW_STRING);
+        attrOverviewLabel.setFont(labelFont);
 
         LHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 2, 4, 1, 1.0, 1.0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Attribute overview"), 0, 10, 4, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, attrOverviewLabel, 0, 10, 4, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, tabPane, 0, 20, 4, 1, 1.0, 1.0);
         LHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 25, 4, 1, 1.0, 1.0);
         LHelper.addGBComponent(componentPanel, mainLayout, configLabel, 0, 27, 4, 1, 0, 0);

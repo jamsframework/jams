@@ -50,7 +50,7 @@ import java.awt.GridBagConstraints;
  */
 public class ModelEditPanel extends JPanel {
 
-    private static final int TEXTAREA_WIDTH = 450,  TEXTAREA_HEIGHT = 150;
+    private static final int TEXTAREA_WIDTH = 450,  TEXTAREA_HEIGHT = 150, TEXTFIELD_WIDTH = 35;
     private JPanel componentPanel;
     private GridBagLayout mainLayout;
     private ModelView view;
@@ -79,16 +79,16 @@ public class ModelEditPanel extends JPanel {
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Description:"), 1, 4, 1, 1, 0, 0);
 
         workspace = LHelper.createInputComponent(JAMSDirName.class.getSimpleName());
-        workspace.setLength(33);
+        workspace.setLength(TEXTFIELD_WIDTH);
 
         author = LHelper.createInputComponent(JAMSString.class.getSimpleName());
-        author.setLength(27);
+        author.setLength(TEXTFIELD_WIDTH);
 
         date = LHelper.createInputComponent(JAMSString.class.getSimpleName());
-        date.setLength(27);
+        date.setLength(TEXTFIELD_WIDTH);
 
         helpBaseURL = LHelper.createInputComponent(JAMSString.class.getSimpleName());
-        helpBaseURL.setLength(27);
+        helpBaseURL.setLength(TEXTFIELD_WIDTH);
 
         description = new JTextPane();
         description.setContentType("text/plain");

@@ -238,10 +238,10 @@ public class LHelper {
         InputComponent ic;
         if (type.equals("JAMSFileName")) {
             ic = new FileInput();
-            ((Component) ic).setPreferredSize(new Dimension(FILEINPUT_WIDTH, JCOMP_HEIGHT));
+            //((Component) ic).setPreferredSize(new Dimension(FILEINPUT_WIDTH, JCOMP_HEIGHT));
         } else if (type.equals("JAMSDirName")) {
             ic = new FileInput(true);
-            ((Component) ic).setPreferredSize(new Dimension(FILEINPUT_WIDTH, JCOMP_HEIGHT));
+            //((Component) ic).setPreferredSize(new Dimension(FILEINPUT_WIDTH, JCOMP_HEIGHT));
         } else if (type.equals("JAMSCalendar")) {
             ic = new CalendarInput();
         } else if (type.equals("JAMSTimeInterval")) {
@@ -251,12 +251,15 @@ public class LHelper {
         } else if ((type.equals("JAMSInteger")) || (type.equals("JAMSLong"))) {
             ic = new IntegerInput();
             ic.getComponent().setPreferredSize(new Dimension(NUMBERINPUT_WIDTH, JCOMP_HEIGHT));
+            ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
         } else if ((type.equals("JAMSFloat")) || (type.equals("JAMSDouble"))) {
             ic = new FloatInput();
             ic.getComponent().setPreferredSize(new Dimension(NUMBERINPUT_WIDTH, JCOMP_HEIGHT));
+            ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
         } else {
             ic = new TextInput();
-            ic.getComponent().setPreferredSize(new Dimension(TEXTINPUT_WIDTH, JCOMP_HEIGHT));ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
+            ic.getComponent().setPreferredSize(new Dimension(TEXTINPUT_WIDTH, JCOMP_HEIGHT));
+            ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
         }
 
         //ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
