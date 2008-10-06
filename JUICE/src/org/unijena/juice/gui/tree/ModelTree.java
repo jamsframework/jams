@@ -578,7 +578,7 @@ public class ModelTree extends JAMSTree {
                 }
             }
         }
-        view.getModelEditPanel().update();
+        view.getModelEditPanel().updatePanel();
 
 
         //handle the launcher node

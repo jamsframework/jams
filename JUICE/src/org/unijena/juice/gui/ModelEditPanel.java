@@ -190,7 +190,7 @@ public class ModelEditPanel extends JPanel {
         add(componentPanel);
     }
 
-    public void update() {
+    public void updatePanel() {
         author.setValue(view.getAuthor());
         date.setValue(view.getDate());
         helpBaseURL.setValue(view.getHelpBaseUrl());
