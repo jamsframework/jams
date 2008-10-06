@@ -121,6 +121,7 @@ public class XMLIO {
         } catch (TransformerConfigurationException ex) {
             ex.printStackTrace();
         } catch (TransformerException ex) {
+            System.out.println(ex.getMessage());
             ex.printStackTrace();
         }
         

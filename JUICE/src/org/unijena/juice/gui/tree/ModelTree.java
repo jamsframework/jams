@@ -311,6 +311,7 @@ public class ModelTree extends JAMSTree {
             rootElement.setAttribute("author", view.getAuthor());
             rootElement.setAttribute("date", view.getDate());
             rootElement.setAttribute("helpbaseurl", view.getHelpBaseUrl());
+            
             rootElement.appendChild(document.createTextNode("\n"));
 
             document.appendChild(rootElement);
@@ -398,7 +399,7 @@ public class ModelTree extends JAMSTree {
             pce.printStackTrace();
         }
 
-        return document;
+            return document;
     }
 
     // return XML element representing a JAMS model property based on a 

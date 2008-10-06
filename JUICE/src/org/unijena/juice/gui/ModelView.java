@@ -81,14 +81,14 @@ public class ModelView {
     private static final int DIVIDER_WIDTH = 9;
     private JInternalFrame frame;
     private File savePath;
-    private Document modelDoc,  initialDoc;
+    private Document initialDoc;
     private JButton modelRunButton,  modelGUIRunButton;
     private ModelTree tree;
     private ComponentPanel compEditPanel;
     //private HashMap<ComponentDescriptor, DataRepository> dataRepositories = new HashMap<ComponentDescriptor, DataRepository>();
     private LauncherPanel launcherPanel;
     private ModelEditPanel modelEditPanel;
-    private String author, date, description, helpBaseUrl, workspace;
+    private String author = "", date = "", description = "", helpBaseUrl = "", workspace = "";
     private HashMap<String, ComponentDescriptor> componentDescriptors = new HashMap<String, ComponentDescriptor>();
     private TreePanel modelTreePanel;
     private JDesktopPane parentPanel;
@@ -710,7 +710,7 @@ public class ModelView {
     }
 
     public void setInitialState() {
-        this.initialDoc = tree.getModelDocument();
+         this.initialDoc = tree.getModelDocument();
     }
 
     public ModelProperties getModelProperties() {
