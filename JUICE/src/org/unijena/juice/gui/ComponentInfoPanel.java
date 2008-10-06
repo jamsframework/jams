@@ -33,7 +33,6 @@ import javax.swing.text.SimpleAttributeSet;
 import jams.gui.LHelper;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
-import org.unijena.juice.*;
 
 /**
  *
