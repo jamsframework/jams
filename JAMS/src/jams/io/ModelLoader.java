@@ -75,10 +75,10 @@ public class ModelLoader {
         jamsModel.setName(root.getAttribute("name"));
         jamsModel.setAuthor(root.getAttribute("author"));
         jamsModel.setDate(root.getAttribute("date"));
-        
+
         /*Element workspaceElement = (Element) root.getElementsByTagName("workspace").item(0);
         jamsModel.setWorkspaceDirectory(workspaceElement.getAttribute("value"));*/
-        
+
 
         NodeList childs = root.getChildNodes();
 
@@ -170,8 +170,8 @@ public class ModelLoader {
             }
 
             // create Objects for component fields and set units and ranges
-            createNumericMembers(component);
-        //createMembers(component);
+            //createNumericMembers(component);
+            createMembers(component);
 
         } catch (ClassNotFoundException cnfe) {
             jamsModel.getRuntime().handle(cnfe, false);
@@ -376,17 +376,24 @@ public class ModelLoader {
             if (!dataType.isInterface() && JAMSData.class.isAssignableFrom(dataType) && fields[i].isAnnotationPresent(JAMSVarDescription.class)) {
 
                 JAMSData dataObject = (JAMSData) o;
+                JAMSVarDescription jvd = fields[i].getAnnotation(JAMSVarDescription.class);
 
                 // get variable object or create one if not existing
-                if (dataObject == null) {
+                if ((dataObject == null) && (!jvd.defaultValue().equals(JAMSVarDescription.NULL_VALUE))) {
                     System.out.println(fields[i].getName());
+
                     dataObject = (JAMSData) dataType.newInstance();
                     fields[i].set(component, dataObject);
+
+                    if (!jvd.defaultValue().equals("")) {
+                        dataObject.setValue(jvd.defaultValue());
+                    }
                 }
             }
         }
     }
 
+/*    
     private void createNumericMembers(JAMSComponent component) throws IllegalAccessException, InstantiationException, ModelSpecificationException {
 
         Class cClass = component.getClass();
@@ -429,28 +436,14 @@ public class ModelLoader {
 //            }
         }
     }
-
+*/
+    
+    /**
+     * Returns the loaded model
+     * @return The loaded model
+     */
     public JAMSModel getModel() {
         return jamsModel;
     }
 
-    public JAMSData getInstance(Class clazz) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-        JAMSData data = null;
-
-        String className = clazz.getSimpleName();
-
-        if (className.equals("JAMSString")) {
-            data = (JAMSData) clazz.newInstance();
-        } else if (className.equals("JAMSInteger")) {
-            data = (JAMSData) clazz.newInstance();
-        } else if (className.equals("JAMSBoolean")) {
-            data = (JAMSData) clazz.newInstance();
-        } else if (className.equals("JAMSDouble")) {
-            data = (JAMSData) Class.forName("jams.data.JAMSSimpleDouble").newInstance();
-        } else {
-            data = (JAMSData) clazz.newInstance();
-        }
-
-        return data;
-    }
 }

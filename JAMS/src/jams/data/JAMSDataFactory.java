@@ -61,4 +61,16 @@ public class JAMSDataFactory {
         }
         return object;
     }
+    
+    public static JAMSData getInstance(Class clazz, JAMSRuntime rt) {
+        JAMSData object = null;
+        try {
+            object = (JAMSData) clazz.newInstance();
+        } catch (InstantiationException ie) {
+            rt.handle(ie);
+        } catch (IllegalAccessException iae) {
+            rt.handle(iae);
+        }
+        return object;
+    }    
 }

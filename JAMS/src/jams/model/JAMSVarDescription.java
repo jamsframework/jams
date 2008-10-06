@@ -20,30 +20,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.model;
 
 /**
  *
  * @author S. Kralisch
  */
-
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JAMSVarDescription {
 
-    public enum AccessType { READ, WRITE, READWRITE };
-    public enum UpdateType { INIT, RUN };
+    public enum AccessType {
+
+        READ, WRITE, READWRITE
+    };
     
+    public static final String NULL_VALUE = "%null%";
+
     AccessType access();                        // type of access
+
     String description() default "";            // description of purpose
-    String defaultValue() default "";           // default value
+
+    String defaultValue() default NULL_VALUE;     // default value
+
     String unit() default "";                   // unit of this var if numeric
+
     double lowerBound() default 0d;             // lowest allowed value of var if numeric
+
     double upperBound() default 0d;             // highest allowed value of var if numeric
-    int length() default 0;             // length of variable if string
+
+    int length() default 0;                     // length of variable if string
 
     //this is obsolete//
+    public enum UpdateType {
+
+        INIT, RUN
+    };
+
     UpdateType update() default UpdateType.INIT;// when to update
 }

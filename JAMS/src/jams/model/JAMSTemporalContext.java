@@ -82,7 +82,7 @@ public class JAMSTemporalContext extends JAMSContext {
         lastValue.add(timeInterval.getTimeUnit(), -timeInterval.getTimeUnitCount());
         lastValue.add(JAMSCalendar.MILLISECOND, 1);
         if (current == null) {
-            current = (JAMSCalendar) JAMSDataFactory.getInstance("jams.data.JAMSCalendar", getModel().getRuntime());
+            current = (JAMSCalendar) JAMSDataFactory.getInstance(JAMSCalendar.class, getModel().getRuntime());
         }
     }
 
@@ -93,17 +93,22 @@ public class JAMSTemporalContext extends JAMSContext {
             // if yes, return standard enumerator
             return new RunEnumerator();
         } else {
-            // if not, return enumerator who's hasNext method always returns false
+            // if not, return empty enumerator
             return new RunEnumerator() {
 
                 @Override
                 public boolean hasNext() {
                     return false;
                 }
+
                 @Override
                 public JAMSComponent next() {
                     return null;
-                }                
+                }
+
+                @Override
+                public void reset() {
+                }
             };
         }
     }
