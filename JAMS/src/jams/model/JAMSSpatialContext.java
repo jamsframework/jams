@@ -23,7 +23,6 @@
 package jams.model;
 
 import jams.data.*;
-import jams.io.DataTracer.DataTracer;
 
 /**
  *
