@@ -213,8 +213,14 @@ public class JAMSContext extends JAMSComponent {
                         array[i] = getDataObject(entityArray, componentClass, tok.nextToken(), accessSpec.accessType, null);
                     }
 
-                    getField(accessSpec.component.getClass(), accessSpec.varName).set(accessSpec.component, array);
-
+                    Field field = getField(accessSpec.component.getClass(), accessSpec.varName);
+                    field.set(accessSpec.component, array);
+                    
+                    // field has been set with some value, so
+                    // remove it from list of nullFields
+                    ArrayList <Field> nullFields = getModel().getNullFields().get(accessSpec.component);
+                    nullFields.remove(field);
+                    
                 } else {
 
                     /* 
@@ -232,9 +238,13 @@ public class JAMSContext extends JAMSComponent {
                     dataObject = getDataObject(entityArray, clazz, accessSpec.attributeName, accessSpec.accessType, componentObject);
 
                     //assign the dataObject to the component
-                    getField(accessSpec.component.getClass(), accessSpec.varName).set(accessSpec.component, dataObject);
+                    Field field = getField(accessSpec.component.getClass(), accessSpec.varName);
+                    field.set(accessSpec.component, dataObject);
 
-
+                    // field has been set with some value, so
+                    // remove it from list of nullFields
+                    ArrayList <Field> nullFields = getModel().getNullFields().get(accessSpec.component);
+                    nullFields.remove(field);
                 }
             } catch (Exception e) {
                 getModel().getRuntime().sendErrorMsg("Error occured in " + accessSpec.component.getInstanceName() + ": " + accessSpec.varName);
@@ -405,7 +415,7 @@ public class JAMSContext extends JAMSComponent {
 
         // setup data tracer -- needed for data output to output-datastores
         setupDataTracer();
-
+        
         // create the init/cleanup enumerator (i.e. one invocation for every component)
         if (initCleanupEnumerator == null) {
             initCleanupEnumerator = getChildrenEnumerator();
@@ -424,17 +434,6 @@ public class JAMSContext extends JAMSComponent {
         }
 
         initEntityData();
-    }
-
-    public void registerAccessor(Class clazz, String attributeName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {
-
-        getDataObject(this.getEntities().getEntityArray(), clazz, attributeName, DataAccessor.READ_ACCESS, null);
-
-        // check if new dataAccessor objects where added
-        // if so, create new array from list
-        if (this.daHash.size() > this.dataAccessors.length) {
-            this.dataAccessors = daHash.values().toArray(new DataAccessor[daHash.size()]);
-        }
     }
 
     protected JAMSData getDataObject(final JAMSEntity[] ea, final Class clazz, final String attributeName, final int accessType, JAMSData componentObject) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {

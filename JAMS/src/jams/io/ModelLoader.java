@@ -31,6 +31,7 @@ import jams.JAMS;
 import jams.JAMSProperties;
 import jams.data.*;
 import jams.runtime.JAMSRuntime;
+import java.util.ArrayList;
 
 /**
  *
@@ -43,6 +44,7 @@ public class ModelLoader {
     private ClassLoader loader;
     private JAMSModel jamsModel;
     private JAMSProperties properties;
+    private HashMap<JAMSComponent, ArrayList<Field>> nullFields = new HashMap<JAMSComponent, ArrayList<Field>>();
 
     public ModelLoader(Document modelDoc, String[] globvars, JAMSRuntime rt, JAMSProperties properties) {
 
@@ -135,6 +137,7 @@ public class ModelLoader {
             }
         }
         jamsModel.setComponents(childComponentList);
+        jamsModel.setNullFields(nullFields);
     }
 
     /**
@@ -170,8 +173,10 @@ public class ModelLoader {
             }
 
             // create Objects for component fields and set units and ranges
-            //createNumericMembers(component);
-            createMembers(component);
+            ArrayList<Field> nf = createMembers(component);
+            nullFields.put(component, nf);
+
+        //createNumericMembers(component);            
 
         } catch (ClassNotFoundException cnfe) {
             jamsModel.getRuntime().handle(cnfe, false);
@@ -247,6 +252,9 @@ public class ModelLoader {
 
                             // attach the variable to the component's field..
                             field.set(component, variable);
+                            
+                            // this field can be removed from the null field list
+                            nullFields.get(component).remove(field);
 
                             JAMSData data = (JAMSData) field.get(component);
                             String id = componentName + "." + varName;
@@ -356,6 +364,14 @@ public class ModelLoader {
         return component;
     }
 
+    public HashMap<JAMSComponent, ArrayList<Field>> getNullFields() {
+        return nullFields;
+    }
+
+    public void setNullFields(HashMap<JAMSComponent, ArrayList<Field>> nullFields) {
+        this.nullFields = nullFields;
+    }
+
     class ModelSpecificationException extends Exception {
 
         public ModelSpecificationException(String errorMsg) {
@@ -363,10 +379,11 @@ public class ModelLoader {
         }
     }
 
-    private void createMembers(JAMSComponent component) throws IllegalAccessException, InstantiationException {
+    private ArrayList<Field> createMembers(JAMSComponent component) throws IllegalAccessException, InstantiationException {
 
         Object o;
         Class dataType;
+        ArrayList<Field> result = new ArrayList<Field>();
 
         Field[] fields = component.getClass().getFields();
         for (int i = 0; i < fields.length; i++) {
@@ -380,64 +397,62 @@ public class ModelLoader {
 
                 // get variable object or create one if not existing
                 if ((dataObject == null) && (!jvd.defaultValue().equals(JAMSVarDescription.NULL_VALUE))) {
-                    System.out.println(fields[i].getName());
-
                     dataObject = (JAMSData) dataType.newInstance();
                     fields[i].set(component, dataObject);
 
-                    if (!jvd.defaultValue().equals("")) {
-                        dataObject.setValue(jvd.defaultValue());
-                    }
+                    dataObject.setValue(jvd.defaultValue());
+                } else {
+                    result.add(fields[i]);
                 }
             }
         }
+        return result;
     }
 
-/*    
+    /*    
     private void createNumericMembers(JAMSComponent component) throws IllegalAccessException, InstantiationException, ModelSpecificationException {
-
-        Class cClass = component.getClass();
-        Object var;
-
-        Field[] fields = cClass.getFields();
-        for (int i = 0; i < fields.length; i++) {
-            var = fields[i].get(component);
-            if (JAMSNumeric.class.isAssignableFrom(fields[i].getType())) {
-                // add ranges and units to JAMSNumeric objects
-
-                JAMSNumeric numericObject = (JAMSNumeric) var;
-                // get variable object or create one if not existing
-                if (numericObject == null) {
-                    numericObject = (JAMSNumeric) fields[i].getType().newInstance();
-                    fields[i].set(component, numericObject);
-                }
-
-                JAMSVarDescription jvd = fields[i].getAnnotation(JAMSVarDescription.class);
-                if (jvd.lowerBound() < jvd.upperBound()) {
-                    //numericObject.setRange(jvd.lowerBound(), jvd.upperBound());
-                }
-
-                if (!jvd.unit().equals("")) {
-                    try {
-                        //numericObject.setUnit(jvd.unit());
-                    } catch (IllegalArgumentException iaex) {
-                        throw new ModelSpecificationException("Invalid unit string in component " + component.getClass().getName() + ": " + jvd.unit());
-                    }
-                }
-
-                if (!jvd.defaultValue().equals("")) {
-                    numericObject.setValue(jvd.defaultValue());
-                }
-
-            }
-//            else if (JAMSData.class.isAssignableFrom(fields[i].getType())) {
-//
-//                JAMSData dataObject = (JAMSData) var; //get variable object or create one if not existing if (dataObject == null && !(JAMSEntity.class.isAssignableFrom(fields[i].getType()))) { dataObject = (JAMSData) fields[i].getType().newInstance(); fields[i].set(component, dataObject); } }
-//            }
-        }
-    }
-*/
     
+    Class cClass = component.getClass();
+    Object var;
+    
+    Field[] fields = cClass.getFields();
+    for (int i = 0; i < fields.length; i++) {
+    var = fields[i].get(component);
+    if (JAMSNumeric.class.isAssignableFrom(fields[i].getType())) {
+    // add ranges and units to JAMSNumeric objects
+    
+    JAMSNumeric numericObject = (JAMSNumeric) var;
+    // get variable object or create one if not existing
+    if (numericObject == null) {
+    numericObject = (JAMSNumeric) fields[i].getType().newInstance();
+    fields[i].set(component, numericObject);
+    }
+    
+    JAMSVarDescription jvd = fields[i].getAnnotation(JAMSVarDescription.class);
+    if (jvd.lowerBound() < jvd.upperBound()) {
+    //numericObject.setRange(jvd.lowerBound(), jvd.upperBound());
+    }
+    
+    if (!jvd.unit().equals("")) {
+    try {
+    //numericObject.setUnit(jvd.unit());
+    } catch (IllegalArgumentException iaex) {
+    throw new ModelSpecificationException("Invalid unit string in component " + component.getClass().getName() + ": " + jvd.unit());
+    }
+    }
+    
+    if (!jvd.defaultValue().equals("")) {
+    numericObject.setValue(jvd.defaultValue());
+    }
+    
+    }
+    //            else if (JAMSData.class.isAssignableFrom(fields[i].getType())) {
+    //
+    //                JAMSData dataObject = (JAMSData) var; //get variable object or create one if not existing if (dataObject == null && !(JAMSEntity.class.isAssignableFrom(fields[i].getType()))) { dataObject = (JAMSData) fields[i].getType().newInstance(); fields[i].set(component, dataObject); } }
+    //            }
+    }
+    }
+     */
     /**
      * Returns the loaded model
      * @return The loaded model
@@ -445,5 +460,4 @@ public class ModelLoader {
     public JAMSModel getModel() {
         return jamsModel;
     }
-
 }

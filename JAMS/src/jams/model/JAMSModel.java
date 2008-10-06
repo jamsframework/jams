@@ -22,6 +22,7 @@
  */
 package jams.model;
 
+import jams.JAMS;
 import jams.data.JAMSDirName;
 import jams.workspace.VirtualWorkspace;
 import jams.workspace.stores.OutputDataStore;
@@ -34,6 +35,8 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import jams.data.JAMSEntityCollection;
 import jams.runtime.JAMSRuntime;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 /**
  *
@@ -51,6 +54,7 @@ public class JAMSModel extends JAMSContext {
     private JAMSRuntime runtime;
     private String name, author, date;
     private VirtualWorkspace workspace;
+    private HashMap<JAMSComponent, ArrayList<Field>> nullFields;
 
     public JAMSModel(JAMSRuntime runtime) {
         this.runtime = runtime;
@@ -109,7 +113,22 @@ public class JAMSModel extends JAMSContext {
         // save current model parameter to workspace output directory
         getRuntime().saveModelParameter();
         
-        super.init();
+        super.init();  
+        
+        
+        getRuntime().println("############## UNDEFIENED FIELDS ####################################", JAMS.VVERBOSE);
+        for (JAMSComponent comp : getNullFields().keySet()) {
+            ArrayList<Field> nf = getNullFields().get(comp);
+            if (nf.isEmpty()) {
+                continue;
+            }
+            String str = "## " + comp.getInstanceName() + ": ";
+            for (Field field : nf) {
+                str += field.getName() + " ";
+            }
+            getRuntime().println(str, JAMS.VVERBOSE);
+        }           
+        getRuntime().println("#####################################################################", JAMS.VVERBOSE);
     }
 
     public void setWorkspaceDirectory(String workspaceDirectory) {
@@ -138,6 +157,14 @@ public class JAMSModel extends JAMSContext {
         }
         return this.workspace.getOutputDataStores(contextName);
     }
+    
+    public HashMap<JAMSComponent, ArrayList<Field>> getNullFields() {
+        return nullFields;
+    }
+
+    public void setNullFields(HashMap<JAMSComponent, ArrayList<Field>> nullFields) {
+        this.nullFields = nullFields;
+    }    
 
     private void CollectEntityCollections(JAMSContext currentContext, JAMSComponent position, HashMap<String, JAMSEntityCollection> collection) {
         currentContext.updateEntityData(position);
