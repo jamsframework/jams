@@ -69,7 +69,7 @@ public class JAMSRemote extends JAMS {
             properties.load(cmdLine.getConfigFileName());
         } else {
             //check for default file
-            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMSProperties.DEFAULT_FILENAME;
+            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
             File file = new File(defaultFile);
             if (file.exists()) {
                 properties.load(defaultFile);

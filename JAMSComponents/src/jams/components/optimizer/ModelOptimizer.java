@@ -5,13 +5,13 @@
 
 package jams.components.optimizer;
 
+import jams.JAMS;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 import jams.JAMSProperties;
@@ -650,7 +650,7 @@ public class ModelOptimizer extends JAMSComponent{
                 }
         } else {
             //check for default file
-            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMSProperties.DEFAULT_FILENAME;
+            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
             File file = new File(defaultFile);
             if (file.exists()) {
                 try{
