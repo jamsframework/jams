@@ -55,6 +55,7 @@ import javax.swing.border.TitledBorder;
 import jams.*;
 import jams.gui.input.InputComponent;
 import jams.data.HelpComponent;
+import jams.gui.input.FileInput;
 import jams.io.ParameterProcessor;
 import jams.runtime.StandardRuntime;
 import jams.runtime.JAMSRuntime;
@@ -240,9 +241,8 @@ public class JAMSLauncher extends JFrame {
 
                 tabbedPane.setSelectedComponent(getGroupMap().get(ic));
 
-                Color oldColor = ic.getComponent().getBackground();
-                ic.getComponent().setBackground(new Color(255, 0, 0));
-
+                ic.setMarked(true);
+                
                 String info = "";
                 if (runModel) {
                     info = " Stopping model execution.";
@@ -254,7 +254,8 @@ public class JAMSLauncher extends JFrame {
                     LHelper.showErrorDlg(this, "Invalid value found!" + info, "Format error");
                 }
 
-                ic.getComponent().setBackground(oldColor);
+                ic.setMarked(false);
+
                 return false;
             }
         }

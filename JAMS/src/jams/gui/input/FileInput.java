@@ -158,4 +158,14 @@ public class FileInput extends JPanel implements InputComponent {
             }
         });
     }
+    
+    private Color oldColor;
+    public void setMarked(boolean marked) {
+        if (marked == true) {
+            oldColor = textField.getBackground();
+            textField.setBackground(new Color(255, 0, 0));
+        } else {
+            textField.setBackground(oldColor);
+        }
+    }
 }

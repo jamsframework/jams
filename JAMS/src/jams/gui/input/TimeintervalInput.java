@@ -40,6 +40,7 @@ import javax.swing.event.DocumentListener;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSTimeInterval;
 import jams.gui.*;
+import java.awt.Color;
 
 /**
  *
@@ -203,7 +204,11 @@ public class TimeintervalInput extends JPanel implements InputComponent {
                 0));
         ti.setTimeUnit(fieldMap.get(timeUnit.getSelectedIndex()));
         ti.setTimeUnitCount(Integer.parseInt(tuCount.getText()));
-        return ti.toString();
+        if (!ti.getStart().before(ti.getEnd())) {
+            return null;
+        } else {
+            return ti.toString();
+        }
     }
 
     public void setValue(String value) {
@@ -283,11 +288,14 @@ public class TimeintervalInput extends JPanel implements InputComponent {
     public boolean verify() {
 
         try {
-            this.getValue();
+            if (this.getValue() != null) {
+                return true;
+            } else {
+                return false;
+            }
         } catch (Exception e) {
             return false;
         }
-        return true;
     }
 
     public int getErrorCode() {
@@ -492,6 +500,16 @@ public class TimeintervalInput extends JPanel implements InputComponent {
             public void changedUpdate(DocumentEvent e) {
                 TimeintervalInput.this.l.valueChanged();
             }
-        });        
+        });
+    }
+
+    private Color oldColor;
+    public void setMarked(boolean marked) {
+        if (marked == true) {
+            oldColor = getBackground();
+            setBackground(new Color(255, 0, 0));
+        } else {
+            setBackground(oldColor);
+        }
     }
 }

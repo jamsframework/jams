@@ -22,6 +22,7 @@
  */
 package jams.gui.input;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
@@ -84,5 +85,15 @@ public class BooleanInput extends JCheckBox implements InputComponent {
                 BooleanInput.this.l.valueChanged();
             }
         });
+    }
+
+    private Color oldColor;
+    public void setMarked(boolean marked) {
+        if (marked == true) {
+            oldColor = getBackground();
+            this.setBackground(new Color(255, 0, 0));
+        } else {
+            this.setBackground(oldColor);
+        }
     }
 }

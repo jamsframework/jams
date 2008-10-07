@@ -23,13 +23,13 @@
 package jams.gui.input;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import jams.gui.*;
 
 /**
  *
@@ -123,5 +123,15 @@ public class FloatInput extends JPanel implements InputComponent {
                 FloatInput.this.l.valueChanged();
             }
         });
+    }
+    
+    private Color oldColor;
+    public void setMarked(boolean marked) {
+        if (marked == true) {
+            oldColor = text.getBackground();
+            text.setBackground(new Color(255, 0, 0));
+        } else {
+            text.setBackground(oldColor);
+        }
     }
 }

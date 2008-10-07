@@ -39,17 +39,44 @@ import org.xml.sax.SAXException;
  */
 public class JAMS {
 
+    /**
+     * Verbosity level 0 of 3
+     */
     public static final int SILENT = 0;
+    /**
+     * Verbosity level 1 of 3
+     */
     public static final int STANDARD = 1;
+    /**
+     * Verbosity level 2 of 3
+     */
     public static final int VERBOSE = 2;
+    /**
+     * Verbosity level 3 of 3
+     */
     public static final int VVERBOSE = 3;
+    
+    /**
+     * Run state causing runtime to stop model execution
+     */
     public static final int RUNSTATE_STOP = 0;
+    /**
+     * Run state causing runtime to continue model execution
+     */
     public static final int RUNSTATE_RUN = 1;
     public static final Font STANDARD_FONT = new java.awt.Font("Courier", 0, 11);
     //public static final int TOOLBAR_HEIGHT = 38;
     public static final int SPLASH_DISPLAY_TIME = 0;
     public static final String WIKI_URL = "http://jams.uni-jena.de/jamswiki";
-    public static final String DEFAULT_PARAMETER_FILE_NAME = "model.jmp";
+    /**
+     * Default name of model output file
+     */
+    public static final String DEFAULT_MODEL_FILENAME = "model.jmp";
+    /**
+     * Default name of parameter output file
+     */
+    public static final String DEFAULT_PARAMETER_FILENAME = "default.jap";
+    
     private static JAMSCmdLine cmdLine;
     private static File baseDir = null;
 
@@ -87,7 +114,7 @@ public class JAMS {
             baseDir = new File(cmdLine.getConfigFileName()).getParentFile();
         } else {
             //check for default file
-            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMSProperties.DEFAULT_FILENAME;
+            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
             baseDir = new File(System.getProperty("user.dir"));
             File file = new File(defaultFile);
             if (file.exists()) {

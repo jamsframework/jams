@@ -31,7 +31,6 @@ import java.util.*;
  */
 public class JAMSProperties extends Observable {
 
-    public static final String DEFAULT_FILENAME = "default.jap";
     public static final String MODEL_IDENTIFIER = "model";
     public static final String LIBS_IDENTIFIER = "libs";
     public static final String SERVER_IDENTIFIER = "server";
@@ -139,7 +138,7 @@ public class JAMSProperties extends Observable {
         p.setProperty("guiconfigheight", "600");
 
         JAMSProperties jp = new JAMSProperties(p);
-        jp.setDefaultFilename(System.getProperty("user.dir") + System.getProperty("file.separator") + JAMSProperties.DEFAULT_FILENAME);
+        jp.setDefaultFilename(System.getProperty("user.dir") + File.separator + JAMS.DEFAULT_PARAMETER_FILENAME);
 
         return jp;
     }

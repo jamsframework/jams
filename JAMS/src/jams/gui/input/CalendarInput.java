@@ -28,19 +28,15 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.InputVerifier;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.WindowConstants;
-import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import jams.data.JAMSCalendar;
-import jams.data.JAMSTimeInterval;
 import jams.gui.*;
+import java.awt.Color;
 
 /**
  *
@@ -294,7 +290,14 @@ public class CalendarInput extends JPanel implements InputComponent {
                 CalendarInput.this.l.valueChanged();
             }
         });
-
-
     }
-}
+    
+    private Color oldColor;
+    public void setMarked(boolean marked) {
+        if (marked == true) {
+            oldColor = getBackground();
+            setBackground(new Color(255, 0, 0));
+        } else {
+            setBackground(oldColor);
+        }
+    }}

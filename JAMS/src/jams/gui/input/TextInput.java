@@ -23,6 +23,7 @@
 package jams.gui.input;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -90,5 +91,15 @@ public class TextInput extends JPanel implements InputComponent {
                 TextInput.this.l.valueChanged();
             }
         });
+    }
+
+    private Color oldColor;
+    public void setMarked(boolean marked) {
+        if (marked == true) {
+            oldColor = text.getBackground();
+            text.setBackground(new Color(255, 0, 0));
+        } else {
+            text.setBackground(oldColor);
+        }
     }
 }
