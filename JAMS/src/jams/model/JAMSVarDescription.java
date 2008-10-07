@@ -42,7 +42,7 @@ public @interface JAMSVarDescription {
 
     String description() default "";            // description of purpose
 
-    String defaultValue() default NULL_VALUE;     // default value
+    String defaultValue() default NULL_VALUE;   // default value
 
     String unit() default "";                   // unit of this var if numeric
 
