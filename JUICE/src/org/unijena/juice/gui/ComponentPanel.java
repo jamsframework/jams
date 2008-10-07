@@ -72,14 +72,12 @@ public class ComponentPanel extends JPanel {
     private ComponentDescriptor componentDescriptor = null;
     private HashMap<String, JTextField> textFields = new HashMap<String, JTextField>();
     private JPanel componentPanel;
-    private Vector<JPanel> varPanels = new Vector<JPanel>();
     private JTable varTable,  attributeTable;
     private Vector<String> varTableColumnIds = new Vector<String>(),  attributeTableColumnIds = new Vector<String>();
     private DefaultTableModel varTableModel,  attributeTableModel;
     private List<String> varNameList,  attrNameList;
     private int selectedVarRow,  selectedAttrRow;
     private JButton attributeEditButton,  attributeAddButton,  attributeDeleteButton;
-    private ComponentAttributeDlg varEditDlg;
     private ContextAttributeDlg attrEditDlg;
     private ModelView view;
     private JAMSNode node;
@@ -97,7 +95,6 @@ public class ComponentPanel extends JPanel {
     private void init() {
 
         componentPanel = new JPanel();
-        //setBorder(BorderFactory.createTitledBorder("Component Properties"));
 
         // create some bold font for the labels
         Font labelFont = (Font) UIManager.getDefaults().get("Label.font");
@@ -168,16 +165,6 @@ public class ComponentPanel extends JPanel {
                 updateAttributeConfigPanel();
             }
         });
-
-        /*
-        varTable.addMouseListener(new MouseAdapter() {
-        public void mouseClicked(MouseEvent e){
-        if (e.getClickCount() == 2){
-        showVarEditDlg();
-        }
-        }
-        });
-         */
 
         varTableColumnIds.add("Name");
         varTableColumnIds.add("Type");
@@ -388,47 +375,6 @@ public class ComponentPanel extends JPanel {
         }
     }
 
-    /*    
-    private void showVarEditDlg() {
-    int tmpSelectedVarRow = selectedVarRow;
-    String attributeName = varNameList.get(selectedVarRow);
-    ComponentAttribute var = componentDescriptor.getComponentAttributes().get(attributeName);
-    
-    //create the dialog if it not yet existing
-    if (varEditDlg == null) {
-    varEditDlg = new ComponentAttributeDlg(JUICE.getJuiceFrame(), view);
-    }
-    
-    Vector<String> ancestors = new Vector<String>();
-    ancestors.add("");
-    
-    JAMSNode ancestor = (JAMSNode) node.getParent();
-    while (ancestor != null) {
-    ancestors.add(ancestor.getUserObject().toString());
-    ancestor = (JAMSNode) ancestor.getParent();
-    }
-    
-    String ancestorNames[] = ancestors.toArray(new String[ancestors.size()]);
-    
-    varEditDlg.show(var, ancestorNames);
-    
-    if (varEditDlg.getResult() == ComponentAttributeDlg.APPROVE_OPTION) {
-    if ((varEditDlg.getAttributeName().equals("") && varEditDlg.getContext() == null) ||
-    (!varEditDlg.getAttributeName().equals("") && varEditDlg.getContext() != null)) {
-    
-    ComponentDescriptor.ComponentAttribute ca = componentDescriptor.getComponentAttributes().get(attributeName);
-    ca.linkToAttribute(varEditDlg.getContext(), varEditDlg.getAttributeName());
-    //componentDescriptor.linkComponentAttribute(attributeName, varEditDlg.getContext(), varEditDlg.getAttributeName());
-    
-    }
-    //componentDescriptor.setComponentAttribute(attributeName, varEditDlg.getValue());
-    componentDescriptor.getComponentAttributes().get(attributeName).setValue(varEditDlg.getValue());
-    
-    this.updateCmpAttrs();
-    varTable.setRowSelectionInterval(tmpSelectedVarRow, tmpSelectedVarRow);
-    }
-    }
-     */
     public JTextField getTextField(String key, String value, boolean editable) {
         JTextField text = new JTextField();
         text.setBorder(BorderFactory.createEtchedBorder());

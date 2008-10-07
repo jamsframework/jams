@@ -79,7 +79,7 @@ public class JUICE {
                 baseDir = new File(cmdLine.getConfigFileName()).getParentFile();
             } else {
                 //check for default file
-                String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMSProperties.DEFAULT_FILENAME;
+                String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
                 baseDir = new File(System.getProperty("user.dir"));
                 File file = new File(defaultFile);
                 if (file.exists()) {

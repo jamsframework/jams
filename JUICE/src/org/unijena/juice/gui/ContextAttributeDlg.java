@@ -24,7 +24,6 @@
 package org.unijena.juice.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -118,14 +117,13 @@ public class ContextAttributeDlg extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 
                 if (!valueInput.verify()) {
-                    Color oldColor = valueInput.getComponent().getBackground();
-                    valueInput.getComponent().setBackground(new Color(255, 0, 0));
+                    valueInput.setMarked(true);
                     LHelper.showErrorDlg(ContextAttributeDlg.this, "Invalid value!", "Format error");
-                    valueInput.getComponent().setBackground(oldColor);
+                    valueInput.setMarked(false);
                     return;
                 }
                 setVisible(false);
-                result = ComponentAttributeDlg.APPROVE_OPTION;
+                result = ContextAttributeDlg.APPROVE_OPTION;
             }
         });
         buttonPanel.add(okButton);
@@ -135,7 +133,7 @@ public class ContextAttributeDlg extends JDialog {
         ActionListener cancelActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                result = ComponentAttributeDlg.CANCEL_OPTION;
+                result = ContextAttributeDlg.CANCEL_OPTION;
             }
         };
         cancelButton.addActionListener(cancelActionListener);

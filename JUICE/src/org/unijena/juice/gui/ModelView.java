@@ -590,11 +590,7 @@ public class ModelView {
         if (tree == null) {
             return null;
         }
-        /*
-        if (!launcherPanel.verifyInputs()) {
-        return null;
-        }
-         */
+
         launcherPanel.updateProperties();
         return tree.getModelDocument();
     }

@@ -43,7 +43,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.WindowConstants;
 import jams.gui.LHelper;
-import org.unijena.juice.*;
 import org.unijena.juice.ComponentDescriptor;
 
 /**
@@ -93,7 +92,7 @@ public class ContextReplaceDlg extends JDialog {
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                result = ComponentAttributeDlg.APPROVE_OPTION;
+                result = ContextAttributeDlg.APPROVE_OPTION;
             }
         });
         buttonPanel.add(okButton);
@@ -102,7 +101,7 @@ public class ContextReplaceDlg extends JDialog {
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                result = ComponentAttributeDlg.CANCEL_OPTION;
+                result = ContextAttributeDlg.CANCEL_OPTION;
             }
         });
         buttonPanel.add(cancelButton);        
