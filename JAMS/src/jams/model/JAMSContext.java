@@ -63,6 +63,9 @@ public class JAMSContext extends JAMSComponent {
     protected DataTracer[] dataTracers;
     protected boolean doRun = true;
 
+    /**
+     * Creates a new context
+     */
     public JAMSContext() {
         //create an entity collection with one entity
         setCurrentEntity(JAMSDataFactory.createEntity());
@@ -75,6 +78,11 @@ public class JAMSContext extends JAMSComponent {
 
     }
 
+    /**
+     * Change the positions of two components
+     * @param i The position of the first component
+     * @param j The position of the second component
+     */
     public void exchange(int i, int j) {
         JAMSComponent oi = components.get(i);
         JAMSComponent oj = components.get(j);
@@ -82,18 +90,35 @@ public class JAMSContext extends JAMSComponent {
         components.set(j, oi);
     }
 
+    /**
+     * Add a single component to this context
+     * @param c The component to be added
+     */
     public void addComponent(JAMSComponent c) {
         components.add(c);
     }
 
+    /**
+     * Remove a single component from this context
+     * @param index The index of the component to be removed
+     */
     public void removeComponent(int index) {
         components.remove(index);
     }
 
+    /**
+     * 
+     * @return All child components as ArrayList
+     */
     public ArrayList getComponents() {
         return components;
     }
 
+    /**
+     * 
+     * @param components Set the child components of this context and set this
+     * object as their context
+     */
     public void setComponents(ArrayList<JAMSComponent> components) {
         this.components = components;
         Iterator<JAMSComponent> i = components.iterator();
@@ -102,28 +127,61 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
+    /**
+     * 
+     * @return An enumerator iterating over all child components depending on
+     * this contexts functionality
+     */
     public JAMSComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
     }
 
+    /**
+     * 
+     * @return An enumerator iterating once over all child components
+     */
     public JAMSComponentEnumerator getChildrenEnumerator() {
         return new ChildrenEnumerator();
     }
 
+    /**
+     * 
+     * @return All child components as array
+     */
     public JAMSComponent[] getCompArray() {
         JAMSComponent[] comps = new JAMSComponent[components.size()];
         components.toArray(comps);
         return comps;
     }
 
+    /**
+     * Registers a new accessor managed by this context
+     * @param user The components that wants to have access
+     * @param varName The name of the components member which is connected
+     * @param attributeName The name of the attribute within this context
+     * @param accessType The permission type (DataAccessor.READ_ACCESS, 
+     * DataAccessor.WRITE_ACCESS or DataAccessor.READWRITE_ACCESS)
+     */
     public void addAccess(JAMSComponent user, String varName, String attributeName, int accessType) {
         accessSpecs.add(new AccessSpec(user, varName, attributeName, accessType));
     }
 
+    /**
+     * Registers a new attribute object for this context
+     * @param attributeName The name of the attribute
+     * @param clazz The type of the attribute
+     * @param value The value of the attribute
+     */
     public void addAttribute(String attributeName, String clazz, String value) {
         attributeSpecs.add(new AttributeSpec(attributeName, clazz, value));
     }
 
+    /**
+     * Sets the model for this context. Additionally an observer of the runtimes
+     * runstate is created in order to stop iteration on runstate changes
+     * @param model The model object
+     */
+    @Override
     public void setModel(JAMSModel model) {
         super.setModel(model);
         JAMSRuntime rt = getModel().getRuntime();
@@ -145,6 +203,12 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
+    /**
+     * Iniatialization of all objects that are needed to manage the data 
+     * exchange between descendent components. Needs to be called once at the 
+     * beginning of the init stage before calling the init() methods of child 
+     * components.
+     */
     public void initAccessors() {
 
         attribs = new HashMap<String, JAMSData>();
@@ -258,10 +322,20 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
+    /**
+     * 
+     * @return A string representing the current state of the context
+     */
     public String getTraceMark() {
         return Long.toString(currentEntity.getId());
     }
 
+    /**
+     * 
+     * @param store A data store defining what data should be stored and 
+     * providing a writer object
+     * @return A data tracer object
+     */
     protected DataTracer createDataTracer(OutputDataStore store) {
 
         // create a DataTracer which is suited for this context
@@ -398,6 +472,14 @@ public class JAMSContext extends JAMSComponent {
 
     }
 
+    /**
+     * Initialization of this context:
+     * 1. Create accessors for all attributes of this context which are to be 
+     *    accessed by descendent components
+     * 2. Create the data tracer objects which take care of outputting values
+     *    of attributes of this context
+     * 3. Calling the init() method of all child components
+     */
     @Override
     public void init() {
 
@@ -511,6 +593,7 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
+    @Override
     public void run() {
 
         for (DataTracer dataTracer : dataTracers) {
@@ -542,6 +625,7 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
+    @Override
     public void cleanup() {
 
         if (initCleanupEnumerator == null) {
@@ -573,14 +657,17 @@ public class JAMSContext extends JAMSComponent {
         JAMSComponent[] compArray = getCompArray();
         int index = 0;
 
+        @Override
         public boolean hasNext() {
             return (index < compArray.length);
         }
 
+        @Override
         public JAMSComponent next() {
             return compArray[index++];
         }
 
+        @Override
         public void reset() {
             index = 0;
         }
