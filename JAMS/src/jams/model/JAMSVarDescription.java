@@ -36,7 +36,7 @@ public @interface JAMSVarDescription {
         READ, WRITE, READWRITE
     };
     
-    public static final String NULL_VALUE = "%null%";
+    public static final String NULL_VALUE = "%NULL%";
 
     AccessType access();                        // type of access
 
