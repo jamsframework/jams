@@ -1,6 +1,6 @@
 /*
- * DataWriter.java
- * Created on 21. März 2008, 13:32
+ * DataReader.java
+ * Created on 31. Januar 2008, 16:21
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -20,20 +20,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.workspace.plugins;
-
-import jams.workspace.DataSet;
+package jams.workspace;
 
 /**
  *
  * @author Sven Kralisch
  */
-public interface DataWriter {
-    
+public interface DataReader {
+
     public int init();
 
     public int cleanup();
 
-    public int writeData(DataSet[] data);
+    public int fetchValues();
+
+    public int fetchValues(int count);
     
+    public DataSet[] getData();
+
+    public int numberOfColumns();
 }

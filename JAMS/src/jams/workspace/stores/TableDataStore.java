@@ -30,7 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import jams.workspace.datatypes.DataValue;
-import jams.workspace.plugins.DataReader;
+import jams.workspace.DataReader;
 
 /**
  *

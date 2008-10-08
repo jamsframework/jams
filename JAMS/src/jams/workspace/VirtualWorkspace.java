@@ -36,6 +36,8 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.StringTokenizer;
 import jams.JAMS;
+import jams.JAMSProperties;
+import jams.JAMSTools;
 import jams.io.XMLIO;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSRuntime;
@@ -60,7 +62,7 @@ public class VirtualWorkspace {
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
     private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
-    private JAMSRuntime runtime = new StandardRuntime();
+    private JAMSRuntime runtime;
     transient ClassLoader classLoader = ClassLoader.getSystemClassLoader();
     transient File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory;
     private Properties properties = new Properties();
@@ -152,11 +154,11 @@ public class VirtualWorkspace {
     }
 
     public void setLibs(String[] libs) {
-        classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
+        this.classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
     }
 
     public ClassLoader getClassLoader() {
-        return classLoader;
+        return this.classLoader;
     }
 
     public JAMSRuntime getRuntime() {
@@ -340,8 +342,13 @@ public class VirtualWorkspace {
                 System.out.print(arg);
             }
         });
+        
+        JAMSProperties properties = JAMSProperties.createJAMSProperties();
+        properties.load("D:/jamsapplication/nsk.jap");
+        String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
 
         VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/vworkspace"), runtime);
+        ws.setLibs(libs);
 
         System.out.println(ws.dataStoreToString("tmin_local"));
         ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/vworkspace/_tmin_dump.txt"));

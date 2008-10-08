@@ -22,6 +22,7 @@
  */
 package jams.workspace.plugins;
 
+import jams.workspace.DataReader;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

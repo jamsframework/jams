@@ -78,11 +78,11 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
     transient private PrintStream infoStream,  errorStream;
     private boolean guiEnabled = false;
     private ClassLoader classLoader;
-    private String[] libs;
     
     private Document modelDocument = null;
     private JAMSProperties properties = null;
 
+    
     @Override
     public void deleteErrorLogObservers() {
         errorLog.deleteObservers();
@@ -163,7 +163,7 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
         }
 
         // get libraries specified in properties
-        libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
+        String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
 
         // load the libraries and create the class loader
         classLoader = JAMSClassLoader.createClassLoader(libs, this);
@@ -197,11 +197,6 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
 
         classLoader = null;
         Runtime.getRuntime().gc();
-    }
-
-    @Override
-    public String[] getLibs(){
-        return libs;
     }
 
     @Override

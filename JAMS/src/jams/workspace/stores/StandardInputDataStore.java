@@ -32,7 +32,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import jams.workspace.plugins.DataReader;
+import jams.workspace.DataReader;
 
 /**
  *
@@ -161,7 +161,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
 
             Element ioNode = (Element) ioNodes.item(n);
             String className = ioNode.getAttribute("type");
-            String id = ioNode.getAttribute("id");
+            String nodeID = ioNode.getAttribute("id");
 
             ClassLoader loader = ws.getClassLoader();
 
@@ -191,7 +191,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
 
                 }
 
-                _dataIO.put(id, io);
+                _dataIO.put(nodeID, io);
 
             } catch (ClassNotFoundException cnfe) {
                 ws.getRuntime().handle(cnfe);

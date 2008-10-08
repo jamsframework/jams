@@ -233,9 +233,10 @@ public class JAMSContext extends JAMSComponent {
                 attribs.put(attributeSpec.attributeName, data);
 
                 //add attributes to "handle map"
+                /*
                 String id = this.getInstanceName() + "." + attributeSpec.attributeName;
                 getModel().getRuntime().getDataHandles().put(id, data);
-
+                */
                 for (JAMSEntity entity : entityArray) {
                     entity.setObject(attributeSpec.attributeName, data);
                 }
