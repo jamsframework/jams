@@ -21,8 +21,8 @@ import java.awt.Cursor.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.io.*;
-import jams.data.*;
-import jams.model.*;
+import org.unijena.jams.data.*;
+import org.unijena.jams.model.*;
 
 import org.jfree.data.time.Second;
 
@@ -32,10 +32,10 @@ import org.jfree.chart.*;
 //not used yet
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import jams.gui.LHelper;
+import org.unijena.jams.gui.LHelper;
 
 //import jams.components.*;
-//import jams.model;
+//import org.unijena.jams.model;
 /*
  *
  * @author Robert Riedel
@@ -71,7 +71,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     //private String[] columnNameArray = headers.getValue();
                                         //{"test1","test2"};
     
-    private final String title = "JAMSSpreadSheet v0.90";
+    private final String title = "JAMSSpreadSheet v0.94";
     
     private JPanel panel = new JPanel();
     private String panelname="spreadsheet";
@@ -144,6 +144,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
  
     /* Constructor */
     public JAMSSpreadSheet() {
+        
     }
     
     /* Methods */
@@ -437,7 +438,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
              
              try{
                  Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
-                 if(test == jams.data.JAMSCalendar.class){
+                 if(test == org.unijena.jams.data.JAMSCalendar.class){
                     table.setColumnSelectionInterval(1, table.getColumnCount()-1);
                      
                  } 
@@ -451,7 +452,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                  }
              }
 //             Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
-//             if(test == jams.data.JAMSCalendar.class){
+//             if(test == org.unijena.jams.data.JAMSCalendar.class){
 //                 
 //             } else {
 //                openCXYS();
@@ -656,9 +657,11 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
 
             LHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 0, 1, 1, 0, 0);
             LHelper.addGBComponent(controlpanel, gbl, savebutton,   0, 1, 1, 2, 0, 0);
-            LHelper.addGBComponent(controlpanel, gbl, onthefly,  0, 2, 1, 1, 0, 0);
+            
             LHelper.addGBComponent(controlpanel, gbl, plotButton,  0, 3, 1, 1, 0, 0);
             LHelper.addGBComponent(controlpanel, gbl, dataplotButton,  0, 4, 1, 1, 0, 0);
+            
+            LHelper.addGBComponent(controlpanel, gbl, onthefly,  0, 5, 1, 1, 0, 0);
               
 //              controlpanel.add(openbutton);
 //              controlpanel.add(savebutton);

@@ -31,7 +31,7 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
-import jams.JAMSFileFilter;
+import org.unijena.jams.JAMSFileFilter;
 
 
 
@@ -374,7 +374,7 @@ public class JXYConfigurator extends JFrame{
         
         for(int k=0;k<graphCount;k++){
             
-            prop = new GraphProperties(this, table, this);
+            prop = new GraphProperties(this);
             prop.setSelectedColumn(columns[k]);
             prop.setXSeries(columns[0]);
             prop.setSelectedRows(rows);
@@ -785,7 +785,7 @@ public class JXYConfigurator extends JFrame{
         
         int i = propVector.indexOf(prop);
         double d_start, d_end;
-        GraphProperties newProp = new GraphProperties(this, table, this);
+        GraphProperties newProp = new GraphProperties(this);
         colour_cnt++;
         
         
@@ -796,6 +796,10 @@ public class JXYConfigurator extends JFrame{
             dlg.dispose();
             newProp.getDataChoice().setSelectedIndex(1);
         
+            
+        newProp.setSeriesPaint(colorTable.get(getColorScheme(i)[0]));
+        newProp.setSeriesFillPaint(colorTable.get(getColorScheme(i)[1]));
+        newProp.setSeriesOutlinePaint(colorTable.get(getColorScheme(i)[2]));
         //newProp.setColor(colour_cnt % 11);
         
         if(i>0){

@@ -20,49 +20,25 @@ import javax.swing.*;
 import javax.swing.JTable;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.lang.Math.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Comparator;
-import java.util.Locale;
-import java.text.*;
 import javax.swing.event.*;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.SegmentedTimeline;
-import org.jfree.chart.axis.Timeline;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.plot.DatasetRenderingOrder;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYAreaRenderer;
-import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
-import org.jfree.chart.renderer.xy.XYDotRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
-import org.jfree.chart.renderer.xy.XYStepRenderer;
+
+import java.lang.Math.*;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+
+import java.text.*;
+
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.*;
 import org.jfree.util.ShapeUtilities.*;
-import jams.data.JAMSBoolean;
-import jams.data.JAMSCalendar;
-import jams.data.JAMSDouble;
-import jams.data.JAMSInteger;
-import jams.data.JAMSString;
-import jams.data.JAMSStringArray;
-import jams.model.JAMSGUIComponent;
-import jams.model.JAMSVarDescription;
 
-import jams.gui.LHelper;
+import org.unijena.jams.data.JAMSCalendar;
+import org.unijena.jams.gui.LHelper;
 
 
 public class GraphProperties {
@@ -190,9 +166,9 @@ public class GraphProperties {
     
     
     /** Creates a new instance of GraphProperties */
-    public GraphProperties(JFrame parent, JTable table, JTSConfigurator ctsconf) {
+    public GraphProperties(JTSConfigurator ctsconf) {
         
-        this.parent = parent;
+        this.parent = ctsconf;
         this.plotType = 0;
         //super(parent, "Select Properties");
         //this.parent = parent;
@@ -202,7 +178,7 @@ public class GraphProperties {
         this.thisProp = this;
         //setLocation(parentloc.x + 30, parentloc.y + 30);
         
-        this.table = table;
+        this.table = ctsconf.table;
         //this.color = "red";
         this.position = "left";
         this.name = "Graph Name";
@@ -246,16 +222,16 @@ public class GraphProperties {
         
     }
     
-    public GraphProperties(JFrame parent, JTable table, JXYConfigurator cxyconf) {
+    public GraphProperties(JXYConfigurator cxyconf) {
         
-        this.parent = parent;
+        this.parent = cxyconf;
         
         this.plotType = 1;
 
         this.cxyconf = cxyconf;
         this.thisProp = this;
         
-        this.table = table;
+        this.table = cxyconf.table;
         //this.color = "red";
         this.position = "left";
         this.name = "Graph Name";
@@ -367,17 +343,23 @@ public class GraphProperties {
         JLabel setColumnLabel = new JLabel("  Set Column:");
         JLabel setLegendLabel = new JLabel("Legend Entry:");
         nameLabel = new JLabel();
-        
-        //item_label = new JAMSItemLabel("test");
-
-//        JTextField setName = new JTextField("Plot Name", 14);
-//        JTextField setLegend = new JTextField("Legend Entry", 14);
 
         String[] column = new String[table.getColumnCount()];
+        
         Class test = table.getValueAt(0, 0).getClass();
-                   
+        
+        
+        
             for(int i=0;i<table.getColumnCount();i++){ 
-                    column[i] = table.getColumnName(i);      
+                if(this.plotType == 0){
+                    if(i!=0){
+                        column[i] = table.getColumnName(i);
+                    }else{
+                        column[i] = "---";
+                    }
+                }else{
+                    column[i] = table.getColumnName(i);
+                    }
             }
         
         setColumn = new JComboBox(column);
@@ -421,13 +403,15 @@ public class GraphProperties {
         double value;
         selectedColumn = setColumn.getSelectedIndex();
         //color = (String) colorchoice.getSelectedItem();
-        ts = new TimeSeries(setLegend.getText(), Second.class);
+        ts = new TimeSeries(getLegendName(), Second.class);
         
         for(int i=getTimeSTART(); i<=getTimeEND(); i++){
             
             time =  (JAMSCalendar) table.getValueAt(i,0); //ONLY FOR TIME SERIES TABLE WITH TIME IN COL 0!!!
-            value = (Double) table.getValueAt(i, selectedColumn);
-            ts.add(new Second(new Date(time.getTimeInMillis())), value);
+            if(!setColumn.getSelectedItem().equals("---")){
+                value = (Double) table.getValueAt(i, selectedColumn);
+                ts.add(new Second(new Date(time.getTimeInMillis())), value);
+            }
         }
         cr_dlg.updateColors();
     }
@@ -440,7 +424,7 @@ public class GraphProperties {
         selectedColumn = setColumn.getSelectedIndex();
         
         //color = (String) colorchoice.getSelectedItem();
-        xys = new XYSeries(setLegend.getText());
+        xys = new XYSeries(getLegendName());
        
         //sort xy data
         
@@ -561,6 +545,7 @@ public class GraphProperties {
     public void setLegendName(String legendName){
         this.legendName = legendName;
         setLegend.setText(legendName);
+        
     }
     
     public void setName(String name){
@@ -968,6 +953,31 @@ public class GraphProperties {
         
     }
     
+    public void setOutlineSlider(int value){
+            cr_dlg.setOutlineSlider(value);
+        }
+        
+        public void setStrokeSlider(int value){
+            cr_dlg.setStrokeSlider(value);
+        }
+        
+        public void setShapeSlider(int value){
+            cr_dlg.setShapeSlider(value);
+        }
+        
+        public void setShapesVisBox(boolean state){
+            cr_dlg.setShapesVisBox(state);
+        }
+        
+        public void setLinesVisBox(boolean state){
+            cr_dlg.setLinesVisBox(state);
+        }
+        
+        public void setShapeBox(int index){
+            cr_dlg.setShapeBox(index);
+        }
+    
+    
     /*** Action Listener ***/
 //    ActionListener okListener = new ActionListener(){
 //        public void actionPerformed(ActionEvent te){
@@ -1104,6 +1114,8 @@ public class GraphProperties {
                 if(plotType == 1) setRendererType(cxyconf.getRendererRight());
             }
             cr_dlg.handleGUI();
+            
+          
             
             cr_dlg.setVisible(true);
         }
@@ -1271,6 +1283,35 @@ public class GraphProperties {
         public void setOutlineButtonColor(Color oc){
             outline_button.setBackground(oc);
         }
+        
+        public void setOutlineSlider(int value){
+            outline_slider.setValue(value);
+        }
+        
+        public void setStrokeSlider(int value){
+            stroke_slider.setValue(value);
+        }
+        
+        public void setShapeSlider(int value){
+            shape_slider.setValue(value);
+        }
+        
+        public void setShapesVisBox(boolean state){
+            shapes_vis_box.setSelected(state);
+        }
+        
+        public void setLinesVisBox(boolean state){
+            lines_vis_box.setSelected(state);
+        }
+        
+        public void setShapeBox(int index){
+            shape_box.setSelectedIndex(index);
+        }
+        
+        
+        
+        
+        
         
         void createPanel(){
             optionspanel = new JPanel();
@@ -1457,11 +1498,11 @@ public class GraphProperties {
             if(getRendererType() == 2){ //area
                 
                 //renderer_box.setEnabled(true);
-                stroke_slider.setEnabled(true); //list for different strokes!
+                stroke_slider.setEnabled(false); //list for different strokes!
                 shape_box.setEnabled(false); //list for different shapes!!
                 stroke_button.setEnabled(true);
-                outline_slider.setEnabled(true);
-                outline_button.setEnabled(true);//color chooser!!
+                outline_slider.setEnabled(false);
+                outline_button.setEnabled(false);//color chooser!!
                 fill_button.setEnabled(false);
                 shapes_vis_box.setEnabled(false);
                 lines_vis_box.setEnabled(false);
@@ -1484,7 +1525,7 @@ public class GraphProperties {
             if(getRendererType() == 1 || getRendererType() == 3 || getRendererType() == 4){ //bars and steps
                 
                 //renderer_box.setEnabled(true);
-                stroke_slider.setEnabled(true); //list for different strokes!
+                stroke_slider.setEnabled(false); //list for different strokes!
                 shape_box.setEnabled(false); //list for different shapes!!
                 stroke_button.setEnabled(true);
                 outline_slider.setEnabled(false);
@@ -1520,7 +1561,7 @@ public class GraphProperties {
                 
                 
                 //ACHTUNG!!! Typen-Abhängig! XY oder TS?
-                if(plotType == 0) ctsconf.plotAllGraphs();  
+                if(plotType == 0) ctsconf.plotAllGraphs();
                 if(plotType == 1) cxyconf.plotAllGraphs();
  
                 setVisible(false);
@@ -1560,10 +1601,11 @@ public class GraphProperties {
         
         ActionListener stroke_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Color new_line_color = JColorChooser.showDialog(thiscrd, "choose Color", line_color);
-                if(line_color != null){
+                Color new_line_color = JColorChooser.showDialog(thiscrd, "Choose Line Color", line_color);
+                if(new_line_color != null){
                     line_color = new_line_color;
                 }
+                
  
                 stroke_button.setBackground(line_color);
             }
@@ -1571,8 +1613,8 @@ public class GraphProperties {
         
         ActionListener fill_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Color new_shape_fill = JColorChooser.showDialog(thiscrd, "choose Color", shape_fill);
-                if(shape_fill != null){
+                Color new_shape_fill = JColorChooser.showDialog(thiscrd, "Choose Shape Color", shape_fill);
+                if(new_shape_fill != null){
                     shape_fill = new_shape_fill;
                 }
                 fill_button.setBackground(shape_fill);
@@ -1581,7 +1623,7 @@ public class GraphProperties {
         
         ActionListener outline_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Color new_outline_color = JColorChooser.showDialog(thiscrd, "choose Color", outline_color);
+                Color new_outline_color = JColorChooser.showDialog(thiscrd, "Choose Outline Color", outline_color);
                 if(new_outline_color != null){
                     outline_color = new_outline_color;
                 }

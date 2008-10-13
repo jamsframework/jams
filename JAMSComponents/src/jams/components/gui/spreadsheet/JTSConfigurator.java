@@ -36,8 +36,8 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 
-import jams.JAMSFileFilter;
-import jams.gui.LHelper;
+import org.unijena.jams.JAMSFileFilter;
+import org.unijena.jams.gui.LHelper;
 
 
 /**
@@ -70,6 +70,8 @@ public class JTSConfigurator extends JFrame{
         
     private JFrame parent;
     private JFrame thisDlg;
+    private JTSConfigurator thisJTS;
+    private JXYConfigurator thisJXY;
     private JPanel frame;
     private JPanel mainpanel;
     private JPanel plotpanel;
@@ -195,6 +197,8 @@ public class JTSConfigurator extends JFrame{
         URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
         ImageIcon icon = new ImageIcon(url);
         setIconImage(icon.getImage());
+        
+        thisJTS = this;
         
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
@@ -381,7 +385,7 @@ public class JTSConfigurator extends JFrame{
         
         for(int k=0;k<graphCount;k++){
             
-            GraphProperties prop = new GraphProperties(this, table, this);
+            GraphProperties prop = new GraphProperties(this);
             //propVector.add(new GraphProperties(parent,table));
             
             prop.setIndex(k);
@@ -518,7 +522,7 @@ public class JTSConfigurator extends JFrame{
             
         int i = propVector.indexOf(prop);
         int t_s, t_e;
-        GraphProperties newProp = new GraphProperties(this, table, this);
+        GraphProperties newProp = new GraphProperties(this);
         
         
         //colour_cnt++;
@@ -636,7 +640,7 @@ public class JTSConfigurator extends JFrame{
         
         int i = propVector.indexOf(prop);
         
-        if(i<propVector.size()){
+        if(i+1<propVector.size()){
         GraphProperties newProp = propVector.get(i+1);
         
         if(i+1>=0 && i+1<graphCount){
@@ -1115,7 +1119,6 @@ public class JTSConfigurator extends JFrame{
             group1.addComponent(prop.getDataChoice()).addComponent(lf).addGap(20);
             group2.addComponent(prop.getTimeChoiceSTART()).addComponent(prop.getTimeChoiceEND());
             group3.addComponent(prop.getCustomizeButton()).addComponent(prop.getPosChoice());
-                       
 
             group9.addComponent(space3);
             
@@ -1232,8 +1235,10 @@ public class JTSConfigurator extends JFrame{
         Properties properties = new Properties();
         int no_of_props = propVector.size();
         
+        
         String names = "";
         String name;
+        String[] legendname;
         String number = ""+no_of_props;
         String stroke_type;
         String stroke_color;
@@ -1259,31 +1264,35 @@ public class JTSConfigurator extends JFrame{
         
         properties.setProperty("number", number);
         
+        //Titles
+        properties.setProperty("title", edTitleField.getText());
+        properties.setProperty("axisLTitle", edLeftField.getText());
+        properties.setProperty("axisRTitle", edRightField.getText());
+        properties.setProperty("xAxisTitle", edXAxisField.getText());
+        //RENDERER
+        properties.setProperty("renderer_left", ""+rLeftBox.getSelectedIndex());
+        properties.setProperty("renderer_right", ""+rRightBox.getSelectedIndex());
+        properties.setProperty("inv_left", ""+invLeftBox.isSelected());
+        properties.setProperty("inv_right", ""+invRightBox.isSelected());
+
+        //TimeFormat
+        properties.setProperty("timeFormat_yy", ""+timeFormat_yy.isSelected());
+        properties.setProperty("timeFormat_mmy", ""+timeFormat_mm.isSelected());
+        properties.setProperty("timeFormat_dd", ""+timeFormat_dd.isSelected());
+        properties.setProperty("timeFormat_hm", ""+timeFormat_hm.isSelected());
+        
+        
         for(int i=0; i<no_of_props; i++ ){
             
             GraphProperties gprop = propVector.get(i);
-            
-            //Titles
-            properties.setProperty("title", edTitleField.getText());
-            properties.setProperty("axisLTitle", edLeftField.getText());
-            properties.setProperty("axisRTitle", edRightField.getText());
-            properties.setProperty("xAxisTitle", edXAxisField.getText());
-            //RENDERER
-            properties.setProperty("renderer_left", ""+rLeftBox.getSelectedIndex());
-            properties.setProperty("renderer_right", ""+rRightBox.getSelectedIndex());
-            properties.setProperty("inv_left", ""+invLeftBox.isSelected());
-            properties.setProperty("inv_right", ""+invRightBox.isSelected());
-            
-            //TimeFormat
-            properties.setProperty("timeFormat_yy", ""+timeFormat_yy.isSelected());
-            properties.setProperty("timeFormat_mmy", ""+timeFormat_mm.isSelected());
-            properties.setProperty("timeFormat_dd", ""+timeFormat_dd.isSelected());
-            properties.setProperty("timeFormat_hm", ""+timeFormat_hm.isSelected());
             
             name = gprop.getName();
             if(i==0) names = name;
             else names = names + "," + name;
             
+            
+            //Legend Name
+                properties.setProperty(name+".legendname", gprop.getLegendName());
             //POSITION left/right
                 properties.setProperty(name + ".position", gprop.getPosition());
             //STROKE
@@ -1339,65 +1348,80 @@ public class JTSConfigurator extends JFrame{
     
     private void loadTemplate() {
 
-        this.propVector = new Vector<GraphProperties>();
+        
         //int no_of_props = propVector.size();
 
         Properties properties = new Properties();
-        String[] namearray;
+        boolean load_prop = false;
+        
         String names;
         String name;
         String stroke_color;
         String shape_color;
         String outline_color;
         int no_of_props;
+        int returnVal=-1;
 
 
         try {
             JFileChooser chooser = new JFileChooser();
-            int returnVal = chooser.showOpenDialog(thisDlg);
+            returnVal = chooser.showOpenDialog(thisDlg);
             File file = chooser.getSelectedFile();
             FileInputStream fin = new FileInputStream(file);
             properties.load(fin);
             fin.close();
 
         } catch (Exception fnfexc) {
+            returnVal = -1;
         }
-
+        
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            
+        
+        this.propVector = new Vector<GraphProperties>();
+        
         names = properties.getProperty("names");
         no_of_props = new Integer(properties.getProperty("number"));
         
         this.graphCount = no_of_props;
-        namearray = new String[no_of_props];
+        
         StringTokenizer nameTokenizer = new StringTokenizer(names, ",");
         
         initGroupUI();
         
         for (int i = 0; i < no_of_props; i++) {
-
-            GraphProperties gprop = new GraphProperties(this, this.table, this);
+            
+            load_prop = false;
+            GraphProperties gprop = new GraphProperties(this);
 
             if (nameTokenizer.hasMoreTokens()) {
 
                 name = nameTokenizer.nextToken();
-
+                
+                
                 for (int k = 0; k < table.getColumnCount(); k++) {
-                    if (table.getColumnName(k).equals(name)) { //stringcompare?
+                    if (table.getColumnName(k).compareTo(name) == 0) { //stringcompare?
                         
                         gprop.setSelectedColumn(k);
+                        load_prop = true;
                         break;
                     }
                 }
                 
+                if(load_prop){
+                //Legend Name
+                    gprop.setLegendName(properties.getProperty(name+".legendname", "legend name"));
                 //POSITION left/right
                     gprop.setPosition(properties.getProperty(name + ".position"));
                 //INTERVAL
                     gprop.setTimeSTART(0);
                     gprop.setTimeEND(table.getRowCount() - 1);
                     gprop.setName(name);
-                    gprop.setLegendName(name);
+                    
 
                 //STROKE
                     gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke","2")));
+                    gprop.setStrokeSlider(gprop.getStrokeType());
 
                 //STROKE COLOR
                     stroke_color = properties.getProperty(name + ".linecolor","255,0,0");
@@ -1409,13 +1433,20 @@ public class JTSConfigurator extends JFrame{
                             new Integer(colorTokenizer.nextToken())));
 
                 //LINES VISIBLE
-                    gprop.setLinesVisible(new Boolean(properties.getProperty(name + ".linesvisible")));
+                    boolean lv = new Boolean(properties.getProperty(name + ".linesvisible"));
+                    gprop.setLinesVisible(lv);
+                    gprop.setLinesVisBox(lv);
                 //SHAPES VISIBLE
-                    gprop.setShapesVisible(new Boolean(properties.getProperty(name + ".shapesvisible")));
+                    boolean sv = new Boolean(properties.getProperty(name + ".shapesvisible"));
+                    gprop.setShapesVisible(sv);
+                    gprop.setShapesVisBox(sv);
                 
                 //SHAPE TYPE AND SIZE
-                    gprop.setShape(new Integer(properties.getProperty(name + ".shapetype","0")),
-                            new Integer(properties.getProperty(name + ".shapesize")));
+                    int stype = new Integer(properties.getProperty(name + ".shapetype","0"));
+                    int ssize = new Integer(properties.getProperty(name + ".shapesize"));
+                    gprop.setShape(stype,ssize);
+                    gprop.setShapeBox(stype);
+                    gprop.setShapeSlider(ssize);
 
                 //SHAPE COLOR
                     shape_color = properties.getProperty(name + ".shapecolor","255,0,0");
@@ -1427,7 +1458,9 @@ public class JTSConfigurator extends JFrame{
                             new Integer(shapeTokenizer.nextToken())));
 
                 //OUTLINE STROKE
-                    gprop.setOutlineStroke(new Integer(properties.getProperty(name + ".outlinestroke")));
+                    int os = new Integer(properties.getProperty(name + ".outlinestroke"));
+                    gprop.setOutlineStroke(os);
+                    gprop.setOutlineSlider(os);
 
                 //OUTLINE COLOR
                     outline_color = properties.getProperty(name + ".outlinecolor","255,0,0");
@@ -1440,10 +1473,16 @@ public class JTSConfigurator extends JFrame{
 
                 gprop.applyTSProperties();
                 
-            }
+                    
+            
             propVector.add(gprop);
             addPropGroup(gprop);
-        }
+            }
+                  
+            
+            //break;
+                    
+        //}
         //Titles
             edTitleField.setText(properties.getProperty("title"));
             edLeftField.setText(properties.getProperty("axisLTitle"));
@@ -1460,19 +1499,20 @@ public class JTSConfigurator extends JFrame{
             timeFormat_mm.setSelected(new Boolean(properties.getProperty("timeFormat_mmy")));
             timeFormat_dd.setSelected(new Boolean(properties.getProperty("timeFormat_dd")));
             timeFormat_hm.setSelected(new Boolean(properties.getProperty("timeFormat_hm")));
-        
+            
+            } 
+        }        
+            
         
         finishGroupUI();
         
         jts.setPropVector(propVector);
 //        jts.createPlot();
 //        handleRenderer();
-        
-         
-        
-        
-        plotAllGraphs();
 
+        plotAllGraphs();
+        }    
+    
     }
     
 //    public void showHiRes(){
@@ -1679,7 +1719,12 @@ public class JTSConfigurator extends JFrame{
     
     ActionListener addbuttonclick = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-            GraphProperties prop = propVector.get(0);
+            GraphProperties prop;
+            if(propVector.size()>0){
+                prop = propVector.get(0);
+            }else{
+                prop = new GraphProperties(thisJTS);
+            }
             //String[] colors = getColorScheme(addGraphDlg);
             //prop.setSeriesPaint(colorTable.get())
             addGraph(prop);
@@ -1811,7 +1856,8 @@ public class JTSConfigurator extends JFrame{
             
             max = propVector.size();
             String[] posArray = {"left","right"};
-            posSpinner = new JSpinner(new SpinnerNumberModel(max,1,max,1));
+            if(max>0)posSpinner = new JSpinner(new SpinnerNumberModel(max,1,max,1));
+            else posSpinner = new JSpinner(new SpinnerNumberModel(0,0,0,0));
             sideChoice = new JComboBox(posArray);
             sideChoice.setSelectedIndex(0);
             JButton okButton = new JButton("OK");
