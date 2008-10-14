@@ -93,6 +93,7 @@ public class OutputDataStore implements DataStore {
 
     public void write(Object o) throws IOException {
         writer.write(o.toString());
+        writer.flush();
     }
 
     public void close() throws IOException {
