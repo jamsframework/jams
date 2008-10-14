@@ -463,10 +463,10 @@ public class JAMSContext extends JAMSComponent {
 
             this.dataTracers[i] = createDataTracer(store);
 
-            if (this.dataTracers[i].getAccessorObjects().length == 0) {
+            /*if (this.dataTracers[i].getAccessorObjects().length == 0) {
                 this.dataTracers[i] = new NullTracer();
                 return;
-            }
+            }*/
 
             i++;
         }
