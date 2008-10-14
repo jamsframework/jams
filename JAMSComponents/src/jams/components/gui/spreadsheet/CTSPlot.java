@@ -23,7 +23,6 @@
 
 package jams.components.gui.spreadsheet;
 
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
@@ -36,8 +35,6 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.SegmentedTimeline;
-import org.jfree.chart.axis.Timeline;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.XYPlot;
@@ -52,14 +49,7 @@ import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.unijena.jams.data.JAMSBoolean;
-import org.unijena.jams.data.JAMSCalendar;
-import org.unijena.jams.data.JAMSDouble;
-import org.unijena.jams.data.JAMSInteger;
-import org.unijena.jams.data.JAMSString;
-import org.unijena.jams.data.JAMSStringArray;
-import org.unijena.jams.model.JAMSGUIComponent;
-import org.unijena.jams.model.JAMSVarDescription;
+import jams.data.JAMSCalendar;
 
 /**
  *

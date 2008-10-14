@@ -43,7 +43,6 @@ import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import org.w3c.dom.Document;
-import jams.workspace.stores.ASCIIConverter;
 import jams.workspace.stores.DataStore;
 import jams.workspace.stores.OutputDataStore;
 import java.io.BufferedInputStream;
@@ -57,6 +56,7 @@ import java.util.Properties;
 
 public class VirtualWorkspace {
 
+    public static final String DUMP_MARKER = "#JAMSdatadump";
     private static final String CONFIG_FILE_NAME = "config.txt";
     private static final String CONTEXT_ATTRIBUTE_NAME = "context";
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
@@ -298,23 +298,23 @@ public class VirtualWorkspace {
         }
     }
 
-    public String dataStoreToString(String dsTitle) {
+    public String dataStoreToString(String dsTitle) throws IOException {
         InputDataStore store = this.getInputDataStore(dsTitle);
         return dataStoreToString(store);
     }
 
-    public String dataStoreToString(InputDataStore store) {
+    public String dataStoreToString(InputDataStore store) throws IOException {
         if (store == null) {
             return null;
         }
-        ASCIIConverter asciiConverter = new ASCIIConverter(store);
+        TSDumpProcessor asciiConverter = new TSDumpProcessor(store);
         String result = asciiConverter.toASCIIString();
         return result;
     }
 
     public void inputDataStoreToFile(String dsTitle, File file) throws IOException {
         InputDataStore store = this.getInputDataStore(dsTitle);
-        ASCIIConverter asciiConverter = new ASCIIConverter(store);
+        TSDumpProcessor asciiConverter = new TSDumpProcessor(store);
         asciiConverter.toASCIIFile(file);
         store.close();
     }

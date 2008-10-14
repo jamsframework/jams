@@ -50,10 +50,10 @@ public class TableDataStore extends StandardInputDataStore {
             return;
         }
 
-        initDataAccess();
+        initDataAccess(doc);
     }
 
-    private void initDataAccess() {
+    private void initDataAccess(Document doc) {
 
         Element dataElement = (Element) doc.getElementsByTagName("data").item(0);
         NodeList columns = dataElement.getElementsByTagName("column");
@@ -77,7 +77,7 @@ public class TableDataStore extends StandardInputDataStore {
             io.init();
         }
 
-        currentPosition = Integer.MAX_VALUE;;
+        currentPosition = Integer.MAX_VALUE;
         maxPosition = Integer.MAX_VALUE;
 
     }
@@ -130,5 +130,4 @@ public class TableDataStore extends StandardInputDataStore {
             io.cleanup();
         }
     }
-
 }

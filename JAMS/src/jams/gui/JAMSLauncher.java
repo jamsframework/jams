@@ -242,7 +242,7 @@ public class JAMSLauncher extends JFrame {
                 tabbedPane.setSelectedComponent(getGroupMap().get(ic));
 
                 ic.setMarked(true);
-                
+
                 String info = "";
                 if (runModel) {
                     info = " Stopping model execution.";
@@ -355,7 +355,14 @@ public class JAMSLauncher extends JFrame {
 
         String componentName = property.getAttribute("component");
         String attributeName = property.getAttribute("attribute");
-        Element attribute = componentHash.get(componentName).get(attributeName);
+        HashMap<String, Element> attributeMap = componentHash.get(componentName);
+
+        Element attribute;
+        if (attributeMap == null) {
+            attribute = null;
+        } else {
+            attribute = componentHash.get(componentName).get(attributeName);
+        }
 
         Element targetElement;
 

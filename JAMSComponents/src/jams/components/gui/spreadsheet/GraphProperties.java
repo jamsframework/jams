@@ -37,8 +37,8 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.xy.*;
 import org.jfree.util.ShapeUtilities.*;
 
-import org.unijena.jams.data.JAMSCalendar;
-import org.unijena.jams.gui.LHelper;
+import jams.data.JAMSCalendar;
+import jams.gui.LHelper;
 
 
 public class GraphProperties {

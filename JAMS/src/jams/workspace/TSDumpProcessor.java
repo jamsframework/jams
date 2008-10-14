@@ -1,5 +1,5 @@
 /*
- * ASCIIConverter.java
+ * TSDumpProcessor.java
  * Created on 19. Februar 2008, 09:16
  *
  * This file is part of JAMS
@@ -20,41 +20,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.workspace.stores;
+package jams.workspace;
 
+import jams.workspace.stores.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.GregorianCalendar;
 import jams.data.JAMSCalendar;
-import jams.workspace.DataSet;
 
 /**
  *
  * @author Sven Kralisch
  */
-public class ASCIIConverter {
+public class TSDumpProcessor {
 
     private InputDataStore store;
-    private String commentTag = "@comments",  metadataTag = "@metadata",  dataTag = "@data",  endTag = "@end";
+    private String commentTag = "@comments",  
+            metadataTag = "@metadata",  dataTag = "@data",  endTag = "@end";
 
-    public ASCIIConverter(InputDataStore store) {
+    public TSDumpProcessor(InputDataStore store) {
         this.store = store;
-
     }
 
-    public String toASCIIString() {
+    public String toASCIIString() throws IOException {
         StringTarget target = new StringTarget();
-        try {
-            output(target);
-        } catch (IOException ioe) {
-        }
+        output(target);
         return target.buffer.toString();
     }
 
     public void toASCIIFile(File file) throws IOException {
-
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         FileTarget target = new FileTarget(writer);
         output(target);
@@ -63,6 +59,7 @@ public class ASCIIConverter {
 
     private void output(OutputTarget target) throws IOException {
 
+        target.append(VirtualWorkspace.DUMP_MARKER + "\n");
         target.append(commentTag + "\n");
         target.append("#ID: " + store.getID() + "\n");
         target.append("#TYPE: " + store.getClass().getSimpleName() + "\n");

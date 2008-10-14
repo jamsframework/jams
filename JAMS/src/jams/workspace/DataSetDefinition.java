@@ -92,6 +92,15 @@ public class DataSetDefinition {
         return true;
     }
 
+    public boolean setAttributeValues(String attributeName, Object value) {
+
+        ArrayList<Object> values = new ArrayList<Object>();        
+        for (int i = 0; i < columnCount; i++) {
+            values.add(value);
+        }
+        return setAttributeValues(attributeName, values);
+    }
+
     public boolean setAttributeValues(int column, ArrayList<Object> values) {
 
         //check if column exists

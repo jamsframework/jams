@@ -33,6 +33,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.workspace.DataReader;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.StringTokenizer;
 
 /**
  *
@@ -40,15 +45,28 @@ import jams.workspace.DataReader;
  */
 public abstract class StandardInputDataStore implements InputDataStore {
 
-    protected Document doc;
     protected HashMap<String, DataReader> dataIO;
     protected VirtualWorkspace ws;
     protected DataSetDefinition dsd;
     protected int bufferSize = 0;
     private String id,  description = "";
+    protected BufferedReader dumpReader;
+
+    public StandardInputDataStore(File file) throws IOException {
+
+        this.dumpReader = new BufferedReader(new FileReader(file));
+
+        String firstLine = dumpReader.readLine();
+
+        if (firstLine.startsWith(VirtualWorkspace.DUMP_MARKER)) {
+            readStandardDump();
+        } else {
+            readJ2KDump(file.getAbsolutePath(), firstLine);
+        }
+
+    }
 
     public StandardInputDataStore(VirtualWorkspace ws, Document doc) {
-        this.doc = doc;
         this.ws = ws;
 
         this.id = doc.getDocumentElement().getAttribute("id");
@@ -65,11 +83,11 @@ public abstract class StandardInputDataStore implements InputDataStore {
             this.bufferSize = Integer.parseInt(bufferSizeElement.getAttribute("value"));
         }
 
-        this.dataIO = createDataIO();
-        this.dsd = createDataSetDefinition();
+        this.dataIO = createDataIO(doc);
+        this.dsd = createDataSetDefinitionFromDocument(doc);
     }
 
-    private DataSetDefinition createDataSetDefinition() {
+    private DataSetDefinition createDataSetDefinitionFromDocument(Document doc) {
 
         ArrayList<Class> dataTypes = new ArrayList<Class>();
 
@@ -135,7 +153,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
         return def;
     }
 
-    private HashMap<String, DataReader> createDataIO() {
+    private HashMap<String, DataReader> createDataIO(Document doc) {
 
         HashMap<String, DataReader> _dataIO = new HashMap<String, DataReader>();
 
@@ -146,7 +164,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
         }
 
         HashMap<String, String> varMap = new HashMap<String, String>();
-        
+
         Element variableElement = (Element) ioElement.getElementsByTagName("variables").item(0);
         if (variableElement != null) {
             NodeList varNodes = variableElement.getElementsByTagName("var");
@@ -155,7 +173,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
                 varMap.put(varNode.getAttribute("id"), varNode.getAttribute("value"));
             }
         }
-        
+
         NodeList ioNodes = ioElement.getElementsByTagName("plugin");
         for (int n = 0; n < ioNodes.getLength(); n++) {
 
@@ -222,5 +240,75 @@ public abstract class StandardInputDataStore implements InputDataStore {
 
     public DataReader getDataIO(String id) {
         return dataIO.get(id);
+    }
+
+    private void readStandardDump() throws IOException {
+    }
+
+    private void readJ2KDump(String id, String firstLine) throws IOException {
+
+        this.id = id;
+
+        // read header information from the J2K time series file
+
+        String line = firstLine;
+        //skip comment lines
+        while (line.charAt(0) == '#') {
+            this.description += line.substring(1) + "\n";
+            line = dumpReader.readLine();
+        }
+
+        StringBuffer dataValueAttribs = new StringBuffer();
+        while (!line.startsWith("@dataSetAttribs")) {
+            dataValueAttribs.append(line + "\n");
+            line = dumpReader.readLine();
+        }
+
+        StringBuffer dataSetAttribs = new StringBuffer();
+        while (!line.startsWith("@statAttribVal")) {
+            dataSetAttribs.append(line + "\n");
+            line = dumpReader.readLine();
+        }
+
+        StringBuffer statAttribVal = new StringBuffer();
+        while (!line.startsWith("@dataVal")) {
+            statAttribVal.append(line + "\n");
+            line = dumpReader.readLine();
+        }
+
+        // create a DataSetDefinition object
+
+        StringTokenizer tok1 = new StringTokenizer(statAttribVal.toString(), "\n");
+        tok1.nextToken();
+        StringTokenizer tok2 = new StringTokenizer(tok1.nextToken());
+
+        int attributeCount = tok2.countTokens() - 1;
+        ArrayList<Class> dataTypes = new ArrayList<Class>();
+        for (int i = 0; i < attributeCount; i++) {
+            dataTypes.add(Double.class);
+        }
+        DataSetDefinition def = new DataSetDefinition(dataTypes);
+
+        while (tok1.hasMoreTokens()) {
+
+            String attributeName = tok2.nextToken();
+            def.addAttribute(attributeName, String.class);
+            ArrayList<Object> values = new ArrayList<Object>();
+            while (tok2.hasMoreTokens()) {
+                values.add(tok2.nextToken());
+            }
+            def.setAttributeValues(attributeName, values);
+            tok2 = new StringTokenizer(tok1.nextToken());
+        }
+
+        tok1 = new StringTokenizer(dataValueAttribs.toString());
+        tok1.nextToken(); // skip the "@"-tag
+        String parameterName = tok1.nextToken();
+        String parameterString = "PARAMETER";
+        def.addAttribute(parameterString, String.class);
+        def.setAttributeValues(parameterString, parameterName);
+
+        this.dsd = def;
+
     }
 }

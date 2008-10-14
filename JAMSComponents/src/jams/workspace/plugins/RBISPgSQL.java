@@ -54,9 +54,6 @@ public class RBISPgSQL implements DataReader {
     private boolean inited = false,  cleanedup = false;
     private DataSet[] currentData = null;            
             
-    public RBISPgSQL() {
-    }
-
     public void setUser(String user) {
         this.user = user;
     }
@@ -77,15 +74,18 @@ public class RBISPgSQL implements DataReader {
         this.db = db;
     }
 
+    @Override
     public DataSet[] getData() {
         return currentData;
     }
 
+    @Override
     public int fetchValues() {
         currentData = getDBRows(Long.MAX_VALUE);
         return 0;
     }
 
+    @Override
     public int fetchValues(int count) {
         currentData = getDBRows(count);
         return 0;
@@ -135,6 +135,7 @@ public class RBISPgSQL implements DataReader {
         return data.toArray(new DataSet[data.size()]);
     }
 
+    @Override
     public int init() {
 
         if (inited) {
@@ -189,12 +190,13 @@ public class RBISPgSQL implements DataReader {
             cleanedup = false;
 
         } catch (SQLException sqlex) {
-            System.out.println("RBISPgSQL: " + sqlex);
+            System.err.println("RBISPgSQL: " + sqlex);
             return -1;
         }
         return 0;
     }
 
+    @Override
     public int cleanup() {
 
         if (cleanedup) {
@@ -215,6 +217,7 @@ public class RBISPgSQL implements DataReader {
         return 0;
     }
 
+    @Override
     public int numberOfColumns() {
         return numberOfColumns;
     }
