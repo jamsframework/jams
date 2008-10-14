@@ -14,12 +14,13 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import jams.data.*;
 import jams.dataaccess.DataAccessor;
-import jams.io.DataTracer.DataTracer;
 import jams.io.DataTracer.*;
 import jams.model.JAMSComponent;
 import jams.model.JAMSContext;
 import jams.model.Snapshot;
 import jams.model.JAMSVarDescription;
+import jams.workspace.stores.OutputDataStore;
+import java.util.regex.Matcher;
 
 /**
  *
@@ -183,7 +184,11 @@ public abstract class Optimizer extends JAMSContext {
     public void init() {        
         if (enable != null)
             if (!enable.getValue())
-                return;        
+                return;    
+        super.init();
+        for (DataTracer dataTracer : dataTracers) {
+            dataTracer.startMark();
+        }
         if (this.parameterIDs == null)
             getModel().getRuntime().sendHalt("parameterIDs not specified!");
         if (this.boundaries == null)
@@ -256,19 +261,31 @@ public abstract class Optimizer extends JAMSContext {
     }
 
     String buildMark(){
-        String current = (iterationCounter + "\t");
-        for (int i=0;i<parameters.length;i++){
-            current += (parameters[i] + "\t");
-        }                
-        current += (effValue.getValue() + "\t");
-        return current;
+        double parameter_double[] = new double[parameters.length];
+        for (int i=0;i<parameter_double.length;i++)
+            parameter_double[i] = parameters[i].getValue();
+        return new Sample(parameter_double,effValue.getValue()).toString();        
     }
     
-/*    @Override
-    protected DataTracer createDataTracer() {
-        return new StandardTracer(this, JAMSLong.class) {
+    @Override
+    public long getNumberOfIterations() {
+        return -1;
+    }
+    
+    @Override
+    protected AbstractTracer createDataTracer(OutputDataStore store) {
+        return new AbstractTracer(this, store, Sample.class) {
             @Override
             public void trace() {
+                // check for filters on other contexts first
+                for (OutputDataStore.Filter filter : store.getFilters()) {
+                    String s = filter.getContext().getTraceMark();
+                    Matcher matcher = filter.getPattern().matcher(s);
+                    if (!matcher.matches()) {
+                        return;
+                    }
+                }
+                
                 output(buildMark());
                 for (DataAccessor dataAccessor : getAccessorObjects()) {
                     output(dataAccessor.getComponentObject());
@@ -277,16 +294,17 @@ public abstract class Optimizer extends JAMSContext {
                 output("\n");
             }
         };
-    }*/
+    }
     
-    /*@Override
+    @Override
     public String getTraceMark() {
         return buildMark();
-    }*/
+    }
     
-    public double funct(double x[]) {        
+    public double funct(double x[]) {     
+        
         double value = 0.0;     
-        //unbedingt bessere variante finden!!                
+        
         if (snapshot != null) {
             if (!this.snapshot.existsAttribute("snapshot")){
                 try {
@@ -340,6 +358,9 @@ public abstract class Optimizer extends JAMSContext {
         if (runEnumerator == null) {
             runEnumerator = getChildrenEnumerator();
         }
+        /*for (DataTracer dataTracer : dataTracers) {
+            dataTracer.startMark();
+        }*/
         runEnumerator.reset();
         while (runEnumerator.hasNext() && doRun) {
             JAMSComponent comp = runEnumerator.next();
@@ -368,6 +389,16 @@ public abstract class Optimizer extends JAMSContext {
             } catch (Exception e) {
                 getModel().getRuntime().sendHalt(e.getMessage());
             }
+        }
+        for (DataTracer dataTracer : dataTracers) {
+            dataTracer.trace();
+            //dataTracer.endMark();
+        }
+    }
+    @Override
+    public void cleanup(){
+        for (DataTracer dataTracer : dataTracers) {
+            dataTracer.endMark();
         }
     }
 }
