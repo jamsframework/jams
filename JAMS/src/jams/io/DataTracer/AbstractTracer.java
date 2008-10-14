@@ -88,9 +88,9 @@ public abstract class AbstractTracer implements DataTracer {
             }
         }
 
-        if (this.accessorObjects.length > 0) {
+        //if (this.accessorObjects.length > 0) {
             createHeader();
-        }
+        //}
     }
 
     private void createHeader() {
@@ -174,7 +174,8 @@ public abstract class AbstractTracer implements DataTracer {
      */
     @Override
     public void startMark() {
-
+        if (parents == null)
+            return;
         for (JAMSContext parent : parents) {
             output(parent.getInstanceName() + "\t" + parent.getTraceMark() + "\n");
         }
