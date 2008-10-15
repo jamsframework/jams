@@ -43,7 +43,11 @@ public class TableDataStore extends StandardInputDataStore {
     protected DataReader[] dataIOArray;
     protected int[] positionArray;
 
-    public TableDataStore(VirtualWorkspace ws, Document doc) {
+    public TableDataStore(VirtualWorkspace ws) {
+        super(ws);
+    }
+    
+    public TableDataStore(VirtualWorkspace ws, Document doc) throws ClassNotFoundException {
         super(ws, doc);
 
         if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {

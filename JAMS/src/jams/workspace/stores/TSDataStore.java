@@ -35,11 +35,21 @@ import jams.workspace.datatypes.DataValue;
  */
 public class TSDataStore extends TableDataStore {
 
-    private CalendarValue calendar;
-    private JAMSCalendar currentDate, endDate;
-    private int timeUnit,  timeUnitCount;
+    protected CalendarValue calendar;
+    protected JAMSCalendar currentDate, startDate, endDate, stopDate;
+    protected int timeUnit, timeUnitCount;
+    private String timeFormat;
 
-    public TSDataStore(VirtualWorkspace ws, Document doc) {
+    public TSDataStore(VirtualWorkspace ws) {
+        super(ws);
+        startDate = new JAMSCalendar();
+        endDate = new JAMSCalendar();
+        currentDate = new JAMSCalendar();
+        calendar = new CalendarValue(currentDate);
+    }
+    
+
+    public TSDataStore(VirtualWorkspace ws, Document doc) throws ClassNotFoundException {
         super(ws, doc);
 
         Element tiNode = (Element) doc.getElementsByTagName("timeinterval").item(0);
@@ -48,23 +58,24 @@ public class TSDataStore extends TableDataStore {
         Element stepsizeElement = (Element) tiNode.getElementsByTagName("stepsize").item(0);
         Element timeFormatElement = (Element) tiNode.getElementsByTagName("timeformat").item(0);
 
-        String timeFormat = "%1$tY-%1$tm-%1$td %1$tH:%1$tM";
+        timeFormat = JAMSCalendar.DATE_TIME_FORMAT;
         if (timeFormatElement != null) {
             timeFormat = timeFormatElement.getAttribute("value");
         }
-
-        JAMSCalendar startDate = new JAMSCalendar();
+        
+        startDate = new JAMSCalendar();
         startDate.setValue(startElement.getAttribute("value"));
 
         timeUnit = Integer.parseInt(stepsizeElement.getAttribute("unit"));
-        timeUnitCount = Integer.parseInt(stepsizeElement.getAttribute("count"));        
-        
+        timeUnitCount = Integer.parseInt(stepsizeElement.getAttribute("count"));
+
         endDate = new JAMSCalendar();
         endDate.setValue(endElement.getAttribute("value"));
-        endDate.add(timeUnit, -1*timeUnitCount);
+        stopDate = endDate.clone();
+        stopDate.add(timeUnit, -1 * timeUnitCount);
 
         currentDate = new JAMSCalendar();
-        currentDate.setFormatString(timeFormat);
+        currentDate.setDateFormat(timeFormat);
         currentDate.setValue(startDate);
         currentDate.add(timeUnit, -1 * timeUnitCount);
         calendar = new CalendarValue(currentDate);
@@ -134,7 +145,7 @@ public class TSDataStore extends TableDataStore {
 
     @Override
     public boolean hasNext() {
-        if (currentDate.after(endDate)) {
+        if (currentDate.after(stopDate)) {
             return false;
         }
         return super.hasNext();
@@ -159,6 +170,26 @@ public class TSDataStore extends TableDataStore {
         currentPosition++;
 
         return result;
+    }
+
+    public JAMSCalendar getStartDate() {
+        return startDate;
+    }
+
+    public JAMSCalendar getEndDate() {
+        return endDate;
+    }
+
+    public int getTimeUnit() {
+        return timeUnit;
+    }
+
+    public int getTimeUnitCount() {
+        return timeUnitCount;
+    }
+
+    public String getTimeFormat() {
+        return timeFormat;
     }
 }
 

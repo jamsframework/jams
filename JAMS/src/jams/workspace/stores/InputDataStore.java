@@ -38,5 +38,7 @@ public interface InputDataStore extends DataStore {
 
     public DataSetDefinition getDataSetDefinition();
     
+    public String getMissingDataValue();
+    
 }
 

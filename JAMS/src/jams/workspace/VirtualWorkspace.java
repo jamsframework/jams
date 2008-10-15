@@ -187,12 +187,18 @@ public class VirtualWorkspace {
         InputDataStore store = null;
         String type = doc.getDocumentElement().getTagName();
 
-        if (type.equals("tabledatastore")) {
-            store = new TableDataStore(this, doc);
-        } else if (type.equals("tsdatastore")) {
-            store = new TSDataStore(this, doc);
-        } else if (type.equals("geodatastore")) {
-            store = new GeoDataStore(this, doc);
+        try {
+            if (type.equals("tabledatastore")) {
+                store = new TableDataStore(this, doc);
+            } else if (type.equals("tsdatastore")) {
+                store = new TSDataStore(this, doc);
+            } else if (type.equals("geodatastore")) {
+                store = new GeoDataStore(this, doc);
+            }
+        } catch (ClassNotFoundException cnfe) {
+            getRuntime().sendErrorMsg("Error initializing datastore \"" + dsTitle + "\"!");
+            getRuntime().handle(cnfe);
+            return null;
         }
 
         return store;
@@ -307,15 +313,28 @@ public class VirtualWorkspace {
         if (store == null) {
             return null;
         }
-        TSDumpProcessor asciiConverter = new TSDumpProcessor(store);
-        String result = asciiConverter.toASCIIString();
-        return result;
+
+        if (store instanceof TSDataStore) {
+            TSDumpProcessor asciiConverter = new TSDumpProcessor((TSDataStore) store);
+            String result = asciiConverter.toASCIIString();
+            return result;
+        } else {
+            return store.getClass().toString() + " not yet supported!";
+        }
     }
 
     public void inputDataStoreToFile(String dsTitle, File file) throws IOException {
         InputDataStore store = this.getInputDataStore(dsTitle);
-        TSDumpProcessor asciiConverter = new TSDumpProcessor(store);
-        asciiConverter.toASCIIFile(file);
+
+        if (store == null) {
+            return;
+        }
+        
+        if (store instanceof TSDataStore) {
+            TSDumpProcessor asciiConverter = new TSDumpProcessor((TSDataStore) store);
+            asciiConverter.toASCIIFile(file);
+        }
+
         store.close();
     }
 
@@ -342,23 +361,24 @@ public class VirtualWorkspace {
                 System.out.print(arg);
             }
         });
-        
+
         JAMSProperties properties = JAMSProperties.createJAMSProperties();
         properties.load("D:/jamsapplication/nsk.jap");
         String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
 
-        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/vworkspace"), runtime);
+//        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/vworkspace"), runtime);
+        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime);
         ws.setLibs(libs);
 
-        System.out.println(ws.dataStoreToString("tmin_local"));
-        ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/vworkspace/_tmin_dump.txt"));
-    /*
-    OutputDataStore store = ws.getOutputDataStore("TimeLoop");
-    System.out.println(store.getID());
-    for (String attribute : store.getAttributes()) {
+        //System.out.println(ws.dataStoreToString("tmin_local"));
+        ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/JAMS-Gehlberg/output/current/tmin_dump.dat"));
+
+    /*OutputDataStore[] stores = ws.getOutputDataStores("TimeLoop");
+    System.out.println(stores[0].getID());
+    for (String attribute : stores[0].getAttributes()) {
     System.out.println(attribute);
-    }
-     */
+    }*/
+
 //        System.out.println(ws.dataStoreToString("tmean_timeseries"));
 //        ws.inputDataStoreToFile("tmean_timeseries", new File("D:/jamsapplication/vworkspace/_tmean_dump.txt"));
 //        ws.wsToFile();

@@ -32,7 +32,7 @@ import org.w3c.dom.Document;
 public class GeoDataStore extends StandardInputDataStore {
 
     //private Polygon extend;
-    public GeoDataStore(VirtualWorkspace ws, Document doc) {
+    public GeoDataStore(VirtualWorkspace ws, Document doc) throws ClassNotFoundException {
         super(ws, doc);
     }
 

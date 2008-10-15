@@ -36,11 +36,11 @@ import jams.data.JAMSCalendar;
  */
 public class TSDumpProcessor {
 
-    private InputDataStore store;
+    private TSDataStore store;
     private String commentTag = "@comments",  
             metadataTag = "@metadata",  dataTag = "@data",  endTag = "@end";
 
-    public TSDumpProcessor(InputDataStore store) {
+    public TSDumpProcessor(TSDataStore store) {
         this.store = store;
     }
 
@@ -56,13 +56,18 @@ public class TSDumpProcessor {
         output(target);
         writer.close();
     }
-
+    
     private void output(OutputTarget target) throws IOException {
 
         target.append(VirtualWorkspace.DUMP_MARKER + "\n");
         target.append(commentTag + "\n");
         target.append("#ID: " + store.getID() + "\n");
         target.append("#TYPE: " + store.getClass().getSimpleName() + "\n");
+        target.append("#START: " + store.getStartDate() + "\n");
+        target.append("#END: " + store.getEndDate() + "\n");
+        target.append("#STEPUNIT: " + store.getTimeUnit() + "\n");
+        target.append("#STEPSIZE: " + store.getTimeUnitCount() + "\n");
+        
         JAMSCalendar creationDate = new JAMSCalendar();
         creationDate.setValue(new GregorianCalendar());
         target.append("#DATE: " + creationDate + "\n");
@@ -73,6 +78,7 @@ public class TSDumpProcessor {
         }
 
         target.append(metadataTag + "\n");
+        
         target.append(store.getDataSetDefinition().toASCIIString() + "\n");
 
         target.append(dataTag + "\n");

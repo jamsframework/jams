@@ -33,11 +33,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.workspace.DataReader;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.StringTokenizer;
 
 /**
  *
@@ -49,24 +44,13 @@ public abstract class StandardInputDataStore implements InputDataStore {
     protected VirtualWorkspace ws;
     protected DataSetDefinition dsd;
     protected int bufferSize = 0;
-    private String id,  description = "";
-    protected BufferedReader dumpReader;
+    protected String id,  description = "",  missingDataValue = "";
 
-    public StandardInputDataStore(File file) throws IOException {
-
-        this.dumpReader = new BufferedReader(new FileReader(file));
-
-        String firstLine = dumpReader.readLine();
-
-        if (firstLine.startsWith(VirtualWorkspace.DUMP_MARKER)) {
-            readStandardDump();
-        } else {
-            readJ2KDump(file.getAbsolutePath(), firstLine);
-        }
-
+    public StandardInputDataStore(VirtualWorkspace ws) {
+        this.ws = ws;
     }
 
-    public StandardInputDataStore(VirtualWorkspace ws, Document doc) {
+    public StandardInputDataStore(VirtualWorkspace ws, Document doc) throws ClassNotFoundException {
         this.ws = ws;
 
         this.id = doc.getDocumentElement().getAttribute("id");
@@ -85,6 +69,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
 
         this.dataIO = createDataIO(doc);
         this.dsd = createDataSetDefinitionFromDocument(doc);
+        
     }
 
     private DataSetDefinition createDataSetDefinitionFromDocument(Document doc) {
@@ -121,9 +106,16 @@ public abstract class StandardInputDataStore implements InputDataStore {
             Element columnElement = (Element) columnList.item(i);
             DataReader metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
 
-            int result = metadataIO.init();
-            if (result < 0) {
-                ws.getRuntime().sendErrorMsg("Initialization of data I/O component (" + this.getClass().getName() + ") failed..");
+            if (metadataIO != null) {
+                int result = metadataIO.init();
+                if (result < 0) {
+                    ws.getRuntime().sendErrorMsg("Initialization of data I/O component \"" +
+                            this.getID() + "\" (" + this.getClass().getName() + ") failed..");
+                    return null;
+                }
+            } else {
+                ws.getRuntime().sendErrorMsg("Initialization of data I/O component \"" +
+                        this.getID() + "\" (" + this.getClass().getName() + ") failed..");
                 return null;
             }
         }
@@ -153,7 +145,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
         return def;
     }
 
-    private HashMap<String, DataReader> createDataIO(Document doc) {
+    private HashMap<String, DataReader> createDataIO(Document doc) throws ClassNotFoundException {
 
         HashMap<String, DataReader> _dataIO = new HashMap<String, DataReader>();
 
@@ -211,16 +203,18 @@ public abstract class StandardInputDataStore implements InputDataStore {
 
                 _dataIO.put(nodeID, io);
 
-            } catch (ClassNotFoundException cnfe) {
-                ws.getRuntime().handle(cnfe);
             } catch (InstantiationException ie) {
                 ws.getRuntime().handle(ie);
+                return null;
             } catch (IllegalAccessException iae) {
                 ws.getRuntime().handle(iae);
+                return null;
             } catch (NoSuchMethodException nsme) {
                 ws.getRuntime().handle(nsme);
+                return null;
             } catch (InvocationTargetException ite) {
                 ws.getRuntime().handle(ite);
+                return null;
             }
         }
         return _dataIO;
@@ -242,73 +236,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
         return dataIO.get(id);
     }
 
-    private void readStandardDump() throws IOException {
-    }
-
-    private void readJ2KDump(String id, String firstLine) throws IOException {
-
-        this.id = id;
-
-        // read header information from the J2K time series file
-
-        String line = firstLine;
-        //skip comment lines
-        while (line.charAt(0) == '#') {
-            this.description += line.substring(1) + "\n";
-            line = dumpReader.readLine();
-        }
-
-        StringBuffer dataValueAttribs = new StringBuffer();
-        while (!line.startsWith("@dataSetAttribs")) {
-            dataValueAttribs.append(line + "\n");
-            line = dumpReader.readLine();
-        }
-
-        StringBuffer dataSetAttribs = new StringBuffer();
-        while (!line.startsWith("@statAttribVal")) {
-            dataSetAttribs.append(line + "\n");
-            line = dumpReader.readLine();
-        }
-
-        StringBuffer statAttribVal = new StringBuffer();
-        while (!line.startsWith("@dataVal")) {
-            statAttribVal.append(line + "\n");
-            line = dumpReader.readLine();
-        }
-
-        // create a DataSetDefinition object
-
-        StringTokenizer tok1 = new StringTokenizer(statAttribVal.toString(), "\n");
-        tok1.nextToken();
-        StringTokenizer tok2 = new StringTokenizer(tok1.nextToken());
-
-        int attributeCount = tok2.countTokens() - 1;
-        ArrayList<Class> dataTypes = new ArrayList<Class>();
-        for (int i = 0; i < attributeCount; i++) {
-            dataTypes.add(Double.class);
-        }
-        DataSetDefinition def = new DataSetDefinition(dataTypes);
-
-        while (tok1.hasMoreTokens()) {
-
-            String attributeName = tok2.nextToken();
-            def.addAttribute(attributeName, String.class);
-            ArrayList<Object> values = new ArrayList<Object>();
-            while (tok2.hasMoreTokens()) {
-                values.add(tok2.nextToken());
-            }
-            def.setAttributeValues(attributeName, values);
-            tok2 = new StringTokenizer(tok1.nextToken());
-        }
-
-        tok1 = new StringTokenizer(dataValueAttribs.toString());
-        tok1.nextToken(); // skip the "@"-tag
-        String parameterName = tok1.nextToken();
-        String parameterString = "PARAMETER";
-        def.addAttribute(parameterString, String.class);
-        def.setAttributeValues(parameterString, parameterName);
-
-        this.dsd = def;
-
+    public String getMissingDataValue() {
+        return missingDataValue;
     }
 }
