@@ -47,8 +47,8 @@ public class TableDataStore extends StandardInputDataStore {
         super(ws);
     }
     
-    public TableDataStore(VirtualWorkspace ws, Document doc) throws ClassNotFoundException {
-        super(ws, doc);
+    public TableDataStore(VirtualWorkspace ws, String id, Document doc) throws ClassNotFoundException {
+        super(ws, id, doc);
 
         if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
             return;

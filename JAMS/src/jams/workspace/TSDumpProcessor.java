@@ -67,6 +67,7 @@ public class TSDumpProcessor {
         target.append("#END: " + store.getEndDate() + "\n");
         target.append("#STEPUNIT: " + store.getTimeUnit() + "\n");
         target.append("#STEPSIZE: " + store.getTimeUnitCount() + "\n");
+        target.append("#MISSINGDATAVALUE: " + store.getMissingDataValue() + "\n");
         
         JAMSCalendar creationDate = new JAMSCalendar();
         creationDate.setValue(new GregorianCalendar());

@@ -22,6 +22,7 @@
  */
 package jams.workspace.stores;
 
+import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.workspace.DataSet;
 import jams.workspace.DataSetDefinition;
@@ -35,6 +36,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  *
@@ -46,27 +49,31 @@ public class J2KTSDataStore extends TSDataStore {
     private int columnCount = 0;
     private BufferedReader dumpReader;
 
-    public J2KTSDataStore(VirtualWorkspace ws, File file) throws IOException {
+    public J2KTSDataStore(VirtualWorkspace ws, String id, Document doc) throws IOException {
 
         super(ws);
+        this.id = id;
 
+        Element tiNode = (Element) doc.getElementsByTagName("timeinterval").item(0);
+        Element timeFormatElement = (Element) tiNode.getElementsByTagName("timeformat").item(0);
+        timeFormat = JAMSCalendar.DATE_TIME_FORMAT;
+        if (timeFormatElement != null) {
+            timeFormat = timeFormatElement.getAttribute("value");
+        }
+
+        File file = new File(ws.getLocalInputDirectory(), id + ".dat");
         this.dumpReader = new BufferedReader(new FileReader(file));
 
-        readJ2KFile(file.getAbsolutePath());
-
-
+        readJ2KFile();
 
         this.columnCount = this.getDataSetDefinition().getColumnCount();
-    /*
-    if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
-    return;
-    }
-     */
+
+        if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
+            return;
+        }
     }
 
-    private void readJ2KFile(String id) throws IOException {
-
-        this.id = id;
+    private void readJ2KFile() throws IOException {
 
         // read header information from the J2K time series file
 
@@ -163,6 +170,8 @@ public class J2KTSDataStore extends TSDataStore {
             }
         }
         timeUnitCount = 1;
+        currentDate.setValue(startDate);
+        currentDate.setDateFormat(timeFormat);
 
 
         this.dsd = def;
@@ -227,7 +236,7 @@ public class J2KTSDataStore extends TSDataStore {
         //System.out.println(ds.getDataSetDefinition().toASCIIString());
 
         for (int i = 0; i < 1; i++) {
-            J2KTSDataStore ds = new J2KTSDataStore(null, new File("D:/jamsapplication/JAMS-Gehlberg/data/rain.dat"));
+            J2KTSDataStore ds = new J2KTSDataStore(null, "rain", null);
             TSDumpProcessor dumpProc = new TSDumpProcessor(ds);
             //dumpProc.toASCIIString();
             dumpProc.toASCIIFile(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/test.dat"));

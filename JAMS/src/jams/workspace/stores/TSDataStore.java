@@ -38,7 +38,7 @@ public class TSDataStore extends TableDataStore {
     protected CalendarValue calendar;
     protected JAMSCalendar currentDate, startDate, endDate, stopDate;
     protected int timeUnit, timeUnitCount;
-    private String timeFormat;
+    protected String timeFormat;
 
     public TSDataStore(VirtualWorkspace ws) {
         super(ws);
@@ -49,8 +49,8 @@ public class TSDataStore extends TableDataStore {
     }
     
 
-    public TSDataStore(VirtualWorkspace ws, Document doc) throws ClassNotFoundException {
-        super(ws, doc);
+    public TSDataStore(VirtualWorkspace ws, String id, Document doc) throws ClassNotFoundException {
+        super(ws, id, doc);
 
         Element tiNode = (Element) doc.getElementsByTagName("timeinterval").item(0);
         Element startElement = (Element) tiNode.getElementsByTagName("start").item(0);

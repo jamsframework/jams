@@ -50,10 +50,10 @@ public abstract class StandardInputDataStore implements InputDataStore {
         this.ws = ws;
     }
 
-    public StandardInputDataStore(VirtualWorkspace ws, Document doc) throws ClassNotFoundException {
+    public StandardInputDataStore(VirtualWorkspace ws, String id, Document doc) throws ClassNotFoundException {
         this.ws = ws;
 
-        this.id = doc.getDocumentElement().getAttribute("id");
+        this.id = id;//doc.getDocumentElement().getAttribute("id");
 
         Node descriptionNode = doc.getDocumentElement().getElementsByTagName("description").item(0);
         if (descriptionNode != null) {

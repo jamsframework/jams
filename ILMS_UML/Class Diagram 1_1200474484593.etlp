@@ -4747,7 +4747,7 @@
       <entry fontholderid="1" name="SansSerif" CharSet="0" Height="12" Italic="false" Strikeout="false" Underline="false" Weight="400"/>
     </FontHolderTable>
   </resources>
-  <diagramInfo zoom="0.7451055876709831" xPos="142.0" yPos="-201.0" name="Virtual Workspace" alias="" docs="" diagramKind="Class Diagram" lastShowAliasState="false" namespaceToplevelID="DCE.64BC63A3-3628-7AEF-BBB3-78C046872626" namespaceMEID="DCE.64BC63A3-3628-7AEF-BBB3-78C046872626" diagramXMIID="DCE.24E128A9-F26B-E523-FED4-CCF3A528B24B"/>
+  <diagramInfo zoom="0.7451055876709831" xPos="142.0" yPos="-190.0" name="Virtual Workspace" alias="" docs="" diagramKind="Class Diagram" lastShowAliasState="false" namespaceToplevelID="DCE.64BC63A3-3628-7AEF-BBB3-78C046872626" namespaceMEID="DCE.64BC63A3-3628-7AEF-BBB3-78C046872626" diagramXMIID="DCE.24E128A9-F26B-E523-FED4-CCF3A528B24B"/>
   <DCE.7DC31626-6D5A-05D1-1B89-851782B529E4 PEID="DCE.7DC31626-6D5A-05D1-1B89-851782B529E4" MEID="DCE.84AB6B4C-9EA5-2F18-033A-DDF6C98F34C8" toplevelMEID="DCE.64BC63A3-3628-7AEF-BBB3-78C046872626" initString="org.netbeans.modules.uml.ui.products.ad.viewfactory.ETGenericNodeUI Class">
     <engine name="ClassDrawEngine" editLocked="false">
       <resources>
@@ -5396,6 +5396,32 @@
       </compartment>
     </engine>
   </DCE.06202D41-5EB9-BFE7-9F5C-B4614BAF421A>
+  <DCE.6A609A73-EE63-D17B-DE84-A203963A7052 PEID="DCE.6A609A73-EE63-D17B-DE84-A203963A7052" MEID="DCE.B2E51001-2382-F204-3A5C-4BF5191FC41D" toplevelMEID="DCE.64BC63A3-3628-7AEF-BBB3-78C046872626" initString="org.netbeans.modules.uml.ui.products.ad.viewfactory.ETGenericNodeUI Class">
+    <engine name="ClassDrawEngine" editLocked="false">
+      <resources>
+        <resource type="font" resourceStringID="6" fontID="2"/>
+        <resource type="color" resourceStringID="6" colorID="5"/>
+        <resource type="color" resourceStringID="4" colorID="3"/>
+        <resource type="color" resourceStringID="201" colorID="321"/>
+        <resource type="color" resourceStringID="2" colorID="1"/>
+      </resources>
+      <compartment name="1" MEID="DCE.B2E51001-2382-F204-3A5C-4BF5191FC41D" value="" textStyles="VCENTER|HCENTER|SINGLELINE" DefaultCompartment="ADClassNameCompartment" staticText="">
+        <resources/>
+        <compartment name="2" MEID="DCE.B2E51001-2382-F204-3A5C-4BF5191FC41D" value="J2KTSDataStore" textStyles="VCENTER|HCENTER|SINGLELINE" nameCompartmentBorderKind="0">
+          <resources>
+            <resource type="font" resourceStringID="6" fontID="2"/>
+            <resource type="color" resourceStringID="6" colorID="5"/>
+          </resources>
+        </compartment>
+      </compartment>
+      <compartment name="3" value="Attributes" textStyles="VCENTER|HCENTER|SINGLELINE">
+        <resources/>
+      </compartment>
+      <compartment name="5" value="Operations" textStyles="VCENTER|HCENTER|SINGLELINE">
+        <resources/>
+      </compartment>
+    </engine>
+  </DCE.6A609A73-EE63-D17B-DE84-A203963A7052>
   <DCE.3243BE49-D8EB-BE4A-D769-75A38233E03C PEID="DCE.3243BE49-D8EB-BE4A-D769-75A38233E03C" MEID="DCE.A6385CC4-BA26-5237-6972-8987A21AADD8" toplevelMEID="DCE.64BC63A3-3628-7AEF-BBB3-78C046872626" initString="org.netbeans.modules.uml.ui.products.ad.viewfactory.RelationEdge Aggregation AG NN">
     <engine name="AssociationEdgeDrawEngine">
       <resources>
@@ -5480,6 +5506,13 @@
       </resources>
     </engine>
   </DCE.8FBE5F18-A11B-9AA0-5F7A-E1079B7FD4F8>
+  <DCE.B48410DF-5451-75B3-B365-CB8A53BA3DC8 PEID="DCE.B48410DF-5451-75B3-B365-CB8A53BA3DC8" MEID="DCE.D5F7AA62-8EE0-8361-DE0A-C6E3743A5398" toplevelMEID="DCE.64BC63A3-3628-7AEF-BBB3-78C046872626" initString="org.netbeans.modules.uml.ui.products.ad.viewfactory.RelationEdge Generalization">
+    <engine name="GeneralizationEdgeDrawEngine">
+      <resources>
+        <resource type="color" resourceStringID="185" colorID="289"/>
+      </resources>
+    </engine>
+  </DCE.B48410DF-5451-75B3-B365-CB8A53BA3DC8>
   <DCE.82CD4435-E67D-30CA-CD1A-3FBFB7EDA265 TSLabelKind="3" TSLabelPlacementKind="1" PEID="DCE.82CD4435-E67D-30CA-CD1A-3FBFB7EDA265" MEID="DCE.00E8F270-C2FB-FFCD-8D25-C11423F3ADD1" toplevelMEID="DCE.64BC63A3-3628-7AEF-BBB3-78C046872626" initString="org.netbeans.modules.uml.ui.products.ad.viewfactory.ETGenericEdgeLabelUI EdgeLabel">
     <engine name="ADLabelDrawEngine" labelText="1">
       <resources>

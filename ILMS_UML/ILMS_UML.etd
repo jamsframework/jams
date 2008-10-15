@@ -61,7 +61,7 @@
 <UML:Multiplicity xmi.id="DCE.53674509-574F-1162-EFC2-2C617695E612"/></UML:TypedElement.multiplicity><UML:Attribute.default>
 <UML:Expression xmi.id="DCE.F1FD6051-31B5-63AB-69C3-915CA940795A"/></UML:Attribute.default></UML:Attribute>
 <UML:SourceFileArtifact xmi.id="DCE.6455AA3D-2A21-0BD5-0C38-FFA785F5918F" name="Unnamed" owner="DCE.BE5C1938-3C1B-5851-E6FE-76CF6C0F524D" sourcefile="..\..\jams\RBISDesk\src\GeoDataStore.java"/></UML:Element.ownedElement></UML:Class>
-<UML:Class xmi.id="DCE.47055974-E9D2-892A-AEEF-E5E48EEA1762" name="TSDataStore" owner="DCE.64BC63A3-3628-7AEF-BBB3-78C046872626" associationEnd=""><UML:Element.presentation>
+<UML:Class xmi.id="DCE.47055974-E9D2-892A-AEEF-E5E48EEA1762" name="TSDataStore" owner="DCE.64BC63A3-3628-7AEF-BBB3-78C046872626" associationEnd="" specialization="DCE.D5F7AA62-8EE0-8361-DE0A-C6E3743A5398"><UML:Element.presentation>
 
 
 
@@ -721,7 +721,11 @@
 
 </UML:Element.presentation></UML:Implementation>
 
-</UML:Element.ownedElement><UML:Package.packageImport>
+
+<UML:Class xmi.id="DCE.B2E51001-2382-F204-3A5C-4BF5191FC41D" name="J2KTSDataStore" owner="DCE.64BC63A3-3628-7AEF-BBB3-78C046872626"><UML:Element.presentation>
+</UML:Element.presentation><UML:Classifier.generalization>
+<UML:Generalization xmi.id="DCE.D5F7AA62-8EE0-8361-DE0A-C6E3743A5398" specific="DCE.B2E51001-2382-F204-3A5C-4BF5191FC41D" general="DCE.47055974-E9D2-892A-AEEF-E5E48EEA1762"><UML:Element.presentation>
+</UML:Element.presentation></UML:Generalization></UML:Classifier.generalization></UML:Class></UML:Element.ownedElement><UML:Package.packageImport>
 <UML:PackageImport xmi.id="DCE.FA4DA623-9EC8-D38E-CC0E-0A9D3DE2F32B" importingPackage="DCE.64BC63A3-3628-7AEF-BBB3-78C046872626"><UML:PackageImport.importedPackage>
 <UML:Profile xmi.id="DCE.778EF241-A9BE-0063-E3A6-35C7A09233DA" name="Unnamed" isCloned="true" href=".\ILMS_UML.etup#//*[@xmi.id=&apos;DCE.778EF241-A9BE-0063-E3A6-35C7A09233DA&apos;]" isDirty="false"/></UML:PackageImport.importedPackage><UML:Element.ownedElement>
 <UML:TaggedValue xmi.id="DCE.85A96CE3-A350-A81B-9FC7-C1F204E819B1" owner="DCE.FA4DA623-9EC8-D38E-CC0E-0A9D3DE2F32B" name="autoCreated">

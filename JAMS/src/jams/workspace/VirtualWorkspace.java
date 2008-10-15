@@ -44,6 +44,7 @@ import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import org.w3c.dom.Document;
 import jams.workspace.stores.DataStore;
+import jams.workspace.stores.J2KTSDataStore;
 import jams.workspace.stores.OutputDataStore;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -63,8 +64,9 @@ public class VirtualWorkspace {
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
     private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
     private JAMSRuntime runtime;
-    transient ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-    transient File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory;
+    private transient ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+    private transient File directory, inputDirectory, outputDirectory = null, 
+            outputDataDirectory, localInputDirectory, localDumpDirectory, tmpDirectory;
     private Properties properties = new Properties();
     private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
 
@@ -114,12 +116,21 @@ public class VirtualWorkspace {
         try {
             File inDir = new File(directory, "input");
             File outDir = new File(directory, "output");
-
+            File tmpDir = new File(directory, "temp");
+            File localInDir = new File(inDir, "local");
+            File localDumpDir = new File(localInDir, "dump");
+            
             inDir.mkdirs();
             outDir.mkdirs();
+            tmpDir.mkdirs();
+            localInDir.mkdirs();
+            localDumpDir.mkdirs();
 
             this.inputDirectory = inDir;
             this.outputDirectory = outDir;
+            this.localInputDirectory = localInDir;
+            this.localDumpDirectory = localDumpDir;
+            this.tmpDirectory = tmpDir;
 
             if (this.isPersistent()) {
                 Calendar cal = Calendar.getInstance();
@@ -189,16 +200,22 @@ public class VirtualWorkspace {
 
         try {
             if (type.equals("tabledatastore")) {
-                store = new TableDataStore(this, doc);
+                store = new TableDataStore(this, dsTitle, doc);
             } else if (type.equals("tsdatastore")) {
-                store = new TSDataStore(this, doc);
+                store = new TSDataStore(this, dsTitle, doc);
+            } else if (type.equals("j2ktsdatastore")) {
+                store = new J2KTSDataStore(this, dsTitle, doc);
             } else if (type.equals("geodatastore")) {
-                store = new GeoDataStore(this, doc);
+                store = new GeoDataStore(this, dsTitle, doc);
             }
         } catch (ClassNotFoundException cnfe) {
             getRuntime().sendErrorMsg("Error initializing datastore \"" + dsTitle + "\"!");
             getRuntime().handle(cnfe);
             return null;
+        } catch (IOException ioe) {
+            getRuntime().sendErrorMsg("Error initializing datastore \"" + dsTitle + "\"!");
+            getRuntime().handle(ioe);
+            return null;            
         }
 
         return store;
@@ -323,7 +340,7 @@ public class VirtualWorkspace {
         }
     }
 
-    public void inputDataStoreToFile(String dsTitle, File file) throws IOException {
+    public void inputDataStoreToFile(String dsTitle) throws IOException {
         InputDataStore store = this.getInputDataStore(dsTitle);
 
         if (store == null) {
@@ -332,7 +349,9 @@ public class VirtualWorkspace {
         
         if (store instanceof TSDataStore) {
             TSDumpProcessor asciiConverter = new TSDumpProcessor((TSDataStore) store);
+            File file = new File(this.getLocalDumpDirectory(), dsTitle + ".dump");
             asciiConverter.toASCIIFile(file);
+            getRuntime().sendInfoMsg("Dumped input datastore " + dsTitle + " to " + file + ".");
         }
 
         store.close();
@@ -340,8 +359,7 @@ public class VirtualWorkspace {
 
     public void inputDataStoreToFile() throws IOException {
         for (String dsTitle : this.getInputDataStoreIDs()) {
-            File file = new File(this.directory.getAbsolutePath() + File.separator + "_" + dsTitle + ".txt");
-            inputDataStoreToFile(dsTitle, file);
+            inputDataStoreToFile(dsTitle);
         }
     }
 
@@ -371,7 +389,8 @@ public class VirtualWorkspace {
         ws.setLibs(libs);
 
         //System.out.println(ws.dataStoreToString("tmin_local"));
-        ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/JAMS-Gehlberg/output/current/tmin_dump.dat"));
+        //ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/JAMS-Gehlberg/output/current/tmin_dump.dat"));
+        ws.inputDataStoreToFile();
 
     /*OutputDataStore[] stores = ws.getOutputDataStores("TimeLoop");
     System.out.println(stores[0].getID());
@@ -398,6 +417,14 @@ public class VirtualWorkspace {
 
     public File getOutputDataDirectory() {
         return outputDataDirectory;
+    }
+
+    public File getLocalInputDirectory() {
+        return localInputDirectory;
+    }
+
+    public File getLocalDumpDirectory() {
+        return localDumpDirectory;
     }
 }
 
