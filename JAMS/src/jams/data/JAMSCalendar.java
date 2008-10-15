@@ -23,6 +23,9 @@
 package jams.data;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -31,20 +34,26 @@ import java.util.*;
  */
 public class JAMSCalendar extends GregorianCalendar implements JAMSData, Serializable {
 
-    private String formatString = "%1$tY-%1$tm-%1$td %1$tH:%1$tM";
-    
+    public final static String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+    public final static TimeZone STANDARD_TIME_ZONE = new SimpleTimeZone(0, "GMT");
+    private DateFormat dateFormat;
+
     public JAMSCalendar() {
         super();
         this.setTimeInMillis(0);
-        java.util.SimpleTimeZone stz = new java.util.SimpleTimeZone(0, "GMT");
-        this.setTimeZone(stz);
+        initTZ();
     }
 
     public JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second) {
         super(year, month, dayOfMonth, hourOfDay, minute, second);
         set(Calendar.MILLISECOND, 0);
-        java.util.SimpleTimeZone stz = new java.util.SimpleTimeZone(0, "GMT");
-        this.setTimeZone(stz);
+        initTZ();
+    }
+
+    private void initTZ() {
+        this.setTimeZone(STANDARD_TIME_ZONE);
+        dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT);
+        dateFormat.setTimeZone(STANDARD_TIME_ZONE);
     }
 
     public JAMSCalendar clone() {
@@ -52,11 +61,15 @@ public class JAMSCalendar extends GregorianCalendar implements JAMSData, Seriali
     }
 
     public String toString() {
-        return toString(this.formatString);
+        Date date = new Date();
+        date.setTime(this.getTimeInMillis());
+        return dateFormat.format(date);
     }
 
-    public String toString(String formatString) {
-        return String.format(formatString, this);
+    public String toString(DateFormat dateFormat) {
+        Date date = new Date();
+        date.setTime(this.getTimeInMillis());
+        return dateFormat.format(date);
     }
 
     public GregorianCalendar getValue() {
@@ -104,7 +117,7 @@ public class JAMSCalendar extends GregorianCalendar implements JAMSData, Seriali
         String second = "0";
         String millisecond = "0";
 
-        StringTokenizer st = new StringTokenizer(value, " :-/");
+        StringTokenizer st = new StringTokenizer(value, " :-/.");
         year = st.nextToken();
         if (st.hasMoreTokens()) {
             month = st.nextToken().trim();
@@ -138,12 +151,29 @@ public class JAMSCalendar extends GregorianCalendar implements JAMSData, Seriali
         }
     }
 
-    public void setFormatString(String formatString) {
-        this.formatString = formatString;
+    public static void main(String[] args) throws Exception {
+        String test = "01.01.1979 07:30";
+        JAMSCalendar cal = new JAMSCalendar();
+        cal.setValue(test, "dd.MM.yyyy HH:mm");
+        for (int i = 0; i < 100000; i++) {
+            cal.toString();
+            //cal.toString("%1$tY-%1$tm-%1$td %1$tH:%1$tM");
+        }
     }
 
-    public String getFormatString() {
-        return this.formatString;
+    public void setValue(String value, String format) throws ParseException {
+        DateFormat fromFormat = new SimpleDateFormat(format);
+        fromFormat.setTimeZone(this.getTimeZone());
+        Date date = fromFormat.parse(value);
+        this.setTimeInMillis(date.getTime());
     }
 
+    public void setDateFormat(String formatString) {
+        dateFormat = new SimpleDateFormat(formatString);
+        dateFormat.setTimeZone(this.getTimeZone());
+    }
+
+    public DateFormat getDateFormat() {
+        return dateFormat;
+    }
 }
