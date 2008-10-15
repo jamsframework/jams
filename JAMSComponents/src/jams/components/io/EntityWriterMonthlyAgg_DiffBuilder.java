@@ -24,11 +24,12 @@
 package jams.components.io;
 
 import java.util.Locale;
-import java.util.Calendar;
 import jams.JAMS;
 import jams.data.*;
 import jams.model.*;
 import jams.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -147,6 +148,9 @@ title="Entity file writer (spatial+monthly)",
     
     private String[] dateVals;
     private String timeFormat = "%1$td.%1$tm.%1$tY";
+    private DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private DateFormat dateMonthFormat = new SimpleDateFormat("ddd");
+    
     private int tcounter;
     private int daycounter;
     private long dayBeforeAggTI;
@@ -236,6 +240,8 @@ title="Entity file writer (spatial+monthly)",
         
         //monthly values
         timeFormat = "%1$tb/%1$ty";
+        dateFormat = new SimpleDateFormat("MMM/yy");
+
         aggMatrix = new double[12][nEnts];
         aggCounter = new int[12];
         aggFieldNames = new String[12];
@@ -279,13 +285,13 @@ title="Entity file writer (spatial+monthly)",
             if(newMonth != oldMonth){
                 
                 //Einfügen: Lesen von Monat und Jahr für Header!
-                dateVals[tcounter] = time.toString(timeFormat);
+                dateVals[tcounter] = time.toString(dateFormat);
                 
                 //aggregated values
                 //monthly values
                 if(tcounter > 0){
                     int month = oldMonth;//time.get(time.MONTH);
-                    aggFieldNames[month] = time.toString("%1$tb");
+                    aggFieldNames[month] = time.toString(dateMonthFormat);
                     if(this.type.getValue().equals("average")){
                         for(int i = 0; i < nEnts; i++){
                             valueMatrixAverage[i] = valueMatrix[tcounter][i] / daycounter;
