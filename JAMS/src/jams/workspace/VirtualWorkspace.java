@@ -58,8 +58,11 @@ import java.util.Properties;
 public class VirtualWorkspace {
 
     public static final String DUMP_MARKER = "#JAMSdatadump";
-    private static final String CONFIG_FILE_NAME = "config.txt";
-    private static final String CONTEXT_ATTRIBUTE_NAME = "context";
+    private static final String CONFIG_FILE_NAME = "config.txt", 
+            CONFIG_FILE_COMMENT = "JAMS workspace configuration", 
+            CONTEXT_ATTRIBUTE_NAME = "context", INPUT_DIR_NAME = "input",
+            OUTPUT_DIR_NAME = "output", TEMP_DIR_NAME = "temp",
+            DUMP_DIR_NAME = "input", LOCAL_INDIR_NAME = "local";
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
     private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
@@ -91,6 +94,9 @@ public class VirtualWorkspace {
             if (file.exists()) {
                 BufferedInputStream is = new BufferedInputStream(new FileInputStream(file));
                 properties.load(is);
+            } else {
+                BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+                properties.store(os, CONFIG_FILE_COMMENT);                
             }
         } catch (IOException ioe) {
             runtime.handle(ioe);
@@ -101,7 +107,7 @@ public class VirtualWorkspace {
         try {
             File file = new File(directory.getPath() + File.separator + CONFIG_FILE_NAME);
             BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(file));
-            properties.store(os, "JAMS workspace config");
+            properties.store(os, CONFIG_FILE_COMMENT);
         } catch (IOException ioe) {
             runtime.handle(ioe);
         }
@@ -114,11 +120,11 @@ public class VirtualWorkspace {
         }
 
         try {
-            File inDir = new File(directory, "input");
-            File outDir = new File(directory, "output");
-            File tmpDir = new File(directory, "temp");
-            File localInDir = new File(inDir, "local");
-            File localDumpDir = new File(localInDir, "dump");
+            File inDir = new File(directory, INPUT_DIR_NAME);
+            File outDir = new File(directory, OUTPUT_DIR_NAME);
+            File tmpDir = new File(directory, TEMP_DIR_NAME);
+            File localInDir = new File(inDir, LOCAL_INDIR_NAME);
+            File localDumpDir = new File(localInDir, DUMP_DIR_NAME);
             
             inDir.mkdirs();
             outDir.mkdirs();
@@ -385,7 +391,8 @@ public class VirtualWorkspace {
         String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
 
 //        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/vworkspace"), runtime);
-        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime);
+//        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime);
+        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/ws_test"), runtime);
         ws.setLibs(libs);
 
         //System.out.println(ws.dataStoreToString("tmin_local"));
