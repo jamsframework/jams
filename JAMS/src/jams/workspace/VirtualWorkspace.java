@@ -58,18 +58,13 @@ import java.util.Properties;
 public class VirtualWorkspace {
 
     public static final String DUMP_MARKER = "#JAMSdatadump";
-    private static final String CONFIG_FILE_NAME = "config.txt", 
-            CONFIG_FILE_COMMENT = "JAMS workspace configuration", 
-            CONTEXT_ATTRIBUTE_NAME = "context", INPUT_DIR_NAME = "input",
-            OUTPUT_DIR_NAME = "output", TEMP_DIR_NAME = "temp",
-            DUMP_DIR_NAME = "dump", LOCAL_INDIR_NAME = "local";
+    private static final String CONFIG_FILE_NAME = "config.txt",  CONFIG_FILE_COMMENT = "JAMS workspace configuration",  CONTEXT_ATTRIBUTE_NAME = "context",  INPUT_DIR_NAME = "input",  OUTPUT_DIR_NAME = "output",  TEMP_DIR_NAME = "temp",  DUMP_DIR_NAME = "dump",  LOCAL_INDIR_NAME = "local";
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
     private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
     private JAMSRuntime runtime;
     private transient ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-    private transient File directory, inputDirectory, outputDirectory = null, 
-            outputDataDirectory, localInputDirectory, localDumpDirectory, tmpDirectory;
+    private transient File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory,  localInputDirectory,  localDumpDirectory,  tmpDirectory;
     private Properties properties = new Properties();
     private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
 
@@ -96,7 +91,7 @@ public class VirtualWorkspace {
                 properties.load(is);
             } else {
                 BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(file));
-                properties.store(os, CONFIG_FILE_COMMENT);                
+                properties.store(os, CONFIG_FILE_COMMENT);
             }
         } catch (IOException ioe) {
             runtime.handle(ioe);
@@ -125,7 +120,7 @@ public class VirtualWorkspace {
             File tmpDir = new File(directory, TEMP_DIR_NAME);
             File localInDir = new File(inDir, LOCAL_INDIR_NAME);
             File localDumpDir = new File(localInDir, DUMP_DIR_NAME);
-            
+
             inDir.mkdirs();
             outDir.mkdirs();
             tmpDir.mkdirs();
@@ -221,7 +216,7 @@ public class VirtualWorkspace {
         } catch (IOException ioe) {
             getRuntime().sendErrorMsg("Error initializing datastore \"" + dsTitle + "\"!");
             getRuntime().handle(ioe);
-            return null;            
+            return null;
         }
 
         return store;
@@ -352,7 +347,7 @@ public class VirtualWorkspace {
         if (store == null) {
             return;
         }
-        
+
         if (store instanceof TSDataStore) {
             TSDumpProcessor asciiConverter = new TSDumpProcessor();
             File file = new File(this.getLocalDumpDirectory(), dsTitle + ".dump");
@@ -364,50 +359,9 @@ public class VirtualWorkspace {
     }
 
     public void inputDataStoreToFile() throws IOException {
-        for (String dsTitle : this.getInputDataStoreIDs())   {
+        for (String dsTitle : this.getInputDataStoreIDs()) {
             inputDataStoreToFile(dsTitle);
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-
-        JAMSRuntime runtime = new StandardRuntime();
-        runtime.setDebugLevel(JAMS.VERBOSE);
-        runtime.addErrorLogObserver(new Observer() {
-
-            public void update(Observable o, Object arg) {
-                System.out.print(arg);
-            }
-        });
-        runtime.addInfoLogObserver(new Observer() {
-
-            public void update(Observable o, Object arg) {
-                System.out.print(arg);
-            }
-        });
-
-        JAMSProperties properties = JAMSProperties.createJAMSProperties();
-        properties.load("D:/jamsapplication/nsk.jap");
-        String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
-
-//        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/vworkspace"), runtime);
-        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime);
-        //VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/ws_test"), runtime);
-        ws.setLibs(libs);
-
-        //System.out.println(ws.dataStoreToString("tmin_local"));
-        //ws.inputDataStoreToFile("tmin_local", new File("D:/jamsapplication/JAMS-Gehlberg/output/current/tmin_dump.dat"));
-        ws.inputDataStoreToFile();
-
-    /*OutputDataStore[] stores = ws.getOutputDataStores("TimeLoop");
-    System.out.println(stores[0].getID());
-    for (String attribute : stores[0].getAttributes()) {
-    System.out.println(attribute);
-    }*/
-
-//        System.out.println(ws.dataStoreToString("tmean_timeseries"));
-//        ws.inputDataStoreToFile("tmean_timeseries", new File("D:/jamsapplication/vworkspace/_tmean_dump.txt"));
-//        ws.wsToFile();
     }
 
     public File getDirectory() {
@@ -432,6 +386,37 @@ public class VirtualWorkspace {
 
     public File getLocalDumpDirectory() {
         return localDumpDirectory;
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        JAMSRuntime runtime = new StandardRuntime();
+        runtime.setDebugLevel(JAMS.VERBOSE);
+        runtime.addErrorLogObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                System.out.print(arg);
+            }
+        });
+        runtime.addInfoLogObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                System.out.print(arg);
+            }
+        });
+
+        JAMSProperties properties = JAMSProperties.createJAMSProperties();
+        properties.load("D:/jamsapplication/nsk.jap");
+        String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
+
+        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime);
+        //VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/ws_test"), runtime);
+        ws.setLibs(libs);
+
+        //System.out.println(ws.dataStoreToString("tmin"));
+        //ws.inputDataStoreToFile("tmin");
+        ws.inputDataStoreToFile();
+
     }
 }
 
