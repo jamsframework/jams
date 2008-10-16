@@ -236,7 +236,7 @@ public class JAMSContext extends JAMSComponent {
                 /*
                 String id = this.getInstanceName() + "." + attributeSpec.attributeName;
                 getModel().getRuntime().getDataHandles().put(id, data);
-                */
+                 */
                 for (JAMSEntity entity : entityArray) {
                     entity.setObject(attributeSpec.attributeName, data);
                 }
@@ -280,12 +280,12 @@ public class JAMSContext extends JAMSComponent {
 
                     Field field = getField(accessSpec.component.getClass(), accessSpec.varName);
                     field.set(accessSpec.component, array);
-                    
+
                     // field has been set with some value, so
                     // remove it from list of nullFields
-                    ArrayList <Field> nullFields = getModel().getNullFields().get(accessSpec.component);
+                    ArrayList<Field> nullFields = getModel().getNullFields().get(accessSpec.component);
                     nullFields.remove(field);
-                    
+
                 } else {
 
                     /* 
@@ -308,7 +308,7 @@ public class JAMSContext extends JAMSComponent {
 
                     // field has been set with some value, so
                     // remove it from list of nullFields
-                    ArrayList <Field> nullFields = getModel().getNullFields().get(accessSpec.component);
+                    ArrayList<Field> nullFields = getModel().getNullFields().get(accessSpec.component);
                     nullFields.remove(field);
                 }
             } catch (Exception e) {
@@ -360,6 +360,7 @@ public class JAMSContext extends JAMSComponent {
                         }
                         output("\n");
                     }
+                    flush();
                 }
             };
         } else {
@@ -411,6 +412,7 @@ public class JAMSContext extends JAMSComponent {
                         }
                         output("\n");
                     }
+                    flush();
                 }
             };
         }
@@ -464,8 +466,8 @@ public class JAMSContext extends JAMSComponent {
             this.dataTracers[i] = createDataTracer(store);
 
             /*if (this.dataTracers[i].getAccessorObjects().length == 0) {
-                this.dataTracers[i] = new NullTracer();
-                return;
+            this.dataTracers[i] = new NullTracer();
+            return;
             }*/
 
             i++;
@@ -498,7 +500,7 @@ public class JAMSContext extends JAMSComponent {
 
         // setup data tracer -- needed for data output to output-datastores
         setupDataTracer();
-        
+
         // create the init/cleanup enumerator (i.e. one invocation for every component)
         if (initCleanupEnumerator == null) {
             initCleanupEnumerator = getChildrenEnumerator();
@@ -795,7 +797,6 @@ public class JAMSContext extends JAMSComponent {
     }
     //create a list for each attribute containing all components which have
     //read and write access to
-
     public HashSet<ContextAttributeReadWriteSet> getAttributeReadWriteSet() {
         //this is necessary!
         this.initAccessors();

@@ -150,6 +150,13 @@ public abstract class AbstractTracer implements DataTracer {
         } catch (IOException ioe) {
         }
     }
+    
+    protected void flush() {
+        try {
+            store.flush();
+        } catch (IOException ioe) {
+        }
+    }    
 
     /**
      * 
@@ -174,8 +181,6 @@ public abstract class AbstractTracer implements DataTracer {
      */
     @Override
     public void startMark() {
-        if (parents == null)
-            return;
         for (JAMSContext parent : parents) {
             output(parent.getInstanceName() + "\t" + parent.getTraceMark() + "\n");
         }
