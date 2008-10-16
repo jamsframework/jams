@@ -54,15 +54,24 @@ public class J2KTSDataStore extends TSDataStore {
         super(ws);
         this.id = id;
 
+        Element sourceElement = (Element) doc.getElementsByTagName("source").item(0);
         Element tiNode = (Element) doc.getElementsByTagName("timeinterval").item(0);
         Element timeFormatElement = (Element) tiNode.getElementsByTagName("timeformat").item(0);
         timeFormat = JAMSCalendar.DATE_TIME_FORMAT;
         if (timeFormatElement != null) {
             timeFormat = timeFormatElement.getAttribute("value");
         }
+        
+        // set sourceFile to the default
+        File sourceFile = new File(ws.getLocalInputDirectory(), id + ".dat");
+        if (sourceElement != null) {
+            String sourceFileName = sourceElement.getAttribute("value");
+            if (sourceFileName != null) {
+                sourceFile = new File(sourceFileName);
+            }
+        }
 
-        File file = new File(ws.getLocalInputDirectory(), id + ".dat");
-        this.dumpReader = new BufferedReader(new FileReader(file));
+        this.dumpReader = new BufferedReader(new FileReader(sourceFile));
 
         readJ2KFile();
 
