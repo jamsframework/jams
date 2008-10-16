@@ -36,28 +36,32 @@ import jams.data.JAMSCalendar;
  */
 public class TSDumpProcessor {
 
-    private TSDataStore store;
-    private String commentTag = "@comments",  
-            metadataTag = "@metadata",  dataTag = "@data",  endTag = "@end";
+    private static final String commentTag = "@comments",  metadataTag = "@metadata",  dataTag = "@data",  endTag = "@end";
 
-    public TSDumpProcessor(TSDataStore store) {
-        this.store = store;
-    }
-
-    public String toASCIIString() throws IOException {
+    public String toASCIIString(TSDataStore store) throws IOException {
         StringTarget target = new StringTarget();
-        output(target);
+        output(store, target);
         return target.buffer.toString();
     }
 
-    public void toASCIIFile(File file) throws IOException {
+    public void toASCIIFile(TSDataStore store, File file) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         FileTarget target = new FileTarget(writer);
-        output(target);
+        output(store, target);
         writer.close();
     }
-    
-    private void output(OutputTarget target) throws IOException {
+
+    /**
+     * @todo: Implement method
+     * @param file
+     * @return
+     */
+    public TSDataStore fromASCIIFile(File file) {
+
+        return null;
+    }
+
+    private void output(TSDataStore store, OutputTarget target) throws IOException {
 
         target.append(VirtualWorkspace.DUMP_MARKER + "\n");
         target.append(commentTag + "\n");
@@ -68,7 +72,7 @@ public class TSDumpProcessor {
         target.append("#STEPUNIT: " + store.getTimeUnit() + "\n");
         target.append("#STEPSIZE: " + store.getTimeUnitCount() + "\n");
         target.append("#MISSINGDATAVALUE: " + store.getMissingDataValue() + "\n");
-        
+
         JAMSCalendar creationDate = new JAMSCalendar();
         creationDate.setValue(new GregorianCalendar());
         target.append("#DATE: " + creationDate + "\n");
@@ -79,7 +83,7 @@ public class TSDumpProcessor {
         }
 
         target.append(metadataTag + "\n");
-        
+
         target.append(store.getDataSetDefinition().toASCIIString() + "\n");
 
         target.append(dataTag + "\n");
@@ -88,18 +92,6 @@ public class TSDumpProcessor {
             target.append(ds.toString() + "\n");
         }
         target.append(endTag);
-    }
-
-    public void setCommentTag(String commentTag) {
-        this.commentTag = commentTag;
-    }
-
-    public void setMetadataTag(String metadataTag) {
-        this.metadataTag = metadataTag;
-    }
-
-    public void setDataTag(String dataTag) {
-        this.dataTag = dataTag;
     }
 
     interface OutputTarget {

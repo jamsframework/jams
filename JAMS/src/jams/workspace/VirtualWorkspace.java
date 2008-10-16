@@ -62,7 +62,7 @@ public class VirtualWorkspace {
             CONFIG_FILE_COMMENT = "JAMS workspace configuration", 
             CONTEXT_ATTRIBUTE_NAME = "context", INPUT_DIR_NAME = "input",
             OUTPUT_DIR_NAME = "output", TEMP_DIR_NAME = "temp",
-            DUMP_DIR_NAME = "input", LOCAL_INDIR_NAME = "local";
+            DUMP_DIR_NAME = "dump", LOCAL_INDIR_NAME = "local";
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
     private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
@@ -338,8 +338,8 @@ public class VirtualWorkspace {
         }
 
         if (store instanceof TSDataStore) {
-            TSDumpProcessor asciiConverter = new TSDumpProcessor((TSDataStore) store);
-            String result = asciiConverter.toASCIIString();
+            TSDumpProcessor asciiConverter = new TSDumpProcessor();
+            String result = asciiConverter.toASCIIString((TSDataStore) store);
             return result;
         } else {
             return store.getClass().toString() + " not yet supported!";
@@ -354,9 +354,9 @@ public class VirtualWorkspace {
         }
         
         if (store instanceof TSDataStore) {
-            TSDumpProcessor asciiConverter = new TSDumpProcessor((TSDataStore) store);
+            TSDumpProcessor asciiConverter = new TSDumpProcessor();
             File file = new File(this.getLocalDumpDirectory(), dsTitle + ".dump");
-            asciiConverter.toASCIIFile(file);
+            asciiConverter.toASCIIFile((TSDataStore) store, file);
             getRuntime().sendInfoMsg("Dumped input datastore " + dsTitle + " to " + file + ".");
         }
 
@@ -364,7 +364,7 @@ public class VirtualWorkspace {
     }
 
     public void inputDataStoreToFile() throws IOException {
-        for (String dsTitle : this.getInputDataStoreIDs()) {
+        for (String dsTitle : this.getInputDataStoreIDs())   {
             inputDataStoreToFile(dsTitle);
         }
     }
@@ -391,8 +391,8 @@ public class VirtualWorkspace {
         String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
 
 //        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/vworkspace"), runtime);
-//        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime);
-        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/ws_test"), runtime);
+        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime);
+        //VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/ws_test"), runtime);
         ws.setLibs(libs);
 
         //System.out.println(ws.dataStoreToString("tmin_local"));

@@ -239,23 +239,4 @@ public class J2KTSDataStore extends TSDataStore {
             ws.getRuntime().handle(ioe);
         }
     }
-
-    public static void main(String[] args) throws Exception {
-
-        //System.out.println(ds.getDataSetDefinition().toASCIIString());
-
-        for (int i = 0; i < 1; i++) {
-            J2KTSDataStore ds = new J2KTSDataStore(null, "rain", null);
-            TSDumpProcessor dumpProc = new TSDumpProcessor(ds);
-            //dumpProc.toASCIIString();
-            dumpProc.toASCIIFile(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/test.dat"));
-        }
-    //dumpProc.toASCIIFile(new File("D:/test.dat"));
-
-    /*DataSet data = ds.getNext();
-    while (data != null) {
-    //System.out.println(data.toString());
-    data = ds.getNext();
-    }*/
-    }
 }
