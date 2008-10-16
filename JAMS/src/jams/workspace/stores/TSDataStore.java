@@ -56,7 +56,7 @@ public class TSDataStore extends TableDataStore {
         Element startElement = (Element) tiNode.getElementsByTagName("start").item(0);
         Element endElement = (Element) tiNode.getElementsByTagName("end").item(0);
         Element stepsizeElement = (Element) tiNode.getElementsByTagName("stepsize").item(0);
-        Element timeFormatElement = (Element) tiNode.getElementsByTagName("timeformat").item(0);
+        Element timeFormatElement = (Element) tiNode.getElementsByTagName("dumptimeformat").item(0);
 
         timeFormat = JAMSCalendar.DATE_TIME_FORMAT;
         if (timeFormatElement != null) {
@@ -77,9 +77,6 @@ public class TSDataStore extends TableDataStore {
         currentDate = new JAMSCalendar();
         currentDate.setDateFormat(timeFormat);
         currentDate.setValue(startDate);
-        currentDate.add(timeUnit, -1 * timeUnitCount);
-        calendar = new CalendarValue(currentDate);
-
 
         int oldBufferSize = bufferSize;
         if (bufferSize == 1) {
@@ -120,6 +117,7 @@ public class TSDataStore extends TableDataStore {
             // check identical start date of all columns
 
             // for all but the first columns
+            boolean shifted = false;
             for (int i = 0; i < dataIOArray.length; i++) {
 
                 long timeStamp2 = dataIOArray[i].getData()[0].getData()[0].getLong();
@@ -134,12 +132,18 @@ public class TSDataStore extends TableDataStore {
 
                     dataIOSet.clear();
                     currentPosition = maxPosition;
+                } else if (!shifted) {
+                    if (cal.compareTo(currentDate) != 0) {
+                        currentDate.setValue(cal);
+                    }
+                    shifted = true;
                 }
             }
-
-
         }
-//        System.exit(-1);
+        
+        currentDate.add(timeUnit, -1 * timeUnitCount);
+        calendar = new CalendarValue(currentDate);
+        
         bufferSize = oldBufferSize;
     }
 

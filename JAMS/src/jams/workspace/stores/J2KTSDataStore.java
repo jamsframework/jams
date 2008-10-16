@@ -56,7 +56,7 @@ public class J2KTSDataStore extends TSDataStore {
 
         Element sourceElement = (Element) doc.getElementsByTagName("source").item(0);
         Element tiNode = (Element) doc.getElementsByTagName("timeinterval").item(0);
-        Element timeFormatElement = (Element) tiNode.getElementsByTagName("timeformat").item(0);
+        Element timeFormatElement = (Element) tiNode.getElementsByTagName("dumptimeformat").item(0);
         timeFormat = JAMSCalendar.DATE_TIME_FORMAT;
         if (timeFormatElement != null) {
             timeFormat = timeFormatElement.getAttribute("value");
