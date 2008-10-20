@@ -27,7 +27,6 @@ import jams.data.JAMSCalendar;
 import jams.workspace.DataSet;
 import jams.workspace.DataSetDefinition;
 import jams.workspace.VirtualWorkspace;
-import jams.workspace.datatypes.CalendarValue;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.StringValue;
 import java.io.BufferedReader;

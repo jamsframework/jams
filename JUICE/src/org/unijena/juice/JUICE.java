@@ -89,8 +89,6 @@ public class JUICE {
 
             juiceFrame = new JUICEFrame();
 
-            loadLibsDlg = new WorkerDlg(juiceFrame, "Loading Libraries");
-
             JAMSSplash splash = new JAMSSplash();
             splash.show(juiceFrame, JAMS.SPLASH_DISPLAY_TIME);
             Thread.sleep(JAMS.SPLASH_DISPLAY_TIME);
@@ -126,6 +124,7 @@ public class JUICE {
     }
 
     public static void updateLibs() {
+        loadLibsDlg = new WorkerDlg(juiceFrame, "Loading Libraries");
         loadLibsDlg.setTask(new Runnable() {
 
             public void run() {

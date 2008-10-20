@@ -156,27 +156,16 @@ public class LibTree extends JAMSTree {
         libsArray = JAMSTools.toArray(libFileNames, ";");
         this.setModel(null);
 
-        //            Thread t = new Thread() {
-        //                public void run() {
-
-        //Cursor standardCursor = JUICE.getJuiceFrame().getCursor();
-        //JUICE.getJuiceFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
         contextCount = 0;
         componentCount = 0;
         JUICE.setStatusText("Loading libraries...");
-        LibTree.this.setVisible(false);
+        this.setVisible(false);
         JAMSNode root = LibTree.this.createLibTree(LibTree.this.libsArray);
-        LibTree.this.setModel(new DefaultTreeModel(root));
-        LibTree.this.collapseAll();
-        LibTree.this.setVisible(true);
+        this.setModel(new DefaultTreeModel(root));
+        this.collapseAll();
+        this.setVisible(true);
         JUICE.setStatusText("Contexts:" + contextCount + " Components:" + componentCount);
 
-    //JUICE.getJuiceFrame().setCursor(standardCursor);
-/*                }
-    };
-    t.start();
-     */
-    //setModel(new DefaultTreeModel(createLibTree(libsArray)));
     }
 
     private JAMSNode createLibTree(String[] libsArray) {

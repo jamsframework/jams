@@ -62,7 +62,11 @@ public class TSDataStoreReader extends JAMSComponent {
 
     @Override
     public void init() {
-        InputDataStore is = getModel().getWorkspace().getInputDataStore(id.getValue());
+
+        InputDataStore is = null;
+        if (id != null) {
+            is = getModel().getWorkspace().getInputDataStore(id.getValue());
+        }
 
         // check if store exists
         if (is == null) {
@@ -129,14 +133,14 @@ public class TSDataStoreReader extends JAMSComponent {
                         steps = (int) diff;
                 }
                 steps = (int) steps / timeUnitCount;
-                
+
                 // just call getNext() step times
                 for (int i = 0; i < steps; i++) {
                     store.getNext();
                 }
-                
+
             } else {
-                
+
                 // here we need to walk through time with a calendar object
                 // this costs more runtime, but works for monthly and yearly 
                 // steps as well
