@@ -26,9 +26,10 @@ import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.workspace.DataSet;
 import jams.workspace.DataSetDefinition;
-import jams.workspace.TSDumpProcessor;
 import jams.workspace.VirtualWorkspace;
+import jams.workspace.datatypes.CalendarValue;
 import jams.workspace.datatypes.DoubleValue;
+import jams.workspace.datatypes.StringValue;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -47,7 +48,8 @@ public class J2KTSDataStore extends TSDataStore {
 
     private String cache = null;
     private int columnCount = 0;
-    private BufferedReader dumpReader;
+    private BufferedReader j2kTSFileReader;
+    private boolean parseDate = false;
 
     public J2KTSDataStore(VirtualWorkspace ws, String id, Document doc) throws IOException {
 
@@ -55,23 +57,39 @@ public class J2KTSDataStore extends TSDataStore {
         this.id = id;
 
         Element sourceElement = (Element) doc.getElementsByTagName("source").item(0);
-        Element tiNode = (Element) doc.getElementsByTagName("timeinterval").item(0);
-        Element timeFormatElement = (Element) tiNode.getElementsByTagName("dumptimeformat").item(0);
-        timeFormat = JAMSCalendar.DATE_TIME_FORMAT;
+        Element timeFormatElement = (Element) doc.getElementsByTagName("dumptimeformat").item(0);
+        Element parseTimeElement = (Element) doc.getElementsByTagName("parsetime").item(0);
+
         if (timeFormatElement != null) {
             timeFormat = timeFormatElement.getAttribute("value");
+        } else {
+            timeFormat = JAMSCalendar.DATE_TIME_FORMAT;
         }
-        
+
+        if (parseTimeElement != null) {
+            parseDate = Boolean.parseBoolean(parseTimeElement.getAttribute("value"));
+        } else {
+            parseDate = false;
+        }
+
+        if (timeFormatElement != null) {
+            timeFormat = timeFormatElement.getAttribute("value");
+        } else {
+            timeFormat = JAMSCalendar.DATE_TIME_FORMAT;
+        }
+
         // set sourceFile to the default
-        File sourceFile = new File(ws.getLocalInputDirectory(), id + ".dat");
+        File sourceFile = null;
         if (sourceElement != null) {
             String sourceFileName = sourceElement.getAttribute("value");
             if (sourceFileName != null) {
                 sourceFile = new File(sourceFileName);
             }
+        } else {
+            sourceFile = new File(ws.getLocalInputDirectory(), id + ".dat");
         }
 
-        this.dumpReader = new BufferedReader(new FileReader(sourceFile));
+        this.j2kTSFileReader = new BufferedReader(new FileReader(sourceFile));
 
         readJ2KFile();
 
@@ -86,29 +104,29 @@ public class J2KTSDataStore extends TSDataStore {
 
         // read header information from the J2K time series file
 
-        String line = dumpReader.readLine();
+        String line = j2kTSFileReader.readLine();
         //skip comment lines
         while (line.charAt(0) == '#') {
             this.description += line.substring(1) + "\n";
-            line = dumpReader.readLine();
+            line = j2kTSFileReader.readLine();
         }
 
         StringBuffer dataValueAttribs = new StringBuffer();
         while (!line.startsWith("@dataSetAttribs")) {
             dataValueAttribs.append(line + "\n");
-            line = dumpReader.readLine();
+            line = j2kTSFileReader.readLine();
         }
 
         StringBuffer dataSetAttribs = new StringBuffer();
         while (!line.startsWith("@statAttribVal")) {
             dataSetAttribs.append(line + "\n");
-            line = dumpReader.readLine();
+            line = j2kTSFileReader.readLine();
         }
 
         StringBuffer statAttribVal = new StringBuffer();
         while (!line.startsWith("@dataVal")) {
             statAttribVal.append(line + "\n");
-            line = dumpReader.readLine();
+            line = j2kTSFileReader.readLine();
         }
 
         // create a DataSetDefinition object
@@ -193,7 +211,7 @@ public class J2KTSDataStore extends TSDataStore {
             return true;
         } else {
             try {
-                cache = dumpReader.readLine();
+                cache = j2kTSFileReader.readLine();
                 return ((cache != null) && (!cache.startsWith("#")));
             } catch (IOException ioe) {
                 return false;
@@ -212,18 +230,21 @@ public class J2KTSDataStore extends TSDataStore {
         StringTokenizer tok = new StringTokenizer(cache, "\t");
 
         String dateTimeString = tok.nextToken() + " " + tok.nextToken();
+        /*if (parseDate) {
         try {
-            currentDate.setValue(dateTimeString, "dd.MM.yyyy HH:mm");
+        currentDate.setValue(dateTimeString, "dd.MM.yyyy HH:mm");
+        result.setData(0, new CalendarValue(currentDate));
         } catch (ParseException pe) {
-            ws.getRuntime().sendErrorMsg("Could not parse date \"" + dateTimeString + "\" - date kept unchanged!");
+        ws.getRuntime().sendErrorMsg("Could not parse date \"" + dateTimeString + "\" - date kept unchanged!");
         }
-        result.setData(0, calendar);
+        } else {*/
+        result.setData(0, new StringValue(dateTimeString));
+//        }
 
         int i = 1;
         while (tok.hasMoreTokens()) {
             double d = Double.parseDouble(tok.nextToken());
-            DoubleValue dValue = new DoubleValue(d);
-            result.setData(i, dValue);
+            result.setData(i, new DoubleValue(d));
             i++;
         }
 
@@ -234,7 +255,7 @@ public class J2KTSDataStore extends TSDataStore {
     @Override
     public void close() {
         try {
-            dumpReader.close();
+            j2kTSFileReader.close();
         } catch (IOException ioe) {
             ws.getRuntime().handle(ioe);
         }

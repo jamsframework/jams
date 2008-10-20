@@ -67,14 +67,15 @@ public class TSPlot extends JAMSGUIComponent {
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Title string for plot"
+            description = "Title string for plot. Default: component name"
             )
             public JAMSString plotTitle;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Title strings for left graphs"
+            description = "Title strings for left graphs. Number of entries " +
+            "must be identical to number of plottet values (valueLeft)."
             )
             public JAMSStringArray titleLeft;
     
@@ -95,49 +96,60 @@ public class TSPlot extends JAMSGUIComponent {
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Colors for left graphs (yellow, orange, red, pink, magenta, cyan, yellow, green, lightgray, gray, black)"
+            description = "Colors for left graphs (yellow, orange, red, pink, " +
+            "magenta, cyan, yellow, green, lightgray, gray, black). Number of " +
+            "entries must be identical to number of plottet values (valueLeft).",
+            defaultValue = "blue"            
             )
             public JAMSStringArray colorLeft;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Colors for right graphs (yellow, orange, red, pink, magenta, cyan, yellow, green, lightgray, gray, black)"
+            description = "Colors for right graphs (yellow, orange, red, pink, " +
+            "magenta, cyan, yellow, green, lightgray, gray, black). Number of " +
+            "entries must be identical to number of plottet values (valueRight).",
+            defaultValue = "red"
             )
             public JAMSStringArray colorRight;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Graph type for left y axis graphs"
+            description = "Graph type for left y axis graphs",
+            defaultValue = "0"
             )
             public JAMSInteger typeLeft;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Graph type for right y axis graphs"
+            description = "Graph type for right y axis graphs",
+            defaultValue = "0"
             )
             public JAMSInteger typeRight;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Title string for x axis"
+            description = "Title string for x axis",
+            defaultValue = "Time"
             )
             public JAMSString xAxisTitle;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Title string for left y axis"
+            description = "Title string for left y axis",
+            defaultValue = "LeftTitle"
             )
             public JAMSString leftAxisTitle;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Title string for right y axis"
+            description = "Title string for right y axis",
+            defaultValue = "RightTitle"
             )
             public JAMSString rightAxisTitle;
     
@@ -151,9 +163,10 @@ public class TSPlot extends JAMSGUIComponent {
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Date format"
+            description = "Date format",
+            defaultValue = "dd-MM-yyyy"
             )
-            public JAMSString dateFormat; //"dd-MM-yyyy"
+            public JAMSString dateFormat;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -185,7 +198,7 @@ public class TSPlot extends JAMSGUIComponent {
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            description = "Plot data after cacheSize values have been collected",
+            description = "Plot data, after cacheSize values have been collected",
             defaultValue = "10"
             )
             public JAMSInteger cacheSize;
