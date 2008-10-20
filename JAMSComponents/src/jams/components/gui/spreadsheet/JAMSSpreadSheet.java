@@ -21,21 +21,15 @@ import java.awt.Cursor.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.io.*;
-import jams.data.*;
-import jams.model.*;
-
-import org.jfree.data.time.Second;
-
-import org.jfree.chart.*;
+import java.util.ArrayList;
+import org.unijena.jams.data.*;
+import org.unijena.jams.model.*;
 
 
-//not used yet
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
-import jams.gui.LHelper;
+import org.unijena.jams.gui.LHelper;
 
 //import jams.components.*;
-//import jams.model;
+//import org.unijena.jams.model;
 /*
  *
  * @author Robert Riedel
@@ -72,11 +66,16 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                                         //{"test1","test2"};
     
     private final String title = "JAMSSpreadSheet v0.94";
+    private final int COLWIDTH = 8;
+    
+    
     
     private JPanel panel = new JPanel();
     private String panelname="spreadsheet";
     
     private int numberOfColumns=0;
+    
+    private JFrame parent_frame;
     
     //runtime time check
     private boolean timeRuns = false;
@@ -95,11 +94,13 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     GridBagConstraints grid = new GridBagConstraints();
     
     private JScrollPane scrollpane = new JScrollPane();
+    private JScrollPane scrollpane2;
     
     /* Buttons */
     private JButton calcbutton = new JButton("Calculate");
-    private JButton openbutton = new JButton("Import");
-    private JButton savebutton = new JButton("Export");
+    private JButton importbutton = new JButton("Import");
+    private JButton openbutton = new JButton("Open");
+    private JButton savebutton = new JButton("Save");
     private JButton plotButton = new JButton("Time Plot");
     private JButton dataplotButton = new JButton("Data Plot");
     
@@ -147,6 +148,12 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         
     }
     
+    public JAMSSpreadSheet(JFrame parent, String[] headers) {
+        this.parent_frame = parent;
+        this.headers = new JAMSStringArray();
+        this.headers.setValue(headers);
+    }
+    
     /* Methods */
     public JPanel getPanel() {
         //createPanel();
@@ -162,7 +169,6 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         createPanel();
         
         updateGUI();
- 
     }
     
      /************* *** Event Handling *** ****l*****************************/
@@ -231,6 +237,195 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
             
         }catch (IOException ex){            
         }     
+    }
+    
+    
+     public void importWSFile(){
+        
+        final String ATTRIBUTES = "@attributes";
+        final String TYPES = "@types";
+        final String DATA = "@data";
+        final String START = "@start";
+        final String END = "@end"; 
+        
+        final String ID = "ID";
+        final String TIME = "JAMSCalendar";
+         
+        BufferedReader bReader;
+        String text = "";
+        String rowtext = "";
+        String itemtext = "";
+        String[] headerBuff = new String[256];
+        int colNumber = 0;
+        double[] rowBuffer = null;
+        ArrayList<String> header_list = new ArrayList<String>();
+        String[] headers = {""};
+        String[] types;
+        
+        Vector<double[]> arrayVector = new Vector<double[]>();
+        Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
+        
+        boolean headerSet = false;
+        int line=0;
+        int k=0;
+        this.tmodel = new JAMSTableModel();
+        tmodel.setTimeRuns(false);
+        this.timeRuns = false;
+        
+        int timeIndex = -1;
+        int idIndex;
+       
+        try{
+            
+            
+            JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
+            int returnVal = chooser.showOpenDialog(panel);
+            
+            if(returnVal == chooser.APPROVE_OPTION){
+                File file = chooser.getSelectedFile();
+                FileReader fReader = new FileReader(file);
+                bReader = new BufferedReader(fReader);
+            }else{
+                throw new FileNotFoundException();
+            }
+            
+            StringBuffer stBuff = new StringBuffer();
+            char[] c = new char[100];
+            int i;
+            
+            
+            
+//            while(fReader.ready()){
+//                i = fReader.read(c,0,c.length);
+//                stBuff.append(c,0,i);
+//            }
+            //
+            //text = stBuff.toString();
+            
+            
+            
+            
+        
+        
+        
+        /* Tokenizers */
+        
+        while(bReader.ready()){
+            //Read lines
+            rowtext = bReader.readLine();
+            
+            //ATTRIBUTES //////////////////////////////////////////////////////
+            if(rowtext.compareTo(ATTRIBUTES) == 0){
+                
+                //read attribute line
+                rowtext = bReader.readLine();
+                StringTokenizer attributes = new StringTokenizer(rowtext,"\t");
+                
+                //read headers
+                String att_name = "";
+                while(attributes.hasMoreTokens()){
+                    
+                    try{
+                        att_name = attributes.nextToken();
+                        header_list.add(att_name);
+                        if(att_name.compareTo(ID) == 0) idIndex = colNumber;
+                        colNumber++;
+                    }catch(NullPointerException npe){}
+                }
+                
+                //write headers in array
+                colNumber = header_list.size();
+                headers = new String[colNumber];
+                header_list.toArray(headers);
+                
+            }
+            
+            //TYPES //////////////////////////////////////////////////////////
+            if(rowtext.compareTo(TYPES) == 0){
+                
+                types = new String[colNumber];
+                
+                //read types line
+                rowtext = bReader.readLine();
+                StringTokenizer typerow = new StringTokenizer(rowtext,"\t");
+                int c_types = 0;
+                
+                //read and write headers
+                String type_name = "";
+                while(typerow.hasMoreTokens()){
+                    
+                    try{
+                        type_name = typerow.nextToken(); 
+                        types[c_types] = type_name;
+                        if(type_name.compareTo(TIME) == 0){
+                            timeIndex = c_types;
+                            tmodel.setTimeRuns(true);
+                            this.timeRuns = true;
+                        }
+                        c_types++;
+                    }catch(NullPointerException npe){}
+                }
+            }
+            
+            //DATA //////////////////////////////////////////////////////////
+            if(rowtext.compareTo(DATA) == 0){
+                
+                //read data line
+                rowtext = bReader.readLine();
+                
+                //START /////////////////////////////////////////////////////
+                if(rowtext.compareTo(START) == 0){
+
+                    //read DATA
+                    rowtext = bReader.readLine();
+                    while(rowtext.compareTo(END) != 0){
+                        
+                        StringTokenizer datarow = new StringTokenizer(rowtext,"\t");
+                        rowBuffer = new double[colNumber];
+                        
+                        for(int col = 0; col < colNumber; col++){
+                            
+                            //timeVector
+                            if(col == timeIndex && timeRuns){
+                                JAMSCalendar timeval = new JAMSCalendar();
+                                timeval.setValue(datarow.nextToken());
+                                timeVector.add(timeval);
+                            }
+                            //rowArray
+                            else {
+                                if(col > timeIndex) rowBuffer[col-1] = new Double(datarow.nextToken());
+                                else                rowBuffer[col] = new Double(datarow.nextToken());
+                            }                            
+                        }
+                        arrayVector.add(rowBuffer);
+                        rowtext = bReader.readLine();
+                    }
+                }     
+            }
+
+        this.tmodel = new JAMSTableModel();
+        tmodel.setTimeRuns(true);
+        timeRuns = true;
+        //if(headers != null){
+            
+        //}
+        if(timeRuns) tmodel.setTimeVector(timeVector);
+        
+        tmodel.setNewDataVector(arrayVector);
+        tmodel.setColumnNames(headers);
+        }
+        }catch(IOException ex){
+            /* FEHLERMELDUNG */
+            
+            try{
+                 LHelper.showErrorDlg(getModel().getRuntime().getFrame(), "File reading failed", "Error");
+             }catch(NullPointerException npe){
+                 LHelper.showErrorDlg(parent_frame,"File reading failed", "Error");
+             }
+            System.out.println("Lesen fehlgeschlagen!");
+        }
+
+        updateGUI();    
     }
     
     public void open(){
@@ -368,11 +563,20 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         
     }
    
+    
+    
+    
     /* Open */
     ActionListener openAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
-
-             int result = LHelper.showYesNoCancelDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?", "Attention");
+            
+             int result;
+             
+             try{
+                 result = LHelper.showYesNoCancelDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?", "Attention");
+             }catch(NullPointerException npe){
+                 result = LHelper.showYesNoCancelDlg(parent_frame,"Do you want to save this sheet before?", "Attention");
+             }
              if (result == JOptionPane.YES_OPTION) {
                  save();
                  open();                 
@@ -400,18 +604,63 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         } 
     };      
     
+    ActionListener importAction = new ActionListener(){
+         public void actionPerformed(ActionEvent e) {
+            
+             int result;
+             
+             try{
+                 result = LHelper.showYesNoCancelDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?", "Attention");
+             }catch(NullPointerException npe){
+                 result = LHelper.showYesNoCancelDlg(parent_frame,"Do you want to save this sheet before?", "Attention");
+             }
+             if (result == JOptionPane.YES_OPTION) {
+                 save();
+                 importWSFile();                 
+             }
+             if (result == JOptionPane.NO_OPTION) {
+                 importWSFile();                
+             }
+             
+             
+/*             YesNoDlg yesnodialog = new YesNoDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?");
+             yesnodialog.setVisible(true);
+ *
+ *
+             
+             if(yesnodialog.getResult().equals("Yes")){
+                 save();
+                 open();
+             }
+             if(yesnodialog.getResult().equals("No")){
+                 open();
+             }
+*/             
+             
+             
+        } 
+    };  
+    
     private void openCTS(){
         /* achtung: nur wenn time mitläuft!! */
-        //if(!ctsIsOpen){
-        JTSConfigurator jts = new JTSConfigurator(getModel().getRuntime().getFrame(), this.table);
+        JTSConfigurator jts;
+        try{
+            jts = new JTSConfigurator(getModel().getRuntime().getFrame(), this.table);
+        }catch(NullPointerException npe){
+            jts = new JTSConfigurator(parent_frame, this.table);
+        }
         //ctstabs.addGraph(table);
         //ctsIsOpen = true;
         }
     
     private void openCXYS(){
-
-        JXYConfigurator jxys = new JXYConfigurator(getModel().getRuntime().getFrame(), this.table);
-
+        JXYConfigurator jxys;
+        
+        try{
+            jxys = new JXYConfigurator(getModel().getRuntime().getFrame(), this.table);
+        }catch(NullPointerException npe){
+            jxys = new JXYConfigurator(parent_frame, this.table);
+        }
         }
    
     
@@ -438,7 +687,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
              
              try{
                  Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
-                 if(test == jams.data.JAMSCalendar.class){
+                 if(test == org.unijena.jams.data.JAMSCalendar.class){
                     table.setColumnSelectionInterval(1, table.getColumnCount()-1);
                      
                  } 
@@ -452,7 +701,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                  }
              }
 //             Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
-//             if(test == jams.data.JAMSCalendar.class){
+//             if(test == org.unijena.jams.data.JAMSCalendar.class){
 //                 
 //             } else {
 //                openCXYS();
@@ -575,6 +824,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         //makeTable();
         table.setModel(tmodel);
         scrollpane.setViewportView(table);
+        
         panel.repaint();
                 //panel.remove(table);
         //updateTable();
@@ -587,14 +837,19 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     public void makeTable(){
                     
                     
-                    table = new JTable(this.tmodel);
-                    this.table=table;
+                    this.table = new JTable(this.tmodel);
+                    
                     this.tableHeader = table.getTableHeader();
                     table.getTableHeader().setReorderingAllowed(false);
                     HeaderHandler mouseListener = new HeaderHandler();
                     tableHeader.addMouseListener(mouseListener);
-        
+                    //tableHeader.setMinimumSize(new Dimension(table.getColumnCount()*20,10));
                     
+//                    for(int cc = 0; cc < table.getColumnCount(); cc++){
+//                        table.getColumnModel().getColumn(cc).setMinWidth(COLWIDTH);
+//                    }
+                    
+                    //table.setMinimumSize(new Dimension(table.getColumnCount()*20,600));
                     //this.scrollpane = new JScrollPane(table);
                       //better than new instance
                     //scrollpane.repaint();
@@ -613,7 +868,6 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                     table.setDragEnabled(false);
                     //table.setSelectionMode(SINGLE SELECTION);
                     table.setCellSelectionEnabled(true);
-                    
                     //return scrollpane;
                     
                    
@@ -635,6 +889,11 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
               controlpanel.setLayout(gbl);
               JPanel headerpanel = new JPanel();
               headerpanel.setLayout(new GridLayout(1,2));
+
+              scrollpane.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
+              scrollpane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+              
+              scrollpane2 = new JScrollPane(scrollpane);
 //////        tmodel = new JAMSTableModel();
               //tmodel = new JAMSTableModel();
 //////        //hier platz für time schaffen!!!!!!!!!!!!
@@ -654,14 +913,16 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         //setColumnNameArray(headers.getValue());
         makeTable();
         //panel.add(scrollpane,grid);
-
-            LHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 0, 1, 1, 0, 0);
-            LHelper.addGBComponent(controlpanel, gbl, savebutton,   0, 1, 1, 2, 0, 0);
             
-            LHelper.addGBComponent(controlpanel, gbl, plotButton,  0, 3, 1, 1, 0, 0);
-            LHelper.addGBComponent(controlpanel, gbl, dataplotButton,  0, 4, 1, 1, 0, 0);
+            LHelper.addGBComponent(controlpanel, gbl, importbutton, 0, 0, 1, 1, 0, 0);
+        
+            LHelper.addGBComponent(controlpanel, gbl, openbutton,   0, 2, 1, 1, 0, 0);
+            LHelper.addGBComponent(controlpanel, gbl, savebutton,   0, 3, 1, 2, 0, 0);
             
-            LHelper.addGBComponent(controlpanel, gbl, onthefly,  0, 5, 1, 1, 0, 0);
+            LHelper.addGBComponent(controlpanel, gbl, plotButton,   0, 5, 1, 1, 0, 0);
+            LHelper.addGBComponent(controlpanel, gbl, dataplotButton,0, 6, 1, 1, 0, 0);
+            
+            LHelper.addGBComponent(controlpanel, gbl, onthefly,     0, 7, 1, 1, 0, 0);
               
 //              controlpanel.add(openbutton);
 //              controlpanel.add(savebutton);
@@ -670,6 +931,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
 //              controlpanel.add(dataplotButton);
               
               //openbutton.setEnabled(false);
+              importbutton.addActionListener(importAction);
               openbutton.addActionListener(openAction);
               savebutton.addActionListener(saveAction);
               plotButton.addActionListener(plotAction);
@@ -681,7 +943,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
               
               panel.add(headerpanel, BorderLayout.NORTH);
               
-              panel.add(scrollpane, BorderLayout.CENTER);
+              panel.add(scrollpane2, BorderLayout.CENTER);
               panel.add(helperpanel,BorderLayout.EAST);
               
               
