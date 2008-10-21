@@ -22,11 +22,11 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.io.*;
 import java.util.ArrayList;
-import org.unijena.jams.data.*;
-import org.unijena.jams.model.*;
+import jams.data.*;
+import jams.model.*;
 
 
-import org.unijena.jams.gui.LHelper;
+import jams.gui.LHelper;
 
 //import jams.components.*;
 //import org.unijena.jams.model;
@@ -687,7 +687,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
              
              try{
                  Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
-                 if(test == org.unijena.jams.data.JAMSCalendar.class){
+                 if(test == JAMSCalendar.class){
                     table.setColumnSelectionInterval(1, table.getColumnCount()-1);
                      
                  } 
