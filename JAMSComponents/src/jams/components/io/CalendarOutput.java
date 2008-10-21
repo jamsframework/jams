@@ -1,9 +1,9 @@
 /*
  * CalendarOutput.java
- * Created on 21. März 2007, 17:26
+ * Created on 21. March 2007, 17:26
  *
  * This file is part of JAMS
- * Copyright (C) 2006 FSU Jena
+ * Copyright (C) 2007 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
