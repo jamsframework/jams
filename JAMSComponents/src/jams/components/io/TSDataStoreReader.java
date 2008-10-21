@@ -23,12 +23,15 @@
 package jams.components.io;
 
 import jams.JAMS;
+import jams.components.efficiencies.Regression;
 import jams.data.*;
 import jams.model.*;
 import jams.workspace.DataSet;
+import jams.workspace.DataSetDefinition;
 import jams.workspace.datatypes.DataValue;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.TSDataStore;
+import java.util.ArrayList;
 
 /**
  *
@@ -46,19 +49,57 @@ public class TSDataStoreReader extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Datastore ID")
     public JAMSString id;
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "The time interval within which the component shall read " +
     "data from the datastore")
-    public JAMSTimeInterval timeinterval;
+    public JAMSTimeInterval timeInterval;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    description = "Dataset descriptor (equals datastore ID)",
+    defaultValue = "")
+    public JAMSString dataSetName;
+
+    /*
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "The current time within the timeinterval")
     public JAMSCalendar time;
+     */
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "Array of double values received from the datastore. Order " +
     "according to datastore")
-    public JAMSDoubleArray doubleValues = new JAMSDoubleArray();
+    public JAMSDoubleArray dataArray = new JAMSDoubleArray();
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    description = "Array of station elevations",
+    defaultValue = "")
+    public JAMSDoubleArray elevation;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    description = "Array of station's x coordinate",
+    defaultValue = "")
+    public JAMSDoubleArray xCoord;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    description = "Array of station's y coordinate",
+    defaultValue = "")
+    public JAMSDoubleArray yCoord;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    description = "Regression coefficients",
+    defaultValue = "")
+    public JAMSDoubleArray regCoeff;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    description = "Calculate regression coefficients? If not, regCoeff array stays empty!",
+    defaultValue = "false")
+    public JAMSBoolean skipRegression;
+
     private TSDataStore store;
+
     private double[] doubles;
+
+    private double[] elevationArray;
 
     @Override
     public void init() {
@@ -85,49 +126,57 @@ public class TSDataStoreReader extends JAMSComponent {
         store = (TSDataStore) is;
 
         // check if the store's time interval matches the provided time interval
-        if (store.getStartDate().after(timeinterval.getStart()) && (store.getStartDate().compareTo(timeinterval.getStart(), timeinterval.getTimeUnit()) != 0)) {
+        if (store.getStartDate().after(timeInterval.getStart()) && (store.getStartDate().compareTo(timeInterval.getStart(), timeInterval.getTimeUnit()) != 0)) {
             getModel().getRuntime().sendHalt("Error accessing datastore \"" +
                     id + "\" from " + getInstanceName() + ": Start date of datastore (" +
                     store.getStartDate() + ") does not match given time interval (" +
-                    timeinterval.getStart() + ")!");
+                    timeInterval.getStart() + ")!");
             return;
         }
 
-        if (store.getEndDate().before(timeinterval.getEnd()) && (store.getEndDate().compareTo(timeinterval.getEnd(), timeinterval.getTimeUnit()) != 0)) {
+        if (store.getEndDate().before(timeInterval.getEnd()) && (store.getEndDate().compareTo(timeInterval.getEnd(), timeInterval.getTimeUnit()) != 0)) {
             getModel().getRuntime().sendHalt("Error accessing datastore \"" +
                     id + "\" from " + getInstanceName() + ": End date of datastore (" +
                     store.getEndDate() + ") does not match given time interval (" +
-                    timeinterval.getEnd() + ")!");
+                    timeInterval.getEnd() + ")!");
             return;
         }
 
-        // check if we need to shift forward
-        if (store.getStartDate().before(timeinterval.getStart()) && (store.getStartDate().compareTo(timeinterval.getStart(), timeinterval.getTimeUnit()) != 0)) {
+        // extract some meta information
+        DataSetDefinition dsDef = store.getDataSetDefinition();
+        xCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("x")));
+        yCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("y")));
+        elevation.setValue(listToDoubleArray(dsDef.getAttributeValues("elevation")));
+        elevationArray = elevation.getValue();
+        dataSetName.setValue(id.getValue());
 
-            DataSet ds = store.getNext();
+        // check if we need to shift forward
+        if (store.getStartDate().before(timeInterval.getStart()) && (store.getStartDate().compareTo(timeInterval.getStart(), timeInterval.getTimeUnit()) != 0)) {
+
             JAMSCalendar current = store.getStartDate().clone();
-            JAMSCalendar targetDate = timeinterval.getStart().clone();
-            int timeUnit = timeinterval.getTimeUnit();
-            int timeUnitCount = timeinterval.getTimeUnitCount();
+            JAMSCalendar targetDate = timeInterval.getStart().clone();
+            int timeUnit = timeInterval.getTimeUnit();
+            int timeUnitCount = timeInterval.getTimeUnitCount();
 
             // check if we can calculate offset correctly
             // this can be done of the step size can be directly calculated from
             // milliseconds representation, i.e. for weekly steps and below
+            // ps: this is evil :]
             if (timeUnit >= JAMSCalendar.WEEK_OF_YEAR) {
-                long diff = (long) targetDate.getTimeInMillis() / 1000 - current.getTimeInMillis() / 1000;
+                float diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
                 int steps;
                 switch (timeUnit) {
                     case JAMSCalendar.DAY_OF_YEAR:
-                        steps = (int) diff / 3600 / 24;
+                        steps = (int) Math.ceil(diff / 3600 / 24);
                         break;
                     case JAMSCalendar.HOUR_OF_DAY:
-                        steps = (int) diff / 3600;
+                        steps = (int) Math.ceil(diff / 3600);
                         break;
                     case JAMSCalendar.WEEK_OF_YEAR:
-                        steps = (int) diff / 3600 / 24 / 7;
+                        steps = (int) Math.ceil(diff / 3600 / 24 / 7);
                         break;
                     case JAMSCalendar.MINUTE:
-                        steps = (int) diff / 60;
+                        steps = (int) Math.ceil(diff / 60);
                         break;
                     default:
                         steps = (int) diff;
@@ -154,7 +203,17 @@ public class TSDataStoreReader extends JAMSComponent {
 
         getModel().getRuntime().println("Datastore " + id + " initialized!", JAMS.VVERBOSE);
         doubles = new double[store.getDataSetDefinition().getColumnCount()];
-        doubleValues.setValue(doubles);
+        dataArray.setValue(doubles);
+    }
+
+    private double[] listToDoubleArray(ArrayList<Object> list) {
+        double[] result = new double[list.size()];
+        int i = 0;
+        for (Object o : list) {
+            result[i] = Double.parseDouble((String) o);
+            i++;
+        }
+        return result;
     }
 
     @Override
@@ -163,6 +222,9 @@ public class TSDataStoreReader extends JAMSComponent {
         DataValue[] data = ds.getData();
         for (int i = 1; i < data.length; i++) {
             doubles[i - 1] = data[i].getDouble();
+        }
+        if (!skipRegression.getValue()) {
+            regCoeff.setValue(Regression.calcLinReg(elevationArray, doubles));
         }
     }
 

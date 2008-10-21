@@ -46,26 +46,34 @@ public class IDWWeightCalculator extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "entity x-coordinate")
     public JAMSDouble entityX;
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "entity y-coordinate")
     public JAMSDouble entityY;
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Number of IDW stations")
     public JAMSInteger nidw;
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Power of IDW function")
     public JAMSDouble pidw;
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
     description = "weights for IDW part of regionalisation")
     public JAMSDoubleArray statWeights = new JAMSDoubleArray();
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Doug Boyle's famous function",
     defaultValue = "false")
     public JAMSBoolean equalWeights;
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "ID of the datastore to read station coordinates from")
     public JAMSString dataStoreID;
+
     private double[] statX;
+
     private double[] statY;
 
     /*
@@ -95,11 +103,11 @@ public class IDWWeightCalculator extends JAMSComponent {
             return;
         }
 
-        statX = convertList(xList);
-        statY = convertList(yList);
+        statX = listToDoubleArray(xList);
+        statY = listToDoubleArray(yList);
     }
 
-    private double[] convertList(ArrayList<Object> list) {
+    private double[] listToDoubleArray(ArrayList<Object> list) {
         double[] result = new double[list.size()];
         int i = 0;
         for (Object o : list) {
