@@ -91,9 +91,9 @@ public class TSDataStoreReader extends JAMSComponent {
     public JAMSDoubleArray regCoeff;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Calculate regression coefficients? If not, regCoeff array stays empty!",
-    defaultValue = "false")
-    public JAMSBoolean skipRegression;
+    description = "Caching configuration: 0 - write cache, 1 - use cache, 2 - caching off",
+    defaultValue = "0")
+    public JAMSInteger dataCaching;
 
     private TSDataStore store;
 
@@ -160,7 +160,7 @@ public class TSDataStoreReader extends JAMSComponent {
             int timeUnit = timeInterval.getTimeUnit();
             int timeUnitCount = timeInterval.getTimeUnitCount();
 
-            // check if we can calculate offset correctly
+            // check if we can calculate offset
             // this can be done if the step size can be calculated directly from
             // milliseconds representation, i.e. for weekly steps and below
             // ps: this is evil :]
@@ -225,7 +225,7 @@ public class TSDataStoreReader extends JAMSComponent {
         for (int i = 1; i < data.length; i++) {
             doubles[i - 1] = data[i].getDouble();
         }
-        if (!skipRegression.getValue()) {
+        if (dataCaching.getValue() != 1) {
             regCoeff.setValue(Regression.calcLinReg(elevationArray, doubles));
         }
     }
