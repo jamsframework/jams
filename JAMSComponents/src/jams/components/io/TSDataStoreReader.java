@@ -155,6 +155,8 @@ public class TSDataStoreReader extends JAMSComponent {
 
             JAMSCalendar current = store.getStartDate().clone();
             JAMSCalendar targetDate = timeInterval.getStart().clone();
+            current.removeUnsignificantComponents(timeInterval.getTimeUnit());
+            targetDate.removeUnsignificantComponents(timeInterval.getTimeUnit());
             int timeUnit = timeInterval.getTimeUnit();
             int timeUnitCount = timeInterval.getTimeUnitCount();
 
@@ -163,27 +165,22 @@ public class TSDataStoreReader extends JAMSComponent {
             // milliseconds representation, i.e. for weekly steps and below
             // ps: this is evil :]
             if (timeUnit >= JAMSCalendar.WEEK_OF_YEAR) {
-                float diff;
+                long diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
                 int steps;
                 switch (timeUnit) {
                     case JAMSCalendar.DAY_OF_YEAR:
-                        diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
-                        steps = (int) Math.ceil(diff / 3600 / 24);
+                        steps = (int) diff / 3600 / 24;
                         break;
                     case JAMSCalendar.HOUR_OF_DAY:
-                        diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
-                        steps = (int) Math.ceil(diff / 3600);
+                        steps = (int) diff / 3600;
                         break;
                     case JAMSCalendar.WEEK_OF_YEAR:
-                        diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
-                        steps = (int) Math.ceil(diff / 3600 / 24 / 7);
+                        steps = (int) diff / 3600 / 24 / 7;
                         break;
                     case JAMSCalendar.MINUTE:
-                        diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
-                        steps = (int) Math.ceil(diff / 60);
+                        steps = (int) diff / 60;
                         break;
                     default:
-                        diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
                         steps = (int) diff;
                 }
                 steps = (int) steps / timeUnitCount;
@@ -228,7 +225,6 @@ public class TSDataStoreReader extends JAMSComponent {
         for (int i = 1; i < data.length; i++) {
             doubles[i - 1] = data[i].getDouble();
         }
-        System.out.println(dataArray);
         if (!skipRegression.getValue()) {
             regCoeff.setValue(Regression.calcLinReg(elevationArray, doubles));
         }
