@@ -159,26 +159,31 @@ public class TSDataStoreReader extends JAMSComponent {
             int timeUnitCount = timeInterval.getTimeUnitCount();
 
             // check if we can calculate offset correctly
-            // this can be done of the step size can be directly calculated from
+            // this can be done if the step size can be calculated directly from
             // milliseconds representation, i.e. for weekly steps and below
             // ps: this is evil :]
             if (timeUnit >= JAMSCalendar.WEEK_OF_YEAR) {
-                float diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
+                float diff;
                 int steps;
                 switch (timeUnit) {
                     case JAMSCalendar.DAY_OF_YEAR:
+                        diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
                         steps = (int) Math.ceil(diff / 3600 / 24);
                         break;
                     case JAMSCalendar.HOUR_OF_DAY:
+                        diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
                         steps = (int) Math.ceil(diff / 3600);
                         break;
                     case JAMSCalendar.WEEK_OF_YEAR:
+                        diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
                         steps = (int) Math.ceil(diff / 3600 / 24 / 7);
                         break;
                     case JAMSCalendar.MINUTE:
+                        diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
                         steps = (int) Math.ceil(diff / 60);
                         break;
                     default:
+                        diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
                         steps = (int) diff;
                 }
                 steps = (int) steps / timeUnitCount;
@@ -223,6 +228,7 @@ public class TSDataStoreReader extends JAMSComponent {
         for (int i = 1; i < data.length; i++) {
             doubles[i - 1] = data[i].getDouble();
         }
+        System.out.println(dataArray);
         if (!skipRegression.getValue()) {
             regCoeff.setValue(Regression.calcLinReg(elevationArray, doubles));
         }

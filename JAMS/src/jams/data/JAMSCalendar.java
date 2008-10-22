@@ -35,7 +35,9 @@ import java.util.*;
 public class JAMSCalendar extends GregorianCalendar implements JAMSData, Serializable {
 
     public final static String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+
     public final static TimeZone STANDARD_TIME_ZONE = new SimpleTimeZone(0, "GMT");
+
     private DateFormat dateFormat;
 
     public JAMSCalendar() {
@@ -75,31 +77,60 @@ public class JAMSCalendar extends GregorianCalendar implements JAMSData, Seriali
     public GregorianCalendar getValue() {
         return clone();
     }
-
+    
+    /**
+     * Compares the date represented by this object with the date represented by 
+     * another JAMSCalendar object while considering a given accuracy. Example: 
+     * The JAMSCalendar object repesenting the date "1979-07-04 07:30" equals 
+     * another object representing the date "1979-07-12 04:00", if the accuracy
+     * is "MONTH", but is earlier if the accuracy is "DAY_OF_MONTH"
+     * @param cal The calendar object to compare with
+     * @param accuracy The accuracy as field of the calendar object (e.g. 
+     * SECOND, MINUTE, HOUR_OF_DAY, DAY_OF_MONTH or MONTH)
+     * @return -1 if this calendar represents an earlier date than cal, 0 if 
+     * this calendar equals cal or 1 if this calendar represents a later date 
+     * than cal, always leaving unsignificant fields unconsidered.
+     */
     public int compareTo(JAMSCalendar cal, int accuracy) {
+        JAMSCalendar cal1 = this.clone();
+        JAMSCalendar cal2 = cal.clone();
+        cal1.removeUnsignificantComponents(accuracy);
+        cal2.removeUnsignificantComponents(accuracy);
+        return cal1.compareTo(cal2);
+    }
 
-        JAMSCalendar clone = this.clone();
-
-        //we won't ever be interested in milliseconds ;)
-        clone.set(JAMSCalendar.MILLISECOND, cal.get(JAMSCalendar.MILLISECOND));
-
+    public void removeUnsignificantComponents(int accuracy) {
         if (accuracy < JAMSCalendar.SECOND) {
-            clone.set(JAMSCalendar.SECOND, cal.get(JAMSCalendar.SECOND));
+            this.set(JAMSCalendar.SECOND, 0);
         }
         if (accuracy < JAMSCalendar.MINUTE) {
-            clone.set(JAMSCalendar.MINUTE, cal.get(JAMSCalendar.MINUTE));
+            this.set(JAMSCalendar.MINUTE, 0);
         }
         if (accuracy < JAMSCalendar.HOUR_OF_DAY) {
-            clone.set(JAMSCalendar.HOUR_OF_DAY, cal.get(JAMSCalendar.HOUR_OF_DAY));
+            this.set(JAMSCalendar.HOUR_OF_DAY, 0);
         }
-        if (accuracy < JAMSCalendar.DAY_OF_YEAR) {
-            clone.set(JAMSCalendar.DAY_OF_YEAR, cal.get(JAMSCalendar.DAY_OF_YEAR));
+        if (accuracy < JAMSCalendar.DAY_OF_MONTH) {
+            this.set(JAMSCalendar.DAY_OF_MONTH, 1);
         }
         if (accuracy < JAMSCalendar.MONTH) {
-            clone.set(JAMSCalendar.MONTH, cal.get(JAMSCalendar.MONTH));
+            this.set(JAMSCalendar.MONTH, 0);
         }
+    }
 
-        return clone.compareTo(cal);
+    public static void main(String[] args) throws Exception {
+
+        JAMSCalendar cal1 = new JAMSCalendar();
+        cal1.setValue("4.7.1979 07:30", "dd.MM.yyyy HH:mm");
+        JAMSCalendar cal2 = new JAMSCalendar();
+        cal2.setValue("12.7.1979 04:00", "dd.MM.yyyy HH:mm");        
+        System.out.println(cal1.compareTo(cal2, DAY_OF_MONTH));
+        System.out.println(cal1);
+        System.out.println(cal2);
+        
+//        for (int i = 0; i < 100000; i++) {
+//            cal.toString();
+//            //cal.toString("%1$tY-%1$tm-%1$td %1$tH:%1$tM");
+//        }       
     }
 
     public void setValue(GregorianCalendar cal) {
@@ -148,16 +179,6 @@ public class JAMSCalendar extends GregorianCalendar implements JAMSData, Seriali
             set(MILLISECOND, Integer.parseInt(millisecond));
         } catch (NumberFormatException nfe) {
             jams.JAMS.handle(nfe);
-        }
-    }
-
-    public static void main(String[] args) throws Exception {
-        String test = "01.01.1979 07:30";
-        JAMSCalendar cal = new JAMSCalendar();
-        cal.setValue(test, "dd.MM.yyyy HH:mm");
-        for (int i = 0; i < 100000; i++) {
-            cal.toString();
-            //cal.toString("%1$tY-%1$tm-%1$td %1$tH:%1$tM");
         }
     }
 
