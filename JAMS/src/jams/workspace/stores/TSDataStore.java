@@ -36,8 +36,8 @@ import jams.workspace.datatypes.DataValue;
 public class TSDataStore extends TableDataStore {
 
     protected CalendarValue calendar;
-    protected JAMSCalendar currentDate, startDate, endDate, stopDate;
-    protected int timeUnit, timeUnitCount;
+    protected JAMSCalendar currentDate,  startDate,  endDate,  stopDate;
+    protected int timeUnit,  timeUnitCount;
     protected String timeFormat;
 
     public TSDataStore(VirtualWorkspace ws) {
@@ -47,7 +47,6 @@ public class TSDataStore extends TableDataStore {
         currentDate = new JAMSCalendar();
         calendar = new CalendarValue(currentDate);
     }
-    
 
     public TSDataStore(VirtualWorkspace ws, String id, Document doc) throws ClassNotFoundException {
         super(ws, id, doc);
@@ -62,7 +61,7 @@ public class TSDataStore extends TableDataStore {
         if (timeFormatElement != null) {
             timeFormat = timeFormatElement.getAttribute("value");
         }
-        
+
         startDate = new JAMSCalendar();
         startDate.setValue(startElement.getAttribute("value"));
 
@@ -140,10 +139,10 @@ public class TSDataStore extends TableDataStore {
                 }
             }
         }
-        
+
         currentDate.add(timeUnit, -1 * timeUnitCount);
         calendar = new CalendarValue(currentDate);
-        
+
         bufferSize = oldBufferSize;
     }
 
@@ -157,6 +156,10 @@ public class TSDataStore extends TableDataStore {
 
     @Override
     public DataSet getNext() {
+
+        if (!hasNext()) {
+            return null;
+        }
 
         DataSet result = new DataSet(positionArray.length + 1);
 

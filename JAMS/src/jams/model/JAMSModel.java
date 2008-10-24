@@ -50,9 +50,9 @@ public class JAMSModel extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
     public JAMSDirName workspaceDirectory = new JAMSDirName();
-
+    
     private JAMSRuntime runtime;
-    private String name, author, date;
+    private String name,  author,  date;
     private VirtualWorkspace workspace;
     private HashMap<JAMSComponent, ArrayList<Field>> nullFields;
 
@@ -95,13 +95,13 @@ public class JAMSModel extends JAMSContext {
 
     @Override
     public void init() {
-        
+
         // check if workspace directory was specified
         if (workspaceDirectory.getValue() == null) {
             runtime.sendHalt("No workspace directory specified, stopping execution!");
             return;
         }
-        
+
         // prepare workspace
         this.workspace = new VirtualWorkspace(new File(workspaceDirectory.getValue()), runtime);
         if (!workspace.isValid()) {
@@ -109,26 +109,27 @@ public class JAMSModel extends JAMSContext {
                     workspace.getDirectory().getAbsolutePath() + "\" is not a valid datastore!");
             return;
         }
-                
+
         // save current model parameter to workspace output directory
         getRuntime().saveModelParameter();
-        
-        super.init();  
-        
-        
-        getRuntime().println("############## UNDEFIENED FIELDS ####################################", JAMS.VVERBOSE);
-        for (JAMSComponent comp : getNullFields().keySet()) {
-            ArrayList<Field> nf = getNullFields().get(comp);
-            if (nf.isEmpty()) {
-                continue;
+
+        super.init();
+
+        if (!getNullFields().isEmpty()) {
+            getRuntime().println("############## UNDEFIENED FIELDS ####################################", JAMS.VVERBOSE);
+            for (JAMSComponent comp : getNullFields().keySet()) {
+                ArrayList<Field> nf = getNullFields().get(comp);
+                if (nf.isEmpty()) {
+                    continue;
+                }
+                String str = "## " + comp.getInstanceName() + ": ";
+                for (Field field : nf) {
+                    str += field.getName() + " ";
+                }
+                getRuntime().println(str, JAMS.VVERBOSE);
             }
-            String str = "## " + comp.getInstanceName() + ": ";
-            for (Field field : nf) {
-                str += field.getName() + " ";
-            }
-            getRuntime().println(str, JAMS.VVERBOSE);
-        }           
-        getRuntime().println("#####################################################################", JAMS.VVERBOSE);
+            getRuntime().println("#####################################################################", JAMS.VVERBOSE);
+        }
     }
 
     public void setWorkspaceDirectory(String workspaceDirectory) {
@@ -157,14 +158,14 @@ public class JAMSModel extends JAMSContext {
         }
         return this.workspace.getOutputDataStores(contextName);
     }
-    
+
     public HashMap<JAMSComponent, ArrayList<Field>> getNullFields() {
         return nullFields;
     }
 
     public void setNullFields(HashMap<JAMSComponent, ArrayList<Field>> nullFields) {
         this.nullFields = nullFields;
-    }    
+    }
 
     private void CollectEntityCollections(JAMSContext currentContext, JAMSComponent position, HashMap<String, JAMSEntityCollection> collection) {
         currentContext.updateEntityData(position);

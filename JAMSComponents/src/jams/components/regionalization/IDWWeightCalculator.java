@@ -94,8 +94,8 @@ public class IDWWeightCalculator extends JAMSComponent {
         }
 
         DataSetDefinition dsDef = store.getDataSetDefinition();
-        ArrayList<Object> xList = dsDef.getAttributeValues("x");
-        ArrayList<Object> yList = dsDef.getAttributeValues("y");
+        ArrayList<Object> xList = dsDef.getAttributeValues("X");
+        ArrayList<Object> yList = dsDef.getAttributeValues("Y");
 
         if (xList.size() != yList.size()) {
             getModel().getRuntime().sendHalt("Error accessing datastore \"" +
@@ -111,7 +111,7 @@ public class IDWWeightCalculator extends JAMSComponent {
         double[] result = new double[list.size()];
         int i = 0;
         for (Object o : list) {
-            result[i] = Double.parseDouble((String) o);
+            result[i] = ((Double) o).doubleValue();
             i++;
         }
         return result;

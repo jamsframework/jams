@@ -195,8 +195,8 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
         long end = System.currentTimeMillis();
         this.println("JAMS model setup time: " + (end - start) + " ms", JAMS.STANDARD);
 
-        classLoader = null;
-        Runtime.getRuntime().gc();
+//        classLoader = null;
+//        Runtime.getRuntime().gc();
     }
 
     @Override

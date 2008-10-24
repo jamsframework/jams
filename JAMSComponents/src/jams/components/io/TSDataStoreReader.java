@@ -144,9 +144,9 @@ public class TSDataStoreReader extends JAMSComponent {
 
         // extract some meta information
         DataSetDefinition dsDef = store.getDataSetDefinition();
-        xCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("x")));
-        yCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("y")));
-        elevation.setValue(listToDoubleArray(dsDef.getAttributeValues("elevation")));
+        xCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("X")));
+        yCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("Y")));
+        elevation.setValue(listToDoubleArray(dsDef.getAttributeValues("ELEVATION")));
         elevationArray = elevation.getValue();
         dataSetName.setValue(id.getValue());
 
@@ -212,7 +212,7 @@ public class TSDataStoreReader extends JAMSComponent {
         double[] result = new double[list.size()];
         int i = 0;
         for (Object o : list) {
-            result[i] = Double.parseDouble((String) o);
+            result[i] = ((Double) o).doubleValue();
             i++;
         }
         return result;

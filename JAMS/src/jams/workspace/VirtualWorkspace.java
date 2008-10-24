@@ -70,6 +70,7 @@ public class VirtualWorkspace {
 
     public VirtualWorkspace(File directory, JAMSRuntime runtime) {
         this.runtime = runtime;
+        this.classLoader = runtime.getClassLoader();
         this.directory = directory;
         loadConfig();
 
@@ -165,6 +166,10 @@ public class VirtualWorkspace {
     public void reload() {
     }
 
+    /**
+     * Creates an individual class loader
+     * @param libs Array of libs that the new classloader will be based on
+     */
     public void setLibs(String[] libs) {
         this.classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
     }

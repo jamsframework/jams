@@ -143,11 +143,18 @@ public class J2KTSDataStore extends TSDataStore {
 
         while (tok1.hasMoreTokens()) {
 
-            String attributeName = tok2.nextToken();
-            def.addAttribute(attributeName, String.class);
+            String attributeName = tok2.nextToken().toUpperCase();
             ArrayList<Object> values = new ArrayList<Object>();
-            while (tok2.hasMoreTokens()) {
-                values.add(tok2.nextToken());
+            if (attributeName.equals("X") || attributeName.equals("Y") || attributeName.equals("ELEVATION")) {
+                def.addAttribute(attributeName, Double.class);
+                while (tok2.hasMoreTokens()) {
+                    values.add(Double.parseDouble(tok2.nextToken()));
+                }
+            } else {
+                def.addAttribute(attributeName, String.class);
+                while (tok2.hasMoreTokens()) {
+                    values.add(tok2.nextToken());
+                }
             }
             def.setAttributeValues(attributeName, values);
             tok2 = new StringTokenizer(tok1.nextToken());
