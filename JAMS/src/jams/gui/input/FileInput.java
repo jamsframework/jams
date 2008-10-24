@@ -36,7 +36,7 @@ import jams.gui.*;
  */
 public class FileInput extends JPanel implements InputComponent {
 
-    static final int BUTTON_SIZE = 20;
+    private static final int BUTTON_SIZE = 20;
     private JTextField textField;
     private JButton addButton;
     private JFileChooser jfc;
@@ -63,6 +63,7 @@ public class FileInput extends JPanel implements InputComponent {
         jfc = LHelper.getJFileChooser();
 
         addButton = new JButton("...");
+        addButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         addButton.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
         addButton.addActionListener(new ActionListener() {
 
@@ -137,7 +138,7 @@ public class FileInput extends JPanel implements InputComponent {
     public void setLength(int length) {
         textField.setColumns(length);
     }
-    
+
     public void addValueChangeListener(ValueChangeListener l) {
         this.l = l;
         this.textField.getDocument().addDocumentListener(new DocumentListener() {
@@ -158,8 +159,8 @@ public class FileInput extends JPanel implements InputComponent {
             }
         });
     }
-    
     private Color oldColor;
+
     public void setMarked(boolean marked) {
         if (marked == true) {
             oldColor = textField.getBackground();

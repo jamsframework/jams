@@ -516,16 +516,16 @@ public class ModelTree extends JAMSTree {
 
         Node node;
         Element element, docRoot;
-        Class<?> clazz;
+        Class<?> modelClazz;
 
         try {
-            clazz = JUICE.getLoader().loadClass(MODEL_CLASS_NAME);
+            modelClazz = JUICE.getLoader().loadClass(MODEL_CLASS_NAME);
         } catch (ClassNotFoundException cnfe) {
-            clazz = null;
+            modelClazz = null;
         }
 
         if (modelDoc == null) {
-            ComponentDescriptor cd = new ComponentDescriptor(NEW_MODEL_NAME, clazz, this);
+            ComponentDescriptor cd = new ComponentDescriptor(NEW_MODEL_NAME, modelClazz, this);
             JAMSNode rootNode = new JAMSNode(cd);
             rootNode.setType(JAMSNode.MODEL_ROOT);
             return rootNode;
@@ -541,12 +541,12 @@ public class ModelTree extends JAMSTree {
 
         Node descriptionNode = docRoot.getElementsByTagName("description").item(0);
         if (descriptionNode != null) {
-            view.setDescription(descriptionNode.getTextContent());
+            view.setDescription(descriptionNode.getTextContent().trim());
         }
 
         //create the tree's root node
 
-        ComponentDescriptor cd = new ComponentDescriptor(modelName, clazz, this);
+        ComponentDescriptor cd = new ComponentDescriptor(modelName, modelClazz, this);
         JAMSNode rootNode = new JAMSNode(cd);
         rootNode.setType(JAMSNode.MODEL_ROOT);
 

@@ -23,7 +23,6 @@
 package jams.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -54,8 +53,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 import jams.*;
 import jams.gui.input.InputComponent;
-import jams.data.HelpComponent;
-import jams.gui.input.FileInput;
 import jams.io.ParameterProcessor;
 import jams.runtime.StandardRuntime;
 import jams.runtime.JAMSRuntime;
@@ -72,6 +69,7 @@ import org.w3c.dom.NodeList;
 public class JAMSLauncher extends JFrame {
 
     protected static final String BASE_TITLE = "JAMS Launcher";
+    private static final int BUTTON_SIZE = 20;
     private Map<InputComponent, Element> inputMap;
     private Map<InputComponent, JScrollPane> groupMap;
     protected Document modelDocument = null;
@@ -429,10 +427,8 @@ public class JAMSLauncher extends JFrame {
         // help button?
         HelpComponent helpComponent = new HelpComponent(property);
         if (!helpComponent.isEmpty()) {
-            JPanel helpPanel = new JPanel();
             HelpButton helpButton = createHelpButton(helpComponent);
-            helpPanel.add(helpButton);
-            LHelper.addGBComponent(contentPanel, gbl, helpPanel,
+            LHelper.addGBComponent(contentPanel, gbl, helpButton,
                     3, row, 1, 1,
                     1, 1, 1, 1,
                     1, 1);
@@ -554,11 +550,11 @@ public class JAMSLauncher extends JFrame {
 
         public HelpButton(HelpComponent helpComponent) {
             super();
-            this.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-            this.setPreferredSize(new Dimension(20, 20));
+            this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+            this.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
+            this.getInsets().set(0, 0, 0, 0);
             this.setText("?");
             this.setFont(titledBorderFont);
-            //this.setIcon(HelpComponent.HELP_ICON);
             this.setToolTipText("Help");
             this.helpComponent = helpComponent;
 
