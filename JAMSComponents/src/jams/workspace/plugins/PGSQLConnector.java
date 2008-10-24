@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.workspace.db;
+package jams.workspace.plugins;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
