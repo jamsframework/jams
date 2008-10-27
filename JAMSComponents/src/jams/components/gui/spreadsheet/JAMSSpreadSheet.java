@@ -869,7 +869,9 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                     //table.setSelectionMode(SINGLE SELECTION);
                     table.setCellSelectionEnabled(true);
                     //return scrollpane;
-                    
+                    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+
                    
     }
     
