@@ -44,7 +44,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import jams.JAMSTools;
-import jams.data.HelpComponent;
+import jams.gui.HelpComponent;
 import jams.gui.LHelper;
 import jams.io.ParameterProcessor;
 import jams.model.JAMSContext;

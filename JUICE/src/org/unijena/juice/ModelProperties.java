@@ -26,7 +26,7 @@ import java.util.Vector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import jams.JAMSTools;
-import jams.data.HelpComponent;
+import jams.gui.HelpComponent;
 
 /**
  *
