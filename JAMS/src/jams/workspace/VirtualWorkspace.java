@@ -58,7 +58,7 @@ import java.util.Properties;
 public class VirtualWorkspace {
 
     public static final String DUMP_MARKER = "#JAMSdatadump";
-    private static final String CONFIG_FILE_NAME = "config.txt",  CONFIG_FILE_COMMENT = "JAMS workspace configuration",  CONTEXT_ATTRIBUTE_NAME = "context",  INPUT_DIR_NAME = "input",  OUTPUT_DIR_NAME = "output",  TEMP_DIR_NAME = "temp",  DUMP_DIR_NAME = "dump",  LOCAL_INDIR_NAME = "local";
+    private static final String CONFIG_FILE_NAME = "config.txt",  CONFIG_FILE_COMMENT = "JAMS workspace configuration",  CONTEXT_ATTRIBUTE_NAME = "context",  INPUT_DIR_NAME = "input",  OUTPUT_DIR_NAME = "output",  TEMP_DIR_NAME = "tmp",  DUMP_DIR_NAME = "dump",  LOCAL_INDIR_NAME = "local";
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
     private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
@@ -391,6 +391,10 @@ public class VirtualWorkspace {
 
     public File getLocalDumpDirectory() {
         return localDumpDirectory;
+    }
+
+    public File getTempDirectory() {
+        return tmpDirectory;
     }
 
     public static void main(String[] args) throws IOException {
