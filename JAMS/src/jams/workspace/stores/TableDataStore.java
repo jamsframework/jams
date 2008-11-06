@@ -100,6 +100,7 @@ public class TableDataStore extends StandardInputDataStore {
         }
     }
 
+    @Override
     public boolean hasNext() {
         if (currentPosition < maxPosition) {
             return true;
@@ -113,6 +114,7 @@ public class TableDataStore extends StandardInputDataStore {
         }
     }
 
+    @Override
     public DataSet getNext() {
 
         DataSet result = new DataSet(positionArray.length);
@@ -129,6 +131,7 @@ public class TableDataStore extends StandardInputDataStore {
         return result;
     }
 
+    @Override
     public void close() {
         for (DataReader io : dataIOSet) {
             io.cleanup();

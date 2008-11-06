@@ -27,6 +27,7 @@ import jams.model.*;
 
 
 import jams.gui.LHelper;
+import java.text.ParseException;
 
 //import jams.components.*;
 //import org.unijena.jams.model;
@@ -503,7 +504,11 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                                 if(col == 0){
                                     // TODO: TIME TOKENIZER EINFUEHREN //////
                                     JAMSCalendar timeval = new JAMSCalendar();
-                                    timeval.setValue(datarow.nextToken());
+                                    try {
+                                    timeval.setValue(datarow.nextToken(), "dd.MM.yyyy HH:mm");
+                                    } catch (ParseException pe) {
+                                        pe.printStackTrace();
+                                    }
                                     timeVector.add(timeval);  
                                 }
                                 //rowArray
@@ -1156,15 +1161,16 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                 
                 if(e.isShiftDown()){
                     button = 1;
-                }
-                if(e.isControlDown()){
+                } else if(e.isControlDown()){
                     button = 2;
+                } else {
+                    button = -1;
                 }
                 
                 switch (button) {
                     
                     case 1: //SHIFT DOWN          
-                        col_END = table.getColumnModel().getColumn(viewCol).getModelIndex(); 
+                        col_END = table.getColumnModel().getColumn(viewCol).getModelIndex();
                         //table.setColumnSelectionInterval(col_START,col_END);
                         table.addColumnSelectionInterval(col_START, col_END);
                         break;
