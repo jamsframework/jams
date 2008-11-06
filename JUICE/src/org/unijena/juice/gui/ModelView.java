@@ -169,7 +169,7 @@ public class ModelView {
         frame.setMaximizable(true);
         frame.setResizable(true);
         frame.setTitle(title);
-        frame.setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/ContextComponent_si.png")));
+        frame.setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/images/Context_si.png")));
         //frame.setVisible(true);
         frame.setBounds(0, 0, 600, 600);
         frame.addInternalFrameListener(new InternalFrameListener() {
@@ -444,7 +444,7 @@ public class ModelView {
         String oldXMLString = XMLIO.getStringFromDocument(initialDoc);
 
         if (newXMLString.compareTo(oldXMLString) != 0) {
-            int result = LHelper.showYesNoCancelDlg(JUICE.getJuiceFrame(), "Save modifications in " + this.getFrame().getTitle() + "?", "JUICE: unsaved modifications");
+            int result = LHelper.showYesNoCancelDlg(JUICE.getJuiceFrame(), "Save modifications in " + this.getFrame().getTitle() + "?", "Unsaved modifications");
             if (result == JOptionPane.OK_OPTION) {
                 JUICE.getJuiceFrame().saveModel(this);
                 ModelView.viewList.removeView(this.getFrame());

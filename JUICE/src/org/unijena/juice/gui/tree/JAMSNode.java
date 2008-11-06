@@ -45,10 +45,10 @@ public class JAMSNode extends DefaultMutableTreeNode {
     static int ICON_HEIGHT = 16;
     
     static Icon[] NODE_ICON = {
-        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/ContextComponent_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
-        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/World_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
-        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/ContextComponent_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Context_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/World_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Context_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Component_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Folder_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH))
     };
     
