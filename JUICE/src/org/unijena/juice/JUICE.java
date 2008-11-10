@@ -131,9 +131,10 @@ public class JUICE {
                 try {
                     JUICE.getJuiceFrame().getLibTreePanel().setEnabled(false);
                     JUICE.createClassLoader();
-                    libTree.update(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER));
+                    getLibTree().update(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER));
                     JUICE.getJuiceFrame().getLibTreePanel().setEnabled(true);
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -228,5 +229,12 @@ public class JUICE {
 
     public static void setStatusText(String status) {
         JUICE.getJuiceFrame().getStatusLabel().setText(status);
+    }
+
+    /**
+     * @return the libTree
+     */
+    public static LibTree getLibTree() {
+        return libTree;
     }
 }

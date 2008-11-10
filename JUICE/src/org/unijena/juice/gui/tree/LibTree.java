@@ -22,7 +22,6 @@
  */
 package org.unijena.juice.gui.tree;
 
-import java.awt.Dimension;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,21 +31,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.jar.JarFile;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.WindowConstants;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import jams.JAMSTools;
 import jams.gui.LHelper;
 import jams.model.JAMSComponent;
-import jams.model.JAMSComponentDescription;
 import jams.model.JAMSContext;
+import javax.swing.KeyStroke;
 import org.unijena.juice.ComponentDescriptor;
-import org.unijena.juice.gui.ComponentInfoPanel;
 import org.unijena.juice.JUICE;
 
 /**
@@ -56,7 +51,6 @@ import org.unijena.juice.JUICE;
 public class LibTree extends JAMSTree {
 
     private static final String ROOT_NAME = "Model Components";
-    private HashMap<Class, JDialog> compViewDlgs = new HashMap<Class, JDialog>();
     private JPopupMenu popup;
     private String[] libsArray;
     private int contextCount,  componentCount;
@@ -67,7 +61,8 @@ public class LibTree extends JAMSTree {
         setEditable(false);
         new DefaultTreeTransferHandler(this, DnDConstants.ACTION_COPY);
 
-        JMenuItem detailItem = new JMenuItem("Show details");
+        JMenuItem detailItem = new JMenuItem("Show Metadata...");
+        detailItem.setAccelerator(KeyStroke.getKeyStroke('M'));
         detailItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent evt) {
@@ -115,39 +110,8 @@ public class LibTree extends JAMSTree {
         if (node == null) {
             return;
         }
-        try {
-            Class<?> clazz = ((ComponentDescriptor) node.getUserObject()).getClazz();
-            if (clazz != null) {
-
-                if (compViewDlgs.containsKey(clazz)) {
-                    compViewDlgs.get(clazz).setVisible(true);
-                    return;
-                }
-
-                JDialog compViewDlg = new JDialog((JFrame) this.getTopLevelAncestor());
-                compViewDlg.setLocationByPlatform(true);
-                compViewDlg.setTitle(clazz.getCanonicalName());
-
-                compViewDlgs.put(clazz, compViewDlg);
-                compViewDlg.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                ComponentInfoPanel compView = new ComponentInfoPanel();
-                compViewDlg.add(new JScrollPane(compView));
-
-                JAMSComponentDescription jcd = (JAMSComponentDescription) clazz.getAnnotation(JAMSComponentDescription.class);
-                if (jcd != null) {
-                    compView.update(clazz.getCanonicalName(), jcd);
-                } else {
-                    compView.reset(clazz.getCanonicalName());
-                }
-
-                compView.update(clazz.getFields());
-
-                compViewDlg.setPreferredSize(new Dimension(450, 600));
-                compViewDlg.pack();
-                compViewDlg.setVisible(true);
-            }
-        } catch (ClassCastException cce) {
-        }
+        ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
+        cd.displayMetadataDlg((JFrame) this.getTopLevelAncestor());
 
     }
 
@@ -249,9 +213,12 @@ public class LibTree extends JAMSTree {
                                 " could not be found)!", "Error while loading archive");
 
                     } catch (NoClassDefFoundError ncdfe) {
-                        //System.out.println("failed: " + classString);
                         //LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Missing class while loading component " + clazzFullName +
                         //        " in archive " + jarName + "!", "Error while loading archive");
+                    } catch (Exception e) {
+                        // other exception like e.g. java.lang.SecurityException
+                        // won't be handled since they hopefully don't occur
+                        // while loading JARs containing JAMS components
                     }
                 }
             }

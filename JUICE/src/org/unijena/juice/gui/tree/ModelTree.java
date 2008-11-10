@@ -48,6 +48,7 @@ import jams.gui.HelpComponent;
 import jams.gui.LHelper;
 import jams.io.ParameterProcessor;
 import jams.model.JAMSContext;
+import javax.swing.JFrame;
 import org.unijena.juice.ComponentDescriptor;
 import org.unijena.juice.ComponentDescriptor.ComponentAttribute;
 import org.unijena.juice.ContextAttribute;
@@ -90,6 +91,16 @@ public class ModelTree extends JAMSTree {
             }
         });
 
+        JMenuItem showMetadataItem = new JMenuItem("Show Metadata...");
+        showMetadataItem.setAccelerator(KeyStroke.getKeyStroke('M'));
+        showMetadataItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                showMetaData();
+            }
+        });
+
         JMenuItem deleteItem = new JMenuItem("Delete");
         deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
         deleteItem.addActionListener(new ActionListener() {
@@ -120,6 +131,7 @@ public class ModelTree extends JAMSTree {
         });
 
         popup = new JPopupMenu();
+        popup.add(showMetadataItem);
         popup.add(deleteItem);
         popup.add(moveUpItem);
         popup.add(moveDownItem);
@@ -181,6 +193,19 @@ public class ModelTree extends JAMSTree {
         }
 
         this.setSelectionPath(null);
+    }
+
+    private void showMetaData() {
+        if (this.getSelectionPaths() == null) {
+            return;
+        }
+
+        for (TreePath path : this.getSelectionPaths()) {
+
+            JAMSNode node = (JAMSNode) path.getLastPathComponent();
+            ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
+            cd.displayMetadataDlg((JFrame) this.getTopLevelAncestor());
+        }
     }
 
     private void moveUpNode() {
@@ -311,7 +336,7 @@ public class ModelTree extends JAMSTree {
             rootElement.setAttribute("author", view.getAuthor());
             rootElement.setAttribute("date", view.getDate());
             rootElement.setAttribute("helpbaseurl", view.getHelpBaseUrl());
-            
+
             rootElement.appendChild(document.createTextNode("\n"));
 
             document.appendChild(rootElement);
@@ -399,7 +424,7 @@ public class ModelTree extends JAMSTree {
             pce.printStackTrace();
         }
 
-            return document;
+        return document;
     }
 
     // return XML element representing a JAMS model property based on a 

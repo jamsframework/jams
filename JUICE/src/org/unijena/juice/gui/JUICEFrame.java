@@ -62,6 +62,7 @@ public class JUICEFrame extends JFrame {
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, "Error Log");
     private Node modelProperties;
     private WorkerDlg loadModelDlg;
+    private SearchDlg searchDlg;
     private String modelPath;
     private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchModelAction,  searchLibsAction,  copyModelGUIAction,  pasteModelGUIAction,  loadModelParamAction,  saveModelParamAction,  runModelAction,  runModelFromLauncherAction,  infoLogAction,  errorLogAction,  wikiAction;
 
@@ -221,6 +222,7 @@ public class JUICEFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+
             }
         };
 
@@ -228,6 +230,8 @@ public class JUICEFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                searchDlg.setTree(JUICE.getLibTree());
+                searchDlg.setVisible(true);
             }
         };
 
@@ -329,6 +333,7 @@ public class JUICEFrame extends JFrame {
         //modelPanel.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
 
         loadModelDlg = new WorkerDlg(this, "Loading Model");
+        searchDlg = new SearchDlg(this);
 
         propertyDlg = new PropertyDlg(this, JUICE.getJamsProperties());
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);

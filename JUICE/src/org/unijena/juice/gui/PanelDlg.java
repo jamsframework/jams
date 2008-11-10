@@ -84,4 +84,5 @@ public abstract class PanelDlg extends JDialog {
     public JPanel getPanel() {
         return panel;
     }
+
 }

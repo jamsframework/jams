@@ -22,12 +22,17 @@
  */
 package org.unijena.juice;
 
-import jams.data.JAMSDirName;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import jams.gui.LHelper;
-import jams.model.JAMSModel;
+import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
+import java.awt.Dimension;
+import java.awt.Frame;
+import javax.swing.JDialog;
+import javax.swing.JScrollPane;
+import javax.swing.WindowConstants;
+import org.unijena.juice.gui.ComponentInfoPanel;
 import org.unijena.juice.gui.ModelView;
 import org.unijena.juice.gui.tree.*;
 
@@ -38,11 +43,12 @@ import org.unijena.juice.gui.tree.*;
 public class ComponentDescriptor {
 
     private String instanceName;
-    private Class clazz;
+    private Class<?> clazz;
     private JAMSTree tree;
     private HashMap<String, ComponentAttribute> componentAttributes = new HashMap<String, ComponentAttribute>();
     private HashMap<String, ContextAttribute> contextAttributes = new HashMap<String, ContextAttribute>();
     private AttributeRepository dataRepository;
+    private static HashMap<Class, JDialog> compViewDlgs = new HashMap<Class, JDialog>();
 
     public ComponentDescriptor(String instanceName, Class clazz, JAMSTree tree) {
         if (clazz == null) {
@@ -62,6 +68,40 @@ public class ComponentDescriptor {
 
     public ComponentDescriptor(Class clazz, JAMSTree tree) {
         this(clazz.getSimpleName(), clazz, tree);
+    }
+
+    public void displayMetadataDlg(Frame owner) {
+
+        if (clazz != null) {
+
+            if (compViewDlgs.containsKey(clazz)) {
+                compViewDlgs.get(clazz).setVisible(true);
+                return;
+            }
+
+            JDialog compViewDlg = new JDialog(owner);
+            compViewDlg.setLocationByPlatform(true);
+            compViewDlg.setTitle(clazz.getCanonicalName());
+
+            compViewDlgs.put(clazz, compViewDlg);
+            compViewDlg.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            ComponentInfoPanel compView = new ComponentInfoPanel();
+            compViewDlg.add(new JScrollPane(compView));
+
+            JAMSComponentDescription jcd = (JAMSComponentDescription) clazz.getAnnotation(JAMSComponentDescription.class);
+            if (jcd != null) {
+                compView.update(clazz.getCanonicalName(), jcd);
+            } else {
+                compView.reset(clazz.getCanonicalName());
+            }
+
+            compView.update(clazz.getFields());
+
+            compViewDlg.setPreferredSize(new Dimension(450, 600));
+            compViewDlg.pack();
+            compViewDlg.setVisible(true);
+        }
+
     }
 
     private void init() {
@@ -165,7 +205,7 @@ public class ComponentDescriptor {
     public Class getClazz() {
         return clazz;
     }
-    
+
     public void setClazz(Class clazz) {
         this.clazz = clazz;
     }
@@ -203,7 +243,7 @@ public class ComponentDescriptor {
     public AttributeRepository getDataRepository() {
         return dataRepository;
     }
-    
+
     public ComponentAttribute createComponentAttribute(String name, Class type, int accessType) {
         return new ComponentAttribute(name, type, accessType);
     }
@@ -319,11 +359,11 @@ public class ComponentDescriptor {
             } else {
                 //check if this one has been already declared by some writing component attribute
                 attribute = context.getDataRepository().getAttributeByTypeName(this.type, contextAttributeName);
-                
+
                 // check if still not available
                 // this happens, if the attribute has been implicitly declared by an entity set
                 if (attribute == null) {
-                     attribute = new ContextAttribute(contextAttributeName, this.type, context);
+                    attribute = new ContextAttribute(contextAttributeName, this.type, context);
                 }
             }
 

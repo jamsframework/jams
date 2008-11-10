@@ -57,7 +57,7 @@ public class GeomReader extends JAMSComponent {
         
         Iterator reader = store.getFeatureSource(store.getTypeNames()[0]).getFeatures().iterator();
         
-        HashMap<Object, Geometry> geomMap = new HashMap<Object, Geometry>();
+        HashMap<Long, Geometry> geomMap = new HashMap<Long, Geometry>();
         while (reader.hasNext()) {
         	Feature f = (Feature) reader.next();
         	Long id = new Long(f.getAttribute(idName.getValue()).toString());

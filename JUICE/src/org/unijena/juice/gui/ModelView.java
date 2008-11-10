@@ -96,7 +96,7 @@ public class ModelView {
     private static int viewCounter = 0;
     public static ViewList viewList = new ViewList();
     private JAMSRuntime runtime;
-    private PanelDlg launcherPanelDlg;
+//    private PanelDlg launcherPanelDlg;
 
     public ModelView(JDesktopPane parentPanel) {
         this(getNextViewName(), parentPanel);
@@ -108,17 +108,17 @@ public class ModelView {
         modelEditPanel = new ModelEditPanel(this);
         compEditPanel = new ComponentPanel(this);
         launcherPanel = new LauncherPanel(this);
-        launcherPanelDlg = new PanelDlg(JUICE.getJuiceFrame(), "GUI Builder", launcherPanel) {
+        /*launcherPanelDlg = new PanelDlg(JUICE.getJuiceFrame(), "GUI Builder", launcherPanel) {
 
-            @Override
-            public void processOK() {
-                launcherPanelDlg.setVisible(false);
-            }
+        @Override
+        public void processOK() {
+        launcherPanelDlg.setVisible(false);
+        }
 
-            @Override
-            public void processCancel() {
-            }
-        };
+        @Override
+        public void processCancel() {
+        }
+        };*/
         modelTreePanel = new TreePanel();
 
         modelLoading = new Runnable() {
