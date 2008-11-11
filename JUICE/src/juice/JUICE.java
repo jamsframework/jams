@@ -60,6 +60,11 @@ public class JUICE {
 
         cmdLine = new JUICECmdLine(args);
 
+        // check if we must force english localization
+        if (cmdLine.getEnglishLocale()) {
+            Locale.setDefault(Locale.ENGLISH);
+        }
+
         try {
             if (System.getProperty("os.name").contains("Windows")) {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
