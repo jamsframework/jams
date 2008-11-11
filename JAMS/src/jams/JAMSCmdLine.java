@@ -57,7 +57,7 @@ public class JAMSCmdLine {
             parser.parse(args);
         } catch (CmdLineParser.OptionException e) {
             System.err.println(e.getMessage());
-            System.err.println(USAGE_STRING);
+            System.err.println("Usage: " + appTitle + " " + USAGE_STRING);
             System.exit(2);
         }
         
