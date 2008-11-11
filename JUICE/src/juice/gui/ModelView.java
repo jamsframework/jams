@@ -159,7 +159,7 @@ public class ModelView {
             }
         };
         // create worker dialog for model setup
-        setupModelDlg = new WorkerDlg(JUICE.getJuiceFrame(), "Model Setup");
+        setupModelDlg = new WorkerDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_Setup"));
 
         // create the internal frame
         frame = new JInternalFrame();
@@ -213,25 +213,25 @@ public class ModelView {
 
         modelRunButton = new JButton(JUICE.getJuiceFrame().getRunModelAction());
         modelRunButton.setText("");
-        modelRunButton.setToolTipText("Run model");
+        modelRunButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Run_model"));
         modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         toolBar.add(modelRunButton);
 
         modelGUIRunButton = new JButton(JUICE.getJuiceFrame().getRunModelFromLauncherAction());
         modelGUIRunButton.setText("");
-        modelGUIRunButton.setToolTipText("Run model from JAMS Launcher");
+        modelGUIRunButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Run_model_from_JAMS_Launcher"));
         modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
         toolBar.add(modelGUIRunButton);
 
         JButton copyGUIButton = new JButton(JUICE.getJuiceFrame().getCopyModelGUIAction());
         copyGUIButton.setText("");
-        copyGUIButton.setToolTipText("Copy Model GUI");
+        copyGUIButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Copy_Model_GUI"));
         copyGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Copy.png")));
         toolBar.add(copyGUIButton);
 
         JButton pasteGUIButton = new JButton(JUICE.getJuiceFrame().getPasteModelGUIAction());
         pasteGUIButton.setText("");
-        pasteGUIButton.setToolTipText("Paste Model GUI");
+        pasteGUIButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Paste_Model_GUI"));
         pasteGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Paste.png")));
         toolBar.add(pasteGUIButton);
 
@@ -244,8 +244,8 @@ public class ModelView {
 
         JTabbedPane tabPane = new JTabbedPane();
         //tabPane.addTab("Model configuration", new JScrollPane(modelEditPanel));
-        tabPane.addTab("Component configuration", new JScrollPane(compEditPanel));
-        tabPane.addTab("GUI Builder", new JScrollPane(launcherPanel));
+        tabPane.addTab(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_configuration"), new JScrollPane(compEditPanel));
+        tabPane.addTab(java.util.ResourceBundle.getBundle("resources/Bundle").getString("GUI_Builder"), new JScrollPane(launcherPanel));
 
         modelSplitPane.setLeftComponent(modelTreePanel);
         modelSplitPane.setRightComponent(tabPane);
@@ -327,7 +327,7 @@ public class ModelView {
 
     public static String getNextViewName() {
         viewCounter++;
-        return "Model" + viewCounter;
+        return java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model") + viewCounter;
     }
 
     public boolean save() {
@@ -390,7 +390,7 @@ public class ModelView {
             componentDescriptors = new HashMap<String, ComponentDescriptor>();
             this.setTree(new ModelTree(this, doc));
         } catch (Exception ex) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "File " + paramsFile.getName() + " could not be loaded.", "File open error");
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_") + paramsFile.getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_loaded."), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_open_error"));
         }
     }
 
@@ -403,7 +403,7 @@ public class ModelView {
             ParameterProcessor.saveParams(getModelDoc(), paramsFile,
                     JUICE.getJamsProperties().getProperty("username"), path);
         } catch (Exception ex) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "File " + paramsFile.getName() + " could not be saved.", "File saving error");
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_") + paramsFile.getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_saved."), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_saving_error"));
         }
     }
 
@@ -444,7 +444,7 @@ public class ModelView {
         String oldXMLString = XMLIO.getStringFromDocument(initialDoc);
 
         if (newXMLString.compareTo(oldXMLString) != 0) {
-            int result = LHelper.showYesNoCancelDlg(JUICE.getJuiceFrame(), "Save modifications in " + this.getFrame().getTitle() + "?", "Unsaved modifications");
+            int result = LHelper.showYesNoCancelDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Save_modifications_in_") + this.getFrame().getTitle() + "?", java.util.ResourceBundle.getBundle("resources/Bundle").getString("Unsaved_modifications"));
             if (result == JOptionPane.OK_OPTION) {
                 JUICE.getJuiceFrame().saveModel(this);
                 ModelView.viewList.removeView(this.getFrame());
@@ -514,9 +514,9 @@ public class ModelView {
         property.component = getComponentDescriptor(propertyElement.getAttribute("component"));
 
         if (property.component == null) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Component \"" + propertyElement.getAttribute("component") +
-                    "\" does not exist, but is referred in list of model parameters!\n" +
-                    "Will be removed when model is saved!", "Model loading error");
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_\"") + propertyElement.getAttribute("component") +
+                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_does_not_exist,_but_is_referred_in_list_of_model_parameters!\n") +
+                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("Will_be_removed_when_model_is_saved!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_loading_error"));
             return null;
         }
 
@@ -537,9 +537,9 @@ public class ModelView {
         //check wether the referred parameter is existing or not
         if ((property.attribute == null) && (property.var == null) &&
                 !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Attribute " + attributeName +
-                    " does not exist in component " + property.component.getName() +
-                    ". Removing visual editor!", "Model loading error");
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + attributeName +
+                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("_does_not_exist_in_component_") + property.component.getName() +
+                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("._Removing_visual_editor!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_loading_error"));
             return null;
         }
 
@@ -603,14 +603,14 @@ public class ModelView {
             String newModelFilename = XMLProcessor.modelDocConverter(fileName);
             if (!newModelFilename.equalsIgnoreCase(fileName)) {
                 LHelper.showInfoDlg(JUICE.getJuiceFrame(),
-                        "The model definition in \"" + fileName + "\" has been adapted in order to meet changes in the JAMS model specification.\nThe new definition has been stored in \"" + newModelFilename + "\" while your original file was left untouched.", "Info");
+                        java.util.ResourceBundle.getBundle("resources/Bundle").getString("The_model_definition_in_\"") + fileName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.\nThe_new_definition_has_been_stored_in_\"") + newModelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_while_your_original_file_was_left_untouched."), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Info"));
             }
             fileName = newModelFilename;
             
             this.setSavePath(new File(fileName));
             this.setTree(new ModelTree(this, XMLIO.getDocument(fileName)));
         } catch (FileNotFoundException fnfe) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "File " + fileName + " could not be loaded.", "File open error");
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_") + fileName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_loaded."), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_open_error"));
         }
         this.setInitialState();
     }

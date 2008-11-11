@@ -36,14 +36,14 @@ public class JUICECmdLine {
     private String parameterValues = null;
     private String[] otherArgs = null;
     private String appTitle;
-    public static final String USAGE_STRING = "[Options]\nOptions:\n" +
-            "  -h, --help                                         Print help\n" +
-            "  -c, --config <config file name>                    Provide config file name\n" +
-            "  -m, --model <model definition file name>           Provide model file name\n" +
-            "  -p, --parametervalue <list of parameter values>    Provide initial parameter values divided by semicolons";
+    public static final String USAGE_STRING = java.util.ResourceBundle.getBundle("resources/Bundle").getString("[Options]") +
+            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-h,_--help_________________________________________Print_help") +
+            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-c,_--config_<config_file_name>____________________Provide_config_file_name") +
+            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-m,_--model_<model_definition_file_name>___________Provide_model_file_name") +
+            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons");
     
     public JUICECmdLine(String [] args) {
-        this(args, "JUICE");
+        this(args, java.util.ResourceBundle.getBundle("resources/Bundle").getString("JUICE"));
     }
     
     public JUICECmdLine(String [] args, String appTitle) {
@@ -65,7 +65,7 @@ public class JUICECmdLine {
         
         boolean usage = ((Boolean) parser.getOptionValue(helpOption, Boolean.FALSE)).booleanValue();
         if (usage) {
-            System.out.println("Usage: " + appTitle + " " + USAGE_STRING);
+            System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Usage:_") + appTitle + " " + USAGE_STRING);
             System.exit(0);
         }
         

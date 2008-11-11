@@ -67,7 +67,7 @@ import org.w3c.dom.NodeList;
  */
 public class ModelTree extends JAMSTree {
 
-    private static final String NEW_MODEL_NAME = "New Model";
+    private static final String NEW_MODEL_NAME = java.util.ResourceBundle.getBundle("resources/Bundle").getString("New_Model");
     private static final String MODEL_CLASS_NAME = "jams.model.JAMSModel";
     private ModelView view;
     private String modelName = NEW_MODEL_NAME;
@@ -91,7 +91,7 @@ public class ModelTree extends JAMSTree {
             }
         });
 
-        JMenuItem showMetadataItem = new JMenuItem("Show Metadata...");
+        JMenuItem showMetadataItem = new JMenuItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Show_Metadata..."));
         showMetadataItem.setAccelerator(KeyStroke.getKeyStroke('M'));
         showMetadataItem.addActionListener(new ActionListener() {
 
@@ -101,7 +101,7 @@ public class ModelTree extends JAMSTree {
             }
         });
 
-        JMenuItem deleteItem = new JMenuItem("Delete");
+        JMenuItem deleteItem = new JMenuItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Delete"));
         deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
         deleteItem.addActionListener(new ActionListener() {
 
@@ -111,7 +111,7 @@ public class ModelTree extends JAMSTree {
             }
         });
 
-        JMenuItem moveUpItem = new JMenuItem("Move Up");
+        JMenuItem moveUpItem = new JMenuItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Move_up"));
         moveUpItem.setAccelerator(KeyStroke.getKeyStroke('-'));
         moveUpItem.addActionListener(new ActionListener() {
 
@@ -120,7 +120,7 @@ public class ModelTree extends JAMSTree {
                 moveUpNode();
             }
         });
-        JMenuItem moveDownItem = new JMenuItem("Move Down");
+        JMenuItem moveDownItem = new JMenuItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Move_down"));
         moveDownItem.setAccelerator(KeyStroke.getKeyStroke('+'));
         moveDownItem.addActionListener(new ActionListener() {
 
@@ -183,7 +183,10 @@ public class ModelTree extends JAMSTree {
 
             JAMSNode node = (JAMSNode) path.getLastPathComponent();
 
-            int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), "Really delete component " + node.getUserObject().toString() + "?", "Deleting component");
+            int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), 
+                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("Really_delete_component_") +
+                    node.getUserObject().toString() +
+                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("Really_delete_component_2"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Deleting_component"));
             if (result == JOptionPane.YES_OPTION) {
                 ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
                 view.unRegisterComponentDescriptor(cd);
@@ -587,9 +590,9 @@ public class ModelTree extends JAMSTree {
                 try {
                     rootNode.add(getSubTree(element));
                 } catch (ModelLoadException mle) {
-                    LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Could not load component \"" +
+                    LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Could_not_load_component_\"") +
                             mle.getComponentName() + "\" (" + mle.getClassName() + "). " +
-                            "Please fix the model definition file!", "Error loading model");
+                            java.util.ResourceBundle.getBundle("resources/Bundle").getString("Please_fix_the_model_definition_file!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_loading_model"));
                     this.view.getFrame().dispose();
                     return null;
                 }
@@ -723,8 +726,8 @@ public class ModelTree extends JAMSTree {
             try {
                 context = view.getComponentDescriptor(contextName);
             } catch (NullPointerException ex) {
-                LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component \"" + cd.getName() +
-                        "\": context \"" + contextName + "\" does not exist!", "Model loading error");
+                LHelper.showErrorDlg(this.view.getFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_while_loading_component_\"") + cd.getName() +
+                        java.util.ResourceBundle.getBundle("resources/Bundle").getString("\":_context_\"") + contextName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_does_not_exist!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_loading_error"));
                 return;
             }
             String name = e.getAttribute("name");
@@ -741,8 +744,8 @@ public class ModelTree extends JAMSTree {
             context.getDataRepository().addAttribute(new ContextAttribute(attribute, attributeType, context));
             }*/
             } catch (NullPointerException ex) {
-                LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component \"" + cd.getName() +
-                        "\": component attribute \"" + name + "\" does not exist!", "Model loading error");
+                LHelper.showErrorDlg(this.view.getFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_while_loading_component_\"") + cd.getName() +
+                        java.util.ResourceBundle.getBundle("resources/Bundle").getString("\":_component_attribute_\"") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_does_not_exist!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_loading_error"));
                 return;
             }
 
@@ -751,8 +754,8 @@ public class ModelTree extends JAMSTree {
             try {
                 cd.getComponentAttributes().get(e.getAttribute("name")).setValue(e.getAttribute("value"));
             } catch (NullPointerException ex) {
-                LHelper.showErrorDlg(this.view.getFrame(), "Error while loading component \"" + cd.getName() +
-                        "\": component attribute \"" + e.getAttribute("name") + "\" does not exist!", "Model loading error");
+                LHelper.showErrorDlg(this.view.getFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_while_loading_component_\"") + cd.getName() +
+                        java.util.ResourceBundle.getBundle("resources/Bundle").getString("\":_component_attribute_\"") + e.getAttribute("name") + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_does_not_exist!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_loading_error"));
                 return;
             }
 

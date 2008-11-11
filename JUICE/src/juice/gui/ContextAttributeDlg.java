@@ -78,9 +78,9 @@ public class ContextAttributeDlg extends JDialog {
         mainPanel.setLayout(mainLayout);
         
         LHelper.addGBComponent(mainPanel, mainLayout, new JPanel(), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel("Name:"), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel("Type:"), 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel("Value:"), 0, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Name:")), 0, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Type:")), 0, 2, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Value:")), 0, 3, 1, 1, 0, 0);
         
         nameText = new JTextField();
         nameText.setColumns(40);
@@ -112,13 +112,13 @@ public class ContextAttributeDlg extends JDialog {
         
         JPanel buttonPanel = new JPanel();
         
-        JButton okButton = new JButton("OK");
+        JButton okButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("OK"));
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 
                 if (!valueInput.verify()) {
                     valueInput.setMarked(true);
-                    LHelper.showErrorDlg(ContextAttributeDlg.this, "Invalid value!", "Format error");
+                    LHelper.showErrorDlg(ContextAttributeDlg.this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Invalid_value!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Format_error"));
                     valueInput.setMarked(false);
                     return;
                 }
@@ -129,7 +129,7 @@ public class ContextAttributeDlg extends JDialog {
         buttonPanel.add(okButton);
         getRootPane().setDefaultButton(okButton);
         
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Cancel"));
         ActionListener cancelActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
@@ -168,7 +168,7 @@ public class ContextAttributeDlg extends JDialog {
     
     public void show(String name, String type, String value) {
         
-        this.setTitle("Attribute: " + name);
+        this.setTitle(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute:_") + name);
         updateInputComponent(type, false);
         this.valueInput.setValue(value);
         this.typeCombo.setSelectedItem(type);

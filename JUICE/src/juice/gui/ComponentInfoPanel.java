@@ -40,7 +40,7 @@ import jams.model.JAMSVarDescription;
  */
 public class ComponentInfoPanel extends JPanel {
     
-    private static final String DEFAULT_STRING = "[none]";
+    private static final String DEFAULT_STRING = java.util.ResourceBundle.getBundle("resources/Bundle").getString("[none]");
     private static final int TEXTAREA_WIDTH = 295;
     private static final int GRIDBAG_MAX_Y = 3;
     
@@ -50,20 +50,20 @@ public class ComponentInfoPanel extends JPanel {
     private JPanel contentPanel;
     private GridBagLayout mainLayout;
     private Vector<JPanel> varPanels = new Vector<JPanel>();
-    private JLabel varLabel = new JLabel("Variables:");
+    private JLabel varLabel = new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Variables:"));
     
     public ComponentInfoPanel() {
         
-        setBorder(BorderFactory.createTitledBorder("Component Details"));
+        setBorder(BorderFactory.createTitledBorder(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_Details")));
         
         contentPanel = new JPanel();
         mainLayout = new GridBagLayout();
         contentPanel.setLayout(mainLayout);
         
-        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel("Type:"), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel("Author:"), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel("Date:"), 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel("Description:"), 0, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Type:")), 0, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Author:")), 0, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Date:")), 0, 2, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Description:")), 0, 3, 1, 1, 0, 0);
         
         LHelper.addGBComponent(contentPanel, mainLayout, getTextField("type", ""), 1, 0, 1, 1, 1.0, 1.0);
         LHelper.addGBComponent(contentPanel, mainLayout, getTextField("author", ""), 1, 1, 1, 1, 1.0, 1.0);
@@ -129,11 +129,11 @@ public class ComponentInfoPanel extends JPanel {
                 GridBagLayout fieldLayout = new GridBagLayout();
                 fieldPanel.setLayout(fieldLayout);
                 
-                LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Type:"), 0, 0, 1, 1, 0, 0);
-                LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Access:"), 0, 1, 1, 1, 0, 0);
+                LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Type:")), 0, 0, 1, 1, 0, 0);
+                LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Access:")), 0, 1, 1, 1, 0, 0);
                 //LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Update:"), 0, 2, 1, 1, 0, 0);
-                LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Description:"), 0, 3, 1, 1, 0, 0);
-                LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Unit:"), 0, 4, 1, 1, 0, 0);
+                LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Description:")), 0, 3, 1, 1, 0, 0);
+                LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Unit:")), 0, 4, 1, 1, 0, 0);
                 
                 LHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", field.getType().getName()), 1, 0, 1, 1, 1.0, 1.0);
                 LHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.access().toString()), 1, 1, 1, 1, 1.0, 1.0);

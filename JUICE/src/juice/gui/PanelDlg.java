@@ -54,7 +54,7 @@ public abstract class PanelDlg extends JDialog {
         setLayout(new BorderLayout());
         getContentPane().add(panel, BorderLayout.CENTER);
 
-        JButton okButton = new JButton("OK");
+        JButton okButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("OK"));
         okButton.addActionListener(new ActionListener() {
 
             @Override
@@ -62,7 +62,7 @@ public abstract class PanelDlg extends JDialog {
                 processOK();
             }
         });
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Cancel"));
         cancelButton.addActionListener(new ActionListener() {
 
             @Override

@@ -69,11 +69,11 @@ public class ModelEditPanel extends JPanel {
         mainLayout = new GridBagLayout();
         componentPanel.setLayout(mainLayout);
 
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Workspace:"), 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Author:"), 1, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Date:"), 1, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Help Base URL:"), 1, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel("Description:"), 1, 4, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Workspace:")), 1, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Author:")), 1, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Date:")), 1, 2, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Help_Base_URL:")), 1, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Description:")), 1, 4, 1, 1, 0, 0);
 
         workspace = LHelper.createInputComponent(JAMSDirName.class.getSimpleName());
         workspace.setLength(TEXTFIELD_WIDTH);

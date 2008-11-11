@@ -63,10 +63,10 @@ import juice.ContextAttribute;
  */
 public class ComponentPanel extends JPanel {
 
-    private static final String DEFAULT_STRING = "[none]",
-            ATTR_CONFIG_STRING = "Attribute configuration:", 
-            MODEL_CONFIG_STRING = "Model configuration:",
-            ATTR_OVERVIEW_STRING = "Attribute overview:";
+    private static final String DEFAULT_STRING = java.util.ResourceBundle.getBundle("resources/Bundle").getString("[none]"),
+            ATTR_CONFIG_STRING = java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_configuration:"),
+            MODEL_CONFIG_STRING = java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_configuration:"),
+            ATTR_OVERVIEW_STRING = java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_overview:");
     private static final Dimension BUTTON_DIMENSION = new Dimension(70, 20);
     private static final Dimension TABLE_DIMENSION = new Dimension(500, 200);
     private ComponentDescriptor componentDescriptor = null;
@@ -103,15 +103,15 @@ public class ComponentPanel extends JPanel {
         GridBagLayout mainLayout = new GridBagLayout();
         componentPanel.setLayout(mainLayout);
         
-        JLabel nameLabel = new JLabel("Name:");
+        JLabel nameLabel = new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Name:"));
         nameLabel.setFont(labelFont);
-        JLabel typeLabel = new JLabel("Type:");
+        JLabel typeLabel = new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Type:"));
         typeLabel.setFont(labelFont);
 
         LHelper.addGBComponent(componentPanel, mainLayout, nameLabel, 0, 0, 1, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, typeLabel, 0, 1, 1, 1, 0, 0);
 
-        JButton nameEditButton = new JButton("...");
+        JButton nameEditButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("..."));
         nameEditButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         nameEditButton.setPreferredSize(new Dimension(20, 20));
         nameEditButton.addActionListener(new ActionListener() {
@@ -119,7 +119,7 @@ public class ComponentPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String oldName = textFields.get("name").getText();
-                String newName = LHelper.showInputDlg(JUICE.getJuiceFrame(), "New component name", oldName);
+                String newName = LHelper.showInputDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("New_component_name"), oldName);
                 if ((newName != null) && !newName.equals(oldName)) {
                     textFields.get("name").setText(newName);
                     setComponentName();
@@ -166,11 +166,11 @@ public class ComponentPanel extends JPanel {
             }
         });
 
-        varTableColumnIds.add("Name");
-        varTableColumnIds.add("Type");
+        varTableColumnIds.add(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Name"));
+        varTableColumnIds.add(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Type"));
         varTableColumnIds.add("R/W");
-        varTableColumnIds.add("Context Attribute");
-        varTableColumnIds.add("Value");
+        varTableColumnIds.add(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Context_Attribute"));
+        varTableColumnIds.add(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Value"));
 
         varTableModel = new DefaultTableModel(varTableColumnIds, 0);
         varTable.setModel(varTableModel);
@@ -225,9 +225,9 @@ public class ComponentPanel extends JPanel {
             }
         });
 
-        attributeTableColumnIds.add("Name");
-        attributeTableColumnIds.add("Type");
-        attributeTableColumnIds.add("Value");
+        attributeTableColumnIds.add(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Name"));
+        attributeTableColumnIds.add(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Type"));
+        attributeTableColumnIds.add(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Value"));
         attributeTableModel = new DefaultTableModel(attributeTableColumnIds, 0);
         attributeTable.setModel(attributeTableModel);
         attributeTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
@@ -242,7 +242,7 @@ public class ComponentPanel extends JPanel {
 
         attributePanel.add(attributeTableScroll, BorderLayout.CENTER);
 
-        attributeEditButton = new JButton("Edit");
+        attributeEditButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Edit"));
         attributeEditButton.setEnabled(false);
         attributeEditButton.setPreferredSize(BUTTON_DIMENSION);
         attributeEditButton.addActionListener(new ActionListener() {
@@ -252,7 +252,7 @@ public class ComponentPanel extends JPanel {
                 showAttributeEditDlg();
             }
         });
-        attributeAddButton = new JButton("Add");
+        attributeAddButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Add"));
         attributeAddButton.setEnabled(true);
         attributeAddButton.setPreferredSize(BUTTON_DIMENSION);
         attributeAddButton.addActionListener(new ActionListener() {
@@ -262,7 +262,7 @@ public class ComponentPanel extends JPanel {
                 showAttributeAddDlg();
             }
         });
-        attributeDeleteButton = new JButton("Delete");
+        attributeDeleteButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Delete"));
         attributeDeleteButton.setEnabled(false);
         attributeDeleteButton.setPreferredSize(BUTTON_DIMENSION);
         attributeDeleteButton.addActionListener(new ActionListener() {
@@ -284,8 +284,8 @@ public class ComponentPanel extends JPanel {
         //fill the tabbed pane
         tabPane = new JTabbedPane();
 
-        tabPane.add("Component attributes", varPanel);
-        tabPane.add("Context attributes (local)", attributePanel);
+        tabPane.add(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_attributes"), varPanel);
+        tabPane.add(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Context_attributes_(local)"), attributePanel);
         tabPane.setEnabledAt(1, false);
 
         attributeConfigPanel = new ComponentAttributePanel(view);
@@ -359,7 +359,7 @@ public class ComponentPanel extends JPanel {
         int tmpSelectedAttrRow = selectedAttrRow;
 
         String attrName = attrNameList.get(selectedAttrRow);
-        int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), "Delete Attribute \"" + attrName + "\"?", "Confirm");
+        int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Delete_Attribute_\"") + attrName + "\"?", java.util.ResourceBundle.getBundle("resources/Bundle").getString("Confirm"));
         if (result == JOptionPane.NO_OPTION) {
             return;
         }
@@ -516,8 +516,8 @@ public class ComponentPanel extends JPanel {
             try {
                 componentDescriptor.setInstanceName(name);
             } catch (JUICEException.NameAlreadyUsedException ex) {
-                LHelper.showInfoDlg(this, "Name " + name + " is already in use. Renamed component to " +
-                        componentDescriptor.getName() + "!", "Component name");
+                LHelper.showInfoDlg(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Name_") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_is_already_in_use._Renamed_component_to_") +
+                        componentDescriptor.getName() + "!", java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_name"));
                 textFields.get("name").setText(componentDescriptor.getName());
             }
         }

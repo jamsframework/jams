@@ -46,7 +46,7 @@ public class JUICE {
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
     public static final int SCREEN_WIDTH = 1200;
     public static final int SCREEN_HEIGHT = 850;
-    public static final String APP_TITLE = "JUICE";
+    public static final String APP_TITLE = java.util.ResourceBundle.getBundle("resources/Bundle").getString("JUICE");
     private static JUICEFrame juiceFrame;
     private static JAMSProperties jamsProperties = JAMSProperties.createJAMSProperties();
     private static File baseDir = null;
@@ -117,14 +117,14 @@ public class JUICE {
             for (StackTraceElement ste : st) {
                 s += "        at " + ste.toString() + "\n";
             }
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), "An error occured during JUICE execution:\n" + e.toString() + "\n" + s, "JUICE Error");
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("An_error_occured_during_JUICE_execution:\n") + e.toString() + "\n" + s, java.util.ResourceBundle.getBundle("resources/Bundle").getString("JUICE_Error"));
         //            JUICE.getJuiceFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
         }
     }
 
     public static void updateLibs() {
-        loadLibsDlg = new WorkerDlg(juiceFrame, "Loading Libraries");
+        loadLibsDlg = new WorkerDlg(juiceFrame, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Loading_Libraries"));
         loadLibsDlg.setTask(new Runnable() {
 
             public void run() {

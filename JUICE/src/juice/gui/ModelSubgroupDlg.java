@@ -68,7 +68,7 @@ public class ModelSubgroupDlg extends JDialog {
     private void init() {
         
         setModal(true);
-        this.setTitle("Subgroup editor");
+        this.setTitle(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Subgroup_editor"));
         
         this.setLayout(new BorderLayout());
         GridBagLayout gbl = new GridBagLayout();
@@ -76,10 +76,10 @@ public class ModelSubgroupDlg extends JDialog {
         contentPanel.setLayout(gbl);
         
         LHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Group:"), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Name:"), 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Help URL:"), 0, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Help Text:"), 0, 4, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Group:")), 0, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Name:")), 0, 2, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Help_URL:")), 0, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Help_Text:")), 0, 4, 1, 1, 0, 0);
         
         groupCombo = new JComboBox();
         nameField = new JTextField();
@@ -96,7 +96,7 @@ public class ModelSubgroupDlg extends JDialog {
         helpTextField.setRows(5);
         LHelper.addGBComponent(contentPanel, gbl, helpTextField, 1, 4, 2, 1, 0, 0);
 
-        JButton okButton = new JButton("OK");
+        JButton okButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("OK"));
         ActionListener okListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
@@ -106,7 +106,7 @@ public class ModelSubgroupDlg extends JDialog {
         okButton.addActionListener(okListener);
         getRootPane().setDefaultButton(okButton);        
         
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Cancel"));
         ActionListener cancelListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);

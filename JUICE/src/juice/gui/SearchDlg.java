@@ -55,7 +55,7 @@ public class SearchDlg extends JDialog {
         JPanel contentPanel = new JPanel();
         getContentPane().add(contentPanel, BorderLayout.CENTER);
 
-        JButton findButton = new JButton("Find");
+        JButton findButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Find"));
         findButton.addActionListener(new ActionListener() {
 
             @Override
@@ -64,7 +64,7 @@ public class SearchDlg extends JDialog {
             }
         });
 
-        JButton closeButton = new JButton("Close");
+        JButton closeButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Close"));
         closeButton.addActionListener(new ActionListener() {
 
             @Override
@@ -84,9 +84,9 @@ public class SearchDlg extends JDialog {
         this.tree = tree;
 
         if (tree instanceof LibTree) {
-            this.setTitle("Find in Libraries");
+            this.setTitle(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Find_in_Libraries"));
         } else if (tree instanceof ModelTree) {
-            this.setTitle("Find in Model");
+            this.setTitle(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Find_in_Model"));
         }
 
         JAMSNode rootNode = (JAMSNode) tree.getModel().getRoot();
