@@ -35,14 +35,13 @@ public class JUICECmdLine {
     private String modelFileName = null;
     private String parameterValues = null;
     private String[] otherArgs = null;
-    private boolean englishLocale;
     private String appTitle;
     public static final String USAGE_STRING = java.util.ResourceBundle.getBundle("resources/Bundle").getString("[Options]") +
             java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-h,_--help_________________________________________Print_help") +
             java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-c,_--config_<config_file_name>____________________Provide_config_file_name") +
             java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-m,_--model_<model_definition_file_name>___________Provide_model_file_name") +
-            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons") +
-            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-e,_--englishlocale________________________________Set_locale_to_english_locale");
+            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons");
+            //java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-e,_--englishlocale________________________________Set_locale_to_english_locale");
     
     public JUICECmdLine(String [] args) {
         this(args, java.util.ResourceBundle.getBundle("resources/Bundle").getString("JUICE"));
@@ -56,7 +55,6 @@ public class JUICECmdLine {
         CmdLineParser.Option modelOption = parser.addStringOption('m', "model");
         CmdLineParser.Option pValueOption = parser.addStringOption('p', "parametervalue");
         CmdLineParser.Option helpOption = parser.addBooleanOption('h', "help");
-        CmdLineParser.Option englishOption = parser.addBooleanOption('e', "englishlocale");
         
         try {
             parser.parse(args);
@@ -75,7 +73,6 @@ public class JUICECmdLine {
         this.configFileName = (String) parser.getOptionValue(configOption, null);
         this.modelFileName = (String) parser.getOptionValue(modelOption, null);
         this.parameterValues = (String) parser.getOptionValue(pValueOption, null);
-        this.englishLocale = ((Boolean) parser.getOptionValue(englishOption, Boolean.FALSE)).booleanValue();
         this.otherArgs = parser.getRemainingArgs();
     }
     
@@ -93,9 +90,5 @@ public class JUICECmdLine {
     
     public String getParameterValues() {
         return parameterValues;
-    }
-
-    public boolean getEnglishLocale() {
-        return englishLocale;
     }
 }

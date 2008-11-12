@@ -515,7 +515,7 @@ public class ModelView {
 
         if (property.component == null) {
             LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_\"") + propertyElement.getAttribute("component") +
-                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_does_not_exist,_but_is_referred_in_list_of_model_parameters!\n") +
+                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_does_not_exist,_but_is_referred_in_list_of_model_parameters!") +
                     java.util.ResourceBundle.getBundle("resources/Bundle").getString("Will_be_removed_when_model_is_saved!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_loading_error"));
             return null;
         }

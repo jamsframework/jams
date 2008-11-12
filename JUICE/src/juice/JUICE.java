@@ -44,27 +44,39 @@ import juice.gui.tree.LibTree;
 public class JUICE {
 
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
+
     public static final int SCREEN_WIDTH = 1200;
+
     public static final int SCREEN_HEIGHT = 850;
-    public static final String APP_TITLE = java.util.ResourceBundle.getBundle("resources/Bundle").getString("JUICE");
+
+    public static final String APP_TITLE = java.util.ResourceBundle.getBundle("resources/Bundle", Locale.ENGLISH).getString("JUICE");
+
     private static JUICEFrame juiceFrame;
+
     private static JAMSProperties jamsProperties = JAMSProperties.createJAMSProperties();
+
     private static File baseDir = null;
+
     private static ArrayList<ModelView> modelViews = new ArrayList<ModelView>();
+
     private static ClassLoader loader;
+
     private static JUICECmdLine cmdLine;
+
     private static LibTree libTree;
+
     private static WorkerDlg loadLibsDlg;
 
     public static void main(String args[]) throws Exception {
 
-        cmdLine = new JUICECmdLine(args);
-
-        // check if we must force english localization
-        if (cmdLine.getEnglishLocale()) {
+        ResourceBundle bundle = java.util.ResourceBundle.getBundle("resources/Bundle");
+        if (!bundle.containsKey("JUICE")) {
             Locale.setDefault(Locale.ENGLISH);
         }
 
+        cmdLine = new JUICECmdLine(args);
+
+        // set system look and feel if we are in Windows
         try {
             if (System.getProperty("os.name").contains("Windows")) {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -77,6 +89,7 @@ public class JUICE {
         } catch (Exception evt) {
         }
         try {
+
             //try to load property values from file
             if (cmdLine.getConfigFileName() != null) {
                 //check for file provided at command line
@@ -90,6 +103,11 @@ public class JUICE {
                 if (file.exists()) {
                     getJamsProperties().load(defaultFile);
                 }
+            }
+
+            String forcelocale = getJamsProperties().getProperty("forcelocale");
+            if (forcelocale != null) {
+                Locale.setDefault(new Locale(forcelocale));
             }
 
             juiceFrame = new JUICEFrame();
@@ -122,7 +140,8 @@ public class JUICE {
             for (StackTraceElement ste : st) {
                 s += "        at " + ste.toString() + "\n";
             }
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("An_error_occured_during_JUICE_execution:\n") + e.toString() + "\n" + s, java.util.ResourceBundle.getBundle("resources/Bundle").getString("JUICE_Error"));
+            System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("JUICE_Error"));
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("An_error_occured_during_JUICE_execution") + e.toString() + "\n" + s, java.util.ResourceBundle.getBundle("resources/Bundle").getString("JUICE_Error"));
         //            JUICE.getJuiceFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
         }
