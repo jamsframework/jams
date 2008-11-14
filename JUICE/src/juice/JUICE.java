@@ -43,6 +43,8 @@ import juice.gui.tree.LibTree;
  */
 public class JUICE {
 
+    public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/Bundle");
+
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
 
     public static final int SCREEN_WIDTH = 1200;
@@ -69,7 +71,7 @@ public class JUICE {
 
     public static void main(String args[]) throws Exception {
 
-        ResourceBundle bundle = java.util.ResourceBundle.getBundle("resources/Bundle");
+        ResourceBundle bundle = JUICE.resources;
         if (!bundle.containsKey("JUICE")) {
             Locale.setDefault(Locale.ENGLISH);
         }
@@ -107,7 +109,9 @@ public class JUICE {
 
             String forcelocale = getJamsProperties().getProperty("forcelocale");
             if (forcelocale != null) {
-                Locale.setDefault(new Locale(forcelocale));
+                Locale l = new Locale(forcelocale);
+                Locale.setDefault(l);
+                resources = java.util.ResourceBundle.getBundle("resources/Bundle", l);
             }
 
             juiceFrame = new JUICEFrame();
@@ -140,15 +144,15 @@ public class JUICE {
             for (StackTraceElement ste : st) {
                 s += "        at " + ste.toString() + "\n";
             }
-            System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("JUICE_Error"));
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("An_error_occured_during_JUICE_execution") + e.toString() + "\n" + s, java.util.ResourceBundle.getBundle("resources/Bundle").getString("JUICE_Error"));
+            System.out.println(JUICE.resources.getString("JUICE_Error"));
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("An_error_occured_during_JUICE_execution") + e.toString() + "\n" + s, JUICE.resources.getString("JUICE_Error"));
         //            JUICE.getJuiceFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
         }
     }
 
     public static void updateLibs() {
-        loadLibsDlg = new WorkerDlg(juiceFrame, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Loading_Libraries"));
+        loadLibsDlg = new WorkerDlg(juiceFrame, JUICE.resources.getString("Loading_Libraries"));
         loadLibsDlg.setTask(new Runnable() {
 
             public void run() {

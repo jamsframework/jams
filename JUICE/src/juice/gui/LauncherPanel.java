@@ -94,7 +94,7 @@ public class LauncherPanel extends JPanel {
         }
         titledBorderFont = new Font(titledBorderFont.getName(), Font.BOLD, fontSize);
 
-        JButton addPropertyButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Add_Property"));
+        JButton addPropertyButton = new JButton(JUICE.resources.getString("Add_Property"));
         addPropertyButton.setPreferredSize(BUTTON_DIMENSION);
         addPropertyButton.addActionListener(new ActionListener() {
 
@@ -104,7 +104,7 @@ public class LauncherPanel extends JPanel {
             }
         });
 
-        JButton addSubgroupButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Add_Subgroup"));
+        JButton addSubgroupButton = new JButton(JUICE.resources.getString("Add_Subgroup"));
         addSubgroupButton.setPreferredSize(BUTTON_DIMENSION);
         addSubgroupButton.addActionListener(new ActionListener() {
 
@@ -114,7 +114,7 @@ public class LauncherPanel extends JPanel {
             }
         });
 
-        JButton addGroupButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Add_Group"));
+        JButton addGroupButton = new JButton(JUICE.resources.getString("Add_Group"));
         addGroupButton.setPreferredSize(BUTTON_DIMENSION);
         addGroupButton.addActionListener(new ActionListener() {
 
@@ -124,7 +124,7 @@ public class LauncherPanel extends JPanel {
             }
         });
 
-        JButton moveupGroupButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Group_up"));
+        JButton moveupGroupButton = new JButton(JUICE.resources.getString("Group_up"));
         moveupGroupButton.setPreferredSize(BUTTON_DIMENSION);
         moveupGroupButton.addActionListener(new ActionListener() {
 
@@ -134,7 +134,7 @@ public class LauncherPanel extends JPanel {
             }
         });
 
-        JButton movedownGroupButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Group_down"));
+        JButton movedownGroupButton = new JButton(JUICE.resources.getString("Group_down"));
         movedownGroupButton.setPreferredSize(BUTTON_DIMENSION);
         movedownGroupButton.addActionListener(new ActionListener() {
 
@@ -144,7 +144,7 @@ public class LauncherPanel extends JPanel {
             }
         });
 
-        JButton editGroupButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Edit_Group"));
+        JButton editGroupButton = new JButton(JUICE.resources.getString("Edit_Group"));
         editGroupButton.setPreferredSize(BUTTON_DIMENSION);
         editGroupButton.addActionListener(new ActionListener() {
 
@@ -154,7 +154,7 @@ public class LauncherPanel extends JPanel {
             }
         });
 
-        JButton delGroupButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Remove_Group"));
+        JButton delGroupButton = new JButton(JUICE.resources.getString("Remove_Group"));
         delGroupButton.setPreferredSize(BUTTON_DIMENSION);
         delGroupButton.addActionListener(new ActionListener() {
 
@@ -230,7 +230,7 @@ public class LauncherPanel extends JPanel {
         // query new name
 
         String groupName = group.getName();
-        String newGroupName = JOptionPane.showInputDialog(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Group_name:"), groupName);
+        String newGroupName = JOptionPane.showInputDialog(this, JUICE.resources.getString("Group_name:"), groupName);
         if ((newGroupName == null) || newGroupName.equals("") || newGroupName.equals(groupName)) {
             return;
         }
@@ -238,7 +238,7 @@ public class LauncherPanel extends JPanel {
         //  try to set group's name
 
         if (!view.getModelProperties().setGroupName(group, newGroupName)) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Group_name_already_in_use!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error"));
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Group_name_already_in_use!"), JUICE.resources.getString("Error"));
             return;
         }
 
@@ -252,7 +252,7 @@ public class LauncherPanel extends JPanel {
 
         // get name
 
-        String groupName = JOptionPane.showInputDialog(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Group_name:"));
+        String groupName = JOptionPane.showInputDialog(this, JUICE.resources.getString("Group_name:"));
 
         if ((groupName == null) || groupName.equals("")) {
             return;
@@ -261,7 +261,7 @@ public class LauncherPanel extends JPanel {
         // add group
 
         if (!view.getModelProperties().addGroup(groupName)) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Group_name_already_in_use!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error"));
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Group_name_already_in_use!"), JUICE.resources.getString("Error"));
             return;
         }
 
@@ -291,7 +291,7 @@ public class LauncherPanel extends JPanel {
             return;
         }
 
-        if (LHelper.showYesNoDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Really_delete_this_Group_and_all_of_its_properties?"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Delete_Group")) != JOptionPane.YES_OPTION) {
+        if (LHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Really_delete_this_Group_and_all_of_its_properties?"), JUICE.resources.getString("Delete_Group")) != JOptionPane.YES_OPTION) {
             return;
         }
 
@@ -453,7 +453,7 @@ public class LauncherPanel extends JPanel {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder());
 
         ElementButton downButton = new ElementButton(property);
-        downButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Move_down"));
+        downButton.setToolTipText(JUICE.resources.getString("Move_down"));
         downButton.setIcon(DOWN_ICON);
         downButton.addActionListener(new ActionListener() {
 
@@ -466,7 +466,7 @@ public class LauncherPanel extends JPanel {
         buttonPanel.add(downButton);
 
         ElementButton upButton = new ElementButton(property);
-        upButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Move_up"));
+        upButton.setToolTipText(JUICE.resources.getString("Move_up"));
         upButton.setIcon(UP_ICON);
         upButton.addActionListener(new ActionListener() {
 
@@ -479,7 +479,7 @@ public class LauncherPanel extends JPanel {
         buttonPanel.add(upButton);
 
         ElementButton delButton = new ElementButton(property);
-        delButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Delete"));
+        delButton.setToolTipText(JUICE.resources.getString("Delete"));
         delButton.setText("-");
         delButton.addActionListener(new ActionListener() {
 
@@ -492,7 +492,7 @@ public class LauncherPanel extends JPanel {
         buttonPanel.add(delButton);
 
         ElementButton editButton = new ElementButton(property);
-        editButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Edit"));
+        editButton.setToolTipText(JUICE.resources.getString("Edit"));
         editButton.setText("...");
         editButton.addActionListener(new ActionListener() {
 
@@ -514,7 +514,7 @@ public class LauncherPanel extends JPanel {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder());
 
         ElementButton downButton = new ElementButton(subgroup);
-        downButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Move_down"));
+        downButton.setToolTipText(JUICE.resources.getString("Move_down"));
         downButton.setIcon(DOWN_ICON);
         downButton.addActionListener(new ActionListener() {
 
@@ -527,7 +527,7 @@ public class LauncherPanel extends JPanel {
         buttonPanel.add(downButton);
 
         ElementButton upButton = new ElementButton(subgroup);
-        upButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Move_up"));
+        upButton.setToolTipText(JUICE.resources.getString("Move_up"));
         upButton.setIcon(UP_ICON);
         upButton.addActionListener(new ActionListener() {
 
@@ -540,7 +540,7 @@ public class LauncherPanel extends JPanel {
         buttonPanel.add(upButton);
 
         ElementButton delButton = new ElementButton(subgroup);
-        delButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Delete"));
+        delButton.setToolTipText(JUICE.resources.getString("Delete"));
         delButton.setText("-");
         delButton.addActionListener(new ActionListener() {
 
@@ -553,7 +553,7 @@ public class LauncherPanel extends JPanel {
         buttonPanel.add(delButton);
 
         ElementButton editButton = new ElementButton(subgroup);
-        editButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Edit"));
+        editButton.setToolTipText(JUICE.resources.getString("Edit"));
         editButton.setText("...");
         editButton.addActionListener(new ActionListener() {
 
@@ -606,12 +606,12 @@ public class LauncherPanel extends JPanel {
         if (element instanceof Group) {
             Vector test = ((Group) element).getProperties();
             if (test.size() > 0) {
-                LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Subgroup_needs_to_be_empty."), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Deletion_not_possible"));
+                LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Subgroup_needs_to_be_empty."), JUICE.resources.getString("Deletion_not_possible"));
                 return;
             }
         }
 
-        int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Really_delete_this_property?"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Delete_property"));
+        int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Really_delete_this_property?"), JUICE.resources.getString("Delete_property"));
         if (result != JOptionPane.YES_OPTION) {
             return;
         }

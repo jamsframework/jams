@@ -22,6 +22,7 @@
  */
 package juice.gui;
 
+import jams.data.JAMSCalendar;
 import jams.data.JAMSDirName;
 import jams.data.JAMSString;
 import java.awt.Dimension;
@@ -29,7 +30,6 @@ import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -37,6 +37,7 @@ import jams.gui.LHelper;
 import jams.gui.input.InputComponent;
 import jams.gui.input.ValueChangeListener;
 import java.awt.GridBagConstraints;
+import juice.JUICE;
 
 /**
  *
@@ -48,7 +49,7 @@ import java.awt.GridBagConstraints;
  */
 public class ModelEditPanel extends JPanel {
 
-    private static final int TEXTAREA_WIDTH = 450,  TEXTAREA_HEIGHT = 150, TEXTFIELD_WIDTH = 35;
+    private static final int TEXTAREA_WIDTH = 450,  TEXTAREA_HEIGHT = 100, TEXTFIELD_WIDTH = 35;
     private JPanel componentPanel;
     private GridBagLayout mainLayout;
     private ModelView view;
@@ -69,11 +70,11 @@ public class ModelEditPanel extends JPanel {
         mainLayout = new GridBagLayout();
         componentPanel.setLayout(mainLayout);
 
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Workspace:")), 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Author:")), 1, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Date:")), 1, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Help_Base_URL:")), 1, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Description:")), 1, 4, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Workspace:")), 1, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Author:")), 1, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Date:")), 1, 2, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Help_Base_URL:")), 1, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Description:")), 1, 4, 1, 1, 0, 0);
 
         workspace = LHelper.createInputComponent(JAMSDirName.class.getSimpleName());
         workspace.setLength(TEXTFIELD_WIDTH);
@@ -81,7 +82,7 @@ public class ModelEditPanel extends JPanel {
         author = LHelper.createInputComponent(JAMSString.class.getSimpleName());
         author.setLength(TEXTFIELD_WIDTH);
 
-        date = LHelper.createInputComponent(JAMSString.class.getSimpleName());
+        date = LHelper.createInputComponent(JAMSCalendar.class.getSimpleName());
         date.setLength(TEXTFIELD_WIDTH);
 
         helpBaseURL = LHelper.createInputComponent(JAMSString.class.getSimpleName());
@@ -111,50 +112,30 @@ public class ModelEditPanel extends JPanel {
             }
         });
 
-        ((JTextField) author.getComponent()).getDocument().addDocumentListener(new DocumentListener() {
+        author.addValueChangeListener(new ValueChangeListener() {
 
-            public void changedUpdate(DocumentEvent e) {
-                updateAuthor();
-            }
-
-            public void insertUpdate(DocumentEvent e) {
-                updateAuthor();
-            }
-
-            public void removeUpdate(DocumentEvent e) {
+            @Override
+            public void valueChanged() {
                 updateAuthor();
             }
         });
 
-        ((JTextField) date.getComponent()).getDocument().addDocumentListener(new DocumentListener() {
+        date.addValueChangeListener(new ValueChangeListener() {
 
-            public void changedUpdate(DocumentEvent e) {
-                updateDate();
-            }
-
-            public void insertUpdate(DocumentEvent e) {
-                updateDate();
-            }
-
-            public void removeUpdate(DocumentEvent e) {
+            @Override
+            public void valueChanged() {
                 updateDate();
             }
         });
 
-        ((JTextField) helpBaseURL.getComponent()).getDocument().addDocumentListener(new DocumentListener() {
+        helpBaseURL.addValueChangeListener(new ValueChangeListener() {
 
-            public void changedUpdate(DocumentEvent e) {
-                updateHelpBaseUrl();
-            }
-
-            public void insertUpdate(DocumentEvent e) {
-                updateHelpBaseUrl();
-            }
-
-            public void removeUpdate(DocumentEvent e) {
+            @Override
+            public void valueChanged() {
                 updateHelpBaseUrl();
             }
         });
+
         description.getDocument().addDocumentListener(new DocumentListener() {
 
             public void changedUpdate(DocumentEvent e) {

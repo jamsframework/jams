@@ -44,6 +44,7 @@ import javax.swing.JTextPane;
 import javax.swing.WindowConstants;
 import jams.gui.LHelper;
 import juice.ComponentDescriptor;
+import juice.JUICE;
 
 /**
  *
@@ -74,13 +75,13 @@ public class ContextReplaceDlg extends JDialog {
         mainPanel.setLayout(mainLayout);
         
         
-        String replaceText = java.util.ResourceBundle.getBundle("resources/Bundle").getString("Found_references_to_context");
+        String replaceText = JUICE.resources.getString("Found_references_to_context");
         
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Found_references_to_old_context")), 0, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("Found_references_to_old_context")), 0, 1, 1, 1, 0, 0);
         LHelper.addGBComponent(mainPanel, mainLayout, oldComponentLabel, 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("from_the_following_components:_")), 0, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("from_the_following_components:_")), 0, 3, 1, 1, 0, 0);
         LHelper.addGBComponent(mainPanel, mainLayout, getTextPane("components", "", 140, false), 0, 4, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Please_choose_new_context_from_this_list:")), 0, 5, 1, 1, 0, 0);
+        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("Please_choose_new_context_from_this_list:")), 0, 5, 1, 1, 0, 0);
         
         LHelper.addGBComponent(mainPanel, mainLayout, contextCombo, 0, 6, 1, 1, 0, 0);
         
@@ -88,7 +89,7 @@ public class ContextReplaceDlg extends JDialog {
         
         JPanel buttonPanel = new JPanel();
         
-        JButton okButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("OK"));
+        JButton okButton = new JButton(JUICE.resources.getString("OK"));
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
@@ -97,7 +98,7 @@ public class ContextReplaceDlg extends JDialog {
         });
         buttonPanel.add(okButton);
         
-        JButton cancelButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Cancel"));
+        JButton cancelButton = new JButton(JUICE.resources.getString("Cancel"));
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
@@ -123,7 +124,7 @@ public class ContextReplaceDlg extends JDialog {
     
     public int show(String oldContext, String[] availableContexts, HashSet<ComponentDescriptor> components) {
         
-        this.setTitle(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Replace_context_:_") + oldContext);
+        this.setTitle(JUICE.resources.getString("Replace_context_:_") + oldContext);
         
         oldComponentLabel.setText("  \"" + oldContext + "\"");
         contextCombo.setModel(new DefaultComboBoxModel(availableContexts));

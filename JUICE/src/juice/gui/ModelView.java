@@ -159,7 +159,7 @@ public class ModelView {
             }
         };
         // create worker dialog for model setup
-        setupModelDlg = new WorkerDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_Setup"));
+        setupModelDlg = new WorkerDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Model_Setup"));
 
         // create the internal frame
         frame = new JInternalFrame();
@@ -213,25 +213,25 @@ public class ModelView {
 
         modelRunButton = new JButton(JUICE.getJuiceFrame().getRunModelAction());
         modelRunButton.setText("");
-        modelRunButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Run_model"));
+        modelRunButton.setToolTipText(JUICE.resources.getString("Run_model"));
         modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         toolBar.add(modelRunButton);
 
         modelGUIRunButton = new JButton(JUICE.getJuiceFrame().getRunModelFromLauncherAction());
         modelGUIRunButton.setText("");
-        modelGUIRunButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Run_model_from_JAMS_Launcher"));
+        modelGUIRunButton.setToolTipText(JUICE.resources.getString("Run_model_from_JAMS_Launcher"));
         modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
         toolBar.add(modelGUIRunButton);
 
         JButton copyGUIButton = new JButton(JUICE.getJuiceFrame().getCopyModelGUIAction());
         copyGUIButton.setText("");
-        copyGUIButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Copy_Model_GUI"));
+        copyGUIButton.setToolTipText(JUICE.resources.getString("Copy_Model_GUI"));
         copyGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Copy.png")));
         toolBar.add(copyGUIButton);
 
         JButton pasteGUIButton = new JButton(JUICE.getJuiceFrame().getPasteModelGUIAction());
         pasteGUIButton.setText("");
-        pasteGUIButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Paste_Model_GUI"));
+        pasteGUIButton.setToolTipText(JUICE.resources.getString("Paste_Model_GUI"));
         pasteGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Paste.png")));
         toolBar.add(pasteGUIButton);
 
@@ -244,8 +244,8 @@ public class ModelView {
 
         JTabbedPane tabPane = new JTabbedPane();
         //tabPane.addTab("Model configuration", new JScrollPane(modelEditPanel));
-        tabPane.addTab(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_configuration"), new JScrollPane(compEditPanel));
-        tabPane.addTab(java.util.ResourceBundle.getBundle("resources/Bundle").getString("GUI_Builder"), new JScrollPane(launcherPanel));
+        tabPane.addTab(JUICE.resources.getString("Component_configuration"), new JScrollPane(compEditPanel));
+        tabPane.addTab(JUICE.resources.getString("GUI_Builder"), new JScrollPane(launcherPanel));
 
         modelSplitPane.setLeftComponent(modelTreePanel);
         modelSplitPane.setRightComponent(tabPane);
@@ -327,7 +327,7 @@ public class ModelView {
 
     public static String getNextViewName() {
         viewCounter++;
-        return java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model") + viewCounter;
+        return JUICE.resources.getString("Model") + viewCounter;
     }
 
     public boolean save() {
@@ -390,7 +390,7 @@ public class ModelView {
             componentDescriptors = new HashMap<String, ComponentDescriptor>();
             this.setTree(new ModelTree(this, doc));
         } catch (Exception ex) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_") + paramsFile.getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_loaded."), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_open_error"));
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + paramsFile.getName() + JUICE.resources.getString("_could_not_be_loaded."), JUICE.resources.getString("File_open_error"));
         }
     }
 
@@ -403,7 +403,7 @@ public class ModelView {
             ParameterProcessor.saveParams(getModelDoc(), paramsFile,
                     JUICE.getJamsProperties().getProperty("username"), path);
         } catch (Exception ex) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_") + paramsFile.getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_saved."), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_saving_error"));
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + paramsFile.getName() + JUICE.resources.getString("_could_not_be_saved."), JUICE.resources.getString("File_saving_error"));
         }
     }
 
@@ -444,7 +444,7 @@ public class ModelView {
         String oldXMLString = XMLIO.getStringFromDocument(initialDoc);
 
         if (newXMLString.compareTo(oldXMLString) != 0) {
-            int result = LHelper.showYesNoCancelDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Save_modifications_in_") + this.getFrame().getTitle() + "?", java.util.ResourceBundle.getBundle("resources/Bundle").getString("Unsaved_modifications"));
+            int result = LHelper.showYesNoCancelDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Save_modifications_in_") + this.getFrame().getTitle() + JUICE.resources.getString("_?"), JUICE.resources.getString("Unsaved_modifications"));
             if (result == JOptionPane.OK_OPTION) {
                 JUICE.getJuiceFrame().saveModel(this);
                 ModelView.viewList.removeView(this.getFrame());
@@ -514,9 +514,9 @@ public class ModelView {
         property.component = getComponentDescriptor(propertyElement.getAttribute("component"));
 
         if (property.component == null) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_\"") + propertyElement.getAttribute("component") +
-                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_does_not_exist,_but_is_referred_in_list_of_model_parameters!") +
-                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("Will_be_removed_when_model_is_saved!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_loading_error"));
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Component_") + propertyElement.getAttribute("component") +
+                    JUICE.resources.getString("_does_not_exist,_but_is_referred_in_list_of_model_parameters!") +
+                    JUICE.resources.getString("Will_be_removed_when_model_is_saved!"), JUICE.resources.getString("Model_loading_error"));
             return null;
         }
 
@@ -537,9 +537,9 @@ public class ModelView {
         //check wether the referred parameter is existing or not
         if ((property.attribute == null) && (property.var == null) &&
                 !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + attributeName +
-                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("_does_not_exist_in_component_") + property.component.getName() +
-                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("._Removing_visual_editor!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_loading_error"));
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Attribute_") + attributeName +
+                    JUICE.resources.getString("_does_not_exist_in_component_") + property.component.getName() +
+                    JUICE.resources.getString("._Removing_visual_editor!"), JUICE.resources.getString("Model_loading_error"));
             return null;
         }
 
@@ -598,21 +598,25 @@ public class ModelView {
      */
     public void loadModel(String fileName) {
         try {
-            
             // first do search&replace on the input xml file
             String newModelFilename = XMLProcessor.modelDocConverter(fileName);
             if (!newModelFilename.equalsIgnoreCase(fileName)) {
                 LHelper.showInfoDlg(JUICE.getJuiceFrame(),
-                        java.util.ResourceBundle.getBundle("resources/Bundle").getString("The_model_definition_in_\"") + fileName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.\nThe_new_definition_has_been_stored_in_\"") + newModelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_while_your_original_file_was_left_untouched."), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Info"));
+                        JUICE.resources.getString("The_model_definition_in_") + fileName + JUICE.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JUICE.resources.getString("_while_your_original_file_was_left_untouched."), JUICE.resources.getString("Info"));
             }
             fileName = newModelFilename;
             
             this.setSavePath(new File(fileName));
             this.setTree(new ModelTree(this, XMLIO.getDocument(fileName)));
+
+            this.setInitialState();
+
         } catch (FileNotFoundException fnfe) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_") + fileName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_loaded."), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_open_error"));
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + fileName + JUICE.resources.getString("_could_not_be_loaded."), JUICE.resources.getString("File_open_error"));
+        } catch (Exception e) {
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Unknown_error_during_Model_loading"), JUICE.resources.getString("Model_loading_error"));
+            e.printStackTrace();
         }
-        this.setInitialState();
     }
 
     public JInternalFrame getFrame() {

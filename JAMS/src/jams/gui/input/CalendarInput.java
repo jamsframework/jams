@@ -120,14 +120,18 @@ public class CalendarInput extends JPanel implements InputComponent {
     }
 
     public String getValue() {
-        JAMSCalendar cal = new JAMSCalendar(
-                Integer.parseInt(syear.getText()),
-                Integer.parseInt(smonth.getText()) - 1,
-                Integer.parseInt(sday.getText()),
-                Integer.parseInt(shour.getText()),
-                Integer.parseInt(sminute.getText()),
-                0);
-        return cal.toString();
+        try {
+            JAMSCalendar cal = new JAMSCalendar(
+                    Integer.parseInt(syear.getText()),
+                    Integer.parseInt(smonth.getText()) - 1,
+                    Integer.parseInt(sday.getText()),
+                    Integer.parseInt(shour.getText()),
+                    Integer.parseInt(sminute.getText()),
+                    0);
+            return cal.toString();
+        } catch (NumberFormatException nfe) {
+            return "";
+        }
     }
 
     public void setValue(String value) {

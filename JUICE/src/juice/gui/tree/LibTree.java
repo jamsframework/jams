@@ -50,7 +50,7 @@ import juice.JUICE;
  */
 public class LibTree extends JAMSTree {
 
-    private static final String ROOT_NAME = java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_Components");
+    private static final String ROOT_NAME = JUICE.resources.getString("Model_Components");
     private JPopupMenu popup;
     private String[] libsArray;
     private int contextCount,  componentCount;
@@ -61,7 +61,7 @@ public class LibTree extends JAMSTree {
         setEditable(false);
         new DefaultTreeTransferHandler(this, DnDConstants.ACTION_COPY);
 
-        JMenuItem detailItem = new JMenuItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Show_Metadata..."));
+        JMenuItem detailItem = new JMenuItem(JUICE.resources.getString("Show_Metadata..."));
         detailItem.setAccelerator(KeyStroke.getKeyStroke('M'));
         detailItem.addActionListener(new ActionListener() {
 
@@ -122,13 +122,13 @@ public class LibTree extends JAMSTree {
 
         contextCount = 0;
         componentCount = 0;
-        JUICE.setStatusText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Loading_libraries..."));
+        JUICE.setStatusText(JUICE.resources.getString("Loading_Libraries"));
         this.setVisible(false);
         JAMSNode root = LibTree.this.createLibTree(LibTree.this.libsArray);
         this.setModel(new DefaultTreeModel(root));
         this.collapseAll();
         this.setVisible(true);
-        JUICE.setStatusText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Contexts:") + contextCount + " " + java.util.ResourceBundle.getBundle("resources/Bundle").getString("Components:") + componentCount);
+        JUICE.setStatusText(JUICE.resources.getString("Contexts:") + contextCount + " " + JUICE.resources.getString("Components:") + componentCount);
 
     }
 
@@ -209,8 +209,8 @@ public class LibTree extends JAMSTree {
 
                     } catch (ClassNotFoundException cnfe) {
 
-                        LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_while_loading_archive_") + jarName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(class_") + classString +
-                                java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_found)!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_while_loading_archive"));
+                        LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Error_while_loading_archive_") + jarName + JUICE.resources.getString("_(class_") + classString +
+                                JUICE.resources.getString("_could_not_be_found)!"), JUICE.resources.getString("Error_while_loading_archive"));
 
                     } catch (NoClassDefFoundError ncdfe) {
                         //LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Missing class while loading component " + clazzFullName +
@@ -254,8 +254,8 @@ public class LibTree extends JAMSTree {
 
                     } catch (NoClassDefFoundError ncdfe) {
 
-                        LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Missing_class_while_loading_component_") + clazzFullName +
-                                java.util.ResourceBundle.getBundle("resources/Bundle").getString("_in_archive_") + jarName + "\"!", java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_while_loading_archive"));
+                        LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Missing_class_while_loading_component_") + clazzFullName +
+                                JUICE.resources.getString("_in_archive_") + jarName + "\"!", JUICE.resources.getString("Error_while_loading_archive"));
 
                     }
                 }
@@ -264,8 +264,7 @@ public class LibTree extends JAMSTree {
 
         } catch (IOException ioe) {
 
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Could_not_open_file_") + jar 
-                    + java.util.ResourceBundle.getBundle("resources/Bundle").getString("Could_not_open_file_2"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_while_loading_archive"));
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + jar + JUICE.resources.getString("_could_not_be_loaded."), JUICE.resources.getString("Error_while_loading_archive"));
             jarRoot = null;
 
         }

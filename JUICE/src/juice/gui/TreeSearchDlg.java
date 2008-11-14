@@ -62,7 +62,7 @@ public class TreeSearchDlg extends JDialog {
             }
         });
         
-        searchButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Search"));
+        searchButton = new JButton(JUICE.resources.getString("Search"));
         searchButton.setMargin(new Insets(4, 4, 4, 4));
         searchButton.setPreferredSize(new Dimension(60, 20));
         searchButton.addActionListener(new ActionListener() {
@@ -104,7 +104,7 @@ public class TreeSearchDlg extends JDialog {
 
         nodeEnum = rootNode.depthFirstEnumeration();
 
-        LHelper.showInfoDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Could_not_find_further_occurrences_of_\"") + searchString + "\".", java.util.ResourceBundle.getBundle("resources/Bundle").getString("Info"));
+        LHelper.showInfoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Could_not_find_further_occurrences_of_") + "\"" + searchString + "\".", JUICE.resources.getString("Info"));
 
     }
 }

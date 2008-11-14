@@ -36,15 +36,15 @@ public class JUICECmdLine {
     private String parameterValues = null;
     private String[] otherArgs = null;
     private String appTitle;
-    public static final String USAGE_STRING = java.util.ResourceBundle.getBundle("resources/Bundle").getString("[Options]") +
-            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-h,_--help_________________________________________Print_help") +
-            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-c,_--config_<config_file_name>____________________Provide_config_file_name") +
-            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-m,_--model_<model_definition_file_name>___________Provide_model_file_name") +
-            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons");
-            //java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-e,_--englishlocale________________________________Set_locale_to_english_locale");
+    public static final String USAGE_STRING = JUICE.resources.getString("[Options]") +
+            JUICE.resources.getString("__-h,_--help_________________________________________Print_help") +
+            JUICE.resources.getString("__-c,_--config_<config_file_name>____________________Provide_config_file_name") +
+            JUICE.resources.getString("__-m,_--model_<model_definition_file_name>___________Provide_model_file_name") +
+            JUICE.resources.getString("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons");
+            //JUICE.resources.getString("__-e,_--englishlocale________________________________Set_locale_to_english_locale");
     
     public JUICECmdLine(String [] args) {
-        this(args, java.util.ResourceBundle.getBundle("resources/Bundle").getString("JUICE"));
+        this(args, JUICE.resources.getString("JUICE"));
     }
     
     public JUICECmdLine(String [] args, String appTitle) {
@@ -66,7 +66,7 @@ public class JUICECmdLine {
         
         boolean usage = ((Boolean) parser.getOptionValue(helpOption, Boolean.FALSE)).booleanValue();
         if (usage) {
-            System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Usage:_") + appTitle + " " + USAGE_STRING);
+            System.out.println(JUICE.resources.getString("Usage:_") + appTitle + " " + USAGE_STRING);
             System.exit(0);
         }
         

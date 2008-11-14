@@ -32,6 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import juice.gui.tree.JAMSTree;
+import juice.JUICE;
 
 /**
  *
@@ -54,7 +55,7 @@ public class TreePanel extends JPanel {
 
         this.setLayout(new BorderLayout());
 
-        expandButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("+"));
+        expandButton = new JButton(JUICE.resources.getString("+"));
         expandButton.setMargin(new Insets(4, 4, 4, 4));
         expandButton.addActionListener(new ActionListener() {
 
@@ -65,9 +66,9 @@ public class TreePanel extends JPanel {
             }
         });
         expandButton.setPreferredSize(BUTTON_DIMENSION);
-        expandButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Expand_Tree"));
+        expandButton.setToolTipText(JUICE.resources.getString("Expand_Tree"));
 
-        collapseButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("-"));
+        collapseButton = new JButton(JUICE.resources.getString("-"));
         collapseButton.setMargin(new Insets(4, 4, 4, 4));
         collapseButton.addActionListener(new ActionListener() {
 
@@ -78,7 +79,7 @@ public class TreePanel extends JPanel {
             }
         });
         collapseButton.setPreferredSize(BUTTON_DIMENSION);
-        collapseButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Collapse_Tree"));
+        collapseButton.setToolTipText(JUICE.resources.getString("Collapse_Tree"));
 
         lowerPanel.add(expandButton);
         lowerPanel.add(collapseButton);

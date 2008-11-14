@@ -50,8 +50,8 @@ public class ContextAttribute {
         HashMap<String, ContextAttribute> attributes = getContext().getContextAttributes();
         
         if (attributes.get(newName) != null) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Context_attribute_\"") + newName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_does_already_exist._") +
-                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("Please_remove_or_chose_a_different_name!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_renaming_context_attribute"));
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Context_attribute_\"") + newName + JUICE.resources.getString("\"_does_already_exist._") +
+                    JUICE.resources.getString("Please_remove_or_chose_a_different_name!"), JUICE.resources.getString("Error_renaming_context_attribute"));
         } else {
             attributes.remove(this.name);
             this.name = newName;

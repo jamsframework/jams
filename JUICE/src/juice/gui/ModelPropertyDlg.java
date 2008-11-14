@@ -53,6 +53,7 @@ import juice.ModelProperties.ModelProperty;
 import juice.ComponentDescriptor;
 import juice.ComponentDescriptor.ComponentAttribute;
 import juice.ContextAttribute;
+import juice.JUICE;
 
 /**
  *
@@ -80,7 +81,7 @@ public class ModelPropertyDlg extends JDialog {
     private void init() {
         
         setModal(true);
-        this.setTitle(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_property_editor"));
+        this.setTitle(JUICE.resources.getString("Model_property_editor"));
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         
         this.setLayout(new BorderLayout());
@@ -89,16 +90,16 @@ public class ModelPropertyDlg extends JDialog {
         contentPanel.setLayout(gbl);
         
         LHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Group:")), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component:")), 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Variable/Attribute:")), 0, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Name:")), 0, 4, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Description:")), 0, 5, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Lower_Boundary:")), 0, 6, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Upper_Boundary:")), 0, 7, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Length:")), 0, 8, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Help_URL:")), 0, 9, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Help_Text:")), 0, 10, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Group:")), 0, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Component:")), 0, 2, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Variable/Attribute:")), 0, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Name:")), 0, 4, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Description:")), 0, 5, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Lower_Boundary:")), 0, 6, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Upper_Boundary:")), 0, 7, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Length:")), 0, 8, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Help_URL:")), 0, 9, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Help_Text:")), 0, 10, 1, 1, 0, 0);
         
         groupCombo = new JComboBox();
         LHelper.addGBComponent(contentPanel, gbl, groupCombo, 1, 1, 1, 1, 0, 0);
@@ -137,7 +138,7 @@ public class ModelPropertyDlg extends JDialog {
         helpTextField.setRows(5);
         LHelper.addGBComponent(contentPanel, gbl, helpTextField, 1, 10, 2, 1, 0, 0);
         
-        JButton okButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("OK"));
+        JButton okButton = new JButton(JUICE.resources.getString("OK"));
         ActionListener okListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
@@ -147,7 +148,7 @@ public class ModelPropertyDlg extends JDialog {
         okButton.addActionListener(okListener);
         getRootPane().setDefaultButton(okButton);        
         
-        JButton cancelButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Cancel"));
+        JButton cancelButton = new JButton(JUICE.resources.getString("Cancel"));
         ActionListener cancelListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
@@ -182,7 +183,7 @@ public class ModelPropertyDlg extends JDialog {
         
         Collections.sort(varNames);
         
-        varNames.add(0, java.util.ResourceBundle.getBundle("resources/Bundle").getString("[enable_component]"));
+        varNames.add(0, JUICE.resources.getString("[enable_component]"));
         
         String[] varNameArray = varNames.toArray(new String[varNames.size()]);
         varCombo.setModel(new DefaultComboBoxModel(varNameArray));

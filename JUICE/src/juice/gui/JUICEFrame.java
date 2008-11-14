@@ -58,13 +58,13 @@ public class JUICEFrame extends JFrame {
     private JMenu windowMenu,  modelMenu;
     private JMenuItem pasteModelParameterItem,  copyModelParameterItem,  searchModelItem;
     private JLabel statusLabel;
-    private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Info_Log"));
-    private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_Log"));
+    private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JUICE.resources.getString("Info_Log"));
+    private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JUICE.resources.getString("Error_Log"));
     private Node modelProperties;
     private WorkerDlg loadModelDlg;
     private SearchDlg searchDlg;
     private String modelPath;
-    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchModelAction,  searchLibsAction,  copyModelGUIAction,  pasteModelGUIAction,  loadModelParamAction,  saveModelParamAction,  runModelAction,  runModelFromLauncherAction,  infoLogAction,  errorLogAction,  wikiAction;
+    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchAction,  copyModelGUIAction,  pasteModelGUIAction,  loadModelParamAction,  saveModelParamAction,  runModelAction,  runModelFromLauncherAction,  infoLogAction,  errorLogAction,  wikiAction;
 
     public JUICEFrame() {
         init();
@@ -105,7 +105,7 @@ public class JUICEFrame extends JFrame {
             }
         });
 
-        editPrefsAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Edit_Preferences...")) {
+        editPrefsAction = new AbstractAction(JUICE.resources.getString("Edit_Preferences...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -117,7 +117,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        reloadLibsAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Reload")) {
+        reloadLibsAction = new AbstractAction(JUICE.resources.getString("Reload")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -125,7 +125,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        newModelAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("New_Model")) {
+        newModelAction = new AbstractAction(JUICE.resources.getString("New_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -133,7 +133,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        loadPrefsAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Load_Preferences...")) {
+        loadPrefsAction = new AbstractAction(JUICE.resources.getString("Load_Preferences...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -154,7 +154,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        savePrefsAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Save_Preferences...")) {
+        savePrefsAction = new AbstractAction(JUICE.resources.getString("Save_Preferences...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -173,7 +173,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        loadModelAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Open_Model...")) {
+        loadModelAction = new AbstractAction(JUICE.resources.getString("Open_Model...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -186,7 +186,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        saveModelAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Save_Model")) {
+        saveModelAction = new AbstractAction(JUICE.resources.getString("Save_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -194,7 +194,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        saveAsModelAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Save_Model_As...")) {
+        saveAsModelAction = new AbstractAction(JUICE.resources.getString("Save_Model_As...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -202,7 +202,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        exitAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Exit")) {
+        exitAction = new AbstractAction(JUICE.resources.getString("Exit")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -210,7 +210,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        aboutAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("About")) {
+        aboutAction = new AbstractAction(JUICE.resources.getString("About")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -218,24 +218,15 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        searchModelAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Find_in_Model...")) {
+        searchAction = new AbstractAction(JUICE.resources.getString("Find...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
-            }
-        };
-
-        searchLibsAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Find_in_Libraries...")) {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                searchDlg.setTree(JUICE.getLibTree());
                 searchDlg.setVisible(true);
             }
         };
 
-        copyModelGUIAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Copy_Model_GUI")) {
+        copyModelGUIAction = new AbstractAction(JUICE.resources.getString("Copy_Model_GUI")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -245,7 +236,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        pasteModelGUIAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Paste_Model_GUI")) {
+        pasteModelGUIAction = new AbstractAction(JUICE.resources.getString("Paste_Model_GUI")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -255,7 +246,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        loadModelParamAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Load_Model_Parameter...")) {
+        loadModelParamAction = new AbstractAction(JUICE.resources.getString("Load_Model_Parameter...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -271,7 +262,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        saveModelParamAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Save_Model_Parameter...")) {
+        saveModelParamAction = new AbstractAction(JUICE.resources.getString("Save_Model_Parameter...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -286,7 +277,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        runModelAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Run_Model")) {
+        runModelAction = new AbstractAction(JUICE.resources.getString("Run_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -295,7 +286,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        runModelFromLauncherAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Run_Model_from_Launcher...")) {
+        runModelFromLauncherAction = new AbstractAction(JUICE.resources.getString("Run_Model_from_Launcher...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -304,7 +295,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        infoLogAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Info_Log...")) {
+        infoLogAction = new AbstractAction(JUICE.resources.getString("Info_Log...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -312,7 +303,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        errorLogAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_Log...")) {
+        errorLogAction = new AbstractAction(JUICE.resources.getString("Error_Log...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -320,7 +311,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        wikiAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("JAMS_Wiki...")) {
+        wikiAction = new AbstractAction(JUICE.resources.getString("JAMS_Wiki...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -332,7 +323,7 @@ public class JUICEFrame extends JFrame {
         setTitle(JUICE.APP_TITLE);
         //modelPanel.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
 
-        loadModelDlg = new WorkerDlg(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Loading_Model"));
+        loadModelDlg = new WorkerDlg(this, JUICE.resources.getString("Loading_Model"));
         searchDlg = new SearchDlg(this);
 
         propertyDlg = new PropertyDlg(this, JUICE.getJamsProperties());
@@ -364,31 +355,31 @@ public class JUICEFrame extends JFrame {
          */
         JButton modelNewButton = new JButton(newModelAction);
         modelNewButton.setText("");
-        modelNewButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("New_Model"));
+        modelNewButton.setToolTipText(JUICE.resources.getString("New_Model"));
         modelNewButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelNew.png")));
         toolBar.add(modelNewButton);
 
         JButton prefsButton = new JButton(editPrefsAction);
         prefsButton.setText("");
-        prefsButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Edit_Preferences..."));
+        prefsButton.setToolTipText(JUICE.resources.getString("Edit_Preferences..."));
         prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
         toolBar.add(prefsButton);
 
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
-        infoLogButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Show_Info_Log..."));
+        infoLogButton.setToolTipText(JUICE.resources.getString("Show_Info_Log..."));
         infoLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/InfoLog.png")));
         toolBar.add(infoLogButton);
 
         JButton errorLogButton = new JButton(errorLogAction);
         errorLogButton.setText("");
-        errorLogButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Show_Error_Log..."));
+        errorLogButton.setToolTipText(JUICE.resources.getString("Show_Error_Log..."));
         errorLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ErrorLog.png")));
         toolBar.add(errorLogButton);
 
         JButton helpButton = new JButton(wikiAction);
         helpButton.setText("");
-        helpButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("JAMS_Wiki..."));
+        helpButton.setToolTipText(JUICE.resources.getString("JAMS_Wiki..."));
         helpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Browser.png")));
         toolBar.add(helpButton);
 
@@ -403,7 +394,7 @@ public class JUICEFrame extends JFrame {
         statusPanel.setBorder(BorderFactory.createEtchedBorder());
         statusPanel.setPreferredSize(new java.awt.Dimension(14, 20));
         statusLabel = new JLabel();
-        statusLabel.setText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("JAMS_Status"));
+        statusLabel.setText(JUICE.resources.getString("JAMS_Status"));
         statusPanel.add(statusLabel, java.awt.BorderLayout.CENTER);
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
 
@@ -415,7 +406,7 @@ public class JUICEFrame extends JFrame {
         /*
          * file menu
          */
-        JMenu fileMenu = new JMenu(java.util.ResourceBundle.getBundle("resources/Bundle").getString("File"));
+        JMenu fileMenu = new JMenu(JUICE.resources.getString("File"));
         mainMenu.add(fileMenu);
 
         JMenuItem newModelItem = new JMenuItem(newModelAction);
@@ -441,7 +432,7 @@ public class JUICEFrame extends JFrame {
         /*
          * edit menu
          */
-        JMenu extrasMenu = new JMenu(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Edit"));
+        JMenu extrasMenu = new JMenu(JUICE.resources.getString("Edit"));
         mainMenu.add(extrasMenu);
 
         JMenuItem editPrefsItem = new JMenuItem(editPrefsAction);
@@ -456,17 +447,15 @@ public class JUICEFrame extends JFrame {
 
         extrasMenu.add(new JSeparator());
 
-        JMenuItem searchLibItem = new JMenuItem(searchLibsAction);
-        extrasMenu.add(searchLibItem);
-
-        searchModelItem = new JMenuItem(searchModelAction);
-        extrasMenu.add(searchModelItem);
+        JMenuItem searchItem = new JMenuItem(searchAction);
+        searchItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
+        extrasMenu.add(searchItem);
 
 
         /*
          * model menu
          */
-        modelMenu = new JMenu(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model"));
+        modelMenu = new JMenu(JUICE.resources.getString("Model"));
         modelMenu.setEnabled(false);
         mainMenu.add(modelMenu);
 
@@ -500,7 +489,7 @@ public class JUICEFrame extends JFrame {
         /*
          * logs menu
          */
-        JMenu logsMenu = new JMenu(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Logs"));
+        JMenu logsMenu = new JMenu(JUICE.resources.getString("Logs"));
         mainMenu.add(logsMenu);
 
         JMenuItem infoLogItem = new JMenuItem(infoLogAction);
@@ -512,7 +501,7 @@ public class JUICEFrame extends JFrame {
         /*
          * windows menu
          */
-        windowMenu = new JMenu(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Windows"));
+        windowMenu = new JMenu(JUICE.resources.getString("Windows"));
         windowMenu.setEnabled(false);
         ModelView.viewList.addObserver(new Observer() {
 
@@ -550,7 +539,7 @@ public class JUICEFrame extends JFrame {
         /*
          * help menu
          */
-        JMenu helpMenu = new JMenu(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Help"));
+        JMenu helpMenu = new JMenu(JUICE.resources.getString("Help"));
         mainMenu.add(helpMenu);
 
         JMenuItem wikiItem = new JMenuItem(wikiAction);
@@ -570,12 +559,10 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.modelMenu.setEnabled(true);
                     JUICEFrame.this.saveModelAction.setEnabled(true);
                     JUICEFrame.this.saveAsModelAction.setEnabled(true);
-                    JUICEFrame.this.searchModelAction.setEnabled(true);
                 } else {
                     JUICEFrame.this.modelMenu.setEnabled(false);
                     JUICEFrame.this.saveModelAction.setEnabled(false);
                     JUICEFrame.this.saveAsModelAction.setEnabled(false);
-                    JUICEFrame.this.searchModelAction.setEnabled(false);
                 }
             }
         });
@@ -636,7 +623,7 @@ public class JUICEFrame extends JFrame {
     public void saveModel(ModelView view) {
         if (view.getSavePath() != null) {
             if (!view.save()) {
-                LHelper.showErrorDlg(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_saving_model_to_") + view.getSavePath(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error"));
+                LHelper.showErrorDlg(this, JUICE.resources.getString("Error_saving_model_to_") + view.getSavePath(), JUICE.resources.getString("Error"));
                 view.setSavePath(null);
             } else {
                 view.setInitialState();

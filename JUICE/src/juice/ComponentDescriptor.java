@@ -52,7 +52,7 @@ public class ComponentDescriptor {
 
     public ComponentDescriptor(String instanceName, Class clazz, JAMSTree tree) {
         if (clazz == null) {
-            LHelper.showInfoDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Could_not_find_class_for_component_\"") + instanceName + "\"!", java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error!"));
+            LHelper.showInfoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Could_not_find_class_for_component_\"") + instanceName + "\"!", JUICE.resources.getString("Error!"));
         }
         this.clazz = clazz;
         this.tree = tree;
@@ -139,8 +139,8 @@ public class ComponentDescriptor {
         // info wenn attribut mit gleichem namen schon existent und dann zum repo adden!!!
         if (ma != null) {
 
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Context_attribute_\"") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_does_already_exist._") +
-                        java.util.ResourceBundle.getBundle("resources/Bundle").getString("Please_remove_or_chose_a_different_name!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_adding_context_attribute"));
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Context_attribute_\"") + name + JUICE.resources.getString("\"_does_already_exist._") +
+                        JUICE.resources.getString("Please_remove_or_chose_a_different_name!"), JUICE.resources.getString("Error_adding_context_attribute"));
             return null;
 
         } else {
@@ -170,7 +170,7 @@ public class ComponentDescriptor {
     public void outputUnsetAttributes() {
         for (ComponentAttribute ad : getComponentAttributes().values()) {
             if (ad.getAttribute() == null && ad.getContext() == null && ad.getValue() == null) {
-                System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + ad.name + " (" + ad.type + java.util.ResourceBundle.getBundle("resources/Bundle").getString(")_not_set_in_component_") + getName());
+                System.out.println(JUICE.resources.getString("Attribute_") + ad.name + " (" + ad.type + JUICE.resources.getString(")_not_set_in_component_") + getName());
             }
         }
     }
