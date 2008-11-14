@@ -359,6 +359,18 @@ public class JUICEFrame extends JFrame {
         modelNewButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelNew.png")));
         toolBar.add(modelNewButton);
 
+        JButton modelOpenButton = new JButton(loadModelAction);
+        modelOpenButton.setText("");
+        modelOpenButton.setToolTipText(JUICE.resources.getString("Open_Model..."));
+        modelOpenButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelOpen.png")));
+        toolBar.add(modelOpenButton);
+
+        JButton modelSaveButton = new JButton(saveModelAction);
+        modelSaveButton.setText("");
+        modelSaveButton.setToolTipText(JUICE.resources.getString("Save_Model"));
+        modelSaveButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelSave.png")));
+        toolBar.add(modelSaveButton);
+
         JButton prefsButton = new JButton(editPrefsAction);
         prefsButton.setText("");
         prefsButton.setToolTipText(JUICE.resources.getString("Edit_Preferences..."));
@@ -368,7 +380,7 @@ public class JUICEFrame extends JFrame {
         JButton searchButton = new JButton(searchAction);
         searchButton.setText("");
         searchButton.setToolTipText(JUICE.resources.getString("Find..."));
-        searchButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/searchbw.png")));
+        searchButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Search.png")));
         toolBar.add(searchButton);
 
         JButton infoLogButton = new JButton(infoLogAction);

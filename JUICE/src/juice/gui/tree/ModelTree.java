@@ -726,8 +726,8 @@ public class ModelTree extends JAMSTree {
             try {
                 context = view.getComponentDescriptor(contextName);
             } catch (NullPointerException ex) {
-                LHelper.showErrorDlg(this.view.getFrame(), JUICE.resources.getString("Error_while_loading_component_\"") + cd.getName() +
-                        JUICE.resources.getString("\":_context_\"") + contextName + JUICE.resources.getString("\"_does_not_exist!"), JUICE.resources.getString("Model_loading_error"));
+                LHelper.showErrorDlg(this.view.getFrame(), JUICE.resources.getString("Error_while_loading_component_") + cd.getName() +
+                        JUICE.resources.getString("_context_") + contextName + JUICE.resources.getString("_does_not_exist!"), JUICE.resources.getString("Model_loading_error"));
                 return;
             }
             String name = e.getAttribute("name");
@@ -744,8 +744,8 @@ public class ModelTree extends JAMSTree {
             context.getDataRepository().addAttribute(new ContextAttribute(attribute, attributeType, context));
             }*/
             } catch (NullPointerException ex) {
-                LHelper.showErrorDlg(this.view.getFrame(), JUICE.resources.getString("Error_while_loading_component_\"") + cd.getName() +
-                        JUICE.resources.getString("\":_component_attribute_\"") + name + JUICE.resources.getString("\"_does_not_exist!"), JUICE.resources.getString("Model_loading_error"));
+                LHelper.showErrorDlg(this.view.getFrame(), JUICE.resources.getString("Error_while_loading_component_") + cd.getName() +
+                        JUICE.resources.getString("_component_attribute_") + name + JUICE.resources.getString("_does_not_exist!"), JUICE.resources.getString("Model_loading_error"));
                 return;
             }
 
@@ -754,8 +754,8 @@ public class ModelTree extends JAMSTree {
             try {
                 cd.getComponentAttributes().get(e.getAttribute("name")).setValue(e.getAttribute("value"));
             } catch (NullPointerException ex) {
-                LHelper.showErrorDlg(this.view.getFrame(), JUICE.resources.getString("Error_while_loading_component_\"") + cd.getName() +
-                        JUICE.resources.getString("\":_component_attribute_\"") + e.getAttribute("name") + JUICE.resources.getString("\"_does_not_exist!"), JUICE.resources.getString("Model_loading_error"));
+                LHelper.showErrorDlg(this.view.getFrame(), JUICE.resources.getString("Error_while_loading_component_") + cd.getName() +
+                        JUICE.resources.getString("_component_attribute_") + e.getAttribute("name") + JUICE.resources.getString("_does_not_exist!"), JUICE.resources.getString("Model_loading_error"));
                 return;
             }
 

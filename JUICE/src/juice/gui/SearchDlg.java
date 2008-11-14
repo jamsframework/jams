@@ -25,20 +25,29 @@ package juice.gui;
 import jams.data.JAMSString;
 import jams.gui.LHelper;
 import jams.gui.input.InputComponent;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Field;
 import java.util.Enumeration;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ButtonGroup;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import javax.swing.tree.TreePath;
 import juice.ComponentDescriptor;
@@ -55,19 +64,12 @@ import juice.JUICE;
 public class SearchDlg extends JDialog {
 
     private static final int TEXTFIELD_WIDTH = 35;
-
-    private static final int FOUND_IN_CLASS = 1,  FOUND_IN_INSTANCE = 2,  FOUND_IN_CONTEXT_ATTRIBS = 3,  FOUND_IN_COMPONENT_ATTRIBS = 4,  FOUND_IN_COMPONENT_VALUES = 5;
-
+    private static final int FOUND_IN_CLASS = 1,  FOUND_IN_INSTANCE = 2,  FOUND_IN_CONTEXT_ATTRIBS = 3,  FOUND_IN_COMPONENT_ATTRIBS = 4,  FOUND_IN_COMPONENT_VALUES = 5,  FOUND_IN_COMPONENT_METADATA = 6;
     private JAMSTree tree;
-
     private Enumeration treeEnum;
-
-    private JCheckBox inClassName,  inInstanceName,  inContextAttribs,  inComponentAttribs,  caseSensitive,  inComponentValues,  wholeString;
-
+    private JCheckBox inClassName,  inInstanceName,  inContextAttribs,  inComponentAttribs,  inComponentValues,  inComponentMetadata,  caseSensitive,  wholeString;
     private InputComponent searchText;
-
     private JRadioButton repo,  model;
-
     private boolean modelSelect = true,  foundResult = false;
 
     public SearchDlg(Frame owner) {
@@ -75,6 +77,7 @@ public class SearchDlg extends JDialog {
         setLocationRelativeTo(owner);
         setModal(false);
         setResizable(false);
+        setLocationByPlatform(true);
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -89,6 +92,7 @@ public class SearchDlg extends JDialog {
         inContextAttribs = new JCheckBox(JUICE.resources.getString("inContextAttribs"), true);
         inComponentAttribs = new JCheckBox(JUICE.resources.getString("inComponentAttribs"), true);
         inComponentValues = new JCheckBox(JUICE.resources.getString("inComponentValues"), true);
+        inComponentMetadata = new JCheckBox(JUICE.resources.getString("inComponentMetadata"), true);
 
         caseSensitive = new JCheckBox(JUICE.resources.getString("caseSensitiveSearch"), false);
         wholeString = new JCheckBox(JUICE.resources.getString("wholeStringSearch"), false);
@@ -121,7 +125,6 @@ public class SearchDlg extends JDialog {
             }
         });
 
-
         ButtonGroup group = new ButtonGroup();
         group.add(repo);
         group.add(model);
@@ -138,9 +141,10 @@ public class SearchDlg extends JDialog {
         LHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Where_to_search")), 1, 10, 2, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, mainLayout, inClassName, 1, 11, 2, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, mainLayout, inComponentAttribs, 1, 12, 2, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, inInstanceName, 1, 13, 2, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, inComponentValues, 1, 14, 2, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, inContextAttribs, 1, 18, 2, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, mainLayout, inComponentMetadata, 1, 14, 2, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, mainLayout, inInstanceName, 1, 16, 2, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, mainLayout, inComponentValues, 1, 18, 2, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, mainLayout, inContextAttribs, 1, 20, 2, 1, 0, 0);
 
         JButton findButton = new JButton(JUICE.resources.getString("Find"));
         findButton.addActionListener(new ActionListener() {
@@ -171,11 +175,12 @@ public class SearchDlg extends JDialog {
         });
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.add(resetButton);
         buttonPanel.add(findButton);
+        buttonPanel.add(resetButton);
         buttonPanel.add(closeButton);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
         this.pack();
+        getRootPane().setDefaultButton(findButton);
     }
 
     private void reset() {
@@ -242,11 +247,13 @@ public class SearchDlg extends JDialog {
                 return FOUND_IN_CLASS;
             }
         }
+
         if (inInstanceName.isSelected()) {
             if (contains(cd.getName(), needle, caseSensitive, wholeString)) {
                 return FOUND_IN_INSTANCE;
             }
         }
+
         if (inComponentAttribs.isSelected()) {
             for (ComponentDescriptor.ComponentAttribute ca : cd.getComponentAttributes().values()) {
 
@@ -256,6 +263,7 @@ public class SearchDlg extends JDialog {
                 }
             }
         }
+
         if (inComponentValues.isSelected()) {
             for (ComponentDescriptor.ComponentAttribute ca : cd.getComponentAttributes().values()) {
 
@@ -274,13 +282,36 @@ public class SearchDlg extends JDialog {
                 }
             }
         }
+
         if (inContextAttribs.isSelected()) {
-            for (String s : cd.getContextAttributes().keySet()) {
-                if (contains(s, needle, caseSensitive, wholeString)) {
+            for (String hay : cd.getContextAttributes().keySet()) {
+                if (contains(hay, needle, caseSensitive, wholeString)) {
                     return FOUND_IN_CONTEXT_ATTRIBS;
                 }
             }
         }
+
+        if (inComponentMetadata.isSelected()) {
+            Class<?> clazz = cd.getClazz();
+            JAMSComponentDescription jcd = (JAMSComponentDescription) clazz.getAnnotation(JAMSComponentDescription.class);
+            if (jcd != null) {
+                String[] hayArray = {jcd.author(), jcd.title(), jcd.description()};
+                for (String hay : hayArray) {
+                    if (contains(hay, needle, caseSensitive, wholeString)) {
+                        return FOUND_IN_COMPONENT_METADATA;
+                    }
+                }
+            }
+            for (Field field : clazz.getFields()) {
+                JAMSVarDescription jvd = (JAMSVarDescription) field.getAnnotation(JAMSVarDescription.class);
+                if (jvd != null) {
+                    if (contains(jvd.description(), needle, caseSensitive, wholeString)) {
+                        return FOUND_IN_COMPONENT_METADATA;
+                    }
+                }
+            }
+        }
+
         return -1;
     }
 
@@ -325,5 +356,22 @@ public class SearchDlg extends JDialog {
         }
 
         super.setVisible(b);
+    }
+
+    @Override
+    protected JRootPane createRootPane() {
+        JRootPane pane = super.createRootPane();
+        Action cancelAction = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                processClose();
+            }
+        };
+        InputMap inputMap = pane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        inputMap.put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
+        pane.getActionMap().put("ESCAPE", cancelAction);
+
+        return pane;
     }
 }
