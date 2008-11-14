@@ -365,6 +365,12 @@ public class JUICEFrame extends JFrame {
         prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
         toolBar.add(prefsButton);
 
+        JButton searchButton = new JButton(searchAction);
+        searchButton.setText("");
+        searchButton.setToolTipText(JUICE.resources.getString("Find..."));
+        searchButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/searchbw.png")));
+        toolBar.add(searchButton);
+
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
         infoLogButton.setToolTipText(JUICE.resources.getString("Show_Info_Log..."));
