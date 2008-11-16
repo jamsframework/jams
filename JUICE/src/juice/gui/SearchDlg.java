@@ -346,13 +346,11 @@ public class SearchDlg extends JDialog {
             model.setEnabled(true);
         }
 
-        // check if we already have a tree
-        if (tree == null) {
-            if (modelSelect) {
-                setTree(JUICE.getJuiceFrame().getCurrentView().getTree());
-            } else {
-                setTree(JUICE.getLibTree());
-            }
+        // make sure the correct tree is selected
+        if (modelSelect) {
+            setTree(JUICE.getJuiceFrame().getCurrentView().getTree());
+        } else {
+            setTree(JUICE.getLibTree());
         }
 
         super.setVisible(b);

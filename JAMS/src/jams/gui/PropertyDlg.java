@@ -46,7 +46,7 @@ public class PropertyDlg extends JDialog {
     private BooleanInput verboseCheck,  windowEnable,  windowOnTop,  errorDlg;
     private JSpinner debugSpinner;
     private FileInput infoFile,  errorFile;
-    private TextInput windowHeight,  windowWidth, helpBaseURL, userName;
+    private TextInput windowHeight,  windowWidth, helpBaseURL, userName, forceLocale;
     private JAMSProperties properties;
     public static final int APPROVE_OPTION = 1;
     public static final int CANCEL_OPTION = 0;
@@ -127,6 +127,12 @@ public class PropertyDlg extends JDialog {
         windowOnTop = new BooleanInput();
         windowOnTop.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         LHelper.addGBComponent(contentPanel, gbl, windowOnTop, 1, y, 1, 1, 1, 1);
+
+        y++;
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Force Localization:"), 0, y, 1, 1, 0, 0);
+        forceLocale = new TextInput();
+        forceLocale.getComponent().setPreferredSize(new Dimension(40, JCOMP_HEIGHT));
+        LHelper.addGBComponent(contentPanel, gbl, forceLocale, 1, y, 1, 1, 1, 1);
 
         y++;
         LHelper.addGBComponent(contentPanel, gbl, new JLabel("Model window width:"), 0, y, 1, 1, 0, 0);
@@ -244,6 +250,7 @@ public class PropertyDlg extends JDialog {
         windowEnable.setValue(properties.getProperty("windowenable"));
         errorDlg.setValue(properties.getProperty("errordlg"));
         windowOnTop.setValue(properties.getProperty("windowontop"));
+        forceLocale.setValue(properties.getProperty("forcelocale"));
 
         windowHeight.setValue(properties.getProperty("windowheight"));
         windowWidth.setValue(properties.getProperty("windowwidth"));
@@ -270,6 +277,7 @@ public class PropertyDlg extends JDialog {
         properties.setProperty("windowenable", windowEnable.getValue());
         properties.setProperty("errordlg", errorDlg.getValue());
         properties.setProperty("windowontop", windowOnTop.getValue());
+        properties.setProperty("forcelocale", forceLocale.getValue());
         properties.setProperty("windowheight", windowHeight.getValue());
         properties.setProperty("windowwidth", windowWidth.getValue());
         properties.setProperty("username", userName.getValue());

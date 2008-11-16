@@ -371,18 +371,18 @@ public class JUICEFrame extends JFrame {
         modelSaveButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelSave.png")));
         toolBar.add(modelSaveButton);
 
-        JButton prefsButton = new JButton(editPrefsAction);
-        prefsButton.setText("");
-        prefsButton.setToolTipText(JUICE.resources.getString("Edit_Preferences..."));
-        prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
-        toolBar.add(prefsButton);
-
         JButton searchButton = new JButton(searchAction);
         searchButton.setText("");
         searchButton.setToolTipText(JUICE.resources.getString("Find..."));
         searchButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Search.png")));
         toolBar.add(searchButton);
 
+        JButton prefsButton = new JButton(editPrefsAction);
+        prefsButton.setText("");
+        prefsButton.setToolTipText(JUICE.resources.getString("Edit_Preferences..."));
+        prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
+        toolBar.add(prefsButton);
+        
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
         infoLogButton.setToolTipText(JUICE.resources.getString("Show_Info_Log..."));
