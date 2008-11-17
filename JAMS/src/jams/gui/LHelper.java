@@ -38,9 +38,9 @@ import jams.gui.input.FileInput;
 import jams.gui.input.FloatInput;
 import jams.gui.input.InputComponent;
 import jams.gui.input.IntegerInput;
-//import jams.gui.input.IntegerArrayInput;
 import jams.gui.input.TextInput;
 import jams.gui.input.TimeintervalInput;
+import jams.JAMS;
 
 /**
  *
@@ -163,7 +163,7 @@ public class LHelper {
      * @return
      */
     public static int showYesNoCancelDlg(Component owner, String message, String title) {
-        Object[] options = {java.util.ResourceBundle.getBundle("resources/Bundle").getString("Yes"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("No"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Cancel")};
+        Object[] options = {JAMS.resources.getString("Yes"), JAMS.resources.getString("No"), JAMS.resources.getString("Cancel")};
         int result = JOptionPane.showOptionDialog(owner, message, title,
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
@@ -178,7 +178,7 @@ public class LHelper {
      * @return
      */
     public static int showYesNoDlg(Component owner, String message, String title) {
-        Object[] options = {java.util.ResourceBundle.getBundle("resources/Bundle").getString("Yes"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("No")};
+        Object[] options = {JAMS.resources.getString("Yes"), JAMS.resources.getString("No")};
         int result = JOptionPane.showOptionDialog(owner, message, title,
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         //int result = JOptionPane.showConfirmDialog(JUICE.getJuiceFrame(), "Delete Attribute \"" + attrName + "\"?", "Confirm", JOptionPane.YES_NO_OPTION);
@@ -289,7 +289,7 @@ public class LHelper {
     public static void openURL(String url) {
 
         String osName = System.getProperty("os.name");
-        String errMsg = java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_attempting_to_launch_web_browser");
+        String errMsg = JAMS.resources.getString("Error_attempting_to_launch_web_browser");
 
         try {
             if (osName.startsWith("Mac OS")) {
@@ -311,7 +311,7 @@ public class LHelper {
                     }
                 }
                 if (browser == null) {
-                    throw new Exception(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Could_not_find_web_browser"));
+                    throw new Exception(JAMS.resources.getString("Could_not_find_web_browser"));
                 } else {
                     Runtime.getRuntime().exec(new String[]{browser, url});
                 }

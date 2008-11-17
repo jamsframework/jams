@@ -134,8 +134,8 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
                 @Override
                 public void update(Observable obs, Object obj) {
 
-                    Object[] options = {java.util.ResourceBundle.getBundle("resources/Bundle").getString("OK"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("OK,_skip_other_messages")};
-                    int result = JOptionPane.showOptionDialog(frame, obj.toString(), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_execution_error"),
+                    Object[] options = {JAMS.resources.getString("OK"), JAMS.resources.getString("OK,_skip_other_messages")};
+                    int result = JOptionPane.showOptionDialog(frame, obj.toString(), JAMS.resources.getString("Model_execution_error"),
                             JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 
                     if (result == 1) {
@@ -193,7 +193,7 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
         }
 
         long end = System.currentTimeMillis();
-        this.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("JAMS_model_setup_time:_") + (end - start) + " ms", JAMS.STANDARD);
+        this.println(JAMS.resources.getString("JAMS_model_setup_time:_") + (end - start) + " ms", JAMS.STANDARD);
 
 //        classLoader = null;
 //        Runtime.getRuntime().gc();
@@ -230,7 +230,7 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
         }
 
         long end = System.currentTimeMillis();
-        this.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("JAMS_model_execution_time:_") + (end - start) + " ms", JAMS.STANDARD);
+        this.println(JAMS.resources.getString("JAMS_model_execution_time:_") + (end - start) + " ms", JAMS.STANDARD);
 
         this.sendHalt();
 
@@ -287,7 +287,7 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
 //        toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
         stopButton = new JButton();
-        stopButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Stop_model"));
+        stopButton.setToolTipText(JAMS.resources.getString("Stop_model"));
         stopButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelStop.png")));
         stopButton.setEnabled(true);
         stopButton.addActionListener(new ActionListener() {
@@ -301,7 +301,7 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
         toolBar.add(stopButton);
 
         closeButton = new JButton();
-        closeButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Close_window"));
+        closeButton.setToolTipText(JAMS.resources.getString("Close_window"));
         closeButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Shutdown.png")));
         closeButton.setEnabled(false);
         closeButton.addActionListener(new ActionListener() {
@@ -393,7 +393,7 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
         String message = "";
 
         if (cName != null) {
-            message += java.util.ResourceBundle.getBundle("resources/Bundle").getString("Exception_occured_in_component_") + cName + "!\n";
+            message += JAMS.resources.getString("Exception_occured_in_component_") + cName + "!\n";
         }
 
         message += ex.toString();
@@ -419,12 +419,12 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
 
     @Override
     public void sendErrorMsg(String str) {
-        errorLog.print(java.util.ResourceBundle.getBundle("resources/Bundle").getString("ERROR:_") + str + "\n");
+        errorLog.print(JAMS.resources.getString("ERROR:_") + str + "\n");
     }
 
     @Override
     public void sendInfoMsg(String str) {
-        infoLog.print(java.util.ResourceBundle.getBundle("resources/Bundle").getString("INFO:_") + str + "\n");
+        infoLog.print(JAMS.resources.getString("INFO:_") + str + "\n");
     }
 
     @Override
@@ -492,7 +492,7 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
             objOut = new ObjectOutputStream(outStream);
             objOut.writeObject(this.model.getEntities());
         } catch (IOException e) {
-            sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Unable_to_save_model_state_because,") + e.toString());
+            sendErrorMsg(JAMS.resources.getString("Unable_to_save_model_state_because,") + e.toString());
         }
 
         try {
@@ -502,14 +502,14 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
                 fos.close();
             }
         } catch (Exception e) {
-            sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Could_not_open_or_write_snapshot_file,_because_") + e.toString());
+            sendErrorMsg(JAMS.resources.getString("Could_not_open_or_write_snapshot_file,_because_") + e.toString());
         }
 
         try {
             objOut.close();
             outStream.close();
         } catch (IOException e) {
-            sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Unable_to_save_model_state_because,") + e.toString());
+            sendErrorMsg(JAMS.resources.getString("Unable_to_save_model_state_because,") + e.toString());
         }
         return outStream;
     }
@@ -525,7 +525,7 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
             this.model.setEntities(e);
             objIn.close();
         } catch (Exception e) {
-            sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Unable_to_deserialize_jamsentity_collection,_because") + e.toString());
+            sendErrorMsg(JAMS.resources.getString("Unable_to_deserialize_jamsentity_collection,_because") + e.toString());
         }
     }
 

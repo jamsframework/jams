@@ -25,6 +25,7 @@ package jams.data;
 import java.util.*;
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.Serializable;
+import jams.JAMS;
 
 /**
  *
@@ -88,7 +89,7 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
         if (values.containsKey(name)) {
             return ((JAMSFloat) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(float)_not_found!"));
+            throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + name + JAMS.resources.getString("_(float)_not_found!"));
         }
     }
 
@@ -96,7 +97,7 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
         if (values.containsKey(name)) {
             return ((JAMSDouble) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(double)_not_found!"));
+            throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + name + JAMS.resources.getString("_(double)_not_found!"));
         }
     }
 
@@ -104,7 +105,7 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
         if (values.containsKey(name)) {
             return ((JAMSInteger) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(int)_not_found!"));
+            throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + name + JAMS.resources.getString("_(int)_not_found!"));
         }
     }
 
@@ -112,7 +113,7 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
         if (values.containsKey(name)) {
             return ((JAMSLong) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(long)_not_found!"));
+            throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + name + JAMS.resources.getString("_(long)_not_found!"));
         }
     }
 
@@ -120,7 +121,7 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
         if (values.containsKey(name)) {
             return values.get(name);
         } else {
-            throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(Object)_not_found!"));
+            throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + name + JAMS.resources.getString("_(Object)_not_found!"));
         }
     }
 
@@ -128,7 +129,7 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
         if (values.containsKey(name)) {
             return ((JAMSGeometry) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(Geometry)_not_found!"));
+            throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + name + JAMS.resources.getString("_(Geometry)_not_found!"));
         }
     }
 

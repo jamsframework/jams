@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.URL;
 import javax.swing.*;
+import jams.JAMS;
 
 /**
  *
@@ -128,7 +129,7 @@ public class AboutDlg extends JDialog {
         versionTextLabel.setText("Test");*/
 
         JButton closeButton = new JButton();
-        closeButton.setText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("OK"));
+        closeButton.setText(JAMS.resources.getString("OK"));
         closeButton.addActionListener(new ActionListener() {
 
             @Override
@@ -141,7 +142,7 @@ public class AboutDlg extends JDialog {
         //this.setAlwaysOnTop(true);
         //this.setUndecorated(true);
         //this.setModal(true);
-        this.setTitle(java.util.ResourceBundle.getBundle("resources/Bundle").getString("About"));
+        this.setTitle(JAMS.resources.getString("About"));
 
         pack();
 

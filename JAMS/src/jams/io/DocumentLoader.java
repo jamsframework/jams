@@ -10,13 +10,10 @@ import java.io.IOException;
 import jams.JAMSTools;
 import jams.data.JAMSDocument;
 import jams.data.JAMSString;
-import jams.io.XMLIO;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
-import jams.runtime.JAMSRuntime;
-import jams.runtime.StandardRuntime;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import jams.JAMS;
 
 /**
  *
@@ -50,14 +47,14 @@ public class DocumentLoader extends JAMSComponent{
             //check if file exists
             File file = new File(modelFilename);
             if (!file.exists()) {
-                System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_file_") + modelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_found_-_exiting!"));
+                System.out.println(JAMS.resources.getString("Model_file_") + modelFilename + JAMS.resources.getString("_could_not_be_found_-_exiting!"));
                 return;
             }
 
             // do some search and replace on the input file and create new file if necessary
             String newModelFilename = XMLProcessor.modelDocConverter(modelFilename);
             if (!newModelFilename.equalsIgnoreCase(modelFilename)) {
-                info = java.util.ResourceBundle.getBundle("resources/Bundle").getString("The_model_definition_in_") + modelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_while_your_original_file_was_left_untouched.");
+                info = JAMS.resources.getString("The_model_definition_in_") + modelFilename + JAMS.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JAMS.resources.getString("_while_your_original_file_was_left_untouched.");
                 modelFilename = newModelFilename;
             }
 
@@ -74,12 +71,12 @@ public class DocumentLoader extends JAMSComponent{
                 modelDoc.setValue(XMLIO.getDocumentFromString(xmlString));
                
             } catch (IOException ioe) {
-                System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("The_model_definition_file_") + modelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_loaded,_because:_") + ioe.toString());
+                System.out.println(JAMS.resources.getString("The_model_definition_file_") + modelFilename + JAMS.resources.getString("_could_not_be_loaded,_because:_") + ioe.toString());
             } catch (SAXException se) {
-                System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("The_model_definition_file_") + modelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_contained_errors!"));
+                System.out.println(JAMS.resources.getString("The_model_definition_file_") + modelFilename + JAMS.resources.getString("_contained_errors!"));
             }                        
         }catch(Exception e){
-            this.getModel().getRuntime().sendHalt(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Can´t_load_model_file,_because_") + e.toString());
+            this.getModel().getRuntime().sendHalt(JAMS.resources.getString("Can´t_load_model_file,_because_") + e.toString());
         }                
     }
     

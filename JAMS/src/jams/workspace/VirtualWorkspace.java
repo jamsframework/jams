@@ -215,11 +215,11 @@ public class VirtualWorkspace {
                 store = new GeoDataStore(this, dsTitle, doc);
             }
         } catch (ClassNotFoundException cnfe) {
-            getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_initializing_datastore_") + dsTitle + java.util.ResourceBundle.getBundle("resources/Bundle").getString("!"));
+            getRuntime().sendErrorMsg(JAMS.resources.getString("Error_initializing_datastore_") + dsTitle + JAMS.resources.getString("!"));
             getRuntime().handle(cnfe);
             return null;
         } catch (IOException ioe) {
-            getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_initializing_datastore_") + dsTitle + java.util.ResourceBundle.getBundle("resources/Bundle").getString("!"));
+            getRuntime().sendErrorMsg(JAMS.resources.getString("Error_initializing_datastore_") + dsTitle + JAMS.resources.getString("!"));
             getRuntime().handle(ioe);
             return null;
         }
@@ -294,10 +294,10 @@ public class VirtualWorkspace {
                 String storeID = getStoreID(child);
                 Document doc = XMLIO.getDocument(child.getAbsolutePath());
                 inputDataStores.put(storeID, doc);
-                this.getRuntime().println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Added_input_store_") + storeID + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_from_") + child.getAbsolutePath() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("."), JAMS.VERBOSE);
+                this.getRuntime().println(JAMS.resources.getString("Added_input_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
 
             } catch (FileNotFoundException fnfe) {
-                this.getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_reading_datastore_") + child.getAbsolutePath() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("!"));
+                this.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.resources.getString("!"));
             }
         }
 
@@ -319,10 +319,10 @@ public class VirtualWorkspace {
                 }
                 stores.add(storeID);
 
-                this.getRuntime().println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Added_output_store_") + storeID + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_from_") + child.getAbsolutePath() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("."), JAMS.VERBOSE);
+                this.getRuntime().println(JAMS.resources.getString("Added_output_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
 
             } catch (FileNotFoundException fnfe) {
-                this.getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_reading_datastore_") + child.getAbsolutePath() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("!"));
+                this.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.resources.getString("!"));
             }
         }
     }
@@ -342,7 +342,7 @@ public class VirtualWorkspace {
             String result = asciiConverter.toASCIIString((TSDataStore) store);
             return result;
         } else {
-            return store.getClass().toString() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_not_yet_supported!");
+            return store.getClass().toString() + JAMS.resources.getString("_not_yet_supported!");
         }
     }
 
@@ -357,7 +357,7 @@ public class VirtualWorkspace {
             TSDumpProcessor asciiConverter = new TSDumpProcessor();
             File file = new File(this.getLocalDumpDirectory(), dsTitle + ".dump");
             asciiConverter.toASCIIFile((TSDataStore) store, file);
-            getRuntime().sendInfoMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Dumped_input_datastore_1") + dsTitle + java.util.ResourceBundle.getBundle("resources/Bundle").getString("Dumped_input_datastore_2") + file + java.util.ResourceBundle.getBundle("resources/Bundle").getString("Dumped_input_datastore_3"));
+            getRuntime().sendInfoMsg(JAMS.resources.getString("Dumped_input_datastore_1") + dsTitle + JAMS.resources.getString("Dumped_input_datastore_2") + file + JAMS.resources.getString("Dumped_input_datastore_3"));
         }
 
         store.close();

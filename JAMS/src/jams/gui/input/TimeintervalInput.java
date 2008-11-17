@@ -41,6 +41,7 @@ import jams.data.JAMSCalendar;
 import jams.data.JAMSTimeInterval;
 import jams.gui.*;
 import java.awt.Color;
+import jams.JAMS;
 
 /**
  *
@@ -63,12 +64,12 @@ public class TimeintervalInput extends JPanel implements InputComponent {
 
         this.setLayout(gbl);
 
-        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Start:_")), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("End:_")), 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Unit:_")), 0, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Unit_Count:_")), 0, 4, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Start:_")), 0, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("End:_")), 0, 2, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit:_")), 0, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit_Count:_")), 0, 4, 1, 1, 0, 0);
 
         syear = new JTextField();
         syear.setInputVerifier(new NumericIntervalVerifier(1900, 2100));
@@ -158,12 +159,12 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         fieldMap.put(5, JAMSCalendar.SECOND);
 
         timeUnit = new JComboBox();
-        timeUnit.addItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("YEAR"));
-        timeUnit.addItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("MONTH"));
-        timeUnit.addItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("DAY"));
-        timeUnit.addItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("HOUR"));
-        timeUnit.addItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("MINUTE"));
-        timeUnit.addItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("SECOND"));
+        timeUnit.addItem(JAMS.resources.getString("YEAR"));
+        timeUnit.addItem(JAMS.resources.getString("MONTH"));
+        timeUnit.addItem(JAMS.resources.getString("DAY"));
+        timeUnit.addItem(JAMS.resources.getString("HOUR"));
+        timeUnit.addItem(JAMS.resources.getString("MINUTE"));
+        timeUnit.addItem(JAMS.resources.getString("SECOND"));
         timeUnit.setPreferredSize(new Dimension(40, 20));
         LHelper.addGBComponent(this, gbl, timeUnit, 1, 3, 1, 1, 0, 0);
 

@@ -33,6 +33,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.workspace.DataReader;
+import jams.JAMS;
 
 /**
  *
@@ -109,13 +110,13 @@ public abstract class StandardInputDataStore implements InputDataStore {
             if (metadataIO != null) {
                 int result = metadataIO.init();
                 if (result < 0) {
-                    ws.getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Initialization_of_data_I/O_component_\"") +
-                            this.getID() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_(") + this.getClass().getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString(")_failed.."));
+                    ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Initialization_of_data_I/O_component_\"") +
+                            this.getID() + JAMS.resources.getString("\"_(") + this.getClass().getName() + JAMS.resources.getString(")_failed.."));
                     return null;
                 }
             } else {
-                ws.getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Initialization_of_data_I/O_component_\"") +
-                        this.getID() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_(") + this.getClass().getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString(")_failed.."));
+                ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Initialization_of_data_I/O_component_\"") +
+                        this.getID() + JAMS.resources.getString("\"_(") + this.getClass().getName() + JAMS.resources.getString(")_failed.."));
                 return null;
             }
         }

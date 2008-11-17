@@ -34,11 +34,11 @@ public class JAMSCmdLine {
     private String parameterValues = null;
     private String[] otherArgs = null;
     private String appTitle;
-    public static final String USAGE_STRING = java.util.ResourceBundle.getBundle("resources/Bundle").getString("[Options]") +
-            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-h,_--help_________________________________________Print_help") +
-            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-c,_--config_<config_file_name>____________________Provide_config_file_name") +
-            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-m,_--model_<model_definition_file_name>___________Provide_model_file_name") +
-            java.util.ResourceBundle.getBundle("resources/Bundle").getString("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons");
+    public static final String USAGE_STRING = JAMS.resources.getString("[Options]") +
+            JAMS.resources.getString("__-h,_--help_________________________________________Print_help") +
+            JAMS.resources.getString("__-c,_--config_<config_file_name>____________________Provide_config_file_name") +
+            JAMS.resources.getString("__-m,_--model_<model_definition_file_name>___________Provide_model_file_name") +
+            JAMS.resources.getString("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons");
     
     public JAMSCmdLine(String [] args) {
         this(args, "JAMS");
@@ -57,13 +57,13 @@ public class JAMSCmdLine {
             parser.parse(args);
         } catch (CmdLineParser.OptionException e) {
             System.err.println(e.getMessage());
-            System.err.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Usage:_") + appTitle + " " + USAGE_STRING);
+            System.err.println(JAMS.resources.getString("Usage:_") + appTitle + " " + USAGE_STRING);
             System.exit(2);
         }
         
         boolean usage = ((Boolean) parser.getOptionValue(helpOption, Boolean.FALSE)).booleanValue();
         if (usage) {
-            System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Usage:_") + appTitle + " " + USAGE_STRING);
+            System.out.println(JAMS.resources.getString("Usage:_") + appTitle + " " + USAGE_STRING);
             System.exit(0);
         }
         

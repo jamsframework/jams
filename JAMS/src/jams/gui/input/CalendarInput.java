@@ -37,6 +37,7 @@ import javax.swing.event.DocumentListener;
 import jams.data.JAMSCalendar;
 import jams.gui.*;
 import java.awt.Color;
+import jams.JAMS;
 
 /**
  *
@@ -58,8 +59,8 @@ public class CalendarInput extends JPanel implements InputComponent {
 
         this.setLayout(gbl);
 
-        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
 
         syear = new JTextField();
         syear.setInputVerifier(new NumericIntervalVerifier(1900, 2100));

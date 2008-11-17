@@ -28,6 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import jams.workspace.datatypes.CalendarValue;
 import jams.workspace.datatypes.DataValue;
+import jams.JAMS;
 
 /**
  *
@@ -105,7 +106,7 @@ public class TSDataStore extends TableDataStore {
                     long demandedSeconds = Math.abs(cal1.getTimeInMillis() - cal.getTimeInMillis()) / 1000;
                     long currentSeconds = Math.abs(cal.getTimeInMillis() - cal2.getTimeInMillis()) / 1000;
 
-                    this.ws.getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_in_") + this.getClass().getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_wrong_time_interval_in_column_") + i + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(demanded_interval_=_") + demandedSeconds + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_sec,_provided_interval_=_") + currentSeconds + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_sec)!"));
+                    this.ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_in_") + this.getClass().getName() + JAMS.resources.getString(":_wrong_time_interval_in_column_") + i + JAMS.resources.getString("_(demanded_interval_=_") + demandedSeconds + JAMS.resources.getString("_sec,_provided_interval_=_") + currentSeconds + JAMS.resources.getString("_sec)!"));
 
                     dataIOSet.clear();
                     currentPosition = maxPosition;
@@ -127,7 +128,7 @@ public class TSDataStore extends TableDataStore {
 
                 if (cal.compareTo(startDate, timeUnit) != 0) {
 
-                    this.ws.getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_in_") + this.getClass().getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_wrong_start_time_in_column_") + i + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(demanded_=_") + startDate + java.util.ResourceBundle.getBundle("resources/Bundle").getString(",_provided_=_") + cal + java.util.ResourceBundle.getBundle("resources/Bundle").getString(")!"));
+                    this.ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_in_") + this.getClass().getName() + JAMS.resources.getString(":_wrong_start_time_in_column_") + i + JAMS.resources.getString("_(demanded_=_") + startDate + JAMS.resources.getString(",_provided_=_") + cal + JAMS.resources.getString(")!"));
 
                     dataIOSet.clear();
                     currentPosition = maxPosition;

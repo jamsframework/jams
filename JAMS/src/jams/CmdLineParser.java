@@ -33,7 +33,7 @@ public class CmdLineParser {
      */
     public static class UnknownOptionException extends OptionException {
         UnknownOptionException( String optionName ) {
-            this(optionName, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Unknown_option_") + optionName + "'");
+            this(optionName, JAMS.resources.getString("Unknown_option_") + optionName + "'");
         }
 
         UnknownOptionException( String optionName, String msg ) {
@@ -60,7 +60,7 @@ public class CmdLineParser {
         private char suboption;
 
         UnknownSuboptionException( String option, char suboption ) {
-            super(option, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Illegal_option:_")+suboption+java.util.ResourceBundle.getBundle("resources/Bundle").getString("_in_")+option+"'");
+            super(option, JAMS.resources.getString("Illegal_option:_")+suboption+JAMS.resources.getString("_in_")+option+"'");
             this.suboption=suboption;
         }
         public char getSuboption() { return suboption; }
@@ -77,8 +77,8 @@ public class CmdLineParser {
         private char notflag;
 
         NotFlagException( String option, char unflaggish ) {
-            super(option, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Illegal_option:_")+option+java.util.ResourceBundle.getBundle("resources/Bundle").getString(",_")+
-                  unflaggish+java.util.ResourceBundle.getBundle("resources/Bundle").getString("'_requires_a_value"));
+            super(option, JAMS.resources.getString("Illegal_option:_")+option+JAMS.resources.getString(",_")+
+                  unflaggish+JAMS.resources.getString("'_requires_a_value"));
             notflag=unflaggish;
         }
 
@@ -96,7 +96,7 @@ public class CmdLineParser {
      */
     public static class IllegalOptionValueException extends OptionException {
         public IllegalOptionValueException( Option opt, String value ) {
-            super(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Illegal_value_") + value + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_for_option_") +
+            super(JAMS.resources.getString("Illegal_value_") + value + JAMS.resources.getString("_for_option_") +
                   (opt.shortForm() != null ? "-" + opt.shortForm() + "/" : "") +
                   "--" + opt.longForm());
             this.option = opt;
@@ -132,7 +132,7 @@ public class CmdLineParser {
 
         private Option( String shortForm, String longForm, boolean wantsValue ) {
             if ( longForm == null )
-                throw new IllegalArgumentException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Null_longForm_not_allowed"));
+                throw new IllegalArgumentException(JAMS.resources.getString("Null_longForm_not_allowed"));
             this.shortForm = shortForm;
             this.longForm = longForm;
             this.wantsValue = wantsValue;

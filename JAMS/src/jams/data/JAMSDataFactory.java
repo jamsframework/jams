@@ -23,6 +23,7 @@
 package jams.data;
 
 import jams.runtime.JAMSRuntime;
+import jams.JAMS;
 
 /**
  *
@@ -40,7 +41,7 @@ public class JAMSDataFactory {
         try {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException ex) {
-            System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("class_not_found:") + className);
+            System.out.println(JAMS.resources.getString("class_not_found:") + className);
             System.exit(0);
         }
         JAMSData dataObject = (JAMSData) clazz.newInstance();
