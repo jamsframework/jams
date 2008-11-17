@@ -54,7 +54,7 @@ public class LogViewDlg extends JDialog {
         getContentPane().add(scrollPane, BorderLayout.CENTER);
 
         JButton closeButton = new JButton();
-        closeButton.setText("Close");
+        closeButton.setText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Close"));
         closeButton.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -62,7 +62,7 @@ public class LogViewDlg extends JDialog {
             }
         });
         JButton clearButton = new JButton();
-        clearButton.setText("Clear");
+        clearButton.setText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Clear"));
         clearButton.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {

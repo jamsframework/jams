@@ -128,7 +128,7 @@ public class AboutDlg extends JDialog {
         versionTextLabel.setText("Test");*/
 
         JButton closeButton = new JButton();
-        closeButton.setText("OK");
+        closeButton.setText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("OK"));
         closeButton.addActionListener(new ActionListener() {
 
             @Override
@@ -141,7 +141,7 @@ public class AboutDlg extends JDialog {
         //this.setAlwaysOnTop(true);
         //this.setUndecorated(true);
         //this.setModal(true);
-        this.setTitle("About");
+        this.setTitle(java.util.ResourceBundle.getBundle("resources/Bundle").getString("About"));
 
         pack();
 

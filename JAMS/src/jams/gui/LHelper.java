@@ -163,7 +163,7 @@ public class LHelper {
      * @return
      */
     public static int showYesNoCancelDlg(Component owner, String message, String title) {
-        Object[] options = {"Yes", "No", "Cancel"};
+        Object[] options = {java.util.ResourceBundle.getBundle("resources/Bundle").getString("Yes"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("No"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Cancel")};
         int result = JOptionPane.showOptionDialog(owner, message, title,
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
@@ -178,7 +178,7 @@ public class LHelper {
      * @return
      */
     public static int showYesNoDlg(Component owner, String message, String title) {
-        Object[] options = {"Yes", "No"};
+        Object[] options = {java.util.ResourceBundle.getBundle("resources/Bundle").getString("Yes"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("No")};
         int result = JOptionPane.showOptionDialog(owner, message, title,
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         //int result = JOptionPane.showConfirmDialog(JUICE.getJuiceFrame(), "Delete Attribute \"" + attrName + "\"?", "Confirm", JOptionPane.YES_NO_OPTION);
@@ -289,7 +289,7 @@ public class LHelper {
     public static void openURL(String url) {
 
         String osName = System.getProperty("os.name");
-        String errMsg = "Error attempting to launch web browser";
+        String errMsg = java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_attempting_to_launch_web_browser");
 
         try {
             if (osName.startsWith("Mac OS")) {
@@ -311,7 +311,7 @@ public class LHelper {
                     }
                 }
                 if (browser == null) {
-                    throw new Exception("Could not find web browser");
+                    throw new Exception(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Could_not_find_web_browser"));
                 } else {
                     Runtime.getRuntime().exec(new String[]{browser, url});
                 }

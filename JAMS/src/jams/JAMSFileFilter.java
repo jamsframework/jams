@@ -37,7 +37,7 @@ public class JAMSFileFilter {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".jap");
         }
         public String getDescription() {
-            return "JAMS Preferences (*.jap)";
+            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("JAMS_Preferences_(*.jap)");
         }
     };
     private static FileFilter modelFilter = new FileFilter() {
@@ -45,7 +45,7 @@ public class JAMSFileFilter {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".jam") || f.getName().toLowerCase().endsWith(".xml");
         }
         public String getDescription() {
-            return "JAMS Model (*.jam; *.xml)";
+            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("JAMS_Model_(*.jam;_*.xml)");
         }
     };
 /*    private static FileFilter modelConfigFilter = new FileFilter() {
@@ -62,7 +62,7 @@ public class JAMSFileFilter {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".jar");
         }
         public String getDescription() {
-            return "Java Archive (*.jar)";
+            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("Java_Archive_(*.jar)");
         }
     };
     private static FileFilter parameterFilter = new FileFilter() {
@@ -70,7 +70,7 @@ public class JAMSFileFilter {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".jmp");
         }
         public String getDescription() {
-            return "JAMS Model Parameter (*.jmp)";
+            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("JAMS_Model_Parameter_(*.jmp)");
         }
     };
     
@@ -79,7 +79,7 @@ public class JAMSFileFilter {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".eps");
         }
         public String getDescription() {
-            return "Encapsulated Postscript (*.eps)";
+            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("Encapsulated_Postscript_(*.eps)");
         }
     };
     

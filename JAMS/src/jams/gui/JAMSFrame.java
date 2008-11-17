@@ -56,8 +56,8 @@ public class JAMSFrame extends JAMSLauncher {
     private JMenuItem saveItem,  saveAsItem;
     private JFileChooser jfc;
     private PropertyDlg propertyDlg;
-    private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, "Info Log");
-    private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, "Error Log");
+    private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Info_Log"));
+    private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_Log"));
     private String modelFilename;
     private Action editPrefsAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  loadModelParamAction,  saveModelParamAction,  infoLogAction,  errorLogAction;
 
@@ -107,7 +107,7 @@ public class JAMSFrame extends JAMSLauncher {
             //check if file exists
             File file = new File(modelFilename);
             if (!file.exists()) {
-                LHelper.showErrorDlg(this, "Model file " + modelFilename + " could not be found!", "File open error");
+                LHelper.showErrorDlg(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_file_") + modelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_found!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_Open_Error"));
                 return;
             }
 
@@ -115,7 +115,7 @@ public class JAMSFrame extends JAMSLauncher {
             String newModelFilename = XMLProcessor.modelDocConverter(modelFilename);
             if (!newModelFilename.equalsIgnoreCase(modelFilename)) {
                 LHelper.showInfoDlg(JAMSFrame.this,
-                        "The model definition in \"" + modelFilename + "\" has been adapted in order to meet changes in the JAMS model specification.\nThe new definition has been stored in \"" + newModelFilename + "\" while your original file was left untouched.", "Info");
+                        java.util.ResourceBundle.getBundle("resources/Bundle").getString("The_model_definition_in_") + modelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_while_your_original_file_was_left_untouched."), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Info"));
             }
 
             modelFilename = newModelFilename;
@@ -144,9 +144,9 @@ public class JAMSFrame extends JAMSLauncher {
         //LHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
 
         } catch (IOException ioe) {
-            LHelper.showErrorDlg(JAMSFrame.this, "The specified model configuration file \"" + modelFilename + "\" could not be found!", "Error");
+            LHelper.showErrorDlg(JAMSFrame.this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("The_specified_model_configuration_file_") + modelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_found!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error"));
         } catch (SAXException se) {
-            LHelper.showErrorDlg(JAMSFrame.this, "The specified model configuration file \"" + modelFilename + "\" contains errors!", "Error");
+            LHelper.showErrorDlg(JAMSFrame.this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("The_specified_model_configuration_file_") + modelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_contains_errors!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error"));
         }
     }
 
@@ -157,7 +157,7 @@ public class JAMSFrame extends JAMSLauncher {
         getRunModelAction().setEnabled(false);
 
         // define some actions
-        editPrefsAction = new AbstractAction("Edit Preferences...") {
+        editPrefsAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Edit_Preferences...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -169,7 +169,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        loadPrefsAction = new AbstractAction("Load Preferences...") {
+        loadPrefsAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Load_Preferences...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -188,7 +188,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        savePrefsAction = new AbstractAction("Save Preferences...") {
+        savePrefsAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Save_Preferences...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -207,7 +207,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        loadModelAction = new AbstractAction("Open Model...") {
+        loadModelAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Open_Model...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -221,7 +221,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        saveModelAction = new AbstractAction("Save Model") {
+        saveModelAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Save_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -230,7 +230,7 @@ public class JAMSFrame extends JAMSLauncher {
         };
         saveModelAction.setEnabled(false);
 
-        saveAsModelAction = new AbstractAction("Save Model As...") {
+        saveAsModelAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Save_Model_As...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -243,7 +243,7 @@ public class JAMSFrame extends JAMSLauncher {
         };
         saveAsModelAction.setEnabled(false);
 
-        exitAction = new AbstractAction("Exit") {
+        exitAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Exit")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -251,7 +251,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        aboutAction = new AbstractAction("About") {
+        aboutAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("About")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -259,7 +259,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        loadModelParamAction = new AbstractAction("Load Model Parameter...") {
+        loadModelParamAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Load_Model_Parameter...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -275,7 +275,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        saveModelParamAction = new AbstractAction("Save Model Parameter...") {
+        saveModelParamAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Save_Model_Parameter...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -297,7 +297,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        infoLogAction = new AbstractAction("Info Log...") {
+        infoLogAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Info_Log...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -305,7 +305,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        errorLogAction = new AbstractAction("Error Log...") {
+        errorLogAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_Log...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -323,7 +323,7 @@ public class JAMSFrame extends JAMSLauncher {
         mainMenu = new JMenuBar();
 
         // file menu
-        JMenu fileMenu = new JMenu("File");
+        JMenu fileMenu = new JMenu(java.util.ResourceBundle.getBundle("resources/Bundle").getString("File"));
 
         JMenuItem loadItem = new JMenuItem(loadModelAction);
         loadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
@@ -343,7 +343,7 @@ public class JAMSFrame extends JAMSLauncher {
         getMainMenu().add(fileMenu);
 
         // extras menu
-        JMenu editMenu = new JMenu("Extras");
+        JMenu editMenu = new JMenu(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Extras"));
 
         JMenuItem editOptionsItem = new JMenuItem(editPrefsAction);
         editOptionsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
@@ -357,7 +357,7 @@ public class JAMSFrame extends JAMSLauncher {
         getMainMenu().add(editMenu);
 
         // model menu
-        modelMenu = new JMenu("Model");
+        modelMenu = new JMenu(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model"));
         modelMenu.setEnabled(false);
         mainMenu.add(modelMenu);
 
@@ -376,7 +376,7 @@ public class JAMSFrame extends JAMSLauncher {
         modelMenu.add(saveModelParamItem);
 
         // logs menu
-        logsMenu = new JMenu("Logs");
+        logsMenu = new JMenu(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Logs"));
 
         JMenuItem infoLogItem = new JMenuItem(infoLogAction);
         getLogsMenu().add(infoLogItem);
@@ -386,7 +386,7 @@ public class JAMSFrame extends JAMSLauncher {
         getMainMenu().add(getLogsMenu());
 
         // help menu
-        JMenu helpMenu = new JMenu("Help");
+        JMenu helpMenu = new JMenu(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Help"));
 
         JMenuItem aboutItem = new JMenuItem(aboutAction);
         helpMenu.add(aboutItem);
@@ -401,7 +401,7 @@ public class JAMSFrame extends JAMSLauncher {
             ParameterProcessor.loadParams(getModelDocument(), paramsFile);
             loadModelDefinition(getModelDocument());
         } catch (Exception ex) {
-            LHelper.showErrorDlg(this, "File " + paramsFile.getName() + " could not be loaded.", "File open error");
+            LHelper.showErrorDlg(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_") + paramsFile.getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_loaded."), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_Open_Error"));
         }
     }
 
@@ -410,7 +410,7 @@ public class JAMSFrame extends JAMSLauncher {
             ParameterProcessor.saveParams(getModelDocument(), paramsFile,
                     getProperties().getProperty("username"), modelFilename);
         } catch (Exception ex) {
-            LHelper.showErrorDlg(this, "File " + paramsFile.getName() + " could not be saved.", "File saving error");
+            LHelper.showErrorDlg(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_") + paramsFile.getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_saved."), java.util.ResourceBundle.getBundle("resources/Bundle").getString("File_saving_error"));
         }
     }
 
@@ -448,8 +448,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         // check for invalid parameter values
         if (!verifyInputs(false)) {
-            int result = LHelper.showYesNoDlg(this, "Found invalid parameter values " +
-                    "which won't be saved. Proceed anyway?", "Invalid parameter values");
+            int result = LHelper.showYesNoDlg(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Found_invalid_parameter_values_which_won't_be_saved._Proceed_anyway?"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Invalid_parameter_values"));
             if (result == JOptionPane.NO_OPTION) {
                 return false;
             }
@@ -461,7 +460,7 @@ public class JAMSFrame extends JAMSLauncher {
         if (getModelDocument() != null) {
             String modelDocString = XMLIO.getStringFromDocument(getModelDocument());
             if (!getInitialModelDocString().equals(modelDocString)) {
-                int result = LHelper.showYesNoCancelDlg(this, "Save modifications in " + modelFilename + "?", "JAMS Launcher: unsaved modifications");
+                int result = LHelper.showYesNoCancelDlg(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Save_modifications_in_") + modelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("?"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("JAMS_Launcher:_unsaved_modifications"));
                 if (result == JOptionPane.CANCEL_OPTION) {
                     return false;
                 } else if (result == JOptionPane.OK_OPTION) {
@@ -481,7 +480,7 @@ public class JAMSFrame extends JAMSLauncher {
             XMLIO.writeXmlFile(getModelDocument(), modelFilename);
             fillAttributes(getModelDocument());
         } catch (IOException ioe) {
-            LHelper.showErrorDlg(JAMSFrame.this, "Error saving configuration to " + modelFilename, "Error");
+            LHelper.showErrorDlg(JAMSFrame.this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_saving_configuration_to_") + modelFilename, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error"));
             return;
         }
     //LHelper.showInfoDlg(LauncherFrame.this, "Configuration has been saved to " + LauncherFrame.this.modelFilename, "Info");

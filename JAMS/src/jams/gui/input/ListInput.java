@@ -121,7 +121,7 @@ public class ListInput extends JPanel {
         editButton = new JButton("...");
         editButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
         editButton.setPreferredSize(BUTTON_DIMENSION);
-        editButton.setToolTipText("Edit");
+        editButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Edit"));
         buttonPanel.add(editButton);
         editButton.addActionListener(new ActionListener() {
 
@@ -134,7 +134,7 @@ public class ListInput extends JPanel {
             upButton = new JButton();
             upButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
             upButton.setPreferredSize(BUTTON_DIMENSION);
-            upButton.setToolTipText("Move up");
+            upButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Move_up"));
             upButton.setIcon(UP_ICON);
             upButton.addActionListener(new ActionListener() {
 
@@ -146,7 +146,7 @@ public class ListInput extends JPanel {
             downButton = new JButton();
             downButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
             downButton.setPreferredSize(BUTTON_DIMENSION);
-            downButton.setToolTipText("Move down");
+            downButton.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Move_down"));
             downButton.setIcon(DOWN_ICON);
             downButton.addActionListener(new ActionListener() {
 
@@ -226,7 +226,7 @@ public class ListInput extends JPanel {
 
     protected void addItem() {
         // Get the text field value
-        String stringValue = LHelper.showInputDlg(ListInput.this, null, "New value", null);
+        String stringValue = LHelper.showInputDlg(ListInput.this, null, java.util.ResourceBundle.getBundle("resources/Bundle").getString("New_value"), null);
 
         // add this item to the list and refresh
         if (stringValue != null && !listData.getValue().contains(stringValue)) {
@@ -259,7 +259,7 @@ public class ListInput extends JPanel {
         if (selection >= 0) {
             // edit this item
             String value = listData.getElementAt(selection);
-            value = LHelper.showInputDlg(ListInput.this, null, "New value", value);
+            value = LHelper.showInputDlg(ListInput.this, null, java.util.ResourceBundle.getBundle("resources/Bundle").getString("New_value"), value);
             if (value != null) {
                 listData.setElementAt(selection, value);
                 scrollPane.revalidate();

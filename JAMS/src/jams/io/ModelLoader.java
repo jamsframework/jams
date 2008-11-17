@@ -108,12 +108,12 @@ public class ModelLoader {
             }
         }
 
-        jamsModel.getRuntime().println("*************************************", JAMS.STANDARD);
-        jamsModel.getRuntime().println("model     : " + jamsModel.getName(), JAMS.STANDARD);
-        jamsModel.getRuntime().println("workspace : " + jamsModel.workspaceDirectory.getValue(), JAMS.STANDARD);
-        jamsModel.getRuntime().println("author    : " + jamsModel.getAuthor(), JAMS.STANDARD);
-        jamsModel.getRuntime().println("date      : " + jamsModel.getDate(), JAMS.STANDARD);
-        jamsModel.getRuntime().println("*************************************", JAMS.STANDARD);
+        jamsModel.getRuntime().println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("*************************************"), JAMS.STANDARD);
+        jamsModel.getRuntime().println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("model_____:_") + jamsModel.getName(), JAMS.STANDARD);
+        jamsModel.getRuntime().println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("workspace_:_") + jamsModel.workspaceDirectory.getValue(), JAMS.STANDARD);
+        jamsModel.getRuntime().println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("author____:_") + jamsModel.getAuthor(), JAMS.STANDARD);
+        jamsModel.getRuntime().println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("date______:_") + jamsModel.getDate(), JAMS.STANDARD);
+        jamsModel.getRuntime().println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("*************************************"), JAMS.STANDARD);
 
 
         // create the model
@@ -153,7 +153,7 @@ public class ModelLoader {
 
         componentName = root.getAttribute("name");
         componentClassName = root.getAttribute("class");
-        jamsModel.getRuntime().println("Adding: " + componentName + " (" + componentClassName + ")", JAMS.STANDARD);
+        jamsModel.getRuntime().println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Adding:_") + componentName + " (" + componentClassName + ")", JAMS.STANDARD);
 
         component = null;
         try {
@@ -230,7 +230,7 @@ public class ModelLoader {
 
                         JAMSVarDescription jvd = field.getAnnotation(JAMSVarDescription.class);
 
-                        jamsModel.getRuntime().println("     " + componentName + " var declaration: " + varName + " (" + varClassName + ", " + jvd.access() + ")", JAMS.VERBOSE);
+                        jamsModel.getRuntime().println("     " + componentName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_var_declaration:_") + varName + " (" + varClassName + ", " + jvd.access() + ")", JAMS.VERBOSE);
 
                         /*
                         if ((jvd.trace() == JAMSVarDescription.UpdateType.INIT) && ((jvd.access() != JAMSVarDescription.AccessType.READ) || element.hasAttribute("attribute"))) {
@@ -291,7 +291,7 @@ public class ModelLoader {
                             // ...
 
                             if (!(context instanceof JAMSContext)) {
-                                throw new ModelSpecificationException("Component " + componentName + ": Component \"" + element.getAttribute("context") + "\" must be of type JAMSSpatialContext!");
+                                throw new ModelSpecificationException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_") + componentName + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_Component_") + element.getAttribute("context") + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_must_be_of_type_JAMSSpatialContext!"));
                             }
 
                             JAMSContext sc = (JAMSContext) context;
@@ -317,19 +317,19 @@ public class ModelLoader {
                     }
                      */
                     } else {
-                        throw new ModelSpecificationException("Component " + componentName + ": variable " + varName + " can not be accessed (missing annotation)!");
+                        throw new ModelSpecificationException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_") + componentName + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_variable_") + varName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_can_not_be_accessed_(missing_annotation)!"));
                     }
 
                 } catch (NoSuchFieldException nsfe) {
-                    throw new ModelSpecificationException("Component " + componentName + ": variable " + varName + " not found!");
+                    throw new ModelSpecificationException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_") + componentName + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_variable_") + varName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_not_found!"));
                 } catch (ClassNotFoundException cnfe) {
-                    throw new ModelSpecificationException("Component " + componentName + ": variable class " + varClassName + " not found!");
+                    throw new ModelSpecificationException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_") + componentName + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_variable_class_") + varClassName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_not_found!"));
                 } catch (IllegalArgumentException iae) {
-                    throw new ModelSpecificationException("Component " + componentName + ": variable " + varName + ": wrong type!");
+                    throw new ModelSpecificationException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_") + componentName + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_variable_") + varName + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_wrong_type!"));
                 } catch (InstantiationException ie) {
-                    throw new ModelSpecificationException("Component " + componentName + ": variable " + varName + ": Instantiation exception!");
+                    throw new ModelSpecificationException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_") + componentName + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_variable_") + varName + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_Instantiation_exception!"));
                 } catch (IllegalAccessException iae) {
-                    throw new ModelSpecificationException("Component " + componentName + ": variable " + varName + ": Access exception!");
+                    throw new ModelSpecificationException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Component_") + componentName + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_variable_") + varName + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_Access_exception!"));
                 } catch (Exception ex) {
                     jamsModel.getRuntime().handle(ex);
                 }
@@ -339,7 +339,7 @@ public class ModelLoader {
             } else if (node.getNodeName().equals("attribute")) {
 
                 if (!JAMSContext.class.isAssignableFrom(component.getClass())) {
-                    throw new ModelSpecificationException("Attribute tag can only be used inside context components! (component " + componentName + ")");
+                    throw new ModelSpecificationException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_tag_can_only_be_used_inside_context_components!_(component_") + componentName + java.util.ResourceBundle.getBundle("resources/Bundle").getString(")"));
                 }
 
                 Element element = (Element) node;

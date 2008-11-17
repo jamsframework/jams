@@ -61,7 +61,7 @@ public class PropertyDlg extends JDialog {
 
         this.properties = properties;
 
-        setTitle("JAMS Preferences");
+        setTitle(java.util.ResourceBundle.getBundle("resources/Bundle").getString("JAMS_Preferences"));
         setModal(true);
 
         JPanel contentPanel = new JPanel();
@@ -71,19 +71,19 @@ public class PropertyDlg extends JDialog {
 
         int y = 0;
 
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Libraries:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Libraries:")), 0, y, 1, 1, 0, 0);
         list = new FileListInput();
         list.setPreferredSize(new Dimension(295, 130));
         LHelper.addGBComponent(contentPanel, gbl, list, 1, y, 1, 1, 1, 1);
 
         y++;
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Command line output:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Command_line_output:")), 0, y, 1, 1, 0, 0);
         verboseCheck = new BooleanInput();
         verboseCheck.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         LHelper.addGBComponent(contentPanel, gbl, verboseCheck, 1, y, 1, 1, 1, 1);
 
         y++;
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Verbosity level:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Verbosity_level:")), 0, y, 1, 1, 0, 0);
         debugSpinner = new JSpinner();
         JPanel spinnerPanel = new JPanel();
         spinnerPanel.setLayout(new BorderLayout());
@@ -99,67 +99,67 @@ public class PropertyDlg extends JDialog {
         LHelper.addGBComponent(contentPanel, gbl, spinnerPanel, 1, y, 1, 1, 0, 0);
 
         y++;
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Info log file:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Info_log_file:")), 0, y, 1, 1, 0, 0);
         infoFile = new FileInput();
         infoFile.setPreferredSize(new Dimension(286, JCOMP_HEIGHT));
         LHelper.addGBComponent(contentPanel, gbl, infoFile, 1, y, 1, 1, 1, 1);
 
         y++;
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Error log file:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_log_file:")), 0, y, 1, 1, 0, 0);
         errorFile = new FileInput();
         errorFile.setPreferredSize(new Dimension(286, JCOMP_HEIGHT));
         LHelper.addGBComponent(contentPanel, gbl, errorFile, 1, y, 1, 1, 1, 1);
 
         y++;
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Model window visible:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_window_visible:")), 0, y, 1, 1, 0, 0);
         windowEnable = new BooleanInput();
         windowEnable.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         LHelper.addGBComponent(contentPanel, gbl, windowEnable, 1, y, 1, 1, 1, 1);
 
         y++;
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Show dialog on errors:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Show_dialog_on_errors:")), 0, y, 1, 1, 0, 0);
         errorDlg = new BooleanInput();
         errorDlg.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         LHelper.addGBComponent(contentPanel, gbl, errorDlg, 1, y, 1, 1, 1, 1);
 
         y++;
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Model window on top:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_window_on_top:")), 0, y, 1, 1, 0, 0);
         windowOnTop = new BooleanInput();
         windowOnTop.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         LHelper.addGBComponent(contentPanel, gbl, windowOnTop, 1, y, 1, 1, 1, 1);
 
         y++;
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Force Localization:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Force_Localization:")), 0, y, 1, 1, 0, 0);
         forceLocale = new TextInput();
         forceLocale.getComponent().setPreferredSize(new Dimension(40, JCOMP_HEIGHT));
         LHelper.addGBComponent(contentPanel, gbl, forceLocale, 1, y, 1, 1, 1, 1);
 
         y++;
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Model window width:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_window_width:")), 0, y, 1, 1, 0, 0);
         windowWidth = new TextInput();
         windowWidth.getComponent().setPreferredSize(new Dimension(100, JCOMP_HEIGHT));
         LHelper.addGBComponent(contentPanel, gbl, windowWidth, 1, y, 1, 1, 1, 1);
         JPanel buttonPanel = new JPanel();
 
         y++;
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Model window height:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_window_height:")), 0, y, 1, 1, 0, 0);
         windowHeight = new TextInput();
         windowHeight.getComponent().setPreferredSize(new Dimension(100, JCOMP_HEIGHT));
         LHelper.addGBComponent(contentPanel, gbl, windowHeight, 1, y, 1, 1, 1, 1);
 
         y++;
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("User name:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("User_name:")), 0, y, 1, 1, 0, 0);
         userName = new TextInput();
         userName.getComponent().setPreferredSize(new Dimension(300, JCOMP_HEIGHT));
         LHelper.addGBComponent(contentPanel, gbl, userName, 1, y, 1, 1, 1, 1);
 
         y++;
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel("Help Base URL:"), 0, y, 1, 1, 0, 0);
+        LHelper.addGBComponent(contentPanel, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Help_Base_URL:")), 0, y, 1, 1, 0, 0);
         helpBaseURL = new TextInput();
         helpBaseURL.getComponent().setPreferredSize(new Dimension(300, JCOMP_HEIGHT));
         LHelper.addGBComponent(contentPanel, gbl, helpBaseURL, 1, y, 1, 1, 1, 1);
 
-        JButton okButton = new JButton("OK");
+        JButton okButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("OK"));
         okButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -170,7 +170,7 @@ public class PropertyDlg extends JDialog {
         getRootPane().setDefaultButton(okButton);
 
 
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Cancel"));
         cancelButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {

@@ -30,6 +30,7 @@ import jams.gui.JAMSFrame;
 import jams.gui.JAMSSplash;
 import jams.runtime.*;
 import jams.io.*;
+import java.util.Locale;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -99,7 +100,7 @@ public class JAMS {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (UnsupportedLookAndFeelException ule) {
-                System.out.println("Error during look and feel initialization");
+                System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_during_look_and_feel_initialization"));
                 ule.printStackTrace();
             }
         }
@@ -129,7 +130,7 @@ public class JAMS {
             if (guiConfig == 1) {
                 startJAMS(properties);
             } else {
-                System.out.println("You must provide a model file name (see JAMS --help) when disabling GUI config!");
+                System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("You_must_provide_a_model_file_name_(see_JAMS_--help)_when_disabling_GUI_config!"));
             }
         } else {
             if (cmdLine.getParameterValues() == null) {
@@ -164,14 +165,14 @@ public class JAMS {
             //check if file exists
             File file = new File(modelFilename);
             if (!file.exists()) {
-                System.out.println("Model file " + modelFilename + " could not be found - exiting!");
+                System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_file_") + modelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_found_-_exiting!"));
                 return;
             }
 
             // do some search and replace on the input file and create new file if necessary
             String newModelFilename = XMLProcessor.modelDocConverter(modelFilename);
             if (!newModelFilename.equalsIgnoreCase(modelFilename)) {
-                info = "The model definition in \"" + modelFilename + "\" has been adapted in order to meet modifications of the JAMS model schema.\nThe new definition has been stored in \"" + newModelFilename + "\" while your original file was left untouched.";
+                info = java.util.ResourceBundle.getBundle("resources/Bundle").getString("The_model_definition_in_") + modelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_while_your_original_file_was_left_untouched.");
                 modelFilename = newModelFilename;
             }
 
@@ -194,9 +195,9 @@ public class JAMS {
                 }
                 runtime.runModel();
             } catch (IOException ioe) {
-                System.out.println("The model definition file " + modelFilename + " could not be loaded, because: " + ioe.toString());
+                System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("The_model_definition_file_") + modelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_loaded,_because:_") + ioe.toString());
             } catch (SAXException se) {
-                System.out.println("The model definition file " + modelFilename + " contained errors!");
+                System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("The_model_definition_file_") + modelFilename + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_contained_errors!"));
             } catch (Exception ex) {
                 if (runtime != null) {
                     runtime.handle(ex);

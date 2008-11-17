@@ -51,7 +51,7 @@ public class EntityAccessor implements DataAccessor {
                     entityObject[i] = JAMSDataFactory.createEntity();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
-                    throw new JAMSEntity.NoSuchAttributeException("Attribute " + attributeName + " does not exist!");
+                    throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + attributeName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_does_not_exist!"));
                 }
             }
         }

@@ -40,7 +40,7 @@ public class JAMSDataFactory {
         try {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException ex) {
-            System.out.println("class not found:" + className);
+            System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("class_not_found:") + className);
             System.exit(0);
         }
         JAMSData dataObject = (JAMSData) clazz.newInstance();

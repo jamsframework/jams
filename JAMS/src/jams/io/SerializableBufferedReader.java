@@ -37,13 +37,13 @@ public class SerializableBufferedReader implements Serializable {
         if (reader != null) {
             return reader.read();
         }
-        throw new IOException("reader not reader!");
+        throw new IOException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("reader_not_reader!"));
     }
     
     public String readLine() throws IOException {
         if (reader != null) {
             return reader.readLine();
         }
-        throw new IOException("reader not reader!");
+        throw new IOException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("reader_not_reader!"));
     }    
 }

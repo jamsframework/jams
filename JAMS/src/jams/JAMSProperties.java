@@ -72,7 +72,7 @@ public class JAMSProperties extends Observable {
 
     public void save(String fileName) throws IOException {
         try {
-            properties.store(new FileOutputStream(fileName), "JAMS configuration file");
+            properties.store(new FileOutputStream(fileName), java.util.ResourceBundle.getBundle("resources/Bundle").getString("JAMS_configuration_file"));
             defaultFilename = fileName;
         } catch (Exception ex) {
             JAMS.handle(ex);

@@ -68,7 +68,7 @@ import org.w3c.dom.NodeList;
  */
 public class JAMSLauncher extends JFrame {
 
-    protected static final String BASE_TITLE = "JAMS Launcher";
+    protected static final String BASE_TITLE = java.util.ResourceBundle.getBundle("resources/Bundle").getString("JAMS_Launcher");
     private static final int BUTTON_SIZE = 20;
     private Map<InputComponent, Element> inputMap;
     private Map<InputComponent, JScrollPane> groupMap;
@@ -140,7 +140,7 @@ public class JAMSLauncher extends JFrame {
             }
         };
 
-        runModelAction = new AbstractAction("Run Model") {
+        runModelAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Run_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -157,7 +157,7 @@ public class JAMSLauncher extends JFrame {
             }
         };
 
-        setupModelDlg = new WorkerDlg(this, "Model Setup");
+        setupModelDlg = new WorkerDlg(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Model_Setup"));
 
         // create some nice font for the border title
         titledBorderFont = (Font) UIManager.getDefaults().get("TitledBorder.font");
@@ -243,13 +243,13 @@ public class JAMSLauncher extends JFrame {
 
                 String info = "";
                 if (runModel) {
-                    info = " Stopping model execution.";
+                    info = java.util.ResourceBundle.getBundle("resources/Bundle").getString("_Stopping_model_execution.");
                 }
 
                 if (ic.getErrorCode() == InputComponent.INPUT_OUT_OF_RANGE) {
-                    LHelper.showErrorDlg(this, "Selected value out of range!" + info, "Range error");
+                    LHelper.showErrorDlg(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Selected_value_out_of_range!") + info, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Range_error"));
                 } else {
-                    LHelper.showErrorDlg(this, "Invalid value found!" + info, "Format error");
+                    LHelper.showErrorDlg(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Invalid_value_found!") + info, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Format_error"));
                 }
 
                 ic.setMarked(false);
@@ -393,8 +393,7 @@ public class JAMSLauncher extends JFrame {
 
             // case 3: attribute does not exist, property removed
             property.getParentNode().removeChild(property);
-            LHelper.showInfoDlg(this, "Attribute " + attributeName + " does not " +
-                    "exist in component " + componentName + "! Removing visual editor!", "Info");
+            LHelper.showInfoDlg(this, java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + attributeName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_does_not_exist_in_component_") + componentName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("!_Removing_visual_editor!"), java.util.ResourceBundle.getBundle("resources/Bundle").getString("Info"));
             return;
         }
 
@@ -555,7 +554,7 @@ public class JAMSLauncher extends JFrame {
             this.getInsets().set(0, 0, 0, 0);
             this.setText("?");
             this.setFont(titledBorderFont);
-            this.setToolTipText("Help");
+            this.setToolTipText(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Help"));
             this.helpComponent = helpComponent;
 
         }

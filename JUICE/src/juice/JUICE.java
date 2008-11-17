@@ -43,30 +43,18 @@ import juice.gui.tree.LibTree;
  */
 public class JUICE {
 
-    public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/Bundle");
-
+    public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/JUICE");
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
-
     public static final int SCREEN_WIDTH = 1200;
-
     public static final int SCREEN_HEIGHT = 850;
-
-    public static final String APP_TITLE = java.util.ResourceBundle.getBundle("resources/Bundle", Locale.ENGLISH).getString("JUICE");
-
+    public static final String APP_TITLE = java.util.ResourceBundle.getBundle("resources/JUICE", Locale.ENGLISH).getString("JUICE");
     private static JUICEFrame juiceFrame;
-
     private static JAMSProperties jamsProperties = JAMSProperties.createJAMSProperties();
-
     private static File baseDir = null;
-
     private static ArrayList<ModelView> modelViews = new ArrayList<ModelView>();
-
     private static ClassLoader loader;
-
     private static JUICECmdLine cmdLine;
-
     private static LibTree libTree;
-
     private static WorkerDlg loadLibsDlg;
 
     public static void main(String args[]) throws Exception {
@@ -111,7 +99,7 @@ public class JUICE {
             if (forcelocale != null) {
                 Locale l = new Locale(forcelocale);
                 Locale.setDefault(l);
-                resources = java.util.ResourceBundle.getBundle("resources/Bundle", l);
+                resources = java.util.ResourceBundle.getBundle("resources/JUICE", l);
             }
 
             juiceFrame = new JUICEFrame();

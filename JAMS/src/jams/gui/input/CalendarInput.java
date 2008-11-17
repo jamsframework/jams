@@ -58,8 +58,8 @@ public class CalendarInput extends JPanel implements InputComponent {
 
         this.setLayout(gbl);
 
-        LHelper.addGBComponent(this, gbl, new JLabel("Date (YYYY/MM/DD)"), 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel("Time (HH:MM)"), 11, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
 
         syear = new JTextField();
         syear.setInputVerifier(new NumericIntervalVerifier(1900, 2100));

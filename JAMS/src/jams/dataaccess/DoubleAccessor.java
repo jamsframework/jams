@@ -50,7 +50,7 @@ public class DoubleAccessor implements DataAccessor {
                     entityObject[i] = new JAMSDouble();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
-                    throw new JAMSEntity.NoSuchAttributeException("Attribute " + attributeName + " does not exist!");
+                    throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + attributeName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_does_not_exist!"));
                 }
             }
         }
@@ -71,7 +71,7 @@ public class DoubleAccessor implements DataAccessor {
         try{
             entityObject[index].setValue(componentObject.getValue());
         }catch(Exception e){
-            System.out.print("geht nicht");
+            e.printStackTrace();
         }
     }
     

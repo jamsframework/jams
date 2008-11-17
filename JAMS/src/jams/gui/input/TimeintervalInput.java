@@ -63,12 +63,12 @@ public class TimeintervalInput extends JPanel implements InputComponent {
 
         this.setLayout(gbl);
 
-        LHelper.addGBComponent(this, gbl, new JLabel("Date (YYYY/MM/DD)"), 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel("Time (HH:MM)"), 11, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel("Start: "), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel("End: "), 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel("Unit: "), 0, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel("Unit Count: "), 0, 4, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Start:_")), 0, 1, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("End:_")), 0, 2, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Unit:_")), 0, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, gbl, new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Unit_Count:_")), 0, 4, 1, 1, 0, 0);
 
         syear = new JTextField();
         syear.setInputVerifier(new NumericIntervalVerifier(1900, 2100));
@@ -158,12 +158,12 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         fieldMap.put(5, JAMSCalendar.SECOND);
 
         timeUnit = new JComboBox();
-        timeUnit.addItem("YEAR");
-        timeUnit.addItem("MONTH");
-        timeUnit.addItem("DAY");
-        timeUnit.addItem("HOUR");
-        timeUnit.addItem("MINUTE");
-        timeUnit.addItem("SECOND");
+        timeUnit.addItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("YEAR"));
+        timeUnit.addItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("MONTH"));
+        timeUnit.addItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("DAY"));
+        timeUnit.addItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("HOUR"));
+        timeUnit.addItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("MINUTE"));
+        timeUnit.addItem(java.util.ResourceBundle.getBundle("resources/Bundle").getString("SECOND"));
         timeUnit.setPreferredSize(new Dimension(40, 20));
         LHelper.addGBComponent(this, gbl, timeUnit, 1, 3, 1, 1, 0, 0);
 

@@ -56,7 +56,7 @@ public class JAMSDocument implements JAMSData, Serializable {
         try{
             this.value = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(value)));
         }catch(Exception e){
-            System.out.println("can´t parse string to xml document, because" + e.toString() + value);
+            System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("can´t_parse_string_to_xml_document,_because") + e.toString() + value);
         }
     }
   

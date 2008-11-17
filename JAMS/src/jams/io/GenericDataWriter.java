@@ -149,7 +149,7 @@ public class GenericDataWriter implements Serializable{
         String s = "";
 
         if (data.size() != header.size()) {
-            throw new RuntimeException("Wrong number of output columns!");
+            throw new RuntimeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Wrong_number_of_output_columns!"));
         } else {
             Iterator<Object> i = data.iterator();
             if (i.hasNext()) {
@@ -173,7 +173,7 @@ public class GenericDataWriter implements Serializable{
         String s = "";
 
         if (data.size() != header.size()) {
-            throw new RuntimeException("Wrong number of output columns!");
+            throw new RuntimeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Wrong_number_of_output_columns!"));
         } else {
             Iterator<Object> i = data.iterator();
             //date first

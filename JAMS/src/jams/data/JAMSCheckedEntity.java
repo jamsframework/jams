@@ -34,7 +34,7 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
 
     private HashMap<String, Object> values = new HashMap<String, Object>();
     private long id = -1;
-    
+
     public void setFloat(String name, float attribute) {
         JAMSFloat v = (JAMSFloat) this.values.get(name);
         try {
@@ -88,7 +88,7 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
         if (values.containsKey(name)) {
             return ((JAMSFloat) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException("Attribute " + name + " (float) not found!");
+            throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(float)_not_found!"));
         }
     }
 
@@ -96,7 +96,7 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
         if (values.containsKey(name)) {
             return ((JAMSDouble) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException("Attribute " + name + " (double) not found!");
+            throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(double)_not_found!"));
         }
     }
 
@@ -104,7 +104,7 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
         if (values.containsKey(name)) {
             return ((JAMSInteger) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException("Attribute " + name + " (int) not found!");
+            throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(int)_not_found!"));
         }
     }
 
@@ -112,7 +112,7 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
         if (values.containsKey(name)) {
             return ((JAMSLong) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException("Attribute " + name + " (long) not found!");
+            throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(long)_not_found!"));
         }
     }
 
@@ -120,7 +120,7 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
         if (values.containsKey(name)) {
             return values.get(name);
         } else {
-            throw new JAMSEntity.NoSuchAttributeException("Attribute " + name + " (Object) not found!");
+            throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(Object)_not_found!"));
         }
     }
 
@@ -128,18 +128,18 @@ class JAMSCheckedEntity implements JAMSEntity, Serializable {
         if (values.containsKey(name)) {
             return ((JAMSGeometry) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException("Attribute " + name + " (Geometry) not found!");
+            throw new JAMSEntity.NoSuchAttributeException(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Attribute_") + name + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(Geometry)_not_found!"));
         }
     }
 
     public boolean existsAttribute(String name) {
-        try{
-        if (values.containsKey(name)) {
-            return true;
-        } else {
-            return false;
-        }}catch(NullPointerException e){
-            System.out.print("test");
+        try {
+            if (values.containsKey(name)) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (NullPointerException e) {
             return false;
         }
     }
