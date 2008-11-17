@@ -53,7 +53,7 @@ public class LongValue implements DataValue {
     }
 
     public void setDouble(double value) {
-        this.value = new Long((long)value);
+        this.value = new Long((long) value);
     }
 
     public void setLong(long value) {
@@ -71,11 +71,10 @@ public class LongValue implements DataValue {
     }
 
     public JAMSCalendar getCalendar() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     public void setCalendar(JAMSCalendar value) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
 

@@ -71,11 +71,10 @@ public class DoubleValue implements DataValue {
     }
 
     public JAMSCalendar getCalendar() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     public void setCalendar(JAMSCalendar value) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
 

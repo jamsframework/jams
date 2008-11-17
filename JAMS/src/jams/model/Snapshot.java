@@ -29,7 +29,7 @@ public class Snapshot implements Serializable{
                     fos.write(data);
                     fos.close();
                 }catch(Exception e){
-                    System.out.println("Could not open or write snapshot file, because " + e.toString());
+                    System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Could_not_open_or_write_snapshot_file,_because_") + e.toString());
                 }
             }
         }
@@ -42,7 +42,7 @@ public class Snapshot implements Serializable{
                     fis.close(); 
                     return snapShotByteArray;
                 }catch(Exception e){
-                    System.out.println("Could not open or read snapshot file, because " + e.toString());
+                    System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Could_not_open_or_read_snapshot_file,_because_") + e.toString());
                     return null;
                 }
             }else{

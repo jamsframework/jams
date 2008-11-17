@@ -37,43 +37,38 @@ public class ObjectValue implements DataValue {
     }
 
     public double getDouble() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return 0;
     }
 
     public long getLong() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return 0;
     }
 
     public String getString() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return value.toString();
     }
 
     public Object getObject() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return value;
     }
 
     public void setDouble(double value) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void setLong(long value) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void setString(String value) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void setObject(Object value) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public JAMSCalendar getCalendar() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     public void setCalendar(JAMSCalendar value) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
 

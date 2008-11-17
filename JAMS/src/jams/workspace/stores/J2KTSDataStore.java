@@ -182,14 +182,14 @@ public class J2KTSDataStore extends TSDataStore {
                 try {
                     startDate.setValue(startString, "dd.MM.yyyy HH:mm");
                 } catch (ParseException pe) {
-                    ws.getRuntime().sendErrorMsg("Could not parse date \"" + startString + "\" - date kept unchanged!");
+                    ws.getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Could_not_parse_date_\"") + startString + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_-_date_kept_unchanged!"));
                 }
             } else if (key.equals("dataEnd")) {
                 String endString = tok2.nextToken() + " " + tok2.nextToken();
                 try {
                     endDate.setValue(endString, "dd.MM.yyyy HH:mm");
                 } catch (ParseException pe) {
-                    ws.getRuntime().sendErrorMsg("Could not parse date \"" + endString + "\" - date kept unchanged!");
+                    ws.getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Could_not_parse_date_\"") + endString + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_-_date_kept_unchanged!"));
                 }
             } else if (key.equals("tres")) {
                 String tres = tok2.nextToken();

@@ -83,7 +83,7 @@ public class DataSetDefinition {
         Class<?> type = attributes.get(attributeName);
         for (int i = 0; i < values.size(); i++) {
             if (!type.isAssignableFrom(values.get(i).getClass())) {
-                System.out.println("Invalid type in dataset definition: " + values.get(i).getClass() + "<->" + type);
+                System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type);
                 return false;
             }
         }
@@ -121,7 +121,7 @@ public class DataSetDefinition {
             Class<?> type = attributes.get(attributeName);
 
             if (!type.isAssignableFrom(values.get(i).getClass())) {
-                System.out.println("Invalid type in dataset definition: " + values.get(i).getClass() + "<->" + type);
+                System.out.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type);
                 return false;
             }
 

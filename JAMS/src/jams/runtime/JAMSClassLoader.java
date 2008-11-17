@@ -92,9 +92,9 @@ public class JAMSClassLoader extends URLClassLoader {
         try {
             URL url = f.toURI().toURL();
             if (!urls.add(url))
-                rt.println("WARNING : The file " + f.getAbsolutePath() + " is already loaded");
+                rt.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("WARNING_:_The_file_") + f.getAbsolutePath() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_is_already_loaded"));
         } catch (MalformedURLException murle) {
-            rt.println("WARNING : The file " + f.getAbsolutePath() + " could not be converted to URL.");
+            rt.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("WARNING_:_The_file_") + f.getAbsolutePath() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_could_not_be_converted_to_URL."));
         }
     }
     
@@ -105,7 +105,7 @@ public class JAMSClassLoader extends URLClassLoader {
             File dir = new File(lib);
             
             if (!dir.exists()) {
-                rt.println("DANGER - directory " + dir.getAbsolutePath() + " does not exist", JAMS.STANDARD);
+                rt.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("DANGER_-_directory_") + dir.getAbsolutePath() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_does_not_exist"), JAMS.STANDARD);
                 continue;
             }
             
@@ -122,7 +122,7 @@ public class JAMSClassLoader extends URLClassLoader {
                 
             }
         }
-        rt.println("created class loader using " + urls, JAMS.STANDARD);
+        rt.println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("created_class_loader_using_") + urls, JAMS.STANDARD);
         
         URL[] urlArray = urls.toArray(new URL[urls.size()]);
         

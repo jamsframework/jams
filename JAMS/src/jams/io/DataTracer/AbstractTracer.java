@@ -98,7 +98,7 @@ public abstract class AbstractTracer implements DataTracer {
         try {
             store.open();
         } catch (IOException ioe) {
-            context.getModel().getRuntime().sendErrorMsg("Error creating data output directory!");
+            context.getModel().getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_creating_data_output_directory!"));
             return;
         }
 

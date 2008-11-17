@@ -31,6 +31,7 @@ import jams.gui.JAMSSplash;
 import jams.runtime.*;
 import jams.io.*;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -56,7 +57,6 @@ public class JAMS {
      * Verbosity level 3 of 3
      */
     public static final int VVERBOSE = 3;
-    
     /**
      * Run state causing runtime to stop model execution
      */
@@ -65,6 +65,7 @@ public class JAMS {
      * Run state causing runtime to continue model execution
      */
     public static final int RUNSTATE_RUN = 1;
+    public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/Bundle");
     public static final Font STANDARD_FONT = new java.awt.Font("Courier", 0, 11);
     //public static final int TOOLBAR_HEIGHT = 38;
     public static final int SPLASH_DISPLAY_TIME = 1000;
@@ -77,7 +78,6 @@ public class JAMS {
      * Default name of parameter output file
      */
     public static final String DEFAULT_PARAMETER_FILENAME = "default.jap";
-    
     private static JAMSCmdLine cmdLine;
     private static File baseDir = null;
 
@@ -123,6 +123,12 @@ public class JAMS {
             }
         }
 
+        String forcelocale = properties.getProperty("forcelocale");
+        if ((forcelocale != null) && !forcelocale.equals("")) {
+            Locale.setDefault(new Locale(forcelocale));
+            resources = java.util.ResourceBundle.getBundle("resources/Bundle");
+        }
+
         int guiConfig = Integer.parseInt(properties.getProperty("guiconfig", "0"));
 
         if ((cmdLine.getModelFileName() == null)) {
@@ -146,7 +152,7 @@ public class JAMS {
         splash.show(new JAMSFrame(properties), SPLASH_DISPLAY_TIME);
     }
 
-    public static void startJAMS(JAMSProperties properties, String modelFilename, String cmdLineParameterValues) {        
+    public static void startJAMS(JAMSProperties properties, String modelFilename, String cmdLineParameterValues) {
         int guiConfig = Integer.parseInt(properties.getProperty("guiconfig", "0"));
 
         if (guiConfig == 1) {

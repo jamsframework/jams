@@ -39,7 +39,6 @@ import jams.JAMS;
 import jams.data.*;
 import jams.dataaccess.*;
 import jams.dataaccess.CalendarAccessor;
-import jams.io.DataTracer.NullTracer;
 import jams.io.DataTracer.AbstractTracer;
 import jams.runtime.JAMSRuntime;
 
@@ -312,7 +311,7 @@ public class JAMSContext extends JAMSComponent {
                     nullFields.remove(field);
                 }
             } catch (Exception e) {
-                getModel().getRuntime().sendErrorMsg("Error occured in " + accessSpec.component.getInstanceName() + ": " + accessSpec.varName);
+                getModel().getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_occured_in_") + accessSpec.component.getInstanceName() + ": " + accessSpec.varName);
                 getModel().getRuntime().handle(e, false);
             }
 
@@ -443,12 +442,12 @@ public class JAMSContext extends JAMSComponent {
                     Class clazz = attribute.getClass();
                     getDataObject(entityArray, clazz, attributeName, DataAccessor.READ_ACCESS, null);
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {
-                    getModel().getRuntime().sendErrorMsg("Can't trace attribute \"" + attributeName +
-                            "\" in context \"" + this.getInstanceName() + "\" (not found)!");
+                    getModel().getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Can't_trace_attribute_") + attributeName +
+                            java.util.ResourceBundle.getBundle("resources/Bundle").getString("_in_context_") + this.getInstanceName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(not_found)!"));
                 // will do nothing here since this will be handled at 
                 // the DataTracer's init method below..
                 } catch (Exception e) {
-                    getModel().getRuntime().sendErrorMsg("Error while trying to trace " + attributeName + ": " + this.getInstanceName());
+                    getModel().getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_while_trying_to_trace_") + attributeName + ": " + this.getInstanceName());
                     getModel().getRuntime().handle(e, false);
                 }
             }
@@ -573,7 +572,7 @@ public class JAMSContext extends JAMSComponent {
             } else if (clazz.equals(JAMSDocument.class)) {
                 da = new DocumentAccessor(ea, dataObject, attributeName, accessType);
             } else {
-                getModel().getRuntime().sendHalt("Class " + clazz.getCanonicalName() + " not supported!");
+                getModel().getRuntime().sendHalt(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Class_") + clazz.getCanonicalName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_not_supported!"));
             }
 
             if (da != null) {
@@ -828,7 +827,7 @@ public class JAMSContext extends JAMSComponent {
                     }
                 } catch (Exception e) {
                     //this is not a big issue
-                    getModel().getRuntime().println("Cant get class of variable " + as.varName + " of component + " + as.component.instanceName + " because:" + e.toString());
+                    getModel().getRuntime().println(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Cant_get_class_of_variable_") + as.varName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_of_component_+_") + as.component.instanceName + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_because:") + e.toString());
                 }
 
                 if (as.accessType == DataAccessor.READ_ACCESS || as.accessType == DataAccessor.READWRITE_ACCESS || isEntity) {

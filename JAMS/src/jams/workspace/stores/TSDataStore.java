@@ -105,7 +105,7 @@ public class TSDataStore extends TableDataStore {
                     long demandedSeconds = Math.abs(cal1.getTimeInMillis() - cal.getTimeInMillis()) / 1000;
                     long currentSeconds = Math.abs(cal.getTimeInMillis() - cal2.getTimeInMillis()) / 1000;
 
-                    this.ws.getRuntime().sendErrorMsg("Error in " + this.getClass().getName() + ": wrong time interval in column " + i + " (demanded interval = " + demandedSeconds + " sec, provided interval = " + currentSeconds + " sec)!");
+                    this.ws.getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_in_") + this.getClass().getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_wrong_time_interval_in_column_") + i + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(demanded_interval_=_") + demandedSeconds + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_sec,_provided_interval_=_") + currentSeconds + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_sec)!"));
 
                     dataIOSet.clear();
                     currentPosition = maxPosition;
@@ -127,7 +127,7 @@ public class TSDataStore extends TableDataStore {
 
                 if (cal.compareTo(startDate, timeUnit) != 0) {
 
-                    this.ws.getRuntime().sendErrorMsg("Error in " + this.getClass().getName() + ": wrong start time in column " + i + " (demanded = \"" + startDate + "\", provided = \"" + cal + "\")!");
+                    this.ws.getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_in_") + this.getClass().getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString(":_wrong_start_time_in_column_") + i + java.util.ResourceBundle.getBundle("resources/Bundle").getString("_(demanded_=_") + startDate + java.util.ResourceBundle.getBundle("resources/Bundle").getString(",_provided_=_") + cal + java.util.ResourceBundle.getBundle("resources/Bundle").getString(")!"));
 
                     dataIOSet.clear();
                     currentPosition = maxPosition;

@@ -109,13 +109,13 @@ public abstract class StandardInputDataStore implements InputDataStore {
             if (metadataIO != null) {
                 int result = metadataIO.init();
                 if (result < 0) {
-                    ws.getRuntime().sendErrorMsg("Initialization of data I/O component \"" +
-                            this.getID() + "\" (" + this.getClass().getName() + ") failed..");
+                    ws.getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Initialization_of_data_I/O_component_\"") +
+                            this.getID() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_(") + this.getClass().getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString(")_failed.."));
                     return null;
                 }
             } else {
-                ws.getRuntime().sendErrorMsg("Initialization of data I/O component \"" +
-                        this.getID() + "\" (" + this.getClass().getName() + ") failed..");
+                ws.getRuntime().sendErrorMsg(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Initialization_of_data_I/O_component_\"") +
+                        this.getID() + java.util.ResourceBundle.getBundle("resources/Bundle").getString("\"_(") + this.getClass().getName() + java.util.ResourceBundle.getBundle("resources/Bundle").getString(")_failed.."));
                 return null;
             }
         }
