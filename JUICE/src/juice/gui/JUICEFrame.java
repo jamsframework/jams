@@ -193,6 +193,7 @@ public class JUICEFrame extends JFrame {
                 saveModel(getCurrentView());
             }
         };
+        saveModelAction.setEnabled(false);
 
         saveAsModelAction = new AbstractAction(JUICE.resources.getString("Save_Model_As...")) {
 
@@ -201,6 +202,7 @@ public class JUICEFrame extends JFrame {
                 saveModelAs(getCurrentView());
             }
         };
+        saveAsModelAction.setEnabled(false);
 
         exitAction = new AbstractAction(JUICE.resources.getString("Exit")) {
 
@@ -432,7 +434,7 @@ public class JUICEFrame extends JFrame {
         fileMenu.add(newModelItem);
 
         JMenuItem loadModelItem = new JMenuItem(loadModelAction);
-        loadModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+        loadModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
         fileMenu.add(loadModelItem);
 
         JMenuItem saveModelItem = new JMenuItem(saveModelAction);
