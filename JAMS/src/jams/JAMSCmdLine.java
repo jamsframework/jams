@@ -52,7 +52,7 @@ public class JAMSCmdLine {
         CmdLineParser.Option modelOption = parser.addStringOption('m', "model");
         CmdLineParser.Option pValueOption = parser.addStringOption('p', "parametervalue");
         CmdLineParser.Option helpOption = parser.addBooleanOption('h', "help");
-        
+
         try {
             parser.parse(args);
         } catch (CmdLineParser.OptionException e) {
