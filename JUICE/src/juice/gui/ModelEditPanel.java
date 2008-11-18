@@ -37,6 +37,7 @@ import jams.gui.LHelper;
 import jams.gui.input.InputComponent;
 import jams.gui.input.ValueChangeListener;
 import java.awt.GridBagConstraints;
+import javax.swing.BorderFactory;
 import juice.JUICE;
 
 /**
@@ -49,7 +50,7 @@ import juice.JUICE;
  */
 public class ModelEditPanel extends JPanel {
 
-    private static final int TEXTAREA_WIDTH = 450,  TEXTAREA_HEIGHT = 100, TEXTFIELD_WIDTH = 35;
+    private static final int TEXTAREA_WIDTH = 450,  TEXTAREA_HEIGHT = 100,  TEXTFIELD_WIDTH = 35;
     private JPanel componentPanel;
     private GridBagLayout mainLayout;
     private ModelView view;
@@ -72,8 +73,8 @@ public class ModelEditPanel extends JPanel {
 
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Workspace:")), 1, 0, 1, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Author:")), 1, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Date:")), 1, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Help_Base_URL:")), 1, 3, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Help_Base_URL:")), 1, 5, 1, 1, 0, 0);
+        LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Date:")), 1, 3, 1, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Description:")), 1, 4, 1, 1, 0, 0);
 
         workspace = LHelper.createInputComponent(JAMSDirName.class.getSimpleName());
@@ -92,15 +93,16 @@ public class ModelEditPanel extends JPanel {
         description.setContentType("text/plain");
         description.setEditable(true);
         JScrollPane scroll = new JScrollPane(description);
+        scroll.setBorder(BorderFactory.createEtchedBorder());
         scroll.setPreferredSize(new Dimension(TEXTAREA_WIDTH, TEXTAREA_HEIGHT));
 
         LHelper.addGBComponent(componentPanel, mainLayout, workspace.getComponent(), 2, 0, 1, 1, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);
         LHelper.addGBComponent(componentPanel, mainLayout, author.getComponent(), 2, 1, 1, 1, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);
-        LHelper.addGBComponent(componentPanel, mainLayout, date.getComponent(), 2, 2, 1, 1, 1.0, 1.0,
+        LHelper.addGBComponent(componentPanel, mainLayout, helpBaseURL.getComponent(), 2, 5, 1, 1, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);
-        LHelper.addGBComponent(componentPanel, mainLayout, helpBaseURL.getComponent(), 2, 3, 1, 1, 1.0, 1.0,
+        LHelper.addGBComponent(componentPanel, mainLayout, date.getComponent(), 2, 3, 1, 1, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);
         LHelper.addGBComponent(componentPanel, mainLayout, scroll, 2, 4, 2, 1, 1.0, 1.0);
 
