@@ -29,6 +29,7 @@ import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.util.ArrayList;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
@@ -45,6 +46,7 @@ public class ComponentDescriptor {
     private String instanceName;
     private Class<?> clazz;
     private JAMSTree tree;
+    private ArrayList<String> componentAttributeList = new ArrayList<String>();
     private HashMap<String, ComponentAttribute> componentAttributes = new HashMap<String, ComponentAttribute>();
     private HashMap<String, ContextAttribute> contextAttributes = new HashMap<String, ContextAttribute>();
     private AttributeRepository dataRepository;
@@ -124,6 +126,7 @@ public class ComponentDescriptor {
                 }
 
                 getComponentAttributes().put(field.getName(), new ComponentAttribute(field.getName(), field.getType(), accessType));
+                getComponentAttributeList().add(field.getName());
             }
         }
     }
@@ -208,6 +211,13 @@ public class ComponentDescriptor {
 
     public void setClazz(Class clazz) {
         this.clazz = clazz;
+    }
+
+    /**
+     * @return the componentAttributeList
+     */
+    public ArrayList<String> getComponentAttributeList() {
+        return componentAttributeList;
     }
 
     public HashMap<String, ComponentAttribute> getComponentAttributes() {

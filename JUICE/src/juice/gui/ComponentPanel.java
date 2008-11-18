@@ -457,8 +457,7 @@ public class ComponentPanel extends JPanel {
 
         selectedVarRow = -1;
 
-        varNameList = new ArrayList<String>(componentDescriptor.getComponentAttributes().keySet());
-        //Collections.sort(varNameList);
+        varNameList = componentDescriptor.getComponentAttributeList();
 
         Vector<Vector<String>> tableData = new Vector<Vector<String>>();
         Vector<String> rowData;
