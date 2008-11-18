@@ -68,7 +68,7 @@ public class JAMS {
     public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
     public static final Font STANDARD_FONT = new java.awt.Font("Courier", 0, 11);
     //public static final int TOOLBAR_HEIGHT = 38;
-    public static final int SPLASH_DISPLAY_TIME = 1000;
+    public static final int SPLASH_DISPLAY_TIME = 0;
     public static final String WIKI_URL = "http://jams.uni-jena.de/jamswiki";
     /**
      * Default name of model output file
