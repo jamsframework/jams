@@ -37,6 +37,7 @@ import javax.swing.tree.TreePath;
 import jams.model.JAMSComponent;
 import jams.workspace.VirtualWorkspace;
 import javax.swing.KeyStroke;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
@@ -80,6 +81,8 @@ public class DatastoreTree extends JAMSTree {
                 }
             }
         });
+
+        this.setVisible(false);
     }
 
     private void showPopup(MouseEvent evt) {
@@ -98,7 +101,13 @@ public class DatastoreTree extends JAMSTree {
     }
 
     public void update(VirtualWorkspace workspace) {
-/*
+
+        this.setVisible(false);
+        JAMSNode root = createLibTree();
+        this.setModel(new DefaultTreeModel(root));
+        this.setVisible(true);
+
+        /*
         libsArray = JAMSTools.toArray(libFileNames, ";");
         this.setModel(null);
 
@@ -111,42 +120,41 @@ public class DatastoreTree extends JAMSTree {
         this.collapseAll();
         this.setVisible(true);
         JUICE.setStatusText(JUICE.resources.getString("Contexts:") + contextCount + " " + JUICE.resources.getString("Components:") + componentCount);
-*/
+         */
 
         System.out.println("Tree Rock'n'Roll");
 
     }
 
-    private JAMSNode createLibTree(String[] libsArray) {
+    private JAMSNode createLibTree() {
 
-        JAMSNode root = new JAMSNode(ROOT_NAME, JAMSNode.LIBRARY_ROOT);
-        JAMSNode jarNode;
-/*
+        JAMSNode root = new JAMSNode(ROOT_NAME, JAMSNode.INPUT_ROOT);
+        /*
         for (int i = 0; i < libsArray.length; i++) {
-            File file = new File(libsArray[i]);
+        File file = new File(libsArray[i]);
 
-            if (!file.exists()) {
-                continue;
-            }
-            if (file.isDirectory()) {
-                File[] f = file.listFiles();
-                for (int j = 0; j < f.length; j++) {
-                    if (f[j].getName().endsWith(".jar")) {
-                        jarNode = createJARNode(f[j].toString(), JUICE.getLoader());
-                        if (jarNode != null) {
-                            root.add(jarNode);
-                        }
-                    }
-                }
-            } else {
-                jarNode = createJARNode(file.toString(), JUICE.getLoader());
-                if (jarNode != null) {
-                    root.add(jarNode);
-                }
-            }
+        if (!file.exists()) {
+        continue;
+        }
+        if (file.isDirectory()) {
+        File[] f = file.listFiles();
+        for (int j = 0; j < f.length; j++) {
+        if (f[j].getName().endsWith(".jar")) {
+        jarNode = createJARNode(f[j].toString(), JUICE.getLoader());
+        if (jarNode != null) {
+        root.add(jarNode);
+        }
+        }
+        }
+        } else {
+        jarNode = createJARNode(file.toString(), JUICE.getLoader());
+        if (jarNode != null) {
+        root.add(jarNode);
+        }
+        }
 
         }
-*/
+         */
 
         return root;
     }
@@ -154,7 +162,7 @@ public class DatastoreTree extends JAMSTree {
     private JAMSNode createJARNode(String jar, ClassLoader loader) {
 
         //System.out.println("loading " + jar);
-        JAMSNode jarRoot = new JAMSNode(jar, JAMSNode.PACKAGE_NODE);
+        JAMSNode jarRoot = new JAMSNode(jar, JAMSNode.INPUT_DS);
         ArrayList<Class> components = new ArrayList<Class>();
         JAMSNode compNode;
         String jarName = "", clazzName = "", clazzFullName = "";
@@ -201,7 +209,7 @@ public class DatastoreTree extends JAMSTree {
             for (Class clazz : components) {
                 newPackage = clazz.getPackage().getName();
                 if (!newPackage.equals(oldPackage)) {
-                    packageNode = new JAMSNode(newPackage, JAMSNode.PACKAGE_NODE);
+                    packageNode = new JAMSNode(newPackage, JAMSNode.INPUT_DS);
                     jarRoot.add(packageNode);
                     oldPackage = newPackage;
                 }
@@ -210,25 +218,25 @@ public class DatastoreTree extends JAMSTree {
                 clazzFullName = clazz.getName();
 
                 if (!(clazzName.equals("JAMSComponent") || clazzName.equals("JAMSContext_") || clazzName.equals("JAMSGUIComponent") || clazzName.equals("JAMSModel"))) {
-/*
+                    /*
                     try {
 
-                        ComponentDescriptor no = new ComponentDescriptor(clazz, this);
+                    ComponentDescriptor no = new ComponentDescriptor(clazz, this);
 
-                        if (JAMSContext.class.isAssignableFrom(clazz)) {
-                            compNode = new JAMSNode(no, JAMSNode.CONTEXT_NODE);
-                            contextCount++;
-                        } else {
-                            compNode = new JAMSNode(no, JAMSNode.COMPONENT_NODE);
-                            componentCount++;
-                        }
+                    if (JAMSContext.class.isAssignableFrom(clazz)) {
+                    compNode = new JAMSNode(no, JAMSNode.CONTEXT_NODE);
+                    contextCount++;
+                    } else {
+                    compNode = new JAMSNode(no, JAMSNode.COMPONENT_NODE);
+                    componentCount++;
+                    }
 
-                        packageNode.add(compNode);
+                    packageNode.add(compNode);
 
                     } catch (NoClassDefFoundError ncdfe) {
 
-                        LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Missing_class_while_loading_component_") + clazzFullName +
-                                JUICE.resources.getString("_in_archive_") + jarName + "\"!", JUICE.resources.getString("Error_while_loading_archive"));
+                    LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Missing_class_while_loading_component_") + clazzFullName +
+                    JUICE.resources.getString("_in_archive_") + jarName + "\"!", JUICE.resources.getString("Error_while_loading_archive"));
 
                     }*/
                 }

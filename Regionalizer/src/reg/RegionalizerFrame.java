@@ -168,6 +168,7 @@ public class RegionalizerFrame extends JFrame {
                     try {
                         workspace = new VirtualWorkspace(jfc.getSelectedFile(), Regionalizer.getRuntime(), true);
                         setTitle(Regionalizer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
+                        inputPanel.update(workspace);
                     } catch (VirtualWorkspace.InvalidWorkspaceException iwe) {
                         Regionalizer.getRuntime().sendHalt(iwe.getMessage());
                     }

@@ -23,10 +23,12 @@
 
 package reg;
 
+import jams.workspace.VirtualWorkspace;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTree;
+import reg.tree.DatastoreTree;
+import reg.tree.JAMSTree;
 
 /**
  *
@@ -34,7 +36,7 @@ import javax.swing.JTree;
  */
 public class InputPanel extends JPanel {
 
-    private JTree tree = new JTree();
+    private DatastoreTree tree = new DatastoreTree();
     
     public InputPanel() {
         super();
@@ -45,6 +47,10 @@ public class InputPanel extends JPanel {
 
     public void updateContent() {
         
+    }
+
+    public void update(VirtualWorkspace ws) {
+        tree.update(ws);
     }
     
 }

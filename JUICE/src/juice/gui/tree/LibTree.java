@@ -162,24 +162,13 @@ public class LibTree extends JAMSTree {
 
         }
 
-        /*
-        
-        
-        while (stok.hasMoreTokens()) {
-        
-        jar = stok.nextToken();
-        jarNode = createJARNode(jar, loader);
-        if (jarNode != null)
-        root.add(jarNode);
-        }
-         */
         return root;
     }
 
     private JAMSNode createJARNode(String jar, ClassLoader loader) {
 
         //System.out.println("loading " + jar);
-        JAMSNode jarRoot = new JAMSNode(jar, JAMSNode.PACKAGE_NODE);
+        JAMSNode jarRoot = new JAMSNode(jar, JAMSNode.ARCHIVE_NODE);
         ArrayList<Class> components = new ArrayList<Class>();
         JAMSNode compNode;
         String jarName = "", clazzName = "", clazzFullName = "";

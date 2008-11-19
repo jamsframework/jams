@@ -13,7 +13,8 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
     }
 
     public boolean canPerformAction(JAMSTree target, JAMSNode draggedNode, int action, Point location) {
-
+        return false;
+/*
         JAMSNode targetRoot = (JAMSNode) target.getModel().getRoot();
 
         //nothing can be moved to a tree with lib root
@@ -37,7 +38,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
         return(false);
         }
          */
-
+/*
         if (((JAMSNode) pathTarget.getLastPathComponent()).getType() == JAMSNode.COMPONENT_NODE) { // or ((JAMSNode)pathTarget.getLastPathComponent()).getChildCount()==0
 //            target.setSelectionPath(null);
 //            return(false);
@@ -57,11 +58,11 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
         } else {
             target.setSelectionPath(null);
             return (false);
-        }
+        }*/
     }
 
     public boolean executeDrop(JAMSTree target, JAMSNode draggedNode, JAMSNode newParentNode, Vector expandedStates, int action) {
-
+/*
         int position = 0;
 
         if (newParentNode.getType() == JAMSNode.COMPONENT_NODE) {
@@ -104,7 +105,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
 
 
             return true;
-        }
+        }*/
         return false;
     }
 

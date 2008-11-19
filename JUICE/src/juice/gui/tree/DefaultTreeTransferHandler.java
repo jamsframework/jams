@@ -33,7 +33,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
         }
 
         //package and library nodes can't be moved
-        if (draggedNode.getType() == JAMSNode.PACKAGE_NODE || draggedNode.getType() == JAMSNode.LIBRARY_ROOT) {
+        if (draggedNode.getType() == JAMSNode.PACKAGE_NODE || draggedNode.getType() == JAMSNode.LIBRARY_ROOT || draggedNode.getType() == JAMSNode.ARCHIVE_NODE) {
             return false;
         }
 
