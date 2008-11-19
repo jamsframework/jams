@@ -68,15 +68,19 @@ public class VirtualWorkspace {
     private Properties properties = new Properties();
     private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
 
-    public VirtualWorkspace(File directory, JAMSRuntime runtime) {
+    public VirtualWorkspace(File directory, JAMSRuntime runtime) throws InvalidWorkspaceException {
+        this(directory, runtime, false);
+    }
+
+    public VirtualWorkspace(File directory, JAMSRuntime runtime, boolean readonly) throws InvalidWorkspaceException {
         this.runtime = runtime;
         this.classLoader = runtime.getClassLoader();
         this.directory = directory;
-        loadConfig();
 
-        if (isValid()) {
-            this.createDataStores();
-        }
+        checkValidity(readonly);
+        loadConfig();
+        this.createDataStores();
+
     }
 
     public void loadConfig() {
@@ -109,42 +113,68 @@ public class VirtualWorkspace {
         }
     }
 
-    public boolean isValid() {
+    public void checkValidity(boolean readonly) throws InvalidWorkspaceException {
 
         if (!directory.isDirectory()) {
-            return false;
+            throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
+                    directory.toString() + JAMS.resources.getString("_is_not_a_directory"));
         }
 
-        try {
-            File inDir = new File(directory, INPUT_DIR_NAME);
-            File outDir = new File(directory, OUTPUT_DIR_NAME);
-            File tmpDir = new File(directory, TEMP_DIR_NAME);
-            File localInDir = new File(inDir, LOCAL_INDIR_NAME);
-            File localDumpDir = new File(localInDir, DUMP_DIR_NAME);
+        File configFile = new File(directory, "config.txt");
+        if (!configFile.exists()) {
+            throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
+                    directory.toString() + JAMS.resources.getString("_does_not_contain_config_file"));
+        }
 
-            inDir.mkdirs();
-            outDir.mkdirs();
-            tmpDir.mkdirs();
-            localInDir.mkdirs();
-            localDumpDir.mkdirs();
+        File inDir = new File(directory, INPUT_DIR_NAME);
+        File outDir = new File(directory, OUTPUT_DIR_NAME);
+        File tmpDir = new File(directory, TEMP_DIR_NAME);
+        File localInDir = new File(inDir, LOCAL_INDIR_NAME);
+        File localDumpDir = new File(localInDir, DUMP_DIR_NAME);
 
+        if (readonly) {
+            File[] allDirs = {inDir, outDir, localInDir, localDumpDir};
+            for (File dir : allDirs) {
+                if (!dir.exists()) {
+                    throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
+                            directory.toString() + JAMS.resources.getString("_does_not_contain_needed_directory_") + 
+                            dir.toString() + JAMS.resources.getString("_)"));
+                }
+            }
             this.inputDirectory = inDir;
             this.outputDirectory = outDir;
             this.localInputDirectory = localInDir;
             this.localDumpDirectory = localDumpDir;
             this.tmpDirectory = tmpDir;
 
-            if (this.isPersistent()) {
-                Calendar cal = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
-                this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + sdf.format(cal.getTime()));
-            } else {
-                this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + "current");
-            }
+        } else {
 
-            return true;
-        } catch (SecurityException se) {
-            return false;
+            try {
+
+                inDir.mkdirs();
+                outDir.mkdirs();
+                tmpDir.mkdirs();
+                localInDir.mkdirs();
+                localDumpDir.mkdirs();
+
+                this.inputDirectory = inDir;
+                this.outputDirectory = outDir;
+                this.localInputDirectory = localInDir;
+                this.localDumpDirectory = localDumpDir;
+                this.tmpDirectory = tmpDir;
+
+                if (this.isPersistent()) {
+                    Calendar cal = Calendar.getInstance();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
+                    this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + sdf.format(cal.getTime()));
+                } else {
+                    this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + "current");
+                }
+
+            } catch (SecurityException se) {
+                throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
+                        directory.toString() + JAMS.resources.getString("_is_not_a_valid_workspace!"));
+            }
         }
     }
 
@@ -397,6 +427,13 @@ public class VirtualWorkspace {
         return tmpDirectory;
     }
 
+    public class InvalidWorkspaceException extends Exception {
+
+        public InvalidWorkspaceException(String msg) {
+            super(msg);
+        }
+    }
+
     public static void main(String[] args) throws IOException {
 
         JAMSRuntime runtime = new StandardRuntime();
@@ -418,7 +455,14 @@ public class VirtualWorkspace {
         properties.load("D:/jamsapplication/nsk.jap");
         String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
 
-        VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime);
+
+        VirtualWorkspace ws;
+        try {
+            ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime, true);
+        } catch (InvalidWorkspaceException iwe) {
+            System.out.println(iwe.getMessage());
+            return;
+        }
         //VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/ws_test"), runtime);
         ws.setLibs(libs);
 

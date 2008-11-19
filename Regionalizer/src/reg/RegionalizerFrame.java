@@ -24,6 +24,7 @@ package reg;
 
 import jams.gui.LHelper;
 import jams.gui.WorkerDlg;
+import jams.workspace.VirtualWorkspace;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -59,6 +60,9 @@ public class RegionalizerFrame extends JFrame {
     private WorkerDlg openWSDlg;
     private Action openWSAction,  exitAction;
     private JLabel statusLabel;
+    private VirtualWorkspace workspace;
+    private InputPanel inputPanel = new InputPanel();
+    private OutputPanel outputPanel = new OutputPanel();
 
     public RegionalizerFrame() {
         init();
@@ -103,8 +107,8 @@ public class RegionalizerFrame extends JFrame {
 
         inoutSplitPane.setAutoscrolls(true);
         inoutSplitPane.setContinuousLayout(true);
-        inoutSplitPane.setLeftComponent(new JPanel());
-        inoutSplitPane.setRightComponent(new JPanel());
+        inoutSplitPane.setLeftComponent(inputPanel);
+        inoutSplitPane.setRightComponent(outputPanel);
         inoutSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         inoutSplitPane.setDividerLocation(IN_PANE_HEIGHT);
         inoutSplitPane.setOneTouchExpandable(false);
@@ -127,7 +131,7 @@ public class RegionalizerFrame extends JFrame {
         statusPanel.setBorder(BorderFactory.createEtchedBorder());
         statusPanel.setPreferredSize(new java.awt.Dimension(14, 20));
         statusLabel = new JLabel();
-        statusLabel.setText("DataReg v0.1");
+        statusLabel.setText(Regionalizer.APP_TITLE + " v0.1");
         statusPanel.add(statusLabel, java.awt.BorderLayout.CENTER);
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
 
@@ -158,14 +162,15 @@ public class RegionalizerFrame extends JFrame {
 
         if (result == JFileChooser.APPROVE_OPTION) {
 
-            // check if this is a valid workspace
-
             openWSDlg.setTask(new Runnable() {
 
                 public void run() {
                     try {
-                    Thread.sleep(3000);
-                    } catch (Exception e) {}
+                        workspace = new VirtualWorkspace(jfc.getSelectedFile(), Regionalizer.getRuntime(), true);
+                        setTitle(Regionalizer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
+                    } catch (VirtualWorkspace.InvalidWorkspaceException iwe) {
+                        Regionalizer.getRuntime().sendHalt(iwe.getMessage());
+                    }
                 }
             });
             openWSDlg.execute();

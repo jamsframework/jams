@@ -50,7 +50,6 @@ public class JAMSModel extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
     public JAMSDirName workspaceDirectory = new JAMSDirName();
-    
     private JAMSRuntime runtime;
     private String name,  author,  date;
     private VirtualWorkspace workspace;
@@ -103,10 +102,10 @@ public class JAMSModel extends JAMSContext {
         }
 
         // prepare workspace
-        this.workspace = new VirtualWorkspace(new File(workspaceDirectory.getValue()), runtime);
-        if (!workspace.isValid()) {
-            this.getRuntime().sendHalt(JAMS.resources.getString("Error_during_model_setup:_") +
-                    workspace.getDirectory().getAbsolutePath() + JAMS.resources.getString("_is_not_a_valid_workspace!"));
+        try {
+            this.workspace = new VirtualWorkspace(new File(workspaceDirectory.getValue()), runtime);
+        } catch (VirtualWorkspace.InvalidWorkspaceException iwe) {
+            this.getRuntime().sendHalt(iwe.getMessage());
             return;
         }
 

@@ -22,6 +22,12 @@
  */
 package reg;
 
+import jams.JAMS;
+import jams.gui.LHelper;
+import jams.runtime.JAMSRuntime;
+import jams.runtime.StandardRuntime;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.UIManager;
 
 /**
@@ -31,7 +37,16 @@ import javax.swing.UIManager;
 public class Regionalizer {
 
     public static final String APP_TITLE = "DataReg";
-    public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 850;
+    public static final int SCREEN_WIDTH = 1200,  SCREEN_HEIGHT = 850;
+    private static RegionalizerFrame regFrame;
+    private static JAMSRuntime runtime;
+
+    /**
+     * @return the runtime
+     */
+    public static JAMSRuntime getRuntime() {
+        return runtime;
+    }
 
     public Regionalizer() {
     }
@@ -44,7 +59,23 @@ public class Regionalizer {
         } catch (Exception evt) {
         }
 
-        RegionalizerFrame regFrame = new RegionalizerFrame();
+        runtime = new StandardRuntime();
+        runtime.setDebugLevel(JAMS.VERBOSE);
+        runtime.addErrorLogObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                LHelper.showErrorDlg(regFrame, arg.toString(), JAMS.resources.getString("Error"));
+            }
+        });
+        runtime.addInfoLogObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                //LHelper.showInfoDlg(regFrame, arg.toString(), JAMS.resources.getString("Info"));
+            }
+        });
+
+
+        regFrame = new RegionalizerFrame();
         regFrame.setVisible(true);
     }
 }
