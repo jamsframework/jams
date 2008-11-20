@@ -185,7 +185,7 @@ public class SearchDlg extends JDialog {
 
     private void reset() {
         JAMSNode rootNode = (JAMSNode) tree.getModel().getRoot();
-        treeEnum = rootNode.breadthFirstEnumeration();
+        treeEnum = rootNode.preorderEnumeration();
         foundResult = false;
     }
 

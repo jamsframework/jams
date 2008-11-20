@@ -66,9 +66,9 @@ public class JAMSTree extends JTree {
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             TreeNode node = (TreeNode) value;
 
-            if (node instanceof JAMSNode) {
-                JAMSNode jNode = (JAMSNode) node;
-                setIcon(JAMSNode.NODE_ICON[jNode.getType()]);
+            if (node instanceof DSTreeNode) {
+                DSTreeNode jNode = (DSTreeNode) node;
+                setIcon(DSTreeNode.NODE_ICON[jNode.getType()]);
             }
             return this;
         }

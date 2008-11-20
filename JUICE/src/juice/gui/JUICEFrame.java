@@ -403,6 +403,13 @@ public class JUICEFrame extends JFrame {
         helpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Browser.png")));
         toolBar.add(helpButton);
 
+        JButton exitButton = new JButton(exitAction);
+        exitButton.setText("");
+        exitButton.setToolTipText(JUICE.resources.getString("Exit"));
+        exitButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/system-shutdown.png")));
+        toolBar.add(exitButton);
+
+
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
 

@@ -29,6 +29,7 @@ import jams.runtime.StandardRuntime;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.UIManager;
+import reg.tree.DSTree;
 
 /**
  *
@@ -40,6 +41,7 @@ public class Regionalizer {
     public static final int SCREEN_WIDTH = 1200,  SCREEN_HEIGHT = 850;
     private static RegionalizerFrame regFrame;
     private static JAMSRuntime runtime;
+    private static DSTree tree;
 
     /**
      * @return the runtime
@@ -77,5 +79,19 @@ public class Regionalizer {
 
         regFrame = new RegionalizerFrame();
         regFrame.setVisible(true);
+    }
+
+    /**
+     * @return the tree
+     */
+    public static DSTree getTree() {
+        return tree;
+    }
+
+    /**
+     * @param tree the tree to set
+     */
+    public static void setTree(DSTree tree) {
+        Regionalizer.tree = tree;
     }
 }

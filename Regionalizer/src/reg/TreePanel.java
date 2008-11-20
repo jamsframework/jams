@@ -1,5 +1,5 @@
 /*
- * InputPanel.java
+ * TreePanel.java
  * Created on 19. November 2008, 10:46
  *
  * This file is part of JAMS
@@ -27,22 +27,22 @@ import jams.workspace.VirtualWorkspace;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import reg.tree.DatastoreTree;
-import reg.tree.JAMSTree;
+import reg.tree.DSTree;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class InputPanel extends JPanel {
+public class TreePanel extends JPanel {
 
-    private DatastoreTree tree = new DatastoreTree();
+    private DSTree tree = new DSTree();
     
-    public InputPanel() {
+    public TreePanel() {
         super();
         JScrollPane scrollPane = new JScrollPane(tree);
         this.setLayout(new BorderLayout());
         this.add(scrollPane, BorderLayout.CENTER);
+        Regionalizer.setTree(tree);
     }
 
     public void updateContent() {

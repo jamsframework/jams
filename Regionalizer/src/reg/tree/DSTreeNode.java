@@ -1,5 +1,5 @@
 /*
- * JAMSNode.java
+ * DSTreeNode.java
  * Created on 7. April 2006, 21:55
  *
  * This file is part of JAMS
@@ -32,31 +32,33 @@ import javax.swing.tree.DefaultMutableTreeNode;
  *
  * @author S. Kralisch
  */
-public class JAMSNode extends DefaultMutableTreeNode {
+public class DSTreeNode extends DefaultMutableTreeNode {
     
-    public final static int INPUT_ROOT = 0;
-    public final static int OUTPUT_ROOT = 1;
-    public final static int INPUT_DS = 2;
-    public final static int OUTPUT_DS = 3;
+    public final static int IO_ROOT = 0;
+    public final static int INPUT_ROOT = 1;
+    public final static int OUTPUT_ROOT = 2;
+    public final static int INPUT_DS = 3;
+    public final static int OUTPUT_DS = 4;
     
     static int ICON_WIDTH = 16;
     static int ICON_HEIGHT = 16;
     
     static Icon[] NODE_ICON = {
-        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/world.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
-        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/world.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/inout.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/folder.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/folder.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/spreadsheet.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/spreadsheet.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
     };
     
     private int type = 0;
     
-    public JAMSNode(Object o, int type) {
+    public DSTreeNode(Object o, int type) {
         super(o);
         this.setType(type);
     }
     
-    public JAMSNode(Object o) {
+    public DSTreeNode(Object o) {
         super(o);
     }
     
@@ -68,7 +70,7 @@ public class JAMSNode extends DefaultMutableTreeNode {
         this.type = type;
     }
     
-    public JAMSNode clone(JAMSTree target) {
+    public DSTreeNode clone(JAMSTree target) {
         return null;
     }
 }

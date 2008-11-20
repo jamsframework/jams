@@ -73,6 +73,7 @@ public class JUICE {
         }*/
         } catch (Exception evt) {
         }
+        
         try {
 
             //try to load property values from file

@@ -32,6 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -54,15 +55,15 @@ import javax.swing.KeyStroke;
  */
 public class RegionalizerFrame extends JFrame {
 
-    private static final int INOUT_PANE_WIDTH = 250,  IN_PANE_HEIGHT = 300;
+    private static final int INOUT_PANE_WIDTH = 250,  INOUT_PANE_HEIGHT = 500;
     private static final int DIVIDER_WIDTH = 6;
     private JFileChooser jfc = LHelper.getJFileChooser();
     private WorkerDlg openWSDlg;
     private Action openWSAction,  exitAction;
     private JLabel statusLabel;
     private VirtualWorkspace workspace;
-    private InputPanel inputPanel = new InputPanel();
-    private OutputPanel outputPanel = new OutputPanel();
+    private TreePanel treePanel = new TreePanel();
+    private InfoPanel infoPanel = new InfoPanel();
 
     public RegionalizerFrame() {
         init();
@@ -107,10 +108,10 @@ public class RegionalizerFrame extends JFrame {
 
         inoutSplitPane.setAutoscrolls(true);
         inoutSplitPane.setContinuousLayout(true);
-        inoutSplitPane.setLeftComponent(inputPanel);
-        inoutSplitPane.setRightComponent(outputPanel);
+        inoutSplitPane.setLeftComponent(treePanel);
+        inoutSplitPane.setRightComponent(infoPanel);
         inoutSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        inoutSplitPane.setDividerLocation(IN_PANE_HEIGHT);
+        inoutSplitPane.setDividerLocation(INOUT_PANE_HEIGHT);
         inoutSplitPane.setOneTouchExpandable(false);
         inoutSplitPane.setDividerSize(DIVIDER_WIDTH);
 
@@ -154,6 +155,13 @@ public class RegionalizerFrame extends JFrame {
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(Math.min(d.width, Regionalizer.SCREEN_WIDTH), Math.min(d.height, Regionalizer.SCREEN_HEIGHT));
 
+        try {
+            workspace = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), Regionalizer.getRuntime(), true);
+            setTitle(Regionalizer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
+            treePanel.update(workspace);
+        } catch (VirtualWorkspace.InvalidWorkspaceException iwe) {
+            Regionalizer.getRuntime().sendHalt(iwe.getMessage());
+        }
     }
 
     private void open() {
@@ -168,7 +176,7 @@ public class RegionalizerFrame extends JFrame {
                     try {
                         workspace = new VirtualWorkspace(jfc.getSelectedFile(), Regionalizer.getRuntime(), true);
                         setTitle(Regionalizer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
-                        inputPanel.update(workspace);
+                        treePanel.update(workspace);
                     } catch (VirtualWorkspace.InvalidWorkspaceException iwe) {
                         Regionalizer.getRuntime().sendHalt(iwe.getMessage());
                     }

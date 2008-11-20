@@ -1,5 +1,5 @@
 /*
- * DatastoreTree.java
+ * DSTree.java
  * Created on 19. November 2008, 17:58
  *
  * This file is part of JAMS
@@ -22,7 +22,6 @@
  */
 package reg.tree;
 
-import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -37,31 +36,35 @@ import javax.swing.tree.TreePath;
 import jams.model.JAMSComponent;
 import jams.workspace.VirtualWorkspace;
 import javax.swing.KeyStroke;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
  * @author S. Kralisch
  */
-public class DatastoreTree extends JAMSTree {
+public class DSTree extends JAMSTree {
 
-    private static final String ROOT_NAME = "Eingabe";
+    private static final String ROOT_NAME = "Datenspeicher",  INPUT_NAME = "Eingabedaten",  OUTPUT_NAME = "Ausgabedaten";
     private JPopupMenu popup;
-    private String[] libsArray;
-    private int contextCount,  componentCount;
+    private VirtualWorkspace workspace;
+    private DSTreeNode root;
+    private NodeObservable nodeObservable = new NodeObservable();
 
-    public DatastoreTree() {
+    public DSTree() {
         super();
 
         setEditable(false);
-        new DefaultTreeTransferHandler(this, DnDConstants.ACTION_COPY);
+        root = new DSTreeNode(ROOT_NAME, DSTreeNode.IO_ROOT);
+        this.setModel(new DefaultTreeModel(root));
 
         JMenuItem detailItem = new JMenuItem("Zeige Daten");
-        detailItem.setAccelerator(KeyStroke.getKeyStroke('M'));
+        detailItem.setAccelerator(KeyStroke.getKeyStroke('D'));
         detailItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent evt) {
-                displayComponentDlg();
+                displayDSData();
             }
         });
         popup = new JPopupMenu();
@@ -77,8 +80,16 @@ public class DatastoreTree extends JAMSTree {
 
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() >= 2) {
-                    displayComponentDlg();
+                    displayDSData();
                 }
+            }
+        });
+
+        addTreeSelectionListener(new TreeSelectionListener() {
+
+            @Override
+            public void valueChanged(TreeSelectionEvent e) {
+                displayDSInfo();
             }
         });
 
@@ -88,47 +99,70 @@ public class DatastoreTree extends JAMSTree {
     private void showPopup(MouseEvent evt) {
         TreePath p = this.getClosestPathForLocation(evt.getX(), evt.getY());
         this.setSelectionPath(p);
-        JAMSNode node = (JAMSNode) this.getLastSelectedPathComponent();
-        if (node != null) {
+        DSTreeNode node = (DSTreeNode) this.getLastSelectedPathComponent();
+        if ((node != null) && ((node.getType() == DSTreeNode.INPUT_DS) || (node.getType() == DSTreeNode.OUTPUT_DS))){
             popup.show(this, evt.getX(), evt.getY());
         }
     }
 
-    private void displayComponentDlg() {
+    private void displayDSInfo() {
+        System.out.println("Show Info");
+        nodeObservable.setNode((DSTreeNode) getSelectionPath().getLastPathComponent());
+    }
 
-
-
+    private void displayDSData() {
+        System.out.println("Show Data");
     }
 
     public void update(VirtualWorkspace workspace) {
 
         this.setVisible(false);
-        JAMSNode root = createLibTree();
-        this.setModel(new DefaultTreeModel(root));
+        this.workspace = workspace;
+        createIOTree();
+        //this.expandRow(0);
+        this.expandAll();
         this.setVisible(true);
 
-        /*
-        libsArray = JAMSTools.toArray(libFileNames, ";");
-        this.setModel(null);
+    /*
+    libsArray = JAMSTools.toArray(libFileNames, ";");
+    this.setModel(null);
 
-        contextCount = 0;
-        componentCount = 0;
-        JUICE.setStatusText(JUICE.resources.getString("Loading_Libraries"));
-        this.setVisible(false);
-        JAMSNode root = LibTree.this.createLibTree(LibTree.this.libsArray);
-        this.setModel(new DefaultTreeModel(root));
-        this.collapseAll();
-        this.setVisible(true);
-        JUICE.setStatusText(JUICE.resources.getString("Contexts:") + contextCount + " " + JUICE.resources.getString("Components:") + componentCount);
-         */
-
-        System.out.println("Tree Rock'n'Roll");
+    contextCount = 0;
+    componentCount = 0;
+    JUICE.setStatusText(JUICE.resources.getString("Loading_Libraries"));
+    this.setVisible(false);
+    DSTreeNode root = LibTree.this.createLibTree(LibTree.this.libsArray);
+    this.setModel(new DefaultTreeModel(root));
+    this.collapseAll();
+    this.setVisible(true);
+    JUICE.setStatusText(JUICE.resources.getString("Contexts:") + contextCount + " " + JUICE.resources.getString("Components:") + componentCount);
+     */
 
     }
 
-    private JAMSNode createLibTree() {
+    private DSTreeNode createIOTree() {
 
-        JAMSNode root = new JAMSNode(ROOT_NAME, JAMSNode.INPUT_ROOT);
+        DSTreeNode inputRoot = new DSTreeNode(INPUT_NAME, DSTreeNode.INPUT_ROOT);
+        Set<String> inIDs = workspace.getInputDataStoreIDs();
+        List<String> inIDList = new ArrayList<String>(inIDs);
+        Collections.sort(inIDList);
+        for (String id : inIDList) {
+            DSTreeNode dsNode = new DSTreeNode(id, DSTreeNode.INPUT_DS);
+            inputRoot.add(dsNode);
+        }
+
+        DSTreeNode outputRoot = new DSTreeNode(OUTPUT_NAME, DSTreeNode.OUTPUT_ROOT);
+        Set<String> outIDs = workspace.getOutputDataStoreIDs();
+        List<String> outIDList = new ArrayList<String>(outIDs);
+        Collections.sort(outIDList);
+        for (String id : outIDList) {
+            DSTreeNode dsNode = new DSTreeNode(id, DSTreeNode.OUTPUT_DS);
+            outputRoot.add(dsNode);
+        }
+        root.removeAllChildren();
+        root.add(inputRoot);
+        root.add(outputRoot);
+
         /*
         for (int i = 0; i < libsArray.length; i++) {
         File file = new File(libsArray[i]);
@@ -159,12 +193,12 @@ public class DatastoreTree extends JAMSTree {
         return root;
     }
 
-    private JAMSNode createJARNode(String jar, ClassLoader loader) {
+    private DSTreeNode createJARNode(String jar, ClassLoader loader) {
 
         //System.out.println("loading " + jar);
-        JAMSNode jarRoot = new JAMSNode(jar, JAMSNode.INPUT_DS);
+        DSTreeNode jarRoot = new DSTreeNode(jar, DSTreeNode.INPUT_DS);
         ArrayList<Class> components = new ArrayList<Class>();
-        JAMSNode compNode;
+        DSTreeNode compNode;
         String jarName = "", clazzName = "", clazzFullName = "";
 
         try {
@@ -172,7 +206,7 @@ public class DatastoreTree extends JAMSTree {
             File file = new File(jar);
             //URLClassLoader loader = new URLClassLoader(new URL[]{file.toURL()});
             jarName = file.getCanonicalFile().getName();
-            //jarRoot = new JAMSNode(jarName, JAMSNode.PACKAGE_NODE);
+            //jarRoot = new DSTreeNode(jarName, DSTreeNode.PACKAGE_NODE);
 
             Enumeration jarentries = jfile.entries();
             while (jarentries.hasMoreElements()) {
@@ -191,8 +225,6 @@ public class DatastoreTree extends JAMSTree {
                         }
 
                     } catch (ClassNotFoundException cnfe) {
-
-
                     } catch (NoClassDefFoundError ncdfe) {
                         //LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Missing class while loading component " + clazzFullName +
                         //        " in archive " + jarName + "!", "Error while loading archive");
@@ -205,11 +237,11 @@ public class DatastoreTree extends JAMSTree {
             }
 
             String oldPackage = "", newPackage;
-            JAMSNode packageNode = null;
+            DSTreeNode packageNode = null;
             for (Class clazz : components) {
                 newPackage = clazz.getPackage().getName();
                 if (!newPackage.equals(oldPackage)) {
-                    packageNode = new JAMSNode(newPackage, JAMSNode.INPUT_DS);
+                    packageNode = new DSTreeNode(newPackage, DSTreeNode.INPUT_DS);
                     jarRoot.add(packageNode);
                     oldPackage = newPackage;
                 }
@@ -224,10 +256,10 @@ public class DatastoreTree extends JAMSTree {
                     ComponentDescriptor no = new ComponentDescriptor(clazz, this);
 
                     if (JAMSContext.class.isAssignableFrom(clazz)) {
-                    compNode = new JAMSNode(no, JAMSNode.CONTEXT_NODE);
+                    compNode = new DSTreeNode(no, DSTreeNode.CONTEXT_NODE);
                     contextCount++;
                     } else {
-                    compNode = new JAMSNode(no, JAMSNode.COMPONENT_NODE);
+                    compNode = new DSTreeNode(no, DSTreeNode.COMPONENT_NODE);
                     componentCount++;
                     }
 
@@ -255,5 +287,32 @@ public class DatastoreTree extends JAMSTree {
         } else {
             return null;
         }
+    }
+
+    public void addObserver(Observer o) {
+        nodeObservable.addObserver(o);
+    }
+
+    /**
+     * @return the workspace
+     */
+    public VirtualWorkspace getWorkspace() {
+        return workspace;
+    }
+
+    private class NodeObservable extends Observable {
+        DSTreeNode node;
+
+        public void setNode(DSTreeNode node) {
+            this.node = node;
+            this.setChanged();
+            notifyObservers();
+        }
+
+        @Override
+        public void notifyObservers(Object arg) {
+            super.notifyObservers(node);
+        }
+
     }
 }
