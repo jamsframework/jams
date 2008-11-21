@@ -35,11 +35,11 @@ public abstract class Optimizer extends JAMSContext {
     public Vector<Sample> sampleList = new Vector<Sample>();
     
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
+    access = JAMSVarDescription.AccessType.WRITE,
+            update = JAMSVarDescription.UpdateType.RUN,
             description = "List of parameter identifiers to be sampled"
             )
-            public JAMSString parameterIDs;
+            public JAMSDouble[] parameterIDs;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
@@ -78,17 +78,11 @@ public abstract class Optimizer extends JAMSContext {
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Flag for enabling/disabling this sampler"
+            description = "Flag for enabling/disabling this sampler",
+            defaultValue = "true"
             )
             public JAMSBoolean enable;
-    
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Data file directory name"
-            )
-            public JAMSString dirName;
-        
+                
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
@@ -159,7 +153,8 @@ public abstract class Optimizer extends JAMSContext {
     protected String[] parameterNames;
     protected double[] lowBound;
     protected double[] upBound;    
-            
+    protected String dirName;
+    
     //number of parameters!!
     public int n;
     //optimization mode
@@ -174,20 +169,13 @@ public abstract class Optimizer extends JAMSContext {
     
     public Optimizer() {
     }
-        
-    public void RefreshDataHandles(){
-        for (int i=0;i<parameterNames.length;i++){
-            parameters[i] = (JAMSDouble) getModel().getRuntime().getDataHandles().get(parameterNames[i]);
-        }
-    }
-        
-    public void init() {        
-        if (enable != null)
-            if (!enable.getValue())
-                return;    
-        super.init();
+                    
+    public void init() {   
+        super.init();        
+        if (!enable.getValue())
+            return;            
         for (DataTracer dataTracer : dataTracers) {
-            dataTracer.startMark();
+            dataTracer.startMark();            
         }
         if (this.parameterIDs == null)
             getModel().getRuntime().sendHalt("parameterIDs not specified!");
@@ -202,29 +190,19 @@ public abstract class Optimizer extends JAMSContext {
         
         currentSampleCount = 0;
         
-        //retreiving parameter names        
-        StringTokenizer tok = new StringTokenizer(parameterIDs.getValue(), ";");        
-        this.n = tok.countTokens();
+        n = parameterIDs.length;
+        parameters = parameterIDs;        
+        parameterNames = new String[n];
         lowBound = new double[n];
         upBound = new double[n];
-        parameters = new JAMSDouble[n];
-        parameterNames = new String[n];         
         
+        StringTokenizer tok = new StringTokenizer(this.boundaries.getValue(),";");
         int i = 0;
         while (tok.hasMoreTokens()) {
-            parameterNames[i] = tok.nextToken();           
-            i++;
-        }
-        RefreshDataHandles();
-        //retreiving boundaries
-        tok = new StringTokenizer(boundaries.getValue(), ";");
-        //check if number of parameter ids and boundaries match
-        if (n != tok.countTokens() ){
-            getModel().getRuntime().sendHalt("Component " + this.getInstanceName() + ": Different number of parameterIDs and boundaries!");
-        }
-        
-        i = 0;
-        while (tok.hasMoreTokens()) {
+            if (i>=n){
+               getModel().getRuntime().sendHalt("to many boundaries!"); 
+               return;
+            }
             String key = tok.nextToken();
             key = key.substring(1, key.length() - 1);
 
@@ -244,7 +222,8 @@ public abstract class Optimizer extends JAMSContext {
             }
 
             i++;
-        }       
+        }  
+        dirName = this.getModel().getWorkspaceDirectory().getPath();
     }
 
     protected double[] RandomSampler() {
@@ -261,10 +240,11 @@ public abstract class Optimizer extends JAMSContext {
     }
 
     String buildMark(){
-        double parameter_double[] = new double[parameters.length];
+        /*double parameter_double[] = new double[parameters.length];
         for (int i=0;i<parameter_double.length;i++)
             parameter_double[i] = parameters[i].getValue();
-        return new Sample(parameter_double,effValue.getValue()).toString();        
+        return new Sample(parameter_double,effValue.getValue()).toString();        */
+        return Integer.toString(currentSampleCount) + "\t";
     }
     
     @Override
@@ -292,6 +272,7 @@ public abstract class Optimizer extends JAMSContext {
                     output("\t");
                 }
                 output("\n");
+                flush();
             }
         };
     }
@@ -315,12 +296,12 @@ public abstract class Optimizer extends JAMSContext {
             }            
         }        
         if (GoalFunction == null) {
-            RefreshDataHandles();
+            //RefreshDataHandles();
             for (int j = 0; j < parameters.length; j++) {
                 try{
                     parameters[j].setValue(x[j]);
                 }catch(Exception e){
-                    getModel().getRuntime().sendHalt("Error! Parameter No. " + j + " konnte nicht gefunden werden!" + e.toString());
+                    getModel().getRuntime().sendHalt("Error! Parameter No. " + j + " wasn´t found" + e.toString());
                 }
             }            
             singleRun();
@@ -357,10 +338,7 @@ public abstract class Optimizer extends JAMSContext {
     protected void singleRun() {
         if (runEnumerator == null) {
             runEnumerator = getChildrenEnumerator();
-        }
-        /*for (DataTracer dataTracer : dataTracers) {
-            dataTracer.startMark();
-        }*/
+        }        
         runEnumerator.reset();
         while (runEnumerator.hasNext() && doRun) {
             JAMSComponent comp = runEnumerator.next();
@@ -377,7 +355,7 @@ public abstract class Optimizer extends JAMSContext {
             try {
                 comp.run();
             } catch (Exception e) {
-                getModel().getRuntime().sendHalt(e.getMessage());
+                getModel().getRuntime().sendHalt(e.toString());
             }
         }
 
@@ -390,15 +368,20 @@ public abstract class Optimizer extends JAMSContext {
                 getModel().getRuntime().sendHalt(e.getMessage());
             }
         }
-        for (DataTracer dataTracer : dataTracers) {
-            dataTracer.trace();
-            //dataTracer.endMark();
+        updateEntityData();
+        if (enable.getValue())  { 
+            for (DataTracer dataTracer : dataTracers) {
+                dataTracer.trace();
+            }
         }
     }
     @Override
     public void cleanup(){
+        if (!enable.getValue())
+            return;            
         for (DataTracer dataTracer : dataTracers) {
             dataTracer.endMark();
+            dataTracer.close();
         }
     }
 }

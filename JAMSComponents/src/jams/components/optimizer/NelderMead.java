@@ -5,26 +5,10 @@
 
 package jams.components.optimizer;
 
-import Jama.Matrix;
-import jams.components.optimizer.LinearConstraintDirectPatternSearch;
-import jams.components.optimizer.Optimizer.AbstractFunction;
 import jams.components.optimizer.Optimizer.Sample;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Random;
-import java.util.Vector;
-import jams.JAMS;
-import jams.JAMSTools;
-import jams.data.JAMSBoolean;
-import jams.data.JAMSDouble;
-import jams.data.JAMSEntity;
-import jams.data.JAMSInteger;
-import jams.data.JAMSString;
 import jams.io.SerializableBufferedWriter;
 import jams.model.JAMSComponentDescription;
-import jams.model.JAMSVarDescription;
 
 @SuppressWarnings("unchecked")
 @JAMSComponentDescription(
@@ -70,7 +54,19 @@ public class NelderMead extends Optimizer{
         super.init();
     }
         
+    public boolean feasible(double point[]){
+        for (int i=0;i<point.length;i++)
+            if (point[i] < this.lowBound[i] || point[i] > this.upBound[i])
+                return false;
+        return true;
+    }
+    
     public void run(){
+        if (enable!=null)
+            if (!enable.getValue()){
+                singleRun();
+                return;
+            }
         boolean stop = false;
     
         //first draw n+1 random points        
@@ -123,34 +119,46 @@ public class NelderMead extends Optimizer{
             for (int i=0;i<n;i++){
                 reflection[i] = centroid[i] + alpha*(centroid[i]-simplex[m-1].x[i]);
             }
-            getModel().getRuntime().println("reflection step");
-            Sample reflection_sample = this.getSample(reflection);
+            Sample reflection_sample = null;
+            if (this.feasible(reflection)){
+                getModel().getRuntime().println("reflection step");
+                reflection_sample = this.getSample(reflection);
             
-            if (simplex[0].fx < reflection_sample.fx && reflection_sample.fx < simplex[m-1].fx){
-                simplex[m-1] = reflection_sample;
-                continue;
+                if (simplex[0].fx < reflection_sample.fx && reflection_sample.fx < simplex[m-1].fx){
+                    simplex[m-1] = reflection_sample;
+                    continue;
+                }
             }
             //expand
-            if (simplex[0].fx >= reflection_sample.fx){
+            if (this.feasible(reflection) && simplex[0].fx >= reflection_sample.fx){
                 double expansion[] = new double[n];
                 for (int i=0;i<n;i++){
                     expansion[i] = centroid[i] + gamma*(centroid[i]-simplex[m-1].x[i]);
                 }
                 getModel().getRuntime().println("expansion step");
+                
                 Sample expansion_sample = this.getSample(expansion);
-                if (expansion_sample.fx < reflection_sample.fx){
+                if (this.feasible(expansion) && expansion_sample.fx < reflection_sample.fx){
                     simplex[m-1] = expansion_sample;
-                    continue;
-                }
+                }else{
+                    simplex[m-1] = reflection_sample;                    
+                }                    
+                continue;                
             }
             //contraction
-            if (simplex[m-1].fx <= reflection_sample.fx){                
+            if (!this.feasible(reflection) || simplex[m-1].fx <= reflection_sample.fx){                
                 double contraction[] = new double[n];
                 for (int i=0;i<n;i++){
                     contraction[i] = centroid[i] + rho*(centroid[i]-simplex[m-1].x[i]);
                 }
                 getModel().getRuntime().println("contraction step");
-                Sample contraction_sample = this.getSample(contraction);
+                //this should not happen .. 
+                Sample contraction_sample = null;
+                if (!this.feasible(contraction)){
+                    getModel().getRuntime().println("not feasible after contraction step");
+                    contraction_sample = this.getSample(this.RandomSampler());
+                }else
+                    contraction_sample = this.getSample(contraction);
                 if (contraction_sample.fx < simplex[m-1].fx){
                     simplex[m-1] = contraction_sample;
                     continue;

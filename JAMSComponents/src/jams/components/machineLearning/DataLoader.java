@@ -14,6 +14,7 @@ import jams.data.*;
 import java.util.*;
 import java.io.*;
 import jams.JAMS;
+import jams.JAMSTools;
 /**
  *
  * @author Christian(web)
@@ -91,7 +92,8 @@ public class DataLoader extends JAMSComponent {
         }
         
         try {
-            reader = new BufferedReader(new FileReader(datafile.getValue()));
+            reader = new BufferedReader(new FileReader(JAMSTools.CreateAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),
+                    datafile.getValue())));
         } catch (IOException ioe) {
             this.getModel().getRuntime().sendHalt("could not open datafile " + datafile.getValue() + "; wrong path?");
             JAMS.handle(ioe);

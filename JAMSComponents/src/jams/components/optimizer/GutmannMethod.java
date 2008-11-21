@@ -126,7 +126,7 @@ public class GutmannMethod extends Optimizer {
             try{
                 mu = A.solve(b);
             }catch(Exception e){
-                System.out.print("aaaaaaaaaaaarg");
+                System.out.print("cant solve interpolation system, because: singular matrix");
                 return Double.POSITIVE_INFINITY;
             }
             double m0factor = -1;
@@ -140,7 +140,7 @@ public class GutmannMethod extends Optimizer {
             double value = mu.get(N, 0)*(sn - fstar)*(sn - fstar)*m0factor;
             //this is not possible
             if (value < 0){
-                System.out.println("bad bumping value!");
+                System.out.println("error, integral of 2nd order is less than zero");
                 value = -value; //better possibilities??
             }
             return value;
@@ -148,7 +148,9 @@ public class GutmannMethod extends Optimizer {
     }
                                                                 
     public void init() {
-        super.init();     
+        super.init();   
+        if (!this.enable.getValue())
+            return;
         this.generator.setSeed(1);
     }
                                        
@@ -241,7 +243,7 @@ public class GutmannMethod extends Optimizer {
         BufferedWriter writer_mean = null;
         BufferedWriter writer_var = null;
         try {
-            writer_mean = new BufferedWriter(new FileWriter(JAMSTools.CreateAbsoluteFileName(this.dirName.getValue(), GPmeanFile)));
+            writer_mean = new BufferedWriter(new FileWriter(JAMSTools.CreateAbsoluteFileName(this.getModel().getWorkspaceDirectory().getPath(), GPmeanFile)));
             //writer_var = new BufferedWriter(new FileWriter(this.dirName + "/" + GPvarFile));
         } catch (IOException ioe) {
             JAMS.handle(ioe);
@@ -366,7 +368,7 @@ public class GutmannMethod extends Optimizer {
     public long sigma(int counter,int n_snake,int cycleLength){
         if (counter == n_snake)
             return n_snake;
-        return sigma(counter-1,n_snake,cycleLength)-Math.round((n-this.initalSampleSize)/(double)cycleLength);
+        return sigma(counter-1,n_snake,cycleLength)-Math.round((this.currentSampleCount-this.initalSampleSize)/(double)cycleLength);
     }
            
     public double[] Transform(double[]x){
@@ -383,6 +385,10 @@ public class GutmannMethod extends Optimizer {
     }
             
     public void run() { 
+        if (!enable.getValue()){
+            singleRun();
+            return;
+        }
         initalPhase();
                         
         int iterationCounter = 0;
@@ -393,7 +399,7 @@ public class GutmannMethod extends Optimizer {
             Matrix coefficient = this.CreateInterpolant();
       
             int k = sampleList.size() % cycleLength;
-            int n_snake = sampleList.size() - k;
+            int n_snake = sampleList.size() - k - 1;
             
             
             Sample myMin = this.FindInterpolatedMinimum(sampleList.size(), coefficient);
@@ -412,7 +418,7 @@ public class GutmannMethod extends Optimizer {
             }
             
             //double target = this.minValue.fx - (double)(k*k)*(sampleList.get((int)sigma(iterationCounter,n_snake,cycleLength)).fx-this.minValue.fx);
-            double target = (double)(k*k)*(sampleList.get((int)sigma(sampleList.size(),n_snake,cycleLength)-1).fx-this.minValue.fx);
+            double target = (double)(k*k)*(sampleList.get((int)sigma(sampleList.size()-1,n_snake,cycleLength)-1).fx-this.minValue.fx);
             double next[] = null;
             if (toNear){
                 System.out.println("use target point!");
@@ -423,64 +429,69 @@ public class GutmannMethod extends Optimizer {
                 next = myMin.x;
             }
             toNear = false;
-            for (int j=0;j<sampleList.size();j++){
-                double y[] = Transform(this.sampleList.get(j).x);
-                double dist = 0.0;
-                for (int i=0;i<next.length;i++){                
-                    dist += (y[i]-next[i])*(y[i]-next[i]);
-                }
-                if (dist < 0.000000001){
-                    System.out.println("distance between next point and a allready sampled point is too near");
-                    toNear = true;
-                    break;
+            double minDist = Double.POSITIVE_INFINITY;
+            
+            do{
+                minDist = Double.POSITIVE_INFINITY;
+                for (int j=0;j<sampleList.size();j++){                
+                    double y[] = Transform(this.sampleList.get(j).x);
+                    double dist = 0;
+                    for (int i=0;i<next.length;i++){                
+                        dist += (y[i]-next[i])*(y[i]-next[i]);
+                    }
+                    minDist = Math.min(dist, minDist);                    
+                    //sample randomly
+                    if (minDist < 0.000000001){
+                        System.out.println("distance between next point and a allready sampled point is too small");
+                        next = Transform(this.RandomSampler());                    
+                        break;
+                    }
                 }                    
-            }
-            if (toNear)
-                continue;
+            }while (minDist < 0.000000001);
             
             Sample s = this.getSample(ReTransform(next));
             
             if (minValue.fx > s.fx){
                 minValue = s;
                 best10.add(minValue);
-                if (this.sampleList.size() > 50*n){
-                    //find new minimum
-                    NelderMead neldermeadOptimizer = new NelderMead();
-                    neldermeadOptimizer.GoalFunction = new innerOptimizer();
-                    neldermeadOptimizer.boundaries = this.boundaries;
-                    neldermeadOptimizer.lowBound = this.lowBound;
-                    neldermeadOptimizer.maxn = new JAMSInteger(200);
-                    neldermeadOptimizer.mode = new JAMSInteger(neldermeadOptimizer.MODE_MINIMIZATION);
-                    neldermeadOptimizer.n = n;
-                    neldermeadOptimizer.upBound = upBound;
-                    Sample initialSimplex[] = new Sample[n+1];
-                    for (int i=0;i<n+1;i++){
-                        if (i==0)
-                            initialSimplex[i] = best10.get(best10.size()-1);
-                        else{
-                            initialSimplex[i] = sampleList.get(generator.nextInt(sampleList.size()));
-                        }
+            }
+            if (this.sampleList.size() > this.maxn.getValue()-10){
+                //find new minimum
+                NelderMead neldermeadOptimizer = new NelderMead();
+                neldermeadOptimizer.GoalFunction = new innerOptimizer();
+                neldermeadOptimizer.boundaries = this.boundaries;
+                neldermeadOptimizer.lowBound = this.lowBound;
+                neldermeadOptimizer.maxn = new JAMSInteger(200);
+                neldermeadOptimizer.mode = new JAMSInteger(NelderMead.MODE_MINIMIZATION);
+                neldermeadOptimizer.n = n;
+                neldermeadOptimizer.upBound = upBound;
+                Sample initialSimplex[] = new Sample[n+1];
+                for (int i=0;i<n+1;i++){
+                    if (i==0)
+                        initialSimplex[i] = best10.get(best10.size()-1);
+                    else{
+                        initialSimplex[i] = sampleList.get(generator.nextInt(sampleList.size()));
                     }
-                    neldermeadOptimizer.initialSimplex = initialSimplex;
-                    neldermeadOptimizer.setModel(this.getModel());
-                    neldermeadOptimizer.run();                
-                    this.sampleList.addAll(neldermeadOptimizer.sampleList);
-                    iterationCounter += neldermeadOptimizer.sampleList.size();
-                    for (int i=0;i<sampleList.size();i++){
-                        if (sampleList.get(i).fx < minValue.fx){
-                            minValue = sampleList.get(i);
-                            best10.add(minValue);
-                        }
-                        if (sampleList.get(i).fx > maxValue.fx)
-                            maxValue = sampleList.get(i);
+                }
+                neldermeadOptimizer.initialSimplex = initialSimplex;
+                neldermeadOptimizer.setModel(this.getModel());
+                neldermeadOptimizer.run();                
+                this.sampleList.addAll(neldermeadOptimizer.sampleList);
+                iterationCounter += neldermeadOptimizer.sampleList.size();
+                for (int i=0;i<sampleList.size();i++){
+                    if (sampleList.get(i).fx < minValue.fx){
+                        minValue = sampleList.get(i);
+                        best10.add(minValue);
                     }
+                    if (sampleList.get(i).fx > maxValue.fx)
+                        maxValue = sampleList.get(i);
                 }
             }
             if (maxValue.fx < s.fx)
                 maxValue = s;
             System.out.println("minimum:" + minValue);
                         
-            WriteData("output\\datafile"+iterationCounter+".dat");
+//            WriteData("output\\datafile"+iterationCounter+".dat");
         }
             /*
             if (writeGPData != null && writeGPData.getValue() == true){

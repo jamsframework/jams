@@ -49,7 +49,8 @@ public class LinearConstraintDirectPatternSearch {
                 P_k.add(P_i.times(delta));
             }            
         }
-                        
+        if (true)
+            return P_k;
         //2. use boundary direction (project p_k onto boundary??)   
         
         //we can construct the so called "tangent cone" through active index set

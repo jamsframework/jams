@@ -109,7 +109,6 @@ public class Learner extends JAMSComponent{
     }
     
     public void run() throws JAMSEntity.NoSuchAttributeException { 
-	Object o1 = this.trainData.getObject("data");
 	double t1[][] = (double[][])this.trainData.getObject("data");
 	double t2[] = (double[])this.trainData.getObject("predict");
 	setTrainingData(t1,t2);

@@ -30,7 +30,8 @@ public class NoNoiseExponential extends Kernel {
 	return sum;
     }
     
-    public String[] getKernelParameterNames(){
+    public String[] getParameterNames(){
+        super.getParameterNames();
         for (int i=0;i<inputDim;i++){
             this.KernelParameterNames[2*i] = "l_" + i;
             this.KernelParameterNames[2*i+1] = "alpha_" + i;

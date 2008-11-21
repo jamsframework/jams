@@ -13,7 +13,8 @@ public class SimplePeriodic extends Kernel {
 	this.KernelParameterCount = 3;
     }
        
-    public String[] getKernelParameterNames(){
+    public String[] getParameterNames(){
+        super.getParameterNames();
         this.KernelParameterNames[0] = "l";
         this.KernelParameterNames[1] = "period";
         this.KernelParameterNames[2] = "sigma";

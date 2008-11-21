@@ -76,6 +76,7 @@ public class NelderMead extends PatternSearch{
         }
         
         Vector<Matrix> P_i = LCDPS.UpdateDirections(Simplex[0], P, 1.0);
+        
         Sample next = super.step(context,Simplex[0],Simplex[n-1],P_i);
         if (next != null)
             return next;  

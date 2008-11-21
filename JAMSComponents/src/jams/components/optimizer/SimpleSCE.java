@@ -100,9 +100,11 @@ public class SimpleSCE extends Optimizer {
     PatternSearch SearchMethod = null;
     Matrix LinearConstraints_A = null, LinearConstraints_b = null;
 
-    public void init() {
+    public void init() {               
         super.init();
-
+        if (!enable.getValue())
+            return;            
+        
         if (LinearConstraintMatrixA != null && LinearConstraintVectorB != null) {
             StringTokenizer tok = new StringTokenizer(LinearConstraintMatrixA.getValue(), ";");
 
@@ -515,12 +517,11 @@ public class SimpleSCE extends Optimizer {
         if (runEnumerator == null) {
             runEnumerator = getChildrenEnumerator();
         }
-        if (enable != null) {
-            if (!enable.getValue()) {
-                singleRun();
-                return;
-            }
-        }                        
+        if (!enable.getValue()){
+            singleRun();
+            return;            
+        }
+        
         double x0[] = RandomSampler();
 
         int iNumberOfComplexes = 0;

@@ -5,14 +5,11 @@
 
 package jams.components.optimizer;
 
-import jams.JAMS;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.StringTokenizer;
 import jams.JAMSProperties;
 import jams.data.*;
@@ -192,118 +189,7 @@ public class ModelOptimizer extends JAMSComponent{
         String AttrName;
         ArrayList<String> compNames;
     }
-    @SuppressWarnings("unchecked")
-    private Hashtable<String,HashSet<String>> TransitiveClosure (Hashtable<String,HashSet<String>> graph){        
-        Hashtable<String,HashSet<String>> TransitiveClosure = new Hashtable();
-        
-        Set<String> keys = graph.keySet();
-        Iterator<String> iter = keys.iterator();
-        while(iter.hasNext()){
-            String key = iter.next();
-            HashSet<String> value = graph.get(key);
-            TransitiveClosure.put(key, (HashSet<String>)value.clone());
-        }
-        //find structures like a <-- b <-- c            
-        boolean change = true;
-        while (change){
-            change = false;
-            Set<String> aSet = TransitiveClosure.keySet();
-            Iterator<String> a_iter = keys.iterator();
-            while(a_iter.hasNext()){
-                String a = a_iter.next();
-                HashSet<String> bSet = TransitiveClosure.get(a);
-                if (bSet == null)
-                    continue;
-                Iterator<String> b_iter = bSet.iterator();
-                HashSet<String> modification = new HashSet();
-                while(b_iter.hasNext()){
-                    String b = b_iter.next();
-                    HashSet<String> cSet = TransitiveClosure.get(b);
-                    if (cSet == null)
-                        continue;
-                    Iterator<String> c_iter = cSet.iterator();
-                    while (c_iter.hasNext()){
-                        String c = c_iter.next();
-                        if (!bSet.contains(c)){
-                            modification.add(c);
-                            change = true;
-                        }
-                    }
-                }
-                bSet.addAll(modification);
-            }
-        }
-        return TransitiveClosure;
-    }
-    
-    @SuppressWarnings("unchecked")
-    Set<String> GetRelevantComponentsList(Hashtable<String,HashSet<String>> dependencyGraph,Set<String> EffWritingComponentsList){
-        HashSet<String> compList = new HashSet();
-        Iterator<String> iter = EffWritingComponentsList.iterator();
-        while(iter.hasNext()){
-            String wr_comp = iter.next();
-            compList.addAll(dependencyGraph.get(wr_comp));
-            compList.add(wr_comp);
-        }
-        return compList;
-    }
-
-    boolean RemoveNotListedComponents(Node root,Set<String> list){
-        NodeList childs = root.getChildNodes();
-        
-        ArrayList<Node> childsToRemove = new ArrayList<Node>();
-        int componentCounter = 0;
-        for (int index = 0; index < childs.getLength(); index++) {
-            Node node = childs.item(index);
-            if (node.getNodeName().equals("contextcomponent")) {
-                if (RemoveNotListedComponents(node,list)){
-                    childsToRemove.add(node);
-                }
-                componentCounter++;
-            }else if (node.getNodeName().equals("component")) {
-                Element comp = (Element)node;
-                if ( !list.contains(comp.getAttribute("name")) ){
-                    childsToRemove.add(node);                    
-                }
-                componentCounter++;
-            }                
-        }
-        boolean contextEmpty = componentCounter == childsToRemove.size();
-                    
-        for (int i=0;i<childsToRemove.size();i++){
-            root.removeChild(childsToRemove.get(i));
-        }
-        return contextEmpty;
-    }
-
-    boolean RemoveGUIComponents(Node root){
-        NodeList childs = root.getChildNodes();
-        
-        ArrayList<Node> childsToRemove = new ArrayList<Node>();
-        int componentCounter = 0;
-        for (int index = 0; index < childs.getLength(); index++) {
-            Node node = childs.item(index);
-            if (node.getNodeName().equals("contextcomponent")) {
-                if (RemoveGUIComponents(node)){
-                    childsToRemove.add(node);
-                }
-                componentCounter++;
-            }else if (node.getNodeName().equals("component")) {
-                Element comp = (Element)node;
-                if ( comp.getAttribute("class").contains("jams.components.gui") ){
-                    childsToRemove.add(node);                    
-                }
-                componentCounter++;
-            }                
-        }
-        boolean contextEmpty = componentCounter == childsToRemove.size();
-                    
-        for (int i=0;i<childsToRemove.size();i++){
-            root.removeChild(childsToRemove.get(i));
-        }
-        return contextEmpty;        
-    }
-    
+                        
     boolean OperatesOnAttribute(Node context,String attribute){
         NodeList childs = context.getChildNodes();
         for (int i=0;i<childs.getLength();i++){
@@ -650,7 +536,7 @@ public class ModelOptimizer extends JAMSComponent{
                 }
         } else {
             //check for default file
-            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
+            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + ".test";
             File file = new File(defaultFile);
             if (file.exists()) {
                 try{
@@ -665,13 +551,14 @@ public class ModelOptimizer extends JAMSComponent{
         rt.loadModel(doc,properties );
         JAMSModel model = rt.getModel();
         
-        Hashtable<String,HashSet<String>> dependencyGraph = model.getDependencyGraph();
-        Hashtable<String,HashSet<String>> transitiveClosureOfDependencyGraph = TransitiveClosure(dependencyGraph);
+        Hashtable<String,HashSet<String>> dependencyGraph = jams.components.metaOptimizer.modelOptimizer.getDependencyGraph(doc,model);
+        Hashtable<String,HashSet<String>> transitiveClosureOfDependencyGraph = jams.components.metaOptimizer.modelOptimizer.TransitiveClosure(dependencyGraph);
         
         Node root = doc.getDocumentElement();
                 
-        RemoveGUIComponents(root);
-        RemoveNotListedComponents(root,GetRelevantComponentsList(transitiveClosureOfDependencyGraph,model.CollectAttributeWritingComponents(effAttributeName.getValue())));
+        jams.components.metaOptimizer.modelOptimizer.RemoveGUIComponents(root);
+        jams.components.metaOptimizer.modelOptimizer.RemoveNotListedComponents(root,
+                jams.components.metaOptimizer.modelOptimizer.GetRelevantComponentsList(transitiveClosureOfDependencyGraph,model.CollectAttributeWritingComponents(effAttributeName.getValue())));
                                                         
         ArrayList<String> innerTimeContextParameter = new ArrayList();
         ArrayList<String> outerTimeContextParameter = new ArrayList();

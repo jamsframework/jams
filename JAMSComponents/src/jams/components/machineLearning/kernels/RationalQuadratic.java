@@ -22,7 +22,8 @@ public class RationalQuadratic extends Kernel {
 	this.KernelParameterCount = inputDim + 2;
     }
        
-    public String[] getKernelParameterNames(){
+    public String[] getParameterNames(){
+        super.getParameterNames();
         for (int i=0;i<inputDim;i++){
             this.KernelParameterNames[i] = "l_" + i;
         }

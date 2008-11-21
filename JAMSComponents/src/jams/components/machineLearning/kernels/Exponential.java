@@ -22,7 +22,8 @@ public class Exponential extends Kernel {
                 
     }
        
-    public String[] getKernelParameterNames(){
+    public String[] getParameterNames(){
+        super.getParameterNames();
         for (int i=0;i<inputDim;i++){
             this.KernelParameterNames[i] = "l_" + i;
         }

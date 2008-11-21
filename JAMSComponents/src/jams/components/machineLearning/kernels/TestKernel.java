@@ -20,7 +20,8 @@ public class TestKernel extends Kernel {
 	this.parameterCount = inputDim + 1;
     }
        
-    public String[] getKernelParameterNames(){
+    public String[] getParameterNames(){
+        super.getParameterNames();
         for (int i=0;i<KernelParameterCount;i++)
             this.KernelParameterNames[i] = "p_" + i;
         return KernelParameterNames;

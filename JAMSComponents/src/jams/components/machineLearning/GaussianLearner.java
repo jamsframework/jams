@@ -15,10 +15,7 @@ import jams.model.*;
 import java.io.*;
 import Jama.*;
 import Jama.Matrix;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.StringTokenizer;
-import jams.io.GenericDataWriter;
+import jams.JAMSTools;
 import jams.components.machineLearning.kernels.*;
 
 public class GaussianLearner extends Learner  {
@@ -102,6 +99,7 @@ public class GaussianLearner extends Learner  {
                
     double logtheta[];    
     double theta[];
+    double meantheta[];
                         
     static final int MAXIMIZATION = 1;
     static final int MINIMIZATION = 2;
@@ -294,16 +292,21 @@ public class GaussianLearner extends Learner  {
 	CovarianzMatrix = new Matrix(TrainLength,TrainLength);
 	Observations = new Matrix(TrainLength,1);        
 	theta = new double[this.kernel.getParameterCount()];
+        meantheta = new double[this.kernel.MM.GetParameterCount()];
 	logtheta = new double[this.kernel.getParameterCount()];
 	invCovarianzMatrix = null;
         
 	//read params from file
-	if (this.parameterFile != null && param_theta == null) {
+	if (!this.doOptimization.getValue() && this.parameterFile != null && param_theta == null) {
 	    BufferedReader reader;
 	    try {
-		reader = new BufferedReader(new FileReader(this.parameterFile.getValue()));
+		reader = new BufferedReader(new FileReader(JAMSTools.CreateAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),
+                        this.parameterFile.getValue())));
 		for (int i=0;i<theta.length;i++) {
 		    logtheta[i] = (new Double(reader.readLine()).doubleValue());	
+		}
+                for (int i=0;i<meantheta.length;i++) {
+		    meantheta[i] = (new Double(reader.readLine()).doubleValue());	
 		}
 		reader.close();
 	    }
@@ -311,13 +314,24 @@ public class GaussianLearner extends Learner  {
                 this.getModel().getRuntime().sendInfoMsg("Could not open or read parameter file, becauce:" + e.toString());
 	        for (int i=0;i<logtheta.length;i++){
                     logtheta[i] = 0.0;
-                }
+                }                
 	    }	
-	}
+	}else{
+            for (int i=0;i<logtheta.length;i++){
+                logtheta[i] = 0.0;
+            }                
+        }
+        if (!this.kernel.MM.isTrained()){
+            this.kernel.MM.create(data, result);
+            this.meantheta = this.kernel.MM.GetParameters();
+        }
 	//try to use parameters directly
 	if (param_theta != null) {
 	    for (int i=0;i<logtheta.length;i++) {
 		logtheta[i] = Math.log(param_theta.getValue()[i]);
+	    }
+            for (int i=0;i<this.kernel.MM.GetParameterCount();i++) {
+		meantheta[i] = param_theta.getValue()[logtheta.length+i];
 	    }
 	}
 	
@@ -326,6 +340,9 @@ public class GaussianLearner extends Learner  {
 	}
 	if (!this.kernel.SetParameter(theta)) {
             this.getModel().getRuntime().sendInfoMsg("covariance function has more parameters than specified!");	    
+	}
+        if (!this.kernel.MM.SetParameters(meantheta)) {
+            this.getModel().getRuntime().sendInfoMsg("mean function has more parameters than specified!");	    
 	}
 			
 	for (int i=0;i<TrainLength;i++) {	    
@@ -337,8 +354,7 @@ public class GaussianLearner extends Learner  {
 	    }
 	    double varianz = this.kernel.kernel(normalize(data[i]),normalize(data[i]),i,i);
 	    CovarianzMatrix.set(i,i,varianz);	    
-	}	
-		
+	}	        
 	Observations = this.kernel.MM.Transform(data,result);
         this.fastSolver = CovarianzMatrix.chol();
         if (!fastSolver.isSPD()){
@@ -602,13 +618,17 @@ public class GaussianLearner extends Learner  {
 	Matrix prediction = (kstar.times(alpha));
 				
 	double result[] = this.kernel.MM.ReTransform(x,prediction);
-	
+        double predicted_variance[] = new double[m];
+        for (int i=0;i<m;i++){
+            predicted_variance[i] = this.GetVariance(x[i]);
+        }
 	if (!writeOutput)
 	    return result;
 	
 	BufferedWriter writer = null;
 	try {
-	    writer = new BufferedWriter(new FileWriter(this.resultFile.getValue(),true));	    
+	    writer = new BufferedWriter(new FileWriter(JAMSTools.CreateAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),
+                    this.resultFile.getValue()),true));	    
 	}
 	catch (Exception e) {
             this.getModel().getRuntime().sendHalt("could not open result-file, because:" + e.toString() + "\nresults won't be saved!");
@@ -617,7 +637,7 @@ public class GaussianLearner extends Learner  {
 	    
 	for (int i=0;i<x.length;i++) {			    
 	    try {
-		writer.write(new String(correctValue[i] + "\t" + result[i] + "\n"));		    
+		writer.write(new String(correctValue[i] + "\t" + result[i] + "\t"+ predicted_variance[i] + "\n"));		    
 		writer.flush();
 	    }
 	    catch(Exception e) {
@@ -647,11 +667,11 @@ public class GaussianLearner extends Learner  {
             return;
 	}			
     }
-    
-    public void trainInit() {
+                
+    public void trainInit() {                
 	super.trainData = this.trainData;
 	super.validationData = this.validationData;
-		
+		                
 	try {
 	    super.run();
 	}
@@ -666,13 +686,16 @@ public class GaussianLearner extends Learner  {
         
 	if (param_theta == null) {
 	    param_theta = new JAMSDoubleArray();
-	    double array[] = new double[x.length];
+	    double array[] = new double[x.length+kernel.MM.GetParameterCount()];
 	    param_theta.setValue(array);
 	}
 	
 	for (int j=0;j<x.length;j++) {	    
 	    param_theta.getValue()[j] = Math.exp(x[j]);
 	}
+        for (int j=0;j<kernel.MM.GetParameterCount();j++) {	    
+            param_theta.getValue()[j+kernel.getParameterCount()] = kernel.MM.GetParameters()[j];
+        }
         
         double performance = this.Train(this.PerformanceMeasure.getValue());
 
@@ -776,7 +799,11 @@ public class GaussianLearner extends Learner  {
                 x[k] = xp[k];
                 info += paramName[k] + ":";
 		info += Math.exp(x[k]) + "\n";
-            }	
+            }
+            for (int t=0; t<kernel.MM.GetParameterCount();t++){
+                info += kernel.MM.getMeanModelParameterNames()[t] + ":";
+		info += kernel.MM.GetParameters()[t] + "\n";
+            }
             if (this.getModel()!=null){
                 getModel().getRuntime().println(info);		
                 getModel().getRuntime().println("function value:\t" + y1 + "\t alpha: " + calpha + "\t diff:" + diff);
@@ -901,8 +928,7 @@ public class GaussianLearner extends Learner  {
 	    default: this.getModel().getRuntime().sendInfoMsg("No valid mean function specified, using Fixed Mean Model"); this.kernel.SetMeanModell(new jams.components.machineLearning.kernels.FixedMeanModell(this.DataLength)); break;
 	}
         
-        kernelParameterNames = this.kernel.getParameterNames();
-        
+        kernelParameterNames = this.kernel.getParameterNames();                
     }
     
     public void run() {
@@ -910,6 +936,7 @@ public class GaussianLearner extends Learner  {
         setKernels();
         
 	if (doOptimization.getValue()) {
+            optInit();
             double x[] = new double[kernel.getParameterCount()];
 	    for (int i=0;i<x.length;i++){
                 if (this.param_theta != null)
@@ -923,17 +950,20 @@ public class GaussianLearner extends Learner  {
                 }
                 if (this.param_theta != null)
                     this.param_theta.setValue(x);
-            }
-	    optInit();
+            }	    
 	    	    
 	    GradientDescent(x,this.kernelParameterNames);   
             
             //save parameters
             BufferedWriter writer;
 	    try {
-		writer = new BufferedWriter(new FileWriter(this.parameterFile.getValue()));
+		writer = new BufferedWriter(new FileWriter(JAMSTools.CreateAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),this.parameterFile.getValue())));
+                this.meantheta = this.kernel.MM.GetParameters();
 		for (int i=0;i<theta.length;i++) {
                     writer.write(Double.toString(this.logtheta[i]) + "\n");		    
+		}
+                for (int i=0;i<meantheta.length;i++) {
+                    writer.write(Double.toString(this.meantheta[i]) + "\n");		    
 		}
 		writer.close();
 	    }

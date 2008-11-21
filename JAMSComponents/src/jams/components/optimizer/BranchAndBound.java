@@ -28,8 +28,10 @@ public class BranchAndBound extends Optimizer{
     public BranchAndBound() {
     }
     
-    public void init(){
+    public void init(){        
         super.init();
+        if (!enable.getValue())
+            return; 
 /*             
         if (SampleDumpFileName != null){
             try {            
@@ -325,7 +327,7 @@ public class BranchAndBound extends Optimizer{
         try{
             String fileName = param_fileName;
                      
-            BufferedWriter writer = new BufferedWriter(new FileWriter(JAMSTools.CreateAbsoluteFileName(this.dirName.getValue(),"/info/" + fileName)));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(JAMSTools.CreateAbsoluteFileName(this.getModel().getWorkspaceDirectory().getPath(),"/info/" + fileName)));
             for (int i=0;i<cubes.size();i++){
                 writer.write(cubes.get(i).compactDescriptionString());
             }
@@ -336,6 +338,10 @@ public class BranchAndBound extends Optimizer{
     }
     
     public void run() {
+        if (!this.enable.getValue()){
+            singleRun();
+            return;
+        }
         Vector<Sample> Q = new Vector<Sample>();
         Vector<HyperCube> cubes = new Vector<HyperCube>();
                 

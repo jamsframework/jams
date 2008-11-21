@@ -25,14 +25,29 @@ public abstract class MeanModell{
 	
     }
     
+    public boolean isTrained(){
+        return beta != null;
+    }
+    
+    public void create(double data[][],double predict[]){
+        return;
+    }
+    
     public int GetParameterCount() {
 	return parameterCount;
     }
     
-    public void SetParameters(double param[]) {
-	for (int i=0;i<beta.length;i++) {
-	    beta[i] = param[i];
-	}
+    public boolean SetParameters(double param[]) {
+        beta = new double[parameterCount];
+        try{
+            for (int i=0;i<beta.length;i++) {
+                beta[i] = param[i];
+            }
+        }catch(Exception e){
+            beta = null;
+            return false;
+        }
+        return true;
     }
     
     public double[] GetParameters() {

@@ -26,7 +26,7 @@ public abstract class Kernel{
     public void SetMeanModell(MeanModell MM) {
 	this.MM = MM;
 	
-	parameterCount = KernelParameterCount + MM.GetParameterCount();
+	parameterCount = KernelParameterCount;
     }
     
     public boolean SetParameter(double []theta) {
@@ -36,42 +36,19 @@ public abstract class Kernel{
 	this.theta = new double[KernelParameterCount];        
 	for (int i=0;i<KernelParameterCount;i++) {
 	    this.theta[i] = theta[i];
-	}
-	if (MM != null) {
-	    if (MM.GetParameterCount() != 0) {
-		meanTheta = new double[MM.GetParameterCount()];	
-		for (int i=KernelParameterCount;i<theta.length;i++) {
-		    meanTheta[i-KernelParameterCount] = Math.log(theta[i]);
-		}
-		MM.SetParameters(meanTheta);
-	    }
 	}	
 	//this.theta = theta;
 	return true;
-    }         
-     
+    }    
+             
     abstract public double kernel(double x[],double y[],int index1,int index2);
     abstract public double dkernel(double x[],double y[],int d);
-    abstract public String[] getKernelParameterNames();
+    public String[] getParameterNames(){
+        KernelParameterNames = new String[this.parameterCount];
+        return KernelParameterNames;
+    }
     
     public int getParameterCount() {
 	return parameterCount;
-    }    
-    
-    public String[] getParameterNames(){        
-        this.parameterNames = new String[parameterCount];
-        
-        KernelParameterNames = new String[this.KernelParameterCount];
-        getKernelParameterNames();
-        for (int i=0;i<KernelParameterCount;i++){
-            parameterNames[i] = KernelParameterNames[i];
-        }
-        if (this.MM!=null){
-            String meanModelParameterNames[] = this.MM.getMeanModelParameterNames();
-            for (int i=KernelParameterCount;i<parameterCount;i++){
-                parameterNames[i] = meanModelParameterNames[i-KernelParameterCount];
-            }
-        }
-        return parameterNames;
-    }
+    }                
 }

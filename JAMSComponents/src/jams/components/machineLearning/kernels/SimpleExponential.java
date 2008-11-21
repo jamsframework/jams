@@ -20,7 +20,8 @@ public class SimpleExponential extends Kernel {
 	this.parameterCount = 1;
     }
        
-    public String[] getKernelParameterNames(){
+    public String[] getParameterNames(){
+        super.getParameterNames();
         this.KernelParameterNames[0] = "l";
         
         return KernelParameterNames;

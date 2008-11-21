@@ -88,7 +88,9 @@ public class GPSearch extends Optimizer {
     int iterationCounter = 0;
     
     public void init() {
-        super.init();        
+        super.init();      
+        if (!enable.getValue())
+            return;
     }
                               
     double TransformAndEvaluate(double []in){
@@ -450,6 +452,10 @@ public class GPSearch extends Optimizer {
     }
     
     public void run() { 
+        if (!enable.getValue()){
+            singleRun();
+            return;
+        }
         initalPhase();
         
         while(iterationCounter < this.maxn.getValue()){                               

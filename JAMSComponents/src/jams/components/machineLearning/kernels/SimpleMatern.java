@@ -21,7 +21,8 @@ public class SimpleMatern extends Kernel {
 	this.KernelParameterCount = 2;
     }
        
-    public String[] getKernelParameterNames(){
+    public String[] getParameterNames(){
+        super.getParameterNames();
         this.KernelParameterNames[0] = "l";
         this.KernelParameterNames[1] = "sigma";
         

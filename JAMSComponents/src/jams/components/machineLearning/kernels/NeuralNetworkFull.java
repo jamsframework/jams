@@ -27,7 +27,8 @@ public class NeuralNetworkFull extends Kernel {
 	this.KernelParameterCount = d*(d+1)/2 + 1;                
     }
      
-    public String[] getKernelParameterNames(){
+    public String[] getParameterNames(){
+        super.getParameterNames();
         for (int i=0;i<inputDim;i++){
             this.KernelParameterNames[i] = "P_i" + i;
         }

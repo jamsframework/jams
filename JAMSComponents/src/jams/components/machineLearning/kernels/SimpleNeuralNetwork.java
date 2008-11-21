@@ -24,7 +24,8 @@ public class SimpleNeuralNetwork extends Kernel {
 	this.parameterCount = 2;
 	this.KernelParameterCount = 2;
     }
-    public String[] getKernelParameterNames(){
+    public String[] getParameterNames(){
+        super.getParameterNames();
         this.KernelParameterNames[0] = "bias";
         this.KernelParameterNames[1] = "sigma";
         

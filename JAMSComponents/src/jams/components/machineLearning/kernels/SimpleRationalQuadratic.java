@@ -22,7 +22,8 @@ public class SimpleRationalQuadratic extends Kernel {
 	this.KernelParameterCount = 2;
     }
        
-    public String[] getKernelParameterNames(){
+    public String[] getParameterNames(){
+        super.getParameterNames();
         this.KernelParameterNames[0] = "alpha";
         this.KernelParameterNames[1] = "sigma";
         
