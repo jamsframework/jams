@@ -551,14 +551,14 @@ public class ModelOptimizer extends JAMSComponent{
         rt.loadModel(doc,properties );
         JAMSModel model = rt.getModel();
         
-        Hashtable<String,HashSet<String>> dependencyGraph = jams.components.metaOptimizer.modelOptimizer.getDependencyGraph(doc,model);
-        Hashtable<String,HashSet<String>> transitiveClosureOfDependencyGraph = jams.components.metaOptimizer.modelOptimizer.TransitiveClosure(dependencyGraph);
+        Hashtable<String,HashSet<String>> dependencyGraph = jams.model.metaoptimizer.metaModelOptimizer.getDependencyGraph(doc,model);
+        Hashtable<String,HashSet<String>> transitiveClosureOfDependencyGraph = jams.model.metaoptimizer.metaModelOptimizer.TransitiveClosure(dependencyGraph);
         
         Node root = doc.getDocumentElement();
                 
-        jams.components.metaOptimizer.modelOptimizer.RemoveGUIComponents(root);
-        jams.components.metaOptimizer.modelOptimizer.RemoveNotListedComponents(root,
-                jams.components.metaOptimizer.modelOptimizer.GetRelevantComponentsList(transitiveClosureOfDependencyGraph,model.CollectAttributeWritingComponents(effAttributeName.getValue())));
+        jams.model.metaoptimizer.metaModelOptimizer.RemoveGUIComponents(root);
+        jams.model.metaoptimizer.metaModelOptimizer.RemoveNotListedComponents(root,
+                jams.model.metaoptimizer.metaModelOptimizer.GetRelevantComponentsList(transitiveClosureOfDependencyGraph,model.CollectAttributeWritingComponents(effAttributeName.getValue())));
                                                         
         ArrayList<String> innerTimeContextParameter = new ArrayList();
         ArrayList<String> outerTimeContextParameter = new ArrayList();
