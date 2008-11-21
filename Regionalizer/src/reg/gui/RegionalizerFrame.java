@@ -65,8 +65,6 @@ public class RegionalizerFrame extends JFrame {
     private Action openWSAction,  exitAction;
     private JLabel statusLabel;
     private VirtualWorkspace workspace;
-    private TreePanel treePanel = new TreePanel();
-    private InfoPanel infoPanel = new InfoPanel();
 
     public RegionalizerFrame() {
         init();
@@ -111,8 +109,8 @@ public class RegionalizerFrame extends JFrame {
 
         inoutSplitPane.setAutoscrolls(true);
         inoutSplitPane.setContinuousLayout(true);
-        inoutSplitPane.setLeftComponent(treePanel);
-        inoutSplitPane.setRightComponent(infoPanel);
+        inoutSplitPane.setLeftComponent(Regionalizer.getTreePanel());
+        inoutSplitPane.setRightComponent(Regionalizer.getInfoPanel());
         inoutSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         inoutSplitPane.setDividerLocation(INOUT_PANE_HEIGHT);
         inoutSplitPane.setOneTouchExpandable(false);
@@ -168,7 +166,7 @@ public class RegionalizerFrame extends JFrame {
             workspace = new VirtualWorkspace(workspaceFile, Regionalizer.getRuntime(), true);
             workspace.setLibs(libs);
             setTitle(Regionalizer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
-            treePanel.update(workspace);
+            Regionalizer.getTreePanel().update(workspace);
         } catch (VirtualWorkspace.InvalidWorkspaceException iwe) {
             Regionalizer.getRuntime().sendHalt(iwe.getMessage());
         }

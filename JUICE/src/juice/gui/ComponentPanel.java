@@ -359,7 +359,7 @@ public class ComponentPanel extends JPanel {
         int tmpSelectedAttrRow = selectedAttrRow;
 
         String attrName = attrNameList.get(selectedAttrRow);
-        int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Delete_Attribute_\"") + attrName + "\"?", JUICE.resources.getString("Confirm"));
+        int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Delete_Attribute_") + attrName + "\"?", JUICE.resources.getString("Confirm"));
         if (result == JOptionPane.NO_OPTION) {
             return;
         }

@@ -22,7 +22,6 @@
  */
 package reg.gui;
 
-import reg.*;
 import jams.data.JAMSCalendar;
 import jams.gui.LHelper;
 import jams.workspace.stores.DataStore;
@@ -30,12 +29,9 @@ import jams.workspace.stores.TSDataStore;
 import java.awt.GridBagLayout;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import reg.tree.DSTreeNode;
 
 /**
  *
@@ -47,30 +43,9 @@ public class InfoPanel extends JPanel {
 
     public InfoPanel() {
         super();
-        Regionalizer.getTree().addObserver(new Observer() {
-
-            public void update(Observable o, Object arg) {
-                if (arg == null) {
-                    InfoPanel.this.updateDS(null);
-                    return;
-                }
-                DSTreeNode node = (DSTreeNode) arg;
-                if (node.getType() == DSTreeNode.INPUT_DS) {
-                    try {
-                        DataStore store = Regionalizer.getTree().getWorkspace().getInputDataStore(node.toString());
-                        InfoPanel.this.updateDS(store);
-                    } catch (Exception e) {
-                        Regionalizer.getRuntime().sendErrorMsg(e.toString());
-                        e.printStackTrace();
-                    }
-                } else if (node.getType() == DSTreeNode.OUTPUT_DS) {
-//                    Regionalizer.getTree().getWorkspace().getO(node.toString());
-                }
-            }
-        });
     }
 
-    private void updateDS(DataStore store) {
+    public void updateDS(DataStore store) {
         if (store == null) {
             this.removeAll();
             this.updateUI();

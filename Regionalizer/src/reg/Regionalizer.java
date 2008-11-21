@@ -25,7 +25,6 @@ package reg;
 import reg.gui.RegionalizerFrame;
 import jams.JAMS;
 import jams.JAMSProperties;
-import jams.JAMSTools;
 import jams.gui.LHelper;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
@@ -34,6 +33,9 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.UIManager;
+import reg.gui.DataPanel;
+import reg.gui.InfoPanel;
+import reg.gui.TreePanel;
 import reg.tree.DSTree;
 
 /**
@@ -48,6 +50,10 @@ public class Regionalizer {
     private static JAMSRuntime runtime;
     private static DSTree tree;
     private static JAMSProperties properties;
+    private static InfoPanel infoPanel;
+    private static DataPanel dataPanel;
+    private static TreePanel treePanel;
+
 
     /**
      * @return the runtime
@@ -61,6 +67,13 @@ public class Regionalizer {
      */
     public static JAMSProperties getProperties() {
         return properties;
+    }
+
+    /**
+     * @return the treePanel
+     */
+    public static TreePanel getTreePanel() {
+        return treePanel;
     }
 
     public Regionalizer() {
@@ -100,6 +113,9 @@ public class Regionalizer {
             }
         }
 
+        treePanel = new TreePanel();
+        infoPanel = new InfoPanel();
+        dataPanel = new DataPanel();
         regFrame = new RegionalizerFrame();
         regFrame.setVisible(true);
     }
@@ -117,4 +133,32 @@ public class Regionalizer {
     public static void setTree(DSTree tree) {
         Regionalizer.tree = tree;
     }
+
+    /**
+     * @return the infoPanel
+     */
+    public static InfoPanel getInfoPanel() {
+        return infoPanel;
+    }
+//
+//    /**
+//     * @param infoPanel the infoPanel to set
+//     */
+//    public void setInfoPanel(InfoPanel infoPanel) {
+//        this.infoPanel = infoPanel;
+//    }
+
+    /**
+     * @return the dataPanel
+     */
+    public static DataPanel getDataPanel() {
+        return dataPanel;
+    }
+
+//    /**
+//     * @param dataPanel the dataPanel to set
+//     */
+//    public void setDataPanel(DataPanel dataPanel) {
+//        this.dataPanel = dataPanel;
+//    }
 }

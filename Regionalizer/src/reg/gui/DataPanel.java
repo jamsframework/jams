@@ -1,6 +1,6 @@
 /*
- * TSPanel.java
- * Created on 21. November 2008, 11:51
+ * DataPanel.java
+ * Created on 21. November 2008, 14:01
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -29,9 +29,9 @@ import javax.swing.JPanel;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class TSPanel extends JPanel {
+public class DataPanel extends JPanel {
     
-    public TSPanel() {
+    public DataPanel() {
     }
     
 }

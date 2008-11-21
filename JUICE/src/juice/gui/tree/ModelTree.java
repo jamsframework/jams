@@ -590,7 +590,7 @@ public class ModelTree extends JAMSTree {
                 try {
                     rootNode.add(getSubTree(element));
                 } catch (ModelLoadException mle) {
-                    LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Could_not_load_component_\"") +
+                    LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Could_not_load_component_") +
                             mle.getComponentName() + "\" (" + mle.getClassName() + "). " +
                             JUICE.resources.getString("Please_fix_the_model_definition_file!"), JUICE.resources.getString("Error_loading_model"));
                     this.view.getFrame().dispose();
