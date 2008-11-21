@@ -67,5 +67,6 @@ public interface JAMSRuntime extends Serializable {
     public void loadModel(Document modelDocument, JAMSProperties properties);
     public ClassLoader getClassLoader();    
     public void saveModelParameter();
+    public String[] getLibs();
     
 }

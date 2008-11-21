@@ -70,6 +70,11 @@ public class MiniRuntime implements JAMSRuntime {
     }
 
     @Override
+    public String[] getLibs(){
+        return new String[0];
+    }
+    
+    @Override
     public int getDebugLevel() {
         return this.debugLevel;
     }
