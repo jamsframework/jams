@@ -26,12 +26,16 @@ import jams.data.JAMSCalendar;
 import jams.gui.LHelper;
 import jams.workspace.stores.DataStore;
 import jams.workspace.stores.TSDataStore;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 /**
  *
@@ -72,6 +76,7 @@ public class InfoPanel extends JPanel {
         private GridBagLayout mainLayout;
         private int FIELD_COUNT = 6;
         private JTextField[] fields;//idField, typField, startField, endField, stepUnitField, stepSizeField, missingDataField;
+        private JTextArea textArea;
         private Map<Integer, String> indexMap = new HashMap<Integer, String>();
 
         public TSPanel() {
@@ -81,10 +86,18 @@ public class InfoPanel extends JPanel {
 
             LHelper.addGBComponent(this, mainLayout, new JLabel("Name:"), 1, 0, 1, 1, 0, 0);
             LHelper.addGBComponent(this, mainLayout, new JLabel("Typ:"), 1, 1, 1, 1, 0, 0);
-            LHelper.addGBComponent(this, mainLayout, new JLabel("Start:"), 1, 2, 1, 1, 0, 0);
+            LHelper.addGBComponent(this, mainLayout, new JLabel("Beginn:"), 1, 2, 1, 1, 0, 0);
             LHelper.addGBComponent(this, mainLayout, new JLabel("Ende:"), 1, 3, 1, 1, 0, 0);
             LHelper.addGBComponent(this, mainLayout, new JLabel("Schrittweite:"), 1, 4, 1, 1, 0, 0);
             LHelper.addGBComponent(this, mainLayout, new JLabel("Lückenwert:"), 1, 5, 1, 1, 0, 0);
+            LHelper.addGBComponent(this, mainLayout, new JLabel("Kommentar:"), 1, 6, 1, 1, 0, 0);
+
+            indexMap.put(JAMSCalendar.YEAR, "Jahr(e)");
+            indexMap.put(JAMSCalendar.MONTH, "Monat(e)");
+            indexMap.put(JAMSCalendar.DAY_OF_YEAR, "Tag(e)");
+            indexMap.put(JAMSCalendar.HOUR_OF_DAY, "Stunde(n)");
+            indexMap.put(JAMSCalendar.MINUTE, "Minute(n)");
+            indexMap.put(JAMSCalendar.SECOND, "Sekunde(n)");
 
             fields = new JTextField[FIELD_COUNT];
             for (int i = 0; i < fields.length; i++) {
@@ -94,12 +107,16 @@ public class InfoPanel extends JPanel {
                 LHelper.addGBComponent(this, mainLayout, fields[i], 2, i, 1, 1, 0, 0);
             }
 
-            indexMap.put(JAMSCalendar.YEAR, "Jahr(e)");
-            indexMap.put(JAMSCalendar.MONTH, "Monat(e)");
-            indexMap.put(JAMSCalendar.DAY_OF_YEAR, "Tag(e)");
-            indexMap.put(JAMSCalendar.HOUR_OF_DAY, "Stunde(n)");
-            indexMap.put(JAMSCalendar.MINUTE, "Minute(n)");
-            indexMap.put(JAMSCalendar.SECOND, "Sekunde(n)");
+            textArea = new JTextArea();
+            textArea.setRows(5);
+            textArea.setColumns(20);
+            textArea.setEditable(false);
+            Font textFont = (Font) UIManager.getDefaults().get("Label.font");
+            textFont = new Font(textFont.getName(), Font.PLAIN, textFont.getSize() - 1);
+            textArea.setFont(textFont);
+            JScrollPane textScrollPane = new JScrollPane(textArea);
+            LHelper.addGBComponent(this, mainLayout, textScrollPane, 2, FIELD_COUNT, 1, 2, 0, 0);
+
 
         }
 
@@ -110,6 +127,7 @@ public class InfoPanel extends JPanel {
             fields[3].setText(store.getEndDate().toString());
             fields[4].setText(Integer.toString(store.getTimeUnitCount()) + " " + indexMap.get(store.getTimeUnit()));
             fields[5].setText(store.getMissingDataValue());
+            textArea.setText(store.getDescription());
         }
     }
 }
