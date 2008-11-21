@@ -36,7 +36,6 @@ import javax.swing.UIManager;
 import reg.gui.DataPanel;
 import reg.gui.InfoPanel;
 import reg.gui.TreePanel;
-import reg.tree.DSTree;
 
 /**
  *
@@ -46,14 +45,10 @@ public class Regionalizer {
 
     public static final String APP_TITLE = "DataReg";
     public static final int SCREEN_WIDTH = 1200,  SCREEN_HEIGHT = 850;
-    private static RegionalizerFrame regFrame;
+    private static RegionalizerFrame regionalizerFrame;
     private static JAMSRuntime runtime;
-    private static DSTree tree;
+//    private static DSTree tree;
     private static JAMSProperties properties;
-    private static InfoPanel infoPanel;
-    private static DataPanel dataPanel;
-    private static TreePanel treePanel;
-
 
     /**
      * @return the runtime
@@ -70,10 +65,10 @@ public class Regionalizer {
     }
 
     /**
-     * @return the treePanel
+     * @return the regFrame
      */
-    public static TreePanel getTreePanel() {
-        return treePanel;
+    public static RegionalizerFrame getRegionalizerFrame() {
+        return regionalizerFrame;
     }
 
     public Regionalizer() {
@@ -92,7 +87,7 @@ public class Regionalizer {
         runtime.addErrorLogObserver(new Observer() {
 
             public void update(Observable o, Object arg) {
-                LHelper.showErrorDlg(regFrame, arg.toString(), JAMS.resources.getString("Error"));
+                LHelper.showErrorDlg(regionalizerFrame, arg.toString(), JAMS.resources.getString("Error"));
             }
         });
         runtime.addInfoLogObserver(new Observer() {
@@ -113,52 +108,8 @@ public class Regionalizer {
             }
         }
 
-        treePanel = new TreePanel();
-        infoPanel = new InfoPanel();
-        dataPanel = new DataPanel();
-        regFrame = new RegionalizerFrame();
-        regFrame.setVisible(true);
+        regionalizerFrame = new RegionalizerFrame();
+        new TreeSelectionObserver();
+        regionalizerFrame.setVisible(true);
     }
-
-    /**
-     * @return the tree
-     */
-    public static DSTree getTree() {
-        return tree;
-    }
-
-    /**
-     * @param tree the tree to set
-     */
-    public static void setTree(DSTree tree) {
-        Regionalizer.tree = tree;
-    }
-
-    /**
-     * @return the infoPanel
-     */
-    public static InfoPanel getInfoPanel() {
-        return infoPanel;
-    }
-//
-//    /**
-//     * @param infoPanel the infoPanel to set
-//     */
-//    public void setInfoPanel(InfoPanel infoPanel) {
-//        this.infoPanel = infoPanel;
-//    }
-
-    /**
-     * @return the dataPanel
-     */
-    public static DataPanel getDataPanel() {
-        return dataPanel;
-    }
-
-//    /**
-//     * @param dataPanel the dataPanel to set
-//     */
-//    public void setDataPanel(DataPanel dataPanel) {
-//        this.dataPanel = dataPanel;
-//    }
 }

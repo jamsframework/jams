@@ -70,7 +70,7 @@ public class InfoPanel extends JPanel {
     private class TSPanel extends JPanel {
 
         private GridBagLayout mainLayout;
-        private int FIELD_COUNT = 7;
+        private int FIELD_COUNT = 6;
         private JTextField[] fields;//idField, typField, startField, endField, stepUnitField, stepSizeField, missingDataField;
         private Map<Integer, String> indexMap = new HashMap<Integer, String>();
 
@@ -84,8 +84,7 @@ public class InfoPanel extends JPanel {
             LHelper.addGBComponent(this, mainLayout, new JLabel("Start:"), 1, 2, 1, 1, 0, 0);
             LHelper.addGBComponent(this, mainLayout, new JLabel("Ende:"), 1, 3, 1, 1, 0, 0);
             LHelper.addGBComponent(this, mainLayout, new JLabel("Schrittweite:"), 1, 4, 1, 1, 0, 0);
-            LHelper.addGBComponent(this, mainLayout, new JLabel("Schritteinheit:"), 1, 5, 1, 1, 0, 0);
-            LHelper.addGBComponent(this, mainLayout, new JLabel("Lückenwert:"), 1, 6, 1, 1, 0, 0);
+            LHelper.addGBComponent(this, mainLayout, new JLabel("Lückenwert:"), 1, 5, 1, 1, 0, 0);
 
             fields = new JTextField[FIELD_COUNT];
             for (int i = 0; i < fields.length; i++) {
@@ -109,9 +108,8 @@ public class InfoPanel extends JPanel {
             fields[1].setText(store.getClass().getSimpleName());
             fields[2].setText(store.getStartDate().toString());
             fields[3].setText(store.getEndDate().toString());
-            fields[4].setText(Integer.toString(store.getTimeUnitCount()));
-            fields[5].setText(indexMap.get(store.getTimeUnit()));
-            fields[6].setText(store.getMissingDataValue());
+            fields[4].setText(Integer.toString(store.getTimeUnitCount()) + " " + indexMap.get(store.getTimeUnit()));
+            fields[5].setText(store.getMissingDataValue());
         }
     }
 }

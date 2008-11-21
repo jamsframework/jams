@@ -20,12 +20,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package reg.gui;
+package reg;
 
 import jams.workspace.stores.DataStore;
 import java.util.Observable;
 import java.util.Observer;
-import reg.Regionalizer;
 import reg.tree.DSTreeNode;
 
 /**
@@ -35,21 +34,19 @@ import reg.tree.DSTreeNode;
 public class TreeSelectionObserver implements Observer {
 
     public TreeSelectionObserver() {
-        Regionalizer.getTree().addObserver(this);
+        Regionalizer.getRegionalizerFrame().getTreePanel().getTree().addObserver(this);
     }
 
     public void update(Observable o, Object arg) {
         if (arg == null) {
-            Regionalizer.getInfoPanel().updateDS(null);
-//            TreeSelectionObserver.this.updateDS(null);
+            Regionalizer.getRegionalizerFrame().getInfoPanel().updateDS(null);
             return;
         }
         DSTreeNode node = (DSTreeNode) arg;
         if (node.getType() == DSTreeNode.INPUT_DS) {
             try {
-                DataStore store = Regionalizer.getTree().getWorkspace().getInputDataStore(node.toString());
-                Regionalizer.getInfoPanel().updateDS(store);
-//                TreeSelectionObserver.this.updateDS(store);
+                DataStore store = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStore(node.toString());
+                Regionalizer.getRegionalizerFrame().getInfoPanel().updateDS(store);
             } catch (Exception e) {
                 Regionalizer.getRuntime().sendErrorMsg(e.toString());
                 e.printStackTrace();

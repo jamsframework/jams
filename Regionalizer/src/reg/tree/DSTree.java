@@ -39,6 +39,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
+import reg.DataManager;
 
 /**
  *
@@ -110,7 +111,7 @@ public class DSTree extends JAMSTree {
     }
 
     private void displayDSData() {
-        System.out.println("Show Data");
+        DataManager.displayDS(this.getLastSelectedPathComponent().toString());
     }
 
     public void update(VirtualWorkspace workspace) {
@@ -273,13 +274,6 @@ public class DSTree extends JAMSTree {
 
     public void addObserver(Observer o) {
         nodeObservable.addObserver(o);
-    }
-
-    /**
-     * @return the workspace
-     */
-    public VirtualWorkspace getWorkspace() {
-        return workspace;
     }
 
     private class NodeObservable extends Observable {

@@ -23,6 +23,7 @@
 
 package reg.gui;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -32,6 +33,7 @@ import javax.swing.JPanel;
 public class DataPanel extends JPanel {
     
     public DataPanel() {
+        add(new JLabel("Data"));
     }
     
 }

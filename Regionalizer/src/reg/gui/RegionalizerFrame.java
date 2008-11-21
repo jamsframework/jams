@@ -65,12 +65,20 @@ public class RegionalizerFrame extends JFrame {
     private Action openWSAction,  exitAction;
     private JLabel statusLabel;
     private VirtualWorkspace workspace;
+    private InfoPanel infoPanel;
+    private DataPanel dataPanel;
+    private TreePanel treePanel;
 
     public RegionalizerFrame() {
         init();
     }
 
     private void init() {
+
+        treePanel = new TreePanel();
+        infoPanel = new InfoPanel();
+        dataPanel = new DataPanel();
+
 
         createListener();
 
@@ -102,15 +110,15 @@ public class RegionalizerFrame extends JFrame {
         mainSplitPane.setAutoscrolls(true);
         mainSplitPane.setContinuousLayout(true);
         mainSplitPane.setLeftComponent(inoutSplitPane);
-        mainSplitPane.setRightComponent(new JPanel());
+        mainSplitPane.setRightComponent(dataPanel);
         mainSplitPane.setDividerLocation(INOUT_PANE_WIDTH);
-        mainSplitPane.setOneTouchExpandable(true);
+        //mainSplitPane.setOneTouchExpandable(true);
         mainSplitPane.setDividerSize(DIVIDER_WIDTH);
 
         inoutSplitPane.setAutoscrolls(true);
         inoutSplitPane.setContinuousLayout(true);
-        inoutSplitPane.setLeftComponent(Regionalizer.getTreePanel());
-        inoutSplitPane.setRightComponent(Regionalizer.getInfoPanel());
+        inoutSplitPane.setLeftComponent(treePanel);
+        inoutSplitPane.setRightComponent(infoPanel);
         inoutSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         inoutSplitPane.setDividerLocation(INOUT_PANE_HEIGHT);
         inoutSplitPane.setOneTouchExpandable(false);
@@ -166,7 +174,7 @@ public class RegionalizerFrame extends JFrame {
             workspace = new VirtualWorkspace(workspaceFile, Regionalizer.getRuntime(), true);
             workspace.setLibs(libs);
             setTitle(Regionalizer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
-            Regionalizer.getTreePanel().update(workspace);
+            treePanel.update(workspace);
         } catch (VirtualWorkspace.InvalidWorkspaceException iwe) {
             Regionalizer.getRuntime().sendHalt(iwe.getMessage());
         }
@@ -187,6 +195,34 @@ public class RegionalizerFrame extends JFrame {
             });
             openWSDlg.execute();
         }
+    }
+
+    /**
+     * @return the workspace
+     */
+    public VirtualWorkspace getWorkspace() {
+        return workspace;
+    }
+
+    /**
+     * @return the infoPanel
+     */
+    public InfoPanel getInfoPanel() {
+        return infoPanel;
+    }
+
+    /**
+     * @return the dataPanel
+     */
+    public DataPanel getDataPanel() {
+        return dataPanel;
+    }
+
+    /**
+     * @return the treePanel
+     */
+    public TreePanel getTreePanel() {
+        return treePanel;
     }
 
     private void exit() {

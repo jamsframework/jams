@@ -1,6 +1,6 @@
 /*
- * TreePanel.java
- * Created on 19. November 2008, 10:46
+ * DataManager.java
+ * Created on 21. November 2008, 15:55
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -21,38 +21,16 @@
  *
  */
 
-package reg.gui;
-
-import jams.workspace.VirtualWorkspace;
-import java.awt.BorderLayout;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import reg.tree.DSTree;
+package reg;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class TreePanel extends JPanel {
+public class DataManager {
 
-    private DSTree tree = new DSTree();
-    
-    public TreePanel() {
-        super();
-        JScrollPane scrollPane = new JScrollPane(tree);
-        this.setLayout(new BorderLayout());
-        this.add(scrollPane, BorderLayout.CENTER);
+    public static void displayDS(String dsID) {
+
     }
 
-    public void update(VirtualWorkspace ws) {
-        tree.update(ws);
-    }
-
-    /**
-     * @return the tree
-     */
-    public DSTree getTree() {
-        return tree;
-    }
-    
 }
