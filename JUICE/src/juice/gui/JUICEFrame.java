@@ -40,6 +40,7 @@ import jams.gui.WorkerDlg;
 import juice.*;
 import juice.gui.tree.LibTree;
 import juice.gui.tree.ModelTree;
+import juice.optimizer.wizard.OptimizationWizard;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -56,7 +57,7 @@ public class JUICEFrame extends JFrame {
     private TreePanel libTreePanel;
     private JDesktopPane modelPanel = new JDesktopPane();
     private JMenu windowMenu,  modelMenu;
-    private JMenuItem pasteModelParameterItem,  copyModelParameterItem,  searchModelItem;
+    private JMenuItem pasteModelParameterItem,  copyModelParameterItem,  searchModelItem, OptimizationWizardItem;
     private JLabel statusLabel;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JUICE.resources.getString("Info_Log"));
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JUICE.resources.getString("Error_Log"));
@@ -64,7 +65,7 @@ public class JUICEFrame extends JFrame {
     private WorkerDlg loadModelDlg;
     private SearchDlg searchDlg;
     private String modelPath;
-    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchAction,  copyModelGUIAction,  pasteModelGUIAction,  loadModelParamAction,  saveModelParamAction,  runModelAction,  runModelFromLauncherAction,  infoLogAction,  errorLogAction,  wikiAction;
+    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchAction,  copyModelGUIAction,  pasteModelGUIAction, OptimizationWizardGUIAction, loadModelParamAction,  saveModelParamAction,  runModelAction,  runModelFromLauncherAction,  infoLogAction,  errorLogAction,  wikiAction;
 
     public JUICEFrame() {
         init();
@@ -247,8 +248,19 @@ public class JUICEFrame extends JFrame {
                 view.updateLauncherPanel();
             }
         };
+        
+        OptimizationWizardGUIAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Optimization_Wizard")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                OptimizationWizard wizard = new OptimizationWizard();
+                ModelView view = getCurrentView();
+                wizard.runWizard(view.getModelDoc(),JUICE.getJamsProperties());
+            }
+        };
 
         loadModelParamAction = new AbstractAction(JUICE.resources.getString("Load_Model_Parameter...")) {
+
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -512,7 +524,11 @@ public class JUICEFrame extends JFrame {
         pasteModelGUIAction.setEnabled(false);
         modelMenu.add(pasteModelParameterItem);
 
-
+        modelMenu.add(new JSeparator());
+        OptimizationWizardItem = new JMenuItem(OptimizationWizardGUIAction);
+        OptimizationWizardGUIAction.setEnabled(false);
+        modelMenu.add(OptimizationWizardItem);
+        
         /*
          * logs menu
          */
@@ -586,6 +602,7 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.modelMenu.setEnabled(true);
                     JUICEFrame.this.saveModelAction.setEnabled(true);
                     JUICEFrame.this.saveAsModelAction.setEnabled(true);
+                    JUICEFrame.this.OptimizationWizardGUIAction.setEnabled(true);
                 } else {
                     JUICEFrame.this.modelMenu.setEnabled(false);
                     JUICEFrame.this.saveModelAction.setEnabled(false);

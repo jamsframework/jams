@@ -61,7 +61,6 @@ public class JUICE {
 
         cmdLine = new JUICECmdLine(args);
 
-        // set system look and feel if we are in Windows
         try {
             if (System.getProperty("os.name").contains("Windows")) {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
