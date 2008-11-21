@@ -48,6 +48,10 @@ public class JAMSTemporalContext extends JAMSContext {
     public JAMSCalendar current;
     private JAMSCalendar lastValue;
 
+    public JAMSTemporalContext(){     
+        super();
+    }
+    
     @Override
     protected DataTracer createDataTracer(OutputDataStore store) {
         return new AbstractTracer(this, store, JAMSCalendar.class) {

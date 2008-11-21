@@ -41,6 +41,8 @@ import jams.dataaccess.*;
 import jams.dataaccess.CalendarAccessor;
 import jams.io.DataTracer.AbstractTracer;
 import jams.runtime.JAMSRuntime;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 @JAMSComponentDescription(title = "JAMS Component",
 author = "Sven Kralisch",
@@ -59,7 +61,7 @@ public class JAMSContext extends JAMSComponent {
     protected DataAccessor[] dataAccessors = new DataAccessor[0];
     private HashMap<String, DataAccessor> daHash;
     protected HashMap<String, JAMSData> attribs;
-    protected DataTracer[] dataTracers;
+    transient protected DataTracer[] dataTracers;
     protected boolean doRun = true;
 
     /**
@@ -185,7 +187,7 @@ public class JAMSContext extends JAMSComponent {
         super.setModel(model);
         JAMSRuntime rt = getModel().getRuntime();
         rt.addRunStateObserver(new Observer() {
-
+            @Override
             public void update(Observable obs, Object obj) {
                 if (getModel().getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
                     JAMSContext.this.doRun = false;
@@ -194,10 +196,12 @@ public class JAMSContext extends JAMSComponent {
         });
     }
 
-    private Field getField(Class clazz, String name) {
+    static public Field getField(Class clazz, String name) throws NoSuchFieldException {
         try {
             return clazz.getDeclaredField(name);
         } catch (NoSuchFieldException e) {
+            if (clazz.getSuperclass() == null)
+                throw e;
             return getField(clazz.getSuperclass(), name);
         }
     }
@@ -282,8 +286,10 @@ public class JAMSContext extends JAMSComponent {
 
                     // field has been set with some value, so
                     // remove it from list of nullFields
-                    ArrayList<Field> nullFields = getModel().getNullFields().get(accessSpec.component);
-                    nullFields.remove(field);
+                    if (getModel().getNullFields() != null){
+                      ArrayList<Field> nullFields = getModel().getNullFields().get(accessSpec.component);
+                      nullFields.remove(field);
+                    }
 
                 } else {
 
@@ -306,9 +312,11 @@ public class JAMSContext extends JAMSComponent {
                     field.set(accessSpec.component, dataObject);
 
                     // field has been set with some value, so
-                    // remove it from list of nullFields
-                    ArrayList<Field> nullFields = getModel().getNullFields().get(accessSpec.component);
-                    nullFields.remove(field);
+                    // remove it from list of nullFields                     
+                    if (getModel().getNullFields() != null){ // can be null after deserialization
+                      ArrayList<Field> nullFields = getModel().getNullFields().get(accessSpec.component);
+                      nullFields.remove(field);
+                    }
                 }
             } catch (Exception e) {
                 getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Error_occured_in_") + accessSpec.component.getInstanceName() + ": " + accessSpec.varName);
@@ -416,7 +424,16 @@ public class JAMSContext extends JAMSComponent {
             };
         }
     }
-
+    
+    protected void reInitDataTracer(){
+        this.setupDataTracer();
+        for (int i=0;i<this.components.size();i++){
+            if (this.components.get(i) instanceof JAMSContext){
+                ((JAMSContext)this.components.get(i)).reInitDataTracer();
+            }
+        }
+    }
+    
     private void setupDataTracer() {
 
         // get the output stores if existing
@@ -681,12 +698,14 @@ public class JAMSContext extends JAMSComponent {
         JAMSEntityEnumerator ee = getEntities().getEntityEnumerator();
         int index = 0;
 
+        @Override
         public boolean hasNext() {
             boolean nextComp = ce.hasNext();
             boolean nextEntity = ee.hasNext();
             return (nextEntity || nextComp);
         }
 
+        @Override
         public JAMSComponent next() {
             // check end of component elements list, if required switch to the next
             // entity and start with the new Component list again
@@ -700,6 +719,7 @@ public class JAMSContext extends JAMSComponent {
             return ce.next();
         }
 
+        @Override
         public void reset() {
             ee.reset();
             setCurrentEntity(getEntities().getCurrent());
@@ -708,75 +728,7 @@ public class JAMSContext extends JAMSComponent {
             updateComponentData(index);
         }
     }
-
-    public class ContextAttributeReadWriteSet {
-
-        public Hashtable<String, HashSet<String>> writeAccessComponents = null;
-        public Hashtable<String, HashSet<String>> readAccessComponents = null;
-        JAMSEntityCollection entities_id;
-
-        ContextAttributeReadWriteSet(JAMSEntityCollection entities) {
-            this.entities_id = entities;
-
-            writeAccessComponents = new Hashtable<String, HashSet<String>>();
-            readAccessComponents = new Hashtable<String, HashSet<String>>();
-        }
-    }
-
-    public Hashtable<String, HashSet<String>> getDependencyGraph() {
-        Hashtable<String, HashSet<String>> edges = new Hashtable<String, HashSet<String>>();
-
-        //for each independed context, get read/write access components
-        //and create an edge from read to write component!
-        HashSet<ContextAttributeReadWriteSet> CAttrRWSet = getAttributeReadWriteSet();
-
-        Hashtable<String, HashSet<String>> writeAccessComponents = null;
-        Hashtable<String, HashSet<String>> readAccessComponents = null;
-
-        //process all independ contexts
-        Iterator<ContextAttributeReadWriteSet> iter = CAttrRWSet.iterator();
-        while (iter.hasNext()) {
-            ContextAttributeReadWriteSet e = iter.next();
-            writeAccessComponents = e.writeAccessComponents;
-            readAccessComponents = e.readAccessComponents;
-            Set<String> writeAccessKeys = writeAccessComponents.keySet();
-            Iterator<String> writeAccessKeysIter = writeAccessKeys.iterator();
-
-            //all attributes   
-            writeAccessKeysIter = writeAccessKeys.iterator();
-            while (writeAccessKeysIter.hasNext()) {
-                String attr = writeAccessKeysIter.next();
-                //all components which have write/read access to this attrib
-                HashSet<String> writeAccess = writeAccessComponents.get(attr);
-                HashSet<String> readAccess = readAccessComponents.get(attr);
-
-                if (readAccess == null || writeAccess == null) {
-                    continue;
-                }
-                Iterator<String> writerIterator = writeAccess.iterator();
-                //iterate through write access components
-                while (writerIterator.hasNext()) {
-                    String writeAccessComponent = writerIterator.next();
-                    //iterate through read access components
-                    Iterator<String> readerIterator = readAccess.iterator();
-                    while (readerIterator.hasNext()) {
-                        String readAccessComponent = readerIterator.next();
-                        //add edge from read to write access component
-                        if (edges.containsKey(readAccessComponent)) {
-                            edges.get(readAccessComponent).add(writeAccessComponent);
-                        } else {
-                            HashSet<String> list = new HashSet<String>();
-                            list.add(writeAccessComponent);
-                            edges.put(readAccessComponent, list);
-                        }
-                    }
-                }
-            }
-        }
-
-        return edges;
-    }
-
+    
     public Set<String> CollectAttributeWritingComponents(String attr) {
         HashSet<String> set = new HashSet<String>();
         for (int i = 0; i < this.accessSpecs.size(); i++) {
@@ -794,103 +746,40 @@ public class JAMSContext extends JAMSComponent {
         }
         return set;
     }
-    //create a list for each attribute containing all components which have
-    //read and write access to
-    public HashSet<ContextAttributeReadWriteSet> getAttributeReadWriteSet() {
-        //this is necessary!
-        this.initAccessors();
-
-
-        HashSet<ContextAttributeReadWriteSet> ConAttrRWSets = new HashSet<ContextAttributeReadWriteSet>();
-        ContextAttributeReadWriteSet ConAttrRWSet = new ContextAttributeReadWriteSet(this.getEntities());
-
-        ConAttrRWSets.add(ConAttrRWSet);
-
-        Hashtable<String, HashSet<String>> writeAccessComponents = ConAttrRWSet.writeAccessComponents;
-        Hashtable<String, HashSet<String>> readAccessComponents = ConAttrRWSet.readAccessComponents;
-
-        //for this context: collect all reading and writing components for each attribute
-        for (int j = 0; j < accessSpecs.size(); j++) {
-            AccessSpec as = accessSpecs.get(j);
-
-            String attrName = null;
-            StringTokenizer tok = new StringTokenizer(as.attributeName, ";");
-            while (tok.hasMoreTokens()) {
-                attrName = tok.nextToken();
-
-                //if there is an entiy attribute, we dont know what attributes will be changed
-                boolean isEntity = false;
-                try {
-                    Class clazz = as.component.getClass().getDeclaredField(as.varName).getType();
-                    if (clazz.getName().equals("jams.data.JAMSEntity") || clazz.getName().equals("jams.data.JAMSEntityCollection")) {
-                        isEntity = true;
-                    }
-                } catch (Exception e) {
-                    //this is not a big issue
-                    getModel().getRuntime().println(JAMS.resources.getString("Cant_get_class_of_variable_") + as.varName + JAMS.resources.getString("_of_component_+_") + as.component.instanceName + JAMS.resources.getString("_because:") + e.toString());
-                }
-
-                if (as.accessType == DataAccessor.READ_ACCESS || as.accessType == DataAccessor.READWRITE_ACCESS || isEntity) {
-                    if (readAccessComponents.containsKey(attrName)) {
-                        readAccessComponents.get(attrName).add(as.component.instanceName);
-                    } else {
-                        HashSet<String> set = new HashSet<String>();
-                        set.add(as.component.instanceName);
-                        readAccessComponents.put(attrName, set);
-                    }
-                }
-                if (as.accessType == DataAccessor.WRITE_ACCESS || as.accessType == DataAccessor.READWRITE_ACCESS || isEntity) {
-                    if (writeAccessComponents.containsKey(attrName)) {
-                        writeAccessComponents.get(attrName).add(as.component.instanceName);
-                    } else {
-                        HashSet<String> set = new HashSet<String>();
-                        set.add(as.component.instanceName);
-                        set.add(this.getInstanceName());
-                        writeAccessComponents.put(attrName, set);
-                    }
-                }
+    
+    public JAMSComponent getComponent(String name){
+        for (int i=0;i<components.size();i++){
+            if (components.get(i).instanceName.equals(name))
+                return components.get(i);
+            if (components.get(i) instanceof JAMSContext){
+                JAMSComponent comp = ((JAMSContext)components.get(i)).getComponent(name);
+                if (comp != null)
+                    return comp;
             }
         }
-
-        //process all children contexts
-        for (int i = 0; i < this.components.size(); i++) {
-            JAMSComponent c = components.get(i);
-            if (c instanceof JAMSContext) {
-                JAMSContext context = (JAMSContext) c;
-                Set<ContextAttributeReadWriteSet> subMap = context.getAttributeReadWriteSet();
-                ConAttrRWSets.addAll(subMap);
-            }
-        }
-
-        //it is possible, that two contexts with different name are working on the
-        //same data set iff the entity ids are equal
-        //in this case the read/write sets have to be unified
-        HashSet<ContextAttributeReadWriteSet> mergedCDGs = new HashSet<ContextAttributeReadWriteSet>();
-
-        Iterator<ContextAttributeReadWriteSet> iter = ConAttrRWSets.iterator();
-        while (iter.hasNext()) {
-            ContextAttributeReadWriteSet e = iter.next();
-            JAMSEntityCollection id = e.entities_id;
-
-            Iterator<ContextAttributeReadWriteSet> iter2 = mergedCDGs.iterator();
-            boolean EntityAdded = false;
-            while (iter2.hasNext()) {
-                ContextAttributeReadWriteSet e2 = iter2.next();
-                JAMSEntityCollection id2 = e2.entities_id;
-                if (id == id2) {
-                    e2.readAccessComponents.putAll(e.readAccessComponents);
-                    e2.writeAccessComponents.putAll(e.writeAccessComponents);
-                    EntityAdded = true;
-                }
-            }
-            if (!EntityAdded) {
-                mergedCDGs.add(e);
-            }
-        }
-
-        return mergedCDGs;
+        return null;
     }
 
+    public String getAttributeToVariable(String varName,String component){
+        for (int i=0;i<this.accessSpecs.size();i++){
+            AccessSpec e = this.accessSpecs.get(i);
+            if (e.component.instanceName.equals(component)){
+                if (e.varName.equals(varName)){
+                    return e.attributeName;
+                }
+            }
+        }
+        
+        for (int i=0;i<this.components.size();i++){
+            if (this.components.get(i) instanceof JAMSContext){
+                String result = ((JAMSContext)this.components.get(i)).getAttributeToVariable(varName, component);
+                if (result != null)
+                    return result;
+            }
+        }
+        return null;
+    }
+    
     protected boolean componentInContext(JAMSComponent component) {
         for (int i = 0; i < components.size(); i++) {
             if (components.get(i).instanceName.equals(component.instanceName)) {

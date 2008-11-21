@@ -35,6 +35,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import jams.data.JAMSEntityCollection;
 import jams.runtime.JAMSRuntime;
+import jams.workspace.VirtualWorkspace.InvalidWorkspaceException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -52,8 +53,8 @@ public class JAMSModel extends JAMSContext {
     public JAMSDirName workspaceDirectory = new JAMSDirName();
     private JAMSRuntime runtime;
     private String name,  author,  date;
-    private VirtualWorkspace workspace;
-    private HashMap<JAMSComponent, ArrayList<Field>> nullFields;
+    public VirtualWorkspace workspace;
+    transient private HashMap<JAMSComponent, ArrayList<Field>> nullFields;
 
     public JAMSModel(JAMSRuntime runtime) {
         this.runtime = runtime;
@@ -131,6 +132,23 @@ public class JAMSModel extends JAMSContext {
         }
     }
 
+    public boolean moveWorkspaceDirectory(String workspaceDirectory){
+        setWorkspaceDirectory(workspaceDirectory);
+        //erstelle output verzeichnis        
+        try{
+            workspace = new VirtualWorkspace(new File(workspaceDirectory), getRuntime());
+            workspace.checkValidity(false);
+        }catch(InvalidWorkspaceException e){
+            getRuntime().sendHalt("Error during model setup: \"" +
+            workspace.getDirectory().getAbsolutePath() + "\" is not a valid datastore, because: " + e.toString());
+            return false;
+        }             
+        //reanimate data tracers
+        reInitDataTracer();
+        this.components.size();
+        return true;
+    }
+    
     public void setWorkspaceDirectory(String workspaceDirectory) {
         this.workspaceDirectory.setValue(workspaceDirectory);
     }
@@ -221,5 +239,5 @@ public class JAMSModel extends JAMSContext {
             this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_deserialize_jamsentity_collection,_because") + e.toString());
         }
         RestoreEntityCollections(this.getModel(), contextStates);
-    }
+    }        
 }
