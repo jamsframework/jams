@@ -249,7 +249,7 @@ public class JUICEFrame extends JFrame {
             }
         };
         
-        OptimizationWizardGUIAction = new AbstractAction(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Optimization_Wizard")) {
+        OptimizationWizardGUIAction = new AbstractAction(JUICE.resources.getString("Optimization_Wizard")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {

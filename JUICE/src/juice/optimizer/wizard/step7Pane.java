@@ -169,16 +169,16 @@ public class step7Pane extends stepPane {
 	//1. schritt
         //parameter relevante componenten verschieben                
         infoLog += JUICE.resources.getString("create_transitive_hull_of_dependency_graph") + "\n";
-        Hashtable<String,HashSet<String>> dependencyGraph = jams.components.metaOptimizer.modelOptimizer.getDependencyGraph(doc.getDocumentElement(),model);
+        Hashtable<String,HashSet<String>> dependencyGraph = jams.model.metaoptimizer.metaModelOptimizer.getDependencyGraph(doc.getDocumentElement(),model);
         Hashtable<String,HashSet<String>> transitiveClosureOfDependencyGraph = 
-                jams.components.metaOptimizer.modelOptimizer.TransitiveClosure(dependencyGraph);
+                jams.model.metaoptimizer.metaModelOptimizer.TransitiveClosure(dependencyGraph);
         
         doc = (Document)doc.cloneNode(true);
         Node root = (Node)doc.getDocumentElement();
         
         if (removeGUIComponents){
             infoLog = JUICE.resources.getString("removing_GUI_components")+ ":\n";
-            ArrayList<String> removedGUIComponents = jams.components.metaOptimizer.modelOptimizer.RemoveGUIComponents(root);
+            ArrayList<String> removedGUIComponents = jams.model.metaoptimizer.metaModelOptimizer.RemoveGUIComponents(root);
             for (int i=0;i<removedGUIComponents.size();i++){
                 infoLog += "    ***" + removedGUIComponents.get(i) + "\n";
             }
@@ -188,8 +188,8 @@ public class step7Pane extends stepPane {
             for (int i=0;i<desc.efficiencies.size();i++){                
                 effWritingComponents.addAll(model.CollectAttributeWritingComponents(desc.efficiencies.get(i).name));
             }
-            ArrayList<String> removedUnusedComponents = jams.components.metaOptimizer.modelOptimizer.RemoveNotListedComponents(root,
-                    jams.components.metaOptimizer.modelOptimizer.GetRelevantComponentsList(transitiveClosureOfDependencyGraph,
+            ArrayList<String> removedUnusedComponents = jams.model.metaoptimizer.metaModelOptimizer.RemoveNotListedComponents(root,
+                    jams.model.metaoptimizer.metaModelOptimizer.GetRelevantComponentsList(transitiveClosureOfDependencyGraph,
                     effWritingComponents));
             
             infoLog += JUICE.resources.getString("removing_components_without_relevant_influence")+":\n";
