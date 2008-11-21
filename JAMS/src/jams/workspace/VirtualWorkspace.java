@@ -75,7 +75,9 @@ public class VirtualWorkspace implements Serializable{
 
     public VirtualWorkspace(File directory, JAMSRuntime runtime, boolean readonly) throws InvalidWorkspaceException {
         this.runtime = runtime;
-        this.classLoader = runtime.getClassLoader();
+        if (runtime.getClassLoader() != null) {
+            this.classLoader = runtime.getClassLoader();
+        }
         this.directory = directory;
 
         checkValidity(readonly);
