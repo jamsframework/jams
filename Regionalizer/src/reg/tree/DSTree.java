@@ -89,7 +89,11 @@ public class DSTree extends JAMSTree {
 
             @Override
             public void valueChanged(TreeSelectionEvent e) {
-                displayDSInfo();
+                if (getSelectionPath() != null) {
+                    nodeObservable.setNode((DSTreeNode) getSelectionPath().getLastPathComponent());
+                } else {
+                    nodeObservable.setNode(null);
+                }
             }
         });
 
@@ -100,14 +104,9 @@ public class DSTree extends JAMSTree {
         TreePath p = this.getClosestPathForLocation(evt.getX(), evt.getY());
         this.setSelectionPath(p);
         DSTreeNode node = (DSTreeNode) this.getLastSelectedPathComponent();
-        if ((node != null) && ((node.getType() == DSTreeNode.INPUT_DS) || (node.getType() == DSTreeNode.OUTPUT_DS))){
+        if ((node != null) && ((node.getType() == DSTreeNode.INPUT_DS) || (node.getType() == DSTreeNode.OUTPUT_DS))) {
             popup.show(this, evt.getX(), evt.getY());
         }
-    }
-
-    private void displayDSInfo() {
-        System.out.println("Show Info");
-        nodeObservable.setNode((DSTreeNode) getSelectionPath().getLastPathComponent());
     }
 
     private void displayDSData() {
@@ -119,25 +118,8 @@ public class DSTree extends JAMSTree {
         this.setVisible(false);
         this.workspace = workspace;
         createIOTree();
-        //this.expandRow(0);
         this.expandAll();
         this.setVisible(true);
-
-    /*
-    libsArray = JAMSTools.toArray(libFileNames, ";");
-    this.setModel(null);
-
-    contextCount = 0;
-    componentCount = 0;
-    JUICE.setStatusText(JUICE.resources.getString("Loading_Libraries"));
-    this.setVisible(false);
-    DSTreeNode root = LibTree.this.createLibTree(LibTree.this.libsArray);
-    this.setModel(new DefaultTreeModel(root));
-    this.collapseAll();
-    this.setVisible(true);
-    JUICE.setStatusText(JUICE.resources.getString("Contexts:") + contextCount + " " + JUICE.resources.getString("Components:") + componentCount);
-     */
-
     }
 
     private DSTreeNode createIOTree() {
@@ -301,6 +283,7 @@ public class DSTree extends JAMSTree {
     }
 
     private class NodeObservable extends Observable {
+
         DSTreeNode node;
 
         public void setNode(DSTreeNode node) {
@@ -313,6 +296,5 @@ public class DSTree extends JAMSTree {
         public void notifyObservers(Object arg) {
             super.notifyObservers(node);
         }
-
     }
 }

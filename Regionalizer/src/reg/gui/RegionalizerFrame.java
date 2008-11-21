@@ -20,8 +20,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package reg;
+package reg.gui;
 
+import reg.*;
+import reg.gui.InfoPanel;
+import jams.JAMSTools;
 import jams.gui.LHelper;
 import jams.gui.WorkerDlg;
 import jams.workspace.VirtualWorkspace;
@@ -155,13 +158,21 @@ public class RegionalizerFrame extends JFrame {
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(Math.min(d.width, Regionalizer.SCREEN_WIDTH), Math.min(d.height, Regionalizer.SCREEN_HEIGHT));
 
+        open(new File("D:/jamsapplication/JAMS-Gehlberg"));
+    }
+
+    private void open(File workspaceFile) {
+
         try {
-            workspace = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), Regionalizer.getRuntime(), true);
+            String[] libs = JAMSTools.toArray(Regionalizer.getProperties().getProperty("libs", ""), ";");
+            workspace = new VirtualWorkspace(workspaceFile, Regionalizer.getRuntime(), true);
+            workspace.setLibs(libs);
             setTitle(Regionalizer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
             treePanel.update(workspace);
         } catch (VirtualWorkspace.InvalidWorkspaceException iwe) {
             Regionalizer.getRuntime().sendHalt(iwe.getMessage());
         }
+
     }
 
     private void open() {
@@ -173,13 +184,7 @@ public class RegionalizerFrame extends JFrame {
             openWSDlg.setTask(new Runnable() {
 
                 public void run() {
-                    try {
-                        workspace = new VirtualWorkspace(jfc.getSelectedFile(), Regionalizer.getRuntime(), true);
-                        setTitle(Regionalizer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
-                        treePanel.update(workspace);
-                    } catch (VirtualWorkspace.InvalidWorkspaceException iwe) {
-                        Regionalizer.getRuntime().sendHalt(iwe.getMessage());
-                    }
+                    open(jfc.getSelectedFile());
                 }
             });
             openWSDlg.execute();

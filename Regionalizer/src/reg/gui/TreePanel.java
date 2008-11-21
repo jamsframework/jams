@@ -21,8 +21,9 @@
  *
  */
 
-package reg;
+package reg.gui;
 
+import reg.*;
 import jams.workspace.VirtualWorkspace;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;

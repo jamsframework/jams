@@ -22,10 +22,15 @@
  */
 package reg;
 
+import reg.gui.RegionalizerFrame;
 import jams.JAMS;
+import jams.JAMSProperties;
+import jams.JAMSTools;
 import jams.gui.LHelper;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
+import java.io.File;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.UIManager;
@@ -42,12 +47,20 @@ public class Regionalizer {
     private static RegionalizerFrame regFrame;
     private static JAMSRuntime runtime;
     private static DSTree tree;
+    private static JAMSProperties properties;
 
     /**
      * @return the runtime
      */
     public static JAMSRuntime getRuntime() {
         return runtime;
+    }
+
+    /**
+     * @return the properties
+     */
+    public static JAMSProperties getProperties() {
+        return properties;
     }
 
     public Regionalizer() {
@@ -76,6 +89,16 @@ public class Regionalizer {
             }
         });
 
+        properties = JAMSProperties.createJAMSProperties();
+        String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
+        File file = new File(defaultFile);
+        if (file.exists()) {
+            try {
+                properties.load(defaultFile);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }
 
         regFrame = new RegionalizerFrame();
         regFrame.setVisible(true);
