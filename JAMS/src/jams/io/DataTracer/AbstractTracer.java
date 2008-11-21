@@ -149,6 +149,7 @@ public abstract class AbstractTracer implements DataTracer {
         try {
             store.write(o);
         } catch (IOException ioe) {
+            System.out.print(ioe);
         }
     }
     

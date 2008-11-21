@@ -44,7 +44,7 @@ public class ModelLoader {
     private ClassLoader loader;
     private JAMSModel jamsModel;
     private JAMSProperties properties;
-    private HashMap<JAMSComponent, ArrayList<Field>> nullFields = new HashMap<JAMSComponent, ArrayList<Field>>();
+    transient private HashMap<JAMSComponent, ArrayList<Field>> nullFields = new HashMap<JAMSComponent, ArrayList<Field>>();
 
     public ModelLoader(Document modelDoc, String[] globvars, JAMSRuntime rt, JAMSProperties properties) {
 
@@ -223,7 +223,7 @@ public class ModelLoader {
 
                 // check if component variable exists
                 try {
-                    Field field = componentClazz.getField(varName);
+                    Field field = JAMSContext.getField(componentClazz,varName);
                     varClassName = field.getType().getName();
 
                     if (field.isAnnotationPresent(JAMSVarDescription.class)) {

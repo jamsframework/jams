@@ -258,7 +258,8 @@ public class ParameterProcessor {
 
                 // get the belonging element object and remove it from its parent
                 Element componentElement = componentHash.get(propertyElement.getAttribute("component"));
-                componentElement.getParentNode().removeChild(componentElement);
+                if (componentElement != null)
+                    componentElement.getParentNode().removeChild(componentElement);
             }
         }
     }

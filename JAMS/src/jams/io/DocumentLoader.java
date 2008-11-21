@@ -40,15 +40,14 @@ public class DocumentLoader extends JAMSComponent{
             description = "Collection of hru objects")
     public JAMSDocument modelDoc;
     
-    public void init(){
+    public String init_withResponse(){
         try{
             String info = "";
-            String modelFilename = workspaceDir.toString() + modelFile.toString();
+            String modelFilename = JAMSTools.CreateAbsoluteFileName(workspaceDir.toString(),modelFile.toString());
             //check if file exists
             File file = new File(modelFilename);
-            if (!file.exists()) {
-                System.out.println(JAMS.resources.getString("Model_file_") + modelFilename + JAMS.resources.getString("_could_not_be_found_-_exiting!"));
-                return;
+            if (!file.exists()) {                
+                return JAMS.resources.getString("Model_file_") + modelFilename + JAMS.resources.getString("_could_not_be_found_-_exiting!");
             }
 
             // do some search and replace on the input file and create new file if necessary
@@ -67,17 +66,22 @@ public class DocumentLoader extends JAMSComponent{
             }
 
             try {
-
                 modelDoc.setValue(XMLIO.getDocumentFromString(xmlString));
                
-            } catch (IOException ioe) {
-                System.out.println(JAMS.resources.getString("The_model_definition_file_") + modelFilename + JAMS.resources.getString("_could_not_be_loaded,_because:_") + ioe.toString());
+            } catch (IOException ioe) {                
+                return JAMS.resources.getString("The_model_definition_file_") + modelFilename + JAMS.resources.getString("_could_not_be_loaded,_because:_") + ioe.toString();
             } catch (SAXException se) {
-                System.out.println(JAMS.resources.getString("The_model_definition_file_") + modelFilename + JAMS.resources.getString("_contained_errors!"));
+                return JAMS.resources.getString("The_model_definition_file_") + modelFilename + JAMS.resources.getString("_contained_errors!");                
             }                        
         }catch(Exception e){
-            this.getModel().getRuntime().sendHalt(JAMS.resources.getString("Can´t_load_model_file,_because_") + e.toString());
-        }                
+            return JAMS.resources.getString("Can´t_load_model_file,_because_") + e.toString();            
+        } 
+        return null;
+    }
+    public void init(){
+        String error = init_withResponse();
+        if (error!=null)
+            this.getModel().getRuntime().sendHalt(error);
     }
     
 }
