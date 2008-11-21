@@ -8,6 +8,7 @@ package juice.optimizer.wizard;
 import jams.JAMSProperties;
 import juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
 import juice.optimizer.wizard.OptimizationWizard.Parameter;
+import juice.*;
 import jams.model.JAMSComponent;
 import jams.model.JAMSContext;
 import jams.model.JAMSModel;
@@ -25,7 +26,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -122,10 +122,10 @@ public class step2Pane extends stepPane {
     public String init(){
         StandardRuntime rt = new StandardRuntime();
         if (this.loadedModel == null){
-            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_no_model_loaded");            
+            return JUICE.resources.getString("error_no_model_loaded");            
         }
         if (this.properties == null){
-            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_no_property_file");            
+            return JUICE.resources.getString("error_no_property_file");            
         }
         
         rt.loadModel(this.loadedModel, properties);
@@ -147,7 +147,7 @@ public class step2Pane extends stepPane {
     public String finish(){
         TreePath selections[] = modelTree.getSelectionPaths();
         if (selections == null){
-            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_no_parameter");    
+            return JUICE.resources.getString("error_no_parameter");    
         }        
         selectedParameters.clear();
         for (int i=0;i<selections.length;i++){
@@ -176,7 +176,7 @@ public class step2Pane extends stepPane {
     public JPanel build(){                
         panel.setLayout(new BorderLayout());
         panel.setBorder(null);
-        panel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("step1_desc")), BorderLayout.NORTH);               
+        panel.add(new JLabel(JUICE.resources.getString("step1_desc")), BorderLayout.NORTH);               
         
         JScrollPane treeScroller = new JScrollPane(modelTree);        
         treeScroller.setVisible(true);

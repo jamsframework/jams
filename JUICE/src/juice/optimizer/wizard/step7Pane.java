@@ -9,6 +9,7 @@ import juice.optimizer.wizard.OptimizationWizard.Efficiency;
 import juice.optimizer.wizard.OptimizationWizard.Parameter;
 import juice.optimizer.wizard.step6Pane.AttributeDescription;
 import juice.optimizer.wizard.step6Pane.OptimizerDescription;
+import juice.*;
 import jams.io.XMLIO;
 import jams.model.JAMSModel;
 import java.awt.BorderLayout;
@@ -167,7 +168,7 @@ public class step7Pane extends stepPane {
         infoLog = "";
 	//1. schritt
         //parameter relevante componenten verschieben                
-        infoLog += java.util.ResourceBundle.getBundle("resources/Bundle").getString("create_transitive_hull_of_dependency_graph") + "\n";
+        infoLog += JUICE.resources.getString("create_transitive_hull_of_dependency_graph") + "\n";
         Hashtable<String,HashSet<String>> dependencyGraph = jams.components.metaOptimizer.modelOptimizer.getDependencyGraph(doc.getDocumentElement(),model);
         Hashtable<String,HashSet<String>> transitiveClosureOfDependencyGraph = 
                 jams.components.metaOptimizer.modelOptimizer.TransitiveClosure(dependencyGraph);
@@ -176,7 +177,7 @@ public class step7Pane extends stepPane {
         Node root = (Node)doc.getDocumentElement();
         
         if (removeGUIComponents){
-            infoLog = java.util.ResourceBundle.getBundle("resources/Bundle").getString("removing_GUI_components")+ ":\n";
+            infoLog = JUICE.resources.getString("removing_GUI_components")+ ":\n";
             ArrayList<String> removedGUIComponents = jams.components.metaOptimizer.modelOptimizer.RemoveGUIComponents(root);
             for (int i=0;i<removedGUIComponents.size();i++){
                 infoLog += "    ***" + removedGUIComponents.get(i) + "\n";
@@ -191,12 +192,12 @@ public class step7Pane extends stepPane {
                     jams.components.metaOptimizer.modelOptimizer.GetRelevantComponentsList(transitiveClosureOfDependencyGraph,
                     effWritingComponents));
             
-            infoLog += java.util.ResourceBundle.getBundle("resources/Bundle").getString("removing_components_without_relevant_influence")+":\n";
+            infoLog += JUICE.resources.getString("removing_components_without_relevant_influence")+":\n";
             for (int i=0;i<removedUnusedComponents.size();i++){
                 infoLog += "    ***" + removedUnusedComponents.get(i) + "\n";
             }
         }
-        infoLog += java.util.ResourceBundle.getBundle("resources/Bundle").getString("add_optimization_context") + "\n";                                                                              
+        infoLog += JUICE.resources.getString("add_optimization_context") + "\n";                                                                              
         //optimierer bauen
         Element optimizerContext = doc.createElement("contextcomponent");
         optimizerContext.setAttribute("class", desc.optimizerClassName);
@@ -212,11 +213,11 @@ public class step7Pane extends stepPane {
         addParameters(desc.parameters,root);
         addEfficiencies(desc.efficiencies,root);
                                       
-        infoLog += java.util.ResourceBundle.getBundle("resources/Bundle").getString("find_a_position_to_place_optimizer") + "\n";
+        infoLog += JUICE.resources.getString("find_a_position_to_place_optimizer") + "\n";
         //find place for optimization context
         Node firstComponent = getFirstComponent(root);
         if (firstComponent == null){
-            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_model_file_does_not_contain_any_components");
+            return JUICE.resources.getString("Error_model_file_does_not_contain_any_components");
         }
         //collect all following siblings of firstComponent and add them to contextOptimizer
         Node currentNode = firstComponent;
@@ -227,7 +228,7 @@ public class step7Pane extends stepPane {
         }
         
         if (firstComponent.getParentNode() == null){
-            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("Error_model_file_does_not_contain_a_model_context");
+            return JUICE.resources.getString("Error_model_file_does_not_contain_a_model_context");
         }
         Node modelContext = firstComponent.getParentNode();
         for (int i=0;i<followingNodes.size();i++){
@@ -261,7 +262,7 @@ public class step7Pane extends stepPane {
     public JPanel build(){
         panel.setLayout(new GridBagLayout());
         
-        JButton chooseModelFile = new JButton(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Save"));        
+        JButton chooseModelFile = new JButton(JUICE.resources.getString("Save"));        
         JPanel saveModelFilePanel = new JPanel(new GridBagLayout());    
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;    c.gridy = 0;    c.fill = GridBagConstraints.NONE;
@@ -270,7 +271,7 @@ public class step7Pane extends stepPane {
         saveModelFilePanel.add(chooseModelFile,c);
                 
         JPanel modelFilePanel = new JPanel(new BorderLayout());
-        modelFilePanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("output_file_path")), BorderLayout.NORTH);
+        modelFilePanel.add(new JLabel(JUICE.resources.getString("output_file_path")), BorderLayout.NORTH);
         modelFilePanel.add(saveModelFilePanel,BorderLayout.CENTER);
 
         c.gridx = 0;    c.gridy = 0;    c.fill = GridBagConstraints.NONE;
@@ -289,7 +290,7 @@ public class step7Pane extends stepPane {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fc = new JFileChooser();
-                fc.setDialogTitle(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Choose_a_model_file"));
+                fc.setDialogTitle(JUICE.resources.getString("Choose_a_model_file"));
                 fc.setFileFilter(new FileFilter() {
                     @Override
                     public boolean accept(File f) {

@@ -7,6 +7,7 @@ package juice.optimizer.wizard;
 
 import juice.optimizer.wizard.OptimizationWizard.Efficiency;
 import juice.optimizer.wizard.OptimizationWizard.Parameter;
+import juice.*;
 import jams.data.JAMSBoolean;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,15 +30,15 @@ import javax.swing.JTextField;
  * @author Christian Fischer
  */
 public class step6Pane extends stepPane{
-    String possibleOptimizer[] = {  java.util.ResourceBundle.getBundle("resources/Bundle").getString("SCE"), 
-                                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("Nelder_Mead"), 
-                                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("MOCOM"), 
-                                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("Branch_and_Bound"), 
-                                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("Gutmann"), 
-                                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("Gaussian_Process_Optimizer"),
-                                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("Random_Sampler"),
-                                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("Parallel_Random_Sampler"),
-                                    java.util.ResourceBundle.getBundle("resources/Bundle").getString("Parallel_SCE")};
+    String possibleOptimizer[] = {  JUICE.resources.getString("SCE"), 
+                                    JUICE.resources.getString("Nelder_Mead"), 
+                                    JUICE.resources.getString("MOCOM"), 
+                                    JUICE.resources.getString("Branch_and_Bound"), 
+                                    JUICE.resources.getString("Gutmann"), 
+                                    JUICE.resources.getString("Gaussian_Process_Optimizer"),
+                                    JUICE.resources.getString("Random_Sampler"),
+                                    JUICE.resources.getString("Parallel_Random_Sampler"),
+                                    JUICE.resources.getString("Parallel_SCE")};
     boolean multiObjective[] = {    false,
                                     false,
                                     true,
@@ -71,9 +72,9 @@ public class step6Pane extends stepPane{
     
     JPanel optimizerOptions[] = new JPanel[9];
     
-    JCheckBox removeNotUsedComponents = new JCheckBox(java.util.ResourceBundle.getBundle("resources/Bundle").getString("remove_unused_components"));
-    JCheckBox removeGUIComponents = new JCheckBox(java.util.ResourceBundle.getBundle("resources/Bundle").getString("remove_GUI_components"));
-    JCheckBox modelStructureOptimization = new JCheckBox(java.util.ResourceBundle.getBundle("resources/Bundle").getString("optimize_model_structure"));
+    JCheckBox removeNotUsedComponents = new JCheckBox(JUICE.resources.getString("remove_unused_components"));
+    JCheckBox removeGUIComponents = new JCheckBox(JUICE.resources.getString("remove_GUI_components"));
+    JCheckBox modelStructureOptimization = new JCheckBox(JUICE.resources.getString("optimize_model_structure"));
             
     ArrayList<Parameter> param_info = null;
     ArrayList<Efficiency> eff_info = null;
@@ -131,9 +132,9 @@ public class step6Pane extends stepPane{
     @Override
     public String init(){
         if (param_info == null)
-            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_no_parameter");
+            return JUICE.resources.getString("error_no_parameter");
         if (eff_info == null)
-            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_no_objective");
+            return JUICE.resources.getString("error_no_objective");
         
         isMultiObjective.setValue(eff_info.size() > 1);
         if (isMultiObjective.getValue()){
@@ -149,7 +150,7 @@ public class step6Pane extends stepPane{
     public JPanel build(){
         panel.setLayout(new BorderLayout());
         panel.setBorder(null);
-        panel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("step5_desc")), BorderLayout.NORTH); 
+        panel.add(new JLabel(JUICE.resources.getString("step5_desc")), BorderLayout.NORTH); 
                                                 
         JPanel optimizerPanel = new JPanel(new BorderLayout());                
         optimizerPanelWrapper.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -161,7 +162,7 @@ public class step6Pane extends stepPane{
                 if (optimizerOptions[index] != null){
                     if (isMultiObjective.getValue()){
                         if (!multiObjective[index]){
-                            JOptionPane.showMessageDialog(optimizerPanelWrapper, java.util.ResourceBundle.getBundle("resources/Bundle").getString("multi_objective_optimization_not_supported"));
+                            JOptionPane.showMessageDialog(optimizerPanelWrapper, JUICE.resources.getString("multi_objective_optimization_not_supported"));
                             optimizer.setSelectedIndex(2);
                             index = 2;
                         }
@@ -185,23 +186,23 @@ public class step6Pane extends stepPane{
         //create panels
         //0 -> SCE                                
         JPanel numberOfComplexesPanel = new JPanel(new BorderLayout());        
-        numberOfComplexesPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("number_of_complexes"),JLabel.LEFT),BorderLayout.WEST);
+        numberOfComplexesPanel.add(new JLabel(JUICE.resources.getString("number_of_complexes"),JLabel.LEFT),BorderLayout.WEST);
         numberOfComplexesPanel.add(SCE_numberOfComplexes,BorderLayout.EAST);
                                
         JPanel maximumNumberOfIterationsPanel = new JPanel(new BorderLayout());
-        maximumNumberOfIterationsPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
+        maximumNumberOfIterationsPanel.add(new JLabel(JUICE.resources.getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
         maximumNumberOfIterationsPanel.add(SCE_maximumNumberOfIterations,BorderLayout.EAST);
                 
         JPanel pcentoPanel = new JPanel(new BorderLayout());
-        pcentoPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("worst_acceptable_improvement"),JLabel.LEFT),BorderLayout.WEST);
+        pcentoPanel.add(new JLabel(JUICE.resources.getString("worst_acceptable_improvement"),JLabel.LEFT),BorderLayout.WEST);
         pcentoPanel.add(SCE_pcento,BorderLayout.EAST);
                 
         JPanel pepsPanel = new JPanel(new BorderLayout());
-        pepsPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("minimal_geometric_population"),JLabel.LEFT),BorderLayout.WEST);
+        pepsPanel.add(new JLabel(JUICE.resources.getString("minimal_geometric_population"),JLabel.LEFT),BorderLayout.WEST);
         pepsPanel.add(SCE_peps,BorderLayout.EAST);
                 
         JPanel kstopPanel = new JPanel(new BorderLayout());
-        kstopPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("kStop")),BorderLayout.WEST);
+        kstopPanel.add(new JLabel(JUICE.resources.getString("kStop")),BorderLayout.WEST);
         kstopPanel.add(SCE_kstop,BorderLayout.EAST);
         
         optimizerOptions[0] = new JPanel();
@@ -214,7 +215,7 @@ public class step6Pane extends stepPane{
         
         //1 -> nelder mead                   
         JPanel maximumNumberOfIterationsPanel2 = new JPanel(new BorderLayout());
-        maximumNumberOfIterationsPanel2.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
+        maximumNumberOfIterationsPanel2.add(new JLabel(JUICE.resources.getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
         maximumNumberOfIterationsPanel2.add(nelderMead_maximumNumberOfIterations,BorderLayout.EAST);
         
         optimizerOptions[1] = new JPanel();
@@ -223,11 +224,11 @@ public class step6Pane extends stepPane{
                 
         //2 -> mocom            
         JPanel maximumNumberOfIterationsPanel3 = new JPanel(new BorderLayout());
-        maximumNumberOfIterationsPanel3.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
+        maximumNumberOfIterationsPanel3.add(new JLabel(JUICE.resources.getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
         maximumNumberOfIterationsPanel3.add(MOCOM_maximumNumberOfIterations,BorderLayout.EAST);
                 
         JPanel populationSizePanel = new JPanel(new BorderLayout());        
-        populationSizePanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("individuals_in_population"),JLabel.LEFT),BorderLayout.WEST);
+        populationSizePanel.add(new JLabel(JUICE.resources.getString("individuals_in_population"),JLabel.LEFT),BorderLayout.WEST);
         populationSizePanel.add(MOCOM_populationSize,BorderLayout.EAST);
                                                         
         optimizerOptions[2] = new JPanel();
@@ -237,7 +238,7 @@ public class step6Pane extends stepPane{
                         
         //3 -> branch and bound            
         JPanel maximumNumberOfIterationsPanel4 = new JPanel(new BorderLayout());
-        maximumNumberOfIterationsPanel4.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
+        maximumNumberOfIterationsPanel4.add(new JLabel(JUICE.resources.getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
         maximumNumberOfIterationsPanel4.add(BranchAndBound_maximumNumberOfIterations,BorderLayout.EAST);
         
         optimizerOptions[3] = new JPanel();
@@ -247,7 +248,7 @@ public class step6Pane extends stepPane{
         
         //4 -> gutmann        
         JPanel maximumNumberOfIterationsPanel5 = new JPanel(new BorderLayout());
-        maximumNumberOfIterationsPanel5.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
+        maximumNumberOfIterationsPanel5.add(new JLabel(JUICE.resources.getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
         maximumNumberOfIterationsPanel5.add(Gutmann_maximumNumberOfIterations,BorderLayout.EAST);
         
         optimizerOptions[4] = new JPanel();
@@ -257,12 +258,12 @@ public class step6Pane extends stepPane{
         
         //5 -> gp        
         JPanel maximumNumberOfIterationsPanel6 = new JPanel(new BorderLayout());
-        maximumNumberOfIterationsPanel6.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
+        maximumNumberOfIterationsPanel6.add(new JLabel(JUICE.resources.getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
         maximumNumberOfIterationsPanel6.add(GPSearch_maximumNumberOfIterations,BorderLayout.EAST);
                         
         kernelMethod.setSelectedIndex(4);
         JPanel gpMethodPanel = new JPanel(new BorderLayout());
-        gpMethodPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("Kernel_Method"),JLabel.LEFT),BorderLayout.WEST);
+        gpMethodPanel.add(new JLabel(JUICE.resources.getString("Kernel_Method"),JLabel.LEFT),BorderLayout.WEST);
         gpMethodPanel.add(kernelMethod,BorderLayout.EAST);
         
         optimizerOptions[5] = new JPanel();
@@ -272,7 +273,7 @@ public class step6Pane extends stepPane{
         
         //6 -> random sampler        
         JPanel notSupportedPanel = new JPanel(new BorderLayout());
-        notSupportedPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("not_supported"),JLabel.LEFT),BorderLayout.WEST);
+        notSupportedPanel.add(new JLabel(JUICE.resources.getString("not_supported"),JLabel.LEFT),BorderLayout.WEST);
                 
         optimizerOptions[6] = new JPanel();
         optimizerOptions[6].setLayout(new BoxLayout(optimizerOptions[6],BoxLayout.Y_AXIS));        
@@ -280,11 +281,11 @@ public class step6Pane extends stepPane{
         
         //7 -> parallel random sampler                
         JPanel maximumNumberOfIterationsPanel7 = new JPanel(new BorderLayout());
-        maximumNumberOfIterationsPanel7.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
+        maximumNumberOfIterationsPanel7.add(new JLabel(JUICE.resources.getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
         maximumNumberOfIterationsPanel7.add(ParallelRandomSearch_maximumNumberOfIterations,BorderLayout.EAST);
                 
         JPanel excludedFilesPanel = new JPanel(new BorderLayout());                
-        excludedFilesPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("do_not_transfer"),JLabel.LEFT),BorderLayout.WEST);
+        excludedFilesPanel.add(new JLabel(JUICE.resources.getString("do_not_transfer"),JLabel.LEFT),BorderLayout.WEST);
         excludedFilesPanel.add(ParallelRandomSearch_excludedFiles,BorderLayout.EAST);
         
         optimizerOptions[7] = new JPanel();
@@ -294,27 +295,27 @@ public class step6Pane extends stepPane{
         
         //8 -> ParallelSCE                                
         JPanel parallel_numberOfComplexesPanel = new JPanel(new BorderLayout());        
-        parallel_numberOfComplexesPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("number_of_complexes"),JLabel.LEFT),BorderLayout.WEST);
+        parallel_numberOfComplexesPanel.add(new JLabel(JUICE.resources.getString("number_of_complexes"),JLabel.LEFT),BorderLayout.WEST);
         parallel_numberOfComplexesPanel.add(ParallelSCE_numberOfComplexes,BorderLayout.EAST);
                                 
         JPanel parallel_maximumNumberOfIterationsPanel = new JPanel(new BorderLayout());
-        parallel_maximumNumberOfIterationsPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
+        parallel_maximumNumberOfIterationsPanel.add(new JLabel(JUICE.resources.getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
         parallel_maximumNumberOfIterationsPanel.add(ParallelSCE_maximumNumberOfIterations,BorderLayout.EAST);
                 
         JPanel parallel_pcentoPanel = new JPanel(new BorderLayout());
-        parallel_pcentoPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("worst_acceptable_improvement"),JLabel.LEFT),BorderLayout.WEST);
+        parallel_pcentoPanel.add(new JLabel(JUICE.resources.getString("worst_acceptable_improvement"),JLabel.LEFT),BorderLayout.WEST);
         parallel_pcentoPanel.add(ParallelSCE_pcento,BorderLayout.EAST);
                 
         JPanel parallel_pepsPanel = new JPanel(new BorderLayout());
-        parallel_pepsPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("minimal_geometric_population"),JLabel.LEFT),BorderLayout.WEST);
+        parallel_pepsPanel.add(new JLabel(JUICE.resources.getString("minimal_geometric_population"),JLabel.LEFT),BorderLayout.WEST);
         parallel_pepsPanel.add(ParallelSCE_peps,BorderLayout.EAST);
                 
         JPanel parallel_kstopPanel = new JPanel(new BorderLayout());
-        parallel_kstopPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("kStop")),BorderLayout.WEST);
+        parallel_kstopPanel.add(new JLabel(JUICE.resources.getString("kStop")),BorderLayout.WEST);
         parallel_kstopPanel.add(ParallelSCE_kstop,BorderLayout.EAST);
         
         JPanel excludedFilesPanel2 = new JPanel(new BorderLayout());                
-        excludedFilesPanel2.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("do_not_transfer"),JLabel.LEFT),BorderLayout.WEST);
+        excludedFilesPanel2.add(new JLabel(JUICE.resources.getString("do_not_transfer"),JLabel.LEFT),BorderLayout.WEST);
         excludedFilesPanel2.add(ParallelSCE_excludedFiles,BorderLayout.EAST);
         
         optimizerOptions[8] = new JPanel();
@@ -381,7 +382,7 @@ public class step6Pane extends stepPane{
                     numOfComplexes = Integer.parseInt(SCE_numberOfComplexes.getText());
                 }catch(Exception e){}
                 if (numOfComplexes < 1 || numOfComplexes > 100)
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("number_of_complexes_have_to_be_an_integer_between_1_and_100");
+                    return JUICE.resources.getString("number_of_complexes_have_to_be_an_integer_between_1_and_100");
                 desc.attributes.add(new AttributeDescription("NumberOfComplexes",null,Integer.toString(numOfComplexes),false));
                 
                 double pcento = 0;
@@ -389,7 +390,7 @@ public class step6Pane extends stepPane{
                     pcento = Double.parseDouble(SCE_pcento.getText());
                 }catch(Exception e){}
                 if (pcento < 0 || pcento > 1)
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("value_of_pcento_have_to_be_between_0_and_1");
+                    return JUICE.resources.getString("value_of_pcento_have_to_be_between_0_and_1");
                 desc.attributes.add(new AttributeDescription("pcento",null,Double.toString(pcento),false));
                 
                 double peps = 0;
@@ -397,7 +398,7 @@ public class step6Pane extends stepPane{
                     peps = Double.parseDouble(SCE_peps.getText());
                 }catch(Exception e){}
                 if (peps < 0 || peps > 1)
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("value_of_peps_have_to_be_between_0_and_1");
+                    return JUICE.resources.getString("value_of_peps_have_to_be_between_0_and_1");
                 desc.attributes.add(new AttributeDescription("peps",null,Double.toString(peps),false));
                 
                 int kstop = 0;
@@ -405,7 +406,7 @@ public class step6Pane extends stepPane{
                     kstop = Integer.parseInt(SCE_kstop.getText());
                 }catch(Exception e){}
                 if (kstop < 1 || kstop > 100)
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("kstop_have_to_be_an_integer_between_1_and_100");
+                    return JUICE.resources.getString("kstop_have_to_be_an_integer_between_1_and_100");
                 desc.attributes.add(new AttributeDescription("kstop",null,Integer.toString(kstop),false));
                 
                 int maxn = 0;
@@ -413,7 +414,7 @@ public class step6Pane extends stepPane{
                     maxn = Integer.parseInt(SCE_maximumNumberOfIterations.getText());
                 }catch(Exception e){}
                 if (maxn < 1 )
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_maxiter_greater_1");
+                    return JUICE.resources.getString("error_maxiter_greater_1");
                 desc.attributes.add(new AttributeDescription("maxn",null,Integer.toString(maxn),false));
         
                 break;
@@ -426,7 +427,7 @@ public class step6Pane extends stepPane{
                     maxn = Integer.parseInt(nelderMead_maximumNumberOfIterations.getText());
                 }catch(Exception e){}
                 if (maxn < 1 )
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_maxiter_greater_1");
+                    return JUICE.resources.getString("error_maxiter_greater_1");
                 desc.attributes.add(new AttributeDescription("maxn",null,Integer.toString(maxn),false));        
                                         
                 break;
@@ -439,7 +440,7 @@ public class step6Pane extends stepPane{
                     maxn = Integer.parseInt(MOCOM_maximumNumberOfIterations.getText());
                 }catch(Exception e){}
                 if (maxn < 1 )
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_maxiter_greater_1");
+                    return JUICE.resources.getString("error_maxiter_greater_1");
                 desc.attributes.add(new AttributeDescription("maxn",null,Integer.toString(maxn),false));        
                    
                 int popSize = 0;
@@ -447,7 +448,7 @@ public class step6Pane extends stepPane{
                     popSize = Integer.parseInt(this.MOCOM_populationSize.getText());
                 }catch(Exception e){}
                 if (popSize < 1 )
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("population_size_must_be_positive");
+                    return JUICE.resources.getString("population_size_must_be_positive");
                 desc.attributes.add(new AttributeDescription("populationSize",null,Integer.toString(popSize),false)); 
                 
                 break;                                
@@ -460,7 +461,7 @@ public class step6Pane extends stepPane{
                     maxn = Integer.parseInt(BranchAndBound_maximumNumberOfIterations.getText());
                 }catch(Exception e){}
                 if (maxn < 1 )
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_maxiter_greater_1");
+                    return JUICE.resources.getString("error_maxiter_greater_1");
                 desc.attributes.add(new AttributeDescription("maxn",null,Integer.toString(maxn),false));        
                 break;
             }
@@ -472,7 +473,7 @@ public class step6Pane extends stepPane{
                     maxn = Integer.parseInt(Gutmann_maximumNumberOfIterations.getText());
                 }catch(Exception e){}
                 if (maxn < 1 )
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_maxiter_greater_1");
+                    return JUICE.resources.getString("error_maxiter_greater_1");
                 desc.attributes.add(new AttributeDescription("maxn",null,Integer.toString(maxn),false));        
                 break;
             }
@@ -484,7 +485,7 @@ public class step6Pane extends stepPane{
                     maxn = Integer.parseInt(GPSearch_maximumNumberOfIterations.getText());
                 }catch(Exception e){}
                 if (maxn < 1 )
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_maxiter_greater_1");
+                    return JUICE.resources.getString("error_maxiter_greater_1");
                 desc.attributes.add(new AttributeDescription("maxn",null,Integer.toString(maxn),false));        
                 
                 int kernel = this.kernelMethod.getSelectedIndex();                
@@ -499,7 +500,7 @@ public class step6Pane extends stepPane{
                     maxn = Integer.parseInt(RandomSearch_maximumNumberOfIterations.getText());
                 }catch(Exception e){}
                 if (maxn < 1 )
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_maxiter_greater_1");
+                    return JUICE.resources.getString("error_maxiter_greater_1");
                 desc.attributes.add(new AttributeDescription("maxn",null,Integer.toString(maxn),false));        
                 break;
             }
@@ -511,7 +512,7 @@ public class step6Pane extends stepPane{
                     maxn = Integer.parseInt(ParallelRandomSearch_maximumNumberOfIterations.getText());
                 }catch(Exception e){}
                 if (maxn < 1 )
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_maxiter_greater_1");
+                    return JUICE.resources.getString("error_maxiter_greater_1");
                 desc.attributes.add(new AttributeDescription("maxn",null,Integer.toString(maxn),false));        
                 break;
             }
@@ -523,7 +524,7 @@ public class step6Pane extends stepPane{
                     numOfComplexes = Integer.parseInt(ParallelSCE_numberOfComplexes.getText());
                 }catch(Exception e){}
                 if (numOfComplexes < 1 || numOfComplexes > 100)
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("number_of_complexes_have_to_be_an_integer_between_1_and_100");
+                    return JUICE.resources.getString("number_of_complexes_have_to_be_an_integer_between_1_and_100");
                 desc.attributes.add(new AttributeDescription("NumberOfComplexes",null,Integer.toString(numOfComplexes),false));
                 
                 double pcento = 0;
@@ -531,7 +532,7 @@ public class step6Pane extends stepPane{
                     pcento = Double.parseDouble(ParallelSCE_pcento.getText());
                 }catch(Exception e){}
                 if (pcento < 0 || pcento > 1)
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("value_of_pcento_have_to_be_between_0_and_1");
+                    return JUICE.resources.getString("value_of_pcento_have_to_be_between_0_and_1");
                 desc.attributes.add(new AttributeDescription("pcento",null,Double.toString(pcento),false));
                 
                 double peps = 0;
@@ -539,7 +540,7 @@ public class step6Pane extends stepPane{
                     peps = Double.parseDouble(ParallelSCE_peps.getText());
                 }catch(Exception e){}
                 if (peps < 0 || peps > 1)
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("value_of_peps_have_to_be_between_0_and_1");
+                    return JUICE.resources.getString("value_of_peps_have_to_be_between_0_and_1");
                 desc.attributes.add(new AttributeDescription("peps",null,Double.toString(peps),false));
                 
                 int kstop = 0;
@@ -547,7 +548,7 @@ public class step6Pane extends stepPane{
                     kstop = Integer.parseInt(ParallelSCE_kstop.getText());
                 }catch(Exception e){}
                 if (kstop < 1 || kstop > 100)
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("kstop_have_to_be_an_integer_between_1_and_100");
+                    return JUICE.resources.getString("kstop_have_to_be_an_integer_between_1_and_100");
                 desc.attributes.add(new AttributeDescription("kstop",null,Integer.toString(kstop),false));
                 
                 int maxn = 0;
@@ -555,15 +556,15 @@ public class step6Pane extends stepPane{
                     maxn = Integer.parseInt(ParallelSCE_maximumNumberOfIterations.getText());
                 }catch(Exception e){}
                 if (maxn < 1 )
-                    return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_maxiter_greater_1");
+                    return JUICE.resources.getString("error_maxiter_greater_1");
                 desc.attributes.add(new AttributeDescription("maxn",null,Integer.toString(maxn),false));
                 
                 try{
                     Pattern.compile(ParallelRandomSearch_excludedFiles.getText());
                 }catch(PatternSyntaxException pse){
-                    return  java.util.ResourceBundle.getBundle("resources/Bundle").getString("There_is_a_problem_with_the_regular_expression!") +"\n"+
-                            java.util.ResourceBundle.getBundle("resources/Bundle").getString("The_pattern_in_question_is") + ":" + pse.getPattern() + "\n"+
-                            java.util.ResourceBundle.getBundle("resources/Bundle").getString("The_description_is")+": "+pse.getDescription() + "\n";                
+                    return  JUICE.resources.getString("There_is_a_problem_with_the_regular_expression!") +"\n"+
+                            JUICE.resources.getString("The_pattern_in_question_is") + ":" + pse.getPattern() + "\n"+
+                            JUICE.resources.getString("The_description_is")+": "+pse.getDescription() + "\n";                
                 }
                 desc.attributes.add(new AttributeDescription("maxn",null,ParallelRandomSearch_excludedFiles.getText(),false));
                 

@@ -6,6 +6,7 @@
 package juice.optimizer.wizard;
 
 import juice.optimizer.wizard.OptimizationWizard.Efficiency;
+import juice.*;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -27,10 +28,10 @@ public class step5Pane extends stepPane{
     ArrayList<Efficiency> selectedEfficiencies = null;
     JComboBox modeList[] = null;
     
-    String modes[] = {  java.util.ResourceBundle.getBundle("resources/Bundle").getString("minimization"),
-                        java.util.ResourceBundle.getBundle("resources/Bundle").getString("maximization"),
-                        java.util.ResourceBundle.getBundle("resources/Bundle").getString("absolute_minimization"),
-                        java.util.ResourceBundle.getBundle("resources/Bundle").getString("absolute_maximization") };
+    String modes[] = {  JUICE.resources.getString("minimization"),
+                        JUICE.resources.getString("maximization"),
+                        JUICE.resources.getString("absolute_minimization"),
+                        JUICE.resources.getString("absolute_maximization") };
                     
     public void setSelectedEfficiencies(ArrayList<Efficiency> selectedEfficiencies){
         this.selectedEfficiencies = selectedEfficiencies;
@@ -40,7 +41,7 @@ public class step5Pane extends stepPane{
     public JPanel build() {        
         panel.setLayout(new BorderLayout());
         panel.setBorder(null);
-        panel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("step4_desc")), BorderLayout.NORTH);               
+        panel.add(new JLabel(JUICE.resources.getString("step4_desc")), BorderLayout.NORTH);               
         
         step5EfficiencyPanel = new JPanel(new BorderLayout());
         
@@ -61,17 +62,17 @@ public class step5Pane extends stepPane{
     @Override   
     public String init(){
         if (selectedEfficiencies == null){
-            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_no_parameter");
+            return JUICE.resources.getString("error_no_parameter");
         }
         step5EfficiencyPanel.removeAll();
         step5EfficiencyPanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;    c.gridy = 0;    c.fill = GridBagConstraints.HORIZONTAL;
-        step5EfficiencyPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("parameter")),c);        
+        step5EfficiencyPanel.add(new JLabel(JUICE.resources.getString("parameter")),c);        
         c.gridx = 1;    c.gridy = 0;
-        step5EfficiencyPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("component")),c);        
+        step5EfficiencyPanel.add(new JLabel(JUICE.resources.getString("component")),c);        
         c.gridx = 2;    c.gridy = 0;
-        step5EfficiencyPanel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("mode")),c);        
+        step5EfficiencyPanel.add(new JLabel(JUICE.resources.getString("mode")),c);        
         step5EfficiencyPanel.setMaximumSize(new Dimension(100,100));
         
         this.modeList = new JComboBox[selectedEfficiencies.size()];        

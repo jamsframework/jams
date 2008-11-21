@@ -7,6 +7,7 @@ package juice.optimizer.wizard;
 
 import juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
 import juice.optimizer.wizard.OptimizationWizard.Efficiency;
+import juice.*;
 import jams.model.JAMSComponent;
 import jams.model.JAMSContext;
 import jams.model.JAMSModel;
@@ -113,7 +114,7 @@ public class step4Pane extends stepPane{
     public JPanel build() {        
         panel.setLayout(new BorderLayout());
         panel.setBorder(null);
-        panel.add(new JLabel(java.util.ResourceBundle.getBundle("resources/Bundle").getString("step3_desc")), BorderLayout.NORTH);               
+        panel.add(new JLabel(JUICE.resources.getString("step3_desc")), BorderLayout.NORTH);               
         
         JScrollPane treeScroller = new JScrollPane(modelTree);        
         treeScroller.setVisible(true);
@@ -134,7 +135,7 @@ public class step4Pane extends stepPane{
     @Override   
     public String init(){
         if (model == null){
-            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_no_model_loaded");
+            return JUICE.resources.getString("error_no_model_loaded");
         }
         this.selectedEfficiencies.clear();
         modelTree.setRootVisible(true);
@@ -149,7 +150,7 @@ public class step4Pane extends stepPane{
     public String finish(){        
         TreePath selections[] = modelTree.getSelectionPaths();
         if (selections == null){
-            return java.util.ResourceBundle.getBundle("resources/Bundle").getString("error_no_parameter");
+            return JUICE.resources.getString("error_no_parameter");
         }        
         selectedEfficiencies.clear();
         for (int i=0;i<selections.length;i++){
