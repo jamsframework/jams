@@ -50,12 +50,13 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
 
-public class VirtualWorkspace {
+public class VirtualWorkspace implements Serializable{
 
     public static final String DUMP_MARKER = "#JAMSdatadump";
     private static final String CONFIG_FILE_NAME = "config.txt",  CONFIG_FILE_COMMENT = "JAMS workspace configuration",  CONTEXT_ATTRIBUTE_NAME = "context",  INPUT_DIR_NAME = "input",  OUTPUT_DIR_NAME = "output",  TEMP_DIR_NAME = "tmp",  DUMP_DIR_NAME = "dump",  LOCAL_INDIR_NAME = "local";

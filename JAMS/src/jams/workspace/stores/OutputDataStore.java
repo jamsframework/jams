@@ -22,22 +22,23 @@
  */
 package jams.workspace.stores;
 
+import jams.io.SerializableBufferedWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import jams.workspace.VirtualWorkspace;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import jams.model.JAMSContext;
+import java.io.Serializable;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class OutputDataStore implements DataStore {
+public class OutputDataStore implements DataStore,Serializable {
 
     private static final String TRACE_STRING = "attribute";
     private static final String FILTER_STRING = "filter";
@@ -47,7 +48,7 @@ public class OutputDataStore implements DataStore {
     private String id;
     private String[] attributes;
     private Filter[] filters;
-    private BufferedWriter writer;
+    private SerializableBufferedWriter writer;
     private VirtualWorkspace ws;
 
     public OutputDataStore(VirtualWorkspace ws, Document doc, String id) {
@@ -88,7 +89,7 @@ public class OutputDataStore implements DataStore {
         outputDirectory.mkdirs();
 
         File outputFile = new File(outputDirectory.getPath() + File.separator + id + ".dat");
-        writer = new BufferedWriter(new FileWriter(outputFile));
+        writer = new SerializableBufferedWriter(new FileWriter(outputFile));
     }
 
     public void write(Object o) throws IOException {
@@ -109,7 +110,7 @@ public class OutputDataStore implements DataStore {
         return filters;
     }
 
-    public class Filter {
+    public class Filter implements Serializable {
 
         private String contextName,  expression;
         private Pattern pattern = null;

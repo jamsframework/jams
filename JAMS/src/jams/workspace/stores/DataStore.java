@@ -23,12 +23,13 @@
 package jams.workspace.stores;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public interface DataStore {
+public interface DataStore extends Serializable {
 
     public String getID();
 
