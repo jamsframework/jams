@@ -39,7 +39,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
-import reg.DataManager;
+import reg.Regionalizer;
 
 /**
  *
@@ -91,7 +91,7 @@ public class DSTree extends JAMSTree {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
                 if (getSelectionPath() != null) {
-                    nodeObservable.setNode((DSTreeNode) getSelectionPath().getLastPathComponent());
+                    nodeObservable.setNode((DSTreeNode) getLastSelectedPathComponent());
                 } else {
                     nodeObservable.setNode(null);
                 }
@@ -101,6 +101,10 @@ public class DSTree extends JAMSTree {
         this.setVisible(false);
     }
 
+    private void displayDSData() {
+        Regionalizer.getDisplayManager().displayDS((DSTreeNode) getLastSelectedPathComponent());
+    }
+
     private void showPopup(MouseEvent evt) {
         TreePath p = this.getClosestPathForLocation(evt.getX(), evt.getY());
         this.setSelectionPath(p);
@@ -108,10 +112,6 @@ public class DSTree extends JAMSTree {
         if ((node != null) && ((node.getType() == DSTreeNode.INPUT_DS) || (node.getType() == DSTreeNode.OUTPUT_DS))) {
             popup.show(this, evt.getX(), evt.getY());
         }
-    }
-
-    private void displayDSData() {
-        DataManager.displayDS(this.getLastSelectedPathComponent().toString());
     }
 
     public void update(VirtualWorkspace workspace) {

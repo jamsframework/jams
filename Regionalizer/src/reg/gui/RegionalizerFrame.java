@@ -23,12 +23,12 @@
 package reg.gui;
 
 import reg.*;
-import reg.gui.InfoPanel;
 import jams.JAMSTools;
 import jams.gui.LHelper;
 import jams.gui.WorkerDlg;
 import jams.workspace.VirtualWorkspace;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -58,27 +58,20 @@ import javax.swing.KeyStroke;
  */
 public class RegionalizerFrame extends JFrame {
 
-    private static final int INOUT_PANE_WIDTH = 250,  INOUT_PANE_HEIGHT = 500;
+    private static final int INOUT_PANE_WIDTH = 250,  INOUT_PANE_HEIGHT = 450;
     private static final int DIVIDER_WIDTH = 6;
     private JFileChooser jfc = LHelper.getJFileChooser();
     private WorkerDlg openWSDlg;
     private Action openWSAction,  exitAction;
     private JLabel statusLabel;
     private VirtualWorkspace workspace;
-    private InfoPanel infoPanel;
-    private DataPanel dataPanel;
-    private TreePanel treePanel;
+    private JSplitPane mainSplitPane;
 
     public RegionalizerFrame() {
         init();
     }
 
     private void init() {
-
-        treePanel = new TreePanel();
-        infoPanel = new InfoPanel();
-        dataPanel = new DataPanel();
-
 
         createListener();
 
@@ -105,20 +98,20 @@ public class RegionalizerFrame extends JFrame {
 
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        JSplitPane mainSplitPane = new JSplitPane();
+        mainSplitPane = new JSplitPane();
         JSplitPane inoutSplitPane = new JSplitPane();
         mainSplitPane.setAutoscrolls(true);
         mainSplitPane.setContinuousLayout(true);
         mainSplitPane.setLeftComponent(inoutSplitPane);
-        mainSplitPane.setRightComponent(dataPanel);
+//        mainSplitPane.setRightComponent(Regionalizer.getDisplayManager().getDataPanel());
         mainSplitPane.setDividerLocation(INOUT_PANE_WIDTH);
         //mainSplitPane.setOneTouchExpandable(true);
         mainSplitPane.setDividerSize(DIVIDER_WIDTH);
 
         inoutSplitPane.setAutoscrolls(true);
         inoutSplitPane.setContinuousLayout(true);
-        inoutSplitPane.setLeftComponent(treePanel);
-        inoutSplitPane.setRightComponent(infoPanel);
+        inoutSplitPane.setLeftComponent(Regionalizer.getDisplayManager().getTreePanel());
+        inoutSplitPane.setRightComponent(Regionalizer.getDisplayManager().getInfoPanel());
         inoutSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         inoutSplitPane.setDividerLocation(INOUT_PANE_HEIGHT);
         inoutSplitPane.setOneTouchExpandable(false);
@@ -174,11 +167,16 @@ public class RegionalizerFrame extends JFrame {
             workspace = new VirtualWorkspace(workspaceFile, Regionalizer.getRuntime(), true);
             workspace.setLibs(libs);
             setTitle(Regionalizer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
-            treePanel.update(workspace);
+            Regionalizer.getDisplayManager().getTreePanel().update(workspace);
         } catch (VirtualWorkspace.InvalidWorkspaceException iwe) {
             Regionalizer.getRuntime().sendHalt(iwe.getMessage());
         }
 
+    }
+
+    public void updateMainPanel(Component comp) {
+        mainSplitPane.setRightComponent(comp);
+        mainSplitPane.updateUI();
     }
 
     private void open() {
@@ -202,27 +200,6 @@ public class RegionalizerFrame extends JFrame {
      */
     public VirtualWorkspace getWorkspace() {
         return workspace;
-    }
-
-    /**
-     * @return the infoPanel
-     */
-    public InfoPanel getInfoPanel() {
-        return infoPanel;
-    }
-
-    /**
-     * @return the dataPanel
-     */
-    public DataPanel getDataPanel() {
-        return dataPanel;
-    }
-
-    /**
-     * @return the treePanel
-     */
-    public TreePanel getTreePanel() {
-        return treePanel;
     }
 
     private void exit() {

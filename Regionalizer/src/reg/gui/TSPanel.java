@@ -20,18 +20,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package reg.gui;
 
+import reg.spreadsheet.JAMSSpreadSheet;
 import javax.swing.JPanel;
+import reg.Regionalizer;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 public class TSPanel extends JPanel {
-    
+
+    private JAMSSpreadSheet spreadsheet;
+
     public TSPanel() {
+        String[] default_headers = {""};
+        spreadsheet = new JAMSSpreadSheet(Regionalizer.getRegionalizerFrame(), default_headers);
+        spreadsheet.init();
+        add(spreadsheet.getPanel());
     }
-    
 }

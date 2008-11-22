@@ -44,11 +44,11 @@ public class DSTreeNode extends DefaultMutableTreeNode {
     static int ICON_HEIGHT = 16;
     
     static Icon[] NODE_ICON = {
-        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/inout.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
-        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/folder.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
-        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/folder.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
-        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/spreadsheet.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
-        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/spreadsheet.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("reg/resources/images/inout.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("reg/resources/images/folder.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("reg/resources/images/folder.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("reg/resources/images/spreadsheet.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("reg/resources/images/spreadsheet.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
     };
     
     private int type = 0;

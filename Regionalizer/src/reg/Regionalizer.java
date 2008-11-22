@@ -33,9 +33,6 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.UIManager;
-import reg.gui.DataPanel;
-import reg.gui.InfoPanel;
-import reg.gui.TreePanel;
 
 /**
  *
@@ -49,27 +46,7 @@ public class Regionalizer {
     private static JAMSRuntime runtime;
 //    private static DSTree tree;
     private static JAMSProperties properties;
-
-    /**
-     * @return the runtime
-     */
-    public static JAMSRuntime getRuntime() {
-        return runtime;
-    }
-
-    /**
-     * @return the properties
-     */
-    public static JAMSProperties getProperties() {
-        return properties;
-    }
-
-    /**
-     * @return the regFrame
-     */
-    public static RegionalizerFrame getRegionalizerFrame() {
-        return regionalizerFrame;
-    }
+    private static DisplayManager displayManager;
 
     public Regionalizer() {
     }
@@ -108,8 +85,37 @@ public class Regionalizer {
             }
         }
 
+        displayManager = new DisplayManager();
         regionalizerFrame = new RegionalizerFrame();
-        new TreeSelectionObserver();
+//        new TreeSelectionObserver();
         regionalizerFrame.setVisible(true);
+    }
+
+    /**
+     * @return the runtime
+     */
+    public static JAMSRuntime getRuntime() {
+        return runtime;
+    }
+
+    /**
+     * @return the properties
+     */
+    public static JAMSProperties getProperties() {
+        return properties;
+    }
+
+    /**
+     * @return the regFrame
+     */
+    public static RegionalizerFrame getRegionalizerFrame() {
+        return regionalizerFrame;
+    }
+
+    /**
+     * @return the displayManager
+     */
+    public static DisplayManager getDisplayManager() {
+        return displayManager;
     }
 }
