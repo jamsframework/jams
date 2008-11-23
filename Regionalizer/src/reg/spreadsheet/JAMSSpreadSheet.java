@@ -743,9 +743,9 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         JXYConfigurator jxys;
 
         try {
-            jxys = new JXYConfigurator(getModel().getRuntime().getFrame(), this.table);
+            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this.table);
         } catch (NullPointerException npe) {
-            jxys = new JXYConfigurator(parent_frame, this.table);
+            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this.table);
         }
     }
     ActionListener plotAction = new ActionListener() {

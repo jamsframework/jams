@@ -28,7 +28,6 @@ import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.util.Observable;
 import java.util.Observer;
-import reg.gui.DataPanel;
 import reg.gui.InfoPanel;
 import reg.gui.TSPanel;
 import reg.gui.TreePanel;
@@ -41,16 +40,13 @@ import reg.tree.DSTreeNode;
 public class DisplayManager implements Observer {
 
     private InfoPanel infoPanel;
-    private DataPanel dataPanel;
-    private TSPanel tSPanel;
+    private TSPanel tsPanel;
     private TreePanel treePanel;
     private JAMSSpreadSheet spreadsheet;
 
     public DisplayManager() {
         treePanel = new TreePanel();
         infoPanel = new InfoPanel();
-        dataPanel = new DataPanel();
-        tSPanel = new TSPanel();
         treePanel.getTree().addObserver(this);
 
         String[] default_headers = {""};
@@ -104,13 +100,6 @@ public class DisplayManager implements Observer {
     }
 
     /**
-     * @return the dataPanel
-     */
-    public DataPanel getDataPanel() {
-        return dataPanel;
-    }
-
-    /**
      * @return the treePanel
      */
     public TreePanel getTreePanel() {
@@ -121,6 +110,9 @@ public class DisplayManager implements Observer {
      * @return the tSPanel
      */
     public TSPanel getTSPanel() {
-        return tSPanel;
+        if (tsPanel == null) {
+            tsPanel = new TSPanel();
+        }
+        return tsPanel;
     }
 }

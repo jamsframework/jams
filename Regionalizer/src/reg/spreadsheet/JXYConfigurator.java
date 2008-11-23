@@ -154,10 +154,10 @@ public class JXYConfigurator extends JFrame {
 
         this.parent = parent;
         //super(parent, "JAMS JTS Viewer");
-        setTitle("JAMS XYPlot Viewer");
-        URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
-        ImageIcon icon = new ImageIcon(url);
-        setIconImage(icon.getImage());
+//        setTitle("JAMS XYPlot Viewer");
+//        URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
+//        ImageIcon icon = new ImageIcon(url);
+//        setIconImage(icon.getImage());
 
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();

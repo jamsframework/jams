@@ -57,7 +57,7 @@ public class JUICEFrame extends JFrame {
     private TreePanel libTreePanel;
     private JDesktopPane modelPanel = new JDesktopPane();
     private JMenu windowMenu,  modelMenu;
-    private JMenuItem pasteModelParameterItem,  copyModelParameterItem,  searchModelItem, OptimizationWizardItem;
+    private JMenuItem pasteModelParameterItem,  copyModelParameterItem,  searchModelItem,  OptimizationWizardItem;
     private JLabel statusLabel;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JUICE.resources.getString("Info_Log"));
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JUICE.resources.getString("Error_Log"));
@@ -65,7 +65,7 @@ public class JUICEFrame extends JFrame {
     private WorkerDlg loadModelDlg;
     private SearchDlg searchDlg;
     private String modelPath;
-    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchAction,  copyModelGUIAction,  pasteModelGUIAction, OptimizationWizardGUIAction, loadModelParamAction,  saveModelParamAction,  runModelAction,  runModelFromLauncherAction,  infoLogAction,  errorLogAction,  wikiAction;
+    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchAction,  copyModelGUIAction,  pasteModelGUIAction,  OptimizationWizardGUIAction,  loadModelParamAction,  saveModelParamAction,  runModelAction,  runModelFromLauncherAction,  infoLogAction,  errorLogAction,  wikiAction;
 
     public JUICEFrame() {
         init();
@@ -248,19 +248,18 @@ public class JUICEFrame extends JFrame {
                 view.updateLauncherPanel();
             }
         };
-        
+
         OptimizationWizardGUIAction = new AbstractAction(JUICE.resources.getString("Optimization_Wizard")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 OptimizationWizard wizard = new OptimizationWizard();
                 ModelView view = getCurrentView();
-                wizard.runWizard(view.getModelDoc(),JUICE.getJamsProperties());
+                wizard.runWizard(view.getModelDoc(), JUICE.getJamsProperties());
             }
         };
 
         loadModelParamAction = new AbstractAction(JUICE.resources.getString("Load_Model_Parameter...")) {
-
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -344,6 +343,13 @@ public class JUICEFrame extends JFrame {
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setCurrentDirectory(JUICE.getBaseDir());
 
+        // use outline or live drag mode for performance or look
+        if (System.getProperty("os.name").contains("Windows")) {
+            modelPanel.setDragMode(JDesktopPane.LIVE_DRAG_MODE);
+        } else {
+            modelPanel.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
+        }
+
         JButton reloadLibsButton = new JButton(reloadLibsAction);
 
         libTreePanel = new TreePanel();
@@ -396,7 +402,7 @@ public class JUICEFrame extends JFrame {
         prefsButton.setToolTipText(JUICE.resources.getString("Edit_Preferences..."));
         prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
         toolBar.add(prefsButton);
-        
+
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
         infoLogButton.setToolTipText(JUICE.resources.getString("Show_Info_Log..."));
@@ -528,7 +534,7 @@ public class JUICEFrame extends JFrame {
         OptimizationWizardItem = new JMenuItem(OptimizationWizardGUIAction);
         OptimizationWizardGUIAction.setEnabled(false);
         modelMenu.add(OptimizationWizardItem);
-        
+
         /*
          * logs menu
          */
