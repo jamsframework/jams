@@ -85,7 +85,7 @@ public class ModelView {
     //private HashMap<ComponentDescriptor, DataRepository> dataRepositories = new HashMap<ComponentDescriptor, DataRepository>();
     private LauncherPanel launcherPanel;
     private ModelEditPanel modelEditPanel;
-    private String author = "", date = "", description = "", helpBaseUrl = "", workspace = "";
+    private String author = "",  date = "",  description = "",  helpBaseUrl = "",  workspace = "";
     private HashMap<String, ComponentDescriptor> componentDescriptors = new HashMap<String, ComponentDescriptor>();
     private TreePanel modelTreePanel;
     private JDesktopPane parentPanel;
@@ -262,13 +262,15 @@ public class ModelView {
 
         ModelView.viewList.addView(frame, this);
 
+        // check if there already was a view opened
+        ModelView currentView = JUICE.getJuiceFrame().getCurrentView();
+
+        // add the current frame to the JDesktopPane
         parentPanel.add(frame, JLayeredPane.DEFAULT_LAYER);
 
         try {
-            frame.setSelected(true);
-            if (firstFrame) {
+            if (currentView == null) {
                 frame.setMaximum(true);
-            //firstFrame = false;
             }
         } catch (PropertyVetoException pve) {
             JAMS.handle(pve);
@@ -284,7 +286,7 @@ public class ModelView {
         JAMSLauncher launcher = new JAMSLauncher(JUICE.getJamsProperties(), getModelDoc());
         launcher.setVisible(true);
     }
-    
+
     public void runModel() {
 
         // first check if provided parameter values are valid
@@ -447,21 +449,37 @@ public class ModelView {
             int result = LHelper.showYesNoCancelDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Save_modifications_in_") + this.getFrame().getTitle() + JUICE.resources.getString("_?"), JUICE.resources.getString("Unsaved_modifications"));
             if (result == JOptionPane.OK_OPTION) {
                 JUICE.getJuiceFrame().saveModel(this);
-                ModelView.viewList.removeView(this.getFrame());
-                this.getFrame().dispose();
+                closeView();
                 returnValue = true;
             } else if (result == JOptionPane.NO_OPTION) {
-                ModelView.viewList.removeView(this.getFrame());
-                this.getFrame().dispose();
+                closeView();
                 returnValue = true;
             }
         } else {
-            ModelView.viewList.removeView(this.getFrame());
-            this.getFrame().dispose();
-            parentPanel.updateUI();
+            closeView();
             returnValue = true;
         }
         return returnValue;
+    }
+
+    private void closeView() {
+        boolean maximized = this.getFrame().isMaximum();
+
+        ModelView.viewList.removeView(this.getFrame());
+        parentPanel.remove(this.getFrame());
+        this.getFrame().dispose();
+        parentPanel.updateUI();
+
+        if (maximized) {
+            try {
+                ModelView currentView = JUICE.getJuiceFrame().getCurrentView();
+                if (currentView != null) {
+                    currentView.getFrame().setMaximum(true);
+                }
+            } catch (PropertyVetoException pve) {
+                JAMS.handle(pve);
+            }
+        }
     }
 
     public void setModelParameters(Element launcherNode) {
@@ -529,11 +547,11 @@ public class ModelView {
             property.var = property.component.getComponentAttributes().get(attributeName);
             property.attribute = property.component.getContextAttributes().get(attributeName);
         }
-/*
+        /*
         if (attributeName.equals("workspace") && (property.component.getClazz() == JAMSModel.class)) {
-            property.var = property.component.createComponentAttribute(attributeName, JAMSDirName.class, ComponentDescriptor.ComponentAttribute.READ_ACCESS);
+        property.var = property.component.createComponentAttribute(attributeName, JAMSDirName.class, ComponentDescriptor.ComponentAttribute.READ_ACCESS);
         }
-*/
+         */
         //check wether the referred parameter is existing or not
         if ((property.attribute == null) && (property.var == null) &&
                 !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
@@ -605,7 +623,7 @@ public class ModelView {
                         JUICE.resources.getString("The_model_definition_in_") + fileName + JUICE.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JUICE.resources.getString("_while_your_original_file_was_left_untouched."), JUICE.resources.getString("Info"));
             }
             fileName = newModelFilename;
-            
+
             this.setSavePath(new File(fileName));
             this.setTree(new ModelTree(this, XMLIO.getDocument(fileName)));
 
@@ -680,14 +698,14 @@ public class ModelView {
     public void setHelpBaseUrl(String helpBaseUrl) {
         this.helpBaseUrl = helpBaseUrl;
     }
-    
+
     public String getWorkspace() {
         return workspace;
     }
 
     public void setWorkspace(String workspace) {
         this.workspace = workspace;
-    }    
+    }
 
     public ComponentDescriptor getComponentDescriptor(String name) {
         return this.getComponentDescriptors().get(name);
@@ -707,7 +725,7 @@ public class ModelView {
     }
 
     public void setInitialState() {
-         this.initialDoc = tree.getModelDocument();
+        this.initialDoc = tree.getModelDocument();
     }
 
     public ModelProperties getModelProperties() {
