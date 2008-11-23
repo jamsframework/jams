@@ -103,7 +103,7 @@ public class RegionalizerFrame extends JFrame {
         mainSplitPane.setAutoscrolls(true);
         mainSplitPane.setContinuousLayout(true);
         mainSplitPane.setLeftComponent(inoutSplitPane);
-//        mainSplitPane.setRightComponent(Regionalizer.getDisplayManager().getDataPanel());
+        mainSplitPane.setRightComponent(new JPanel());
         mainSplitPane.setDividerLocation(INOUT_PANE_WIDTH);
         //mainSplitPane.setOneTouchExpandable(true);
         mainSplitPane.setDividerSize(DIVIDER_WIDTH);
@@ -168,6 +168,7 @@ public class RegionalizerFrame extends JFrame {
             workspace.setLibs(libs);
             setTitle(Regionalizer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
             Regionalizer.getDisplayManager().getTreePanel().update(workspace);
+            this.updateMainPanel(new JPanel());
         } catch (VirtualWorkspace.InvalidWorkspaceException iwe) {
             Regionalizer.getRuntime().sendHalt(iwe.getMessage());
         }

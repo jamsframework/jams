@@ -22,6 +22,7 @@
  */
 package reg;
 
+import jams.gui.LHelper;
 import reg.spreadsheet.JAMSSpreadSheet;
 import jams.workspace.stores.DataStore;
 import jams.workspace.stores.InputDataStore;
@@ -84,6 +85,12 @@ public class DisplayManager implements Observer {
 //                    dataPanel.add(tSPanel);
 //                    dataPanel.updateUI();
                     Regionalizer.getRegionalizerFrame().updateMainPanel(spreadsheet.getPanel());
+                    try {
+                        spreadsheet.loadTSDS((TSDataStore) store);
+                    } catch (Exception e) {
+                        LHelper.showErrorDlg(Regionalizer.getRegionalizerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
+                        e.printStackTrace();
+                    }
                 }
                 break;
             case DSTreeNode.OUTPUT_DS:
