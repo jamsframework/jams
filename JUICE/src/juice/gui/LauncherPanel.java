@@ -764,7 +764,7 @@ public class LauncherPanel extends JPanel {
 
         public ElementButton(ModelElement element) {
             super();
-            this.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+            //this.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
             this.setPreferredSize(new Dimension(20, 14));
             this.element = element;
         }

@@ -246,262 +246,6 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         updateGUI();
     }
 
-    public void importWSFile() {
-        final String CONTEXT = "@context";
-        final String JAMSDATADUMP = "#JAMSdatadump";
-
-        final String ATTRIBUTES = "@attributes";
-        final String TYPES = "@types";
-        final String DATA = "@data";
-        final String START = "@start";
-        final String END = "@end";
-
-        final String TIME = "JAMSCalendar";
-
-        final String METADATA = "@metadata";
-
-        BufferedReader bReader;
-        String rowtext = "";
-        int colNumber = 0;
-        double[] rowBuffer = null;
-        ArrayList<String> header_list = new ArrayList<String>();
-        String[] headers = {""};
-        String[] types;
-
-        Vector<double[]> arrayVector = new Vector<double[]>();
-        Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
-
-        this.tmodel = new JAMSTableModel();
-        tmodel.setTimeRuns(false);
-        this.timeRuns = false;
-
-        int timeIndex = -1;
-
-        try {
-
-
-            JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
-            int returnVal = chooser.showOpenDialog(panel);
-
-            if (returnVal == chooser.APPROVE_OPTION) {
-                File file = chooser.getSelectedFile();
-                FileReader fReader = new FileReader(file);
-                bReader = new BufferedReader(fReader);
-            } else {
-                throw new FileNotFoundException();
-            }
-
-
-            /* Tokenizers */
-
-            if (bReader.ready()) {
-                //Read lines
-                rowtext = bReader.readLine();
-
-                //TIME-LOOP ///////////////////////////////////////////////////////
-                if (rowtext.compareTo(CONTEXT) == 0) {
-
-                    while (bReader.ready()) {
-                        rowtext = bReader.readLine();
-
-                        //ATTRIBUTES //////////////////////////////////////////////////////
-                        if (rowtext.compareTo(ATTRIBUTES) == 0) {
-
-                            //read attribute line
-                            rowtext = bReader.readLine();
-                            StringTokenizer attributes = new StringTokenizer(rowtext, "\t");
-
-                            //read headers
-                            String att_name = "";
-                            while (attributes.hasMoreTokens()) {
-
-                                try {
-                                    att_name = attributes.nextToken();
-                                    header_list.add(att_name);
-
-                                    colNumber++;
-                                } catch (NullPointerException npe) {
-                                }
-                            }
-
-                            //write headers in array
-                            colNumber = header_list.size();
-                            headers = new String[colNumber];
-                            header_list.toArray(headers);
-
-                        }
-
-                        //TYPES //////////////////////////////////////////////////////////
-                        if (rowtext.compareTo(TYPES) == 0) {
-
-                            types = new String[colNumber];
-
-                            //read types line
-                            rowtext = bReader.readLine();
-                            StringTokenizer typerow = new StringTokenizer(rowtext, "\t");
-                            int c_types = 0;
-
-                            //read and write headers
-                            String type_name = "";
-                            while (typerow.hasMoreTokens()) {
-
-                                try {
-                                    type_name = typerow.nextToken();
-                                    types[c_types] = type_name;
-                                    if (type_name.compareTo(TIME) == 0) {
-                                        timeIndex = c_types;
-                                        tmodel.setTimeRuns(true);
-                                        this.timeRuns = true;
-                                    }
-                                    c_types++;
-                                } catch (NullPointerException npe) {
-                                }
-                            }
-                        }
-
-                        //DATA //////////////////////////////////////////////////////////
-                        if (rowtext.compareTo(DATA) == 0) {
-
-                            //read data line
-                            rowtext = bReader.readLine();
-
-                            //START /////////////////////////////////////////////////////
-                            if (rowtext.compareTo(START) == 0) {
-
-                                //read DATA
-                                rowtext = bReader.readLine();
-                                while (rowtext.compareTo(END) != 0) {
-
-                                    StringTokenizer datarow = new StringTokenizer(rowtext, "\t");
-                                    rowBuffer = new double[colNumber - 1];
-
-                                    for (int col = 0; col < colNumber; col++) {
-
-                                        //timeVector
-                                        if (col == timeIndex && timeRuns) {
-                                            JAMSCalendar timeval = new JAMSCalendar();
-                                            timeval.setValue(datarow.nextToken());
-                                            timeVector.add(timeval);
-                                        } //rowArray
-                                        else {
-                                            if (col > timeIndex) {
-                                                rowBuffer[col - 1] = new Double(datarow.nextToken());
-                                            } else {
-                                                rowBuffer[col] = new Double(datarow.nextToken());
-                                            }
-                                        }
-                                    }
-                                    arrayVector.add(rowBuffer);
-                                    rowtext = bReader.readLine();
-                                }
-                            }
-                        }
-                    }
-                }
-
-                //DUMP FILE /////////////////////////////////////////////////////////////
-                if (rowtext.compareTo(JAMSDATADUMP) == 0) {
-
-                    while (bReader.ready()) {
-                        rowtext = bReader.readLine();
-
-                        //METADATA AND HEADERS //////////////////////////////////////////////
-                        if (rowtext.compareTo(METADATA) == 0) {
-
-                            //read attribute line
-                            rowtext = bReader.readLine();
-                            StringTokenizer attributes = new StringTokenizer(rowtext, "\t");
-
-                            //read headers
-                            String att_name = "";
-                            while (attributes.hasMoreTokens()) {
-
-                                try {
-                                    att_name = attributes.nextToken();
-                                    header_list.add(att_name);
-
-                                } catch (NullPointerException npe) {
-                                }
-                            }
-
-
-                            //write headers in array
-                            colNumber = header_list.size();
-                            headers = new String[colNumber];
-                            header_list.toArray(headers);
-
-                        }
-
-                        //DATA //////////////////////////////////////////////////////////
-                        if (rowtext.compareTo(DATA) == 0) {
-
-                            //read DATA
-                            rowtext = bReader.readLine();
-                            while (rowtext.compareTo(END) != 0) {
-
-                                StringTokenizer datarow = new StringTokenizer(rowtext, "\t");
-                                rowBuffer = new double[colNumber - 1];
-
-                                for (int col = 0; col < colNumber; col++) {
-
-                                    //timeVector
-                                    if (col == 0) {
-                                        // TODO: TIME TOKENIZER EINFUEHREN //////
-                                        JAMSCalendar timeval = new JAMSCalendar();
-                                        try {
-                                            timeval.setValue(datarow.nextToken(), "dd.MM.yyyy HH:mm");
-                                        } catch (ParseException pe) {
-                                            pe.printStackTrace();
-                                        }
-                                        timeVector.add(timeval);
-                                    } //rowArray
-                                    else {
-                                        String val = datarow.nextToken();
-
-                                        try {
-                                            rowBuffer[col - 1] = new Double(val);
-
-                                        } catch (java.lang.NumberFormatException nfe) {
-                                            System.out.println("NumberFormatException: " + val);
-                                        }
-                                    }
-                                }
-                                arrayVector.add(rowBuffer);
-                                rowtext = bReader.readLine();
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            this.tmodel = new JAMSTableModel();
-            tmodel.setTimeRuns(true);
-            timeRuns = true;
-            //if(headers != null){
-
-            //}
-            if (timeRuns) {
-                tmodel.setTimeVector(timeVector);
-            }
-
-            tmodel.setNewDataVector(arrayVector);
-            tmodel.setColumnNames(headers);
-
-        } catch (IOException ex) {
-            /* FEHLERMELDUNG */
-
-            try {
-                LHelper.showErrorDlg(getModel().getRuntime().getFrame(), "File reading failed", "Error");
-            } catch (NullPointerException npe) {
-                LHelper.showErrorDlg(parent_frame, "File reading failed", "Error");
-            }
-            System.out.println("Lesen fehlgeschlagen!");
-        }
-
-        updateGUI();
-    }
-
     public void open() {
 
 
@@ -653,43 +397,6 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
             }
             if (result == JOptionPane.NO_OPTION) {
                 open();
-            }
-
-
-        /*             YesNoDlg yesnodialog = new YesNoDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?");
-        yesnodialog.setVisible(true);
-         *
-         *
-        
-        if(yesnodialog.getResult().equals("Yes")){
-        save();
-        open();
-        }
-        if(yesnodialog.getResult().equals("No")){
-        open();
-        }
-         */
-
-
-        }
-    };
-    ActionListener importAction = new ActionListener() {
-
-        public void actionPerformed(ActionEvent e) {
-
-            int result;
-
-            try {
-                result = LHelper.showYesNoCancelDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?", "Attention");
-            } catch (NullPointerException npe) {
-                result = LHelper.showYesNoCancelDlg(parent_frame, "Do you want to save this sheet before?", "Attention");
-            }
-            if (result == JOptionPane.YES_OPTION) {
-                save();
-                importWSFile();
-            }
-            if (result == JOptionPane.NO_OPTION) {
-                importWSFile();
             }
 
 
@@ -933,14 +640,8 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
 
     }
 
-//////    public void createPanel() {
     public void createPanel() {
-//////
-//////        /* PANEL */
 
-//////        //this.panel = new JPanel();
-//////
-//////        panel.setLayout(panellayout);
         panel.setLayout(new BorderLayout(10, 10));
         JPanel controlpanel = new JPanel();
         JPanel helperpanel = new JPanel();
@@ -953,10 +654,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         scrollpane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         scrollpane2 = new JScrollPane(scrollpane);
-//////        tmodel = new JAMSTableModel();
-        //tmodel = new JAMSTableModel();
-//////        //hier platz für time schaffen!!!!!!!!!!!!
-//////        //
+
         if (time != null) {
             tmodel.setTimeRuns(true);
             setColumnNameArray(new String[0]);
@@ -967,10 +665,8 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         makeTable();
         //panel.add(scrollpane,grid);
 
-        LHelper.addGBComponent(controlpanel, gbl, importbutton, 0, 0, 1, 1, 0, 0);
-
-        LHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 3, 1, 2, 0, 0);
+        //LHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 2, 1, 1, 0, 0);
+        //LHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 3, 1, 2, 0, 0);
 
         LHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 5, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 6, 1, 1, 0, 0);
@@ -983,7 +679,6 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
 //              controlpanel.add(dataplotButton);
 
         //openbutton.setEnabled(false);
-        importbutton.addActionListener(importAction);
         openbutton.addActionListener(openAction);
         savebutton.addActionListener(saveAction);
         plotButton.addActionListener(plotAction);

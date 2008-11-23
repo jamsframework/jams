@@ -49,10 +49,10 @@ public class GraphProperties {
     JFrame parent;
     
     URL url1 = this.getClass().getResource("/reg/resources/images/arrowup.png");
-    ImageIcon up_icon = new ImageIcon(url1);
+    ImageIcon up_icon = new ImageIcon(new ImageIcon(url1).getImage().getScaledInstance(10, 10, Image.SCALE_SMOOTH));
     
     URL url2 = this.getClass().getResource("/reg/resources/images/arrowdown.png");
-    ImageIcon down_icon = new ImageIcon(url2);
+    ImageIcon down_icon = new ImageIcon(new ImageIcon(url2).getImage().getScaledInstance(10, 10, Image.SCALE_SMOOTH));
     
     URL url3 = this.getClass().getResource("/reg/resources/images/correct.png");
     ImageIcon plot_icon = new ImageIcon(url3);
@@ -61,7 +61,7 @@ public class GraphProperties {
     ImageIcon add_icon = new ImageIcon(url4);
     
     URL url5 = this.getClass().getResource("/reg/resources/images/remove.png");
-    ImageIcon rem_icon = new ImageIcon(url5);
+    ImageIcon rem_icon = new ImageIcon(new ImageIcon(url5).getImage().getScaledInstance(10, 10, Image.SCALE_SMOOTH));
     //ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/root.png
     
     GraphProperties thisProp;
@@ -309,13 +309,13 @@ public class GraphProperties {
         downButton.addActionListener(downListener);
         customizeButton.addActionListener(customize_listener);
         
-        remButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+//        remButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         remButton.setPreferredSize(new Dimension(20,14));
-        upButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+//        upButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         upButton.setPreferredSize(new Dimension(20,14));
-        plotButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+//        plotButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         plotButton.setPreferredSize(new Dimension(20,14));
-        downButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+//        downButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         downButton.setPreferredSize(new Dimension(20,14));
         
         colorchoice = new JComboBox(colors);

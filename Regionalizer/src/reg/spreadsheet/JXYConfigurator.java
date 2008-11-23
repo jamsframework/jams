@@ -152,9 +152,9 @@ public class JXYConfigurator extends JFrame {
 
     public JXYConfigurator(JFrame parent, JTable table) {
 
-        this.parent = parent;
-        //super(parent, "JAMS JTS Viewer");
-//        setTitle("JAMS XYPlot Viewer");
+        this.setParent(parent);
+        this.setIconImage(parent.getIconImage());
+        setTitle("XYPlot Viewer");
 //        URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
 //        ImageIcon icon = new ImageIcon(url);
 //        setIconImage(icon.getImage());

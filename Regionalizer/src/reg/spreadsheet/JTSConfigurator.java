@@ -70,8 +70,6 @@ public class JTSConfigurator extends JFrame{
         
     private JFrame parent;
     private JFrame thisDlg;
-    private JTSConfigurator thisJTS;
-    private JXYConfigurator thisJXY;
     private JPanel frame;
     private JPanel mainpanel;
     private JPanel plotpanel;
@@ -191,12 +189,11 @@ public class JTSConfigurator extends JFrame{
     
     public JTSConfigurator(JFrame parent, JTable table){
         
-        //super(parent, "JAMS JTS Viewer");
-        this.parent = parent;
-        setTitle("JAMS JTS Viewer");
-        
-        thisJTS = this;
-        
+//        super(parent, "JAMS JTS Viewer");
+        this.setParent(parent);
+        this.setIconImage(parent.getIconImage());
+        setTitle("JTS Viewer");
+                
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
@@ -1720,7 +1717,7 @@ public class JTSConfigurator extends JFrame{
             if(propVector.size()>0){
                 prop = propVector.get(0);
             }else{
-                prop = new GraphProperties(thisJTS);
+                prop = new GraphProperties(JTSConfigurator.this);
             }
             //String[] colors = getColorScheme(addGraphDlg);
             //prop.setSeriesPaint(colorTable.get())
