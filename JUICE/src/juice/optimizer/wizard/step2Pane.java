@@ -220,6 +220,20 @@ public class step2Pane extends stepPane {
         
     }
     
+    public boolean RemoveLauncher(Node root){
+        NodeList childs = root.getChildNodes();
+        for (int i=0;i<childs.getLength();i++){
+            Node node = childs.item(i);
+            if (node.getNodeName().equals("launcher")){
+                root.removeChild(node);
+                return true;
+            }else
+               if (RemoveLauncher(node))
+                   return true;
+        }        
+        return false;
+    }
+    
     @Override
     public String init(){
         rt = new StandardRuntime();
@@ -231,20 +245,20 @@ public class step2Pane extends stepPane {
         }
         //copy doc, because loadModel will alter document sometimes
         
-        /*DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
         Document CopyDoc = null;
         try{
-        Node oldDocument = this.loadedModel.cloneNode(true);
-        CopyDoc = (f.newDocumentBuilder()).newDocument();
-        Element root2  = CopyDoc.createElement("test");
-        CopyDoc.appendChild(root2);
-        CopyDoc.getFirstChild().appendChild(CopyDoc.importNode(oldDocument.getFirstChild(),true));
-        }catch(Exception e){System.out.println(e); e.printStackTrace();}*/
+            Node oldDocument = this.loadedModel.cloneNode(true);
+            CopyDoc = (f.newDocumentBuilder()).newDocument();            
+            CopyDoc.appendChild(CopyDoc.importNode(oldDocument.getFirstChild(),true));        
+            RemoveLauncher(CopyDoc);
+        }catch(Exception e){System.out.println(e); e.printStackTrace();}
         
-        rt.loadModel(this.loadedModel, properties);
-        rt.setDebugLevel(3);
-        System.out.println(rt.getErrorLog());
-        System.out.println(rt.getInfoLog());
+        rt.loadModel(CopyDoc, properties);
+        if (rt.getDebugLevel() >= 3){
+            System.out.println(rt.getErrorLog());
+            System.out.println(rt.getInfoLog());
+        }
         selectedParameters.clear();
         model = rt.getModel();
         modelTree.setRootVisible(true);
