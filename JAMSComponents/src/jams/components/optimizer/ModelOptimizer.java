@@ -557,8 +557,8 @@ public class ModelOptimizer extends JAMSComponent{
         Node root = doc.getDocumentElement();
                 
         jams.model.metaoptimizer.metaModelOptimizer.RemoveGUIComponents(root);
-        jams.model.metaoptimizer.metaModelOptimizer.RemoveNotListedComponents(root,
-                jams.model.metaoptimizer.metaModelOptimizer.GetRelevantComponentsList(transitiveClosureOfDependencyGraph,model.CollectAttributeWritingComponents(effAttributeName.getValue())));
+        /*jams.model.metaoptimizer.metaModelOptimizer.RemoveNotListedComponents(root,
+                jams.model.metaoptimizer.metaModelOptimizer.GetRelevantComponentsList(transitiveClosureOfDependencyGraph,model.CollectAttributeWritingComponents(effAttributeName.getValue())));*/
                                                         
         ArrayList<String> innerTimeContextParameter = new ArrayList();
         ArrayList<String> outerTimeContextParameter = new ArrayList();

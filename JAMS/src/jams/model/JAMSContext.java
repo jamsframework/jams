@@ -176,7 +176,17 @@ public class JAMSContext extends JAMSComponent {
     public void addAttribute(String attributeName, String clazz, String value) {
         attributeSpecs.add(new AttributeSpec(attributeName, clazz, value));
     }
-
+    /**
+     * get registered attributes     
+     */
+    public ArrayList<AttributeSpec> getAttributes() {
+        ArrayList<AttributeSpec> attributes = new ArrayList<AttributeSpec>();
+        for (int i=0;i<this.attributeSpecs.size();i++){
+            AttributeSpec orginial = attributeSpecs.get(i);
+            attributes.add(new AttributeSpec(orginial.attributeName, orginial.className, orginial.value));
+        }
+        return attributes;
+    }
     /**
      * Sets the model for this context. Additionally an observer of the runtimes
      * runstate is created in order to stop iteration on runstate changes
@@ -728,7 +738,7 @@ public class JAMSContext extends JAMSComponent {
             updateComponentData(index);
         }
     }
-    
+    /*
     public Set<String> CollectAttributeWritingComponents(String attr) {
         HashSet<String> set = new HashSet<String>();
         for (int i = 0; i < this.accessSpecs.size(); i++) {
@@ -745,7 +755,7 @@ public class JAMSContext extends JAMSComponent {
             }
         }
         return set;
-    }
+    }*/
     
     public JAMSComponent getComponent(String name){
         for (int i=0;i<components.size();i++){
@@ -759,27 +769,7 @@ public class JAMSContext extends JAMSComponent {
         }
         return null;
     }
-
-    public String getAttributeToVariable(String varName,String component){
-        for (int i=0;i<this.accessSpecs.size();i++){
-            AccessSpec e = this.accessSpecs.get(i);
-            if (e.component.instanceName.equals(component)){
-                if (e.varName.equals(varName)){
-                    return e.attributeName;
-                }
-            }
-        }
         
-        for (int i=0;i<this.components.size();i++){
-            if (this.components.get(i) instanceof JAMSContext){
-                String result = ((JAMSContext)this.components.get(i)).getAttributeToVariable(varName, component);
-                if (result != null)
-                    return result;
-            }
-        }
-        return null;
-    }
-    
     protected boolean componentInContext(JAMSComponent component) {
         for (int i = 0; i < components.size(); i++) {
             if (components.get(i).instanceName.equals(component.instanceName)) {
@@ -918,9 +908,9 @@ public class JAMSContext extends JAMSComponent {
         return getEntities().getEntities().size();
     }
 
-    protected class AttributeSpec implements Serializable {
+    public class AttributeSpec implements Serializable {
 
-        String attributeName, className,
+        public String attributeName, className,
                 value;
 
         public AttributeSpec(String attributeName, String className, String value) {

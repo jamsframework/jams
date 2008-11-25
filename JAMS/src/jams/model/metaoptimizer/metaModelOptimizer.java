@@ -125,6 +125,13 @@ public class metaModelOptimizer {
         }
         return mergedCDGs;  
     }
+                    
+    static public Set<String> CollectAttributeWritingComponents(Node root,JAMSModel model,String attribute,String context){        
+        Hashtable<String,String> contextEntityAttributes = new Hashtable<String,String>();
+        Hashtable<String,AttributeReadWriteSet> result = getAttributeReadWriteSet(root,model,model.getName(),contextEntityAttributes);
+        
+        return result.get(context).attrWritingComponents.get(attribute);
+    }
     
     //this function return an attribute r/w set for each context
     //the r/w set contains a list for every attribute which components are reading and writing that attr.
@@ -343,6 +350,7 @@ public class metaModelOptimizer {
         ArrayList<String> removedComponents = new ArrayList<String>();
         
         NodeList childs = root.getChildNodes();
+        Node mainRoot = root.getOwnerDocument();
         
         ArrayList<Node> childsToRemove = new ArrayList<Node>();
         for (int index = 0; index < childs.getLength(); index++) {
@@ -352,14 +360,15 @@ public class metaModelOptimizer {
             }else if (node.getNodeName().equals("component")) {
                 Element comp = (Element)node;
                 if ( comp.getAttribute("class").contains("jams.components.gui") ){
-                    childsToRemove.add(node);                    
+                    childsToRemove.add(node);                
+                    RemoveProperty(mainRoot,null,comp.getAttribute("name"));
                 }
             }                
         }
                             
         for (int i=0;i<childsToRemove.size();i++){
             Element elem = (Element)childsToRemove.get(i);                                    
-            removedComponents.add(elem.getAttribute("name"));
+            removedComponents.add(elem.getAttribute("name"));            
             root.removeChild(childsToRemove.get(i));            
         }
         //delete empty contexts
@@ -394,7 +403,7 @@ public class metaModelOptimizer {
         //remove childs on list
         for (int i=0;i<childsToRemove.size();i++){
             Element elem = (Element)childsToRemove.get(i);                                    
-            removedNodes.add(elem.getAttribute("name"));
+            removedNodes.add(elem.getAttribute("name"));            
             root.removeChild(childsToRemove.get(i));            
         }
         //recursive iteration until no change occurs
@@ -410,6 +419,8 @@ public class metaModelOptimizer {
         ArrayList<Node> childsToRemove = new ArrayList<Node>();
         ArrayList<String> removedNodes = new ArrayList<String>();
         
+        Node mainRoot = root.getOwnerDocument();
+        
         for (int index = 0; index < childs.getLength(); index++) {
             Node node = childs.item(index);
             if (node.getNodeName().equals("contextcomponent")) {
@@ -417,6 +428,7 @@ public class metaModelOptimizer {
             }else if (node.getNodeName().equals("component")) {
                 Element comp = (Element)node;
                 if ( !list.contains(comp.getAttribute("name")) ){
+                    RemoveProperty(mainRoot,null,comp.getAttribute("name"));
                     childsToRemove.add(node);                       
                 }
             }                
@@ -433,20 +445,28 @@ public class metaModelOptimizer {
         
         return removedNodes;
     }
-        
-   /* static private ArrayList<Node> CollectProperties(Node root){
+           
+    static public void RemoveProperty(Node root,String attrName,String component){        
+        ArrayList<Node> nodesToRemove = new ArrayList<Node>();
         NodeList childs = root.getChildNodes();
         for (int i=0;i<childs.getLength();i++){
-            if (childs.item(i).getNodeName().equals("property")){
-                
+            Node node = childs.item(i);
+            if (node.getNodeName().equals("property")){
+                Element elem = (Element)node;
+                if (elem.hasAttribute("attribute") && elem.hasAttribute("component")){
+                    String attr = elem.getAttribute("attribute");
+                    String comp = elem.getAttribute("component");
+                    if ( (attrName == null || attr.equals(attrName)) && comp.equals(component)){
+                        nodesToRemove.add(node);
+                    }
+                }
+            }else{
+                RemoveProperty(node,attrName,component);
             }
         }
-    }*/
-    static public void RemoveDeadProperties(Node root){
-        /*ArrayList<AttributeProperty> propertyCollection = new ArrayList<AttributeProperty>();
-        propertyCollection = CollectProperties(root);
-        NodeList childs = root.getChildNodes();*/
-        
+        for (int i=0;i<nodesToRemove.size();i++){
+            root.removeChild(nodesToRemove.get(i));
+        }
     }
     
     @SuppressWarnings("unchecked")

@@ -373,9 +373,16 @@ public class SimpleSCE extends Optimizer {
         }
     }
 
+    public void sayThis(String wordsToSay){
+        if (this.getModel()==null){            
+            System.out.println(wordsToSay);            
+        }else
+            this.getModel().getRuntime().sendInfoMsg(wordsToSay);
+    }
+    
     public Sample sceua(double[] x0, double[] bl, double[] bu, int maxn, int kstop, double pcento, double peps, int ngs, int iseed, int iniflg) {
         int method = 1;
-
+                
         SearchMethod = null;
         if (method == 1) {
             SearchMethod = new NelderMead();
@@ -417,20 +424,21 @@ public class SimpleSCE extends Optimizer {
         // Computes the normalized geometric range of the parameters
         double gnrng = NormalizedgeometricRange(x, bound); //exp(mean(log((max(x)-min(x))./bound)));
 
-        System.out.println("The Inital Loop: 0");
-        System.out.println("Best: " + x[0].toString());
-        System.out.println("Worst: " + x[npt-1].toString());
-
+        sayThis("The Inital Loop: 0");
+        sayThis("Best: " + x[0].toString());
+        sayThis("Worst: " + x[npt-1].toString());
+                        
+        
         //Check for convergency;
         if (currentSampleCount >= maxn) {
-            System.out.println("*** OPTIMIZATION SEARCH TERMINATED BECAUSE THE LIMIT");
-            System.out.println("ON THE MAXIMUM NUMBER OF TRIALS" + maxn);
-            System.out.println("HAS BEEN EXCEEDED.  SEARCH WAS STOPPED AT TRIAL NUMBER:" + currentSampleCount);
-            System.out.println("OF THE INITIAL LOOP!");            
+            sayThis("*** OPTIMIZATION SEARCH TERMINATED BECAUSE THE LIMIT");
+            sayThis("ON THE MAXIMUM NUMBER OF TRIALS" + maxn);
+            sayThis("HAS BEEN EXCEEDED.  SEARCH WAS STOPPED AT TRIAL NUMBER:" + currentSampleCount);
+            sayThis("OF THE INITIAL LOOP!");            
         }
 
         if (gnrng < peps) {            
-            System.out.println("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");
+            sayThis("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");
         }
 
         // Begin evolution loops:
@@ -470,17 +478,17 @@ public class SimpleSCE extends Optimizer {
             gnrng = NormalizedgeometricRange(x, bound);
 
             // Record the best and worst points;            
-            System.out.println("Evolution Loop:" + nloop + " - Trial - " + currentSampleCount);
-            System.out.println("BEST:" + x[0]);
-            System.out.println("WORST:" + x[x.length-1]);
+            sayThis("Evolution Loop:" + nloop + " - Trial - " + currentSampleCount);
+            sayThis("BEST:" + x[0]);
+            sayThis("WORST:" + x[x.length-1]);
             
             // Check for convergency;
             if (currentSampleCount >= maxn) {
-                System.out.println("*** OPTIMIZATION SEARCH TERMINATED BECAUSE THE LIMIT");
-                System.out.println("ON THE MAXIMUM NUMBER OF TRIALS " + maxn + " HAS BEEN EXCEEDED!");                
+                sayThis("*** OPTIMIZATION SEARCH TERMINATED BECAUSE THE LIMIT");
+                sayThis("ON THE MAXIMUM NUMBER OF TRIALS " + maxn + " HAS BEEN EXCEEDED!");                
             }
             if (gnrng < peps) {
-                System.out.println("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");                
+                sayThis("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");                
             }
 
             for (int i = 0; i < kstop - 1; i++) {
@@ -497,15 +505,15 @@ public class SimpleSCE extends Optimizer {
                 criter_change /= criter_mean;
 
                 if (criter_change < pcento) {
-                    System.out.println("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY");
-                    System.out.println("LESS THAN THE THRESHOLD " + pcento + "%");
-                    System.out.println("CONVERGENCY HAS ACHIEVED BASED ON OBJECTIVE FUNCTION CRITERIA!!!");                   
+                    sayThis("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY");
+                    sayThis("LESS THAN THE THRESHOLD " + pcento + "%");
+                    sayThis("CONVERGENCY HAS ACHIEVED BASED ON OBJECTIVE FUNCTION CRITERIA!!!");                   
                 }
             }
         }
-        System.out.println("SEARCH WAS STOPPED AT TRIAL NUMBER: " + currentSampleCount);
-        System.out.println("NORMALIZED GEOMETRIC RANGE = " + gnrng);
-        System.out.println("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY " + criter_change + "%");
+        sayThis("SEARCH WAS STOPPED AT TRIAL NUMBER: " + currentSampleCount);
+        sayThis("NORMALIZED GEOMETRIC RANGE = " + gnrng);
+        sayThis("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY " + criter_change + "%");
                 
         return x[0];
     }
