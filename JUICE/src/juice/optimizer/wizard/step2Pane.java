@@ -6,11 +6,10 @@
 package juice.optimizer.wizard;
 
 import jams.JAMSProperties;
+import jams.model.JAMSContext;
 import juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
 import juice.optimizer.wizard.OptimizationWizard.Parameter;
 import juice.*;
-import jams.model.JAMSComponent;
-import jams.model.JAMSContext;
 import jams.model.JAMSModel;
 import jams.model.JAMSVarDescription;
 import jams.model.JAMSVarDescription.AccessType;
@@ -30,7 +29,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import javax.xml.parsers.DocumentBuilderFactory;
+import juice.optimizer.wizard.OptimizationWizard.AttributeWrapper;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  *
@@ -40,6 +44,7 @@ public class step2Pane extends stepPane {
     Document loadedModel = null;
     JAMSProperties properties = null;
     JAMSModel model;
+    StandardRuntime rt = null;
     JTree modelTree = new JTree();    
     ArrayList<Parameter> selectedParameters = new ArrayList<Parameter>();
     
@@ -70,7 +75,7 @@ public class step2Pane extends stepPane {
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
                 if (node.getUserObject() instanceof ComponentWrapper) {                    
                     ComponentWrapper wrapper = (ComponentWrapper)node.getUserObject();
-                    if (wrapper.content instanceof JAMSContext)
+                    if (wrapper.contextComponent)
                         setIcon(contextIcon);
                     else
                         setIcon(componentIcon);
@@ -81,19 +86,98 @@ public class step2Pane extends stepPane {
             return this;
         }   
     }
-
-    public boolean IsVariableOverWritten(String varName,String compName){
-        String attr = model.getAttributeToVariable(varName, compName);
-        if (attr == null)
-            return false;
-        if (model.CollectAttributeWritingComponents(attr).size()!=0)
-            return true;
-        //if attribute is declared in model context directly in jam file
-        //then this result is not correct!!
-        return true;
-    }
-    
-    void buildModelTree(JAMSContext context,DefaultMutableTreeNode node,DefaultTreeModel model){
+                  
+    //todo .. component attributes, which are not used in the jam file, will not
+    //be shown in this list
+    void buildModelTree(Node root,DefaultMutableTreeNode node,DefaultTreeModel model){                        
+        NodeList childs = root.getChildNodes();
+        Element parent = (Element)root;
+        for (int i=0;i<childs.getLength();i++){
+            Node child = childs.item(i);
+            if (child.getNodeName().equals("contextcomponent")){
+                Element elem = (Element)child;                
+                DefaultMutableTreeNode childTreeNode = new DefaultMutableTreeNode(new ComponentWrapper(
+                        elem.getAttribute("name"),
+                        elem.getAttribute("name"),
+                        true));
+                model.insertNodeInto(childTreeNode, node, node.getChildCount());
+                
+                buildModelTree(child,childTreeNode,model);
+            }
+            if (child.getNodeName().equals("component")){               
+                Element elem = (Element)child;                
+                DefaultMutableTreeNode childTreeNode = new DefaultMutableTreeNode(new ComponentWrapper(
+                        elem.getAttribute("name"),
+                        parent.getAttribute("name"),
+                        false));
+                model.insertNodeInto(childTreeNode, node, node.getChildCount());
+                buildModelTree(child,childTreeNode,model);
+            }
+            if (child.getNodeName().equals("var")){                
+                Element elem = (Element)child;                      
+                String context = elem.getAttribute("context");
+                String name = elem.getAttribute("name");
+                String attr = elem.getAttribute("attribute");
+                if (context == null && attr != null){
+                    ComponentWrapper component = (ComponentWrapper)node.getUserObject();
+                    context = component.componentContext;
+                }                
+                Class clazz = null;
+                Field field = null;
+                boolean isDouble = true;
+                try{
+                    clazz = rt.getClassLoader().loadClass(parent.getAttribute("class"));
+                    if (clazz != null)
+                        field = JAMSContext.getField(clazz, name);                
+                }catch(Exception e){
+                    //System.out.println(e.toString() + parent.getAttribute("class"));
+                    continue;
+                }                                
+                if (field==null){
+                    //System.out.println("field is null" + clazz);
+                    continue;
+                }
+                field.getAnnotation(JAMSVarDescription.class);
+                Class type = field.getType();                                        
+                if (!type.getName().equals("jams.data.JAMSDouble")){
+                    isDouble = false;                    
+                }                
+                JAMSVarDescription jvd = field.getAnnotation(JAMSVarDescription.class);
+                if ((jvd == null ||jvd.access() == AccessType.READ) && isDouble){
+                    DefaultMutableTreeNode childTreeNode = new DefaultMutableTreeNode(new AttributeWrapper(
+                            name,
+                            elem.getAttribute("attribute"),
+                            parent.getAttribute("name"),
+                            context));
+                    model.insertNodeInto(childTreeNode, node, node.getChildCount());
+                }
+            }
+            if (child.getNodeName().equals("attribute")){                
+                Element elem = (Element)child;                                                      
+                String attr = elem.getAttribute("name");
+                String context = parent.getAttribute("name");
+                String clazz = elem.getAttribute("class");
+                                
+                if (clazz.equals("jams.data.JAMSDouble")){
+                    DefaultMutableTreeNode childTreeNode = new DefaultMutableTreeNode(new AttributeWrapper(
+                            null,
+                            attr,
+                            null,
+                            context));
+                    model.insertNodeInto(childTreeNode, node, node.getChildCount());
+                }
+            }
+        }
+        
+        /*
+        ArrayList<AttributeSpec> specs = context.getAttributes();
+        for (int i=0;i<specs.size();i++){
+            AttributeSpec attr = specs.get(i);
+            if (attr.className.equals("jams.data.JAMSDouble")){
+                DefaultMutableTreeNode attrNode = new DefaultMutableTreeNode(attr.attributeName);
+                model.insertNodeInto( attrNode,node, 0); 
+            }
+        }
         for (int i=0;i<context.getComponents().size();i++){
             JAMSComponent comp = (JAMSComponent)context.getComponents().get(i);
             DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(new ComponentWrapper(comp));
@@ -115,32 +199,70 @@ public class step2Pane extends stepPane {
             }            
             if (comp instanceof JAMSContext)
                 buildModelTree((JAMSContext)comp,childNode,model);
+        }*/
+    }
+    
+    private Node getModelNode(Node root){
+        if (root.getNodeName().equals("model")){
+            return root;
         }
+        NodeList childs = root.getChildNodes();
+        for (int i=0;i<childs.getLength();i++){
+            Node model = getModelNode(childs.item(i));
+            if (model != null)
+                return model;
+        }
+        return null;
+    }
+    
+    public Document getDocument(){
+        return this.loadedModel;
+        
     }
     
     @Override
     public String init(){
-        StandardRuntime rt = new StandardRuntime();
+        rt = new StandardRuntime();
         if (this.loadedModel == null){
             return JUICE.resources.getString("error_no_model_loaded");            
         }
         if (this.properties == null){
             return JUICE.resources.getString("error_no_property_file");            
         }
+        //copy doc, because loadModel will alter document sometimes
+        
+        /*DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+        Document CopyDoc = null;
+        try{
+        Node oldDocument = this.loadedModel.cloneNode(true);
+        CopyDoc = (f.newDocumentBuilder()).newDocument();
+        Element root2  = CopyDoc.createElement("test");
+        CopyDoc.appendChild(root2);
+        CopyDoc.getFirstChild().appendChild(CopyDoc.importNode(oldDocument.getFirstChild(),true));
+        }catch(Exception e){System.out.println(e); e.printStackTrace();}*/
         
         rt.loadModel(this.loadedModel, properties);
+        rt.setDebugLevel(3);
+        System.out.println(rt.getErrorLog());
+        System.out.println(rt.getInfoLog());
         selectedParameters.clear();
         model = rt.getModel();
         modelTree.setRootVisible(true);
-        DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode(new ComponentWrapper(model)));
+        Node root = getModelNode(loadedModel);
+        Element rootElement = (Element)root;
+        DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode(new ComponentWrapper(rootElement.getAttribute("name")
+                ,rootElement.getAttribute("name"),true)));
         modelTree.setModel(treeModel);
         modelTree.setCellRenderer(new MyRenderer());
-        buildModelTree(model,(DefaultMutableTreeNode)treeModel.getRoot(),treeModel);        
+        buildModelTree(root,(DefaultMutableTreeNode)treeModel.getRoot(),treeModel);        
         return null;
     }
 
     public JAMSModel getModel(){
         return this.model;
+    }
+    public StandardRuntime getRuntime(){
+        return rt;
     }
     
     @Override    
@@ -155,14 +277,14 @@ public class step2Pane extends stepPane {
             if (selectionPath.length < 2)
                 continue;
             DefaultMutableTreeNode attributeNode = (DefaultMutableTreeNode)selectionPath[selectionPath.length-1];
-            DefaultMutableTreeNode componentNode = (DefaultMutableTreeNode)selectionPath[selectionPath.length-2];
-            if (attributeNode.getUserObject() instanceof String &&
-                componentNode.getUserObject() instanceof ComponentWrapper){
-                Parameter selectedParameter = new Parameter();
-                selectedParameter.name = (String)attributeNode.getUserObject();              
-                selectedParameter.component = ((ComponentWrapper)componentNode.getUserObject()).content;              
+            
+            if (attributeNode.getUserObject() instanceof AttributeWrapper ){
+                Parameter selectedParameter = new Parameter((AttributeWrapper)attributeNode.getUserObject());                       
                 selectedParameters.add(selectedParameter);
             }
+        }
+        if (selectedParameters.size()==0){          
+            return JUICE.resources.getString("error_no_parameter");    
         }
         return null;
     }

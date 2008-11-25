@@ -351,7 +351,10 @@ public class step6Pane extends stepPane{
         //build param string
         String param_string = "";
         for (int i=0;i<param_info.size();i++){
-            param_string += param_info.get(i).name + ";";
+            if (param_info.get(i).variableName != null)
+                param_string += param_info.get(i).variableName + ";";
+            else
+                param_string += param_info.get(i).attributeName + ";";
         }
         desc.attributes.add(new AttributeDescription("parameterIDs","optimizer",param_string,true));
         //build boundary string
@@ -365,8 +368,8 @@ public class step6Pane extends stepPane{
         if (this.isMultiObjective.getValue()){
             //TODO
         }else{
-            desc.attributes.add(new AttributeDescription("effValue","optimizer",this.eff_info.get(0).name,true));
-            desc.attributes.add(new AttributeDescription("effMethodName",null,this.eff_info.get(0).name,false));
+            desc.attributes.add(new AttributeDescription("effValue","optimizer",this.eff_info.get(0).attributeName,true));
+            desc.attributes.add(new AttributeDescription("effMethodName",null,this.eff_info.get(0).attributeName,false));
             desc.attributes.add(new AttributeDescription("mode",null,Integer.toString(this.eff_info.get(0).mode),false));
         }
         desc.attributes.add(new AttributeDescription("enable",null,"true",false));

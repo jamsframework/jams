@@ -79,11 +79,16 @@ public class step3Pane extends stepPane{
         
         for (int i=0;i<selectedParameters.size();i++){
             JTextField paramName = new JTextField(10);
-            paramName.setText(selectedParameters.get(i).name);
             paramName.setEditable(false);
             JTextField componentName = new JTextField(20);
-            componentName.setText(selectedParameters.get(i).component.getInstanceName());
             componentName.setEditable(false);
+            if (selectedParameters.get(i).variableName != null){
+                paramName.setText(selectedParameters.get(i).variableName);
+                componentName.setText(selectedParameters.get(i).componentName);            
+            }else{
+                paramName.setText(selectedParameters.get(i).attributeName);
+                componentName.setText(selectedParameters.get(i).contextName);
+            }                                                                            
             lowBound[i] = new JTextField(8);            
             upBound[i] = new JTextField(8);
             c.gridx = 0;    c.gridy = i+1;

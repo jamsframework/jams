@@ -10,34 +10,24 @@ import juice.optimizer.wizard.OptimizationWizard.Parameter;
 import juice.optimizer.wizard.step6Pane.AttributeDescription;
 import juice.optimizer.wizard.step6Pane.OptimizerDescription;
 import juice.*;
-import jams.io.XMLIO;
 import jams.model.JAMSModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
-import javax.swing.filechooser.FileFilter;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import juice.optimizer.wizard.OptimizationWizard.AttributeWrapper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -104,6 +94,69 @@ public class step7Pane extends stepPane {
             parent.appendChild(newElement);
     }
     
+    void replaceAttribute(Node root,AttributeWrapper attribute,String newAttributeName,String newAttributeContext){
+        NodeList childs = root.getChildNodes();
+        ArrayList<Node> nodesToRemove = new ArrayList<Node>();
+        
+        for (int i=0;i<childs.getLength();i++){
+            Node node = childs.item(i);
+            if (node.getNodeName().equals("model") || node.getNodeName().equals("contextcomponent")){
+                replaceAttribute(node, attribute, newAttributeName, newAttributeContext);                
+            }
+            if (node.getNodeName().equals("component")){
+                replaceAttribute(node, attribute, newAttributeName, newAttributeContext);
+            }
+            
+            //something like that 
+            //(a)<var name="pidw" value="2.0"/>
+            //(b)<var attribute="x" context="HRUInit" name="entityX"/>
+            if (node.getNodeName().equals("var")){
+                Element varNode = (Element)node;
+                //case (b)
+                if (attribute.attributeName != null){
+                    String node_attr = varNode.getAttribute("attribute");
+                    String node_context = varNode.getAttribute("context");
+                    if (node_attr == null)
+                        continue;
+                    if (node_context == null)
+                        node_context = ((Element)root.getParentNode()).getAttribute("name");
+                    if (node_attr.equals(attribute.attributeName) && node_context.equals(attribute.contextName)){                        
+                        varNode.setAttribute("attribute", newAttributeName);
+                        varNode.setAttribute("context", newAttributeContext);
+                    }
+                //case (a)
+                }else{
+                    String node_attr = varNode.getAttribute("name");                                        
+                    String node_component = ((Element)varNode.getParentNode()).getAttribute("name");
+                    if (node_component == null)
+                        continue;
+                    if (node_attr.equals(attribute.variableName) && node_component.equals(attribute.componentName)){
+                        jams.model.metaoptimizer.metaModelOptimizer.RemoveProperty((Node)this.doc.getDocumentElement(), attribute.variableName, attribute.componentName);
+                        varNode.setAttribute("attribute", newAttributeName);
+                        varNode.setAttribute("context", newAttributeContext);
+                        varNode.setAttribute("value", null);
+                    }
+                }
+            }
+            if (node.getNodeName().equals("attribute")){
+                Element varNode = (Element)node;
+                if (attribute.attributeName != null){
+                    String node_attr = varNode.getAttribute("name");
+                    String node_context = ((Element)root).getAttribute("name");
+                                            
+                    if (node_attr.equals(attribute.attributeName) && node_context.equals(attribute.contextName)){
+                        //remove broken links
+                        jams.model.metaoptimizer.metaModelOptimizer.RemoveProperty(this.doc.getDocumentElement(), attribute.attributeName, attribute.contextName);
+                        nodesToRemove.add(node);
+                    }
+                }                
+            }
+        }
+        for (int i=0;i<nodesToRemove.size();i++){
+            root.removeChild(nodesToRemove.get(i));
+        }
+    }
+    
     private Node findComponentNode(Node context, String name){
         NodeList childs = context.getChildNodes();
         for (int i=0;i<childs.getLength();i++){
@@ -120,19 +173,7 @@ public class step7Pane extends stepPane {
         }
         return null;
     }
-    
-    private void removeAttribute(Node component, String name){
-        NodeList childs = component.getChildNodes();
-        for (int i=0;i<childs.getLength();i++){
-            Node node = childs.item(i);
-            if (node.getNodeName().equals("var")){
-                if (((Element)node).getAttribute("name").equals(name)){
-                    component.removeChild(node);
-                }
-            }            
-        }        
-    }
-    
+        
     private Node getFirstComponent(Node root){
         NodeList childs = root.getChildNodes();
         for (int i=0;i<childs.getLength();i++){
@@ -147,20 +188,21 @@ public class step7Pane extends stepPane {
     }
             
     private void addParameters(ArrayList<Parameter> list,Node root){
-        for (int i=0;i<list.size();i++){
-            Node component = findComponentNode(root,list.get(i).component.getInstanceName());
-            if (component == null)
-                return;
-            removeAttribute(component,list.get(i).name);
-            AddAttribute((Element)component,list.get(i).name,list.get(i).name,"optimizer",false);
+        for (int i=0;i<list.size();i++){            
+            if (list.get(i).attributeName != null)
+                this.replaceAttribute(root, list.get(i), list.get(i).attributeName, "optimizer");
+            else
+                this.replaceAttribute(root, list.get(i), list.get(i).variableName, "optimizer");
         }
     }
     private void addEfficiencies(ArrayList<Efficiency> list,Node root){
-        for (int i=0;i<list.size();i++){
-            Node component = findComponentNode(root,list.get(i).component.getInstanceName());
-            removeAttribute(component,list.get(i).name);
-            AddAttribute((Element)component,list.get(i).name,list.get(i).name,"optimizer",false);
+        for (int i=0;i<list.size();i++){            
+            if (list.get(i).attributeName != null)
+                this.replaceAttribute(root, list.get(i), list.get(i).attributeName, "optimizer");
+            else
+                this.replaceAttribute(root, list.get(i), list.get(i).variableName, "optimizer");
         }
+        
     }
     
     @Override
@@ -186,7 +228,12 @@ public class step7Pane extends stepPane {
         if (optimizeModelStructure){
             HashSet<String> effWritingComponents = new HashSet<String>();
             for (int i=0;i<desc.efficiencies.size();i++){                
-                effWritingComponents.addAll(model.CollectAttributeWritingComponents(desc.efficiencies.get(i).name));
+                effWritingComponents.addAll(
+                        jams.model.metaoptimizer.metaModelOptimizer.CollectAttributeWritingComponents(
+                        (Node)this.doc.getDocumentElement(),
+                        this.model,
+                        desc.efficiencies.get(i).attributeName,
+                        desc.efficiencies.get(i).contextName));
             }
             ArrayList<String> removedUnusedComponents = jams.model.metaoptimizer.metaModelOptimizer.RemoveNotListedComponents(root,
                     jams.model.metaoptimizer.metaModelOptimizer.GetRelevantComponentsList(transitiveClosureOfDependencyGraph,
@@ -197,6 +244,7 @@ public class step7Pane extends stepPane {
                 infoLog += "    ***" + removedUnusedComponents.get(i) + "\n";
             }
         }
+                
         infoLog += JUICE.resources.getString("add_optimization_context") + "\n";                                                                              
         //optimierer bauen
         Element optimizerContext = doc.createElement("contextcomponent");
@@ -261,21 +309,22 @@ public class step7Pane extends stepPane {
     @Override
     public JPanel build(){
         panel.setLayout(new GridBagLayout());
-        
-        JButton chooseModelFile = new JButton(JUICE.resources.getString("Save"));        
+        GridBagConstraints c = new GridBagConstraints();
+        /*JButton chooseModelFile = new JButton(JUICE.resources.getString("Save"));        
         JPanel saveModelFilePanel = new JPanel(new GridBagLayout());    
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;    c.gridy = 0;    c.fill = GridBagConstraints.NONE;
         saveModelFilePanel.add(selectedOutputFile,c);
         c.gridx = 1;    c.gridy = 0;    c.fill = GridBagConstraints.NONE;
-        saveModelFilePanel.add(chooseModelFile,c);
+        saveModelFilePanel.add(chooseModelFile,c);*/
                 
-        JPanel modelFilePanel = new JPanel(new BorderLayout());
+        /*JPanel modelFilePanel = new JPanel(new BorderLayout());
         modelFilePanel.add(new JLabel(JUICE.resources.getString("output_file_path")), BorderLayout.NORTH);
         modelFilePanel.add(saveModelFilePanel,BorderLayout.CENTER);
 
         c.gridx = 0;    c.gridy = 0;    c.fill = GridBagConstraints.NONE;
-        panel.add(modelFilePanel,c);   
+        panel.add(modelFilePanel,c);   */
+        this.panel.add(new JLabel(JUICE.resources.getString("successfully_finished")));
         
         JPanel infoPanel = new JPanel(new BorderLayout());
         infoPanel.add(new JLabel("infoLog"),BorderLayout.NORTH);
@@ -286,7 +335,7 @@ public class step7Pane extends stepPane {
         c.gridx = 0;    c.gridy = 1;    c.fill = GridBagConstraints.NONE;
         panel.add(infoPanel,c);                
                         
-        chooseModelFile.addActionListener(new ActionListener() {
+/*        chooseModelFile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fc = new JFileChooser();
@@ -308,7 +357,7 @@ public class step7Pane extends stepPane {
                 File fileFromDialog = fc.getSelectedFile();
                 selectedOutputFile.setText(fileFromDialog.getAbsolutePath());
             }
-        });      
+        });   */   
         
         infoLogField.setCaretPosition(infoLogField.getDocument().getLength());
         

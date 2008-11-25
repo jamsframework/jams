@@ -79,11 +79,17 @@ public class step5Pane extends stepPane{
         
         for (int i=0;i<selectedEfficiencies.size();i++){
             JTextField paramName = new JTextField(10);
-            paramName.setText(selectedEfficiencies.get(i).name);
             paramName.setEditable(false);
-            JTextField componentName = new JTextField(10);
-            componentName.setText(selectedEfficiencies.get(i).component.getInstanceName());
+            JTextField componentName = new JTextField(10);            
             componentName.setEditable(false);
+            
+            if (selectedEfficiencies.get(i).variableName != null){
+                paramName.setText(selectedEfficiencies.get(i).variableName);
+                componentName.setText(selectedEfficiencies.get(i).componentName);
+            }else{
+                paramName.setText(selectedEfficiencies.get(i).attributeName);
+                componentName.setText(selectedEfficiencies.get(i).contextName);
+            }                        
             modeList[i] = new JComboBox(modes);
             c.gridx = 0;    c.gridy = i+1;
             step5EfficiencyPanel.add(paramName,c);

@@ -17,6 +17,9 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import juice.gui.JUICEFrame;
+import juice.gui.ModelView;
+import juice.gui.tree.ModelTree;
 import org.w3c.dom.Document;
 
 /**
@@ -31,45 +34,95 @@ import org.w3c.dom.Document;
  */
 public class OptimizationWizard {
         
+    Document result = null;
+    
     public static class ComponentWrapper{
-        public JAMSComponent content;
-        public ComponentWrapper(JAMSComponent content){
-            this.content = content;
+        public String componentName;
+        public String componentContext;
+        public boolean contextComponent;
+        
+        public ComponentWrapper(String componentName,String componentContext,boolean contextComponent){
+            this.componentContext = componentContext;
+            this.componentName = componentName;
+            this.contextComponent = contextComponent;
         }
         public String toString(){
-            return content.getInstanceName();
+            if (contextComponent)
+                return componentName;
+            return componentContext + "." + componentName;
         }
     }
     
-    public static class Parameter{
-        public String name;
-        public JAMSComponent component;
-        public double lowerBound;
-        public double upperBound;
+    public static class AttributeWrapper{
+        public String attributeName;
+        public String variableName;
+        public String componentName;
+        public String contextName;
+        public boolean isSetByValue;
+        
+        public AttributeWrapper(){
+            
+        }
+        public AttributeWrapper(String variableName,String attributeName,String componentName,String contextName){
+            this.variableName = variableName;
+            this.attributeName = attributeName;
+            this.componentName = componentName;
+            this.contextName = contextName;            
+        }
+        public String extendedtoString(){
+            return componentName + "." + variableName +"="+ contextName + "." + attributeName;
+        }
+        public String toString(){
+            if (variableName!=null)
+                return variableName;
+            return attributeName;
+        }
     }
     
-    public static class Efficiency{
-        public String name;
-        public JAMSComponent component;
+    public static class Parameter extends AttributeWrapper{        
+        public double lowerBound;
+        public double upperBound;
+        
+        public Parameter(AttributeWrapper attr){
+            this.attributeName = attr.attributeName;
+            this.componentName = attr.componentName;
+            this.contextName = attr.contextName;
+            this.variableName = attr.variableName;
+            this.isSetByValue = attr.isSetByValue;            
+        }
+    }
+    
+    public static class Efficiency extends AttributeWrapper{              
         public int mode;
+        
+        public Efficiency(AttributeWrapper attr){
+            this.attributeName = attr.attributeName;
+            this.componentName = attr.componentName;
+            this.contextName = attr.contextName;
+            this.variableName = attr.variableName;
+            this.isSetByValue = attr.isSetByValue;            
+        }
     }
     
     public static class ModelData{
         public Document modelDoc;
         public JAMSProperties properties;
+        public JUICEFrame frame;
     }
     
     final ModelData myData = new ModelData();
     
     stepPane steps[] = new stepPane[8];
-                                                                                  
-    public void runWizard(Document modelDoc,JAMSProperties properties) {
+    
+    
+    public void runWizard(Document modelDoc,JAMSProperties properties,JUICEFrame frame) {
         final JDialog wizardDlg = new JDialog();
+        
         final JTabbedPane stepPane = new JTabbedPane();
         stepPane.setEnabled(false);
         this.myData.modelDoc = modelDoc;
         this.myData.properties = properties;
-        
+        this.myData.frame = frame;
         //steps[0] = new step1Pane();
         steps[0] = new step2Pane();
         steps[1] = new step3Pane();
@@ -86,7 +139,7 @@ public class OptimizationWizard {
         stepPane.addTab("Step 4", null, steps[3].build(), JUICE.resources.getString("specify_modes"));
         stepPane.addTab("Step 5", null, steps[4].build(), JUICE.resources.getString("optimizer_selection"));
         stepPane.addTab("Step 6", null, steps[5].build(), JUICE.resources.getString("output_path"));
-        stepPane.addTab("Step 7", null, steps[6].build(), JUICE.resources.getString("finish"));
+        //stepPane.addTab("Step 7", null, steps[6].build(), JUICE.resources.getString("finish"));
         
         wizardDlg.setLayout(new BorderLayout());
         wizardDlg.add(stepPane, BorderLayout.CENTER);
@@ -120,7 +173,8 @@ public class OptimizationWizard {
                         break;
                     }
                     case 2:{
-                        ((step4Pane)steps[2]).setModel(((step2Pane)steps[0]).getModel());                    
+                        ((step4Pane)steps[2]).setModelDocument(((step2Pane)steps[0]).getDocument());                    
+                        ((step4Pane)steps[2]).setRuntime(((step2Pane)steps[0]).getRuntime());                    
                         break;
                     }
                     case 3:{
@@ -141,23 +195,29 @@ public class OptimizationWizard {
                                                         ((step6Pane)steps[4]).getOptionState_modelStructureOptimization());    
                                                         
                         ((step7Pane)steps[5]).setOptimizerDescription( ((step6Pane)steps[4]).getOptimizerDescription() );  
-                        ((step7Pane)steps[5]).setDialog(wizardDlg);                        
+                        ((step7Pane)steps[5]).setDialog(wizardDlg);                                                                         
                         break;
                     }
                     case 6:{
-                       ((step8Pane)steps[6]).setOutputProperties( ((step7Pane)steps[5]).getModifiedDocument(),
-                                                        ((step7Pane)steps[5]).getOutputPath() );                       
+                       /*((step8Pane)steps[6]).setOutputProperties( ((step7Pane)steps[5]).getModifiedDocument(),
+                                                        ((step7Pane)steps[5]).getOutputPath() );                       */                      
                     }
                 }                
-                if (index < 7){
+                if (index < 6){
                     String initError = steps[index].init();
                     if (initError != null)  {  
                         JOptionPane.showMessageDialog((Component) e.getSource(), initError); 
                         return;
                     }else{
                         stepPane.setSelectedIndex(index);                
-                        if (index == 6)
+                        if (index == 5){
                             nextStep.setEnabled(false);
+                            result = ((step7Pane)steps[5]).getModifiedDocument();  
+                            Document newModelDoc = result;
+                            myData.frame.newModel();
+                            ModelView view = myData.frame.getCurrentView();
+                            view.setTree(new ModelTree(view,newModelDoc));
+                        }
                     }
                 }
             }
@@ -197,8 +257,8 @@ public class OptimizationWizard {
 
         wizardDlg.setPreferredSize(new Dimension(800, 400));
         wizardDlg.setMinimumSize(new Dimension(800, 400));
-        wizardDlg.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        wizardDlg.setVisible(true);
+        wizardDlg.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);        
+        wizardDlg.setVisible(true);                  
     }
 
     public static void main(String arg[]) {

@@ -41,6 +41,7 @@ import juice.*;
 import juice.gui.tree.LibTree;
 import juice.gui.tree.ModelTree;
 import juice.optimizer.wizard.OptimizationWizard;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -255,7 +256,7 @@ public class JUICEFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 OptimizationWizard wizard = new OptimizationWizard();
                 ModelView view = getCurrentView();
-                wizard.runWizard(view.getModelDoc(), JUICE.getJamsProperties());
+                wizard.runWizard(view.getModelDoc(),JUICE.getJamsProperties(),JUICEFrame.this);                
             }
         };
 
@@ -334,6 +335,10 @@ public class JUICEFrame extends JFrame {
 
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(JUICE.APP_TITLE);
+<<<<<<< .mine
+        modelPanel.setDragMode(JDesktopPane.LIVE_DRAG_MODE);
+=======
+>>>>>>> .r1142
 
         loadModelDlg = new WorkerDlg(this, JUICE.resources.getString("Loading_Model"));
         searchDlg = new SearchDlg(this);
@@ -630,7 +635,7 @@ public class JUICEFrame extends JFrame {
         this.libTreePanel.setTree(tree);
     }
 
-    private void newModel() {
+    public void newModel() {
         ModelView mView = new ModelView(modelPanel);
         mView.setTree(new ModelTree(mView, null));
         mView.setInitialState();
