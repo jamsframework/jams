@@ -207,14 +207,18 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         tmodel = new JAMSTableModel();
         tmodel.setTimeRuns(false);
 
+        // read table headers from attribute "NAME"
+        // @TODO: flexible handling of header attribute
         ArrayList<Object> names = store.getDataSetDefinition().getAttributeValues("NAME");
         colNumber = store.getDataSetDefinition().getColumnCount();
         headers = new String[colNumber + 1];
+        headers[0] = "";
         int i = 1;
         for (Object o : names) {
             headers[i++] = (String) o;
         }
 
+        // read table values from store
         while (store.hasNext()) {
             DataSet ds = store.getNext();
 

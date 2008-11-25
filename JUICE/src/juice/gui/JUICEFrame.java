@@ -334,7 +334,6 @@ public class JUICEFrame extends JFrame {
 
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(JUICE.APP_TITLE);
-        //modelPanel.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
 
         loadModelDlg = new WorkerDlg(this, JUICE.resources.getString("Loading_Model"));
         searchDlg = new SearchDlg(this);

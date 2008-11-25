@@ -81,9 +81,6 @@ public class DisplayManager implements Observer {
             case DSTreeNode.INPUT_DS:
                 InputDataStore store = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStore(node.toString());
                 if (store instanceof TSDataStore) {
-//                    dataPanel.removeAll();
-//                    dataPanel.add(tSPanel);
-//                    dataPanel.updateUI();
                     Regionalizer.getRegionalizerFrame().updateMainPanel(spreadsheet.getPanel());
                     try {
                         spreadsheet.loadTSDS((TSDataStore) store);
