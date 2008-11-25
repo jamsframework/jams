@@ -37,7 +37,9 @@ public class ModelProperties {
     //private HashMap<String, ArrayList<ModelProperty>> properties = new HashMap<String, ArrayList<ModelProperty>>();
     private HashMap<String, Group> groups = new HashMap<String, Group>();
     private ArrayList<Group> groupList = new ArrayList<Group>();
-    private static String groupSeparator = "-";
+    
+    // this is pretty ugly, change it
+    private static String groupSeparator = Character.toString((char)187); 
 
     public boolean addProperty(Group group, ModelProperty p) {
 
@@ -292,7 +294,7 @@ public class ModelProperties {
         @Override
         public String getName() {
             if (isSubGroup()) {
-                return getGroup().getName() + ModelProperties.groupSeparator + name;
+                return getGroup().getName() + groupSeparator + name;
             } else {
                 return name;
             }
