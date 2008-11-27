@@ -109,12 +109,12 @@ public class step3Pane extends stepPane{
            try{
                 this.selectedParameters.get(i).lowerBound = Double.parseDouble(this.lowBound[i].getText());
            }catch(Exception e){
-               return JUICE.resources.getString("illegal_number_format_of_lower_bound_in_row") + (i+1) + " " + e.toString();
+               return JUICE.resources.getString("illegal_number_format_of_lower_bound_in_row") + (i+1) + "!";
            }
            try{
                 this.selectedParameters.get(i).upperBound = Double.parseDouble(this.upBound[i].getText());
            }catch(Exception e){
-               return JUICE.resources.getString("illegal_number_format_of_upper_bound_in_row") + (i+1) + " " + e.toString();
+               return JUICE.resources.getString("illegal_number_format_of_upper_bound_in_row") + (i+1) + "!";
            }
            if (this.selectedParameters.get(i).lowerBound >= this.selectedParameters.get(i).upperBound){
                return JUICE.resources.getString("lower_bound_have_to_be_smaller_than_upper_bound");

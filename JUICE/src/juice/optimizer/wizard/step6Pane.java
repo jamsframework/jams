@@ -566,7 +566,7 @@ public class step6Pane extends stepPane{
                     Pattern.compile(ParallelRandomSearch_excludedFiles.getText());
                 }catch(PatternSyntaxException pse){
                     return  JUICE.resources.getString("There_is_a_problem_with_the_regular_expression!") +"\n"+
-                            JUICE.resources.getString("The_pattern_in_question_is") + ":" + pse.getPattern() + "\n"+
+                            JUICE.resources.getString("The_pattern_in_question_is") + ": " + pse.getPattern() + "\n"+
                             JUICE.resources.getString("The_description_is")+": "+pse.getDescription() + "\n";                
                 }
                 desc.attributes.add(new AttributeDescription("maxn",null,ParallelRandomSearch_excludedFiles.getText(),false));

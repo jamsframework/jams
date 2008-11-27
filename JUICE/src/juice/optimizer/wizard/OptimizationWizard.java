@@ -116,7 +116,7 @@ public class OptimizationWizard {
     
     
     public void runWizard(Document modelDoc,JAMSProperties properties,JUICEFrame frame) {
-        final JDialog wizardDlg = new JDialog();
+        final JDialog wizardDlg = new JDialog(JUICE.getJuiceFrame());
         
         final JTabbedPane stepPane = new JTabbedPane();
         stepPane.setEnabled(false);
@@ -133,12 +133,12 @@ public class OptimizationWizard {
         steps[6] = new step8Pane();
         
         //stepPane.addTab("Step 1", null, steps[0].build(), "load model file");
-        stepPane.addTab("Step 1", null, steps[0].build(), JUICE.resources.getString("select_parameter"));
-        stepPane.addTab("Step 2", null, steps[1].build(), JUICE.resources.getString("specify_feasible_area"));
-        stepPane.addTab("Step 3", null, steps[2].build(), JUICE.resources.getString("select_efficiencies"));
-        stepPane.addTab("Step 4", null, steps[3].build(), JUICE.resources.getString("specify_modes"));
-        stepPane.addTab("Step 5", null, steps[4].build(), JUICE.resources.getString("optimizer_selection"));
-        stepPane.addTab("Step 6", null, steps[5].build(), JUICE.resources.getString("output_path"));
+        stepPane.addTab(JUICE.resources.getString("Step_1"), null, steps[0].build(), JUICE.resources.getString("select_parameter"));
+        stepPane.addTab(JUICE.resources.getString("Step_2"), null, steps[1].build(), JUICE.resources.getString("specify_feasible_area"));
+        stepPane.addTab(JUICE.resources.getString("Step_3"), null, steps[2].build(), JUICE.resources.getString("select_efficiencies"));
+        stepPane.addTab(JUICE.resources.getString("Step_4"), null, steps[3].build(), JUICE.resources.getString("specify_modes"));
+        stepPane.addTab(JUICE.resources.getString("Step_5"), null, steps[4].build(), JUICE.resources.getString("optimizer_selection"));
+        stepPane.addTab(JUICE.resources.getString("Step_6"), null, steps[5].build(), JUICE.resources.getString("output_path"));
         //stepPane.addTab("Step 7", null, steps[6].build(), JUICE.resources.getString("finish"));
         
         wizardDlg.setLayout(new BorderLayout());
