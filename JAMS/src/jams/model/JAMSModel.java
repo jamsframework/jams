@@ -130,6 +130,7 @@ public class JAMSModel extends JAMSContext {
             }
             getRuntime().println(JAMS.resources.getString("#####################################################################"), JAMS.VVERBOSE);
         }
+        setupDataTracer();
     }
 
     public boolean moveWorkspaceDirectory(String workspaceDirectory){
@@ -144,7 +145,7 @@ public class JAMSModel extends JAMSContext {
             return false;
         }             
         //reanimate data tracers
-        reInitDataTracer();
+        setupDataTracer();
         this.components.size();
         return true;
     }

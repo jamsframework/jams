@@ -90,9 +90,7 @@ public class SimpleSCE extends Optimizer {
         update = JAMSVarDescription.UpdateType.RUN,
         description = "stopping parameter: peps")
         public JAMSDouble peps;
-
-    GenericDataWriter writer = null;
-    SerializableBufferedWriter sampleWriter = null;
+    
     int N; //parameter dimension
     int p; //number of complexes
     int s; //population size

@@ -62,8 +62,9 @@ public abstract class AbstractTracer implements DataTracer {
         init(context.getDaHash());
     }
 
-    private void init(HashMap<String, DataAccessor> dataObjectHash) {
-
+    @Override
+    public void updateDateAccessors(){
+        HashMap<String, DataAccessor> dataObjectHash = context.getDaHash();
         ArrayList<DataAccessor> accessorObjectList = new ArrayList<DataAccessor>();
         this.attributeNames = new ArrayList<String>();
 
@@ -88,6 +89,11 @@ public abstract class AbstractTracer implements DataTracer {
                 superContext = context.getContext();
             }
         }
+    }
+    
+    private void init(HashMap<String, DataAccessor> dataObjectHash) {
+        updateDateAccessors();
+        
 
         //if (this.accessorObjects.length > 0) {
             createHeader();

@@ -174,9 +174,7 @@ public abstract class Optimizer extends JAMSContext {
         super.init();        
         if (!enable.getValue())
             return;            
-        for (DataTracer dataTracer : dataTracers) {
-            dataTracer.startMark();            
-        }
+        
         if (this.parameterIDs == null)
             getModel().getRuntime().sendHalt("parameterIDs not specified!");
         if (this.boundaries == null)
@@ -226,6 +224,14 @@ public abstract class Optimizer extends JAMSContext {
         dirName = this.getModel().getWorkspaceDirectory().getPath();
     }
 
+    @Override
+    public void setupDataTracer(){
+        super.setupDataTracer();
+        for (DataTracer dataTracer : dataTracers) {
+            dataTracer.startMark();            
+        }
+    }
+    
     protected double[] RandomSampler() {
         double[] sample = new double[n];
 
@@ -346,6 +352,7 @@ public abstract class Optimizer extends JAMSContext {
                 comp.init();
             } catch (Exception e) {                
                 getModel().getRuntime().sendHalt(e.getMessage());
+                e.printStackTrace();
             }
         }
 
@@ -356,6 +363,7 @@ public abstract class Optimizer extends JAMSContext {
                 comp.run();
             } catch (Exception e) {
                 getModel().getRuntime().sendHalt(e.toString());
+                e.printStackTrace();
             }
         }
 
@@ -366,6 +374,7 @@ public abstract class Optimizer extends JAMSContext {
                 comp.cleanup();
             } catch (Exception e) {
                 getModel().getRuntime().sendHalt(e.getMessage());
+                e.printStackTrace();
             }
         }
         updateEntityData();

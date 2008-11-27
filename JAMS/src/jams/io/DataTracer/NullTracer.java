@@ -23,6 +23,7 @@
 package jams.io.DataTracer;
 
 import jams.dataaccess.DataAccessor;
+import java.util.HashMap;
 
 /**
  *
@@ -50,4 +51,8 @@ public class NullTracer implements DataTracer {
     public DataAccessor[] getAccessorObjects() {
         return null;
     }
+    
+    public void updateDateAccessors(){
+        return;
+    }    
 }

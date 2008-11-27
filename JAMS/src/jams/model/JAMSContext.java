@@ -434,17 +434,8 @@ public class JAMSContext extends JAMSComponent {
             };
         }
     }
-    
-    protected void reInitDataTracer(){
-        this.setupDataTracer();
-        for (int i=0;i<this.components.size();i++){
-            if (this.components.get(i) instanceof JAMSContext){
-                ((JAMSContext)this.components.get(i)).reInitDataTracer();
-            }
-        }
-    }
-    
-    private void setupDataTracer() {
+            
+    protected void setupDataTracer() {
 
         // get the output stores if existing
         OutputDataStore[] stores = getModel().getOutputDataStores(this.getInstanceName());
@@ -453,9 +444,79 @@ public class JAMSContext extends JAMSComponent {
         if (stores.length == 0) {
             // if there is no store create a NullTracer (does nothing) and exit
             //this.dataTracers = new NullTracer();
+            for (int j=0;j<this.components.size();j++){
+                JAMSComponent comp = components.get(j);
+                if (comp instanceof JAMSContext){
+                    ((JAMSContext)comp).setupDataTracer();
+                }
+            }   
+            return;
+        }
+        int i = 0;
+        for (OutputDataStore store : stores) {
+            this.dataTracers[i] = createDataTracer(store);           
+            i++;
+        }
+        
+        initTracerDataAccess();
+
+        for (int j=0;j<this.components.size();j++){
+            JAMSComponent comp = components.get(j);
+            if (comp instanceof JAMSContext){
+                ((JAMSContext)comp).setupDataTracer();
+            }
+        }
+        
+    }
+
+    /**
+     * Initialization of this context:
+     * 1. Create accessors for all attributes of this context which are to be 
+     *    accessed by descendent components
+     * 2. Create the data tracer objects which take care of outputting values
+     *    of attributes of this context
+     * 3. Calling the init() method of all child components
+     */
+    @Override
+    public void init() {
+
+        attribs = new HashMap<String, JAMSData>();
+
+        runEnumerator = null;
+
+        if (!doRun) {
             return;
         }
 
+        // setup accessors for data exchange between context attributes and
+        // component attributes
+        initAccessors();
+        
+        // create the init/cleanup enumerator (i.e. one invocation for every component)
+        if (initCleanupEnumerator == null) {
+            initCleanupEnumerator = getChildrenEnumerator();
+        }
+
+        // initialize init/cleanup enumerator and start iteration
+        initCleanupEnumerator.reset();
+        while (initCleanupEnumerator.hasNext() && doRun) {
+            JAMSComponent comp = initCleanupEnumerator.next();
+            //comp.updateInit();
+            try {
+                comp.init();
+            } catch (Exception e) {
+                getModel().getRuntime().handle(e, comp.getInstanceName());
+            }
+        }
+
+        initEntityData();
+        initTracerDataAccess();       
+    }
+
+    protected void initTracerDataAccess(){
+         // get the output stores if existing
+        OutputDataStore[] stores = getModel().getOutputDataStores(this.getInstanceName());
+        
         // make sure there are accessors for all attributes        
         JAMSEntity[] entityArray = getEntities().getEntityArray();
         for (OutputDataStore store : stores) {
@@ -484,69 +545,15 @@ public class JAMSContext extends JAMSComponent {
         // if so, create new array from list
         if (this.daHash.size() > this.dataAccessors.length) {
             this.dataAccessors = daHash.values().toArray(new DataAccessor[daHash.size()]);
-        }
-
-        int i = 0;
-        for (OutputDataStore store : stores) {
-
-            this.dataTracers[i] = createDataTracer(store);
-
-            /*if (this.dataTracers[i].getAccessorObjects().length == 0) {
-            this.dataTracers[i] = new NullTracer();
-            return;
-            }*/
-
-            i++;
-        }
-
-    }
-
-    /**
-     * Initialization of this context:
-     * 1. Create accessors for all attributes of this context which are to be 
-     *    accessed by descendent components
-     * 2. Create the data tracer objects which take care of outputting values
-     *    of attributes of this context
-     * 3. Calling the init() method of all child components
-     */
-    @Override
-    public void init() {
-
-        attribs = new HashMap<String, JAMSData>();
-
-        runEnumerator = null;
-
-        if (!doRun) {
-            return;
-        }
-
-        // setup accessors for data exchange between context attributes and
-        // component attributes
-        initAccessors();
-
-        // setup data tracer -- needed for data output to output-datastores
-        setupDataTracer();
-
-        // create the init/cleanup enumerator (i.e. one invocation for every component)
-        if (initCleanupEnumerator == null) {
-            initCleanupEnumerator = getChildrenEnumerator();
-        }
-
-        // initialize init/cleanup enumerator and start iteration
-        initCleanupEnumerator.reset();
-        while (initCleanupEnumerator.hasNext() && doRun) {
-            JAMSComponent comp = initCleanupEnumerator.next();
-            //comp.updateInit();
-            try {
-                comp.init();
-            } catch (Exception e) {
-                getModel().getRuntime().handle(e, comp.getInstanceName());
+        }         
+        
+        if (this.dataTracers!=null)
+            for (int i=0;i<this.dataTracers.length;i++){
+                if (this.dataTracers[i]!=null)
+                    this.dataTracers[i].updateDateAccessors();
             }
-        }
-
-        initEntityData();
     }
-
+    
     protected JAMSData getDataObject(final JAMSEntity[] ea, final Class clazz, final String attributeName, final int accessType, JAMSData componentObject) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {
         JAMSData dataObject;
         DataAccessor da = null;
@@ -608,7 +615,7 @@ public class JAMSContext extends JAMSComponent {
         }
         return dataObject;
     }
-
+        
     protected void initEntityData() {
 
         //in case the components want to write access the objects, trace the entity objects attributes
@@ -738,25 +745,7 @@ public class JAMSContext extends JAMSComponent {
             updateComponentData(index);
         }
     }
-    /*
-    public Set<String> CollectAttributeWritingComponents(String attr) {
-        HashSet<String> set = new HashSet<String>();
-        for (int i = 0; i < this.accessSpecs.size(); i++) {
-            if (accessSpecs.get(i).attributeName.equals(attr)) {
-                if (accessSpecs.get(i).accessType != DataAccessor.READ_ACCESS) {
-                    set.add(accessSpecs.get(i).component.getInstanceName());
-                }
-            }
-        }
-        for (int i = 0; i < this.components.size(); i++) {
-            if (components.get(i) instanceof JAMSContext) {
-                JAMSContext c = (JAMSContext) components.get(i);
-                set.addAll(c.CollectAttributeWritingComponents(attr));
-            }
-        }
-        return set;
-    }*/
-    
+   
     public JAMSComponent getComponent(String name){
         for (int i=0;i<components.size();i++){
             if (components.get(i).instanceName.equals(name))

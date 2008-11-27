@@ -206,7 +206,9 @@ public class metaModelOptimizer {
                                 attrRWSet.attrWritingComponents.put(attr, attrSet);
                             }
                         }                        
-                    }catch(Exception e){System.out.println(e.toString());}                                
+                    }catch(Exception e){
+                        System.out.println(e.toString()); e.printStackTrace();
+                    }                                
                 }
             }
         }                          

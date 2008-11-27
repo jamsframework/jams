@@ -23,6 +23,7 @@
 package jams.io.DataTracer;
 
 import jams.dataaccess.DataAccessor;
+import java.util.HashMap;
 
 /**
  *
@@ -31,7 +32,7 @@ import jams.dataaccess.DataAccessor;
 public interface DataTracer {
 
     public DataAccessor[] getAccessorObjects();
-
+    public void updateDateAccessors();
     public void trace();
 
     public void startMark();
