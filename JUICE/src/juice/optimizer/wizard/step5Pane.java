@@ -105,7 +105,7 @@ public class step5Pane extends stepPane{
     @Override
     public String finish(){
         for (int i=0;i<this.modeList.length;i++){
-           int index = this.modeList[i].getSelectedIndex();
+           int index = this.modeList[i].getSelectedIndex()+1;
            this.selectedEfficiencies.get(i).mode = index;
         }
         return null;
