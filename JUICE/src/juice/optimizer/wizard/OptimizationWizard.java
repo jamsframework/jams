@@ -116,7 +116,7 @@ public class OptimizationWizard {
     
     
     public void runWizard(Document modelDoc,JAMSProperties properties,JUICEFrame frame) {
-        final JDialog wizardDlg = new JDialog(JUICE.getJuiceFrame());
+        final JDialog wizardDlg = new JDialog(JUICE.getJuiceFrame(), JUICE.resources.getString("Optimization_Wizard"));
         
         final JTabbedPane stepPane = new JTabbedPane();
         stepPane.setEnabled(false);
