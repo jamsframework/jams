@@ -138,7 +138,7 @@ public class HRUReducer extends JAMSContext{
     
     void restore(){
         if (mySnapShot != null){
-            this.getModel().SetModelState(mySnapShot);
+            this.getModel().setModelState(mySnapShot);
         }
     }
             

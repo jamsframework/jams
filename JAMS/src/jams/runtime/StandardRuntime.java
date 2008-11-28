@@ -478,6 +478,7 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
         guiComponents.add(component);
     }
 
+    @Override
     public void saveModelParameter() {
         // save the model's parameter set to the workspace output dir
         try {

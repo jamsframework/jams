@@ -185,19 +185,19 @@ public class JAMSModel extends JAMSContext {
         this.nullFields = nullFields;
     }
 
-    private void CollectEntityCollections(JAMSContext currentContext, JAMSComponent position, HashMap<String, JAMSEntityCollection> collection) {
+    private void collectEntityCollections(JAMSContext currentContext, JAMSComponent position, HashMap<String, JAMSEntityCollection> collection) {
         currentContext.updateEntityData(position);
         collection.put(currentContext.instanceName, currentContext.getEntities());
 
         for (int i = 0; i < currentContext.components.size(); i++) {
             JAMSComponent c = (JAMSComponent) currentContext.getComponents().get(i);
             if (c instanceof JAMSContext) {
-                CollectEntityCollections((JAMSContext) c, position, collection);
+                collectEntityCollections((JAMSContext) c, position, collection);
             }
         }
     }
 
-    private void RestoreEntityCollections(JAMSContext currentContext, HashMap<String, JAMSEntityCollection> collection) {
+    private void restoreEntityCollections(JAMSContext currentContext, HashMap<String, JAMSEntityCollection> collection) {
         JAMSEntityCollection e = collection.get(currentContext.instanceName);
         if (e != null) {
             currentContext.setEntities(e);
@@ -205,18 +205,18 @@ public class JAMSModel extends JAMSContext {
         for (int i = 0; i < currentContext.components.size(); i++) {
             JAMSComponent c = (JAMSComponent) currentContext.getComponents().get(i);
             if (c instanceof JAMSContext) {
-                RestoreEntityCollections((JAMSContext) c, collection);
+                restoreEntityCollections((JAMSContext) c, collection);
             }
         }
         currentContext.initAccessors();
     }
 
-    public Snapshot GetModelState(boolean holdInMemory, String fileName, JAMSComponent position) {
+    public Snapshot getModelState(boolean holdInMemory, String fileName, JAMSComponent position) {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         ObjectOutputStream objOut = null;
 
         HashMap<String, JAMSEntityCollection> contextStates = new HashMap<String, JAMSEntityCollection>();
-        CollectEntityCollections(this.getModel(), position, contextStates);
+        collectEntityCollections(this.getModel(), position, contextStates);
 
         try {
             objOut = new ObjectOutputStream(outStream);
@@ -229,7 +229,7 @@ public class JAMSModel extends JAMSContext {
     }
 
     @SuppressWarnings("unchecked")
-    public void SetModelState(Snapshot inData) {
+    public void setModelState(Snapshot inData) {
         HashMap<String, JAMSEntityCollection> contextStates = null;
         try {
             ObjectInputStream objIn = new ObjectInputStream(new ByteArrayInputStream(inData.getData()));
@@ -239,6 +239,6 @@ public class JAMSModel extends JAMSContext {
         } catch (Exception e) {
             this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_deserialize_jamsentity_collection,_because") + e.toString());
         }
-        RestoreEntityCollections(this.getModel(), contextStates);
+        restoreEntityCollections(this.getModel(), contextStates);
     }        
 }

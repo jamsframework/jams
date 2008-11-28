@@ -77,7 +77,7 @@ public class JAMSModelSnapshot extends JAMSComponent{
             
             if (takeSnapshot != null && takeSnapshot.getValue()){                  
                 runtime.sendInfoMsg("Taking Snapshot" + " (" + this.instanceName + ")");                
-                Snapshot snapshot = this.getModel().GetModelState(holdInMemory != null && holdInMemory.getValue(),
+                Snapshot snapshot = this.getModel().getModelState(holdInMemory != null && holdInMemory.getValue(),
                         fileName,this);                               
                 data.setObject("snapshot", snapshot);
             }
@@ -89,7 +89,7 @@ public class JAMSModelSnapshot extends JAMSComponent{
                     System.out.println("Entity does not contain any snapshot-data," + e.toString());
                 }
                 runtime.sendInfoMsg("Restoring Snapshot" + " (" + this.instanceName + ")");
-                this.getModel().SetModelState(snapshot);
+                this.getModel().setModelState(snapshot);
             }
         }else{
             this.getModel().getRuntime().println("Snapshoting not supported by runtime!");                        

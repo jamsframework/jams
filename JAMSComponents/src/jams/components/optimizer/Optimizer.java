@@ -295,7 +295,7 @@ public abstract class Optimizer extends JAMSContext {
         if (snapshot != null) {
             if (!this.snapshot.existsAttribute("snapshot")){
                 try {
-                    this.getModel().SetModelState((Snapshot) snapshot.getObject("snapshot"));
+                    this.getModel().setModelState((Snapshot) snapshot.getObject("snapshot"));
                 } catch (Exception e) {
                     this.getModel().getRuntime().sendHalt(e.toString());                
                 } 
