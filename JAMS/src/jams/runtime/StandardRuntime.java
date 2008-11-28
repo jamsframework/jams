@@ -491,7 +491,7 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
         }
     }
 
-    public ByteArrayOutputStream GetRuntimeState(String fileName) {
+    public ByteArrayOutputStream getRuntimeState(String fileName) {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         ObjectOutputStream objOut = null;
 
@@ -525,7 +525,7 @@ public class StandardRuntime implements JAMSRuntime,Serializable {
         return this.model;
     }
 
-    public void SetRuntimeState(ByteArrayInputStream inStream) {
+    public void setRuntimeState(ByteArrayInputStream inStream) {
         try {
             ObjectInputStream objIn = new ObjectInputStream(inStream);
             JAMSEntityCollection e = (JAMSEntityCollection) objIn.readObject();
