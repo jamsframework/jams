@@ -40,6 +40,8 @@ import jams.*;
 import jams.io.ParameterProcessor;
 import jams.io.XMLIO;
 import jams.io.XMLProcessor;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -330,8 +332,20 @@ public class JAMSFrame extends JAMSLauncher {
         jfc.setCurrentDirectory(JAMS.getBaseDir());
 
         // runtime manager dlg
+        RuntimeManagerPanel rtManagerPanel = new RuntimeManagerPanel();
+        JButton closeButton = new JButton(JAMS.resources.getString("Close"));
+        closeButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rtManagerDlg.setVisible(false);
+            }
+        });
+        rtManagerPanel.getButtonPanel().add(closeButton);
+
         rtManagerDlg = new JDialog(JAMSFrame.this, JAMS.resources.getString("Runtime_Manager"));
-        rtManagerDlg.getContentPane().add(new RuntimeManagerPanel());
+        rtManagerDlg.getContentPane().add(rtManagerPanel);
+        rtManagerDlg.setAlwaysOnTop(true);
         rtManagerDlg.pack();
 
         // menu stuff

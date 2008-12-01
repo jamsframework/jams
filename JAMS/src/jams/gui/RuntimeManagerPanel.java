@@ -49,6 +49,7 @@ public class RuntimeManagerPanel extends JPanel {
     private JList runtimeList;
     private DefaultListModel listModel = new DefaultListModel();
     private JButton stopButton;
+    private JPanel buttonPanel;
 
     public RuntimeManagerPanel() {
 
@@ -129,7 +130,16 @@ public class RuntimeManagerPanel extends JPanel {
 
         JScrollPane listScrollPane = new JScrollPane(runtimeList);
         this.add(listScrollPane, BorderLayout.CENTER);
-        this.add(stopButton, BorderLayout.SOUTH);
+        buttonPanel = new JPanel();
+        buttonPanel.add(stopButton);
+        this.add(buttonPanel, BorderLayout.SOUTH);
 
+    }
+
+    /**
+     * @return the buttonPanel
+     */
+    public JPanel getButtonPanel() {
+        return buttonPanel;
     }
 }
