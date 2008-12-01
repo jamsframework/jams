@@ -81,7 +81,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private Document modelDocument = null;
     private JAMSProperties properties = null;
     String[] libs = null;
-    private int runState = JAMSRuntime.RUNSTATE_RUN;
+    private int runState = JAMSRuntime.STATE_RUN;
 
     @Override
     public void loadModel(Document modelDocument, JAMSProperties properties) {
@@ -193,10 +193,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     public void runModel() {
 
         //check if runstate is on "run"
-        if (this.getRunState() != JAMSRuntime.RUNSTATE_RUN) {
+        if (this.getState() != JAMSRuntime.STATE_RUN) {
             return;
         }
 
+        // add this runtime to the runtime manager
         JAMS.getRuntimeManager().addRuntime(this);
 
         if (guiEnabled && (guiComponents.size() > 0)) {
@@ -205,15 +206,15 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         long start = System.currentTimeMillis();
 
-        if (this.getRunState() == JAMSRuntime.RUNSTATE_RUN) {
+        if (this.getState() == JAMSRuntime.STATE_RUN) {
             model.init();
         }
 
-        if (this.getRunState() == JAMSRuntime.RUNSTATE_RUN) {
+        if (this.getState() == JAMSRuntime.STATE_RUN) {
             model.run();
         }
 
-        if (this.getRunState() == JAMSRuntime.RUNSTATE_RUN) {
+        if (this.getState() == JAMSRuntime.STATE_RUN) {
             model.cleanup();
         }
 
@@ -323,11 +324,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             }
         });
 
-        this.addRunStateObserver(new Observer() {
+        this.addStateObserver(new Observer() {
 
             @Override
             public void update(Observable obs, Object obj) {
-                if (StandardRuntime.this.getRunState() == JAMSRuntime.RUNSTATE_STOP) {
+                if (StandardRuntime.this.getState() == JAMSRuntime.STATE_STOP) {
                     stopButton.setEnabled(false);
                     closeButton.setEnabled(true);
                 }
@@ -405,7 +406,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     @Override
     public void sendHalt() {
-        this.setRunState(JAMSRuntime.RUNSTATE_STOP);
+        this.setRunState(JAMSRuntime.STATE_STOP);
     }
 
     @Override
@@ -425,12 +426,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     }
 
     @Override
-    public void addRunStateObserver(Observer o) {
+    public void addStateObserver(Observer o) {
         this.addObserver(o);
     }
 
     @Override
-    public int getRunState() {
+    public int getState() {
         return runState;
     }
 
@@ -547,21 +548,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     @Override
     public JFrame getFrame() {
         return frame;
-    }
-
-    class RunState extends Observable implements Serializable {
-
-        private int state = JAMSRuntime.RUNSTATE_RUN;
-
-        public int getState_() {
-            return state;
-        }
-
-        public void setState_(int state) {
-            this.state = state;
-            this.setChanged();
-            this.notifyObservers();
-        }
     }
 
     @Override

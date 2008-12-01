@@ -62,7 +62,7 @@ public class ListInput extends JPanel {
 
         // create a new listbox control
         listbox = new JList(listData.getValue());
-        getListbox().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listbox.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         listbox.addMouseListener(new MouseListener() {
 

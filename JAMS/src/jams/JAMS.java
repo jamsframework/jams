@@ -28,10 +28,13 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import jams.gui.JAMSFrame;
 import jams.gui.JAMSSplash;
+import jams.gui.RuntimeManagerPanel;
 import jams.runtime.*;
 import jams.io.*;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -73,7 +76,7 @@ public class JAMS {
     public static final String DEFAULT_PARAMETER_FILENAME = "default.jap";
     private static JAMSCmdLine cmdLine;
     private static File baseDir = null;
-    private static final RuntimeManager runtimeManager = new RuntimeManager();
+    private static final RuntimeManager runtimeManager = RuntimeManager.getInstance();
 
     public static void handle(Exception ex) {
         handle(ex, true);

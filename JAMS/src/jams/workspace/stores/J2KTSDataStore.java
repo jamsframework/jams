@@ -95,7 +95,7 @@ public class J2KTSDataStore extends TSDataStore {
 
         this.columnCount = this.getDataSetDefinition().getColumnCount();
 
-        if (ws.getRuntime().getRunState() != JAMSRuntime.RUNSTATE_RUN) {
+        if (ws.getRuntime().getState() != JAMSRuntime.STATE_RUN) {
             return;
         }
     }

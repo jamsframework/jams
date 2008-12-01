@@ -196,10 +196,10 @@ public class JAMSContext extends JAMSComponent {
     public void setModel(JAMSModel model) {
         super.setModel(model);
         JAMSRuntime rt = getModel().getRuntime();
-        rt.addRunStateObserver(new Observer() {
+        rt.addStateObserver(new Observer() {
             @Override
             public void update(Observable obs, Object obj) {
-                if (getModel().getRuntime().getRunState() != JAMSRuntime.RUNSTATE_RUN) {
+                if (getModel().getRuntime().getState() != JAMSRuntime.STATE_RUN) {
                     JAMSContext.this.doRun = false;
                 }
             }

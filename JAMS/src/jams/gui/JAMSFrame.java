@@ -40,6 +40,7 @@ import jams.*;
 import jams.io.ParameterProcessor;
 import jams.io.XMLIO;
 import jams.io.XMLProcessor;
+import javax.swing.JDialog;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -55,11 +56,12 @@ public class JAMSFrame extends JAMSLauncher {
     private JMenu logsMenu,  modelMenu;
     private JMenuItem saveItem,  saveAsItem;
     private JFileChooser jfc;
+    private JDialog rtManagerDlg;
     private PropertyDlg propertyDlg;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Info_Log"));
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Error_Log"));
     private String modelFilename;
-    private Action editPrefsAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  loadModelParamAction,  saveModelParamAction,  infoLogAction,  errorLogAction;
+    private Action editPrefsAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  loadModelParamAction,  saveModelParamAction,  rtManagerAction,  infoLogAction,  errorLogAction;
 
 
     /*
@@ -297,6 +299,14 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
+        rtManagerAction = new AbstractAction(JAMS.resources.getString("Show_Runtime_Manager...")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rtManagerDlg.setVisible(true);
+            }
+        };
+
         infoLogAction = new AbstractAction(JAMS.resources.getString("Info_Log...")) {
 
             @Override
@@ -318,6 +328,11 @@ public class JAMSFrame extends JAMSLauncher {
         jfc = LHelper.getJFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setCurrentDirectory(JAMS.getBaseDir());
+
+        // runtime manager dlg
+        rtManagerDlg = new JDialog(JAMSFrame.this, JAMS.resources.getString("Runtime_Manager"));
+        rtManagerDlg.getContentPane().add(new RuntimeManagerPanel());
+        rtManagerDlg.pack();
 
         // menu stuff
         mainMenu = new JMenuBar();
@@ -374,6 +389,12 @@ public class JAMSFrame extends JAMSLauncher {
         JMenuItem saveModelParamItem = new JMenuItem(saveModelParamAction);
         //loadModelParamItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         modelMenu.add(saveModelParamItem);
+
+        modelMenu.add(new JSeparator());
+
+        JMenuItem rtManagerItem = new JMenuItem(rtManagerAction);
+        modelMenu.add(rtManagerItem);
+
 
         // logs menu
         logsMenu = new JMenu(JAMS.resources.getString("Logs"));

@@ -155,12 +155,12 @@ public class MiniRuntime implements JAMSRuntime {
     }
 
     @Override
-    public int getRunState() {
+    public int getState() {
         return -1;
     }
 
     @Override
-    public void addRunStateObserver(Observer o) {
+    public void addStateObserver(Observer o) {
     }
 
     @Override
