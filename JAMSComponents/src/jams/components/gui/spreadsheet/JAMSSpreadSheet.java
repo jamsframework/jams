@@ -773,14 +773,27 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     private void openCTS(){
         /* achtung: nur wenn time mitläuft!! */
         JTSConfigurator jts;
-        try{
-            jts = new JTSConfigurator(getModel().getRuntime().getFrame(), this.table);
-        }catch(NullPointerException npe){
-            jts = new JTSConfigurator(parent_frame, this.table);
-        }
+        
+       
+
+                try{
+                    jts = new JTSConfigurator(getModel().getRuntime().getFrame(), this.table);
+                }catch(NullPointerException npe){
+                    jts = new JTSConfigurator(parent_frame, this.table);
+                }
+
+//        SwingUtilities.invokeLater( new Runnable(){
+//            public void run()
+//            {
+//                bar.setValue(K);
+//                }
+//            } );  
+        
         //ctstabs.addGraph(table);
         //ctsIsOpen = true;
         }
+    
+    
     
     private void openCXYS(){
         JXYConfigurator jxys;
@@ -798,6 +811,8 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
          
 //             if(table.getValueAt(0, 0).getClass() == JAMSCalendar.class){     
 //                openCTS();
+             
+             
              try{
                  openCTS();
              } catch (ClassCastException cce){
@@ -806,6 +821,8 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                      openCTS();
                  }
              }
+             
+             
 //             }
          } 
     };  

@@ -347,12 +347,11 @@ public class JAMSTimePlot {
     }
         
     public void plotLeft(XYItemRenderer leftRenderer, String nameLeft, String xAxisTitle, boolean inverted){ //plotLeft(renderer, axisname, inverted)
-        int plot_count = 0;
-        int c = propVector.size();
-        int right = 0;
+        
         dataLeft = new TimeSeriesCollection();
         DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
-   
+        final XYItemRenderer lRenderer = leftRenderer;
+        
         axisLEFT.setInverted(inverted);
         axisLEFT.setLabel(nameLeft);
         dateAxis.setLabel(xAxisTitle);
@@ -361,51 +360,115 @@ public class JAMSTimePlot {
 
         //dataRight.removeAllSeries();
         
-        for(int k=0; k<c; k++){ 
+        new Thread(new Runnable(){
+ 
+        int plot_count = 0;
+        int c = propVector.size();
+        int right = 0;
             
-            GraphProperties prop = propVector.get(k);
-            if(propVector.get(k).getPosChoice().getSelectedItem() == "left"){
-                plot_count++;
-                //GraphProperties prop = propVector.get(k);
-                dataLeft.addSeries(prop.getTS());
-                dataRight.removeSeries(prop.getTS());
-                
-//                leftRenderer.setSeriesPaint(k-right, prop.getSeriesPaint());
-//                leftRenderer.setSeriesStroke(k-right, prop.getSeriesStroke());
-//                leftRenderer.setSeriesShape(k-right, prop.getSeriesShape());
-                
-                //leftRenderer.setSeriesPaint(k-right,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
-            }else{
-                dataLeft.removeSeries(prop.getTS());
-                right++;
-//                if(right <= dataRight.getSeriesCount()){
-//                    dataRight.removeSeries(prop.getTS());
-//                }
+        public void run(){
+            
+            for(int k=0; k<c; k++){ 
+
+                GraphProperties prop = propVector.get(k);
+                if(propVector.get(k).getPosChoice().getSelectedItem() == "left"){
+                    plot_count++;
+                    //GraphProperties prop = propVector.get(k);
+                    dataLeft.addSeries(prop.getTS());
+                    dataRight.removeSeries(prop.getTS());
+
+    //                leftRenderer.setSeriesPaint(k-right, prop.getSeriesPaint());
+    //                leftRenderer.setSeriesStroke(k-right, prop.getSeriesStroke());
+    //                leftRenderer.setSeriesShape(k-right, prop.getSeriesShape());
+
+                    //leftRenderer.setSeriesPaint(k-right,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
+                }else{
+                    dataLeft.removeSeries(prop.getTS());
+                    right++;
+    //                if(right <= dataRight.getSeriesCount()){
+    //                    dataRight.removeSeries(prop.getTS());
+    //                }
+                }
             }
+
+            //if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
+
+
+            if(right == 0){
+                dataRight.removeAllSeries();
+                axisRIGHT.setVisible(false);
+                axisLEFT.setVisible(true);
+                plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+                plot.setRangeAxis(0, axisLEFT);
+                plot.setDataset(0, dataLeft);
+
+                plot.setRenderer(0, lRenderer);
+                plot.mapDatasetToRangeAxis(0, 0);
+
+            } else {
+                axisRIGHT.setVisible(true);
+                plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+                plot.setRangeAxis(0, axisLEFT);
+                plot.setDataset(0, dataLeft);
+                plot.setRenderer(0, lRenderer);
+                plot.mapDatasetToRangeAxis(0, 0);
+            }
+        
         }
+        }).start();
         
-        //if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
+        /////////////ohne thread//////////////
+//        int plot_count = 0;
+//        int c = propVector.size();
+//        int right = 0;
+//        
+//        for(int k=0; k<c; k++){ 
+//
+//                GraphProperties prop = propVector.get(k);
+//                if(propVector.get(k).getPosChoice().getSelectedItem() == "left"){
+//                    plot_count++;
+//                    //GraphProperties prop = propVector.get(k);
+//                    dataLeft.addSeries(prop.getTS());
+//                    dataRight.removeSeries(prop.getTS());
+//
+//    //                leftRenderer.setSeriesPaint(k-right, prop.getSeriesPaint());
+//    //                leftRenderer.setSeriesStroke(k-right, prop.getSeriesStroke());
+//    //                leftRenderer.setSeriesShape(k-right, prop.getSeriesShape());
+//
+//                    //leftRenderer.setSeriesPaint(k-right,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
+//                }else{
+//                    dataLeft.removeSeries(prop.getTS());
+//                    right++;
+//    //                if(right <= dataRight.getSeriesCount()){
+//    //                    dataRight.removeSeries(prop.getTS());
+//    //                }
+//                }
+//            }
+
+           
+
+
+//            if(right == 0){
+//                dataRight.removeAllSeries();
+//                axisRIGHT.setVisible(false);
+//                axisLEFT.setVisible(true);
+//                plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+//                plot.setRangeAxis(0, axisLEFT);
+//                plot.setDataset(0, dataLeft);
+//
+//                plot.setRenderer(0, lRenderer);
+//                plot.mapDatasetToRangeAxis(0, 0);
+//
+//            } else {
+//                axisRIGHT.setVisible(true);
+//                plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+//                plot.setRangeAxis(0, axisLEFT);
+//                plot.setDataset(0, dataLeft);
+//                plot.setRenderer(0, lRenderer);
+//                plot.mapDatasetToRangeAxis(0, 0);
+//            }
         
         
-        if(right == 0){
-            dataRight.removeAllSeries();
-            axisRIGHT.setVisible(false);
-            axisLEFT.setVisible(true);
-            plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
-            plot.setRangeAxis(0, axisLEFT);
-            plot.setDataset(0, dataLeft);
-            
-            plot.setRenderer(0, leftRenderer);
-            plot.mapDatasetToRangeAxis(0, 0);
-            
-        } else {
-            axisRIGHT.setVisible(true);
-            plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
-            plot.setRangeAxis(0, axisLEFT);
-            plot.setDataset(0, dataLeft);
-            plot.setRenderer(0, leftRenderer);
-            plot.mapDatasetToRangeAxis(0, 0);
-        }
         
     }
     
