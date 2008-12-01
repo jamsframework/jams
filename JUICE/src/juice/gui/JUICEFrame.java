@@ -36,12 +36,12 @@ import jams.gui.AboutDlg;
 import jams.gui.LHelper;
 import jams.gui.LogViewDlg;
 import jams.gui.PropertyDlg;
+import jams.gui.RuntimeManagerPanel;
 import jams.gui.WorkerDlg;
 import juice.*;
 import juice.gui.tree.LibTree;
 import juice.gui.tree.ModelTree;
 import juice.optimizer.wizard.OptimizationWizard;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -51,8 +51,8 @@ import org.w3c.dom.Node;
  */
 public class JUICEFrame extends JFrame {
 
-    private static final int TREE_PANE_WIDTH = 250;
-    private static final int DIVIDER_WIDTH = 9;
+    private static final int TREE_PANE_WIDTH = 250,  TREE_PANE_HEIGHT = 600;
+    private static final int DIVIDER_WIDTH = 8;
     private PropertyDlg propertyDlg;
     private JFileChooser jfc = LHelper.getJFileChooser();
     private TreePanel libTreePanel;
@@ -256,7 +256,7 @@ public class JUICEFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 OptimizationWizard wizard = new OptimizationWizard();
                 ModelView view = getCurrentView();
-                wizard.runWizard(view.getModelDoc(),JUICE.getJamsProperties(),JUICEFrame.this);                
+                wizard.runWizard(view.getModelDoc(), JUICE.getJamsProperties(), JUICEFrame.this);
             }
         };
 
@@ -355,10 +355,23 @@ public class JUICEFrame extends JFrame {
         libTreePanel = new TreePanel();
         libTreePanel.addCustomButton(reloadLibsButton, 80);
 
+        JPanel rtManagerPanel = new JPanel();
+        rtManagerPanel.setLayout(new BorderLayout());
+        rtManagerPanel.add(new JLabel(" " + JAMS.resources.getString("Runtime_Manager") + ":"), BorderLayout.NORTH);
+        rtManagerPanel.add(new RuntimeManagerPanel(), BorderLayout.CENTER);
+
+        JSplitPane leftSplitPane = new JSplitPane();
+        leftSplitPane.setAutoscrolls(true);
+        leftSplitPane.setContinuousLayout(true);
+        leftSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        leftSplitPane.setTopComponent(libTreePanel);
+        leftSplitPane.setBottomComponent(rtManagerPanel);
+        leftSplitPane.setDividerLocation(TREE_PANE_HEIGHT);
+
         JSplitPane mainSplitPane = new JSplitPane();
         mainSplitPane.setAutoscrolls(true);
         mainSplitPane.setContinuousLayout(true);
-        mainSplitPane.setLeftComponent(libTreePanel);
+        mainSplitPane.setLeftComponent(leftSplitPane);
         mainSplitPane.setRightComponent(modelPanel);
         mainSplitPane.setDividerLocation(TREE_PANE_WIDTH);
         mainSplitPane.setOneTouchExpandable(true);

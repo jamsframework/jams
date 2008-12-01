@@ -28,13 +28,10 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import jams.gui.JAMSFrame;
 import jams.gui.JAMSSplash;
-import jams.gui.RuntimeManagerPanel;
 import jams.runtime.*;
 import jams.io.*;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 

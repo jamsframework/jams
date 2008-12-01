@@ -38,6 +38,7 @@ import org.jfree.chart.renderer.xy.XYStepRenderer;
 
 import jams.JAMSFileFilter;
 import jams.gui.LHelper;
+import jams.gui.WorkerDlg;
 
 
 /**
@@ -707,249 +708,262 @@ public class JTSConfigurator extends JFrame{
     
     public void plotAllGraphs(){
         
-        createProgressBarDlg();
-        new Thread(plotRunnable).start();
-       
-        
-//    updatePropVector();
-//            int l=0;
-//            int r=0;
-//            int rLeft = this.rLeftBox.getSelectedIndex();
-//            int rRight = this.rRightBox.getSelectedIndex();
-//            
-//            XYItemRenderer rendererLeft = new XYLineAndShapeRenderer();
-//            XYItemRenderer rendererRight = new XYLineAndShapeRenderer();
-//            
-//            XYLineAndShapeRenderer lsr_R = new XYLineAndShapeRenderer();
-//            XYBarRenderer brr_R = new XYBarRenderer();
-//            XYDifferenceRenderer dfr_R = new XYDifferenceRenderer();
-//            XYAreaRenderer ar_R = new XYAreaRenderer();
-//            XYStepRenderer str_R = new XYStepRenderer();
-//            XYStepAreaRenderer sar_R = new XYStepAreaRenderer();
-//            
-//            XYLineAndShapeRenderer lsr_L = new XYLineAndShapeRenderer();
-//            XYBarRenderer brr_L = new XYBarRenderer();
-//            XYDifferenceRenderer dfr_L = new XYDifferenceRenderer();
-//            XYAreaRenderer ar_L = new XYAreaRenderer();
-//            XYStepRenderer str_L = new XYStepRenderer();
-//            XYStepAreaRenderer sar_L = new XYStepAreaRenderer();
-//            
-//            GraphProperties prop;
-//            //2 Renderer einfügen. Typ aus rLeftBox bzw rRightBox holen!
-//            //Switch/Case Anweisung in den Configurator packen
-//            //
-//            
-//
-//            
-//            
-//            /////////////// In dieser Schleife Eigenschaften übernehmen!! /////////////
-//            for(int i=0; i<propVector.size(); i++){
-//                
-//                prop = propVector.get(i);
-//                
-//                if(prop.getPosChoice().getSelectedItem() == "left"){                   
-//                    l++;
-//                    //prop.setRendererType(rLeft);
-//                    
-//                    switch(rLeft){
-//                        
-//                        case 0:
-//                            lsr_L.setSeriesPaint(i-r, prop.getSeriesPaint());
-//                            //lsr_L.setSeriesPaint(i-r, Color.black);
-//                            lsr_L.setSeriesStroke(i-r, prop.getSeriesStroke());
-//                            lsr_L.setSeriesShape(i-r, prop.getSeriesShape());
-//                            lsr_L.setSeriesShapesVisible(i-r, prop.getShapesVisible());
-//                            lsr_L.setSeriesLinesVisible(i-r, prop.getLinesVisible());
-//                            //lsr_L.setDrawOutlines(prop.getOutlineVisible());
-//                            lsr_L.setUseOutlinePaint(true);
-//                            lsr_L.setSeriesFillPaint(i-r, prop.getSeriesFillPaint());
-//                            lsr_L.setUseFillPaint(true);
-//                            lsr_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
-//                            lsr_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
-//                            rendererLeft = lsr_L;
-//                            break;
-//                            
-//                        case 1:
-//                            brr_L.setSeriesPaint(i-r, prop.getSeriesPaint());
-//                            brr_L.setSeriesStroke(i-r, prop.getSeriesStroke());
-//                            
-//                            brr_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
-//                            brr_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
-//                            
-//                            
-//                            rendererLeft = brr_L;
-//                            //set Margin
-//                            break;
-//                            
-//                        case 2:
-//                            ar_L.setSeriesPaint(i-r, prop.getSeriesPaint());
-//                            ar_L.setSeriesStroke(i-r, prop.getSeriesStroke());
-//                            ar_L.setSeriesShape(i-r, prop.getSeriesShape());
-//                            ar_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
-//                            ar_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
-//                            ar_L.setOutline(prop.getOutlineVisible());
-//                            //ar_L.setSeriesOu
-//                            
-//                            rendererLeft = ar_L;
-//                            
-//                            break;
-//                        
-//                        case 3:
-//                            str_L.setSeriesPaint(i-r, prop.getSeriesPaint());
-//                            str_L.setSeriesStroke(i-r, prop.getSeriesStroke());
-//                            str_L.setSeriesShape(i-r, prop.getSeriesShape());
-////                            str_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
-////                            str_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
-//                            
-//                            rendererLeft = str_L;
-//                            break;
-//                            
-//                        case 4:
-//                            sar_L.setSeriesPaint(i-r, prop.getSeriesPaint());
-//                            sar_L.setSeriesStroke(i-r, prop.getSeriesStroke());
-//                            sar_L.setSeriesShape(i-r, prop.getSeriesShape());
-//                            sar_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
-//                            sar_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
-//                            sar_L.setOutline(prop.getOutlineVisible());
-//                            
-//                            rendererLeft = sar_L;
-//
-//                            break;
-//                            
-//                        case 5:
-//                            dfr_L.setSeriesPaint(i-r, prop.getSeriesPaint());
-//                            dfr_L.setSeriesStroke(i-r, prop.getSeriesStroke());
-//                            dfr_L.setSeriesShape(i-r, prop.getSeriesShape());
-//                            dfr_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
-//                            dfr_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
-//                            dfr_L.setShapesVisible(prop.getShapesVisible());
-//                            
-//                            
-////                            dfr_L.setNegativePaint(prop.getNegativePaint());
-////                            dfr_L.setPositivePaint(prop.getNegativePaint());
-//                            
-//                            rendererLeft = dfr_L;
-//                            
-//                            break;
-//                        
-//                         default:
-//                            lsr_L.setSeriesPaint(i-r, prop.getSeriesPaint());
-//                            lsr_L.setSeriesStroke(i-r, prop.getSeriesStroke());
-//                            lsr_L.setSeriesShape(i-r, prop.getSeriesShape());
-//                            lsr_L.setSeriesShapesVisible(i-r, prop.getShapesVisible());
-//                            lsr_L.setSeriesLinesVisible(i-r, prop.getLinesVisible());
-//                            lsr_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
-//                            lsr_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
-//                            
-//                            rendererLeft = lsr_L;
-//                            break;
-//                    }
-//                    
-//                }
-//                if(prop.getPosChoice().getSelectedItem() == "right"){
-//                    r++;
-//                    //prop.setRendererType(rRight);
-//                    switch(rRight){
-//                        case 0:
-//                            lsr_R.setSeriesPaint(i-l, prop.getSeriesPaint());
-//                            lsr_R.setSeriesStroke(i-l, prop.getSeriesStroke());
-//                            lsr_R.setSeriesShape(i-l, prop.getSeriesShape());
-//                            lsr_R.setSeriesShapesVisible(i-l, prop.getShapesVisible());
-//                            lsr_R.setSeriesLinesVisible(i-l, prop.getLinesVisible());
-//                            //lsr_R.setDrawOutlines(prop.getOutlineVisible());
-//                            lsr_R.setUseOutlinePaint(true);
-//                            lsr_R.setSeriesFillPaint(i-l, prop.getSeriesFillPaint());
-//                            lsr_R.setUseFillPaint(true);
-//                            lsr_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
-//                            lsr_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
-//                            
-//                            rendererRight = lsr_R;
-//                            break;
-//                            
-//                        case 1:
-//                            brr_R.setSeriesPaint(i-l, prop.getSeriesPaint());
-//                            brr_R.setSeriesStroke(i-l, prop.getSeriesStroke());
-//                            brr_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
-//                            brr_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
-//                            
-//                            rendererRight = brr_R;
-//                            //set Margin
-//                            break;
-//                            
-//                        case 2:
-//                            ar_R.setSeriesPaint(i-l, prop.getSeriesPaint());
-//                            ar_R.setSeriesStroke(i-l, prop.getSeriesStroke());
-//                            ar_R.setSeriesShape(i-l, prop.getSeriesShape());
-//                            ar_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
-//                            ar_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
-//                            
-//                            rendererRight = ar_R;
-//                            
-//                            break;
-//                        
-//                        case 3:
-//                            str_R.setSeriesPaint(i-l, prop.getSeriesPaint());
-//                            str_R.setSeriesStroke(i-l, prop.getSeriesStroke());
-//                            str_R.setSeriesShape(i-l, prop.getSeriesShape());
-//                            str_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
-//                            str_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
-//                            
-//                            rendererRight = str_R;
-//                            
-//                            break;
-//                            
-//                        case 4: 
-//                            sar_R.setSeriesPaint(i-l, prop.getSeriesPaint());
-//                            sar_R.setSeriesStroke(i-l, prop.getSeriesStroke());
-//                            sar_R.setSeriesShape(i-l, prop.getSeriesShape());
-//                            sar_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
-//                            sar_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
-//                            
-//                            rendererRight = sar_R;
-//                            
-//                            break;
-//                            
-//                        case 5:
-//                            dfr_R.setSeriesPaint(i-l, prop.getSeriesPaint());
-//                            dfr_R.setSeriesStroke(i-l, prop.getSeriesStroke());
-//                            dfr_R.setSeriesShape(i-l, prop.getSeriesShape());
-//                            dfr_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
-//                            dfr_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
-//                            dfr_R.setShapesVisible(prop.getShapesVisible());
-//                            rendererRight = dfr_R;
-//                            
-//                            break;
-//                            
-//                        default:
-//                            lsr_R.setSeriesPaint(i-l, prop.getSeriesPaint());
-//                            lsr_R.setSeriesStroke(i-l, prop.getSeriesStroke());
-//                            lsr_R.setSeriesShape(i-l, prop.getSeriesShape());
-//                            lsr_R.setSeriesShapesVisible(i-l, prop.getShapesVisible());
-//                            lsr_R.setSeriesLinesVisible(i-l, prop.getLinesVisible());
-//                            lsr_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
-//                            lsr_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
-//                            
-//                            rendererRight = lsr_R;
-//                            break;
-//                    }
-//                    
-//                }
-//            }
-//            
-//            ////////////////////////////////////////////////////////////////////////////
-//            //Renderer direkt übernehmen! //
-//            if(l>0){
-//                jts.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
-//            }
-//            if(r>0){
-//                jts.plotRight(rendererRight, edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected()); 
-//            }
-//            if(r==0 && l==0) jts.plotEmpty();
-//            
-//            jts.setTitle(edTitleField.getText());
-//            jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
-//                                timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
+        //createProgressBarDlg();
+        //new Thread(plotRunnable).start();
+
+        Runnable r = new Runnable() {
+
+            @Override
+            public void run() {
+    updatePropVector();
+            int l=0;
+            int r=0;
+            int rLeft = rLeftBox.getSelectedIndex();
+            int rRight = rRightBox.getSelectedIndex();
+            
+            XYItemRenderer rendererLeft = new XYLineAndShapeRenderer();
+            XYItemRenderer rendererRight = new XYLineAndShapeRenderer();
+            
+            XYLineAndShapeRenderer lsr_R = new XYLineAndShapeRenderer();
+            XYBarRenderer brr_R = new XYBarRenderer();
+            XYDifferenceRenderer dfr_R = new XYDifferenceRenderer();
+            XYAreaRenderer ar_R = new XYAreaRenderer();
+            XYStepRenderer str_R = new XYStepRenderer();
+            XYStepAreaRenderer sar_R = new XYStepAreaRenderer();
+            
+            XYLineAndShapeRenderer lsr_L = new XYLineAndShapeRenderer();
+            XYBarRenderer brr_L = new XYBarRenderer();
+            XYDifferenceRenderer dfr_L = new XYDifferenceRenderer();
+            XYAreaRenderer ar_L = new XYAreaRenderer();
+            XYStepRenderer str_L = new XYStepRenderer();
+            XYStepAreaRenderer sar_L = new XYStepAreaRenderer();
+            
+            GraphProperties prop;
+            //2 Renderer einfügen. Typ aus rLeftBox bzw rRightBox holen!
+            //Switch/Case Anweisung in den Configurator packen
+            //
+            
+
+            
+            
+            /////////////// In dieser Schleife Eigenschaften übernehmen!! /////////////
+            for(int i=0; i<propVector.size(); i++){
+                
+                prop = propVector.get(i);
+                
+                if(prop.getPosChoice().getSelectedItem() == "left"){                   
+                    l++;
+                    //prop.setRendererType(rLeft);
+                    
+                    switch(rLeft){
+                        
+                        case 0:
+                            lsr_L.setSeriesPaint(i-r, prop.getSeriesPaint());
+                            //lsr_L.setSeriesPaint(i-r, Color.black);
+                            lsr_L.setSeriesStroke(i-r, prop.getSeriesStroke());
+                            lsr_L.setSeriesShape(i-r, prop.getSeriesShape());
+                            lsr_L.setSeriesShapesVisible(i-r, prop.getShapesVisible());
+                            lsr_L.setSeriesLinesVisible(i-r, prop.getLinesVisible());
+                            //lsr_L.setDrawOutlines(prop.getOutlineVisible());
+                            lsr_L.setUseOutlinePaint(true);
+                            lsr_L.setSeriesFillPaint(i-r, prop.getSeriesFillPaint());
+                            lsr_L.setUseFillPaint(true);
+                            lsr_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
+                            lsr_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
+                            rendererLeft = lsr_L;
+                            break;
+                            
+                        case 1:
+                            brr_L.setSeriesPaint(i-r, prop.getSeriesPaint());
+                            brr_L.setSeriesStroke(i-r, prop.getSeriesStroke());
+                            
+                            brr_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
+                            brr_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
+                            
+                            
+                            rendererLeft = brr_L;
+                            //set Margin
+                            break;
+                            
+                        case 2:
+                            ar_L.setSeriesPaint(i-r, prop.getSeriesPaint());
+                            ar_L.setSeriesStroke(i-r, prop.getSeriesStroke());
+                            ar_L.setSeriesShape(i-r, prop.getSeriesShape());
+                            ar_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
+                            ar_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
+                            ar_L.setOutline(prop.getOutlineVisible());
+                            //ar_L.setSeriesOu
+                            
+                            rendererLeft = ar_L;
+                            
+                            break;
+                        
+                        case 3:
+                            str_L.setSeriesPaint(i-r, prop.getSeriesPaint());
+                            str_L.setSeriesStroke(i-r, prop.getSeriesStroke());
+                            str_L.setSeriesShape(i-r, prop.getSeriesShape());
+//                            str_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
+//                            str_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
+                            
+                            rendererLeft = str_L;
+                            break;
+                            
+                        case 4:
+                            sar_L.setSeriesPaint(i-r, prop.getSeriesPaint());
+                            sar_L.setSeriesStroke(i-r, prop.getSeriesStroke());
+                            sar_L.setSeriesShape(i-r, prop.getSeriesShape());
+                            sar_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
+                            sar_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
+                            sar_L.setOutline(prop.getOutlineVisible());
+                            
+                            rendererLeft = sar_L;
+
+                            break;
+                            
+                        case 5:
+                            dfr_L.setSeriesPaint(i-r, prop.getSeriesPaint());
+                            dfr_L.setSeriesStroke(i-r, prop.getSeriesStroke());
+                            dfr_L.setSeriesShape(i-r, prop.getSeriesShape());
+                            dfr_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
+                            dfr_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
+                            dfr_L.setShapesVisible(prop.getShapesVisible());
+                            
+                            
+//                            dfr_L.setNegativePaint(prop.getNegativePaint());
+//                            dfr_L.setPositivePaint(prop.getNegativePaint());
+                            
+                            rendererLeft = dfr_L;
+                            
+                            break;
+                        
+                         default:
+                            lsr_L.setSeriesPaint(i-r, prop.getSeriesPaint());
+                            lsr_L.setSeriesStroke(i-r, prop.getSeriesStroke());
+                            lsr_L.setSeriesShape(i-r, prop.getSeriesShape());
+                            lsr_L.setSeriesShapesVisible(i-r, prop.getShapesVisible());
+                            lsr_L.setSeriesLinesVisible(i-r, prop.getLinesVisible());
+                            lsr_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
+                            lsr_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
+                            
+                            rendererLeft = lsr_L;
+                            break;
+                    }
+                    
+                }
+                if(prop.getPosChoice().getSelectedItem() == "right"){
+                    r++;
+                    //prop.setRendererType(rRight);
+                    switch(rRight){
+                        case 0:
+                            lsr_R.setSeriesPaint(i-l, prop.getSeriesPaint());
+                            lsr_R.setSeriesStroke(i-l, prop.getSeriesStroke());
+                            lsr_R.setSeriesShape(i-l, prop.getSeriesShape());
+                            lsr_R.setSeriesShapesVisible(i-l, prop.getShapesVisible());
+                            lsr_R.setSeriesLinesVisible(i-l, prop.getLinesVisible());
+                            //lsr_R.setDrawOutlines(prop.getOutlineVisible());
+                            lsr_R.setUseOutlinePaint(true);
+                            lsr_R.setSeriesFillPaint(i-l, prop.getSeriesFillPaint());
+                            lsr_R.setUseFillPaint(true);
+                            lsr_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
+                            lsr_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
+                            
+                            rendererRight = lsr_R;
+                            break;
+                            
+                        case 1:
+                            brr_R.setSeriesPaint(i-l, prop.getSeriesPaint());
+                            brr_R.setSeriesStroke(i-l, prop.getSeriesStroke());
+                            brr_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
+                            brr_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
+                            
+                            rendererRight = brr_R;
+                            //set Margin
+                            break;
+                            
+                        case 2:
+                            ar_R.setSeriesPaint(i-l, prop.getSeriesPaint());
+                            ar_R.setSeriesStroke(i-l, prop.getSeriesStroke());
+                            ar_R.setSeriesShape(i-l, prop.getSeriesShape());
+                            ar_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
+                            ar_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
+                            
+                            rendererRight = ar_R;
+                            
+                            break;
+                        
+                        case 3:
+                            str_R.setSeriesPaint(i-l, prop.getSeriesPaint());
+                            str_R.setSeriesStroke(i-l, prop.getSeriesStroke());
+                            str_R.setSeriesShape(i-l, prop.getSeriesShape());
+                            str_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
+                            str_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
+                            
+                            rendererRight = str_R;
+                            
+                            break;
+                            
+                        case 4: 
+                            sar_R.setSeriesPaint(i-l, prop.getSeriesPaint());
+                            sar_R.setSeriesStroke(i-l, prop.getSeriesStroke());
+                            sar_R.setSeriesShape(i-l, prop.getSeriesShape());
+                            sar_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
+                            sar_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
+                            
+                            rendererRight = sar_R;
+                            
+                            break;
+                            
+                        case 5:
+                            dfr_R.setSeriesPaint(i-l, prop.getSeriesPaint());
+                            dfr_R.setSeriesStroke(i-l, prop.getSeriesStroke());
+                            dfr_R.setSeriesShape(i-l, prop.getSeriesShape());
+                            dfr_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
+                            dfr_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
+                            dfr_R.setShapesVisible(prop.getShapesVisible());
+                            rendererRight = dfr_R;
+                            
+                            break;
+                            
+                        default:
+                            lsr_R.setSeriesPaint(i-l, prop.getSeriesPaint());
+                            lsr_R.setSeriesStroke(i-l, prop.getSeriesStroke());
+                            lsr_R.setSeriesShape(i-l, prop.getSeriesShape());
+                            lsr_R.setSeriesShapesVisible(i-l, prop.getShapesVisible());
+                            lsr_R.setSeriesLinesVisible(i-l, prop.getLinesVisible());
+                            lsr_R.setSeriesOutlineStroke(i-l, prop.getSeriesOutlineStroke());
+                            lsr_R.setSeriesOutlinePaint(i-l, prop.getSeriesOutlinePaint());
+                            
+                            rendererRight = lsr_R;
+                            break;
+                    }
+                    
+                }
+            }
+            
+            ////////////////////////////////////////////////////////////////////////////
+            //Renderer direkt übernehmen! //
+            if(l>0){
+                jts.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
+            }
+            if(r>0){
+                jts.plotRight(rendererRight, edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected()); 
+            }
+            if(r==0 && l==0) jts.plotEmpty();
+            
+            jts.setTitle(edTitleField.getText());
+            jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
+                                timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
+
+                        }
+        };
+
+        WorkerDlg dlg = new WorkerDlg(this, "Plotting");
+        dlg.setTask(r);
+        dlg.execute();
+
+
 }
+
     
     public void handleRenderer(){
         int r=0, l=0;

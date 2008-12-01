@@ -94,6 +94,7 @@ public class JUICE {
             if ((forcelocale != null) && !forcelocale.equals("")) {
                 Locale.setDefault(new Locale(forcelocale));
                 resources = java.util.ResourceBundle.getBundle("resources/JUICEBundle");
+                JAMS.resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
             }
 
             juiceFrame = new JUICEFrame();

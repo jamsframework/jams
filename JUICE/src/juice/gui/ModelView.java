@@ -75,7 +75,7 @@ import org.w3c.dom.NodeList;
 public class ModelView {
 
     private static final int TREE_PANE_WIDTH = 250;
-    private static final int DIVIDER_WIDTH = 9;
+    private static final int DIVIDER_WIDTH = 8;
     private JInternalFrame frame;
     private File savePath;
     private Document initialDoc;
@@ -250,8 +250,8 @@ public class ModelView {
         modelSplitPane.setLeftComponent(modelTreePanel);
         modelSplitPane.setRightComponent(tabPane);
         modelSplitPane.setDividerLocation(TREE_PANE_WIDTH);
-        modelSplitPane.setOneTouchExpandable(true);
-        modelSplitPane.setDividerSize(DIVIDER_WIDTH);
+        //modelSplitPane.setOneTouchExpandable(true);
+        //modelSplitPane.setDividerSize(DIVIDER_WIDTH);
 
 
         /*

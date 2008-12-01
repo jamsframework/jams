@@ -104,18 +104,31 @@ public class RuntimeManager extends Observable {
 
     public class RuntimeInfo {
 
-        private Calendar startTime, endTime;
+        private Calendar startTime,  endTime;
         private JAMSRuntime runtime;
+        private String stringRepresentation = null;
 
         public RuntimeInfo(Calendar startTime, JAMSRuntime runtime) {
             this.startTime = startTime;
             this.runtime = runtime;
         }
 
+        @Override
         public String toString() {
-            String result = runtime.getModel().getName();
-            SimpleDateFormat sdf = new SimpleDateFormat();
-            result += " [" + sdf.format(startTime.getTime()) + "]";
+            String result;
+            if (stringRepresentation == null) {
+                result = runtime.getModel().getName();
+                SimpleDateFormat sdf = new SimpleDateFormat();
+                result += " [" + sdf.format(startTime.getTime()) + "]";
+                result += " [" + runtime.getModel().workspaceDirectory.getValue() + "]";
+                stringRepresentation = result;
+            } else {
+                result = stringRepresentation;
+//                if (endTime != null) {
+//                    SimpleDateFormat sdf = new SimpleDateFormat();
+//                    result += "-[" + sdf.format(endTime.getTime()) + "]";
+//                }
+            }
             return result;
         }
 

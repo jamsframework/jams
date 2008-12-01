@@ -123,6 +123,9 @@ public class RuntimeManagerPanel extends JPanel {
                 if (rtInfo.getEndTime() == null) {
                     listModel.addElement(rtInfo);
                 } else {
+//                    int pos = listModel.lastIndexOf(rtInfo);
+//                    listModel.removeElement(rtInfo);
+//                    listModel.add(pos, rtInfo);
                     listModel.removeElement(rtInfo);
                 }
             }

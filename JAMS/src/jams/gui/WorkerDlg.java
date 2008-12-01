@@ -28,7 +28,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
