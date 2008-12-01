@@ -24,6 +24,7 @@ package jams.workspace.stores;
 
 import jams.JAMS;
 import jams.data.JAMSCalendar;
+import jams.runtime.JAMSRuntime;
 import jams.workspace.DataSet;
 import jams.workspace.DataSetDefinition;
 import jams.workspace.VirtualWorkspace;
@@ -94,7 +95,7 @@ public class J2KTSDataStore extends TSDataStore {
 
         this.columnCount = this.getDataSetDefinition().getColumnCount();
 
-        if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
+        if (ws.getRuntime().getRunState() != JAMSRuntime.RUNSTATE_RUN) {
             return;
         }
     }

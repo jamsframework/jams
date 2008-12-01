@@ -199,7 +199,7 @@ public class JAMSContext extends JAMSComponent {
         rt.addRunStateObserver(new Observer() {
             @Override
             public void update(Observable obs, Object obj) {
-                if (getModel().getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
+                if (getModel().getRuntime().getRunState() != JAMSRuntime.RUNSTATE_RUN) {
                     JAMSContext.this.doRun = false;
                 }
             }

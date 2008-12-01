@@ -57,14 +57,7 @@ public class JAMS {
      * Verbosity level 3 of 3
      */
     public static final int VVERBOSE = 3;
-    /**
-     * Run state causing runtime to stop model execution
-     */
-    public static final int RUNSTATE_STOP = 0;
-    /**
-     * Run state causing runtime to continue model execution
-     */
-    public static final int RUNSTATE_RUN = 1;
+
     public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
     public static final Font STANDARD_FONT = new java.awt.Font("Courier", 0, 11);
     //public static final int TOOLBAR_HEIGHT = 38;
@@ -80,6 +73,7 @@ public class JAMS {
     public static final String DEFAULT_PARAMETER_FILENAME = "default.jap";
     private static JAMSCmdLine cmdLine;
     private static File baseDir = null;
+    private static final RuntimeManager runtimeManager = new RuntimeManager();
 
     public static void handle(Exception ex) {
         handle(ex, true);
@@ -217,5 +211,12 @@ public class JAMS {
 
     public static File getBaseDir() {
         return baseDir;
+    }
+
+    /**
+     * @return the runtimeManager
+     */
+    public static RuntimeManager getRuntimeManager() {
+        return runtimeManager;
     }
 }

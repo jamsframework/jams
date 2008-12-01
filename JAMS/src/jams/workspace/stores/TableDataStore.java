@@ -22,9 +22,9 @@
  */
 package jams.workspace.stores;
 
+import jams.runtime.JAMSRuntime;
 import java.util.HashSet;
 import java.util.Set;
-import jams.JAMS;
 import jams.workspace.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -50,7 +50,7 @@ public class TableDataStore extends StandardInputDataStore {
     public TableDataStore(VirtualWorkspace ws, String id, Document doc) throws ClassNotFoundException {
         super(ws, id, doc);
 
-        if (ws.getRuntime().getRunState() != JAMS.RUNSTATE_RUN) {
+        if (ws.getRuntime().getRunState() != JAMSRuntime.RUNSTATE_RUN) {
             return;
         }
 

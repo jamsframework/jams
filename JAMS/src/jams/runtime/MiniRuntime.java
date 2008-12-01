@@ -231,6 +231,10 @@ public class MiniRuntime implements JAMSRuntime {
 
     @Override
     public void saveModelParameter() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public JAMSModel getModel() {
+        return null;
     }
 }

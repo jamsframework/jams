@@ -23,7 +23,10 @@
 
 package jams.runtime;
 
-import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  *
@@ -31,10 +34,45 @@ import java.util.ArrayList;
  */
 public class RuntimeManager {
 
-    private ArrayList<JAMSRuntime> runtimes = new ArrayList<JAMSRuntime>();
-    
-    public RuntimeManager() {
-        
+    private HashMap<JAMSRuntime, RuntimeInfo> runtimeInstances = new HashMap<JAMSRuntime, RuntimeInfo>();
+
+    public void addRuntime(JAMSRuntime runtime) {
+
+        // runtime will only be added if on runstate "run"
+        if (runtime.getRunState() != JAMSRuntime.RUNSTATE_RUN) {
+            return;
+        }
+
+        RuntimeInfo rtInfo = new RuntimeInfo(Calendar.getInstance(), runtime);
+        runtimeInstances.put(runtime, rtInfo);
+        runtime.addRunStateObserver(new Observer() {
+
+            @Override
+            public void update(Observable o, Object arg) {
+                
+                JAMSRuntime rt = (JAMSRuntime) o;
+                if (rt.getRunState() == JAMSRuntime.RUNSTATE_STOP) {
+                    removeRuntime(rt);
+                }
+            }
+        });
     }
-    
+
+    private void removeRuntime(JAMSRuntime runtime) {
+        runtimeInstances.remove(runtime);
+    }
+
+    public int getNumberofInstances() {
+        return runtimeInstances.size();
+    }
+
+    class RuntimeInfo {
+        Calendar startTime;
+        JAMSRuntime runtime;
+
+        public RuntimeInfo(Calendar startTime, JAMSRuntime runtime) {
+            this.startTime = startTime;
+            this.runtime = runtime;
+        }
+    }
 }
