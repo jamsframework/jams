@@ -90,7 +90,7 @@ public class ModelView {
     private TreePanel modelTreePanel;
     private JDesktopPane parentPanel;
     private ModelProperties modelProperties = new ModelProperties();
-    private WorkerDlg setupModelDlg;
+    private WorkerDlg loadModelDlg;
     private Runnable modelLoading;
     private static boolean firstFrame = true;
     private static int viewCounter = 0;
@@ -159,7 +159,7 @@ public class ModelView {
             }
         };
         // create worker dialog for model setup
-        setupModelDlg = new WorkerDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Model_Setup"));
+        loadModelDlg = new WorkerDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Model_Setup"));
 
         // create the internal frame
         frame = new JInternalFrame();
@@ -295,8 +295,8 @@ public class ModelView {
         }*/
 
         // then load the model via the modelLoading runnable
-        setupModelDlg.setTask(modelLoading);
-        setupModelDlg.execute();
+        loadModelDlg.setTask(modelLoading);
+        loadModelDlg.execute();
 
         // check if runtime has been created successfully
         if (runtime == null) {

@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.gui;
 
 import java.awt.BorderLayout;
@@ -37,67 +36,73 @@ import javax.swing.SwingWorker;
  * @author S. Kralisch
  */
 public class WorkerDlg extends JDialog {
-    
+
     private Runnable task;
     private SwingWorker worker;
     private Frame owner;
-    
+
     public WorkerDlg(Frame owner, String title) {
         this(owner, title, "");
     }
-    
+
     public WorkerDlg(Frame owner, String title, String message) {
         super(owner);
-        
+
         this.owner = owner;
         //this.setAlwaysOnTop(true);
         this.setModal(true);
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         this.setTitle(title);
-        
+
         this.setLocationRelativeTo(owner);
-        
+
         this.setLayout(new BorderLayout());
         this.setResizable(false);
-        
+
         if (!message.equals("")) {
             JLabel label = new JLabel(message);
             this.add(label, BorderLayout.NORTH);
         }
-        
+
         JProgressBar progressBar = new JProgressBar();
         progressBar.setIndeterminate(true);
         progressBar.setPreferredSize(new Dimension(300, 20));
         this.add(progressBar, BorderLayout.CENTER);
-        
+
         this.pack();
     }
-    
+
     public void execute() {
-        worker.execute();
-        
+
         Dimension ownerDim = owner.getSize();
         Dimension thisDim = this.getSize();
-        
+
         //center dialog window over owner
         int x = (int) owner.getX() + ((ownerDim.width - thisDim.width) / 2);
         int y = (int) owner.getY() + ((ownerDim.height - thisDim.height) / 2);
         setLocation(x, y);
-        
-        setVisible(true);
+
+        worker.execute();
+        if (!worker.isDone()) {
+            setVisible(true);
+        }
+
         try {
             worker.get();
         } catch (InterruptedException ie) {
-        } catch (ExecutionException ee) {}
+        } catch (ExecutionException ee) {
+        }
     }
-    
+
     public void setTask(Runnable task) {
         this.task = task;
         worker = new SwingWorker<Object, Void>() {
+
             public Object doInBackground() {
                 WorkerDlg.this.task.run();
                 return null;
             }
+
             public void done() {
                 WorkerDlg.this.setVisible(false);
             }

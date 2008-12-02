@@ -80,7 +80,7 @@ public class JAMSLauncher extends JFrame {
     protected String initialModelDocString = "";
     private JAMSRuntime runtime;
     private Runnable modelLoading;
-    private WorkerDlg setupModelDlg;
+    private WorkerDlg loadModelDlg;
     private Font titledBorderFont;
     private Action runModelAction;
 
@@ -157,7 +157,7 @@ public class JAMSLauncher extends JFrame {
             }
         };
 
-        setupModelDlg = new WorkerDlg(this, JAMS.resources.getString("Model_Setup"));
+        loadModelDlg = new WorkerDlg(this, JAMS.resources.getString("Model_Setup"));
 
         // create some nice font for the border title
         titledBorderFont = (Font) UIManager.getDefaults().get("TitledBorder.font");
@@ -463,8 +463,8 @@ public class JAMSLauncher extends JFrame {
     protected void runModel() {
 
         // first load the model via the modelLoading runnable
-        setupModelDlg.setTask(modelLoading);
-        setupModelDlg.execute();
+        loadModelDlg.setTask(modelLoading);
+        loadModelDlg.execute();
 
         // check if runtime has been created successfully
         if (runtime == null) {
