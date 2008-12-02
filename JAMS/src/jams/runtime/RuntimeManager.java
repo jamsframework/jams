@@ -117,10 +117,11 @@ public class RuntimeManager extends Observable {
         public String toString() {
             String result;
             if (stringRepresentation == null) {
-                result = runtime.getModel().getName();
+                result = runtime.getModel().getName() + " [";
                 SimpleDateFormat sdf = new SimpleDateFormat();
-                result += " [" + sdf.format(startTime.getTime()) + "; ";
-                result += runtime.getModel().workspaceDirectory.getValue() + "]";
+                result += "start=" + sdf.format(startTime.getTime()) + ", ";
+                result += "workspace=" + runtime.getModel().workspaceDirectory.getValue();
+                result += "]";
                 stringRepresentation = result;
             } else {
                 result = stringRepresentation;

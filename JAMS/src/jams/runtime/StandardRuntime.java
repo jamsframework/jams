@@ -372,21 +372,21 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     }
 
     @Override
-    public void handle(Exception ex) {
-        handle(ex, null, false);
+    public void handle(Throwable t) {
+        handle(t, null, false);
     }
 
     @Override
-    public void handle(Exception ex, String cName) {
-        handle(ex, cName, false);
+    public void handle(Throwable t, String cName) {
+        handle(t, cName, false);
     }
 
     @Override
-    public void handle(Exception ex, boolean proceed) {
-        handle(ex, null, proceed);
+    public void handle(Throwable t, boolean proceed) {
+        handle(t, null, proceed);
     }
 
-    public void handle(Exception ex, String cName, boolean proceed) {
+    public void handle(Throwable t, String cName, boolean proceed) {
 
         String message = "";
 
@@ -394,9 +394,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             message += JAMS.resources.getString("Exception_occured_in_component_") + cName + "!\n";
         }
 
-        message += ex.toString();
+        message += t.toString();
         if (getDebugLevel() > JAMS.STANDARD) {
-            message += "\n" + JAMSTools.getStackTraceString(ex.getStackTrace());
+            message += "\n" + JAMSTools.getStackTraceString(t.getStackTrace());
         }
         sendErrorMsg(message);
         if (!proceed) {

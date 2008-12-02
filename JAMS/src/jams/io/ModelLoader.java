@@ -121,7 +121,7 @@ public class ModelLoader {
         for (int index = 0; index < childs.getLength(); index++) {
             node = childs.item(index);
             if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
-                element = (Element) node; //3.
+                element = (Element) node;
 
                 try {
 
@@ -153,6 +153,7 @@ public class ModelLoader {
 
         componentName = root.getAttribute("name");
         componentClassName = root.getAttribute("class");
+
         jamsModel.getRuntime().println(JAMS.resources.getString("Adding:_") + componentName + " (" + componentClassName + ")", JAMS.STANDARD);
 
         component = null;
@@ -185,6 +186,8 @@ public class ModelLoader {
             jamsModel.getRuntime().handle(ie, false);
         } catch (IllegalAccessException iae) {
             jamsModel.getRuntime().handle(iae, false);
+        } catch (Throwable t) {
+            jamsModel.getRuntime().handle(t, false);
         }
 
 
@@ -223,7 +226,7 @@ public class ModelLoader {
 
                 // check if component variable exists
                 try {
-                    Field field = JAMSContext.getField(componentClazz,varName);
+                    Field field = JAMSContext.getField(componentClazz, varName);
                     varClassName = field.getType().getName();
 
                     if (field.isAnnotationPresent(JAMSVarDescription.class)) {
@@ -252,7 +255,7 @@ public class ModelLoader {
 
                             // attach the variable to the component's field..
                             field.set(component, variable);
-                            
+
                             // this field can be removed from the null field list
                             nullFields.get(component).remove(field);
 

@@ -58,7 +58,7 @@ public class LauncherPanel extends JPanel {
 
     private static ImageIcon UP_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowup.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
     private static ImageIcon DOWN_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowdown.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
-    private static final Dimension BUTTON_DIMENSION = new Dimension(150, 20);
+    private static final Dimension BUTTON_DIMENSION = new Dimension(150, 20),  PANEL_DIMENSION = new Dimension(300, 0);
     private JTabbedPane tabbedPane = new JTabbedPane();
     private HashMap<ModelProperty, InputComponent> inputMap = new HashMap<ModelProperty, InputComponent>();
     private ModelPropertyDlg propertyDlg = new ModelPropertyDlg(JUICE.getJuiceFrame());
@@ -178,6 +178,7 @@ public class LauncherPanel extends JPanel {
         LHelper.addGBComponent(innerButtonPanel, gblButton, delGroupButton, 3, 0, 1, 1, 0, 0);
 
         mainButtonPanel.add(innerButtonPanel);
+        this.setPreferredSize(PANEL_DIMENSION);
 
     }
 
@@ -339,7 +340,7 @@ public class LauncherPanel extends JPanel {
                 JPanel buttonPanel = createPropertyButtonPanel(contentPanel, gbl, property, y);
                 LHelper.addGBComponent(contentPanel, gbl, buttonPanel, 3, y, 1, 1, 1, 1);
             }
-            
+
             if (modelElement instanceof Group) {
                 Group subgroup = (Group) modelElement;
                 Vector subgroupProperties = subgroup.getProperties();
@@ -764,7 +765,7 @@ public class LauncherPanel extends JPanel {
 
         public ElementButton(ModelElement element) {
             super();
-            //this.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+            this.setBorder(null);
             this.setPreferredSize(new Dimension(20, 14));
             this.element = element;
         }

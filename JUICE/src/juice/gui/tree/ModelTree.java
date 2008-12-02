@@ -22,6 +22,7 @@
  */
 package juice.gui.tree;
 
+import jams.JAMS;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -183,7 +184,7 @@ public class ModelTree extends JAMSTree {
 
             JAMSNode node = (JAMSNode) path.getLastPathComponent();
 
-            int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), 
+            int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(),
                     JUICE.resources.getString("Really_delete_component_") +
                     node.getUserObject().toString() +
                     JUICE.resources.getString("Really_delete_component_2"), JUICE.resources.getString("Deleting_component"));
@@ -339,6 +340,7 @@ public class ModelTree extends JAMSTree {
             rootElement.setAttribute("author", view.getAuthor());
             rootElement.setAttribute("date", view.getDate());
             rootElement.setAttribute("helpbaseurl", view.getHelpBaseUrl());
+            rootElement.setAttribute("version", JAMS.getVersionString());
 
             rootElement.appendChild(document.createTextNode("\n"));
 

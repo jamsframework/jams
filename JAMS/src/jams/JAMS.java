@@ -30,6 +30,7 @@ import jams.gui.JAMSFrame;
 import jams.gui.JAMSSplash;
 import jams.runtime.*;
 import jams.io.*;
+import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import org.w3c.dom.Document;
@@ -57,7 +58,6 @@ public class JAMS {
      * Verbosity level 3 of 3
      */
     public static final int VVERBOSE = 3;
-
     public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
     public static final Font STANDARD_FONT = new java.awt.Font("Courier", 0, 11);
     //public static final int TOOLBAR_HEIGHT = 38;
@@ -74,6 +74,7 @@ public class JAMS {
     private static JAMSCmdLine cmdLine;
     private static File baseDir = null;
     private static final RuntimeManager runtimeManager = RuntimeManager.getInstance();
+    private static String versionString = null;
 
     public static void handle(Exception ex) {
         handle(ex, true);
@@ -218,5 +219,22 @@ public class JAMS {
      */
     public static RuntimeManager getRuntimeManager() {
         return runtimeManager;
+    }
+
+    public static String getVersionString() {
+
+        if (versionString != null) {
+            return versionString;
+        } else {
+            versionString = "";
+            try {
+                URL versionURL = ClassLoader.getSystemResource("resources/text/version.txt");
+                if (versionURL != null) {
+                    versionString = JAMSTools.streamToString(versionURL.openStream());
+                }
+            } catch (IOException ioe) {
+            }
+            return versionString;
+        }
     }
 }

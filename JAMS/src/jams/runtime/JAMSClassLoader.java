@@ -25,90 +25,54 @@ package jams.runtime;
 import java.util.*;
 import java.net.*;
 import java.io.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 import jams.JAMS;
 
 public class JAMSClassLoader extends URLClassLoader {
-    
+
     private URL[] urls;
-    
+
     public JAMSClassLoader(URL[] urls) {
         super(urls, ClassLoader.getSystemClassLoader());
         this.urls = urls;
     }
-    
+
     public JAMSClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
         this.urls = urls;
     }
-    
-    private void loadAll() {
-        for (URL jar : urls) {
-            System.out.println(jar.getFile());
-            
-            try {
-                JarInputStream jis = new JarInputStream(new FileInputStream(jar.getFile()));
-                JarEntry entry = jis.getNextJarEntry();
-                
-                while (entry != null) {
-                    String name = entry.getName();
-                    if (name.endsWith(".class")) {
-                        name = name.substring(0, name.length() - 6);
-                        name = name.replace('/', '.');
-                        System.out.print("> " + name);
-                        
-                        try {
-                            loadClass(name);
-                            System.out.println("\t- loaded");
-                        } catch (Throwable e) {
-                            System.out.println("\t- not loaded");
-                            System.out.println("\t " + e.getClass().getName() + ": " + e.getMessage());
-                        }
-                        
-                    }
-                    entry = jis.getNextJarEntry();
-                }
-                
-            } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            
-        }
-    }
-    
-    
+
+    @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return loadClass(name, true);
+        Class<?> clazz = loadClass(name, true);
+        return clazz;
     }
-    
+
     public Class load(String name, byte[] data) {
         return defineClass(name, data, 0, data.length);
     }
-    
+
     private static void addFile(Set<URL> urls, File f, JAMSRuntime rt) {
         try {
             URL url = f.toURI().toURL();
-            if (!urls.add(url))
+            if (!urls.add(url)) {
                 rt.println(JAMS.resources.getString("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.resources.getString("_is_already_loaded"));
+            }
         } catch (MalformedURLException murle) {
             rt.println(JAMS.resources.getString("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.resources.getString("_could_not_be_converted_to_URL."));
         }
     }
-    
+
     public static ClassLoader createClassLoader(String[] libs, JAMSRuntime rt) {
         Set<URL> urls = new HashSet<URL>();
         for (String lib : libs) {
-            
+
             File dir = new File(lib);
-            
+
             if (!dir.exists()) {
                 rt.println(JAMS.resources.getString("DANGER_-_directory_") + dir.getAbsolutePath() + JAMS.resources.getString("_does_not_exist"), JAMS.STANDARD);
                 continue;
             }
-            
+
             if (dir.isDirectory()) {
                 File[] files = dir.listFiles();
                 for (File file : files) {
@@ -117,18 +81,16 @@ public class JAMSClassLoader extends URLClassLoader {
                     }
                 }
             } else {
-                
+
                 addFile(urls, dir, rt);
-                
+
             }
         }
         rt.println(JAMS.resources.getString("created_class_loader_using_") + urls, JAMS.STANDARD);
-        
+
         URL[] urlArray = urls.toArray(new URL[urls.size()]);
-        
+
         JAMSClassLoader cl = new JAMSClassLoader(urlArray);
         return cl;
     }
-    
-    
 }

@@ -54,13 +54,13 @@ public interface JAMSRuntime extends Serializable {
 
     public void println(String s);
 
-    public void handle(Exception ex);
+    public void handle(Throwable t);
 
     public HashMap<String, JAMSData> getDataHandles();
 
-    public void handle(Exception ex, String cName);
+    public void handle(Throwable t, String cName);
 
-    public void handle(Exception ex, boolean proceed);
+    public void handle(Throwable t, boolean proceed);
 
     public void sendHalt();
 

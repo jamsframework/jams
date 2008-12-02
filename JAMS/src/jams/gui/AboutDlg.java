@@ -29,6 +29,7 @@ import java.io.*;
 import java.net.URL;
 import javax.swing.*;
 import jams.JAMS;
+import jams.JAMSTools;
 
 /**
  *
@@ -61,12 +62,9 @@ public class AboutDlg extends JDialog {
         try {
             URL textURL = ClassLoader.getSystemResource("resources/text/readme.txt");
             if (textURL != null) {
-                gplText = readContent(textURL.openStream());
+                gplText = JAMSTools.streamToString(textURL.openStream());
             }
-            textURL = ClassLoader.getSystemResource("resources/text/version.txt");
-            if (textURL != null) {
-                versionText = readContent(textURL.openStream());
-            }
+            versionText = JAMS.resources.getString("Version") + JAMS.getVersionString();
         } catch (IOException ioe) {
         }
 
@@ -148,33 +146,5 @@ public class AboutDlg extends JDialog {
 
         Dimension d2 = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(d2.width / 2 - getWidth() / 2, d2.height / 2 - getHeight() / 2);
-    }
-
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new  
-
-              Runnable() {
-
-                 @Override
-            public void run() {
-                new AboutDlg(null).setVisible(true);
-            }
-        });
-    }
-
-    public static String readContent(InputStream in) {
-        String content = "";
-        InputStreamReader r = new InputStreamReader(in);
-
-        try {
-            char[] buffer = new char[in.available()];
-            r.read(buffer);
-            content = String.copyValueOf(buffer);
-            r.close();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
-        return content;
     }
 }

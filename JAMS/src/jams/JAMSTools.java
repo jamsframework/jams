@@ -24,6 +24,9 @@ package jams;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
@@ -72,17 +75,29 @@ public class JAMSTools {
         String result = "";
 
         try {
-            FileInputStream file = new FileInputStream(fileName);
-            byte[] b = new byte[file.available()];
-            file.read(b);
-            file.close();
-            result = new String(b);
+            FileInputStream in = new FileInputStream(fileName);
+            result = streamToString(in);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return result;
     }
+
+    public static String streamToString(InputStream in) {
+        String content = "";
+
+        try {
+            byte[] buffer = new byte[in.available()];
+            in.read(buffer);
+            content = new String(buffer);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+        return content;
+    }
+
 
     public static String getStackTraceString(StackTraceElement[] stea) {
         String result = "";

@@ -56,6 +56,7 @@ import jams.io.XMLIO;
 import jams.io.XMLProcessor;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
+import java.awt.Dimension;
 import juice.*;
 import juice.ComponentDescriptor;
 import juice.ModelProperties.Group;
@@ -108,17 +109,7 @@ public class ModelView {
         modelEditPanel = new ModelEditPanel(this);
         compEditPanel = new ComponentPanel(this);
         launcherPanel = new LauncherPanel(this);
-        /*launcherPanelDlg = new PanelDlg(JUICE.getJuiceFrame(), "GUI Builder", launcherPanel) {
 
-        @Override
-        public void processOK() {
-        launcherPanelDlg.setVisible(false);
-        }
-
-        @Override
-        public void processCancel() {
-        }
-        };*/
         modelTreePanel = new TreePanel();
 
         modelLoading = new Runnable() {
