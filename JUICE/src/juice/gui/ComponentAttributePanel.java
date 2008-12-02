@@ -303,7 +303,7 @@ public class ComponentAttributePanel extends JPanel {
 
         //enable field for custom attribute name if !READ_ACCESS        
         if ((var.accessType == ComponentAttribute.READ_ACCESS) && !type.isArray()) {
-            customAttributeText.setEnabled(false);
+            customAttributeText.setEnabled(true);
         } else {
             customAttributeText.setEnabled(true);
         }
