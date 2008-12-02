@@ -118,6 +118,10 @@ public class step2Pane extends stepPane {
                 String context = elem.getAttribute("context");
                 String name = elem.getAttribute("name");
                 String attr = elem.getAttribute("attribute");
+                if (attr.equals(""))    attr = null;
+                if (context.equals("")) context = null;
+                if (name.equals(""))    name = null;
+                                
                 if (context == null && attr != null){
                     ComponentWrapper component = (ComponentWrapper)node.getUserObject();
                     context = component.componentContext;
@@ -143,10 +147,10 @@ public class step2Pane extends stepPane {
                     isDouble = false;                    
                 }                
                 JAMSVarDescription jvd = field.getAnnotation(JAMSVarDescription.class);
-                if ((jvd == null ||jvd.access() == AccessType.READ) && isDouble){
+                if ((jvd == null ||jvd.access() == AccessType.READ) && isDouble){                    
                     DefaultMutableTreeNode childTreeNode = new DefaultMutableTreeNode(new AttributeWrapper(
                             name,
-                            elem.getAttribute("attribute"),
+                            attr,
                             parent.getAttribute("name"),
                             context));
                     model.insertNodeInto(childTreeNode, node, node.getChildCount());

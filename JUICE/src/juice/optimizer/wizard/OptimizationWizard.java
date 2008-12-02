@@ -49,7 +49,7 @@ public class OptimizationWizard {
         public String toString(){
             if (contextComponent)
                 return componentName;
-            return componentContext + "." + componentName;
+            return /*componentContext + "." + */componentName;
         }
     }
     
