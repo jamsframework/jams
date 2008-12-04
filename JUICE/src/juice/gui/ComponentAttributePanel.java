@@ -68,6 +68,8 @@ import juice.ContextAttribute;
  */
 public class ComponentAttributePanel extends JPanel {
 
+    private static final Dimension LISTPANEL_DIMENSION = new Dimension(160, 245),
+            DETAILPANEL_DIMENSION = new Dimension(460, 245);
     private JComboBox contextCombo;
     private InputComponent valueInput;
     private GridBagLayout connectionLayout,  infoLayout;
@@ -95,7 +97,7 @@ public class ComponentAttributePanel extends JPanel {
 
         listPanel = new JPanel();
         listPanel.setLayout(new BorderLayout());
-        listPanel.setPreferredSize(new Dimension(100, 245));
+        listPanel.setPreferredSize(LISTPANEL_DIMENSION);
 
         infoPanel = new JPanel();
         //infoPanel.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -106,7 +108,7 @@ public class ComponentAttributePanel extends JPanel {
 
         JPanel detailPanel = new JPanel();
         detailPanel.setBorder(BorderFactory.createLoweredBevelBorder());
-        detailPanel.setPreferredSize(new Dimension(460, 245));
+        detailPanel.setPreferredSize(DETAILPANEL_DIMENSION);
         detailPanel.add(infoPanel);
 
         this.add(detailPanel);
