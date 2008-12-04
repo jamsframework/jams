@@ -30,6 +30,7 @@ import java.net.URL;
 import javax.swing.*;
 import jams.JAMS;
 import jams.JAMSTools;
+import jams.JAMSVersion;
 
 /**
  *
@@ -64,7 +65,7 @@ public class AboutDlg extends JDialog {
             if (textURL != null) {
                 gplText = JAMSTools.streamToString(textURL.openStream());
             }
-            versionText = JAMS.resources.getString("Version") + JAMS.getVersionString();
+            versionText = JAMS.resources.getString("Version") + JAMSVersion.getInstance().getVersionDateString();
         } catch (IOException ioe) {
         }
 

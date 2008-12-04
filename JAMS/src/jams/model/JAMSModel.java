@@ -44,16 +44,20 @@ import java.util.ArrayList;
  * @author S. Kralisch
  */
 @JAMSComponentDescription(title = "JAMS model",
-author = "Sven Kralisch",
-date = "26. September 2005",
-description = "This component represents a JAMS model which is a special type of context component")
+                          author = "Sven Kralisch",
+                          date = "26. September 2005",
+                          description = "This component represents a JAMS model which is a special type of context component")
 public class JAMSModel extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
     public JAMSDirName workspaceDirectory = new JAMSDirName();
+
     private JAMSRuntime runtime;
+
     private String name,  author,  date;
+
     public VirtualWorkspace workspace;
+
     transient private HashMap<JAMSComponent, ArrayList<Field>> nullFields;
 
     public JAMSModel(JAMSRuntime runtime) {
@@ -115,6 +119,10 @@ public class JAMSModel extends JAMSContext {
 
         super.init();
 
+        if (!doRun) {
+            return;
+        }
+
         if (!getNullFields().isEmpty()) {
             getRuntime().println(JAMS.resources.getString("##############_UNDEFIENED_FIELDS_####################################"), JAMS.VVERBOSE);
             for (JAMSComponent comp : getNullFields().keySet()) {
@@ -133,23 +141,23 @@ public class JAMSModel extends JAMSContext {
         setupDataTracer();
     }
 
-    public boolean moveWorkspaceDirectory(String workspaceDirectory){
+    public boolean moveWorkspaceDirectory(String workspaceDirectory) {
         setWorkspaceDirectory(workspaceDirectory);
         //erstelle output verzeichnis        
-        try{
+        try {
             workspace = new VirtualWorkspace(new File(workspaceDirectory), getRuntime());
             workspace.checkValidity(false);
-        }catch(InvalidWorkspaceException e){
+        } catch (InvalidWorkspaceException e) {
             getRuntime().sendHalt("Error during model setup: \"" +
-            workspace.getDirectory().getAbsolutePath() + "\" is not a valid datastore, because: " + e.toString());
+                    workspace.getDirectory().getAbsolutePath() + "\" is not a valid datastore, because: " + e.toString());
             return false;
-        }             
+        }
         //reanimate data tracers
         setupDataTracer();
         this.components.size();
         return true;
     }
-    
+
     public void setWorkspaceDirectory(String workspaceDirectory) {
         this.workspaceDirectory.setValue(workspaceDirectory);
     }
@@ -240,5 +248,5 @@ public class JAMSModel extends JAMSContext {
             this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_deserialize_jamsentity_collection,_because") + e.toString());
         }
         restoreEntityCollections(this.getModel(), contextStates);
-    }        
+    }
 }

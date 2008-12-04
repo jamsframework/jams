@@ -312,6 +312,7 @@ public class VirtualWorkspace implements Serializable{
 
         FileFilter filter = new FileFilter() {
 
+            @Override
             public boolean accept(File pathname) {
                 if (pathname.getPath().endsWith(".xml")) {
                     return true;
@@ -444,12 +445,14 @@ public class VirtualWorkspace implements Serializable{
         runtime.setDebugLevel(JAMS.VERBOSE);
         runtime.addErrorLogObserver(new Observer() {
 
+            @Override
             public void update(Observable o, Object arg) {
                 System.out.print(arg);
             }
         });
         runtime.addInfoLogObserver(new Observer() {
 
+            @Override
             public void update(Observable o, Object arg) {
                 System.out.print(arg);
             }

@@ -45,6 +45,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import jams.JAMSTools;
+import jams.JAMSVersion;
 import jams.gui.HelpComponent;
 import jams.gui.LHelper;
 import jams.io.ParameterProcessor;
@@ -216,6 +217,10 @@ public class ModelTree extends JAMSTree {
 
         int i, j;
         TreePath[] paths = this.getSelectionPaths();
+        if (paths == null) {
+            return;
+        }
+
         int[] index = new int[paths.length];
 
         i = 0;
@@ -340,7 +345,7 @@ public class ModelTree extends JAMSTree {
             rootElement.setAttribute("author", view.getAuthor());
             rootElement.setAttribute("date", view.getDate());
             rootElement.setAttribute("helpbaseurl", view.getHelpBaseUrl());
-            rootElement.setAttribute("version", JAMS.getVersionString());
+            rootElement.setAttribute("version", JAMSVersion.getInstance().getVersionString());
 
             rootElement.appendChild(document.createTextNode("\n"));
 

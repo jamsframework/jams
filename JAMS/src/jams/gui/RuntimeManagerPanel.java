@@ -113,7 +113,7 @@ public class RuntimeManagerPanel extends JPanel {
             }
         });
 
-        JAMS.getRuntimeManager().addObserver(new Observer() {
+        RuntimeManager.getInstance().addObserver(new Observer() {
 
             @Override
             public void update(Observable o, Object arg) {

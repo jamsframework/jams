@@ -32,6 +32,7 @@ import jams.runtime.*;
 import jams.io.*;
 import java.net.URL;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -61,7 +62,7 @@ public class JAMS {
     public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
     public static final Font STANDARD_FONT = new java.awt.Font("Courier", 0, 11);
     //public static final int TOOLBAR_HEIGHT = 38;
-    public static final int SPLASH_DISPLAY_TIME = 0;
+    public static final int SPLASH_DISPLAY_TIME = 1000;
     public static final String WIKI_URL = "http://jams.uni-jena.de/jamswiki";
     /**
      * Default name of model output file
@@ -73,7 +74,6 @@ public class JAMS {
     public static final String DEFAULT_PARAMETER_FILENAME = "default.jap";
     private static JAMSCmdLine cmdLine;
     private static File baseDir = null;
-    private static final RuntimeManager runtimeManager = RuntimeManager.getInstance();
     private static String versionString = null;
 
     public static void handle(Exception ex) {
@@ -214,27 +214,4 @@ public class JAMS {
         return baseDir;
     }
 
-    /**
-     * @return the runtimeManager
-     */
-    public static RuntimeManager getRuntimeManager() {
-        return runtimeManager;
-    }
-
-    public static String getVersionString() {
-
-        if (versionString != null) {
-            return versionString;
-        } else {
-            versionString = "";
-            try {
-                URL versionURL = ClassLoader.getSystemResource("resources/text/version.txt");
-                if (versionURL != null) {
-                    versionString = JAMSTools.streamToString(versionURL.openStream());
-                }
-            } catch (IOException ioe) {
-            }
-            return versionString;
-        }
-    }
 }

@@ -262,6 +262,10 @@ public class ComponentAttributePanel extends JPanel {
                  */
                 customAttributeText.setText(var.getAttribute());
             } else {
+                // @todo: should stay empty if attribute not provided by some 
+                // context -- workaround for errorneous model files
+                customAttributeText.setText(var.getAttribute());
+                
                 attributeList.setSelectedValue(var.getAttribute().toString(), true);
             }
         }
@@ -303,6 +307,8 @@ public class ComponentAttributePanel extends JPanel {
 
         //enable field for custom attribute name if !READ_ACCESS        
         if ((var.accessType == ComponentAttribute.READ_ACCESS) && !type.isArray()) {
+            // @todo: this should be disabled since some other context must
+            // provide this attribute -- workaround for incomplete attributes list
             customAttributeText.setEnabled(true);
         } else {
             customAttributeText.setEnabled(true);

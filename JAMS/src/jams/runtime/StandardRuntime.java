@@ -198,7 +198,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
 
         // add this runtime to the runtime manager
-        JAMS.getRuntimeManager().addRuntime(this);
+        RuntimeManager.getInstance().addRuntime(this);
 
         if (guiEnabled && (guiComponents.size() > 0)) {
             frame.setVisible(true);

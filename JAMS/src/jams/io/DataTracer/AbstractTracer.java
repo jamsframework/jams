@@ -59,7 +59,7 @@ public abstract class AbstractTracer implements DataTracer {
         // the provided dataObjectHash, open the store and output some metadata 
         // to the store. Nothing will be written to the store as no attribute
         // names are provided or none of them are found in the dataObjectHash.
-        init(context.getDaHash());
+        init();
     }
 
     @Override
@@ -91,10 +91,8 @@ public abstract class AbstractTracer implements DataTracer {
         }
     }
     
-    private void init(HashMap<String, DataAccessor> dataObjectHash) {
+    private void init() {
         updateDateAccessors();
-        
-
         //if (this.accessorObjects.length > 0) {
             createHeader();
         //}

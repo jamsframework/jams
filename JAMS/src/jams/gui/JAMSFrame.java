@@ -40,9 +40,11 @@ import jams.*;
 import jams.io.ParameterProcessor;
 import jams.io.XMLIO;
 import jams.io.XMLProcessor;
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.WindowConstants;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -332,7 +334,13 @@ public class JAMSFrame extends JAMSLauncher {
         jfc.setCurrentDirectory(JAMS.getBaseDir());
 
         // runtime manager dlg
+        rtManagerDlg = new JDialog(this, JAMS.resources.getString("Runtime_Manager"));
+        rtManagerDlg.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        rtManagerDlg.setLocationByPlatform(true);
         RuntimeManagerPanel rtManagerPanel = new RuntimeManagerPanel();
+        rtManagerDlg.getContentPane().add(rtManagerPanel);
+        rtManagerDlg.pack();
+
         JButton closeButton = new JButton(JAMS.resources.getString("Close"));
         closeButton.addActionListener(new ActionListener() {
 
@@ -343,10 +351,6 @@ public class JAMSFrame extends JAMSLauncher {
         });
         rtManagerPanel.getButtonPanel().add(closeButton);
 
-        rtManagerDlg = new JDialog(JAMSFrame.this, JAMS.resources.getString("Runtime_Manager"));
-        rtManagerDlg.getContentPane().add(rtManagerPanel);
-        rtManagerDlg.setAlwaysOnTop(true);
-        rtManagerDlg.pack();
 
         // menu stuff
         mainMenu = new JMenuBar();
@@ -408,7 +412,6 @@ public class JAMSFrame extends JAMSLauncher {
 
         JMenuItem rtManagerItem = new JMenuItem(rtManagerAction);
         modelMenu.add(rtManagerItem);
-
 
         // logs menu
         logsMenu = new JMenu(JAMS.resources.getString("Logs"));
@@ -521,6 +524,7 @@ public class JAMSFrame extends JAMSLauncher {
     //LHelper.showInfoDlg(LauncherFrame.this, "Configuration has been saved to " + LauncherFrame.this.modelFilename, "Info");
     }
 
+    @Override
     protected void fillAttributes(final Document doc) {
 
         // extract some model information
