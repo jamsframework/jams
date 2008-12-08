@@ -1560,7 +1560,7 @@ public class GraphProperties {
                 colorlabel.setSymbol(getSeriesShape(), shape_fill, outline_color);
                 
                 
-                //ACHTUNG!!! Typen-Abhängig! XY oder TS?
+                //ACHTUNG!!! Typen-Abhï¿½ngig! XY oder TS?
                 if(plotType == 0) ctsconf.plotAllGraphs();
                 if(plotType == 1) cxyconf.plotAllGraphs();
  
@@ -1590,7 +1590,7 @@ public class GraphProperties {
                 
                 
                 
-                //ACHTUNG!!! Typen-Abhängig! XY oder TS?
+                //ACHTUNG!!! Typen-AbhÃ¤ngig! XY oder TS?
                 if(plotType == 0) ctsconf.plotAllGraphs();  
                 if(plotType == 1) cxyconf.plotAllGraphs();
                 

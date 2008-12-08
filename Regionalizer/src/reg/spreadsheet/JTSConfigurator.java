@@ -12,7 +12,6 @@ package reg.spreadsheet;
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGEncodeParam;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Vector;
 import java.awt.event.*;
@@ -38,6 +37,7 @@ import org.jfree.chart.renderer.xy.XYStepRenderer;
 
 import jams.JAMSFileFilter;
 import jams.gui.LHelper;
+import jams.gui.WorkerDlg;
 
 
 /**
@@ -68,6 +68,8 @@ public class JTSConfigurator extends JFrame{
     
     private Vector<ActionListener> addAction = new Vector<ActionListener>();    
         
+    private JTSConfigurator thisJTS = this;
+    
     private JFrame parent;
     private JFrame thisDlg;
     private JPanel frame;
@@ -241,6 +243,9 @@ public class JTSConfigurator extends JFrame{
 //    }
     
     public void createPanel(){
+        
+        
+        
         thisDlg = this;
         colour_cnt = 0;
         /* create ColorMap */
@@ -374,12 +379,16 @@ public class JTSConfigurator extends JFrame{
         rLeftBox.setSelectedIndex(0);
         rRightBox.setSelectedIndex(0);
         
+        Runnable r = new Runnable(){
+        
         String[] colors;
         int color_cnt;
         
+        public void run(){
+        
         for(int k=0;k<graphCount;k++){
             
-            GraphProperties prop = new GraphProperties(this);
+            GraphProperties prop = new GraphProperties(thisJTS);
             //propVector.add(new GraphProperties(parent,table));
             
             prop.setIndex(k);
@@ -412,10 +421,17 @@ public class JTSConfigurator extends JFrame{
             addPropGroup(prop);
       
             propVector.add(k,prop);
+        
             
             //graphpanel.add(propVector.get(k-1).getGraphPanel());
             
         }
+        }
+        };
+        
+        WorkerDlg dlg = new WorkerDlg(this, "Plotting");
+        dlg.setTask(r);
+        dlg.execute();
         
         finishGroupUI();
         createOptionPanel();
@@ -449,6 +465,7 @@ public class JTSConfigurator extends JFrame{
         //jts.plotLeft(0, "leftAxisName", "Time", false);
         jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
                                 timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
+        
         plotAllGraphs();
         //jts.plotRight(1, "rightAxisName", true);
     
@@ -698,11 +715,19 @@ public class JTSConfigurator extends JFrame{
 //    }  
     
     public void plotAllGraphs(){
+        
+        //createProgressBarDlg();
+        //new Thread(plotRunnable).start();
+
+        Runnable r = new Runnable() {
+
+            @Override
+            public void run() {
     updatePropVector();
             int l=0;
             int r=0;
-            int rLeft = this.rLeftBox.getSelectedIndex();
-            int rRight = this.rRightBox.getSelectedIndex();
+            int rLeft = rLeftBox.getSelectedIndex();
+            int rRight = rRightBox.getSelectedIndex();
             
             XYItemRenderer rendererLeft = new XYLineAndShapeRenderer();
             XYItemRenderer rendererRight = new XYLineAndShapeRenderer();
@@ -722,14 +747,14 @@ public class JTSConfigurator extends JFrame{
             XYStepAreaRenderer sar_L = new XYStepAreaRenderer();
             
             GraphProperties prop;
-            //2 Renderer einfügen. Typ aus rLeftBox bzw rRightBox holen!
+            //2 Renderer einfÃ¼gen. Typ aus rLeftBox bzw rRightBox holen!
             //Switch/Case Anweisung in den Configurator packen
             //
             
 
             
             
-            /////////////// In dieser Schleife Eigenschaften übernehmen!! /////////////
+            /////////////// In dieser Schleife Eigenschaften Ã¼bernehmen!! /////////////
             for(int i=0; i<propVector.size(); i++){
                 
                 prop = propVector.get(i);
@@ -924,7 +949,7 @@ public class JTSConfigurator extends JFrame{
             }
             
             ////////////////////////////////////////////////////////////////////////////
-            //Renderer direkt übernehmen! //
+            //Renderer direkt Ã¼bernehmen! //
             if(l>0){
                 jts.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
             }
@@ -936,6 +961,15 @@ public class JTSConfigurator extends JFrame{
             jts.setTitle(edTitleField.getText());
             jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
                                 timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
+
+                        }
+        };
+
+        WorkerDlg dlg = new WorkerDlg(this, "Plotting");
+        dlg.setTask(r);
+        dlg.execute();
+
+
 }
     
     public void handleRenderer(){
