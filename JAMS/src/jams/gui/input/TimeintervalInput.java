@@ -50,14 +50,26 @@ import jams.JAMS;
 public class TimeintervalInput extends JPanel implements InputComponent {
 
     private JTextField tuCount,  syear,  smonth,  sday,  shour,  sminute,  eyear,  emonth,  eday,  ehour,  eminute;
+
     private JComboBox timeUnit;
+
     private Map<Integer, Integer> indexMap = new HashMap<Integer, Integer>();
+
     private Map<Integer, Integer> fieldMap = new HashMap<Integer, Integer>();
+
     private JPanel panel;
+
     private ValueChangeListener l;
 
-    /** Creates a new instance of TimeintervalInput */
+    protected boolean intervalEdit = false;
+
     public TimeintervalInput() {
+        this(false);
+    }
+
+    public TimeintervalInput(boolean intervalEdit) {
+
+        this.intervalEdit = intervalEdit;
 
         GridBagLayout gbl = new GridBagLayout();
         this.setBorder(BorderFactory.createEtchedBorder());
@@ -185,6 +197,9 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         eminute.setBorder(BorderFactory.createEtchedBorder());
         tuCount.setBorder(BorderFactory.createEtchedBorder());
         timeUnit.setBorder(BorderFactory.createEtchedBorder());
+
+        tuCount.setEnabled(intervalEdit);
+        timeUnit.setEnabled(intervalEdit);
     }
 
     public String getValue() {
@@ -282,8 +297,8 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         eday.setEnabled(enabled);
         ehour.setEnabled(enabled);
         eminute.setEnabled(enabled);
-        timeUnit.setEnabled(enabled);
-        tuCount.setEnabled(enabled);
+        timeUnit.setEnabled(enabled && intervalEdit);
+        tuCount.setEnabled(enabled && intervalEdit);
     }
 
     public boolean verify() {
@@ -503,8 +518,8 @@ public class TimeintervalInput extends JPanel implements InputComponent {
             }
         });
     }
-
     private Color oldColor;
+
     public void setMarked(boolean marked) {
         if (marked == true) {
             oldColor = getBackground();

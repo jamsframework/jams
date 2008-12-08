@@ -39,8 +39,8 @@ import jams.gui.input.FloatInput;
 import jams.gui.input.InputComponent;
 import jams.gui.input.IntegerInput;
 import jams.gui.input.TextInput;
-import jams.gui.input.TimeintervalInput;
 import jams.JAMS;
+import jams.gui.input.TimeintervalInput;
 
 /**
  *
