@@ -212,13 +212,9 @@ public class GraphProperties {
         colorTable.put("lightgray", Color.lightGray);
         colorTable.put("black", Color.black);
         colorTable.put("white", Color.WHITE);
-        
-       
-                
-           
-        
+
         createPanel();
-        applyTSProperties();
+        //applyTSProperties();
         
     }
     
@@ -266,8 +262,7 @@ public class GraphProperties {
         
         datachoice_panel.add(datachoice_END);
         datachoice_panel.add(datachoice_max);
-        
-        
+
         createPanel();     
     }
     
@@ -415,7 +410,7 @@ public class GraphProperties {
         }
         cr_dlg.updateColors();
     }
-    
+
     public void applyXYProperties(){
         
         //System.out.println("ApplyXYProperties()");
@@ -524,7 +519,10 @@ public class GraphProperties {
     public void setSelectedColumn(int col){
         this.selectedColumn = col;
         this.setColumn.setSelectedIndex(col);
-        this.nameLabel.setText((String)setColumn.getSelectedItem());
+        //setLegendName((String)setColumn.getSelectedItem());
+        //setName((String)setColumn.getSelectedItem());
+        
+        
     }
     
     public void setSelectedRows(int[] rows){
@@ -1561,8 +1559,8 @@ public class GraphProperties {
                 
                 
                 //ACHTUNG!!! Typen-Abh�ngig! XY oder TS?
-                if(plotType == 0) ctsconf.plotAllGraphs();
-                if(plotType == 1) cxyconf.plotAllGraphs();
+//                if(plotType == 0) ctsconf.plotAllGraphs();
+//                if(plotType == 1) cxyconf.plotAllGraphs();
  
                 setVisible(false);
                 
@@ -1591,8 +1589,8 @@ public class GraphProperties {
                 
                 
                 //ACHTUNG!!! Typen-Abhängig! XY oder TS?
-                if(plotType == 0) ctsconf.plotAllGraphs();  
-                if(plotType == 1) cxyconf.plotAllGraphs();
+//                if(plotType == 0) ctsconf.plotAllGraphs();  
+//                if(plotType == 1) cxyconf.plotAllGraphs();
                 
                 updateColors();
                 

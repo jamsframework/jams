@@ -653,7 +653,9 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         controlpanel.setLayout(gbl);
         JPanel headerpanel = new JPanel();
         headerpanel.setLayout(new GridLayout(1, 2));
-
+        
+        dataplotButton.setEnabled(false);
+        
         scrollpane.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
         scrollpane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 

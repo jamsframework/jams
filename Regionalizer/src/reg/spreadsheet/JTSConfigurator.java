@@ -412,8 +412,8 @@ public class JTSConfigurator extends JFrame{
 //            prop.setColor((String) colorchoice.getSelectedItem());
 //            prop.setPosition((String) poschoice.getSelectedItem());
 //            prop.setRendererType(typechoice.getSelectedIndex());
-            prop.setName(table.getColumnName(k+1));
-            prop.setLegendName(table.getColumnName(k+1));
+//            prop.setName(table.getColumnName(k+1));
+//            prop.setLegendName(table.getColumnName(k+1));
             
             //prop.getPlotButton().addActionListener(plotbuttonclick);
             
@@ -429,7 +429,7 @@ public class JTSConfigurator extends JFrame{
         }
         };
         
-        WorkerDlg dlg = new WorkerDlg(this, "Plotting");
+        WorkerDlg dlg = new WorkerDlg(this, "Preparing Data...");
         dlg.setTask(r);
         dlg.execute();
         
@@ -723,7 +723,9 @@ public class JTSConfigurator extends JFrame{
 
             @Override
             public void run() {
-    updatePropVector();
+                
+            updatePropVector();
+            
             int l=0;
             int r=0;
             int rLeft = rLeftBox.getSelectedIndex();
@@ -758,6 +760,9 @@ public class JTSConfigurator extends JFrame{
             for(int i=0; i<propVector.size(); i++){
                 
                 prop = propVector.get(i);
+                
+//                prop.setLegendName((String)prop.setColumn.getSelectedItem());
+//                prop.setName((String)prop.setColumn.getSelectedItem());
                 
                 if(prop.getPosChoice().getSelectedItem() == "left"){                   
                     l++;
@@ -945,6 +950,8 @@ public class JTSConfigurator extends JFrame{
                             break;
                     }
                     
+                    prop.setLegendName(prop.setLegend.getText());
+                    prop.applyTSProperties();
                 }
             }
             
@@ -965,7 +972,7 @@ public class JTSConfigurator extends JFrame{
                         }
         };
 
-        WorkerDlg dlg = new WorkerDlg(this, "Plotting");
+        WorkerDlg dlg = new WorkerDlg(this, "Creating Plot...");
         dlg.setTask(r);
         dlg.execute();
 
