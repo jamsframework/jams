@@ -34,6 +34,13 @@ public class LogViewDlg extends JDialog {
 
     private JTextArea textArea;
 
+    /**
+     * Creates a new LogViewDlg object
+     * @param owner Parent frame
+     * @param width Dialog width
+     * @param height Dialog height
+     * @param title Dialog title
+     */
     public LogViewDlg(Frame owner, int width, int height, String title) {
 
         super(owner);
@@ -81,14 +88,26 @@ public class LogViewDlg extends JDialog {
         pack();
     }
 
+    /**
+     * Sets the text to be displayed by the dialog
+     * @param text The text to be displayed by the dialog
+     */
     public void setText(String text) {
         textArea.setText(text);
     }
 
+    /**
+     * 
+     * @return The text displayed by the dialog
+     */
     public String getText() {
         return textArea.getText();
     }
 
+    /**
+     * Appends some text to the dialog
+     * @param text The text to be appended
+     */
     public void appendText(String text) {
         textArea.append(text);
     }

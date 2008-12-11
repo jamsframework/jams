@@ -45,6 +45,7 @@ import jams.gui.input.TimeintervalInput;
 /**
  *
  * @author S. Kralisch
+ *
  */
 public class LHelper {
 
@@ -157,7 +158,7 @@ public class LHelper {
 
     /**
      * Show Yes-No-Cancel dialog
-     * @param owner
+     * @param owner The parent component
      * @param message
      * @param title
      * @return
@@ -172,7 +173,7 @@ public class LHelper {
 
     /**
      * Show Yes-No dialog
-     * @param owner
+     * @param owner The parent component
      * @param message
      * @param title
      * @return
@@ -188,7 +189,7 @@ public class LHelper {
 
     /**
      * Show info dialog
-     * @param owner
+     * @param owner The parent component
      * @param message
      * @param title
      */
@@ -198,7 +199,7 @@ public class LHelper {
 
     /**
      * Show error dialog
-     * @param owner
+     * @param owner The parent component
      * @param message
      * @param title
      */
@@ -208,7 +209,7 @@ public class LHelper {
 
     /**
      * Show input dialog
-     * @param owner
+     * @param owner The parent component
      * @param message
      * @param initalValue
      * @return
@@ -219,10 +220,10 @@ public class LHelper {
 
     /**
      * Show input dialog
-     * @param owner
-     * @param message
-     * @param title
-     * @param initalValue
+     * @param owner The parent component
+     * @param message The message to be shown
+     * @param title The dialog window title
+     * @param initalValue Some default value
      * @return
      */
     public static String showInputDlg(Component owner, String message, String title, String initalValue) {
@@ -232,16 +233,14 @@ public class LHelper {
     /**
      * Create swing input component based on data type
      * @param type Data type
-     * @return InputComponent object
+     * @return InputComponent object that provides an editor for the type
      */
     public static InputComponent createInputComponent(String type) {
         InputComponent ic;
         if (type.equals("JAMSFileName")) {
             ic = new FileInput();
-            //((Component) ic).setPreferredSize(new Dimension(FILEINPUT_WIDTH, JCOMP_HEIGHT));
         } else if (type.equals("JAMSDirName")) {
             ic = new FileInput(true);
-            //((Component) ic).setPreferredSize(new Dimension(FILEINPUT_WIDTH, JCOMP_HEIGHT));
         } else if (type.equals("JAMSCalendar")) {
             ic = new CalendarInput();
         } else if (type.equals("JAMSTimeInterval")) {

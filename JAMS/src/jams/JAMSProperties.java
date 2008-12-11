@@ -31,25 +31,52 @@ import java.util.*;
  */
 public class JAMSProperties extends Observable {
 
+    /**
+     * Identifier for model value
+     */
     public static final String MODEL_IDENTIFIER = "model";
+    /**
+     * Identifier for libraries value
+     */
     public static final String LIBS_IDENTIFIER = "libs";
+    /**
+     * Identifier for server value
+     */
     public static final String SERVER_IDENTIFIER = "server";
+    /**
+     * Identifier for server account value
+     */
     public static final String SERVER_ACCOUNT_IDENTIFIER = "serveraccount";
+    /**
+     * Identifier for server password value
+     */
     public static final String SERVER_PASSWORD_IDENTIFIER = "serverpassword";
+    /**
+     * Identifier for excludes value
+     */
     public static final String SERVER_EXCLUDES_IDENTIFIER = "excludes";
+    /**
+     * Identifier for workspace value
+     */
     public static final String WORKSPACE_IDENTIFIER = "workspace";
 
     private Properties properties = new Properties();
     private String defaultFilename = "";
     private HashMap<String, JAMSProperty> propertyMap = new HashMap<String, JAMSProperty>();
 
-    public JAMSProperties() {
-    }
-
+    /**
+     * Creates a new JAMSProperties object
+     * @param properties A java.util.Properties object containing the properties
+     */
     public JAMSProperties(Properties properties) {
         this.properties = properties;
     }
 
+    /**
+     * Loads properties from a file
+     * @param fileName The name of the file to read properties from
+     * @throws java.io.IOException
+     */
     public void load(String fileName) throws IOException {
         try {
             properties.load(new FileInputStream(fileName));
@@ -70,6 +97,11 @@ public class JAMSProperties extends Observable {
         }
     }
 
+    /**
+     * Saves properties to a file
+     * @param fileName The name of the file to save properties to
+     * @throws java.io.IOException
+     */
     public void save(String fileName) throws IOException {
         try {
             properties.store(new FileOutputStream(fileName), JAMS.resources.getString("JAMS_configuration_file"));
@@ -79,10 +111,21 @@ public class JAMSProperties extends Observable {
         }
     }
 
+    /**
+     * Gets a property value
+     * @param key The identifier for the property
+     * @return The property value
+     */
     public String getProperty(String key) {
         return properties.getProperty(key);
     }
 
+    /**
+     * Gets a property value or default value if property does not exist
+     * @param key The identifier for the property
+     * @param defaultValue The default value
+     * @return The property value
+     */
     public String getProperty(String key, String defaultValue) {
         if (getProperty(key) != null) {
             return getProperty(key);
@@ -91,6 +134,11 @@ public class JAMSProperties extends Observable {
         }
     }
 
+    /**
+     * Sets a property value
+     * @param key The identifier for the property
+     * @param value The value of the property
+     */
     public void setProperty(String key, String value) {
 
         JAMSProperty property = propertyMap.get(key);
@@ -108,6 +156,11 @@ public class JAMSProperties extends Observable {
 
     }
 
+    /**
+     * Adds an observer for some property
+     * @param key The identifier for the property
+     * @param obs The java.util.Observer object
+     */
     public void addObserver(String key, Observer obs) {
         JAMSProperty property = propertyMap.get(key);
         if (property == null) {
@@ -121,6 +174,10 @@ public class JAMSProperties extends Observable {
         return properties.toString();
     }
 
+    /**
+     * Creates a new JAMSProperties object
+     * @return The JAMSProperties object
+     */
     public static JAMSProperties createJAMSProperties() {
         Properties p = new Properties();
         p.setProperty("model", "");
@@ -143,10 +200,18 @@ public class JAMSProperties extends Observable {
         return jp;
     }
 
+    /**
+     *
+     * @return The default file name for storing JAMS properties
+     */
     public String getDefaultFilename() {
         return defaultFilename;
     }
 
+    /**
+     * Set the default file name for storing JAMS properties
+     * @param defaultFilename The default file name
+     */
     public void setDefaultFilename(String defaultFilename) {
         this.defaultFilename = defaultFilename;
     }

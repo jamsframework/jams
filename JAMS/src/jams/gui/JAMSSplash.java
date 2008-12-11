@@ -39,11 +39,19 @@ public class JAMSSplash extends JDialog {
     
     private Image img;
     
+    /**
+     * Creates a new splash dialog
+     */
     public JAMSSplash() {
         this(0,0);
     }
     
-    public JAMSSplash(int x, int y) {
+    /**
+     * Creates a new splash dialog width given width/height
+     * @param width dialog width
+     * @param height dialog height
+     */
+    public JAMSSplash(int width, int height) {
         
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("JAMS");
@@ -55,38 +63,32 @@ public class JAMSSplash extends JDialog {
         if (img == null && imgURL != null) {
             img = new ImageIcon(imgURL).getImage();//.getScaledInstance(x, y, Image.SCALE_SMOOTH);
         }
-        if (x == 0) {
-            x = img.getWidth(null);
-            y = img.getHeight(null);
+        if (width == 0) {
+            width = img.getWidth(null);
+            height = img.getHeight(null);
         } else {
-            img = img.getScaledInstance(x, y, Image.SCALE_SMOOTH);
+            img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         }
-        setSize(x, y);
+        setSize(width, height);
         
-        Dimension d2 = new java.awt.Dimension(x, y);
+        Dimension d2 = new java.awt.Dimension(width, height);
         this.setPreferredSize(d2);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation(d.width / 2 - x / 2, d.height / 2 - y / 2);
-        
-        
-/*
-        //wait 'till image has been loaded
-        MediaTracker mt = new MediaTracker(this);
-        mt.addImage(img, 0);
-        try {
-            mt.waitForAll();
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-        }
- */
+        setLocation(d.width / 2 - width / 2, d.height / 2 - height / 2);
         
     }
     
+    @Override
     public void paint(Graphics g) {
         super.paint(g);
         g.drawImage(img, 0, 0, this);
     }
     
+    /**
+     *
+     * @param frame Frame to show after splash disappears
+     * @param timeInMillis Time to show the splash
+     */
     public void show(JFrame frame, int timeInMillis) {
         setVisible(true);
         new Timer().schedule(new FrameStarter(this, frame), timeInMillis);

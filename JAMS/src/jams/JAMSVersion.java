@@ -51,6 +51,10 @@ public class JAMSVersion {
         dateString = p.getProperty("date");
     }
 
+    /**
+     * Returns a singleton JAMSVersion object
+     * @return A JAMSVersion object
+     */
     public static JAMSVersion getInstance() {
         if (instance == null) {
             instance = new JAMSVersion();
@@ -58,10 +62,18 @@ public class JAMSVersion {
         return instance;
     }
 
+    /**
+     * Creates a string representation of the version including date
+     * @return The string representation
+     */
     public String getVersionDateString() {
         return String.format("%d.%d_%02d (%s)", major, minor, revision, dateString);
     }
 
+    /**
+     * Creates a string representation of the version
+     * @return The string representation
+     */
     public String getVersionString() {
         return String.format("%d.%d", major, minor);
     }

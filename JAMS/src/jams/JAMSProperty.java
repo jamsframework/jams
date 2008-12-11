@@ -34,14 +34,23 @@ public class JAMSProperty extends Observable implements Serializable{
     
     private String name;
     
+    /**
+     * Creates a new JAMSProperty object
+     * @param name The identifier of the property
+     */
     public JAMSProperty(String name) {
         this.name = name;
     }
 
+    /**
+     * 
+     * @return The identifier of the property
+     */
     public String getName() {
         return name;
     }
     
+    @Override
     public void setChanged() {
         super.setChanged();
     }

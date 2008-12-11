@@ -47,39 +47,70 @@ public class JAMS {
      * Verbosity level 0 of 3
      */
     public static final int SILENT = 0;
+
     /**
      * Verbosity level 1 of 3
      */
     public static final int STANDARD = 1;
+
     /**
      * Verbosity level 2 of 3
      */
     public static final int VERBOSE = 2;
+
     /**
      * Verbosity level 3 of 3
      */
     public static final int VVERBOSE = 3;
+
+    /**
+     * Resource bundle containing all string literals for some localization
+     */
     public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
+
+    /**
+     * The standard font
+     */
     public static final Font STANDARD_FONT = new java.awt.Font("Courier", 0, 11);
     //public static final int TOOLBAR_HEIGHT = 38;
+
+    /**
+     * The time that the splash screen should be displayed
+     */
     public static final int SPLASH_DISPLAY_TIME = 0;
+
+    /**
+     * The wiki URL
+     */
     public static final String WIKI_URL = "http://jams.uni-jena.de/jamswiki";
+
     /**
      * Default name of model output file
      */
     public static final String DEFAULT_MODEL_FILENAME = "model.jmp";
+
     /**
      * Default name of parameter output file
      */
     public static final String DEFAULT_PARAMETER_FILENAME = "default.jap";
-    private static JAMSCmdLine cmdLine;
-    private static File baseDir = null;
-    private static String versionString = null;
 
+    private static JAMSCmdLine cmdLine;
+
+    private static File baseDir = null;
+
+    /**
+     * Exception handling method
+     * @param ex Exception to be handled
+     */
     public static void handle(Exception ex) {
         handle(ex, true);
     }
 
+    /**
+     * Exception handling method
+     * @param ex Exception to be handled
+     * @param proceed Proceed or not?
+     */
     public static void handle(Exception ex, boolean proceed) {
         ex.printStackTrace();
         if (!proceed) {
@@ -87,16 +118,20 @@ public class JAMS {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    /**
+     * JAMS main method
+     * @param args The command line arguments
+     */
+    public static void main(String[] args) {
 
         cmdLine = new JAMSCmdLine(args);
 
         if (System.getProperty("os.name").contains("Windows")) {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (UnsupportedLookAndFeelException ule) {
+            } catch (Exception e) {
                 System.out.println(JAMS.resources.getString("Error_during_look_and_feel_initialization"));
-                ule.printStackTrace();
+                handle(e);
             }
         }
 
@@ -106,7 +141,12 @@ public class JAMS {
         //try to load property values from file
         if (cmdLine.getConfigFileName() != null) {
             //check for file provided at command line
-            properties.load(cmdLine.getConfigFileName());
+            try {
+                properties.load(cmdLine.getConfigFileName());
+            } catch (IOException ioe) {
+                System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + cmdLine.getConfigFileName());
+                handle(ioe);
+            }
             baseDir = new File(cmdLine.getConfigFileName()).getParentFile();
         } else {
             //check for default file
@@ -114,7 +154,12 @@ public class JAMS {
             baseDir = new File(System.getProperty("user.dir"));
             File file = new File(defaultFile);
             if (file.exists()) {
-                properties.load(defaultFile);
+                try {
+                    properties.load(defaultFile);
+                } catch (IOException ioe) {
+                    System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + defaultFile);
+                    handle(ioe);
+                }
             }
         }
 
@@ -142,12 +187,12 @@ public class JAMS {
         }
     }
 
-    public static void startJAMS(JAMSProperties properties) {
+    private static void startJAMS(JAMSProperties properties) {
         JAMSSplash splash = new JAMSSplash();
         splash.show(new JAMSFrame(properties), SPLASH_DISPLAY_TIME);
     }
 
-    public static void startJAMS(JAMSProperties properties, String modelFilename, String cmdLineParameterValues) {
+    private static void startJAMS(JAMSProperties properties, String modelFilename, String cmdLineParameterValues) {
         int guiConfig = Integer.parseInt(properties.getProperty("guiconfig", "0"));
 
         if (guiConfig == 1) {
@@ -210,8 +255,11 @@ public class JAMS {
         }
     }
 
+    /**
+     * Get the JAMS base directory
+     * @return The JAMS base directory
+     */
     public static File getBaseDir() {
         return baseDir;
     }
-
 }

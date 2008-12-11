@@ -33,68 +33,85 @@ import javax.swing.filechooser.FileFilter;
 public class JAMSFileFilter {
     
     private static FileFilter propertyFilter = new FileFilter() {
+        @Override
         public boolean accept(File f) {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".jap");
         }
+        @Override
         public String getDescription() {
             return JAMS.resources.getString("JAMS_Preferences_(*.jap)");
         }
     };
     private static FileFilter modelFilter = new FileFilter() {
+        @Override
         public boolean accept(File f) {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".jam") || f.getName().toLowerCase().endsWith(".xml");
         }
+        @Override
         public String getDescription() {
             return JAMS.resources.getString("JAMS_Model_(*.jam;_*.xml)");
         }
     };
-/*    private static FileFilter modelConfigFilter = new FileFilter() {
-        public boolean accept(File f) {
-            return f.isDirectory() || f.getName().toLowerCase().endsWith(".jmc");
-        }
-        public String getDescription() {
-            return "JAMS model configuration(*.jmc)";
-        }
-    };
- */
     private static FileFilter jarFilter = new FileFilter() {
+        @Override
         public boolean accept(File f) {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".jar");
         }
+        @Override
         public String getDescription() {
             return JAMS.resources.getString("Java_Archive_(*.jar)");
         }
     };
     private static FileFilter parameterFilter = new FileFilter() {
+        @Override
         public boolean accept(File f) {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".jmp");
         }
+        @Override
         public String getDescription() {
             return JAMS.resources.getString("JAMS_Model_Parameter_(*.jmp)");
         }
     };
     
     private static FileFilter epsFilter = new FileFilter() {
+        @Override
         public boolean accept(File f) {
             return f.isDirectory() || f.getName().toLowerCase().endsWith(".eps");
         }
+        @Override
         public String getDescription() {
             return JAMS.resources.getString("Encapsulated_Postscript_(*.eps)");
         }
     };
     
+    /**
+     *
+     * @return The filter for EPS files
+     */
     public static FileFilter getEpsFilter() {
         return epsFilter;
     }
 
+    /**
+     *
+     * @return The filter for property files
+     */
     public static FileFilter getPropertyFilter() {
         return propertyFilter;
     }
     
+    /**
+     *
+     * @return The filter for model files
+     */
     public static FileFilter getModelFilter() {
         return modelFilter;
     }
 
+    /**
+     *
+     * @return The filter for parameter files
+     */
     public static FileFilter getParameterFilter() {
         return parameterFilter;
     }
@@ -103,6 +120,10 @@ public class JAMSFileFilter {
         return modelConfigFilter;
     }
 */
+    /**
+     *
+     * @return The filter for JAR files
+     */
     public static FileFilter getJarFilter() {
         return jarFilter;
     }

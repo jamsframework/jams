@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
@@ -35,7 +34,13 @@ import java.util.StringTokenizer;
  */
 public class JAMSTools {
 
-    public static String CreateAbsoluteFileName(String dirName, String fileName){        
+    /**
+     * 
+     * @param dirName
+     * @param fileName
+     * @return
+     */
+    public static String CreateAbsoluteFileName(String dirName, String fileName){
         //if relative path is provided, make absolute path!
         if (dirName.isEmpty()){
             dirName = System.getProperty("user.dir");
@@ -46,10 +51,21 @@ public class JAMSTools {
         return dirName + fileName;
     }
     
+    /**
+     * Splits a string into tokens and fills a string array with them
+     * @param str The string to be splitted
+     * @return A string array with the tokens 
+     */
     public static String[] toArray(String str) {
         return toArray(str, null);
     }
 
+    /**
+     * Splits a string into tokens and fills a string array with them
+     * @param str The string to be splitted
+     * @param delim A delimiter defining where to split
+     * @return A string array with the tokens 
+     */
     public static String[] toArray(String str, String delim) {
 
         if (str == null) {
@@ -70,6 +86,11 @@ public class JAMSTools {
         return result;
     }
 
+    /**
+     * Reads a file and returns its content as string
+     * @param fileName The name of the file
+     * @return The file content
+     */
     public static String fileToString(String fileName) {
 
         String result = "";
@@ -84,6 +105,11 @@ public class JAMSTools {
         return result;
     }
 
+    /**
+     * Reads from a stream and returns its content as string
+     * @param in The stream
+     * @return The stream content
+     */
     public static String streamToString(InputStream in) {
         String content = "";
 
@@ -99,6 +125,11 @@ public class JAMSTools {
     }
 
 
+    /**
+     * Creates a string representation of a stack trace
+     * @param stea The stack trace
+     * @return The stack trace string
+     */
     public static String getStackTraceString(StackTraceElement[] stea) {
         String result = "";
 
@@ -108,14 +139,13 @@ public class JAMSTools {
         return result;
     }
 
-    public static String[] arrayStringAsStringArray(String arrayString) {
-        return toArray(arrayString, ";");
-    }
-
+    /**
+     * Checks if a string is empty (i.e. if its null, has length 0 or contains only whitespaces
+     * @param theString The string to be checked
+     * @return True, if theString is empty, false otherwise
+     */
     public static boolean isEmptyString(String theString) {
-        if (theString == null ||
-                theString.length() == 0 ||
-                theString.trim().length() == 0) {
+        if (theString == null || theString.length() == 0 || theString.trim().length() == 0) {
             return true;
         } else {
             return false;

@@ -34,16 +34,25 @@ public class JAMSCmdLine {
     private String parameterValues = null;
     private String[] otherArgs = null;
     private String appTitle;
-    public static final String USAGE_STRING = JAMS.resources.getString("[Options]") +
+    private static final String USAGE_STRING = JAMS.resources.getString("[Options]") +
             JAMS.resources.getString("__-h,_--help_________________________________________Print_help") +
             JAMS.resources.getString("__-c,_--config_<config_file_name>____________________Provide_config_file_name") +
             JAMS.resources.getString("__-m,_--model_<model_definition_file_name>___________Provide_model_file_name") +
             JAMS.resources.getString("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons");
     
+    /**
+     * Creates a new JAMSCmdLine object
+     * @param args The argument list as String array
+     */
     public JAMSCmdLine(String [] args) {
         this(args, "JAMS");
     }
     
+    /**
+     * Creates a new JAMSCmdLine object
+     * @param args The argument list as String array
+     * @param appTitle The title of the application
+     */
     public JAMSCmdLine(String [] args, String appTitle) {
         
         this.appTitle = appTitle;
@@ -73,18 +82,34 @@ public class JAMSCmdLine {
         this.otherArgs = parser.getRemainingArgs();
     }
     
+    /**
+     * Returns the name of the config file
+     * @return The name of the config file
+     */
     public String getConfigFileName() {
         return configFileName;
     }
     
+    /**
+     * Returns the name of the model file
+     * @return The name of the model file
+     */
     public String getModelFileName() {
         return modelFileName;
     }
     
+    /**
+     * Return all additional arguments
+     * @return The list of additional arguments as String array
+     */
     public String[] getOtherArgs() {
         return otherArgs;
     }
     
+    /**
+     * Return the list of parameter values
+     * @return The String representing a list of parameter values
+     */
     public String getParameterValues() {
         return parameterValues;
     }
