@@ -38,15 +38,42 @@ import jams.workspace.DataReader;
  */
 public class TableDataStore extends StandardInputDataStore {
 
+    /**
+     * The current position of dataset within the buffer
+     */
+    /**
+     * The maximal position within the buffer
+     */
     protected int currentPosition,  maxPosition;
+    /**
+     * A set of DataReader objects that this datastore uses to read data
+     */
     protected Set<DataReader> dataIOSet = new HashSet<DataReader>();
+    /**
+     * An array of DataReader objects that this datastore uses to read data
+     */
     protected DataReader[] dataIOArray;
+    /**
+     * An array of integers defining which column of the DataReader contains
+     * the data
+     */
     protected int[] positionArray;
 
+    /**
+     * Creates a new TableDataStore object
+     * @param ws The workspace that the datastore belongs to
+     */
     public TableDataStore(VirtualWorkspace ws) {
         super(ws);
     }
     
+    /**
+     * Creates a new TableDataStore object
+     * @param ws The workspace that the datastore belongs to
+     * @param id A datastore identifier
+     * @param doc A XML document that describes this datastore
+     * @throws java.lang.ClassNotFoundException
+     */
     public TableDataStore(VirtualWorkspace ws, String id, Document doc) throws ClassNotFoundException {
         super(ws, id, doc);
 
@@ -86,6 +113,9 @@ public class TableDataStore extends StandardInputDataStore {
 
     }
 
+    /**
+     * Fills the buffer according to the buffer size
+     */
     protected void fillBuffer() {
 
         for (DataReader io : dataIOSet) {
@@ -100,6 +130,10 @@ public class TableDataStore extends StandardInputDataStore {
         }
     }
 
+    /**
+     * Checks if there is another dataset in the datastore
+     * @return True, if there is another dataset, false if not
+     */
     @Override
     public boolean hasNext() {
         if (currentPosition < maxPosition) {
@@ -114,6 +148,10 @@ public class TableDataStore extends StandardInputDataStore {
         }
     }
 
+    /**
+     * Gets the next dataset from the datastore
+     * @return A dataset object
+     */
     @Override
     public DataSet getNext() {
 
@@ -131,6 +169,9 @@ public class TableDataStore extends StandardInputDataStore {
         return result;
     }
 
+    /**
+     * Closes the datastore by closing all its belonging data readers
+     */
     @Override
     public void close() {
         for (DataReader io : dataIOSet) {

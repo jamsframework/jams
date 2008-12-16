@@ -49,6 +49,9 @@ import jams.gui.input.TimeintervalInput;
  */
 public class LHelper {
 
+    public static final int NO_OPTION = JOptionPane.NO_OPTION;
+    public static final int YES_OPTION = JOptionPane.YES_OPTION;
+    public static final int CANCEL_OPTION = JOptionPane.CANCEL_OPTION;
     private static final int JCOMP_HEIGHT = 20;
     private static final int NUMBERINPUT_WIDTH = 100;
     private static final int TEXTINPUT_WIDTH = 250;

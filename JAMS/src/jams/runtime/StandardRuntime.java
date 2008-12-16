@@ -54,6 +54,7 @@ import jams.JAMSProperties;
 import jams.JAMSTools;
 import jams.data.JAMSData;
 import jams.data.JAMSEntityCollection;
+import jams.gui.LHelper;
 import jams.io.ModelLoader;
 import jams.io.ParameterProcessor;
 import jams.model.JAMSGUIComponent;
@@ -67,20 +68,34 @@ import org.w3c.dom.Document;
 public class StandardRuntime extends Observable implements JAMSRuntime, Serializable {
 
     private HashMap<String, JAMSData> dataHandles = new HashMap<String, JAMSData>();
+
     private JAMSLog errorLog = new JAMSLog();
+
     private JAMSLog infoLog = new JAMSLog();
+
     private int debugLevel = JAMS.STANDARD;
     //private RunState runState = new RunState();
+
     private ArrayList<JAMSGUIComponent> guiComponents = new ArrayList<JAMSGUIComponent>();
+
     private JButton stopButton,  closeButton;
+
     private JFrame frame;
+
     private JAMSModel model;
+
     transient private PrintStream infoStream,  errorStream;
+
     private boolean guiEnabled = false;
+
     transient private ClassLoader classLoader;
+
     private Document modelDocument = null;
+
     private JAMSProperties properties = null;
+
     String[] libs = null;
+
     private int runState = JAMSRuntime.STATE_RUN;
 
     @Override
@@ -269,7 +284,16 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
             while (i.hasNext()) {
                 JAMSGUIComponent comp = i.next();
-                tabbedPane.addTab(comp.getInstanceName(), comp.getPanel());
+                try {
+                    tabbedPane.addTab(comp.getInstanceName(), comp.getPanel());
+                } catch (Throwable t) {
+                    this.handle(t, true);
+                    int result = LHelper.showYesNoDlg(frame, JAMS.resources.getString("Could_not_load_component") + comp.getInstanceName() +
+                            JAMS.resources.getString("Proceed_anyway?"), JAMS.resources.getString("Error"));
+                    if (result == LHelper.NO_OPTION) {
+                        this.setRunState(JAMSRuntime.STATE_STOP);
+                    }
+                }
             }
             frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
