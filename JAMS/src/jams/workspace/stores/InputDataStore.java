@@ -1,4 +1,4 @@
-    /*
+/*
  * InputDataStore.java
  * Created on 23. Januar 2008, 15:46
  *
