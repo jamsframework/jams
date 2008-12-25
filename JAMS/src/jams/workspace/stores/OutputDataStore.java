@@ -26,7 +26,7 @@ import jams.io.SerializableBufferedWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import jams.workspace.VirtualWorkspace;
+import jams.workspace.JAMSWorkspace;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -49,9 +49,9 @@ public class OutputDataStore implements DataStore,Serializable {
     private String[] attributes;
     private Filter[] filters;
     private SerializableBufferedWriter writer;
-    private VirtualWorkspace ws;
+    private JAMSWorkspace ws;
 
-    public OutputDataStore(VirtualWorkspace ws, Document doc, String id) {
+    public OutputDataStore(JAMSWorkspace ws, Document doc, String id) {
 
         this.id = id;
         this.ws = ws;
@@ -88,7 +88,7 @@ public class OutputDataStore implements DataStore,Serializable {
         File outputDirectory = ws.getOutputDataDirectory();
         outputDirectory.mkdirs();
 
-        File outputFile = new File(outputDirectory.getPath() + File.separator + id + ".dat");
+        File outputFile = new File(outputDirectory.getPath() + File.separator + id + JAMSWorkspace.OUTPUT_FILE_ENDING);
         writer = new SerializableBufferedWriter(new FileWriter(outputFile));
     }
 

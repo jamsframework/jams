@@ -27,12 +27,14 @@ import reg.spreadsheet.JAMSSpreadSheet;
 import jams.workspace.stores.DataStore;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.TSDataStore;
+import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 import reg.gui.InfoPanel;
 import reg.gui.TSPanel;
 import reg.gui.TreePanel;
 import reg.tree.DSTreeNode;
+import reg.tree.FileObject;
 
 /**
  *
@@ -41,8 +43,11 @@ import reg.tree.DSTreeNode;
 public class DisplayManager implements Observer {
 
     private InfoPanel infoPanel;
+
     private TSPanel tsPanel;
+
     private TreePanel treePanel;
+
     private JAMSSpreadSheet spreadsheet;
 
     public DisplayManager() {
@@ -91,7 +96,11 @@ public class DisplayManager implements Observer {
                 }
                 break;
             case DSTreeNode.OUTPUT_DS:
-                //handle output nodes here
+                FileObject fo = (FileObject) node.getUserObject();
+                System.out.println(fo.getFile().getAbsolutePath());
+                
+
+
                 break;
         }
     }

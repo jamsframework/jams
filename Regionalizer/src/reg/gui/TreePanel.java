@@ -23,7 +23,7 @@
 
 package reg.gui;
 
-import jams.workspace.VirtualWorkspace;
+import jams.workspace.JAMSWorkspace;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -44,7 +44,7 @@ public class TreePanel extends JPanel {
         this.add(scrollPane, BorderLayout.CENTER);
     }
 
-    public void update(VirtualWorkspace ws) {
+    public void update(JAMSWorkspace ws) {
         tree.update(ws);
     }
 

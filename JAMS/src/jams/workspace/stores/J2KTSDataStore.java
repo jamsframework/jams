@@ -27,7 +27,7 @@ import jams.data.JAMSCalendar;
 import jams.runtime.JAMSRuntime;
 import jams.workspace.DataSet;
 import jams.workspace.DataSetDefinition;
-import jams.workspace.VirtualWorkspace;
+import jams.workspace.JAMSWorkspace;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.StringValue;
 import java.io.BufferedReader;
@@ -51,7 +51,7 @@ public class J2KTSDataStore extends TSDataStore {
     private BufferedReader j2kTSFileReader;
     private boolean parseDate = false;
 
-    public J2KTSDataStore(VirtualWorkspace ws, String id, Document doc) throws IOException {
+    public J2KTSDataStore(JAMSWorkspace ws, String id, Document doc) throws IOException {
 
         super(ws);
         this.id = id;

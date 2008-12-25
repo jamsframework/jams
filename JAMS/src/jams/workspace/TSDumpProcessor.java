@@ -63,7 +63,7 @@ public class TSDumpProcessor {
 
     private void output(TSDataStore store, OutputTarget target) throws IOException {
 
-        target.append(VirtualWorkspace.DUMP_MARKER + "\n");
+        target.append(JAMSWorkspace.DUMP_MARKER + "\n");
         target.append(commentTag + "\n");
         target.append("#ID: " + store.getID() + "\n");
         target.append("#TYPE: " + store.getClass().getSimpleName() + "\n");

@@ -42,16 +42,16 @@ import jams.JAMS;
 public abstract class StandardInputDataStore implements InputDataStore {
 
     protected HashMap<String, DataReader> dataIO;
-    protected VirtualWorkspace ws;
+    protected JAMSWorkspace ws;
     protected DataSetDefinition dsd;
     protected int bufferSize = 0;
     protected String id,  description = "",  missingDataValue = "";
 
-    public StandardInputDataStore(VirtualWorkspace ws) {
+    public StandardInputDataStore(JAMSWorkspace ws) {
         this.ws = ws;
     }
 
-    public StandardInputDataStore(VirtualWorkspace ws, String id, Document doc) throws ClassNotFoundException {
+    public StandardInputDataStore(JAMSWorkspace ws, String id, Document doc) throws ClassNotFoundException {
         this.ws = ws;
 
         this.id = id;//doc.getDocumentElement().getAttribute("id");

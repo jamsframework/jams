@@ -24,7 +24,7 @@ package jams.model;
 
 import jams.JAMS;
 import jams.data.JAMSDirName;
-import jams.workspace.VirtualWorkspace;
+import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.OutputDataStore;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,7 +35,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import jams.data.JAMSEntityCollection;
 import jams.runtime.JAMSRuntime;
-import jams.workspace.VirtualWorkspace.InvalidWorkspaceException;
+import jams.workspace.JAMSWorkspace.InvalidWorkspaceException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -56,7 +56,7 @@ public class JAMSModel extends JAMSContext {
 
     private String name,  author,  date;
 
-    public VirtualWorkspace workspace;
+    public JAMSWorkspace workspace;
 
     transient private HashMap<JAMSComponent, ArrayList<Field>> nullFields;
 
@@ -108,8 +108,8 @@ public class JAMSModel extends JAMSContext {
 
         // prepare workspace
         try {
-            this.workspace = new VirtualWorkspace(new File(workspaceDirectory.getValue()), runtime);
-        } catch (VirtualWorkspace.InvalidWorkspaceException iwe) {
+            this.workspace = new JAMSWorkspace(new File(workspaceDirectory.getValue()), runtime);
+        } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
             this.getRuntime().sendHalt(iwe.getMessage());
             return;
         }
@@ -145,7 +145,7 @@ public class JAMSModel extends JAMSContext {
         setWorkspaceDirectory(workspaceDirectory);
         //erstelle output verzeichnis        
         try {
-            workspace = new VirtualWorkspace(new File(workspaceDirectory), getRuntime());
+            workspace = new JAMSWorkspace(new File(workspaceDirectory), getRuntime());
             workspace.checkValidity(false);
         } catch (InvalidWorkspaceException e) {
             getRuntime().sendHalt("Error during model setup: \"" +
@@ -162,7 +162,7 @@ public class JAMSModel extends JAMSContext {
         this.workspaceDirectory.setValue(workspaceDirectory);
     }
 
-    public VirtualWorkspace getWorkspace() {
+    public JAMSWorkspace getWorkspace() {
         return workspace;
     }
 

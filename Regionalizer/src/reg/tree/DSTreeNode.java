@@ -39,6 +39,7 @@ public class DSTreeNode extends DefaultMutableTreeNode {
     public final static int OUTPUT_ROOT = 2;
     public final static int INPUT_DS = 3;
     public final static int OUTPUT_DS = 4;
+    public final static int OUTPUT_DIR = 5;
     
     static int ICON_WIDTH = 16;
     static int ICON_HEIGHT = 16;
@@ -49,6 +50,7 @@ public class DSTreeNode extends DefaultMutableTreeNode {
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("reg/resources/images/folder.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("reg/resources/images/spreadsheet.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("reg/resources/images/spreadsheet.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("reg/resources/images/folder.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
     };
     
     private int type = 0;

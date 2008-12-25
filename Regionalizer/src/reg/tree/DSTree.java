@@ -34,7 +34,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
 import jams.model.JAMSComponent;
-import jams.workspace.VirtualWorkspace;
+import jams.workspace.JAMSWorkspace;
 import javax.swing.KeyStroke;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -49,7 +49,7 @@ public class DSTree extends JAMSTree {
 
     private static final String ROOT_NAME = "Datenspeicher",  INPUT_NAME = "Eingabedaten",  OUTPUT_NAME = "Ausgabedaten";
     private JPopupMenu popup;
-    private VirtualWorkspace workspace;
+    private JAMSWorkspace workspace;
     private DSTreeNode root;
     private NodeObservable nodeObservable = new NodeObservable();
 
@@ -101,6 +101,41 @@ public class DSTree extends JAMSTree {
         this.setVisible(false);
     }
 
+    private DSTreeNode createInputNode() {
+        DSTreeNode inputRoot = new DSTreeNode(INPUT_NAME, DSTreeNode.INPUT_ROOT);
+        Set<String> inIDs = workspace.getInputDataStoreIDs();
+        List<String> inIDList = new ArrayList<String>(inIDs);
+        Collections.sort(inIDList);
+        for (String id : inIDList) {
+            DSTreeNode dsNode = new DSTreeNode(id, DSTreeNode.INPUT_DS);
+            inputRoot.add(dsNode);
+        }
+        return inputRoot;
+    }
+
+    private DSTreeNode createOutputNode() {
+        DSTreeNode outputRoot = new DSTreeNode(OUTPUT_NAME, DSTreeNode.OUTPUT_ROOT);
+
+        File[] outputDirs = workspace.getOutputDataDirectories();
+        for (File dir : outputDirs) {
+            DSTreeNode outputDataDirNode = new DSTreeNode(dir.getName(), DSTreeNode.OUTPUT_DIR);
+            for (File file : workspace.getOutputDataFiles(dir)) {
+                DSTreeNode outputDataStoreNode = new DSTreeNode(new FileObject(file), DSTreeNode.OUTPUT_DS);
+                outputDataDirNode.add(outputDataStoreNode);
+            }
+            outputRoot.add(outputDataDirNode);
+        }
+
+//        List<String> outIDList = new ArrayList<String>(workspace.getOutputDataStoreIDs());
+//        Collections.sort(outIDList);
+//        for (String id : outIDList) {
+//            DSTreeNode dsNode = new DSTreeNode(id, DSTreeNode.OUTPUT_DS);
+//            outputRoot.add(dsNode);
+//            //!!!take care of different result sets here!!!
+//        }
+        return outputRoot;
+    }
+
     private void displayDSData() {
         Regionalizer.getDisplayManager().displayDS((DSTreeNode) getLastSelectedPathComponent());
     }
@@ -114,7 +149,7 @@ public class DSTree extends JAMSTree {
         }
     }
 
-    public void update(VirtualWorkspace workspace) {
+    public void update(JAMSWorkspace workspace) {
 
         this.setVisible(false);
         this.workspace = workspace;
@@ -125,151 +160,14 @@ public class DSTree extends JAMSTree {
 
     private DSTreeNode createIOTree() {
 
-        DSTreeNode inputRoot = new DSTreeNode(INPUT_NAME, DSTreeNode.INPUT_ROOT);
-        Set<String> inIDs = workspace.getInputDataStoreIDs();
-        List<String> inIDList = new ArrayList<String>(inIDs);
-        Collections.sort(inIDList);
-        for (String id : inIDList) {
-            DSTreeNode dsNode = new DSTreeNode(id, DSTreeNode.INPUT_DS);
-            inputRoot.add(dsNode);
-        }
+        DSTreeNode inputRoot = createInputNode();
+        DSTreeNode outputRoot = createOutputNode();
 
-        DSTreeNode outputRoot = new DSTreeNode(OUTPUT_NAME, DSTreeNode.OUTPUT_ROOT);
-        Set<String> outIDs = workspace.getOutputDataStoreIDs();
-        List<String> outIDList = new ArrayList<String>(outIDs);
-        Collections.sort(outIDList);
-        for (String id : outIDList) {
-            DSTreeNode dsNode = new DSTreeNode(id, DSTreeNode.OUTPUT_DS);
-            outputRoot.add(dsNode);
-        }
         root.removeAllChildren();
         root.add(inputRoot);
         root.add(outputRoot);
 
-        /*
-        for (int i = 0; i < libsArray.length; i++) {
-        File file = new File(libsArray[i]);
-
-        if (!file.exists()) {
-        continue;
-        }
-        if (file.isDirectory()) {
-        File[] f = file.listFiles();
-        for (int j = 0; j < f.length; j++) {
-        if (f[j].getName().endsWith(".jar")) {
-        jarNode = createJARNode(f[j].toString(), JUICE.getLoader());
-        if (jarNode != null) {
-        root.add(jarNode);
-        }
-        }
-        }
-        } else {
-        jarNode = createJARNode(file.toString(), JUICE.getLoader());
-        if (jarNode != null) {
-        root.add(jarNode);
-        }
-        }
-
-        }
-         */
-
         return root;
-    }
-
-    private DSTreeNode createJARNode(String jar, ClassLoader loader) {
-
-        //System.out.println("loading " + jar);
-        DSTreeNode jarRoot = new DSTreeNode(jar, DSTreeNode.INPUT_DS);
-        ArrayList<Class> components = new ArrayList<Class>();
-        DSTreeNode compNode;
-        String jarName = "", clazzName = "", clazzFullName = "";
-
-        try {
-            JarFile jfile = new JarFile(jar);
-            File file = new File(jar);
-            //URLClassLoader loader = new URLClassLoader(new URL[]{file.toURL()});
-            jarName = file.getCanonicalFile().getName();
-            //jarRoot = new DSTreeNode(jarName, DSTreeNode.PACKAGE_NODE);
-
-            Enumeration jarentries = jfile.entries();
-            while (jarentries.hasMoreElements()) {
-                String entry = jarentries.nextElement().toString();
-                if ((entry.endsWith(".class"))) {
-                    String classString = entry.substring(0, entry.length() - 6);
-                    classString = classString.replaceAll("/", ".");
-
-                    try {
-
-                        // try to load the class and check if it's a subclass of JAMSComponent
-                        Class<?> clazz = loader.loadClass(classString);
-
-                        if (JAMSComponent.class.isAssignableFrom(clazz)) {
-                            components.add(clazz);
-                        }
-
-                    } catch (ClassNotFoundException cnfe) {
-                    } catch (NoClassDefFoundError ncdfe) {
-                        //LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Missing class while loading component " + clazzFullName +
-                        //        " in archive " + jarName + "!", "Error while loading archive");
-                    } catch (Exception e) {
-                        // other exception like e.g. java.lang.SecurityException
-                        // won't be handled since they hopefully don't occur
-                        // while loading JARs containing JAMS components
-                    }
-                }
-            }
-
-            String oldPackage = "", newPackage;
-            DSTreeNode packageNode = null;
-            for (Class clazz : components) {
-                newPackage = clazz.getPackage().getName();
-                if (!newPackage.equals(oldPackage)) {
-                    packageNode = new DSTreeNode(newPackage, DSTreeNode.INPUT_DS);
-                    jarRoot.add(packageNode);
-                    oldPackage = newPackage;
-                }
-
-                clazzName = clazz.getSimpleName();
-                clazzFullName = clazz.getName();
-
-                if (!(clazzName.equals("JAMSComponent") || clazzName.equals("JAMSContext_") || clazzName.equals("JAMSGUIComponent") || clazzName.equals("JAMSModel"))) {
-                    /*
-                    try {
-
-                    ComponentDescriptor no = new ComponentDescriptor(clazz, this);
-
-                    if (JAMSContext.class.isAssignableFrom(clazz)) {
-                    compNode = new DSTreeNode(no, DSTreeNode.CONTEXT_NODE);
-                    contextCount++;
-                    } else {
-                    compNode = new DSTreeNode(no, DSTreeNode.COMPONENT_NODE);
-                    componentCount++;
-                    }
-
-                    packageNode.add(compNode);
-
-                    } catch (NoClassDefFoundError ncdfe) {
-
-                    LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Missing_class_while_loading_component_") + clazzFullName +
-                    JUICE.resources.getString("_in_archive_") + jarName + "\"!", JUICE.resources.getString("Error_while_loading_archive"));
-
-                    }*/
-                }
-            }
-
-
-        } catch (IOException ioe) {
-
-            //LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + jar + JUICE.resources.getString("_could_not_be_loaded."), JUICE.resources.getString("Error_while_loading_archive"));
-            jarRoot = null;
-
-        }
-
-        if (components.size() > 0) {
-            return jarRoot;
-        } else {
-            return null;
-        }
     }
 
     public void addObserver(Observer o) {

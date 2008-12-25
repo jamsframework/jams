@@ -26,7 +26,7 @@ import reg.*;
 import jams.JAMSTools;
 import jams.gui.LHelper;
 import jams.gui.WorkerDlg;
-import jams.workspace.VirtualWorkspace;
+import jams.workspace.JAMSWorkspace;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -64,7 +64,7 @@ public class RegionalizerFrame extends JFrame {
     private WorkerDlg openWSDlg;
     private Action openWSAction,  exitAction;
     private JLabel statusLabel;
-    private VirtualWorkspace workspace;
+    private JAMSWorkspace workspace;
     private JSplitPane mainSplitPane;
 
     public RegionalizerFrame() {
@@ -164,12 +164,12 @@ public class RegionalizerFrame extends JFrame {
 
         try {
             String[] libs = JAMSTools.toArray(Regionalizer.getProperties().getProperty("libs", ""), ";");
-            workspace = new VirtualWorkspace(workspaceFile, Regionalizer.getRuntime(), true);
+            workspace = new JAMSWorkspace(workspaceFile, Regionalizer.getRuntime(), true);
             workspace.setLibs(libs);
             setTitle(Regionalizer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
             Regionalizer.getDisplayManager().getTreePanel().update(workspace);
             this.updateMainPanel(new JPanel());
-        } catch (VirtualWorkspace.InvalidWorkspaceException iwe) {
+        } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
             Regionalizer.getRuntime().sendHalt(iwe.getMessage());
         }
 
@@ -199,7 +199,7 @@ public class RegionalizerFrame extends JFrame {
     /**
      * @return the workspace
      */
-    public VirtualWorkspace getWorkspace() {
+    public JAMSWorkspace getWorkspace() {
         return workspace;
     }
 

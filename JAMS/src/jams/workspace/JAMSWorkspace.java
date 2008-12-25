@@ -1,5 +1,5 @@
 /*
- * VirtualWorkspace.java
+ * JAMSWorkspace.java
  * Created on 23. Januar 2008, 15:42
  *
  * This file is part of JAMS
@@ -31,8 +31,6 @@ import jams.workspace.stores.TableDataStore;
 import jams.workspace.stores.TSDataStore;
 import jams.workspace.stores.InputDataStore;
 import java.util.HashMap;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 import java.util.StringTokenizer;
 import jams.JAMS;
@@ -54,27 +52,42 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Properties;
 
-public class VirtualWorkspace implements Serializable{
+public class JAMSWorkspace implements Serializable {
 
-    public static final String DUMP_MARKER = "#JAMSdatadump";
+    /**
+     * Comment string used to mark dump files of input datastores
+     */
+    public static final String DUMP_MARKER = "#JAMSdatadump", OUTPUT_FILE_ENDING = ".dat" ;
+
     private static final String CONFIG_FILE_NAME = "config.txt",  CONFIG_FILE_COMMENT = "JAMS workspace configuration",  CONTEXT_ATTRIBUTE_NAME = "context";
+
     private static final String INPUT_DIR_NAME = "input",  OUTPUT_DIR_NAME = "output",  TEMP_DIR_NAME = "tmp",  DUMP_DIR_NAME = "dump",  LOCAL_INDIR_NAME = "local";
+
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
+
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
+
     private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
+
     private JAMSRuntime runtime;
+
     private transient ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+
     private transient File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory,  localInputDirectory,  localDumpDirectory,  tmpDirectory;
+
     private Properties properties = new Properties();
+
     private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
 
-    public VirtualWorkspace(File directory, JAMSRuntime runtime) throws InvalidWorkspaceException {
+    public JAMSWorkspace(File directory, JAMSRuntime runtime) throws InvalidWorkspaceException {
         this(directory, runtime, false);
     }
 
-    public VirtualWorkspace(File directory, JAMSRuntime runtime, boolean readonly) throws InvalidWorkspaceException {
+    public JAMSWorkspace(File directory, JAMSRuntime runtime, boolean readonly) throws InvalidWorkspaceException {
         this.runtime = runtime;
         if (runtime.getClassLoader() != null) {
             this.classLoader = runtime.getClassLoader();
@@ -87,6 +100,10 @@ public class VirtualWorkspace implements Serializable{
 
     }
 
+    /**
+     * Loads the workspace config from the config file in the root of the
+     * workspace directory
+     */
     public void loadConfig() {
         try {
 
@@ -107,6 +124,10 @@ public class VirtualWorkspace implements Serializable{
         }
     }
 
+    /**
+     * Saves the workspace config in the config file in the root of the
+     * workspace directory
+     */
     public void saveConfig() {
         try {
             File file = new File(directory.getPath() + File.separator + CONFIG_FILE_NAME);
@@ -117,6 +138,12 @@ public class VirtualWorkspace implements Serializable{
         }
     }
 
+    /**
+     * Checks if this workspace is valid
+     * @param readonly If readonly is false, the workspace can be fixed (e.g.
+     * missing directories will be created), otherwise not
+     * @throws jams.workspace.JAMSWorkspace.InvalidWorkspaceException
+     */
     public void checkValidity(boolean readonly) throws InvalidWorkspaceException {
 
         if (!directory.isDirectory()) {
@@ -141,7 +168,7 @@ public class VirtualWorkspace implements Serializable{
             for (File dir : allDirs) {
                 if (!dir.exists()) {
                     throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
-                            directory.toString() + JAMS.resources.getString("_does_not_contain_needed_directory_") + 
+                            directory.toString() + JAMS.resources.getString("_does_not_contain_needed_directory_") +
                             dir.toString() + JAMS.resources.getString("_)"));
                 }
             }
@@ -197,9 +224,6 @@ public class VirtualWorkspace implements Serializable{
         return doc.getDocumentElement().getAttribute(CONTEXT_ATTRIBUTE_NAME);
     }
 
-    public void reload() {
-    }
-
     /**
      * Creates an individual class loader
      * @param libs Array of libs that the new classloader will be based on
@@ -208,26 +232,51 @@ public class VirtualWorkspace implements Serializable{
         this.classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
     }
 
+    /**
+     *
+     * @return The classloader that this workspace uses
+     */
     public ClassLoader getClassLoader() {
         return this.classLoader;
     }
 
+    /**
+     *
+     * @return The JAMSRuntime object that this workspace uses
+     */
     public JAMSRuntime getRuntime() {
         return runtime;
     }
 
+    /**
+     *
+     * @return A set of the names of all input datastores
+     */
     public Set<String> getInputDataStoreIDs() {
         return this.inputDataStores.keySet();
     }
 
+    /**
+     *
+     * @return A set of the names of all output datastores
+     */
     public Set<String> getOutputDataStoreIDs() {
         return this.outputDataStores.keySet();
     }
 
+    /**
+     * Removes a datastore from the list of datastores
+     * @param store The datastore to be removed
+     */
     public void removeDataStore(InputDataStore store) {
         inputDataStores.remove(store);
     }
 
+    /**
+     *
+     * @param dsTitle The name of the datastore to be returned
+     * @return An input datastore named by dsTitle
+     */
     public InputDataStore getInputDataStore(String dsTitle) {
 
         Document doc = inputDataStores.get(dsTitle);
@@ -261,6 +310,11 @@ public class VirtualWorkspace implements Serializable{
         return store;
     }
 
+    /**
+     *
+     * @param contextName The instance name of a context component
+     * @return All output datastores defined for the given context
+     */
     public OutputDataStore[] getOutputDataStores(String contextName) {
 
         ArrayList<String> stores = contextStores.get(contextName);
@@ -282,6 +336,9 @@ public class VirtualWorkspace implements Serializable{
         return result;
     }
 
+    /**
+     * Closes the workspace, i.e. closes all datastores
+     */
     public void close() {
         for (DataStore store : currentStores) {
             try {
@@ -292,18 +349,36 @@ public class VirtualWorkspace implements Serializable{
         }
     }
 
+    /**
+     *
+     * @return The workspace title
+     */
     public String getTitle() {
         return properties.getProperty("title");
     }
 
+    /**
+     * Sets the workspace title
+     * @param title The title
+     */
     public void setTitle(String title) {
         properties.setProperty("title", title);
     }
 
+    /**
+     *
+     * @return If the data output directory will be overwritten or not
+     */
     public boolean isPersistent() {
         return Boolean.parseBoolean(properties.getProperty("persistent"));
     }
 
+    /**
+     * Defines if the data output directory is overwritten or not
+     * @param inc If inc is true, a new data output directory will be created
+     * for model output, otherwise output will be directed to standard data
+     * output directory ("current")
+     */
     public void setPersistent(boolean inc) {
         properties.setProperty("persistent", Boolean.toString(inc));
     }
@@ -362,11 +437,23 @@ public class VirtualWorkspace implements Serializable{
         }
     }
 
+    /**
+     * Creates a string dump of an input datastore
+     * @param dsTitle The name of the datastore to be dumped
+     * @return The string representation of the datastore
+     * @throws java.io.IOException
+     */
     public String dataStoreToString(String dsTitle) throws IOException {
         InputDataStore store = this.getInputDataStore(dsTitle);
         return dataStoreToString(store);
     }
 
+    /**
+     * Creates a string dump of an input datastore
+     * @param store The datastore to be dumped
+     * @return The string representation of the datastore
+     * @throws java.io.IOException
+     */
     public String dataStoreToString(InputDataStore store) throws IOException {
         if (store == null) {
             return null;
@@ -381,6 +468,11 @@ public class VirtualWorkspace implements Serializable{
         }
     }
 
+    /**
+     * Creates a file dump of an input datastore
+     * @param dsTitle The name of the datastore to be dumped
+     * @throws java.io.IOException
+     */
     public void inputDataStoreToFile(String dsTitle) throws IOException {
         InputDataStore store = this.getInputDataStore(dsTitle);
 
@@ -398,36 +490,100 @@ public class VirtualWorkspace implements Serializable{
         store.close();
     }
 
+    /**
+     * Creates file dumps of all input datastores
+     * @throws java.io.IOException
+     */
     public void inputDataStoreToFile() throws IOException {
         for (String dsTitle : this.getInputDataStoreIDs()) {
             inputDataStoreToFile(dsTitle);
         }
     }
 
+    /**
+     *
+     * @return The directory of the workspace
+     */
     public File getDirectory() {
         return directory;
     }
 
+    /**
+     *
+     * @return The input directory, i.e. the directory where the input
+     * datastores are defined
+     */
     public File getInputDirectory() {
         return inputDirectory;
     }
 
-    public File getOutputDirectory(boolean increment) {
-        return outputDirectory;
-    }
-
+    /**
+     *
+     * @return The current data output directory
+     */
     public File getOutputDataDirectory() {
         return outputDataDirectory;
     }
 
+    /**
+     * 
+     * @return All existing data output directories
+     */
+    public File[] getOutputDataDirectories() {
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File pathname) {
+                if (pathname.isDirectory() && !pathname.getName().endsWith(".svn")) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        return outputDirectory.listFiles(filter);
+    }
+
+    /**
+     *
+     * @param outputDataDirectory An output data directory
+     * @return All existing data files from a given output data directory
+     */
+    public File[] getOutputDataFiles(File outputDataDirectory) {
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File pathname) {
+                if (pathname.isFile() && pathname.getName().endsWith(OUTPUT_FILE_ENDING)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        return outputDataDirectory.listFiles(filter);
+    }
+
+    /**
+     *
+     * @return The directory where local input files are stored
+     */
     public File getLocalInputDirectory() {
         return localInputDirectory;
     }
 
+    /**
+     *
+     * @return The directory where input datastore dump files are stored
+     */
     public File getLocalDumpDirectory() {
         return localDumpDirectory;
     }
 
+    /**
+     *
+     * @return The temp directory
+     */
     public File getTempDirectory() {
         return tmpDirectory;
     }
@@ -463,14 +619,14 @@ public class VirtualWorkspace implements Serializable{
         String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
 
 
-        VirtualWorkspace ws;
+        JAMSWorkspace ws;
         try {
-            ws = new VirtualWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime, true);
+            ws = new JAMSWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime, true);
         } catch (InvalidWorkspaceException iwe) {
             System.out.println(iwe.getMessage());
             return;
         }
-        //VirtualWorkspace ws = new VirtualWorkspace(new File("D:/jamsapplication/ws_test"), runtime);
+        //JAMSWorkspace ws = new JAMSWorkspace(new File("D:/jamsapplication/ws_test"), runtime);
         ws.setLibs(libs);
 
         //System.out.println(ws.dataStoreToString("tmin"));

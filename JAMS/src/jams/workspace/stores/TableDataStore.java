@@ -63,7 +63,7 @@ public class TableDataStore extends StandardInputDataStore {
      * Creates a new TableDataStore object
      * @param ws The workspace that the datastore belongs to
      */
-    public TableDataStore(VirtualWorkspace ws) {
+    public TableDataStore(JAMSWorkspace ws) {
         super(ws);
     }
     
@@ -74,7 +74,7 @@ public class TableDataStore extends StandardInputDataStore {
      * @param doc A XML document that describes this datastore
      * @throws java.lang.ClassNotFoundException
      */
-    public TableDataStore(VirtualWorkspace ws, String id, Document doc) throws ClassNotFoundException {
+    public TableDataStore(JAMSWorkspace ws, String id, Document doc) throws ClassNotFoundException {
         super(ws, id, doc);
 
         if (ws.getRuntime().getState() != JAMSRuntime.STATE_RUN) {
