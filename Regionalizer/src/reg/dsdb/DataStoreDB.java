@@ -51,6 +51,10 @@ public class DataStoreDB {
 
     private HashMap<String, String> typeMap = new HashMap<String, String>();
 
+    private BufferedReader reader;
+
+    private Statement stmt;
+
     public DataStoreDB(String fileName) {
         this.fileName = fileName;
 
@@ -62,6 +66,7 @@ public class DataStoreDB {
         try {
             initDS();
             initDB();
+            fillDB();
         } catch (IOException ex) {
             Logger.getLogger(DataStoreDB.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -84,7 +89,7 @@ public class DataStoreDB {
         System.out.println("jdbc:h2:" + dbName);
 
         // get a statement object
-        Statement stmt = conn.createStatement();
+        stmt = conn.createStatement();
 
         // remove data table if exists
         stmt.execute("DROP TABLE IF EXISTS data");
@@ -126,7 +131,7 @@ public class DataStoreDB {
     private void initDS() throws IOException {
         String row;
         StringTokenizer tok;
-        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        reader = new BufferedReader(new FileReader(fileName));
 
         // @context row
         row = reader.readLine();
@@ -164,13 +169,62 @@ public class DataStoreDB {
         while (attributeTokenizer.hasMoreTokens() && typeTokenizer.hasMoreTokens()) {
             attributes.add(new AttributeData(typeTokenizer.nextToken(), attributeTokenizer.nextToken()));
         }
+    }
 
+    private void fillDB() throws IOException, SQLException {
+        String row;
 
+        row = reader.readLine();
+
+        boolean result = fillBlock();
+        while (result == true) {
+            result = fillBlock();
+        }
+    }
+
+    private boolean fillBlock() throws IOException, SQLException {
+        String row;
+        String queryPrefix = "INSERT INTO data VALUES (";
+
+        // read the ancestor's data
+        for (int i = contexts.size() - 1; i > 0; i--) {
+            ContextData cd = contexts.get(i);
+            row = reader.readLine();
+            if (row == null) {
+                return false;
+            }
+            StringTokenizer tok = new StringTokenizer(row, "\t");
+            tok.nextToken();
+            String value = tok.nextToken();
+            if (cd.type.endsWith("TemporalContext")) {
+                value += ":00";
+            }
+            queryPrefix += "'" + value + "',";
+        }
+
+        row = reader.readLine();
+        while (!(row = reader.readLine()).equals("@end")) {
+
+            String q = queryPrefix;
+
+            StringTokenizer tok = new StringTokenizer(row, "\t");
+            while (tok.hasMoreTokens()) {
+                q += tok.nextToken() + ",";
+            }
+
+            q = q.substring(0, q.length() - 1);
+            q += ")";
+
+            // insert data into table
+            stmt.execute(q);
+
+            //System.out.println(q);
+        }
+        return true;
     }
 
     public static void main(String[] args) {
-        DataStoreDB dsdb = new DataStoreDB("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_1.dat");
-
+        DataStoreDB dsdb = new DataStoreDB("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat");
     }
 
     private class ContextData {
