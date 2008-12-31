@@ -1,5 +1,5 @@
 /*
- * DataStoreDB.java
+ * H2DataStore.java
  * Created on 29. Dezember 2008, 19:05
  *
  * This file is part of JAMS
@@ -23,6 +23,8 @@
 package reg.dsdb;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
@@ -39,7 +41,9 @@ import java.util.logging.Logger;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class DataStoreDB {
+public class H2DataStore {
+
+    public static final String DB_USER = "jamsuser",  DB_PASSWORD = "";
 
     private String fileName;
 
@@ -55,9 +59,25 @@ public class DataStoreDB {
 
     private Statement stmt;
 
-    public DataStoreDB(String fileName) {
+    private String jdbcURL;
+
+    private Connection conn;
+
+    public H2DataStore(String fileName) {
         this.fileName = fileName;
 
+        // get the db file name
+        jdbcURL = "jdbc:h2:" + fileName.substring(0, fileName.lastIndexOf("."));
+
+        try {
+            // load the driver
+            Class.forName("org.h2.Driver");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(H2DataStore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void createDB() {
         typeMap.put("JAMSLong", "INT8");
         typeMap.put("JAMSDouble", "FLOAT8");
         typeMap.put("JAMSString", "VARCHAR(255)");
@@ -68,25 +88,66 @@ public class DataStoreDB {
             initDB();
             fillDB();
         } catch (IOException ex) {
-            Logger.getLogger(DataStoreDB.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(H2DataStore.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DataStoreDB.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(H2DataStore.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(DataStoreDB.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(H2DataStore.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    public void removeDB() throws SQLException {
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File pathname) {
+                String prefix = new File(fileName.substring(0, fileName.lastIndexOf("."))).getPath();
+                if (pathname.getPath().endsWith(".db") && pathname.getPath().startsWith(prefix)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
+        this.close();
+        File parent = new File(fileName).getParentFile();
+        File[] h2Files = parent.listFiles(filter);
+
+        for (File h2File : h2Files) {
+            h2File.delete();
+        }
+    }
+
+    public void close() throws SQLException {
+        if ((conn != null) && !conn.isClosed()) {
+            conn.close();
+        }
+    }
+
+    public Connection getH2Connection() throws SQLException {
+        if (conn != null) {
+            return conn;
+        }
+
+        String prefix = fileName.substring(0, fileName.lastIndexOf("."));
+        File dataFile = new File(prefix + ".data.db");
+        File indexFile = new File(prefix + ".index.db");
+
+        if (dataFile.exists() && indexFile.exists()) {
+            return DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
+        } else {
+            return null;
+        }
+    }
+
+//    public boolean existsH2DB() {
+//        conn = DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
+//    }
     private void initDB() throws ClassNotFoundException, SQLException {
 
-        // load the driver
-        Class.forName("org.h2.Driver");
-
-        // get the db file name
-        String dbName = fileName.substring(0, fileName.lastIndexOf("."));
-
         // open / create the db
-        Connection conn = DriverManager.getConnection("jdbc:h2:" + dbName, "jamsuser", "");
-        System.out.println("jdbc:h2:" + dbName);
+        conn = DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
 
         // get a statement object
         stmt = conn.createStatement();
@@ -112,7 +173,6 @@ public class DataStoreDB {
 
         // create table
         stmt.execute(q);
-        System.out.println(q);
 
         // build index query
         q = "CREATE INDEX dataindex ON data (";
@@ -125,7 +185,6 @@ public class DataStoreDB {
 
         // create indexes
         stmt.execute(q);
-        System.out.println(q);
     }
 
     private void initDS() throws IOException {
@@ -180,6 +239,7 @@ public class DataStoreDB {
         while (result == true) {
             result = fillBlock();
         }
+
     }
 
     private boolean fillBlock() throws IOException, SQLException {
@@ -218,13 +278,28 @@ public class DataStoreDB {
             // insert data into table
             stmt.execute(q);
 
-            //System.out.println(q);
+        //System.out.println(q);
         }
         return true;
     }
 
     public static void main(String[] args) {
-        DataStoreDB dsdb = new DataStoreDB("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat");
+        H2DataStore dsdb = new H2DataStore("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_1.dat");
+        //dsdb.createDB();
+        //System.out.println(dsdb.getJdbcURL());
+        try {
+            //System.out.println(dsdb.getH2Connection());
+            dsdb.removeDB();
+        } catch (SQLException ex) {
+            Logger.getLogger(H2DataStore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * @return the jdbcURL
+     */
+    public String getJdbcURL() {
+        return jdbcURL;
     }
 
     private class ContextData {
