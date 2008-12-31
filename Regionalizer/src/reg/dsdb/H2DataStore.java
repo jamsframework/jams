@@ -130,20 +130,24 @@ public class H2DataStore {
             return conn;
         }
 
-        String prefix = fileName.substring(0, fileName.lastIndexOf("."));
-        File dataFile = new File(prefix + ".data.db");
-        File indexFile = new File(prefix + ".index.db");
-
-        if (dataFile.exists() && indexFile.exists()) {
+        if (existsH2DB()) {
             return DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
         } else {
             return null;
         }
     }
 
-//    public boolean existsH2DB() {
-//        conn = DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
-//    }
+    public boolean existsH2DB() {
+        String prefix = fileName.substring(0, fileName.lastIndexOf("."));
+        File dataFile = new File(prefix + ".data.db");
+        File indexFile = new File(prefix + ".index.db");
+        if (dataFile.exists() && indexFile.exists()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private void initDB() throws ClassNotFoundException, SQLException {
 
         // open / create the db
@@ -288,7 +292,8 @@ public class H2DataStore {
         //dsdb.createDB();
         //System.out.println(dsdb.getJdbcURL());
         try {
-            //System.out.println(dsdb.getH2Connection());
+            System.out.println(dsdb.existsH2DB());
+            System.out.println(dsdb.getH2Connection());
             dsdb.removeDB();
         } catch (SQLException ex) {
             Logger.getLogger(H2DataStore.class.getName()).log(Level.SEVERE, null, ex);
