@@ -164,12 +164,12 @@ public class H2DataStore {
 
         for (int i = contexts.size() - 1; i >= 0; i--) {
             ContextData cd = contexts.get(i);
-            q += cd.name + "ID " + typeMap.get(cd.idType) + ",";
+            q += cd.getName() + "ID " + typeMap.get(cd.getIdType()) + ",";
         }
 
         for (int i = 1; i < attributes.size(); i++) {
             AttributeData attribute = attributes.get(i);
-            q += attribute.name + " " + typeMap.get(attribute.type) + ",";
+            q += attribute.getName() + " " + typeMap.get(attribute.getType()) + ",";
         }
         q = q.substring(0, q.length() - 1);
 
@@ -182,7 +182,7 @@ public class H2DataStore {
         q = "CREATE INDEX dataindex ON data (";
         for (int i = contexts.size() - 1; i >= 0; i--) {
             ContextData cd = contexts.get(i);
-            q += cd.name + "ID,";
+            q += cd.getName() + "ID,";
         }
         q = q.substring(0, q.length() - 1);
         q += ")";
@@ -260,7 +260,7 @@ public class H2DataStore {
             StringTokenizer tok = new StringTokenizer(row, "\t");
             tok.nextToken();
             String value = tok.nextToken();
-            if (cd.type.endsWith("TemporalContext")) {
+            if (cd.getType().endsWith("TemporalContext")) {
                 value += ":00";
             }
             queryPrefix += "'" + value + "',";
@@ -281,8 +281,6 @@ public class H2DataStore {
 
             // insert data into table
             stmt.execute(q);
-
-        //System.out.println(q);
         }
         return true;
     }
@@ -307,11 +305,33 @@ public class H2DataStore {
         return jdbcURL;
     }
 
-    private class ContextData {
+    /**
+     * @return the contexts
+     */
+    public ArrayList<ContextData> getContexts() {
+        return contexts;
+    }
 
-        String type, name, idType;
+    /**
+     * @return the filters
+     */
+    public ArrayList<FilterData> getFilters() {
+        return filters;
+    }
 
-        int size;
+    /**
+     * @return the attributes
+     */
+    public ArrayList<AttributeData> getAttributes() {
+        return attributes;
+    }
+
+    public class ContextData {
+
+        private String type;
+        private String name;
+        private String idType;
+        private int size;
 
         public ContextData(String type, String name, String size, String idType) {
             this.type = type;
@@ -326,25 +346,83 @@ public class H2DataStore {
                 }
             }
         }
+
+        /**
+         * @return the type
+         */
+        public String getType() {
+            return type;
+        }
+
+        /**
+         * @return the name
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * @return the idType
+         */
+        public String getIdType() {
+            return idType;
+        }
+
+        /**
+         * @return the size
+         */
+        public int getSize() {
+            return size;
+        }
     }
 
-    private class FilterData {
+    public class FilterData {
 
-        String regex, contextName;
+        private String regex;
+        private String contextName;
 
         public FilterData(String regex, String contextName) {
             this.regex = regex;
             this.contextName = contextName;
         }
+
+        /**
+         * @return the regex
+         */
+        public String getRegex() {
+            return regex;
+        }
+
+        /**
+         * @return the contextName
+         */
+        public String getContextName() {
+            return contextName;
+        }
     }
 
-    private class AttributeData {
-
-        String type, name;
+    public class AttributeData {
+        
+        private String type;
+        private String name;
 
         public AttributeData(String type, String name) {
             this.type = type;
             this.name = name;
+        }
+
+        /**
+         * @return the type
+         */
+        public String getType() {
+            return type;
+        }
+
+        /**
+         * @return the name
+         */
+        public String getName() {
+            return name;
         }
     }
 }
