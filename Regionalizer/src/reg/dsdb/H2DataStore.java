@@ -66,15 +66,15 @@ public class H2DataStore {
     public H2DataStore(String fileName) {
         this.fileName = fileName;
 
-        // get the db file name
-        jdbcURL = "jdbc:h2:" + fileName.substring(0, fileName.lastIndexOf("."));
-
         try {
-            // load the driver
-            Class.forName("org.h2.Driver");
-        } catch (ClassNotFoundException ex) {
+            initDS();
+        } catch (IOException ex) {
             Logger.getLogger(H2DataStore.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        // get the db file name
+        jdbcURL = "jdbc:h2:" + fileName.substring(0, fileName.lastIndexOf(".")) + ";LOG=0;OPTIMIZE_REUSE_RESULTS=1";
+
     }
 
     public void createDB() {
@@ -84,7 +84,8 @@ public class H2DataStore {
         typeMap.put("JAMSCalendar", "TIMESTAMP");
 
         try {
-            initDS();
+            removeDB();
+            Class.forName("org.h2.Driver");
             initDB();
             fillDB();
         } catch (IOException ex) {
@@ -101,7 +102,7 @@ public class H2DataStore {
 
             @Override
             public boolean accept(File pathname) {
-                String prefix = new File(fileName.substring(0, fileName.lastIndexOf("."))).getPath();
+                String prefix = new File(getFileName().substring(0, getFileName().lastIndexOf("."))).getPath();
                 if (pathname.getPath().endsWith(".db") && pathname.getPath().startsWith(prefix)) {
                     return true;
                 } else {
@@ -125,9 +126,13 @@ public class H2DataStore {
         }
     }
 
-    public Connection getH2Connection() throws SQLException {
+    public Connection getH2Connection(boolean checkForDB) throws SQLException {
         if (conn != null) {
             return conn;
+        }
+
+        if (!checkForDB) {
+            return DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
         }
 
         if (existsH2DB()) {
@@ -148,13 +153,19 @@ public class H2DataStore {
         }
     }
 
-    private void initDB() throws ClassNotFoundException, SQLException {
+    private void initDB() throws SQLException {
 
         // open / create the db
-        conn = DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
+        conn = getH2Connection(false);
 
         // get a statement object
         stmt = conn.createStatement();
+
+        // some options
+        //stmt.execute("SET LOG 0");
+        //stmt.execute("SET WRITE_DELAY 10000");
+        //stmt.execute("SET MAX_OPERATION_MEMORY 0");
+        //stmt.execute("SET EXCLUSIVE FALSE");
 
         // remove data table if exists
         stmt.execute("DROP TABLE IF EXISTS data");
@@ -167,7 +178,7 @@ public class H2DataStore {
             q += cd.getName() + "ID " + typeMap.get(cd.getIdType()) + ",";
         }
 
-        for (int i = 1; i < attributes.size(); i++) {
+        for (int i = 0; i < attributes.size(); i++) {
             AttributeData attribute = attributes.get(i);
             q += attribute.getName() + " " + typeMap.get(attribute.getType()) + ",";
         }
@@ -178,17 +189,13 @@ public class H2DataStore {
         // create table
         stmt.execute(q);
 
-        // build index query
-        q = "CREATE INDEX dataindex ON data (";
+        // create indexes
         for (int i = contexts.size() - 1; i >= 0; i--) {
             ContextData cd = contexts.get(i);
-            q += cd.getName() + "ID,";
+            q = "CREATE INDEX " + cd.getName() + "_index ON data (" + cd.getName() + "ID)";
+            stmt.execute(q);
+            //System.out.println(q);
         }
-        q = q.substring(0, q.length() - 1);
-        q += ")";
-
-        // create indexes
-        stmt.execute(q);
     }
 
     private void initDS() throws IOException {
@@ -228,6 +235,10 @@ public class H2DataStore {
         row = reader.readLine();
         row = reader.readLine();
         StringTokenizer typeTokenizer = new StringTokenizer(row);
+
+        // throw away the first, ID token
+        typeTokenizer.nextToken();
+        attributeTokenizer.nextToken();
 
         while (attributeTokenizer.hasMoreTokens() && typeTokenizer.hasMoreTokens()) {
             attributes.add(new AttributeData(typeTokenizer.nextToken(), attributeTokenizer.nextToken()));
@@ -286,13 +297,13 @@ public class H2DataStore {
     }
 
     public static void main(String[] args) {
-        H2DataStore dsdb = new H2DataStore("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_1.dat");
-        //dsdb.createDB();
+        H2DataStore dsdb = new H2DataStore("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat");
+        dsdb.createDB();
         //System.out.println(dsdb.getJdbcURL());
         try {
             System.out.println(dsdb.existsH2DB());
-            System.out.println(dsdb.getH2Connection());
-            dsdb.removeDB();
+            System.out.println(dsdb.getH2Connection(true));
+        //dsdb.removeDB();
         } catch (SQLException ex) {
             Logger.getLogger(H2DataStore.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -326,11 +337,21 @@ public class H2DataStore {
         return attributes;
     }
 
+    /**
+     * @return the fileName
+     */
+    public String getFileName() {
+        return fileName;
+    }
+
     public class ContextData {
 
         private String type;
+
         private String name;
+
         private String idType;
+
         private int size;
 
         public ContextData(String type, String name, String size, String idType) {
@@ -379,6 +400,7 @@ public class H2DataStore {
     public class FilterData {
 
         private String regex;
+
         private String contextName;
 
         public FilterData(String regex, String contextName) {
@@ -402,13 +424,17 @@ public class H2DataStore {
     }
 
     public class AttributeData {
-        
+
         private String type;
+
         private String name;
+
+        private boolean selected;
 
         public AttributeData(String type, String name) {
             this.type = type;
             this.name = name;
+            this.selected = true;
         }
 
         /**
@@ -423,6 +449,20 @@ public class H2DataStore {
          */
         public String getName() {
             return name;
+        }
+
+        /**
+         * @return the active
+         */
+        public boolean isSelected() {
+            return selected;
+        }
+
+        /**
+         * @param active the active to set
+         */
+        public void setSelected(boolean active) {
+            this.selected = active;
         }
     }
 }
