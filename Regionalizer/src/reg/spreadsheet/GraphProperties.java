@@ -154,7 +154,8 @@ public class GraphProperties {
     Color series_outline_paint;
     Color series_fill_paint;
     
-    ColorLabel colorlabel;
+    JLabel colorlabel;
+    JLabel scolorlabel;
     
     boolean outlineVisible;
     boolean linesVisible;
@@ -389,7 +390,15 @@ public class GraphProperties {
         
         cr_dlg = new CustomizeRendererDlg();
         
-        colorlabel = new ColorLabel(cr_dlg.shape_fill, cr_dlg.outline_color, getSeriesShape());
+        //linecolor label
+        colorlabel = new JLabel("      ");
+        colorlabel.setOpaque(true);
+        colorlabel.setBackground(getSeriesPaint());
+        //shapecolorlabel
+        scolorlabel = new JLabel("");
+        scolorlabel.setOpaque(false);
+        scolorlabel.setBackground(getSeriesPaint());
+
         //plotButton.addActionListener(okListener);
     }
     
@@ -433,6 +442,7 @@ public class GraphProperties {
             //System.out.println("x: "+cxyconf.sorted_Row[i].col[x_series_col]+" y: "+cxyconf.sorted_Row[i].col[selectedColumn]);
         }
         
+        cr_dlg.updateColors();
         //System.out.println("x_series_col: " + x_series_col);
         
       //}
@@ -464,7 +474,13 @@ public class GraphProperties {
         return index;
     }
  
-
+    public void setColorLabelColor(){
+        colorlabel.setBackground(getSeriesPaint());
+    }
+    
+    public void setSColorLabelColor(){
+        scolorlabel.setBackground(getSeriesFillPaint());
+    }
     
     private void setPossibleTimeIntervals(){
         int s = timechoice_START.getSelectedIndex();
@@ -741,8 +757,12 @@ public class GraphProperties {
         return this.customizeButton;
     }
     
-    public ColorLabel getColorLabel(){
+    public JLabel getColorLabel(){
         return this.colorlabel;
+    }
+    
+    public JLabel getSColorLabel(){
+        return this.scolorlabel;
     }
     
     //Methods for renderer configuration
@@ -1555,7 +1575,7 @@ public class GraphProperties {
                 setShapesVisible(shapes_vis_box.isSelected());
                 result = true;
                 
-                colorlabel.setSymbol(getSeriesShape(), shape_fill, outline_color);
+                
                 
                 
                 //ACHTUNG!!! Typen-Abh�ngig! XY oder TS?
@@ -1565,6 +1585,8 @@ public class GraphProperties {
                 setVisible(false);
                 
                 updateColors();
+                setColorLabelColor();
+                setSColorLabelColor();
             }
         };
         

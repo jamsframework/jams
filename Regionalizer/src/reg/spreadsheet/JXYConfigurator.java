@@ -11,7 +11,6 @@ package reg.spreadsheet;
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGEncodeParam;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Vector;
 import java.awt.event.*;
@@ -31,6 +30,12 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import jams.JAMSFileFilter;
+import jams.gui.LHelper;
+import jams.gui.WorkerDlg;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 /**
  *
@@ -59,6 +64,9 @@ public class JXYConfigurator extends JFrame {
     //private Vector<ActionListener> addAction = new Vector<ActionListener>();    
     private JFrame parent;
     private JFrame thisDlg;
+    
+    private JXYConfigurator thisJXY = this;
+    
     private JPanel frame;
     private JPanel mainpanel;
     private JPanel plotpanel;
@@ -79,7 +87,11 @@ public class JXYConfigurator extends JFrame {
     private JScrollPane optScPane;
     private JPanel savePanel;
     private String[] headers;
-    //Hi Res Box
+    
+    private JButton saveTempButton = new JButton("Save Template");
+    private JButton loadTempButton = new JButton("Load Template");
+    
+    
 //    private HiResDlg hiresDlg;
     private JLabel edTitle = new JLabel("Plot Title: ");
     private JLabel edLeft = new JLabel("Left axis title: ");
@@ -182,7 +194,7 @@ public class JXYConfigurator extends JFrame {
 //        }
 
 
-        setSize(680, 480);
+        setPreferredSize(new Dimension(1024, 768));
         //setMinimumSize(new Dimension(680,480));
         createPanel();
         //timePlot();
@@ -241,12 +253,18 @@ public class JXYConfigurator extends JFrame {
         dataLabel.setBackground(Color.DARK_GRAY);
         timeLabel.setBackground(Color.DARK_GRAY);
 
-        saveButton.addActionListener(saveImageAction);
+        
         savePanel = new JPanel();
-        //mainpanel = new JPanel();
-        setLayout(new BorderLayout());
-        //mainpanel.setBackground(Color.WHITE);
-
+        GridBagLayout sgbl = new GridBagLayout();
+        savePanel.setLayout(sgbl);
+        LHelper.addGBComponent(savePanel, sgbl, saveButton, 0, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(savePanel, sgbl, saveTempButton,   0, 1, 1, 1, 0, 0);   
+        LHelper.addGBComponent(savePanel, sgbl, loadTempButton,  0, 2, 1, 1, 0, 0);
+        
+        saveButton.addActionListener(saveImageAction);
+        saveTempButton.addActionListener(saveTempListener);
+        loadTempButton.addActionListener(loadTempListener);
+        
         plotpanel = new JPanel();
         plotpanel.setLayout(new BorderLayout());
 
@@ -329,14 +347,18 @@ public class JXYConfigurator extends JFrame {
         optionpanel.add(edRightField);
         optionpanel.add(applyButton);
 
+        Runnable r = new Runnable(){
+        
         GraphProperties prop;
 
         String[] colors;
         int color_cnt;
 
+        public void run(){
+        
         for (int k = 0; k < graphCount; k++) {
 
-            prop = new GraphProperties(this);
+            prop = new GraphProperties(thisJXY);
             prop.setSelectedColumn(columns[k]);
             prop.setXSeries(columns[0]);
             prop.setSelectedRows(rows);
@@ -388,7 +410,7 @@ public class JXYConfigurator extends JFrame {
         }
 
         //initial data intervals
-        this.range = setDataIntervals();
+        range = setDataIntervals();
 
         //set data intervals
         for (int k = 0; k < propVector.size(); k++) {
@@ -397,15 +419,25 @@ public class JXYConfigurator extends JFrame {
 
             prop.setXIntervals(range);
             if (k == x_series_index) {
-                prop.setDataSTART(this.row_start);
-                prop.setDataEND(this.row_end);
+                prop.setDataSTART(row_start);
+                prop.setDataEND(row_end);
             }
 
 
             prop.applyXYProperties();
             addPropGroup(propVector.get(k));
+            
+            prop.setColorLabelColor();
 
         }
+        }
+        };
+        
+        WorkerDlg dlg = new WorkerDlg(this, "Preparing Data...");
+        dlg.setTask(r);
+        dlg.execute();
+        
+        ///////// runnable end ///////////////
 
         finishGroupUI();
         createOptionPanel();
@@ -421,6 +453,7 @@ public class JXYConfigurator extends JFrame {
         optPanel.add(optionpanel);
 
         graphScPane = new JScrollPane(graphPanel);
+        graphScPane.setPreferredSize(new Dimension(512,300));
         //graphScPane.setPreferredSize(new Dimension(200,150));
         graphScPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
@@ -1018,12 +1051,17 @@ public class JXYConfigurator extends JFrame {
 //    }    
     public void plotAllGraphs() {
         updatePropVector();
+        
+        Runnable r = new Runnable(){
+        
+        public void run(){    
+            
         int l = 0;
         int r = 0;
         int corr = 0;
 
-        int rLeft = this.rLeftBox.getSelectedIndex();
-        int rRight = this.rRightBox.getSelectedIndex();
+        int rLeft = rLeftBox.getSelectedIndex();
+        int rRight = rRightBox.getSelectedIndex();
 
         XYItemRenderer rendererLeft = new XYLineAndShapeRenderer();
         XYItemRenderer rendererRight = new XYLineAndShapeRenderer();
@@ -1246,7 +1284,10 @@ public class JXYConfigurator extends JFrame {
                         rendererRight = lsr_R;
                         break;
                 }
-
+                
+                    prop.setLegendName(prop.setLegend.getText());
+                    prop.setColorLabelColor();
+                    prop.applyXYProperties();
             }
         }
 
@@ -1270,6 +1311,16 @@ public class JXYConfigurator extends JFrame {
         }
 
         jxys.setTitle(edTitleField.getText());
+        }
+        };
+        
+        WorkerDlg dlg = new WorkerDlg(this, "Creating Plot...");
+        dlg.setTask(r);
+        dlg.execute();
+        
+        repaint();
+        ///////////Runnable end /////////////////////
+        
     }
 
     public void handleRenderer() {
@@ -1420,11 +1471,11 @@ public class JXYConfigurator extends JFrame {
         group10.addComponent(prop.getIsXAxisButton());
         group11.addComponent(space4);
 
-        group13.addComponent(prop.getRemButton());
+        group13.addComponent(prop.getColorLabel()).addComponent(prop.getRemButton());
         group14.addComponent(prop.getUpButton());
         group15.addComponent(prop.getDownButton());
 
-        vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING).addComponent(prop.getDataChoice()).addComponent(prop.getDataChoiceSTART()).addComponent(space5).addComponent(prop.getColorChoice()).addComponent(space5).addComponent(prop.getCustomizeButton()).addComponent(prop.getIsXAxisButton()));
+        vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING).addComponent(prop.getDataChoice()).addComponent(prop.getDataChoiceSTART()).addComponent(space5).addComponent(prop.getColorChoice()).addComponent(space5).addComponent(prop.getCustomizeButton()).addComponent(prop.getIsXAxisButton()).addComponent(prop.getColorLabel()));
         vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING).addComponent(lf).addComponent(prop.getDataChoiceEND()).addComponent(prop.getMaxButton()).addComponent(prop.getPosChoice()).addComponent(space3).addComponent(space4).addComponent(prop.getRemButton()).addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
         vGroup.addGroup(gLayout.createParallelGroup().addGap(20));
 
@@ -1477,20 +1528,297 @@ public class JXYConfigurator extends JFrame {
         this.parent = parent;
     }
 
-    /*
-    public void addGraph(){
-    for(int i=0; i<headers.length; i++){
+    private void saveTemplate(){
+        
+        Properties properties = new Properties();
+        int no_of_props = propVector.size();
+        
+        
+        String names = "";
+        String name;
+        String[] legendname;
+        String number = ""+no_of_props;
+        String stroke_type;
+        String stroke_color;
+        //String stroke_color_G;
+        //String stroke_color_B;
+        String lines_vis;
+        String shapes_vis;
+        String shape_type;
+        String size_type;
+        String shape_color;
+        //String shape_color_G;
+        //String shape_color_B;
+        String outline_type;
+        String outline_color;
+        //String outline_color_G;
+        //String outline_color_B;
+        Color linecolor_load;
+        Color fillcolor_load;
+        Color outcolor_load;
+        
+        //Header Name
+            
+        
+        properties.setProperty("number", number);
+        
+        //Titles
+        properties.setProperty("title", edTitleField.getText());
+        properties.setProperty("axisLTitle", edLeftField.getText());
+        properties.setProperty("axisRTitle", edRightField.getText());
+        properties.setProperty("xAxisTitle", edXAxisField.getText());
+        //RENDERER
+        properties.setProperty("renderer_left", ""+rLeftBox.getSelectedIndex());
+        properties.setProperty("renderer_right", ""+rRightBox.getSelectedIndex());
+        properties.setProperty("inv_left", ""+invLeftBox.isSelected());
+        properties.setProperty("inv_right", ""+invRightBox.isSelected());
 
-    datapanels.get(i).add(datachoice.get(i));
-    datapanels.get(i).add(poschoice.get(i));
-    datapanels.get(i).add(typechoice.get(i));
-    datapanels.get(i).add(colorchoice.get(i));
+        //X-Row
+        properties.setProperty("x_series_index", ""+x_series_index);
+        
+        for(int i=0; i<no_of_props; i++ ){
+            
+            GraphProperties gprop = propVector.get(i);
+            
+            name = gprop.getName();
+            if(i==0) names = name;
+            else names = names + "," + name;
+            
+            
+            //Legend Name
+                properties.setProperty(name+".legendname", gprop.getLegendName());
+            //POSITION left/right
+                properties.setProperty(name + ".position", gprop.getPosition());
+            //STROKE
+                stroke_type = ""+ gprop.getStrokeType();
+                properties.setProperty(name + ".linestroke", stroke_type);
+            //STROKE COLOR
+                linecolor_load = gprop.getSeriesPaint();
+                stroke_color = "" + linecolor_load.getRed() + "," + linecolor_load.getGreen() + "," + linecolor_load.getBlue();
+            //stroke_color_R = "" + gprop.getSeriesPaint().getRed();
+                properties.setProperty(name + ".linecolor", stroke_color);
+            
+            //LINES VISIBLE
+                lines_vis = ""+gprop.getLinesVisible();
+                properties.setProperty(name + ".linesvisible", lines_vis);
+            //SHAPES VISIBLE
+                shapes_vis = ""+gprop.getShapesVisible();
+                properties.setProperty(name + ".shapesvisible", shapes_vis);
+            //SHAPE TYPE
+                shape_type = "" + gprop.getShapeType();
+                properties.setProperty(name + ".shapetype", shape_type);
+            //SHAPE SIZE
+                size_type = "" + gprop.getSizeType();
+                properties.setProperty(name + ".shapesize", size_type);
+            //SHAPE COLOR
+                fillcolor_load = gprop.getSeriesFillPaint();
+                shape_color = "" + fillcolor_load.getRed() + "," + fillcolor_load.getGreen() + "," + fillcolor_load.getBlue();
+                properties.setProperty(name + ".shapecolor", shape_color);
+//            
+            //OUTLINE STROKE
+                outline_type = "" + gprop.getOutlineType();
+                properties.setProperty(name + ".outlinestroke", outline_type);
+            //OUTLINE COLOR
+                outcolor_load = gprop.getSeriesOutlinePaint();
+                outline_color = "" + outcolor_load.getRed()+","+outcolor_load.getGreen()+","+outcolor_load.getBlue();
+                properties.setProperty(name + ".outlinecolor", outline_color);
+//            
+        }
+        properties.setProperty("names", names);
+        
+        //Save Parameter File
+        
+        try{
+            JFileChooser chooser = new JFileChooser();
+            int returnVal = chooser.showSaveDialog(thisDlg);
+            File file = chooser.getSelectedFile();
+            FileOutputStream fout = new FileOutputStream(file);
+            properties.store(fout, "");
+            
+            fout.close();
 
-    graphpanel.add(datapanels.get(i));
-
+        }catch(Exception fnfex){};   
     }
+    
+    private void loadTemplate() {
+
+        
+        //int no_of_props = propVector.size();
+
+        Properties properties = new Properties();
+        boolean load_prop = false;
+        
+        String names;
+        String name;
+        String stroke_color;
+        String shape_color;
+        String outline_color;
+        int no_of_props;
+        int returnVal=-1;
+
+
+        try {
+            JFileChooser chooser = new JFileChooser();
+            returnVal = chooser.showOpenDialog(thisDlg);
+            File file = chooser.getSelectedFile();
+            FileInputStream fin = new FileInputStream(file);
+            properties.load(fin);
+            fin.close();
+
+        } catch (Exception fnfexc) {
+            returnVal = -1;
+        }
+        
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            
+        
+        this.propVector = new Vector<GraphProperties>();
+        
+        names = properties.getProperty("names");
+        no_of_props = new Integer(properties.getProperty("number"));
+        
+        this.graphCount = no_of_props;
+        
+        StringTokenizer nameTokenizer = new StringTokenizer(names, ",");
+        
+        initGroupUI();
+        
+        x_series_index = new Integer(properties.getProperty("x_series_index"));
+        
+        for (int i = 0; i < no_of_props; i++) {
+            
+            load_prop = false;
+            GraphProperties gprop = new GraphProperties(this);
+            
+            if(i == x_series_index){ gprop.setIsXSeries(true);
+            gprop.getIsXAxisButton().setSelected(true);
+            }
+            else gprop.setIsXSeries(false);
+            
+            if (nameTokenizer.hasMoreTokens()) {
+
+                name = nameTokenizer.nextToken();
+                
+                
+                for (int k = 0; k < table.getColumnCount(); k++) {
+                    if (table.getColumnName(k).compareTo(name) == 0) { //stringcompare?
+                        
+                        gprop.setSelectedColumn(k);
+                        load_prop = true;
+                        break;
+                    }
+                }
+                
+                if(load_prop){
+                //Legend Name
+                    gprop.setLegendName(properties.getProperty(name+".legendname", "legend name"));
+                //POSITION left/right
+                    gprop.setPosition(properties.getProperty(name + ".position"));
+
+                //STROKE
+                    gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke","2")));
+                    gprop.setStrokeSlider(gprop.getStrokeType());
+
+                //STROKE COLOR
+                    stroke_color = properties.getProperty(name + ".linecolor","255,0,0");
+
+                    StringTokenizer colorTokenizer = new StringTokenizer(stroke_color, ",");
+
+                    gprop.setSeriesPaint(new Color(new Integer(colorTokenizer.nextToken()),
+                            new Integer(colorTokenizer.nextToken()),
+                            new Integer(colorTokenizer.nextToken())));
+
+                //LINES VISIBLE
+                    boolean lv = new Boolean(properties.getProperty(name + ".linesvisible"));
+                    gprop.setLinesVisible(lv);
+                    gprop.setLinesVisBox(lv);
+                //SHAPES VISIBLE
+                    boolean sv = new Boolean(properties.getProperty(name + ".shapesvisible"));
+                    gprop.setShapesVisible(sv);
+                    gprop.setShapesVisBox(sv);
+                
+                //SHAPE TYPE AND SIZE
+                    int stype = new Integer(properties.getProperty(name + ".shapetype","0"));
+                    int ssize = new Integer(properties.getProperty(name + ".shapesize"));
+                    gprop.setShape(stype,ssize);
+                    gprop.setShapeBox(stype);
+                    gprop.setShapeSlider(ssize);
+
+                //SHAPE COLOR
+                    shape_color = properties.getProperty(name + ".shapecolor","255,0,0");
+
+                    StringTokenizer shapeTokenizer = new StringTokenizer(shape_color, ",");
+
+                    gprop.setSeriesFillPaint(new Color(new Integer(shapeTokenizer.nextToken()),
+                            new Integer(shapeTokenizer.nextToken()),
+                            new Integer(shapeTokenizer.nextToken())));
+
+                //OUTLINE STROKE
+                    int os = new Integer(properties.getProperty(name + ".outlinestroke"));
+                    gprop.setOutlineStroke(os);
+                    gprop.setOutlineSlider(os);
+
+                //OUTLINE COLOR
+                    outline_color = properties.getProperty(name + ".outlinecolor","255,0,0");
+
+                    StringTokenizer outTokenizer = new StringTokenizer(outline_color, ",");
+
+                    gprop.setSeriesOutlinePaint(new Color(new Integer(outTokenizer.nextToken()),
+                            new Integer(outTokenizer.nextToken()),
+                            new Integer(outTokenizer.nextToken())));
+
+                gprop.applyXYProperties();
+                
+                    
+            
+            propVector.add(gprop);
+            addPropGroup(gprop);
+            }
+                  
+            
+            //break;
+                    
+        //}
+        //Titles
+            edTitleField.setText(properties.getProperty("title"));
+            edLeftField.setText(properties.getProperty("axisLTitle"));
+            edRightField.setText(properties.getProperty("axisRTitle"));
+            edXAxisField.setText(properties.getProperty("xAxisTitle"));
+         //RENDERER
+            rLeftBox.setSelectedIndex(new Integer(properties.getProperty("renderer_left")));
+            rRightBox.setSelectedIndex(new Integer(properties.getProperty("renderer_right")));
+            invLeftBox.setSelected(new Boolean(properties.getProperty("inv_left")));
+            invRightBox.setSelected(new Boolean(properties.getProperty("inv_right")));
+            
+            
+            
+            
+            
+            
+            } 
+        }        
+            
+        xChanged(propVector.get(x_series_index));
+        setMaxDataIntervals(propVector.get(x_series_index));
+        
+        
+        for(int c = 0; c< no_of_props; c++){
+            propVector.get(c).setXIntervals(this.range);
+        }
+        
+        finishGroupUI();
+        
+        jxys.setPropVector(propVector);
+//        jts.createPlot();
+//        handleRenderer();
+
+        plotAllGraphs();
+        }    
+    
     }
-     */
+    
+    
+    
     private void editProperties() {
         JDialog propDlg = new JDialog(parent, "Properties");
         int ct = headers.length;
@@ -1689,6 +2017,19 @@ public class JXYConfigurator extends JFrame {
 //
 //    }
     /****** EVENT HANDLING ******/
+    
+    ActionListener saveTempListener = new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+            saveTemplate();
+        }
+    };
+    
+    ActionListener loadTempListener = new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+            loadTemplate();
+        }
+    };
+    
     ActionListener titleListener = new ActionListener() {
 
         public void actionPerformed(ActionEvent te) {
@@ -1718,7 +2059,7 @@ public class JXYConfigurator extends JFrame {
                 prop.setXIntervals(range);
 //                prop.setDataSTART(row_start);
 //                prop.setDataEND(row_end);
-                prop.applyXYProperties();
+                //prop.applyXYProperties();
 
 
             }
@@ -1924,9 +2265,9 @@ public class JXYConfigurator extends JFrame {
 
         public AddGraphDlg() {
             super(thisDlg, "Add Graph", true);
-            URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
-            ImageIcon icon = new ImageIcon(url);
-            setIconImage(icon.getImage());
+//            URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
+//            ImageIcon icon = new ImageIcon(url);
+//            setIconImage(icon.getImage());
             Point parentloc = thisDlg.getLocation();
             setLocation(parentloc.x + 50, parentloc.y + 50);
             createPanel();

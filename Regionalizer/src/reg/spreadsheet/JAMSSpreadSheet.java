@@ -423,7 +423,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
     };
 
     private void openCTS() {
-        /* achtung: nur wenn time mitläuft!! */
+        /* achtung: nur wenn time mitlÃ¤uft!! */
         JTSConfigurator jts;
         jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this.table);
     //ctstabs.addGraph(table);
@@ -654,7 +654,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         JPanel headerpanel = new JPanel();
         headerpanel.setLayout(new GridLayout(1, 2));
         
-        dataplotButton.setEnabled(false);
+        //dataplotButton.setEnabled(false);
         
         scrollpane.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
         scrollpane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
