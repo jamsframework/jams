@@ -33,6 +33,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,6 +64,10 @@ public class H2DataStore {
     private String jdbcURL;
 
     private Connection conn;
+
+    private int overallSize;
+
+    private ImportProgressObservable importProgressObservable = new ImportProgressObservable();
 
     public H2DataStore(String fileName) {
         this.fileName = fileName;
@@ -155,20 +161,21 @@ public class H2DataStore {
 
     private void initDB() throws SQLException {
 
-        // open / create the db
+        // open/create the db
         conn = getH2Connection(false);
 
         // get a statement object
         stmt = conn.createStatement();
 
-        // some options
+        // set some options
         //stmt.execute("SET LOG 0");
         //stmt.execute("SET WRITE_DELAY 10000");
         //stmt.execute("SET MAX_OPERATION_MEMORY 0");
         //stmt.execute("SET EXCLUSIVE FALSE");
+        //stmt.execute("SET DEFAULT_TABLE_TYPE MEMORY");
 
         // remove data table if exists
-        stmt.execute("DROP TABLE IF EXISTS data");
+        //stmt.execute("DROP TABLE IF EXISTS data");
 
         // build create query
         String q = "CREATE TABLE data (";
@@ -194,7 +201,6 @@ public class H2DataStore {
             ContextData cd = contexts.get(i);
             q = "CREATE INDEX " + cd.getName() + "_index ON data (" + cd.getName() + "ID)";
             stmt.execute(q);
-            //System.out.println(q);
         }
     }
 
@@ -216,9 +222,12 @@ public class H2DataStore {
         row = reader.readLine();
         row = reader.readLine();
 
+        overallSize = 0;
         while (!row.equals("@filters")) {
             tok = new StringTokenizer(row);
-            contexts.add(new ContextData(tok.nextToken(), tok.nextToken(), tok.nextToken(), null));
+            ContextData cd = new ContextData(tok.nextToken(), tok.nextToken(), tok.nextToken(), null);
+            contexts.add(cd);
+            overallSize += cd.getSize();
             row = reader.readLine();
         }
 
@@ -246,15 +255,21 @@ public class H2DataStore {
     }
 
     private void fillDB() throws IOException, SQLException {
-        String row;
 
-        row = reader.readLine();
+        float counter = 0;
+        int percent = 0;
 
+        reader.readLine();
         boolean result = fillBlock();
+
         while (result == true) {
+            if ((counter / overallSize) * 100 >= percent) {
+                percent++;
+                importProgressObservable.setProgress(percent);
+            }
+            counter++;
             result = fillBlock();
         }
-
     }
 
     private boolean fillBlock() throws IOException, SQLException {
@@ -298,6 +313,12 @@ public class H2DataStore {
 
     public static void main(String[] args) {
         H2DataStore dsdb = new H2DataStore("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat");
+        dsdb.addImportProgressObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                System.out.println("Progress: " + arg);
+            }
+        });
         dsdb.createDB();
         //System.out.println(dsdb.getJdbcURL());
         try {
@@ -342,6 +363,10 @@ public class H2DataStore {
      */
     public String getFileName() {
         return fileName;
+    }
+
+    public void addImportProgressObserver(Observer o) {
+        importProgressObservable.addObserver(o);
     }
 
     public class ContextData {
@@ -464,5 +489,77 @@ public class H2DataStore {
         public void setSelected(boolean active) {
             this.selected = active;
         }
+    }
+
+    private class ImportProgressObservable extends Observable {
+
+        private int progress;
+
+        private void setProgress(int progress) {
+            this.progress = progress;
+            this.setChanged();
+            this.notifyObservers(progress);
+        }
+    }
+    /* 
+     * these methods are for testing purposes only
+     * they store all the data in some ArrayList and thus keep them
+     * in memory --> much faster but also mem consuming
+     */
+    private ArrayList<ArrayList<?>> allData = new ArrayList<ArrayList<?>>();
+
+    private void fillDB_() throws IOException, SQLException {
+        String row;
+
+        row = reader.readLine();
+
+        ArrayList<?> result = fillBlock_();
+        System.out.println(result.size());
+        while (result != null) {
+            allData.add(result);
+            result = fillBlock_();
+        }
+        System.out.println(allData.size());
+    }
+
+    private ArrayList<?> fillBlock_() throws IOException, SQLException {
+        String row;
+        String queryPrefix = "INSERT INTO data VALUES (";
+        ArrayList<Object> result = new ArrayList<Object>();
+
+        // read the ancestor's data
+        for (int i = contexts.size() - 1; i > 0; i--) {
+            ContextData cd = contexts.get(i);
+            row = reader.readLine();
+            if (row == null) {
+                return null;
+            }
+            StringTokenizer tok = new StringTokenizer(row, "\t");
+            tok.nextToken();
+            String value = tok.nextToken();
+            if (cd.getType().endsWith("TemporalContext")) {
+                value += ":00";
+            }
+            queryPrefix += "'" + value + "',";
+            result.add(value);
+        }
+
+        row = reader.readLine();
+        while (!(row = reader.readLine()).equals("@end")) {
+
+            String q = queryPrefix;
+
+            StringTokenizer tok = new StringTokenizer(row, "\t");
+            while (tok.hasMoreTokens()) {
+                result.add(new Float(tok.nextToken()));
+            }
+
+            q = q.substring(0, q.length() - 1);
+            q += ")";
+
+        // insert data into table
+        //stmt.execute(q);
+        }
+        return result;
     }
 }

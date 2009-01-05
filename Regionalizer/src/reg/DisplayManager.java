@@ -88,7 +88,7 @@ public class DisplayManager implements Observer {
                 if (store instanceof TSDataStore) {
                     Regionalizer.getRegionalizerFrame().updateMainPanel(spreadsheet.getPanel());
                     try {
-                        spreadsheet.loadTSDS((TSDataStore) store);
+                        spreadsheet.loadTSDS((TSDataStore) store, Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory());
                     } catch (Exception e) {
                         LHelper.showErrorDlg(Regionalizer.getRegionalizerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
                         e.printStackTrace();

@@ -91,11 +91,13 @@ public class TimeSpaceProcessor {
                 query += ", " + attribute.getName();
             }
         }
+
         query += " FROM data WHERE " + timeID + "='" + date.toString() + "'";
         System.out.println(query);
 
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);
+        System.out.println("finished");
         return rs;
 
 //        query = "SELECT count(*) FROM data";
@@ -112,11 +114,13 @@ public class TimeSpaceProcessor {
                 query += ", " + attribute.getName();
             }
         }
+
         query += " FROM data WHERE " + spaceID + "=" + entityID;
         System.out.println(query);
 
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);
+        System.out.println("finished");
         return rs;
     }
 
@@ -145,6 +149,7 @@ public class TimeSpaceProcessor {
         date.setValue("1995-11-01 07:30");
 
         //output(tsproc.getData(date));
-        output(tsproc.getData(new JAMSLong(42)));
+        output(tsproc.getData(new JAMSLong(122)));
+        tsproc.h2ds.close();
     }
 }

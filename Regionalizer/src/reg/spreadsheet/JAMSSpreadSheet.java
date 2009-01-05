@@ -195,11 +195,14 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         }
     }
 
-    public void loadTSDS(TSDataStore store) throws Exception {
+    public void loadTSDS(TSDataStore store, File inputDSDir) throws Exception {
 
         int colNumber = 0;
         double[] rowBuffer;
         String[] headers;
+
+        File templateFile = new File(inputDSDir, store.getID() + ".tpl");
+        System.out.println(templateFile.getPath());
 
         Vector<double[]> arrayVector = new Vector<double[]>();
         Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
