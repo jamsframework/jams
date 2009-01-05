@@ -202,7 +202,6 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         String[] headers;
 
         File templateFile = new File(inputDSDir, store.getID() + ".tpl");
-        System.out.println(templateFile.getPath());
 
         Vector<double[]> arrayVector = new Vector<double[]>();
         Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
