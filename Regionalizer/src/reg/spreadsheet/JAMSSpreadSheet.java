@@ -52,6 +52,9 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
     /* TESTING VARIABLES */
     //private String[] columnNameArray = headers.getValue();
     //{"test1","test2"};
+    
+    File templateFile;
+    
     private final String title = "";
     private final int COLWIDTH = 8;
     private JPanel panel = new JPanel();
@@ -201,8 +204,8 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         double[] rowBuffer;
         String[] headers;
 
-        File templateFile = new File(inputDSDir, store.getID() + ".tpl");
-
+        templateFile = new File(inputDSDir, store.getID() + ".tpl");
+        
         Vector<double[]> arrayVector = new Vector<double[]>();
         Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
 
@@ -425,9 +428,17 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
     };
 
     private void openCTS() {
-        /* achtung: nur wenn time mitlÃ¤uft!! */
+        /* achtung: nur wenn time mitlÃƒÂ¤uft!! */
         JTSConfigurator jts;
         jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this.table);
+    //ctstabs.addGraph(table);
+    //ctsIsOpen = true;
+    }
+    
+    private void openCTS(File templateFile) {
+        /* achtung: nur wenn time mitlÃƒÂ¤uft!! */
+        JTSConfigurator jts;
+        jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this.table, templateFile);
     //ctstabs.addGraph(table);
     //ctsIsOpen = true;
     }
@@ -448,7 +459,9 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
 //             if(table.getValueAt(0, 0).getClass() == JAMSCalendar.class){     
 //                openCTS();
             try {
-                openCTS();
+                
+                openCTS(templateFile);
+                
             } catch (ClassCastException cce) {
                 if (timeRuns) {
                     table.setColumnSelectionInterval(1, table.getColumnCount() - 1);

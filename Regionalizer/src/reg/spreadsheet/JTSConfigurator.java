@@ -85,6 +85,7 @@ public class JTSConfigurator extends JFrame{
     private JPanel edTimeAxisPanel;
     private JPanel savePanel;
     
+    private File templateFile;
     //Hi Res Box
 //    private HiResDlg hiresDlg;
     
@@ -224,6 +225,42 @@ public class JTSConfigurator extends JFrame{
         
     }
     
+    public JTSConfigurator(JFrame parent, JTable table, File templateFile){
+        
+//        super(parent, "JAMS JTS Viewer");
+        this.setParent(parent);
+        this.setIconImage(parent.getIconImage());
+        setTitle("JTS Viewer");
+                
+        setLayout(new FlowLayout());
+        Point parentloc = parent.getLocation();
+        setLocation(parentloc.x + 30, parentloc.y + 30);
+        
+        this.table = table;
+        this.templateFile = templateFile;
+        
+        this.rows = table.getSelectedRows();
+        this.columns = table.getSelectedColumns();
+        this.graphCount = columns.length;
+        this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
+        
+//        this.legendEntries = new String[graphCount];
+        
+//        for(int k=0;k<graphCount;k++){
+//            headers[k] = table.getColumnName(columns[k]);
+//            legendEntries[k] = headers[k];
+//        }
+        
+        
+        setPreferredSize(new Dimension(1024,768));
+        //setMinimumSize(new Dimension(680,480));
+        createPanel();
+        //timePlot();
+        pack();
+        setVisible(true);
+        
+    }
+    
 //    public void setTable(JTable table){
 //
 //        this.table = table;
@@ -243,9 +280,7 @@ public class JTSConfigurator extends JFrame{
 //    }
     
     public void createPanel(){
-        
-        
-        
+
         thisDlg = this;
         colour_cnt = 0;
         /* create ColorMap */
@@ -379,6 +414,56 @@ public class JTSConfigurator extends JFrame{
         rLeftBox.setSelectedIndex(0);
         rRightBox.setSelectedIndex(0);
         
+        ////////////////////////// GRAPH AUSFÜHREN ///////////
+        try{
+            loadTemplate(templateFile);
+        } catch (Exception fnfe){
+            initGraphLoad();
+        }
+        
+        ////////////////////////////////////////////
+        
+        finishGroupUI();
+        createOptionPanel();
+        handleRenderer();
+        /* initialise JTSPlot */
+        //JAMSTimePlot jts = new JAMSTimePlot(propVector);
+        jts.setPropVector(propVector);
+        jts.createPlot();
+ 
+        JPanel graphPanel = new JPanel();
+        JPanel optPanel = new JPanel();
+        graphPanel.add(graphpanel);
+        optPanel.add(optionpanel);
+        
+        graphScPane = new JScrollPane(graphPanel);
+        graphScPane.setPreferredSize(new Dimension(512,300));
+        graphScPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);       
+        jts.getPanel().add(savePanel, BorderLayout.EAST);
+        
+        //graphPanel.setPreferredSize(new Dimension(600,300));
+        
+        optionpanel.setBorder(new EtchedBorder());
+        plotScPane = new JScrollPane(jts.getPanel());
+        optScPane = new JScrollPane(optPanel);
+        split_hor.add(optScPane, 0);
+        split_hor.add(graphScPane, 1);
+        split_vert.add(split_hor, 0);
+        split_vert.add(plotScPane, 1);
+        add(split_vert);
+//        add(frame, BorderLayout.NORTH);
+//        add(plotScPane, BorderLayout.CENTER);
+        
+        //jts.plotLeft(0, "leftAxisName", "Time", false);
+        jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
+                                timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
+        
+        plotAllGraphs();
+        //jts.plotRight(1, "rightAxisName", true);
+    
+    }
+    
+    private void initGraphLoad(){
         Runnable r = new Runnable(){
         
         String[] colors;
@@ -434,45 +519,6 @@ public class JTSConfigurator extends JFrame{
         WorkerDlg dlg = new WorkerDlg(this, "Preparing Data...");
         dlg.setTask(r);
         dlg.execute();
-        
-        finishGroupUI();
-        createOptionPanel();
-        handleRenderer();
-        /* initialise JTSPlot */
-        //JAMSTimePlot jts = new JAMSTimePlot(propVector);
-        jts.setPropVector(propVector);
-        jts.createPlot();
- 
-        JPanel graphPanel = new JPanel();
-        JPanel optPanel = new JPanel();
-        graphPanel.add(graphpanel);
-        optPanel.add(optionpanel);
-        
-        graphScPane = new JScrollPane(graphPanel);
-        graphScPane.setPreferredSize(new Dimension(512,300));
-        graphScPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);       
-        jts.getPanel().add(savePanel, BorderLayout.EAST);
-        
-        //graphPanel.setPreferredSize(new Dimension(600,300));
-        
-        optionpanel.setBorder(new EtchedBorder());
-        plotScPane = new JScrollPane(jts.getPanel());
-        optScPane = new JScrollPane(optPanel);
-        split_hor.add(optScPane, 0);
-        split_hor.add(graphScPane, 1);
-        split_vert.add(split_hor, 0);
-        split_vert.add(plotScPane, 1);
-        add(split_vert);
-//        add(frame, BorderLayout.NORTH);
-//        add(plotScPane, BorderLayout.CENTER);
-        
-        //jts.plotLeft(0, "leftAxisName", "Time", false);
-        jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
-                                timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
-        
-        plotAllGraphs();
-        //jts.plotRight(1, "rightAxisName", true);
-    
     }
     
     private String[] getColorScheme(int scheme){
@@ -1388,7 +1434,7 @@ public class JTSConfigurator extends JFrame{
         }catch(Exception fnfex){};   
     }
     
-    private void loadTemplate() {
+    private void loadTemplate(File templateFile) {
 
         
         //int no_of_props = propVector.size();
@@ -1403,21 +1449,15 @@ public class JTSConfigurator extends JFrame{
         String outline_color;
         int no_of_props;
         int returnVal=-1;
-
-
-        try {
-            JFileChooser chooser = new JFileChooser();
-            returnVal = chooser.showOpenDialog(thisDlg);
-            File file = chooser.getSelectedFile();
-            FileInputStream fin = new FileInputStream(file);
+        
+        try{
+            FileInputStream fin = new FileInputStream(templateFile);
             properties.load(fin);
             fin.close();
-
-        } catch (Exception fnfexc) {
-            returnVal = -1;
-        }
+        }catch(Exception e){}
         
-        if(returnVal == JFileChooser.APPROVE_OPTION){
+        
+        
             
         
         this.propVector = new Vector<GraphProperties>();
@@ -1553,9 +1593,11 @@ public class JTSConfigurator extends JFrame{
 //        handleRenderer();
 
         plotAllGraphs();
-        }    
+            
     
     }
+    
+    
      
     
     /****** EVENT HANDLING ******/
@@ -1635,7 +1677,23 @@ public class JTSConfigurator extends JFrame{
     
     ActionListener loadTempListener = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-            loadTemplate();
+            
+            int returnVal;
+            
+        try {
+            JFileChooser chooser = new JFileChooser();
+            returnVal = chooser.showOpenDialog(thisDlg);
+            File file = chooser.getSelectedFile();
+            
+            if(returnVal == JFileChooser.APPROVE_OPTION){
+                loadTemplate(file);
+            }
+
+        } catch (Exception fnfexc) {
+            returnVal = -1;
+        }
+            
+            
         }
     };
     
