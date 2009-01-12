@@ -23,7 +23,6 @@
 package reg.dsdb;
 
 import jams.data.JAMSCalendar;
-import jams.data.JAMSLong;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -44,6 +43,8 @@ public class TimeSpaceProcessor {
     private ArrayList<H2DataStore.ContextData> contexts;
 
     private String spaceID,  timeID;
+
+    private String spaceFilter = null,  timeFilter = null,  aggregator = null;
 
     public TimeSpaceProcessor(String fileName) {
         this(new H2DataStore(fileName));
@@ -105,23 +106,76 @@ public class TimeSpaceProcessor {
 //        query = "SELECT DISTINCT TIMELOOPID, AVG(ELEVATION), AVG(X), AVG(Y) FROM data WHERE TIMELOOPID LIKE '%-11-% %:%:%' GROUP BY TIMELOOPID";
     }
 
-    public ResultSet getData(JAMSLong entityID) throws SQLException {
+    public ResultSet customQuery(String query) throws SQLException {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        return rs;
+    }
 
-        String query = "SELECT " + timeID;
+    public ResultSet getData() throws SQLException {
+
+        String query;
+        if (aggregator == null) {
+            query = "SELECT " + timeID + ", " + spaceID;
+        } else {
+            query = "SELECT 0 ";
+        }
 
         for (H2DataStore.AttributeData attribute : h2ds.getAttributes()) {
             if (attribute.isSelected()) {
-                query += ", " + attribute.getName();
+                if (aggregator == null) {
+                    query += ", " + attribute.getName();
+                } else {
+                    query += ", " + aggregator + "(" + attribute.getName() + ")";
+                }
             }
         }
 
-        query += " FROM data WHERE " + spaceID + "=" + entityID;
+        query += " FROM data";
+
+        if ((spaceFilter != null) || (timeFilter != null)) {
+
+            query += " WHERE ";
+            String s = null;
+            if (spaceFilter != null) {
+                if (spaceFilter.contains("%")) {
+                    s = " LIKE '" + spaceFilter + "'";
+                } else {
+                    s = "=" + spaceFilter;
+                }
+                query += spaceID + s;
+            }
+            if ((spaceFilter != null) && (timeFilter != null)) {
+                query += " AND ";
+            }
+            if (timeFilter != null) {
+                if (timeFilter.contains("%")) {
+                    s = " LIKE '" + timeFilter + "'";
+                } else {
+                    s = " = '" + timeFilter + "'";
+                }
+                query += timeID + s;
+            }
+        }
+
         System.out.println(query);
 
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);
-        System.out.println("finished");
         return rs;
+    }
+
+    public void getMonthlyAvg() throws SQLException {
+        Statement stmt = conn.createStatement();
+        for (int i = 1; i <= 12; i++) {
+
+            resetSpaceFilter();
+            setTimeFilter("%-" + String.format("%02d", i) + "-%");
+            setAggregator("AVG");
+            output(getData());
+
+        }
+
     }
 
     public static void output(ResultSet rs) throws SQLException {
@@ -141,6 +195,46 @@ public class TimeSpaceProcessor {
         }
     }
 
+    /**
+     * @param spaceFilter the spaceIDFilter to set
+     */
+    public void setSpaceFilter(String spaceFilter) {
+        this.spaceFilter = spaceFilter;
+    }
+
+    /**
+     * @param timeFilter the timeIDFilter to set
+     */
+    public void setTimeFilter(String timeFilter) {
+        this.timeFilter = timeFilter;
+    }
+
+    /**
+     * @param aggregator the aggregator to set
+     */
+    public void setAggregator(String aggregator) {
+        this.aggregator = aggregator;
+    }
+
+    public void resetSpaceFilter() {
+        spaceFilter = null;
+    }
+
+    public void resetTimeFilter() {
+        timeFilter = null;
+    }
+
+    public void resetAggregator() {
+        aggregator = null;
+    }
+
+    /**
+     * @return the h2ds
+     */
+    public H2DataStore getH2ds() {
+        return h2ds;
+    }
+
     public static void main(String[] args) throws Exception {
         TimeSpaceProcessor tsproc = new TimeSpaceProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_2.dat");
         tsproc.isTimeSpaceDatastore();
@@ -149,7 +243,16 @@ public class TimeSpaceProcessor {
         date.setValue("1995-11-01 07:30");
 
         //output(tsproc.getData(date));
-        output(tsproc.getData(new JAMSLong(122)));
+        tsproc.setSpaceFilter("42");
+        tsproc.setTimeFilter("%-02-%");
+        tsproc.setAggregator("sum");
+
+        output(tsproc.getData());
+
+        tsproc.getMonthlyAvg();
+
+        //output(tsproc.customQuery("SELECT count(*) from data "));
+
         tsproc.h2ds.close();
     }
 }

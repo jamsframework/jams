@@ -80,6 +80,7 @@ public class H2DataStore {
 
         // get the db file name
         jdbcURL = "jdbc:h2:" + fileName.substring(0, fileName.lastIndexOf(".")) + ";LOG=0;OPTIMIZE_REUSE_RESULTS=1";
+        jdbcURL = "jdbc:h2:" + fileName.substring(0, fileName.lastIndexOf(".")) + ";LOG=0";
 
     }
 
@@ -274,7 +275,8 @@ public class H2DataStore {
 
     private boolean fillBlock() throws IOException, SQLException {
         String row;
-        String queryPrefix = "INSERT INTO data VALUES (";
+        String insertString = "INSERT INTO data VALUES ";
+        String queryPrefix = "(";
 
         // read the ancestor's data
         for (int i = contexts.size() - 1; i > 0; i--) {
@@ -293,20 +295,34 @@ public class H2DataStore {
         }
 
         row = reader.readLine();
-        while (!(row = reader.readLine()).equals("@end")) {
 
-            String q = queryPrefix;
+        // grab rowCount rows and append them to one SQL statement
+        int rowCount = 1;
+        while (true) {
+            String q = "";
+            int i = 0;
+            while ((i < rowCount) && !(row = reader.readLine()).equals("@end")) {
 
-            StringTokenizer tok = new StringTokenizer(row, "\t");
-            while (tok.hasMoreTokens()) {
-                q += tok.nextToken() + ",";
+                q += queryPrefix;
+
+                StringTokenizer tok = new StringTokenizer(row, "\t");
+                while (tok.hasMoreTokens()) {
+                    q += tok.nextToken() + ",";
+                }
+
+                q = q.substring(0, q.length() - 1);
+                q += "),";
+                i++;
             }
 
-            q = q.substring(0, q.length() - 1);
-            q += ")";
-
             // insert data into table
-            stmt.execute(q);
+            if (!q.isEmpty()) {
+                q = insertString + q.substring(0, q.length() - 1);
+                stmt.execute(q);
+            }
+            if (row.equals("@end")) {
+                break;
+            }
         }
         return true;
     }
@@ -367,6 +383,14 @@ public class H2DataStore {
 
     public void addImportProgressObserver(Observer o) {
         importProgressObservable.addObserver(o);
+    }
+
+    public int getSize() {
+        int size = 1;
+        for (ContextData cd : contexts) {
+            size *= cd.getSize();
+        }
+        return size;
     }
 
     public class ContextData {
