@@ -22,6 +22,7 @@
  */
 package reg.dsproc;
 
+import Jama.Matrix;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -37,7 +38,6 @@ import java.util.Observer;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import reg.dsdb.H2DataStore;
 
 /**
  *
@@ -90,7 +90,7 @@ public class DataStoreProcessor {
 
         removeDB();
         Class.forName("org.h2.Driver");
-        initDB();
+        initTables();
         createIndex();
     }
 
@@ -150,7 +150,7 @@ public class DataStoreProcessor {
         }
     }
 
-    private void initDB() throws SQLException {
+    private void initTables() throws SQLException {
 
         // open/create the db
         conn = getH2Connection(false);
@@ -165,11 +165,15 @@ public class DataStoreProcessor {
         //stmt.execute("SET EXCLUSIVE FALSE");
         //stmt.execute("SET DEFAULT_TABLE_TYPE MEMORY");
 
-        // remove data table if exists
-        stmt.execute("DROP TABLE IF EXISTS data");
+        /*
+         * Build index table
+         */
+
+        // remove index table if exists
+        stmt.execute("DROP TABLE IF EXISTS index");
 
         // build create query
-        String q = "CREATE TABLE data (";
+        String q = "CREATE TABLE index (";
 
         for (int i = contexts.size() - 1; i > 0; i--) {
             ContextData cd = contexts.get(i);
@@ -184,7 +188,40 @@ public class DataStoreProcessor {
         // create indexes
         for (int i = contexts.size() - 1; i > 0; i--) {
             ContextData cd = contexts.get(i);
-            q = "CREATE INDEX " + cd.getName() + "_index ON data (" + cd.getName() + "ID)";
+            q = "CREATE INDEX " + cd.getName() + "_index ON index (" + cd.getName() + "ID)";
+            stmt.execute(q);
+        }
+
+
+        /*
+         * Build data table
+         */
+        // remove data table if exists
+        stmt.execute("DROP TABLE IF EXISTS data");
+
+        // build create query
+        q = "CREATE TABLE data (";
+
+        for (int i = contexts.size() - 1; i >= 0; i--) {
+            ContextData cd = contexts.get(i);
+            q += cd.getName() + "ID " + typeMap.get(cd.getIdType()) + ",";
+        }
+
+        for (int i = 0; i < attributes.size(); i++) {
+            AttributeData attribute = attributes.get(i);
+            q += attribute.getName() + " " + typeMap.get(attribute.getType()) + ",";
+        }
+        q = q.substring(0, q.length() - 1);
+
+        q += ")";
+
+        // create table
+        stmt.execute(q);
+
+        // create indexes
+        for (int i = contexts.size() - 1; i >= 0; i--) {
+            ContextData cd = contexts.get(i);
+            q = "CREATE INDEX " + cd.getName() + "_data ON data (" + cd.getName() + "ID)";
             stmt.execute(q);
         }
     }
@@ -243,18 +280,16 @@ public class DataStoreProcessor {
 
         reader.readLine();
 
-        boolean result = fillBlock();
+        boolean result = parseBlock();
         while (result) {
-            result = fillBlock();
+            result = parseBlock();
         }
 
     }
 
-    private boolean fillBlock() throws IOException, SQLException {
+    private boolean parseBlock() throws IOException, SQLException {
         String row;
-        String query = "INSERT INTO data VALUES (";
-
-        long position = reader.getPosition();
+        String query = "INSERT INTO index VALUES (";
 
         // read the ancestor's data
         row = reader.readLine();
@@ -273,6 +308,8 @@ public class DataStoreProcessor {
             query += "'" + value + "',";
             row = reader.readLine();
         }
+
+        long position = reader.getPosition();
         query += "'" + position + "')";
 
         while (!(row = reader.readLine()).equals("@end")) {
@@ -280,6 +317,60 @@ public class DataStoreProcessor {
 
         stmt.execute(query);
 
+        return true;
+    }
+
+    public boolean fillBlock(long position) throws IOException, SQLException {
+        String row;
+        String insertString = "INSERT INTO data VALUES ";
+        String queryPrefix = "(";
+
+        // read the ancestor's data
+        for (int i = contexts.size() - 1; i > 0; i--) {
+            ContextData cd = contexts.get(i);
+            row = reader.readLine();
+            if (row == null) {
+                return false;
+            }
+            StringTokenizer tok = new StringTokenizer(row, "\t");
+            tok.nextToken();
+            String value = tok.nextToken();
+            if (cd.getType().endsWith("TemporalContext")) {
+                value += ":00";
+            }
+            queryPrefix += "'" + value + "',";
+        }
+
+        row = reader.readLine();
+
+        // grab rowCount rows and append them to one SQL statement
+        int rowCount = 1;
+        while (true) {
+            String q = "";
+            int i = 0;
+            while ((i < rowCount) && !(row = reader.readLine()).equals("@end")) {
+
+                q += queryPrefix;
+
+                StringTokenizer tok = new StringTokenizer(row, "\t");
+                while (tok.hasMoreTokens()) {
+                    q += tok.nextToken() + ",";
+                }
+
+                q = q.substring(0, q.length() - 1);
+                q += "),";
+                i++;
+            }
+
+            // insert data into table
+            if (!q.isEmpty()) {
+                q = insertString + q.substring(0, q.length() - 1);
+                stmt.execute(q);
+            }
+            if (row.equals("@end")) {
+                break;
+            }
+        }
         return true;
     }
 
@@ -296,6 +387,12 @@ public class DataStoreProcessor {
         dsdb.createDB();
         dsdb.createIndex();
 
+//        DataMatrix m = dsdb.getData(8410394);
+        DataMatrix m = dsdb.getData(836);
+        m.print(5, 3);
+        for (String s : m.getIds()) {
+            System.out.println(s);
+        }
     }
 
     /**
@@ -336,6 +433,51 @@ public class DataStoreProcessor {
             size *= cd.getSize();
         }
         return size;
+    }
+
+    public DataMatrix getData(long position) throws IOException {
+
+        String line, token;
+        int i, numDoubles = 0;
+
+        boolean isDouble[] = new boolean[attributes.size()];
+        i = 0;
+        for (AttributeData a : attributes) {
+            if (a.getType().equals("JAMSDouble")) {
+                isDouble[i] = true;
+                numDoubles++;
+            } else {
+                isDouble[i] = false;
+            }
+            i++;
+        }
+
+        double[] cols;
+        ArrayList<double[]> rows = new ArrayList<double[]>();
+        ArrayList<String> idList = new ArrayList<String>();
+
+        reader.setPosition(position);
+
+        while (!(line = reader.readLine()).equals("@end")) {
+
+            cols = new double[numDoubles];
+            StringTokenizer tok = new StringTokenizer(line, "\t");
+            i = 0;
+            idList.add(tok.nextToken());
+            while (tok.hasMoreTokens()) {
+
+                token = tok.nextToken();
+                if (isDouble[i]) {
+                    cols[i] = Double.parseDouble(token);
+                }
+                i++;
+            }
+            rows.add(cols);
+        }
+        double[][] data = rows.toArray(new double[numDoubles][rows.size()]);
+        String ids[] = idList.toArray(new String[idList.size()]);
+
+        return new DataMatrix(data, ids);
     }
 
     public class ContextData {
@@ -460,6 +602,24 @@ public class DataStoreProcessor {
         }
     }
 
+    public class DataMatrix extends Matrix {
+
+        private String[] ids;
+
+        public DataMatrix(double[][] data, String[] ids) {
+            super(data);
+            this.ids= ids;
+        }
+
+        /**
+         * @return the id
+         */
+        public String[] getIds() {
+            return ids;
+        }
+
+    }
+
     private class ImportProgressObservable extends Observable {
 
         private int progress;
@@ -470,4 +630,6 @@ public class DataStoreProcessor {
             this.notifyObservers(progress);
         }
     }
+
+
 }
