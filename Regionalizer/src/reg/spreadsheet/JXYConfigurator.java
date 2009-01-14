@@ -88,6 +88,8 @@ public class JXYConfigurator extends JFrame {
     private JPanel savePanel;
     private String[] headers;
     
+    private File templateFile;
+    
     private JButton saveTempButton = new JButton("Save Template");
     private JButton loadTempButton = new JButton("Load Template");
     
@@ -186,40 +188,55 @@ public class JXYConfigurator extends JFrame {
         d_end_changed = false;
 
         writeSortedData(columns[0]);
-//        this.legendEntries = new String[graphCount];
-
-//        for(int k=0;k<graphCount;k++){
-//            headers[k] = table.getColumnName(columns[k]);
-//            legendEntries[k] = headers[k];
-//        }
-
 
         setPreferredSize(new Dimension(1024, 768));
-        //setMinimumSize(new Dimension(680,480));
+
         createPanel();
-        //timePlot();
+   
+        pack();
+        setVisible(true);
+
+    }
+    
+     public JXYConfigurator(JFrame parent, JTable table, File templateFile) {
+
+        this.setParent(parent);
+        this.setIconImage(parent.getIconImage());
+        setTitle("XYPlot Viewer");
+//        URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
+//        ImageIcon icon = new ImageIcon(url);
+//        setIconImage(icon.getImage());
+
+        setLayout(new FlowLayout());
+        Point parentloc = parent.getLocation();
+        setLocation(parentloc.x + 30, parentloc.y + 30);
+
+        this.table = table;
+        this.templateFile = templateFile;
+
+        this.rows = table.getSelectedRows();
+        this.columns = table.getSelectedColumns();
+        this.graphCount = columns.length;
+        this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
+
+        d_start_changed = false;
+        d_end_changed = false;
+        
+        try{
+        writeSortedData(columns[0]);
+        }catch(java.lang.ArrayIndexOutOfBoundsException aiofb){
+        writeSortedData(0);
+        }
+
+        setPreferredSize(new Dimension(1024, 768));
+
+        createPanel();
+   
         pack();
         setVisible(true);
 
     }
 
-//    public void setTable(JTable table){
-//
-//        this.table = table;
-//        this.rows = table.getSelectedRows();
-//        this.columns = table.getSelectedColumns();
-//        this.graphCount = columns.length;
-//        this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
-//        this.parent = parent;
-//        this.legendEntries = new String[graphCount];
-//
-//        for(int k=0;k<graphCount;k++){
-//            headers[k] = table.getColumnName(columns[k]);
-//            legendEntries[k] = headers[k];
-//        }
-//
-//        /* now call createPanel() */
-//    }
     public void createPanel() {
 
         thisDlg = this;
@@ -289,33 +306,7 @@ public class JXYConfigurator extends JFrame {
         edLeftAxisPanel.setLayout(new FlowLayout());
         edRightAxisPanel = new JPanel();
         edRightAxisPanel.setLayout(new FlowLayout());
-//        
-//        
-//        
-//        
-//        /*
-//        for(int k=0;k<headers.length;k++){
-//         
-//           datapanels.add(new JPanel());
-//           datapanels.get(k).setLayout(new FlowLayout());
-//         
-//           activate.add(new JCheckBox(headers[k],true));
-//           //datachoice.add(new JComboBox(headers));
-//           poschoice.add(new JComboBox(positions));
-//           typechoice.add(new JComboBox(types));
-//           colorchoice.add(new JComboBox(colors));
-//        }
-//         */
-//        
-////        datapanels = new JPanel[graphCount];
-////        activate = new JCheckBox[graphCount];
-////        poschoice = new JComboBox[graphCount];
-////        typechoice = new JComboBox[graphCount];
-////        colorchoice = new JComboBox[graphCount];
-//        
-//        //createActionListener();
-//        
-        //edTitleField.setColumns(20);
+
         edTitleField.setText("XY Data Plot");
         edTitleField.setSize(40, 10);
         edTitleField.addActionListener(plotbuttonclick);
@@ -347,6 +338,53 @@ public class JXYConfigurator extends JFrame {
         optionpanel.add(edRightField);
         optionpanel.add(applyButton);
 
+        rLeftBox.setSelectedIndex(0);
+        rRightBox.setSelectedIndex(0);
+        
+        ////////////////////////// GRAPH AUSFÜHREN ///////////
+        try{
+            loadTemplate(templateFile);
+        } catch (Exception fnfe){
+            initGraphLoad();
+        }
+        ////////////////////////////////////////////
+        
+
+        
+        createOptionPanel();
+        handleRenderer();
+
+        jxys.setPropVector(propVector);
+        jxys.createPlot();
+
+        JPanel graphPanel = new JPanel();
+        JPanel optPanel = new JPanel();
+        graphPanel.add(graphpanel);
+        optPanel.add(optionpanel);
+
+        graphScPane = new JScrollPane(graphPanel);
+        graphScPane.setPreferredSize(new Dimension(512,300));
+        graphScPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        savePanel.add(saveButton);
+
+        jxys.getPanel().add(savePanel, BorderLayout.EAST);
+
+        optionpanel.setBorder(new EtchedBorder());
+        plotScPane = new JScrollPane(jxys.getPanel());
+        optScPane = new JScrollPane(optPanel);
+        split_hor.add(optScPane, 0);
+        split_hor.add(graphScPane, 1);
+        split_vert.add(split_hor, 0);
+        split_vert.add(plotScPane, 1);
+        add(split_vert);
+
+        plotAllGraphs();
+
+    }
+    
+    private void initGraphLoad(){
+        
         Runnable r = new Runnable(){
         
         GraphProperties prop;
@@ -434,49 +472,13 @@ public class JXYConfigurator extends JFrame {
         };
         
         WorkerDlg dlg = new WorkerDlg(this, "Preparing Data...");
+        dlg.setLocationRelativeTo(null);
         dlg.setTask(r);
         dlg.execute();
         
-        ///////// runnable end ///////////////
-
         finishGroupUI();
-        createOptionPanel();
-        handleRenderer();
-        /* initialise JTSPlot */
-        //JAMSTimePlot jts = new JAMSTimePlot(propVector);
-        jxys.setPropVector(propVector);
-        jxys.createPlot();
-
-        JPanel graphPanel = new JPanel();
-        JPanel optPanel = new JPanel();
-        graphPanel.add(graphpanel);
-        optPanel.add(optionpanel);
-
-        graphScPane = new JScrollPane(graphPanel);
-        graphScPane.setPreferredSize(new Dimension(512,300));
-        //graphScPane.setPreferredSize(new Dimension(200,150));
-        graphScPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        savePanel.add(saveButton);
-
-        jxys.getPanel().add(savePanel, BorderLayout.EAST);
-
-        optionpanel.setBorder(new EtchedBorder());
-        plotScPane = new JScrollPane(jxys.getPanel());
-        optScPane = new JScrollPane(optPanel);
-        split_hor.add(optScPane, 0);
-        split_hor.add(graphScPane, 1);
-        split_vert.add(split_hor, 0);
-        split_vert.add(plotScPane, 1);
-        add(split_vert);
-//        add(frame, BorderLayout.NORTH);
-//        add(plotScPane, BorderLayout.CENTER);
-
-        plotAllGraphs();
-    //jts.plotRight(1, "rightAxisName", true);
-
     }
-
+    
     private void writeSortedData(int x_col) {
         int row_nr = table.getRowCount();
         int col_nr = table.getColumnCount();
@@ -1315,6 +1317,7 @@ public class JXYConfigurator extends JFrame {
         };
         
         WorkerDlg dlg = new WorkerDlg(this, "Creating Plot...");
+        dlg.setLocationRelativeTo(null);
         dlg.setTask(r);
         dlg.execute();
         
@@ -1640,9 +1643,8 @@ public class JXYConfigurator extends JFrame {
         }catch(Exception fnfex){};   
     }
     
-    private void loadTemplate() {
+    private void loadTemplate(File templateFile) {
 
-        
         //int no_of_props = propVector.size();
 
         Properties properties = new Properties();
@@ -1658,20 +1660,15 @@ public class JXYConfigurator extends JFrame {
 
 
         try {
-            JFileChooser chooser = new JFileChooser();
-            returnVal = chooser.showOpenDialog(thisDlg);
-            File file = chooser.getSelectedFile();
-            FileInputStream fin = new FileInputStream(file);
+            
+            FileInputStream fin = new FileInputStream(templateFile);
             properties.load(fin);
             fin.close();
 
         } catch (Exception fnfexc) {
             returnVal = -1;
         }
-        
-        if(returnVal == JFileChooser.APPROVE_OPTION){
-            
-        
+
         this.propVector = new Vector<GraphProperties>();
         
         names = properties.getProperty("names");
@@ -1685,6 +1682,8 @@ public class JXYConfigurator extends JFrame {
         
         x_series_index = new Integer(properties.getProperty("x_series_index"));
         
+        ///////Runnable //////////////
+  
         for (int i = 0; i < no_of_props; i++) {
             
             load_prop = false;
@@ -1767,16 +1766,16 @@ public class JXYConfigurator extends JFrame {
                             new Integer(outTokenizer.nextToken()),
                             new Integer(outTokenizer.nextToken())));
 
-                gprop.applyXYProperties();
+//                gprop.applyXYProperties();
                 
                     
             
             propVector.add(gprop);
             addPropGroup(gprop);
             }
-                  
+                
             
-            //break;
+            
                     
         //}
         //Titles
@@ -1803,8 +1802,25 @@ public class JXYConfigurator extends JFrame {
         
         
         for(int c = 0; c< no_of_props; c++){
-            propVector.get(c).setXIntervals(this.range);
+            propVector.get(c).setXIntervals(range);
         }
+        
+        Runnable r = new Runnable(){
+                
+                    
+            public void run() {
+                    for (int j = 0; j < propVector.size(); j++) {
+
+                        propVector.get(j).applyXYProperties();
+
+                    }
+                }
+            };
+                  
+            WorkerDlg dlg = new WorkerDlg(this, "Preparing Data...");
+            dlg.setLocationRelativeTo(null);
+            dlg.setTask(r);
+            dlg.execute();
         
         finishGroupUI();
         
@@ -1812,8 +1828,10 @@ public class JXYConfigurator extends JFrame {
 //        jts.createPlot();
 //        handleRenderer();
 
+        
+        /////////////////////////////////////
         plotAllGraphs();
-        }    
+            
     
     }
     
@@ -1844,178 +1862,7 @@ public class JXYConfigurator extends JFrame {
 
 
     }
-//    public void showHiRes(){
-//  
-//            hiresDlg = new HiResDlg();
-//            hiresDlg.setVisible(true);
-//    }
-//    public void timePlot(){
-////
-////
-////        /* Festlegen welche cols zu valueLeft und welche zu valueRight gehören!! */
-////
-////        /* CTSPlot initialisieren */
-//        ctsplot = new CTSPlot();
-////
-////       System.out.println("CTSPlot ctsplot = new CTSPlot();");
-////
-////        /* Parameter festlegen */
-////
-//        ctsplot.setTitle(edTitleField.getText());
-//        ctsplot.setLeftAxisTitle(edLeftField.getText());
-//        ctsplot.setRightAxisTitle(edRightField.getText());
-////
-////
-////        //ctsplot.setGraphCountRight(columns.length);
-//         /*
-//        plotframe = new JDialog();
-//        plotframe.setLayout(new FlowLayout());
-//         System.out.println("plotframe.setLayout(new FlowLayout());");
-//        plotframe.add(ctsplot.getPanel());
-//         System.out.println("plotframe.add(ctsplot.getPanel());");
-//        plotframe.pack();
-//        plotframe.setVisible(true);
-//          **/
-////
-////
-////         //System.out.println("plotframe.setVisible(true)");
-////
-////        //JAMSCalendar test = new JAMSCalendar();
-////        //if(table.getValueAt(rows[0], columns[0]).getClass() != test.getClass()){
-//        int numActiveLeft=0;
-//        int numActiveRight=0;
-//        int corr=0;
-//        
-//        int row_start = 0;
-//        int row_end = 0;
-//        
-//        boolean typechosen_R=false;
-//        boolean typechosen_L=false;
-//        String[] colorLeft = new String[graphCount];
-//        String[] colorRight = new String[graphCount];
-//        String[] titleLeft = new String[graphCount];
-//        String[] titleRight = new String[graphCount];
-////
-////        /* zuordnung der graphen */
-//        for(int i=0; i<graphCount; i++){
-//            
-//            GraphProperties prop = propVector.get(i);
-//            int s = prop.getTimeSTART();
-//            int e = prop.getTimeEND();
-//            
-//            if(s > row_start){
-//                row_start = s;
-//            }
-//            if(e > row_end){
-//                row_end = e;
-//            }
-//            
-//            if(prop.getPosition()== "left"){
-//                
-//                ctsplot.setTypeLeft(prop.getRendererType());
-//                
-//                colorLeft[i - numActiveRight] = prop.getColor();
-//                titleLeft[i - numActiveRight] = prop.getLegendName();
-//                numActiveLeft++;
-//            }
-//            if(prop.getPosition() == "right"){
-//                ctsplot.setTypeRight(prop.getRendererType());
-//                
-//                colorRight[i - numActiveLeft] = prop.getColor();
-//                titleRight[i - numActiveLeft] = prop.getLegendName();
-//                numActiveRight++;
-//            }
-//        }
-//        
-//        String[] legendLeft = new String[numActiveLeft];
-//        String[] legendRight = new String[numActiveRight];
-//        
-//        for(int n=0; n<numActiveLeft; n++){
-//            legendLeft[n] = titleLeft[n];
-//        }
-//        for(int n=0; n<numActiveRight; n++){
-//            legendRight[n] = titleRight[n];
-//        }
-//        ctsplot.setTitleLeft(legendLeft);
-//        ctsplot.setTitleRight(legendRight);
-//        
-//        ctsplot.setGraphCountLeft(numActiveLeft);
-//        ctsplot.setGraphCountRight(numActiveRight);
-//        
-//        ctsplot.setColorLeft(colorLeft);
-//        ctsplot.setColorRight(colorRight);
-//        ctsplot.setTitleLeft(titleLeft);
-//        ctsplot.setTitleRight(titleRight);
-//        /* CTSPlot erstellen */
-//        
-//        //removeAll(); /* nullPionterEx at first startup? */
-//        //add(frame, BorderLayout.NORTH);
-//        ctsplot.createPlot();
-//        //plotScPane = new JScrollPane(ctsplot.getPanel());
-//        plotScPane.setViewportView(ctsplot.getPanel());
-//        //mainpanel.add(ctsplot.getChartPanel(), BorderLayout.CENTER);
-//        //System.out.println("ctsplot.createPlot();");
-//       
-//        double[] valueLeft = new double[numActiveLeft];
-//        double[] valueRight = new double[numActiveRight];
-//        
-//        
-//       
-//                
-//        /* jedesmal fragen, ob der graph zu valueLEFT GEHÖRT (COMBObOX ABFRAGEN) */
-//        /* ACHTUNG: Funktioniert noch nicht bei addGraph() */
-//        //int rowcount = table.getRowCount();
-//        int c = 0;
-//        
-//        for(int k=row_start; k<=row_end; k++){
-//                    
-//                    int corrLeft = 0;
-//                    int corrRight = 0;
-//                    Object value = null;
-//
-//                    for(int i=0;i<graphCount;i++){
-//                        
-//                        GraphProperties prop = propVector.get(i);
-//                        //value = (Double) table.getValueAt(rows[k],columns[i]);
-//                            //int rows[] = prop.getSelectedRows();
-//                            int col = prop.getSelectedColumn();
-//                            int s = prop.getTimeSTART();
-//                            int e = prop.getTimeEND();
-//                            
-//                            if(!(k<s) && !(k>e)){
-//
-//                                value = table.getValueAt(k,col);
-//                                if(value.getClass() != java.lang.Double.class){
-//                                        value = 0.0;
-//                                    }
-//
-//                                if(prop.getPosition() == "left"){
-//                                        //valueLeft[i - corrLeft] = (Double) table.getValueAt(rows[k],columns[i]);
-//                                    valueLeft[i - corrLeft] = (Double) value;
-//                                    corrRight++;
-//
-//                                }
-//
-//                                if(prop.getPosition() == "right"){
-//                                    //valueRight[i - corrRight] = (Double) table.getValueAt(rows[k],columns[i]);
-//                                    valueRight[i - corrRight] = (Double) value;
-//                                    corrLeft++;
-//                                }
-//                            }else{
-//                                corrRight++;
-//                                corrLeft++;
-//                                corr++;
-//                            }
-//                    }                 
-//                ctsplot.plot((JAMSCalendar)table.getValueAt(k,0), valueLeft, valueRight);
-//            }
-//
-//        repaint();
-//        //pack();
-//
-//
-//
-//    }
+    
     /****** EVENT HANDLING ******/
     
     ActionListener saveTempListener = new ActionListener(){
@@ -2026,7 +1873,24 @@ public class JXYConfigurator extends JFrame {
     
     ActionListener loadTempListener = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-            loadTemplate();
+            
+            int returnVal = -1;
+            
+            try{
+                JFileChooser chooser = new JFileChooser();
+                returnVal = chooser.showOpenDialog(thisDlg);
+                File file = chooser.getSelectedFile();
+            
+            
+                if(returnVal == JFileChooser.APPROVE_OPTION){
+                    loadTemplate(file);
+                }
+
+            } catch (Exception fnfexc) {
+                returnVal = -1;
+            }
+            
+            
         }
     };
     
@@ -2124,132 +1988,6 @@ public class JXYConfigurator extends JFrame {
         }
     }
 
-//    private class HiResDlg extends JDialog{
-//            
-//            HiResPanel hiresPanel;
-//            JScrollPane hiresPane;
-//            JLabel w_label;
-//            JLabel h_label;
-//            JTextField w_field;
-//            JTextField h_field;
-//            ;
-//            
-//            BufferedImage bi;
-//
-//            int w = 1024;
-//            int h = 768;
-//            Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-//            
-//            JButton createButton = new JButton("Create Image");
-//            JButton saveJPEG = new JButton("Export as JPEG");
-//            JPanel buttonPanel = new JPanel();
-//            
-//            public HiResDlg(){
-//                super(thisDlg, "High Resolution JPEG Export");
-//                setDefaultCloseOperation(this.DISPOSE_ON_CLOSE);
-//                createGUI();
-//            }
-//            
-//            private void createGUI(){
-//                
-//                screen.height = screen.height - 28;
-//
-//                saveJPEG.addActionListener(saveJPEGListener);
-//                createButton.addActionListener(createImageListener);
-//                setSize(screen);
-//                setLayout( new BorderLayout());
-//                
-//                w_label = new JLabel("width");
-//                w_field= new JTextField("1024");
-//                h_label = new JLabel("height");
-//                h_field= new JTextField("768");
-//                
-//                
-//                createImage();
-//                
-//                buttonPanel.setLayout(new FlowLayout());
-//                buttonPanel.add(w_label);
-//                buttonPanel.add(w_field);
-//                buttonPanel.add(h_label);
-//                buttonPanel.add(h_field);
-//                buttonPanel.add(createButton);
-//                buttonPanel.add(saveJPEG);
-//                
-////                hiresPanel.paint(jts.getBufferedImage(2000, 3000).createGraphics());
-//                hiresPane = new JScrollPane(hiresPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-//                //hiresPane.setPreferredSize(new Dimension(1024, 768));
-//                hiresPane.createVerticalScrollBar();
-//                hiresPane.createHorizontalScrollBar();
-//                
-//                add(buttonPanel, BorderLayout.NORTH);
-//                add(hiresPane, BorderLayout.CENTER);
-//                //hiresDlg.pack();
-//                
-//            }
-//            private void createImage(){
-//                
-//                bi = jxys.getBufferedImage(w, h);
-//                
-//                hiresPanel = new HiResPanel(bi);
-//                hiresPanel.setPreferredSize(new Dimension(w, h));
-//            }
-//            
-//            private void readSize(){
-//                try{
-//                    w = new Integer(w_field.getText());
-//                    h = new Integer(h_field.getText());
-//                } catch(NumberFormatException ne){
-//                    w = 1024;
-//                    h = 768;
-//                }
-//            }
-//            
-//            public void saveJPEG(BufferedImage bi){
-//        
-//        try{
-//            JFileChooser chooser = new JFileChooser();
-//            int returnVal = chooser.showSaveDialog(thisDlg);
-//            
-//            File file = chooser.getSelectedFile();
-//        
-//	    // jpeg encoding
-//            
-//            FileOutputStream out = new FileOutputStream(file);
-//            
-//            //ByteArrayOutputStream out = new ByteArrayOutputStream();
-//            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-//            JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bi); 
-//            param.setQuality(1.0f, false);
-//            encoder.setJPEGEncodeParam(param);
-//            encoder.encode(bi);
-//        }
-//        catch(Exception ex){
-//        }
-//            
-//            
-//    }
-//            
-//    ActionListener createImageListener = new ActionListener(){
-//                public void actionPerformed(ActionEvent e) {
-//                    
-//                    
-//                    readSize();
-//                    createImage();
-//                    
-//                    hiresPanel.repaint();
-//                    hiresPane.setViewportView(hiresPanel);
-//                    repaint();
-//                    
-//                    
-//                }
-//            };
-//            
-//            ActionListener saveJPEGListener = new ActionListener(){
-//                public void actionPerformed(ActionEvent e) {
-//                    saveJPEG(bi);
-//                }
-//            };
-//    }
     private class AddGraphDlg extends JDialog {
 
         boolean result = false;

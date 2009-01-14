@@ -428,7 +428,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
     };
 
     private void openCTS() {
-        /* achtung: nur wenn time mitlÃƒÂ¤uft!! */
+        /* achtung: nur wenn time mitlÃƒÆ’Ã‚Â¤uft!! */
         JTSConfigurator jts;
         jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this.table);
     //ctstabs.addGraph(table);
@@ -436,7 +436,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
     }
     
     private void openCTS(File templateFile) {
-        /* achtung: nur wenn time mitlÃƒÂ¤uft!! */
+        /* achtung: nur wenn time mitlÃƒÆ’Ã‚Â¤uft!! */
         JTSConfigurator jts;
         jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this.table, templateFile);
     //ctstabs.addGraph(table);
@@ -452,6 +452,17 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
             jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this.table);
         }
     }
+    
+    private void openCXYS(File templateFile) {
+        JXYConfigurator jxys;
+
+//        try {
+            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this.table, templateFile);
+//        } catch (NullPointerException npe) {
+//            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this.table);
+//        }
+    }
+    
     ActionListener plotAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -477,18 +488,14 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
 
 
             try {
-                Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
-                if (test == JAMSCalendar.class) {
-                    table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
-
-                }
-                openCXYS();
+                
+                openCXYS(templateFile);
 
             } catch (ClassCastException cce) {
 
                 if (timeRuns) {
                     table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
-                    openCXYS();
+                    openCXYS(templateFile);
                 }
             }
 //             Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();

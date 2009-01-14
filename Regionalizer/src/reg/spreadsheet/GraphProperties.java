@@ -402,6 +402,10 @@ public class GraphProperties {
         //plotButton.addActionListener(okListener);
     }
     
+    public void applySelectedColumn(){
+        selectedColumn = setColumn.getSelectedIndex();
+    }
+    
     public void applyTSProperties(){
         JAMSCalendar time;
         double value;
@@ -427,37 +431,16 @@ public class GraphProperties {
         
         selectedColumn = setColumn.getSelectedIndex();
         
-        //color = (String) colorchoice.getSelectedItem();
         xys = new XYSeries(getLegendName());
        
-        //sort xy data
-        
-        //check data intervals
-        //int[] d_range = setPossibleDataIntervals();
-        //if(!isXSeries()){
-            //cxyconf.setXIntervals();
-            //write xy series
         for(int i=this.d_range[0]; i<=this.d_range[1]; i++){
             xys.add(cxyconf.sorted_Row[i].col[x_series_col], cxyconf.sorted_Row[i].col[selectedColumn]);
-            //System.out.println("x: "+cxyconf.sorted_Row[i].col[x_series_col]+" y: "+cxyconf.sorted_Row[i].col[selectedColumn]);
+            
         }
         
-        cr_dlg.updateColors();
-        //System.out.println("x_series_col: " + x_series_col);
-        
-      //}
+        cr_dlg.updateColors();    
     }
-    
-//    public void writeXYPairs(){
-//        selectedColumn = setColumn.getSelectedIndex();
-//        for(int i=0; i<table.getRowCount(); i++){
-//            
-//              data[i] = new XYPair((Double) table.getValueAt(i, x_series_col),
-//                                    (Double) table.getValueAt(i, selectedColumn));
-//        }
-//        java.util.Arrays.sort(data);
-//    }
-  
+
     public TimeSeries getTS(){
         return ts;
     }

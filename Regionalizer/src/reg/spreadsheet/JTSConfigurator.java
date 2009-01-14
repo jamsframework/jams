@@ -219,7 +219,6 @@ public class JTSConfigurator extends JFrame{
         setPreferredSize(new Dimension(1024,768));
         //setMinimumSize(new Dimension(680,480));
         createPanel();
-        //timePlot();
         pack();
         setVisible(true);
         
@@ -243,19 +242,11 @@ public class JTSConfigurator extends JFrame{
         this.columns = table.getSelectedColumns();
         this.graphCount = columns.length;
         this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
-        
-//        this.legendEntries = new String[graphCount];
-        
-//        for(int k=0;k<graphCount;k++){
-//            headers[k] = table.getColumnName(columns[k]);
-//            legendEntries[k] = headers[k];
-//        }
-        
-        
+   
         setPreferredSize(new Dimension(1024,768));
-        //setMinimumSize(new Dimension(680,480));
+
         createPanel();
-        //timePlot();
+
         pack();
         setVisible(true);
         
@@ -322,17 +313,14 @@ public class JTSConfigurator extends JFrame{
         saveButton.addActionListener(saveImageAction);
         saveTempButton.addActionListener(saveTempListener);
         loadTempButton.addActionListener(loadTempListener);
-        
-        //mainpanel = new JPanel();
+
         setLayout(new BorderLayout());
-        //mainpanel.setBackground(Color.WHITE);
-        
+
         plotpanel = new JPanel();
         plotpanel.setLayout(new BorderLayout());
         
         frame = new JPanel();
         frame.setLayout(new BorderLayout());
-        //frame.setSize(640,80);
         
         graphScPane = new JScrollPane();
                 
@@ -351,33 +339,7 @@ public class JTSConfigurator extends JFrame{
         edLeftAxisPanel.setLayout(new FlowLayout());
         edRightAxisPanel = new JPanel();
         edRightAxisPanel.setLayout(new FlowLayout());
-//        
-//        
-//        
-//        
-//        /*
-//        for(int k=0;k<headers.length;k++){
-//         
-//           datapanels.add(new JPanel());
-//           datapanels.get(k).setLayout(new FlowLayout());
-//         
-//           activate.add(new JCheckBox(headers[k],true));
-//           //datachoice.add(new JComboBox(headers));
-//           poschoice.add(new JComboBox(positions));
-//           typechoice.add(new JComboBox(types));
-//           colorchoice.add(new JComboBox(colors));
-//        }
-//         */
-//        
-////        datapanels = new JPanel[graphCount];
-////        activate = new JCheckBox[graphCount];
-////        poschoice = new JComboBox[graphCount];
-////        typechoice = new JComboBox[graphCount];
-////        colorchoice = new JComboBox[graphCount];
-//        
-//        //createActionListener();
-//        
-        //edTitleField.setColumns(20);
+
         edTitleField.setText("Time Series Plot");
         edTitleField.setSize(40,10);
         edTitleField.addActionListener(plotbuttonclick);
@@ -393,16 +355,7 @@ public class JTSConfigurator extends JFrame{
         edXAxisField.setText("Time");
         edXAxisField.addActionListener(plotbuttonclick);
         applyButton.addActionListener(plotbuttonclick);
-        
-//        rLeftBox.addActionListener(rendererListener);
-//        rRightBox.addActionListener(rendererListener);
-//        edTitlePanel.add(edTitle);
-//        edTitlePanel.add(edTitleField);
-//        edLeftAxisPanel.add(edLeft);
-//        edLeftAxisPanel.add(edLeftField);
-//        edRightAxisPanel.add(edRight);
-//        edRightAxisPanel.add(edRightField);
-        
+                
         optionpanel.add(edTitle);
         optionpanel.add(edTitleField);
         optionpanel.add(edLeft);
@@ -423,7 +376,7 @@ public class JTSConfigurator extends JFrame{
         
         ////////////////////////////////////////////
         
-        finishGroupUI();
+        
         createOptionPanel();
         handleRenderer();
         /* initialise JTSPlot */
@@ -441,8 +394,6 @@ public class JTSConfigurator extends JFrame{
         graphScPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);       
         jts.getPanel().add(savePanel, BorderLayout.EAST);
         
-        //graphPanel.setPreferredSize(new Dimension(600,300));
-        
         optionpanel.setBorder(new EtchedBorder());
         plotScPane = new JScrollPane(jts.getPanel());
         optScPane = new JScrollPane(optPanel);
@@ -451,19 +402,16 @@ public class JTSConfigurator extends JFrame{
         split_vert.add(split_hor, 0);
         split_vert.add(plotScPane, 1);
         add(split_vert);
-//        add(frame, BorderLayout.NORTH);
-//        add(plotScPane, BorderLayout.CENTER);
-        
-        //jts.plotLeft(0, "leftAxisName", "Time", false);
+
         jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
                                 timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
         
         plotAllGraphs();
-        //jts.plotRight(1, "rightAxisName", true);
-    
+
     }
     
     private void initGraphLoad(){
+        
         Runnable r = new Runnable(){
         
         String[] colors;
@@ -502,7 +450,7 @@ public class JTSConfigurator extends JFrame{
             
             //prop.getPlotButton().addActionListener(plotbuttonclick);
             
-            prop.applyTSProperties();
+//            prop.applyTSProperties();
             prop.setColorLabelColor();
             prop.setSColorLabelColor();
             addPropGroup(prop);
@@ -517,8 +465,11 @@ public class JTSConfigurator extends JFrame{
         };
         
         WorkerDlg dlg = new WorkerDlg(this, "Preparing Data...");
+        dlg.setLocationRelativeTo(null);
         dlg.setTask(r);
         dlg.execute();
+        
+        finishGroupUI();
     }
     
     private String[] getColorScheme(int scheme){
@@ -802,10 +753,7 @@ public class JTSConfigurator extends JFrame{
             //2 Renderer einfügen. Typ aus rLeftBox bzw rRightBox holen!
             //Switch/Case Anweisung in den Configurator packen
             //
-            
 
-            
-            
             /////////////// In dieser Schleife Eigenschaften übernehmen!! /////////////
             for(int i=0; i<propVector.size(); i++){
                 
@@ -1024,6 +972,7 @@ public class JTSConfigurator extends JFrame{
         };
 
         WorkerDlg dlg = new WorkerDlg(this, "Creating Plot...");
+        dlg.setLocationRelativeTo(null);
         dlg.setTask(r);
         dlg.execute();
         
@@ -1553,7 +1502,7 @@ public class JTSConfigurator extends JFrame{
                             new Integer(outTokenizer.nextToken()),
                             new Integer(outTokenizer.nextToken())));
 
-                gprop.applyTSProperties();
+                
                 
                     
             
@@ -1562,7 +1511,9 @@ public class JTSConfigurator extends JFrame{
             }
                   
             
-            //break;
+            
+                  
+           
                     
         //}
         //Titles
@@ -1584,7 +1535,20 @@ public class JTSConfigurator extends JFrame{
             
             } 
         }        
-            
+        
+//        Runnable r = new Runnable(){
+//      
+//            public void run() {
+//                    for (int j = 0; j < propVector.size(); j++) {
+//                        propVector.get(j).applyTSProperties();
+//                    }
+//                }
+//            };
+//            
+//            WorkerDlg dlg = new WorkerDlg(this, "Preparing Data...");
+//            dlg.setLocationRelativeTo(null);
+//            dlg.setTask(r);
+//            dlg.execute();
         
         finishGroupUI();
         
@@ -1593,8 +1557,6 @@ public class JTSConfigurator extends JFrame{
 //        handleRenderer();
 
         plotAllGraphs();
-            
-    
     }
     
     
@@ -1678,7 +1640,7 @@ public class JTSConfigurator extends JFrame{
     ActionListener loadTempListener = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
             
-            int returnVal;
+            int returnVal = -1;
             
         try {
             JFileChooser chooser = new JFileChooser();
