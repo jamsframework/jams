@@ -1,5 +1,4 @@
 major_release=2
 minor_release=6
-revision=02
-date=20081202
-2.6_02 (20081202)
+revision=03
+date=20090115
