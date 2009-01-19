@@ -205,9 +205,11 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         double[] rowBuffer;
         String[] headers;
 
+        JTSConfigurator.getTemplateChooser().setCurrentDirectory(inputDSDir);
+
         ttpFile = new File(inputDSDir, store.getID() + ".ttp");
         dtpFile = new File(inputDSDir, store.getID() + ".dtp");
-        
+
         Vector<double[]> arrayVector = new Vector<double[]>();
         Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
 

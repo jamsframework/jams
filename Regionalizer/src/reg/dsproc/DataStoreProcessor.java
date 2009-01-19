@@ -278,10 +278,19 @@ public class DataStoreProcessor {
 
     private void createIndex() throws IOException, SQLException {
 
+        float counter = 0;
+        int percent = 0;
+
         reader.readLine();
 
         boolean result = parseBlock();
+
         while (result) {
+            if ((counter / overallSize) * 100 >= percent) {
+                percent++;
+                importProgressObservable.setProgress(percent);
+            }
+            counter++;
             result = parseBlock();
         }
 
@@ -375,8 +384,8 @@ public class DataStoreProcessor {
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
-//        DataStoreProcessor dsdb = new DataStoreProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat");
-        DataStoreProcessor dsdb = new DataStoreProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/TimeLoop.dat");
+        DataStoreProcessor dsdb = new DataStoreProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat");
+//        DataStoreProcessor dsdb = new DataStoreProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/TimeLoop.dat");
         dsdb.addImportProgressObserver(new Observer() {
 
             public void update(Observable o, Object arg) {
@@ -387,12 +396,12 @@ public class DataStoreProcessor {
         dsdb.createDB();
         dsdb.createIndex();
 
-//        DataMatrix m = dsdb.getData(8410394);
-        DataMatrix m = dsdb.getData(836);
-        m.print(5, 3);
-        for (String s : m.getIds()) {
-            System.out.println(s);
-        }
+//        DataMatrix m = dsdb.getData(7323914);
+////        DataMatrix m = dsdb.getData(836);
+//        m.print(5, 3);
+//        for (String s : m.getIds()) {
+//            System.out.println(s);
+//        }
     }
 
     /**
@@ -435,19 +444,19 @@ public class DataStoreProcessor {
         return size;
     }
 
-    public DataMatrix getData(long position) throws IOException {
+    public synchronized DataMatrix getData(long position) throws IOException {
 
         String line, token;
-        int i, numDoubles = 0;
+        int i, j, numSelected = 0;
 
-        boolean isDouble[] = new boolean[attributes.size()];
+        boolean selected[] = new boolean[attributes.size()];
         i = 0;
         for (AttributeData a : attributes) {
-            if (a.getType().equals("JAMSDouble")) {
-                isDouble[i] = true;
-                numDoubles++;
+            if (a.isSelected() && a.getType().equals("JAMSDouble")) {
+                selected[i] = true;
+                numSelected++;
             } else {
-                isDouble[i] = false;
+                selected[i] = false;
             }
             i++;
         }
@@ -460,21 +469,21 @@ public class DataStoreProcessor {
 
         while (!(line = reader.readLine()).equals("@end")) {
 
-            cols = new double[numDoubles];
+            cols = new double[numSelected];
             StringTokenizer tok = new StringTokenizer(line, "\t");
-            i = 0;
+            j = 0;
             idList.add(tok.nextToken());
-            while (tok.hasMoreTokens()) {
-
+            for (i = 0; i < attributes.size(); i++) {
+//            while (tok.hasMoreTokens()) {
                 token = tok.nextToken();
-                if (isDouble[i]) {
-                    cols[i] = Double.parseDouble(token);
+                if (selected[i]) {
+                    cols[j] = Double.parseDouble(token);
+                    j++;
                 }
-                i++;
             }
             rows.add(cols);
         }
-        double[][] data = rows.toArray(new double[numDoubles][rows.size()]);
+        double[][] data = rows.toArray(new double[numSelected][rows.size()]);
         String ids[] = idList.toArray(new String[idList.size()]);
 
         return new DataMatrix(data, ids);
@@ -598,7 +607,9 @@ public class DataStoreProcessor {
          * @param active the active to set
          */
         public void setSelected(boolean active) {
-            this.selected = active;
+            synchronized (DataStoreProcessor.this) {
+                this.selected = active;
+            }
         }
     }
 
@@ -608,7 +619,7 @@ public class DataStoreProcessor {
 
         public DataMatrix(double[][] data, String[] ids) {
             super(data);
-            this.ids= ids;
+            this.ids = ids;
         }
 
         /**
@@ -617,7 +628,6 @@ public class DataStoreProcessor {
         public String[] getIds() {
             return ids;
         }
-
     }
 
     private class ImportProgressObservable extends Observable {
@@ -630,6 +640,4 @@ public class DataStoreProcessor {
             this.notifyObservers(progress);
         }
     }
-
-
 }

@@ -22,14 +22,17 @@
  */
 package reg.dsproc;
 
-import reg.dsdb.*;
+import Jama.Matrix;
 import jams.data.JAMSCalendar;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import reg.dsproc.DataStoreProcessor.AttributeData;
+import reg.dsproc.DataStoreProcessor.DataMatrix;
 
 /**
  *
@@ -37,22 +40,22 @@ import java.util.ArrayList;
  */
 public class TimeSpaceProcessor {
 
-    private H2DataStore h2ds;
+    private DataStoreProcessor dsdb;
 
     private Connection conn;
 
-    private ArrayList<H2DataStore.ContextData> contexts;
+    private ArrayList<DataStoreProcessor.ContextData> contexts;
 
     private String spaceID,  timeID;
 
     private String spaceFilter = null,  timeFilter = null,  aggregator = null;
 
     public TimeSpaceProcessor(String fileName) {
-        this(new H2DataStore(fileName));
+        this(new DataStoreProcessor(fileName));
     }
 
-    public TimeSpaceProcessor(H2DataStore h2ds) {
-        this.h2ds = h2ds;
+    public TimeSpaceProcessor(DataStoreProcessor dsdb) {
+        this.dsdb = dsdb;
 
         if (isTimeSpaceDatastore()) {
 
@@ -60,26 +63,26 @@ public class TimeSpaceProcessor {
             timeID = contexts.get(1).getName() + "ID";
 
             try {
-                this.conn = h2ds.getH2Connection(true);
+                this.conn = dsdb.getH2Connection(true);
             } catch (SQLException ex) {
-                System.out.println("Error while creating connection to H2 database of " + h2ds.getFileName());
+                System.out.println("Error while creating connection to H2 database of " + dsdb.getFileName());
             }
         }
     }
 
     public boolean isTimeSpaceDatastore() {
-        ArrayList<H2DataStore.ContextData> contexts = h2ds.getContexts();
-        if (contexts.size() != 2) {
+        ArrayList<DataStoreProcessor.ContextData> cntxt = dsdb.getContexts();
+        if (cntxt.size() != 2) {
             return false;
         }
-        if (!contexts.get(0).getType().equals("jams.model.JAMSSpatialContext")) {
+        if (!cntxt.get(0).getType().equals("jams.model.JAMSSpatialContext")) {
             return false;
         }
-        if (!contexts.get(1).getType().equals("jams.model.JAMSTemporalContext")) {
+        if (!cntxt.get(1).getType().equals("jams.model.JAMSTemporalContext")) {
             return false;
         }
 
-        this.contexts = contexts;
+        this.contexts = cntxt;
         return true;
     }
 
@@ -88,7 +91,7 @@ public class TimeSpaceProcessor {
         date.setDateFormat("yyyy-MM-dd HH:mm:ss");
         String query = "SELECT " + spaceID;
 
-        for (H2DataStore.AttributeData attribute : h2ds.getAttributes()) {
+        for (DataStoreProcessor.AttributeData attribute : dsdb.getAttributes()) {
             if (attribute.isSelected()) {
                 query += ", " + attribute.getName();
             }
@@ -139,17 +142,52 @@ public class TimeSpaceProcessor {
         return rs;
     }
 
-    public void getMonthlyAvg() throws SQLException {
+    public void getMonthlyAvg() throws SQLException, IOException {
         Statement stmt = conn.createStatement();
+
+        for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
+            if (attrib.getName().equals("rain")) {
+                attrib.setSelected(false);
+            } else {
+                attrib.setSelected(true);
+            }
+        }
+
+        // loop over months
         for (int i = 1; i <= 12; i++) {
 
             resetSpaceFilter();
             setTimeFilter("%-" + String.format("%02d", i) + "-%");
             setAggregator("AVG");
-            output(getData());
+
+            ResultSet rs = getData();
+
+            // we have a set of positions now, so get the matrixes and rock'n roll
+            // get the first dataset
+            long position;
+            Matrix aggregate;
+
+            if (rs.next()) {
+                position = rs.getLong("POSITION");
+                aggregate = dsdb.getData(position);
+            } else {
+                continue;
+            }
+
+            // loop over datasets for current month
+            while (rs.next()) {
+                position = rs.getLong("POSITION");
+                //System.out.println(position);
+                DataMatrix m = dsdb.getData(position);
+                aggregate = aggregate.plus(m);
+            }
+
+//            for (AttributeData attrib : dsdb.getAttributes()) {
+//                System.out.println(attrib.getName());
+//            }
+            aggregate.print(5, 3);
 
         }
-
     }
 
     public static void output(ResultSet rs) throws SQLException {
@@ -205,8 +243,8 @@ public class TimeSpaceProcessor {
     /**
      * @return the h2ds
      */
-    public H2DataStore getH2ds() {
-        return h2ds;
+    public DataStoreProcessor getDataStoreProcessor() {
+        return dsdb;
     }
 
     public static void main(String[] args) throws Exception {
@@ -227,6 +265,6 @@ public class TimeSpaceProcessor {
 
         //output(tsproc.customQuery("SELECT count(*) from data "));
 
-        tsproc.h2ds.close();
+        tsproc.dsdb.close();
     }
 }
