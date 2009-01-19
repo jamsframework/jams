@@ -717,6 +717,7 @@ public class JTSConfigurator extends JFrame{
     
     public void plotAllGraphs(){
         
+        System.out.println("PlotAllGraphs");
         //createProgressBarDlg();
         //new Thread(plotRunnable).start();
 
@@ -950,12 +951,15 @@ public class JTSConfigurator extends JFrame{
                     
                     prop.setLegendName(prop.setLegend.getText());
                     prop.setColorLabelColor();
+                    System.out.println("...ApplyTSProperties");
                     prop.applyTSProperties();
+                    System.out.println("...applyed!");
                 }
             }
             
             ////////////////////////////////////////////////////////////////////////////
             //Renderer direkt übernehmen! //
+            System.out.println("Plot left/right");
             if(l>0){
                 jts.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
             }
@@ -968,7 +972,7 @@ public class JTSConfigurator extends JFrame{
             jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
                                 timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
 
-                        }
+            }
         };
 
         WorkerDlg dlg = new WorkerDlg(this, "Creating Plot...");
@@ -1332,6 +1336,11 @@ public class JTSConfigurator extends JFrame{
                 properties.setProperty(name+".legendname", gprop.getLegendName());
             //POSITION left/right
                 properties.setProperty(name + ".position", gprop.getPosition());
+            //TIME INTERVAL
+                //start
+                properties.setProperty(name + ".timeSTART", gprop.getTimeChoiceSTART().getSelectedItem().toString());
+                //end
+                properties.setProperty(name + ".timeEND", gprop.getTimeChoiceEND().getSelectedItem().toString());
             //STROKE
                 stroke_type = ""+ gprop.getStrokeType();
                 properties.setProperty(name + ".linestroke", stroke_type);
@@ -1373,6 +1382,7 @@ public class JTSConfigurator extends JFrame{
         
         try{
             JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(templateFile);
             int returnVal = chooser.showSaveDialog(thisDlg);
             File file = chooser.getSelectedFile();
             FileOutputStream fout = new FileOutputStream(file);
@@ -1428,8 +1438,7 @@ public class JTSConfigurator extends JFrame{
             if (nameTokenizer.hasMoreTokens()) {
 
                 name = nameTokenizer.nextToken();
-                
-                
+
                 for (int k = 0; k < table.getColumnCount(); k++) {
                     if (table.getColumnName(k).compareTo(name) == 0) { //stringcompare?
                         
@@ -1445,10 +1454,33 @@ public class JTSConfigurator extends JFrame{
                 //POSITION left/right
                     gprop.setPosition(properties.getProperty(name + ".position"));
                 //INTERVAL
+//                    String timeSTART = properties.getProperty(name + ".timeSTART").toString();
+//                    String timeEND = properties.getProperty(name + ".timeEND").toString();
+//                    String read;
+//
+//                    System.out.println("start setting intervals...");
+//                    for(int tc = 0; tc < table.getRowCount(); tc ++){
+//                        read = gprop.getTimeChoiceSTART().getItemAt(tc).toString();
+//                        //start
+//                        if(read.compareTo(timeSTART) == 0){
+//                            gprop.setTimeSTART(tc);
+//                        }else{
+//                            gprop.setTimeSTART(0);
+//                        }
+//                        //end
+//                        if(read.compareTo(timeEND) == 0){
+//                            gprop.setTimeEND(tc);
+//                        }else{
+//                            gprop.setTimeEND(table.getRowCount() - 1);
+//                        }
+//                    }
+//                    System.out.println("interval set");
+                    
                     gprop.setTimeSTART(0);
                     gprop.setTimeEND(table.getRowCount() - 1);
-                    gprop.setName(name);
                     
+                //NAME    
+                    gprop.setName(name);
 
                 //STROKE
                     gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke","2")));
@@ -1505,14 +1537,15 @@ public class JTSConfigurator extends JFrame{
                 
                 
                     
-            
+            gprop.setColorLabelColor();
             propVector.add(gprop);
             addPropGroup(gprop);
             }
-                  
+                 
             
-            
-                  
+           } 
+        }    
+        System.out.println("Props loaded");           
            
                     
         //}
@@ -1533,8 +1566,7 @@ public class JTSConfigurator extends JFrame{
             timeFormat_dd.setSelected(new Boolean(properties.getProperty("timeFormat_dd")));
             timeFormat_hm.setSelected(new Boolean(properties.getProperty("timeFormat_hm")));
             
-            } 
-        }        
+                 
         
 //        Runnable r = new Runnable(){
 //      
@@ -1555,8 +1587,8 @@ public class JTSConfigurator extends JFrame{
         jts.setPropVector(propVector);
 //        jts.createPlot();
 //        handleRenderer();
-
-        plotAllGraphs();
+        
+        
     }
     
     
@@ -1644,12 +1676,16 @@ public class JTSConfigurator extends JFrame{
             
         try {
             JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(templateFile);
             returnVal = chooser.showOpenDialog(thisDlg);
             File file = chooser.getSelectedFile();
             
             if(returnVal == JFileChooser.APPROVE_OPTION){
                 loadTemplate(file);
+                plotAllGraphs();
             }
+            
+            
 
         } catch (Exception fnfexc) {
             returnVal = -1;

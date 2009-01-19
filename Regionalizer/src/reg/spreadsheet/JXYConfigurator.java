@@ -1633,6 +1633,7 @@ public class JXYConfigurator extends JFrame {
         
         try{
             JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(templateFile);
             int returnVal = chooser.showSaveDialog(thisDlg);
             File file = chooser.getSelectedFile();
             FileOutputStream fout = new FileOutputStream(file);
@@ -1769,7 +1770,7 @@ public class JXYConfigurator extends JFrame {
 //                gprop.applyXYProperties();
                 
                     
-            
+            gprop.setColorLabelColor();
             propVector.add(gprop);
             addPropGroup(gprop);
             }
@@ -1830,7 +1831,7 @@ public class JXYConfigurator extends JFrame {
 
         
         /////////////////////////////////////
-        plotAllGraphs();
+//        plotAllGraphs();
             
     
     }
@@ -1878,12 +1879,14 @@ public class JXYConfigurator extends JFrame {
             
             try{
                 JFileChooser chooser = new JFileChooser();
+                chooser.setCurrentDirectory(templateFile);
                 returnVal = chooser.showOpenDialog(thisDlg);
                 File file = chooser.getSelectedFile();
             
             
                 if(returnVal == JFileChooser.APPROVE_OPTION){
                     loadTemplate(file);
+                    plotAllGraphs();
                 }
 
             } catch (Exception fnfexc) {
