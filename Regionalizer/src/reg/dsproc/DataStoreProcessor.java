@@ -622,6 +622,11 @@ public class DataStoreProcessor {
             this.ids = ids;
         }
 
+        public DataMatrix(Matrix matrix, String[] ids) {
+            super(matrix.getArray());
+            this.ids = ids;
+        }
+
         /**
          * @return the id
          */
