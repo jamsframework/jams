@@ -64,14 +64,16 @@ public abstract class Optimizer extends JAMSContext {
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "optimization mode, 1 - minimization, 2 - maximization, 3 - max |f(x)|, 4 - min |f(x)|"
+            description = "optimization mode, 1 - minimization, 2 - maximization, 3 - max |f(x)|, 4 - min |f(x)|",
+            defaultValue = "1"
             )
             public JAMSInteger mode;
           
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "maximum numer of function evaluations"
+            description = "maximum numer of function evaluations",
+            defaultValue = "1000"
             )
             public JAMSInteger maxn;
         
@@ -198,7 +200,7 @@ public abstract class Optimizer extends JAMSContext {
         int i = 0;
         while (tok.hasMoreTokens()) {
             if (i>=n){
-               getModel().getRuntime().sendHalt("to many boundaries!"); 
+               getModel().getRuntime().sendHalt("too many boundaries!"); 
                return;
             }
             String key = tok.nextToken();

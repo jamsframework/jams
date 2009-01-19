@@ -70,25 +70,29 @@ public class SimpleSCE extends Optimizer {
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
         update = JAMSVarDescription.UpdateType.RUN,
-        description = "optimization parameter: number of complex, a common value for this is 2 or 3")
+        description = "optimization parameter: number of complex, a common value for this is 2 or 3",
+        defaultValue = "2")
         public JAMSInteger NumberOfComplexes;
     
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
         update = JAMSVarDescription.UpdateType.RUN,
-        description = "stopping parameter: pcento")
+        description = "stopping parameter: pcento, optimization is stopped if objective function does not improve by pcento percent in the last kstop iterations",
+        defaultValue = "0.1")
         public JAMSDouble pcento;
     
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
         update = JAMSVarDescription.UpdateType.RUN,
-        description = "stopping parameter: kstop")
+        description = "stopping parameter: kstop, for further description see pcento",
+        defaultValue = "10")
         public JAMSInteger kstop;
     
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
         update = JAMSVarDescription.UpdateType.RUN,
-        description = "stopping parameter: peps")
+        description = "stopping parameter: peps, optimization is stopped if the parameter - space has converged to a volume less than peps",
+        defaultValue = "0.0001")
         public JAMSDouble peps;
     
     int N; //parameter dimension
@@ -173,10 +177,10 @@ public class SimpleSCE extends Optimizer {
                 max = Math.max(max, x[j].x[i]);
             }
 
-            mean += Math.log(max - min) / bound[i];
+            mean += (max - min) / bound[i];
         }
         mean /= n;
-        return Math.exp(mean);
+        return (mean);
     }
 
     public double[] std(Sample x[]) {
@@ -402,7 +406,7 @@ public class SimpleSCE extends Optimizer {
         }
 
         // Create an initial population to fill array x(npt,nopt):
-        this.generator.setSeed(iseed);        
+        generator.setSeed(iseed);        
         Sample x[] = new Sample[npt];
         for (int i = 0; i < npt; i++) {
             if (iniflg == 1 && i == 0) {
@@ -444,7 +448,7 @@ public class SimpleSCE extends Optimizer {
         double criter[] = new double[kstop];
         double criter_change = 100000;
 
-        while (currentSampleCount < maxn && gnrng > peps && criter_change > pcento) {
+        while (currentSampleCount < maxn && /*gnrng > peps &&*/ criter_change > pcento) {
             nloop++;
             // Loop on complexes (sub-populations);
             for (int igs = 0; igs < ngs; igs++) {
@@ -530,46 +534,32 @@ public class SimpleSCE extends Optimizer {
         
         double x0[] = RandomSampler();
 
-        int iNumberOfComplexes = 0;
-        if (NumberOfComplexes != null) {
-            iNumberOfComplexes = NumberOfComplexes.getValue();
-        }
+        int iNumberOfComplexes = NumberOfComplexes.getValue();        
+        double pcento = this.pcento.getValue();
+        double peps = this.peps.getValue();
+        int kstop = this.kstop.getValue();
+        int maxn = this.maxn.getValue();
+        
         if (iNumberOfComplexes <= 0) {
             this.getModel().getRuntime().sendInfoMsg("NumberOfComplexes: value not specified or out of bounds, set to default value: 2");
             iNumberOfComplexes = 2;
         }
-        
-        double pcento = 0.0;
-        if (this.pcento != null) {
-            pcento = this.pcento.getValue();
-        }
+                                   
         if (pcento <= 0) {
             this.getModel().getRuntime().sendInfoMsg("pcento: value not specified or out of bounds, set to default value: 0.1");
             pcento = 0.1;
         }
-        
-        double peps = 0.0;
-        if (this.peps != null) {
-            peps = this.peps.getValue();
-        }
+                        
         if (peps <= 0) {
             this.getModel().getRuntime().sendInfoMsg("pcento: value not specified or out of bounds, set to default value: 0.00001");
             peps = 0.00001;
         }
-        
-        int kstop = 0;        
-        if (this.kstop != null) {
-            kstop = this.kstop.getValue();
-        }
+                        
         if (kstop <= 0) {
             this.getModel().getRuntime().sendInfoMsg("kstop: value not specified or out of bounds, set to default value: 10");
             kstop = 10;
         }
-        
-        int maxn = 10;        
-        if (this.maxn != null) {
-            maxn = this.maxn.getValue();
-        }
+                        
         if (maxn <= 0) {
             this.getModel().getRuntime().sendInfoMsg("kstop: value not specified or out of bounds, set to default value: 10000");
             maxn = 10000;
