@@ -22,8 +22,8 @@
  */
 package jams.data;
 
+import com.vividsolutions.jts.geom.Geometry;
 import jams.runtime.JAMSRuntime;
-import jams.JAMS;
 
 /**
  *
@@ -31,47 +31,79 @@ import jams.JAMS;
  */
 public class JAMSDataFactory {
 
-    //public JAMSDataFactory
-    public static JAMSEntity createEntity() {
-        return new JAMSCheckedEntity();
-    }
-
-    public static JAMSData getData(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        Class clazz = null;
-        try {
-            clazz = Class.forName(className);
-        } catch (ClassNotFoundException ex) {
-            System.out.println(JAMS.resources.getString("class_not_found:") + className);
-            System.exit(0);
-        }
-        JAMSData dataObject = (JAMSData) clazz.newInstance();
-
-        return dataObject;
+    public static JAMSData getInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        return getInstance(Class.forName(className));
     }
 
     public static JAMSData getInstance(String className, JAMSRuntime rt) {
-        JAMSData object = null;
+        JAMSData value = null;
         try {
-            object = getData(className);
-        } catch (ClassNotFoundException cnfe) {
-            rt.handle(cnfe);
-        } catch (InstantiationException ie) {
-            rt.handle(ie);
-        } catch (IllegalAccessException iae) {
-            rt.handle(iae);
+            value = getInstance(Class.forName(className));
+        } catch (ClassNotFoundException ex) {
+            rt.handle(ex, false);
+        } catch (InstantiationException ex) {
+            rt.handle(ex, false);
+        } catch (IllegalAccessException ex) {
+            rt.handle(ex, false);
         }
-        return object;
+
+        return value;
     }
-    
-    public static JAMSData getInstance(Class clazz, JAMSRuntime rt) {
-        JAMSData object = null;
-        try {
-            object = (JAMSData) clazz.newInstance();
-        } catch (InstantiationException ie) {
-            rt.handle(ie);
-        } catch (IllegalAccessException iae) {
-            rt.handle(iae);
+
+    public static JAMSData getInstance(Class clazz) throws InstantiationException, IllegalAccessException {
+        if (JAMSEntity.class.isAssignableFrom(clazz)) {
+            clazz = JAMSCheckedEntity.class;
         }
-        return object;
-    }    
+        return (JAMSData) clazz.newInstance();
+    }
+
+    public static JAMSData getInstance(Class clazz, JAMSRuntime rt) {
+        if (JAMSEntity.class.isAssignableFrom(clazz)) {
+            clazz = JAMSCheckedEntity.class;
+        }
+        JAMSData value = null;
+        try {
+            value = (JAMSData) clazz.newInstance();
+        } catch (InstantiationException ex) {
+            rt.handle(ex, false);
+        } catch (IllegalAccessException ex) {
+            rt.handle(ex, false);
+        }
+        return value;
+    }
+
+    public static JAMSData getInstance(Object value) {
+        Class type = value.getClass();
+        JAMSData result;
+
+        if (Integer.class.isAssignableFrom(type)) {
+            JAMSInteger v = new JAMSInteger();
+            v.setValue(((Integer) value).intValue());
+            result = v;
+        } else if (Long.class.isAssignableFrom(type)) {
+            JAMSLong v = new JAMSLong();
+            v.setValue(((Long) value).longValue());
+            result = v;
+        } else if (Float.class.isAssignableFrom(type)) {
+            JAMSFloat v = new JAMSFloat();
+            v.setValue(((Float) value).floatValue());
+            result = v;
+        } else if (Double.class.isAssignableFrom(type)) {
+            JAMSDouble v = new JAMSDouble();
+            v.setValue(((Double) value).doubleValue());
+            result = v;
+        } else if (String.class.isAssignableFrom(type)) {
+            JAMSString v = new JAMSString();
+            v.setValue(value.toString());
+            result = v;
+        } else if (Geometry.class.isAssignableFrom(type)) {
+            JAMSGeometry v = new JAMSGeometry((Geometry) value);
+            result = v;
+        } else {
+            result = new jams.data.JAMSString();
+            result.setValue(value.toString());
+        }
+
+        return result;
+    }
 }

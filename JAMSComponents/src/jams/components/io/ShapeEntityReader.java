@@ -24,6 +24,7 @@ package jams.components.io;
 
 import com.vividsolutions.jts.geom.Geometry;
 import jams.data.JAMSData;
+import jams.data.JAMSDataFactory;
 import jams.data.JAMSDouble;
 import jams.data.JAMSEntityCollection;
 import jams.data.JAMSFloat;
@@ -74,6 +75,7 @@ public class ShapeEntityReader extends JAMSComponent {
         while (featureIterator.hasNext()) {
             Feature f = (Feature) featureIterator.next();
 
+            //JAMSEntity e = JAMSDataFactory.
             for (int i = 0; i < f.getNumberOfAttributes(); i++) {
                 System.out.print(f.getAttribute(i) + " ");
             }
@@ -93,38 +95,5 @@ public class ShapeEntityReader extends JAMSComponent {
 //        }
     }
 
-    private JAMSData getDataValue(Object value) {
-        Class type = value.getClass();
-        JAMSData result;
 
-        if (type.equals(Integer.class)) {
-            JAMSInteger v = new JAMSInteger();
-            v.setValue(((Integer) value).intValue());
-            result = v;
-        } else if (type.equals(Long.class)) {
-            JAMSLong v = new JAMSLong();
-            v.setValue(((Long) value).longValue());
-            result = v;
-        } else if (type.equals(Float.class)) {
-            JAMSFloat v = new JAMSFloat();
-            v.setValue(((Float) value).floatValue());
-            result = v;
-        } else if (type.equals(Double.class)) {
-            JAMSDouble v = new JAMSDouble();
-            v.setValue(((Double) value).doubleValue());
-            result = v;
-        } else if (type.equals(String.class)) {
-            JAMSString v = new JAMSString();
-            v.setValue(value.toString());
-            result = v;
-        } else if (Geometry.class.isAssignableFrom(type)) {
-            JAMSGeometry v = new JAMSGeometry((Geometry) value);
-            result = v;
-        } else {
-            result = new jams.data.JAMSString();
-            result.setValue(value.toString());
-        }
-
-        return result;
-    }
 }

@@ -77,15 +77,19 @@ public class JAMSContext extends JAMSComponent {
      * Creates a new context
      */
     public JAMSContext() {
-        //create an entity collection with one entity
-        setCurrentEntity(JAMSDataFactory.createEntity());
-        ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
-        list.add(getCurrentEntity());
-        setEntities(new JAMSEntityCollection());
-        getEntities().setEntities(list);
+        try {
+            
+            //create an entity collection with one entity
+            setCurrentEntity((JAMSEntity) JAMSDataFactory.getInstance(JAMSEntity.class));
+            ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
+            list.add(getCurrentEntity());
+            setEntities(new JAMSEntityCollection());
+            getEntities().setEntities(list);
+            attribs = new HashMap<String, JAMSData>();
 
-        attribs = new HashMap<String, JAMSData>();
-
+        } catch (InstantiationException ex) {
+        } catch (IllegalAccessException ex) {
+        }
     }
 
     /**
@@ -255,7 +259,7 @@ public class JAMSContext extends JAMSComponent {
 
             try {
 
-                JAMSData data = JAMSDataFactory.getData(attributeSpec.className);
+                JAMSData data = JAMSDataFactory.getInstance(attributeSpec.className);
                 data.setValue(attributeSpec.value);
                 attribs.put(attributeSpec.attributeName, data);
 
@@ -581,7 +585,7 @@ public class JAMSContext extends JAMSComponent {
                 dataObject = componentObject;
             } else {
                 if (clazz.getName().equals("jams.data.JAMSEntity")) {
-                    dataObject = (JAMSData) JAMSDataFactory.createEntity();
+                    dataObject = JAMSDataFactory.getInstance(JAMSEntity.class, getModel().getRuntime());
                 } else {
                     dataObject = (JAMSData) clazz.newInstance();
                 }
@@ -696,7 +700,7 @@ public class JAMSContext extends JAMSComponent {
         }
 
         ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
-        list.add(JAMSDataFactory.createEntity());
+        list.add((JAMSEntity) JAMSDataFactory.getInstance(JAMSEntity.class, getModel().getRuntime()));
 
     }
 

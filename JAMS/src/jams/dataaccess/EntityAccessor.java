@@ -24,6 +24,8 @@ package jams.dataaccess;
 
 import jams.data.*;
 import jams.JAMS;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -49,7 +51,11 @@ public class EntityAccessor implements DataAccessor {
                 }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
-                    entityObject[i] = JAMSDataFactory.createEntity();
+                    try {
+                        entityObject[i] = (JAMSEntity) JAMSDataFactory.getInstance(JAMSEntity.class);
+                    } catch (InstantiationException ex) {
+                    } catch (IllegalAccessException ex) {
+                    }
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
                     throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist!"));

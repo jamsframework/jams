@@ -31,7 +31,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import reg.dsproc.DataStoreProcessor.AttributeData;
 import reg.dsproc.DataStoreProcessor.DataMatrix;
 
 /**
