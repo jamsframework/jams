@@ -729,10 +729,8 @@ public class ModelTree extends JAMSTree {
                 contextName = modelName;
             }
 
-            ComponentDescriptor context;
-            try {
-                context = view.getComponentDescriptor(contextName);
-            } catch (NullPointerException ex) {
+            ComponentDescriptor context = view.getComponentDescriptor(contextName);
+            if (context == null) {
                 LHelper.showErrorDlg(this.view.getFrame(), JUICE.resources.getString("Error_while_loading_component_") + cd.getName() +
                         JUICE.resources.getString("_context_") + contextName + JUICE.resources.getString("_does_not_exist!"), JUICE.resources.getString("Model_loading_error"));
                 return;
