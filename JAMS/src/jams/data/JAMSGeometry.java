@@ -29,7 +29,7 @@ import java.io.Serializable;
  *
  * @author C. Schwartze
  */
-public class JAMSGeometry implements JAMSData, Serializable {
+public class JAMSGeometry implements Attribute.Geometry, Serializable {
 
     private Geometry geo;
 

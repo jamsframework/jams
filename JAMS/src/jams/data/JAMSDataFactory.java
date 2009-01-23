@@ -32,65 +32,32 @@ import jams.runtime.JAMSRuntime;
 public class JAMSDataFactory {
 
     /**
-     * Creates a new instance of a given class
-     * @param className The name of the class
-     * @return An instance of the provided class
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.lang.InstantiationException
-     * @throws java.lang.IllegalAccessException
-     */
-    public static JAMSData getInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        return getInstance(Class.forName(className));
-    }
-
-    /**
-     * Creates a new instance of a given class
-     * @param className The name of the class
-     * @param rt A runtime object that will be used to handle any exceptions ocurred
-     * @return An instance of the provided class
-     */
-    public static JAMSData getInstance(String className, JAMSRuntime rt) {
-        JAMSData value = null;
-        try {
-            value = getInstance(Class.forName(className));
-        } catch (ClassNotFoundException ex) {
-            rt.handle(ex, false);
-        } catch (InstantiationException ex) {
-            rt.handle(ex, false);
-        } catch (IllegalAccessException ex) {
-            rt.handle(ex, false);
-        }
-
-        return value;
-    }
-
-    /**
-     * Creates a new instance of a given class
+     * Creates a new instance of a given JAMSData class
      * @param clazz The class
      * @return An instance of the provided class
      * @throws java.lang.InstantiationException
      * @throws java.lang.IllegalAccessException
      */
     public static JAMSData getInstance(Class clazz) throws InstantiationException, IllegalAccessException {
+        if (!JAMSData.class.isAssignableFrom(clazz)) {
+            return null;
+        }
         if (JAMSEntity.class.isAssignableFrom(clazz)) {
-            clazz = JAMSCheckedEntity.class;
+            clazz = StandardEntity.class;
         }
         return (JAMSData) clazz.newInstance();
     }
 
     /**
-     * Creates a new instance of a given class
+     * Creates a new instance of a given JAMSData class
      * @param clazz The class
      * @param rt A runtime object that will be used to handle any exceptions ocurred
      * @return An instance of the provided class
      */
     public static JAMSData getInstance(Class clazz, JAMSRuntime rt) {
-        if (JAMSEntity.class.isAssignableFrom(clazz)) {
-            clazz = JAMSCheckedEntity.class;
-        }
         JAMSData value = null;
         try {
-            value = (JAMSData) clazz.newInstance();
+            value = getInstance(clazz);
         } catch (InstantiationException ex) {
             rt.handle(ex, false);
         } catch (IllegalAccessException ex) {
@@ -100,7 +67,7 @@ public class JAMSDataFactory {
     }
 
     /**
-     * Creates a new JAMSData instance that is a representation of a given object
+     * Creates a new JAMSData instance that is a representation of a given data object
      * @param value The object to be represented by a JAMSData instance
      * @return A JAMSData instance
      */

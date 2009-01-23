@@ -29,7 +29,7 @@ import java.util.StringTokenizer;
  *
  * @author S. Kralisch
  */
-public class JAMSBooleanArray implements JAMSData, Serializable {
+public class JAMSBooleanArray implements Attribute.BooleanArray, Serializable {
 
     private boolean[] value;
 

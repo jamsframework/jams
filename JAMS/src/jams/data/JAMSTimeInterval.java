@@ -29,7 +29,7 @@ import java.util.StringTokenizer;
  *
  * @author S. Kralisch
  */
-public class JAMSTimeInterval implements JAMSData, Serializable {
+public class JAMSTimeInterval implements Attribute.TimeInterval, Serializable {
 
     protected JAMSCalendar start = new JAMSCalendar();
     protected JAMSCalendar end = new JAMSCalendar();

@@ -29,7 +29,7 @@ import java.util.*;
  *
  * @author S. Kralisch
  */
-public class JAMSEntityCollection implements JAMSData, Serializable {
+public class JAMSEntityCollection implements Attribute.EntityList, Serializable {
 
     protected ArrayList<JAMSEntity> entities = new ArrayList<JAMSEntity>();
     protected JAMSEntity[] entityArray;

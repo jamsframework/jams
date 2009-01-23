@@ -28,7 +28,7 @@ import java.io.Serializable;
  *
  * @author S. Kralisch
  */
-public class JAMSBoolean implements JAMSData, Serializable {
+public class JAMSBoolean implements Attribute.Boolean, Serializable {
 
     private boolean value;
 

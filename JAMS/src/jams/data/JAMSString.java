@@ -28,7 +28,7 @@ import java.io.Serializable;
  *
  * @author S. Kralisch
  */
-public class JAMSString implements JAMSData, Serializable {
+public class JAMSString implements Attribute.String, Serializable {
 
     private String value;
     private int length;

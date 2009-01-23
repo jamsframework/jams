@@ -22,11 +22,13 @@
  */
 package jams.data;
 
+import java.io.Serializable;
+
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSDouble extends JAMSNumeric {
+public class JAMSDouble implements JAMSNumeric, Serializable {
 
     private double value;
 

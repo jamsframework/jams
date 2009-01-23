@@ -22,11 +22,13 @@
  */
 package jams.data;
 
+import java.io.Serializable;
+
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSFloat extends JAMSNumeric {
+public class JAMSFloat implements JAMSNumeric, Serializable {
 
     private float value;
 

@@ -33,7 +33,7 @@ import jams.JAMS;
  *
  * @author S. Kralisch
  */
-public class JAMSDocument implements JAMSData, Serializable {
+public class JAMSDocument implements Attribute.Document, Serializable {
 
     private Document value;
 

@@ -32,7 +32,7 @@ import java.util.*;
  *
  * @author S. Kralisch
  */
-public class JAMSCalendar extends GregorianCalendar implements JAMSData, Serializable {
+public class JAMSCalendar extends GregorianCalendar implements Attribute.Calendar, Serializable {
 
     public final static String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
 
@@ -117,21 +117,17 @@ public class JAMSCalendar extends GregorianCalendar implements JAMSData, Seriali
         }
     }
 
-    public static void main(String[] args) throws Exception {
-
-        JAMSCalendar cal1 = new JAMSCalendar();
-        cal1.setValue("4.7.1979 07:30", "dd.MM.yyyy HH:mm");
-        JAMSCalendar cal2 = new JAMSCalendar();
-        cal2.setValue("12.7.1979 04:00", "dd.MM.yyyy HH:mm");        
-        System.out.println(cal1.compareTo(cal2, DAY_OF_MONTH));
-        System.out.println(cal1);
-        System.out.println(cal2);
-        
-//        for (int i = 0; i < 100000; i++) {
-//            cal.toString();
-//            //cal.toString("%1$tY-%1$tm-%1$td %1$tH:%1$tM");
-//        }       
-    }
+//    public static void main(String[] args) throws Exception {
+//
+//        JAMSCalendar cal1 = new JAMSCalendar();
+//        cal1.setValue("4.7.1979 07:30", "dd.MM.yyyy HH:mm");
+//        JAMSCalendar cal2 = new JAMSCalendar();
+//        cal2.setValue("12.7.1979 04:00", "dd.MM.yyyy HH:mm");
+//        System.out.println(cal1.compareTo(cal2, DAY_OF_MONTH));
+//        System.out.println(cal1);
+//        System.out.println(cal2);
+//
+//    }
 
     public void setValue(GregorianCalendar cal) {
         setTimeInMillis(cal.getTimeInMillis());

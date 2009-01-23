@@ -22,51 +22,10 @@
  */
 package jams.data;
 
-import java.io.Serializable;
-
 /**
  *
  * @author S. Kralisch
  */
-public abstract class JAMSNumeric implements JAMSData, Serializable {
-
-    /*
-    private NumericRange range = null;
-    private Unit unit = null;
-    
-    public NumericRange getRange() {
-        return range;
-    }
-
-    public void setRange(double minValue, double maxValue) {
-        this.range = new NumericRange(minValue, maxValue);
-    }
-
-    public Unit getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unitString) {
-        this.unit = Unit.valueOf(unitString);
-    }
-    
-    public class NumericRange {
-
-        private double maxValue,  minValue;
-
-        public NumericRange(double minValue, double maxValue) {
-            this.maxValue = maxValue;
-            this.minValue = minValue;
-        }
-
-        public double getMaxValue() {
-            return maxValue;
-        }
-
-        public double getMinValue() {
-            return minValue;
-        }
-    }
-    */
+public interface JAMSNumeric extends JAMSData {
 
 }

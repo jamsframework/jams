@@ -75,11 +75,11 @@ public class ShapeEntityReader extends JAMSComponent {
         while (featureIterator.hasNext()) {
             Feature f = (Feature) featureIterator.next();
 
-            //JAMSEntity e = JAMSDataFactory.
-            for (int i = 0; i < f.getNumberOfAttributes(); i++) {
-                System.out.print(f.getAttribute(i) + " ");
-            }
-        //System.out.println("");
+//            JAMSEntity e = JAMSDataFactory.
+            System.out.println(f.getNumberOfAttributes());
+//            for (int i = 0; i < f.getNumberOfAttributes(); i++) {
+//                System.out.print(f.getAttribute(i) + " ");
+//            }
 
 
 //        	Long id = new Long(f.getAttribute(idName.getValue()).toString());

@@ -1,5 +1,5 @@
 /*
- * JAMSCheckedEntity.java
+ * StandardEntity.java
  * Created on 24. November 2005, 07:35
  *
  * This file is part of JAMS
@@ -31,7 +31,7 @@ import jams.JAMS;
  *
  * @author S. Kralisch
  */
-class JAMSCheckedEntity implements JAMSEntity, Serializable {
+class StandardEntity implements JAMSEntity, Serializable {
 
     private HashMap<String, Object> values = new HashMap<String, Object>();
     private long id = -1;
