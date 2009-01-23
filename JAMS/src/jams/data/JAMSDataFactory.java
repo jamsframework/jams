@@ -31,10 +31,24 @@ import jams.runtime.JAMSRuntime;
  */
 public class JAMSDataFactory {
 
+    /**
+     * Creates a new instance of a given class
+     * @param className The name of the class
+     * @return An instance of the provided class
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.InstantiationException
+     * @throws java.lang.IllegalAccessException
+     */
     public static JAMSData getInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         return getInstance(Class.forName(className));
     }
 
+    /**
+     * Creates a new instance of a given class
+     * @param className The name of the class
+     * @param rt A runtime object that will be used to handle any exceptions ocurred
+     * @return An instance of the provided class
+     */
     public static JAMSData getInstance(String className, JAMSRuntime rt) {
         JAMSData value = null;
         try {
@@ -50,6 +64,13 @@ public class JAMSDataFactory {
         return value;
     }
 
+    /**
+     * Creates a new instance of a given class
+     * @param clazz The class
+     * @return An instance of the provided class
+     * @throws java.lang.InstantiationException
+     * @throws java.lang.IllegalAccessException
+     */
     public static JAMSData getInstance(Class clazz) throws InstantiationException, IllegalAccessException {
         if (JAMSEntity.class.isAssignableFrom(clazz)) {
             clazz = JAMSCheckedEntity.class;
@@ -57,6 +78,12 @@ public class JAMSDataFactory {
         return (JAMSData) clazz.newInstance();
     }
 
+    /**
+     * Creates a new instance of a given class
+     * @param clazz The class
+     * @param rt A runtime object that will be used to handle any exceptions ocurred
+     * @return An instance of the provided class
+     */
     public static JAMSData getInstance(Class clazz, JAMSRuntime rt) {
         if (JAMSEntity.class.isAssignableFrom(clazz)) {
             clazz = JAMSCheckedEntity.class;
@@ -72,6 +99,11 @@ public class JAMSDataFactory {
         return value;
     }
 
+    /**
+     * Creates a new JAMSData instance that is a representation of a given object
+     * @param value The object to be represented by a JAMSData instance
+     * @return A JAMSData instance
+     */
     public static JAMSData getInstance(Object value) {
         Class type = value.getClass();
         JAMSData result;
