@@ -51,10 +51,7 @@ import org.geotools.feature.FeatureTypeBuilder;
 import org.geotools.feature.GeometryAttributeType;
 import org.geotools.feature.SchemaException;
 import org.geotools.filter.BBoxExpression;
-import org.geotools.filter.Filter;
-import org.geotools.filter.FilterFactory;
 import org.geotools.filter.FilterFactoryImpl;
-import org.geotools.filter.GeometryDistanceFilter;
 import org.geotools.filter.IllegalFilterException;
 import org.geotools.gui.swing.JMapPane;
 import org.geotools.gui.swing.PanAction;
@@ -363,15 +360,15 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                          * Select-Filter überarbeiten, DEPRECATED, aber Bug in GT 2.3.1 !!!
                          */
             // *************FILTER***************
-            GeometryDistanceFilter distWithinFilter = null;
+            org.geotools.filter.GeometryDistanceFilter distWithinFilter = null;
             selectedF = null;
             Coordinate c1 = new Coordinate(mapX, mapY);
             Coordinate c2 = new Coordinate(mapX + 0.000001, mapY + 0.000001);
             
             try {
-                FilterFactory filtFact = new FilterFactoryImpl();
+                org.geotools.filter.FilterFactory filtFact = new FilterFactoryImpl();
                 distWithinFilter = filtFact
-                        .createGeometryDistanceFilter(Filter.GEOMETRY_DWITHIN);
+                        .createGeometryDistanceFilter(org.geotools.filter.Filter.GEOMETRY_DWITHIN);
                 Envelope bbox = new Envelope(c1, c2);
                 BBoxExpression bboxExp = filtFact.createBBoxExpression(bbox);
                 distWithinFilter.addRightGeometry(bboxExp);

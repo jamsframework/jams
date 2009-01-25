@@ -23,6 +23,7 @@
 package jams.components.io;
 
 import com.vividsolutions.jts.geom.Geometry;
+import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
 import jams.data.JAMSEntity;
 import jams.data.JAMSEntityCollection;
@@ -30,6 +31,7 @@ import jams.data.JAMSString;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.geotools.data.shapefile.ShapefileDataStore;
@@ -56,39 +58,33 @@ public class ShapeEntityReader extends JAMSComponent {
 
     public void init() throws Exception {
 
+        // in this case the entities attribut is not referred from outside
+        if (entities == null) {
+            return;
+        }
+
         URL shapeUrl = (new java.io.File(getModel().getWorkspaceDirectory().getPath() + "/" + shapeFileName.getValue()).toURI().toURL());
         ShapefileDataStore store = new ShapefileDataStore(shapeUrl);
 
         Iterator featureIterator = store.getFeatureSource(store.getTypeNames()[0]).getFeatures().iterator();
 
         AttributeType[] types = store.getFeatureSource(store.getTypeNames()[0]).getSchema().getAttributeTypes();
-        for (AttributeType type : types) {
-            System.out.println(type.getName() + " " + type.getType());
-        }
+
+        ArrayList<JAMSEntity> entityList = new ArrayList<JAMSEntity>();
 
         HashMap<Long, Geometry> geomMap = new HashMap<Long, Geometry>();
         while (featureIterator.hasNext()) {
             Feature f = (Feature) featureIterator.next();
 
-            JAMSEntity e = JAMSDataFactory.getEntity();
-            System.out.println(f.getNumberOfAttributes());
-//            for (int i = 0; i < f.getNumberOfAttributes(); i++) {
-//                System.out.print(f.getAttribute(i) + " ");
-//            }
+            Attribute.Entity e = JAMSDataFactory.getEntity();
 
+            for (int i = 0; i < types.length; i++) {
+                e.setObject(types[i].getName(), JAMSDataFactory.getInstance(f.getAttribute(i)));
+            }
 
-//        	Long id = new Long(f.getAttribute(idName.getValue()).toString());
-//        	geomMap.put(id, f.getDefaultGeometry());
+            entityList.add((JAMSEntity) e);
         }
 
-//        JAMSEntity e;
-//        Iterator<JAMSEntity> hruIterator = entities.getEntities().iterator();
-//        while (hruIterator.hasNext()) {
-//            e = hruIterator.next();
-//            long id = new Double(e.getDouble("ID")).longValue();
-//            e.setGeometry("geom", geomMap.get(id));
-//        }
+        entities.setEntities(entityList);
     }
-
-
 }

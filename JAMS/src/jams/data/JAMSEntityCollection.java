@@ -32,7 +32,9 @@ import java.util.*;
 public class JAMSEntityCollection implements Attribute.EntityList, Serializable {
 
     protected ArrayList<JAMSEntity> entities = new ArrayList<JAMSEntity>();
+
     protected JAMSEntity[] entityArray;
+
     protected JAMSEntity current;
 
     JAMSEntityCollection() {
@@ -49,6 +51,7 @@ public class JAMSEntityCollection implements Attribute.EntityList, Serializable 
     class EntityEnumerator implements JAMSEntityEnumerator {
 
         JAMSEntity[] entityArray = getEntityArray();
+
         int index = 0;
 
         public boolean hasNext() {
@@ -86,7 +89,7 @@ public class JAMSEntityCollection implements Attribute.EntityList, Serializable 
     }
 
     public void setValue(String data) {
-    //this makes no sense!
+        //this makes no sense!
     }
 
     public void setValue(ArrayList<JAMSEntity> entities) {
