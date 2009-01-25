@@ -28,15 +28,15 @@ import java.io.Serializable;
  *
  * @author S. Kralisch
  */
-public class JAMSInteger implements JAMSNumeric, Serializable {
+public class JAMSInteger implements Attribute.Integer, JAMSNumeric, Serializable {
 
     private int value;
 
     /** Creates a new instance of JAMSInteger */
-    public JAMSInteger() {
+    JAMSInteger() {
     }
 
-    public JAMSInteger(int value) {
+    JAMSInteger(int value) {
         this.value = value;
     }
 

@@ -36,7 +36,7 @@ public class JAMSDoubleArray implements JAMSData, Serializable {
     /**
      * Creates a new instance of JAMSDoubleArray
      */
-    public JAMSDoubleArray() {
+    JAMSDoubleArray() {
     }
 
     public String toString() {

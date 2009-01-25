@@ -105,4 +105,88 @@ public class JAMSDataFactory {
 
         return result;
     }
+
+    public static JAMSDouble getDouble() {
+        return new JAMSDouble();
+    }
+
+    public static JAMSDoubleArray getDoubleArray() {
+        return new JAMSDoubleArray();
+    }
+
+    public static JAMSFloat getFloat() {
+        return new JAMSFloat();
+    }
+
+    public static JAMSFloatArray getFloatArray() {
+        return new JAMSFloatArray();
+    }
+
+    public static JAMSLong getLong() {
+        return new JAMSLong();
+    }
+
+    public static JAMSLongArray getLongArray() {
+        return new JAMSLongArray();
+    }
+
+    public static JAMSInteger getInteger() {
+        return new JAMSInteger();
+    }
+
+    public static JAMSIntegerArray getIntegerArray() {
+        return new JAMSIntegerArray();
+    }
+
+    public static JAMSString getString() {
+        return new JAMSString();
+    }
+
+    public static JAMSStringArray getStringArray() {
+        return new JAMSStringArray();
+    }
+
+    public static JAMSBoolean getBoolean() {
+        return new JAMSBoolean();
+    }
+
+    public static JAMSBooleanArray getBooleanArray() {
+        return new JAMSBooleanArray();
+    }
+
+    public static JAMSCalendar getCalendar() {
+        return new JAMSCalendar();
+    }
+
+    public static JAMSDirName getDirName() {
+        return new JAMSDirName();
+    }
+
+    public static JAMSDocument getJAMSDocument() {
+        return new JAMSDocument();
+    }
+
+    public static JAMSFileName getFileName() {
+        return new JAMSFileName();
+    }
+
+    public static JAMSGeometry getGeometry() {
+        return new JAMSGeometry();
+    }
+
+    public static JAMSTimeInterval getTimeInterval() {
+        return new JAMSTimeInterval();
+    }
+
+    public static JAMSEntity getEntity() {
+        return new StandardEntity();
+    }
+
+    public static JAMSDocument getDocument() {
+        return new JAMSDocument();
+    }
+
+    public static JAMSEntityCollection getEntityCollection() {
+        return new JAMSEntityCollection();
+    }
 }

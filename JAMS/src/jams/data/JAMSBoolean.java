@@ -33,10 +33,10 @@ public class JAMSBoolean implements Attribute.Boolean, Serializable {
     private boolean value;
 
     /** Creates a new instance of JAMSBoolean */
-    public JAMSBoolean() {
+    JAMSBoolean() {
     }
 
-    public JAMSBoolean(boolean value) {
+    JAMSBoolean(boolean value) {
         this.value = value;
     }
 

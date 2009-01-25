@@ -29,6 +29,7 @@ import org.w3c.dom.Element;
 import jams.workspace.datatypes.CalendarValue;
 import jams.workspace.datatypes.DataValue;
 import jams.JAMS;
+import jams.data.JAMSDataFactory;
 
 /**
  *
@@ -43,9 +44,9 @@ public class TSDataStore extends TableDataStore {
 
     public TSDataStore(JAMSWorkspace ws) {
         super(ws);
-        startDate = new JAMSCalendar();
-        endDate = new JAMSCalendar();
-        currentDate = new JAMSCalendar();
+        startDate = JAMSDataFactory.getCalendar();
+        endDate = JAMSDataFactory.getCalendar();
+        currentDate = JAMSDataFactory.getCalendar();
         calendar = new CalendarValue(currentDate);
     }
 
@@ -63,18 +64,18 @@ public class TSDataStore extends TableDataStore {
             timeFormat = timeFormatElement.getAttribute("value");
         }
 
-        startDate = new JAMSCalendar();
+        startDate = JAMSDataFactory.getCalendar();
         startDate.setValue(startElement.getAttribute("value"));
 
         timeUnit = Integer.parseInt(stepsizeElement.getAttribute("unit"));
         timeUnitCount = Integer.parseInt(stepsizeElement.getAttribute("count"));
 
-        endDate = new JAMSCalendar();
+        endDate = JAMSDataFactory.getCalendar();
         endDate.setValue(endElement.getAttribute("value"));
         stopDate = endDate.clone();
         stopDate.add(timeUnit, -1 * timeUnitCount);
 
-        currentDate = new JAMSCalendar();
+        currentDate = JAMSDataFactory.getCalendar();
         currentDate.setDateFormat(timeFormat);
         currentDate.setValue(startDate);
 
@@ -93,9 +94,9 @@ public class TSDataStore extends TableDataStore {
                 long timeStamp2 = dataIOArray[i].getData()[1].getData()[0].getLong();
 
                 //compare the two time stamps
-                JAMSCalendar cal1 = new JAMSCalendar();
+                JAMSCalendar cal1 = JAMSDataFactory.getCalendar();
                 cal1.setTimeInMillis(timeStamp1 * 1000);
-                JAMSCalendar cal2 = new JAMSCalendar();
+                JAMSCalendar cal2 = JAMSDataFactory.getCalendar();
                 cal2.setTimeInMillis(timeStamp2 * 1000);
 
                 cal1.add(timeUnit, timeUnitCount);
@@ -123,7 +124,7 @@ public class TSDataStore extends TableDataStore {
                 long timeStamp2 = dataIOArray[i].getData()[0].getData()[0].getLong();
 
                 //compare the two time stamps
-                JAMSCalendar cal = new JAMSCalendar();
+                JAMSCalendar cal = JAMSDataFactory.getCalendar();
                 cal.setTimeInMillis(timeStamp2 * 1000);
 
                 if (cal.compareTo(startDate, timeUnit) != 0) {

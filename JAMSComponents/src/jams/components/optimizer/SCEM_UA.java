@@ -444,7 +444,8 @@ title="Title",
                     System.out.println("Fehler -> Parameter ist NaN!!");
             }
             for (int i=0;i<N;i++) {
-                tmpArray[i] = new JAMSDouble(offspring[i]);
+                tmpArray[i] = JAMSDataFactory.getDouble();
+                tmpArray[i].setValue(offspring[i]);
             }
         }while (!IsSampleValid(tmpArray));
         

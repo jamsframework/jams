@@ -157,11 +157,11 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
         }
         info.setText("3D Map Pane ... initializing");
         if (shapeFileName1 == null)
-            shapeFileName1 = new JAMSString("");
+            shapeFileName1 = JAMSDataFactory.getString();
         if (shapeFileName2 == null)
-            shapeFileName2 = new JAMSString("");
+            shapeFileName2 = JAMSDataFactory.getString();
         if (shapeFileName3 == null)
-            shapeFileName3 = new JAMSString("");
+            shapeFileName3 = JAMSDataFactory.getString();
         
         FeatureSource fs = null;
         String[] otherLayers = { shapeFileName1.getValue(),

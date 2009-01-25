@@ -23,14 +23,7 @@
 package jams.components.io;
 
 import com.vividsolutions.jts.geom.Geometry;
-import jams.data.JAMSData;
-import jams.data.JAMSDataFactory;
-import jams.data.JAMSDouble;
 import jams.data.JAMSEntityCollection;
-import jams.data.JAMSFloat;
-import jams.data.JAMSGeometry;
-import jams.data.JAMSInteger;
-import jams.data.JAMSLong;
 import jams.data.JAMSString;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;

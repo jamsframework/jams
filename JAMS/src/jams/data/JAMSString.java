@@ -34,10 +34,11 @@ public class JAMSString implements Attribute.String, Serializable {
     private int length;
 
     /** Creates a new instance of JAMSString */
-    public JAMSString() {
+    JAMSString() {
+        value = "";
     }
 
-    public JAMSString(String value) {
+    JAMSString(String value) {
         this.value = value;
     }
 

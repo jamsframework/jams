@@ -35,6 +35,9 @@ public class JAMSEntityCollection implements Attribute.EntityList, Serializable 
     protected JAMSEntity[] entityArray;
     protected JAMSEntity current;
 
+    JAMSEntityCollection() {
+    }
+
     public JAMSEntity[] getEntityArray() {
         return this.entityArray;
     }

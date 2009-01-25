@@ -38,10 +38,10 @@ public class JAMSDocument implements Attribute.Document, Serializable {
     private Document value;
 
     /** Creates a new instance of JAMSString */
-    public JAMSDocument() {
+    JAMSDocument() {
     }
 
-    public JAMSDocument(Document value) {
+    JAMSDocument(Document value) {
         this.value = value;
     }
 

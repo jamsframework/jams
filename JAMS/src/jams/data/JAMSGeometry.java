@@ -33,7 +33,10 @@ public class JAMSGeometry implements Attribute.Geometry, Serializable {
 
     private Geometry geo;
 
-    public JAMSGeometry(Geometry geo) {
+    JAMSGeometry() {
+    }
+
+    JAMSGeometry(Geometry geo) {
         this.geo = geo;
     }
 

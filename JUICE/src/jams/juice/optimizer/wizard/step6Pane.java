@@ -9,6 +9,7 @@ import jams.juice.optimizer.wizard.OptimizationWizard.Efficiency;
 import jams.juice.optimizer.wizard.OptimizationWizard.Parameter;
 import jams.juice.*;
 import jams.data.JAMSBoolean;
+import jams.data.JAMSDataFactory;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -78,7 +79,7 @@ public class step6Pane extends stepPane{
             
     ArrayList<Parameter> param_info = null;
     ArrayList<Efficiency> eff_info = null;
-    final JAMSBoolean isMultiObjective = new JAMSBoolean(false);
+    final JAMSBoolean isMultiObjective = JAMSDataFactory.getBoolean();
     final JComboBox optimizer = new JComboBox(possibleOptimizer);
     final JPanel optimizerPanelWrapper = new JPanel();
     
@@ -110,6 +111,10 @@ public class step6Pane extends stepPane{
     String methods[] = {"Exponential","Matérn","RQ","Neural Network","Exponential(no noise)","Neural Network (full)","Exponential (simple)","Matérn (simple)","RQ (simple)","Neural Network (simple)"};
     int kernelMap[] = {2,3,5,6,7,8,12,13,15,16};
     JComboBox kernelMethod = new JComboBox(methods);
+
+    public step6Pane() {
+        isMultiObjective.setValue(false);
+    }
                         
     public boolean getOptionState_RemoveNotUsedComponents(){
         return this.removeNotUsedComponents.isSelected();

@@ -79,7 +79,7 @@ public class JAMSTableDataConverter {
             timeArray[i] = st.nextToken();
         }
         
-        JAMSCalendar cal = new JAMSCalendar();
+        JAMSCalendar cal = JAMSDataFactory.getCalendar();
         cal.setValue(timeArray[0]+"-"+timeArray[1]+"-"+timeArray[2]+" "+timeArray[3]+":"+timeArray[4]);
         return cal;
     }

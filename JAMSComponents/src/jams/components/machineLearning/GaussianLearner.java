@@ -685,7 +685,7 @@ public class GaussianLearner extends Learner  {
         double value = 0;
         
 	if (param_theta == null) {
-	    param_theta = new JAMSDoubleArray();
+	    param_theta = JAMSDataFactory.getDoubleArray();
 	    double array[] = new double[x.length+kernel.MM.GetParameterCount()];
 	    param_theta.setValue(array);
 	}

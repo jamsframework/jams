@@ -72,42 +72,42 @@ public class CheckedTSDataReader extends JAMSComponent {
             update = JAMSVarDescription.UpdateType.RUN,
             description = "Array of data values for current time step"
             )
-            public JAMSDoubleArray dataArray = new JAMSDoubleArray();
+            public JAMSDoubleArray dataArray;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "data set descriptor"
             )
-            public JAMSString dataSetName = new JAMSString();
+            public JAMSString dataSetName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "Array of station elevations"
             )
-            public JAMSDoubleArray elevation = new JAMSDoubleArray();
+            public JAMSDoubleArray elevation;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "Array of station's x coordinate"
             )
-            public JAMSDoubleArray xCoord = new JAMSDoubleArray();
+            public JAMSDoubleArray xCoord;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "Array of station's y coordinate"
             )
-            public JAMSDoubleArray yCoord = new JAMSDoubleArray();
+            public JAMSDoubleArray yCoord;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "Regression coefficients"
             )
-            public JAMSDoubleArray regCoeff = new JAMSDoubleArray();
+            public JAMSDoubleArray regCoeff;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -251,7 +251,7 @@ public class CheckedTSDataReader extends JAMSComponent {
         yCoord.setValue(staty);
         
         currentTime = timeInterval.getStart().clone();
-        tsTime = new JAMSCalendar();
+        tsTime = JAMSDataFactory.getCalendar();
         tsTime.setValue("0-01-01 00:00");
         
         getModel().getRuntime().println(dataSetName.getValue() + " data file initalised ... ", JAMS.VERBOSE);
@@ -294,7 +294,7 @@ public class CheckedTSDataReader extends JAMSComponent {
             timeArray[i] = st.nextToken();
         }
         
-        JAMSCalendar cal = new JAMSCalendar();
+        JAMSCalendar cal = JAMSDataFactory.getCalendar();
         cal.setValue(timeArray[2]+"-"+timeArray[1]+"-"+timeArray[0]+" "+timeArray[3]+":"+timeArray[4]);
         return cal;
     }

@@ -68,7 +68,7 @@ public class TSDataStoreReader extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "Array of double values received from the datastore. Order " +
     "according to datastore")
-    public JAMSDoubleArray dataArray = new JAMSDoubleArray();
+    public JAMSDoubleArray dataArray;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "Array of station elevations",

@@ -29,6 +29,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.GregorianCalendar;
 import jams.data.JAMSCalendar;
+import jams.data.JAMSDataFactory;
 
 /**
  *
@@ -73,7 +74,7 @@ public class TSDumpProcessor {
         target.append("#STEPSIZE: " + store.getTimeUnitCount() + "\n");
         target.append("#MISSINGDATAVALUE: " + store.getMissingDataValue() + "\n");
 
-        JAMSCalendar creationDate = new JAMSCalendar();
+        JAMSCalendar creationDate = JAMSDataFactory.getCalendar();
         creationDate.setValue(new GregorianCalendar());
         target.append("#DATE: " + creationDate + "\n");
         target.append("#DESCRIPTION:\n");

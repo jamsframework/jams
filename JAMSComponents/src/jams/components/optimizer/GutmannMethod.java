@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import jams.JAMS;
 import jams.JAMSTools;
-import jams.data.JAMSInteger;
+import jams.data.JAMSDataFactory;
 import jams.model.JAMSComponentDescription;
 @JAMSComponentDescription(
         title="GutmanMethod",
@@ -461,8 +461,10 @@ public class GutmannMethod extends Optimizer {
                 neldermeadOptimizer.GoalFunction = new innerOptimizer();
                 neldermeadOptimizer.boundaries = this.boundaries;
                 neldermeadOptimizer.lowBound = this.lowBound;
-                neldermeadOptimizer.maxn = new JAMSInteger(200);
-                neldermeadOptimizer.mode = new JAMSInteger(NelderMead.MODE_MINIMIZATION);
+                neldermeadOptimizer.maxn = JAMSDataFactory.getInteger();
+                maxn.setValue(200);
+                neldermeadOptimizer.mode = JAMSDataFactory.getInteger();
+                mode.setValue(NelderMead.MODE_MINIMIZATION);
                 neldermeadOptimizer.n = n;
                 neldermeadOptimizer.upBound = upBound;
                 Sample initialSimplex[] = new Sample[n+1];

@@ -38,6 +38,7 @@ import jams.data.JAMSCalendar;
 import jams.gui.*;
 import java.awt.Color;
 import jams.JAMS;
+import jams.data.JAMSDataFactory;
 
 /**
  *
@@ -122,7 +123,8 @@ public class CalendarInput extends JPanel implements InputComponent {
 
     public String getValue() {
         try {
-            JAMSCalendar cal = new JAMSCalendar(
+            JAMSCalendar cal = JAMSDataFactory.getCalendar();
+            cal.set(
                     Integer.parseInt(syear.getText()),
                     Integer.parseInt(smonth.getText()) - 1,
                     Integer.parseInt(sday.getText()),
@@ -137,7 +139,7 @@ public class CalendarInput extends JPanel implements InputComponent {
 
     public void setValue(String value) {
 
-        JAMSCalendar cal = new JAMSCalendar();
+        JAMSCalendar cal = JAMSDataFactory.getCalendar();
 
         if ((value != null) && !value.equals("")) {
             cal.setValue(value);

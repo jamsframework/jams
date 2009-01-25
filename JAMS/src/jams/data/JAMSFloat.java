@@ -28,17 +28,17 @@ import java.io.Serializable;
  *
  * @author S. Kralisch
  */
-public class JAMSFloat implements JAMSNumeric, Serializable {
+public class JAMSFloat implements Attribute.Float, JAMSNumeric, Serializable {
 
     private float value;
 
     /**
      * Creates a new instance of JAMSFloat
      */
-    public JAMSFloat() {
+    JAMSFloat() {
     }
 
-    public JAMSFloat(float value) {
+    JAMSFloat(float value) {
         this.value = value;
     }
 

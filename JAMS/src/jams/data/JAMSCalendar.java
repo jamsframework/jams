@@ -40,13 +40,13 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
 
     private DateFormat dateFormat;
 
-    public JAMSCalendar() {
+    JAMSCalendar() {
         super();
         this.setTimeInMillis(0);
         initTZ();
     }
 
-    public JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second) {
+    JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second) {
         super(year, month, dayOfMonth, hourOfDay, minute, second);
         set(Calendar.MILLISECOND, 0);
         initTZ();

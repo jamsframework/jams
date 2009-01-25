@@ -28,17 +28,17 @@ import java.io.Serializable;
  *
  * @author S. Kralisch
  */
-public class JAMSDouble implements JAMSNumeric, Serializable {
+public class JAMSDouble implements Attribute.Double, JAMSNumeric, Serializable {
 
     private double value;
 
     /**
      * Creates a new instance of JAMSDouble
      */
-    public JAMSDouble() {
+    JAMSDouble() {
     }
 
-    public JAMSDouble(double value) {
+    JAMSDouble(double value) {
         this.value = value;
     }
 

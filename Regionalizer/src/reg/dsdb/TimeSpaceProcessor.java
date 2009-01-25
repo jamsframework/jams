@@ -23,6 +23,7 @@
 package reg.dsdb;
 
 import jams.data.JAMSCalendar;
+import jams.data.JAMSDataFactory;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -239,7 +240,7 @@ public class TimeSpaceProcessor {
         TimeSpaceProcessor tsproc = new TimeSpaceProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_2.dat");
         tsproc.isTimeSpaceDatastore();
 
-        JAMSCalendar date = new JAMSCalendar();
+        JAMSCalendar date = JAMSDataFactory.getCalendar();
         date.setValue("1995-11-01 07:30");
 
         //output(tsproc.getData(date));

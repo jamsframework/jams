@@ -451,9 +451,9 @@ public class NNLearner extends Learner {
 	if (LearningRate <= 0.0)   LearningRate = 0.01;
 	if (Momentum < 0.0) Momentum = 0.01;
 	
-	if (this.epochen == null)	this.epochen = new JAMSInteger();
-	if (this.learningrate == null)  this.learningrate = new JAMSDouble();
-	if (this.momentum == null)	this.momentum = new JAMSDouble();
+	if (this.epochen == null)	this.epochen = JAMSDataFactory.getInteger();
+	if (this.learningrate == null)  this.learningrate = JAMSDataFactory.getDouble();
+	if (this.momentum == null)	this.momentum = JAMSDataFactory.getDouble();
 	
 	this.epochen.setValue(EpochCounter);
 	this.learningrate.setValue(LearningRate);

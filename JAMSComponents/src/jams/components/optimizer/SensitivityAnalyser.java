@@ -86,18 +86,18 @@ public class SensitivityAnalyser extends Optimizer{
     
     GaussianLearner CreateGPModel(Vector<double[]> samplePoint,Vector<Double> sampleValue){        
         GaussianLearner GP = new GaussianLearner();
-        GP.MeanMethod = new JAMSInteger();
+        GP.MeanMethod = JAMSDataFactory.getInteger();
         GP.MeanMethod.setValue(0);
-        GP.PerformanceMeasure = new JAMSInteger();
+        GP.PerformanceMeasure = JAMSDataFactory.getInteger();
         GP.PerformanceMeasure.setValue(2);
-        GP.doOptimization = new JAMSBoolean();
+        GP.doOptimization = JAMSDataFactory.getBoolean();
         GP.doOptimization.setValue(true);          
         GP.setModel(this.getModel());
-        GP.kernelMethod = new JAMSInteger();
+        GP.kernelMethod = JAMSDataFactory.getInteger();
         GP.kernelMethod.setValue(2);
-        GP.resultFile = new JAMSString();
+        GP.resultFile = JAMSDataFactory.getString();
         GP.resultFile.setValue("tmp.dat");
-        GP.param_theta = new JAMSDoubleArray();
+        GP.param_theta = JAMSDataFactory.getDoubleArray();
         
         double params[] = new double[n+1];
         for (int i=0;i<n;i++){

@@ -28,15 +28,15 @@ import java.io.Serializable;
  *
  * @author S. Kralisch
  */
-public class JAMSLong implements JAMSNumeric, Serializable {
+public class JAMSLong implements Attribute.Long, JAMSNumeric, Serializable {
 
     private long value;
 
     /** Creates a new instance of JAMSLong */
-    public JAMSLong() {
+    JAMSLong() {
     }
 
-    public JAMSLong(long value) {
+    JAMSLong(long value) {
         this.value = value;
     }
 

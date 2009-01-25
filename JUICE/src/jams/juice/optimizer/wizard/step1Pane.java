@@ -6,6 +6,7 @@
 package jams.juice.optimizer.wizard;
 
 import jams.JAMSProperties;
+import jams.data.JAMSDataFactory;
 import jams.data.JAMSDocument;
 import jams.data.JAMSString;
 import jams.io.DocumentLoader;
@@ -39,9 +40,11 @@ public class step1Pane extends stepPane {
         File file = new File(fileName);
 
         DocumentLoader loader = new DocumentLoader();
-        loader.modelFile = new JAMSString(file.getName());
-        loader.workspaceDir = new JAMSString(file.getParent());
-        loader.modelDoc = new JAMSDocument();
+        loader.modelFile = JAMSDataFactory.getString();
+        loader.modelFile.setValue(file.getName());
+        loader.workspaceDir = JAMSDataFactory.getString();
+        loader.workspaceDir.setValue(file.getParent());
+        loader.modelDoc = JAMSDataFactory.getDocument();
 
         String errorString = loader.init_withResponse();
         loadedModel = loader.modelDoc.getValue();

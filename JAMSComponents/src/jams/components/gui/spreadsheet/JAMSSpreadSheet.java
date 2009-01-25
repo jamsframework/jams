@@ -151,7 +151,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     
     public JAMSSpreadSheet(JFrame parent, String[] headers) {
         this.parent_frame = parent;
-        this.headers = new JAMSStringArray();
+        this.headers = JAMSDataFactory.getStringArray();
         this.headers.setValue(headers);
     }
     
@@ -399,7 +399,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
 
                                 //timeVector
                                 if(col == timeIndex && timeRuns){
-                                    JAMSCalendar timeval = new JAMSCalendar();
+                                    JAMSCalendar timeval = JAMSDataFactory.getCalendar();
                                     timeval.setValue(datarow.nextToken());
                                     timeVector.add(timeval);
                                 }
@@ -503,7 +503,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                                 //timeVector
                                 if(col == 0){
                                     // TODO: TIME TOKENIZER EINFUEHREN //////
-                                    JAMSCalendar timeval = new JAMSCalendar();
+                                    JAMSCalendar timeval = JAMSDataFactory.getCalendar();
                                     try {
                                     timeval.setValue(datarow.nextToken(), "dd.MM.yyyy HH:mm");
                                     } catch (ParseException pe) {
@@ -639,7 +639,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                         }else{
                         
                             if(k == 0){
-                                JAMSCalendar timeval = new JAMSCalendar();
+                                JAMSCalendar timeval = JAMSDataFactory.getCalendar();
                                 timeval.setValue(itemtext);
                                 timeVector.add(timeval);
                                 

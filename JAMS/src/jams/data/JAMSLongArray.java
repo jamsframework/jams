@@ -36,7 +36,7 @@ public class JAMSLongArray implements JAMSData, Serializable {
     /**
      * Creates a new instance of JAMSLongArray
      */
-    public JAMSLongArray() {
+    JAMSLongArray() {
     }
 
     public String toString() {

@@ -34,10 +34,10 @@ public class JAMSBooleanArray implements Attribute.BooleanArray, Serializable {
     private boolean[] value;
 
     /** Creates a new instance of JAMSBooleanArray */
-    public JAMSBooleanArray() {
+    JAMSBooleanArray() {
     }
 
-    public JAMSBooleanArray(boolean[] value) {
+    JAMSBooleanArray(boolean[] value) {
         this.value = value;
     }
 

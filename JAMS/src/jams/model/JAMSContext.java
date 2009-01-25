@@ -83,7 +83,7 @@ public class JAMSContext extends JAMSComponent {
             setCurrentEntity((JAMSEntity) JAMSDataFactory.getInstance(JAMSEntity.class));
             ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
             list.add(getCurrentEntity());
-            setEntities(new JAMSEntityCollection());
+            setEntities(JAMSDataFactory.getEntityCollection());
             getEntities().setEntities(list);
             attribs = new HashMap<String, JAMSData>();
 
@@ -585,11 +585,7 @@ public class JAMSContext extends JAMSComponent {
             if (componentObject != null) {
                 dataObject = componentObject;
             } else {
-                if (clazz.getName().equals("jams.data.JAMSEntity")) {
-                    dataObject = JAMSDataFactory.getInstance(JAMSEntity.class, getModel().getRuntime());
-                } else {
-                    dataObject = (JAMSData) clazz.newInstance();
-                }
+                dataObject = JAMSDataFactory.getInstance(clazz, getModel().getRuntime());
             }
 
             attribs.put(attributeName, dataObject);

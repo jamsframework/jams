@@ -49,7 +49,7 @@ public class IntegerArrayAccessor implements DataAccessor {
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {}
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
-                    entityObject[i] = new JAMSIntegerArray();
+                    entityObject[i] = JAMSDataFactory.getIntegerArray();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
                     throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist!"));

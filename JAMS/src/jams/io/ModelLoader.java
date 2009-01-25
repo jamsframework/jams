@@ -247,7 +247,7 @@ public class ModelLoader {
                             // create the var object
                             varClazz = loader.loadClass(varClassName);
 
-                            variable = (JAMSData) varClazz.newInstance();
+                            variable = JAMSDataFactory.getInstance(varClazz);
                             // variable = getInstance(varClazz);
 
                             varValue = element.getAttribute("value");
@@ -332,6 +332,7 @@ public class ModelLoader {
                 } catch (InstantiationException ie) {
                     throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_variable_") + varName + JAMS.resources.getString(":_Instantiation_exception!"));
                 } catch (IllegalAccessException iae) {
+                    iae.printStackTrace();
                     throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_variable_") + varName + JAMS.resources.getString(":_Access_exception!"));
                 } catch (Exception ex) {
                     jamsModel.getRuntime().handle(ex);
@@ -400,7 +401,7 @@ public class ModelLoader {
 
                 // get variable object or create one if not existing
                 if ((dataObject == null) && (!jvd.defaultValue().equals(JAMSVarDescription.NULL_VALUE))) {
-                    dataObject = (JAMSData) dataType.newInstance();
+                    dataObject = JAMSDataFactory.getInstance(dataType);
                     fields[i].set(component, dataObject);
 
                     dataObject.setValue(jvd.defaultValue());

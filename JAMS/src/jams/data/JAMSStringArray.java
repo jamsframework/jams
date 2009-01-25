@@ -34,7 +34,7 @@ public class JAMSStringArray implements Attribute.StringArray, Serializable {
     private String[] value;
 
     /** Creates a new instance of JAMSStringArray */
-    public JAMSStringArray() {
+    JAMSStringArray() {
     }
 
     public String toString() {

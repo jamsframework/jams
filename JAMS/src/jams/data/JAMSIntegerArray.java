@@ -36,7 +36,7 @@ public class JAMSIntegerArray implements JAMSData, Serializable {
     /**
      * Creates a new instance of JAMSIntegerArray
      */
-    public JAMSIntegerArray() {
+    JAMSIntegerArray() {
     }
 
     public String toString() {

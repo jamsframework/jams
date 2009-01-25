@@ -89,7 +89,7 @@ public class JAMSSimpleParaSampler extends JAMSContext {
             update = JAMSVarDescription.UpdateType.RUN,
             description = "current parameter value"
             )
-            public JAMSDouble value = new JAMSDouble(0);
+            public JAMSDouble value = JAMSDataFactory.getDouble();
     
     
     double stepSize;

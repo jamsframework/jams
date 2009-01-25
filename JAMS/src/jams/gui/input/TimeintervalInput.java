@@ -42,6 +42,7 @@ import jams.data.JAMSTimeInterval;
 import jams.gui.*;
 import java.awt.Color;
 import jams.JAMS;
+import jams.data.JAMSDataFactory;
 
 /**
  *
@@ -204,20 +205,24 @@ public class TimeintervalInput extends JPanel implements InputComponent {
 
     public String getValue() {
         JAMSTimeInterval ti = new JAMSTimeInterval();
-        ti.setStart(new JAMSCalendar(
+        JAMSCalendar start = JAMSDataFactory.getCalendar();
+        start.set(
                 Integer.parseInt(syear.getText()),
                 Integer.parseInt(smonth.getText()) - 1,
                 Integer.parseInt(sday.getText()),
                 Integer.parseInt(shour.getText()),
                 Integer.parseInt(sminute.getText()),
-                0));
-        ti.setEnd(new JAMSCalendar(
+                0);
+        ti.setStart(start);
+        JAMSCalendar end = JAMSDataFactory.getCalendar();
+        end.set(
                 Integer.parseInt(eyear.getText()),
                 Integer.parseInt(emonth.getText()) - 1,
                 Integer.parseInt(eday.getText()),
                 Integer.parseInt(ehour.getText()),
                 Integer.parseInt(eminute.getText()),
-                0));
+                0);
+        ti.setEnd(end);
         ti.setTimeUnit(fieldMap.get(timeUnit.getSelectedIndex()));
         ti.setTimeUnitCount(Integer.parseInt(tuCount.getText()));
         if (!ti.getStart().before(ti.getEnd())) {

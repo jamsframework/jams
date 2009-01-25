@@ -36,7 +36,7 @@ public class JAMSFloatArray implements JAMSData, Serializable {
     /**
      * Creates a new instance of JAMSFloatArray
      */
-    public JAMSFloatArray() {
+    JAMSFloatArray() {
     }
 
     public String toString() {
