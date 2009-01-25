@@ -22,55 +22,9 @@
  */
 package jams.data;
 
-import java.util.*;
-import com.vividsolutions.jts.geom.Geometry;
-
 /**
  *
  * @author S. Kralisch
  */
-public interface JAMSEntity extends JAMSData {
-
-    public void setFloat(String name, float attribute);
-
-    public void setDouble(String name, double attribute);
-
-    public void setInt(String name, int attribute);
-
-    public void setLong(String name, long attribute);
-
-    public void setObject(String name, Object attribute);
-
-    public void setGeometry(String name, Geometry attribute);
-
-    public float getFloat(String name) throws NoSuchAttributeException;
-
-    public double getDouble(String name) throws NoSuchAttributeException;
-
-    public int getInt(String name) throws NoSuchAttributeException;
-
-    public long getLong(String name) throws NoSuchAttributeException;
-
-    public Object getObject(String name) throws NoSuchAttributeException;
-
-    public Geometry getGeometry(String name) throws NoSuchAttributeException;
-
-    public boolean existsAttribute(String name);
-
-    public Object[] getKeys();
-
-    public void setValue(HashMap<String, Object> value);
-
-    public HashMap<String, Object> getValue();
-    
-    public long getId();
-    
-    public void setId(long id);
-
-    public class NoSuchAttributeException extends Exception {
-
-        public NoSuchAttributeException(String errorMsg) {
-            super(errorMsg);
-        }
-    }
+public interface JAMSEntity extends Attribute.Entity {
 }

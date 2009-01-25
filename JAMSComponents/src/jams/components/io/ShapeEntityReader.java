@@ -23,6 +23,8 @@
 package jams.components.io;
 
 import com.vividsolutions.jts.geom.Geometry;
+import jams.data.JAMSDataFactory;
+import jams.data.JAMSEntity;
 import jams.data.JAMSEntityCollection;
 import jams.data.JAMSString;
 import jams.model.JAMSComponent;
@@ -68,7 +70,7 @@ public class ShapeEntityReader extends JAMSComponent {
         while (featureIterator.hasNext()) {
             Feature f = (Feature) featureIterator.next();
 
-//            JAMSEntity e = JAMSDataFactory.
+            JAMSEntity e = JAMSDataFactory.getEntity();
             System.out.println(f.getNumberOfAttributes());
 //            for (int i = 0; i < f.getNumberOfAttributes(); i++) {
 //                System.out.print(f.getAttribute(i) + " ");

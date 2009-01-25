@@ -163,37 +163,37 @@ public interface Attribute {
 
     public interface Entity extends JAMSData {
 
-        public void setFloat(String name, float attribute);
+        public void setFloat(java.lang.String name, float attribute);
 
-        public void setDouble(String name, double attribute);
+        public void setDouble(java.lang.String name, double attribute);
 
-        public void setInt(String name, int attribute);
+        public void setInt(java.lang.String name, int attribute);
 
-        public void setLong(String name, long attribute);
+        public void setLong(java.lang.String name, long attribute);
 
-        public void setObject(String name, Object attribute);
+        public void setObject(java.lang.String name, Object attribute);
 
-        public void setGeometry(String name, Geometry attribute);
+        public void setGeometry(java.lang.String name, com.vividsolutions.jts.geom.Geometry attribute);
 
-        public float getFloat(String name) throws NoSuchAttributeException;
+        public float getFloat(java.lang.String name) throws NoSuchAttributeException;
 
-        public double getDouble(String name) throws NoSuchAttributeException;
+        public double getDouble(java.lang.String name) throws NoSuchAttributeException;
 
-        public int getInt(String name) throws NoSuchAttributeException;
+        public int getInt(java.lang.String name) throws NoSuchAttributeException;
 
-        public long getLong(String name) throws NoSuchAttributeException;
+        public long getLong(java.lang.String name) throws NoSuchAttributeException;
 
-        public Object getObject(String name) throws NoSuchAttributeException;
+        public Object getObject(java.lang.String name) throws NoSuchAttributeException;
 
-        public Geometry getGeometry(String name) throws NoSuchAttributeException;
+        public com.vividsolutions.jts.geom.Geometry getGeometry(java.lang.String name) throws NoSuchAttributeException;
 
-        public boolean existsAttribute(String name);
+        public boolean existsAttribute(java.lang.String name);
 
         public Object[] getKeys();
 
-        public void setValue(HashMap<String, Object> value);
+        public void setValue(HashMap<java.lang.String, Object> value);
 
-        public HashMap<String, Object> getValue();
+        public HashMap<java.lang.String, Object> getValue();
 
         public long getId();
 
