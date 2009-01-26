@@ -22,13 +22,11 @@
  */
 package jams.data;
 
-import java.io.Serializable;
-
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSBoolean implements Attribute.Boolean, Serializable {
+public class JAMSBoolean implements Attribute.Boolean {
 
     private boolean value;
 

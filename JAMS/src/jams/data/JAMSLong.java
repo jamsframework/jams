@@ -22,13 +22,11 @@
  */
 package jams.data;
 
-import java.io.Serializable;
-
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSLong implements Attribute.Long, JAMSNumeric, Serializable {
+public class JAMSLong implements Attribute.Long, JAMSNumeric {
 
     private long value;
 

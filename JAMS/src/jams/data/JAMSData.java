@@ -22,11 +22,13 @@
  */
 package jams.data;
 
+import java.io.Serializable;
+
 /**
  *
  * @author S. Kralisch
  */
-public interface JAMSData {
+public interface JAMSData extends Serializable {
 
     public void setValue(String value);
 

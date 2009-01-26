@@ -22,13 +22,11 @@
  */
 package jams.data;
 
-import java.io.Serializable;
-
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSString implements Attribute.String, Serializable {
+public class JAMSString implements Attribute.String {
 
     private String value;
     private int length;

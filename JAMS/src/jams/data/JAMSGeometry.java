@@ -23,13 +23,12 @@
 package jams.data;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.io.Serializable;
 
 /**
  *
  * @author C. Schwartze
  */
-public class JAMSGeometry implements Attribute.Geometry, Serializable {
+public class JAMSGeometry implements Attribute.Geometry {
 
     private Geometry geo;
 

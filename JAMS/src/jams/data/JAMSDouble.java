@@ -22,13 +22,11 @@
  */
 package jams.data;
 
-import java.io.Serializable;
-
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSDouble implements Attribute.Double, JAMSNumeric, Serializable {
+public class JAMSDouble implements Attribute.Double, JAMSNumeric {
 
     private double value;
 

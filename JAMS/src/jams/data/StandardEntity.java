@@ -24,14 +24,13 @@ package jams.data;
 
 import java.util.*;
 import com.vividsolutions.jts.geom.Geometry;
-import java.io.Serializable;
 import jams.JAMS;
 
 /**
  *
  * @author S. Kralisch
  */
-class StandardEntity implements JAMSEntity, Serializable {
+class StandardEntity implements JAMSEntity {
 
     private HashMap<String, Object> values = new HashMap<String, Object>();
     private long id = -1;

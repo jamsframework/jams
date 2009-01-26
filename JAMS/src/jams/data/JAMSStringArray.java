@@ -22,14 +22,13 @@
  */
 package jams.data;
 
-import java.io.Serializable;
 import java.util.StringTokenizer;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSStringArray implements Attribute.StringArray, Serializable {
+public class JAMSStringArray implements Attribute.StringArray {
 
     private String[] value;
 

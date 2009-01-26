@@ -23,7 +23,6 @@
 package jams.data;
 
 import org.w3c.dom.*;
-import java.io.Serializable;
 import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.xml.sax.InputSource;
@@ -33,7 +32,7 @@ import jams.JAMS;
  *
  * @author S. Kralisch
  */
-public class JAMSDocument implements Attribute.Document, Serializable {
+public class JAMSDocument implements Attribute.Document {
 
     private Document value;
 

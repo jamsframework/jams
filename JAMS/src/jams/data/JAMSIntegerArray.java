@@ -22,14 +22,13 @@
  */
 package jams.data;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSIntegerArray implements JAMSData, Serializable {
+public class JAMSIntegerArray implements JAMSData {
 
     private int[] value;
 

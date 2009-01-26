@@ -22,14 +22,13 @@
  */
 package jams.data;
 
-import java.io.Serializable;
 import java.util.StringTokenizer;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSBooleanArray implements Attribute.BooleanArray, Serializable {
+public class JAMSBooleanArray implements Attribute.BooleanArray {
 
     private boolean[] value;
 

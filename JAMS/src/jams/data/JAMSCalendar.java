@@ -22,7 +22,6 @@
  */
 package jams.data;
 
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,7 +31,7 @@ import java.util.*;
  *
  * @author S. Kralisch
  */
-public class JAMSCalendar extends GregorianCalendar implements Attribute.Calendar, Serializable {
+public class JAMSCalendar extends GregorianCalendar implements Attribute.Calendar {
 
     public final static String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
 

@@ -22,14 +22,13 @@
  */
 package jams.data;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSEntityCollection implements Attribute.EntityList, Serializable {
+public class JAMSEntityCollection implements Attribute.EntityList {
 
     protected ArrayList<JAMSEntity> entities = new ArrayList<JAMSEntity>();
 

@@ -22,14 +22,13 @@
  */
 package jams.data;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSLongArray implements JAMSData, Serializable {
+public class JAMSLongArray implements JAMSData {
 
     private long[] value;
 

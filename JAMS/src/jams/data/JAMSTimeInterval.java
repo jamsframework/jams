@@ -22,14 +22,13 @@
  */
 package jams.data;
 
-import java.io.Serializable;
 import java.util.StringTokenizer;
 
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSTimeInterval implements Attribute.TimeInterval, Serializable {
+public class JAMSTimeInterval implements Attribute.TimeInterval {
 
     protected JAMSCalendar start = new JAMSCalendar();
     protected JAMSCalendar end = new JAMSCalendar();

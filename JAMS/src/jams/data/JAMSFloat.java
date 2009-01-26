@@ -22,13 +22,11 @@
  */
 package jams.data;
 
-import java.io.Serializable;
-
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSFloat implements Attribute.Float, JAMSNumeric, Serializable {
+public class JAMSFloat implements Attribute.Float, JAMSNumeric {
 
     private float value;
 

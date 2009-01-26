@@ -22,13 +22,11 @@
  */
 package jams.data;
 
-import java.io.Serializable;
-
 /**
  *
  * @author S. Kralisch
  */
-public class JAMSInteger implements Attribute.Integer, JAMSNumeric, Serializable {
+public class JAMSInteger implements Attribute.Integer, JAMSNumeric {
 
     private int value;
 
