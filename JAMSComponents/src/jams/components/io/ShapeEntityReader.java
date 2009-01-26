@@ -29,6 +29,7 @@ import jams.data.JAMSEntity;
 import jams.data.JAMSEntityCollection;
 import jams.data.JAMSString;
 import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.net.URL;
 import java.util.ArrayList;
@@ -42,6 +43,11 @@ import org.geotools.feature.Feature;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
+@JAMSComponentDescription (title = "ShapeEntityReader",
+                           author = "Sven Kralisch",
+                           description = "Reads a shape file and creates a " +
+"list of JAMS entities containing an entity for each feature. An attribute " +
+"name must be provided in order to identify the id field used in the shape file")
 public class ShapeEntityReader extends JAMSComponent {
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
@@ -58,17 +64,20 @@ public class ShapeEntityReader extends JAMSComponent {
 
     public void init() throws Exception {
 
-        // in this case the entities attribut is not referred from outside
-        if (entities == null) {
-            //return;
-        }
-
         URL shapeUrl = (new java.io.File(getModel().getWorkspaceDirectory().getPath() + "/" + shapeFileName.getValue()).toURI().toURL());
         ShapefileDataStore store = new ShapefileDataStore(shapeUrl);
 
         Iterator featureIterator = store.getFeatureSource(store.getTypeNames()[0]).getFeatures().iterator();
 
         AttributeType[] types = store.getFeatureSource(store.getTypeNames()[0]).getSchema().getAttributeTypes();
+        int idAttributeIndex = -1;
+
+        for (int i = 0; i < types.length; i++) {
+            if (types[i].getName().equals(idName.getValue()) &&
+                    ((types[i].getType() == Long.class) || (types[i].getType() == Integer.class))) {
+                idAttributeIndex = i;
+            }
+        }
 
         ArrayList<JAMSEntity> entityList = new ArrayList<JAMSEntity>();
 
@@ -80,6 +89,15 @@ public class ShapeEntityReader extends JAMSComponent {
 
             for (int i = 0; i < types.length; i++) {
                 e.setObject(types[i].getName(), JAMSDataFactory.createInstance(f.getAttribute(i)));
+            }
+
+            if (idAttributeIndex != -1) {
+                try {
+                    long id = Long.parseLong(f.getAttribute(idAttributeIndex).toString());
+                    e.setId(id);
+                } catch (NumberFormatException nfe) {
+                    getModel().getRuntime().sendErrorMsg("Could not parse " + f.getAttribute(idAttributeIndex) + " as long value!");
+                }
             }
 
             entityList.add((JAMSEntity) e);
