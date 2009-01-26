@@ -42,7 +42,7 @@ public class JAMSDoubleArray implements JAMSData, Serializable {
     public String toString() {
         String s = "";
         if (value == null || value.length == 0) {
-            s = "null";
+            s = "";
         } else {
             s += value[0];
             for (int i = 1; i < value.length; i++) {

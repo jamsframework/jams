@@ -240,7 +240,7 @@ public class TimeSpaceProcessor {
         TimeSpaceProcessor tsproc = new TimeSpaceProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_2.dat");
         tsproc.isTimeSpaceDatastore();
 
-        JAMSCalendar date = JAMSDataFactory.getCalendar();
+        JAMSCalendar date = JAMSDataFactory.createCalendar();
         date.setValue("1995-11-01 07:30");
 
         //output(tsproc.getData(date));

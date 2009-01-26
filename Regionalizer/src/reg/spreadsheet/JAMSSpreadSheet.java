@@ -233,7 +233,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
 
             DataValue[] rowData = ds.getData();
 
-            JAMSCalendar timeval = JAMSDataFactory.getCalendar();
+            JAMSCalendar timeval = JAMSDataFactory.createCalendar();
             try {
                 timeval.setValue(rowData[0].getString(), "dd.MM.yyyy HH:mm");
             } catch (ParseException pe) {
@@ -341,7 +341,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
                         } else {
 
                             if (k == 0) {
-                                JAMSCalendar timeval = JAMSDataFactory.getCalendar();
+                                JAMSCalendar timeval = JAMSDataFactory.createCalendar();
                                 timeval.setValue(itemtext);
                                 timeVector.add(timeval);
 

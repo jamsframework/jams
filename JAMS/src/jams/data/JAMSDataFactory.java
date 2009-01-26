@@ -38,7 +38,7 @@ public class JAMSDataFactory {
      * @throws java.lang.InstantiationException
      * @throws java.lang.IllegalAccessException
      */
-    public static JAMSData getInstance(Class clazz) throws InstantiationException, IllegalAccessException {
+    public static JAMSData createInstance(Class clazz) throws InstantiationException, IllegalAccessException {
         if (!JAMSData.class.isAssignableFrom(clazz)) {
             return null;
         }
@@ -54,10 +54,10 @@ public class JAMSDataFactory {
      * @param rt A runtime object that will be used to handle any exceptions ocurred
      * @return An instance of the provided class
      */
-    public static JAMSData getInstance(Class clazz, JAMSRuntime rt) {
+    public static JAMSData createInstance(Class clazz, JAMSRuntime rt) {
         JAMSData value = null;
         try {
-            value = getInstance(clazz);
+            value = createInstance(clazz);
         } catch (InstantiationException ex) {
             rt.handle(ex, false);
         } catch (IllegalAccessException ex) {
@@ -71,7 +71,7 @@ public class JAMSDataFactory {
      * @param value The object to be represented by a JAMSData instance
      * @return A JAMSData instance
      */
-    public static JAMSData getInstance(Object value) {
+    public static JAMSData createInstance(Object value) {
         Class type = value.getClass();
         JAMSData result;
 
@@ -107,87 +107,87 @@ public class JAMSDataFactory {
         return result;
     }
 
-    public static JAMSDouble getDouble() {
+    public static JAMSDouble createDouble() {
         return new JAMSDouble();
     }
 
-    public static JAMSDoubleArray getDoubleArray() {
+    public static JAMSDoubleArray createDoubleArray() {
         return new JAMSDoubleArray();
     }
 
-    public static JAMSFloat getFloat() {
+    public static JAMSFloat createFloat() {
         return new JAMSFloat();
     }
 
-    public static JAMSFloatArray getFloatArray() {
+    public static JAMSFloatArray createFloatArray() {
         return new JAMSFloatArray();
     }
 
-    public static JAMSLong getLong() {
+    public static JAMSLong createLong() {
         return new JAMSLong();
     }
 
-    public static JAMSLongArray getLongArray() {
+    public static JAMSLongArray createLongArray() {
         return new JAMSLongArray();
     }
 
-    public static JAMSInteger getInteger() {
+    public static JAMSInteger createInteger() {
         return new JAMSInteger();
     }
 
-    public static JAMSIntegerArray getIntegerArray() {
+    public static JAMSIntegerArray createIntegerArray() {
         return new JAMSIntegerArray();
     }
 
-    public static JAMSString getString() {
+    public static JAMSString createString() {
         return new JAMSString();
     }
 
-    public static JAMSStringArray getStringArray() {
+    public static JAMSStringArray createStringArray() {
         return new JAMSStringArray();
     }
 
-    public static JAMSBoolean getBoolean() {
+    public static JAMSBoolean createBoolean() {
         return new JAMSBoolean();
     }
 
-    public static JAMSBooleanArray getBooleanArray() {
+    public static JAMSBooleanArray createBooleanArray() {
         return new JAMSBooleanArray();
     }
 
-    public static JAMSCalendar getCalendar() {
+    public static JAMSCalendar createCalendar() {
         return new JAMSCalendar();
     }
 
-    public static JAMSDirName getDirName() {
+    public static JAMSDirName createDirName() {
         return new JAMSDirName();
     }
 
-    public static JAMSDocument getJAMSDocument() {
+    public static JAMSDocument createJAMSDocument() {
         return new JAMSDocument();
     }
 
-    public static JAMSFileName getFileName() {
+    public static JAMSFileName createFileName() {
         return new JAMSFileName();
     }
 
-    public static JAMSGeometry getGeometry() {
+    public static JAMSGeometry createGeometry() {
         return new JAMSGeometry();
     }
 
-    public static JAMSTimeInterval getTimeInterval() {
+    public static JAMSTimeInterval createTimeInterval() {
         return new JAMSTimeInterval();
     }
 
-    public static JAMSEntity getEntity() {
+    public static JAMSEntity createEntity() {
         return new StandardEntity();
     }
 
-    public static JAMSDocument getDocument() {
+    public static JAMSDocument createDocument() {
         return new JAMSDocument();
     }
 
-    public static JAMSEntityCollection getEntityCollection() {
+    public static JAMSEntityCollection createEntityCollection() {
         return new JAMSEntityCollection();
     }
 }

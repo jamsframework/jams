@@ -205,7 +205,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
 
     public String getValue() {
         JAMSTimeInterval ti = new JAMSTimeInterval();
-        JAMSCalendar start = JAMSDataFactory.getCalendar();
+        JAMSCalendar start = JAMSDataFactory.createCalendar();
         start.set(
                 Integer.parseInt(syear.getText()),
                 Integer.parseInt(smonth.getText()) - 1,
@@ -214,7 +214,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
                 Integer.parseInt(sminute.getText()),
                 0);
         ti.setStart(start);
-        JAMSCalendar end = JAMSDataFactory.getCalendar();
+        JAMSCalendar end = JAMSDataFactory.createCalendar();
         end.set(
                 Integer.parseInt(eyear.getText()),
                 Integer.parseInt(emonth.getText()) - 1,

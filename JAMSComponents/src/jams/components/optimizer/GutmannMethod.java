@@ -465,9 +465,9 @@ public class GutmannMethod extends Optimizer {
                 neldermeadOptimizer.GoalFunction = new innerOptimizer();
                 neldermeadOptimizer.boundaries = this.boundaries;
                 neldermeadOptimizer.lowBound = this.lowBound;
-                neldermeadOptimizer.maxn = JAMSDataFactory.getInteger();
+                neldermeadOptimizer.maxn = JAMSDataFactory.createInteger();
                 maxn.setValue(200);
-                neldermeadOptimizer.mode = JAMSDataFactory.getInteger();
+                neldermeadOptimizer.mode = JAMSDataFactory.createInteger();
                 mode.setValue(NelderMead.MODE_MINIMIZATION);
                 neldermeadOptimizer.n = n;
                 neldermeadOptimizer.upBound = upBound;

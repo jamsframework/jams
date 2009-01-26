@@ -86,7 +86,7 @@ public class JAMSTemporalContext extends JAMSContext {
         lastValue.add(timeInterval.getTimeUnit(), -timeInterval.getTimeUnitCount());
         lastValue.add(JAMSCalendar.MILLISECOND, 1);
         if (current == null) {
-            current = (JAMSCalendar) JAMSDataFactory.getInstance(JAMSCalendar.class, getModel().getRuntime());
+            current = (JAMSCalendar) JAMSDataFactory.createInstance(JAMSCalendar.class, getModel().getRuntime());
         }
     }
 

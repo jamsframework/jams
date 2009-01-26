@@ -123,7 +123,7 @@ public class CalendarInput extends JPanel implements InputComponent {
 
     public String getValue() {
         try {
-            JAMSCalendar cal = JAMSDataFactory.getCalendar();
+            JAMSCalendar cal = JAMSDataFactory.createCalendar();
             cal.set(
                     Integer.parseInt(syear.getText()),
                     Integer.parseInt(smonth.getText()) - 1,
@@ -139,7 +139,7 @@ public class CalendarInput extends JPanel implements InputComponent {
 
     public void setValue(String value) {
 
-        JAMSCalendar cal = JAMSDataFactory.getCalendar();
+        JAMSCalendar cal = JAMSDataFactory.createCalendar();
 
         if ((value != null) && !value.equals("")) {
             cal.setValue(value);

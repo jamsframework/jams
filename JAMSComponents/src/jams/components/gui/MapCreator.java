@@ -157,11 +157,11 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
     public void run() throws Exception {
         
         if (shapeFileName1 == null)
-            shapeFileName1 = JAMSDataFactory.getString();
+            shapeFileName1 = JAMSDataFactory.createString();
         if (shapeFileName2 == null)
-            shapeFileName2 = JAMSDataFactory.getString();
+            shapeFileName2 = JAMSDataFactory.createString();
         if (shapeFileName3 == null)
-            shapeFileName3 = JAMSDataFactory.getString();
+            shapeFileName3 = JAMSDataFactory.createString();
         
         FeatureSource fs = null;
         String[] otherLayers = { shapeFileName1.getValue(),

@@ -60,7 +60,7 @@ public class ShapeEntityReader extends JAMSComponent {
 
         // in this case the entities attribut is not referred from outside
         if (entities == null) {
-            return;
+            //return;
         }
 
         URL shapeUrl = (new java.io.File(getModel().getWorkspaceDirectory().getPath() + "/" + shapeFileName.getValue()).toURI().toURL());
@@ -76,10 +76,10 @@ public class ShapeEntityReader extends JAMSComponent {
         while (featureIterator.hasNext()) {
             Feature f = (Feature) featureIterator.next();
 
-            Attribute.Entity e = JAMSDataFactory.getEntity();
+            Attribute.Entity e = JAMSDataFactory.createEntity();
 
             for (int i = 0; i < types.length; i++) {
-                e.setObject(types[i].getName(), JAMSDataFactory.getInstance(f.getAttribute(i)));
+                e.setObject(types[i].getName(), JAMSDataFactory.createInstance(f.getAttribute(i)));
             }
 
             entityList.add((JAMSEntity) e);

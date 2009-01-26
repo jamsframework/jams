@@ -52,7 +52,7 @@ public class EntityAccessor implements DataAccessor {
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
                     try {
-                        entityObject[i] = (JAMSEntity) JAMSDataFactory.getInstance(JAMSEntity.class);
+                        entityObject[i] = (JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class);
                     } catch (InstantiationException ex) {
                     } catch (IllegalAccessException ex) {
                     }

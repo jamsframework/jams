@@ -331,7 +331,7 @@ title="Title",
     private boolean IsSampleValid(double[] sample) {
         JAMSDouble conv_sample[] = new JAMSDouble[sample.length];
         for (int i = 0;i<sample.length;i++) {
-            conv_sample[i] = JAMSDataFactory.getDouble();
+            conv_sample[i] = JAMSDataFactory.createDouble();
             conv_sample[i].setValue(sample[i]);
         }
         return IsSampleValid(conv_sample);

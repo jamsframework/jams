@@ -40,11 +40,11 @@ public class step1Pane extends stepPane {
         File file = new File(fileName);
 
         DocumentLoader loader = new DocumentLoader();
-        loader.modelFile = JAMSDataFactory.getString();
+        loader.modelFile = JAMSDataFactory.createString();
         loader.modelFile.setValue(file.getName());
-        loader.workspaceDir = JAMSDataFactory.getString();
+        loader.workspaceDir = JAMSDataFactory.createString();
         loader.workspaceDir.setValue(file.getParent());
-        loader.modelDoc = JAMSDataFactory.getDocument();
+        loader.modelDoc = JAMSDataFactory.createDocument();
 
         String errorString = loader.init_withResponse();
         loadedModel = loader.modelDoc.getValue();

@@ -251,7 +251,7 @@ public class CheckedTSDataReader extends JAMSComponent {
         yCoord.setValue(staty);
         
         currentTime = timeInterval.getStart().clone();
-        tsTime = JAMSDataFactory.getCalendar();
+        tsTime = JAMSDataFactory.createCalendar();
         tsTime.setValue("0-01-01 00:00");
         
         getModel().getRuntime().println(dataSetName.getValue() + " data file initalised ... ", JAMS.VERBOSE);
@@ -294,7 +294,7 @@ public class CheckedTSDataReader extends JAMSComponent {
             timeArray[i] = st.nextToken();
         }
         
-        JAMSCalendar cal = JAMSDataFactory.getCalendar();
+        JAMSCalendar cal = JAMSDataFactory.createCalendar();
         cal.setValue(timeArray[2]+"-"+timeArray[1]+"-"+timeArray[0]+" "+timeArray[3]+":"+timeArray[4]);
         return cal;
     }

@@ -48,7 +48,7 @@ public class LongArrayAccessor implements DataAccessor {
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {}
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
-                    entityObject[i] = JAMSDataFactory.getLongArray();
+                    entityObject[i] = JAMSDataFactory.createLongArray();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
                     throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist!"));

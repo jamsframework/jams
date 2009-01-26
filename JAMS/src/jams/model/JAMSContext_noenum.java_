@@ -160,7 +160,7 @@ public class JAMSContext extends JAMSComponent {
 
             try {
 
-                JAMSData data = JAMSDataFactory.getData(attributeSpec.className);
+                JAMSData data = JAMSDataFactory.createData(attributeSpec.className);
                 data.setValue(attributeSpec.value);
                 attribs.put(attributeSpec.attributeName, data);
 

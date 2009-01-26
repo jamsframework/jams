@@ -247,8 +247,8 @@ public class ModelLoader {
                             // create the var object
                             varClazz = loader.loadClass(varClassName);
 
-                            variable = JAMSDataFactory.getInstance(varClazz);
-                            // variable = getInstance(varClazz);
+                            variable = JAMSDataFactory.createInstance(varClazz);
+                            // variable = createInstance(varClazz);
 
                             varValue = element.getAttribute("value");
                             variable.setValue(varValue);
@@ -272,7 +272,7 @@ public class ModelLoader {
                         // create the var object
                         varClazz = loader.loadClass(varClassName);
                         variable = (JAMSData) varClazz.newInstance();
-                        // variable = getInstance(varClazz);
+                        // variable = createInstance(varClazz);
                         varValue = element.getAttribute("globvar");
                         variable.setValue(constants.get(varValue));
                         // attach the variable to the component's field..
@@ -400,14 +400,18 @@ public class ModelLoader {
                 JAMSVarDescription jvd = fields[i].getAnnotation(JAMSVarDescription.class);
 
                 // get variable object or create one if not existing
-                if ((dataObject == null) && (!jvd.defaultValue().equals(JAMSVarDescription.NULL_VALUE))) {
-                    dataObject = JAMSDataFactory.getInstance(dataType);
+                if ((dataObject == null) && (!jvd.defaultValue().equals(JAMSVarDescription.NULL_VALUE) || (jvd.access() == JAMSVarDescription.AccessType.WRITE))) {
+                    dataObject = JAMSDataFactory.createInstance(dataType);
                     fields[i].set(component, dataObject);
-
-                    dataObject.setValue(jvd.defaultValue());
                 } else {
                     result.add(fields[i]);
                 }
+
+                // set value for data object if defined
+                if (!jvd.defaultValue().equals(JAMSVarDescription.NULL_VALUE)) {
+                    dataObject.setValue(jvd.defaultValue());
+                }
+                
             }
         }
         return result;

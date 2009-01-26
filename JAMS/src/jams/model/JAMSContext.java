@@ -80,10 +80,10 @@ public class JAMSContext extends JAMSComponent {
         try {
             
             //create an entity collection with one entity
-            setCurrentEntity((JAMSEntity) JAMSDataFactory.getInstance(JAMSEntity.class));
+            setCurrentEntity((JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class));
             ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
             list.add(getCurrentEntity());
-            setEntities(JAMSDataFactory.getEntityCollection());
+            setEntities(JAMSDataFactory.createEntityCollection());
             getEntities().setEntities(list);
             attribs = new HashMap<String, JAMSData>();
 
@@ -260,7 +260,7 @@ public class JAMSContext extends JAMSComponent {
             try {
 
                 clazz = Class.forName(attributeSpec.className);
-                JAMSData data = JAMSDataFactory.getInstance(clazz);
+                JAMSData data = JAMSDataFactory.createInstance(clazz);
                 data.setValue(attributeSpec.value);
                 attribs.put(attributeSpec.attributeName, data);
 
@@ -585,7 +585,7 @@ public class JAMSContext extends JAMSComponent {
             if (componentObject != null) {
                 dataObject = componentObject;
             } else {
-                dataObject = JAMSDataFactory.getInstance(clazz, getModel().getRuntime());
+                dataObject = JAMSDataFactory.createInstance(clazz, getModel().getRuntime());
             }
 
             attribs.put(attributeName, dataObject);
@@ -697,7 +697,7 @@ public class JAMSContext extends JAMSComponent {
         }
 
         ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
-        list.add((JAMSEntity) JAMSDataFactory.getInstance(JAMSEntity.class, getModel().getRuntime()));
+        list.add((JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class, getModel().getRuntime()));
 
     }
 
