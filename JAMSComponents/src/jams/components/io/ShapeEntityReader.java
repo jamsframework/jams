@@ -22,7 +22,6 @@
  */
 package jams.components.io;
 
-import com.vividsolutions.jts.geom.Geometry;
 import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
 import jams.data.JAMSEntity;
@@ -33,7 +32,6 @@ import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.AttributeType;
@@ -62,6 +60,7 @@ public class ShapeEntityReader extends JAMSComponent {
                          description = "Entity collection to be created")
     public JAMSEntityCollection entities;
 
+    @Override
     public void init() throws Exception {
 
         URL shapeUrl = (new java.io.File(getModel().getWorkspaceDirectory().getPath() + "/" + shapeFileName.getValue()).toURI().toURL());
@@ -81,7 +80,6 @@ public class ShapeEntityReader extends JAMSComponent {
 
         ArrayList<JAMSEntity> entityList = new ArrayList<JAMSEntity>();
 
-        HashMap<Long, Geometry> geomMap = new HashMap<Long, Geometry>();
         while (featureIterator.hasNext()) {
             Feature f = (Feature) featureIterator.next();
 
