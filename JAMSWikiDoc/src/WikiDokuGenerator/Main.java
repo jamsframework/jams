@@ -9,7 +9,10 @@
 
 package WikiDokuGenerator;
 
-import java.io.File;
+import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
+import java.awt.Component;
 import net.sourceforge.jwbf.bots.MediaWikiBot;
 import net.sourceforge.jwbf.contentRep.mw.SimpleArticle;
 import java.io.*;
@@ -19,74 +22,39 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Vector;
 import java.util.jar.JarFile;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
 import org.unijena.jams.model.*;
 import org.unijena.jams.model.JAMSComponent;
 
-/**
- *
- * @author admin
- */
 public class Main {
     private static final Class[] parameters = new Class[]{URL.class};         
-    static MediaWikiBot bot = null;
+    MediaWikiBot bot = null;
     
-    static String WikiLocation = "http://localhost/wiki/";
-    static String WikiUser     = "WikiSysop";
-    static String WikiPw       = "secret";
-         
-    static JDialog ProgrammInformation = new JDialog();
-    static JProgressBar Progress       = new JProgressBar(0,100);
+    String WikiLocation = "http://localhost/wiki/";
+    String WikiUser     = "WikiSysop";
+    String WikiPw       = "secret";
+    public String statusText = "";
+                 
+    ClassLoader parentLoader;
+    Component parentComponent;
     
-    public static boolean initBot() {
+    public boolean initBot() {
         bot = new MediaWikiBot(WikiLocation);
          
         try {
             bot.login(WikiUser, WikiPw);
         }catch(Exception e) {
-            System.out.println("Could not login database, because:" + e.toString());
+            JOptionPane.showMessageDialog(parentComponent,"Could not login database, because:" + e.toString());    
             return false;
         }
         return true;       
     }
-    
-    static String replaceAll(String source,String expr,String repl){
-        String result = "";
-        boolean inMatch = false;
-        int matchOffset = 0;
-        for (int i=0;i<source.length();i++){
-            if (inMatch){
-                matchOffset++;
-                if (matchOffset >= expr.length()){
-                    result += repl + source.charAt(i);
-                    inMatch = false;
-                }
-                else if (source.charAt(i)!=expr.charAt(matchOffset)){
-                    inMatch = false;
-                    result += source.substring(i-matchOffset,i);
-                }                
-            }
-            else{
-                if (source.charAt(i) == expr.charAt(0)) {
-                    inMatch = true;
-                    matchOffset = 0;
-                }
-                else{
-                    result += source.charAt(i);
-                }
-            }
-        }        
-        if (inMatch && matchOffset+1 == expr.length()){
-            result += repl;
-        }
-        return result;
-    }
-    
-    public static boolean sendContent(String articleName,String text){
+        
+    public boolean sendContent(String articleName,String text){
         SimpleArticle a = new SimpleArticle();
         
         a.setText(text);
@@ -97,62 +65,66 @@ public class Main {
             bot.writeContent(a);
         }
         catch(Exception e) {
-            System.out.println("Could not write content!!, because:" + e.toString());
+            JOptionPane.showMessageDialog(parentComponent,"Could not write content!!, because:" + e.toString());    
             return false;
         }
         return true;
     }
     
-    public static boolean deleteAll() {
-        
-        return true;
-    }
-    public static String readContent(InputStream in) {
-        String content="";
-        InputStreamReader r = new InputStreamReader(in);
-        
-        try {
-            char[] buffer = new char[in.available()];
-            r.read(buffer);
-            content = String.copyValueOf(buffer);
-            r.close();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-        
-        return content;
-    }
-    
-    public static void writeContent(String file, String content) {
-        File f = new File(file);
-        char[] buffer = new char[(int) f.length()];
-        
-        try {
-            Writer w = new FileWriter(f);
-            w.write(content);
-            w.close();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-    }
-    
-    public static void createDoc(String inJar, Class<?> superClass) throws Exception {        
-        JarFile jfile = new JarFile(inJar);
-                
-        Progress.setString("Adding Articles of Package " + inJar);
-        String fileName = null;
-        for(int i=inJar.length()-1;i>=0;i--){
-            if (inJar.charAt(i)=='\\' || inJar.charAt(i)=='/' ) {
-                fileName = inJar.substring(i+1,inJar.length());              
+    public static String GetFileName(String path){
+        String fileName = path;
+        for(int i=path.length()-1;i>=0;i--){
+            if (path.charAt(i)=='\\' || path.charAt(i)=='/' ) {
+                fileName = path.substring(i+1,path.length());              
                 break;
             }
+        }        
+        return fileName;        
+    }
+    
+    public static String MakeIDCode(String fileName){        
+        return "11"+fileName.replace(".","").toUpperCase()+"11";
+    }
+    
+    public void updateDocToWiki(String inJar, Class<?> superClass,Vector<String> components) throws Exception {
+        HashMap<String,String> contentList = new HashMap();
+
+        statusText = "Create new Articles";        
+        createDoc(inJar,superClass,contentList,null);
+
+        statusText = "Adding Articles of Package " + inJar;
+                
+         //delete old components   
+        if (components == null){
+            this.DeleteArticle(inJar);            
+            //bot.RemoveAllArticlesWithString(MakeIDCode(GetFileName(inJar)));
         }
-        if (fileName == null) {
-            fileName = inJar;
+        Iterator<Entry<String,String>> e = contentList.entrySet().iterator();
+        while(e.hasNext()){
+            Entry<String,String> entry = e.next();
+            boolean contains = false;
+            if (components != null){
+                for (int i=0;i<components.size();i++){
+                    if ( components.get(i).compareToIgnoreCase(entry.getKey()) == 0){
+                        contains = true;                        
+                        break;
+                    }
+                }                
+            }
+            else{
+                contains = true;
+            }
+            if ( contains ){
+                statusText = "Sending page: " + entry.getKey();
+                sendContent(entry.getKey(),entry.getValue());
+            }
         }
-        
-        File file = new File(inJar);
-        URLClassLoader loader = new URLClassLoader(new URL[]{file.toURL()});
+    }
+    
+    public void createDoc(String inJar, Class<?> superClass,HashMap<String,String> contentList,Vector<String> componentsList) throws Exception {        
+        JarFile jfile = new JarFile(inJar);                                        
+        File file = new File(inJar);        
+        URLClassLoader loader = new URLClassLoader(new URL[]{file.toURL()}, parentLoader);
         
         Enumeration jarentries = jfile.entries();
         
@@ -181,13 +153,9 @@ public class Main {
                 
         HashMap<Class, String> componentDescriptions = new HashMap<Class, String>();
         ArrayList<Class> components = new ArrayList<Class>();
-        
-        //delete old components
-        String idCode = "11"+fileName.replace(".","").toUpperCase()+"11";
-        
-        Progress.setString("Remove old articles of Package:" + inJar);
-        bot.RemoveAllArticlesWithString(idCode);
-        Progress.setString("Building Articles");
+                 
+        String fileName = GetFileName(inJar);        
+        String idCode   = MakeIDCode(fileName);
         
         while (jarentries.hasMoreElements()) {
             String entry = jarentries.nextElement().toString();
@@ -198,9 +166,9 @@ public class Main {
             classString = classString.replace("/", ".");
             Class<?> clazz = null;
             try {
-                clazz = loader.loadClass(classString);
+                clazz = loader.loadClass(classString);                
             }catch(java.lang.NoClassDefFoundError e){
-                System.out.println("Class: " + classString + " was not found!, because " + e.toString());
+                JOptionPane.showMessageDialog(parentComponent,"Class: " + classString + " was not found!, because " + e.toString());  
                 continue;
             }
             if (clazz == null)
@@ -234,12 +202,11 @@ public class Main {
                     try{
                     field = clazz.getFields();
                     }catch(java.lang.NoClassDefFoundError e){
-                        System.out.println("Cant load fields of class:" + clazz.getName() + " ,because:" + e.toString());
+                        JOptionPane.showMessageDialog(parentComponent,"Can't load fields of class:" + clazz.getName() + " ,because:" + e.toString());  
                         continue;
                     }
                     for (int i=0;i<field.length;i++) {                            
                         JAMSVarDescription jvd = (JAMSVarDescription) field[i].getAnnotation(JAMSVarDescription.class);
-                        System.out.println(field[i].toString());    
                         componentvar = varTemplate;
                         componentvar = componentvar.replace("%name%", field[i].getName());
                         if (jvd != null) {
@@ -263,13 +230,12 @@ public class Main {
                     components.add(clazz);
                     componentDescriptions.put(clazz, compDesc);
                 } catch (Exception exc) {
-                    System.out.println("Error:" + exc.toString());
+                     JOptionPane.showMessageDialog(parentComponent,"Error:" + exc.toString());  
                 }
             }
         }
         String package_list = "";
-        String oldPackage = "", newPackage;
-        
+        String oldPackage = "", newPackage;        
         String mainpage = "";
         
         for (Class clazz : components) {
@@ -285,13 +251,12 @@ public class Main {
                     mainpage += "===[[package "+oldPackage + "]]===\n" + package_list;
 
                     package_list = "";
-                    sendContent("package_" + oldPackage, package_desc);
-                    System.out.println("Sending:" + "package_" + oldPackage);                    
+                    contentList.put("package_" + oldPackage,new String(package_desc));                    
                 }
                 oldPackage = newPackage;
             }
             String package_item = packageTemplate.replace("%name%",clazz.getName());
-            package_list += package_item;  //"<p style='line-height:3px;margin-left:20px;'><a href=\"" + clazz.getName() + ".html\">" + clazz.getSimpleName() + "</a></p>\n";
+            package_list += package_item;
         }
         
         //send last package
@@ -304,192 +269,144 @@ public class Main {
         mainpage += "===[[package "+oldPackage + "]]===\n" + package_list;
 
         package_list = "";
-        sendContent("package_" + oldPackage, package_desc);
-        Progress.setString("Adding Article:" + "package_" + oldPackage);
-        System.out.println("Sending:" + "package_" + oldPackage);         
-        
-        String jarName = file.getCanonicalFile().getName();
-                
+        contentList.put("package_" + oldPackage, new String(package_desc));                      
+        String jarName = file.getCanonicalFile().getName();        
         for (Class clazz : components) {
             String compdesc = componentDescriptions.get(clazz);
             String html = compdesc;
-                        
-            System.out.println("Sending:" + clazz.getName());
-            Progress.setString("Adding Article:" + clazz.getName());
-            sendContent(clazz.getName(), html);            
-        }
-        Progress.setString("Adding Article:" + fileName);
-        sendContent(fileName, mainpage + "Download: [[Bild:"+fileName.replace(".jar",".zip")+"]]\n"+"<span style=\"color:white\">" + idCode + "</span>");
-        System.out.println("Sending:" + fileName);                    
+             
+            if (componentsList != null)
+                componentsList.add(clazz.getName());            
+            if (contentList != null)
+                contentList.put(clazz.getName(), html);
+        }        
+        contentList.put(new String(fileName),new String(mainpage + "Download: [[Bild:"+fileName.replace(".jar",".zip")+"]]\n"+"<span style=\"color:white\">" + idCode + "</span>"));               
     }
-
-    
-    public static void main(String[] args) {                
-        Class c = JAMSComponent.class;
-                               
-        FileOutputStream f = null;
-        try {
-            f = new FileOutputStream("wikidocu.log");
-        }catch(Exception e){
-            System.out.println("Kann log nicht erstellen" + e.toString());
-        }
-        PrintStream p = new PrintStream(f);
-        System.setOut(p);
-                    
-        ProgrammInformation.add(Progress);
-        ProgrammInformation.setTitle("Upload Status");
         
-        ProgrammInformation.setSize(500,60);
-        ProgrammInformation.setLocationByPlatform(true);
-        ProgrammInformation.setVisible(true);
-        Progress.setValue(0);        
-        Progress.setString("Initialize");
-                
-        String jarDirName = "D:\\JAMSBuild\\j2k\\dist\\";
-        Vector<String> DeleteList = new Vector<String>();
-        Vector<String> AddList = new Vector<String>();
-        Vector<String> UploadList = new Vector<String>();
-        Vector<String> UnloadList = new Vector<String>();
-
-        //parse arguments        
-        for (int i=0;i<args.length-1;i++) {
-            jarDirName = args[i];
-
-            if (args[i].compareTo("user") == 0) {
-                WikiUser = args[i+1];
-                i++;
-            }
-            if (args[i].compareTo("password") == 0) {
-                WikiPw = args[i+1];
-                i++;
-            }
-            if (args[i].compareTo("location") == 0) {
-                WikiLocation = args[i+1];
-                i++;
-            }
-            if (args[i].compareTo("del") == 0) {
-                DeleteList.add(args[i+1]);
-                i++;
-            }
-            
-            if (args[i].compareTo("update") == 0) {
-                DeleteList.add(args[i+1]);
-                AddList.add(args[i+1]);
-                i++;
-            }
-            
-            if (args[i].compareTo("add") == 0) {
-                AddList.add(args[i+1]);
-                i++;
-            }
-            
-            if (args[i].compareTo("upload") == 0) {
-                UploadList.add(args[i+1]);
-                i++;
-            }
-            
-            if (args[i].compareTo("unload") == 0) {
-                UnloadList.add(args[i+1]);
-                i++;
+    public static File[] getFiles(String inFile){
+        File jarDir = new File(inFile);
+        File[] files = null;
+        //does file exist?
+        if( jarDir.exists() ) {
+            files = jarDir.listFiles();
+            //no directory?
+            if (files == null) {
+                files = new File[1];
+                files[0] = jarDir;
             }
         }
-        Progress.setValue(0);
-        Progress.setString("Login");
-        Progress.setStringPainted(true);
-        ProgrammInformation.setAlwaysOnTop(true);
+        else
+            return null;
+        return files;
+    }
+        
+    public Main(ClassLoader _parentClassLoader, Component _parentComponent){           
+        this.parentLoader = _parentClassLoader;
+        this.parentComponent = _parentComponent;
+    }
+    
+    public boolean initUploadProcess(String _WikiUser,String _WikiPw, String _WikiLocation){                               
+        WikiUser = _WikiUser;
+        WikiPw   = _WikiPw;
+        WikiLocation = _WikiLocation;
+
+        statusText = "Login";
+        
         //try to login
         if (!initBot()) {
-            JOptionPane.showMessageDialog(ProgrammInformation,"Could not login! Check username, password and wiki location");            
-            ProgrammInformation.dispose();
-            return;
+            JOptionPane.showMessageDialog(parentComponent,"Could not login! Check username, password and wiki location");            
+            return false;
         }
-        
-        double globalOperations = DeleteList.size() + UnloadList.size() + UploadList.size() + AddList.size() + 1;
-        double opCounter = 1;
-        //upload files
-        for (int i=0;i<UploadList.size();i++) {            
-            Progress.setValue((int)((opCounter/globalOperations)*100.0));
-            opCounter += 1.0;
-            Progress.setString("Uploading File:" + UploadList.get(i));
-            bot.uploadFile(UploadList.get(i));
-        }        
-        //delete files
-        for (int i=0;i<DeleteList.size();i++) {                    
-            Progress.setValue((int)((opCounter/globalOperations)*100.0));
-            opCounter += 1.0;
-            Progress.setString("Deleting Articles of Package" + DeleteList.get(i));
-            try {
-                File jarDir = new File(DeleteList.get(i));
-                //does file exist?
-                if( jarDir.exists() ) {
-                    File[] files = jarDir.listFiles();
-                    //no directory?
-                    if (files == null) {
-                        files = new File[1];
-                        files[0] = jarDir;
-                    }
-                    for(int k=0; k<files.length; k++) {                        
-                        bot.RemoveAllArticlesWithString("11"+files[k].getName().replace(".","").toUpperCase()+"11");
+        return true;
+    }
+    
+    public void finishUploadProcess(){
+        statusText = "Upload Process finished successfully";
+    }
+     
+    public boolean UploadFile(String File){
+        statusText = "Upload File:" + File;
+        bot.uploadFile(File);
+        return true;
+    }
+     
+    public boolean DeleteFile(String File){
+        try{
+            statusText = "Delete File:" + File;
+            bot.removeArticle("Bild:"+File);
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(parentComponent,"Could not remove articles");             
+            return false;
+        }
+        return true;
+    }
+                    
+    public boolean DeleteArticle(String File){
+        try {
+            File[] files = getFiles(File);
+                
+            if (files != null){                
+                for(int k=0; k<files.length; k++) { 
+                    statusText = "Searching for old articles of Package:" + files[k].getName();
+                    Vector<String> ArticlesList = bot.SearchForString("11"+files[k].getName().replace(".","").toUpperCase()+"11");
+                    for (int i=0;i<ArticlesList.size();i++){
+                        statusText = "Removing Article: " + ArticlesList.get(i);
+                        bot.removeArticle(ArticlesList.get(i));
                     }
                 }
-                //search for name
-                else {
-                    bot.RemoveAllArticlesWithString("11"+DeleteList.get(i).replace(".","").toUpperCase()+"11");   
-                }                                    
-            }catch(Exception e) {
-                JOptionPane.showMessageDialog(null,"Could not remove articles");            
-                System.out.println("Could not remove articles because: " + e.toString());
             }
-        }        
-        //delete        
-        for (int i=0;i<UnloadList.size();i++) {
-            Progress.setValue((int)((opCounter/globalOperations)*100.0));
-            opCounter += 1.0;
-            Progress.setString("Deleting File:" + UnloadList.get(i));
-            try{
-                bot.removeArticle("Bild:"+UnloadList.get(i));
-            }catch(Exception e){
-                JOptionPane.showMessageDialog(null,"Could not remove articles");            
-                System.out.println("Could not remove articles because: " + e.toString());
-            }
-        }
-        
-        //add files
-        for (int i=0;i<AddList.size();i++) {
-            Progress.setValue((int)((opCounter/globalOperations)*100.0));
-            opCounter += 1.0;            
-            Progress.setString("Deleting Articles of Package: " + AddList.get(i));
-            
-            File jarDir = new File(AddList.get(i));
-            //file must exist
-            if( jarDir.exists() ) {
-                File[] files = jarDir.listFiles();
-                //no directory?
-                if (files == null) {
-                    files = new File[1];
-                    files[0] = jarDir;
+            //search for name
+            else {                
+                statusText = "Searching for old articles of Package:" + File;
+                Vector<String> ArticlesList = bot.SearchForString("11"+File.replace(".","").toUpperCase()+"11");
+                for (int i=0;i<ArticlesList.size();i++){
+                    statusText = "Removing Article: " + ArticlesList.get(i);
+                    bot.removeArticle(ArticlesList.get(i));
                 }
-                for(int k=0; k<files.length; k++) {
-                    try {
-                        if (files[k].getCanonicalFile().getName().endsWith(".jar")) {                                            
-                            createDoc(files[k].getAbsolutePath(), JAMSComponent.class);
-                        }
-                    }catch(Exception e) {
-                        JOptionPane.showMessageDialog(null,"Could not create doc");     
-                        System.out.println("Could not create doc, because:" + e.toString());
+            }                                    
+        }catch(Exception e) {
+            JOptionPane.showMessageDialog(parentComponent,"Could not remove articles");            
+        }
+        return true;
+    }
+    
+    public boolean AddArticle(String File){            
+        File[] files = getFiles(File);
+        if (files != null){ 
+            for(int k=0; k<files.length; k++) {
+                try {
+                    if (files[k].getCanonicalFile().getName().endsWith(".jar")) {                                            
+                        updateDocToWiki(files[k].getAbsolutePath(),JAMSComponent.class,null);
                     }
+                }catch(Exception e) {
+                    JOptionPane.showMessageDialog(parentComponent,"Could not create doc");     
                 }
             }            
         }
-        Progress.setString("Upload Process finished successfully");
-        System.out.println("Upload Process finished successfully");
-        ProgrammInformation.setVisible(false);
-        try {
-            f.close();
+        return true;
+    }   
+    
+    //update components
+    public boolean UpdateComponents(String jarFile,Vector<String> components){
+        File[] files = getFiles(jarFile);
+        if (files != null){
+        try{
+            updateDocToWiki(files[0].getAbsolutePath(),JAMSComponent.class, components);
         }catch(Exception e){
-            System.out.println("Could not close file, because:" + e.toString());
-        }        
-    ProgrammInformation.dispose();
-    return;
-    }    
+            JOptionPane.showMessageDialog(parentComponent,"Could not create doc");                 
+            }
+        }
+        return true;
+    }
+    
+    public Vector<String> ListComponents(String jarFile){
+        HashMap<String,String> dump = new HashMap();        
+        Vector<String> componentsList = new Vector<String>();
+        try{
+            createDoc(jarFile, JAMSComponent.class,dump,componentsList);
+        }catch(Exception e) {
+            return null;
+        }
+        return componentsList;
+    }
 }

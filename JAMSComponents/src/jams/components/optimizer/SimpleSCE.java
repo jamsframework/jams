@@ -531,9 +531,11 @@ public class SimpleSCE extends Optimizer {
             singleRun();
             return;            
         }
+                
+        if (x0 == null){
+            x0 = RandomSampler(); 
+        }
         
-        double x0[] = RandomSampler();
-
         int iNumberOfComplexes = NumberOfComplexes.getValue();        
         double pcento = this.pcento.getValue();
         double peps = this.peps.getValue();

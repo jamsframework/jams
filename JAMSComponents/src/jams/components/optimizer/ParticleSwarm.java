@@ -39,11 +39,20 @@ public class ParticleSwarm extends Optimizer {
         }
         return true;
     }
-            
+         
+    public void init(){
+        super.init();
+    }
     public void run() {  
         System.out.println("start optimization of " + this.instanceName);
         for (int i=0;i<numberOfParticles;i++){
-            Sample rndSample = this.getSample(this.RandomSampler());
+            Sample rndSample = null;
+            
+            if (i==0 && x0 != null){
+                rndSample = this.getSample(x0);
+            }else
+                rndSample = this.getSample(this.RandomSampler());
+            
             particles[i] = new Particle(rndSample,new double[n]);
                         
             if (bestParticle!=null){

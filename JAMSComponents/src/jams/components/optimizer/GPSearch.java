@@ -21,6 +21,7 @@ import jams.model.JAMSVarDescription;
 import jams.components.machineLearning.GaussianLearner;
 
 //import jams.components.optimizer.
+import java.util.Arrays;
 @JAMSComponentDescription(
         title="NNOptimizer",
         author="Christian Fischer",
@@ -393,7 +394,10 @@ public class GPSearch extends Optimizer {
                 
         for (int i=0;i<n*initalSampleSize;i++){
             double nextSample[] = this.RandomSampler();
-            for (int j=0;j<n;j++){
+            if (i==0 && x0 != null){                
+                nextSample = Arrays.copyOf(x0, n);
+            }
+            for (int j=0;j<n;j++){                                    
                 nextSample[j] = (nextSample[j] - lowBound[j])/(upBound[j]-lowBound[j]);
             }
             samplePoint.add(nextSample);

@@ -40,6 +40,14 @@ public abstract class Optimizer extends JAMSContext {
             description = "List of parameter identifiers to be sampled"
             )
             public JAMSDouble[] parameterIDs;
+    
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "List of parameter identifiers to be sampled"
+            )
+            public JAMSString startValue;
+    
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
@@ -169,6 +177,8 @@ public abstract class Optimizer extends JAMSContext {
         
     protected int iterationCounter = 0;
     
+    protected double x0[] = null;
+    
     public Optimizer() {
     }
                     
@@ -224,6 +234,28 @@ public abstract class Optimizer extends JAMSContext {
             i++;
         }  
         dirName = this.getModel().getWorkspaceDirectory().getPath();
+        
+        if (this.startValue!=null){
+            x0 = new double[n];
+            StringTokenizer tokStartValue = new StringTokenizer(startValue.getValue(),";");
+            int counter = 0;
+            while(tokStartValue.hasMoreTokens()){
+                String param = tokStartValue.nextToken();
+                try{
+                    if (counter >= n){
+                        getModel().getRuntime().sendHalt("Component " + this.getInstanceName() + ": startvalue, too many parameter");
+                        break;
+                    }
+                    x0[counter] = Double.valueOf(param).doubleValue();                                        
+                    counter++;
+                }catch(NumberFormatException e){
+                    getModel().getRuntime().sendHalt("Component " + this.getInstanceName() + ": unparseable number: " + param);
+                }
+            }
+            if (counter != n){
+                getModel().getRuntime().sendHalt("Component " + this.getInstanceName() + ": startvalue, not enough parameters");
+            }                        
+        }
     }
 
     @Override

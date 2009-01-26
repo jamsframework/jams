@@ -75,7 +75,10 @@ public class NelderMead extends Optimizer{
             simplex = initialSimplex;
         }else{
             for (int i=0;i<n+1;i++){
-                simplex[i] = this.getSample(this.RandomSampler());
+                if (i==0&&x0!=null)
+                    simplex[i] = this.getSample(x0);
+                else
+                    simplex[i] = this.getSample(this.RandomSampler());
             }   
         }
         int m = simplex.length;

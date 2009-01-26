@@ -353,8 +353,12 @@ public class GutmannMethod extends Optimizer {
             
     public void initalPhase(){                
         for (int i=0;i<n*initalSampleSize;i++){                        
-            Sample s = this.getSample(this.RandomSampler());
-                        
+            Sample s = null;
+            if (i==0 && x0 != null){
+                s = this.getSample(x0);
+            }else
+                s = this.getSample(this.RandomSampler());
+            
             if (minValue.fx > s.fx){
                 minValue = s;
                 best10.add(minValue);

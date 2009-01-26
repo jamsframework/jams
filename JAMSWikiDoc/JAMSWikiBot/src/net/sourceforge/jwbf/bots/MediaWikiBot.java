@@ -24,6 +24,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Vector;
 
 import net.sourceforge.jwbf.actions.http.ActionException;
 import net.sourceforge.jwbf.actions.http.ProcessException;
@@ -683,7 +684,35 @@ public class MediaWikiBot extends HttpBot {
             return true;
 	}
         
-        public boolean RemoveAllArticlesWithString(String searchString) {
+        public Vector<String> SearchForString(String searchString){
+            Iterable<String> result = null;
+            try {
+                //better would be to use getAllPageTitles, but this dont work if media
+                //wiki api is not installed!!
+                result = FindPage(searchString);//getAllPageTitles();
+                
+            }catch (Exception e) {
+                System.out.println("Could not access articles, because: " + e.toString() );
+            }
+            Iterator<String> k = result.iterator();
+            Vector<String> list = new Vector();
+            
+            while (k.hasNext()) {                
+                try {
+                    // space not decoded 
+                    String tmp = k.next();
+                    tmp = tmp.replace(' ','_');
+                    
+                    String title = URLEncoder.encode(tmp, MediaWikiBot.CHARSET);
+                    list.add(title);                    
+                }catch(Exception e) {
+                    System.out.println("Could not read article, because: " + e.toString());
+                }
+            }
+            return list;
+        }
+        
+       /* public boolean RemoveAllArticlesWithString(String searchString) {
             Iterable<String> result = null;
             try {
                 //better would be to use getAllPageTitles, but this dont work if media
@@ -715,7 +744,7 @@ public class MediaWikiBot extends HttpBot {
             }
             
             return true;
-        }
+        }*/
         
 	/**
 	 * 

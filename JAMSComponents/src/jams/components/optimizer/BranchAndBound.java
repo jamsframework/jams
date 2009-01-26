@@ -32,6 +32,10 @@ public class BranchAndBound extends Optimizer{
         super.init();
         if (!enable.getValue())
             return; 
+        
+        if (x0 != null){
+            this.getModel().getRuntime().sendInfoMsg("start values not supported by branch and bound optimizer!\nstart value is ignored");
+        }
 /*             
         if (SampleDumpFileName != null){
             try {            

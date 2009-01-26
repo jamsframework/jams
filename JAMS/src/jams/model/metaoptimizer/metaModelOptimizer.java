@@ -477,8 +477,11 @@ public class metaModelOptimizer {
         Iterator<String> iter = EffWritingComponentsList.iterator();
         while(iter.hasNext()){
             String wr_comp = iter.next();
-            compList.addAll(dependencyGraph.get(wr_comp));
-            compList.add(wr_comp);
+            HashSet<String> set = dependencyGraph.get(wr_comp);
+            if (set != null){
+                compList.addAll(set);
+                compList.add(wr_comp);
+            }
         }
         return compList;
     }
