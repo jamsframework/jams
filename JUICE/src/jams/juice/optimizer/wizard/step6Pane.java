@@ -9,7 +9,6 @@ import jams.juice.optimizer.wizard.OptimizationWizard.Efficiency;
 import jams.juice.optimizer.wizard.OptimizationWizard.Parameter;
 import jams.juice.*;
 import jams.data.JAMSBoolean;
-import jams.data.JAMSDataFactory;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -79,7 +78,7 @@ public class step6Pane extends stepPane{
             
     ArrayList<Parameter> param_info = null;
     ArrayList<Efficiency> eff_info = null;
-    final JAMSBoolean isMultiObjective = JAMSDataFactory.createBoolean();
+    final JAMSBoolean isMultiObjective = jams.data.JAMSDataFactory.getBoolean();             
     final JComboBox optimizer = new JComboBox(possibleOptimizer);
     final JPanel optimizerPanelWrapper = new JPanel();
     
@@ -95,7 +94,7 @@ public class step6Pane extends stepPane{
     JTextField MOCOM_maximumNumberOfIterations = new JTextField("500",6);
     JTextField MOCOM_populationSize = new JTextField("100",6);
     JTextField BranchAndBound_maximumNumberOfIterations = new JTextField("500",6);
-    JTextField RandomSearch_maximumNumberOfIterations = new JTextField("500",6);
+    JTextField RandomSampler_maximumNumberOfIterations = new JTextField("500",6);
     JTextField ParallelRandomSearch_maximumNumberOfIterations = new JTextField("500",6);
     JTextField ParallelRandomSearch_excludedFiles = new JTextField("(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output)",6);
     
@@ -111,10 +110,6 @@ public class step6Pane extends stepPane{
     String methods[] = {"Exponential","Matérn","RQ","Neural Network","Exponential(no noise)","Neural Network (full)","Exponential (simple)","Matérn (simple)","RQ (simple)","Neural Network (simple)"};
     int kernelMap[] = {2,3,5,6,7,8,12,13,15,16};
     JComboBox kernelMethod = new JComboBox(methods);
-
-    public step6Pane() {
-        isMultiObjective.setValue(false);
-    }
                         
     public boolean getOptionState_RemoveNotUsedComponents(){
         return this.removeNotUsedComponents.isSelected();
@@ -136,6 +131,8 @@ public class step6Pane extends stepPane{
     
     @Override
     public String init(){
+        isMultiObjective.setValue(false);
+        
         if (param_info == null)
             return JUICE.resources.getString("error_no_parameter");
         if (eff_info == null)
@@ -277,17 +274,18 @@ public class step6Pane extends stepPane{
         optimizerOptions[5].add(maximumNumberOfIterationsPanel6);
         
         //6 -> random sampler        
-        JPanel notSupportedPanel = new JPanel(new BorderLayout());
-        notSupportedPanel.add(new JLabel(JUICE.resources.getString("not_supported"),JLabel.LEFT),BorderLayout.WEST);
+        JPanel maximumNumberOfIterationsPanel7 = new JPanel(new BorderLayout());
+        maximumNumberOfIterationsPanel7.add(new JLabel(JUICE.resources.getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
+        maximumNumberOfIterationsPanel7.add(RandomSampler_maximumNumberOfIterations,BorderLayout.EAST);
                 
         optimizerOptions[6] = new JPanel();
         optimizerOptions[6].setLayout(new BoxLayout(optimizerOptions[6],BoxLayout.Y_AXIS));        
-        optimizerOptions[6].add(notSupportedPanel);
+        optimizerOptions[6].add(maximumNumberOfIterationsPanel7);
         
         //7 -> parallel random sampler                
-        JPanel maximumNumberOfIterationsPanel7 = new JPanel(new BorderLayout());
-        maximumNumberOfIterationsPanel7.add(new JLabel(JUICE.resources.getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
-        maximumNumberOfIterationsPanel7.add(ParallelRandomSearch_maximumNumberOfIterations,BorderLayout.EAST);
+        JPanel maximumNumberOfIterationsPanel8 = new JPanel(new BorderLayout());
+        maximumNumberOfIterationsPanel8.add(new JLabel(JUICE.resources.getString("maximum_number_of_iterations"),JLabel.LEFT),BorderLayout.WEST);
+        maximumNumberOfIterationsPanel8.add(ParallelRandomSearch_maximumNumberOfIterations,BorderLayout.EAST);
                 
         JPanel excludedFilesPanel = new JPanel(new BorderLayout());                
         excludedFilesPanel.add(new JLabel(JUICE.resources.getString("do_not_transfer"),JLabel.LEFT),BorderLayout.WEST);
@@ -295,7 +293,7 @@ public class step6Pane extends stepPane{
         
         optimizerOptions[7] = new JPanel();
         optimizerOptions[7].setLayout(new BoxLayout(optimizerOptions[7],BoxLayout.Y_AXIS));        
-        optimizerOptions[7].add(maximumNumberOfIterationsPanel7);
+        optimizerOptions[7].add(maximumNumberOfIterationsPanel8);
         optimizerOptions[7].add(excludedFilesPanel);
         
         //8 -> ParallelSCE                                
@@ -367,8 +365,21 @@ public class step6Pane extends stepPane{
         for (int i=0;i<param_info.size();i++){
             boundary_string += "[" + param_info.get(i).lowerBound + ">" + param_info.get(i).upperBound + "];";
         }
-        boundary_string += "";
+        
         desc.attributes.add(new AttributeDescription("boundaries",null,boundary_string,false));
+        //build startvalue string
+        String startvalue_string = "";
+        boolean validStartValue = true;
+        for (int i=0;i<param_info.size();i++){
+            if (param_info.get(i).startValueValid)
+                startvalue_string += param_info.get(i).startValue + ";";
+            else{
+                validStartValue = false;
+                break;
+            }
+        }
+        if (validStartValue)
+            desc.attributes.add(new AttributeDescription("startValue",null,startvalue_string,false));
         
         if (this.isMultiObjective.getValue()){
             //TODO
@@ -501,11 +512,11 @@ public class step6Pane extends stepPane{
                 break;
             }
             case 6:{
-                desc.optimizerClassName = "jams.components.optimizer.RandomSearch";
+                desc.optimizerClassName = "jams.components.optimizer.RandomSampler";
                 
                 int maxn = 0;
                 try{
-                    maxn = Integer.parseInt(RandomSearch_maximumNumberOfIterations.getText());
+                    maxn = Integer.parseInt(RandomSampler_maximumNumberOfIterations.getText());
                 }catch(Exception e){}
                 if (maxn < 1 )
                     return JUICE.resources.getString("error_maxiter_greater_1");

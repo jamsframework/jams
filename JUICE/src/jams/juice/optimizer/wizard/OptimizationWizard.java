@@ -82,8 +82,11 @@ public class OptimizationWizard {
     public static class Parameter extends AttributeWrapper{        
         public double lowerBound;
         public double upperBound;
+        public boolean startValueValid;
+        public double startValue;        
         
         public Parameter(AttributeWrapper attr){
+            startValueValid = false;
             this.attributeName = attr.attributeName;
             this.componentName = attr.componentName;
             this.contextName = attr.contextName;
@@ -129,8 +132,11 @@ public class OptimizationWizard {
         steps[2] = new step4Pane();
         steps[3] = new step5Pane();
         steps[4] = new step6Pane();
-        steps[5] = new step7Pane();
-        steps[6] = new step8Pane();
+        
+        steps[5] = new step6aPane();
+        
+        steps[6] = new step7Pane();                        
+        steps[7] = new step8Pane();
         
         //stepPane.addTab("Step 1", null, steps[0].build(), "load model file");
         stepPane.addTab(JUICE.resources.getString("Step_1"), null, steps[0].build(), JUICE.resources.getString("select_parameter"));
@@ -138,7 +144,8 @@ public class OptimizationWizard {
         stepPane.addTab(JUICE.resources.getString("Step_3"), null, steps[2].build(), JUICE.resources.getString("select_efficiencies"));
         stepPane.addTab(JUICE.resources.getString("Step_4"), null, steps[3].build(), JUICE.resources.getString("specify_modes"));
         stepPane.addTab(JUICE.resources.getString("Step_5"), null, steps[4].build(), JUICE.resources.getString("optimizer_selection"));
-        stepPane.addTab(JUICE.resources.getString("Step_6"), null, steps[5].build(), JUICE.resources.getString("output_path"));
+        stepPane.addTab(JUICE.resources.getString("Step_6"), null, steps[5].build(), JUICE.resources.getString("specify_output_data"));
+        stepPane.addTab(JUICE.resources.getString("Step_7"), null, steps[6].build(), JUICE.resources.getString("output_path"));
         //stepPane.addTab("Step 7", null, steps[6].build(), JUICE.resources.getString("finish"));
         
         wizardDlg.setLayout(new BorderLayout());
@@ -170,6 +177,7 @@ public class OptimizationWizard {
                 switch(index){                    
                     case 1:{
                         ((step3Pane)steps[1]).setSelectedParameters(((step2Pane)steps[0]).getSelection());                    
+                        
                         break;
                     }
                     case 2:{
@@ -186,33 +194,39 @@ public class OptimizationWizard {
                         ((step6Pane)steps[4]).setParameterInformation(((step2Pane)steps[0]).getSelection());                         
                         break;
                     }
-                    case 5:{
-                        ((step7Pane)steps[5]).setModel(  myData.modelDoc,
+                    case 5:{                        
+                        ((step6aPane)steps[5]).setModel(  myData.modelDoc,
                                                         ((step2Pane)steps[0]).getModel() );   
-                        ((step7Pane)steps[5]).setModelOptimizationProperties( 
-                                                        ((step6Pane)steps[4]).getOptionState_RemoveGUIComponents(),
+                        ((step6aPane)steps[5]).setModelOptimizationProperties( 
                                                         ((step6Pane)steps[4]).getOptionState_RemoveNotUsedComponents(),
+                                                        ((step6Pane)steps[4]).getOptionState_RemoveGUIComponents(),
                                                         ((step6Pane)steps[4]).getOptionState_modelStructureOptimization());    
                                                         
-                        ((step7Pane)steps[5]).setOptimizerDescription( ((step6Pane)steps[4]).getOptimizerDescription() );  
-                        ((step7Pane)steps[5]).setDialog(wizardDlg);                                                                         
-                        break;
+                        ((step6aPane)steps[5]).setOptimizerDescription( ((step6Pane)steps[4]).getOptimizerDescription() );  
+                        ((step6aPane)steps[5]).setDialog(wizardDlg);     
                     }
                     case 6:{
+                        ((step7Pane)steps[6]).setModel(  myData.modelDoc,
+                                                        ((step2Pane)steps[0]).getModel() );        
+                        ((step7Pane)steps[6]).setInfoLog(((step6aPane)steps[5]).getInfoLog() );
+                        ((step7Pane)steps[6]).setDialog(wizardDlg);                                                                         
+                        break;
+                    }
+                    case 7:{
                        /*((step8Pane)steps[6]).setOutputProperties( ((step7Pane)steps[5]).getModifiedDocument(),
                                                         ((step7Pane)steps[5]).getOutputPath() );                       */                      
                     }
                 }                
-                if (index < 6){
+                if (index < 7){
                     String initError = steps[index].init();
                     if (initError != null)  {  
                         JOptionPane.showMessageDialog((Component) e.getSource(), initError); 
                         return;
                     }else{
                         stepPane.setSelectedIndex(index);                
-                        if (index == 5){
+                        if (index == 6){
                             nextStep.setEnabled(false);
-                            result = ((step7Pane)steps[5]).getModifiedDocument();  
+                            result = ((step6aPane)steps[5]).getDocument();  
                             Document newModelDoc = result;
                             myData.frame.newModel();
                             ModelView view = myData.frame.getCurrentView();
@@ -255,8 +269,8 @@ public class OptimizationWizard {
 
         wizardDlg.add(buttonPanel, BorderLayout.SOUTH);
 
-        wizardDlg.setPreferredSize(new Dimension(800, 400));
-        wizardDlg.setMinimumSize(new Dimension(800, 400));
+        wizardDlg.setPreferredSize(new Dimension(800, 500));
+        wizardDlg.setMinimumSize(new Dimension(800, 500));
         wizardDlg.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);        
         wizardDlg.setVisible(true);                  
     }

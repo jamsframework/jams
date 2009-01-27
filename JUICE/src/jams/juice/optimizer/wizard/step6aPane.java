@@ -3,10 +3,12 @@
  * and open the template in the editor.
  */
 
-package juice.optimizer.wizard;
+package jams.juice.optimizer.wizard;
 
+import com.sun.org.apache.xerces.internal.dom.DocumentImpl;
+import jams.io.XMLIO;
 import jams.model.JAMSContext;
-import juice.*;
+import jams.juice.*;
 import jams.model.JAMSModel;
 import jams.model.JAMSVarDescription;
 import jams.runtime.StandardRuntime;
@@ -32,12 +34,16 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
-import juice.optimizer.wizard.OptimizationWizard.AttributeWrapper;
-import juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
-import juice.optimizer.wizard.OptimizationWizard.Efficiency;
-import juice.optimizer.wizard.OptimizationWizard.Parameter;
-import juice.optimizer.wizard.step6Pane.AttributeDescription;
-import juice.optimizer.wizard.step6Pane.OptimizerDescription;
+import jams.juice.optimizer.wizard.OptimizationWizard.AttributeWrapper;
+import jams.juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
+import jams.juice.optimizer.wizard.OptimizationWizard.Efficiency;
+import jams.juice.optimizer.wizard.OptimizationWizard.Parameter;
+import jams.juice.optimizer.wizard.step6Pane.AttributeDescription;
+import jams.juice.optimizer.wizard.step6Pane.OptimizerDescription;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.tree.TreePath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -48,6 +54,9 @@ import org.w3c.dom.NodeList;
  * @author Christian Fischer
  */
 public class step6aPane extends stepPane {        
+    
+    final String optimizerContextName = "optimizer";
+    
     JDialog parent = null;                
     Document doc = null;        
     JAMSModel model = null;
@@ -65,37 +74,8 @@ public class step6aPane extends stepPane {
     String infoLog = "";
     OptimizerDescription desc;
     
-    static class MyRenderer extends DefaultTreeCellRenderer {
-        Icon contextIcon, componentIcon, attributeIcon;
+    ArrayList<AttributeWrapper> selectedOutputAttributes = new ArrayList<AttributeWrapper>();
             
-        int ICON_WIDTH = 16;
-        int ICON_HEIGHT = 16;
-    
-        public MyRenderer() {
-            contextIcon = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Component_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));
-            componentIcon = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Context_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));            
-            attributeIcon = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/attribute.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));            
-        }
-
-        @Override
-        public Component getTreeCellRendererComponent(JTree tree,Object value,boolean sel,boolean expanded,boolean leaf,int row,boolean hasFocus) {
-            super.getTreeCellRendererComponent(tree, value, sel,expanded, leaf, row,hasFocus);
-            if (value instanceof DefaultMutableTreeNode){
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-                if (node.getUserObject() instanceof ComponentWrapper) {                    
-                    ComponentWrapper wrapper = (ComponentWrapper)node.getUserObject();
-                    if (wrapper.contextComponent)
-                        setIcon(contextIcon);
-                    else
-                        setIcon(componentIcon);
-                }else{
-                    setIcon(attributeIcon);                    
-                }
-            }        
-            return this;
-        }   
-    }
-    
     void buildModelTree(Node root,DefaultMutableTreeNode node,DefaultTreeModel model){                        
         NodeList childs = root.getChildNodes();
         Element parent = (Element)root;
@@ -176,20 +156,7 @@ public class step6aPane extends stepPane {
     public void setDialog(JDialog parent){
         this.parent = parent;
     }
-    
-    private Node getModelNode(Node root){
-        if (root.getNodeName().equals("model")){
-            return root;
-        }
-        NodeList childs = root.getChildNodes();
-        for (int i=0;i<childs.getLength();i++){
-            Node model = getModelNode(childs.item(i));
-            if (model != null)
-                return model;
-        }
-        return null;
-    }
-     
+             
     void replaceAttribute(Node root,AttributeWrapper attribute,String newAttributeName,String newAttributeContext){
         NodeList childs = root.getChildNodes();
         ArrayList<Node> nodesToRemove = new ArrayList<Node>();
@@ -252,38 +219,8 @@ public class step6aPane extends stepPane {
             root.removeChild(nodesToRemove.get(i));
         }
     }
-    
-    private Node findComponentNode(Node context, String name){
-        NodeList childs = context.getChildNodes();
-        for (int i=0;i<childs.getLength();i++){
-            Node node = childs.item(i);
-            String node_name = node.getNodeName();
-            if (node_name.equals("component") || node_name.equals("contextcomponent")){
-                if (((Element)node).getAttribute("name").equals(name)){
-                    return node;
-                }
-            }
-            Node result = findComponentNode(node,name);
-            if (result != null)
-                return result;
-        }
-        return null;
-    }
-        
-    private Node getFirstComponent(Node root){
-        NodeList childs = root.getChildNodes();
-        for (int i=0;i<childs.getLength();i++){
-            if ( childs.item(i).getNodeName().equals("component") || childs.item(i).getNodeName().equals("contextcomponent") ){
-                return childs.item(i);
-            }
-            Node result = getFirstComponent(childs.item(i));
-            if (result != null)
-                return result;
-        }
-        return null;
-    }
-    
-    private void AddAttribute(Element parent,String name,String value,String context,boolean isValue){
+                        
+    private void addAttribute(Element parent,String name,String value,String context,boolean isValue){
         Element newElement = parent.getOwnerDocument().createElement("var");
         newElement.setAttribute("name", name);
         if (isValue)
@@ -302,17 +239,17 @@ public class step6aPane extends stepPane {
     private void addParameters(ArrayList<Parameter> list,Node root){
         for (int i=0;i<list.size();i++){            
             if (list.get(i).attributeName != null)
-                this.replaceAttribute(root, list.get(i), list.get(i).attributeName, "optimizer");
+                this.replaceAttribute(root, list.get(i), list.get(i).attributeName, optimizerContextName);
             else
-                this.replaceAttribute(root, list.get(i), list.get(i).variableName, "optimizer");
+                this.replaceAttribute(root, list.get(i), list.get(i).variableName, optimizerContextName);
         }
     }
     private void addEfficiencies(ArrayList<Efficiency> list,Node root){
         for (int i=0;i<list.size();i++){            
             if (list.get(i).attributeName != null)
-                this.replaceAttribute(root, list.get(i), list.get(i).attributeName, "optimizer");
+                this.replaceAttribute(root, list.get(i), list.get(i).attributeName, optimizerContextName);
             else
-                this.replaceAttribute(root, list.get(i), list.get(i).variableName, "optimizer");
+                this.replaceAttribute(root, list.get(i), list.get(i).variableName, optimizerContextName);
         }
         
     }
@@ -364,13 +301,13 @@ public class step6aPane extends stepPane {
         //optimierer bauen
         Element optimizerContext = doc.createElement("contextcomponent");
         optimizerContext.setAttribute("class", desc.optimizerClassName);
-        optimizerContext.setAttribute("name", "optimizer");
+        optimizerContext.setAttribute("name", optimizerContextName);
                        
         
         Iterator<AttributeDescription> iter = desc.attributes.iterator();
         while(iter.hasNext()){
             AttributeDescription attr = iter.next();            
-            AddAttribute(optimizerContext,attr.name,attr.value,attr.context,!attr.isAttribute);
+            addAttribute(optimizerContext,attr.name,attr.value,attr.context,!attr.isAttribute);
         }
                                
         addParameters(desc.parameters,root);
@@ -378,7 +315,7 @@ public class step6aPane extends stepPane {
                                       
         infoLog += JUICE.resources.getString("find_a_position_to_place_optimizer") + "\n";
         //find place for optimization context
-        Node firstComponent = getFirstComponent(root);
+        Node firstComponent = Tools.getFirstComponent(root);
         if (firstComponent == null){
             return JUICE.resources.getString("Error_model_file_does_not_contain_any_components");
         }
@@ -406,12 +343,12 @@ public class step6aPane extends stepPane {
         
         //show model graph
         modelTree.setRootVisible(true);
-        root = getModelNode(this.doc.getDocumentElement());
+        root = Tools.getModelNode(this.doc.getDocumentElement());
         Element rootElement = (Element)root;
         DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode(new ComponentWrapper(rootElement.getAttribute("name")
                 ,rootElement.getAttribute("name"),true)));
         modelTree.setModel(treeModel);
-        modelTree.setCellRenderer(new MyRenderer());
+        modelTree.setCellRenderer(new Tools.ModelTreeRenderer());
         buildModelTree(root,(DefaultMutableTreeNode)treeModel.getRoot(),treeModel);
         
         panel.invalidate();        
@@ -429,6 +366,7 @@ public class step6aPane extends stepPane {
         panel.setBorder(null);
         panel.add(new JLabel(JUICE.resources.getString("step6a_desc")), BorderLayout.NORTH); 
         
+        /*
         JPanel outputOptions = new JPanel();        
         outputOptions.setBorder(BorderFactory.createLineBorder(Color.black));
         outputOptions.add(new JLabel(JUICE.resources.getString("output_mode")));
@@ -436,12 +374,11 @@ public class step6aPane extends stepPane {
         JPanel subOutputOptions = new JPanel(new BorderLayout());        
         subOutputOptions.add(outputModeEntityWriter,BorderLayout.NORTH);
         subOutputOptions.add(outputModeStandardized,BorderLayout.SOUTH);
-        outputOptions.add(subOutputOptions);
+        outputOptions.add(subOutputOptions);*/
         
         JPanel subPanel = new JPanel();        
-        subPanel.setLayout(new BoxLayout(subPanel,BoxLayout.Y_AXIS));
-        
-        subPanel.add(outputOptions);
+        subPanel.setLayout(new BoxLayout(subPanel,BoxLayout.Y_AXIS));        
+        //subPanel.add(outputOptions);
         
         
         JScrollPane treeScroller = new JScrollPane(modelTree);        
@@ -472,5 +409,82 @@ public class step6aPane extends stepPane {
     
     public Document getDocument(){
         return doc;
+    }
+            
+    @Override
+    public String finish(){     
+        Map<String,HashSet<String>> outputContexts = new HashMap<String,HashSet<String>>();
+         
+        //collect output attributes
+        TreePath selections[] = modelTree.getSelectionPaths();
+        if (selections == null){
+            return JUICE.resources.getString("error_no_parameter");    
+        }        
+        selectedOutputAttributes.clear();
+        for (int i=0;i<selections.length;i++){
+            Object selectionPath[] = selections[i].getPath();
+            if (selectionPath.length < 2)
+                continue;
+            DefaultMutableTreeNode attributeNode = (DefaultMutableTreeNode)selectionPath[selectionPath.length-1];
+            
+            if (attributeNode.getUserObject() instanceof AttributeWrapper ){
+                AttributeWrapper selectedAttribute = (AttributeWrapper)attributeNode.getUserObject();                       
+                selectedOutputAttributes.add(selectedAttribute);                                
+            }
+        }
+        
+        //parameter and efficiencies are set by default
+        for (int i=0;i<this.desc.parameters.size();i++){
+            Parameter attrDesc = desc.parameters.get(i);            
+            selectedOutputAttributes.add(new AttributeWrapper(null,attrDesc.attributeName,null,optimizerContextName));
+        }
+        for (int i=0;i<this.desc.efficiencies.size();i++){
+            Efficiency attrDesc = desc.efficiencies.get(i);
+            selectedOutputAttributes.add(new AttributeWrapper(null,attrDesc.attributeName,null,optimizerContextName));
+        }
+        
+        
+        for (int i=0;i<selectedOutputAttributes.size();i++){
+            String attr = selectedOutputAttributes.get(i).attributeName;
+            if ( attr != null){
+                String context = selectedOutputAttributes.get(i).contextName;
+                if ( context != null){
+                    if (!outputContexts.containsKey(context)){
+                        outputContexts.put(context,new HashSet<String>());
+                    }
+                    outputContexts.get(context).add(attr);
+                }
+            }
+        }
+        
+        //mode 1: xml
+        Iterator<String> iter = outputContexts.keySet().iterator();
+                
+        while(iter.hasNext()){
+            String context = iter.next();
+            
+            Document outputDoc = new DocumentImpl();
+            Element root = outputDoc.createElement("outputdatastore"); 
+            root.setAttribute("context", context);
+            outputDoc.appendChild(root);
+            
+            Element trace = outputDoc.createElement("trace");             
+            root.appendChild(trace);
+            
+            HashSet<String> attr = outputContexts.get(context);
+            Iterator<String> attrIter = attr.iterator();
+            while(attrIter.hasNext()){
+                Element attrElement = outputDoc.createElement("attribute"); 
+                attrElement.setAttribute("id",attrIter.next());
+                trace.appendChild(attrElement);
+            }
+                        
+            try{
+                XMLIO.writeXmlFile(outputDoc, Tools.getWorkspacePath(doc) + File.separator + "output" + File.separator + "optimization_wizard_" + context + ".xml");
+            }catch(Exception e){
+                return JUICE.resources.getString("Error_cant_write_xml_file_because_") + e.toString();
+            }            
+        }        
+        return null;
     }
 }

@@ -28,6 +28,8 @@ public class step3Pane extends stepPane{
     
     JTextField lowBound[];            
     JTextField upBound[];
+    
+    JTextField startValue[];
             
     public void setSelectedParameters(ArrayList<Parameter> selectedParameters){
         this.selectedParameters = selectedParameters;
@@ -72,10 +74,13 @@ public class step3Pane extends stepPane{
         step3ParameterPanel.add(new JLabel(JUICE.resources.getString("lower_bound")),c);
         c.gridx = 3;    c.gridy = 0;
         step3ParameterPanel.add(new JLabel(JUICE.resources.getString("upper_bound")),c);        
+        c.gridx = 4;    c.gridy = 0;
+        step3ParameterPanel.add(new JLabel(JUICE.resources.getString("start_value")),c);        
         //step3ParameterPanel.setMaximumSize(new Dimension(100,100));
         
         lowBound = new JTextField[selectedParameters.size()];
         upBound = new JTextField[selectedParameters.size()];
+        startValue = new JTextField[selectedParameters.size()];
         
         for (int i=0;i<selectedParameters.size();i++){
             JTextField paramName = new JTextField(10);
@@ -91,6 +96,8 @@ public class step3Pane extends stepPane{
             }                                                                            
             lowBound[i] = new JTextField(8);            
             upBound[i] = new JTextField(8);
+            startValue[i] = new JTextField(10);
+            
             c.gridx = 0;    c.gridy = i+1;
             step3ParameterPanel.add(paramName,c);
             c.gridx = 1;    c.gridy = i+1;
@@ -99,6 +106,8 @@ public class step3Pane extends stepPane{
             step3ParameterPanel.add(lowBound[i],c);
             c.gridx = 3;    c.gridy = i+1;
             step3ParameterPanel.add(upBound[i],c);
+            c.gridx = 4;    c.gridy = i+1;
+            step3ParameterPanel.add(startValue[i],c);
         }
         return null;
     }
@@ -119,6 +128,16 @@ public class step3Pane extends stepPane{
            if (this.selectedParameters.get(i).lowerBound >= this.selectedParameters.get(i).upperBound){
                return JUICE.resources.getString("lower_bound_have_to_be_smaller_than_upper_bound");
            }               
+           try{
+               if (this.startValue[i].getText().length() != 0){
+                    this.selectedParameters.get(i).startValue = Double.parseDouble(this.upBound[i].getText());
+                    this.selectedParameters.get(i).startValueValid = true;
+               }else{
+                   this.selectedParameters.get(i).startValueValid = false;
+               }
+           }catch(Exception e){
+               return JUICE.resources.getString("illegal_number_format_of_startvalue_in_row") + (i+1) + "!";
+           }
         }
         return null;
     }

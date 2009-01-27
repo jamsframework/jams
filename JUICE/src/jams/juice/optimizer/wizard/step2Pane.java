@@ -55,38 +55,34 @@ public class step2Pane extends stepPane {
     public void setProperties(JAMSProperties properties){
         this.properties = properties;
     }
-    
-    static class MyRenderer extends DefaultTreeCellRenderer {
-        Icon contextIcon, componentIcon, attributeIcon;
+                         
+    boolean isPotentialParameter(JAMSVarDescription jvd, String attrName, String contextName){
+        if (jvd.access() != AccessType.READ)
+            return false;        
+        if (attrName==null)
+            return true;
+        else{
+            //these are potential parameters, but they are allready listed in the context node
+            /*
+            Node contextNode = Tools.findComponentNode(getDocument(), contextName);
+            if (contextNode==null)
+                return false;
             
-        int ICON_WIDTH = 16;
-        int ICON_HEIGHT = 16;
-    
-        public MyRenderer() {
-            componentIcon = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Component_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));
-            contextIcon = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Context_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));            
-            attributeIcon = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/attribute.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));            
-        }
-
-        @Override
-        public Component getTreeCellRendererComponent(JTree tree,Object value,boolean sel,boolean expanded,boolean leaf,int row,boolean hasFocus) {
-            super.getTreeCellRendererComponent(tree, value, sel,expanded, leaf, row,hasFocus);
-            if (value instanceof DefaultMutableTreeNode){
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-                if (node.getUserObject() instanceof ComponentWrapper) {                    
-                    ComponentWrapper wrapper = (ComponentWrapper)node.getUserObject();
-                    if (wrapper.contextComponent)
-                        setIcon(contextIcon);
-                    else
-                        setIcon(componentIcon);
-                }else{
-                    setIcon(attributeIcon);                    
+            NodeList list = contextNode.getChildNodes();
+            
+            for (int i=0;i<list.getLength();i++){
+                Node node = list.item(i);
+                if ( node.getNodeName().equals("attribute") && ((Element)node).hasAttribute("name") && ((Element)node).hasAttribute("value") ){                    
+                    if (((Element)node).getAttribute("name").equals(attrName)){
+                        return true;
+                    }                    
                 }
-            }        
-            return this;
-        }   
+            }*/
+            return false;
+        }
+        
     }
-                  
+    
     //todo .. component attributes, which are not used in the jam file, will not
     //be shown in this list
     void buildModelTree(Node root,DefaultMutableTreeNode node,DefaultTreeModel model){                        
@@ -147,12 +143,13 @@ public class step2Pane extends stepPane {
                     isDouble = false;                    
                 }                
                 JAMSVarDescription jvd = field.getAnnotation(JAMSVarDescription.class);
-                if ((jvd == null ||jvd.access() == AccessType.READ) && isDouble){                    
+                
+                if (isPotentialParameter(jvd,attr,context) && isDouble){                    
                     DefaultMutableTreeNode childTreeNode = new DefaultMutableTreeNode(new AttributeWrapper(
-                            name,
-                            attr,
-                            parent.getAttribute("name"),
-                            context));
+                        name,
+                        attr,
+                        parent.getAttribute("name"),
+                        context));
                     model.insertNodeInto(childTreeNode, node, node.getChildCount());
                 }
             }
@@ -271,7 +268,7 @@ public class step2Pane extends stepPane {
         DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode(new ComponentWrapper(rootElement.getAttribute("name")
                 ,rootElement.getAttribute("name"),true)));
         modelTree.setModel(treeModel);
-        modelTree.setCellRenderer(new MyRenderer());
+        modelTree.setCellRenderer(new Tools.ModelTreeRenderer());
         buildModelTree(root,(DefaultMutableTreeNode)treeModel.getRoot(),treeModel);        
         return null;
     }

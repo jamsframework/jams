@@ -43,38 +43,7 @@ public class step4Pane extends stepPane{
     Document loadedModel = null;
     JTree modelTree = new JTree();    
     ArrayList<Efficiency> selectedEfficiencies = new ArrayList<Efficiency>();
-    
-    static class MyRenderer extends DefaultTreeCellRenderer {
-        Icon contextIcon, componentIcon, attributeIcon;
             
-        int ICON_WIDTH = 16;
-        int ICON_HEIGHT = 16;
-    
-        public MyRenderer() {
-            contextIcon = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Component_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));
-            componentIcon = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Context_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));            
-            attributeIcon = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/attribute.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH));            
-        }
-
-        @Override
-        public Component getTreeCellRendererComponent(JTree tree,Object value,boolean sel,boolean expanded,boolean leaf,int row,boolean hasFocus) {
-            super.getTreeCellRendererComponent(tree, value, sel,expanded, leaf, row,hasFocus);
-            if (value instanceof DefaultMutableTreeNode){
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-                if (node.getUserObject() instanceof ComponentWrapper) {                    
-                    ComponentWrapper wrapper = (ComponentWrapper)node.getUserObject();
-                    if (wrapper.contextComponent)
-                        setIcon(contextIcon);
-                    else
-                        setIcon(componentIcon);
-                }else{
-                    setIcon(attributeIcon);                    
-                }
-            }        
-            return this;
-        }   
-    }
-    
 /*    private boolean IsVariableOverWritten(String varName,String compName){
         String attr = model.getAttributeToVariable(varName, compName);
         if (attr == null)
@@ -251,7 +220,7 @@ public class step4Pane extends stepPane{
         DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode(new ComponentWrapper(rootElement.getAttribute("name")
                 ,rootElement.getAttribute("name"),true)));
         modelTree.setModel(treeModel);
-        modelTree.setCellRenderer(new MyRenderer());
+        modelTree.setCellRenderer(new Tools.ModelTreeRenderer());
         buildModelTree(root,(DefaultMutableTreeNode)treeModel.getRoot(),treeModel);      
         return null;
     }
