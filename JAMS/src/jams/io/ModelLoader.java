@@ -199,7 +199,7 @@ public class ModelLoader {
 
         for (int index = 0; index < childs.getLength(); index++) {
 
-            Node node = childs.item(index);//6
+            Node node = childs.item(index);
 
             if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
 

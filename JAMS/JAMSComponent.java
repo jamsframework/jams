@@ -53,14 +53,17 @@ public class __NAME__ extends JAMSComponent {
      *  Component run stages
      */
     
+    @Override
     public void init() {
         
     }
 
+    @Override
     public void run() {
         
     }
 
+    @Override
     public void cleanup() {
         
     }
