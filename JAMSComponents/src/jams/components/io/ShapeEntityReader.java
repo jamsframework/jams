@@ -53,7 +53,7 @@ public class ShapeEntityReader extends JAMSComponent {
     public JAMSString shapeFileName;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         description = "Name of identifier column in shape file")
+                         description = "Name of identifying attribute in shape file")
     public JAMSString idName;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.WRITE,
