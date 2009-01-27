@@ -78,7 +78,7 @@ public class step6Pane extends stepPane{
             
     ArrayList<Parameter> param_info = null;
     ArrayList<Efficiency> eff_info = null;
-    final JAMSBoolean isMultiObjective = jams.data.JAMSDataFactory.getBoolean();             
+    final JAMSBoolean isMultiObjective = jams.data.JAMSDataFactory.createBoolean();        
     final JComboBox optimizer = new JComboBox(possibleOptimizer);
     final JPanel optimizerPanelWrapper = new JPanel();
     
