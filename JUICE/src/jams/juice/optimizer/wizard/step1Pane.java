@@ -6,7 +6,6 @@ package jams.juice.optimizer.wizard;
 
 import jams.JAMSProperties;
 import jams.data.JAMSDataFactory;
-import jams.io.DocumentLoader;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
