@@ -24,8 +24,6 @@
 
 package jams.io;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 import java.io.*;
@@ -48,6 +46,12 @@ import org.w3c.dom.*;
 
 public class XMLIO {
     
+    /**
+     * Reads a XML document from a file and returns it
+     * @param fileName The name of the file containing the document
+     * @return The XML document
+     * @throws java.io.FileNotFoundException
+     */
     public static Document getDocument(String fileName) throws FileNotFoundException {
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -79,6 +83,13 @@ public class XMLIO {
         return document;
     }
     
+    /**
+     * Creates an XML document from a string object
+     * @param docString The string representing the document
+     * @return The XML document
+     * @throws java.io.IOException
+     * @throws org.xml.sax.SAXException
+     */
     public static Document getDocumentFromString(String docString) throws IOException, SAXException {
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -99,6 +110,10 @@ public class XMLIO {
         return document;
     }
 
+    /**
+     * Creates an empty XML document
+     * @return An XML document
+     */
     public static Document createDocument() {
         Document document = null;
         try {
@@ -109,6 +124,11 @@ public class XMLIO {
         return document;
     }
     
+    /**
+     * Creates a string representation from a XML document
+     * @param doc The XML document
+     * @return A string reoresenting the XML document
+     */
     public static String getStringFromDocument(Document doc) {
         if (doc == null) {
             return "";
@@ -116,7 +136,7 @@ public class XMLIO {
         return xmlSerializerSun(doc);
     }
     
-    public static String xmlSerializerSun(Document doc) {
+    private static String xmlSerializerSun(Document doc) {
         
         String returnValue = "";
         
@@ -157,6 +177,13 @@ public class XMLIO {
     }
      */
     
+    /**
+     * Writes a XML document to a file
+     * @param modelDoc The XML document
+     * @param filename The name of the file to be written
+     * @return true if everything went fine, false otherwise
+     * @throws java.io.IOException
+     */
     public static boolean writeXmlFile(Document modelDoc, String filename) throws IOException {
         return writeXmlFile(modelDoc, new File(filename));
     }
