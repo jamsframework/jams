@@ -22,6 +22,9 @@
  */
 package jams.components.io;
 
+import com.vividsolutions.jts.algorithm.CentroidArea;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
 import jams.data.JAMSEntity;
@@ -36,6 +39,7 @@ import java.util.Iterator;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.AttributeType;
 import org.geotools.feature.Feature;
+import org.geotools.filter.AreaFunction;
 
 /**
  *
@@ -55,6 +59,21 @@ public class ShapeEntityReader extends JAMSComponent {
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
                          description = "Name of identifying attribute in shape file")
     public JAMSString idName;
+
+    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
+                         description = "Name of the area attribute to be created",
+                         defaultValue = "area")
+    public JAMSString areaAttribute;
+
+    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
+                         description = "Name of the x attribute to be created",
+                         defaultValue = "x")
+    public JAMSString xAttribute;
+
+    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
+                         description = "Name of the y attribute to be created",
+                         defaultValue = "y")
+    public JAMSString yAttribute;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.WRITE,
                          description = "Entity collection to be created")
@@ -88,6 +107,15 @@ public class ShapeEntityReader extends JAMSComponent {
             for (int i = 0; i < types.length; i++) {
                 e.setObject(types[i].getName(), JAMSDataFactory.createInstance(f.getAttribute(i)));
             }
+            Geometry geom = f.getDefaultGeometry();
+            AreaFunction af = new AreaFunction();
+            e.setDouble(areaAttribute.getValue(), af.getArea(geom));
+
+            CentroidArea c2d = new CentroidArea();
+            c2d.add(geom);
+            Coordinate coord = c2d.getCentroid();
+            e.setDouble(xAttribute.getValue(), coord.x);
+            e.setDouble(yAttribute.getValue(), coord.y);
 
             if (idAttributeIndex != -1) {
                 try {
@@ -98,6 +126,7 @@ public class ShapeEntityReader extends JAMSComponent {
                 }
             }
 
+//            System.out.println(e.getValue());
             entityList.add((JAMSEntity) e);
         }
 

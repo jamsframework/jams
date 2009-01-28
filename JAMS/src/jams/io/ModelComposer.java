@@ -38,8 +38,6 @@ public class ModelComposer {
 
     private HashMap<String, Element> pluginBlocks;
 
-//    private HashMap<String, ModelPlugin> plugins = new HashMap<String, ModelPlugin>();
-
     public ModelComposer(Document template) {
         this.template = template;
     }
@@ -89,10 +87,10 @@ public class ModelComposer {
                 }
             }
         }
-        
+
         // do the launcher stuff
 
-        // put all the group elements from the template into a hashmap for
+        // put all the group nodes from the template into a hashmap for
         // easy access
         HashMap<String, Element> launcherGroups = new HashMap<String, Element>();
         Element templateLauncher = (Element) result.getElementsByTagName("launcher").item(0);
@@ -114,27 +112,26 @@ public class ModelComposer {
             Element templateGroup = launcherGroups.get(groupName);
             if (templateGroup != null) {
 
+                // append the property nodes from the plugin's group node
+                // to the existing template group node
                 NodeList propertyNodes = group.getChildNodes();
                 for (int j = 0; j < propertyNodes.getLength(); j++) {
                     Node newNode = result.importNode(propertyNodes.item(j), true);
                     templateGroup.appendChild(newNode);
                 }
-                
+
             } else {
 
-                
+                // append the whole plugin group node to the launcher node
+                // of the template
+                Node newNode = result.importNode(group, true);
+                templateLauncher.appendChild(newNode);
 
             }
         }
-        
+
         return result;
     }
-//
-//    private class ModelPlugin {
-//
-//        HashMap<String, Element> elements = new HashMap<String, Element>();
-//
-//    }
 
     public static void main(String[] args) throws Exception {
 
@@ -144,7 +141,9 @@ public class ModelComposer {
 
         Document result = comp.loadPlugin(plugin);
 
-        System.out.println(XMLIO.getStringFromDocument(result));
+        XMLIO.writeXmlFile(result, "D:/jamsapplication/j2k_gehlberg_result.jam");
+
+    //System.out.println(XMLIO.getStringFromDocument(result));
 
     }
 }
