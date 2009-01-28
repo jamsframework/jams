@@ -24,6 +24,8 @@
 
 package jams.io;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 import java.io.*;
@@ -94,6 +96,16 @@ public class XMLIO {
             
         }
         
+        return document;
+    }
+
+    public static Document createDocument() {
+        Document document = null;
+        try {
+            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        } catch (ParserConfigurationException ex) {
+            ex.printStackTrace();
+        }
         return document;
     }
     

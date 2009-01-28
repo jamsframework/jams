@@ -5,7 +5,6 @@
 
 package jams.juice.optimizer.wizard;
 
-import com.sun.org.apache.xerces.internal.dom.DocumentImpl;
 import jams.io.XMLIO;
 import jams.model.JAMSContext;
 import jams.juice.*;
@@ -456,7 +455,7 @@ public class step6aPane extends stepPane {
         while(iter.hasNext()){
             String context = iter.next();
             
-            Document outputDoc = new DocumentImpl();
+            Document outputDoc = XMLIO.createDocument();
             Element root = outputDoc.createElement("outputdatastore"); 
             root.setAttribute("context", context);
             outputDoc.appendChild(root);
