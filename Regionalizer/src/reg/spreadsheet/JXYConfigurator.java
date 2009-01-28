@@ -89,6 +89,7 @@ public class JXYConfigurator extends JFrame {
     private String[] headers;
     
     private File templateFile;
+    private static JFileChooser templateChooser;
     
     private JButton saveTempButton = new JButton("Save Template");
     private JButton loadTempButton = new JButton("Load Template");
@@ -342,9 +343,13 @@ public class JXYConfigurator extends JFrame {
         rRightBox.setSelectedIndex(0);
         
         ////////////////////////// GRAPH AUSFÜHREN ///////////
+        if(templateFile != null){
         try{
             loadTemplate(templateFile);
         } catch (Exception fnfe){
+            initGraphLoad();
+        }
+        } else {
             initGraphLoad();
         }
         ////////////////////////////////////////////
@@ -806,10 +811,10 @@ public class JXYConfigurator extends JFrame {
             newProp.getDataChoice().setSelectedIndex(1);
 
 
-            newProp.setSeriesPaint(colorTable.get(getColorScheme(i)[0]));
-            newProp.setSeriesFillPaint(colorTable.get(getColorScheme(i)[1]));
-            newProp.setSeriesOutlinePaint(colorTable.get(getColorScheme(i)[2]));
-            //newProp.setColor(colour_cnt % 11);
+            newProp.setSeriesPaint(Color.RED);
+            newProp.setSeriesFillPaint(Color.RED);
+            newProp.setSeriesOutlinePaint(Color.RED);
+            newProp.setColorLabelColor();
 
             if (i > 0) {
                 d_start = prop.getDataSTART();
@@ -1632,13 +1637,13 @@ public class JXYConfigurator extends JFrame {
         //Save Parameter File
         
         try{
-            JFileChooser chooser = new JFileChooser();
+            JFileChooser chooser = getTemplateChooser();
             chooser.setCurrentDirectory(templateFile);
             int returnVal = chooser.showSaveDialog(thisDlg);
             File file = chooser.getSelectedFile();
             FileOutputStream fout = new FileOutputStream(file);
             properties.store(fout, "");
-            
+
             fout.close();
 
         }catch(Exception fnfex){};   
@@ -1872,16 +1877,23 @@ public class JXYConfigurator extends JFrame {
         }
     };
     
+    static JFileChooser getTemplateChooser() {
+        if (templateChooser == null) {
+            templateChooser = new JFileChooser();
+            templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
+        }
+        return templateChooser;
+    }
+    
     ActionListener loadTempListener = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
             
             int returnVal = -1;
             
             try{
-                JFileChooser chooser = new JFileChooser();
-                chooser.setCurrentDirectory(templateFile);
-                returnVal = chooser.showOpenDialog(thisDlg);
-                File file = chooser.getSelectedFile();
+                getTemplateChooser().setCurrentDirectory(templateFile);
+                returnVal = getTemplateChooser().showOpenDialog(thisDlg);
+                File file = getTemplateChooser().getSelectedFile();
             
             
                 if(returnVal == JFileChooser.APPROVE_OPTION){

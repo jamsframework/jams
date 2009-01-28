@@ -83,6 +83,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
     private JButton savebutton = new JButton("Save");
     private JButton plotButton = new JButton("Time Plot");
     private JButton dataplotButton = new JButton("Data Plot");
+    private JCheckBox useTemplateButton = new JCheckBox("use Template");
     /* Labels */
     private JLabel headerlabel = new JLabel();
     private JLabel titleLabel = new JLabel(title);
@@ -432,7 +433,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
     };
 
     private void openCTS() {
-        /* achtung: nur wenn time mitlÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤uft!! */
+        /* achtung: nur wenn time mitlÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤uft!! */
         JTSConfigurator jts;
         jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this.table);
     //ctstabs.addGraph(table);
@@ -440,9 +441,14 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
     }
     
     private void openCTS(File templateFile) {
-        /* achtung: nur wenn time mitlÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤uft!! */
+        /* achtung: nur wenn time mitlÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤uft!! */
+        
         JTSConfigurator jts;
+        if(useTemplateButton.isSelected()){
         jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this.table, templateFile);
+        } else {
+            jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this.table, null);
+        }
     //ctstabs.addGraph(table);
     //ctsIsOpen = true;
     }
@@ -460,11 +466,11 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
     private void openCXYS(File templateFile) {
         JXYConfigurator jxys;
 
-//        try {
+        if(useTemplateButton.isSelected()){
             jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this.table, templateFile);
-//        } catch (NullPointerException npe) {
-//            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this.table);
-//        }
+        } else {
+            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this.table, null);
+        }
     }
     
     ActionListener plotAction = new ActionListener() {
@@ -680,6 +686,8 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         JPanel headerpanel = new JPanel();
         headerpanel.setLayout(new GridLayout(1, 2));
         
+        useTemplateButton.setEnabled(true);
+        useTemplateButton.setSelected(false);
         //dataplotButton.setEnabled(false);
         
         scrollpane.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
@@ -702,7 +710,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
 
         LHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 5, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 6, 1, 1, 0, 0);
-
+        LHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 7, 1, 1, 0, 0);
 
 //              controlpanel.add(openbutton);
 //              controlpanel.add(savebutton);

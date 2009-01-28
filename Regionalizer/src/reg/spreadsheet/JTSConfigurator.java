@@ -419,9 +419,13 @@ public class JTSConfigurator extends JFrame {
         rRightBox.setSelectedIndex(0);
 
         ////////////////////////// GRAPH AUSFÜHREN ///////////
+        if(templateFile != null){
         try {
             loadTemplate(templateFile);
         } catch (Exception fnfe) {
+            initGraphLoad();
+        }
+        } else {
             initGraphLoad();
         }
 
@@ -610,9 +614,10 @@ public class JTSConfigurator extends JFrame {
             i = dlg.getPosition();
             dlg.dispose();
 
-            newProp.setSeriesPaint(colorTable.get(getColorScheme(i)[0]));
-            newProp.setSeriesFillPaint(colorTable.get(getColorScheme(i)[1]));
-            newProp.setSeriesOutlinePaint(colorTable.get(getColorScheme(i)[2]));
+            newProp.setSeriesPaint(Color.RED);
+            newProp.setSeriesFillPaint(Color.RED);
+            newProp.setSeriesOutlinePaint(Color.RED);
+            newProp.setColorLabelColor();
             //newProp.setColor(colour_cnt % 11);
 
             if (i >= 0) {
@@ -1729,6 +1734,7 @@ public class JTSConfigurator extends JFrame {
     static JFileChooser getTemplateChooser() {
         if (templateChooser == null) {
             templateChooser = new JFileChooser();
+            templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
         }
         return templateChooser;
     }
@@ -1804,23 +1810,14 @@ public class JTSConfigurator extends JFrame {
     private class AddGraphDlg extends JDialog {
 
         boolean result = false;
-
         int max;
-
         String side;
-
         int side_index;
-
         int position;
-
         JSpinner posSpinner;
-
         JComboBox sideChoice;
-
         JButton okButton;
-
         JLabel pos_label;
-
         JLabel side_label;
 
         public AddGraphDlg() {
