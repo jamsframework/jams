@@ -83,7 +83,18 @@ public class JAMSFileFilter {
             return JAMS.resources.getString("Encapsulated_Postscript_(*.eps)");
         }
     };
-    
+
+    private static FileFilter ttpFilter = new FileFilter() {
+        @Override
+        public boolean accept(File f) {
+            return f.isDirectory() || f.getName().toLowerCase().endsWith(".ttp") || f.getName().toLowerCase().endsWith(".dtp");
+        }
+        @Override
+        public String getDescription() {
+            return JAMS.resources.getString("Plot_template_(*.ttp)");
+        }
+    };
+
     /**
      *
      * @return The filter for EPS files
@@ -126,5 +137,13 @@ public class JAMSFileFilter {
      */
     public static FileFilter getJarFilter() {
         return jarFilter;
+    }
+
+    /**
+     *
+     * @return The filter for TTP files
+     */
+    public static FileFilter getTtpFilter() {
+        return ttpFilter;
     }
 }
