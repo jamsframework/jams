@@ -417,50 +417,6 @@ public class ModelLoader {
         return result;
     }
 
-    /*    
-    private void createNumericMembers(JAMSComponent component) throws IllegalAccessException, InstantiationException, ModelSpecificationException {
-    
-    Class cClass = component.getClass();
-    Object var;
-    
-    Field[] fields = cClass.getFields();
-    for (int i = 0; i < fields.length; i++) {
-    var = fields[i].get(component);
-    if (JAMSNumeric.class.isAssignableFrom(fields[i].getType())) {
-    // add ranges and units to JAMSNumeric objects
-    
-    JAMSNumeric numericObject = (JAMSNumeric) var;
-    // get variable object or create one if not existing
-    if (numericObject == null) {
-    numericObject = (JAMSNumeric) fields[i].getType().newInstance();
-    fields[i].set(component, numericObject);
-    }
-    
-    JAMSVarDescription jvd = fields[i].getAnnotation(JAMSVarDescription.class);
-    if (jvd.lowerBound() < jvd.upperBound()) {
-    //numericObject.setRange(jvd.lowerBound(), jvd.upperBound());
-    }
-    
-    if (!jvd.unit().equals("")) {
-    try {
-    //numericObject.setUnit(jvd.unit());
-    } catch (IllegalArgumentException iaex) {
-    throw new ModelSpecificationException("Invalid unit string in component " + component.getClass().getName() + ": " + jvd.unit());
-    }
-    }
-    
-    if (!jvd.defaultValue().equals("")) {
-    numericObject.setValue(jvd.defaultValue());
-    }
-    
-    }
-    //            else if (JAMSData.class.isAssignableFrom(fields[i].getType())) {
-    //
-    //                JAMSData dataObject = (JAMSData) var; //get variable object or create one if not existing if (dataObject == null && !(JAMSEntity.class.isAssignableFrom(fields[i].getType()))) { dataObject = (JAMSData) fields[i].getType().newInstance(); fields[i].set(component, dataObject); } }
-    //            }
-    }
-    }
-     */
     /**
      * Returns the loaded model
      * @return The loaded model
