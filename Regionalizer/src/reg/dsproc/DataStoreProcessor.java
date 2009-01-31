@@ -45,6 +45,8 @@ import java.util.logging.Logger;
  */
 public class DataStoreProcessor {
 
+    public static final HashMap<String, String> TYPE_MAP = getTypeMap();
+
     public static final String DB_USER = "jamsuser",  DB_PASSWORD = "";
 
     private String fileName;
@@ -54,8 +56,6 @@ public class DataStoreProcessor {
     private ArrayList<FilterData> filters = new ArrayList<FilterData>();
 
     private ArrayList<AttributeData> attributes = new ArrayList<AttributeData>();
-
-    private HashMap<String, String> typeMap = new HashMap<String, String>();
 
     private BufferedFileReader reader;
 
@@ -82,11 +82,18 @@ public class DataStoreProcessor {
 
     }
 
+    private static HashMap<String, String> getTypeMap() {
+        HashMap<String, String> result = new HashMap<String, String>();
+        result.put("JAMSInteger", "INT4");
+        result.put("JAMSLong", "INT8");
+        result.put("JAMSFloat", "FLOAT4");
+        result.put("JAMSDouble", "FLOAT8");
+        result.put("JAMSString", "VARCHAR(255)");
+        result.put("JAMSCalendar", "TIMESTAMP");
+        return result;
+    }
+
     public void createDB() throws IOException, SQLException, ClassNotFoundException {
-        typeMap.put("JAMSLong", "INT8");
-        typeMap.put("JAMSDouble", "FLOAT8");
-        typeMap.put("JAMSString", "VARCHAR(255)");
-        typeMap.put("JAMSCalendar", "TIMESTAMP");
 
         removeDB();
         Class.forName("org.h2.Driver");
@@ -177,10 +184,10 @@ public class DataStoreProcessor {
 
         for (int i = contexts.size() - 1; i > 0; i--) {
             ContextData cd = contexts.get(i);
-            q += cd.getName() + "ID " + typeMap.get(cd.getIdType()) + ",";
+            q += cd.getName() + "ID " + TYPE_MAP.get(cd.getIdType()) + ",";
         }
 
-        q += "position " + typeMap.get("JAMSLong") + ")";
+        q += "position " + TYPE_MAP.get("JAMSLong") + ")";
 
         // create table
         stmt.execute(q);
@@ -204,12 +211,12 @@ public class DataStoreProcessor {
 
         for (int i = contexts.size() - 1; i >= 0; i--) {
             ContextData cd = contexts.get(i);
-            q += cd.getName() + "ID " + typeMap.get(cd.getIdType()) + ",";
+            q += cd.getName() + "ID " + TYPE_MAP.get(cd.getIdType()) + ",";
         }
 
         for (int i = 0; i < attributes.size(); i++) {
             AttributeData attribute = attributes.get(i);
-            q += attribute.getName() + " " + typeMap.get(attribute.getType()) + ",";
+            q += attribute.getName() + " " + TYPE_MAP.get(attribute.getType()) + ",";
         }
         q = q.substring(0, q.length() - 1);
 
@@ -625,6 +632,18 @@ public class DataStoreProcessor {
         public DataMatrix(Matrix matrix, String[] ids) {
             super(matrix.getArray());
             this.ids = ids;
+        }
+
+        @Override
+        public DataMatrix plus(Matrix other) {
+            Matrix result = super.plus(other);
+            return new DataMatrix(result, ids);
+        }
+
+        @Override
+        public DataMatrix times(double d) {
+            Matrix result = super.times(d);
+            return new DataMatrix(result, ids);
         }
 
         /**

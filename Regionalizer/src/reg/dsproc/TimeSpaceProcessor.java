@@ -24,6 +24,7 @@ package reg.dsproc;
 
 import Jama.Matrix;
 import jams.data.JAMSCalendar;
+import jams.data.JAMSDouble;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -31,6 +32,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import reg.dsproc.DataStoreProcessor.AttributeData;
+import reg.dsproc.DataStoreProcessor.ContextData;
 import reg.dsproc.DataStoreProcessor.DataMatrix;
 
 /**
@@ -141,52 +144,88 @@ public class TimeSpaceProcessor {
         return rs;
     }
 
-    public void getMonthlyAvg() throws SQLException, IOException {
-        Statement stmt = conn.createStatement();
+    public void calcMonthlyAvg() throws SQLException, IOException {
+        // loop over months
 
-        for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
-            if (attrib.getName().equals("rain")) {
-                attrib.setSelected(false);
-            } else {
-                attrib.setSelected(true);
+        int numSelected = 0;
+        for (AttributeData a : getDataStoreProcessor().getAttributes()) {
+            if (a.isSelected() && a.getType().equals("JAMSDouble")) {
+                numSelected++;
             }
         }
 
-        // loop over months
+
+        Statement stmt = conn.createStatement();
+        stmt.execute("DROP TABLE IF EXISTS monthavg");
+        String q = "CREATE TABLE monthavg (";
+        q += "MONTH " + DataStoreProcessor.TYPE_MAP.get("JAMSInteger") + ",";
+        q += spaceID + " " + DataStoreProcessor.TYPE_MAP.get("JAMSLong") + ",";
+
+        for (int i = 1; i <= numSelected; i++) {
+            q += "a_" + i + " " + DataStoreProcessor.TYPE_MAP.get("JAMSDouble") + ",";
+        }
+        q = q.substring(0, q.length() - 1);
+        q += ")";
+        stmt.execute(q);
+        System.out.println(q);
+
+
         for (int i = 1; i <= 12; i++) {
 
-            resetSpaceFilter();
-            setTimeFilter("%-" + String.format("%02d", i) + "-%");
-            setAggregator("AVG");
-
-            ResultSet rs = getData();
-
-            // we have a set of positions now, so get the matrixes and rock'n roll
-            // get the first dataset
-            long position;
-            Matrix aggregate;
-
-            if (rs.next()) {
-                position = rs.getLong("POSITION");
-                aggregate = dsdb.getData(position);
-            } else {
-                continue;
-            }
-
-            // loop over datasets for current month
-            while (rs.next()) {
-                position = rs.getLong("POSITION");
-                //System.out.println(position);
-                DataMatrix m = dsdb.getData(position);
-                aggregate = aggregate.plus(m);
-            }
-
-//            for (AttributeData attrib : dsdb.getAttributes()) {
-//                System.out.println(attrib.getName());
-//            }
-            aggregate.print(5, 3);
+            calcMonthlyAvg(i);
+        //aggregate.print(5, 3);
 
         }
+
+    }
+
+    public DataMatrix calcMonthlyAvg(int month) throws SQLException, IOException {
+        Statement stmt = conn.createStatement();
+
+
+        resetSpaceFilter();
+        String monthString = String.format("%02d", month);
+        setTimeFilter("%-" + monthString + "-%");
+        setAggregator("AVG");
+
+        ResultSet rs = getData();
+
+        // we have a set of positions now, so get the matrixes and rock'n roll
+        // get the first dataset
+        long position;
+        DataMatrix aggregate;
+        int count = 1;
+
+        if (rs.next()) {
+            position = rs.getLong("POSITION");
+            aggregate = dsdb.getData(position);
+        } else {
+            return null;
+        }
+
+        // loop over datasets for current month
+        while (rs.next()) {
+            position = rs.getLong("POSITION");
+            //System.out.println(position);
+            DataMatrix m = dsdb.getData(position);
+            aggregate = aggregate.plus(m);
+            count++;
+        }
+
+        aggregate = aggregate.times(1f / count);
+
+        String ids[] = aggregate.getIds();
+        double data[][] = aggregate.getArray();
+        for (int i = 0; i < data.length; i++) {
+            String q = "INSERT INTO monthavg VALUES (" + month + ", " + ids[i];
+            for (int j = 0; j < data[i].length; j++) {
+                q += ", " + data[i][j];
+            }
+            q += ")";
+            stmt.execute(q);
+        }
+
+        return aggregate;
     }
 
     public static void output(ResultSet rs) throws SQLException {
@@ -260,7 +299,16 @@ public class TimeSpaceProcessor {
 //
 //        output(tsproc.getData());
 
-        tsproc.getMonthlyAvg();
+        ArrayList<DataStoreProcessor.AttributeData> attribs = tsproc.getDataStoreProcessor().getAttributes();
+        for (DataStoreProcessor.AttributeData attrib : attribs) {
+            if (attrib.getName().startsWith("act")) {
+                attrib.setSelected(true);
+            } else {
+                attrib.setSelected(false);
+            }
+        }
+
+        tsproc.calcMonthlyAvg();
 
         //output(tsproc.customQuery("SELECT count(*) from data "));
 
