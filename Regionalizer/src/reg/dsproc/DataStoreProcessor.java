@@ -493,7 +493,7 @@ public class DataStoreProcessor {
         double[][] data = rows.toArray(new double[numSelected][rows.size()]);
         String ids[] = idList.toArray(new String[idList.size()]);
 
-        return new DataMatrix(data, ids);
+        return new DataMatrix(data, ids,this);
     }
 
     public class ContextData {
@@ -617,40 +617,6 @@ public class DataStoreProcessor {
             synchronized (DataStoreProcessor.this) {
                 this.selected = active;
             }
-        }
-    }
-
-    public class DataMatrix extends Matrix {
-
-        private String[] ids;
-
-        public DataMatrix(double[][] data, String[] ids) {
-            super(data);
-            this.ids = ids;
-        }
-
-        public DataMatrix(Matrix matrix, String[] ids) {
-            super(matrix.getArray());
-            this.ids = ids;
-        }
-
-        @Override
-        public DataMatrix plus(Matrix other) {
-            Matrix result = super.plus(other);
-            return new DataMatrix(result, ids);
-        }
-
-        @Override
-        public DataMatrix times(double d) {
-            Matrix result = super.times(d);
-            return new DataMatrix(result, ids);
-        }
-
-        /**
-         * @return the id
-         */
-        public String[] getIds() {
-            return ids;
         }
     }
 

@@ -34,7 +34,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import reg.dsproc.DataStoreProcessor.AttributeData;
 import reg.dsproc.DataStoreProcessor.ContextData;
-import reg.dsproc.DataStoreProcessor.DataMatrix;
+import reg.dsproc.DataMatrix;
 
 /**
  *
@@ -144,17 +144,51 @@ public class TimeSpaceProcessor {
         return rs;
     }
 
-    public void calcMonthlyAvg() throws SQLException, IOException {
-        // loop over months
-
+    private int getSelectedAttribCount() {
+        // get number of selected attributes
         int numSelected = 0;
         for (AttributeData a : getDataStoreProcessor().getAttributes()) {
             if (a.isSelected() && a.getType().equals("JAMSDouble")) {
                 numSelected++;
             }
         }
+        return numSelected;
+    }
 
+    public DataMatrix getMonthlyAvg(int month) throws SQLException, IOException {
 
+        DataMatrix result = null;
+        int attribCount = getSelectedAttribCount();
+
+        Statement stmt = conn.createStatement();
+        String q = "SELECT * FROM monthavg WHERE MONTH = " + month;
+        ResultSet rs = stmt.executeQuery(q);
+
+        ArrayList<double[]> data = new ArrayList<double[]>();
+        ArrayList<Long> ids = new ArrayList<Long>();
+        while (rs.next()) {
+            double[] rowdata = new double[attribCount];
+            for (int i = 0; i < attribCount; i++) {
+                // get data starting from the 3rd column
+                rowdata[i] = rs.getDouble(i + 3);
+            }
+            data.add(rowdata);
+            ids.add(rs.getLong(2));
+        }
+
+        double[][] dataArray = data.toArray(new double[attribCount][data.size()]);
+        Long[] idArray = ids.toArray(new Long[ids.size()]);
+        result = new DataMatrix(dataArray, idArray, this.getDataStoreProcessor());
+
+        return result;
+    }
+
+    public void calcMonthlyAvg() throws SQLException, IOException {
+
+        // get number of selected attributes
+        int numSelected = getSelectedAttribCount();
+
+        // create the db tables to store the calculated monthly means
         Statement stmt = conn.createStatement();
         stmt.execute("DROP TABLE IF EXISTS monthavg");
         String q = "CREATE TABLE monthavg (";
@@ -167,21 +201,18 @@ public class TimeSpaceProcessor {
         q = q.substring(0, q.length() - 1);
         q += ")";
         stmt.execute(q);
-        System.out.println(q);
+        //System.out.println(q);
 
-
+        // loop over months
         for (int i = 1; i <= 12; i++) {
-
             calcMonthlyAvg(i);
         //aggregate.print(5, 3);
-
         }
-
     }
 
     public DataMatrix calcMonthlyAvg(int month) throws SQLException, IOException {
-        Statement stmt = conn.createStatement();
 
+        Statement stmt = conn.createStatement();
 
         resetSpaceFilter();
         String monthString = String.format("%02d", month);
@@ -214,7 +245,7 @@ public class TimeSpaceProcessor {
 
         aggregate = aggregate.times(1f / count);
 
-        String ids[] = aggregate.getIds();
+        Object ids[] = aggregate.getIds();
         double data[][] = aggregate.getArray();
         for (int i = 0; i < data.length; i++) {
             String q = "INSERT INTO monthavg VALUES (" + month + ", " + ids[i];
@@ -308,7 +339,10 @@ public class TimeSpaceProcessor {
             }
         }
 
-        tsproc.calcMonthlyAvg();
+        //tsproc.calcMonthlyAvg();
+        DataMatrix dm = tsproc.getMonthlyAvg(1);
+        dm.print(5, 3);
+
 
         //output(tsproc.customQuery("SELECT count(*) from data "));
 
