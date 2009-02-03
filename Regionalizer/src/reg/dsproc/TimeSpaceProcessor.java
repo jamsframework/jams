@@ -173,18 +173,18 @@ public class TimeSpaceProcessor {
     }
 
     /**
-     * Gets the values of the selected attributes of a single spatial entity
-     * at all time steps
-     * @param id The id of the spatial entiy
+     * Gets the mean values of the selected attributes for an array of
+     * spatial entities at all time steps
+     * @param id The id array of the spatial enties
      * @return A DataMatrix object containing one row per timestep with the
-     * values of selected attributes in columns
+     * mean values of selected attributes in columns
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public DataMatrix getEntityData(long id) throws SQLException, IOException {
+    public DataMatrix getEntityData(long[] id) throws SQLException, IOException {
 
         int attribCount = getSelectedAttribCount();
-        int idPosition = 0;
+        int[] idPosition = new int[id.length];
         ArrayList<double[]> data = new ArrayList<double[]>();
         ArrayList<String> timeStamps = new ArrayList<String>();
 
@@ -195,15 +195,23 @@ public class TimeSpaceProcessor {
         // get first dataset to obtain id position
         if (rs.next()) {
             DataMatrix m = dsdb.getData(rs.getLong("POSITION"));
-            idPosition = m.getIDPosition(String.valueOf(id));
-            data.add(m.getRow(idPosition));
+            ArrayList<double[]> a = new ArrayList<double[]>();
+            for (int i = 0; i < id.length; i++) {
+                idPosition[i] = m.getIDPosition(String.valueOf(id[i]));
+                a.add(m.getRow(idPosition[i]));
+            }
+            data.add(getAvg(a));
             timeStamps.add(rs.getTimestamp(timeID).toString());
         }
 
         // loop over datasets
         while (rs.next()) {
             DataMatrix m = dsdb.getData(rs.getLong("POSITION"));
-            data.add(m.getRow(idPosition));
+            ArrayList<double[]> a = new ArrayList<double[]>();
+            for (int i = 0; i < id.length; i++) {
+                a.add(m.getRow(idPosition[i]));
+            }
+            data.add(getAvg(a));
             timeStamps.add(rs.getTimestamp(timeID).toString());
         }
 
@@ -213,7 +221,23 @@ public class TimeSpaceProcessor {
         DataMatrix result = new DataMatrix(dataArray, timeStampArray, this.getDataStoreProcessor());
 
         return result;
+    }
 
+    private double[] getAvg(ArrayList<double[]> a) {
+
+        double[] result = a.get(0);
+        double[] b;
+        for (int i = 1; i < a.size(); i++) {
+            b = a.get(i);
+            for (int c = 0; c < result.length; c++) {
+                result[c] += b[c];
+            }
+        }
+        for (int c = 0; c < result.length; c++) {
+            result[c] /= a.size();
+        }
+
+        return result;
     }
 
     /**
@@ -450,7 +474,7 @@ public class TimeSpaceProcessor {
 
         return aggregate;
     }
-    
+
     /**
      * Initialises the calculation of overall spatial average values of the
      * selected attributes for all time steps
@@ -588,7 +612,8 @@ public class TimeSpaceProcessor {
                 m = tsproc.getMonthlyAvg(1);
                 break;
             case 4:
-                m = tsproc.getEntityData(1);
+                long[] ids = {1, 3};
+                m = tsproc.getEntityData(ids);
                 break;
         }
 
