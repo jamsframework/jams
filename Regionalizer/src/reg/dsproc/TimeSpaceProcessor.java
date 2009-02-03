@@ -23,12 +23,14 @@
 package reg.dsproc;
 
 import jams.data.JAMSCalendar;
+import jams.data.JAMSDataFactory;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import reg.dsproc.DataStoreProcessor.AttributeData;
 
@@ -38,8 +40,7 @@ import reg.dsproc.DataStoreProcessor.AttributeData;
  */
 public class TimeSpaceProcessor {
 
-    private static final String TABLE_NAME_MONTHAVG = "MONTHAVG",
-            TABLE_NAME_SPATAVG = "SPATAVG";
+    private static final String TABLE_NAME_MONTHAVG = "MONTHAVG",  TABLE_NAME_YEARAVG = "YEARAVG",  TABLE_NAME_SPATAVG = "SPATAVG";
 
     private DataStoreProcessor dsdb;
 
@@ -107,10 +108,16 @@ public class TimeSpaceProcessor {
         return rs;
     }
 
-    public ResultSet customQuery(String query) throws SQLException {
+    public ResultSet customSelectQuery(String query) throws SQLException {
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         return rs;
+    }
+
+    public boolean customQuery(String query) throws SQLException {
+        Statement stmt = conn.createStatement();
+        boolean result = stmt.execute(query);
+        return result;
     }
 
     public ResultSet getData() throws SQLException {
@@ -134,8 +141,7 @@ public class TimeSpaceProcessor {
 
         System.out.println(query);
 
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
+        ResultSet rs = customSelectQuery(query);
         return rs;
     }
 
@@ -150,6 +156,41 @@ public class TimeSpaceProcessor {
         return numSelected;
     }
 
+    public DataMatrix getEntityData(long id) throws SQLException, IOException {
+
+        int attribCount = getSelectedAttribCount();
+        int idPosition = 0;
+        ArrayList<double[]> data = new ArrayList<double[]>();
+        ArrayList<String> timeStamps = new ArrayList<String>();
+
+        // reset filter and get the data
+        resetTimeFilter();
+        ResultSet rs = getData();
+
+        // get first dataset to obtain id position
+        if (rs.next()) {
+            DataMatrix m = dsdb.getData(rs.getLong("POSITION"));
+            idPosition = m.getIDPosition(id);
+            data.add(m.getRow(idPosition));
+            timeStamps.add(rs.getTimestamp(timeID).toString());
+        }
+
+        // loop over datasets
+        while (rs.next()) {
+            DataMatrix m = dsdb.getData(rs.getLong("POSITION"));
+            data.add(m.getRow(idPosition));
+            timeStamps.add(rs.getTimestamp(timeID).toString());
+        }
+
+        double[][] dataArray = data.toArray(new double[attribCount][data.size()]);
+        String[] timeStampArray = timeStamps.toArray(new String[timeStamps.size()]);
+
+        DataMatrix result = new DataMatrix(dataArray, timeStampArray, this.getDataStoreProcessor());
+
+        return result;
+
+    }
+
     public DataMatrix getSpatialAvg() throws SQLException, IOException {
 
         DataMatrix result = null;
@@ -160,9 +201,8 @@ public class TimeSpaceProcessor {
 
         int attribCount = getSelectedAttribCount();
 
-        Statement stmt = conn.createStatement();
         String q = "SELECT * FROM " + TABLE_NAME_SPATAVG;
-        ResultSet rs = stmt.executeQuery(q);
+        ResultSet rs = customSelectQuery(q);
 
         ArrayList<double[]> data = new ArrayList<double[]>();
         ArrayList<String> ids = new ArrayList<String>();
@@ -183,7 +223,7 @@ public class TimeSpaceProcessor {
         return result;
     }
 
-    public DataMatrix getYearlyAvg() throws SQLException, IOException {
+    public DataMatrix getTemporalAvg() throws SQLException, IOException {
 
         DataMatrix aggregate = getMonthlyAvg(1);
         if (aggregate == null) {
@@ -204,16 +244,18 @@ public class TimeSpaceProcessor {
 
         DataMatrix result = null;
 
+        // check if the values have already been calculated, return null if not
         if (!isTableExisting(TABLE_NAME_MONTHAVG)) {
             return result;
         }
 
         int attribCount = getSelectedAttribCount();
 
-        Statement stmt = conn.createStatement();
+        // create and send a select statement to get the data from the database
         String q = "SELECT * FROM " + TABLE_NAME_MONTHAVG + " WHERE MONTH = " + month;
-        ResultSet rs = stmt.executeQuery(q);
+        ResultSet rs = customSelectQuery(q);
 
+        // iterate through the result set
         ArrayList<double[]> data = new ArrayList<double[]>();
         ArrayList<Long> ids = new ArrayList<Long>();
         while (rs.next()) {
@@ -226,6 +268,7 @@ public class TimeSpaceProcessor {
             ids.add(rs.getLong(2));
         }
 
+        // create a DataMatrix object from the results
         double[][] dataArray = data.toArray(new double[attribCount][data.size()]);
         Long[] idArray = ids.toArray(new Long[ids.size()]);
         result = new DataMatrix(dataArray, idArray, this.getDataStoreProcessor());
@@ -234,13 +277,47 @@ public class TimeSpaceProcessor {
     }
 
     private boolean isTableExisting(String tableName) throws SQLException {
-        Statement stmt = conn.createStatement();
         String q = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME='" + tableName + "'";
-        ResultSet rs = stmt.executeQuery(q);
+        ResultSet rs = customSelectQuery(q);
         if (rs.next()) {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public void calcYearlyAvg() throws SQLException, IOException {
+
+        // get number of selected attributes
+        int numSelected = getSelectedAttribCount();
+
+        // create the db tables to store the calculated monthly means
+        customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_YEARAVG);
+        String q = "CREATE TABLE " + TABLE_NAME_YEARAVG + " (";
+        q += "YEAR " + DataStoreProcessor.TYPE_MAP.get("JAMSInteger") + ",";
+        q += spaceID + " " + DataStoreProcessor.TYPE_MAP.get("JAMSLong") + ",";
+
+        for (int i = 1; i <= numSelected; i++) {
+            q += "a_" + i + " " + DataStoreProcessor.TYPE_MAP.get("JAMSDouble") + ",";
+        }
+        q = q.substring(0, q.length() - 1);
+        q += ")";
+        customQuery(q);
+
+        // get min and max dates
+        q = "SELECT min(" + timeID + ") AS MINDATE, max(" + timeID + ") AS MAXDATE FROM index";
+        System.out.println(q);
+        ResultSet rs = customSelectQuery(q);
+        rs.next();
+        JAMSCalendar minDate = JAMSDataFactory.createCalendar();
+        JAMSCalendar maxDate = JAMSDataFactory.createCalendar();
+        minDate.setValue(rs.getTimestamp("MINDATE").toString());
+        maxDate.setValue(rs.getTimestamp("MAXDATE").toString());
+
+        // loop over years
+        for (int i = minDate.get(JAMSCalendar.YEAR); i <= maxDate.get(JAMSCalendar.YEAR); i++) {
+            String filterString = String.format("%04d", i) + "-%-%";
+            calcTempAvg(filterString, TABLE_NAME_YEARAVG, String.valueOf(i));
         }
     }
 
@@ -250,8 +327,7 @@ public class TimeSpaceProcessor {
         int numSelected = getSelectedAttribCount();
 
         // create the db tables to store the calculated monthly means
-        Statement stmt = conn.createStatement();
-        stmt.execute("DROP TABLE IF EXISTS " + TABLE_NAME_MONTHAVG);
+        customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_MONTHAVG);
         String q = "CREATE TABLE " + TABLE_NAME_MONTHAVG + " (";
         q += "MONTH " + DataStoreProcessor.TYPE_MAP.get("JAMSInteger") + ",";
         q += spaceID + " " + DataStoreProcessor.TYPE_MAP.get("JAMSLong") + ",";
@@ -261,21 +337,19 @@ public class TimeSpaceProcessor {
         }
         q = q.substring(0, q.length() - 1);
         q += ")";
-        stmt.execute(q);
+        customQuery(q);
 
         // loop over months
         for (int i = 1; i <= 12; i++) {
-            calcMonthlyAvg(i);
+            String filterString = "%-" + String.format("%02d", i) + "-%";
+            calcTempAvg(filterString, TABLE_NAME_MONTHAVG, String.valueOf(i));
         }
     }
 
-    public DataMatrix calcMonthlyAvg(int month) throws SQLException, IOException {
+    private DataMatrix calcTempAvg(String filter, String tableName, String id) throws SQLException, IOException {
 
-        Statement stmt = conn.createStatement();
-
-        String monthString = String.format("%02d", month);
-        setTimeFilter("%-" + monthString + "-%");
-
+        // set the temporal filter and get the result set
+        setTimeFilter(filter);
         ResultSet rs = getData();
 
         // we have a set of positions now, so get the matrixes and rock'n roll
@@ -304,12 +378,12 @@ public class TimeSpaceProcessor {
         Object ids[] = aggregate.getIds();
         double data[][] = aggregate.getArray();
         for (int i = 0; i < data.length; i++) {
-            String q = "INSERT INTO " + TABLE_NAME_MONTHAVG + " VALUES (" + month + ", " + ids[i];
+            String q = "INSERT INTO " + tableName + " VALUES (" + id + ", " + ids[i];
             for (int j = 0; j < data[i].length; j++) {
                 q += ", " + data[i][j];
             }
             q += ")";
-            stmt.execute(q);
+            customQuery(q);
         }
 
         return aggregate;
@@ -318,10 +392,12 @@ public class TimeSpaceProcessor {
     public DataMatrix calcSpatialAvg() throws SQLException, IOException {
 
         int attribCount = getSelectedAttribCount();
+        long position;
+        ArrayList<double[]> data = new ArrayList<double[]>();
+        ArrayList<String> timeStamps = new ArrayList<String>();
 
-        // create the db tables to store the calculated spatial mean
-        Statement stmt = conn.createStatement();
-        stmt.execute("DROP TABLE IF EXISTS " + TABLE_NAME_SPATAVG);
+        // create the db table to store the calculated spatial mean
+        customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_SPATAVG);
         String q = "CREATE TABLE " + TABLE_NAME_SPATAVG + " (";
         q += timeID + " " + DataStoreProcessor.TYPE_MAP.get("JAMSCalendar") + ",";
 
@@ -330,27 +406,19 @@ public class TimeSpaceProcessor {
         }
         q = q.substring(0, q.length() - 1);
         q += ")";
-        stmt.execute(q);
+        customQuery(q);
 
         // reset filter and get the data
-        resetTimeFilter();        
+        resetTimeFilter();
         ResultSet rs = getData();
-        
-        // we have a set of positions now, so get the matrixes and rock'n roll
-        // get the first dataset
-        long position;
-        DataMatrix aggregate;
-        
-        ArrayList<double[]> data = new ArrayList<double[]>();
-        ArrayList<String> timeStamps = new ArrayList<String>();
 
-        // loop over datasets for current month
+        // loop over datasets
         while (rs.next()) {
             position = rs.getLong("POSITION");
             DataMatrix m = dsdb.getData(position);
             data.add(m.getAvgRow());
             timeStamps.add(rs.getTimestamp(timeID).toString());
-        }        
+        }
 
         double[][] dataArray = data.toArray(new double[attribCount][data.size()]);
         String[] timeStampArray = timeStamps.toArray(new String[timeStamps.size()]);
@@ -362,11 +430,11 @@ public class TimeSpaceProcessor {
                 q += ", " + dataArray[i][j];
             }
             q += ")";
-            stmt.execute(q);
+            customQuery(q);
         }
-        
+
         DataMatrix result = new DataMatrix(dataArray, timeStampArray, this.getDataStoreProcessor());
-        
+
         return result;
     }
 
@@ -423,33 +491,44 @@ public class TimeSpaceProcessor {
         for (DataStoreProcessor.AttributeData attrib : attribs) {
             if (attrib.getName().startsWith("act")) {
                 attrib.setSelected(true);
-                System.out.println(attrib.getName());
+                System.out.print(attrib.getName() + " ");
             } else {
                 attrib.setSelected(false);
             }
         }
+        System.out.println();
 
-        //tsproc.calcMonthlyAvg();
-        //DataMatrix spatAvg = tsproc.calcSpatialAvg();
+        int c = 3;
 
-        DataMatrix spatAvg = tsproc.getSpatialAvg();
-        for (Object o : spatAvg.getIds()) {
-            System.out.println(o);
+        DataMatrix m = null;
+        switch (c) {
+            case 0:
+                tsproc.calcMonthlyAvg();
+                m = tsproc.getMonthlyAvg(1);
+                break;
+            case 1:
+                //tsproc.calcSpatialAvg();
+                m = tsproc.getSpatialAvg();
+                break;
+            case 2:
+                m = tsproc.getTemporalAvg();
+                break;
+            case 3:
+                tsproc.calcYearlyAvg();
+                //m = tsproc.getMonthlyAvg(1);
+                break;
         }
-        spatAvg.print(5, 3);
 
-        DataMatrix dm = tsproc.getMonthlyAvg(1);
-        dm = tsproc.getYearlyAvg();
-//        dm.print(5, 3);
-
-//        for (Object o : dm.getIds()) {
-//            System.out.print(o + " ");
-//        }
-
-
+        if (m == null) {
+            return;
+        }
+        for (Object o : m.getIds()) {
+            System.out.print(o + " ");
+        }
+        System.out.println();
+        m.print(5, 3);
 
         //output(tsproc.customQuery("SELECT count(*) from data "));
-
         tsproc.dsdb.close();
     }
 }

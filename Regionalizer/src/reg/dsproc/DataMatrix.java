@@ -6,7 +6,7 @@ public class DataMatrix extends Matrix {
 
     private Object[] ids;
 
-    DataStoreProcessor outer;
+    private DataStoreProcessor outer;
 
     public DataMatrix(double[][] data, Object[] ids, DataStoreProcessor outer) {
         super(data);
@@ -57,14 +57,37 @@ public class DataMatrix extends Matrix {
         return result;
     }
 
+    public int getIDPosition(Object id) {
+        int i = 0;
+        for (Object o : ids) {
+            if (o.equals(id)) {
+                break;
+            }
+            i++;
+        }
+        return i;
+    }
+
+    public double[] getRow(int position) {
+        return getArray()[position];
+    }
+
     public static void main(String[] args) {
-        double[][] x = {{1, 2, 3}, {4, 5, 6}, {4, 5, 6}};
+        double[][] x = {{1, 2, 3}, {4, 5, 6}, {8, 10, 12}};
         String[] ids = {"a", "b", "c"};
         DataMatrix dm = new DataMatrix(x, ids, null);
 
         for (double v : dm.getAvgRow()) {
             System.out.print(v + " ");
         }
+        
         System.out.println("");
+
+        for (double v : dm.getRow(dm.getIDPosition("c"))) {
+            System.out.print(v + " ");
+        }
+        
+        System.out.println("");
+
     }
 }
