@@ -30,7 +30,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import reg.dsproc.DataStoreProcessor.AttributeData;
 
@@ -191,6 +190,14 @@ public class TimeSpaceProcessor {
 
     }
 
+    /**
+     * Calculates the overall spatial average values of the selected
+     * attributes for all time steps
+     * @return A DataMatrix object containing one row per timestep with the
+     * spatial average values of selected attributes in columns
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     */
     public DataMatrix getSpatialAvg() throws SQLException, IOException {
 
         DataMatrix result = null;
@@ -223,6 +230,14 @@ public class TimeSpaceProcessor {
         return result;
     }
 
+    /**
+     * Calculates the overall temporal average values of the selected
+     * attributes for all entities
+     * @return A DataMatrix object containing one row per entity with the
+     * temporal average values of selected attributes in columns
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     */
     public DataMatrix getTemporalAvg() throws SQLException, IOException {
 
         DataMatrix aggregate = getMonthlyAvg(1);
@@ -240,6 +255,15 @@ public class TimeSpaceProcessor {
         return aggregate;
     }
 
+    /**
+     * Calculates the longtime monthly average values of the selected
+     * attributes for all entities
+     * @param month The month for which the average values shall be returned
+     * @return A DataMatrix object containing one row per entity with the
+     * longtime monthly average values of selected attributes in columns
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     */
     public DataMatrix getMonthlyAvg(int month) throws SQLException, IOException {
 
         DataMatrix result = null;
@@ -286,6 +310,12 @@ public class TimeSpaceProcessor {
         }
     }
 
+    /**
+     * Initialises the calculation of yearly average values of the selected
+     * attributes for all entities
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     */
     public void calcYearlyAvg() throws SQLException, IOException {
 
         // get number of selected attributes
@@ -321,6 +351,12 @@ public class TimeSpaceProcessor {
         }
     }
 
+    /**
+     * Initialises the calculation of longterm monthly average values of the
+     * selected attributes for all entities
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     */
     public void calcMonthlyAvg() throws SQLException, IOException {
 
         // get number of selected attributes
