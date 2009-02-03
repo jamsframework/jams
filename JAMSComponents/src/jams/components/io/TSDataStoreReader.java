@@ -223,6 +223,7 @@ public class TSDataStoreReader extends JAMSComponent {
         DataSet ds = store.getNext();
         DataValue[] data = ds.getData();
         for (int i = 1; i < data.length; i++) {
+            System.out.println(i + ": " + data[i].getDouble());
             doubles[i - 1] = data[i].getDouble();
         }
         if (dataCaching.getValue() != 1) {

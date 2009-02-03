@@ -107,18 +107,35 @@ public class TimeSpaceProcessor {
         return rs;
     }
 
+    /**
+     * Send a custom select-query to the database
+     * @param query The query string
+     * @return A JDBC result set
+     * @throws java.sql.SQLException
+     */
     public ResultSet customSelectQuery(String query) throws SQLException {
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         return rs;
     }
 
+    /**
+     * Send a custom query to the database
+     * @param query The query string
+     * @return true, if the query was sent successfully, false otherwise
+     * @throws java.sql.SQLException
+     */
     public boolean customQuery(String query) throws SQLException {
         Statement stmt = conn.createStatement();
         boolean result = stmt.execute(query);
         return result;
     }
 
+    /**
+     * Get data from the database based on defined filters on time and space
+     * @return The data as JDBC result set
+     * @throws java.sql.SQLException
+     */
     public ResultSet getData() throws SQLException {
 
         String query = "SELECT " + timeID + ", position FROM index";
@@ -155,6 +172,15 @@ public class TimeSpaceProcessor {
         return numSelected;
     }
 
+    /**
+     * Gets the values of the selected attributes of a single spatial entity
+     * at all time steps
+     * @param id The id of the spatial entiy
+     * @return A DataMatrix object containing one row per timestep with the
+     * values of selected attributes in columns
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     */
     public DataMatrix getEntityData(long id) throws SQLException, IOException {
 
         int attribCount = getSelectedAttribCount();
@@ -169,7 +195,7 @@ public class TimeSpaceProcessor {
         // get first dataset to obtain id position
         if (rs.next()) {
             DataMatrix m = dsdb.getData(rs.getLong("POSITION"));
-            idPosition = m.getIDPosition(id);
+            idPosition = m.getIDPosition(String.valueOf(id));
             data.add(m.getRow(idPosition));
             timeStamps.add(rs.getTimestamp(timeID).toString());
         }
@@ -191,7 +217,7 @@ public class TimeSpaceProcessor {
     }
 
     /**
-     * Calculates the overall spatial average values of the selected
+     * Gets the overall spatial average values of the selected
      * attributes for all time steps
      * @return A DataMatrix object containing one row per timestep with the
      * spatial average values of selected attributes in columns
@@ -231,7 +257,7 @@ public class TimeSpaceProcessor {
     }
 
     /**
-     * Calculates the overall temporal average values of the selected
+     * Gets the overall temporal average values of the selected
      * attributes for all entities
      * @return A DataMatrix object containing one row per entity with the
      * temporal average values of selected attributes in columns
@@ -256,7 +282,7 @@ public class TimeSpaceProcessor {
     }
 
     /**
-     * Calculates the longtime monthly average values of the selected
+     * Gets the longtime monthly average values of the selected
      * attributes for all entities
      * @param month The month for which the average values shall be returned
      * @return A DataMatrix object containing one row per entity with the
@@ -424,7 +450,15 @@ public class TimeSpaceProcessor {
 
         return aggregate;
     }
-
+    
+    /**
+     * Initialises the calculation of overall spatial average values of the
+     * selected attributes for all time steps
+     * @return A DataMatrix object containing one row per timestep with the
+     * spatial average values of selected attributes in columns
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     */
     public DataMatrix calcSpatialAvg() throws SQLException, IOException {
 
         int attribCount = getSelectedAttribCount();
@@ -534,7 +568,7 @@ public class TimeSpaceProcessor {
         }
         System.out.println();
 
-        int c = 3;
+        int c = 4;
 
         DataMatrix m = null;
         switch (c) {
@@ -543,7 +577,7 @@ public class TimeSpaceProcessor {
                 m = tsproc.getMonthlyAvg(1);
                 break;
             case 1:
-                //tsproc.calcSpatialAvg();
+                tsproc.calcSpatialAvg();
                 m = tsproc.getSpatialAvg();
                 break;
             case 2:
@@ -551,7 +585,10 @@ public class TimeSpaceProcessor {
                 break;
             case 3:
                 tsproc.calcYearlyAvg();
-                //m = tsproc.getMonthlyAvg(1);
+                m = tsproc.getMonthlyAvg(1);
+                break;
+            case 4:
+                m = tsproc.getEntityData(1);
                 break;
         }
 

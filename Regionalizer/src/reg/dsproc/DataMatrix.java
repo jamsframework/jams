@@ -57,10 +57,10 @@ public class DataMatrix extends Matrix {
         return result;
     }
 
-    public int getIDPosition(Object id) {
+    public int getIDPosition(String id) {
         int i = 0;
         for (Object o : ids) {
-            if (o.equals(id)) {
+            if (o.toString().equals(id)) {
                 break;
             }
             i++;
