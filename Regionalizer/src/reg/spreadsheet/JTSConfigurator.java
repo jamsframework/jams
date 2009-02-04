@@ -189,8 +189,9 @@ public class JTSConfigurator extends JFrame {
 
     private JAMSTimePlot jts = new JAMSTimePlot();
     
-    private static JFileChooser templateChooser;
+    //private static JFileChooser templateChooser;
 
+    private JAMSSpreadSheet sheet;
 //    private String[] headers;
 //    //private String[] colors = {"yellow","orange","red","pink","magenta","cyan","blue","green","gray","lightgray","black"};
     //private String[] colors = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
@@ -242,7 +243,7 @@ public class JTSConfigurator extends JFrame {
     }
      **/
 
-    public JTSConfigurator(JFrame parent, JTable table) {
+    public JTSConfigurator(JFrame parent, JAMSSpreadSheet sheet) {
 
 //        super(parent, "JAMS JTS Viewer");
         this.setParent(parent);
@@ -252,8 +253,9 @@ public class JTSConfigurator extends JFrame {
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
-
-        this.table = table;
+        
+        this.sheet = sheet;
+        this.table = sheet.table;
 
         this.rows = table.getSelectedRows();
         this.columns = table.getSelectedColumns();
@@ -276,7 +278,7 @@ public class JTSConfigurator extends JFrame {
 
     }
 
-    public JTSConfigurator(JFrame parent, JTable table, File templateFile) {
+    public JTSConfigurator(JFrame parent, JAMSSpreadSheet sheet, File templateFile) {
 
 //        super(parent, "JAMS JTS Viewer");
         this.setParent(parent);
@@ -287,7 +289,7 @@ public class JTSConfigurator extends JFrame {
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
 
-        this.table = table;
+        this.table = sheet.table;
         this.templateFile = templateFile;
 
         this.rows = table.getSelectedRows();
@@ -1432,7 +1434,7 @@ public class JTSConfigurator extends JFrame {
         //Save Parameter File
 
         try {
-            JFileChooser chooser = getTemplateChooser();
+            JFileChooser chooser = sheet.getTemplateChooser();
             chooser.setCurrentDirectory(templateFile);
             int returnVal = chooser.showSaveDialog(thisDlg);
             File file = chooser.getSelectedFile();
@@ -1730,15 +1732,6 @@ public class JTSConfigurator extends JFrame {
         }
     };
 
-    
-    static JFileChooser getTemplateChooser() {
-        if (templateChooser == null) {
-            templateChooser = new JFileChooser();
-            templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
-        }
-        return templateChooser;
-    }
-    
     ActionListener loadTempListener = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -1747,9 +1740,9 @@ public class JTSConfigurator extends JFrame {
 
             try {
                 
-                getTemplateChooser().setCurrentDirectory(templateFile);
-                returnVal = getTemplateChooser().showOpenDialog(thisDlg);
-                File file = getTemplateChooser().getSelectedFile();
+                sheet.getTemplateChooser().setCurrentDirectory(templateFile);
+                returnVal = sheet.getTemplateChooser().showOpenDialog(thisDlg);
+                File file = sheet.getTemplateChooser().getSelectedFile();
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     loadTemplate(file);

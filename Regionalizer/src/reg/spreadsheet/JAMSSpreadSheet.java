@@ -11,6 +11,7 @@
  */
 package reg.spreadsheet;
 
+import jams.JAMSFileFilter;
 import java.util.Vector;
 import java.util.StringTokenizer;
 import java.awt.event.*;
@@ -28,7 +29,6 @@ import jams.gui.LHelper;
 import jams.workspace.DataSet;
 import jams.workspace.datatypes.DataValue;
 import jams.workspace.datatypes.DoubleValue;
-import jams.workspace.datatypes.StringValue;
 import jams.workspace.stores.TSDataStore;
 import java.text.ParseException;
 import reg.Regionalizer;
@@ -105,7 +105,8 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
     private String[] calclist = {"Sum    ", "Mean   "};
     JComboBox calculations = new JComboBox(calclist);
     private int kindofcalc = 0;
-
+    
+    private JFileChooser templateChooser;
     /* Plot-Test */
     //private ExtendedTSPlot tsplot;
     /* ActionEvents */
@@ -199,14 +200,23 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         } catch (IOException ex) {
         }
     }
-
+    
+    public JFileChooser getTemplateChooser() {
+        if (templateChooser == null) {
+            templateChooser = new JFileChooser();
+            templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
+        }
+        templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
+        return templateChooser;
+    }
+    
     public void loadTSDS(TSDataStore store, File inputDSDir) throws Exception {
 
         int colNumber = 0;
         double[] rowBuffer;
         String[] headers;
 
-        JTSConfigurator.getTemplateChooser().setCurrentDirectory(inputDSDir);
+        getTemplateChooser().setCurrentDirectory(inputDSDir);
 
         ttpFile = new File(inputDSDir, store.getID() + ".ttp");
         dtpFile = new File(inputDSDir, store.getID() + ".dtp");
@@ -433,21 +443,20 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
     };
 
     private void openCTS() {
-        /* achtung: nur wenn time mitlÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤uft!! */
+                
         JTSConfigurator jts;
-        jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this.table);
+        jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this);
     //ctstabs.addGraph(table);
     //ctsIsOpen = true;
     }
     
     private void openCTS(File templateFile) {
-        /* achtung: nur wenn time mitlÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤uft!! */
         
         JTSConfigurator jts;
         if(useTemplateButton.isSelected()){
-        jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this.table, templateFile);
+        jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this, templateFile);
         } else {
-            jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this.table, null);
+            jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this, null);
         }
     //ctstabs.addGraph(table);
     //ctsIsOpen = true;
@@ -457,9 +466,9 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         JXYConfigurator jxys;
 
         try {
-            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this.table);
+            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this);
         } catch (NullPointerException npe) {
-            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this.table);
+            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this);
         }
     }
     
@@ -467,9 +476,9 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         JXYConfigurator jxys;
 
         if(useTemplateButton.isSelected()){
-            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this.table, templateFile);
+            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this, templateFile);
         } else {
-            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this.table, null);
+            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this, null);
         }
     }
     

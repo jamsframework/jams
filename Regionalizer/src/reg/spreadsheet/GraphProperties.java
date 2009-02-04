@@ -458,7 +458,9 @@ public class GraphProperties {
     }
  
     public void setColorLabelColor(){
-        colorlabel.setBackground(getSeriesPaint());
+        if(linesVisible) colorlabel.setBackground(getSeriesPaint());
+        else colorlabel.setBackground(getSeriesFillPaint());
+  
     }
     
     public void setSColorLabelColor(){
@@ -780,9 +782,13 @@ public class GraphProperties {
         this.linesVisible = flag;
     }
     
+ 
+    
     public void setShapesVisible(boolean flag){
         this.shapesVisible = flag;
+        //cr_dlg.shapes_vis_box.setSelected(flag);
     }
+    
     
     public void setStroke(int type){
         stroke_type = type;
@@ -1327,7 +1333,7 @@ public class GraphProperties {
             setLayout(brl);
             optionspanel.setLayout(option_gbl);
             
-            ok_button = new JButton("OK");
+            ok_button = new JButton("Set Properties");
             cancel_button = new JButton("Cancel");
             
             ok_button.addActionListener(ok);
@@ -1448,7 +1454,7 @@ public class GraphProperties {
             //buttonpanel
             LHelper.addGBComponent(buttonpanel, button_gbl, ok_button, 0, 0, 1, 1, 1, 1);
             LHelper.addGBComponent(buttonpanel, button_gbl, cancel_button, 1, 0, 1, 1, 1, 1);
-            LHelper.addGBComponent(buttonpanel, button_gbl, apply_button, 2, 0, 1, 1, 1, 1);
+            //LHelper.addGBComponent(buttonpanel, button_gbl, apply_button, 2, 0, 1, 1, 1, 1);
             
             //this-panel
 //            LHelper.addGBComponent(this, gbl, optionspanel, 0, 0, 1, 6, 1, 1);

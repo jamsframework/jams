@@ -89,13 +89,12 @@ public class JXYConfigurator extends JFrame {
     private String[] headers;
     
     private File templateFile;
-    private static JFileChooser templateChooser;
+    //private static JFileChooser templateChooser;
     
     private JButton saveTempButton = new JButton("Save Template");
     private JButton loadTempButton = new JButton("Load Template");
     
-    
-//    private HiResDlg hiresDlg;
+ 
     private JLabel edTitle = new JLabel("Plot Title: ");
     private JLabel edLeft = new JLabel("Left axis title: ");
     private JLabel edXAxis = new JLabel("X axis title");
@@ -121,6 +120,8 @@ public class JXYConfigurator extends JFrame {
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
     private JAMSXYPlot jxys = new JAMSXYPlot();
     public XYRow[] sorted_Row;
+    
+    private boolean tempLoaded = true;
 //    private String[] headers;
 //    //private String[] colors = {"yellow","orange","red","pink","magenta","cyan","blue","green","gray","lightgray","black"};
     //private String[] colors = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
@@ -154,6 +155,8 @@ public class JXYConfigurator extends JFrame {
     JComboBox[] colorchoice;
     /* ActionListener */
     ActionListener[] activationChange;
+    
+    JAMSSpreadSheet sheet;
 
     /** Creates a new instance of CTSConfigurator */
     public JXYConfigurator() {
@@ -165,7 +168,7 @@ public class JXYConfigurator extends JFrame {
     }
      **/
 
-    public JXYConfigurator(JFrame parent, JTable table) {
+    public JXYConfigurator(JFrame parent, JAMSSpreadSheet sheet) {
 
         this.setParent(parent);
         this.setIconImage(parent.getIconImage());
@@ -177,8 +180,9 @@ public class JXYConfigurator extends JFrame {
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
-
-        this.table = table;
+        
+        this.sheet = sheet;
+        this.table = sheet.table;
 
         this.rows = table.getSelectedRows();
         this.columns = table.getSelectedColumns();
@@ -199,7 +203,7 @@ public class JXYConfigurator extends JFrame {
 
     }
     
-     public JXYConfigurator(JFrame parent, JTable table, File templateFile) {
+     public JXYConfigurator(JFrame parent, JAMSSpreadSheet sheet, File templateFile) {
 
         this.setParent(parent);
         this.setIconImage(parent.getIconImage());
@@ -212,7 +216,8 @@ public class JXYConfigurator extends JFrame {
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
 
-        this.table = table;
+        this.sheet = sheet;
+        this.table = sheet.table;
         this.templateFile = templateFile;
 
         this.rows = table.getSelectedRows();
@@ -222,6 +227,8 @@ public class JXYConfigurator extends JFrame {
 
         d_start_changed = false;
         d_end_changed = false;
+        
+        if(templateFile == null) tempLoaded = false;
         
         try{
         writeSortedData(columns[0]);
@@ -286,8 +293,7 @@ public class JXYConfigurator extends JFrame {
         plotpanel = new JPanel();
         plotpanel.setLayout(new BorderLayout());
 
-        frame = new JPanel();
-        frame.setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
         //frame.setSize(640,80);
 
         graphScPane = new JScrollPane();
@@ -346,11 +352,14 @@ public class JXYConfigurator extends JFrame {
         if(templateFile != null){
         try{
             loadTemplate(templateFile);
+            tempLoaded = true;
         } catch (Exception fnfe){
             initGraphLoad();
+            tempLoaded = false;
         }
         } else {
             initGraphLoad();
+            tempLoaded = false;
         }
         ////////////////////////////////////////////
         
@@ -371,7 +380,7 @@ public class JXYConfigurator extends JFrame {
         graphScPane.setPreferredSize(new Dimension(512,300));
         graphScPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        savePanel.add(saveButton);
+        //savePanel.add(saveButton);
 
         jxys.getPanel().add(savePanel, BorderLayout.EAST);
 
@@ -440,7 +449,8 @@ public class JXYConfigurator extends JFrame {
             prop.setSeriesPaint(colorTable.get(colors[0]));
             prop.setSeriesFillPaint(colorTable.get(colors[1]));
             prop.setSeriesOutlinePaint(colorTable.get(colors[2]));
-
+            prop.setLinesVisible(false);
+            prop.setLinesVisBox(false);
 //            prop.setColor((String) colorchoice.getSelectedItem());
 //            prop.setPosition((String) poschoice.getSelectedItem());
 //            prop.setRendererType(typechoice.getSelectedIndex());
@@ -485,7 +495,14 @@ public class JXYConfigurator extends JFrame {
     }
     
     private void writeSortedData(int x_col) {
-        int row_nr = table.getRowCount();
+        
+        int row_nr;
+        if(tempLoaded){
+            row_nr = table.getRowCount();
+        } else {
+            row_nr = rows.length;
+        }
+        
         int col_nr = table.getColumnCount();
         sorted_Row = new XYRow[row_nr];
         double[] rowarray;
@@ -967,7 +984,10 @@ public class JXYConfigurator extends JFrame {
     }
 
     private void updatePropVector() {
-
+        
+//        if(tempLoaded){
+//            writeSortedData(columns[0]);
+//        }
         for (int i = 0; i < propVector.size(); i++) {
             propVector.get(i).applyXYProperties();
         }
@@ -1637,7 +1657,7 @@ public class JXYConfigurator extends JFrame {
         //Save Parameter File
         
         try{
-            JFileChooser chooser = getTemplateChooser();
+            JFileChooser chooser = sheet.getTemplateChooser();
             chooser.setCurrentDirectory(templateFile);
             int returnVal = chooser.showSaveDialog(thisDlg);
             File file = chooser.getSelectedFile();
@@ -1877,13 +1897,7 @@ public class JXYConfigurator extends JFrame {
         }
     };
     
-    static JFileChooser getTemplateChooser() {
-        if (templateChooser == null) {
-            templateChooser = new JFileChooser();
-            templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
-        }
-        return templateChooser;
-    }
+    
     
     ActionListener loadTempListener = new ActionListener(){
         public void actionPerformed(ActionEvent e) {
@@ -1891,9 +1905,9 @@ public class JXYConfigurator extends JFrame {
             int returnVal = -1;
             
             try{
-                getTemplateChooser().setCurrentDirectory(templateFile);
-                returnVal = getTemplateChooser().showOpenDialog(thisDlg);
-                File file = getTemplateChooser().getSelectedFile();
+                sheet.getTemplateChooser();//.setCurrentDirectory(templateFile);
+                returnVal = sheet.getTemplateChooser().showOpenDialog(thisDlg);
+                File file = sheet.getTemplateChooser().getSelectedFile();
             
             
                 if(returnVal == JFileChooser.APPROVE_OPTION){
