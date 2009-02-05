@@ -289,6 +289,7 @@ public class JTSConfigurator extends JFrame {
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
 
+        this.sheet = sheet;
         this.table = sheet.table;
         this.templateFile = templateFile;
 
@@ -1435,7 +1436,6 @@ public class JTSConfigurator extends JFrame {
 
         try {
             JFileChooser chooser = sheet.getTemplateChooser();
-            chooser.setCurrentDirectory(templateFile);
             int returnVal = chooser.showSaveDialog(thisDlg);
             File file = chooser.getSelectedFile();
             FileOutputStream fout = new FileOutputStream(file);
@@ -1444,8 +1444,7 @@ public class JTSConfigurator extends JFrame {
             fout.close();
 
         } catch (Exception fnfex) {
-        }
-        ;
+        };
     }
 
     private void loadTemplate(File templateFile) {
@@ -1740,7 +1739,6 @@ public class JTSConfigurator extends JFrame {
 
             try {
                 
-                sheet.getTemplateChooser().setCurrentDirectory(templateFile);
                 returnVal = sheet.getTemplateChooser().showOpenDialog(thisDlg);
                 File file = sheet.getTemplateChooser().getSelectedFile();
 

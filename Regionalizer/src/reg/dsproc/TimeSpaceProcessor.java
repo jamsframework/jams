@@ -87,26 +87,6 @@ public class TimeSpaceProcessor {
         return true;
     }
 
-    public ResultSet getData(JAMSCalendar date) throws SQLException {
-
-        date.setDateFormat("yyyy-MM-dd HH:mm:ss");
-        String query = "SELECT " + spaceID;
-
-        for (DataStoreProcessor.AttributeData attribute : dsdb.getAttributes()) {
-            if (attribute.isSelected()) {
-                query += ", " + attribute.getName();
-            }
-        }
-
-        query += " FROM data WHERE " + timeID + "='" + date.toString() + "'";
-        System.out.println(query);
-
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
-        System.out.println("finished");
-        return rs;
-    }
-
     /**
      * Send a custom select-query to the database
      * @param query The query string
@@ -170,6 +150,29 @@ public class TimeSpaceProcessor {
             }
         }
         return numSelected;
+    }
+    
+    /**
+     * Gets the values of the selected attributes for all entities at a
+     * specific date
+     * @param date The date for which the data shall be returned
+     * @return A DataMatrix object containing one row per entity with the
+     * attribute values in columns
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     */
+    public DataMatrix getData(JAMSCalendar date) throws SQLException, IOException {
+
+        date.setDateFormat("yyyy-MM-dd HH:mm:ss");
+        String filterString = date.toString();
+        setTimeFilter(filterString);        
+        ResultSet rs = getData();
+        DataMatrix result = null;
+        if (rs.next()) {
+            long position = rs.getLong("POSITION");
+            result = dsdb.getData(position);
+        }
+        return result;
     }
 
     /**
@@ -592,28 +595,40 @@ public class TimeSpaceProcessor {
         }
         System.out.println();
 
-        int c = 4;
+        int c = 5;
 
         DataMatrix m = null;
         switch (c) {
             case 0:
+                // calc/get longterm monthly mean values
                 tsproc.calcMonthlyAvg();
                 m = tsproc.getMonthlyAvg(1);
                 break;
             case 1:
-                tsproc.calcSpatialAvg();
-                m = tsproc.getSpatialAvg();
-                break;
-            case 2:
-                m = tsproc.getTemporalAvg();
-                break;
-            case 3:
+                // calc/get yearly mean values
                 tsproc.calcYearlyAvg();
                 m = tsproc.getMonthlyAvg(1);
                 break;
+            case 2:
+                // get overall temporal mean values
+                // (based on longterm monthly mean values)
+                m = tsproc.getTemporalAvg();
+                break;
+            case 3:
+                // calc/get overall spatial mean values
+                tsproc.calcSpatialAvg();
+                m = tsproc.getSpatialAvg();
+                break;
             case 4:
-                long[] ids = {1, 3};
+                // calc/get spatial mean values for selected entities
+                long[] ids = {1, 3, 5, 7, 9};
                 m = tsproc.getEntityData(ids);
+                break;
+            case 5:
+                // get values for a specific date
+                JAMSCalendar cal = JAMSDataFactory.createCalendar();
+                cal.setValue("2000-10-31 07:30");
+                m = tsproc.getData(cal);
                 break;
         }
 

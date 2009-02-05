@@ -1658,7 +1658,6 @@ public class JXYConfigurator extends JFrame {
         
         try{
             JFileChooser chooser = sheet.getTemplateChooser();
-            chooser.setCurrentDirectory(templateFile);
             int returnVal = chooser.showSaveDialog(thisDlg);
             File file = chooser.getSelectedFile();
             FileOutputStream fout = new FileOutputStream(file);
@@ -1905,7 +1904,6 @@ public class JXYConfigurator extends JFrame {
             int returnVal = -1;
             
             try{
-                sheet.getTemplateChooser();//.setCurrentDirectory(templateFile);
                 returnVal = sheet.getTemplateChooser().showOpenDialog(thisDlg);
                 File file = sheet.getTemplateChooser().getSelectedFile();
             
