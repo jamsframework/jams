@@ -30,6 +30,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import reg.dsproc.DataStoreProcessor.AttributeData;
 
@@ -151,7 +152,7 @@ public class TimeSpaceProcessor {
         }
         return numSelected;
     }
-    
+
     /**
      * Gets the values of the selected attributes for all entities at a
      * specific date
@@ -161,11 +162,14 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public DataMatrix getData(JAMSCalendar date) throws SQLException, IOException {
+    public DataMatrix getSpatialData(JAMSCalendar date) throws SQLException, IOException {
 
+        String oldFormat = ((SimpleDateFormat) date.getDateFormat()).toPattern();
         date.setDateFormat("yyyy-MM-dd HH:mm:ss");
         String filterString = date.toString();
-        setTimeFilter(filterString);        
+        date.setDateFormat(oldFormat);
+
+        setTimeFilter(filterString);
         ResultSet rs = getData();
         DataMatrix result = null;
         if (rs.next()) {
@@ -173,6 +177,87 @@ public class TimeSpaceProcessor {
             result = dsdb.getData(position);
         }
         return result;
+    }
+
+    /**
+     * Gets the mean values of the selected attributes for a set of time steps
+     * given by an array of JAMSCalendar objects
+     * @param dates An array of JAMSCalendar objects
+     * @return A DataMatrix object containing one row per entity with the
+     * mean values of selected attributes in columns
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     */
+    public DataMatrix getTemporalAvg(JAMSCalendar[] dates) throws SQLException, IOException {
+
+        if ((dates == null) || (dates.length == 0)) {
+            return null;
+        }
+
+        DataMatrix aggregate = null, matrix;
+        int count = 0;
+        // loop over dates 
+        for (JAMSCalendar date : dates) {
+
+            matrix = getSpatialData(date);
+
+            if (matrix != null) {
+                if (aggregate == null) {
+                    aggregate = matrix;
+                    count = 1;
+                } else {
+                    aggregate = aggregate.plus(matrix);
+                    count++;
+                }
+            }
+        }
+
+        if (aggregate != null) {
+            aggregate = aggregate.times(1f / count);
+        }
+
+        return aggregate;
+    }
+
+    /**
+     * Gets the mean values of the selected attributes for a set of time steps
+     * matching a given pattern
+     * @param datePattern A date pattern string
+     * @return A DataMatrix object containing one row per entity with the
+     * mean values of selected attributes in columns
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     */
+    public DataMatrix getTemporalAvg(String datePattern) throws SQLException, IOException {
+
+        // set the temporal filter and get the result set
+        setTimeFilter(datePattern);
+        ResultSet rs = getData();
+
+        // we have a set of positions now, so get the matrixes and rock'n roll
+        // get the first dataset
+        long position;
+        DataMatrix aggregate;
+        int count = 1;
+
+        if (rs.next()) {
+            position = rs.getLong("POSITION");
+            aggregate = dsdb.getData(position);
+        } else {
+            return null;
+        }
+
+        // loop over datasets for current month
+        while (rs.next()) {
+            position = rs.getLong("POSITION");
+            DataMatrix m = dsdb.getData(position);
+            aggregate = aggregate.plus(m);
+            count++;
+        }
+
+        aggregate = aggregate.times(1f / count);
+
+        return aggregate;
     }
 
     /**
@@ -400,7 +485,7 @@ public class TimeSpaceProcessor {
         // loop over years
         for (int i = minDate.get(JAMSCalendar.YEAR); i <= maxDate.get(JAMSCalendar.YEAR); i++) {
             String filterString = String.format("%04d", i) + "-%-%";
-            calcTempAvg(filterString, TABLE_NAME_YEARAVG, String.valueOf(i));
+            calcTemporalAvg(filterString, TABLE_NAME_YEARAVG, String.valueOf(i));
         }
     }
 
@@ -431,11 +516,11 @@ public class TimeSpaceProcessor {
         // loop over months
         for (int i = 1; i <= 12; i++) {
             String filterString = "%-" + String.format("%02d", i) + "-%";
-            calcTempAvg(filterString, TABLE_NAME_MONTHAVG, String.valueOf(i));
+            calcTemporalAvg(filterString, TABLE_NAME_MONTHAVG, String.valueOf(i));
         }
     }
 
-    private DataMatrix calcTempAvg(String filter, String tableName, String id) throws SQLException, IOException {
+    private DataMatrix calcTemporalAvg(String filter, String tableName, String id) throws SQLException, IOException {
 
         // set the temporal filter and get the result set
         setTimeFilter(filter);
@@ -577,12 +662,12 @@ public class TimeSpaceProcessor {
 //        JAMSCalendar date = new JAMSCalendar();
 //        date.setValue("1995-11-01 07:30");
 //
-//        //output(tsproc.getData(date));
+//        //output(tsproc.getSpatialData(date));
 //        tsproc.setSpaceFilter("42");
 //        tsproc.setTimeFilter("%-02-%");
 //        tsproc.setAggregator("sum");
 //
-//        output(tsproc.getData());
+//        output(tsproc.getSpatialData());
 
         ArrayList<DataStoreProcessor.AttributeData> attribs = tsproc.getDataStoreProcessor().getAttributes();
         for (DataStoreProcessor.AttributeData attrib : attribs) {
@@ -595,7 +680,7 @@ public class TimeSpaceProcessor {
         }
         System.out.println();
 
-        int c = 5;
+        int c = 7;
 
         DataMatrix m = null;
         switch (c) {
@@ -620,7 +705,7 @@ public class TimeSpaceProcessor {
                 m = tsproc.getSpatialAvg();
                 break;
             case 4:
-                // calc/get spatial mean values for selected entities
+                // get spatial mean values for selected entities
                 long[] ids = {1, 3, 5, 7, 9};
                 m = tsproc.getEntityData(ids);
                 break;
@@ -628,7 +713,20 @@ public class TimeSpaceProcessor {
                 // get values for a specific date
                 JAMSCalendar cal = JAMSDataFactory.createCalendar();
                 cal.setValue("2000-10-31 07:30");
-                m = tsproc.getData(cal);
+                m = tsproc.getSpatialData(cal);
+                break;
+            case 6:
+                // get temporal mean values matching a date pattern
+                m = tsproc.getTemporalAvg("2%-10-30 07:30%");
+                break;
+            case 7:
+                // get temporal mean values for an array of specific dates
+                JAMSCalendar[] dates = new JAMSCalendar[2];
+                dates[0] = JAMSDataFactory.createCalendar();
+                dates[0].setValue("2000-10-31 07:30");
+                dates[1] = JAMSDataFactory.createCalendar();
+                dates[1].setValue("2000-10-30 07:30");
+                m = tsproc.getTemporalAvg(dates);
                 break;
         }
 
