@@ -39,65 +39,80 @@ import reg.Regionalizer;
  *
  * @author Robert Riedel
  */
-public class JAMSSpreadSheet extends JPanel {
+public class JAMSSpreadSheet extends JAMSGUIComponent {
 
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    update = JAMSVarDescription.UpdateType.RUN,
+    description = "Current time")
+    public JAMSCalendar time;
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    update = JAMSVarDescription.UpdateType.RUN,
+    description = "Array with data of one row")
+    public JAMSDouble[] rowarray;
+    /* TESTING VARIABLES */
+    //private String[] columnNameArray = headers.getValue();
+    //{"test1","test2"};
+    
     File ttpFile;
-
     File dtpFile;
-
+    
     private final String title = "";
-
+    private final int COLWIDTH = 8;
     private JPanel panel = new JPanel();
-
     private String panelname = "spreadsheet";
-
     private int numberOfColumns = 0;
-
     private JFrame parent_frame;
-
+    //runtime time check
     private boolean timeRuns = false;
-
+    //private Runnable updateTable;
+    private boolean ctsIsOpen = false;
+    //private CTSViewer ctstabs;
+    //Vectors
+    private Vector<Vector> data = new Vector<Vector>();
+    private Vector<String> colnames = new Vector<String>();
+    private double[] rowdata;
+    /* *** Graphical components *** */
     GridBagLayout panellayout = new GridBagLayout();
-
     GridBagConstraints grid = new GridBagConstraints();
-
     private JScrollPane scrollpane = new JScrollPane();
-
     private JScrollPane scrollpane2;
     /* Buttons */
-
+    private JButton calcbutton = new JButton("Calculate");
+    private JButton importbutton = new JButton("Import");
+    private JButton openbutton = new JButton("Open");
     private JButton savebutton = new JButton("Save");
-
     private JButton plotButton = new JButton("Time Plot");
-
     private JButton dataplotButton = new JButton("Data Plot");
-
     private JCheckBox useTemplateButton = new JCheckBox("use Template");
     /* Labels */
-
     private JLabel headerlabel = new JLabel();
-
     private JLabel titleLabel = new JLabel(title);
-
     private JLabel calclabel = new JLabel("calclabel");
+    private JLabel label2 = new JLabel();
+    private JLabel opensavealert = new JLabel("");
+    private JLabel plotalert = new JLabel();
+    /*CheckBox*/
+    /* TextFields */
+    private JTextField editField = new JTextField();
     /* Table and TableModel */
-
     private JAMSTableModel tmodel;
-
     private JTableHeader tableHeader;
-
+    //private MouseListener mouseListener;
+    //private MouseAdapter mouseAdapter;
     JTable table;
     /* ComboBox */
     /* String array contains words of the ComboBox */
-
     private String[] calclist = {"Sum    ", "Mean   "};
-
     JComboBox calculations = new JComboBox(calclist);
-
     private int kindofcalc = 0;
-
+    
     private JFileChooser templateChooser;
-
+    /* Plot-Test */
+    //private ExtendedTSPlot tsplot;
+    /* ActionEvents */
+    //private ActionListener buttonclicked;
+    /* Testvalues
+     */
     /* Constructor */
     public JAMSSpreadSheet() {
     }
@@ -138,7 +153,6 @@ public class JAMSSpreadSheet extends JPanel {
         }
     };
     /* Save */
-
     ActionListener saveAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -186,7 +200,7 @@ public class JAMSSpreadSheet extends JPanel {
         } catch (IOException ex) {
         }
     }
-
+    
     public JFileChooser getTemplateChooser() {
         if (templateChooser == null) {
             templateChooser = new JFileChooser();
@@ -195,7 +209,7 @@ public class JAMSSpreadSheet extends JPanel {
         templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
         return templateChooser;
     }
-
+    
     public void loadTSDS(TSDataStore store, File inputDSDir) throws Exception {
 
         int colNumber = 0;
@@ -256,19 +270,191 @@ public class JAMSSpreadSheet extends JPanel {
         updateGUI();
     }
 
-    private void openCTS() {
+    public void open() {
 
+
+        String text = "";
+        String rowtext = "";
+        String itemtext = "";
+        String[] headerBuff = new String[256];
+        int colNumber = 0;
+        double[] rowBuffer = null;
+        String[] headers = null;
+
+        Vector<double[]> arrayVector = new Vector<double[]>();
+        Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
+
+        boolean headerSet = false;
+        int line = 0;
+        int k = 0;
+        this.tmodel = new JAMSTableModel();
+        tmodel.setTimeRuns(true);
+        this.timeRuns = true;
+
+        try {
+
+
+            JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
+            int returnVal = chooser.showOpenDialog(panel);
+            File file = chooser.getSelectedFile();
+            FileReader fReader = new FileReader(file);
+
+            StringBuffer stBuff = new StringBuffer();
+            char[] c = new char[100];
+            int i;
+
+
+            while (fReader.ready()) {
+                i = fReader.read(c, 0, c.length);
+                stBuff.append(c, 0, i);
+            }
+            fReader.close();
+            text = stBuff.toString();
+
+
+
+
+        } catch (IOException ex) {
+            /* FEHLERMELDUNG */
+            System.out.println("Lesen fehlgeschlagen!");
+        }
+
+
+        /* Tokenizers */
+
+        StringTokenizer row = new StringTokenizer(text, "\r\n");
+        while (row.hasMoreTokens()) {
+
+            rowtext = row.nextToken();
+            StringTokenizer item = new StringTokenizer(rowtext, "\t");
+
+
+            while (item.hasMoreTokens()) {
+
+                itemtext = item.nextToken();
+
+                try {
+                    if (line == 0) {
+
+                        headerBuff[k] = itemtext;
+                        colNumber++;
+
+                    } else {
+
+                        if (line == 1) { /* headers[k-1] != null &&  */
+                            headers = new String[colNumber];
+                            for (int l = 0; l < colNumber; l++) {
+                                headers[l] = headerBuff[l];
+                            }
+                            //setColumnNameArray(colnames);
+                            rowBuffer = null;
+
+                        } else {
+
+                            if (k == 0) {
+                                JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+                                timeval.setValue(itemtext);
+                                timeVector.add(timeval);
+
+                            } else {
+                                rowBuffer[k - 1] = new Double(itemtext);
+
+                            }
+                        }
+                    }
+                } catch (NullPointerException ne) {
+                }
+
+
+
+                k++;
+            }
+
+
+            if (rowBuffer != null) {
+
+                arrayVector.add(rowBuffer);
+            }
+            rowBuffer = new double[colNumber - 1];
+            ; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            k = 0;
+            line++;
+        }
+
+        this.tmodel = new JAMSTableModel();
+        tmodel.setTimeRuns(true);
+        timeRuns = true;
+        //if(headers != null){
+
+        //}
+        tmodel.setTimeVector(timeVector);
+
+        tmodel.setNewDataVector(arrayVector);
+        String headertest = "";
+
+        tmodel.setColumnNames(headers);
+
+
+        updateGUI();
+
+
+
+
+
+    }
+    /* Open */
+    ActionListener openAction = new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+
+            int result;
+
+            try {
+                result = LHelper.showYesNoCancelDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?", "Attention");
+            } catch (NullPointerException npe) {
+                result = LHelper.showYesNoCancelDlg(parent_frame, "Do you want to save this sheet before?", "Attention");
+            }
+            if (result == JOptionPane.YES_OPTION) {
+                save();
+                open();
+            }
+            if (result == JOptionPane.NO_OPTION) {
+                open();
+            }
+
+
+        /*             YesNoDlg yesnodialog = new YesNoDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?");
+        yesnodialog.setVisible(true);
+         *
+         *
+        
+        if(yesnodialog.getResult().equals("Yes")){
+        save();
+        open();
+        }
+        if(yesnodialog.getResult().equals("No")){
+        open();
+        }
+         */
+
+
+        }
+    };
+
+    private void openCTS() {
+                
         JTSConfigurator jts;
         jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this);
     //ctstabs.addGraph(table);
     //ctsIsOpen = true;
     }
-
+    
     private void openCTS(File templateFile) {
-
+        
         JTSConfigurator jts;
-        if (useTemplateButton.isSelected()) {
-            jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this, templateFile);
+        if(useTemplateButton.isSelected()){
+        jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this, templateFile);
         } else {
             jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this, null);
         }
@@ -285,37 +471,43 @@ public class JAMSSpreadSheet extends JPanel {
             jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this);
         }
     }
-
+    
     private void openCXYS(File templateFile) {
         JXYConfigurator jxys;
 
-        if (useTemplateButton.isSelected()) {
+        if(useTemplateButton.isSelected()){
             jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this, templateFile);
         } else {
             jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this, null);
         }
     }
+    
     ActionListener plotAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
 
+//             if(table.getValueAt(0, 0).getClass() == JAMSCalendar.class){     
+//                openCTS();
             try {
+                
                 openCTS(ttpFile);
+                
             } catch (ClassCastException cce) {
                 if (timeRuns) {
                     table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
                     openCTS();
                 }
             }
+//             }
         }
     };
-
     ActionListener dataplotAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
 
-            try {
 
+            try {
+                
                 openCXYS(dtpFile);
 
             } catch (ClassCastException cce) {
@@ -325,7 +517,12 @@ public class JAMSSpreadSheet extends JPanel {
                     openCXYS(dtpFile);
                 }
             }
-
+//             Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
+//             if(test == org.unijena.jams.data.JAMSCalendar.class){
+//                 
+//             } else {
+//                openCXYS();
+//             }
         }
     };
 
@@ -356,6 +553,8 @@ public class JAMSSpreadSheet extends JPanel {
             }
         }
         return sum;
+
+    //label2.setText("first element: "+(Double)table.getValueAt(rows[0], columns[0]));
     }
 
     private double calcmean() {
@@ -411,10 +610,38 @@ public class JAMSSpreadSheet extends JPanel {
         tmodel.setColumnNames(names);
     }
 
+    public void addRowArray(double[] data) {
+        //
+        //tmodel.addRowArray(data);
+    }
+    /*
+    public void addValue(double value, int columnIndex){
+    // if (columnIndex < numberOfColumns){                       //hier noch else-Verhalten!!
+    //data.get(columnIndex).addElement("test"+value);
+    tmodel.addValue(value, columnIndex);
+    //}
+    }
+     */
+
+    public void updateValue(double value, int rowIndex, int columnIndex) {
+        //tmodel.setValueAt(value, rowIndex, columnIndex);
+        //tmodel.getValueAt(value, rowIndex, columnIndex);
+    }
+
     public void updateGUI() {
+
+
+        //makeTable();
         table.setModel(tmodel);
         scrollpane.setViewportView(table);
+
         panel.repaint();
+    //panel.remove(table);
+    //updateTable();
+    //add(updateTable(), grid);
+    //this.add(scrollpane);
+    //panel.updateUI();
+    //createPanel();
     }
 
     public void makeTable() {
@@ -426,6 +653,24 @@ public class JAMSSpreadSheet extends JPanel {
         table.getTableHeader().setReorderingAllowed(false);
         HeaderHandler mouseListener = new HeaderHandler();
         tableHeader.addMouseListener(mouseListener);
+        //tableHeader.setMinimumSize(new Dimension(table.getColumnCount()*20,10));
+
+//                    for(int cc = 0; cc < table.getColumnCount(); cc++){
+//                        table.getColumnModel().getColumn(cc).setMinWidth(COLWIDTH);
+//                    }
+
+        //table.setMinimumSize(new Dimension(table.getColumnCount()*20,600));
+        //this.scrollpane = new JScrollPane(table);
+        //better than new instance
+        //scrollpane.repaint();
+        //scrollpane.setSize(800, 600);
+
+        //panel.add(table, grid);
+
+
+        //add(scrollpane, grid);
+        //scrollpane.updateUI();
+        //scrollpane.repaint();
 
         //table.getColumnModel().getColumn(0)
         table.setRowSelectionAllowed(true);
@@ -449,16 +694,22 @@ public class JAMSSpreadSheet extends JPanel {
         controlpanel.setLayout(gbl);
         JPanel headerpanel = new JPanel();
         headerpanel.setLayout(new GridLayout(1, 2));
-
+        
         useTemplateButton.setEnabled(true);
         useTemplateButton.setSelected(false);
         //dataplotButton.setEnabled(false);
-
+        
         scrollpane.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
         scrollpane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         scrollpane2 = new JScrollPane(scrollpane);
 
+        if (time != null) {
+            tmodel.setTimeRuns(true);
+            setColumnNameArray(new String[0]);
+        } else {
+            setColumnNameArray(new String[0]);
+        }
         //setColumnNameArray(headers.getValue());
         makeTable();
         //panel.add(scrollpane,grid);
@@ -476,6 +727,8 @@ public class JAMSSpreadSheet extends JPanel {
 //              controlpanel.add(plotButton);
 //              controlpanel.add(dataplotButton);
 
+        //openbutton.setEnabled(false);
+        openbutton.addActionListener(openAction);
         savebutton.addActionListener(saveAction);
         plotButton.addActionListener(plotAction);
         dataplotButton.addActionListener(dataplotAction);
@@ -506,6 +759,10 @@ public class JAMSSpreadSheet extends JPanel {
         return grid;
     }
 
+    public void addCurrentTime() {
+        tmodel.addTime(time);
+    }
+
     public void addTime(JAMSCalendar time) {
         tmodel.addTime(time);
     }
@@ -513,11 +770,8 @@ public class JAMSSpreadSheet extends JPanel {
     private class HeaderHandler extends MouseAdapter {
 
         int button = -1;
-
         int[] selectedColumns;
-
         int col_START = 0; // is this nessesary?
-
         int col_END = 0;
 
         public void mouseClicked(MouseEvent e) {
