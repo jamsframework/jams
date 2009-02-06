@@ -30,6 +30,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import reg.dsproc.DataStoreProcessor.AttributeData;
@@ -620,6 +621,21 @@ public class TimeSpaceProcessor {
         return result;
     }
 
+    public JAMSCalendar[] getTimeSteps() throws SQLException {
+        
+        ArrayList<JAMSCalendar> result = new ArrayList<JAMSCalendar>();
+
+        ResultSet rs = customSelectQuery("SELECT * FROM index");
+        while (rs.next()) {
+            Timestamp ts = rs.getTimestamp(timeID);
+            JAMSCalendar cal = JAMSDataFactory.createCalendar();
+            cal.setValue(ts.toString());
+            result.add(cal);
+        }
+
+        return result.toArray(new JAMSCalendar[result.size()]);
+    }
+
     public static void output(ResultSet rs) throws SQLException {
         ResultSetMetaData rsmd = rs.getMetaData();
         int numberOfColumns = rsmd.getColumnCount();
@@ -680,7 +696,7 @@ public class TimeSpaceProcessor {
         }
         System.out.println();
 
-        int c = 7;
+        int c = 8;
 
         DataMatrix m = null;
         switch (c) {
@@ -727,6 +743,12 @@ public class TimeSpaceProcessor {
                 dates[1] = JAMSDataFactory.createCalendar();
                 dates[1].setValue("2000-10-30 07:30");
                 m = tsproc.getTemporalAvg(dates);
+                break;
+            case 8:
+                dates = tsproc.getTimeSteps();
+                for (JAMSCalendar date : dates) {
+                    System.out.println(date);
+                }
                 break;
         }
 
