@@ -128,6 +128,40 @@ public class IDW {
         
         return weights;
     }
+
+    /**
+     * Changes the weight array in such a way, that only the weights of
+     * "nidw"-stations are kept and the other weights are set to zero.
+     * The nidw-weights are recalculated to provide again a sum of 1.0.
+     * @param weight the weight array for all stations
+     * @param nidw number of relevant stations
+     * @return the changed weight array
+     */
+    public static double[] calcIDWeights(double entityX, double entityY, double[] statX, double[] statY, double pidw){
+
+        double[] distances = calcDistances(entityX, entityY, statX, statY, pidw);
+        double[] weights = calcWeights(distances);
+        int counter = 0;
+        int nstat = weights.length;
+        int[] temp = new int[nstat];
+        double weightsum = 0;
+        int[] indicator = new int[nstat];
+        for(int i = 0; i < nstat; i++){
+            counter = 0;
+            for(int k = 0; k < nstat; k++){
+                if(weights[i] > weights[k])
+                    counter++;
+            }
+            temp[i] = counter;
+        }
+        
+        for(int i = 0; i < nstat; i++)
+            weightsum += weights[i];
+        for(int i = 0; i < nstat; i++)
+            weights[i] = weights[i] / weightsum;
+
+        return weights;
+    }
     
     /**
      * Computes an integer array (wArray) of same lenght as the weight array
