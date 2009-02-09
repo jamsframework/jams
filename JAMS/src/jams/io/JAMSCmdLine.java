@@ -21,7 +21,9 @@
  *
  */
 
-package jams;
+package jams.io;
+
+import jams.*;
 
 /**
  *

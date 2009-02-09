@@ -11,9 +11,8 @@
  */
 package reg.spreadsheet;
 
-import jams.JAMSFileFilter;
+import jams.io.JAMSFileFilter;
 import java.util.Vector;
-import java.util.StringTokenizer;
 import java.awt.event.*;
 import java.awt.*;
 import java.awt.Cursor.*;
@@ -22,7 +21,6 @@ import javax.swing.table.*;
 import java.io.*;
 import java.util.ArrayList;
 import jams.data.*;
-import jams.model.*;
 
 
 import jams.gui.LHelper;
@@ -96,7 +94,7 @@ public class JAMSSpreadSheet extends JPanel {
 
     private int kindofcalc = 0;
 
-    private JFileChooser templateChooser;
+    private JFileChooser epsFileChooser,  templateChooser;
 
     /* Constructor */
     public JAMSSpreadSheet() {
@@ -142,7 +140,6 @@ public class JAMSSpreadSheet extends JPanel {
     ActionListener saveAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
-
             save();
         }
     };
@@ -154,36 +151,39 @@ public class JAMSSpreadSheet extends JPanel {
         String value;
         String[] columnNames = tmodel.getCoulumnNameArray();
 
-        try {
+        JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
+        int returnVal = chooser.showSaveDialog(panel);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
-            int returnVal = chooser.showSaveDialog(panel);
-            File file = chooser.getSelectedFile();
-            //File file = chooser.getSelectedFile();
-            FileWriter filewriter = new FileWriter(file);
+            try {
+
+                File file = chooser.getSelectedFile();
+                //File file = chooser.getSelectedFile();
+                FileWriter filewriter = new FileWriter(file);
 
 
-            for (int j = 0; j < colcount; j++) {
-                filewriter.write(columnNames[j], 0, columnNames[j].length());
-                filewriter.write("\t");
-            }
-
-            filewriter.write("\r\n" + "#");
-            filewriter.write("\r\n");
-
-            for (int k = 0; k < rowcount; k++) {
-                for (int i = 0; i < colcount; i++) {
-
-                    value = table.getValueAt(k, i).toString();
-                    filewriter.write(value, 0, value.length());
+                for (int j = 0; j < colcount; j++) {
+                    filewriter.write(columnNames[j], 0, columnNames[j].length());
                     filewriter.write("\t");
                 }
-                filewriter.write("\r\n");
-            }
-            //filewriter.write("#");
-            filewriter.close();
 
-        } catch (IOException ex) {
+                filewriter.write("\r\n" + "#");
+                filewriter.write("\r\n");
+
+                for (int k = 0; k < rowcount; k++) {
+                    for (int i = 0; i < colcount; i++) {
+
+                        value = table.getValueAt(k, i).toString();
+                        filewriter.write(value, 0, value.length());
+                        filewriter.write("\t");
+                    }
+                    filewriter.write("\r\n");
+                }
+                //filewriter.write("#");
+                filewriter.close();
+
+            } catch (IOException ex) {
+            }
         }
     }
 
@@ -196,6 +196,14 @@ public class JAMSSpreadSheet extends JPanel {
         return templateChooser;
     }
 
+    public JFileChooser getEPSFileChooser() {
+        if (epsFileChooser == null) {
+            epsFileChooser = new JFileChooser();
+            epsFileChooser.setFileFilter(JAMSFileFilter.getEpsFilter());
+        }
+        return epsFileChooser;
+    }
+
     public void loadTSDS(TSDataStore store, File inputDSDir) throws Exception {
 
         int colNumber = 0;
@@ -203,6 +211,7 @@ public class JAMSSpreadSheet extends JPanel {
         String[] headers;
 
         getTemplateChooser().setCurrentDirectory(inputDSDir);
+        getEPSFileChooser().setCurrentDirectory(inputDSDir.getParentFile());
 
         ttpFile = new File(inputDSDir, store.getID() + ".ttp");
         dtpFile = new File(inputDSDir, store.getID() + ".dtp");

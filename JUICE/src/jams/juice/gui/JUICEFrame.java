@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
 import jams.JAMS;
-import jams.JAMSFileFilter;
+import jams.io.JAMSFileFilter;
 import jams.JAMSProperties;
 import jams.gui.AboutDlg;
 import jams.gui.LHelper;

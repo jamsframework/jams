@@ -24,7 +24,7 @@ package jams.gui.input;
 
 import java.io.File;
 import javax.swing.*;
-import jams.JAMSFileFilter;
+import jams.io.JAMSFileFilter;
 import jams.gui.*;
 
 /**

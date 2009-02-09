@@ -25,7 +25,7 @@ package jams.remote.client;
 import java.io.File;
 import javax.swing.UIManager;
 import jams.JAMS;
-import jams.JAMSCmdLine;
+import jams.io.JAMSCmdLine;
 import jams.JAMSProperties;
 import jams.gui.JAMSSplash;
 import java.io.IOException;

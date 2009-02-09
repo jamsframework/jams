@@ -21,8 +21,9 @@
  *
  */
 
-package jams;
+package jams.io;
 
+import jams.*;
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 

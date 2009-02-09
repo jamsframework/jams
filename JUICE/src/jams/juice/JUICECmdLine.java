@@ -22,7 +22,7 @@
  */
 package jams.juice;
 
-import jams.JAMSCmdLine;
+import jams.io.JAMSCmdLine;
 
 /**
  *

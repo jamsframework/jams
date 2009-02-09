@@ -34,7 +34,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 
-import jams.JAMSFileFilter;
+import jams.io.JAMSFileFilter;
 import jams.gui.LHelper;
 import jams.gui.WorkerDlg;
 
@@ -85,8 +85,6 @@ public class JTSConfigurator extends JFrame {
     private JTSConfigurator thisJTS = this;
 
     private JFrame parent;
-
-    private JFrame thisDlg;
 
     private JPanel frame;
 
@@ -188,9 +186,8 @@ public class JTSConfigurator extends JFrame {
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
 
     private JAMSTimePlot jts = new JAMSTimePlot();
-    
-    //private static JFileChooser templateChooser;
 
+    //private static JFileChooser templateChooser;
     private JAMSSpreadSheet sheet;
 //    private String[] headers;
 //    //private String[] colors = {"yellow","orange","red","pink","magenta","cyan","blue","green","gray","lightgray","black"};
@@ -200,6 +197,7 @@ public class JTSConfigurator extends JFrame {
     /* test*/
 //    private Color[] colors_ = {Color.RED, Color.BLUE};
 //    private String[] legendEntries;
+
     private int index;
 
     private int colour_cnt;
@@ -253,7 +251,7 @@ public class JTSConfigurator extends JFrame {
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
-        
+
         this.sheet = sheet;
         this.table = sheet.table;
 
@@ -326,7 +324,6 @@ public class JTSConfigurator extends JFrame {
 //    }
     public void createPanel() {
 
-        thisDlg = this;
         colour_cnt = 0;
         /* create ColorMap */
         colorTable.put("yellow", Color.yellow);
@@ -422,12 +419,12 @@ public class JTSConfigurator extends JFrame {
         rRightBox.setSelectedIndex(0);
 
         ////////////////////////// GRAPH AUSFÜHREN ///////////
-        if(templateFile != null){
-        try {
-            loadTemplate(templateFile);
-        } catch (Exception fnfe) {
-            initGraphLoad();
-        }
+        if (templateFile != null) {
+            try {
+                loadTemplate(templateFile);
+            } catch (Exception fnfe) {
+                initGraphLoad();
+            }
         } else {
             initGraphLoad();
         }
@@ -1436,15 +1433,15 @@ public class JTSConfigurator extends JFrame {
 
         try {
             JFileChooser chooser = sheet.getTemplateChooser();
-            int returnVal = chooser.showSaveDialog(thisDlg);
-            File file = chooser.getSelectedFile();
-            FileOutputStream fout = new FileOutputStream(file);
-            properties.store(fout, "");
-
-            fout.close();
-
+            int returnVal = chooser.showSaveDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = chooser.getSelectedFile();
+                FileOutputStream fout = new FileOutputStream(file);
+                properties.store(fout, "");
+                fout.close();
+            }
         } catch (Exception fnfex) {
-        };
+        }
     }
 
     private void loadTemplate(File templateFile) {
@@ -1714,11 +1711,12 @@ public class JTSConfigurator extends JFrame {
 
 //            showHiRes();
             try {
-                JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
-                chooser.setFileFilter(JAMSFileFilter.getEpsFilter());
-                int returnVal = chooser.showSaveDialog(thisDlg);
-                File file = chooser.getSelectedFile();
-                jts.saveAsEPS(file);
+                JFileChooser chooser = sheet.getEPSFileChooser();
+                int returnVal = chooser.showSaveDialog(JTSConfigurator.this);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = chooser.getSelectedFile();
+                    jts.saveAsEPS(file);
+                }
             } catch (Exception ex) {
             }
         }
@@ -1738,16 +1736,14 @@ public class JTSConfigurator extends JFrame {
             int returnVal = -1;
 
             try {
-                
-                returnVal = sheet.getTemplateChooser().showOpenDialog(thisDlg);
-                File file = sheet.getTemplateChooser().getSelectedFile();
+
+                returnVal = sheet.getTemplateChooser().showOpenDialog(JTSConfigurator.this);
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = sheet.getTemplateChooser().getSelectedFile();
                     loadTemplate(file);
                     plotAllGraphs();
                 }
-
-
 
             } catch (Exception fnfexc) {
                 returnVal = -1;
@@ -1801,18 +1797,27 @@ public class JTSConfigurator extends JFrame {
     private class AddGraphDlg extends JDialog {
 
         boolean result = false;
+
         int max;
+
         String side;
+
         int side_index;
+
         int position;
+
         JSpinner posSpinner;
+
         JComboBox sideChoice;
+
         JButton okButton;
+
         JLabel pos_label;
+
         JLabel side_label;
 
         public AddGraphDlg() {
-            super(thisDlg, "Add Graph", true);
+            super(JTSConfigurator.this, "Add Graph", true);
 //            URL url = this.getClass().getResource("resources/JAMSicon16.png");
 //            ImageIcon icon = new ImageIcon(url);
 //            setIconImage(icon.getImage());

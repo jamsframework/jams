@@ -1,5 +1,6 @@
-package jams;
+package jams.io;
 
+import jams.*;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Hashtable;

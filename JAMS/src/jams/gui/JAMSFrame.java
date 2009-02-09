@@ -22,6 +22,7 @@
  */
 package jams.gui;
 
+import jams.io.JAMSFileFilter;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

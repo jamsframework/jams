@@ -48,7 +48,7 @@ public class DisplayManager implements Observer {
 
     private TreePanel treePanel;
 
-    private JAMSSpreadSheet spreadsheet;
+    private JAMSSpreadSheet inputDSSpreadsheet;
 
     public DisplayManager() {
         treePanel = new TreePanel();
@@ -56,8 +56,8 @@ public class DisplayManager implements Observer {
         treePanel.getTree().addObserver(this);
 
         String[] default_headers = {""};
-        spreadsheet = new JAMSSpreadSheet(Regionalizer.getRegionalizerFrame(), default_headers);
-        spreadsheet.init();
+        inputDSSpreadsheet = new JAMSSpreadSheet(Regionalizer.getRegionalizerFrame(), default_headers);
+        inputDSSpreadsheet.init();
     }
 
     // handle selection of tree nodes and show metadata
@@ -82,13 +82,16 @@ public class DisplayManager implements Observer {
     }
 
     public void displayDS(DSTreeNode node) {
+        if (node == null) {
+            return;
+        }
         switch (node.getType()) {
             case DSTreeNode.INPUT_DS:
                 InputDataStore store = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStore(node.toString());
                 if (store instanceof TSDataStore) {
-                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadsheet.getPanel());
+                    Regionalizer.getRegionalizerFrame().updateMainPanel(inputDSSpreadsheet.getPanel());
                     try {
-                        spreadsheet.loadTSDS((TSDataStore) store, Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory());
+                        inputDSSpreadsheet.loadTSDS((TSDataStore) store, Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory());
                     } catch (Exception e) {
                         LHelper.showErrorDlg(Regionalizer.getRegionalizerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
                         e.printStackTrace();
@@ -98,7 +101,7 @@ public class DisplayManager implements Observer {
             case DSTreeNode.OUTPUT_DS:
                 FileObject fo = (FileObject) node.getUserObject();
                 System.out.println(fo.getFile().getAbsolutePath());
-                
+
 
 
                 break;

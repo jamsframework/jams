@@ -22,6 +22,7 @@
  */
 package jams;
 
+import jams.io.JAMSCmdLine;
 import java.awt.Font;
 import java.io.*;
 import javax.swing.UIManager;
