@@ -409,17 +409,19 @@ public class GraphProperties {
     public void applyTSProperties(){
         JAMSCalendar time;
         double value;
+        int timeSTART = getTimeSTART();
+        int timeEND = getTimeEND();
         selectedColumn = setColumn.getSelectedIndex();
         //color = (String) colorchoice.getSelectedItem();
         ts = new TimeSeries(getLegendName(), Second.class);
         
-        for(int i=getTimeSTART(); i<=getTimeEND(); i++){
+        for(int i=timeSTART; i<=timeEND; i++){
             
             time =  (JAMSCalendar) table.getValueAt(i,0); //ONLY FOR TIME SERIES TABLE WITH TIME IN COL 0!!!
-            if(!setColumn.getSelectedItem().equals("---")){
-                value = (Double) table.getValueAt(i, selectedColumn);
-                ts.add(new Second(new Date(time.getTimeInMillis())), value);
-            }
+//            if(!setColumn.getSelectedItem().equals("---")){
+            value = (Double) table.getValueAt(i, selectedColumn);
+            ts.add(new Second(new Date(time.getTimeInMillis())), value);
+//            }
         }
         cr_dlg.updateColors();
     }
@@ -631,6 +633,7 @@ public class GraphProperties {
 
     public int getTimeEND(){
         return timechoice_END.getSelectedIndex();
+//        return 5000;
     }
     
     public double readDataSTART(){
@@ -1095,6 +1098,13 @@ public class GraphProperties {
             
             cxyconf.xChanged(thisProp);
             cxyconf.setMaxDataIntervals(thisProp);
+        }
+    };
+    
+    ItemListener endListener = new ItemListener(){
+        public void itemStateChanged(ItemEvent xe){
+            
+//            time_END = timechoice_END.getSelectedIndex();
         }
     };
     

@@ -567,8 +567,10 @@ public class JXYConfigurator extends JFrame {
             }
         };
 
-        WorkerDlg dlg = new WorkerDlg(this, "Preparing Data...");
-        dlg.setLocationRelativeTo(null);
+        WorkerDlg dlg = new WorkerDlg(parent, "Preparing Data...");
+//        Point parentloc = parent.getLocation();
+//        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
+        
         dlg.setTask(r);
         dlg.execute();
 
@@ -1422,8 +1424,10 @@ public class JXYConfigurator extends JFrame {
             }
         };
 
-        WorkerDlg dlg = new WorkerDlg(this, "Creating Plot...");
-        dlg.setLocationRelativeTo(null);
+        WorkerDlg dlg = new WorkerDlg(parent, "Creating Plot...");
+//        Point parentloc = parent.getLocation();
+//        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
+//        dlg.setLocationByPlatform(true);
         dlg.setTask(r);
         dlg.execute();
 
@@ -1930,8 +1934,10 @@ public class JXYConfigurator extends JFrame {
             }
         };
 
-        WorkerDlg dlg = new WorkerDlg(this, "Preparing Data...");
-        dlg.setLocationRelativeTo(null);
+        WorkerDlg dlg = new WorkerDlg(parent, "Preparing Data...");
+//        Point parentloc = parent.getLocation();
+//        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
+//        dlg.setLocationByPlatform(true);
         dlg.setTask(r);
         dlg.execute();
 
@@ -2044,6 +2050,7 @@ public class JXYConfigurator extends JFrame {
             plotAllGraphs();
             dStartChanged(false);
             dEndChanged(false);
+            setVisible(true);
         }
     };
 

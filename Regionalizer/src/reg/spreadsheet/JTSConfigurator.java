@@ -418,7 +418,7 @@ public class JTSConfigurator extends JFrame {
         rLeftBox.setSelectedIndex(0);
         rRightBox.setSelectedIndex(0);
 
-        ////////////////////////// GRAPH AUSFÜHREN ///////////
+        ////////////////////////// GRAPH AUSFÃƒÅ“HREN ///////////
         if (templateFile != null) {
             try {
                 loadTemplate(templateFile);
@@ -523,8 +523,11 @@ public class JTSConfigurator extends JFrame {
             }
         };
 
-        WorkerDlg dlg = new WorkerDlg(this, "Preparing Data...");
-        dlg.setLocationRelativeTo(null);
+        WorkerDlg dlg = new WorkerDlg(parent, "Preparing Data...");
+//        Point parentloc = parent.getLocation();
+//        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
+//        dlg.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2,
+//                Toolkit.getDefaultToolkit().getScreenSize().height / 2);
         dlg.setTask(r);
         dlg.execute();
 
@@ -819,11 +822,11 @@ public class JTSConfigurator extends JFrame {
                 XYStepAreaRenderer sar_L = new XYStepAreaRenderer();
 
                 GraphProperties prop;
-                //2 Renderer einfügen. Typ aus rLeftBox bzw rRightBox holen!
+                //2 Renderer einfÃƒÂ¼gen. Typ aus rLeftBox bzw rRightBox holen!
                 //Switch/Case Anweisung in den Configurator packen
                 //
 
-                /////////////// In dieser Schleife Eigenschaften übernehmen!! /////////////
+                /////////////// In dieser Schleife Eigenschaften ÃƒÂ¼bernehmen!! /////////////
                 for (int i = 0; i < propVector.size(); i++) {
 
                     prop = propVector.get(i);
@@ -1026,7 +1029,7 @@ public class JTSConfigurator extends JFrame {
                 }
 
                 ////////////////////////////////////////////////////////////////////////////
-                //Renderer direkt übernehmen! //
+                //Renderer direkt ÃƒÂ¼bernehmen! //
                 System.out.println("Plot left/right");
                 if (l > 0) {
                     jts.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
@@ -1045,14 +1048,16 @@ public class JTSConfigurator extends JFrame {
             }
         };
 
-        WorkerDlg dlg = new WorkerDlg(this, "Creating Plot...");
-        dlg.setLocationRelativeTo(null);
+        WorkerDlg dlg = new WorkerDlg(parent, "Creating Plot...");
+//        Point parentloc = parent.getLocation();
+//        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
+//        dlg.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2,
+//                Toolkit.getDefaultToolkit().getScreenSize().height / 2);
         dlg.setTask(r);
         dlg.execute();
-
+        
         repaint();
-
-
+        
     }
 
     public void handleRenderer() {
@@ -1695,6 +1700,7 @@ public class JTSConfigurator extends JFrame {
 
         public void actionPerformed(ActionEvent e) {
             plotAllGraphs();
+            setVisible(true);
         }
     };
 
@@ -1771,7 +1777,7 @@ public class JTSConfigurator extends JFrame {
         Vector<ActionListener> addAction = new Vector<ActionListener>();
 
         for (int k = 0; k < graphCount; k++) {
-            /* reicht hier ein listener für alle boxes? scheint so... */
+            /* reicht hier ein listener fÃƒÂ¼r alle boxes? scheint so... */
             activationChange[k] = new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
