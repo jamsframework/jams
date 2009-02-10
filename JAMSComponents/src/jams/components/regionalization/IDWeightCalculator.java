@@ -57,7 +57,7 @@ public class IDWeightCalculator extends JAMSComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
     description = "weights for IDW part of regionalisation")
-    public JAMSDoubleArray statWeights = new JAMSDoubleArray();
+    public JAMSDoubleArray statWeights;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Doug Boyle's famous function",
