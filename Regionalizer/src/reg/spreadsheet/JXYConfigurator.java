@@ -1686,8 +1686,11 @@ public class JXYConfigurator extends JFrame {
         properties.setProperty("inv_left", "" + invLeftBox.isSelected());
         properties.setProperty("inv_right", "" + invRightBox.isSelected());
 
-        //X-Row
+        //X-Col
         properties.setProperty("x_series_index", "" + x_series_index);
+        //Rows
+//        properties.setProperty("selected_rows.length", "" + rows.length);
+//        properties.setProperty("selected_rows", "" + rows);
 
         for (int i = 0; i < no_of_props; i++) {
 
@@ -1699,10 +1702,23 @@ public class JXYConfigurator extends JFrame {
             } else {
                 names = names + "," + name;
             }
-
+            
+            if(gprop.isXSeries()){
+                //DATA INTERVAL
+            //start
+            properties.setProperty("dataSTART", ""+row_start);
+            //end
+            properties.setProperty("dataEND", ""+row_end);
+            }
 
             //Legend Name
             properties.setProperty(name + ".legendname", gprop.getLegendName());
+            
+//            //DATA INTERVAL
+//            //start
+//            properties.setProperty(name + ".dataSTART", ""+gprop.getDataSTART());
+//            //end
+//            properties.setProperty(name + ".dataEND", ""+gprop.getDataEND());
             //POSITION left/right
             properties.setProperty(name + ".position", gprop.getPosition());
             //STROKE
@@ -1773,7 +1789,10 @@ public class JXYConfigurator extends JFrame {
         String outline_color;
         int no_of_props;
         int returnVal = -1;
-
+        
+        double data_start = 0;
+        double data_end = 0;
+        int selected_rows[];
 
         try {
 
@@ -1804,10 +1823,17 @@ public class JXYConfigurator extends JFrame {
 
             load_prop = false;
             GraphProperties gprop = new GraphProperties(this);
-
+ 
             if (i == x_series_index) {
                 gprop.setIsXSeries(true);
                 gprop.getIsXAxisButton().setSelected(true);
+                
+                //DATA INTERVAL
+                      //start
+                      data_start = new Double(properties.getProperty("dataSTART"));
+                      //end
+                      data_end = new Double(properties.getProperty("dataEND"));
+                
             } else {
                 gprop.setIsXSeries(false);
             }
@@ -1829,6 +1855,11 @@ public class JXYConfigurator extends JFrame {
                 if (load_prop) {
                     //Legend Name
                     gprop.setLegendName(properties.getProperty(name + ".legendname", "legend name"));
+//                    //DATA INTERVAL
+//                      //start
+//                      gprop.setDataSTART(new Double(properties.getProperty(name + ".dataSTART")));
+//                      //end
+//                      gprop.setDataEND(new Double(properties.getProperty(name + ".dataEND")));
                     //POSITION left/right
                     gprop.setPosition(properties.getProperty(name + ".position"));
 
@@ -1916,30 +1947,53 @@ public class JXYConfigurator extends JFrame {
         }
 
         xChanged(propVector.get(x_series_index));
-        setMaxDataIntervals(propVector.get(x_series_index));
+//        setMaxDataIntervals(propVector.get(x_series_index));
 
+        //range = setDataIntervals();
+        
+        //int[] range = new int[2];
+        //x_series_index
+        
+        //setDataIntervals///////////////////
+        this.row_start = sorted_Row[0].col[x_series_index];
+        this.row_end = sorted_Row[sorted_Row.length - 1].col[x_series_index];
+        range[0] = 0;
+        range[1] = sorted_Row.length - 1;
 
+        dStartChanged(false);
+        dEndChanged(false);
+        ////////////////////////////////////
+         
+        
         for (int c = 0; c < no_of_props; c++) {
+
             propVector.get(c).setXIntervals(range);
+                    if (c == x_series_index) {
+                        propVector.get(c).setDataSTART(data_start);
+                        propVector.get(c).setDataEND(data_end);
+                    }
+            propVector.get(c).applyXYProperties();
+            
+//            propVector.get(c).setXIntervals(range);
         }
 
-        Runnable r = new Runnable() {
+//        Runnable r = new Runnable() {
+//
+//            public void run() {
+//                for (int j = 0; j < propVector.size(); j++) {
+//
+//                    propVector.get(j).applyXYProperties();
+//
+//                }
+//            }
+//        };
 
-            public void run() {
-                for (int j = 0; j < propVector.size(); j++) {
-
-                    propVector.get(j).applyXYProperties();
-
-                }
-            }
-        };
-
-        WorkerDlg dlg = new WorkerDlg(parent, "Preparing Data...");
-//        Point parentloc = parent.getLocation();
-//        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
-//        dlg.setLocationByPlatform(true);
-        dlg.setTask(r);
-        dlg.execute();
+//        WorkerDlg dlg = new WorkerDlg(parent, "Preparing Data...");
+////        Point parentloc = parent.getLocation();
+////        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
+////        dlg.setLocationByPlatform(true);
+//        dlg.setTask(r);
+//        dlg.execute();
 
         finishGroupUI();
 
