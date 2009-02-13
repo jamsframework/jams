@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.gui;
 
 import java.awt.*;
@@ -35,30 +34,58 @@ import javax.swing.JFrame;
  *
  * @author  S. Kralisch
  */
-public class JAMSSplash extends JDialog {
-    
+public class JAMSSplash {
+
     private Image img;
-    
+
+    private int width,  height;
+
+    private JDialog dlg;
+
     /**
      * Creates a new splash dialog
      */
     public JAMSSplash() {
-        this(0,0);
+        this(0, 0);
     }
-    
+
     /**
      * Creates a new splash dialog width given width/height
      * @param width dialog width
      * @param height dialog height
      */
     public JAMSSplash(int width, int height) {
-        
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("JAMS");
-        this.setUndecorated(true);
-        this.setFocusable(false);
-        this.setAlwaysOnTop(true);
-        
+        this.width = 0;
+        this.height = 0;
+    }
+
+    /**
+     *
+     * @param frame Frame to show after splash disappears
+     * @param timeInMillis Time to show the splash
+     */
+    public void show(JFrame frame, int timeInMillis) {
+
+        if (timeInMillis == 0) {
+            frame.setVisible(true);
+            return;
+        }
+
+        dlg = new JDialog() {
+
+            @Override
+            public void paint(Graphics g) {
+                super.paint(g);
+                g.drawImage(img, 0, 0, this);
+            }
+        };
+
+        dlg.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        dlg.setTitle("JAMS");
+        dlg.setUndecorated(true);
+        dlg.setFocusable(false);
+        dlg.setAlwaysOnTop(true);
+
         URL imgURL = ClassLoader.getSystemResource("resources/images/JAMSsplash.png");
         if (img == null && imgURL != null) {
             img = new ImageIcon(imgURL).getImage();//.getScaledInstance(x, y, Image.SCALE_SMOOTH);
@@ -69,52 +96,40 @@ public class JAMSSplash extends JDialog {
         } else {
             img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         }
-        setSize(width, height);
-        
+        dlg.setSize(width, height);
+
         Dimension d2 = new java.awt.Dimension(width, height);
-        this.setPreferredSize(d2);
+        dlg.setPreferredSize(d2);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation(d.width / 2 - width / 2, d.height / 2 - height / 2);
-        
+        dlg.setLocation(d.width / 2 - width / 2, d.height / 2 - height / 2);
+
+        dlg.setVisible(true);
+        new Timer().schedule(new FrameStarter(dlg, frame), timeInMillis);
     }
-    
-    @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-        g.drawImage(img, 0, 0, this);
-    }
-    
-    /**
-     *
-     * @param frame Frame to show after splash disappears
-     * @param timeInMillis Time to show the splash
-     */
-    public void show(JFrame frame, int timeInMillis) {
-        setVisible(true);
-        new Timer().schedule(new FrameStarter(this, frame), timeInMillis);
-    }
-    
+
     class FrameStarter extends TimerTask {
-        
+
         private JDialog splash;
+
         private JFrame frame;
-        
+
         public FrameStarter(JDialog splash, JFrame frame) {
             this.splash = splash;
             this.frame = frame;
         }
+
         public void run() {
             // kill splash
             splash.setVisible(false);
             splash.dispose();
-            
+
             //start main window
             java.awt.EventQueue.invokeLater(new Runnable() {
+
                 public void run() {
                     frame.setVisible(true);
                 }
             });
         }
-        
     }
 }

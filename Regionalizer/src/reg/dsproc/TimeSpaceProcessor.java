@@ -33,6 +33,9 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Observable;
+import java.util.Observer;
 import reg.dsproc.DataStoreProcessor.AttributeData;
 
 /**
@@ -52,6 +55,8 @@ public class TimeSpaceProcessor {
     private String spaceID,  timeID;
 
     private String timeFilter = null;
+
+    private ProcessingProgressObservable processingProgressObservable = new ProcessingProgressObservable();
 
     public TimeSpaceProcessor(String fileName) {
         this(new DataStoreProcessor(fileName));
@@ -196,7 +201,8 @@ public class TimeSpaceProcessor {
         }
 
         DataMatrix aggregate = null, matrix;
-        int count = 0;
+        int count = 0, percent = 0;
+        
         // loop over dates 
         for (JAMSCalendar date : dates) {
 
@@ -210,6 +216,13 @@ public class TimeSpaceProcessor {
                     aggregate = aggregate.plus(matrix);
                     count++;
                 }
+            }
+
+            // update the observer
+            int current = Math.round((count / (float) dates.length) * 100);
+            if (current > percent) {
+                percent = current;
+                processingProgressObservable.setProgress(percent);
             }
         }
 
@@ -270,7 +283,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public DataMatrix getEntityData(long[] id) throws SQLException, IOException {
+    public synchronized DataMatrix getEntityData(long[] id) throws SQLException, IOException {
 
         int attribCount = getSelectedAttribCount();
         int[] idPosition = new int[id.length];
@@ -287,11 +300,19 @@ public class TimeSpaceProcessor {
             ArrayList<double[]> a = new ArrayList<double[]>();
             for (int i = 0; i < id.length; i++) {
                 idPosition[i] = m.getIDPosition(String.valueOf(id[i]));
+                if (idPosition[i] == -1) {
+                    return null;
+                }
                 a.add(m.getRow(idPosition[i]));
             }
             data.add(getAvg(a));
             timeStamps.add(rs.getTimestamp(timeID).toString());
+        } else {
+            return null;
         }
+
+        int percent = 0, max = dsdb.getContexts().get(1).getSize();
+        float counter = 1;
 
         // loop over datasets
         while (rs.next()) {
@@ -302,6 +323,14 @@ public class TimeSpaceProcessor {
             }
             data.add(getAvg(a));
             timeStamps.add(rs.getTimestamp(timeID).toString());
+
+            // update the observer
+            counter++;
+            int current = Math.round((counter / max) * 100);
+            if (current > percent) {
+                percent = current;
+                processingProgressObservable.setProgress(percent);
+            }
         }
 
         double[][] dataArray = data.toArray(new double[attribCount][data.size()]);
@@ -341,7 +370,7 @@ public class TimeSpaceProcessor {
 
         DataMatrix result = null;
 
-        if (!isTableExisting(TABLE_NAME_SPATAVG)) {
+        if (!isSpatAvgExisiting()) {
             return result;
         }
 
@@ -408,7 +437,7 @@ public class TimeSpaceProcessor {
         DataMatrix result = null;
 
         // check if the values have already been calculated, return null if not
-        if (!isTableExisting(TABLE_NAME_MONTHAVG)) {
+        if (!isMonthlyAvgExisiting()) {
             return result;
         }
 
@@ -439,6 +468,64 @@ public class TimeSpaceProcessor {
         return result;
     }
 
+    /**
+     * Gets the yearly average values of the selected
+     * attributes for all entities
+     * @param year The year for which the average values shall be returned
+     * @return A DataMatrix object containing one row per entity with the
+     * longtime monthly average values of selected attributes in columns
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     */
+    public DataMatrix getYearlyAvg(int year) throws SQLException, IOException {
+
+        DataMatrix result = null;
+
+        // check if the values have already been calculated, return null if not
+        if (!isYearlyAvgExisiting()) {
+            return result;
+        }
+
+        int attribCount = getSelectedAttribCount();
+
+        // create and send a select statement to get the data from the database
+        String q = "SELECT * FROM " + TABLE_NAME_YEARAVG + " WHERE YEAR = " + year;
+        ResultSet rs = customSelectQuery(q);
+
+        // iterate through the result set
+        ArrayList<double[]> data = new ArrayList<double[]>();
+        ArrayList<Long> ids = new ArrayList<Long>();
+
+        if (rs.next()) {
+            double[] rowdata = new double[attribCount];
+            for (int i = 0; i < attribCount; i++) {
+                // get data starting from the 3rd column
+                rowdata[i] = rs.getDouble(i + 3);
+            }
+            data.add(rowdata);
+            ids.add(rs.getLong(2));
+        } else {
+            return null;
+        }
+
+        while (rs.next()) {
+            double[] rowdata = new double[attribCount];
+            for (int i = 0; i < attribCount; i++) {
+                // get data starting from the 3rd column
+                rowdata[i] = rs.getDouble(i + 3);
+            }
+            data.add(rowdata);
+            ids.add(rs.getLong(2));
+        }
+
+        // create a DataMatrix object from the results
+        double[][] dataArray = data.toArray(new double[attribCount][data.size()]);
+        Long[] idArray = ids.toArray(new Long[ids.size()]);
+        result = new DataMatrix(dataArray, idArray, this.getDataStoreProcessor());
+
+        return result;
+    }
+
     private boolean isTableExisting(String tableName) throws SQLException {
         String q = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME='" + tableName + "'";
         ResultSet rs = customSelectQuery(q);
@@ -446,6 +533,25 @@ public class TimeSpaceProcessor {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public boolean isYearlyAvgExisiting() throws SQLException {
+        return isTableExisting(TABLE_NAME_YEARAVG);
+    }
+
+    public boolean isMonthlyAvgExisiting() throws SQLException {
+        return isTableExisting(TABLE_NAME_MONTHAVG);
+    }
+
+    public boolean isSpatAvgExisiting() throws SQLException {
+        return isTableExisting(TABLE_NAME_SPATAVG);
+    }
+
+    public void deleteCache() throws SQLException {
+        String[] tables = {TABLE_NAME_YEARAVG, TABLE_NAME_SPATAVG, TABLE_NAME_MONTHAVG};
+        for (String table : tables) {
+            customQuery("DROP TABLE IF EXISTS " + table);
         }
     }
 
@@ -483,10 +589,21 @@ public class TimeSpaceProcessor {
         minDate.setValue(rs.getTimestamp("MINDATE").toString());
         maxDate.setValue(rs.getTimestamp("MAXDATE").toString());
 
+        int percent = 0, max = maxDate.get(JAMSCalendar.YEAR) - minDate.get(JAMSCalendar.YEAR) + 1;
+        float counter = 0;
+
         // loop over years
         for (int i = minDate.get(JAMSCalendar.YEAR); i <= maxDate.get(JAMSCalendar.YEAR); i++) {
             String filterString = String.format("%04d", i) + "-%-%";
             calcTemporalAvg(filterString, TABLE_NAME_YEARAVG, String.valueOf(i));
+
+            // update the observer
+            counter++;
+            int current = Math.round((counter / max) * 100);
+            if (current > percent) {
+                percent = current;
+                processingProgressObservable.setProgress(percent);
+            }
         }
     }
 
@@ -496,7 +613,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public void calcMonthlyAvg() throws SQLException, IOException {
+    public synchronized void calcMonthlyAvg() throws SQLException, IOException {
 
         // get number of selected attributes
         int numSelected = getSelectedAttribCount();
@@ -514,10 +631,21 @@ public class TimeSpaceProcessor {
         q += ")";
         customQuery(q);
 
+        int percent = 0;
+
         // loop over months
         for (int i = 1; i <= 12; i++) {
+
+            // calc the monthly average values
             String filterString = "%-" + String.format("%02d", i) + "-%";
             calcTemporalAvg(filterString, TABLE_NAME_MONTHAVG, String.valueOf(i));
+
+            // update the observer
+            int current = Math.round((i / 12f) * 100);
+            if (current > percent) {
+                percent = current;
+                processingProgressObservable.setProgress(percent);
+            }
         }
     }
 
@@ -572,7 +700,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public DataMatrix calcSpatialAvg() throws SQLException, IOException {
+    public synchronized DataMatrix calcSpatialAvg() throws SQLException, IOException {
 
         int attribCount = getSelectedAttribCount();
         long position;
@@ -595,12 +723,23 @@ public class TimeSpaceProcessor {
         resetTimeFilter();
         ResultSet rs = getData();
 
+        int percent = 0, max = dsdb.getContexts().get(1).getSize();
+        float counter = 0;
+
         // loop over datasets
         while (rs.next()) {
             position = rs.getLong("POSITION");
             DataMatrix m = dsdb.getData(position);
             data.add(m.getAvgRow());
             timeStamps.add(rs.getTimestamp(timeID).toString());
+
+            // update the observer
+            counter++;
+            int current = Math.round((counter / max) * 100);
+            if (current > percent) {
+                percent = current;
+                processingProgressObservable.setProgress(percent);
+            }
         }
 
         double[][] dataArray = data.toArray(new double[attribCount][data.size()]);
@@ -621,8 +760,39 @@ public class TimeSpaceProcessor {
         return result;
     }
 
+    /**
+     * Gets the IDs of the entities stored in the dataset
+     * @return An array of ID values
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     */
+    public Long[] getEntityIDs() throws SQLException, IOException {
+
+        Object[] ids = null;
+
+        ResultSet rs = customSelectQuery("SELECT * FROM index LIMIT 1");
+        if (rs.next()) {
+            long position = rs.getLong("POSITION");
+            DataMatrix m = dsdb.getData(position);
+            ids = m.getIds();
+        }
+
+        if (ids == null) {
+            return null;
+        }
+
+        ArrayList<Long> result = new ArrayList<Long>();
+        for (Object o : ids) {
+            result.add(Long.parseLong(o.toString()));
+        }
+
+        Collections.sort(result);
+
+        return result.toArray(new Long[result.size()]);
+    }
+
     public JAMSCalendar[] getTimeSteps() throws SQLException {
-        
+
         ArrayList<JAMSCalendar> result = new ArrayList<JAMSCalendar>();
 
         ResultSet rs = customSelectQuery("SELECT * FROM index");
@@ -671,6 +841,25 @@ public class TimeSpaceProcessor {
         return dsdb;
     }
 
+    public void close() throws SQLException {
+        dsdb.close();
+    }
+
+    public void addProcessingProgressObserver(Observer o) {
+        processingProgressObservable.addObserver(o);
+    }
+
+    private class ProcessingProgressObservable extends Observable {
+
+        private int progress;
+
+        private void setProgress(int progress) {
+            this.progress = progress;
+            this.setChanged();
+            this.notifyObservers(progress);
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         TimeSpaceProcessor tsproc = new TimeSpaceProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat");
         tsproc.isTimeSpaceDatastore();
@@ -696,19 +885,29 @@ public class TimeSpaceProcessor {
         }
         System.out.println();
 
-        int c = 8;
+        tsproc.addProcessingProgressObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                System.out.println("Progress: " + arg);
+            }
+        });
+
+
+        tsproc.deleteCache();
+
+        int c = 0;
 
         DataMatrix m = null;
         switch (c) {
             case 0:
                 // calc/get longterm monthly mean values
-                tsproc.calcMonthlyAvg();
-                m = tsproc.getMonthlyAvg(1);
+                //tsproc.calcMonthlyAvg();
+                m = tsproc.getMonthlyAvg(12);
                 break;
             case 1:
                 // calc/get yearly mean values
-                tsproc.calcYearlyAvg();
-                m = tsproc.getMonthlyAvg(1);
+                //tsproc.calcYearlyAvg();
+                m = tsproc.getYearlyAvg(1997);
                 break;
             case 2:
                 // get overall temporal mean values
@@ -722,7 +921,8 @@ public class TimeSpaceProcessor {
                 break;
             case 4:
                 // get spatial mean values for selected entities
-                long[] ids = {1, 3, 5, 7, 9};
+                //long[] ids = {1, 3, 5, 7, 9};
+                long[] ids = {1};
                 m = tsproc.getEntityData(ids);
                 break;
             case 5:

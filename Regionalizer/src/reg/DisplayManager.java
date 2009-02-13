@@ -27,7 +27,6 @@ import reg.spreadsheet.JAMSSpreadSheet;
 import jams.workspace.stores.DataStore;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.TSDataStore;
-import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 import reg.gui.InfoPanel;

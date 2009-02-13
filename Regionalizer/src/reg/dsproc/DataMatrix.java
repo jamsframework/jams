@@ -59,17 +59,31 @@ public class DataMatrix extends Matrix {
 
     public int getIDPosition(String id) {
         int i = 0;
+        boolean found = false;
         for (Object o : ids) {
             if (o.toString().equals(id)) {
+                found = true;
                 break;
             }
             i++;
         }
-        return i;
+        if (found) {
+            return i;
+        } else {
+            return -1;
+        }
     }
 
     public double[] getRow(int position) {
         return getArray()[position];
+    }
+
+    public void output() {
+        for (Object o : this.getIds()) {
+            System.out.print(o + " ");
+        }
+        System.out.println();
+        this.print(5, 3);
     }
 
     public static void main(String[] args) {
@@ -80,13 +94,13 @@ public class DataMatrix extends Matrix {
         for (double v : dm.getAvgRow()) {
             System.out.print(v + " ");
         }
-        
+
         System.out.println("");
 
         for (double v : dm.getRow(dm.getIDPosition("c"))) {
             System.out.print(v + " ");
         }
-        
+
         System.out.println("");
 
     }

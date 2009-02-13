@@ -40,6 +40,7 @@ public class WorkerDlg extends JDialog {
     private Runnable task;
     private SwingWorker worker;
     private Frame owner;
+    private JProgressBar progressBar;
 
     public WorkerDlg(Frame owner, String title) {
         this(owner, title, "");
@@ -64,12 +65,24 @@ public class WorkerDlg extends JDialog {
             this.add(label, BorderLayout.NORTH);
         }
 
-        JProgressBar progressBar = new JProgressBar();
+        progressBar = new JProgressBar();
         progressBar.setIndeterminate(true);
         progressBar.setPreferredSize(new Dimension(300, 20));
         this.add(progressBar, BorderLayout.CENTER);
 
         this.pack();
+    }
+
+    public void setInderminate(boolean value) {
+        progressBar.setIndeterminate(value);
+    }
+
+    public void setProgress(int value) {
+        progressBar.setValue(value);
+    }
+
+    public void setProgressMax(int value) {
+        progressBar.setMaximum(value);
     }
 
     public void execute() {

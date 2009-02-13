@@ -93,7 +93,7 @@ public class DataStoreProcessor {
         return result;
     }
 
-    public void createDB() throws IOException, SQLException, ClassNotFoundException {
+    public synchronized void createDB() throws IOException, SQLException, ClassNotFoundException {
 
         removeDB();
         Class.forName("org.h2.Driver");
@@ -283,7 +283,7 @@ public class DataStoreProcessor {
         }
     }
 
-    private void createIndex() throws IOException, SQLException {
+    private synchronized void createIndex() throws IOException, SQLException {
 
         float counter = 0;
         int percent = 0;
@@ -293,12 +293,15 @@ public class DataStoreProcessor {
         boolean result = parseBlock();
 
         while (result) {
-            if ((counter / overallSize) * 100 >= percent) {
-                percent++;
+
+            result = parseBlock();
+
+            counter++;
+            int current = Math.round((counter / overallSize) * 100);
+            if (current > percent) {
+                percent = current;
                 importProgressObservable.setProgress(percent);
             }
-            counter++;
-            result = parseBlock();
         }
 
     }
