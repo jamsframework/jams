@@ -45,7 +45,7 @@ public class Efficiencies {
         double prod = 0;
 
         int nstat = xData.length;
-        double[] regCoef = new double[3]; //(intercept, gradient, r²)
+        double[] regCoef = new double[3]; //(intercept, gradient, r^)
 
         //calculating sums
         for(int i = 0; i < nstat; i++){
@@ -65,7 +65,7 @@ public class Efficiencies {
         
         regCoef[0] = meanYValue - regCoef[1] * meanXValue; //intercept
         regCoef[1] = prod / sumX;  //gradient        
-        regCoef[2] = Math.pow((prod / Math.sqrt(sumX * sumY)), 2); //r²
+        regCoef[2] = Math.pow((prod / Math.sqrt(sumX * sumY)), 2); //r^
                                 
         return regCoef;
     }

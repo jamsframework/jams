@@ -815,7 +815,7 @@ public class MCAT5 extends JAMSComponent{
                 case EFFICIENCY_LOGE2:calcEffMenu[i] = new JMenuItem("Calculate log Nash-Sutcliffe(E2)"); break;
                 case EFFICIENCY_IOA1:calcEffMenu[i] = new JMenuItem("Calculate Index of Agreement (IOA1)"); break;
                 case EFFICIENCY_IOA2:calcEffMenu[i] = new JMenuItem("Calculate Index of Agreement (IOA2)"); break;
-                case EFFICIENCY_R2:calcEffMenu[i] = new JMenuItem("Calculate Regression Coefficient R²"); break;
+                case EFFICIENCY_R2:calcEffMenu[i] = new JMenuItem("Calculate Regression Coefficient R^"); break;
                 case EFFICIENCY_WR2:calcEffMenu[i] = new JMenuItem("Calculate WR2"); break;
                 case EFFICIENCY_DSGRAD:calcEffMenu[i] = new JMenuItem("Calculate dsGrad"); break;
                 case EFFICIENCY_ABSVOLERROR:calcEffMenu[i] = new JMenuItem("Calculate absolute volume error (absVolErr)"); break;

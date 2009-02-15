@@ -739,14 +739,14 @@ public class JTSConfigurator extends JFrame{
             XYStepAreaRenderer sar_L = new XYStepAreaRenderer();
             
             GraphProperties prop;
-            //2 Renderer einfügen. Typ aus rLeftBox bzw rRightBox holen!
+            //2 Renderer einf^gen. Typ aus rLeftBox bzw rRightBox holen!
             //Switch/Case Anweisung in den Configurator packen
             //
             
 
             
             
-            /////////////// In dieser Schleife Eigenschaften übernehmen!! /////////////
+            /////////////// In dieser Schleife Eigenschaften ^bernehmen!! /////////////
             for(int i=0; i<propVector.size(); i++){
                 
                 prop = propVector.get(i);
@@ -941,7 +941,7 @@ public class JTSConfigurator extends JFrame{
             }
             
             ////////////////////////////////////////////////////////////////////////////
-            //Renderer direkt übernehmen! //
+            //Renderer direkt ^bernehmen! //
             if(l>0){
                 jts.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
             }
@@ -1569,13 +1569,13 @@ public class JTSConfigurator extends JFrame{
             
             GraphProperties prop;
             final int max = propVector.size();
-            //2 Renderer einfügen. Typ aus rLeftBox bzw rRightBox holen!
+            //2 Renderer einf^gen. Typ aus rLeftBox bzw rRightBox holen!
             //Switch/Case Anweisung in den Configurator packen
             //
             
             //JProgressBarMax
             setMax(max);
-            /////////////// In dieser Schleife Eigenschaften übernehmen!! /////////////
+            /////////////// In dieser Schleife Eigenschaften ^bernehmen!! /////////////
             for(int i=0; i<max; i++){
 
                 prop = propVector.get(i);
@@ -1773,7 +1773,7 @@ public class JTSConfigurator extends JFrame{
             }
             
             ////////////////////////////////////////////////////////////////////////////
-            //Renderer direkt übernehmen! //
+            //Renderer direkt ^bernehmen! //
             if(l>0){
                 jts.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
             }

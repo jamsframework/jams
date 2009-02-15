@@ -124,14 +124,14 @@ public class JAMS {
 
         cmdLine = new JAMSCmdLine(args);
 
-        if (System.getProperty("os.name").contains("Windows")) {
+//        if (System.getProperty("os.name").contains("Windows")) {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (Exception e) {
                 System.out.println(JAMS.resources.getString("Error_during_look_and_feel_initialization"));
                 handle(e);
             }
-        }
+//        }
 
         //create a JAMS default set of property values
         JAMSProperties properties = JAMSProperties.createJAMSProperties();

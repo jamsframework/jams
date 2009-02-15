@@ -89,7 +89,7 @@ public class NelderMead extends PatternSearch{
         double x[] = new double[m];
         int iterCounter = 0;
         while(!feasible){   
-            //shit .. can´t find feasible point
+            //shit .. can^t find feasible point
             if (iterCounter++>10000)
                 return null;
             for (int i=0;i<m;i++){

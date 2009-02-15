@@ -56,7 +56,7 @@ public class JAMSDocument implements Attribute.Document {
         try{
             this.value = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(value)));
         }catch(Exception e){
-            System.out.println(JAMS.resources.getString("can´t_parse_string_to_xml_document,_because") + e.toString() + value);
+            System.out.println(JAMS.resources.getString("cant_parse_string_to_xml_document,_because") + e.toString() + value);
         }
     }
   

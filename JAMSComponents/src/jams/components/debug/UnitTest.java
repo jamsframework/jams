@@ -1,6 +1,6 @@
 /*
  * UnitTest.java
- * Created on 4. März 2008, 13:06
+ * Created on 4. M^rz 2008, 13:06
  *
  * This file is a JAMS component
  * Copyright (C) FSU Jena

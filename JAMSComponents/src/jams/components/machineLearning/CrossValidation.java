@@ -116,7 +116,7 @@ public class CrossValidation extends JAMSContext {
 	    predict = (double[])Data.getObject("predict");
 	}
 	catch(Exception e) {
-            this.getModel().getRuntime().sendHalt("Keine Datensätze gefunden!!" + e.toString());
+            this.getModel().getRuntime().sendHalt("Keine Datens^tze gefunden!!" + e.toString());
 	}
         this.getModel().getRuntime().sendInfoMsg("Cross Validation");
 	

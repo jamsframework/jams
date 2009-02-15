@@ -546,7 +546,7 @@ public class ModelOptimizer extends JAMSComponent{
                 }
             }
         }
-        //baue abhängigkeitsgraph
+        //baue abh^ngigkeitsgraph
         StandardRuntime rt = new StandardRuntime();
         rt.loadModel(doc,properties );
         JAMSModel model = rt.getModel();
@@ -689,7 +689,7 @@ public class ModelOptimizer extends JAMSComponent{
         if (!outerTimeContextParameterString.equals("")){
             outerTimeOptimizerPosition = GetFirstParameterDependentComponent(root,outerTimeContextParameterString);
         }
-        //hru reducer hinzufügen
+        //hru reducer hinzuf^gen
         if (reduceHRUs.getValue()){
             AddHRUReducerContext(root,doc);
         }
@@ -699,7 +699,7 @@ public class ModelOptimizer extends JAMSComponent{
                 initialisationTimeInterval.toString(),calibrationTimeInterval.toString(),doc,innerTimeContextOptimizer,innerTimeModelSnapshot);
         }
         
-        //TODO: sicherstellen, dass outer time optimizer nach hru reducer ausgeführt wird?!
+        //TODO: sicherstellen, dass outer time optimizer nach hru reducer ausgef^hrt wird?!
         
         //place outer time optimizer        
         if (outerTimeOptimizerPosition != null){

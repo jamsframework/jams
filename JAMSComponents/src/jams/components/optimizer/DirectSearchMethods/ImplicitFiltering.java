@@ -1,7 +1,7 @@
 /*
  * SimplexGradient.java
  *
- * Created on 7. März 2008, 12:24
+ * Created on 7. M^rz 2008, 12:24
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
@@ -29,7 +29,7 @@ public class ImplicitFiltering extends PatternSearch{
     public Sample step(Optimizer context,Sample[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]){
         //1 compare worst
         //2 compare best
-        //3 zufällige richtung
+        //3 zuf^llige richtung
         int method = 3;        
                         
         if (Generator == null){

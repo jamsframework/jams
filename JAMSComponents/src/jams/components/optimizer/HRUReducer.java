@@ -304,9 +304,9 @@ public class HRUReducer extends JAMSContext{
      @SuppressWarnings("unchecked")
     ArrayList<JAMSEntity> HRUunification(double threshold,JAMSEntity[] reference,JAMSEntity[] live, String attribute){     
         //wieso die ganzen entities mehrfach?
-        // live .. die tatsächliche entitycollection in diesem durchlauf .. dort sind keine informationen über einen tatsächlich modelllauf gespeichert
-        // reference .. entities aus einem testlauf .. diese dürfen nicht verändert werden
-        // ref_cpy kopie von reference die verändert werden darf                        
+        // live .. die tats^chliche entitycollection in diesem durchlauf .. dort sind keine informationen ^ber einen tats^chlich modelllauf gespeichert
+        // reference .. entities aus einem testlauf .. diese d^rfen nicht ver^ndert werden
+        // ref_cpy kopie von reference die ver^ndert werden darf                        
         ArrayList<JAMSEntity> reducedEntityList = new ArrayList();
         JAMSEntity[] tmp = copyEntityArray(reference);     
         
@@ -357,7 +357,7 @@ public class HRUReducer extends JAMSContext{
                 int to_poly = getToPolyID(src);
                 
                 if (to_poly == -1){
-                    //versuchen mit hru zu vereeinigen die in denselben reach entwässert
+                    //versuchen mit hru zu vereeinigen die in denselben reach entw^ssert
                     int to_reach = getToReachID(live[live_index]);
                     if (to_reach != -1){
                         //isolierte hrus??
@@ -385,7 +385,7 @@ public class HRUReducer extends JAMSContext{
                         this.getModel().getRuntime().println("isolated hru with id" + id);
                     }
                     if (to_poly == -1){
-                        offsetCounter++;//etwas problematisch, weil die sortierung sich ändern kann .. dadurch können einige hrus übersehen werden, die eigentlich vereinigt werden könnten!
+                        offsetCounter++;//etwas problematisch, weil die sortierung sich ^ndern kann .. dadurch k^nnen einige hrus ^bersehen werden, die eigentlich vereinigt werden k^nnten!
                         //there are no mory hrus which can be unified!
                         if (offsetCounter >= ref_cpy.size()){
                             this.getModel().getRuntime().println("stopped reduction with " + offsetCounter + " not removeable units");
@@ -399,7 +399,7 @@ public class HRUReducer extends JAMSContext{
                 /*int index_dest = searchInEntityArray(to_poly,live);            
                 JAMSEntity dest = live[index_dest];*/
                                                 
-                //nach hrus suchen die in src entwässern                
+                //nach hrus suchen die in src entw^ssern                
                 HashSet<JAMSEntity> reRoutingSet_refcpy_id = ref_cpy_sortedByToPolyID.get(new Integer(id));
                 HashSet<JAMSEntity> reRoutingSet_refcpy_to_poly = ref_cpy_sortedByToPolyID.get(new Integer(to_poly));
                 if (reRoutingSet_refcpy_id != null){

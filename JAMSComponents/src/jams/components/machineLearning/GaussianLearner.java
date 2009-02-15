@@ -188,7 +188,7 @@ public class GaussianLearner extends Learner  {
 	return -sum;
     }
     //das macht einen kleinen unterschied zum normalen training, weil die eingabedaten nicht mit dem
-    //neuen datensatz normiert werden! .. im normalfall sollte dieser kleine fehler aber vernachlässigbar
+    //neuen datensatz normiert werden! .. im normalfall sollte dieser kleine fehler aber vernachl^ssigbar
     //gering sein!
     public double RetrainWithANewObservation(int PerformanceMeasure,double[] input,double obs){
         Matrix oldCovarianzMatrix = CovarianzMatrix;

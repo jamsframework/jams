@@ -89,7 +89,7 @@ public class InfoPanel extends JPanel {
             LHelper.addGBComponent(this, mainLayout, new JLabel("Beginn:"), 1, 2, 1, 1, 0, 0);
             LHelper.addGBComponent(this, mainLayout, new JLabel("Ende:"), 1, 3, 1, 1, 0, 0);
             LHelper.addGBComponent(this, mainLayout, new JLabel("Schrittweite:"), 1, 4, 1, 1, 0, 0);
-            LHelper.addGBComponent(this, mainLayout, new JLabel("Lückenwert:"), 1, 5, 1, 1, 0, 0);
+            LHelper.addGBComponent(this, mainLayout, new JLabel("LÃ¼ckenwert:"), 1, 5, 1, 1, 0, 0);
             LHelper.addGBComponent(this, mainLayout, new JLabel("Kommentar:"), 1, 6, 1, 1, 0, 0);
 
             indexMap.put(JAMSCalendar.YEAR, "Jahr(e)");

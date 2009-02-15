@@ -75,7 +75,7 @@ public class DocumentLoader extends JAMSComponent{
                 return JAMS.resources.getString("The_model_definition_file_") + modelFilename + JAMS.resources.getString("_contained_errors!");                
             }                        
         }catch(Exception e){
-            return JAMS.resources.getString("Can´t_load_model_file,_because_") + e.toString();            
+            return JAMS.resources.getString("Can^t_load_model_file,_because_") + e.toString();            
         } 
         return null;
     }

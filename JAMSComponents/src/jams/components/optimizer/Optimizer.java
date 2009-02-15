@@ -341,7 +341,7 @@ public abstract class Optimizer extends JAMSContext {
                 try{
                     parameters[j].setValue(x[j]);
                 }catch(Exception e){
-                    getModel().getRuntime().sendHalt("Error! Parameter No. " + j + " wasn´t found" + e.toString());
+                    getModel().getRuntime().sendHalt("Error! Parameter No. " + j + " wasn^t found" + e.toString());
                 }
             }            
             singleRun();

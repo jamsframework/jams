@@ -83,7 +83,7 @@ public class RegionalizerFrame extends JFrame {
             }
         };
 
-        openWSAction = new AbstractAction("Arbeitsverzeichnis öffnen") {
+        openWSAction = new AbstractAction("Arbeitsverzeichnis Ã¶ffnen") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -91,7 +91,7 @@ public class RegionalizerFrame extends JFrame {
             }
         };
 
-        openWSDlg = new WorkerDlg(this, "Öffne Arbeitsverzeichnis");
+        openWSDlg = new WorkerDlg(this, "Ã–ffne Arbeitsverzeichnis");
 
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(Regionalizer.APP_TITLE);

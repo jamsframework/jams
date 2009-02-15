@@ -1,7 +1,7 @@
 /*
  * OwnTSClass.java
  *
- * Created on 14. März 2007, 16:44
+ * Created on 14. MÃ¤rz 2007, 16:44
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.

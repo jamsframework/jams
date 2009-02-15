@@ -58,13 +58,13 @@ public class SimpleSCE extends Optimizer {
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
         update = JAMSVarDescription.UpdateType.INIT,
-        description = "A and B specify linear constraints, so that for every x the condition Ax = B is satisfied. if you don´t specify A and B the unconstrained problem will be solved")
+        description = "A and B specify linear constraints, so that for every x the condition Ax = B is satisfied. if you don^t specify A and B the unconstrained problem will be solved")
         public JAMSString LinearConstraintMatrixA;
     
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
         update = JAMSVarDescription.UpdateType.INIT,
-        description = "A and B specify linear constraints, so that for every x the condition Ax = B is satisfied. if you don´t specify A and B the unconstrained problem will be solved")
+        description = "A and B specify linear constraints, so that for every x the condition Ax = B is satisfied. if you don^t specify A and B the unconstrained problem will be solved")
         public JAMSString LinearConstraintVectorB;
     
     @JAMSVarDescription(
@@ -127,7 +127,7 @@ public class SimpleSCE extends Optimizer {
                     try {
                         value = Double.parseDouble(number);
                     } catch (NumberFormatException e) {
-                        this.getModel().getRuntime().sendHalt("SimpleSCE: Can´t read Linear Constraint Matrix, because there are unparseable elements:" + e.toString());
+                        this.getModel().getRuntime().sendHalt("SimpleSCE: Can^t read Linear Constraint Matrix, because there are unparseable elements:" + e.toString());
                     }
                     LinearConstraints_A.set(i, j, value);
                 }
@@ -142,7 +142,7 @@ public class SimpleSCE extends Optimizer {
                 try {
                     value = Double.parseDouble(number);
                 } catch (NumberFormatException e) {
-                    this.getModel().getRuntime().sendHalt("SimpleSCE: Can´t read Linear Constraint Matrix, because there are unparseable elements:" + e.toString());
+                    this.getModel().getRuntime().sendHalt("SimpleSCE: Can^t read Linear Constraint Matrix, because there are unparseable elements:" + e.toString());
                 }
                 LinearConstraints_b.set(i, 0, value);
             }
@@ -345,7 +345,7 @@ public class SimpleSCE extends Optimizer {
                 int lpos = 0;
                 for (int iter = 0; iter < 1000; iter++) {
                     lpos = (int) Math.floor(npg + 0.5 - Math.sqrt((npg + 0.5) * (npg + 0.5) - npg * (npg + 1) * Custom_rand()));
-                    //wirklich nötig??
+                    //wirklich n^tig??
                     int idx = find(lcs, 0, k3, lpos);
                     if (idx == -1) {
                         break;
