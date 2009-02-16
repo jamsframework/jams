@@ -607,6 +607,11 @@ public class TimeSpaceProcessor {
             String filterString = String.format("%04d", i) + "-%-%";
             calcTemporalAvg(filterString, TABLE_NAME_YEARAVG, String.valueOf(i));
 
+            if (abortOperation) {
+                customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_YEARAVG);
+                return;
+            }
+
             // update the observer
             counter++;
             int current = Math.round((counter / max) * 100);
@@ -615,6 +620,30 @@ public class TimeSpaceProcessor {
                 processingProgressObservable.setProgress(percent);
             }
         }
+    }
+    
+    public synchronized int[] getYears() throws SQLException {
+
+        // get min and max dates
+        String q = "SELECT min(" + timeID + ") AS MINDATE, max(" + timeID + ") AS MAXDATE FROM index";
+        System.out.println(q);
+        ResultSet rs = customSelectQuery(q);
+        rs.next();
+        JAMSCalendar minDate = JAMSDataFactory.createCalendar();
+        JAMSCalendar maxDate = JAMSDataFactory.createCalendar();
+        minDate.setValue(rs.getTimestamp("MINDATE").toString());
+        maxDate.setValue(rs.getTimestamp("MAXDATE").toString());
+
+        int startYear = minDate.get(JAMSCalendar.YEAR); 
+        int endYear = maxDate.get(JAMSCalendar.YEAR);
+        int[] years = new int[endYear-startYear+1];
+        int c = 0;
+
+        for (int i = startYear; i <= endYear; i++) {
+            years[c++] = i;
+        }
+
+        return years;
     }
 
     /**
@@ -644,7 +673,7 @@ public class TimeSpaceProcessor {
         int percent = 0;
 
         // loop over months
-        for (int i = 1; i <= 12; i++) {
+        for (int i = 0; i <= 12; i++) {
 
             // calc the monthly average values
             String filterString = "%-" + String.format("%02d", i) + "-%";
@@ -811,6 +840,11 @@ public class TimeSpaceProcessor {
         return result.toArray(new Long[result.size()]);
     }
 
+    /**
+     * Get all available time steps
+     * @return An array of calendar objects representing the time steps
+     * @throws java.sql.SQLException
+     */
     public synchronized JAMSCalendar[] getTimeSteps() throws SQLException {
 
         ArrayList<JAMSCalendar> result = new ArrayList<JAMSCalendar>();
@@ -932,7 +966,7 @@ public class TimeSpaceProcessor {
         switch (c) {
             case 0:
                 // calc/get longterm monthly mean values
-                //tsproc.calcMonthlyAvg();
+                tsproc.calcMonthlyAvg();
                 m = tsproc.getMonthlyAvg(12);
                 break;
             case 1:

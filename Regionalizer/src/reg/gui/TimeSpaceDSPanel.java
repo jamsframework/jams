@@ -33,8 +33,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
@@ -44,6 +42,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import reg.dsproc.DataMatrix;
 import reg.dsproc.TimeSpaceProcessor;
 
@@ -53,7 +53,7 @@ import reg.dsproc.TimeSpaceProcessor;
  */
 public class TimeSpaceDSPanel extends JPanel {
 
-    private static final Dimension ACTION_BUTTON_DIM = new Dimension(140, 25), LIST_DIMENSION = new Dimension(150, 200);
+    private static final Dimension ACTION_BUTTON_DIM = new Dimension(140, 25),  LIST_DIMENSION = new Dimension(150, 200);
 
     private TimeSpaceProcessor tsproc;
 
@@ -61,7 +61,7 @@ public class TimeSpaceDSPanel extends JPanel {
 
     private JList timeList,  entityList,  monthList,  yearList;
 
-    private Action timeStepAction,  spaceEntityAction,  timeAvgAction,  spaceAvgAction,  monthlyAvgAction,  resetCacheAction;
+    private Action timeStepAction,  spaceEntityAction,  timeAvgAction,  spaceAvgAction,  monthlyAvgAction,  yearlyAvgAction,  resetCacheAction;
 
     private CancelableWorkerDlg workerDlg;
 
@@ -105,6 +105,14 @@ public class TimeSpaceDSPanel extends JPanel {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        showMonthlyAvg();
+    }
+},
+        yearlyAvgAction = new AbstractAction("Yearly Average") {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        showYearlyAvg();
     }
 }
     };
@@ -131,10 +139,12 @@ public class TimeSpaceDSPanel extends JPanel {
         entityListScroll.setPreferredSize(LIST_DIMENSION);
 
         monthList = new JList();
+        monthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane monthListScroll = new JScrollPane(monthList);
         monthListScroll.setPreferredSize(LIST_DIMENSION);
 
         yearList = new JList();
+        yearList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane yearListScroll = new JScrollPane(yearList);
         yearListScroll.setPreferredSize(LIST_DIMENSION);
 
@@ -181,6 +191,10 @@ public class TimeSpaceDSPanel extends JPanel {
     }
 
     public static void main(String[] args) throws Exception {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception evt) {
+        }
         TimeSpaceDSPanel tsp = new TimeSpaceDSPanel();
         JFrame frame = new JFrame();
         frame.add(tsp);
@@ -223,14 +237,40 @@ public class TimeSpaceDSPanel extends JPanel {
 
         entityList.setModel(new AbstractListModel() {
 
-            Long[] dates = TimeSpaceDSPanel.this.getTsproc().getEntityIDs();
+            Long[] ids = TimeSpaceDSPanel.this.getTsproc().getEntityIDs();
 
             public int getSize() {
-                return dates.length;
+                return ids.length;
             }
 
             public Object getElementAt(int i) {
-                return dates[i];
+                return ids[i];
+            }
+        });
+
+        yearList.setModel(new AbstractListModel() {
+
+            int[] years = TimeSpaceDSPanel.this.getTsproc().getYears();
+
+            public int getSize() {
+                return years.length;
+            }
+
+            public Object getElementAt(int i) {
+                return years[i];
+            }
+        });
+
+        monthList.setModel(new AbstractListModel() {
+
+            int[] months = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+
+            public int getSize() {
+                return months.length;
+            }
+
+            public Object getElementAt(int i) {
+                return months[i];
             }
         });
 
@@ -266,15 +306,88 @@ public class TimeSpaceDSPanel extends JPanel {
         }
     }
 
-    private void showTimeAvg() {
+    private void showMonthlyAvg() {
+
+        if (monthList.getSelectedValues().length == 0) {
+            return;
+        }
 
         workerDlg.setInderminate(false);
         workerDlg.setProgress(0);
+        workerDlg.setTask(new CancelableRunnable() {
+
+            public void run() {
+                try {
+
+                    int month = (Integer) monthList.getSelectedValue();
+
+                    if (!tsproc.isMonthlyAvgExisiting()) {
+                        tsproc.calcMonthlyAvg();
+                    }
+
+                    workerDlg.setInderminate(true);
+
+                    DataMatrix m = tsproc.getMonthlyAvg(month);
+
+                    m.output();
+                } catch (SQLException ex) {
+                } catch (IOException ex) {
+                }
+            }
+
+            public int cancel() {
+                tsproc.sendAbortOperation();
+                return 0;
+            }
+        });
+        workerDlg.execute();
+    }
+
+    private void showYearlyAvg() {
+
+        if (yearList.getSelectedValues().length == 0) {
+            return;
+        }
+
+        workerDlg.setInderminate(false);
+        workerDlg.setProgress(0);
+        workerDlg.setTask(new CancelableRunnable() {
+
+            public void run() {
+                try {
+
+                    int year = (Integer) yearList.getSelectedValue();
+
+                    if (!tsproc.isYearlyAvgExisiting()) {
+                        tsproc.calcYearlyAvg();
+                    }
+
+                    workerDlg.setInderminate(true);
+
+                    DataMatrix m = tsproc.getYearlyAvg(year);
+
+                    m.output();
+                } catch (SQLException ex) {
+                } catch (IOException ex) {
+                }
+            }
+
+            public int cancel() {
+                tsproc.sendAbortOperation();
+                return 0;
+            }
+        });
+        workerDlg.execute();
+    }
+
+    private void showTimeAvg() {
 
         if (timeList.getSelectedValues().length == 0) {
             return;
         }
 
+        workerDlg.setInderminate(false);
+        workerDlg.setProgress(0);
         workerDlg.setTask(new CancelableRunnable() {
 
             public void run() {
@@ -290,15 +403,15 @@ public class TimeSpaceDSPanel extends JPanel {
 
                     DataMatrix m = null;
 
-                    // check if number of selected dates is equal to all dates
+                    // check if number of selected ids is equal to all ids
                     // if so, we better derive temp avg from monthly means
                     if (dates.length == timeList.getModel().getSize()) {
                         // check if cache tables are available
                         if (!tsproc.isMonthlyAvgExisiting()) {
                             tsproc.calcMonthlyAvg();
-                        } else {
-                            workerDlg.setInderminate(true);
                         }
+                        workerDlg.setInderminate(true);
+
 
                         if (!tsproc.isMonthlyAvgExisiting()) {
                             return;
