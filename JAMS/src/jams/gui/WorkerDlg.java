@@ -74,6 +74,11 @@ public class WorkerDlg extends JDialog {
     }
 
     public void setInderminate(boolean value) {
+        if (value) {
+            progressBar.setStringPainted(false);
+        } else {
+            progressBar.setStringPainted(true);
+        }
         progressBar.setIndeterminate(value);
     }
 

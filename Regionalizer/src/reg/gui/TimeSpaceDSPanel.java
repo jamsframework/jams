@@ -53,17 +53,17 @@ import reg.dsproc.TimeSpaceProcessor;
  */
 public class TimeSpaceDSPanel extends JPanel {
 
-    private static final Dimension ACTION_BUTTON_DIM = new Dimension(140, 25);
+    private static final Dimension ACTION_BUTTON_DIM = new Dimension(140, 25), LIST_DIMENSION = new Dimension(150, 200);
 
     private TimeSpaceProcessor tsproc;
 
     private GridBagLayout mainLayout;
 
-    private JList timeList,  entityList;
+    private JList timeList,  entityList,  monthList,  yearList;
 
     private Action timeStepAction,  spaceEntityAction,  timeAvgAction,  spaceAvgAction,  monthlyAvgAction,  resetCacheAction;
 
-    private CancelWorkerDlg workerDlg;
+    private CancelableWorkerDlg workerDlg;
 
     private Frame parent;
 
@@ -94,17 +94,17 @@ public class TimeSpaceDSPanel extends JPanel {
     public void actionPerformed(ActionEvent e) {
     }
 },
-        monthlyAvgAction = new AbstractAction("Monthly Average") {
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-    }
-},
         resetCacheAction = new AbstractAction("Reset Caches") {
 
     @Override
     public void actionPerformed(ActionEvent e) {
         resetCaches();
+    }
+},
+        monthlyAvgAction = new AbstractAction("Monthly Average") {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
     }
 }
     };
@@ -124,33 +124,58 @@ public class TimeSpaceDSPanel extends JPanel {
 
         timeList = new JList();
         JScrollPane timeListScroll = new JScrollPane(timeList);
-        timeListScroll.setPreferredSize(new Dimension(150, 200));
+        timeListScroll.setPreferredSize(LIST_DIMENSION);
 
         entityList = new JList();
         JScrollPane entityListScroll = new JScrollPane(entityList);
-        entityListScroll.setPreferredSize(new Dimension(150, 200));
+        entityListScroll.setPreferredSize(LIST_DIMENSION);
+
+        monthList = new JList();
+        JScrollPane monthListScroll = new JScrollPane(monthList);
+        monthListScroll.setPreferredSize(LIST_DIMENSION);
+
+        yearList = new JList();
+        JScrollPane yearListScroll = new JScrollPane(yearList);
+        yearListScroll.setPreferredSize(LIST_DIMENSION);
 
         LHelper.addGBComponent(this, mainLayout, new JLabel("Time Steps:"), 10, 10, 1, 1, 0, 0);
         LHelper.addGBComponent(this, mainLayout, timeListScroll, 10, 20, 1, 1, 0, 0);
         LHelper.addGBComponent(this, mainLayout, new JLabel("Spatial Entitiy IDs:"), 20, 10, 1, 1, 0, 0);
         LHelper.addGBComponent(this, mainLayout, entityListScroll, 20, 20, 1, 1, 0, 0);
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setPreferredSize(new Dimension(150, 200));
+        JPanel buttonPanelA = new JPanel();
+        buttonPanelA.setPreferredSize(LIST_DIMENSION);
 
-        for (Action a : actions) {
+        for (int i = 0; i <= 4; i++) {
+            Action a = actions[i];
             JButton button = new JButton(a);
             button.setPreferredSize(ACTION_BUTTON_DIM);
-            buttonPanel.add(button);
+            buttonPanelA.add(button);
         }
 
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Data Selection:"), 30, 10, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, buttonPanel, 30, 20, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, mainLayout, buttonPanelA, 30, 20, 1, 1, 0, 0);
+
+        LHelper.addGBComponent(this, mainLayout, new JLabel("Months:"), 50, 10, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, mainLayout, monthListScroll, 50, 20, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, mainLayout, new JLabel("Years:"), 60, 10, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, mainLayout, yearListScroll, 60, 20, 1, 1, 0, 0);
+
+        JPanel buttonPanelB = new JPanel();
+        buttonPanelB.setPreferredSize(LIST_DIMENSION);
+
+        for (int i = 5; i < actions.length; i++) {
+            Action a = actions[i];
+            JButton button = new JButton(a);
+            button.setPreferredSize(ACTION_BUTTON_DIM);
+            buttonPanelB.add(button);
+        }
+
+        LHelper.addGBComponent(this, mainLayout, buttonPanelB, 70, 20, 1, 1, 0, 0);
     }
 
     public void setParent(Frame parent) {
         this.parent = parent;
-        workerDlg = new CancelWorkerDlg(parent, "Processing data");
+        workerDlg = new CancelableWorkerDlg(parent, "Processing data");
         workerDlg.setProgress(0);
         workerDlg.setProgressMax(100);
     }
@@ -224,6 +249,11 @@ public class TimeSpaceDSPanel extends JPanel {
     }
 
     private void showTimeStep() {
+
+        if (timeList.getSelectedValues().length > 1) {
+            return;
+        }
+
         JAMSCalendar date = (JAMSCalendar) timeList.getSelectedValue();
         if (date == null) {
             return;
@@ -245,7 +275,7 @@ public class TimeSpaceDSPanel extends JPanel {
             return;
         }
 
-        workerDlg.setTask(new Runnable() {
+        workerDlg.setTask(new CancelableRunnable() {
 
             public void run() {
                 try {
@@ -286,6 +316,11 @@ public class TimeSpaceDSPanel extends JPanel {
                 } catch (IOException ex) {
                 }
             }
+
+            public int cancel() {
+                tsproc.sendAbortOperation();
+                return 0;
+            }
         });
         workerDlg.execute();
     }
@@ -294,7 +329,6 @@ public class TimeSpaceDSPanel extends JPanel {
         try {
             tsproc.deleteCache();
         } catch (SQLException ex) {
-            
         }
     }
 }

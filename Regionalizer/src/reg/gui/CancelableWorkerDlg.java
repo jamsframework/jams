@@ -1,5 +1,5 @@
 /*
- * CancelWorkerDlg.java
+ * CancelableWorkerDlg.java
  * Created on 13. Februar 2009, 22:43
  *
  * This file is part of JAMS
@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package reg.gui;
 
 import jams.gui.WorkerDlg;
@@ -35,15 +34,19 @@ import javax.swing.JPanel;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class CancelWorkerDlg extends WorkerDlg {
-    
-    public CancelWorkerDlg(Frame owner, String title) {
+public class CancelableWorkerDlg extends WorkerDlg {
+
+    private CancelableRunnable task;
+
+    public CancelableWorkerDlg(Frame owner, String title) {
         super(owner, title);
+
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Canceling execution");
+                task.cancel();
             }
         });
 
@@ -53,5 +56,9 @@ public class CancelWorkerDlg extends WorkerDlg {
         this.add(buttonPanel, BorderLayout.SOUTH);
         pack();
     }
-    
+
+    public synchronized void setTask(CancelableRunnable task) {
+        this.task = task;
+        super.setTask(task);
+    }
 }

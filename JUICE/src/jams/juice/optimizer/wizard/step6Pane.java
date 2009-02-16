@@ -107,7 +107,7 @@ public class step6Pane extends stepPane{
         
     JTextField Gutmann_maximumNumberOfIterations = new JTextField("500",6);
     JTextField GPSearch_maximumNumberOfIterations = new JTextField("500",6);
-    String methods[] = {"Exponential","Matrn","RQ","Neural Network","Exponential(no noise)","Neural Network (full)","Exponential (simple)","Matrn (simple)","RQ (simple)","Neural Network (simple)"};
+    String methods[] = {"Exponential","Matérn","RQ","Neural Network","Exponential(no noise)","Neural Network (full)","Exponential (simple)","Matrn (simple)","RQ (simple)","Neural Network (simple)"};
     int kernelMap[] = {2,3,5,6,7,8,12,13,15,16};
     JComboBox kernelMethod = new JComboBox(methods);
                         

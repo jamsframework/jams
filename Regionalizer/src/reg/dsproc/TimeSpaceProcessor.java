@@ -58,6 +58,8 @@ public class TimeSpaceProcessor {
 
     private ProcessingProgressObservable processingProgressObservable = new ProcessingProgressObservable();
 
+    private boolean abortOperation = false;
+
     public TimeSpaceProcessor(String fileName) {
         this(new DataStoreProcessor(fileName));
     }
@@ -78,7 +80,11 @@ public class TimeSpaceProcessor {
         }
     }
 
-    public boolean isTimeSpaceDatastore() {
+    /**
+     * Check if this is a datastore that contains spatial data that vary in time
+     * @return True or false
+     */
+    public synchronized boolean isTimeSpaceDatastore() {
         ArrayList<DataStoreProcessor.ContextData> cntxt = dsdb.getContexts();
         if (cntxt.size() != 2) {
             return false;
@@ -100,7 +106,7 @@ public class TimeSpaceProcessor {
      * @return A JDBC result set
      * @throws java.sql.SQLException
      */
-    public ResultSet customSelectQuery(String query) throws SQLException {
+    public synchronized ResultSet customSelectQuery(String query) throws SQLException {
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         return rs;
@@ -112,7 +118,7 @@ public class TimeSpaceProcessor {
      * @return true, if the query was sent successfully, false otherwise
      * @throws java.sql.SQLException
      */
-    public boolean customQuery(String query) throws SQLException {
+    public synchronized boolean customQuery(String query) throws SQLException {
         Statement stmt = conn.createStatement();
         boolean result = stmt.execute(query);
         return result;
@@ -123,7 +129,7 @@ public class TimeSpaceProcessor {
      * @return The data as JDBC result set
      * @throws java.sql.SQLException
      */
-    public ResultSet getData() throws SQLException {
+    public synchronized ResultSet getData() throws SQLException {
 
         String query = "SELECT " + timeID + ", position FROM index";
 
@@ -148,7 +154,7 @@ public class TimeSpaceProcessor {
         return rs;
     }
 
-    private int getSelectedAttribCount() {
+    private synchronized int getSelectedAttribCount() {
         // get number of selected attributes
         int numSelected = 0;
         for (AttributeData a : getDataStoreProcessor().getAttributes()) {
@@ -168,7 +174,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public DataMatrix getSpatialData(JAMSCalendar date) throws SQLException, IOException {
+    public synchronized DataMatrix getSpatialData(JAMSCalendar date) throws SQLException, IOException {
 
         String oldFormat = ((SimpleDateFormat) date.getDateFormat()).toPattern();
         date.setDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -194,7 +200,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public DataMatrix getTemporalAvg(JAMSCalendar[] dates) throws SQLException, IOException {
+    public synchronized DataMatrix getTemporalAvg(JAMSCalendar[] dates) throws SQLException, IOException {
 
         if ((dates == null) || (dates.length == 0)) {
             return null;
@@ -202,9 +208,13 @@ public class TimeSpaceProcessor {
 
         DataMatrix aggregate = null, matrix;
         int count = 0, percent = 0;
-        
+
         // loop over dates 
         for (JAMSCalendar date : dates) {
+
+            if (abortOperation) {
+                return null;
+            }
 
             matrix = getSpatialData(date);
 
@@ -242,7 +252,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public DataMatrix getTemporalAvg(String datePattern) throws SQLException, IOException {
+    public synchronized DataMatrix getTemporalAvg(String datePattern) throws SQLException, IOException {
 
         // set the temporal filter and get the result set
         setTimeFilter(datePattern);
@@ -341,7 +351,7 @@ public class TimeSpaceProcessor {
         return result;
     }
 
-    private double[] getAvg(ArrayList<double[]> a) {
+    private synchronized double[] getAvg(ArrayList<double[]> a) {
 
         double[] result = a.get(0);
         double[] b;
@@ -366,7 +376,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public DataMatrix getSpatialAvg() throws SQLException, IOException {
+    public synchronized DataMatrix getSpatialAvg() throws SQLException, IOException {
 
         DataMatrix result = null;
 
@@ -406,7 +416,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public DataMatrix getTemporalAvg() throws SQLException, IOException {
+    public synchronized DataMatrix getTemporalAvg() throws SQLException, IOException {
 
         DataMatrix aggregate = getMonthlyAvg(1);
         if (aggregate == null) {
@@ -432,7 +442,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public DataMatrix getMonthlyAvg(int month) throws SQLException, IOException {
+    public synchronized DataMatrix getMonthlyAvg(int month) throws SQLException, IOException {
 
         DataMatrix result = null;
 
@@ -477,7 +487,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public DataMatrix getYearlyAvg(int year) throws SQLException, IOException {
+    public synchronized DataMatrix getYearlyAvg(int year) throws SQLException, IOException {
 
         DataMatrix result = null;
 
@@ -526,7 +536,7 @@ public class TimeSpaceProcessor {
         return result;
     }
 
-    private boolean isTableExisting(String tableName) throws SQLException {
+    private synchronized boolean isTableExisting(String tableName) throws SQLException {
         String q = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME='" + tableName + "'";
         ResultSet rs = customSelectQuery(q);
         if (rs.next()) {
@@ -548,7 +558,7 @@ public class TimeSpaceProcessor {
         return isTableExisting(TABLE_NAME_SPATAVG);
     }
 
-    public void deleteCache() throws SQLException {
+    public synchronized void deleteCache() throws SQLException {
         String[] tables = {TABLE_NAME_YEARAVG, TABLE_NAME_SPATAVG, TABLE_NAME_MONTHAVG};
         for (String table : tables) {
             customQuery("DROP TABLE IF EXISTS " + table);
@@ -561,7 +571,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public void calcYearlyAvg() throws SQLException, IOException {
+    public synchronized void calcYearlyAvg() throws SQLException, IOException {
 
         // get number of selected attributes
         int numSelected = getSelectedAttribCount();
@@ -640,6 +650,11 @@ public class TimeSpaceProcessor {
             String filterString = "%-" + String.format("%02d", i) + "-%";
             calcTemporalAvg(filterString, TABLE_NAME_MONTHAVG, String.valueOf(i));
 
+            if (abortOperation) {
+                customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_MONTHAVG);
+                return;
+            }
+
             // update the observer
             int current = Math.round((i / 12f) * 100);
             if (current > percent) {
@@ -649,7 +664,7 @@ public class TimeSpaceProcessor {
         }
     }
 
-    private DataMatrix calcTemporalAvg(String filter, String tableName, String id) throws SQLException, IOException {
+    private synchronized DataMatrix calcTemporalAvg(String filter, String tableName, String id) throws SQLException, IOException {
 
         // set the temporal filter and get the result set
         setTimeFilter(filter);
@@ -670,6 +685,11 @@ public class TimeSpaceProcessor {
 
         // loop over datasets for current month
         while (rs.next()) {
+
+            if (abortOperation) {
+                return null;
+            }
+
             position = rs.getLong("POSITION");
             DataMatrix m = dsdb.getData(position);
             aggregate = aggregate.plus(m);
@@ -766,7 +786,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public Long[] getEntityIDs() throws SQLException, IOException {
+    public synchronized Long[] getEntityIDs() throws SQLException, IOException {
 
         Object[] ids = null;
 
@@ -791,7 +811,7 @@ public class TimeSpaceProcessor {
         return result.toArray(new Long[result.size()]);
     }
 
-    public JAMSCalendar[] getTimeSteps() throws SQLException {
+    public synchronized JAMSCalendar[] getTimeSteps() throws SQLException {
 
         ArrayList<JAMSCalendar> result = new ArrayList<JAMSCalendar>();
 
@@ -826,11 +846,11 @@ public class TimeSpaceProcessor {
     /**
      * @param timeFilter the timeIDFilter to set
      */
-    public void setTimeFilter(String timeFilter) {
+    public synchronized void setTimeFilter(String timeFilter) {
         this.timeFilter = timeFilter;
     }
 
-    public void resetTimeFilter() {
+    public synchronized void resetTimeFilter() {
         timeFilter = null;
     }
 
@@ -847,6 +867,17 @@ public class TimeSpaceProcessor {
 
     public void addProcessingProgressObserver(Observer o) {
         processingProgressObservable.addObserver(o);
+    }
+
+    public void addProcessingStateObserver(Observer o) {
+        processingProgressObservable.addObserver(o);
+    }
+
+    public void sendAbortOperation() {
+        this.abortOperation = true;
+        synchronized (this) {
+            this.abortOperation = false;
+        }
     }
 
     private class ProcessingProgressObservable extends Observable {
