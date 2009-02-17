@@ -45,7 +45,6 @@ public class CancelableWorkerDlg extends WorkerDlg {
         cancelButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Canceling execution");
                 task.cancel();
             }
         });

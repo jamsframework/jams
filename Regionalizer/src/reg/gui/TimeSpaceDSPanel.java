@@ -36,14 +36,18 @@ import java.util.Observer;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import reg.dsproc.DataMatrix;
 import reg.dsproc.TimeSpaceProcessor;
 
@@ -53,7 +57,7 @@ import reg.dsproc.TimeSpaceProcessor;
  */
 public class TimeSpaceDSPanel extends JPanel {
 
-    private static final Dimension ACTION_BUTTON_DIM = new Dimension(140, 25),  LIST_DIMENSION = new Dimension(150, 200);
+    private static final Dimension ACTION_BUTTON_DIM = new Dimension(150, 25),  LIST_DIMENSION = new Dimension(150, 240);
 
     private TimeSpaceProcessor tsproc;
 
@@ -61,60 +65,72 @@ public class TimeSpaceDSPanel extends JPanel {
 
     private JList timeList,  entityList,  monthList,  yearList;
 
-    private Action timeStepAction,  spaceEntityAction,  timeAvgAction,  spaceAvgAction,  monthlyAvgAction,  yearlyAvgAction,  resetCacheAction;
-
     private CancelableWorkerDlg workerDlg;
 
     private Frame parent;
 
+    private JTextField timeField;
+
+//    private Action timeStepAction,  spaceEntityAction,  timeAvgAction,  spaceAvgAction,  monthlyAvgAction,  yearlyAvgAction,  resetCacheAction;
     private Action[] actions = {
-        timeStepAction = new AbstractAction("Time Step") {
+        new AbstractAction("Time Step") {
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        showTimeStep();
-    }
-},
-        spaceEntityAction = new AbstractAction("Spatial Entity") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showTimeStep();
+            }
+        },
+        new AbstractAction("Temp. Mean") {
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-    }
-},
-        timeAvgAction = new AbstractAction("Temporal Average") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showTimeAvg();
+            }
+        },
+        new AbstractAction("Spatial Entity") {
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        showTimeAvg();
-    }
-},
-        spaceAvgAction = new AbstractAction("Spatial Average") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showSpatEntity();
+            }
+        },
+        new AbstractAction("Spatial Mean") {
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-    }
-},
-        resetCacheAction = new AbstractAction("Reset Caches") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showSpatEntity();
+            }
+        },
+        new AbstractAction("Monthly Mean") {
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        resetCaches();
-    }
-},
-        monthlyAvgAction = new AbstractAction("Monthly Average") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showMonthlyAvg();
+            }
+        },
+        new AbstractAction("Yearly Mean") {
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        showMonthlyAvg();
-    }
-},
-        yearlyAvgAction = new AbstractAction("Yearly Average") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showYearlyAvg();
+            }
+        },};
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        showYearlyAvg();
-    }
-}
+    private Action timePoint = actions[0],  timeMean = actions[1],  spacePoint = actions[2],  spaceMean = actions[3],  monthMean = actions[4],  yearMean = actions[5];
+
+    private Action cacheReset = new AbstractAction("Reset Caches") {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            resetCaches();
+        }
+    };
+
+    private Action freeTempMean = new AbstractAction("Temp. Mean (filter)") {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+        }
     };
 
     public TimeSpaceDSPanel() {
@@ -126,6 +142,8 @@ public class TimeSpaceDSPanel extends JPanel {
         for (Action a : actions) {
             a.setEnabled(false);
         }
+        freeTempMean.setEnabled(false);
+        cacheReset.setEnabled(false);
 
         mainLayout = new GridBagLayout();
         this.setLayout(mainLayout);
@@ -133,35 +151,114 @@ public class TimeSpaceDSPanel extends JPanel {
         timeList = new JList();
         JScrollPane timeListScroll = new JScrollPane(timeList);
         timeListScroll.setPreferredSize(LIST_DIMENSION);
+        timeList.addListSelectionListener(new ListSelectionListener() {
+
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    if (timeList.getSelectedValues().length == 1) {
+                        timePoint.setEnabled(true);
+                        timeMean.setEnabled(false);
+                        freeTempMean.setEnabled(false);
+                    } else if (timeList.getSelectedValues().length > 1) {
+                        timePoint.setEnabled(false);
+                        timeMean.setEnabled(true);
+                        freeTempMean.setEnabled(true);
+                    } else {
+                        timePoint.setEnabled(false);
+                        timeMean.setEnabled(false);
+                        freeTempMean.setEnabled(false);
+                    }
+                }
+            }
+        });
 
         entityList = new JList();
         JScrollPane entityListScroll = new JScrollPane(entityList);
-        entityListScroll.setPreferredSize(LIST_DIMENSION);
+        entityListScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width - 50, LIST_DIMENSION.height));
+        entityList.addListSelectionListener(new ListSelectionListener() {
+
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    if (entityList.getSelectedValues().length == 1) {
+                        spacePoint.setEnabled(true);
+                        spaceMean.setEnabled(false);
+                    } else if (entityList.getSelectedValues().length > 1) {
+                        spacePoint.setEnabled(false);
+                        spaceMean.setEnabled(true);
+                    } else {
+                        spacePoint.setEnabled(false);
+                        spaceMean.setEnabled(false);
+                    }
+                }
+            }
+        });
 
         monthList = new JList();
         monthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane monthListScroll = new JScrollPane(monthList);
-        monthListScroll.setPreferredSize(LIST_DIMENSION);
+        monthListScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width - 100, LIST_DIMENSION.height));
+        monthList.addListSelectionListener(new ListSelectionListener() {
+
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    if (monthList.getSelectedValues().length == 1) {
+                        monthMean.setEnabled(true);
+                    } else {
+                        monthMean.setEnabled(false);
+                    }
+                }
+            }
+        });
 
         yearList = new JList();
         yearList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane yearListScroll = new JScrollPane(yearList);
-        yearListScroll.setPreferredSize(LIST_DIMENSION);
+        yearListScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width - 100, LIST_DIMENSION.height));
+        yearList.addListSelectionListener(new ListSelectionListener() {
+
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    if (yearList.getSelectedValues().length == 1) {
+                        yearMean.setEnabled(true);
+                    } else {
+                        yearMean.setEnabled(false);
+                    }
+                }
+            }
+        });
 
         LHelper.addGBComponent(this, mainLayout, new JLabel("Time Steps:"), 10, 10, 1, 1, 0, 0);
         LHelper.addGBComponent(this, mainLayout, timeListScroll, 10, 20, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Spatial Entitiy IDs:"), 20, 10, 1, 1, 0, 0);
+        LHelper.addGBComponent(this, mainLayout, new JLabel("Entitiy IDs:"), 20, 10, 1, 1, 0, 0);
         LHelper.addGBComponent(this, mainLayout, entityListScroll, 20, 20, 1, 1, 0, 0);
 
         JPanel buttonPanelA = new JPanel();
         buttonPanelA.setPreferredSize(LIST_DIMENSION);
+        JButton button;
 
-        for (int i = 0; i <= 4; i++) {
+        for (int i = 0; i <= 3; i++) {
             Action a = actions[i];
-            JButton button = new JButton(a);
+            button = new JButton(a);
             button.setPreferredSize(ACTION_BUTTON_DIM);
             buttonPanelA.add(button);
         }
+
+        JPanel filterPanel = new JPanel();
+        filterPanel.setPreferredSize(new Dimension(LIST_DIMENSION.width, LIST_DIMENSION.height - 150));
+        filterPanel.setBorder(BorderFactory.createEtchedBorder());
+
+        filterPanel.add(new JLabel("Time Filter:"));
+        timeField = new JTextField();
+        timeField.setEnabled(false);
+        timeField.setToolTipText("Date expression in SQL syntax, e.g. \"1992-11-%\" for all November values in 1992");
+        timeField.setPreferredSize(new Dimension(ACTION_BUTTON_DIM.width - 20, timeField.getPreferredSize().height));
+        filterPanel.add(timeField);
+
+        button = new JButton(freeTempMean);
+        button.setPreferredSize(new Dimension(ACTION_BUTTON_DIM.width - 20, ACTION_BUTTON_DIM.height));
+        filterPanel.add(button);
+
+        buttonPanelA.add(filterPanel);
 
         LHelper.addGBComponent(this, mainLayout, buttonPanelA, 30, 20, 1, 1, 0, 0);
 
@@ -173,12 +270,18 @@ public class TimeSpaceDSPanel extends JPanel {
         JPanel buttonPanelB = new JPanel();
         buttonPanelB.setPreferredSize(LIST_DIMENSION);
 
-        for (int i = 5; i < actions.length; i++) {
+        for (int i = 4; i < actions.length; i++) {
             Action a = actions[i];
-            JButton button = new JButton(a);
+            button = new JButton(a);
             button.setPreferredSize(ACTION_BUTTON_DIM);
             buttonPanelB.add(button);
         }
+
+        buttonPanelB.add(new JPanel());
+        button = new JButton(cacheReset);
+        button.setPreferredSize(ACTION_BUTTON_DIM);
+        buttonPanelB.add(button);
+
 
         LHelper.addGBComponent(this, mainLayout, buttonPanelB, 70, 20, 1, 1, 0, 0);
     }
@@ -206,7 +309,7 @@ public class TimeSpaceDSPanel extends JPanel {
         TimeSpaceProcessor tsproc = new TimeSpaceProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat");
         tsproc.isTimeSpaceDatastore();
         tsp.setTsproc(tsproc);
-        tsproc.close();
+    //tsproc.close();
     }
 
     /**
@@ -274,14 +377,12 @@ public class TimeSpaceDSPanel extends JPanel {
             }
         });
 
-        for (Action a : actions) {
-            a.setEnabled(true);
-        }
+        cacheReset.setEnabled(true);
+        timeField.setEnabled(true);
 
         tsproc.addProcessingProgressObserver(new Observer() {
 
             public void update(Observable o, Object arg) {
-                System.out.println(arg);
                 workerDlg.setProgress(Integer.parseInt(arg.toString()));
             }
         });
@@ -290,20 +391,32 @@ public class TimeSpaceDSPanel extends JPanel {
 
     private void showTimeStep() {
 
-        if (timeList.getSelectedValues().length > 1) {
+        if ((timeList.getSelectedValues().length == 0) || (timeList.getSelectedValues().length > 1)) {
             return;
         }
 
-        JAMSCalendar date = (JAMSCalendar) timeList.getSelectedValue();
-        if (date == null) {
-            return;
-        }
-        try {
-            DataMatrix m = tsproc.getSpatialData(date);
-            m.output();
-        } catch (SQLException ex) {
-        } catch (IOException ex) {
-        }
+        workerDlg.setInderminate(true);
+        workerDlg.setTask(new CancelableRunnable() {
+
+            public void run() {
+                try {
+                    JAMSCalendar date = (JAMSCalendar) timeList.getSelectedValue();
+                    if (date == null) {
+                        return;
+                    }
+                    DataMatrix m = tsproc.getTemporalData(date);
+                    loadData(m);
+
+                } catch (SQLException ex) {
+                } catch (IOException ex) {
+                }
+            }
+
+            public int cancel() {
+                return 0;
+            }
+        });
+        workerDlg.execute();
     }
 
     private void showMonthlyAvg() {
@@ -321,15 +434,15 @@ public class TimeSpaceDSPanel extends JPanel {
 
                     int month = (Integer) monthList.getSelectedValue();
 
-                    if (!tsproc.isMonthlyAvgExisiting()) {
-                        tsproc.calcMonthlyAvg();
+                    if (!tsproc.isMonthlyMeanExisiting()) {
+                        tsproc.calcMonthlyMean();
                     }
 
                     workerDlg.setInderminate(true);
 
-                    DataMatrix m = tsproc.getMonthlyAvg(month);
+                    DataMatrix m = tsproc.getMonthlyMean(month);
+                    loadData(m);
 
-                    m.output();
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
                 }
@@ -358,15 +471,15 @@ public class TimeSpaceDSPanel extends JPanel {
 
                     int year = (Integer) yearList.getSelectedValue();
 
-                    if (!tsproc.isYearlyAvgExisiting()) {
-                        tsproc.calcYearlyAvg();
+                    if (!tsproc.isYearlyMeanExisiting()) {
+                        tsproc.calcYearlyMean();
                     }
 
                     workerDlg.setInderminate(true);
 
-                    DataMatrix m = tsproc.getYearlyAvg(year);
+                    DataMatrix m = tsproc.getYearlyMean(year);
+                    loadData(m);
 
-                    m.output();
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
                 }
@@ -407,13 +520,13 @@ public class TimeSpaceDSPanel extends JPanel {
                     // if so, we better derive temp avg from monthly means
                     if (dates.length == timeList.getModel().getSize()) {
                         // check if cache tables are available
-                        if (!tsproc.isMonthlyAvgExisiting()) {
-                            tsproc.calcMonthlyAvg();
+                        if (!tsproc.isMonthlyMeanExisiting()) {
+                            tsproc.calcMonthlyMean();
                         }
                         workerDlg.setInderminate(true);
 
 
-                        if (!tsproc.isMonthlyAvgExisiting()) {
+                        if (!tsproc.isMonthlyMeanExisiting()) {
                             return;
                         }
 
@@ -421,10 +534,70 @@ public class TimeSpaceDSPanel extends JPanel {
 
                     } else {
 
-                        m = tsproc.getTemporalAvg(dates);
+                        workerDlg.setInderminate(true);
+                        m = tsproc.getTemporalMean(dates);
 
                     }
-                    m.output();
+                    loadData(m);
+
+                } catch (SQLException ex) {
+                } catch (IOException ex) {
+                }
+            }
+
+            public int cancel() {
+                tsproc.sendAbortOperation();
+                return 0;
+            }
+        });
+        workerDlg.execute();
+    }
+
+    private void showSpatEntity() {
+        if (entityList.getSelectedValues().length == 0) {
+            return;
+        }
+
+        workerDlg.setInderminate(false);
+        workerDlg.setProgress(0);
+        workerDlg.setTask(new CancelableRunnable() {
+
+            public void run() {
+                try {
+
+                    Object[] objects = entityList.getSelectedValues();
+
+                    long[] ids = new long[objects.length];
+                    int c = 0;
+                    for (Object o : objects) {
+                        ids[c++] = (Long) o;
+                    }
+
+                    DataMatrix m = null;
+
+                    // check if number of selected ids is equal to all ids
+                    // if so, we better derive temp avg from monthly means
+                    if (ids.length == entityList.getModel().getSize()) {
+                        // check if cache tables are available
+                        if (!tsproc.isSpatMeanExisiting()) {
+                            tsproc.calcSpatialMean();
+                        }
+                        workerDlg.setInderminate(true);
+
+                        if (!tsproc.isSpatMeanExisiting()) {
+                            return;
+                        }
+
+                        m = tsproc.getSpatialMean();
+
+                    } else {
+
+                        workerDlg.setInderminate(true);
+                        m = tsproc.getSpatialMean(ids);
+
+                    }
+                    loadData(m);
+
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
                 }
@@ -443,5 +616,9 @@ public class TimeSpaceDSPanel extends JPanel {
             tsproc.deleteCache();
         } catch (SQLException ex) {
         }
+    }
+
+    private void loadData(DataMatrix m) {
+        m.output();
     }
 }

@@ -148,7 +148,7 @@ public class TimeSpaceProcessor {
         }
         query += " ORDER BY position";
 
-        System.out.println(query);
+//        System.out.println(query);
 
         ResultSet rs = customSelectQuery(query);
         return rs;
@@ -174,7 +174,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getSpatialData(JAMSCalendar date) throws SQLException, IOException {
+    public synchronized DataMatrix getTemporalData(JAMSCalendar date) throws SQLException, IOException {
 
         String oldFormat = ((SimpleDateFormat) date.getDateFormat()).toPattern();
         date.setDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -200,7 +200,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getTemporalAvg(JAMSCalendar[] dates) throws SQLException, IOException {
+    public synchronized DataMatrix getTemporalMean(JAMSCalendar[] dates) throws SQLException, IOException {
 
         if ((dates == null) || (dates.length == 0)) {
             return null;
@@ -216,7 +216,7 @@ public class TimeSpaceProcessor {
                 return null;
             }
 
-            matrix = getSpatialData(date);
+            matrix = getTemporalData(date);
 
             if (matrix != null) {
                 if (aggregate == null) {
@@ -252,7 +252,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getTemporalAvg(String datePattern) throws SQLException, IOException {
+    public synchronized DataMatrix getTemporalMean(String datePattern) throws SQLException, IOException {
 
         // set the temporal filter and get the result set
         setTimeFilter(datePattern);
@@ -293,10 +293,10 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getEntityData(long[] id) throws SQLException, IOException {
+    public synchronized DataMatrix getSpatialMean(long[] ids) throws SQLException, IOException {
 
         int attribCount = getSelectedAttribCount();
-        int[] idPosition = new int[id.length];
+        int[] idPosition = new int[ids.length];
         ArrayList<double[]> data = new ArrayList<double[]>();
         ArrayList<String> timeStamps = new ArrayList<String>();
 
@@ -308,14 +308,14 @@ public class TimeSpaceProcessor {
         if (rs.next()) {
             DataMatrix m = dsdb.getData(rs.getLong("POSITION"));
             ArrayList<double[]> a = new ArrayList<double[]>();
-            for (int i = 0; i < id.length; i++) {
-                idPosition[i] = m.getIDPosition(String.valueOf(id[i]));
+            for (int i = 0; i < ids.length; i++) {
+                idPosition[i] = m.getIDPosition(String.valueOf(ids[i]));
                 if (idPosition[i] == -1) {
                     return null;
                 }
                 a.add(m.getRow(idPosition[i]));
             }
-            data.add(getAvg(a));
+            data.add(getMean(a));
             timeStamps.add(rs.getTimestamp(timeID).toString());
         } else {
             return null;
@@ -326,12 +326,17 @@ public class TimeSpaceProcessor {
 
         // loop over datasets
         while (rs.next()) {
+
+            if (abortOperation) {
+                return null;
+            }
+
             DataMatrix m = dsdb.getData(rs.getLong("POSITION"));
             ArrayList<double[]> a = new ArrayList<double[]>();
-            for (int i = 0; i < id.length; i++) {
+            for (int i = 0; i < ids.length; i++) {
                 a.add(m.getRow(idPosition[i]));
             }
-            data.add(getAvg(a));
+            data.add(getMean(a));
             timeStamps.add(rs.getTimestamp(timeID).toString());
 
             // update the observer
@@ -351,7 +356,7 @@ public class TimeSpaceProcessor {
         return result;
     }
 
-    private synchronized double[] getAvg(ArrayList<double[]> a) {
+    private synchronized double[] getMean(ArrayList<double[]> a) {
 
         double[] result = a.get(0);
         double[] b;
@@ -376,11 +381,11 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getSpatialAvg() throws SQLException, IOException {
+    public synchronized DataMatrix getSpatialMean() throws SQLException, IOException {
 
         DataMatrix result = null;
 
-        if (!isSpatAvgExisiting()) {
+        if (!isSpatMeanExisiting()) {
             return result;
         }
 
@@ -418,12 +423,12 @@ public class TimeSpaceProcessor {
      */
     public synchronized DataMatrix getTemporalAvg() throws SQLException, IOException {
 
-        DataMatrix aggregate = getMonthlyAvg(1);
+        DataMatrix aggregate = getMonthlyMean(1);
         if (aggregate == null) {
             return null;
         }
         for (int i = 2; i <= 12; i++) {
-            DataMatrix monthlyData = getMonthlyAvg(i);
+            DataMatrix monthlyData = getMonthlyMean(i);
             if (monthlyData == null) {
                 return null;
             }
@@ -442,12 +447,12 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getMonthlyAvg(int month) throws SQLException, IOException {
+    public synchronized DataMatrix getMonthlyMean(int month) throws SQLException, IOException {
 
         DataMatrix result = null;
 
         // check if the values have already been calculated, return null if not
-        if (!isMonthlyAvgExisiting()) {
+        if (!isMonthlyMeanExisiting()) {
             return result;
         }
 
@@ -487,12 +492,12 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getYearlyAvg(int year) throws SQLException, IOException {
+    public synchronized DataMatrix getYearlyMean(int year) throws SQLException, IOException {
 
         DataMatrix result = null;
 
         // check if the values have already been calculated, return null if not
-        if (!isYearlyAvgExisiting()) {
+        if (!isYearlyMeanExisiting()) {
             return result;
         }
 
@@ -546,15 +551,15 @@ public class TimeSpaceProcessor {
         }
     }
 
-    public boolean isYearlyAvgExisiting() throws SQLException {
+    public boolean isYearlyMeanExisiting() throws SQLException {
         return isTableExisting(TABLE_NAME_YEARAVG);
     }
 
-    public boolean isMonthlyAvgExisiting() throws SQLException {
+    public boolean isMonthlyMeanExisiting() throws SQLException {
         return isTableExisting(TABLE_NAME_MONTHAVG);
     }
 
-    public boolean isSpatAvgExisiting() throws SQLException {
+    public boolean isSpatMeanExisiting() throws SQLException {
         return isTableExisting(TABLE_NAME_SPATAVG);
     }
 
@@ -571,7 +576,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized void calcYearlyAvg() throws SQLException, IOException {
+    public synchronized void calcYearlyMean() throws SQLException, IOException {
 
         // get number of selected attributes
         int numSelected = getSelectedAttribCount();
@@ -591,7 +596,6 @@ public class TimeSpaceProcessor {
 
         // get min and max dates
         q = "SELECT min(" + timeID + ") AS MINDATE, max(" + timeID + ") AS MAXDATE FROM index";
-        System.out.println(q);
         ResultSet rs = customSelectQuery(q);
         rs.next();
         JAMSCalendar minDate = JAMSDataFactory.createCalendar();
@@ -605,7 +609,7 @@ public class TimeSpaceProcessor {
         // loop over years
         for (int i = minDate.get(JAMSCalendar.YEAR); i <= maxDate.get(JAMSCalendar.YEAR); i++) {
             String filterString = String.format("%04d", i) + "-%-%";
-            calcTemporalAvg(filterString, TABLE_NAME_YEARAVG, String.valueOf(i));
+            calcTemporalMean(filterString, TABLE_NAME_YEARAVG, String.valueOf(i));
 
             if (abortOperation) {
                 customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_YEARAVG);
@@ -626,7 +630,6 @@ public class TimeSpaceProcessor {
 
         // get min and max dates
         String q = "SELECT min(" + timeID + ") AS MINDATE, max(" + timeID + ") AS MAXDATE FROM index";
-        System.out.println(q);
         ResultSet rs = customSelectQuery(q);
         rs.next();
         JAMSCalendar minDate = JAMSDataFactory.createCalendar();
@@ -652,7 +655,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized void calcMonthlyAvg() throws SQLException, IOException {
+    public synchronized void calcMonthlyMean() throws SQLException, IOException {
 
         // get number of selected attributes
         int numSelected = getSelectedAttribCount();
@@ -677,7 +680,7 @@ public class TimeSpaceProcessor {
 
             // calc the monthly average values
             String filterString = "%-" + String.format("%02d", i) + "-%";
-            calcTemporalAvg(filterString, TABLE_NAME_MONTHAVG, String.valueOf(i));
+            calcTemporalMean(filterString, TABLE_NAME_MONTHAVG, String.valueOf(i));
 
             if (abortOperation) {
                 customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_MONTHAVG);
@@ -693,7 +696,7 @@ public class TimeSpaceProcessor {
         }
     }
 
-    private synchronized DataMatrix calcTemporalAvg(String filter, String tableName, String id) throws SQLException, IOException {
+    private synchronized DataMatrix calcTemporalMean(String filter, String tableName, String id) throws SQLException, IOException {
 
         // set the temporal filter and get the result set
         setTimeFilter(filter);
@@ -749,7 +752,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix calcSpatialAvg() throws SQLException, IOException {
+    public synchronized DataMatrix calcSpatialMean() throws SQLException, IOException {
 
         int attribCount = getSelectedAttribCount();
         long position;
@@ -781,6 +784,11 @@ public class TimeSpaceProcessor {
             DataMatrix m = dsdb.getData(position);
             data.add(m.getAvgRow());
             timeStamps.add(rs.getTimestamp(timeID).toString());
+
+            if (abortOperation) {
+                customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_SPATAVG);
+                return null;
+            }
 
             // update the observer
             counter++;
@@ -932,12 +940,12 @@ public class TimeSpaceProcessor {
 //        JAMSCalendar date = new JAMSCalendar();
 //        date.setValue("1995-11-01 07:30");
 //
-//        //output(tsproc.getSpatialData(date));
+//        //output(tsproc.getTemporalData(date));
 //        tsproc.setSpaceFilter("42");
 //        tsproc.setTimeFilter("%-02-%");
 //        tsproc.setAggregator("sum");
 //
-//        output(tsproc.getSpatialData());
+//        output(tsproc.getTemporalData());
 
         ArrayList<DataStoreProcessor.AttributeData> attribs = tsproc.getDataStoreProcessor().getAttributes();
         for (DataStoreProcessor.AttributeData attrib : attribs) {
@@ -960,19 +968,19 @@ public class TimeSpaceProcessor {
 
         tsproc.deleteCache();
 
-        int c = 0;
+        int c = 4;
 
         DataMatrix m = null;
         switch (c) {
             case 0:
                 // calc/get longterm monthly mean values
-                tsproc.calcMonthlyAvg();
-                m = tsproc.getMonthlyAvg(12);
+                tsproc.calcMonthlyMean();
+                m = tsproc.getMonthlyMean(12);
                 break;
             case 1:
                 // calc/get yearly mean values
-                //tsproc.calcYearlyAvg();
-                m = tsproc.getYearlyAvg(1997);
+                //tsproc.calcYearlyMean();
+                m = tsproc.getYearlyMean(1997);
                 break;
             case 2:
                 // get overall temporal mean values
@@ -981,24 +989,24 @@ public class TimeSpaceProcessor {
                 break;
             case 3:
                 // calc/get overall spatial mean values
-                tsproc.calcSpatialAvg();
-                m = tsproc.getSpatialAvg();
+                tsproc.calcSpatialMean();
+                m = tsproc.getSpatialMean();
                 break;
             case 4:
                 // get spatial mean values for selected entities
                 //long[] ids = {1, 3, 5, 7, 9};
                 long[] ids = {1};
-                m = tsproc.getEntityData(ids);
+                m = tsproc.getSpatialMean(ids);
                 break;
             case 5:
                 // get values for a specific date
                 JAMSCalendar cal = JAMSDataFactory.createCalendar();
                 cal.setValue("2000-10-31 07:30");
-                m = tsproc.getSpatialData(cal);
+                m = tsproc.getTemporalData(cal);
                 break;
             case 6:
                 // get temporal mean values matching a date pattern
-                m = tsproc.getTemporalAvg("2%-10-30 07:30%");
+                m = tsproc.getTemporalMean("2%-10-30 07:30%");
                 break;
             case 7:
                 // get temporal mean values for an array of specific dates
@@ -1007,7 +1015,7 @@ public class TimeSpaceProcessor {
                 dates[0].setValue("2000-10-31 07:30");
                 dates[1] = JAMSDataFactory.createCalendar();
                 dates[1].setValue("2000-10-30 07:30");
-                m = tsproc.getTemporalAvg(dates);
+                m = tsproc.getTemporalMean(dates);
                 break;
             case 8:
                 dates = tsproc.getTimeSteps();
