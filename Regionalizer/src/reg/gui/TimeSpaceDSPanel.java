@@ -162,15 +162,12 @@ public class TimeSpaceDSPanel extends JPanel {
                     if (timeList.getSelectedValues().length == 1) {
                         timePoint.setEnabled(true);
                         timeMean.setEnabled(false);
-                        freeTempMean.setEnabled(false);
                     } else if (timeList.getSelectedValues().length > 1) {
                         timePoint.setEnabled(false);
                         timeMean.setEnabled(true);
-                        freeTempMean.setEnabled(true);
                     } else {
                         timePoint.setEnabled(false);
                         timeMean.setEnabled(false);
-                        freeTempMean.setEnabled(false);
                     }
                 }
             }
