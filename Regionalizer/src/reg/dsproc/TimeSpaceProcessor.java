@@ -154,6 +154,34 @@ public class TimeSpaceProcessor {
         return rs;
     }
 
+    /**
+     * Check how many results are created
+     * @return The number of results
+     * @throws java.sql.SQLException
+     */
+    public synchronized int getResultCount() throws SQLException {
+
+        String query = "SELECT count(*) as COUNT FROM index";
+
+        if (timeFilter != null) {
+
+            query += " WHERE ";
+            String s = null;
+            if (timeFilter != null) {
+                if (timeFilter.contains("%")) {
+                    s = " LIKE '" + timeFilter + "'";
+                } else {
+                    s = " = '" + timeFilter + "'";
+                }
+                query += timeID + s;
+            }
+        }
+
+        ResultSet rs = customSelectQuery(query);
+        rs.next();
+        return rs.getInt("COUNT");
+    }
+
     private synchronized int getSelectedAttribCount() {
         // get number of selected attributes
         int numSelected = 0;
@@ -256,13 +284,16 @@ public class TimeSpaceProcessor {
 
         // set the temporal filter and get the result set
         setTimeFilter(datePattern);
+
         ResultSet rs = getData();
+        int max = getResultCount();
 
         // we have a set of positions now, so get the matrixes and rock'n roll
         // get the first dataset
         long position;
         DataMatrix aggregate;
-        int count = 1;
+        int count = 1, percent = 0;
+        ;
 
         if (rs.next()) {
             position = rs.getLong("POSITION");
@@ -273,14 +304,25 @@ public class TimeSpaceProcessor {
 
         // loop over datasets for current month
         while (rs.next()) {
+
+            if (abortOperation) {
+                return null;
+            }
+
             position = rs.getLong("POSITION");
             DataMatrix m = dsdb.getData(position);
             aggregate = aggregate.plus(m);
             count++;
+
+            // update the observer
+            int current = Math.round((count * 100) / max);
+            if (current > percent) {
+                percent = current;
+                processingProgressObservable.setProgress(percent);
+            }
         }
 
         aggregate = aggregate.times(1f / count);
-
         return aggregate;
     }
 
@@ -625,7 +667,7 @@ public class TimeSpaceProcessor {
             }
         }
     }
-    
+
     public synchronized int[] getYears() throws SQLException {
 
         // get min and max dates
@@ -637,9 +679,9 @@ public class TimeSpaceProcessor {
         minDate.setValue(rs.getTimestamp("MINDATE").toString());
         maxDate.setValue(rs.getTimestamp("MAXDATE").toString());
 
-        int startYear = minDate.get(JAMSCalendar.YEAR); 
+        int startYear = minDate.get(JAMSCalendar.YEAR);
         int endYear = maxDate.get(JAMSCalendar.YEAR);
-        int[] years = new int[endYear-startYear+1];
+        int[] years = new int[endYear - startYear + 1];
         int c = 0;
 
         for (int i = startYear; i <= endYear; i++) {

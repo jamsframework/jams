@@ -28,6 +28,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -46,6 +47,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import reg.dsproc.DataMatrix;
@@ -84,7 +87,7 @@ public class TimeSpaceDSPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                showTimeAvg();
+                showTempMean();
             }
         },
         new AbstractAction("Spatial Entity") {
@@ -105,14 +108,14 @@ public class TimeSpaceDSPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                showMonthlyAvg();
+                showMonthlyMean();
             }
         },
         new AbstractAction("Yearly Mean") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                showYearlyAvg();
+                showYearlyMean();
             }
         },};
 
@@ -130,6 +133,7 @@ public class TimeSpaceDSPanel extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            showFreeTempMean();
         }
     };
 
@@ -252,6 +256,25 @@ public class TimeSpaceDSPanel extends JPanel {
         timeField.setEnabled(false);
         timeField.setToolTipText("Date expression in SQL syntax, e.g. \"1992-11-%\" for all November values in 1992");
         timeField.setPreferredSize(new Dimension(ACTION_BUTTON_DIM.width - 20, timeField.getPreferredSize().height));
+        timeField.getDocument().addDocumentListener(new DocumentListener() {
+
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+
+            private void update() {
+                toggleFreeTempMeanButton();
+            }
+        });
+
         filterPanel.add(timeField);
 
         button = new JButton(freeTempMean);
@@ -300,7 +323,8 @@ public class TimeSpaceDSPanel extends JPanel {
         }
         TimeSpaceDSPanel tsp = new TimeSpaceDSPanel();
         JFrame frame = new JFrame();
-        frame.add(tsp);
+        JScrollPane scroll = new JScrollPane(tsp);
+        frame.add(scroll);
         tsp.setParent(frame);
         //frame.setPreferredSize(new Dimension(300, 100));
         frame.pack();
@@ -419,7 +443,7 @@ public class TimeSpaceDSPanel extends JPanel {
         workerDlg.execute();
     }
 
-    private void showMonthlyAvg() {
+    private void showMonthlyMean() {
 
         if (monthList.getSelectedValues().length == 0) {
             return;
@@ -456,7 +480,7 @@ public class TimeSpaceDSPanel extends JPanel {
         workerDlg.execute();
     }
 
-    private void showYearlyAvg() {
+    private void showYearlyMean() {
 
         if (yearList.getSelectedValues().length == 0) {
             return;
@@ -493,7 +517,7 @@ public class TimeSpaceDSPanel extends JPanel {
         workerDlg.execute();
     }
 
-    private void showTimeAvg() {
+    private void showTempMean() {
 
         if (timeList.getSelectedValues().length == 0) {
             return;
@@ -534,7 +558,6 @@ public class TimeSpaceDSPanel extends JPanel {
 
                     } else {
 
-                        workerDlg.setInderminate(true);
                         m = tsproc.getTemporalMean(dates);
 
                     }
@@ -592,7 +615,6 @@ public class TimeSpaceDSPanel extends JPanel {
 
                     } else {
 
-                        workerDlg.setInderminate(true);
                         m = tsproc.getSpatialMean(ids);
 
                     }
@@ -609,6 +631,48 @@ public class TimeSpaceDSPanel extends JPanel {
             }
         });
         workerDlg.execute();
+    }
+
+    private void showFreeTempMean() {
+
+        String filter = timeField.getText();
+        if (!filter.contains("%") && !filter.contains("?")) {
+            return;
+        }
+
+        workerDlg.setInderminate(false);
+        workerDlg.setProgress(0);
+        workerDlg.setTask(new CancelableRunnable() {
+
+            public void run() {
+                try {
+                    String filter = timeField.getText();
+
+                    DataMatrix m = tsproc.getTemporalMean(filter);
+
+                    loadData(m);
+
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                }
+            }
+
+            public int cancel() {
+                tsproc.sendAbortOperation();
+                return 0;
+            }
+        });
+        workerDlg.execute();
+    }
+
+    private void toggleFreeTempMeanButton() {
+        String filter = timeField.getText();
+        if (!filter.contains("%") && !filter.contains("?")) {
+            freeTempMean.setEnabled(false);
+        } else {
+            freeTempMean.setEnabled(true);
+        }
     }
 
     private void resetCaches() {
