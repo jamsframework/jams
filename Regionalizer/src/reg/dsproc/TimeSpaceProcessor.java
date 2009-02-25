@@ -24,6 +24,7 @@ package reg.dsproc;
 
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -60,8 +61,8 @@ public class TimeSpaceProcessor {
 
     private boolean abortOperation = false;
 
-    public TimeSpaceProcessor(String fileName) {
-        this(new DataStoreProcessor(fileName));
+    public TimeSpaceProcessor(File file) {
+        this(new DataStoreProcessor(file));
     }
 
     public TimeSpaceProcessor(DataStoreProcessor dsdb) {
@@ -75,7 +76,7 @@ public class TimeSpaceProcessor {
             try {
                 this.conn = dsdb.getH2Connection(true);
             } catch (SQLException ex) {
-                System.out.println("Error while creating connection to H2 database of " + dsdb.getFileName());
+                System.out.println("Error while creating connection to H2 database of " + dsdb.getFile());
             }
         }
     }
@@ -982,7 +983,7 @@ public class TimeSpaceProcessor {
     }
 
     public static void main(String[] args) throws Exception {
-        TimeSpaceProcessor tsproc = new TimeSpaceProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat");
+        TimeSpaceProcessor tsproc = new TimeSpaceProcessor(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat"));
         tsproc.isTimeSpaceDatastore();
 
 //        JAMSCalendar date = new JAMSCalendar();

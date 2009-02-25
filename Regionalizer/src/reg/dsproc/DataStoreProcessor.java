@@ -22,11 +22,11 @@
  */
 package reg.dsproc;
 
-import Jama.Matrix;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -49,7 +49,7 @@ public class DataStoreProcessor {
 
     public static final String DB_USER = "jamsuser",  DB_PASSWORD = "";
 
-    private String fileName;
+    private File dsFile;
 
     private ArrayList<ContextData> contexts = new ArrayList<ContextData>();
 
@@ -69,8 +69,8 @@ public class DataStoreProcessor {
 
     private ImportProgressObservable importProgressObservable = new ImportProgressObservable();
 
-    public DataStoreProcessor(String fileName) {
-        this.fileName = fileName;
+    public DataStoreProcessor(File dsFile) {
+        this.dsFile = dsFile;
 
         try {
             initDS();
@@ -78,7 +78,7 @@ public class DataStoreProcessor {
             Logger.getLogger(DataStoreProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        jdbcURL = "jdbc:h2:" + fileName.substring(0, fileName.lastIndexOf(".")) + ";LOG=0";
+        jdbcURL = "jdbc:h2:" + dsFile.toString().substring(0, dsFile.toString().lastIndexOf(".")) + ";LOG=0";
 
     }
 
@@ -106,7 +106,7 @@ public class DataStoreProcessor {
 
             @Override
             public boolean accept(File pathname) {
-                String prefix = new File(getFileName().substring(0, getFileName().lastIndexOf("."))).getPath();
+                String prefix = new File(dsFile.toString().substring(0, dsFile.toString().lastIndexOf("."))).getPath();
                 if (pathname.getPath().endsWith(".db") && pathname.getPath().startsWith(prefix)) {
                     return true;
                 } else {
@@ -116,7 +116,7 @@ public class DataStoreProcessor {
         };
 
         this.close();
-        File parent = new File(fileName).getParentFile();
+        File parent = dsFile.getParentFile();
         File[] h2Files = parent.listFiles(filter);
 
         for (File h2File : h2Files) {
@@ -131,7 +131,7 @@ public class DataStoreProcessor {
     }
 
     public boolean existsH2DB() {
-        String prefix = fileName.substring(0, fileName.lastIndexOf("."));
+        String prefix = dsFile.toString().substring(0, dsFile.toString().lastIndexOf("."));
         File dataFile = new File(prefix + ".data.db");
         File indexFile = new File(prefix + ".index.db");
         if (dataFile.exists() && indexFile.exists()) {
@@ -236,7 +236,7 @@ public class DataStoreProcessor {
     private void initDS() throws IOException {
         String row;
         StringTokenizer tok;
-        reader = new BufferedFileReader(new FileInputStream(new File(fileName)));
+        reader = new BufferedFileReader(new FileInputStream(dsFile));
 
         // @context row
         row = reader.readLine();
@@ -394,7 +394,8 @@ public class DataStoreProcessor {
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
-        DataStoreProcessor dsdb = new DataStoreProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat");
+
+        DataStoreProcessor dsdb = new DataStoreProcessor(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat"));
 //        DataStoreProcessor dsdb = new DataStoreProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/TimeLoop.dat");
         dsdb.addImportProgressObserver(new Observer() {
 
@@ -438,8 +439,8 @@ public class DataStoreProcessor {
     /**
      * @return the fileName
      */
-    public String getFileName() {
-        return fileName;
+    public File getFile() {
+        return dsFile;
     }
 
     public void addImportProgressObserver(Observer o) {
@@ -496,7 +497,7 @@ public class DataStoreProcessor {
         double[][] data = rows.toArray(new double[rows.size()][numSelected]);
         String ids[] = idList.toArray(new String[idList.size()]);
 
-        return new DataMatrix(data, ids,this);
+        return new DataMatrix(data, ids, this);
     }
 
     public class ContextData {

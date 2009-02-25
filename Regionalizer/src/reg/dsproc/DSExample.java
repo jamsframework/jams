@@ -22,7 +22,10 @@
  */
 package reg.dsproc;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.Observable;
 import java.util.Observer;
@@ -33,10 +36,10 @@ import java.util.Observer;
  */
 public class DSExample {
 
-    public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException, URISyntaxException {
 
-        DataStoreProcessor dsdb = new DataStoreProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop.dat");
-        //dsdb.removeDB();
+        URL dsURL = ClassLoader.getSystemResource("reg/dsproc/HRULoop.dat");
+        DataStoreProcessor dsdb = new DataStoreProcessor(new File(dsURL.toURI()));
         dsdb.addImportProgressObserver(new Observer() {
 
             public void update(Observable o, Object arg) {
@@ -81,6 +84,8 @@ public class DSExample {
 //                monthlyMean.output();
             }
         }
+
+//        dsdb.removeDB();
 
     }
 }
