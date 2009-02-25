@@ -45,142 +45,83 @@ import jams.gui.WorkerDlg;
 public class JTSConfigurator extends JFrame {
 
     GroupLayout gLayout;
-
     GroupLayout.SequentialGroup hGroup;
-
     GroupLayout.SequentialGroup vGroup;
-
     Group group1;
-
     Group group2;
-
     Group group3;
-
     Group group4;
-
     Group group5;
-
     Group group6;
-
     Group group7;
-
     Group group8;
-
     Group group9;
-
     Group group10;
-
     Group group11;
-
     Group group12;
-
     Group group13;
-
     Group group14;
-
     Group group15;
 
     private Vector<ActionListener> addAction = new Vector<ActionListener>();
-
     private JTSConfigurator thisJTS = this;
 
     private JFrame parent;
-
     private JPanel frame;
-
     private JPanel mainpanel;
-
     private JPanel plotpanel;
-
     private JPanel optionpanel;
-
     private JPanel graphpanel;
-
     private JPanel southpanel;
     //private Vector<JPanel> datapanels = new Vector<JPanel>();
-
     private JPanel edTitlePanel;
-
     private JPanel edLeftAxisPanel;
-
     private JPanel edRightAxisPanel;
-
     private JPanel edTimeAxisPanel;
-
     private JPanel savePanel;
 
     private File templateFile;
-    //Hi Res Box
-//    private HiResDlg hiresDlg;
 
     private JSplitPane split_hor = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-
     private JSplitPane split_vert = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-
     private JPanel[] datapanels;
 
     private JScrollPane graphScPane;
-
     private JScrollPane plotScPane;
-
     private JScrollPane mainScPane;
-
     private JScrollPane optScPane;
 
     private String[] headers;
 
     private JLabel edTitle = new JLabel("Plot Title: ");
-
     private JLabel edLeft = new JLabel("Left axis title: ");
-
     private JLabel edXAxis = new JLabel("X axis title");
-
     private JLabel edRight = new JLabel("Right axis title: ");
-
     private JLabel rLeftLabel = new JLabel("Renderer left");
-
     private JLabel rRightLabel = new JLabel("Renderer right");
-
     private JLabel invLeftLabel = new JLabel("Invert left axis");
-
     private JLabel invRightLabel = new JLabel("Invert right axis");
-
     private JLabel timeFormatLabel = new JLabel("Time format");
-
     private JTextField edTitleField = new JTextField(14);
-
     private JTextField edLeftField = new JTextField(14);
-
     private JTextField edRightField = new JTextField(14);
-
     private JTextField edXAxisField = new JTextField(14);
 
     private String[] types = {"Line and Shape", "Bar", "Area", "Step", "StepArea", "Difference"};
 
     private JComboBox rLeftBox = new JComboBox(types);
-
     private JComboBox rRightBox = new JComboBox(types);
-
     private JCheckBox invLeftBox = new JCheckBox("Invert left Axis");
-
     private JCheckBox invRightBox = new JCheckBox("Invert right Axis");
-
     private JCheckBox timeFormat_yy = new JCheckBox("yy");
-
     private JCheckBox timeFormat_mm = new JCheckBox("mm");
-
     private JCheckBox timeFormat_dd = new JCheckBox("dd");
-
     private JCheckBox timeFormat_hm = new JCheckBox("hh:mm");
 
     private JButton applyButton = new JButton("Apply");
-
     private JButton addButton = new JButton("Add Graph");
-
     private JButton saveButton = new JButton("EPS export");
-
     private JButton saveTempButton = new JButton("Save Template");
-
     private JButton loadTempButton = new JButton("Load Template");
 
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
@@ -211,6 +152,7 @@ public class JTSConfigurator extends JFrame {
     CTSPlot ctsplot;
 
     /*buttons*/
+    int columnCount = 0;
     int graphCount = 0;
 //    Vector<JCheckBox> activate = new Vector<JCheckBox>();
 //    Vector<JComboBox> datachoice = new Vector<JComboBox>();
@@ -219,13 +161,9 @@ public class JTSConfigurator extends JFrame {
 //    Vector<JComboBox> colorchoice = new Vector<JComboBox>();
 
     JCheckBox[] activate;
-
     JComboBox[] datachoice;
-
     JComboBox[] poschoice;
-
     JComboBox[] typechoice;
-
     JComboBox[] colorchoice;
 
     /* ActionListener */
@@ -254,7 +192,8 @@ public class JTSConfigurator extends JFrame {
 
         this.sheet = sheet;
         this.table = sheet.table;
-
+        
+        this.columnCount = table.getColumnCount();
         this.rows = table.getSelectedRows();
         this.columns = table.getSelectedColumns();
         this.graphCount = columns.length;
@@ -262,10 +201,9 @@ public class JTSConfigurator extends JFrame {
 
 //        this.legendEntries = new String[graphCount];
 
-//        for(int k=0;k<graphCount;k++){
-//            headers[k] = table.getColumnName(columns[k]);
-//            legendEntries[k] = headers[k];
-//        }
+        for(int k=0;k<graphCount;k++){
+            headers[k] = table.getColumnName(columns[k]);
+        }
 
 
         setPreferredSize(new Dimension(1024, 768));
@@ -295,7 +233,11 @@ public class JTSConfigurator extends JFrame {
         this.columns = table.getSelectedColumns();
         this.graphCount = columns.length;
         this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
-
+        
+        for(int k=0;k<graphCount;k++){
+            headers[k] = table.getColumnName(columns[k]);
+        }
+        
         setPreferredSize(new Dimension(1024, 768));
 
         createPanel();
@@ -305,23 +247,6 @@ public class JTSConfigurator extends JFrame {
 
     }
 
-//    public void setTable(JTable table){
-//
-//        this.table = table;
-//        this.rows = table.getSelectedRows();
-//        this.columns = table.getSelectedColumns();
-//        this.graphCount = columns.length;
-//        this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
-//        this.parent = parent;
-//        this.legendEntries = new String[graphCount];
-//
-//        for(int k=0;k<graphCount;k++){
-//            headers[k] = table.getColumnName(columns[k]);
-//            legendEntries[k] = headers[k];
-//        }
-//
-//        /* now call createPanel() */
-//    }
     public void createPanel() {
 
         colour_cnt = 0;
@@ -418,7 +343,7 @@ public class JTSConfigurator extends JFrame {
         rLeftBox.setSelectedIndex(0);
         rRightBox.setSelectedIndex(0);
 
-        ////////////////////////// GRAPH AUSFÃƒÅ“HREN ///////////
+        ////////////////////////// RUN GRAPH ///////////
         if (templateFile != null) {
             try {
                 loadTemplate(templateFile);
@@ -464,7 +389,15 @@ public class JTSConfigurator extends JFrame {
         plotAllGraphs();
 
     }
-
+    
+    public String[] getHeaders(){
+        return this.headers;
+    }
+    
+    public int getColumnCount(){
+        return this.columnCount;
+    }
+    
     private void initGraphLoad() {
 
         Runnable r = new Runnable() {

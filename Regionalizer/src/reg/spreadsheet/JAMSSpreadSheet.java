@@ -71,6 +71,8 @@ public class JAMSSpreadSheet extends JPanel {
     private JButton dataplotButton = new JButton("Data Plot");
 
     private JCheckBox useTemplateButton = new JCheckBox("use Template");
+    
+    private JButton stpButton = new JButton("Stacked Time Plot");
     /* Labels */
 
     private JLabel headerlabel = new JLabel();
@@ -304,6 +306,11 @@ public class JAMSSpreadSheet extends JPanel {
             jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this, null);
         }
     }
+    
+    private void openSTP(){
+        STPConfigurator stp = new STPConfigurator(Regionalizer.getRegionalizerFrame(), 2);
+    }
+    
     ActionListener plotAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -334,6 +341,25 @@ public class JAMSSpreadSheet extends JPanel {
                     openCXYS(dtpFile);
                 }
             }
+
+        }
+    };
+    
+    ActionListener stpAction = new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+
+//            try {
+
+                openSTP();
+
+//            } catch (ClassCastException cce) {
+//
+//                if (timeRuns) {
+//                    table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
+//                    openCXYS(dtpFile);
+//                }
+//            }
 
         }
     };
@@ -475,9 +501,10 @@ public class JAMSSpreadSheet extends JPanel {
         //LHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 2, 1, 1, 0, 0);
         //LHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 3, 1, 2, 0, 0);
 
-        LHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 5, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 6, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 7, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, plotButton,           0, 5, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, dataplotButton,       0, 6, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, useTemplateButton,    0, 7, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, stpButton,            0, 8, 1, 1, 0, 0);
 
 //              controlpanel.add(openbutton);
 //              controlpanel.add(savebutton);
@@ -488,6 +515,7 @@ public class JAMSSpreadSheet extends JPanel {
         savebutton.addActionListener(saveAction);
         plotButton.addActionListener(plotAction);
         dataplotButton.addActionListener(dataplotAction);
+        stpButton.addActionListener(stpAction);
 
         headerpanel.add(titleLabel);
         headerpanel.add(headerlabel);
