@@ -493,7 +493,7 @@ public class DataStoreProcessor {
             }
             rows.add(cols);
         }
-        double[][] data = rows.toArray(new double[numSelected][rows.size()]);
+        double[][] data = rows.toArray(new double[rows.size()][numSelected]);
         String ids[] = idList.toArray(new String[idList.size()]);
 
         return new DataMatrix(data, ids,this);

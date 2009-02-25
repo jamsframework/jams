@@ -28,7 +28,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,6 +51,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import reg.dsproc.DataMatrix;
+import reg.dsproc.DataStoreProcessor;
 import reg.dsproc.TimeSpaceProcessor;
 
 /**
@@ -327,7 +327,21 @@ public class TimeSpaceDSPanel extends JPanel {
         frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        TimeSpaceProcessor tsproc = new TimeSpaceProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat");
+
+        DataStoreProcessor dsdb = new DataStoreProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat");
+        //dsdb.removeDB();
+        dsdb.addImportProgressObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                System.out.println("Import progress: " + arg);
+            }
+        });
+
+        if (!dsdb.existsH2DB()) {
+            dsdb.createDB();
+        }
+        
+        TimeSpaceProcessor tsproc = new TimeSpaceProcessor(dsdb);
         tsproc.isTimeSpaceDatastore();
         tsp.setTsproc(tsproc);
     //tsproc.close();
@@ -342,6 +356,8 @@ public class TimeSpaceDSPanel extends JPanel {
 
     /**
      * @param tsproc the tsproc to set
+     * @throws SQLException
+     * @throws IOException 
      */
     public void setTsproc(TimeSpaceProcessor tsproc) throws SQLException, IOException {
         this.tsproc = tsproc;

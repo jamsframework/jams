@@ -265,7 +265,7 @@ public class TimeSpaceProcessor {
         }
 
         if (aggregate != null) {
-            aggregate = aggregate.times(1f / count);
+            aggregate = aggregate.times(1d / count);
         }
 
         return aggregate;
@@ -322,7 +322,7 @@ public class TimeSpaceProcessor {
             }
         }
 
-        aggregate = aggregate.times(1f / count);
+        aggregate = aggregate.times(1d / count);
         return aggregate;
     }
 
@@ -390,7 +390,7 @@ public class TimeSpaceProcessor {
             }
         }
 
-        double[][] dataArray = data.toArray(new double[attribCount][data.size()]);
+        double[][] dataArray = data.toArray(new double[data.size()][attribCount]);
         String[] timeStampArray = timeStamps.toArray(new String[timeStamps.size()]);
 
         DataMatrix result = new DataMatrix(dataArray, timeStampArray, this.getDataStoreProcessor());
@@ -448,7 +448,7 @@ public class TimeSpaceProcessor {
             ids.add(rs.getString(1));
         }
 
-        double[][] dataArray = data.toArray(new double[attribCount][data.size()]);
+        double[][] dataArray = data.toArray(new double[data.size()][attribCount]);
         String[] idArray = ids.toArray(new String[ids.size()]);
         result = new DataMatrix(dataArray, idArray, this.getDataStoreProcessor());
 
@@ -476,7 +476,7 @@ public class TimeSpaceProcessor {
             }
             aggregate = aggregate.plus(monthlyData);
         }
-        aggregate = aggregate.times(1f / 12);
+        aggregate = aggregate.times(1d / 12);
         return aggregate;
     }
 
@@ -484,6 +484,7 @@ public class TimeSpaceProcessor {
      * Gets the longtime monthly average values of the selected
      * attributes for all entities
      * @param month The month for which the average values shall be returned
+     * as int value between 1 and 12
      * @return A DataMatrix object containing one row per entity with the
      * longtime monthly average values of selected attributes in columns
      * @throws java.sql.SQLException
@@ -518,7 +519,7 @@ public class TimeSpaceProcessor {
         }
 
         // create a DataMatrix object from the results
-        double[][] dataArray = data.toArray(new double[attribCount][data.size()]);
+        double[][] dataArray = data.toArray(new double[data.size()][attribCount]);
         Long[] idArray = ids.toArray(new Long[ids.size()]);
         result = new DataMatrix(dataArray, idArray, this.getDataStoreProcessor());
 
@@ -576,7 +577,7 @@ public class TimeSpaceProcessor {
         }
 
         // create a DataMatrix object from the results
-        double[][] dataArray = data.toArray(new double[attribCount][data.size()]);
+        double[][] dataArray = data.toArray(new double[data.size()][attribCount]);
         Long[] idArray = ids.toArray(new Long[ids.size()]);
         result = new DataMatrix(dataArray, idArray, this.getDataStoreProcessor());
 
@@ -668,6 +669,11 @@ public class TimeSpaceProcessor {
         }
     }
 
+    /**
+     * Get the years that data are available for
+     * @return An int array containing the years
+     * @throws java.sql.SQLException
+     */
     public synchronized int[] getYears() throws SQLException {
 
         // get min and max dates
@@ -718,7 +724,7 @@ public class TimeSpaceProcessor {
         int percent = 0;
 
         // loop over months
-        for (int i = 0; i <= 12; i++) {
+        for (int i = 1; i <= 12; i++) {
 
             // calc the monthly average values
             String filterString = "%-" + String.format("%02d", i) + "-%";
@@ -770,7 +776,7 @@ public class TimeSpaceProcessor {
             count++;
         }
 
-        aggregate = aggregate.times(1f / count);
+        aggregate = aggregate.times(1d / count);
 
         Object ids[] = aggregate.getIds();
         double data[][] = aggregate.getArray();
@@ -841,7 +847,7 @@ public class TimeSpaceProcessor {
             }
         }
 
-        double[][] dataArray = data.toArray(new double[attribCount][data.size()]);
+        double[][] dataArray = data.toArray(new double[data.size()][attribCount]);
         String[] timeStampArray = timeStamps.toArray(new String[timeStamps.size()]);
 
         // write the calculated array to the database
