@@ -80,8 +80,12 @@ public class DSExample {
                 if (monthlyMean == null) {
                     continue;
                 }
-                double[][] data = monthlyMean.getArray();
-//                monthlyMean.output();
+
+//                double[][] data = monthlyMean.getArray();
+//                Object[] ids = monthlyMean.getIds();
+//                System.out.println(ids[0] + " : " + data[0][1]);
+
+                monthlyMean.output();
             }
         }
 
