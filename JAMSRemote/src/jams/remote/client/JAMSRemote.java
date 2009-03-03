@@ -22,81 +22,99 @@
  */
 package jams.remote.client;
 
-import java.io.File;
-import javax.swing.UIManager;
 import jams.JAMS;
-import jams.io.JAMSCmdLine;
-import jams.JAMSProperties;
 import jams.gui.JAMSSplash;
-import java.io.IOException;
+import jams.io.JAMSCmdLine;
 
 /**
  *
  * @author Sven Kralisch
  */
 public class JAMSRemote extends JAMS {
-
-    private static JAMSCmdLine cmdLine;
-
-    public static void startJAMS(JAMSProperties properties) {
+    
+    public JAMSRemote(JAMSCmdLine cmdLine) {   
+        super(cmdLine);
+    }
+    
+    @Override
+    protected void startGUI() {
         JAMSSplash splash = new JAMSSplash();
-        splash.show(new JAMSRemoteLauncher(properties), JAMS.SPLASH_DISPLAY_TIME);
+        splash.show(new JAMSRemoteLauncher(properties), splashTimeout);
     }
 
-    public static void startJAMS(JAMSProperties properties, String modelFilename, String cmdLineParameterValues) {
-
+    @Override
+    protected void startGUI(String modelFileName, String cmdLineParameterValues) {
         JAMSSplash splash = new JAMSSplash();
-        splash.show(new JAMSRemoteLauncher(modelFilename, properties, cmdLineParameterValues), SPLASH_DISPLAY_TIME);
-
+        splash.show(new JAMSRemoteLauncher(modelFileName, properties, cmdLineParameterValues), splashTimeout);
     }
 
     public static void main(String[] args) {
 
-        cmdLine = new JAMSCmdLine(args);
+        new JAMSRemote(new JAMSCmdLine(args));
 
-        try {
-            if (System.getProperty("os.name").contains("Windows")) {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            }
-        } catch (Exception evt) {
-        }
-
-        //create a JAMS default set of property values
-        JAMSProperties properties = JAMSProperties.createJAMSProperties();
-
-        //try to load property values from file
-        if (cmdLine.getConfigFileName() != null) {
-            //check for file provided at command line
-            try {
-                properties.load(cmdLine.getConfigFileName());
-            } catch (IOException ioe) {
-                System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + cmdLine.getConfigFileName());
-                handle(ioe);
-            }
-        } else {
-            //check for default file
-            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
-            File file = new File(defaultFile);
-            if (file.exists()) {
-                try {
-                    properties.load(defaultFile);
-                } catch (IOException ioe) {
-                    System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + defaultFile);
-                    handle(ioe);
-                }
-            }
-        }
-
-
-        if ((cmdLine.getModelFileName() == null)) {
-            //see if at least GUI is enabled
-            startJAMS(properties);
-        } else {
-            if (cmdLine.getParameterValues() == null) {
-                startJAMS(properties, cmdLine.getModelFileName(), null);
-            } else {
-                startJAMS(properties, cmdLine.getModelFileName(), cmdLine.getParameterValues());
-            }
-        }
     }
+
+//    private static JAMSCmdLine cmdLine;
+//
+//    public static void startJAMS(JAMSProperties properties) {
+//        JAMSSplash splash = new JAMSSplash();
+//        splash.show(new JAMSRemoteLauncher(properties), JAMS.SPLASH_DISPLAY_TIME);
+//    }
+//
+//    public static void startJAMS(JAMSProperties properties, String modelFilename, String cmdLineParameterValues) {
+//
+//        JAMSSplash splash = new JAMSSplash();
+//        splash.show(new JAMSRemoteLauncher(modelFilename, properties, cmdLineParameterValues), SPLASH_DISPLAY_TIME);
+//
+//    }
+//
+//    public static void main(String[] args) {
+//
+//        cmdLine = new JAMSCmdLine(args);
+//
+//        try {
+//            if (System.getProperty("os.name").contains("Windows")) {
+//                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//            }
+//        } catch (Exception evt) {
+//        }
+//
+//        //create a JAMS default set of property values
+//        JAMSProperties properties = JAMSProperties.createJAMSProperties();
+//
+//        //try to load property values from file
+//        if (cmdLine.getConfigFileName() != null) {
+//            //check for file provided at command line
+//            try {
+//                properties.load(cmdLine.getConfigFileName());
+//            } catch (IOException ioe) {
+//                System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + cmdLine.getConfigFileName());
+//                handle(ioe);
+//            }
+//        } else {
+//            //check for default file
+//            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
+//            File file = new File(defaultFile);
+//            if (file.exists()) {
+//                try {
+//                    properties.load(defaultFile);
+//                } catch (IOException ioe) {
+//                    System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + defaultFile);
+//                    handle(ioe);
+//                }
+//            }
+//        }
+//
+//
+//        if ((cmdLine.getModelFileName() == null)) {
+//            //see if at least GUI is enabled
+//            startJAMS(properties);
+//        } else {
+//            if (cmdLine.getParameterValues() == null) {
+//                startJAMS(properties, cmdLine.getModelFileName(), null);
+//            } else {
+//                startJAMS(properties, cmdLine.getModelFileName(), cmdLine.getParameterValues());
+//            }
+//        }
+//    }
 }

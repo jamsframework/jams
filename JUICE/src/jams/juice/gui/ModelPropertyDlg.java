@@ -60,6 +60,7 @@ import jams.juice.JUICE;
  */
 public class ModelPropertyDlg extends JDialog {
 
+    private static final Dimension TEXT_FIELD_DIM = new Dimension(200, 20), TEXT_AREA_DIM = new Dimension(300, 100);
     public final static int OK_RESULT = 0;
     public final static int CANCEL_RESULT = -1;
     private JComboBox groupCombo,  componentCombo,  varCombo;
@@ -80,7 +81,7 @@ public class ModelPropertyDlg extends JDialog {
 
         setModal(true);
         this.setTitle(JUICE.resources.getString("Model_property_editor"));
-        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         this.setLayout(new BorderLayout());
         GridBagLayout gbl = new GridBagLayout();
@@ -117,12 +118,13 @@ public class ModelPropertyDlg extends JDialog {
         LHelper.addGBComponent(contentPanel, gbl, varCombo, 1, 3, 1, 1, 0, 0);
 
         nameField = new JTextField();
+        nameField.setPreferredSize(TEXT_FIELD_DIM);
         descriptionField = new JTextField();
+        descriptionField.setPreferredSize(TEXT_FIELD_DIM);
         lowField = new FloatInput();
         upField = new FloatInput();
         lengthField = new IntegerInput();
         helpURLField = new JTextField();
-        helpTextField = new JTextArea();
 
         LHelper.addGBComponent(contentPanel, gbl, nameField, 1, 4, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, descriptionField, 1, 5, 1, 1, 0, 0);
@@ -130,16 +132,17 @@ public class ModelPropertyDlg extends JDialog {
         LHelper.addGBComponent(contentPanel, gbl, upField.getComponent(), 1, 7, 1, 1, 0, 0);
         LHelper.addGBComponent(contentPanel, gbl, lengthField.getComponent(), 1, 8, 1, 1, 0, 0);
 
-        helpURLField.setPreferredSize(new Dimension(200, 20));
         LHelper.addGBComponent(contentPanel, gbl, helpURLField, 1, 9, 2, 1, 0, 0);
 
-        helpTextField.setColumns(30);
-        helpTextField.setRows(5);
-        LHelper.addGBComponent(contentPanel, gbl, helpTextField, 1, 10, 2, 1, 0, 0);
+        helpTextField = new JTextArea();
+        JScrollPane textScroll = new JScrollPane(helpTextField);
+        textScroll.setPreferredSize(TEXT_AREA_DIM);
+        LHelper.addGBComponent(contentPanel, gbl, textScroll, 1, 10, 2, 1, 0, 0);
 
         JButton okButton = new JButton(JUICE.resources.getString("OK"));
         ActionListener okListener = new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
                 result = OK_RESULT;
@@ -151,6 +154,7 @@ public class ModelPropertyDlg extends JDialog {
         JButton cancelButton = new JButton(JUICE.resources.getString("Cancel"));
         ActionListener cancelListener = new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
                 result = CANCEL_RESULT;
@@ -166,6 +170,7 @@ public class ModelPropertyDlg extends JDialog {
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         getContentPane().add(scrollPane, BorderLayout.CENTER);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+
         pack();
     }
 
@@ -217,13 +222,17 @@ public class ModelPropertyDlg extends JDialog {
             }
 
             nameField.setText(property.name);
+            nameField.setCaretPosition(0);
             descriptionField.setText(property.description);
+            descriptionField.setCaretPosition(0);
 
             lowField.setValue("" + property.lowerBound);
             upField.setValue("" + property.upperBound);
             lengthField.setValue("" + property.length);
             helpURLField.setText(property.getHelpComponent().getHelpURL());
+            helpURLField.setCaretPosition(0);
             helpTextField.setText(property.getHelpComponent().getHelpText());
+            helpTextField.setCaretPosition(0);
         } else {
             nameField.setText("");
             descriptionField.setText("");

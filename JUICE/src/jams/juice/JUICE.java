@@ -36,6 +36,7 @@ import jams.runtime.StandardRuntime;
 import jams.juice.gui.JUICEFrame;
 import jams.juice.gui.ModelView;
 import jams.juice.gui.tree.LibTree;
+import javax.swing.LookAndFeel;
 
 /**
  *
@@ -44,35 +45,46 @@ import jams.juice.gui.tree.LibTree;
 public class JUICE {
 
     public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/JUICEBundle");
+
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
+
     public static final int SCREEN_WIDTH = 1200;
+
     public static final int SCREEN_HEIGHT = 850;
+
     public static final String APP_TITLE = java.util.ResourceBundle.getBundle("resources/JUICEBundle").getString("JUICE");
+
     private static JUICEFrame juiceFrame;
+
     private static JAMSProperties jamsProperties = JAMSProperties.createJAMSProperties();
+
     private static File baseDir = null;
+
     private static ArrayList<ModelView> modelViews = new ArrayList<ModelView>();
+
     private static ClassLoader loader;
+
     private static JUICECmdLine cmdLine;
+
     private static LibTree libTree;
+
     private static WorkerDlg loadLibsDlg;
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String args[]) {
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception lnfe) {
+            try {
+                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            } catch (Exception ex) {
+                JAMS.handle(ex);
+            }
+        }
 
         cmdLine = new JUICECmdLine(args);
 
-        try {
-            if (System.getProperty("os.name").contains("Windows")) {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            }/* else {
-        PlasticLookAndFeel laf = new PlasticXPLookAndFeel();
-        PlasticLookAndFeel.setPlasticTheme(new com.jgoodies.looks.plastic.theme.ExperienceBlue());
-        Options.setPopupDropShadowEnabled(true);
-        UIManager.setLookAndFeel(laf);
-        }*/
-        } catch (Exception evt) {
-        }
-        
         try {
 
             //try to load property values from file
@@ -97,11 +109,13 @@ public class JUICE {
                 JAMS.resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
             }
 
+            int splashTimeout = Integer.parseInt(getJamsProperties().getProperty("splashtimeout", "1000"));
+
             juiceFrame = new JUICEFrame();
 
             JAMSSplash splash = new JAMSSplash();
-            splash.show(juiceFrame, JAMS.SPLASH_DISPLAY_TIME);
-            Thread.sleep(JAMS.SPLASH_DISPLAY_TIME);
+            splash.show(juiceFrame, splashTimeout);
+            Thread.sleep(splashTimeout);
             //juiceFrame.setVisible(true);
 
             libTree = new LibTree();

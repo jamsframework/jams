@@ -193,6 +193,7 @@ public class JAMSProperties extends Observable {
         p.setProperty("guiconfig", "1");
         p.setProperty("guiconfigwidth", "600");
         p.setProperty("guiconfigheight", "600");
+        p.setProperty("splashtimeout", "1000");
 
         JAMSProperties jp = new JAMSProperties(p);
         jp.setDefaultFilename(System.getProperty("user.dir") + File.separator + JAMS.DEFAULT_PARAMETER_FILENAME);

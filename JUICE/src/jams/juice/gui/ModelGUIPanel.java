@@ -1,5 +1,5 @@
 /*
- * LauncherPanel.java
+ * ModelGUIPanel.java
  * Created on 5. Januar 2007, 10:44
  *
  * This file is part of JAMS
@@ -54,7 +54,7 @@ import jams.juice.ModelProperties.ModelProperty;
  *
  * @author S. Kralisch
  */
-public class LauncherPanel extends JPanel {
+public class ModelGUIPanel extends JPanel {
 
     private static ImageIcon UP_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowup.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
     private static ImageIcon DOWN_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowdown.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
@@ -73,9 +73,9 @@ public class LauncherPanel extends JPanel {
     /**
      * JPanel providing visual builder for defining a JAMS models GUI
      * 
-     * @param view the ModelView object this LauncherPanel is associated to
+     * @param view the ModelView object this ModelGUIPanel is associated to
      */
-    public LauncherPanel(ModelView view) {
+    public ModelGUIPanel(ModelView view) {
 
         this.view = view;
         this.tabbedPane.setTabPlacement(JTabbedPane.LEFT);

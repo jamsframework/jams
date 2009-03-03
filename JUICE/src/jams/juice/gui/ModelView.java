@@ -84,7 +84,7 @@ public class ModelView {
     private ModelTree tree;
     private ComponentPanel compEditPanel;
     //private HashMap<ComponentDescriptor, DataRepository> dataRepositories = new HashMap<ComponentDescriptor, DataRepository>();
-    private LauncherPanel launcherPanel;
+    private ModelGUIPanel launcherPanel;
     private ModelEditPanel modelEditPanel;
     private String author = "",  date = "",  description = "",  helpBaseUrl = "",  workspace = "";
     private HashMap<String, ComponentDescriptor> componentDescriptors = new HashMap<String, ComponentDescriptor>();
@@ -108,7 +108,7 @@ public class ModelView {
         this.parentPanel = parentPanel;
         modelEditPanel = new ModelEditPanel(this);
         compEditPanel = new ComponentPanel(this);
-        launcherPanel = new LauncherPanel(this);
+        launcherPanel = new ModelGUIPanel(this);
 
         modelTreePanel = new TreePanel();
 

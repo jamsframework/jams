@@ -68,30 +68,6 @@ public class JAMSFrame extends JAMSLauncher {
     private String modelFilename;
     private Action editPrefsAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  loadModelParamAction,  saveModelParamAction,  rtManagerAction,  infoLogAction,  errorLogAction;
 
-
-    /*
-    //public static final int APPROVE_OPTION = 1;
-    //public static final int EXIT_OPTION = 0;
-    private static final String baseTitle = "JAMS Launcher";
-    //private int result = EXIT_OPTION;
-    private Map<InputComponent, Element> inputMap;
-    private Map<InputComponent, JScrollPane> groupMap;
-    
-    private Document modelDocument = null;
-    private JTabbedPane tabbedPane = new JTabbedPane();
-    private JAMSProperties properties;
-    private JButton runButton;
-    
-    
-    
-    private HelpDlg helpDlg;
-    
-    private String initialModelDocString = "";
-    private JAMSRuntime runtime;
-    private Runnable modelLoading;
-    private WorkerDlg setupModelDlg;
-    private Font titledBorderFont;
-     */
     public JAMSFrame(JAMSProperties properties) {
         super(properties);
     }
@@ -287,13 +263,6 @@ public class JAMSFrame extends JAMSLauncher {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                /*File file = null;
-                if (modelFilename != null) {
-                file = new File(modelFilename);
-                } else {
-                file = new File(System.getProperty("user.dir"));
-                }
-                jfc.setCurrentDirectory(file);*/
                 jfc.setFileFilter(JAMSFileFilter.getParameterFilter());
                 int result = jfc.showSaveDialog(JAMSFrame.this);
 
@@ -522,7 +491,6 @@ public class JAMSFrame extends JAMSLauncher {
             LHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Error_saving_configuration_to_") + modelFilename, JAMS.resources.getString("Error"));
             return;
         }
-    //LHelper.showInfoDlg(LauncherFrame.this, "Configuration has been saved to " + LauncherFrame.this.modelFilename, "Info");
     }
 
     @Override
