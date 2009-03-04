@@ -438,7 +438,7 @@ public class JTSConfigurator extends JFrame {
 //            prop.setPosition((String) poschoice.getSelectedItem());
 //            prop.setRendererType(typechoice.getSelectedIndex());
 //            prop.setName(table.getColumnName(k+1));
-                    prop.setLegendName(table.getColumnName(k + 1));
+                    prop.setLegendName(table.getColumnName(columns[k]));
 
                     //prop.getPlotButton().addActionListener(plotbuttonclick);
 

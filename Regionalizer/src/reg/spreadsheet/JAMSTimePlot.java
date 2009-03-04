@@ -129,6 +129,14 @@ public class JAMSTimePlot {
         
     }
     
+    public XYPlot getXYPlot(){
+        return chart.getXYPlot();
+    }
+    
+    public DateAxis getDateAxis(){
+        return dateAxis;
+    }
+    
     public void setDefaultValues(){
 
             String xAxisTitle = "x axis title";

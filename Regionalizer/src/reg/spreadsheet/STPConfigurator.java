@@ -32,6 +32,8 @@ import javax.swing.BorderFactory.*;
 import javax.swing.GroupLayout.*;
 
 
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
@@ -53,10 +55,16 @@ public class STPConfigurator extends JFrame{
     JPanel chooserpanel;
     
     JComboBox templateBox[];
+    JTextField titleField;
     
     JButton plotbutton;
+    JButton settitleButton;
+    JLabel edTitleLabel;
+    
+    JPanel chartpanel;
     
     JAMSSpreadSheet sheet;
+    JAMSStackedPlot stackedplot;
     JFrame parent;
 //    JTable table; //wichtig?
     File templateFile;
@@ -108,6 +116,7 @@ public class STPConfigurator extends JFrame{
         //this.headers = new String[graphCount];
 
         setPreferredSize(new Dimension(1024, 768));
+        
 
         createPanel();
 
@@ -119,22 +128,34 @@ public class STPConfigurator extends JFrame{
         
         setLayout(new BorderLayout());
         plotpanel = new JPanel();
-        plotpanel.setLayout(new GridLayout(numberOfPlots, 1));
+
         optionpanel = new JPanel();
         chooserpanel = new JPanel();
         
         GridBagLayout gbl = new GridBagLayout();
         chooserpanel.setLayout(gbl);
         
-        plotbutton = new JButton("Plot");
+        plotbutton = new JButton("PLOT");
+        settitleButton = new JButton("set");
+        titleField = new JTextField();
+        titleField.setSize(50, 10);
+        titleField.setText("Stacked Time Plot");
+        edTitleLabel = new JLabel("set Title: ");
         
         // PROGRAMME //
         templateFiles = new File[numberOfPlots];
         templateBox = new JComboBox[numberOfPlots];
         
         plotbutton.addActionListener(plotaction);
+        titleField.addActionListener(titleListener);
+        settitleButton.addActionListener(titleListener);
         dataset = getAccessibleIDs();
         
+        //create optionpanel GUI
+        optionpanel.add(edTitleLabel);
+        optionpanel.add(titleField);
+        optionpanel.add(settitleButton);
+        optionpanel.add(new JLabel("  "));
         for(int c = 0; c < numberOfPlots; c++){
             templateBox[c] = new JComboBox(dataset);
             optionpanel.add(templateBox[c]);
@@ -145,6 +166,9 @@ public class STPConfigurator extends JFrame{
         
 //        plotpanel = createPlotPanel();
         
+        XYPlot[] xyplots = new XYPlot[numberOfPlots];
+        DateAxis dateAxis = new DateAxis();
+        
         for(int i = 0; i < numberOfPlots; i++){
             String datasetID = (String)templateBox[i].getSelectedItem();
             templateFiles[i] = new File(Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory(), datasetID +".ttp");
@@ -155,12 +179,18 @@ public class STPConfigurator extends JFrame{
             jts[i].createPlot();
 //            jts[i].getPanel().add(templateBox[i]);
             
-            plotpanel.add(jts[i].getPanel());
             plot(i);
-            if(i < numberOfPlots - 1) jts[i].removeLegendAndXAxis();
+            xyplots[i] = jts[i].getXYPlot();
+            //last date axis
+            dateAxis = jts[i].getDateAxis();
         }
         
-        add(plotpanel, BorderLayout.CENTER);
+        title = titleField.getText();
+        stackedplot = new JAMSStackedPlot(xyplots, dateAxis, title);
+        
+        chartpanel = stackedplot.getChartPanel();
+        
+        add(chartpanel, BorderLayout.CENTER);
         add(optionpanel, BorderLayout.SOUTH);
         
         repaint();
@@ -168,9 +198,10 @@ public class STPConfigurator extends JFrame{
     
     private void repaintPlotPanel(){
         
-        this.remove(plotpanel);
-        JPanel plotpanel = new JPanel();
-        plotpanel.setLayout(new GridLayout(numberOfPlots, 1));
+        this.remove(chartpanel);
+
+        XYPlot[] xyplots = new XYPlot[numberOfPlots];
+        DateAxis dateAxis = new DateAxis();
         
         for(int i = 0; i < numberOfPlots; i++){
             String datasetID = (String)templateBox[i].getSelectedItem();
@@ -180,14 +211,21 @@ public class STPConfigurator extends JFrame{
             jts[i] = new JAMSTimePlot();
             jts[i].setPropVector(propVector);
             jts[i].createPlot();
-//            jts[i].getPanel().add(templateBox[i]);
             
-            plotpanel.add(jts[i].getPanel());
             plot(i);
-            if(i < numberOfPlots - 1) jts[i].removeLegendAndXAxis();
+            xyplots[i] = jts[i].getXYPlot();
+            //last date axis
+            dateAxis = jts[i].getDateAxis();
+            //if(i < numberOfPlots - 1) jts[i].removeLegendAndXAxis();
         }
         
-        add(plotpanel, BorderLayout.CENTER);
+        title = titleField.getText();
+        stackedplot = new JAMSStackedPlot(xyplots, dateAxis, title);
+        
+        chartpanel = stackedplot.getChartPanel();
+        
+        add(chartpanel, BorderLayout.CENTER);
+        add(optionpanel, BorderLayout.SOUTH);
         pack();
         repaint();
         
@@ -779,7 +817,7 @@ public class STPConfigurator extends JFrame{
         dlg.setTask(r);
         dlg.execute();
         
-        repaint();
+        //repaint();
         
     }
     
@@ -804,6 +842,14 @@ public class STPConfigurator extends JFrame{
         public void actionPerformed(ActionEvent e) {
             repaintPlotPanel();
             setVisible(true);
+        }
+    };
+    
+    ActionListener titleListener = new ActionListener() {
+
+        public void actionPerformed(ActionEvent te) {
+            title = titleField.getText();
+            stackedplot.setTitle(title);
         }
     };
 
