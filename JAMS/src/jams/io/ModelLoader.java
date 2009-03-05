@@ -154,6 +154,14 @@ public class ModelLoader {
         componentName = root.getAttribute("name");
         componentClassName = root.getAttribute("class");
 
+        // check if a component with that name is already existing
+        JAMSComponent existingComponent = this.componentRepository.get(componentName);
+        if (existingComponent != null) {
+            jamsModel.getRuntime().sendHalt(JAMS.resources.getString("Component_with_name_") + componentName +
+                    JAMS.resources.getString("_is_already_exisiting_(") + existingComponent.getClass() +
+                    JAMS.resources.getString(")._Please_make_sure_component_names_are_unique!_Stopping_model_loading!"));
+        }
+
         jamsModel.getRuntime().println(JAMS.resources.getString("Adding:_") + componentName + " (" + componentClassName + ")", JAMS.STANDARD);
 
         component = null;
@@ -161,10 +169,14 @@ public class ModelLoader {
 
             // create the JAMSComponent object
             jamsModel.getRuntime().println(componentClassName, JAMS.VERBOSE);
-            componentClazz = loader.loadClass(componentClassName);
-            //componentClazz = Class.forName(componentClassName, true, loader);
 
+            // try to load the class
+            componentClazz = loader.loadClass(componentClassName);
+
+            // generate an instance of that class
             component = (JAMSComponent) componentClazz.newInstance();
+
+            // do some basic setup
             component.setModel(jamsModel);
             component.setInstanceName(componentName);
 
@@ -189,7 +201,6 @@ public class ModelLoader {
         } catch (Throwable t) {
             jamsModel.getRuntime().handle(t, false);
         }
-
 
         // put the JAMSComponent object into the component repository
         this.componentRepository.put(componentName, component);

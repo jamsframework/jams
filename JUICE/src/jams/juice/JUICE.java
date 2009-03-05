@@ -37,6 +37,8 @@ import jams.juice.gui.JUICEFrame;
 import jams.juice.gui.ModelView;
 import jams.juice.gui.tree.LibTree;
 import javax.swing.LookAndFeel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -74,7 +76,7 @@ public class JUICE {
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception lnfe) {
             try {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -133,37 +135,39 @@ public class JUICE {
                 }
             });
 
-        } catch (Exception e) {
+        } catch (Throwable t) {
 
             //if something goes wrong that has not been handled until now, catch it here
             String s = "";
-            StackTraceElement[] st = e.getStackTrace();
+            StackTraceElement[] st = t.getStackTrace();
             for (StackTraceElement ste : st) {
                 s += "        at " + ste.toString() + "\n";
             }
             System.out.println(JUICE.resources.getString("JUICE_Error"));
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("An_error_occured_during_JUICE_execution") + e.toString() + "\n" + s, JUICE.resources.getString("JUICE_Error"));
+            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("An_error_occured_during_JUICE_execution") + t.toString() + "\n" + s, JUICE.resources.getString("JUICE_Error"));
         //            JUICE.getJuiceFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
         }
     }
 
     public static void updateLibs() {
-        loadLibsDlg = new WorkerDlg(juiceFrame, JUICE.resources.getString("Loading_Libraries"));
-        loadLibsDlg.setTask(new Runnable() {
+        if (loadLibsDlg == null) {
+            loadLibsDlg = new WorkerDlg(juiceFrame, JUICE.resources.getString("Loading_Libraries"));
+        }
+        try {
+            loadLibsDlg.setTask(new Runnable() {
 
-            public void run() {
-                try {
+                public void run() {
                     JUICE.getJuiceFrame().getLibTreePanel().setEnabled(false);
                     JUICE.createClassLoader();
                     getLibTree().update(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER));
                     JUICE.getJuiceFrame().getLibTreePanel().setEnabled(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-            }
-        });
-        loadLibsDlg.execute();
+            });
+            loadLibsDlg.execute();
+        } catch (Throwable t) {
+            System.out.println("ARGH");
+        }
     }
 
     private static void createClassLoader() {

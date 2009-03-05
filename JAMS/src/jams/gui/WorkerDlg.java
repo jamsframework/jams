@@ -25,7 +25,8 @@ package jams.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.util.concurrent.ExecutionException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
@@ -38,8 +39,11 @@ import javax.swing.SwingWorker;
 public class WorkerDlg extends JDialog {
 
     private Runnable task;
+
     private SwingWorker worker;
+
     private Frame owner;
+
     private JProgressBar progressBar;
 
     public WorkerDlg(Frame owner, String title) {
@@ -100,16 +104,22 @@ public class WorkerDlg extends JDialog {
         int y = (int) owner.getY() + ((ownerDim.height - thisDim.height) / 2);
         setLocation(x, y);
 
-        worker.execute();
-        if (!worker.isDone()) {
-            setVisible(true);
-        }
+        worker.addPropertyChangeListener(new PropertyChangeListener() {
 
-        try {
-            worker.get();
-        } catch (InterruptedException ie) {
-        } catch (ExecutionException ee) {
-        }
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().equals("state") && evt.getNewValue() == SwingWorker.StateValue.DONE) {
+                    WorkerDlg.this.setVisible(false);
+                    WorkerDlg.this.dispose();
+                }
+            }
+        });
+
+        // @TODO: fix occasional problems when task contains swing operations
+        // (e.g. repaints)
+        worker.execute();
+        this.setVisible(true);
+        
     }
 
     public void setTask(Runnable task) {
@@ -117,13 +127,19 @@ public class WorkerDlg extends JDialog {
         worker = new SwingWorker<Object, Void>() {
 
             public Object doInBackground() {
-                WorkerDlg.this.task.run();
+                //WorkerDlg.this.setVisible(true);
+
+                try {
+                    WorkerDlg.this.task.run();
+                } catch (Throwable t) {
+                    System.out.println("as");
+                }
                 return null;
             }
 
-            public void done() {
-                WorkerDlg.this.setVisible(false);
-            }
+//            public void done() {
+//                WorkerDlg.this.setVisible(false);
+//            }
         };
     }
 }

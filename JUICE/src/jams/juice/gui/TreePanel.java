@@ -88,8 +88,9 @@ public class TreePanel extends JPanel {
         this.add(lowerPanel, BorderLayout.SOUTH);
     }
 
-    public void addCustomButton(JButton button, int width) {
-        button.setPreferredSize(new Dimension(width, BUTTON_DIMENSION.height));
+    public void addCustomButton(JButton button) {
+        //button.setPreferredSize(new Dimension(width, BUTTON_DIMENSION.height));
+        button.setPreferredSize(new Dimension(button.getPreferredSize().width, BUTTON_DIMENSION.height));
         lowerPanel.add(button);
         lowerPanel.updateUI();
     }

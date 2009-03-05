@@ -353,7 +353,7 @@ public class JUICEFrame extends JFrame {
         JButton reloadLibsButton = new JButton(reloadLibsAction);
 
         libTreePanel = new TreePanel();
-        libTreePanel.addCustomButton(reloadLibsButton, 80);
+        libTreePanel.addCustomButton(reloadLibsButton);
 
         JPanel rtManagerPanel = new JPanel();
         rtManagerPanel.setLayout(new BorderLayout());

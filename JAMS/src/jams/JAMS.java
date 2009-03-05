@@ -87,7 +87,7 @@ public class JAMS {
 
     private JAMSCmdLine cmdLine;
 
-    private static File baseDir = new File(System.getProperty("user.home"));
+    private static File baseDir = new File(System.getProperty("user.dir"));
 
     protected int splashTimeout;
 
