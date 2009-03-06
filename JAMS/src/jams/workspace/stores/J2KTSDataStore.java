@@ -133,7 +133,7 @@ public class J2KTSDataStore extends TSDataStore {
 
         StringTokenizer tok1 = new StringTokenizer(statAttribVal.toString(), "\n");
         tok1.nextToken();
-        StringTokenizer tok2 = new StringTokenizer(tok1.nextToken());
+        StringTokenizer tok2 = new StringTokenizer(tok1.nextToken(), "\t");
 
         int attributeCount = tok2.countTokens() - 1;
         ArrayList<Class> dataTypes = new ArrayList<Class>();
