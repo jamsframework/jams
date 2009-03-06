@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import jams.JAMS;
+import jams.JAMSTools;
 import jams.data.*;
 import jams.dataaccess.*;
 import jams.dataaccess.CalendarAccessor;
@@ -223,17 +224,6 @@ public class JAMSContext extends JAMSComponent {
         });
     }
 
-    static public Field getField(Class clazz, String name) throws NoSuchFieldException {
-        try {
-            return clazz.getDeclaredField(name);
-        } catch (NoSuchFieldException e) {
-            if (clazz.getSuperclass() == null) {
-                throw e;
-            }
-            return getField(clazz.getSuperclass(), name);
-        }
-    }
-
     /**
      * Iniatialization of all objects that are needed to manage the data 
      * exchange between descendent components. Needs to be called once at the 
@@ -290,7 +280,7 @@ public class JAMSContext extends JAMSComponent {
 
             try {
 
-                clazz = getField(accessSpec.component.getClass(), accessSpec.varName).getType();
+                clazz = JAMSTools.getField(accessSpec.component.getClass(), accessSpec.varName).getType();
 
                 if (clazz == null) {
                     clazz = null;
@@ -310,8 +300,11 @@ public class JAMSContext extends JAMSComponent {
                         array[i] = getDataObject(entityArray, componentClass, tok.nextToken(), accessSpec.accessType, null);
                     }
 
-                    Field field = getField(accessSpec.component.getClass(), accessSpec.varName);
-                    field.set(accessSpec.component, array);
+                    Field field = JAMSTools.getField(accessSpec.component.getClass(), accessSpec.varName);
+                    
+                    // set the component's field value to dataObject
+                    JAMSTools.setField(accessSpec.component, field, array);
+                    //field.set(accessSpec.component, array);
 
                     // field has been set with some value, so
                     // remove it from list of nullFields
@@ -337,8 +330,11 @@ public class JAMSContext extends JAMSComponent {
                     dataObject = getDataObject(entityArray, clazz, accessSpec.attributeName, accessSpec.accessType, componentObject);
 
                     //assign the dataObject to the component
-                    Field field = getField(accessSpec.component.getClass(), accessSpec.varName);
-                    field.set(accessSpec.component, dataObject);
+                    Field field = JAMSTools.getField(accessSpec.component.getClass(), accessSpec.varName);
+
+                    // set the component's field value to dataObject
+                    JAMSTools.setField(accessSpec.component, field, dataObject);
+
 
                     // field has been set with some value, so
                     // remove it from list of nullFields                     

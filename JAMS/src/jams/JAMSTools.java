@@ -22,10 +22,16 @@
  */
 package jams;
 
+import jams.data.JAMSData;
+import jams.model.JAMSComponent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.StringTokenizer;
 
 /**
@@ -40,9 +46,9 @@ public class JAMSTools {
      * @param fileName
      * @return
      */
-    public static String CreateAbsoluteFileName(String dirName, String fileName){
+    public static String CreateAbsoluteFileName(String dirName, String fileName) {
         //if relative path is provided, make absolute path!
-        if (dirName.isEmpty()){
+        if (dirName.isEmpty()) {
             dirName = System.getProperty("user.dir");
         }
         //in case directory is not terminated with slash, add slash
@@ -50,7 +56,7 @@ public class JAMSTools {
 
         return dirName + fileName;
     }
-    
+
     /**
      * Splits a string into tokens and fills a string array with them
      * @param str The string to be splitted
@@ -124,7 +130,6 @@ public class JAMSTools {
         return content;
     }
 
-
     /**
      * Creates a string representation of a stack trace
      * @param stea The stack trace
@@ -150,5 +155,90 @@ public class JAMSTools {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Looks for a field with a given name in a class and all its superclasses
+     * @param clazz The class to be searched in
+     * @param name The name of the field
+     * @return A Field object
+     * @throws java.lang.NoSuchFieldException
+     */
+    static public Field getField(Class clazz, String name) throws NoSuchFieldException {
+        try {
+            return clazz.getDeclaredField(name);
+        } catch (NoSuchFieldException e) {
+            if (clazz.getSuperclass() == null) {
+                throw e;
+            }
+            return getField(clazz.getSuperclass(), name);
+        }
+    }
+
+    /**
+     * Sets a component's attribute to a value using a setter
+     * @param component The component
+     * @param attribName The attributes name
+     * @param value The value
+     * @throws java.lang.SecurityException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.NoSuchMethodException
+     * @throws java.lang.reflect.InvocationTargetException
+     * @throws java.lang.IllegalArgumentException
+     */
+    public static void setAttribute(JAMSComponent component, String attribName, Object value) throws SecurityException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, IllegalArgumentException {
+        Class<?> componentClazz = component.getClass();
+        Class<?> attribClazz = value.getClass();
+        String methodName = "set" + Character.toUpperCase(attribName.charAt(0)) + attribName.substring(1);
+        Method m = componentClazz.getDeclaredMethod(methodName, attribClazz);
+        // if we got here, the setter is existing
+        m.invoke(component, value);
+    }
+
+    /**
+     * Decides on either the a component's attribute is accessible or not and 
+     * sets the value of that attribute either directly or by calling a setter
+     * @param component The component
+     * @param field The field representing the attributes
+     * @param value The value
+     * @return The new value of the attribute
+     * @throws java.lang.SecurityException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.NoSuchMethodException
+     * @throws java.lang.reflect.InvocationTargetException
+     * @throws java.lang.IllegalArgumentException
+     */
+    public static Object setField(JAMSComponent component, Field field, Object value) throws SecurityException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, IllegalArgumentException {
+        Object data;
+        if (field.getModifiers() == Modifier.PUBLIC) {
+            // if field is public, set it directly
+            field.set(component, value);
+            data = field.get(component);
+        } else {
+            // if field is not public, try to use a setter
+            String attribName = field.getName();
+            setAttribute(component, attribName, value);
+            data = JAMSTools.getAttribute(component, attribName);
+        }
+        return data;
+    }
+
+    /**
+     * Gets the value of a component's attribute
+     * @param component The component
+     * @param attribName The name of the atribute
+     * @return
+     * @throws java.lang.IllegalArgumentException
+     * @throws java.lang.SecurityException
+     * @throws java.lang.reflect.InvocationTargetException
+     * @throws java.lang.NoSuchMethodException
+     * @throws java.lang.IllegalAccessException
+     */
+    public static Object getAttribute(JAMSComponent component, String attribName) throws IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        Class<?> componentClazz = component.getClass();
+        String methodName = "get" + Character.toUpperCase(attribName.charAt(0)) + attribName.substring(1);
+        Method m = componentClazz.getDeclaredMethod(methodName);
+        Object data = m.invoke(component);
+        return data;
     }
 }

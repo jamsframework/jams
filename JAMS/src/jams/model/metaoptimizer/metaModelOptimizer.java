@@ -5,6 +5,7 @@
 
 package jams.model.metaoptimizer;
 
+import jams.JAMSTools;
 import jams.model.JAMSComponent;
 import jams.model.JAMSContext;
 import jams.model.JAMSModel;
@@ -173,7 +174,7 @@ public class metaModelOptimizer {
                     }
                     Field f = null;
                     try{
-                        f = JAMSContext.getField(parent.getClass(), name);
+                        f = JAMSTools.getField(parent.getClass(), name);
                         AttributeReadWriteSet attrRWSet = table.get(context);
                         if (attrRWSet == null){
                             attrRWSet = new AttributeReadWriteSet();

@@ -29,6 +29,7 @@ import org.w3c.dom.*;
 import java.lang.reflect.*;
 import jams.JAMS;
 import jams.JAMSProperties;
+import jams.JAMSTools;
 import jams.data.*;
 import jams.runtime.JAMSRuntime;
 import java.util.ArrayList;
@@ -40,10 +41,15 @@ import java.util.ArrayList;
 public class ModelLoader {
 
     private HashMap<String, JAMSComponent> componentRepository = new HashMap<String, JAMSComponent>();
+
     private HashMap<String, String> constants = new HashMap<String, String>();
+
     private ClassLoader loader;
+
     private JAMSModel jamsModel;
+
     private JAMSProperties properties;
+
     transient private HashMap<JAMSComponent, ArrayList<Field>> nullFields = new HashMap<JAMSComponent, ArrayList<Field>>();
 
     public ModelLoader(Document modelDoc, String[] globvars, JAMSRuntime rt, JAMSProperties properties) {
@@ -132,6 +138,7 @@ public class ModelLoader {
                 } catch (ModelSpecificationException iae) {
 
                     jamsModel.getRuntime().handle(iae, false);
+                    return;
 
                 }
             }
@@ -148,7 +155,7 @@ public class ModelLoader {
         String componentName, componentClassName, varName, varClassName = "", varValue;
         JAMSComponent component, childComponent;
         JAMSData variable;
-        Class componentClazz = null, varClazz = null;
+        Class<?> componentClazz = null, varClazz = null;
         ArrayList<JAMSComponent> childComponentList = new ArrayList<JAMSComponent>();
 
         componentName = root.getAttribute("name");
@@ -157,7 +164,7 @@ public class ModelLoader {
         // check if a component with that name is already existing
         JAMSComponent existingComponent = this.componentRepository.get(componentName);
         if (existingComponent != null) {
-            jamsModel.getRuntime().sendHalt(JAMS.resources.getString("Component_with_name_") + componentName +
+            throw new ModelSpecificationException(JAMS.resources.getString("Component_with_name_") + componentName +
                     JAMS.resources.getString("_is_already_exisiting_(") + existingComponent.getClass() +
                     JAMS.resources.getString(")._Please_make_sure_component_names_are_unique!_Stopping_model_loading!"));
         }
@@ -237,7 +244,7 @@ public class ModelLoader {
 
                 // check if component variable exists
                 try {
-                    Field field = JAMSContext.getField(componentClazz, varName);
+                    Field field = JAMSTools.getField(componentClazz, varName);
                     varClassName = field.getType().getName();
 
                     if (field.isAnnotationPresent(JAMSVarDescription.class)) {
@@ -245,12 +252,6 @@ public class ModelLoader {
                         JAMSVarDescription jvd = field.getAnnotation(JAMSVarDescription.class);
 
                         jamsModel.getRuntime().println("     " + componentName + JAMS.resources.getString("_var_declaration:_") + varName + " (" + varClassName + ", " + jvd.access() + ")", JAMS.VERBOSE);
-
-                        /*
-                        if ((jvd.trace() == JAMSVarDescription.UpdateType.INIT) && ((jvd.access() != JAMSVarDescription.AccessType.READ) || element.hasAttribute("attribute"))) {
-                        throw new ModelSpecificationException("Component " + componentName + ": Variable " + varName + " can only be set using \"value\" or \"globvar\"!");
-                        }
-                         */
 
                         // set the var object if value provided directly
                         if (element.hasAttribute("value")) {
@@ -264,13 +265,17 @@ public class ModelLoader {
                             varValue = element.getAttribute("value");
                             variable.setValue(varValue);
 
-                            // attach the variable to the component's field..
-                            field.set(component, variable);
+                            // try to attach the variable to the component's field..
+                            JAMSData data;
+                            try {
+                                data = (JAMSData) JAMSTools.setField(component, field, variable);
+                            } catch (NoSuchMethodException nsme) {
+                                throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_variable_") + varName + JAMS.resources.getString(":_Access_exception!"));
+                            }
 
                             // this field can be removed from the null field list
                             nullFields.get(component).remove(field);
 
-                            JAMSData data = (JAMSData) field.get(component);
                             String id = componentName + "." + varName;
                             jamsModel.getRuntime().getDataHandles().put(id, data);
 
@@ -343,7 +348,6 @@ public class ModelLoader {
                 } catch (InstantiationException ie) {
                     throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_variable_") + varName + JAMS.resources.getString(":_Instantiation_exception!"));
                 } catch (IllegalAccessException iae) {
-                    iae.printStackTrace();
                     throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_variable_") + varName + JAMS.resources.getString(":_Access_exception!"));
                 } catch (Exception ex) {
                     jamsModel.getRuntime().handle(ex);
@@ -422,7 +426,7 @@ public class ModelLoader {
                 if (!jvd.defaultValue().equals(JAMSVarDescription.NULL_VALUE)) {
                     dataObject.setValue(jvd.defaultValue());
                 }
-                
+
             }
         }
         return result;
