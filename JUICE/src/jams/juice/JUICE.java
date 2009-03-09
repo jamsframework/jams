@@ -36,9 +36,6 @@ import jams.runtime.StandardRuntime;
 import jams.juice.gui.JUICEFrame;
 import jams.juice.gui.ModelView;
 import jams.juice.gui.tree.LibTree;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 
 /**
  *
@@ -145,8 +142,6 @@ public class JUICE {
             }
             System.out.println(JUICE.resources.getString("JUICE_Error"));
             LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("An_error_occured_during_JUICE_execution") + t.toString() + "\n" + s, JUICE.resources.getString("JUICE_Error"));
-        //            JUICE.getJuiceFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-
         }
     }
 

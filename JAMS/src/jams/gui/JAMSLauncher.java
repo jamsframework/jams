@@ -83,6 +83,7 @@ public class JAMSLauncher extends JFrame {
     private WorkerDlg loadModelDlg;
     private Font titledBorderFont;
     private Action runModelAction;
+    private JToolBar toolBar;
 
     public JAMSLauncher(JAMSProperties properties) {
         this.properties = properties;
@@ -205,13 +206,14 @@ public class JAMSLauncher extends JFrame {
 
         runButton = new JButton(runModelAction);
         runButton.setText("");
+        runButton.setToolTipText(JAMS.resources.getString("Run_Model"));
         runButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         runButton.setEnabled(false);
 
         tabbedPane.setTabPlacement(JTabbedPane.LEFT);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-        JToolBar toolBar = new JToolBar();
+        toolBar = new JToolBar();
         toolBar.setPreferredSize(new Dimension(0, 40));
         toolBar.add(runButton);
 
@@ -541,6 +543,13 @@ public class JAMSLauncher extends JFrame {
 
     protected Action getRunModelAction() {
         return runModelAction;
+    }
+
+    /**
+     * @return the toolBar
+     */
+    public JToolBar getToolBar() {
+        return toolBar;
     }
 
     class HelpButton extends JButton {

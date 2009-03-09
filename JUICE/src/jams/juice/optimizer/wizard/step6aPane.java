@@ -5,6 +5,7 @@
 
 package jams.juice.optimizer.wizard;
 
+import jams.JAMSTools;
 import jams.io.XMLIO;
 import jams.model.JAMSContext;
 import jams.juice.*;
@@ -107,7 +108,7 @@ public class step6aPane extends stepPane {
                 try{
                     clazz = rt.getClassLoader().loadClass(parent.getAttribute("class"));
                     if (clazz != null)
-                        field = JAMSContext.getField(clazz, name);                
+                        field = JAMSTools.getField(clazz, name);
                 }catch(Exception e){
                     continue;
                 }                                

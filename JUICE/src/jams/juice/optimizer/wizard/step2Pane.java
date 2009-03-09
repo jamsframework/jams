@@ -6,6 +6,7 @@
 package jams.juice.optimizer.wizard;
 
 import jams.JAMSProperties;
+import jams.JAMSTools;
 import jams.model.JAMSContext;
 import jams.juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
 import jams.juice.optimizer.wizard.OptimizationWizard.Parameter;
@@ -128,7 +129,7 @@ public class step2Pane extends stepPane {
                 try{
                     clazz = rt.getClassLoader().loadClass(parent.getAttribute("class"));
                     if (clazz != null)
-                        field = JAMSContext.getField(clazz, name);                
+                        field = JAMSTools.getField(clazz, name);
                 }catch(Exception e){
                     //System.out.println(e.toString() + parent.getAttribute("class"));
                     continue;

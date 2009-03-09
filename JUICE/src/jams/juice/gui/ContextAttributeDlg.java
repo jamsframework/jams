@@ -23,6 +23,7 @@
 
 package jams.juice.gui;
 
+import jams.data.JAMSString;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
@@ -84,7 +85,7 @@ public class ContextAttributeDlg extends JDialog {
         
         nameText = new JTextField();
         nameText.setColumns(40);
-        valueInput = LHelper.createInputComponent("");
+        valueInput = LHelper.createInputComponent(JAMSString.class.getSimpleName(), true);
         
         typeCombo = new JComboBox();
         
@@ -156,7 +157,7 @@ public class ContextAttributeDlg extends JDialog {
             LHelper.removeGBComponent(mainPanel, valueInput.getComponent());
             oldValue = valueInput.getValue();
         }
-        valueInput = LHelper.createInputComponent(shortType);
+        valueInput = LHelper.createInputComponent(shortType, true);
         
         if (doUpdate) {
             valueInput.setValue(oldValue);

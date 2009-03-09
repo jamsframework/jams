@@ -1,5 +1,5 @@
  This software is part of JAMS
- Copyright (C) 2006-2008 FSU Jena
+ Copyright (C) 2006-2009 FSU Jena
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License

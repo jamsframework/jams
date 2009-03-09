@@ -66,7 +66,7 @@ public class JUICEFrame extends JFrame {
     private WorkerDlg loadModelDlg;
     private SearchDlg searchDlg;
     private String modelPath;
-    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchAction,  copyModelGUIAction,  pasteModelGUIAction,  OptimizationWizardGUIAction,  loadModelParamAction,  saveModelParamAction,  runModelAction,  runModelFromLauncherAction,  infoLogAction,  errorLogAction,  wikiAction;
+    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchAction,  copyModelGUIAction,  pasteModelGUIAction,  OptimizationWizardGUIAction,  loadModelParamAction,  saveModelParamAction,  runModelAction,  runModelFromLauncherAction,  infoLogAction,  errorLogAction,  onlineAction;
 
     public JUICEFrame() {
         init();
@@ -206,7 +206,7 @@ public class JUICEFrame extends JFrame {
         };
         saveAsModelAction.setEnabled(false);
 
-        exitAction = new AbstractAction(JUICE.resources.getString("Exit")) {
+        exitAction = new AbstractAction(JAMS.resources.getString("Exit")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -214,7 +214,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        aboutAction = new AbstractAction(JUICE.resources.getString("About")) {
+        aboutAction = new AbstractAction(JAMS.resources.getString("About")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -291,7 +291,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        runModelAction = new AbstractAction(JUICE.resources.getString("Run_Model")) {
+        runModelAction = new AbstractAction(JAMS.resources.getString("Run_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -300,7 +300,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        runModelFromLauncherAction = new AbstractAction(JUICE.resources.getString("Run_Model_from_Launcher...")) {
+        runModelFromLauncherAction = new AbstractAction(JUICE.resources.getString("Run_model_from_JAMS_Launcher")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -325,11 +325,11 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        wikiAction = new AbstractAction(JUICE.resources.getString("JAMS_Wiki...")) {
+        onlineAction = new AbstractAction(JAMS.resources.getString("JAMS_online...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                LHelper.openURL(JAMS.WIKI_URL);
+                LHelper.openURL(JAMS.resources.getString("JAMS_URL"));
             }
         };
 
@@ -418,25 +418,25 @@ public class JUICEFrame extends JFrame {
 
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
-        infoLogButton.setToolTipText(JUICE.resources.getString("Show_Info_Log..."));
+        infoLogButton.setToolTipText(JAMS.resources.getString("Show_Info_Log..."));
         infoLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/InfoLog.png")));
         toolBar.add(infoLogButton);
 
         JButton errorLogButton = new JButton(errorLogAction);
         errorLogButton.setText("");
-        errorLogButton.setToolTipText(JUICE.resources.getString("Show_Error_Log..."));
+        errorLogButton.setToolTipText(JAMS.resources.getString("Show_Error_Log..."));
         errorLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ErrorLog.png")));
         toolBar.add(errorLogButton);
 
-        JButton helpButton = new JButton(wikiAction);
+        JButton helpButton = new JButton(onlineAction);
         helpButton.setText("");
-        helpButton.setToolTipText(JUICE.resources.getString("JAMS_Wiki..."));
+        helpButton.setToolTipText(JAMS.resources.getString("JAMS_online..."));
         helpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Browser.png")));
         toolBar.add(helpButton);
 
         JButton exitButton = new JButton(exitAction);
         exitButton.setText("");
-        exitButton.setToolTipText(JUICE.resources.getString("Exit"));
+        exitButton.setToolTipText(JAMS.resources.getString("Exit"));
         exitButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/system-shutdown.png")));
         toolBar.add(exitButton);
 
@@ -604,8 +604,8 @@ public class JUICEFrame extends JFrame {
         JMenu helpMenu = new JMenu(JUICE.resources.getString("Help"));
         mainMenu.add(helpMenu);
 
-        JMenuItem wikiItem = new JMenuItem(wikiAction);
-        helpMenu.add(wikiItem);
+        JMenuItem onlineItem = new JMenuItem(onlineAction);
+        helpMenu.add(onlineItem);
 
         JMenuItem aboutItem = new JMenuItem(aboutAction);
         helpMenu.add(aboutItem);

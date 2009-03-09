@@ -41,8 +41,8 @@ import jams.*;
 import jams.io.ParameterProcessor;
 import jams.io.XMLIO;
 import jams.io.XMLProcessor;
-import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.WindowConstants;
@@ -58,15 +58,24 @@ import org.xml.sax.SAXException;
 public class JAMSFrame extends JAMSLauncher {
 
     private JMenuBar mainMenu;
+
     private JMenu logsMenu,  modelMenu;
+
     private JMenuItem saveItem,  saveAsItem;
+
     private JFileChooser jfc;
+
     private JDialog rtManagerDlg;
+
     private PropertyDlg propertyDlg;
+
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Info_Log"));
+
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Error_Log"));
+
     private String modelFilename;
-    private Action editPrefsAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  loadModelParamAction,  saveModelParamAction,  rtManagerAction,  infoLogAction,  errorLogAction;
+
+    private Action editPrefsAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  loadModelParamAction,  saveModelParamAction,  rtManagerAction,  infoLogAction,  errorLogAction,  onlineAction;
 
     public JAMSFrame(JAMSProperties properties) {
         super(properties);
@@ -242,6 +251,14 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
+        onlineAction = new AbstractAction(JAMS.resources.getString("JAMS_online...")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LHelper.openURL(JAMS.resources.getString("JAMS_URL"));
+            }
+        };
+
         loadModelParamAction = new AbstractAction(JAMS.resources.getString("Load_Model_Parameter...")) {
 
             @Override
@@ -396,11 +413,46 @@ public class JAMSFrame extends JAMSLauncher {
         // help menu
         JMenu helpMenu = new JMenu(JAMS.resources.getString("Help"));
 
+        JMenuItem onlineItem = new JMenuItem(onlineAction);
+        helpMenu.add(onlineItem);
+
         JMenuItem aboutItem = new JMenuItem(aboutAction);
         helpMenu.add(aboutItem);
+
         getMainMenu().add(helpMenu);
 
         setJMenuBar(getMainMenu());
+
+        JButton loadButton = new JButton(loadModelAction);
+        loadButton.setText("");
+        loadButton.setToolTipText(JAMS.resources.getString("Open_Model..."));
+        loadButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelOpen.png")));
+        getToolBar().add(loadButton);
+
+        JButton saveButton = new JButton(saveModelAction);
+        saveButton.setText("");
+        saveButton.setToolTipText(JAMS.resources.getString("Save_Model"));
+        saveButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelSave.png")));
+        getToolBar().add(saveButton);
+
+        JButton infoLogButton = new JButton(infoLogAction);
+        infoLogButton.setText("");
+        infoLogButton.setToolTipText(JAMS.resources.getString("Show_Info_Log..."));
+        infoLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/InfoLog.png")));
+        getToolBar().add(infoLogButton);
+
+        JButton errorLogButton = new JButton(errorLogAction);
+        errorLogButton.setText("");
+        errorLogButton.setToolTipText(JAMS.resources.getString("Show_Error_Log..."));
+        errorLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ErrorLog.png")));
+        getToolBar().add(errorLogButton);
+
+        JButton exitButton = new JButton(exitAction);
+        exitButton.setText("");
+        exitButton.setToolTipText(JAMS.resources.getString("Exit"));
+        exitButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/system-shutdown.png")));
+        getToolBar().add(exitButton);
+
 
     }
 

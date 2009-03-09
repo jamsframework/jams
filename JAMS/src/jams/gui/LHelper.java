@@ -50,11 +50,17 @@ import jams.gui.input.TimeintervalInput;
 public class LHelper {
 
     public static final int NO_OPTION = JOptionPane.NO_OPTION;
+
     public static final int YES_OPTION = JOptionPane.YES_OPTION;
+
     public static final int CANCEL_OPTION = JOptionPane.CANCEL_OPTION;
+
     private static final int JCOMP_HEIGHT = 20;
+
     private static final int NUMBERINPUT_WIDTH = 100;
+
     private static final int TEXTINPUT_WIDTH = 250;
+
     private static final int FILEINPUT_WIDTH = 250;
 
     /**
@@ -78,7 +84,7 @@ public class LHelper {
      * @param weightx Component weight in x direction
      * @param weighty Component weight in y direction
      * @return Component added
-     */    
+     */
     public static Component addGBComponent(Container cont, GridBagLayout gbl, Component c,
             int x, int y, int width, int height,
             double weightx, double weighty) {
@@ -111,7 +117,7 @@ public class LHelper {
      * @param weightx Component weight in x direction
      * @param weighty Component weight in y direction
      * @return Component added
-     */    
+     */
     public static Component addGBComponent(Container cont, GridBagLayout gbl, Component c,
             int x, int y, int width, int height,
             int topInset, int leftInset, int bottomInset, int rightInset,
@@ -239,6 +245,17 @@ public class LHelper {
      * @return InputComponent object that provides an editor for the type
      */
     public static InputComponent createInputComponent(String type) {
+        return createInputComponent(type, false);
+    }
+
+    /**
+     * Create swing input component based on data type
+     * @param type Data type
+     * @param extEdit A flag defining if the editors will provide extended or
+     * limited access to data (e.g. step size for timeintervals)
+     * @return InputComponent object that provides an editor for the type
+     */
+    public static InputComponent createInputComponent(String type, boolean extEdit) {
         InputComponent ic;
         if (type.equals("JAMSFileName")) {
             ic = new FileInput();
@@ -247,7 +264,7 @@ public class LHelper {
         } else if (type.equals("JAMSCalendar")) {
             ic = new CalendarInput();
         } else if (type.equals("JAMSTimeInterval")) {
-            ic = new TimeintervalInput();
+            ic = new TimeintervalInput(extEdit);
         } else if (type.equals("JAMSBoolean")) {
             ic = new BooleanInput();
         } else if ((type.equals("JAMSInteger")) || (type.equals("JAMSLong"))) {
@@ -274,6 +291,7 @@ public class LHelper {
      */
     public static JFileChooser getJFileChooser() {
         return new JFileChooser() {
+
             @Override
             public void updateUI() {
                 //putClientProperty("FileChooser.useShellFolder", Boolean.FALSE);

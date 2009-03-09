@@ -71,11 +71,6 @@ public class JAMS {
     public static final Font STANDARD_FONT = new java.awt.Font("Courier", 0, 11);
 
     /**
-     * The wiki URL
-     */
-    public static final String WIKI_URL = "http://jams.uni-jena.de/jamswiki";
-
-    /**
      * Default name of model output file
      */
     public static final String DEFAULT_MODEL_FILENAME = "model.jmp";

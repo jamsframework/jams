@@ -204,7 +204,7 @@ public class ModelView {
 
         modelRunButton = new JButton(JUICE.getJuiceFrame().getRunModelAction());
         modelRunButton.setText("");
-        modelRunButton.setToolTipText(JUICE.resources.getString("Run_model"));
+        modelRunButton.setToolTipText(JAMS.resources.getString("Run_Model"));
         modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         toolBar.add(modelRunButton);
 
