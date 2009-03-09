@@ -39,7 +39,7 @@ import jams.JAMS;
         title="JAMS execution info frame",
         author="Sven Kralisch",
         date="17. June 2006",
-        description="This visual component creates a panel with progress bar and log information <math>\\frac{a^{\\pi}{\\sum_{\\pi^{\\gamma}}}</math>")
+        description="This visual component creates a panel with progress bar and log information")
         public class JAMSExecInfo extends JAMSGUIComponent {
     
     
