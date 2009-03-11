@@ -5,7 +5,10 @@
 
 package reg.spreadsheet;
 
-import java.awt.Color;
+import java.awt.Rectangle;
+import java.io.File;
+import java.io.OutputStream;
+import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
@@ -39,13 +42,30 @@ public class JAMSStackedPlot {
         //create JFreeChart
         chart = new JFreeChart(this.title, JFreeChart.DEFAULT_TITLE_FONT, parentplot, true);
         chartpanel = new ChartPanel(chart, true, true, true, false, true);
-        chartpanel.setBackground(Color.white);
         
     }
     
     public ChartPanel getChartPanel(){
         return chartpanel;
     }
+    
+    public void saveAsEPS(File outfile){
+        
+     try{ 
+        
+      OutputStream out = new java.io.FileOutputStream(outfile);
+      EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
+      g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
+      int width = 600;
+      int height = 400;
+      g2d.setupDocument(out, width, height); //400pt x 200pt
+      this.chart.draw(g2d,new Rectangle(width,height));
+      g2d.finish();
+      out.flush();
+      out.close();
+      
+      }catch(Exception fnfe){}
+   } 
     
     public void setTitle(String title){
         this.title = title;

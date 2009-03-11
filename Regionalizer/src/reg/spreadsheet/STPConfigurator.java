@@ -10,6 +10,7 @@ package reg.spreadsheet;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
+import jams.gui.LHelper;
 import jams.gui.WorkerDlg;
 import jams.workspace.DataSet;
 import jams.workspace.datatypes.DataValue;
@@ -54,11 +55,18 @@ public class STPConfigurator extends JFrame{
     JPanel optionpanel;
     JPanel chooserpanel;
     
+    GridBagLayout ogbl;
+    
     JComboBox templateBox[];
+    JRadioButton timeButton[];
+    JLabel titleLabel[];
     JTextField titleField;
+    ButtonGroup axisGroup;
     
     JButton plotbutton;
     JButton settitleButton;
+    JButton epsButton;
+    JButton addbutton;
     JLabel edTitleLabel;
     
     JPanel chartpanel;
@@ -69,7 +77,7 @@ public class STPConfigurator extends JFrame{
 //    JTable table; //wichtig?
     File templateFile;
             
-    int rows, columns, graphCount;
+    int rows, columns, graphCount, selectedTimeAxis;
     String[] headers;
     
     Vector<double[]> arrayVector;
@@ -112,7 +120,7 @@ public class STPConfigurator extends JFrame{
         setLocation(parentloc.x + 30, parentloc.y + 30);
 
         this.numberOfPlots = numberOfPlots;
-        jts = new JAMSTimePlot[numberOfPlots];
+//        jts = new JAMSTimePlot[numberOfPlots];
         //this.headers = new String[graphCount];
 
         setPreferredSize(new Dimension(1024, 768));
@@ -126,6 +134,9 @@ public class STPConfigurator extends JFrame{
     
     private void createPanel(){
         
+//        JPanel backgroundPanel = (JPanel)this.getContentPane();
+//        backgroundPanel.setBackground(Color.white);
+        
         setLayout(new BorderLayout());
         plotpanel = new JPanel();
 
@@ -134,40 +145,27 @@ public class STPConfigurator extends JFrame{
         
         GridBagLayout gbl = new GridBagLayout();
         chooserpanel.setLayout(gbl);
+        ogbl = new GridBagLayout();
+        optionpanel.setLayout(ogbl);
+        
         
         plotbutton = new JButton("PLOT");
+        epsButton = new JButton("EPS Export");
         settitleButton = new JButton("set");
+        addbutton = new JButton("Add Plot");
         titleField = new JTextField();
         titleField.setSize(50, 10);
         titleField.setText("Stacked Time Plot");
         edTitleLabel = new JLabel("set Title: ");
         
         // PROGRAMME //
-        templateFiles = new File[numberOfPlots];
-        templateBox = new JComboBox[numberOfPlots];
-        
-        plotbutton.addActionListener(plotaction);
-        titleField.addActionListener(titleListener);
-        settitleButton.addActionListener(titleListener);
-        dataset = getAccessibleIDs();
-        
-        //create optionpanel GUI
-        optionpanel.add(edTitleLabel);
-        optionpanel.add(titleField);
-        optionpanel.add(settitleButton);
-        optionpanel.add(new JLabel("  "));
-        for(int c = 0; c < numberOfPlots; c++){
-            templateBox[c] = new JComboBox(dataset);
-            optionpanel.add(templateBox[c]);
-            templateBox[c].setSelectedIndex(c);
-            //LHelper.addGBComponent(chooserpanel, gbl, templateBox[c], 0, c, 1, 1, 0, 0);
-        }
-        optionpanel.add(plotbutton);
-        
-//        plotpanel = createPlotPanel();
+        buildOptionPanel();
+//        optionpanel.add(plotbutton);
         
         XYPlot[] xyplots = new XYPlot[numberOfPlots];
         DateAxis dateAxis = new DateAxis();
+        
+        jts = new JAMSTimePlot[numberOfPlots];
         
         for(int i = 0; i < numberOfPlots; i++){
             String datasetID = (String)templateBox[i].getSelectedItem();
@@ -177,12 +175,15 @@ public class STPConfigurator extends JFrame{
             jts[i] = new JAMSTimePlot();
             jts[i].setPropVector(propVector);
             jts[i].createPlot();
+            jts[i].setTitle(title);
+            titleLabel[i].setText(title);
 //            jts[i].getPanel().add(templateBox[i]);
             
             plot(i);
             xyplots[i] = jts[i].getXYPlot();
             //last date axis
-            dateAxis = jts[i].getDateAxis();
+            if(timeButton[i].isSelected()) dateAxis = jts[i].getDateAxis();
+            
         }
         
         title = titleField.getText();
@@ -196,12 +197,127 @@ public class STPConfigurator extends JFrame{
         repaint();
     }
     
+    private void buildOptionPanel(){
+        
+        templateFiles = new File[numberOfPlots];
+        templateBox = new JComboBox[numberOfPlots];
+        timeButton = new JRadioButton[numberOfPlots];
+        titleLabel = new JLabel[numberOfPlots];
+        axisGroup = new ButtonGroup();
+        
+        plotbutton.addActionListener(plotaction);
+        titleField.addActionListener(titleListener);
+        settitleButton.addActionListener(titleListener);
+        epsButton.addActionListener(saveImageAction);
+        addbutton.addActionListener(addAction);
+        dataset = getAccessibleIDs();
+        
+        //create optionpanel GUI
+//        optionpanel.add(edTitleLabel);
+//        optionpanel.add(titleField);
+//        optionpanel.add(settitleButton);
+//        optionpanel.add(new JLabel("  "));
+        
+        LHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 0, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 2, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots+1, 1, 1, 0, 0);
+        LHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots+2, 1, 1, 0, 0);
+        LHelper.addGBComponent(optionpanel, ogbl, titleField,   1, numberOfPlots+2, 1, 1, 0, 0);
+        LHelper.addGBComponent(optionpanel, ogbl, settitleButton,   2, numberOfPlots+2, 1, 1, 0, 0);
+        LHelper.addGBComponent(optionpanel, ogbl, plotbutton,   4, numberOfPlots+2, 1, 1, 0, 0);
+        LHelper.addGBComponent(optionpanel, ogbl, epsButton,   6, numberOfPlots+2, 1, 1, 0, 0);
+          
+        
+        for(int c = 0; c < numberOfPlots; c++){
+
+            
+            templateBox[c] = new JComboBox(dataset);
+            timeButton[c] = new JRadioButton();
+            axisGroup.add(timeButton[c]);
+            timeButton[c].setSelected(true);
+            selectedTimeAxis = c;
+            titleLabel[c] = new JLabel("");
+//            optionpanel.add(templateBox[c]);
+            templateBox[c].setSelectedIndex(c);
+            LHelper.addGBComponent(optionpanel, ogbl, templateBox[c], 0, c+1, 1, 1, 0, 0);
+            LHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 1, c+1, 1, 1, 0, 0);
+            LHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 2, c+1, 1, 1, 0, 0);
+        }
+    }
+    
+    private void addPlot(){
+        
+        dataset = getAccessibleIDs();
+        
+        
+        if(numberOfPlots <dataset.length ){
+            
+            
+            int[] selectedTemplates = new int[numberOfPlots];
+            
+            for(int k = 0; k < numberOfPlots; k++){
+                selectedTemplates[k] = templateBox[k].getSelectedIndex();
+            }
+            numberOfPlots++;
+            remove(optionpanel);
+            optionpanel = new JPanel();
+            ogbl = new GridBagLayout();
+            optionpanel.setLayout(ogbl);
+            
+            templateFiles = new File[numberOfPlots];
+            templateBox = new JComboBox[numberOfPlots];
+            timeButton = new JRadioButton[numberOfPlots];
+            titleLabel = new JLabel[numberOfPlots];
+            axisGroup = new ButtonGroup();
+
+            plotbutton.addActionListener(plotaction);
+            titleField.addActionListener(titleListener);
+            settitleButton.addActionListener(titleListener);
+            epsButton.addActionListener(saveImageAction);
+            addbutton.addActionListener(addAction);
+            dataset = getAccessibleIDs();
+
+            LHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 0, 0, 1, 1, 0, 0);
+            LHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 2, 0, 1, 1, 0, 0);
+            LHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots+1, 1, 1, 0, 0);
+            LHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots+2, 1, 1, 0, 0);
+            LHelper.addGBComponent(optionpanel, ogbl, titleField,   1, numberOfPlots+2, 1, 1, 0, 0);
+            LHelper.addGBComponent(optionpanel, ogbl, settitleButton,   2, numberOfPlots+2, 1, 1, 0, 0);
+            LHelper.addGBComponent(optionpanel, ogbl, plotbutton,   4, numberOfPlots+2, 1, 1, 0, 0);
+            LHelper.addGBComponent(optionpanel, ogbl, epsButton,   6, numberOfPlots+2, 1, 1, 0, 0);
+
+
+            for(int c = 0; c < numberOfPlots; c++){
+
+                templateBox[c] = new JComboBox(dataset);
+                timeButton[c] = new JRadioButton();
+                axisGroup.add(timeButton[c]);
+                if(c == selectedTimeAxis) timeButton[c].setSelected(true);
+                titleLabel[c] = new JLabel("");
+    //            optionpanel.add(templateBox[c]);
+                if(c<selectedTemplates.length) templateBox[c].setSelectedIndex(selectedTemplates[c]);
+                
+                LHelper.addGBComponent(optionpanel, ogbl, templateBox[c], 0, c+1, 1, 1, 0, 0);
+                LHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 1, c+1, 1, 1, 0, 0);
+                LHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 2, c+1, 1, 1, 0, 0);
+            }
+            
+            repaintPlotPanel();
+            
+        } else {
+            /* Not enough Templates */
+        }
+        
+    }
+    
     private void repaintPlotPanel(){
         
         this.remove(chartpanel);
 
         XYPlot[] xyplots = new XYPlot[numberOfPlots];
         DateAxis dateAxis = new DateAxis();
+        
+        jts = new JAMSTimePlot[numberOfPlots];
         
         for(int i = 0; i < numberOfPlots; i++){
             String datasetID = (String)templateBox[i].getSelectedItem();
@@ -210,12 +326,19 @@ public class STPConfigurator extends JFrame{
             loadTemplate(templateFiles[i]);
             jts[i] = new JAMSTimePlot();
             jts[i].setPropVector(propVector);
+            
             jts[i].createPlot();
+            jts[i].setTitle(title);
+            titleLabel[i].setText(title);
             
             plot(i);
             xyplots[i] = jts[i].getXYPlot();
             //last date axis
-            dateAxis = jts[i].getDateAxis();
+            if(timeButton[i].isSelected()){
+                
+                selectedTimeAxis = i;
+                dateAxis = jts[i].getDateAxis();
+            }
             //if(i < numberOfPlots - 1) jts[i].removeLegendAndXAxis();
         }
         
@@ -238,6 +361,8 @@ public class STPConfigurator extends JFrame{
         return store;
     }
     
+    
+    
     private String[] getAccessibleIDs(){
         
         int totalIDs = 0;
@@ -255,13 +380,15 @@ public class STPConfigurator extends JFrame{
         for(int i = 0; i < totalIDs; i++){
             
             File testFile = new File(Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory(), idArray[i] +".ttp");
-            try {
-                FileInputStream fin = new FileInputStream(testFile);
-                fin.close();
-                accIDList.add(idArray[i]);
-            }   catch (IOException ioe) {
-                    failedIDs++;
-            }
+            if(testFile.exists()) accIDList.add(idArray[i]);
+            else failedIDs++;
+//            try {
+//                FileInputStream fin = new FileInputStream(testFile);
+//                fin.close();
+//                accIDList.add(idArray[i]);
+//            }   catch (IOException ioe) {
+//                    failedIDs++;
+//            }
             
         }
         accessibleIDs = accIDList.size();
@@ -852,5 +979,31 @@ public class STPConfigurator extends JFrame{
             stackedplot.setTitle(title);
         }
     };
+    
+     ActionListener saveImageAction = new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+
+//            showHiRes();
+            try {
+                JFileChooser chooser = new JFileChooser();
+                int returnVal = chooser.showSaveDialog(parent);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = chooser.getSelectedFile();
+                    stackedplot.saveAsEPS(file);
+                }
+            } catch (Exception ex) {
+            }
+        }
+    };
+    
+    ActionListener addAction = new ActionListener() {
+
+        public void actionPerformed(ActionEvent te) {
+            
+            addPlot();
+        }
+    };
+    
 
 }

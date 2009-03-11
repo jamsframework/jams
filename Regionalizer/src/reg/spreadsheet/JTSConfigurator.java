@@ -123,6 +123,8 @@ public class JTSConfigurator extends JFrame {
     private JButton saveButton = new JButton("EPS export");
     private JButton saveTempButton = new JButton("Save Template");
     private JButton loadTempButton = new JButton("Load Template");
+    
+ 
 
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
 

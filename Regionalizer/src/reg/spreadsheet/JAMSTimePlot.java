@@ -143,7 +143,7 @@ public class JAMSTimePlot {
             String leftAxisTitle = "left axis title";
             String rightAxisTitle = "right axis title";
 
-            String title = "CTSPlot ver. 0.10";
+            String title = "CTSPlot ver. 1.00";
     }
     public ChartPanel getChartPanel(){
         //createPlot();
@@ -352,6 +352,10 @@ public class JAMSTimePlot {
     
     public void setTitle(String title){
         chart.setTitle(title);
+    }
+    
+    public String getTitle(){
+        return title;
     }
     
     public void plotEmpty(){
