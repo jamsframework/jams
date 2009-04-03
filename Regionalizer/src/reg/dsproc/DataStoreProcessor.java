@@ -26,9 +26,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -36,8 +36,6 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -69,17 +67,26 @@ public class DataStoreProcessor {
 
     private ImportProgressObservable importProgressObservable = new ImportProgressObservable();
 
+    private boolean cancelCreateIndex = false;
+
     public DataStoreProcessor(File dsFile) {
         this.dsFile = dsFile;
 
         try {
             initDS();
         } catch (IOException ex) {
-            Logger.getLogger(DataStoreProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
 
         jdbcURL = "jdbc:h2:" + dsFile.toString().substring(0, dsFile.toString().lastIndexOf(".")) + ";LOG=0";
 
+    }
+
+    public synchronized void createDB() throws IOException, SQLException, ClassNotFoundException {
+        Class.forName("org.h2.Driver");
+        clearDB();
+        initTables();
+        createIndex();
     }
 
     private static HashMap<String, String> getTypeMap() {
@@ -93,15 +100,31 @@ public class DataStoreProcessor {
         return result;
     }
 
-    public synchronized void createDB() throws IOException, SQLException, ClassNotFoundException {
+    public void clearDB() throws SQLException {
 
-        removeDB();
-        Class.forName("org.h2.Driver");
-        initTables();
-        createIndex();
+        if ((conn == null) || (conn.isClosed())) {
+            // open/create the db
+            conn = getH2Connection(false);
+        }
+
+        // get a statement object
+        stmt = conn.createStatement();
+
+        // remove index table if exists
+        ResultSet rs = stmt.executeQuery("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='PUBLIC'");
+        ArrayList<String> tables = new ArrayList<String>();
+        while (rs.next()) {
+            tables.add(rs.getString("TABLE_NAME"));
+
+        }
+        rs.close();
+
+        for (String table : tables) {
+            stmt.execute("DROP TABLE IF EXISTS " + table);
+        }
     }
 
-    public void removeDB() throws SQLException {
+    public void removeDBFiles() {
         FileFilter filter = new FileFilter() {
 
             @Override
@@ -115,22 +138,46 @@ public class DataStoreProcessor {
             }
         };
 
-        this.close();
         File parent = dsFile.getParentFile();
         File[] h2Files = parent.listFiles(filter);
 
         for (File h2File : h2Files) {
-            h2File.delete();
+            System.out.println(h2File.delete());
         }
     }
 
     public void close() throws SQLException {
         if ((conn != null) && !conn.isClosed()) {
+            System.out.println("closing");
             conn.close();
+        //conn = null;
         }
     }
 
-    public boolean existsH2DB() {
+    public boolean existsH2DB() throws SQLException {
+
+        if ((conn == null) || (conn.isClosed())) {
+            // open/create the db
+            conn = getH2Connection(false);
+        }
+
+        // get a statement object
+        stmt = conn.createStatement();
+
+        // remove index table if exists
+        ResultSet rs = stmt.executeQuery("SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME='INDEX' OR TABLE_NAME='DATA'");
+        rs.next();
+        int count = rs.getInt(1);
+        rs.close();
+
+        if (count != 2) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean existsH2DBFiles() {
         String prefix = dsFile.toString().substring(0, dsFile.toString().lastIndexOf("."));
         File dataFile = new File(prefix + ".data.db");
         File indexFile = new File(prefix + ".index.db");
@@ -146,12 +193,9 @@ public class DataStoreProcessor {
             return conn;
         }
 
-        if (!checkForDB) {
-            return DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
-        }
-
-        if (existsH2DB()) {
-            return DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
+        if (!checkForDB || existsH2DBFiles()) {
+            conn = DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
+            return conn;
         } else {
             return null;
         }
@@ -240,7 +284,7 @@ public class DataStoreProcessor {
 
         // @context row
         row = reader.readLine();
-        if (!row.equals("@context")) {
+        if ((row == null) || !row.equals("@context")) {
             return;
         }
         row = reader.readLine();
@@ -288,11 +332,19 @@ public class DataStoreProcessor {
         float counter = 0;
         int percent = 0;
 
-        reader.readLine();
+        reader = new BufferedFileReader(new FileInputStream(dsFile));
+
+        while (!reader.readLine().equals("@data")) {
+        }
 
         boolean result = parseBlock();
 
         while (result) {
+
+            if (cancelCreateIndex) {
+                clearDB();
+                return;
+            }
 
             result = parseBlock();
 
@@ -303,7 +355,10 @@ public class DataStoreProcessor {
                 importProgressObservable.setProgress(percent);
             }
         }
+    }
 
+    public void cancelCreateIndex() {
+        cancelCreateIndex = true;
     }
 
     private boolean parseBlock() throws IOException, SQLException {
@@ -405,7 +460,7 @@ public class DataStoreProcessor {
         });
 
         dsdb.createDB();
-        dsdb.createIndex();
+    //dsdb.createIndex();
 
 //        DataMatrix m = dsdb.getData(7323914);
 ////        DataMatrix m = dsdb.getData(836);

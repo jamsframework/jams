@@ -34,6 +34,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
@@ -64,6 +66,8 @@ public class TimeSpaceDSPanel extends JPanel {
     private static final Dimension ACTION_BUTTON_DIM = new Dimension(150, 25),  LIST_DIMENSION = new Dimension(150, 240);
 
     private TimeSpaceProcessor tsproc;
+
+    private DataStoreProcessor dsdb;
 
     private GridBagLayout mainLayout;
 
@@ -130,6 +134,14 @@ public class TimeSpaceDSPanel extends JPanel {
         }
     };
 
+    private Action indexReset = new AbstractAction("Reset Index") {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            resetIndex();
+        }
+    };
+
     private Action freeTempMean = new AbstractAction("Temp. Mean (filter)") {
 
         @Override
@@ -149,6 +161,7 @@ public class TimeSpaceDSPanel extends JPanel {
         }
         freeTempMean.setEnabled(false);
         cacheReset.setEnabled(false);
+        indexReset.setEnabled(false);
 
         mainLayout = new GridBagLayout();
         this.setLayout(mainLayout);
@@ -299,10 +312,14 @@ public class TimeSpaceDSPanel extends JPanel {
         }
 
         buttonPanelB.add(new JPanel());
+
         button = new JButton(cacheReset);
         button.setPreferredSize(ACTION_BUTTON_DIM);
         buttonPanelB.add(button);
 
+        button = new JButton(indexReset);
+        button.setPreferredSize(ACTION_BUTTON_DIM);
+        buttonPanelB.add(button);
 
         LHelper.addGBComponent(this, mainLayout, buttonPanelB, 70, 20, 1, 1, 0, 0);
     }
@@ -338,13 +355,13 @@ public class TimeSpaceDSPanel extends JPanel {
             }
         });
 
-        if (!dsdb.existsH2DB()) {
+        if (!dsdb.existsH2DBFiles()) {
             dsdb.createDB();
         }
-        
+
         TimeSpaceProcessor tsproc = new TimeSpaceProcessor(dsdb);
         tsproc.isTimeSpaceDatastore();
-        tsp.setTsproc(tsproc);
+        tsp.setTsProc(tsproc);
     //tsproc.close();
     }
 
@@ -355,12 +372,73 @@ public class TimeSpaceDSPanel extends JPanel {
         return tsproc;
     }
 
-    /**
-     * @param tsproc the tsproc to set
-     * @throws SQLException
-     * @throws IOException 
-     */
-    public void setTsproc(TimeSpaceProcessor tsproc) throws SQLException, IOException {
+    private void createDB() {
+        workerDlg.setInderminate(false);
+        workerDlg.setTask(new CancelableRunnable() {
+
+            public int cancel() {
+                dsdb.cancelCreateIndex();
+                return -1;
+            }
+
+            public void run() {
+                try {
+                    dsdb.createDB();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                } catch (ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        try {
+            if (!dsdb.existsH2DB()) {
+                workerDlg.execute();
+            }
+
+            if (!dsdb.existsH2DB()) {
+                clearPanel();
+                System.out.println("Creation canceled");
+            }
+
+            TimeSpaceProcessor proc = new TimeSpaceProcessor(dsdb);
+
+            if (proc.isTimeSpaceDatastore()) {
+                this.setTsProc(proc);
+            }
+        } catch (SQLException ex) {
+        } catch (IOException ex) {
+        }
+    }
+
+    private void resetIndex() {
+
+        try {
+            dsdb.clearDB();
+        } catch (SQLException ex) {
+            Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        createDB();
+    }
+
+    public void createTsProc(File file) {
+
+        dsdb = new DataStoreProcessor(file);
+        dsdb.addImportProgressObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                workerDlg.setProgress(Integer.parseInt(arg.toString()));
+            }
+        });
+
+        createDB();
+    }
+
+    private void setTsProc(TimeSpaceProcessor tsproc) throws SQLException, IOException {
         this.tsproc = tsproc;
 
         timeList.setModel(new AbstractListModel() {
@@ -425,6 +503,16 @@ public class TimeSpaceDSPanel extends JPanel {
             }
         });
 
+    }
+
+    private void clearPanel() {
+        timeList.setEnabled(false);
+        entityList.setEnabled(false);
+        yearList.setEnabled(false);
+        monthList.setEnabled(false);
+        cacheReset.setEnabled(false);
+        timeField.setEnabled(false);
+        indexReset.setEnabled(false);
     }
 
     private void showTimeStep() {
@@ -693,6 +781,7 @@ public class TimeSpaceDSPanel extends JPanel {
         try {
             tsproc.deleteCache();
         } catch (SQLException ex) {
+            ex.printStackTrace();
         }
     }
 

@@ -29,7 +29,8 @@ import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.util.Observable;
 import java.util.Observer;
-import reg.gui.InfoPanel;
+import reg.gui.InputDSInfoPanel;
+import reg.gui.OutputDSPanel;
 import reg.gui.TSPanel;
 import reg.gui.TreePanel;
 import reg.tree.DSTreeNode;
@@ -41,7 +42,7 @@ import reg.tree.FileObject;
  */
 public class DisplayManager implements Observer {
 
-    private InfoPanel infoPanel;
+    private InputDSInfoPanel inputDSInfoPanel;
 
     private TSPanel tsPanel;
 
@@ -51,7 +52,7 @@ public class DisplayManager implements Observer {
 
     public DisplayManager() {
         treePanel = new TreePanel();
-        infoPanel = new InfoPanel();
+        inputDSInfoPanel = new InputDSInfoPanel();
         treePanel.getTree().addObserver(this);
 
         String[] default_headers = {""};
@@ -62,20 +63,20 @@ public class DisplayManager implements Observer {
     // handle selection of tree nodes and show metadata
     public void update(Observable o, Object arg) {
         if (arg == null) {
-            infoPanel.updateDS(null);
+            inputDSInfoPanel.updateDS(null);
             return;
         }
         DSTreeNode node = (DSTreeNode) arg;
         if (node.getType() == DSTreeNode.INPUT_DS) {
             try {
                 DataStore store = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStore(node.toString());
-                infoPanel.updateDS(store);
+                inputDSInfoPanel.updateDS(store);
             } catch (Exception e) {
                 Regionalizer.getRuntime().sendErrorMsg(e.toString());
                 e.printStackTrace();
             }
         } else if (node.getType() == DSTreeNode.OUTPUT_DS) {
-//                    Regionalizer.getTree().getWorkspace().getO(node.toString());
+            //display info dlg
         }
 
     }
@@ -97,12 +98,11 @@ public class DisplayManager implements Observer {
                     }
                 }
                 break;
+
             case DSTreeNode.OUTPUT_DS:
                 FileObject fo = (FileObject) node.getUserObject();
-                System.out.println(fo.getFile().getAbsolutePath());
-
-
-
+                OutputDSPanel odsPanel = OutputDSPanel.createPanel(fo.getFile());
+                Regionalizer.getRegionalizerFrame().updateMainPanel(odsPanel);
                 break;
         }
     }
@@ -110,8 +110,8 @@ public class DisplayManager implements Observer {
     /**
      * @return the infoPanel
      */
-    public InfoPanel getInfoPanel() {
-        return infoPanel;
+    public InputDSInfoPanel getInputDSInfoPanel() {
+        return inputDSInfoPanel;
     }
 
     /**

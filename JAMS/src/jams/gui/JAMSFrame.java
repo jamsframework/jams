@@ -538,6 +538,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         try {
             XMLIO.writeXmlFile(getModelDocument(), modelFilename);
+            this.initialModelDocString = XMLIO.getStringFromDocument(this.modelDocument);
             fillAttributes(getModelDocument());
         } catch (IOException ioe) {
             LHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Error_saving_configuration_to_") + modelFilename, JAMS.resources.getString("Error"));

@@ -43,7 +43,6 @@ public class __NAME__ extends JAMSComponent {
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.<access>,
-            update = JAMSVarDescription.UpdateType.<update>,
             description = "Description"
             )
             public <JAMSType> varName;

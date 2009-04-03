@@ -1,5 +1,5 @@
 /*
- * InfoPanel.java
+ * InputDSInfoPanel.java
  * Created on 19. November 2008, 10:47
  *
  * This file is part of JAMS
@@ -41,11 +41,11 @@ import javax.swing.UIManager;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class InfoPanel extends JPanel {
+public class InputDSInfoPanel extends JPanel {
 
     private TSPanel tsPanel;
 
-    public InfoPanel() {
+    public InputDSInfoPanel() {
         super();
     }
 

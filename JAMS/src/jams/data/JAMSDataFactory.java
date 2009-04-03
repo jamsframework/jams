@@ -95,7 +95,6 @@ public class JAMSDataFactory {
             JAMSString v = new JAMSString();
             v.setValue(value.toString());
             result = v;
-//@TODO: solve problems with class loader that prevent loading of Geometry.class
         } else if (Geometry.class.isAssignableFrom(type)) {
             JAMSGeometry v = new JAMSGeometry((Geometry) value);
             result = v;

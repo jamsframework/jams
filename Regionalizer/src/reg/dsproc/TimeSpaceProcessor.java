@@ -960,10 +960,6 @@ public class TimeSpaceProcessor {
         processingProgressObservable.addObserver(o);
     }
 
-    public void addProcessingStateObserver(Observer o) {
-        processingProgressObservable.addObserver(o);
-    }
-
     public void sendAbortOperation() {
         this.abortOperation = true;
         synchronized (this) {

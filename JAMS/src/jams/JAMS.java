@@ -247,8 +247,8 @@ public class JAMS {
      * Exception handling method
      * @param ex Exception to be handled
      */
-    public static void handle(Exception ex) {
-        handle(ex, true);
+    public static void handle(Throwable t) {
+        handle(t, true);
     }
 
     /**
@@ -256,8 +256,8 @@ public class JAMS {
      * @param ex Exception to be handled
      * @param proceed Proceed or not?
      */
-    public static void handle(Exception ex, boolean proceed) {
-        ex.printStackTrace();
+    public static void handle(Throwable t, boolean proceed) {
+        t.printStackTrace();
         if (!proceed) {
             System.exit(-1);
         }

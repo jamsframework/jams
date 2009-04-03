@@ -169,7 +169,7 @@ title="Title",
             i++;
         }
         
-        entities = (JAMSEntityCollection)getModel().getRuntime().getDataHandles().get("hrus");
+        setEntities((JAMSEntityCollection)getModel().getRuntime().getDataHandles().get("hrus"));
         
         //retreiving boundaries
         tok = new StringTokenizer(boundaries.getValue(), ";");

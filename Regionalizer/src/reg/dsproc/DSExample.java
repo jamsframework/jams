@@ -47,7 +47,7 @@ public class DSExample {
             }
         });
 
-        if (!dsdb.existsH2DB()) {
+        if (!dsdb.existsH2DBFiles()) {
             dsdb.createDB();
         }
         TimeSpaceProcessor tsproc = new TimeSpaceProcessor(dsdb);

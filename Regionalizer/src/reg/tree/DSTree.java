@@ -27,13 +27,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
-import java.util.jar.JarFile;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
-import jams.model.JAMSComponent;
 import jams.workspace.JAMSWorkspace;
 import javax.swing.KeyStroke;
 import javax.swing.event.TreeSelectionEvent;
@@ -61,7 +58,7 @@ public class DSTree extends JAMSTree {
         this.setModel(new DefaultTreeModel(root));
 
         JMenuItem detailItem = new JMenuItem("Zeige Daten");
-        detailItem.setAccelerator(KeyStroke.getKeyStroke('D'));
+        //detailItem.setAccelerator(KeyStroke.getKeyStroke('D'));
         detailItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent evt) {

@@ -111,7 +111,7 @@ public class RegionalizerFrame extends JFrame {
         inoutSplitPane.setAutoscrolls(true);
         inoutSplitPane.setContinuousLayout(true);
         inoutSplitPane.setLeftComponent(Regionalizer.getDisplayManager().getTreePanel());
-        inoutSplitPane.setRightComponent(Regionalizer.getDisplayManager().getInfoPanel());
+        inoutSplitPane.setRightComponent(Regionalizer.getDisplayManager().getInputDSInfoPanel());
         inoutSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         inoutSplitPane.setDividerLocation(INOUT_PANE_HEIGHT);
         inoutSplitPane.setOneTouchExpandable(false);

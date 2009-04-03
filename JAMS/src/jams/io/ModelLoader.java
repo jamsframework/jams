@@ -326,6 +326,7 @@ public class ModelLoader {
                                 sc.addAccess(component, varName, attributeName, DataAccessor.READWRITE_ACCESS);
                             }
 
+                            nullFields.get(component).remove(field);
                         }
 
                     /*

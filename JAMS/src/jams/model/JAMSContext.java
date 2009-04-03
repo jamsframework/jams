@@ -50,9 +50,9 @@ import jams.runtime.JAMSRuntime;
 "component of every component hierarchie in JAMS")
 public class JAMSContext extends JAMSComponent {
 
-    protected JAMSEntityCollection entities;
+    private JAMSEntityCollection entities;
 
-    protected JAMSEntity currentEntity;
+//    private JAMSEntity currentEntity;
 
     protected ArrayList<JAMSComponent> components = new ArrayList<JAMSComponent>();
 
@@ -78,12 +78,13 @@ public class JAMSContext extends JAMSComponent {
      * Creates a new context
      */
     public JAMSContext() {
-        try {
-            
+
+        try {    
             //create an entity collection with one entity
-            setCurrentEntity((JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class));
+//            setCurrentEntity((JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class));
             ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
-            list.add(getCurrentEntity());
+//            list.add(getCurrentEntity());
+            list.add((JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class));
             setEntities(JAMSDataFactory.createEntityCollection());
             getEntities().setEntities(list);
             attribs = new HashMap<String, JAMSData>();
@@ -338,10 +339,10 @@ public class JAMSContext extends JAMSComponent {
 
                     // field has been set with some value, so
                     // remove it from list of nullFields                     
-                    if (getModel().getNullFields() != null) { // can be null after deserialization
-                        ArrayList<Field> nullFields = getModel().getNullFields().get(accessSpec.component);
-                        nullFields.remove(field);
-                    }
+//                    if (getModel().getNullFields() != null) { // can be null after deserialization
+//                        ArrayList<Field> nullFields = getModel().getNullFields().get(accessSpec.component);
+//                        nullFields.remove(field);
+//                    }
                 }
             } catch (Exception e) {
                 getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Error_occured_in_") + accessSpec.component.getInstanceName() + ": " + accessSpec.varName);
@@ -360,7 +361,7 @@ public class JAMSContext extends JAMSComponent {
      * @return A string representing the current state of the context
      */
     public String getTraceMark() {
-        return Long.toString(currentEntity.getId());
+        return Long.toString(entities.getCurrent().getId());
     }
 
     /**
@@ -744,7 +745,9 @@ public class JAMSContext extends JAMSComponent {
             // entity and start with the new Component list again
             if (!ce.hasNext() && ee.hasNext()) {
                 updateEntityData();
-                setCurrentEntity(ee.next());
+//                setCurrentEntity(ee.next());
+                ee.next();
+
                 index++;
                 updateComponentData(index);
                 ce.reset();
@@ -755,7 +758,7 @@ public class JAMSContext extends JAMSComponent {
         @Override
         public void reset() {
             ee.reset();
-            setCurrentEntity(getEntities().getCurrent());
+//            setCurrentEntity(getEntities().getCurrent());
             ce.reset();
             index = 0;
             updateComponentData(index);
@@ -923,8 +926,6 @@ public class JAMSContext extends JAMSComponent {
             this.attributeName = attributeName;
             this.className = className;
             this.value = value;
-
-
         }
     }
 
@@ -955,11 +956,11 @@ public class JAMSContext extends JAMSComponent {
         this.entities = entities;
     }
 
-    public JAMSEntity getCurrentEntity() {
-        return currentEntity;
-    }
-
-    public void setCurrentEntity(JAMSEntity currentEntity) {
-        this.currentEntity = currentEntity;
-    }
+//    public JAMSEntity getCurrentEntity() {
+//        return currentEntity;
+//    }
+//
+//    public void setCurrentEntity(JAMSEntity currentEntity) {
+//        this.currentEntity = currentEntity;
+//    }
 }
