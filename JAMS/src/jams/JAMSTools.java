@@ -22,7 +22,6 @@
  */
 package jams;
 
-import jams.data.JAMSData;
 import jams.model.JAMSComponent;
 import java.io.File;
 import java.io.FileInputStream;

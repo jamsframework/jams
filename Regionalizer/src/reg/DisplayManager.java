@@ -23,14 +23,16 @@
 package reg;
 
 import jams.gui.LHelper;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import reg.spreadsheet.JAMSSpreadSheet;
 import jams.workspace.stores.DataStore;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.JPanel;
 import reg.gui.InputDSInfoPanel;
-import reg.gui.OutputDSPanel;
 import reg.gui.TSPanel;
 import reg.gui.TreePanel;
 import reg.tree.DSTreeNode;
@@ -98,11 +100,18 @@ public class DisplayManager implements Observer {
                     }
                 }
                 break;
-
             case DSTreeNode.OUTPUT_DS:
                 FileObject fo = (FileObject) node.getUserObject();
-                OutputDSPanel odsPanel = OutputDSPanel.createPanel(fo.getFile());
-                Regionalizer.getRegionalizerFrame().updateMainPanel(odsPanel);
+//                OutputDSPanel odsPanel = OutputDSPanel.createPanel(fo.getFile());
+//                Regionalizer.getRegionalizerFrame().updateMainPanel(odsPanel);
+                try {
+                    JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(fo.getFile());
+                    Regionalizer.getRegionalizerFrame().updateMainPanel(outputPanel);
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
                 break;
         }
     }

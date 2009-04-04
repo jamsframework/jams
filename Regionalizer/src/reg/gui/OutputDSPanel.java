@@ -1,0 +1,60 @@
+/*
+ * OutputDSPanel.java
+ * Created on 29. März 2009, 15:09
+ *
+ * This file is part of JAMS
+ * Copyright (C) FSU Jena
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ *
+ */
+package reg.gui;
+
+import java.io.File;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import reg.Regionalizer;
+
+/**
+ *
+ * @author Sven Kralisch <sven.kralisch at uni-jena.de>
+ */
+public class OutputDSPanel extends JPanel {
+
+    private TimeSpaceDSPanel tsp;
+
+    private JSplitPane splitPane;
+
+    public static OutputDSPanel createPanel(File file) {
+        return new OutputDSPanel(file);
+    }
+
+    private OutputDSPanel(File file) {
+
+        splitPane = new JSplitPane();
+        splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+
+        tsp = new TimeSpaceDSPanel();
+        tsp.setParent(Regionalizer.getRegionalizerFrame());
+        tsp.createTsProc(file);
+
+        JScrollPane scroll = new JScrollPane(tsp);
+        splitPane.setLeftComponent(scroll);
+        splitPane.setRightComponent(new JPanel());
+
+        this.add(splitPane);
+    }
+}

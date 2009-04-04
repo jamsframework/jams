@@ -48,6 +48,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
@@ -66,6 +67,7 @@ public class RegionalizerFrame extends JFrame {
     private JLabel statusLabel;
     private JAMSWorkspace workspace;
     private JSplitPane mainSplitPane;
+    private JScrollPane mainScroll;
 
     public RegionalizerFrame() {
         init();
@@ -98,12 +100,14 @@ public class RegionalizerFrame extends JFrame {
 
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
+        mainScroll = new JScrollPane();
+
         mainSplitPane = new JSplitPane();
         JSplitPane inoutSplitPane = new JSplitPane();
         mainSplitPane.setAutoscrolls(true);
         mainSplitPane.setContinuousLayout(true);
         mainSplitPane.setLeftComponent(inoutSplitPane);
-        mainSplitPane.setRightComponent(new JPanel());
+        mainSplitPane.setRightComponent(mainScroll);
         mainSplitPane.setDividerLocation(INOUT_PANE_WIDTH);
         //mainSplitPane.setOneTouchExpandable(true);
         mainSplitPane.setDividerSize(DIVIDER_WIDTH);
@@ -176,8 +180,8 @@ public class RegionalizerFrame extends JFrame {
     }
 
     public void updateMainPanel(Component comp) {
-        mainSplitPane.setRightComponent(comp);
-        mainSplitPane.updateUI();
+        mainScroll.setViewportView(comp);
+        mainScroll.updateUI();
     }
 
     private void open() {

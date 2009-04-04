@@ -495,6 +495,7 @@ public class TimeSpaceDSPanel extends JPanel {
 
         cacheReset.setEnabled(true);
         timeField.setEnabled(true);
+        indexReset.setEnabled(true);
 
         tsproc.addProcessingProgressObserver(new Observer() {
 
