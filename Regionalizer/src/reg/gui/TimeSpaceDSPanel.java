@@ -134,7 +134,7 @@ public class TimeSpaceDSPanel extends JPanel {
         }
     };
 
-    private Action indexReset = new AbstractAction("Reset Index") {
+    private Action indexReset = new AbstractAction("Reload Index") {
 
         @Override
         public void actionPerformed(ActionEvent e) {
