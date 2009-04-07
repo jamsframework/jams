@@ -258,7 +258,8 @@ public class JXYConfigurator extends JFrame {
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
-
+        this.thisJXY = this;
+        
         this.sheet = sheet;
         this.table = sheet.table;
 
@@ -293,7 +294,8 @@ public class JXYConfigurator extends JFrame {
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
-
+        this.thisJXY = this;
+        
         this.sheet = sheet;
         this.table = sheet.table;
         this.templateFile = templateFile;
@@ -490,13 +492,13 @@ public class JXYConfigurator extends JFrame {
             public void run() {
 
                 for (int k = 0; k < graphCount; k++) {
-
                     prop = new GraphProperties(thisJXY);
                     prop.setSelectedColumn(columns[k]);
                     prop.setXSeries(columns[0]);
                     prop.setSelectedRows(rows);
 
                     if (k == 0) { //initial x axis
+                        System.out.println("k=0 initial x axis");
                         prop.getIsXAxisButton().setSelected(true);
                         prop.setIsXSeries(true);
                         prop.getDataChoice().setEnabled(false);
@@ -532,13 +534,8 @@ public class JXYConfigurator extends JFrame {
                     prop.setSeriesOutlinePaint(colorTable.get(colors[2]));
                     prop.setLinesVisible(false);
                     prop.setLinesVisBox(false);
-//            prop.setColor((String) colorchoice.getSelectedItem());
-//            prop.setPosition((String) poschoice.getSelectedItem());
-//            prop.setRendererType(typechoice.getSelectedIndex());
                     prop.setName(table.getColumnName(k + 1));
                     prop.setLegendName(table.getColumnName(k + 1));
-
-
                     propVector.add(k, prop);
 
                 }
@@ -548,7 +545,7 @@ public class JXYConfigurator extends JFrame {
 
                 //set data intervals
                 for (int k = 0; k < propVector.size(); k++) {
-
+                    System.out.println("set data intervals. size = "+propVector.size());
                     prop = propVector.get(k);
 
                     prop.setXIntervals(range);

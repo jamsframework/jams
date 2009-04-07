@@ -72,6 +72,7 @@ public class JAMSTimePlot {
     int graphCountRight=0;
     int graphCountLeft=0;
     
+    double weight;
 
     String xAxisTitle;
     String leftAxisTitle;
@@ -274,9 +275,10 @@ public class JAMSTimePlot {
         chartPanel.setBackground(Color.WHITE);
         
         panel = new JPanel();
-
+        
         panel.setLayout(new BorderLayout());
-
+        panel.setBackground(Color.WHITE);
+        
         panel.add(chartPanel, BorderLayout.CENTER);
         panel.add(chartPanel);
         
@@ -356,6 +358,15 @@ public class JAMSTimePlot {
     
     public String getTitle(){
         return title;
+    }
+    
+    public void setWeight(double weight){
+        this.weight = weight;
+        
+    }
+    
+    public double getWeight(){
+        return this.weight;
     }
     
     public void plotEmpty(){

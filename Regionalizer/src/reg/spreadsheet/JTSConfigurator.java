@@ -1264,7 +1264,7 @@ public class JTSConfigurator extends JFrame {
         Properties properties = new Properties();
         int no_of_props = propVector.size();
 
-
+        String store = sheet.getStore().getID();
         String names = "";
         String name;
         String[] legendname;
@@ -1292,7 +1292,8 @@ public class JTSConfigurator extends JFrame {
 
 
         properties.setProperty("number", number);
-
+        //Store
+        properties.setProperty("store", store);
         //Titles
         properties.setProperty("title", edTitleField.getText());
         properties.setProperty("axisLTitle", edLeftField.getText());

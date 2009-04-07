@@ -86,6 +86,8 @@ public class JAMSSpreadSheet extends JPanel {
 
     private JTableHeader tableHeader;
 
+    private TSDataStore store;
+    
     JTable table;
     /* ComboBox */
     /* String array contains words of the ComboBox */
@@ -111,7 +113,11 @@ public class JAMSSpreadSheet extends JPanel {
         //createPanel();
         return panel;
     }
-
+    
+    public TSDataStore getStore(){
+        return this.store;
+    }
+    
     /* JAMS init() method */
     public void init() {
 
@@ -207,7 +213,9 @@ public class JAMSSpreadSheet extends JPanel {
     }
 
     public void loadTSDS(TSDataStore store, File inputDSDir) throws Exception {
-
+        
+        this.store = store;
+        
         int colNumber = 0;
         double[] rowBuffer;
         String[] headers;

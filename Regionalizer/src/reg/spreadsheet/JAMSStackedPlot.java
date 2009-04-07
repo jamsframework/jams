@@ -5,6 +5,7 @@
 
 package reg.spreadsheet;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.OutputStream;
@@ -25,7 +26,7 @@ public class JAMSStackedPlot {
     ChartPanel chartpanel;
     String title;
     
-    public JAMSStackedPlot(XYPlot[] xyplots, DateAxis timeAxis, String title){
+    public JAMSStackedPlot(XYPlot[] xyplots, int[] weights, DateAxis timeAxis, String title){
         //final JFreeChart chart = createStackedChart(xyplots, DateAxis);
         int no_of_plots = xyplots.length;
         this.title = title;
@@ -35,7 +36,8 @@ public class JAMSStackedPlot {
         
         //add subplots
         for(int i = 0; i< no_of_plots; i++){
-            parentplot.add(xyplots[i], 1);
+//            parentplot.add(xyplots[i], xyplots[i].getWeight());
+            parentplot.add(xyplots[i], weights[i]);
         }
         parentplot.setOrientation(PlotOrientation.VERTICAL);
         
@@ -43,11 +45,15 @@ public class JAMSStackedPlot {
         chart = new JFreeChart(this.title, JFreeChart.DEFAULT_TITLE_FONT, parentplot, true);
         chartpanel = new ChartPanel(chart, true, true, true, false, true);
         
+        chartpanel.setBackground(Color.WHITE);
+        
     }
     
     public ChartPanel getChartPanel(){
         return chartpanel;
     }
+    
+    
     
     public void saveAsEPS(File outfile){
         
