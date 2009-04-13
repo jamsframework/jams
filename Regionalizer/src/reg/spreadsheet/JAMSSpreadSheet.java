@@ -30,6 +30,7 @@ import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.stores.TSDataStore;
 import java.text.ParseException;
 import reg.Regionalizer;
+import reg.dsproc.DataMatrix;
 
 //import jams.components.*;
 //import org.unijena.jams.model;
@@ -212,6 +213,62 @@ public class JAMSSpreadSheet extends JPanel {
         return epsFileChooser;
     }
 
+    public void loadMatrix(DataMatrix m, File outputDSDir, boolean timeSeries) {
+
+//        getTemplateChooser().setCurrentDirectory(outputDSDir);
+//        getEPSFileChooser().setCurrentDirectory(outputDSDir.getParentFile());
+//        ttpFile = new File(inputDSDir, store.getID() + ".ttp");
+//        dtpFile = new File(inputDSDir, store.getID() + ".dtp");
+
+        Vector<double[]> arrayVector = new Vector<double[]>();
+        Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
+        String[] headers = new String[m.getColumnDimension() + 1];
+        double[] rowBuffer, source;
+        int pos = 0;
+
+        Object[] ids = m.getIds();
+
+        tmodel = new JAMSTableModel();
+
+        if (timeSeries) {
+            timeRuns = true;
+            tmodel.setTimeRuns(timeRuns);
+        }
+
+        for (Object id : ids) {
+
+            if (timeSeries) {
+                JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+                timeval.setValue(id.toString());
+                timeVector.add(timeval);
+                rowBuffer = m.getRow(pos);
+            } else {
+                rowBuffer = new double[m.getColumnDimension() + 1];
+                rowBuffer[0] = Double.parseDouble(id.toString());
+                source = m.getRow(pos);
+                System.arraycopy(source, 0, rowBuffer, 1, source.length);
+            }
+
+            arrayVector.add(rowBuffer);
+
+            pos++;
+        }
+
+        if (timeSeries) {
+            tmodel.setTimeVector(timeVector);
+        }
+
+        for (int i = 0; i < headers.length; i++) {
+            headers[i] = "col" + i;
+        }
+
+        tmodel.setNewDataVector(arrayVector);
+        tmodel.setColumnNames(headers);
+
+        updateGUI();
+
+    }
+
     public void loadTSDS(TSDataStore store, File inputDSDir) throws Exception {
         
         this.store = store;
@@ -229,8 +286,6 @@ public class JAMSSpreadSheet extends JPanel {
         Vector<double[]> arrayVector = new Vector<double[]>();
         Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
 
-        tmodel = new JAMSTableModel();
-        tmodel.setTimeRuns(false);
 
         // read table headers from attribute "NAME"
         // @TODO: flexible handling of header attribute

@@ -22,6 +22,7 @@
  */
 package jams.workspace.datatypes;
 
+import com.vividsolutions.jts.geom.Geometry;
 import jams.data.JAMSCalendar;
 
 /**
@@ -67,7 +68,8 @@ public class CalendarValue implements DataValue {
     public void setObject(Object value) {
         if (value instanceof JAMSCalendar) {
             this.value = (JAMSCalendar) value;
-        }    }
+        }
+    }
 
     public JAMSCalendar getCalendar() {
         return value;
@@ -75,6 +77,16 @@ public class CalendarValue implements DataValue {
 
     public void setCalendar(JAMSCalendar value) {
         this.value = value;
+    }
+
+    @Override
+    public Geometry getGeometry() {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
+    @Override
+    public void setGeometry(Geometry geometry) {
+        throw new UnsupportedOperationException("Not supported.");
     }
 }
 

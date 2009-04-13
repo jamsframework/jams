@@ -22,6 +22,7 @@
  */
 package jams.workspace.datatypes;
 
+import com.vividsolutions.jts.geom.Geometry;
 import jams.data.JAMSCalendar;
 
 /**
@@ -38,6 +39,8 @@ public interface DataValue {
 
     public JAMSCalendar getCalendar();
 
+    public Geometry getGeometry();
+
     public Object getObject();
 
     public void setDouble(double value);
@@ -47,6 +50,8 @@ public interface DataValue {
     public void setString(String value);
 
     public void setCalendar(JAMSCalendar value);
+
+    public void setGeometry(Geometry geometry);
 
     public void setObject(Object value);
 }

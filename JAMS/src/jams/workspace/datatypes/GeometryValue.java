@@ -1,6 +1,6 @@
 /*
- * DoubleValue.java
- * Created on 7. Februar 2008, 21:26
+ * GeometryValue.java
+ * Created on 13. April 2009, 19:54
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -27,66 +27,77 @@ import jams.data.JAMSCalendar;
 
 /**
  *
- * @author Sven Kralisch
+ * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class DoubleValue implements DataValue {
+public class GeometryValue implements DataValue {
 
-    private Double value;
+    private Geometry value;
 
-    public DoubleValue(double value) {
-        this.value = new Double(value);
+    public GeometryValue(Geometry value) {
+        this.value = value;
     }
 
+    @Override
     public double getDouble() {
-        return value.doubleValue();
+        throw new UnsupportedOperationException("Not supported.");
     }
 
+    @Override
     public long getLong() {
-        return value.longValue();
+        throw new UnsupportedOperationException("Not supported.");
     }
 
+    @Override
     public String getString() {
         return value.toString();
     }
 
-    public Object getObject() {
-        return value;
-    }
-
-    public void setDouble(double value) {
-        this.value = new Double(value);
-    }
-
-    public void setLong(long value) {
-        this.value = new Double(value);
-    }
-
-    public void setString(String value) throws NumberFormatException {
-        this.value = new Double(value);
-    }
-
-    public void setObject(Object value) {
-        if (value instanceof Double) {
-            this.value = (Double) value;
-        }
-    }
-
+    @Override
     public JAMSCalendar getCalendar() {
-        throw new UnsupportedOperationException("Not supported.");
-    }
-
-    public void setCalendar(JAMSCalendar value) {
         throw new UnsupportedOperationException("Not supported.");
     }
 
     @Override
     public Geometry getGeometry() {
+        return value;
+    }
+
+    @Override
+    public Object getObject() {
+        return value;
+    }
+
+    @Override
+    public void setDouble(double value) {
         throw new UnsupportedOperationException("Not supported.");
     }
 
     @Override
-    public void setGeometry(Geometry geometry) {
+    public void setLong(long value) {
         throw new UnsupportedOperationException("Not supported.");
     }
-}
 
+    @Override
+    public void setString(String value) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
+    @Override
+    public void setCalendar(JAMSCalendar value) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
+    @Override
+    public void setGeometry(Geometry value) {
+        this.value = value;
+    }
+
+    @Override
+    public void setObject(Object value) {
+        if (value instanceof Geometry) {
+            this.value = (Geometry) value;
+        } else {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+    }
+}

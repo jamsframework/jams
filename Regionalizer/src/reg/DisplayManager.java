@@ -50,7 +50,7 @@ public class DisplayManager implements Observer {
 
     private TreePanel treePanel;
 
-    private JAMSSpreadSheet inputDSSpreadsheet;
+    private JAMSSpreadSheet spreadsheet;
 
     public DisplayManager() {
         treePanel = new TreePanel();
@@ -58,8 +58,8 @@ public class DisplayManager implements Observer {
         treePanel.getTree().addObserver(this);
 
         String[] default_headers = {""};
-        inputDSSpreadsheet = new JAMSSpreadSheet(Regionalizer.getRegionalizerFrame(), default_headers);
-        inputDSSpreadsheet.init();
+        spreadsheet = new JAMSSpreadSheet(Regionalizer.getRegionalizerFrame(), default_headers);
+        spreadsheet.init();
     }
 
     // handle selection of tree nodes and show metadata
@@ -91,9 +91,9 @@ public class DisplayManager implements Observer {
             case DSTreeNode.INPUT_DS:
                 InputDataStore store = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStore(node.toString());
                 if (store instanceof TSDataStore) {
-                    Regionalizer.getRegionalizerFrame().updateMainPanel(inputDSSpreadsheet.getPanel());
+                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadsheet.getPanel());
                     try {
-                        inputDSSpreadsheet.loadTSDS((TSDataStore) store, Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory());
+                        spreadsheet.loadTSDS((TSDataStore) store, Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory());
                     } catch (Exception e) {
                         LHelper.showErrorDlg(Regionalizer.getRegionalizerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
                         e.printStackTrace();

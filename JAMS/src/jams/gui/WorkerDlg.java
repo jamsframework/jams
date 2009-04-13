@@ -55,7 +55,6 @@ public class WorkerDlg extends JDialog {
         super(owner);
 
         this.owner = owner;
-        //this.setAlwaysOnTop(true);
         this.setModal(true);
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         this.setTitle(title);

@@ -37,9 +37,6 @@ import reg.gui.SimpleOutputPanel;
  */
 public class OutputPanelFactory {
 
-    public OutputPanelFactory() {
-    }
-
     public static JPanel getOutputDSPanel(File file) throws FileNotFoundException, IOException {
         BufferedFileReader reader = new BufferedFileReader(new FileInputStream(file));
         String line = reader.readLine();

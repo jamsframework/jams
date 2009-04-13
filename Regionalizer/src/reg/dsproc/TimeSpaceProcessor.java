@@ -330,7 +330,7 @@ public class TimeSpaceProcessor {
     /**
      * Gets the mean values of the selected attributes for an array of
      * spatial entities at all time steps
-     * @param id The id array of the spatial enties
+     * @param ids The id array of the spatial enties
      * @return A DataMatrix object containing one row per timestep with the
      * mean values of selected attributes in columns
      * @throws java.sql.SQLException

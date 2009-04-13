@@ -24,17 +24,15 @@ package reg.gui;
 
 import java.io.File;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import reg.Regionalizer;
+import reg.spreadsheet.JAMSSpreadSheet;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 public class OutputDSPanel extends JPanel {
-
-    private TimeSpaceDSPanel tsp;
 
     private JSplitPane splitPane;
 
@@ -47,13 +45,19 @@ public class OutputDSPanel extends JPanel {
         splitPane = new JSplitPane();
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 
-        tsp = new TimeSpaceDSPanel();
+        // create the spreadsheet
+        String[] default_headers = {""};
+        JAMSSpreadSheet spreadsheet = new JAMSSpreadSheet(Regionalizer.getRegionalizerFrame(), default_headers);
+        spreadsheet.init();
+
+        // create the controller panel
+        TimeSpaceDSPanel tsp = new TimeSpaceDSPanel();
         tsp.setParent(Regionalizer.getRegionalizerFrame());
+        tsp.setOutputSpreadSheet(spreadsheet);
         tsp.createTsProc(file);
 
-        JScrollPane scroll = new JScrollPane(tsp);
-        splitPane.setLeftComponent(scroll);
-        splitPane.setRightComponent(new JPanel());
+        splitPane.setLeftComponent(tsp);
+        splitPane.setRightComponent(spreadsheet.getPanel());
 
         this.add(splitPane);
     }

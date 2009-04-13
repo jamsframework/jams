@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import jams.workspace.stores.GeoDataStore;
 import jams.workspace.stores.TableDataStore;
 import jams.workspace.stores.TSDataStore;
 import jams.workspace.stores.InputDataStore;
@@ -44,6 +43,7 @@ import org.w3c.dom.Document;
 import jams.workspace.stores.DataStore;
 import jams.workspace.stores.J2KTSDataStore;
 import jams.workspace.stores.OutputDataStore;
+import jams.workspace.stores.ShapeFileDataStore;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
@@ -294,8 +294,8 @@ public class JAMSWorkspace implements Serializable {
                 store = new TSDataStore(this, dsTitle, doc);
             } else if (type.equals("j2ktsdatastore")) {
                 store = new J2KTSDataStore(this, dsTitle, doc);
-            } else if (type.equals("geodatastore")) {
-                store = new GeoDataStore(this, dsTitle, doc);
+            } else if (type.equals("shapefiledatastore")) {
+                store = new ShapeFileDataStore(this, dsTitle, doc);
             }
         } catch (ClassNotFoundException cnfe) {
             getRuntime().sendErrorMsg(JAMS.resources.getString("Error_initializing_datastore_") + dsTitle + JAMS.resources.getString("!"));

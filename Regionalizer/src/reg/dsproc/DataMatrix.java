@@ -79,6 +79,7 @@ public class DataMatrix extends Matrix {
     }
 
     public void output() {
+        System.out.println(this.getIds()[0].getClass());
         for (Object o : this.getIds()) {
             System.out.print(o + " ");
         }

@@ -29,35 +29,14 @@ import org.w3c.dom.Document;
  *
  * @author Sven Kralisch
  */
-public class GeoDataStore extends StandardInputDataStore {
+public abstract class GeoDataStore extends StandardInputDataStore {
 
-    //private Polygon extend;
+    public GeoDataStore(JAMSWorkspace ws) {
+        super(ws);
+    }
+
     public GeoDataStore(JAMSWorkspace ws, String id, Document doc) throws ClassNotFoundException {
         super(ws, id, doc);
-    }
-
-    public boolean hasNext() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public DataSet getNext() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void close() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public String toASCIIString() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public String getRespParty() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public String getDate() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
 

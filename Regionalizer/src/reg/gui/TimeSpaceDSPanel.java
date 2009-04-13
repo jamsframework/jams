@@ -56,6 +56,7 @@ import javax.swing.event.ListSelectionListener;
 import reg.dsproc.DataMatrix;
 import reg.dsproc.DataStoreProcessor;
 import reg.dsproc.TimeSpaceProcessor;
+import reg.spreadsheet.JAMSSpreadSheet;
 
 /**
  *
@@ -78,6 +79,10 @@ public class TimeSpaceDSPanel extends JPanel {
     private Frame parent;
 
     private JTextField timeField;
+
+    private JAMSSpreadSheet outputSpreadSheet;
+
+    private File outputDSFile;
 
 //    private Action timeStepAction,  spaceEntityAction,  timeAvgAction,  spaceAvgAction,  monthlyAvgAction,  yearlyAvgAction,  resetCacheAction;
     private Action[] actions = {
@@ -427,6 +432,7 @@ public class TimeSpaceDSPanel extends JPanel {
 
     public void createTsProc(File file) {
 
+        workerDlg.setTitle(workerDlg.getTitle() + " [" + file.getName() + "]");
         dsdb = new DataStoreProcessor(file);
         dsdb.addImportProgressObserver(new Observer() {
 
@@ -434,8 +440,9 @@ public class TimeSpaceDSPanel extends JPanel {
                 workerDlg.setProgress(Integer.parseInt(arg.toString()));
             }
         });
-
         createDB();
+
+        this.outputDSFile = file;
     }
 
     private void setTsProc(TimeSpaceProcessor tsproc) throws SQLException, IOException {
@@ -786,7 +793,15 @@ public class TimeSpaceDSPanel extends JPanel {
         }
     }
 
+    public void setOutputSpreadSheet(JAMSSpreadSheet spreadsheet) {
+        this.outputSpreadSheet = spreadsheet;
+    }
+
     private void loadData(DataMatrix m) {
-        m.output();
+        if (this.outputSpreadSheet != null) {
+            this.outputSpreadSheet.loadMatrix(m, outputDSFile.getParentFile(), false);
+        } else {
+            m.output();
+        }
     }
 }
