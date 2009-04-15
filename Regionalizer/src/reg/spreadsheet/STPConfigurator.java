@@ -479,7 +479,7 @@ public class STPConfigurator extends JFrame{
 //        File testfile = new File());
         File testfile = new File(Regionalizer.getRegionalizerFrame().getWorkspace().getDirectory().toString()+"/input");
         File[] filelist = testfile.listFiles();
-//        System.out.println(Regionalizer.getRegionalizerFrame().getWorkspace().getDirectory().toString());
+
         Set<String> idSet;
 //        idSet = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStoreIDs();
 //        totalIDs = idSet.size();
@@ -513,7 +513,6 @@ public class STPConfigurator extends JFrame{
         accIDArray = new String[accessibleIDs];
         accIDArray = accIDList.toArray(accIDArray);
        
-        System.out.println("Accessible IDs: "+accessibleIDs);
         return accIDArray;
     }
     
@@ -526,7 +525,7 @@ public class STPConfigurator extends JFrame{
         } catch (Exception e) {
         }
         String id = (String) properties.getProperty("store");
-        System.out.println("datasetID:"+id);
+
         return id;
     }
     
@@ -647,7 +646,7 @@ public class STPConfigurator extends JFrame{
         
         datasetID = (String) properties.getProperty("store");
         names = (String) properties.getProperty("names");
-        System.out.println(datasetID);
+
         no_of_props = new Integer(properties.getProperty("number"));
 
         this.graphCount = no_of_props;
@@ -686,7 +685,6 @@ public class STPConfigurator extends JFrame{
                     String timeEND = properties.getProperty(name + ".timeEND");
                     String read = null;
 
-                    System.out.println("start setting intervals...");
                     for (int tc = 0; tc < rows; tc++) {
 
                         if (readStart && readEnd) {
@@ -709,7 +707,7 @@ public class STPConfigurator extends JFrame{
                             }
                         }
                     }
-                    System.out.println("interval set");
+
 
 //                    gprop.setTimeSTART(0);
 //                    gprop.setTimeEND(table.getRowCount() - 1);
@@ -775,7 +773,6 @@ public class STPConfigurator extends JFrame{
                 }
             }
         }
-        System.out.println("Props loaded");
 
         //////////////// hier implementieren!! /////////////////////////
         //}
@@ -1042,15 +1039,14 @@ public class STPConfigurator extends JFrame{
 
                         prop.setLegendName(prop.setLegend.getText());
                         prop.setColorLabelColor();
-                        System.out.println("...ApplySTPProperties");
                         prop.applySTPProperties(arrayVector, timeVector);
-                        System.out.println("...applyed!");
+                        
                     }
                 }
 
                 ////////////////////////////////////////////////////////////////////////////
                 //Renderer direkt ÃƒÆ’Ã‚Â¼bernehmen! //
-                System.out.println("Plot left/right");
+                
                 if (l > 0) {
                     jts[index].plotLeft(rendererLeft, tLeft, xAxisTitle, invLeft);
                 }

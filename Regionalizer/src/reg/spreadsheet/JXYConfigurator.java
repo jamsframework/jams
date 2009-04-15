@@ -258,7 +258,7 @@ public class JXYConfigurator extends JFrame {
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
-        this.thisJXY = this;
+//        this.thisJXY = this;
         
         this.sheet = sheet;
         this.table = sheet.table;
@@ -294,7 +294,7 @@ public class JXYConfigurator extends JFrame {
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
-        this.thisJXY = this;
+//        this.thisJXY = this;
         
         this.sheet = sheet;
         this.table = sheet.table;
@@ -490,15 +490,20 @@ public class JXYConfigurator extends JFrame {
             int color_cnt;
 
             public void run() {
-
+               
                 for (int k = 0; k < graphCount; k++) {
+                  
+                    
                     prop = new GraphProperties(thisJXY);
+                   
+                    
+                    prop.setIndex(k);
                     prop.setSelectedColumn(columns[k]);
                     prop.setXSeries(columns[0]);
                     prop.setSelectedRows(rows);
 
                     if (k == 0) { //initial x axis
-                        System.out.println("k=0 initial x axis");
+                        
                         prop.getIsXAxisButton().setSelected(true);
                         prop.setIsXSeries(true);
                         prop.getDataChoice().setEnabled(false);
@@ -545,7 +550,7 @@ public class JXYConfigurator extends JFrame {
 
                 //set data intervals
                 for (int k = 0; k < propVector.size(); k++) {
-                    System.out.println("set data intervals. size = "+propVector.size());
+
                     prop = propVector.get(k);
 
                     prop.setXIntervals(range);

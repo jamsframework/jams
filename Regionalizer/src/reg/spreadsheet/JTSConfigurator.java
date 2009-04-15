@@ -723,10 +723,6 @@ public class JTSConfigurator extends JFrame {
 //    }  
     public void plotAllGraphs() {
 
-        System.out.println("PlotAllGraphs");
-        //createProgressBarDlg();
-        //new Thread(plotRunnable).start();
-
         Runnable r = new Runnable() {
 
             @Override
@@ -957,15 +953,15 @@ public class JTSConfigurator extends JFrame {
 
                         prop.setLegendName(prop.setLegend.getText());
                         prop.setColorLabelColor();
-                        System.out.println("...ApplyTSProperties");
+
                         prop.applyTSProperties();
-                        System.out.println("...applyed!");
+
                     }
                 }
 
                 ////////////////////////////////////////////////////////////////////////////
                 //Renderer direkt ÃƒÂ¼bernehmen! //
-                System.out.println("Plot left/right");
+
                 if (l > 0) {
                     jts.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
                 }
@@ -1455,7 +1451,6 @@ public class JTSConfigurator extends JFrame {
                     String timeEND = properties.getProperty(name + ".timeEND");
                     String read = null;
 
-                    System.out.println("start setting intervals...");
                     for (int tc = 0; tc < table.getRowCount(); tc++) {
 
                         if (readStart && readEnd) {
@@ -1478,7 +1473,6 @@ public class JTSConfigurator extends JFrame {
                             }
                         }
                     }
-                    System.out.println("interval set");
 
 //                    gprop.setTimeSTART(0);
 //                    gprop.setTimeEND(table.getRowCount() - 1);
@@ -1549,8 +1543,6 @@ public class JTSConfigurator extends JFrame {
 
             }
         }
-        System.out.println("Props loaded");
-
 
         //}
         //Titles

@@ -235,6 +235,7 @@ public class GraphProperties {
     
     public GraphProperties(JXYConfigurator cxyconf) {
         
+        
         this.parent = cxyconf;
         
         this.plotType = 1;
@@ -250,6 +251,9 @@ public class GraphProperties {
         
         this.rowSelection = null;
         
+        
+        columnCount = table.getColumnCount();
+        rowCount = table.getRowCount();
         //data = new XYPair[table.getRowCount()];
 
         rowSelection = table.getSelectedRows();
@@ -536,10 +540,7 @@ public class GraphProperties {
     }
 
     public void applyXYProperties(){
-        
-        //System.out.println("ApplyXYProperties()");
-        
-        
+
         selectedColumn = setColumn.getSelectedIndex();
         
         xys = new XYSeries(getLegendName());
