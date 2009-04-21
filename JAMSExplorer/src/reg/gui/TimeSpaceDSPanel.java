@@ -539,7 +539,7 @@ public class TimeSpaceDSPanel extends JPanel {
                         return;
                     }
                     DataMatrix m = tsproc.getTemporalData(date);
-                    loadData(m);
+                    loadData(m, false);
 
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
@@ -575,7 +575,7 @@ public class TimeSpaceDSPanel extends JPanel {
                     workerDlg.setInderminate(true);
 
                     DataMatrix m = tsproc.getMonthlyMean(month);
-                    loadData(m);
+                    loadData(m, false);
 
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
@@ -612,7 +612,7 @@ public class TimeSpaceDSPanel extends JPanel {
                     workerDlg.setInderminate(true);
 
                     DataMatrix m = tsproc.getYearlyMean(year);
-                    loadData(m);
+                    loadData(m, false);
 
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
@@ -671,7 +671,7 @@ public class TimeSpaceDSPanel extends JPanel {
                         m = tsproc.getTemporalMean(dates);
 
                     }
-                    loadData(m);
+                    loadData(m, false);
 
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
@@ -728,7 +728,7 @@ public class TimeSpaceDSPanel extends JPanel {
                         m = tsproc.getSpatialMean(ids);
 
                     }
-                    loadData(m);
+                    loadData(m, true);
 
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
@@ -760,7 +760,7 @@ public class TimeSpaceDSPanel extends JPanel {
 
                     DataMatrix m = tsproc.getTemporalMean(filter);
 
-                    loadData(m);
+                    loadData(m, false);
 
                 } catch (SQLException ex) {
                     ex.printStackTrace();
@@ -797,9 +797,9 @@ public class TimeSpaceDSPanel extends JPanel {
         this.outputSpreadSheet = spreadsheet;
     }
 
-    private void loadData(DataMatrix m) {
+    private void loadData(DataMatrix m, boolean timeSeries) {
         if (this.outputSpreadSheet != null) {
-            this.outputSpreadSheet.loadMatrix(m, outputDSFile.getParentFile(), false);
+            this.outputSpreadSheet.loadMatrix(m, outputDSFile.getParentFile(), timeSeries);
         } else {
             m.output();
         }
