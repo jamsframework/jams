@@ -161,7 +161,7 @@ public class JUICE {
             });
             loadLibsDlg.execute();
         } catch (Throwable t) {
-            System.out.println("ARGH");
+            t.printStackTrace();
         }
     }
 

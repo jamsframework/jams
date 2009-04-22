@@ -51,21 +51,36 @@ import org.w3c.dom.Node;
  */
 public class JUICEFrame extends JFrame {
 
-    private static final int TREE_PANE_WIDTH = 250,  TREE_PANE_HEIGHT = 600;
+    private static final int TREE_PANE_WIDTH = 250,  RT_MANAGER_HEIGHT = 600;
+
     private static final int DIVIDER_WIDTH = 8;
+
     private PropertyDlg propertyDlg;
+
     private JFileChooser jfc = LHelper.getJFileChooser();
+
     private TreePanel libTreePanel;
+
     private JDesktopPane modelPanel = new JDesktopPane();
+
     private JMenu windowMenu,  modelMenu;
+
     private JMenuItem pasteModelParameterItem,  copyModelParameterItem,  searchModelItem,  OptimizationWizardItem;
+
     private JLabel statusLabel;
+
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JUICE.resources.getString("Info_Log"));
+
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JUICE.resources.getString("Error_Log"));
+
     private Node modelProperties;
+
     private WorkerDlg loadModelDlg;
+
     private SearchDlg searchDlg;
+
     private String modelPath;
+
     private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchAction,  copyModelGUIAction,  pasteModelGUIAction,  OptimizationWizardGUIAction,  loadModelParamAction,  saveModelParamAction,  runModelAction,  runModelFromLauncherAction,  infoLogAction,  errorLogAction,  onlineAction;
 
     public JUICEFrame() {
@@ -366,7 +381,6 @@ public class JUICEFrame extends JFrame {
         leftSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         leftSplitPane.setTopComponent(libTreePanel);
         leftSplitPane.setBottomComponent(rtManagerPanel);
-        leftSplitPane.setDividerLocation(TREE_PANE_HEIGHT);
 
         JSplitPane mainSplitPane = new JSplitPane();
         mainSplitPane.setAutoscrolls(true);
@@ -635,9 +649,14 @@ public class JUICEFrame extends JFrame {
          */
         setJMenuBar(mainMenu);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize(Math.min(d.width, JUICE.SCREEN_WIDTH), Math.min(d.height, JUICE.SCREEN_HEIGHT));
-        this.libTreePanel.requestFocus();
 
+        int height = Math.min((int) (d.height * 0.95), JUICE.SCREEN_HEIGHT);
+        int width = Math.min((int) (d.width * 0.95), JUICE.SCREEN_WIDTH);
+
+        setSize(width, height);
+        leftSplitPane.setDividerLocation((int) (height*0.6));
+
+        this.libTreePanel.requestFocus();
     }
 
     public void setLibTree(LibTree tree) {
