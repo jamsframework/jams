@@ -753,11 +753,11 @@ public class JTSConfigurator extends JFrame {
                 XYStepAreaRenderer sar_L = new XYStepAreaRenderer();
 
                 GraphProperties prop;
-                //2 Renderer einfÃƒÂ¼gen. Typ aus rLeftBox bzw rRightBox holen!
+                //2 Renderer einfÃƒÆ’Ã‚Â¼gen. Typ aus rLeftBox bzw rRightBox holen!
                 //Switch/Case Anweisung in den Configurator packen
                 //
 
-                /////////////// In dieser Schleife Eigenschaften ÃƒÂ¼bernehmen!! /////////////
+                /////////////// In dieser Schleife Eigenschaften ÃƒÆ’Ã‚Â¼bernehmen!! /////////////
                 for (int i = 0; i < propVector.size(); i++) {
 
                     prop = propVector.get(i);
@@ -960,7 +960,7 @@ public class JTSConfigurator extends JFrame {
                 }
 
                 ////////////////////////////////////////////////////////////////////////////
-                //Renderer direkt ÃƒÂ¼bernehmen! //
+                //Renderer direkt ÃƒÆ’Ã‚Â¼bernehmen! //
 
                 if (l > 0) {
                     jts.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
@@ -1259,8 +1259,13 @@ public class JTSConfigurator extends JFrame {
 
         Properties properties = new Properties();
         int no_of_props = propVector.size();
-
-        String store = sheet.getStore().getID();
+        
+        String store = "";
+        try{
+            store = sheet.getStore().getID();
+        } catch (NullPointerException npe){
+            store = "output_current";
+        }
         String names = "";
         String name;
         String[] legendname;
@@ -1705,7 +1710,7 @@ public class JTSConfigurator extends JFrame {
         Vector<ActionListener> addAction = new Vector<ActionListener>();
 
         for (int k = 0; k < graphCount; k++) {
-            /* reicht hier ein listener fÃƒÂ¼r alle boxes? scheint so... */
+            /* reicht hier ein listener fÃƒÆ’Ã‚Â¼r alle boxes? scheint so... */
             activationChange[k] = new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {

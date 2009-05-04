@@ -378,13 +378,28 @@ public class JAMSSpreadSheet extends JPanel {
 
         public void actionPerformed(ActionEvent e) {
 
-            try {
+            if(ttpFile.exists()){
                 openCTS(ttpFile);
-            } catch (ClassCastException cce) {
-                if (timeRuns) {
-                    table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
-                    openCTS();
-                }
+            } else {
+                
+                 try {
+                    JFileChooser chooser = getTemplateChooser();
+                    int returnVal = chooser.showOpenDialog(parent_frame);
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        ttpFile = chooser.getSelectedFile(); 
+                    }
+                    openCTS(ttpFile);
+                    
+                } catch (Exception fnfex) {
+                    if (timeRuns) {
+                            table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
+                            openCTS();
+                        }
+        }
+                
+                
+                
+                
             }
         }
     };

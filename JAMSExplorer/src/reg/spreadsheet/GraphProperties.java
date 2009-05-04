@@ -531,10 +531,10 @@ public class GraphProperties {
         for(int i=timeSTART; i<=timeEND; i++){
             
             time =  (JAMSCalendar) table.getValueAt(i,0); //ONLY FOR TIME SERIES TABLE WITH TIME IN COL 0!!!
-//            if(!setColumn.getSelectedItem().equals("---")){
-            value = (Double) table.getValueAt(i, selectedColumn);
+            if(!setColumn.getSelectedItem().equals("---")){
+                value = (Double) table.getValueAt(i, selectedColumn);
             ts.add(new Second(new Date(time.getTimeInMillis())), value);
-//            }
+          }
         }
         cr_dlg.updateColors();
     }
