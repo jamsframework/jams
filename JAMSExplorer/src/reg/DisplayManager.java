@@ -29,10 +29,12 @@ import reg.spreadsheet.JAMSSpreadSheet;
 import jams.workspace.stores.DataStore;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.TSDataStore;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JPanel;
 import reg.gui.InputDSInfoPanel;
+import reg.gui.SpreadSheetPanel;
 import reg.gui.TSPanel;
 import reg.gui.TreePanel;
 import reg.tree.DSTreeNode;
@@ -50,16 +52,13 @@ public class DisplayManager implements Observer {
 
     private TreePanel treePanel;
 
-    private JAMSSpreadSheet spreadsheet;
+    private HashMap<String, JAMSSpreadSheet> spreadSheets = new HashMap<String, JAMSSpreadSheet>();
 
     public DisplayManager() {
         treePanel = new TreePanel();
         inputDSInfoPanel = new InputDSInfoPanel();
         treePanel.getTree().addObserver(this);
 
-        String[] default_headers = {""};
-        spreadsheet = new JAMSSpreadSheet(Regionalizer.getRegionalizerFrame(), default_headers);
-        spreadsheet.init();
     }
 
     // handle selection of tree nodes and show metadata
@@ -91,9 +90,16 @@ public class DisplayManager implements Observer {
             case DSTreeNode.INPUT_DS:
                 InputDataStore store = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStore(node.toString());
                 if (store instanceof TSDataStore) {
-                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadsheet.getPanel());
+
+                    String[] default_headers = {""};
+                    JAMSSpreadSheet spreadSheet = new JAMSSpreadSheet(Regionalizer.getRegionalizerFrame(), default_headers);
+                    spreadSheet.init();
+
+                    spreadSheets.put(node.toString(), spreadSheet);
+
+                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadSheet.getPanel());
                     try {
-                        spreadsheet.loadTSDS((TSDataStore) store, Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory());
+                        spreadSheet.loadTSDS((TSDataStore) store, Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory());
                     } catch (Exception e) {
                         LHelper.showErrorDlg(Regionalizer.getRegionalizerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
                         e.printStackTrace();
@@ -138,5 +144,12 @@ public class DisplayManager implements Observer {
             tsPanel = new TSPanel();
         }
         return tsPanel;
+    }
+
+    /**
+     * @return the spreadSheets
+     */
+    public HashMap<String, JAMSSpreadSheet> getSpreadSheets() {
+        return spreadSheets;
     }
 }

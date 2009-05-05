@@ -72,7 +72,7 @@ public class JAMSSpreadSheet extends JPanel {
     private JButton dataplotButton = new JButton("Data Plot");
 
     private JCheckBox useTemplateButton = new JCheckBox("use Template");
-    
+
     private JButton stpButton = new JButton("Stacked Time Plot");
     /* Labels */
 
@@ -88,7 +88,7 @@ public class JAMSSpreadSheet extends JPanel {
     private JTableHeader tableHeader;
 
     private TSDataStore store;
-    
+
     JTable table;
     /* ComboBox */
     /* String array contains words of the ComboBox */
@@ -114,11 +114,11 @@ public class JAMSSpreadSheet extends JPanel {
         //createPanel();
         return panel;
     }
-    
-    public TSDataStore getStore(){
+
+    public TSDataStore getStore() {
         return this.store;
     }
-    
+
     /* JAMS init() method */
     public void init() {
 
@@ -270,9 +270,9 @@ public class JAMSSpreadSheet extends JPanel {
     }
 
     public void loadTSDS(TSDataStore store, File inputDSDir) throws Exception {
-        
+
         this.store = store;
-        
+
         int colNumber = 0;
         double[] rowBuffer;
         String[] headers;
@@ -369,37 +369,36 @@ public class JAMSSpreadSheet extends JPanel {
             jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this, null);
         }
     }
-    
-    private void openSTP(){
+
+    private void openSTP() {
         STPConfigurator stp = new STPConfigurator(Regionalizer.getRegionalizerFrame(), 2);
     }
-    
     ActionListener plotAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
 
-            if(ttpFile.exists()){
+            if (ttpFile.exists()) {
                 openCTS(ttpFile);
             } else {
-                
-                 try {
+
+                try {
                     JFileChooser chooser = getTemplateChooser();
                     int returnVal = chooser.showOpenDialog(parent_frame);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
-                        ttpFile = chooser.getSelectedFile(); 
+                        ttpFile = chooser.getSelectedFile();
                     }
                     openCTS(ttpFile);
-                    
+
                 } catch (Exception fnfex) {
                     if (timeRuns) {
-                            table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
-                            openCTS();
-                        }
-        }
-                
-                
-                
-                
+                        table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
+                        openCTS();
+                    }
+                }
+
+
+
+
             }
         }
     };
@@ -422,14 +421,14 @@ public class JAMSSpreadSheet extends JPanel {
 
         }
     };
-    
+
     ActionListener stpAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
 
 //            try {
 
-                openSTP();
+            openSTP();
 
 //            } catch (ClassCastException cce) {
 //
@@ -579,10 +578,10 @@ public class JAMSSpreadSheet extends JPanel {
         //LHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 2, 1, 1, 0, 0);
         //LHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 3, 1, 2, 0, 0);
 
-        LHelper.addGBComponent(controlpanel, gbl, plotButton,           0, 5, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, dataplotButton,       0, 6, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, useTemplateButton,    0, 7, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, stpButton,            0, 8, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 5, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 6, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 7, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 8, 1, 1, 0, 0);
 
 //              controlpanel.add(openbutton);
 //              controlpanel.add(savebutton);
