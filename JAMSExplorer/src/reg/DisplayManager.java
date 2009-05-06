@@ -33,8 +33,8 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import reg.gui.InputDSInfoPanel;
-import reg.gui.SpreadSheetPanel;
 import reg.gui.TSPanel;
 import reg.gui.TreePanel;
 import reg.tree.DSTreeNode;
@@ -51,6 +51,8 @@ public class DisplayManager implements Observer {
     private TSPanel tsPanel;
 
     private TreePanel treePanel;
+    
+    private JTabbedPane spreadSheetTabs; 
 
     private HashMap<String, JAMSSpreadSheet> spreadSheets = new HashMap<String, JAMSSpreadSheet>();
 
@@ -58,6 +60,7 @@ public class DisplayManager implements Observer {
         treePanel = new TreePanel();
         inputDSInfoPanel = new InputDSInfoPanel();
         treePanel.getTree().addObserver(this);
+        spreadSheetTabs = new JTabbedPane();
 
     }
 
@@ -96,8 +99,11 @@ public class DisplayManager implements Observer {
                     spreadSheet.init();
 
                     spreadSheets.put(node.toString(), spreadSheet);
+                    
+                    spreadSheetTabs.add(node.toString(), spreadSheet.getPanel());
 
-                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadSheet.getPanel());
+                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadSheetTabs);
+//                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadSheet.getPanel());
                     try {
                         spreadSheet.loadTSDS((TSDataStore) store, Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory());
                     } catch (Exception e) {

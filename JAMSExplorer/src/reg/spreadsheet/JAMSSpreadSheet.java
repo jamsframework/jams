@@ -70,6 +70,8 @@ public class JAMSSpreadSheet extends JPanel {
     private JButton plotButton = new JButton("Time Plot");
 
     private JButton dataplotButton = new JButton("Data Plot");
+    
+    private JButton closeButton = new JButton("Close Tab");
 
     private JCheckBox useTemplateButton = new JCheckBox("use Template");
 
@@ -212,7 +214,14 @@ public class JAMSSpreadSheet extends JPanel {
         }
         return epsFileChooser;
     }
+    
+    ActionListener closeTabAction = new ActionListener() {
 
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("closeTabAction: no function included!");
+        }
+    };
+    
     public void loadMatrix(DataMatrix m, File outputDSDir, boolean timeSeries) {
 
 //        getTemplateChooser().setCurrentDirectory(outputDSDir);
@@ -333,7 +342,7 @@ public class JAMSSpreadSheet extends JPanel {
     private void openCTS() {
 
         JTSConfigurator jts;
-        jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this);
+        jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this, null);
     //ctstabs.addGraph(table);
     //ctsIsOpen = true;
     }
@@ -376,29 +385,33 @@ public class JAMSSpreadSheet extends JPanel {
     ActionListener plotAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
+            
+            if (useTemplateButton.isSelected()) {
+                if(ttpFile != null){
+                    if(ttpFile.exists()){
+                        openCTS(ttpFile);
+                        
+                    } else{
+                        
+                        try {
+                            JFileChooser chooser = getTemplateChooser();
+                            int returnVal = chooser.showOpenDialog(parent_frame);
+                            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                                ttpFile = chooser.getSelectedFile();
+                            }
+                            openCTS(ttpFile);
 
-            if (ttpFile.exists()) {
-                openCTS(ttpFile);
-            } else {
-
-                try {
-                    JFileChooser chooser = getTemplateChooser();
-                    int returnVal = chooser.showOpenDialog(parent_frame);
-                    if (returnVal == JFileChooser.APPROVE_OPTION) {
-                        ttpFile = chooser.getSelectedFile();
-                    }
-                    openCTS(ttpFile);
-
-                } catch (Exception fnfex) {
-                    if (timeRuns) {
-                        table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
-                        openCTS();
+                        } catch (Exception fnfex) {
+                            
+                            if (timeRuns) {
+                                table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
+                                openCTS();
+                            }
+                        }
                     }
                 }
-
-
-
-
+            } else {
+                openCTS();
             }
         }
     };
@@ -577,11 +590,12 @@ public class JAMSSpreadSheet extends JPanel {
 
         //LHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 2, 1, 1, 0, 0);
         //LHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 3, 1, 2, 0, 0);
-
-        LHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 5, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 6, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 7, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 8, 1, 1, 0, 0);
+        
+        LHelper.addGBComponent(controlpanel, gbl, closeButton, 0, 5, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 6, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 7, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 8, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
 
 //              controlpanel.add(openbutton);
 //              controlpanel.add(savebutton);
@@ -593,6 +607,7 @@ public class JAMSSpreadSheet extends JPanel {
         plotButton.addActionListener(plotAction);
         dataplotButton.addActionListener(dataplotAction);
         stpButton.addActionListener(stpAction);
+        closeButton.addActionListener(closeTabAction);
 
         headerpanel.add(titleLabel);
         headerpanel.add(headerlabel);
