@@ -221,7 +221,7 @@ public class JAMSSpreadSheet extends JPanel {
     ActionListener closeTabAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
-            System.out.println("closeTabAction: no function included!");
+            
             Regionalizer.getRegionalizerFrame().removeFromTabbedPane(thisSpreadSheet.getPanel());
         }
     };
