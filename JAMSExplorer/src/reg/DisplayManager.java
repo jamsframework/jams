@@ -100,9 +100,11 @@ public class DisplayManager implements Observer {
 
                     spreadSheets.put(node.toString(), spreadSheet);
                     
-                    spreadSheetTabs.add(node.toString(), spreadSheet.getPanel());
-
-                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadSheetTabs);
+                    Regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(), spreadSheet.getPanel());
+                    
+//                    spreadSheetTabs.add(node.toString(), spreadSheet.getPanel());
+//
+//                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadSheetTabs);
 //                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadSheet.getPanel());
                     try {
                         spreadSheet.loadTSDS((TSDataStore) store, Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory());

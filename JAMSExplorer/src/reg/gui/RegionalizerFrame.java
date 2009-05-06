@@ -50,6 +50,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
@@ -68,6 +69,7 @@ public class RegionalizerFrame extends JFrame {
     private JAMSWorkspace workspace;
     private JSplitPane mainSplitPane;
     private JScrollPane mainScroll;
+    private JTabbedPane spreadSheetTabs;
 
     public RegionalizerFrame() {
         init();
@@ -101,6 +103,8 @@ public class RegionalizerFrame extends JFrame {
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         mainScroll = new JScrollPane();
+        
+        spreadSheetTabs = new JTabbedPane();
 
         mainSplitPane = new JSplitPane();
         JSplitPane inoutSplitPane = new JSplitPane();
@@ -178,7 +182,17 @@ public class RegionalizerFrame extends JFrame {
         }
 
     }
-
+    
+    public void addToTabbedPane(String title, Component comp){
+        spreadSheetTabs.add(title, comp);
+        updateMainPanel(spreadSheetTabs);
+    }
+    
+    public void removeFromTabbedPane(Component comp){
+        spreadSheetTabs.remove(comp);
+        updateMainPanel(spreadSheetTabs);
+    }
+    
     public void updateMainPanel(Component comp) {
         mainScroll.setViewportView(comp);
         mainScroll.updateUI();

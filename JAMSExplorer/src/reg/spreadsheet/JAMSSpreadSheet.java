@@ -45,6 +45,8 @@ public class JAMSSpreadSheet extends JPanel {
     File dtpFile;
 
     private final String title = "";
+    
+    private JAMSSpreadSheet thisSpreadSheet;
 
     private JPanel panel = new JPanel();
 
@@ -109,6 +111,7 @@ public class JAMSSpreadSheet extends JPanel {
 
     public JAMSSpreadSheet(JFrame parent, String[] headers) {
         this.parent_frame = parent;
+        this.thisSpreadSheet = this;
     }
 
     /* Methods */
@@ -219,6 +222,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         public void actionPerformed(ActionEvent e) {
             System.out.println("closeTabAction: no function included!");
+            Regionalizer.getRegionalizerFrame().removeFromTabbedPane(thisSpreadSheet.getPanel());
         }
     };
     
