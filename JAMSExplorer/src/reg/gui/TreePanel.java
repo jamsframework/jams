@@ -27,7 +27,7 @@ import jams.workspace.JAMSWorkspace;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import reg.Regionalizer;
+import reg.JAMSExplorer;
 import reg.tree.DSTree;
 
 /**
@@ -38,9 +38,9 @@ public class TreePanel extends JPanel {
 
     private DSTree tree;
 
-    private Regionalizer regionalizer;
+    private JAMSExplorer regionalizer;
     
-    public TreePanel(Regionalizer regionalizer) {
+    public TreePanel(JAMSExplorer regionalizer) {
         super();
         tree = new DSTree(regionalizer);
         JScrollPane scrollPane = new JScrollPane(tree);

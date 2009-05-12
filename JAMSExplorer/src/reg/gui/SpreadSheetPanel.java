@@ -23,7 +23,7 @@
 package reg.gui;
 
 import javax.swing.JPanel;
-import reg.Regionalizer;
+import reg.JAMSExplorer;
 import reg.spreadsheet.JAMSSpreadSheet;
 
 /**

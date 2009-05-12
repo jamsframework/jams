@@ -42,7 +42,7 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
-import reg.Regionalizer;
+import reg.JAMSExplorer;
 
 
 /**
@@ -113,7 +113,7 @@ public class STPConfigurator extends JFrame{
     File templateFiles[];
     int numberOfPlots;
     
-    public STPConfigurator(Regionalizer regionalizer, int numberOfPlots){
+    public STPConfigurator(JAMSExplorer regionalizer, int numberOfPlots){
 
         this.workspace = regionalizer.getWorkspace();
         this.parent = regionalizer.getRegionalizerFrame();
@@ -483,7 +483,7 @@ public class STPConfigurator extends JFrame{
         File[] filelist = testfile.listFiles();
 
         Set<String> idSet;
-//        idSet = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStoreIDs();
+//        idSet = JAMSExplorer.getRegionalizerFrame().getWorkspace().getInputDataStoreIDs();
 //        totalIDs = idSet.size();
         
         //idArray = idSet.toArray(idArray);
@@ -497,7 +497,7 @@ public class STPConfigurator extends JFrame{
                 
                 
             
-//            File testFile = new File(Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory(), idArray[i] +".ttp");
+//            File testFile = new File(JAMSExplorer.getRegionalizerFrame().getWorkspace().getInputDirectory(), idArray[i] +".ttp");
 //            if(testFile.exists()) accIDList.add(idArray[i]);
 //            else failedIDs++;
 ////            try {

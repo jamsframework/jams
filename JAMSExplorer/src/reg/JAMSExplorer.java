@@ -1,5 +1,5 @@
 /*
- * Regionalizer.java
+ * JAMSExplorer.java
  * Created on 18. November 2008, 21:37
  *
  * This file is part of JAMS
@@ -41,9 +41,9 @@ import javax.swing.UIManager;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class Regionalizer {
+public class JAMSExplorer {
 
-    public static final String APP_TITLE = "DataReg";
+    public static final String APP_TITLE = "Data Explorer";
 
     public static final int SCREEN_WIDTH = 1200,  SCREEN_HEIGHT = 750;
 
@@ -57,11 +57,11 @@ public class Regionalizer {
 
     private JAMSWorkspace workspace;
 
-    public Regionalizer() {
+    public JAMSExplorer() {
         this(null);
     }
 
-    public Regionalizer(JAMSRuntime runtime) {
+    public JAMSExplorer(JAMSRuntime runtime) {
 
         if (runtime == null) {
             this.runtime = new StandardRuntime();
@@ -99,18 +99,11 @@ public class Regionalizer {
 
     }
 
-    public void open(File workspaceFile) {
-
-        try {
-            String[] libs = JAMSTools.toArray(this.getProperties().getProperty("libs", ""), ";");
-            workspace = new JAMSWorkspace(workspaceFile, this.getRuntime(), true);
-            workspace.setLibs(libs);
-            regionalizerFrame.setTitle(Regionalizer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
-            this.getDisplayManager().getTreePanel().update(workspace);
-            regionalizerFrame.updateMainPanel(new JPanel());
-        } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
-            this.getRuntime().sendHalt(iwe.getMessage());
-        }
+    public void open(JAMSWorkspace workspace) {
+        this.workspace = workspace;
+        regionalizerFrame.setTitle(JAMSExplorer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
+        getDisplayManager().getTreePanel().update(workspace);
+        regionalizerFrame.updateMainPanel(new JPanel());
     }
 
     public static void main(String[] args) {
@@ -120,9 +113,21 @@ public class Regionalizer {
             }
         } catch (Exception evt) {
         }
-        
-        Regionalizer reg = new Regionalizer();
-        reg.open(new File("D:/jamsapplication/JAMS-Gehlberg"));
+
+        // create the JAMSExplorer object
+        JAMSExplorer reg = new JAMSExplorer();
+        try {
+            String[] libs = JAMSTools.toArray(reg.getProperties().getProperty("libs", ""), ";");
+            JAMSWorkspace workspace = new JAMSWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), reg.getRuntime(), true);
+            workspace.setLibs(libs);
+
+            reg.open(workspace);
+
+        } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
+            reg.getRuntime().sendHalt(iwe.getMessage());
+        }
+
+
         reg.getRegionalizerFrame().setVisible(true);
     }
 

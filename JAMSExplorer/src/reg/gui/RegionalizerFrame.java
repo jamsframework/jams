@@ -69,9 +69,9 @@ public class RegionalizerFrame extends JFrame {
     private JSplitPane mainSplitPane;
     private JScrollPane mainScroll;
     private JTabbedPane spreadSheetTabs;
-    private Regionalizer regionalizer;
+    private JAMSExplorer regionalizer;
 
-    public RegionalizerFrame(Regionalizer regionalizer) {
+    public RegionalizerFrame(JAMSExplorer regionalizer) {
         this.regionalizer = regionalizer;
         init();
     }
@@ -99,7 +99,7 @@ public class RegionalizerFrame extends JFrame {
         openWSDlg = new WorkerDlg(this, "Öffne Arbeitsverzeichnis");
 
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
-        setTitle(Regionalizer.APP_TITLE);
+        setTitle(JAMSExplorer.APP_TITLE);
 
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -143,7 +143,7 @@ public class RegionalizerFrame extends JFrame {
         statusPanel.setBorder(BorderFactory.createEtchedBorder());
         statusPanel.setPreferredSize(new java.awt.Dimension(14, 20));
         statusLabel = new JLabel();
-        statusLabel.setText(Regionalizer.APP_TITLE + " v0.1");
+        statusLabel.setText(JAMSExplorer.APP_TITLE + " v0.1");
         statusPanel.add(statusLabel, java.awt.BorderLayout.CENTER);
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
 
@@ -164,7 +164,7 @@ public class RegionalizerFrame extends JFrame {
 
         setJMenuBar(mainMenu);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize(Math.min(d.width, Regionalizer.SCREEN_WIDTH), Math.min(d.height, Regionalizer.SCREEN_HEIGHT));
+        setSize(Math.min(d.width, JAMSExplorer.SCREEN_WIDTH), Math.min(d.height, JAMSExplorer.SCREEN_HEIGHT));
     }
     
     public void addToTabbedPane(String title, Component comp){
@@ -191,7 +191,7 @@ public class RegionalizerFrame extends JFrame {
             openWSDlg.setTask(new Runnable() {
 
                 public void run() {
-                    //Regionalizer.open(jfc.getSelectedFile());
+                    //JAMSExplorer.open(jfc.getSelectedFile());
                 }
             });
             openWSDlg.execute();

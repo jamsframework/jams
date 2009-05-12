@@ -25,7 +25,7 @@ package reg.gui;
 import java.io.File;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import reg.Regionalizer;
+import reg.JAMSExplorer;
 import reg.spreadsheet.JAMSSpreadSheet;
 
 /**
@@ -36,11 +36,11 @@ public class OutputDSPanel extends JPanel {
 
     private JSplitPane splitPane;
 
-    public static OutputDSPanel createPanel(Regionalizer regionalizer, File file) {
+    public static OutputDSPanel createPanel(JAMSExplorer regionalizer, File file) {
         return new OutputDSPanel(regionalizer, file);
     }
 
-    private OutputDSPanel(Regionalizer regionalizer, File file) {
+    private OutputDSPanel(JAMSExplorer regionalizer, File file) {
 
         splitPane = new JSplitPane();
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);

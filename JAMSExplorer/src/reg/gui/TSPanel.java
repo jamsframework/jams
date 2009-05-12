@@ -24,7 +24,7 @@ package reg.gui;
 
 import reg.spreadsheet.JAMSSpreadSheet;
 import javax.swing.JPanel;
-import reg.Regionalizer;
+import reg.JAMSExplorer;
 
 /**
  *
@@ -35,7 +35,7 @@ public class TSPanel extends JPanel {
     
     private JAMSSpreadSheet spreadsheet;
 
-    public TSPanel(Regionalizer regionalizer) {
+    public TSPanel(JAMSExplorer regionalizer) {
         String[] default_headers = {""};
         spreadsheet = new JAMSSpreadSheet(regionalizer, default_headers);
         spreadsheet.init();

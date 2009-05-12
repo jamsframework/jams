@@ -36,7 +36,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
-import reg.Regionalizer;
+import reg.JAMSExplorer;
 
 /**
  *
@@ -49,9 +49,9 @@ public class DSTree extends JAMSTree {
     private JAMSWorkspace workspace;
     private DSTreeNode root;
     private NodeObservable nodeObservable = new NodeObservable();
-    private Regionalizer regionalizer;
+    private JAMSExplorer regionalizer;
 
-    public DSTree(Regionalizer regionalizer) {
+    public DSTree(JAMSExplorer regionalizer) {
         super();
 
         this.regionalizer = regionalizer;

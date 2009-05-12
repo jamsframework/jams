@@ -88,6 +88,7 @@ public class JAMSWorkspace implements Serializable {
     }
 
     public JAMSWorkspace(File directory, JAMSRuntime runtime, boolean readonly) throws InvalidWorkspaceException {
+
         this.runtime = runtime;
         if (runtime.getClassLoader() != null) {
             this.classLoader = runtime.getClassLoader();
@@ -97,7 +98,6 @@ public class JAMSWorkspace implements Serializable {
         this.loadConfig();
         this.checkValidity(readonly);
         this.createDataStores();
-
     }
 
     /**

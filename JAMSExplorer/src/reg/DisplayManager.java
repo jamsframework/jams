@@ -57,9 +57,9 @@ public class DisplayManager implements Observer {
 
     private HashMap<String, JAMSSpreadSheet> spreadSheets = new HashMap<String, JAMSSpreadSheet>();
 
-    private Regionalizer regionalizer;
+    private JAMSExplorer regionalizer;
 
-    public DisplayManager(Regionalizer regionalizer) {
+    public DisplayManager(JAMSExplorer regionalizer) {
         treePanel = new TreePanel(regionalizer);
         inputDSInfoPanel = new InputDSInfoPanel();
         treePanel.getTree().addObserver(this);
@@ -107,8 +107,8 @@ public class DisplayManager implements Observer {
                     
 //                    spreadSheetTabs.add(node.toString(), spreadSheet.getPanel());
 //
-//                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadSheetTabs);
-//                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadSheet.getPanel());
+//                    JAMSExplorer.getRegionalizerFrame().updateMainPanel(spreadSheetTabs);
+//                    JAMSExplorer.getRegionalizerFrame().updateMainPanel(spreadSheet.getPanel());
                     try {
                         spreadSheet.loadTSDS((TSDataStore) store, regionalizer.getWorkspace().getInputDirectory());
                     } catch (Exception e) {
@@ -120,7 +120,7 @@ public class DisplayManager implements Observer {
             case DSTreeNode.OUTPUT_DS:
                 FileObject fo = (FileObject) node.getUserObject();
 //                OutputDSPanel odsPanel = OutputDSPanel.createPanel(fo.getFile());
-//                Regionalizer.getRegionalizerFrame().updateMainPanel(odsPanel);
+//                JAMSExplorer.getRegionalizerFrame().updateMainPanel(odsPanel);
                 try {
                     JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(regionalizer, fo.getFile());
                     regionalizer.getRegionalizerFrame().updateMainPanel(outputPanel);

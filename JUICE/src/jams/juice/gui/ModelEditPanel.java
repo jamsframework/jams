@@ -44,7 +44,7 @@ import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
-import reg.Regionalizer;
+import reg.JAMSExplorer;
 
 /**
  *
@@ -113,7 +113,7 @@ public class ModelEditPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Regionalizer(new File(workspace.getValue()));
+                new JAMSExplorer(new File(workspace.getValue()));
             }
         };
         explorerButton = new JButton(explorerAction);

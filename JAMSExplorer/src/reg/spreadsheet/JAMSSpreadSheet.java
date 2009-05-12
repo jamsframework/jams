@@ -29,7 +29,7 @@ import jams.workspace.datatypes.DataValue;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.stores.TSDataStore;
 import java.text.ParseException;
-import reg.Regionalizer;
+import reg.JAMSExplorer;
 import reg.dsproc.DataMatrix;
 
 //import jams.components.*;
@@ -105,13 +105,13 @@ public class JAMSSpreadSheet extends JPanel {
 
     private JFileChooser epsFileChooser,  templateChooser;
 
-    private Regionalizer regionalizer;
+    private JAMSExplorer regionalizer;
 
     /* Constructor */
     public JAMSSpreadSheet() {
     }
 
-    public JAMSSpreadSheet(Regionalizer regionalizer, String[] headers) {
+    public JAMSSpreadSheet(JAMSExplorer regionalizer, String[] headers) {
         this.regionalizer = regionalizer;
         this.parent_frame = regionalizer.getRegionalizerFrame();
         this.thisSpreadSheet = this;
