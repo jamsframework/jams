@@ -57,11 +57,11 @@ public class Regionalizer {
 
     private JAMSWorkspace workspace;
 
-    public Regionalizer(File path) {
-        this(null, path);
+    public Regionalizer() {
+        this(null);
     }
 
-    public Regionalizer(JAMSRuntime runtime, File path) {
+    public Regionalizer(JAMSRuntime runtime) {
 
         if (runtime == null) {
             this.runtime = new StandardRuntime();
@@ -97,10 +97,6 @@ public class Regionalizer {
         displayManager = new DisplayManager(this);
         regionalizerFrame = new RegionalizerFrame(this);
 
-        if (path != null) {
-            open(path);
-        }
-
     }
 
     public void open(File workspaceFile) {
@@ -115,7 +111,6 @@ public class Regionalizer {
         } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
             this.getRuntime().sendHalt(iwe.getMessage());
         }
-
     }
 
     public static void main(String[] args) {
@@ -125,8 +120,9 @@ public class Regionalizer {
             }
         } catch (Exception evt) {
         }
-        Regionalizer reg = new Regionalizer(new File("D:/jamsapplication/JAMS-Gehlberg"));
-
+        
+        Regionalizer reg = new Regionalizer();
+        reg.open(new File("D:/jamsapplication/JAMS-Gehlberg"));
         reg.getRegionalizerFrame().setVisible(true);
     }
 
