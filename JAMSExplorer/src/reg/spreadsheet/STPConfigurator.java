@@ -13,6 +13,7 @@ import jams.data.JAMSDataFactory;
 import jams.gui.LHelper;
 import jams.gui.WorkerDlg;
 import jams.workspace.DataSet;
+import jams.workspace.JAMSWorkspace;
 import jams.workspace.datatypes.DataValue;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.stores.InputDataStore;
@@ -21,7 +22,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -78,6 +78,7 @@ public class STPConfigurator extends JFrame{
     JFrame parent;
 //    JTable table; //wichtig?
     File templateFile;
+    private JAMSWorkspace workspace;
             
     int rows, columns, graphCount, selectedTimeAxis;
     int[] weights;
@@ -112,9 +113,10 @@ public class STPConfigurator extends JFrame{
     File templateFiles[];
     int numberOfPlots;
     
-    public STPConfigurator(JFrame parent, int numberOfPlots){
-        
-        this.parent = parent;
+    public STPConfigurator(Regionalizer regionalizer, int numberOfPlots){
+
+        this.workspace = regionalizer.getWorkspace();
+        this.parent = regionalizer.getRegionalizerFrame();
         this.setIconImage(parent.getIconImage());
         setTitle("StackedTimePlot Configurator");
         
@@ -181,7 +183,7 @@ public class STPConfigurator extends JFrame{
         
         for(int i = 0; i < numberOfPlots; i++){
             String datasetFileID = (String)templateBox[i].getSelectedItem();
-            templateFiles[i] = new File(Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory(), datasetFileID);
+            templateFiles[i] = new File(workspace.getInputDirectory(), datasetFileID);
 
             loadInputDSData(loadDatasetID(templateFiles[i]));
             loadTemplate(templateFiles[i]);
@@ -417,7 +419,7 @@ public class STPConfigurator extends JFrame{
         for(int i = 0; i < numberOfPlots; i++){
             
             String datasetFileID = (String)templateBox[i].getSelectedItem();
-            templateFiles[i] = new File(Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory(), datasetFileID);
+            templateFiles[i] = new File(workspace.getInputDirectory(), datasetFileID);
             
             
             loadInputDSData(loadDatasetID(templateFiles[i]));
@@ -461,7 +463,7 @@ public class STPConfigurator extends JFrame{
    
     private InputDataStore getInputDataStore(String datasetID){
         
-        InputDataStore store = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStore(datasetID);
+        InputDataStore store = workspace.getInputDataStore(datasetID);
         
         return store;
     }
@@ -477,7 +479,7 @@ public class STPConfigurator extends JFrame{
         String[] accIDArray;
         
 //        File testfile = new File());
-        File testfile = new File(Regionalizer.getRegionalizerFrame().getWorkspace().getDirectory().toString()+"/input");
+        File testfile = new File(workspace.getDirectory().toString()+"/input");
         File[] filelist = testfile.listFiles();
 
         Set<String> idSet;

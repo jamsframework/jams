@@ -23,6 +23,7 @@
 package reg;
 
 import jams.gui.LHelper;
+import jams.workspace.JAMSWorkspace;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import reg.spreadsheet.JAMSSpreadSheet;
@@ -56,12 +57,14 @@ public class DisplayManager implements Observer {
 
     private HashMap<String, JAMSSpreadSheet> spreadSheets = new HashMap<String, JAMSSpreadSheet>();
 
-    public DisplayManager() {
-        treePanel = new TreePanel();
+    private Regionalizer regionalizer;
+
+    public DisplayManager(Regionalizer regionalizer) {
+        treePanel = new TreePanel(regionalizer);
         inputDSInfoPanel = new InputDSInfoPanel();
         treePanel.getTree().addObserver(this);
         spreadSheetTabs = new JTabbedPane();
-
+        this.regionalizer = regionalizer;
     }
 
     // handle selection of tree nodes and show metadata
@@ -73,10 +76,10 @@ public class DisplayManager implements Observer {
         DSTreeNode node = (DSTreeNode) arg;
         if (node.getType() == DSTreeNode.INPUT_DS) {
             try {
-                DataStore store = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStore(node.toString());
+                DataStore store = regionalizer.getWorkspace().getInputDataStore(node.toString());
                 inputDSInfoPanel.updateDS(store);
             } catch (Exception e) {
-                Regionalizer.getRuntime().sendErrorMsg(e.toString());
+                regionalizer.getRuntime().sendErrorMsg(e.toString());
                 e.printStackTrace();
             }
         } else if (node.getType() == DSTreeNode.OUTPUT_DS) {
@@ -91,25 +94,25 @@ public class DisplayManager implements Observer {
         }
         switch (node.getType()) {
             case DSTreeNode.INPUT_DS:
-                InputDataStore store = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStore(node.toString());
+                InputDataStore store = regionalizer.getWorkspace().getInputDataStore(node.toString());
                 if (store instanceof TSDataStore) {
 
                     String[] default_headers = {""};
-                    JAMSSpreadSheet spreadSheet = new JAMSSpreadSheet(Regionalizer.getRegionalizerFrame(), default_headers);
+                    JAMSSpreadSheet spreadSheet = new JAMSSpreadSheet(regionalizer, default_headers);
                     spreadSheet.init();
 
                     spreadSheets.put(node.toString(), spreadSheet);
                     
-                    Regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(), spreadSheet.getPanel());
+                    regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(), spreadSheet.getPanel());
                     
 //                    spreadSheetTabs.add(node.toString(), spreadSheet.getPanel());
 //
 //                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadSheetTabs);
 //                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadSheet.getPanel());
                     try {
-                        spreadSheet.loadTSDS((TSDataStore) store, Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory());
+                        spreadSheet.loadTSDS((TSDataStore) store, regionalizer.getWorkspace().getInputDirectory());
                     } catch (Exception e) {
-                        LHelper.showErrorDlg(Regionalizer.getRegionalizerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
+                        LHelper.showErrorDlg(regionalizer.getRegionalizerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
                         e.printStackTrace();
                     }
                 }
@@ -119,8 +122,8 @@ public class DisplayManager implements Observer {
 //                OutputDSPanel odsPanel = OutputDSPanel.createPanel(fo.getFile());
 //                Regionalizer.getRegionalizerFrame().updateMainPanel(odsPanel);
                 try {
-                    JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(fo.getFile());
-                    Regionalizer.getRegionalizerFrame().updateMainPanel(outputPanel);
+                    JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(regionalizer, fo.getFile());
+                    regionalizer.getRegionalizerFrame().updateMainPanel(outputPanel);
                 } catch (FileNotFoundException ex) {
                     ex.printStackTrace();
                 } catch (IOException ex) {
@@ -149,7 +152,7 @@ public class DisplayManager implements Observer {
      */
     public TSPanel getTSPanel() {
         if (tsPanel == null) {
-            tsPanel = new TSPanel();
+            tsPanel = new TSPanel(regionalizer);
         }
         return tsPanel;
     }

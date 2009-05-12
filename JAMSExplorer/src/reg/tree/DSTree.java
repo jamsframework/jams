@@ -49,10 +49,12 @@ public class DSTree extends JAMSTree {
     private JAMSWorkspace workspace;
     private DSTreeNode root;
     private NodeObservable nodeObservable = new NodeObservable();
+    private Regionalizer regionalizer;
 
-    public DSTree() {
+    public DSTree(Regionalizer regionalizer) {
         super();
 
+        this.regionalizer = regionalizer;
         setEditable(false);
         root = new DSTreeNode(ROOT_NAME, DSTreeNode.IO_ROOT);
         this.setModel(new DefaultTreeModel(root));
@@ -134,7 +136,7 @@ public class DSTree extends JAMSTree {
     }
 
     private void displayDSData() {
-        Regionalizer.getDisplayManager().displayDS((DSTreeNode) getLastSelectedPathComponent());
+        regionalizer.getDisplayManager().displayDS((DSTreeNode) getLastSelectedPathComponent());
     }
 
     private void showPopup(MouseEvent evt) {

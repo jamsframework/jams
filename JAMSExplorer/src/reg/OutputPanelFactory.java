@@ -37,7 +37,7 @@ import reg.gui.SimpleOutputPanel;
  */
 public class OutputPanelFactory {
 
-    public static JPanel getOutputDSPanel(File file) throws FileNotFoundException, IOException {
+    public static JPanel getOutputDSPanel(Regionalizer regionalizer, File file) throws FileNotFoundException, IOException {
         BufferedFileReader reader = new BufferedFileReader(new FileInputStream(file));
         String line = reader.readLine();
         reader.close();
@@ -47,7 +47,7 @@ public class OutputPanelFactory {
         }
 
         if (line.startsWith("@context")) {
-            return OutputDSPanel.createPanel(file);
+            return OutputDSPanel.createPanel(regionalizer, file);
         }
 
         return new SimpleOutputPanel(file);

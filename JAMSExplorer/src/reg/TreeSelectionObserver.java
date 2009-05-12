@@ -22,6 +22,7 @@
  */
 package reg;
 
+import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.DataStore;
 import java.util.Observable;
 import java.util.Observer;
@@ -33,7 +34,12 @@ import reg.tree.DSTreeNode;
  */
 public class TreeSelectionObserver implements Observer {
 
-    public TreeSelectionObserver() {
+    private JAMSWorkspace workspace;
+
+    private Regionalizer regionalizer;
+
+    public TreeSelectionObserver(JAMSWorkspace workspace) {
+        this.workspace = workspace;
 //        Regionalizer.getRegionalizerFrame().getTreePanel().getTree().addObserver(this);
     }
 
@@ -45,10 +51,10 @@ public class TreeSelectionObserver implements Observer {
         DSTreeNode node = (DSTreeNode) arg;
         if (node.getType() == DSTreeNode.INPUT_DS) {
             try {
-                DataStore store = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStore(node.toString());
+                DataStore store = workspace.getInputDataStore(node.toString());
 //                Regionalizer.getRegionalizerFrame().getInfoPanel().updateDS(store);
             } catch (Exception e) {
-                Regionalizer.getRuntime().sendErrorMsg(e.toString());
+                regionalizer.getRuntime().sendErrorMsg(e.toString());
                 e.printStackTrace();
             }
         } else if (node.getType() == DSTreeNode.OUTPUT_DS) {

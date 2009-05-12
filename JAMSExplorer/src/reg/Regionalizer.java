@@ -25,13 +25,16 @@ package reg;
 import reg.gui.RegionalizerFrame;
 import jams.JAMS;
 import jams.JAMSProperties;
+import jams.JAMSTools;
 import jams.gui.LHelper;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
+import jams.workspace.JAMSWorkspace;
 import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 /**
@@ -41,41 +44,47 @@ import javax.swing.UIManager;
 public class Regionalizer {
 
     public static final String APP_TITLE = "DataReg";
-    public static final int SCREEN_WIDTH = 1200,  SCREEN_HEIGHT = 850;
-    private static RegionalizerFrame regionalizerFrame;
-    private static JAMSRuntime runtime;
-//    private static DSTree tree;
-    private static JAMSProperties properties;
-    private static DisplayManager displayManager;
 
-    public Regionalizer() {
+    public static final int SCREEN_WIDTH = 1200,  SCREEN_HEIGHT = 750;
+
+    private RegionalizerFrame regionalizerFrame;
+
+    private JAMSRuntime runtime;
+
+    private JAMSProperties properties;
+
+    private DisplayManager displayManager;
+
+    private JAMSWorkspace workspace;
+
+    public Regionalizer(File path) {
+        this(null, path);
     }
 
-    public static void main(String[] args) {
-        try {
-            if (System.getProperty("os.name").contains("Windows")) {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            }
-        } catch (Exception evt) {
+    public Regionalizer(JAMSRuntime runtime, File path) {
+
+        if (runtime == null) {
+            this.runtime = new StandardRuntime();
+            this.runtime.setDebugLevel(JAMS.VERBOSE);
+            this.runtime.addErrorLogObserver(new Observer() {
+
+                public void update(Observable o, Object arg) {
+                    LHelper.showErrorDlg(regionalizerFrame, arg.toString(), JAMS.resources.getString("Error"));
+                }
+            });
+            this.runtime.addInfoLogObserver(new Observer() {
+
+                public void update(Observable o, Object arg) {
+                    //LHelper.showInfoDlg(regFrame, arg.toString(), JAMS.resources.getString("Info"));
+                }
+            });
+        } else {
+            this.runtime = runtime;
         }
-
-        runtime = new StandardRuntime();
-        runtime.setDebugLevel(JAMS.VERBOSE);
-        runtime.addErrorLogObserver(new Observer() {
-
-            public void update(Observable o, Object arg) {
-                LHelper.showErrorDlg(regionalizerFrame, arg.toString(), JAMS.resources.getString("Error"));
-            }
-        });
-        runtime.addInfoLogObserver(new Observer() {
-
-            public void update(Observable o, Object arg) {
-                //LHelper.showInfoDlg(regFrame, arg.toString(), JAMS.resources.getString("Info"));
-            }
-        });
 
         properties = JAMSProperties.createJAMSProperties();
         String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
+        System.out.println(defaultFile);
         File file = new File(defaultFile);
         if (file.exists()) {
             try {
@@ -85,37 +94,74 @@ public class Regionalizer {
             }
         }
 
-        displayManager = new DisplayManager();
-        regionalizerFrame = new RegionalizerFrame();
-//        new TreeSelectionObserver();
-        regionalizerFrame.setVisible(true);
+        displayManager = new DisplayManager(this);
+        regionalizerFrame = new RegionalizerFrame(this);
+
+        if (path != null) {
+            open(path);
+        }
+
+    }
+
+    public void open(File workspaceFile) {
+
+        try {
+            String[] libs = JAMSTools.toArray(this.getProperties().getProperty("libs", ""), ";");
+            workspace = new JAMSWorkspace(workspaceFile, this.getRuntime(), true);
+            workspace.setLibs(libs);
+            regionalizerFrame.setTitle(Regionalizer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
+            this.getDisplayManager().getTreePanel().update(workspace);
+            regionalizerFrame.updateMainPanel(new JPanel());
+        } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
+            this.getRuntime().sendHalt(iwe.getMessage());
+        }
+
+    }
+
+    public static void main(String[] args) {
+        try {
+            if (System.getProperty("os.name").contains("Windows")) {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        } catch (Exception evt) {
+        }
+        Regionalizer reg = new Regionalizer(new File("D:/jamsapplication/JAMS-Gehlberg"));
+
+        reg.getRegionalizerFrame().setVisible(true);
     }
 
     /**
      * @return the runtime
      */
-    public static JAMSRuntime getRuntime() {
+    public JAMSRuntime getRuntime() {
         return runtime;
     }
 
     /**
      * @return the properties
      */
-    public static JAMSProperties getProperties() {
+    public JAMSProperties getProperties() {
         return properties;
     }
 
     /**
      * @return the regFrame
      */
-    public static RegionalizerFrame getRegionalizerFrame() {
+    public RegionalizerFrame getRegionalizerFrame() {
         return regionalizerFrame;
     }
 
     /**
      * @return the displayManager
      */
-    public static DisplayManager getDisplayManager() {
+    public DisplayManager getDisplayManager() {
         return displayManager;
+    }
+
+    /**
+     * @return the workspace
+     */
+    public JAMSWorkspace getWorkspace() {
+        return workspace;
     }
 }

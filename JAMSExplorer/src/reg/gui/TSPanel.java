@@ -35,9 +35,9 @@ public class TSPanel extends JPanel {
     
     private JAMSSpreadSheet spreadsheet;
 
-    public TSPanel() {
+    public TSPanel(Regionalizer regionalizer) {
         String[] default_headers = {""};
-        spreadsheet = new JAMSSpreadSheet(Regionalizer.getRegionalizerFrame(), default_headers);
+        spreadsheet = new JAMSSpreadSheet(regionalizer, default_headers);
         spreadsheet.init();
         add(spreadsheet.getPanel());
     }

@@ -39,6 +39,12 @@ import jams.gui.input.ValueChangeListener;
 import java.awt.GridBagConstraints;
 import javax.swing.BorderFactory;
 import jams.juice.JUICE;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import reg.Regionalizer;
 
 /**
  *
@@ -51,11 +57,18 @@ import jams.juice.JUICE;
 public class ModelEditPanel extends JPanel {
 
     private static final int TEXTAREA_WIDTH = 450,  TEXTAREA_HEIGHT = 100,  TEXTFIELD_WIDTH = 35;
+
     private JPanel componentPanel;
+
     private GridBagLayout mainLayout;
+
     private ModelView view;
+
     private InputComponent workspace,  author,  date,  helpBaseURL;
+
     private JTextPane description;
+
+    private JButton explorerButton;
 
     public ModelEditPanel(ModelView view) {
         super();
@@ -96,7 +109,18 @@ public class ModelEditPanel extends JPanel {
         scroll.setBorder(BorderFactory.createEtchedBorder());
         scroll.setPreferredSize(new Dimension(TEXTAREA_WIDTH, TEXTAREA_HEIGHT));
 
+        Action explorerAction = new AbstractAction(JUICE.resources.getString("JAMS_Explorer")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Regionalizer(new File(workspace.getValue()));
+            }
+        };
+        explorerButton = new JButton(explorerAction);
+
         LHelper.addGBComponent(componentPanel, mainLayout, workspace.getComponent(), 2, 0, 1, 1, 1.0, 1.0,
+                GridBagConstraints.NONE, GridBagConstraints.WEST);
+        LHelper.addGBComponent(componentPanel, mainLayout, explorerButton, 3, 0, 1, 1, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);
         LHelper.addGBComponent(componentPanel, mainLayout, author.getComponent(), 2, 1, 1, 1, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);

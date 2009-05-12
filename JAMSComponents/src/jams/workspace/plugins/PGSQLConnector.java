@@ -69,37 +69,4 @@ public class PGSQLConnector {
         this.con.close();
     }
 
-    public static void main(String[] args) {
-
-        PGSQLConnector pgsql = new PGSQLConnector("localhost", "saaleRIS", "postgres", "admin");
-
-        try {
-
-            pgsql.connect();
-
-            String query = jams.JAMSTools.fileToString("D:/jams/RBISDesk/timeseries.sql");
-            ResultSet rs = pgsql.execQuery(query);
-
-            ResultSetMetaData rsmd = rs.getMetaData();
-
-            int numberOfColumns = rsmd.getColumnCount();
-            int rowCount = 1;
-            while (rs.next()) {
-                System.out.println("Line " + rowCount + ": ");
-                for (int i = 1; i <= numberOfColumns; i++) {
-                    System.out.print("\t" + rsmd.getColumnName(i) + ": ");
-                    System.out.println(rs.getString(i));
-                }
-                System.out.println("");
-                rowCount++;
-            }
-
-            rs.close();
-            pgsql.close();
-
-        } catch (SQLException sqlex) {
-            System.out.println("PGSQLConnector: " + sqlex.getMessage());
-        }
-
-    }
 }
