@@ -23,7 +23,6 @@
 package reg;
 
 import jams.gui.LHelper;
-import jams.workspace.JAMSWorkspace;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import reg.spreadsheet.JAMSSpreadSheet;
@@ -57,14 +56,12 @@ public class DisplayManager implements Observer {
 
     private HashMap<String, JAMSSpreadSheet> spreadSheets = new HashMap<String, JAMSSpreadSheet>();
 
-    private JAMSExplorer regionalizer;
-
-    public DisplayManager(JAMSExplorer regionalizer) {
-        treePanel = new TreePanel(regionalizer);
+    public DisplayManager() {
+        treePanel = new TreePanel();
         inputDSInfoPanel = new InputDSInfoPanel();
         treePanel.getTree().addObserver(this);
         spreadSheetTabs = new JTabbedPane();
-        this.regionalizer = regionalizer;
+
     }
 
     // handle selection of tree nodes and show metadata
@@ -76,10 +73,10 @@ public class DisplayManager implements Observer {
         DSTreeNode node = (DSTreeNode) arg;
         if (node.getType() == DSTreeNode.INPUT_DS) {
             try {
-                DataStore store = regionalizer.getWorkspace().getInputDataStore(node.toString());
+                DataStore store = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStore(node.toString());
                 inputDSInfoPanel.updateDS(store);
             } catch (Exception e) {
-                regionalizer.getRuntime().sendErrorMsg(e.toString());
+                Regionalizer.getRuntime().sendErrorMsg(e.toString());
                 e.printStackTrace();
             }
         } else if (node.getType() == DSTreeNode.OUTPUT_DS) {
@@ -87,32 +84,38 @@ public class DisplayManager implements Observer {
         }
 
     }
-
+    
+    public HashMap<String, JAMSSpreadSheet> getSpreadSheets(){
+        return spreadSheets;
+    }
+    
     public void displayDS(DSTreeNode node) {
         if (node == null) {
             return;
         }
         switch (node.getType()) {
             case DSTreeNode.INPUT_DS:
-                InputDataStore store = regionalizer.getWorkspace().getInputDataStore(node.toString());
+                InputDataStore store = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStore(node.toString());
                 if (store instanceof TSDataStore) {
 
                     String[] default_headers = {""};
-                    JAMSSpreadSheet spreadSheet = new JAMSSpreadSheet(regionalizer, default_headers);
+                    JAMSSpreadSheet spreadSheet = new JAMSSpreadSheet(Regionalizer.getRegionalizerFrame(), default_headers);
                     spreadSheet.init();
-
-                    spreadSheets.put(node.toString(), spreadSheet);
+                    spreadSheet.setName(node.toString());
                     
-                    regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(), spreadSheet.getPanel());
-                    
+                    if(!spreadSheets.containsKey(node.toString())){
+                        
+                        spreadSheets.put(node.toString(), spreadSheet);
+                        Regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(), spreadSheet.getPanel());
+                    }
 //                    spreadSheetTabs.add(node.toString(), spreadSheet.getPanel());
 //
-//                    JAMSExplorer.getRegionalizerFrame().updateMainPanel(spreadSheetTabs);
-//                    JAMSExplorer.getRegionalizerFrame().updateMainPanel(spreadSheet.getPanel());
+//                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadSheetTabs);
+//                    Regionalizer.getRegionalizerFrame().updateMainPanel(spreadSheet.getPanel());
                     try {
-                        spreadSheet.loadTSDS((TSDataStore) store, regionalizer.getWorkspace().getInputDirectory());
+                        spreadSheet.loadTSDS((TSDataStore) store, Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory());
                     } catch (Exception e) {
-                        LHelper.showErrorDlg(regionalizer.getRegionalizerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
+                        LHelper.showErrorDlg(Regionalizer.getRegionalizerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
                         e.printStackTrace();
                     }
                 }
@@ -120,10 +123,10 @@ public class DisplayManager implements Observer {
             case DSTreeNode.OUTPUT_DS:
                 FileObject fo = (FileObject) node.getUserObject();
 //                OutputDSPanel odsPanel = OutputDSPanel.createPanel(fo.getFile());
-//                JAMSExplorer.getRegionalizerFrame().updateMainPanel(odsPanel);
+//                Regionalizer.getRegionalizerFrame().updateMainPanel(odsPanel);
                 try {
-                    JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(regionalizer, fo.getFile());
-                    regionalizer.getRegionalizerFrame().updateMainPanel(outputPanel);
+                    JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(fo.getFile());
+                    Regionalizer.getRegionalizerFrame().addToTabbedPane("Output",outputPanel);
                 } catch (FileNotFoundException ex) {
                     ex.printStackTrace();
                 } catch (IOException ex) {
@@ -152,15 +155,15 @@ public class DisplayManager implements Observer {
      */
     public TSPanel getTSPanel() {
         if (tsPanel == null) {
-            tsPanel = new TSPanel(regionalizer);
+            tsPanel = new TSPanel();
         }
         return tsPanel;
     }
 
-    /**
-     * @return the spreadSheets
-     */
-    public HashMap<String, JAMSSpreadSheet> getSpreadSheets() {
-        return spreadSheets;
-    }
+//    /**
+//     * @return the spreadSheets
+//     */
+//    public HashMap<String, JAMSSpreadSheet> getSpreadSheets() {
+//        return spreadSheets;
+//    }
 }
