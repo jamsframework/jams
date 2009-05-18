@@ -13,7 +13,6 @@ import jams.data.JAMSDataFactory;
 import jams.gui.LHelper;
 import jams.gui.WorkerDlg;
 import jams.workspace.DataSet;
-import jams.workspace.JAMSWorkspace;
 import jams.workspace.datatypes.DataValue;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.stores.InputDataStore;
@@ -22,6 +21,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
-import reg.JAMSExplorer;
+import reg.Regionalizer;
 
 
 /**
@@ -78,7 +78,6 @@ public class STPConfigurator extends JFrame{
     JFrame parent;
 //    JTable table; //wichtig?
     File templateFile;
-    private JAMSWorkspace workspace;
             
     int rows, columns, graphCount, selectedTimeAxis;
     int[] weights;
@@ -113,10 +112,9 @@ public class STPConfigurator extends JFrame{
     File templateFiles[];
     int numberOfPlots;
     
-    public STPConfigurator(JAMSExplorer regionalizer, int numberOfPlots){
-
-        this.workspace = regionalizer.getWorkspace();
-        this.parent = regionalizer.getRegionalizerFrame();
+    public STPConfigurator(JFrame parent, int numberOfPlots){
+        
+        this.parent = parent;
         this.setIconImage(parent.getIconImage());
         setTitle("StackedTimePlot Configurator");
         
@@ -183,7 +181,7 @@ public class STPConfigurator extends JFrame{
         
         for(int i = 0; i < numberOfPlots; i++){
             String datasetFileID = (String)templateBox[i].getSelectedItem();
-            templateFiles[i] = new File(workspace.getInputDirectory(), datasetFileID);
+            templateFiles[i] = new File(Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory(), datasetFileID);
 
             loadInputDSData(loadDatasetID(templateFiles[i]));
             loadTemplate(templateFiles[i]);
@@ -419,7 +417,7 @@ public class STPConfigurator extends JFrame{
         for(int i = 0; i < numberOfPlots; i++){
             
             String datasetFileID = (String)templateBox[i].getSelectedItem();
-            templateFiles[i] = new File(workspace.getInputDirectory(), datasetFileID);
+            templateFiles[i] = new File(Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory(), datasetFileID);
             
             
             loadInputDSData(loadDatasetID(templateFiles[i]));
@@ -463,7 +461,7 @@ public class STPConfigurator extends JFrame{
    
     private InputDataStore getInputDataStore(String datasetID){
         
-        InputDataStore store = workspace.getInputDataStore(datasetID);
+        InputDataStore store = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStore(datasetID);
         
         return store;
     }
@@ -479,11 +477,11 @@ public class STPConfigurator extends JFrame{
         String[] accIDArray;
         
 //        File testfile = new File());
-        File testfile = new File(workspace.getDirectory().toString()+"/input");
+        File testfile = new File(Regionalizer.getRegionalizerFrame().getWorkspace().getDirectory().toString()+"/input");
         File[] filelist = testfile.listFiles();
 
         Set<String> idSet;
-//        idSet = JAMSExplorer.getRegionalizerFrame().getWorkspace().getInputDataStoreIDs();
+//        idSet = Regionalizer.getRegionalizerFrame().getWorkspace().getInputDataStoreIDs();
 //        totalIDs = idSet.size();
         
         //idArray = idSet.toArray(idArray);
@@ -497,7 +495,7 @@ public class STPConfigurator extends JFrame{
                 
                 
             
-//            File testFile = new File(JAMSExplorer.getRegionalizerFrame().getWorkspace().getInputDirectory(), idArray[i] +".ttp");
+//            File testFile = new File(Regionalizer.getRegionalizerFrame().getWorkspace().getInputDirectory(), idArray[i] +".ttp");
 //            if(testFile.exists()) accIDList.add(idArray[i]);
 //            else failedIDs++;
 ////            try {
