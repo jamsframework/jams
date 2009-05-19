@@ -107,10 +107,9 @@ public class JAMSExplorer {
     }
 
     public static void main(String[] args) {
+        
         try {
-            if (System.getProperty("os.name").contains("Windows")) {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            }
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception evt) {
         }
 

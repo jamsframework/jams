@@ -26,7 +26,7 @@ import java.awt.BorderLayout;
 import java.io.File;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import reg.Regionalizer;
+import reg.JAMSExplorer;
 import reg.spreadsheet.JAMSSpreadSheet;
 
 /**
@@ -37,31 +37,29 @@ public class OutputDSPanel extends JPanel {
 
     private JSplitPane splitPane;
 
-    public static OutputDSPanel createPanel(File file) {
-        return new OutputDSPanel(file);
+    public static OutputDSPanel createPanel(JAMSExplorer regionalizer, File file) {
+        return new OutputDSPanel(regionalizer, file);
     }
 
-    private OutputDSPanel(File file) {
-        
+    private OutputDSPanel(JAMSExplorer regionalizer, File file) {
+
         this.setLayout(new BorderLayout());
-        
         splitPane = new JSplitPane();
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 
         // create the spreadsheet
         String[] default_headers = {""};
-        JAMSSpreadSheet spreadsheet = new JAMSSpreadSheet(Regionalizer.getRegionalizerFrame(), default_headers);
+        JAMSSpreadSheet spreadsheet = new JAMSSpreadSheet(regionalizer, default_headers);
         spreadsheet.init();
 
         // create the controller panel
         TimeSpaceDSPanel tsp = new TimeSpaceDSPanel();
-        tsp.setParent(Regionalizer.getRegionalizerFrame());
+        tsp.setParent(regionalizer.getRegionalizerFrame());
         tsp.setOutputSpreadSheet(spreadsheet);
         tsp.createTsProc(file);
 
         splitPane.setLeftComponent(tsp);
         splitPane.setRightComponent(spreadsheet.getPanel());
-        
 
         this.add(splitPane, BorderLayout.CENTER);
     }

@@ -29,7 +29,7 @@ import jams.workspace.datatypes.DataValue;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.stores.TSDataStore;
 import java.text.ParseException;
-import reg.Regionalizer;
+import reg.JAMSExplorer;
 import reg.dsproc.DataMatrix;
 
 //import jams.components.*;
@@ -107,12 +107,15 @@ public class JAMSSpreadSheet extends JPanel {
 
     private JFileChooser epsFileChooser,  templateChooser;
 
+    private JAMSExplorer regionalizer;
+
     /* Constructor */
     public JAMSSpreadSheet() {
     }
 
-    public JAMSSpreadSheet(JFrame parent, String[] headers) {
-        this.parent_frame = parent;
+    public JAMSSpreadSheet(JAMSExplorer regionalizer, String[] headers) {
+        this.regionalizer = regionalizer;
+        this.parent_frame = regionalizer.getRegionalizerFrame();
         this.thisSpreadSheet = this;
     }
 
@@ -123,8 +126,8 @@ public class JAMSSpreadSheet extends JPanel {
     }
     
     public void closeTab(){
-        Regionalizer.getRegionalizerFrame().removeFromTabbedPane(thisSpreadSheet.getPanel());
-        Regionalizer.getDisplayManager().getSpreadSheets().remove(this.name);
+        regionalizer.getRegionalizerFrame().removeFromTabbedPane(thisSpreadSheet.getPanel());
+        regionalizer.getDisplayManager().getSpreadSheets().remove(this.name);
     }
     
     public void setName(String name){
@@ -234,7 +237,6 @@ public class JAMSSpreadSheet extends JPanel {
         public void actionPerformed(ActionEvent e) {
             
             closeTab();
-            
         }
     };
     
@@ -358,7 +360,7 @@ public class JAMSSpreadSheet extends JPanel {
     private void openCTS() {
 
         JTSConfigurator jts;
-        jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this, null);
+        jts = new JTSConfigurator(regionalizer.getRegionalizerFrame(), this, null);
     //ctstabs.addGraph(table);
     //ctsIsOpen = true;
     }
@@ -367,9 +369,9 @@ public class JAMSSpreadSheet extends JPanel {
 
         JTSConfigurator jts;
         if (useTemplateButton.isSelected()) {
-            jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this, templateFile);
+            jts = new JTSConfigurator(regionalizer.getRegionalizerFrame(), this, templateFile);
         } else {
-            jts = new JTSConfigurator(Regionalizer.getRegionalizerFrame(), this, null);
+            jts = new JTSConfigurator(regionalizer.getRegionalizerFrame(), this, null);
         }
     //ctstabs.addGraph(table);
     //ctsIsOpen = true;
@@ -379,9 +381,9 @@ public class JAMSSpreadSheet extends JPanel {
         JXYConfigurator jxys;
 
         try {
-            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this);
+            jxys = new JXYConfigurator(regionalizer.getRegionalizerFrame(), this);
         } catch (NullPointerException npe) {
-            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this);
+            jxys = new JXYConfigurator(regionalizer.getRegionalizerFrame(), this);
         }
     }
 
@@ -389,14 +391,14 @@ public class JAMSSpreadSheet extends JPanel {
         JXYConfigurator jxys;
 
         if (useTemplateButton.isSelected()) {
-            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this, templateFile);
+            jxys = new JXYConfigurator(regionalizer.getRegionalizerFrame(), this, templateFile);
         } else {
-            jxys = new JXYConfigurator(Regionalizer.getRegionalizerFrame(), this, null);
+            jxys = new JXYConfigurator(regionalizer.getRegionalizerFrame(), this, null);
         }
     }
 
     private void openSTP() {
-        STPConfigurator stp = new STPConfigurator(Regionalizer.getRegionalizerFrame(), 2);
+        STPConfigurator stp = new STPConfigurator(regionalizer, 2);
     }
     ActionListener plotAction = new ActionListener() {
 
