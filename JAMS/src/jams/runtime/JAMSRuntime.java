@@ -41,6 +41,7 @@ public interface JAMSRuntime extends Serializable {
      * Run state causing runtime to stop model execution
      */
     public static final int STATE_STOP = 0;
+
     /**
      * Run state causing runtime to continue model execution
      */
@@ -105,6 +106,4 @@ public interface JAMSRuntime extends Serializable {
     public ClassLoader getClassLoader();
 
     public void saveModelParameter();
-
-    public String[] getLibs();
 }

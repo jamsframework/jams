@@ -113,7 +113,7 @@ public class ModelEditPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                new JAMSExplorer(new File(workspace.getValue()));
+                //new JAMSExplorer(new File(workspace.getValue()));
             }
         };
         explorerButton = new JButton(explorerAction);

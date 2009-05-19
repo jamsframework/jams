@@ -258,11 +258,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     }
 
     @Override
-    public String[] getLibs() {
-        return libs;
-    }
-
-    @Override
     public void initGUI(String title, boolean ontop, int width, int height) {
 
         if (guiComponents.size() == 0) {
@@ -553,11 +548,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         return outStream;
     }
 
-    @Override
-    public JAMSModel getModel() {
-        return this.model;
-    }
-
     public void setRuntimeState(ByteArrayInputStream inStream) {
         try {
             ObjectInputStream objIn = new ObjectInputStream(inStream);
@@ -567,6 +557,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         } catch (Exception e) {
             sendErrorMsg(JAMS.resources.getString("Unable_to_deserialize_jamsentity_collection,_because") + e.toString());
         }
+    }
+
+    @Override
+    public JAMSModel getModel() {
+        return this.model;
     }
 
     @Override
