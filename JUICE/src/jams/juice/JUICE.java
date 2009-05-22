@@ -36,6 +36,7 @@ import jams.runtime.StandardRuntime;
 import jams.juice.gui.JUICEFrame;
 import jams.juice.gui.ModelView;
 import jams.juice.gui.tree.LibTree;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -150,11 +151,17 @@ public class JUICE {
             loadLibsDlg = new WorkerDlg(juiceFrame, JUICE.resources.getString("Loading_Libraries"));
         }
         try {
-            loadLibsDlg.setTask(new Runnable() {
+            loadLibsDlg.setTask(new SwingWorker() {
 
-                public void run() {
+                @Override
+                public Object doInBackground() {
                     JUICE.getJuiceFrame().getLibTreePanel().setEnabled(false);
                     JUICE.createClassLoader();
+                    return null;
+                }
+
+                @Override
+                public void done() {
                     getLibTree().update(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER));
                     JUICE.getJuiceFrame().getLibTreePanel().setEnabled(true);
                 }
