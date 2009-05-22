@@ -115,20 +115,22 @@ public class WorkerDlg extends JDialog {
             }
         });
 
-        // @TODO: fix occasional problems when task contains swing operations
-        // (e.g. repaints)
         worker.execute();
         this.setVisible(true);
-        
     }
 
+    /**
+     * Set a task to be executed
+     * This method should only be used when the tasks involves no Swing related
+     * methods, since they should only be applied in the event dispatching
+     * thread. In this case, use setTask(SwingWorker worker) instead.
+     * @param task The task
+     */
     public void setTask(Runnable task) {
         this.task = task;
         worker = new SwingWorker<Object, Void>() {
 
             public Object doInBackground() {
-                //WorkerDlg.this.setVisible(true);
-
                 try {
                     WorkerDlg.this.task.run();
                 } catch (Throwable t) {
@@ -136,10 +138,17 @@ public class WorkerDlg extends JDialog {
                 }
                 return null;
             }
-
-//            public void done() {
-//                WorkerDlg.this.setVisible(false);
-//            }
         };
+    }
+
+    /**
+     * Set a task to be executed by creating a SwingWorker. This method should
+     * be used if Swing related methods are to be executed. In this case, these
+     * should be executed in the done() method of the SwingWorker, i.e. within
+     * the event dispatching thread
+     * @param worker The SwingWorker
+     */
+    public void setTask(SwingWorker worker) {
+        this.worker = worker;
     }
 }
