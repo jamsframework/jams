@@ -208,7 +208,7 @@ public class JTSConfigurator extends JFrame {
         }
 
 
-        setPreferredSize(new Dimension(1024, 768));
+        //setPreferredSize(new Dimension(1024, 768));
         //setMinimumSize(new Dimension(680,480));
         createPanel();
         pack();

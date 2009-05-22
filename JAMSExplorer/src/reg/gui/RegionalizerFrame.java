@@ -112,7 +112,7 @@ public class RegionalizerFrame extends JFrame {
         mainSplitPane.setAutoscrolls(true);
         mainSplitPane.setContinuousLayout(true);
         mainSplitPane.setLeftComponent(inoutSplitPane);
-        mainSplitPane.setRightComponent(mainScroll);
+//        mainSplitPane.setRightComponent(mainScroll);
         mainSplitPane.setDividerLocation(INOUT_PANE_WIDTH);
         //mainSplitPane.setOneTouchExpandable(true);
         mainSplitPane.setDividerSize(DIVIDER_WIDTH);
@@ -178,8 +178,9 @@ public class RegionalizerFrame extends JFrame {
     }
     
     public void updateMainPanel(Component comp) {
-        mainScroll.setViewportView(comp);
-        mainScroll.updateUI();
+//        mainScroll.setViewportView(comp);
+//        mainScroll.updateUI();
+        mainSplitPane.setRightComponent(comp);
     }
 
     private void open() {

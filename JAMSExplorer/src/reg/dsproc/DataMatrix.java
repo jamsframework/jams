@@ -5,31 +5,30 @@ import Jama.Matrix;
 public class DataMatrix extends Matrix {
 
     private Object[] ids;
+    private String[] attributeIDs;
 
-    private DataStoreProcessor outer;
-
-    public DataMatrix(double[][] data, Object[] ids, DataStoreProcessor outer) {
+    public DataMatrix(double[][] data, Object[] ids, String[] attributeIDs) {
         super(data);
-        this.outer = outer;
         this.ids = ids;
+        this.attributeIDs = attributeIDs;
     }
 
-    public DataMatrix(Matrix matrix, Object[] ids, DataStoreProcessor outer) {
+    public DataMatrix(Matrix matrix, Object[] ids, String[] attributeIDs) {
         super(matrix.getArray());
-        this.outer = outer;
         this.ids = ids;
+        this.attributeIDs = attributeIDs;
     }
 
     @Override
     public DataMatrix plus(Matrix other) {
         Matrix result = super.plus(other);
-        return new DataMatrix(result, ids, outer);
+        return new DataMatrix(result, ids, attributeIDs);
     }
 
     @Override
     public DataMatrix times(double d) {
         Matrix result = super.times(d);
-        return new DataMatrix(result, ids, outer);
+        return new DataMatrix(result, ids, attributeIDs);
     }
 
     /**
@@ -90,7 +89,8 @@ public class DataMatrix extends Matrix {
     public static void main(String[] args) {
         double[][] x = {{1, 2, 3}, {4, 5, 6}, {8, 10, 12}};
         String[] ids = {"a", "b", "c"};
-        DataMatrix dm = new DataMatrix(x, ids, null);
+        String[] atributeids = {"x", "y", "z"};
+        DataMatrix dm = new DataMatrix(x, ids, atributeids);
 
         for (double v : dm.getAvgRow()) {
             System.out.print(v + " ");

@@ -183,17 +183,6 @@ public class TimeSpaceProcessor {
         return rs.getInt("COUNT");
     }
 
-    private synchronized int getSelectedAttribCount() {
-        // get number of selected attributes
-        int numSelected = 0;
-        for (AttributeData a : getDataStoreProcessor().getAttributes()) {
-            if (a.isSelected() && a.getType().equals("JAMSDouble")) {
-                numSelected++;
-            }
-        }
-        return numSelected;
-    }
-
     /**
      * Gets the values of the selected attributes for all entities at a
      * specific date
@@ -338,7 +327,8 @@ public class TimeSpaceProcessor {
      */
     public synchronized DataMatrix getSpatialMean(long[] ids) throws SQLException, IOException {
 
-        int attribCount = getSelectedAttribCount();
+        String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
+        int attribCount = attributeIDs.length;
         int[] idPosition = new int[ids.length];
         ArrayList<double[]> data = new ArrayList<double[]>();
         ArrayList<String> timeStamps = new ArrayList<String>();
@@ -347,7 +337,7 @@ public class TimeSpaceProcessor {
         resetTimeFilter();
         ResultSet rs = getData();
 
-        // get first dataset to obtain id position
+        // get first dataset to obtain id positions
         if (rs.next()) {
             DataMatrix m = dsdb.getData(rs.getLong("POSITION"));
             ArrayList<double[]> a = new ArrayList<double[]>();
@@ -394,7 +384,7 @@ public class TimeSpaceProcessor {
         double[][] dataArray = data.toArray(new double[data.size()][attribCount]);
         String[] timeStampArray = timeStamps.toArray(new String[timeStamps.size()]);
 
-        DataMatrix result = new DataMatrix(dataArray, timeStampArray, this.getDataStoreProcessor());
+        DataMatrix result = new DataMatrix(dataArray, timeStampArray, attributeIDs);
 
         return result;
     }
@@ -432,7 +422,8 @@ public class TimeSpaceProcessor {
             return result;
         }
 
-        int attribCount = getSelectedAttribCount();
+        String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
+        int attribCount = attributeIDs.length;
 
         String q = "SELECT * FROM " + TABLE_NAME_SPATAVG;
         ResultSet rs = customSelectQuery(q);
@@ -451,7 +442,7 @@ public class TimeSpaceProcessor {
 
         double[][] dataArray = data.toArray(new double[data.size()][attribCount]);
         String[] idArray = ids.toArray(new String[ids.size()]);
-        result = new DataMatrix(dataArray, idArray, this.getDataStoreProcessor());
+        result = new DataMatrix(dataArray, idArray, attributeIDs);
 
         return result;
     }
@@ -500,7 +491,8 @@ public class TimeSpaceProcessor {
             return result;
         }
 
-        int attribCount = getSelectedAttribCount();
+        String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
+        int attribCount = attributeIDs.length;
 
         // create and send a select statement to get the data from the database
         String q = "SELECT * FROM " + TABLE_NAME_MONTHAVG + " WHERE MONTH = " + month;
@@ -522,7 +514,7 @@ public class TimeSpaceProcessor {
         // create a DataMatrix object from the results
         double[][] dataArray = data.toArray(new double[data.size()][attribCount]);
         Long[] idArray = ids.toArray(new Long[ids.size()]);
-        result = new DataMatrix(dataArray, idArray, this.getDataStoreProcessor());
+        result = new DataMatrix(dataArray, idArray, attributeIDs);
 
         return result;
     }
@@ -545,7 +537,8 @@ public class TimeSpaceProcessor {
             return result;
         }
 
-        int attribCount = getSelectedAttribCount();
+        String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
+        int attribCount = attributeIDs.length;
 
         // create and send a select statement to get the data from the database
         String q = "SELECT * FROM " + TABLE_NAME_YEARAVG + " WHERE YEAR = " + year;
@@ -580,7 +573,7 @@ public class TimeSpaceProcessor {
         // create a DataMatrix object from the results
         double[][] dataArray = data.toArray(new double[data.size()][attribCount]);
         Long[] idArray = ids.toArray(new Long[ids.size()]);
-        result = new DataMatrix(dataArray, idArray, this.getDataStoreProcessor());
+        result = new DataMatrix(dataArray, idArray, attributeIDs);
 
         return result;
     }
@@ -623,7 +616,8 @@ public class TimeSpaceProcessor {
     public synchronized void calcYearlyMean() throws SQLException, IOException {
 
         // get number of selected attributes
-        int numSelected = getSelectedAttribCount();
+        String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
+        int numSelected = attributeIDs.length;
 
         // create the db tables to store the calculated monthly means
         customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_YEARAVG);
@@ -707,7 +701,8 @@ public class TimeSpaceProcessor {
     public synchronized void calcMonthlyMean() throws SQLException, IOException {
 
         // get number of selected attributes
-        int numSelected = getSelectedAttribCount();
+        String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
+        int numSelected = attributeIDs.length;
 
         // create the db tables to store the calculated monthly means
         customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_MONTHAVG);
@@ -803,7 +798,8 @@ public class TimeSpaceProcessor {
      */
     public synchronized DataMatrix calcSpatialMean() throws SQLException, IOException {
 
-        int attribCount = getSelectedAttribCount();
+        String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
+        int attribCount = attributeIDs.length;
         long position;
         ArrayList<double[]> data = new ArrayList<double[]>();
         ArrayList<String> timeStamps = new ArrayList<String>();
@@ -861,7 +857,7 @@ public class TimeSpaceProcessor {
             customQuery(q);
         }
 
-        DataMatrix result = new DataMatrix(dataArray, timeStampArray, this.getDataStoreProcessor());
+        DataMatrix result = new DataMatrix(dataArray, timeStampArray, attributeIDs);
 
         return result;
     }

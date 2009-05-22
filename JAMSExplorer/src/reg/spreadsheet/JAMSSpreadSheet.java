@@ -64,7 +64,7 @@ public class JAMSSpreadSheet extends JPanel {
 
     private JScrollPane scrollpane = new JScrollPane();
 
-    private JScrollPane scrollpane2;
+    //private JScrollPane scrollpane2;
     /* Buttons */
 
     private String name = "default";
@@ -600,7 +600,7 @@ public class JAMSSpreadSheet extends JPanel {
         scrollpane.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
         scrollpane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        scrollpane2 = new JScrollPane(scrollpane);
+//        scrollpane2 = new JScrollPane(scrollpane);
 
         //setColumnNameArray(headers.getValue());
         makeTable();
@@ -633,7 +633,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         panel.add(headerpanel, BorderLayout.NORTH);
 
-        panel.add(scrollpane2, BorderLayout.CENTER);
+        panel.add(scrollpane, BorderLayout.CENTER);
         panel.add(helperpanel, BorderLayout.EAST);
 
 

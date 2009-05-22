@@ -1,5 +1,5 @@
 /*
- * CancelableRunnable.java
+ * CancelableSwingWorker.java
  * Created on 15. Februar 2009, 22:40
  *
  * This file is part of JAMS
@@ -23,12 +23,14 @@
 
 package reg.gui;
 
+import javax.swing.SwingWorker;
+
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public interface CancelableRunnable extends Runnable {
+public abstract class CancelableSwingWorker extends SwingWorker {
 
-    public int cancel();
+    public abstract int cancel();
 
 }

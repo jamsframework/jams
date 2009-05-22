@@ -273,7 +273,7 @@ public class JXYConfigurator extends JFrame {
 
         writeSortedData(columns[0]);
 
-        setPreferredSize(new Dimension(1024, 768));
+        //setPreferredSize(new Dimension(1024, 768));
 
         createPanel();
 
@@ -318,7 +318,7 @@ public class JXYConfigurator extends JFrame {
             writeSortedData(0);
         }
 
-        setPreferredSize(new Dimension(1024, 768));
+        //setPreferredSize(new Dimension(1024, 768));
 
         createPanel();
 

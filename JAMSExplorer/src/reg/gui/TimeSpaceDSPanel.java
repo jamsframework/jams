@@ -48,6 +48,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -164,6 +165,7 @@ public class TimeSpaceDSPanel extends JPanel {
         for (Action a : actions) {
             a.setEnabled(false);
         }
+
         freeTempMean.setEnabled(false);
         cacheReset.setEnabled(false);
         indexReset.setEnabled(false);
@@ -379,14 +381,14 @@ public class TimeSpaceDSPanel extends JPanel {
 
     private void createDB() {
         workerDlg.setInderminate(false);
-        workerDlg.setTask(new CancelableRunnable() {
+        workerDlg.setTask(new CancelableSwingWorker() {
 
             public int cancel() {
                 dsdb.cancelCreateIndex();
                 return -1;
             }
 
-            public void run() {
+            public Object doInBackground() {
                 try {
                     dsdb.createDB();
                 } catch (IOException ex) {
@@ -396,6 +398,7 @@ public class TimeSpaceDSPanel extends JPanel {
                 } catch (ClassNotFoundException ex) {
                     ex.printStackTrace();
                 }
+                return null;
             }
         });
 
@@ -530,26 +533,32 @@ public class TimeSpaceDSPanel extends JPanel {
         }
 
         workerDlg.setInderminate(true);
-        workerDlg.setTask(new CancelableRunnable() {
 
-            public void run() {
+        workerDlg.setTask(new SwingWorker<Object, Void>() {
+
+            DataMatrix m = null;
+
+            public Object doInBackground() {
+                JAMSCalendar date = (JAMSCalendar) timeList.getSelectedValue();
+
+                if (date == null) {
+                    return m;
+                }
+
                 try {
-                    JAMSCalendar date = (JAMSCalendar) timeList.getSelectedValue();
-                    if (date == null) {
-                        return;
-                    }
-                    DataMatrix m = tsproc.getTemporalData(date);
-                    loadData(m, false);
-
+                    m = tsproc.getTemporalData(date);
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
                 }
+                return m;
             }
 
-            public int cancel() {
-                return 0;
+            @Override
+            public void done() {
+                loadData(m, false);
             }
         });
+
         workerDlg.execute();
     }
 
@@ -561,9 +570,11 @@ public class TimeSpaceDSPanel extends JPanel {
 
         workerDlg.setInderminate(false);
         workerDlg.setProgress(0);
-        workerDlg.setTask(new CancelableRunnable() {
+        workerDlg.setTask(new CancelableSwingWorker() {
 
-            public void run() {
+            DataMatrix m;
+
+            public Object doInBackground() {
                 try {
 
                     int month = (Integer) monthList.getSelectedValue();
@@ -574,12 +585,17 @@ public class TimeSpaceDSPanel extends JPanel {
 
                     workerDlg.setInderminate(true);
 
-                    DataMatrix m = tsproc.getMonthlyMean(month);
-                    loadData(m, false);
+                    m = tsproc.getMonthlyMean(month);
 
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
                 }
+                return null;
+            }
+
+            @Override
+            public void done() {
+                loadData(m, false);
             }
 
             public int cancel() {
@@ -598,9 +614,11 @@ public class TimeSpaceDSPanel extends JPanel {
 
         workerDlg.setInderminate(false);
         workerDlg.setProgress(0);
-        workerDlg.setTask(new CancelableRunnable() {
+        workerDlg.setTask(new CancelableSwingWorker() {
 
-            public void run() {
+            DataMatrix m;
+
+            public Object doInBackground() {
                 try {
 
                     int year = (Integer) yearList.getSelectedValue();
@@ -611,12 +629,17 @@ public class TimeSpaceDSPanel extends JPanel {
 
                     workerDlg.setInderminate(true);
 
-                    DataMatrix m = tsproc.getYearlyMean(year);
-                    loadData(m, false);
+                    m = tsproc.getYearlyMean(year);
 
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
                 }
+                return null;
+            }
+
+            @Override
+            public void done() {
+                loadData(m, false);
             }
 
             public int cancel() {
@@ -635,9 +658,11 @@ public class TimeSpaceDSPanel extends JPanel {
 
         workerDlg.setInderminate(false);
         workerDlg.setProgress(0);
-        workerDlg.setTask(new CancelableRunnable() {
+        workerDlg.setTask(new CancelableSwingWorker() {
 
-            public void run() {
+            DataMatrix m = null;
+
+            public Object doInBackground() {
                 try {
 
                     Object[] objects = timeList.getSelectedValues();
@@ -647,8 +672,6 @@ public class TimeSpaceDSPanel extends JPanel {
                         dateList.add((JAMSCalendar) o);
                     }
                     JAMSCalendar[] dates = dateList.toArray(new JAMSCalendar[dateList.size()]);
-
-                    DataMatrix m = null;
 
                     // check if number of selected ids is equal to all ids
                     // if so, we better derive temp avg from monthly means
@@ -661,7 +684,7 @@ public class TimeSpaceDSPanel extends JPanel {
 
 
                         if (!tsproc.isMonthlyMeanExisiting()) {
-                            return;
+                            return null;
                         }
 
                         m = tsproc.getTemporalAvg();
@@ -671,11 +694,16 @@ public class TimeSpaceDSPanel extends JPanel {
                         m = tsproc.getTemporalMean(dates);
 
                     }
-                    loadData(m, false);
 
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
                 }
+                return null;
+            }
+
+            @Override
+            public void done() {
+                loadData(m, false);
             }
 
             public int cancel() {
@@ -693,9 +721,11 @@ public class TimeSpaceDSPanel extends JPanel {
 
         workerDlg.setInderminate(false);
         workerDlg.setProgress(0);
-        workerDlg.setTask(new CancelableRunnable() {
+        workerDlg.setTask(new CancelableSwingWorker() {
 
-            public void run() {
+            DataMatrix m = null;
+
+            public Object doInBackground() {
                 try {
 
                     Object[] objects = entityList.getSelectedValues();
@@ -705,8 +735,6 @@ public class TimeSpaceDSPanel extends JPanel {
                     for (Object o : objects) {
                         ids[c++] = (Long) o;
                     }
-
-                    DataMatrix m = null;
 
                     // check if number of selected ids is equal to all ids
                     // if so, we better derive temp avg from monthly means
@@ -718,7 +746,7 @@ public class TimeSpaceDSPanel extends JPanel {
                         workerDlg.setInderminate(true);
 
                         if (!tsproc.isSpatMeanExisiting()) {
-                            return;
+                            return null;
                         }
 
                         m = tsproc.getSpatialMean();
@@ -728,11 +756,16 @@ public class TimeSpaceDSPanel extends JPanel {
                         m = tsproc.getSpatialMean(ids);
 
                     }
-                    loadData(m, true);
 
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
                 }
+                return null;
+            }
+
+            @Override
+            public void done() {
+                loadData(m, true);
             }
 
             public int cancel() {
@@ -752,20 +785,25 @@ public class TimeSpaceDSPanel extends JPanel {
 
         workerDlg.setInderminate(false);
         workerDlg.setProgress(0);
-        workerDlg.setTask(new CancelableRunnable() {
+        workerDlg.setTask(new CancelableSwingWorker() {
 
-            public void run() {
+            DataMatrix m;
+
+            public Object doInBackground() {
                 try {
                     String filter = timeField.getText();
 
-                    DataMatrix m = tsproc.getTemporalMean(filter);
-
-                    loadData(m, false);
+                    m = tsproc.getTemporalMean(filter);
 
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 } catch (IOException ex) {
                 }
+                return null;
+            }
+
+            public void done() {
+                loadData(m, false);
             }
 
             public int cancel() {
@@ -798,6 +836,9 @@ public class TimeSpaceDSPanel extends JPanel {
     }
 
     private void loadData(DataMatrix m, boolean timeSeries) {
+        if (m == null) {
+            return;
+        }
         if (this.outputSpreadSheet != null) {
             this.outputSpreadSheet.loadMatrix(m, outputDSFile.getParentFile(), timeSeries);
         } else {

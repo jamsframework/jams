@@ -36,7 +36,7 @@ import javax.swing.JPanel;
  */
 public class CancelableWorkerDlg extends WorkerDlg {
 
-    private CancelableRunnable task;
+    private CancelableSwingWorker task;
 
     public CancelableWorkerDlg(Frame owner, String title) {
         super(owner, title);
@@ -56,7 +56,7 @@ public class CancelableWorkerDlg extends WorkerDlg {
         pack();
     }
 
-    public synchronized void setTask(CancelableRunnable task) {
+    public synchronized void setTask(CancelableSwingWorker task) {
         this.task = task;
         super.setTask(task);
     }

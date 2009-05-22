@@ -25,7 +25,7 @@ package reg.gui;
 import java.awt.BorderLayout;
 import java.io.File;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
+import javax.swing.JScrollPane;
 import reg.JAMSExplorer;
 import reg.spreadsheet.JAMSSpreadSheet;
 
@@ -35,17 +35,9 @@ import reg.spreadsheet.JAMSSpreadSheet;
  */
 public class OutputDSPanel extends JPanel {
 
-    private JSplitPane splitPane;
-
-    public static OutputDSPanel createPanel(JAMSExplorer regionalizer, File file) {
-        return new OutputDSPanel(regionalizer, file);
-    }
-
-    private OutputDSPanel(JAMSExplorer regionalizer, File file) {
+    public OutputDSPanel(JAMSExplorer regionalizer, File file) {
 
         this.setLayout(new BorderLayout());
-        splitPane = new JSplitPane();
-        splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 
         // create the spreadsheet
         String[] default_headers = {""};
@@ -58,9 +50,7 @@ public class OutputDSPanel extends JPanel {
         tsp.setOutputSpreadSheet(spreadsheet);
         tsp.createTsProc(file);
 
-        splitPane.setLeftComponent(tsp);
-        splitPane.setRightComponent(spreadsheet.getPanel());
-
-        this.add(splitPane, BorderLayout.CENTER);
+        this.add(new JScrollPane(tsp), BorderLayout.NORTH);
+        this.add(spreadsheet.getPanel(), BorderLayout.CENTER);
     }
 }

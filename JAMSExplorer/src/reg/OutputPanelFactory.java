@@ -47,7 +47,7 @@ public class OutputPanelFactory {
         }
 
         if (line.startsWith("@context")) {
-            return OutputDSPanel.createPanel(regionalizer, file);
+            return new OutputDSPanel(regionalizer, file);
         }
 
         return new SimpleOutputPanel(file);

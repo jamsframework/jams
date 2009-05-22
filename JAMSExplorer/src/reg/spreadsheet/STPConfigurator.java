@@ -135,7 +135,7 @@ public class STPConfigurator extends JFrame{
 //        jts = new JAMSTimePlot[numberOfPlots];
         //this.headers = new String[graphCount];
 
-        setPreferredSize(new Dimension(1024, 768));
+        //setPreferredSize(new Dimension(1024, 768));
         
 
         createPanel();

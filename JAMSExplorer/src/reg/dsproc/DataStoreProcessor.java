@@ -552,7 +552,30 @@ public class DataStoreProcessor {
         double[][] data = rows.toArray(new double[rows.size()][numSelected]);
         String ids[] = idList.toArray(new String[idList.size()]);
 
-        return new DataMatrix(data, ids, this);
+        return new DataMatrix(data, ids, null);
+    }
+
+    private synchronized int getSelectedDoubleCount() {
+        // get number of selected attributes
+        int numSelected = 0;
+        for (AttributeData a : getAttributes()) {
+            if (a.isSelected() && a.getType().equals("JAMSDouble")) {
+                numSelected++;
+            }
+        }
+        return numSelected;
+    }
+
+    public synchronized String[] getSelectedDoubleAttribs() {
+        // get number of selected attributes
+        int numSelected = 0;
+        ArrayList<String> attribs = new ArrayList<String>();
+        for (AttributeData a : getAttributes()) {
+            if (a.isSelected() && a.getType().equals("JAMSDouble")) {
+                attribs.add(a.getName());
+            }
+        }
+        return attribs.toArray(new String[attribs.size()]);
     }
 
     public class ContextData {
