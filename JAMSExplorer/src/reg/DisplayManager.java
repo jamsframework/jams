@@ -104,7 +104,7 @@ public class DisplayManager implements Observer {
                     String[] default_headers = {""};
                     JAMSSpreadSheet spreadSheet = new JAMSSpreadSheet(regionalizer, default_headers);
                     spreadSheet.init();
-                    spreadSheet.setName(node.toString());
+                    spreadSheet.setID(node.toString());
                     
                     if(!spreadSheets.containsKey(node.toString())){
                         

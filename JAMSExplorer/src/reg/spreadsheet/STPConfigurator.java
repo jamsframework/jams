@@ -82,7 +82,7 @@ public class STPConfigurator extends JFrame{
     private JAMSWorkspace workspace;
             
     int rows, columns, graphCount, selectedTimeAxis;
-    int[] weights;
+    double[] weights;
     String[] headers;
     
     Vector<double[]> arrayVector;
@@ -114,7 +114,7 @@ public class STPConfigurator extends JFrame{
     File templateFiles[];
     int numberOfPlots;
     
-    public STPConfigurator(JAMSExplorer regionalizer, int numberOfPlots){
+    public STPConfigurator(JAMSExplorer regionalizer){
 
         this.workspace = regionalizer.getWorkspace();
         this.parent = regionalizer.getRegionalizerFrame();
@@ -130,18 +130,27 @@ public class STPConfigurator extends JFrame{
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
-
-        this.numberOfPlots = numberOfPlots;
-//        jts = new JAMSTimePlot[numberOfPlots];
-        //this.headers = new String[graphCount];
-
-        //setPreferredSize(new Dimension(1024, 768));
         
+        dataset = getAccessibleIDs();
+        System.out.println("dataset.length = "+dataset.length);
+        if(dataset.length <= 2) this.numberOfPlots = dataset.length;
+        if(dataset.length == 0){
+            
+            String error_msg = "No template files found in the workspace directory! " +
+                    "Use the 'Save Template' Option in the Time Plot Configurator!";
+            LHelper.showErrorDlg(this, error_msg, "Error");
+            
+            // CLOSE!!!
+        }
+        if(dataset.length > 2) this.numberOfPlots = 2;
+            
+        if(numberOfPlots > 0){
 
-        createPanel();
+            createPanel();
 
-        pack();
-        setVisible(true);
+            pack();
+            setVisible(true);
+        }
     }
     
     private void createPanel(){
@@ -164,7 +173,7 @@ public class STPConfigurator extends JFrame{
         
         plotbutton = new JButton("PLOT");
         epsButton = new JButton("EPS Export");
-        settitleButton = new JButton("set");
+        settitleButton = new JButton("set Title");
         addbutton = new JButton("Add Plot");
         removebutton = new JButton("Remove Plot");
         titleField = new JTextField();
@@ -180,7 +189,7 @@ public class STPConfigurator extends JFrame{
         DateAxis dateAxis = new DateAxis();
         
         jts = new JAMSTimePlot[numberOfPlots];
-        weights = new int[numberOfPlots];
+        weights = new double[numberOfPlots];
         
         for(int i = 0; i < numberOfPlots; i++){
             String datasetFileID = (String)templateBox[i].getSelectedItem();
@@ -194,7 +203,7 @@ public class STPConfigurator extends JFrame{
             jts[i].createPlot();
             jts[i].setTitle(title);
             try{
-               weights[i] = new Integer(weightField[i].getText());
+               weights[i] = new Double(weightField[i].getText());
             }catch(NumberFormatException nfe){
                 weights[i] = 1;
                 weightField[i].setText("1");
@@ -210,7 +219,7 @@ public class STPConfigurator extends JFrame{
         }
         
         title = titleField.getText();
-        stackedplot = new JAMSStackedPlot(xyplots, weights, dateAxis, title);
+        stackedplot = new JAMSStackedPlot(xyplots, calc_weights(weights), dateAxis, title);
         
         chartpanel = stackedplot.getChartPanel();
         
@@ -235,7 +244,7 @@ public class STPConfigurator extends JFrame{
         epsButton.addActionListener(saveImageAction);
         addbutton.addActionListener(addAction);
         removebutton.addActionListener(removeAction);
-        dataset = getAccessibleIDs();
+//        dataset = getAccessibleIDs();
         
         //create optionpanel GUI
 //        optionpanel.add(edTitleLabel);
@@ -254,6 +263,13 @@ public class STPConfigurator extends JFrame{
         LHelper.addGBComponent(optionpanel, ogbl, plotbutton,   4, numberOfPlots+2, 1, 1, 0, 0);
         LHelper.addGBComponent(optionpanel, ogbl, epsButton,    6, numberOfPlots+2, 1, 1, 0, 0);
           
+//        if(numberOfPlots ==0){
+//            if(numberOfPlots == 0){
+//            String error_msg = "No template files found in the workspace directory!" +
+//                    "Use the 'Save Template' Option in the Time Plot Configurator!";
+//            LHelper.showErrorDlg(this, error_msg, "Error");
+//        }
+//        }
         
         for(int c = 0; c < numberOfPlots; c++){
 
@@ -277,7 +293,11 @@ public class STPConfigurator extends JFrame{
     private void addPlot(){
         
         dataset = getAccessibleIDs();
-       
+//        if(numberOfPlots == 0){
+//            String error_msg = "No template files found in the workspace directory!" +
+//                    "Use the 'Save Template' Option in the Time Plot Configurator!";
+//            LHelper.showErrorDlg(this, error_msg, "Error");
+//        }
         if(numberOfPlots <dataset.length ){
 
             int[] selectedTemplates = new int[numberOfPlots];
@@ -362,6 +382,7 @@ public class STPConfigurator extends JFrame{
             templateFiles = new File[numberOfPlots];
             templateBox = new JComboBox[numberOfPlots];
             timeButton = new JRadioButton[numberOfPlots];
+            weightField = new JTextField[numberOfPlots];
             titleLabel = new JLabel[numberOfPlots];
             axisGroup = new ButtonGroup();
 
@@ -388,15 +409,17 @@ public class STPConfigurator extends JFrame{
 
                 templateBox[c] = new JComboBox(dataset);
                 timeButton[c] = new JRadioButton();
+                weightField[c] = new JTextField("1");
                 axisGroup.add(timeButton[c]);
                 if(c == selectedTimeAxis) timeButton[c].setSelected(true);
                 titleLabel[c] = new JLabel("");
     //            optionpanel.add(templateBox[c]);
                 if(c<selectedTemplates.length) templateBox[c].setSelectedIndex(selectedTemplates[c]);
                 
-                LHelper.addGBComponent(optionpanel, ogbl, templateBox[c],   0, c+1, 1, 1, 0, 0);
-                LHelper.addGBComponent(optionpanel, ogbl, titleLabel[c],    1, c+1, 1, 1, 0, 0);
-                LHelper.addGBComponent(optionpanel, ogbl, timeButton[c],    2, c+1, 1, 1, 0, 0);
+                LHelper.addGBComponent(optionpanel, ogbl, weightField[c],   0, c+1, 1, 1, 0, 0);
+                LHelper.addGBComponent(optionpanel, ogbl, templateBox[c],   1, c+1, 1, 1, 0, 0);
+                LHelper.addGBComponent(optionpanel, ogbl, titleLabel[c],    2, c+1, 1, 1, 0, 0);
+                LHelper.addGBComponent(optionpanel, ogbl, timeButton[c],    3, c+1, 1, 1, 0, 0);
             }
             
             repaintPlotPanel();
@@ -415,7 +438,7 @@ public class STPConfigurator extends JFrame{
         DateAxis dateAxis = new DateAxis();
         
         jts = new JAMSTimePlot[numberOfPlots];
-        weights = new int[numberOfPlots];
+        weights = new double[numberOfPlots];
         
         for(int i = 0; i < numberOfPlots; i++){
             
@@ -432,8 +455,9 @@ public class STPConfigurator extends JFrame{
             jts[i].createPlot();
             jts[i].setTitle(title);
             try{
-                weights[i] = new Integer(weightField[i].getText());
+                weights[i] = new Double(weightField[i].getText());
             }catch(NumberFormatException nfe){
+                System.out.println("NumberFormatException catched");
                 weights[i] = 1;
                 weightField[i].setText("1");
             }
@@ -451,7 +475,7 @@ public class STPConfigurator extends JFrame{
         }
         
         title = titleField.getText();
-        stackedplot = new JAMSStackedPlot(xyplots, weights, dateAxis, title);
+        stackedplot = new JAMSStackedPlot(xyplots, calc_weights(weights), dateAxis, title);
         
         chartpanel = stackedplot.getChartPanel();
         
@@ -462,6 +486,18 @@ public class STPConfigurator extends JFrame{
         
     }
    
+    private int[] calc_weights(double[] array){
+        final int DEC = 1000;
+        int size = array.length;
+        int[] internal_weights = new int[size];
+        
+        for(int i=0; i< size; i++){
+            internal_weights[i] = new Integer(""+Math.round(array[i]*DEC));
+                    //(array[i]*DEC);
+        }
+        return internal_weights;
+    }
+    
     private InputDataStore getInputDataStore(String datasetID){
         
         InputDataStore store = workspace.getInputDataStore(datasetID);
@@ -1124,11 +1160,19 @@ public class STPConfigurator extends JFrame{
 
 //            showHiRes();
             try {
-                JFileChooser chooser = new JFileChooser();
+                final JFileChooser chooser = new JFileChooser();
                 int returnVal = chooser.showSaveDialog(parent);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = chooser.getSelectedFile();
-                    stackedplot.saveAsEPS(file);
+                    Runnable r = new Runnable(){
+                        public void run(){
+                        File file = chooser.getSelectedFile();
+                        stackedplot.saveAsEPS(file);
+                        }
+                    };
+                    WorkerDlg dlg = new WorkerDlg(parent, "EPS Export");
+
+                    dlg.setTask(r);
+                    dlg.execute();
                 }
             } catch (Exception ex) {
             }

@@ -131,7 +131,11 @@ public class JAMSSpreadSheet extends JPanel {
         regionalizer.getDisplayManager().getSpreadSheets().remove(this.name);
     }
     
-    public void setName(String name){
+    public String getID(){
+        return name;
+    }
+    
+    public void setID(String name){
         this.name = name;
         getPanel().setName(name);
     }
@@ -400,7 +404,7 @@ public class JAMSSpreadSheet extends JPanel {
     }
 
     private void openSTP() {
-        STPConfigurator stp = new STPConfigurator(regionalizer, 2);
+        STPConfigurator stp = new STPConfigurator(regionalizer);
     }
     ActionListener plotAction = new ActionListener() {
 

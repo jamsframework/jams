@@ -5,6 +5,7 @@
 
 package reg.spreadsheet;
 
+import jams.gui.WorkerDlg;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.io.File;
@@ -57,20 +58,25 @@ public class JAMSStackedPlot {
     
     public void saveAsEPS(File outfile){
         
-     try{ 
+            
+            
+            
+                 try{ 
+
+                  OutputStream out = new java.io.FileOutputStream(outfile);
+                  EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
+                  g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
+                  int width = 600;
+                  int height = 400;
+                  g2d.setupDocument(out, width, height); //400pt x 200pt
+                  this.chart.draw(g2d,new Rectangle(width,height));
+                  g2d.finish();
+                  out.flush();
+                  out.close();
+
+                  }catch(Exception fnfe){}
+          
         
-      OutputStream out = new java.io.FileOutputStream(outfile);
-      EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
-      g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
-      int width = 600;
-      int height = 400;
-      g2d.setupDocument(out, width, height); //400pt x 200pt
-      this.chart.draw(g2d,new Rectangle(width,height));
-      g2d.finish();
-      out.flush();
-      out.close();
-      
-      }catch(Exception fnfe){}
    } 
     
     public void setTitle(String title){

@@ -44,7 +44,7 @@ public class OutputDSPanel extends JPanel {
         String[] default_headers = {""};
         JAMSSpreadSheet spreadsheet = new JAMSSpreadSheet(regionalizer, default_headers);        
         spreadsheet.init();
-        spreadsheet.setName(file.getName());
+        spreadsheet.setID(file.getName());
         this.setName(file.getName());
 
         // create the controller panel

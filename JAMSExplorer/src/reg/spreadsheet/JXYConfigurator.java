@@ -396,7 +396,7 @@ public class JXYConfigurator extends JFrame {
         edRightAxisPanel = new JPanel();
         edRightAxisPanel.setLayout(new FlowLayout());
 
-        edTitleField.setText("XY Data Plot");
+        edTitleField.setText(sheet.getID());
         edTitleField.setSize(40, 10);
         edTitleField.addActionListener(plotbuttonclick);
         //edLeftField.setColumns(20);

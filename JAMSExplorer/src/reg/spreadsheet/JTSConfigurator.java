@@ -318,7 +318,7 @@ public class JTSConfigurator extends JFrame {
         edRightAxisPanel = new JPanel();
         edRightAxisPanel.setLayout(new FlowLayout());
 
-        edTitleField.setText("Time Series Plot");
+        edTitleField.setText(sheet.getID());
         edTitleField.setSize(40, 10);
         edTitleField.addActionListener(plotbuttonclick);
         //edLeftField.setColumns(20);
@@ -753,11 +753,11 @@ public class JTSConfigurator extends JFrame {
                 XYStepAreaRenderer sar_L = new XYStepAreaRenderer();
 
                 GraphProperties prop;
-                //2 Renderer einfÃƒÆ’Ã‚Â¼gen. Typ aus rLeftBox bzw rRightBox holen!
+                //2 Renderer einfÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼gen. Typ aus rLeftBox bzw rRightBox holen!
                 //Switch/Case Anweisung in den Configurator packen
                 //
 
-                /////////////// In dieser Schleife Eigenschaften ÃƒÆ’Ã‚Â¼bernehmen!! /////////////
+                /////////////// In dieser Schleife Eigenschaften ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼bernehmen!! /////////////
                 for (int i = 0; i < propVector.size(); i++) {
 
                     prop = propVector.get(i);
@@ -960,7 +960,7 @@ public class JTSConfigurator extends JFrame {
                 }
 
                 ////////////////////////////////////////////////////////////////////////////
-                //Renderer direkt ÃƒÆ’Ã‚Â¼bernehmen! //
+                //Renderer direkt ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼bernehmen! //
 
                 if (l > 0) {
                     jts.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
@@ -1649,12 +1649,20 @@ public class JTSConfigurator extends JFrame {
         public void actionPerformed(ActionEvent e) {
 
 //            showHiRes();
+
             try {
                 JFileChooser chooser = sheet.getEPSFileChooser();
                 int returnVal = chooser.showSaveDialog(JTSConfigurator.this);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = chooser.getSelectedFile();
-                    jts.saveAsEPS(file);
+                    final File file = chooser.getSelectedFile();
+                    Runnable r = new Runnable(){
+                        public void run(){
+                            jts.saveAsEPS(file);
+                        }
+                    };
+                    WorkerDlg dlg = new WorkerDlg(parent, "EPS Export");
+                    dlg.setTask(r);
+                    dlg.execute();
                 }
             } catch (Exception ex) {
             }
@@ -1710,7 +1718,7 @@ public class JTSConfigurator extends JFrame {
         Vector<ActionListener> addAction = new Vector<ActionListener>();
 
         for (int k = 0; k < graphCount; k++) {
-            /* reicht hier ein listener fÃƒÆ’Ã‚Â¼r alle boxes? scheint so... */
+            /* reicht hier ein listener fÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼r alle boxes? scheint so... */
             activationChange[k] = new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
