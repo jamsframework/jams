@@ -105,4 +105,18 @@ public class DataMatrix extends Matrix {
         System.out.println("");
 
     }
+
+    /**
+     * @return the attributeIDs
+     */
+    public String[] getAttributeIDs() {
+        return attributeIDs;
+    }
+
+    /**
+     * @param attributeIDs the attributeIDs to set
+     */
+    public void setAttributeIDs(String[] attributeIDs) {
+        this.attributeIDs = attributeIDs;
+    }
 }

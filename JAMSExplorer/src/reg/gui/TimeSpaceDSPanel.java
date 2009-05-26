@@ -839,6 +839,11 @@ public class TimeSpaceDSPanel extends JPanel {
         if (m == null) {
             return;
         }
+
+        if (m.getAttributeIDs() == null) {
+            m.setAttributeIDs(dsdb.getSelectedDoubleAttribs());
+        }
+
         if (this.outputSpreadSheet != null) {
             this.outputSpreadSheet.loadMatrix(m, outputDSFile.getParentFile(), timeSeries);
         } else {

@@ -45,7 +45,7 @@ public class JAMSSpreadSheet extends JPanel {
     File dtpFile;
 
     private final String title = "";
-    
+
     private JAMSSpreadSheet thisSpreadSheet;
 
     private JPanel panel = new JPanel();
@@ -66,15 +66,14 @@ public class JAMSSpreadSheet extends JPanel {
 
     //private JScrollPane scrollpane2;
     /* Buttons */
-
     private String name = "default";
-    
+
     private JButton savebutton = new JButton("Save");
 
     private JButton plotButton = new JButton("Time Plot");
 
     private JButton dataplotButton = new JButton("Data Plot");
-    
+
     private JButton closeButton = new JButton("Close Tab");
 
     private JCheckBox useTemplateButton = new JCheckBox("use Template");
@@ -124,8 +123,8 @@ public class JAMSSpreadSheet extends JPanel {
         //createPanel();
         return panel;
     }
-    
-    public void closeTab(){
+
+    public void closeTab() {
         regionalizer.getRegionalizerFrame().removeFromTabbedPane(this.name);
         regionalizer.getRegionalizerFrame().removeFromTabbedPane(this.getPanel());
         regionalizer.getDisplayManager().getSpreadSheets().remove(this.name);
@@ -139,7 +138,7 @@ public class JAMSSpreadSheet extends JPanel {
         this.name = name;
         getPanel().setName(name);
     }
-    
+
     public TSDataStore getStore() {
         return this.store;
     }
@@ -237,15 +236,14 @@ public class JAMSSpreadSheet extends JPanel {
         }
         return epsFileChooser;
     }
-    
     ActionListener closeTabAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
-            
+
             closeTab();
         }
     };
-    
+
     public void loadMatrix(DataMatrix m, File outputDSDir, boolean timeSeries) {
 
 //        getTemplateChooser().setCurrentDirectory(outputDSDir);
@@ -255,7 +253,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         Vector<double[]> arrayVector = new Vector<double[]>();
         Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
-        String[] headers = new String[m.getColumnDimension() + 1];
+
         double[] rowBuffer, source;
         int pos = 0;
 
@@ -291,8 +289,11 @@ public class JAMSSpreadSheet extends JPanel {
             tmodel.setTimeVector(timeVector);
         }
 
-        for (int i = 0; i < headers.length; i++) {
-            headers[i] = "col" + i;
+        String[] attribtuteIDs = m.getAttributeIDs();
+        String[] headers = new String[attribtuteIDs.length + 1];
+        headers[0] = "ID";
+        for (int i = 1; i < headers.length; i++) {
+            headers[i] = attribtuteIDs[i-1];
         }
 
         tmodel.setNewDataVector(arrayVector);
@@ -409,14 +410,14 @@ public class JAMSSpreadSheet extends JPanel {
     ActionListener plotAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
-            
+
             if (useTemplateButton.isSelected()) {
-                if(ttpFile != null){
-                    if(ttpFile.exists()){
+                if (ttpFile != null) {
+                    if (ttpFile.exists()) {
                         openCTS(ttpFile);
-                        
-                    } else{
-                        
+
+                    } else {
+
                         try {
                             JFileChooser chooser = getTemplateChooser();
                             int returnVal = chooser.showOpenDialog(parent_frame);
@@ -426,7 +427,7 @@ public class JAMSSpreadSheet extends JPanel {
                             openCTS(ttpFile);
 
                         } catch (Exception fnfex) {
-                            
+
                             if (timeRuns) {
                                 table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
                                 openCTS();
@@ -614,7 +615,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         //LHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 2, 1, 1, 0, 0);
         //LHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 3, 1, 2, 0, 0);
-        
+
         LHelper.addGBComponent(controlpanel, gbl, closeButton, 0, 5, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 6, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 7, 1, 1, 0, 0);
