@@ -168,12 +168,20 @@ public class RegionalizerFrame extends JFrame {
     }
     
     public void addToTabbedPane(String title, Component comp){
-        spreadSheetTabs.add(title, comp);
+        spreadSheetTabs.addTab(title, comp);
+        spreadSheetTabs.setSelectedComponent(comp);
+//        spreadSheetTabs.
         updateMainPanel(spreadSheetTabs);
     }
     
     public void removeFromTabbedPane(Component comp){
         spreadSheetTabs.remove(comp);
+        updateMainPanel(spreadSheetTabs);
+    }
+    
+    public void removeFromTabbedPane(String name){
+//        spreadSheetTabs.remove(comp);
+        spreadSheetTabs.remove(regionalizer.getDisplayManager().getSpreadSheets().get(name));
         updateMainPanel(spreadSheetTabs);
     }
     

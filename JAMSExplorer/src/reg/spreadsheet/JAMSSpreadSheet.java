@@ -126,12 +126,14 @@ public class JAMSSpreadSheet extends JPanel {
     }
     
     public void closeTab(){
-        regionalizer.getRegionalizerFrame().removeFromTabbedPane(thisSpreadSheet.getPanel());
+        regionalizer.getRegionalizerFrame().removeFromTabbedPane(this.name);
+        regionalizer.getRegionalizerFrame().removeFromTabbedPane(this.getPanel());
         regionalizer.getDisplayManager().getSpreadSheets().remove(this.name);
     }
     
     public void setName(String name){
         this.name = name;
+        getPanel().setName(name);
     }
     
     public TSDataStore getStore() {

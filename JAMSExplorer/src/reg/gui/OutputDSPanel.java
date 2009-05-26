@@ -34,15 +34,18 @@ import reg.spreadsheet.JAMSSpreadSheet;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 public class OutputDSPanel extends JPanel {
-
+        
+    
     public OutputDSPanel(JAMSExplorer regionalizer, File file) {
 
         this.setLayout(new BorderLayout());
 
         // create the spreadsheet
         String[] default_headers = {""};
-        JAMSSpreadSheet spreadsheet = new JAMSSpreadSheet(regionalizer, default_headers);
+        JAMSSpreadSheet spreadsheet = new JAMSSpreadSheet(regionalizer, default_headers);        
         spreadsheet.init();
+        spreadsheet.setName(file.getName());
+        this.setName(file.getName());
 
         // create the controller panel
         TimeSpaceDSPanel tsp = new TimeSpaceDSPanel();
@@ -53,4 +56,5 @@ public class OutputDSPanel extends JPanel {
         this.add(new JScrollPane(tsp), BorderLayout.NORTH);
         this.add(spreadsheet.getPanel(), BorderLayout.CENTER);
     }
+    
 }

@@ -117,7 +117,7 @@ public class JAMSExplorer {
         JAMSExplorer reg = new JAMSExplorer();
         try {
             String[] libs = JAMSTools.toArray(reg.getProperties().getProperty("libs", ""), ";");
-            JAMSWorkspace workspace = new JAMSWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), reg.getRuntime(), true);
+            JAMSWorkspace workspace = new JAMSWorkspace(new File("F:/Eigene Dateien/Java/jamsdata/JAMS-Gehlberg"), reg.getRuntime(), true);
             workspace.setLibs(libs);
 
             reg.open(workspace);

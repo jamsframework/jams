@@ -55,7 +55,7 @@ public class DisplayManager implements Observer {
     
     private JTabbedPane spreadSheetTabs; 
 
-    private HashMap<String, JAMSSpreadSheet> spreadSheets = new HashMap<String, JAMSSpreadSheet>();
+    private HashMap<String, JPanel> spreadSheets = new HashMap<String, JPanel>();
 
     private JAMSExplorer regionalizer;
 
@@ -88,7 +88,7 @@ public class DisplayManager implements Observer {
 
     }
     
-    public HashMap<String, JAMSSpreadSheet> getSpreadSheets(){
+    public HashMap<String, JPanel> getSpreadSheets(){
         return spreadSheets;
     }
     
@@ -129,7 +129,15 @@ public class DisplayManager implements Observer {
 //                JAMSExplorer.getRegionalizerFrame().updateMainPanel(odsPanel);
                 try {
                     JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(regionalizer, fo.getFile());
-                    regionalizer.getRegionalizerFrame().addToTabbedPane("Output",outputPanel);
+//                    regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(),outputPanel);
+                    
+                    if(!spreadSheets.containsKey(fo.getFile().getName())){
+                                                
+                        spreadSheets.put(fo.getFile().getName(), outputPanel);
+//                        regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(), outputPanel);
+                        regionalizer.getRegionalizerFrame().addToTabbedPane(fo.getFile().getName(), outputPanel);
+                    }
+                    
                 } catch (FileNotFoundException ex) {
                     ex.printStackTrace();
                 } catch (IOException ex) {

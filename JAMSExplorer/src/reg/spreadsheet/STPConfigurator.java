@@ -185,9 +185,9 @@ public class STPConfigurator extends JFrame{
         for(int i = 0; i < numberOfPlots; i++){
             String datasetFileID = (String)templateBox[i].getSelectedItem();
             templateFiles[i] = new File(workspace.getInputDirectory(), datasetFileID);
-
+            
             loadInputDSData(loadDatasetID(templateFiles[i]));
-            loadTemplate(templateFiles[i]);
+            loadTemplate(templateFiles[i]); //set propVector
             
             jts[i] = new JAMSTimePlot();
             jts[i].setPropVector(propVector);
@@ -521,13 +521,18 @@ public class STPConfigurator extends JFrame{
     
     private String loadDatasetID(File templateFile){
         Properties properties = new Properties();
+        String id;
+        
         try {
             FileInputStream fin = new FileInputStream(templateFile);
             properties.load(fin);
             fin.close();
+            id = (String) properties.getProperty("store");
+            
         } catch (Exception e) {
+            id = "---";
         }
-        String id = (String) properties.getProperty("store");
+        
 
         return id;
     }
