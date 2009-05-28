@@ -20,32 +20,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.dataaccess;
 
 import jams.data.*;
 import jams.JAMS;
+import java.util.GregorianCalendar;
 
 /**
  *
  * @author S. Kralisch
  */
 public class CalendarAccessor implements DataAccessor {
-    
-    JAMSCalendar componentObject;
-    JAMSCalendar[] entityObject;
+
+    Attribute.Calendar componentObject;
+
+    Attribute.Calendar[] entityObject;
+
     int index;
+
     int accessType;
-    
+
     public CalendarAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
-        
+
         //get the entities' data objects
-        entityObject = new JAMSCalendar[entities.length];
+        entityObject = new Attribute.Calendar[entities.length];
         for (int i = 0; i < entities.length; i++) {
             if (entities[i].existsAttribute(attributeName)) {
                 try {
-                    entityObject[i] = (JAMSCalendar) entities[i].getObject(attributeName);
-                } catch (JAMSEntity.NoSuchAttributeException nsae) {}
+                    entityObject[i] = (Attribute.Calendar) entities[i].getObject(attributeName);
+                } catch (JAMSEntity.NoSuchAttributeException nsae) {
+                }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
                     entityObject[i] = JAMSDataFactory.createCalendar();
@@ -55,28 +59,42 @@ public class CalendarAccessor implements DataAccessor {
                 }
             }
         }
-        
+
         this.accessType = accessType;
-        this.componentObject = (JAMSCalendar) dataObject;
+        this.componentObject = (Attribute.Calendar) dataObject;
     }
-    
+
+    @Override
+    public void initEntityData() {
+        for (Attribute.Calendar v : entityObject) {
+            if (componentObject.getValue() != null) {
+                v.setValue((GregorianCalendar) componentObject.getValue().clone());
+            }
+        }
+    }
+
+    @Override
     public void setIndex(int index) {
         this.index = index;
     }
-    
+
+    @Override
     public void read() {
         componentObject.setValue(entityObject[index].getValue());
     }
-    
+
+    @Override
     public void write() {
         entityObject[index].setValue(componentObject.getValue());
     }
-    
+
+    @Override
     public int getAccessType() {
         return accessType;
-    }   
-    
-    public JAMSData getComponentObject(){
+    }
+
+    @Override
+    public JAMSData getComponentObject() {
         return this.componentObject;
     }
 }

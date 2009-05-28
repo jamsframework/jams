@@ -24,8 +24,6 @@ package jams.dataaccess;
 
 import jams.data.*;
 import jams.JAMS;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -34,9 +32,13 @@ import java.util.logging.Logger;
 public class EntityAccessor implements DataAccessor {
 
     JAMSEntity componentObject;
+
     JAMSEntity[] entityObject;
+
     int index;
+
     int accessType;
+
     String attributeName;
 
     public EntityAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
@@ -68,23 +70,35 @@ public class EntityAccessor implements DataAccessor {
         this.attributeName = attributeName;
     }
 
+    @Override
+    public void initEntityData() {
+        for (JAMSEntity v : entityObject) {
+            v.setValue(componentObject.getValue());
+        }
+    }
+
+    @Override
     public void setIndex(int index) {
         this.index = index;
     }
 
+    @Override
     public void read() {
         componentObject.setValue(entityObject[index].getValue());
     }
 
+    @Override
     public void write() {
         entityObject[index].setValue(componentObject.getValue());
     }
 
+    @Override
     public int getAccessType() {
         return accessType;
     }
-    
-    public JAMSData getComponentObject(){
+
+    @Override
+    public JAMSData getComponentObject() {
         return this.componentObject;
     }
 }

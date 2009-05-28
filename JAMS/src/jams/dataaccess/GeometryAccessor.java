@@ -22,6 +22,7 @@
  */
 package jams.dataaccess;
 
+import com.vividsolutions.jts.geom.Geometry;
 import jams.data.*;
 import jams.JAMS;
 import org.w3c.dom.Document;
@@ -30,29 +31,29 @@ import org.w3c.dom.Document;
  *
  * @author S. Kralisch
  */
-public class DocumentAccessor implements DataAccessor {
+public class GeometryAccessor implements DataAccessor {
 
-    Attribute.Document componentObject;
+    Attribute.Geometry componentObject;
 
-    Attribute.Document[] entityObject;
+    Attribute.Geometry[] entityObject;
 
     int index;
 
     int accessType;
 
-    public DocumentAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public GeometryAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
-        entityObject = new Attribute.Document[entities.length];
+        entityObject = new Attribute.Geometry[entities.length];
         for (int i = 0; i < entities.length; i++) {
             if (entities[i].existsAttribute(attributeName)) {
                 try {
-                    entityObject[i] = (Attribute.Document) entities[i].getObject(attributeName);
+                    entityObject[i] = (Attribute.Geometry) entities[i].getObject(attributeName);
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {
                 }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
-                    entityObject[i] = JAMSDataFactory.createDocument();
+                    entityObject[i] = JAMSDataFactory.createGeometry();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
                     throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist!"));
@@ -61,14 +62,14 @@ public class DocumentAccessor implements DataAccessor {
         }
 
         this.accessType = accessType;
-        this.componentObject = (Attribute.Document) dataObject;
+        this.componentObject = (Attribute.Geometry) dataObject;
     }
 
     @Override
     public void initEntityData() {
-        for (Attribute.Document v : entityObject) {
+        for (Attribute.Geometry v : entityObject) {
             if (componentObject.getValue() != null) {
-                v.setValue((Document) componentObject.getValue().cloneNode(true));
+                v.setValue((Geometry) componentObject.getValue().clone());
             }
         }
     }

@@ -43,17 +43,16 @@ import jams.dataaccess.CalendarAccessor;
 import jams.io.DataTracer.AbstractTracer;
 import jams.runtime.JAMSRuntime;
 
-@JAMSComponentDescription(title = "JAMS Component",
-                          author = "Sven Kralisch",
-                          date = "27. Juni 2005",
-                          description = "This component represents a JAMS context which is the top level " +
+@JAMSComponentDescription (title = "JAMS Component",
+                           author = "Sven Kralisch",
+                           date = "27. Juni 2005",
+                           description = "This component represents a JAMS context which is the top level " +
 "component of every component hierarchie in JAMS")
 public class JAMSContext extends JAMSComponent {
 
     private JAMSEntityCollection entities;
 
 //    private JAMSEntity currentEntity;
-
     protected ArrayList<JAMSComponent> components = new ArrayList<JAMSComponent>();
 
     protected JAMSComponentEnumerator runEnumerator = null;
@@ -79,7 +78,7 @@ public class JAMSContext extends JAMSComponent {
      */
     public JAMSContext() {
 
-        try {    
+        try {
             //create an entity collection with one entity
 //            setCurrentEntity((JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class));
             ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
@@ -302,7 +301,7 @@ public class JAMSContext extends JAMSComponent {
                     }
 
                     Field field = JAMSTools.getField(accessSpec.component.getClass(), accessSpec.varName);
-                    
+
                     // set the component's field value to dataObject
                     JAMSTools.setField(accessSpec.component, field, array);
                     //field.set(accessSpec.component, array);
@@ -337,8 +336,8 @@ public class JAMSContext extends JAMSComponent {
                     JAMSTools.setField(accessSpec.component, field, dataObject);
 
 
-                    // field has been set with some value, so
-                    // remove it from list of nullFields                     
+                // field has been set with some value, so
+                // remove it from list of nullFields
 //                    if (getModel().getNullFields() != null) { // can be null after deserialization
 //                        ArrayList<Field> nullFields = getModel().getNullFields().get(accessSpec.component);
 //                        nullFields.remove(field);
@@ -635,10 +634,17 @@ public class JAMSContext extends JAMSComponent {
         //in case the components want to write access the objects, trace the entity objects attributes
         for (int i = 0; i < dataAccessors.length; i++) {
             if (dataAccessors[i].getAccessType() == DataAccessor.WRITE_ACCESS) {
-                for (int j = 0; j < getEntities().getEntities().size(); j++) {
-                    dataAccessors[i].setIndex(j);
-                    dataAccessors[i].write();
-                }
+
+//                if (dataAccessors[i] instanceof DoubleArrayAccessor) {
+//                    ((DoubleArrayAccessor) dataAccessors[i]).initEntityData();
+//                }
+
+                dataAccessors[i].initEntityData();
+
+//                for (int j = 0; j < getEntities().getEntities().size(); j++) {
+//                    dataAccessors[i].setIndex(j);
+//                    dataAccessors[i].write();
+//                }
             }
         }
     }

@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.dataaccess;
 
 import jams.data.*;
@@ -31,21 +30,25 @@ import jams.JAMS;
  * @author S. Kralisch
  */
 public class DoubleArrayAccessor implements DataAccessor {
-    
-    JAMSDoubleArray componentObject;
-    JAMSDoubleArray[] entityObject;
+
+    Attribute.DoubleArray componentObject;
+
+    Attribute.DoubleArray[] entityObject;
+
     int index;
+
     int accessType;
-    
+
     public DoubleArrayAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
-        
+
         //get the entities' data objects
-        entityObject = new JAMSDoubleArray[entities.length];
+        entityObject = new Attribute.DoubleArray[entities.length];
         for (int i = 0; i < entities.length; i++) {
             if (entities[i].existsAttribute(attributeName)) {
                 try {
-                    entityObject[i] = (JAMSDoubleArray) entities[i].getObject(attributeName);
-                } catch (JAMSEntity.NoSuchAttributeException nsae) {}
+                    entityObject[i] = (Attribute.DoubleArray) entities[i].getObject(attributeName);
+                } catch (JAMSEntity.NoSuchAttributeException nsae) {
+                }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
                     entityObject[i] = JAMSDataFactory.createDoubleArray();
@@ -55,28 +58,42 @@ public class DoubleArrayAccessor implements DataAccessor {
                 }
             }
         }
-        
+
         this.accessType = accessType;
-        this.componentObject = (JAMSDoubleArray) dataObject;
+        this.componentObject = (Attribute.DoubleArray) dataObject;
     }
-    
+
+    @Override
+    public void initEntityData() {
+        for (Attribute.DoubleArray array : entityObject) {
+            if (componentObject.getValue() != null) {
+                array.setValue((double[]) componentObject.getValue().clone());
+            }
+        }
+    }
+
+    @Override
     public void setIndex(int index) {
         this.index = index;
     }
-    
+
+    @Override
     public void read() {
         componentObject.setValue(entityObject[index].getValue());
     }
-    
+
+    @Override
     public void write() {
         entityObject[index].setValue(componentObject.getValue());
     }
-    
+
+    @Override
     public int getAccessType() {
         return accessType;
-    }  
-    
-    public JAMSData getComponentObject(){
+    }
+
+    @Override
+    public JAMSData getComponentObject() {
         return this.componentObject;
     }
 }

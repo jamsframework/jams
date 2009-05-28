@@ -20,33 +20,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.dataaccess;
 
 import jams.data.*;
 import jams.JAMS;
-
 
 /**
  *
  * @author S. Kralisch
  */
 public class IntegerArrayAccessor implements DataAccessor {
-    
+
     JAMSIntegerArray componentObject;
+
     JAMSIntegerArray[] entityObject;
+
     int index;
+
     int accessType;
-    
+
     public IntegerArrayAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
-                
+
         //get the entities' data objects
         entityObject = new JAMSIntegerArray[entities.length];
         for (int i = 0; i < entities.length; i++) {
             if (entities[i].existsAttribute(attributeName)) {
                 try {
                     entityObject[i] = (JAMSIntegerArray) entities[i].getObject(attributeName);
-                } catch (JAMSEntity.NoSuchAttributeException nsae) {}
+                } catch (JAMSEntity.NoSuchAttributeException nsae) {
+                }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
                     entityObject[i] = JAMSDataFactory.createIntegerArray();
@@ -56,28 +58,42 @@ public class IntegerArrayAccessor implements DataAccessor {
                 }
             }
         }
-        
+
         this.accessType = accessType;
         this.componentObject = (JAMSIntegerArray) dataObject;
-    }    
-    
+    }
+
+    @Override
+    public void initEntityData() {
+        for (JAMSIntegerArray array : entityObject) {
+            if (componentObject.getValue() != null) {
+                array.setValue((int[]) componentObject.getValue().clone());
+            }
+        }
+    }
+
+    @Override
     public void setIndex(int index) {
         this.index = index;
     }
-    
+
+    @Override
     public void read() {
         componentObject.setValue(entityObject[index].getValue());
     }
-    
+
+    @Override
     public void write() {
         entityObject[index].setValue(componentObject.getValue());
     }
-    
+
+    @Override
     public int getAccessType() {
         return accessType;
-    }   
-    
-    public JAMSData getComponentObject(){
+    }
+
+    @Override
+    public JAMSData getComponentObject() {
         return this.componentObject;
     }
 }

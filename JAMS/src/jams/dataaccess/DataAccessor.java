@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.dataaccess;
 
 import java.io.Serializable;
@@ -30,16 +29,23 @@ import jams.data.JAMSData;
  *
  * @author S. Kralisch
  */
-public interface DataAccessor extends Serializable{
+public interface DataAccessor extends Serializable {
 
     public static final int READ_ACCESS = 0;
+
     public static final int WRITE_ACCESS = 1;
+
     public static final int READWRITE_ACCESS = 2;
-    
+
     public int getAccessType();
+
     public void setIndex(int index);
+
     public void read();
+
     public void write();
-    
+
+    public void initEntityData();
+
     public JAMSData getComponentObject();
 }

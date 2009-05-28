@@ -20,33 +20,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.dataaccess;
 
 import jams.data.*;
 import jams.JAMS;
-
 
 /**
  *
  * @author S. Kralisch
  */
 public class BooleanAccessor implements DataAccessor {
-    
-    JAMSBoolean componentObject;
-    JAMSBoolean[] entityObject;
+
+    Attribute.Boolean componentObject;
+
+    Attribute.Boolean[] entityObject;
+
     int index;
+
     int accessType;
-    
+
     public BooleanAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
-                
+
         //get the entities' data objects
-        entityObject = new JAMSBoolean[entities.length];
+        entityObject = new Attribute.Boolean[entities.length];
         for (int i = 0; i < entities.length; i++) {
             if (entities[i].existsAttribute(attributeName)) {
                 try {
-                    entityObject[i] = (JAMSBoolean) entities[i].getObject(attributeName);
-                } catch (JAMSEntity.NoSuchAttributeException nsae) {}
+                    entityObject[i] = (Attribute.Boolean) entities[i].getObject(attributeName);
+                } catch (JAMSEntity.NoSuchAttributeException nsae) {
+                }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
                     entityObject[i] = JAMSDataFactory.createBoolean();
@@ -57,26 +59,38 @@ public class BooleanAccessor implements DataAccessor {
             }
         }
         this.accessType = accessType;
-        this.componentObject = (JAMSBoolean) dataObject;
-    }    
-    
+        this.componentObject = (Attribute.Boolean) dataObject;
+    }
+
+    @Override
+    public void initEntityData() {
+        for (Attribute.Boolean v : entityObject) {
+            v.setValue(componentObject.getValue());
+        }
+    }
+
+    @Override
     public void setIndex(int index) {
         this.index = index;
     }
-    
+
+    @Override
     public void read() {
         componentObject.setValue(entityObject[index].getValue());
     }
-    
+
+    @Override
     public void write() {
         entityObject[index].setValue(componentObject.getValue());
     }
 
+    @Override
     public int getAccessType() {
         return accessType;
     }
-    
-    public JAMSData getComponentObject(){
+
+    @Override
+    public JAMSData getComponentObject() {
         return this.componentObject;
     }
 }

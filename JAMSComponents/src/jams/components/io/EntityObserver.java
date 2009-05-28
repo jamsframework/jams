@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.components.io;
 
 import jams.data.*;
@@ -30,36 +29,28 @@ import jams.model.*;
  *
  * @author S. Kralisch
  */
-@JAMSComponentDescription(
-        title="EntityObserver",
-        author="Sven Kralisch",
-        description="Ouput an entities attributes and their values to the info " +
-        "log. The entity must be specified by providing the name and value of " +
-        "some identifying attribute."
-        )
-        public class EntityObserver extends JAMSComponent {
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "Description"
-            )
-            public JAMSEntityCollection entities;
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Description"
-            )
-            public JAMSString idAttribute;
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Description"
-            )
-            public JAMSDouble idValue;
-    
+@JAMSComponentDescription (title = "EntityObserver",
+                           author = "Sven Kralisch",
+                           description = "Ouput an entities attributes and their values to the info " +
+"log. The entity must be specified by providing the name and value of " +
+"some identifying attribute.")
+public class EntityObserver extends JAMSComponent {
+
+    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
+                         update = JAMSVarDescription.UpdateType.RUN,
+                         description = "Description")
+    public JAMSEntityCollection entities;
+
+    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
+                         update = JAMSVarDescription.UpdateType.INIT,
+                         description = "Description")
+    public JAMSString idAttribute;
+
+    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
+                         update = JAMSVarDescription.UpdateType.INIT,
+                         description = "Description")
+    public JAMSDouble idValue;
+
     public void run() throws JAMSEntity.NoSuchAttributeException {
         String s;
         for (JAMSEntity e : entities.getEntities()) {
@@ -69,8 +60,22 @@ import jams.model.*;
                 getModel().getRuntime().println("******************************************************");
                 Object[] keys = e.getKeys();
                 for (int i = 0; i < keys.length; i++) {
-                    s = String.format("%20s: %s", keys[i], e.getObject(keys[i].toString()));
-                    getModel().getRuntime().println(s);
+                    Object value = e.getObject(keys[i].toString());
+                    if (value instanceof JAMSDoubleArray) {
+                        double[] d = ((JAMSDoubleArray) value).getValue();
+                        if (d != null) {
+                            for (int j = 0; j < d.length; j++) {
+                                s = String.format("%20s: %s", keys[i] + "[" + j + "]", d[j]);
+                                getModel().getRuntime().println(s);
+                            }
+                        } else {
+                            s = String.format("%20s: %s", keys[i] + "[]", "null");
+                            getModel().getRuntime().println(s);
+                        }
+                    } else {
+                        s = String.format("%20s: %s", keys[i], value);
+                        getModel().getRuntime().println(s);
+                    }
                 }
                 return;
             }

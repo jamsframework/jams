@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.dataaccess;
 
 import jams.data.*;
@@ -31,21 +30,25 @@ import jams.JAMS;
  * @author S. Kralisch
  */
 public class StringAccessor implements DataAccessor {
-    
+
     JAMSString componentObject;
+
     JAMSString[] entityObject;
+
     int index;
+
     int accessType;
-    
+
     public StringAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
-        
+
         //get the entities' data objects
         entityObject = new JAMSString[entities.length];
         for (int i = 0; i < entities.length; i++) {
             if (entities[i].existsAttribute(attributeName)) {
                 try {
                     entityObject[i] = (JAMSString) entities[i].getObject(attributeName);
-                } catch (JAMSEntity.NoSuchAttributeException nsae) {}
+                } catch (JAMSEntity.NoSuchAttributeException nsae) {
+                }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
                     entityObject[i] = JAMSDataFactory.createString();
@@ -55,28 +58,40 @@ public class StringAccessor implements DataAccessor {
                 }
             }
         }
-        
+
         this.accessType = accessType;
         this.componentObject = (JAMSString) dataObject;
     }
-    
+
+    @Override
+    public void initEntityData() {
+        for (JAMSString v : entityObject) {
+            v.setValue(componentObject.getValue());
+        }
+    }
+
+    @Override
     public void setIndex(int index) {
         this.index = index;
     }
-    
+
+    @Override
     public void read() {
         componentObject.setValue(entityObject[index].getValue());
     }
-    
+
+    @Override
     public void write() {
         entityObject[index].setValue(componentObject.getValue());
     }
-    
+
+    @Override
     public int getAccessType() {
         return accessType;
-    }  
-    
-    public JAMSData getComponentObject(){
+    }
+
+    @Override
+    public JAMSData getComponentObject() {
         return this.componentObject;
     }
 }
