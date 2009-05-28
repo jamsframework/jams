@@ -43,7 +43,7 @@ public class JAMSDataFactory {
             return null;
         }
         if (JAMSEntity.class.isAssignableFrom(clazz)) {
-            clazz = StandardEntity.class;
+            clazz = JAMSEntity.class;
         }
         return (JAMSData) clazz.newInstance();
     }
@@ -179,7 +179,7 @@ public class JAMSDataFactory {
     }
 
     public static JAMSEntity createEntity() {
-        return new StandardEntity();
+        return new JAMSEntity();
     }
 
     public static JAMSDocument createDocument() {

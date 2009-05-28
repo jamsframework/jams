@@ -39,10 +39,12 @@ public class JAMSEntityCollection implements Attribute.EntityList {
     JAMSEntityCollection() {
     }
 
+    @Override
     public JAMSEntity[] getEntityArray() {
         return this.entityArray;
     }
 
+    @Override
     public JAMSEntityEnumerator getEntityEnumerator() {
         return new EntityEnumerator();
     }
@@ -53,26 +55,31 @@ public class JAMSEntityCollection implements Attribute.EntityList {
 
         int index = 0;
 
+        @Override
         public boolean hasNext() {
             return (index + 1 < entityArray.length);
         }
 
+        @Override
         public JAMSEntity next() {
             index++;
             JAMSEntityCollection.this.current = entityArray[index];
             return entityArray[index];
         }
 
+        @Override
         public void reset() {
             index = 0;
             JAMSEntityCollection.this.current = entityArray[index];
         }
     }
 
+    @Override
     public ArrayList<JAMSEntity> getEntities() {
         return entities;
     }
 
+    @Override
     public void setEntities(ArrayList<JAMSEntity> entities) {
         this.entities = entities;
         this.entityArray = entities.toArray(new JAMSEntity[entities.size()]);
@@ -83,18 +90,22 @@ public class JAMSEntityCollection implements Attribute.EntityList {
         }
     }
 
+    @Override
     public JAMSEntity getCurrent() {
         return current;
     }
 
+    @Override
     public void setValue(String data) {
         //this makes no sense!
     }
 
+    @Override
     public void setValue(ArrayList<JAMSEntity> entities) {
         setEntities(entities);
     }
 
+    @Override
     public ArrayList<JAMSEntity> getValue() {
         return getEntities();
     }

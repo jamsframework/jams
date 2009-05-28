@@ -54,10 +54,12 @@ public class JAMSConcurrentContext extends JAMSContext {
                          description = "Max. number of concurrent threads")
     public JAMSInteger maxThreads;
 
+    @Override
     public JAMSEntityCollection getEntities() {
         return entities;
     }
 
+    @Override
     public void setEntities(JAMSEntityCollection entities) {
         this.entities = entities;
     }
@@ -84,6 +86,7 @@ public class JAMSConcurrentContext extends JAMSContext {
         executor = new TaskExecutor(maxThreads.getValue());
     }
 
+    @Override
     public JAMSComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
     }
@@ -117,10 +120,12 @@ public class JAMSConcurrentContext extends JAMSContext {
 
         int index = 0;
 
+        @Override
         public boolean hasNext() {
             return ee.hasNext();
         }
 
+        @Override
         public JAMSComponent next() {
             // check end of component elements list, if required switch to the next
             // entity and start with the new Component list again
@@ -133,6 +138,7 @@ public class JAMSConcurrentContext extends JAMSContext {
             return null;
         }
 
+        @Override
         public void reset() {
             ee.reset();
             setCurrentEntity(getEntities().getCurrent());
