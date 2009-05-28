@@ -151,7 +151,7 @@ public class JAMSContext extends JAMSComponent {
         JAMSData dataObject;
         Class clazz;
 
-        JAMSEntity[] entityArray = getEntities().getEntityArray();
+        Attribute.Entity[] entityArray = getEntities().getEntityArray();
 
         //handle all attribute declarations in this context
         Iterator<AttributeSpec> attributeIterator = attributeSpecs.iterator();
@@ -248,7 +248,7 @@ public class JAMSContext extends JAMSComponent {
         initEntityData();
     }
 
-    protected JAMSData getDataObject(final JAMSEntity[] ea, final Class clazz, final String attributeName, final int accessType, JAMSData componentObject) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {
+    protected JAMSData getDataObject(final Attribute.Entity[] ea, final Class clazz, final String attributeName, final int accessType, JAMSData componentObject) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {
         JAMSData dataObject;
         JAMSEntityDataAccessor da = null;
 

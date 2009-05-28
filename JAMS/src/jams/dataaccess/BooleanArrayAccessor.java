@@ -39,7 +39,7 @@ public class BooleanArrayAccessor implements DataAccessor {
 
     int accessType;
 
-    public BooleanArrayAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public BooleanArrayAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new Attribute.BooleanArray[entities.length];

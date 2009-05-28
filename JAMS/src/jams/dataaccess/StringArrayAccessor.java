@@ -39,7 +39,7 @@ public class StringArrayAccessor implements DataAccessor {
 
     int accessType;
 
-    public StringArrayAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public StringArrayAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new JAMSStringArray[entities.length];

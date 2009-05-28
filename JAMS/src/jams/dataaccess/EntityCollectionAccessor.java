@@ -40,7 +40,7 @@ public class EntityCollectionAccessor implements DataAccessor {
 
     int accessType;
 
-    public EntityCollectionAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public EntityCollectionAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new JAMSEntityCollection[entities.length];

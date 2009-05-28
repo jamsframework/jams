@@ -39,7 +39,7 @@ public class LongArrayAccessor implements DataAccessor {
 
     int accessType;
 
-    public LongArrayAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public LongArrayAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new JAMSLongArray[entities.length];

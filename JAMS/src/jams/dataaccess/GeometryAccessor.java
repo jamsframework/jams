@@ -41,7 +41,7 @@ public class GeometryAccessor implements DataAccessor {
 
     int accessType;
 
-    public GeometryAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public GeometryAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new Attribute.Geometry[entities.length];

@@ -39,7 +39,7 @@ public class FloatArrayAccessor implements DataAccessor {
 
     int accessType;
 
-    public FloatArrayAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public FloatArrayAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new JAMSFloatArray[entities.length];

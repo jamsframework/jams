@@ -40,7 +40,7 @@ public class CalendarAccessor implements DataAccessor {
 
     int accessType;
 
-    public CalendarAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public CalendarAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new Attribute.Calendar[entities.length];

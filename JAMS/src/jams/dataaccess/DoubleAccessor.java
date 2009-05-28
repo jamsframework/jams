@@ -39,7 +39,7 @@ public class DoubleAccessor implements DataAccessor {
 
     int accessType;
 
-    public DoubleAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public DoubleAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new Attribute.Double[entities.length];

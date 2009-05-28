@@ -33,7 +33,7 @@ public class EntityAccessor implements DataAccessor {
 
     JAMSEntity componentObject;
 
-    JAMSEntity[] entityObject;
+    Attribute.Entity[] entityObject;
 
     int index;
 
@@ -41,7 +41,7 @@ public class EntityAccessor implements DataAccessor {
 
     String attributeName;
 
-    public EntityAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public EntityAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new JAMSEntity[entities.length];
@@ -72,7 +72,7 @@ public class EntityAccessor implements DataAccessor {
 
     @Override
     public void initEntityData() {
-        for (JAMSEntity v : entityObject) {
+        for (Attribute.Entity v : entityObject) {
             v.setValue(componentObject.getValue());
         }
     }

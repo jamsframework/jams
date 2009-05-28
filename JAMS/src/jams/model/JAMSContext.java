@@ -240,7 +240,7 @@ public class JAMSContext extends JAMSComponent {
         JAMSData dataObject;
         Class clazz;
 
-        JAMSEntity[] entityArray = getEntities().getEntityArray();
+        Attribute.Entity[] entityArray = getEntities().getEntityArray();
 
         //handle all attribute declarations in this context
         Iterator<AttributeSpec> attributeIterator = attributeSpecs.iterator();
@@ -259,7 +259,7 @@ public class JAMSContext extends JAMSComponent {
                 String id = this.getInstanceName() + "." + attributeSpec.attributeName;
                 getModel().getRuntime().getDataHandles().put(id, data);
                  */
-                for (JAMSEntity entity : entityArray) {
+                for (Attribute.Entity entity : entityArray) {
                     entity.setObject(attributeSpec.attributeName, data);
                 }
 
@@ -378,7 +378,7 @@ public class JAMSContext extends JAMSComponent {
                 @Override
                 public void trace() {
                     DataAccessor[] dataAccessors = this.accessorObjects;
-                    JAMSEntity[] entities = context.getEntities().getEntityArray();
+                    Attribute.Entity[] entities = context.getEntities().getEntityArray();
                     for (int j = 0; j < entities.length; j++) {
 
                         output(entities[j].getId());
@@ -413,7 +413,7 @@ public class JAMSContext extends JAMSComponent {
                     }
 
                     DataAccessor[] dataAccessors = this.accessorObjects;
-                    JAMSEntity[] entities = context.getEntities().getEntityArray();
+                    Attribute.Entity[] entities = context.getEntities().getEntityArray();
                     for (int j = 0; j < entities.length; j++) {
 
                         boolean doBreak = false;
@@ -533,7 +533,7 @@ public class JAMSContext extends JAMSComponent {
         OutputDataStore[] stores = getModel().getOutputDataStores(this.getInstanceName());
 
         // make sure there are accessors for all attributes        
-        JAMSEntity[] entityArray = getEntities().getEntityArray();
+        Attribute.Entity[] entityArray = getEntities().getEntityArray();
         for (OutputDataStore store : stores) {
             for (String attributeName : store.getAttributes()) {
 
@@ -571,7 +571,7 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
-    protected JAMSData getDataObject(final JAMSEntity[] ea, final Class clazz, final String attributeName, final int accessType, JAMSData componentObject) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {
+    protected JAMSData getDataObject(final Attribute.Entity[] ea, final Class clazz, final String attributeName, final int accessType, JAMSData componentObject) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {
         JAMSData dataObject;
         DataAccessor da = null;
 

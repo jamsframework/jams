@@ -38,46 +38,39 @@ import jams.runtime.concurrent.TaskExecutor;
  * @author Sven Kralisch
  */
 public class JAMSConcurrentContext extends JAMSContext {
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "List of spatial entities"
-            )
-            public JAMSEntityCollection entities;
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "Current spatial entity"
-            )
-            public JAMSEntity currentEntity;
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Max. number of concurrent threads"
-            )
-            public JAMSInteger maxThreads;    
-    
-    
+
+    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
+                         update = JAMSVarDescription.UpdateType.RUN,
+                         description = "List of spatial entities")
+    public JAMSEntityCollection entities;
+
+    @JAMSVarDescription (access = JAMSVarDescription.AccessType.WRITE,
+                         update = JAMSVarDescription.UpdateType.RUN,
+                         description = "Current spatial entity")
+    public JAMSEntity currentEntity;
+
+    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
+                         update = JAMSVarDescription.UpdateType.INIT,
+                         description = "Max. number of concurrent threads")
+    public JAMSInteger maxThreads;
+
     public JAMSEntityCollection getEntities() {
         return entities;
     }
-    
+
     public void setEntities(JAMSEntityCollection entities) {
         this.entities = entities;
     }
-    
+
     public JAMSEntity getCurrentEntity() {
         return currentEntity;
     }
-    
+
     public void setCurrentEntity(JAMSEntity currentEntity) {
         this.currentEntity = currentEntity;
-    }    
-
+    }
     private Runnable[] tasks;
+
     private TaskExecutor executor;
 
     @Override
@@ -121,6 +114,7 @@ public class JAMSConcurrentContext extends JAMSContext {
     class RunEnumerator implements JAMSComponentEnumerator {
 
         JAMSEntityEnumerator ee = getEntities().getEntityEnumerator();
+
         int index = 0;
 
         public boolean hasNext() {

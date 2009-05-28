@@ -40,7 +40,7 @@ public class DocumentAccessor implements DataAccessor {
 
     int accessType;
 
-    public DocumentAccessor(JAMSEntity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public DocumentAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new Attribute.Document[entities.length];
