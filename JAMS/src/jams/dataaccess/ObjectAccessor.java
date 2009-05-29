@@ -1,9 +1,9 @@
 /*
- * DoubleAccessor.java
- * Created on 28. September 2005, 16:39
+ * ObjectAccessor.java
+ * Created on 28. Mai 2009, 22:40
  *
  * This file is part of JAMS
- * Copyright (C) 2005 FSU Jena
+ * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,37 +22,39 @@
  */
 package jams.dataaccess;
 
-import com.vividsolutions.jts.geom.Geometry;
-import jams.data.*;
+import jams.data.Attribute;
+import jams.data.JAMSData;
+import jams.data.JAMSDataFactory;
+import jams.data.JAMSEntity;
 import jams.JAMS;
 
 /**
  *
- * @author S. Kralisch
+ * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class GeometryAccessor implements DataAccessor {
+public class ObjectAccessor implements DataAccessor {
 
-    Attribute.Geometry componentObject;
+    Attribute.Object componentObject;
 
-    Attribute.Geometry[] entityObject;
+    Attribute.Object[] entityObject;
 
     int index;
 
     int accessType;
 
-    public GeometryAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public ObjectAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
-        entityObject = new Attribute.Geometry[entities.length];
+        entityObject = new Attribute.Object[entities.length];
         for (int i = 0; i < entities.length; i++) {
             if (entities[i].existsAttribute(attributeName)) {
                 try {
-                    entityObject[i] = (Attribute.Geometry) entities[i].getObject(attributeName);
+                    entityObject[i] = (Attribute.Object) entities[i].getObject(attributeName);
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {
                 }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
-                    entityObject[i] = JAMSDataFactory.createGeometry();
+                    entityObject[i] = JAMSDataFactory.createObject();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
                     throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist!"));
@@ -61,15 +63,13 @@ public class GeometryAccessor implements DataAccessor {
         }
 
         this.accessType = accessType;
-        this.componentObject = (Attribute.Geometry) dataObject;
+        this.componentObject = (Attribute.Object) dataObject;
     }
 
     @Override
     public void initEntityData() {
-        for (Attribute.Geometry v : entityObject) {
-            if (componentObject.getValue() != null) {
-                v.setValue((Geometry) componentObject.getValue().clone());
-            }
+        for (Attribute.Object v : entityObject) {
+            v.setValue(componentObject.getValue());
         }
     }
 

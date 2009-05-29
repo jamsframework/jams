@@ -171,7 +171,7 @@ public interface Attribute {
 
         public void setLong(java.lang.String name, long attribute);
 
-        public void setObject(java.lang.String name, Object attribute);
+        public void setObject(java.lang.String name, java.lang.Object attribute);
 
         public void setGeometry(java.lang.String name, com.vividsolutions.jts.geom.Geometry attribute);
 
@@ -183,17 +183,17 @@ public interface Attribute {
 
         public long getLong(java.lang.String name) throws NoSuchAttributeException;
 
-        public Object getObject(java.lang.String name) throws NoSuchAttributeException;
+        public java.lang.Object getObject(java.lang.String name) throws NoSuchAttributeException;
 
         public com.vividsolutions.jts.geom.Geometry getGeometry(java.lang.String name) throws NoSuchAttributeException;
 
         public boolean existsAttribute(java.lang.String name);
 
-        public Object[] getKeys();
+        public java.lang.Object[] getKeys();
 
-        public void setValue(HashMap<java.lang.String, Object> value);
+        public void setValue(HashMap<java.lang.String, java.lang.Object> value);
 
-        public HashMap<java.lang.String, Object> getValue();
+        public HashMap<java.lang.String, java.lang.Object> getValue();
 
         public long getId();
 
@@ -249,8 +249,13 @@ public interface Attribute {
         public void setTimeUnitCount(int timeUnitCount);
 
         public long getNumberOfTimesteps();
+    }
 
+    public interface Object extends JAMSData {
 
+        public java.lang.Object getValue();
+
+        public void setValue(java.lang.Object value);
     }
 }
 

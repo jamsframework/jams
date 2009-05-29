@@ -40,14 +40,17 @@ public class JAMSBooleanArray implements Attribute.BooleanArray {
         this.value = value;
     }
 
+    @Override
     public boolean[] getValue() {
         return value;
     }
 
+    @Override
     public void setValue(boolean[] value) {
         this.value = value;
     }
 
+    @Override
     public void setValue(String value) {
         StringTokenizer st = new StringTokenizer(value, ",");
         boolean[] values = new boolean[st.countTokens()];
@@ -57,6 +60,7 @@ public class JAMSBooleanArray implements Attribute.BooleanArray {
         this.value = values;
     }
     
+    @Override
     public String toString() {
         String s = "";
         if (value == null || value.length == 0) {

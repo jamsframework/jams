@@ -189,4 +189,8 @@ public class JAMSDataFactory {
     public static JAMSEntityCollection createEntityCollection() {
         return new JAMSEntityCollection();
     }
+
+    public static JAMSObject createObject() {
+        return new JAMSObject();
+    }
 }

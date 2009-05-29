@@ -41,31 +41,34 @@ public class DoubleArrayTest extends JAMSComponent {
                          description = "Description")
     public JAMSDoubleArray values;
 
-    /*
-     *  Component variables
-     */
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
                          description = "Description")
     public JAMSDouble id;
+
+    @JAMSVarDescription (access = JAMSVarDescription.AccessType.WRITE,
+                         description = "Description")
+    public JAMSDirName fName;
 
     /*
      *  Component run stages
      */
 //    @Override
     public void init() {
-        double[] doubles = new double[3];
+        double[] doubles = new double[5];
         values.setValue(doubles);
     }
 
     @Override
     public void run() {
 
+        fName.setValue("ID: " + id.getValue());
         double[] doubles = values.getValue();
         for (int i = 0; i < doubles.length; i++) {
             doubles[i] = id.getValue() + Math.random();
         }
         values.setValue(doubles);
-        System.out.println(values);
+//        System.out.println(fName);
+//        System.out.println(values);
     }
 
     @Override

@@ -610,6 +610,10 @@ public class JAMSContext extends JAMSComponent {
                 da = new IntegerAccessor(ea, dataObject, attributeName, accessType);
             } else if (clazz.equals(JAMSIntegerArray.class)) {
                 da = new IntegerArrayAccessor(ea, dataObject, attributeName, accessType);
+            } else if (clazz.equals(JAMSFileName.class)) {
+                da = new StringAccessor(ea, dataObject, attributeName, accessType);
+            } else if (clazz.equals(JAMSDirName.class)) {
+                da = new StringAccessor(ea, dataObject, attributeName, accessType);
             } else if (clazz.equals(JAMSEntity.class)) {
                 da = new EntityAccessor(ea, dataObject, attributeName, accessType);
             } else if (clazz.equals(JAMSEntityCollection.class)) {
@@ -618,6 +622,10 @@ public class JAMSContext extends JAMSComponent {
                 da = new CalendarAccessor(ea, dataObject, attributeName, accessType);
             } else if (clazz.equals(JAMSDocument.class)) {
                 da = new DocumentAccessor(ea, dataObject, attributeName, accessType);
+            } else if (clazz.equals(JAMSGeometry.class)) {
+                da = new GeometryAccessor(ea, dataObject, attributeName, accessType);
+            } else if (clazz.equals(JAMSObject.class)) {
+                da = new ObjectAccessor(ea, dataObject, attributeName, accessType);
             } else {
                 getModel().getRuntime().sendHalt(JAMS.resources.getString("Class_") + clazz.getCanonicalName() + JAMS.resources.getString("_not_supported!"));
             }
