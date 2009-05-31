@@ -90,16 +90,16 @@ public class ModelEditPanel extends JPanel {
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Date:")), 1, 3, 1, 1, 0, 0);
         LHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Description:")), 1, 4, 1, 1, 0, 0);
 
-        workspace = LHelper.createInputComponent(JAMSDirName.class.getSimpleName());
+        workspace = LHelper.createInputComponent(JAMSDirName.class);
         workspace.setLength(TEXTFIELD_WIDTH);
 
-        author = LHelper.createInputComponent(JAMSString.class.getSimpleName());
+        author = LHelper.createInputComponent(JAMSString.class);
         author.setLength(TEXTFIELD_WIDTH);
 
-        date = LHelper.createInputComponent(JAMSCalendar.class.getSimpleName());
+        date = LHelper.createInputComponent(JAMSCalendar.class);
         date.setLength(TEXTFIELD_WIDTH);
 
-        helpBaseURL = LHelper.createInputComponent(JAMSString.class.getSimpleName());
+        helpBaseURL = LHelper.createInputComponent(JAMSString.class);
         helpBaseURL.setLength(TEXTFIELD_WIDTH);
 
         description = new JTextPane();

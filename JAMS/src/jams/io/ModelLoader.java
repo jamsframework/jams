@@ -367,7 +367,7 @@ public class ModelLoader {
 
             } /*else if (node.getNodeName().equals("trace")) {
         
-        if (!JAMSContext.class.isAssignableFrom(component.getClass())) {
+        if (!JAMSContext.class.isAssignableFrom(component.getImplementingClass())) {
         throw new ModelSpecificationException("Trace tag can only be used inside context components! (component " + componentName + ")");
         }
         

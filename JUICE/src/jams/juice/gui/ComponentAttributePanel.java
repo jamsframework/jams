@@ -322,7 +322,7 @@ public class ComponentAttributePanel extends JPanel {
         }
 
         //create value input component
-        valueInput = LHelper.createInputComponent(var.type.getSimpleName(), true);
+        valueInput = LHelper.createInputComponent(var.type, true);
         valuePanel.add(valueInput.getComponent(), BorderLayout.WEST);
         valuePanel.updateUI();
 

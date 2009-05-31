@@ -28,9 +28,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.lang.reflect.Method;
 import javax.swing.BorderFactory;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import jams.gui.input.BooleanInput;
 import jams.gui.input.CalendarInput;
@@ -40,7 +38,19 @@ import jams.gui.input.InputComponent;
 import jams.gui.input.IntegerInput;
 import jams.gui.input.TextInput;
 import jams.JAMS;
+import jams.data.JAMSBoolean;
+import jams.data.JAMSCalendar;
+import jams.data.JAMSDataFactory;
+import jams.data.JAMSDirName;
+import jams.data.JAMSDouble;
+import jams.data.JAMSFileName;
+import jams.data.JAMSFloat;
+import jams.data.JAMSInteger;
+import jams.data.JAMSLong;
+import jams.data.JAMSTimeInterval;
 import jams.gui.input.TimeintervalInput;
+import java.lang.reflect.Method;
+import javax.swing.JFileChooser;
 
 /**
  *
@@ -244,7 +254,7 @@ public class LHelper {
      * @param type Data type
      * @return InputComponent object that provides an editor for the type
      */
-    public static InputComponent createInputComponent(String type) {
+    public static InputComponent createInputComponent(Class type) {
         return createInputComponent(type, false);
     }
 
@@ -255,23 +265,28 @@ public class LHelper {
      * limited access to data (e.g. step size for timeintervals)
      * @return InputComponent object that provides an editor for the type
      */
-    public static InputComponent createInputComponent(String type, boolean extEdit) {
+    public static InputComponent createInputComponent(Class type, boolean extEdit) {
         InputComponent ic;
-        if (type.equals("JAMSFileName")) {
-            ic = new FileInput();
-        } else if (type.equals("JAMSDirName")) {
+
+        if (type.isInterface()) {
+            type = JAMSDataFactory.getImplementingClass(type);
+        }
+
+        if (JAMSFileName.class.isAssignableFrom(type)) {
+            ic = new FileInput(false);
+        } else if (JAMSDirName.class.isAssignableFrom(type)) {
             ic = new FileInput(true);
-        } else if (type.equals("JAMSCalendar")) {
+        } else if (JAMSCalendar.class.isAssignableFrom(type)) {
             ic = new CalendarInput();
-        } else if (type.equals("JAMSTimeInterval")) {
+        } else if (JAMSTimeInterval.class.isAssignableFrom(type)) {
             ic = new TimeintervalInput(extEdit);
-        } else if (type.equals("JAMSBoolean")) {
+        } else if (JAMSBoolean.class.isAssignableFrom(type)) {
             ic = new BooleanInput();
-        } else if ((type.equals("JAMSInteger")) || (type.equals("JAMSLong"))) {
+        } else if ((JAMSInteger.class.isAssignableFrom(type)) || (JAMSLong.class.isAssignableFrom(type))) {
             ic = new IntegerInput();
             ic.getComponent().setPreferredSize(new Dimension(NUMBERINPUT_WIDTH, JCOMP_HEIGHT));
             ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
-        } else if ((type.equals("JAMSFloat")) || (type.equals("JAMSDouble"))) {
+        } else if ((JAMSFloat.class.isAssignableFrom(type)) || (JAMSDouble.class.isAssignableFrom(type))) {
             ic = new FloatInput();
             ic.getComponent().setPreferredSize(new Dimension(NUMBERINPUT_WIDTH, JCOMP_HEIGHT));
             ic.getComponent().setBorder(BorderFactory.createEtchedBorder());

@@ -207,7 +207,7 @@ public interface Attribute {
         }
     }
 
-    public interface EntityList extends JAMSData {
+    public interface EntityCollection extends JAMSData {
 
         public JAMSEntity[] getEntityArray();
 

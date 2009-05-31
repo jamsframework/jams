@@ -323,8 +323,8 @@ public class JAMSContext extends JAMSComponent {
                      * attribute values -- they would keep their old attribute
                      * value introducing a model memory :/ -- better use null instead..
                      */
-                    JAMSData componentObject = null;//(JAMSData) accessSpec.component.getClass().getDeclaredField(accessSpec.varName).get(accessSpec.component);
-                    //JAMSData componentObject = (JAMSData) accessSpec.component.getClass().getDeclaredField(accessSpec.varName).get(accessSpec.component);
+                    JAMSData componentObject = null;//(JAMSData) accessSpec.component.getImplementingClass().getDeclaredField(accessSpec.varName).get(accessSpec.component);
+                    //JAMSData componentObject = (JAMSData) accessSpec.component.getImplementingClass().getDeclaredField(accessSpec.varName).get(accessSpec.component);
 
                     //get the data object belonging to the attribute
                     dataObject = getDataObject(entityArray, clazz, accessSpec.attributeName, accessSpec.accessType, componentObject);
@@ -571,7 +571,7 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
-    protected JAMSData getDataObject(final Attribute.Entity[] ea, final Class clazz, final String attributeName, final int accessType, JAMSData componentObject) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {
+    protected JAMSData getDataObject(final Attribute.Entity[] ea, Class clazz, final String attributeName, final int accessType, JAMSData componentObject) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {
         JAMSData dataObject;
         DataAccessor da = null;
 
@@ -585,6 +585,10 @@ public class JAMSContext extends JAMSComponent {
             }
 
             attribs.put(attributeName, dataObject);
+
+            if (clazz.isInterface()) {
+                clazz = JAMSDataFactory.getImplementingClass(clazz);
+            }
 
             if (clazz.equals(JAMSDouble.class)) {
                 da = new DoubleAccessor(ea, dataObject, attributeName, accessType);

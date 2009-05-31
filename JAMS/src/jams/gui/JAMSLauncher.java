@@ -37,6 +37,8 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -69,20 +71,35 @@ import org.w3c.dom.NodeList;
 public class JAMSLauncher extends JFrame {
 
     protected static final String BASE_TITLE = JAMS.resources.getString("JAMS_Launcher");
+
     private static final int BUTTON_SIZE = 20;
+
     private Map<InputComponent, Element> inputMap;
+
     private Map<InputComponent, JScrollPane> groupMap;
+
     protected Document modelDocument = null;
+
     private JTabbedPane tabbedPane = new JTabbedPane();
+
     private JAMSProperties properties;
+
     private JButton runButton;
+
     private HelpDlg helpDlg;
+
     protected String initialModelDocString = "";
+
     private JAMSRuntime runtime;
+
     private Runnable modelLoading;
+
     private WorkerDlg loadModelDlg;
+
     private Font titledBorderFont;
+
     private Action runModelAction;
+
     private JToolBar toolBar;
 
     public JAMSLauncher(JAMSProperties properties) {
@@ -404,26 +421,46 @@ public class JAMSLauncher extends JFrame {
         nameLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
         LHelper.addGBComponent(contentPanel, gbl, nameLabel, 0, row, 1, 1, 0, 0);
 
-        InputComponent ic = LHelper.createInputComponent(property.getAttribute("type"));
+        InputComponent ic;
+        try {
 
-        StringTokenizer tok = new StringTokenizer(property.getAttribute("range"), ";");
-        if (tok.countTokens() == 2) {
-            String lower = tok.nextToken();
-            String upper = tok.nextToken();
-            ic.setRange(Double.parseDouble(lower), Double.parseDouble(upper));
+            // try to get the proper input component
+            String typeName = property.getAttribute("type");
+
+            // check if old version is used in model definition, i.e. classes instead of interfaces
+            String prefix;
+            if (typeName.startsWith("JAMS")) {
+                prefix = "jams.data.";
+            } else {
+                prefix = "jams.data.Attribute$";
+            }
+            
+            if (!typeName.startsWith(prefix)) {
+                typeName = prefix + typeName;
+            }
+            ic = LHelper.createInputComponent(Class.forName(typeName));
+
+            StringTokenizer tok = new StringTokenizer(property.getAttribute("range"), ";");
+            if (tok.countTokens() == 2) {
+                String lower = tok.nextToken();
+                String upper = tok.nextToken();
+                ic.setRange(Double.parseDouble(lower), Double.parseDouble(upper));
+            }
+            String lenStr = property.getAttribute("length");
+            if (lenStr != null && lenStr.length() > 0) {
+                ic.setLength(Integer.parseInt(lenStr));
+            }
+
+            ic.getComponent().setToolTipText(property.getAttribute("description"));
+            ic.setValue(targetElement.getAttribute("value"));
+
+            getInputMap().put(ic, targetElement);
+            getGroupMap().put(ic, scrollPane);
+
+            LHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
         }
-        String lenStr = property.getAttribute("length");
-        if (lenStr != null && lenStr.length() > 0) {
-            ic.setLength(Integer.parseInt(lenStr));
-        }
-
-        ic.getComponent().setToolTipText(property.getAttribute("description"));
-        ic.setValue(targetElement.getAttribute("value"));
-
-        getInputMap().put(ic, targetElement);
-        getGroupMap().put(ic, scrollPane);
-
-        LHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
 
         // help button?
         HelpComponent helpComponent = new HelpComponent(property);

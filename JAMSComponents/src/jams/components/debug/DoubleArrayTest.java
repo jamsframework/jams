@@ -39,15 +39,15 @@ public class DoubleArrayTest extends JAMSComponent {
      */
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.WRITE,
                          description = "Description")
-    public JAMSDoubleArray values;
+    public Attribute.DoubleArray values;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
                          description = "Description")
-    public JAMSDouble id;
+    public Attribute.Double id;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.WRITE,
                          description = "Description")
-    public JAMSDirName fName;
+    public Attribute.DirName fName;
 
     /*
      *  Component run stages

@@ -24,12 +24,15 @@ package jams.data;
 
 import com.vividsolutions.jts.geom.Geometry;
 import jams.runtime.JAMSRuntime;
+import java.util.HashMap;
 
 /**
  *
  * @author S. Kralisch
  */
 public class JAMSDataFactory {
+
+    private static HashMap<Class, Class> interfaceLookup;
 
     /**
      * Creates a new instance of a given JAMSData class
@@ -39,6 +42,11 @@ public class JAMSDataFactory {
      * @throws java.lang.IllegalAccessException
      */
     public static JAMSData createInstance(Class clazz) throws InstantiationException, IllegalAccessException {
+
+        if (clazz.isInterface()) {
+            clazz = getImplementingClass(clazz);
+        }
+
         if (!JAMSData.class.isAssignableFrom(clazz)) {
             return null;
         }
@@ -55,6 +63,11 @@ public class JAMSDataFactory {
      * @return An instance of the provided class
      */
     public static JAMSData createInstance(Class clazz, JAMSRuntime rt) {
+
+        if (clazz.isInterface()) {
+            clazz = getImplementingClass(clazz);
+        }
+
         JAMSData value = null;
         try {
             value = createInstance(clazz);
@@ -192,5 +205,36 @@ public class JAMSDataFactory {
 
     public static JAMSObject createObject() {
         return new JAMSObject();
+    }
+
+    public static Class getImplementingClass(Class interfaceType) {
+        if (interfaceLookup == null) {
+
+            interfaceLookup = new HashMap<Class, Class>();
+
+            interfaceLookup.put(Attribute.Boolean.class, JAMSBoolean.class);
+            interfaceLookup.put(Attribute.BooleanArray.class, JAMSBooleanArray.class);
+            interfaceLookup.put(Attribute.Calendar.class, JAMSCalendar.class);
+            interfaceLookup.put(Attribute.DirName.class, JAMSDirName.class);
+            interfaceLookup.put(Attribute.Document.class, JAMSDocument.class);
+            interfaceLookup.put(Attribute.Double.class, JAMSDouble.class);
+            interfaceLookup.put(Attribute.DoubleArray.class, JAMSDoubleArray.class);
+            interfaceLookup.put(Attribute.Entity.class, JAMSEntity.class);
+            interfaceLookup.put(Attribute.EntityCollection.class, JAMSEntityCollection.class);
+            interfaceLookup.put(Attribute.FileName.class, JAMSFileName.class);
+            interfaceLookup.put(Attribute.Float.class, JAMSFloat.class);
+            interfaceLookup.put(Attribute.FloatArray.class, JAMSFloatArray.class);
+            interfaceLookup.put(Attribute.Geometry.class, JAMSGeometry.class);
+            interfaceLookup.put(Attribute.Integer.class, JAMSInteger.class);
+            interfaceLookup.put(Attribute.IntegerArray.class, JAMSIntegerArray.class);
+            interfaceLookup.put(Attribute.Long.class, JAMSLong.class);
+            interfaceLookup.put(Attribute.LongArray.class, JAMSLongArray.class);
+            interfaceLookup.put(Attribute.Object.class, JAMSObject.class);
+            interfaceLookup.put(Attribute.String.class, JAMSString.class);
+            interfaceLookup.put(Attribute.StringArray.class, JAMSStringArray.class);
+            interfaceLookup.put(Attribute.TimeInterval.class, JAMSTimeInterval.class);
+        }
+
+        return interfaceLookup.get(interfaceType);
     }
 }

@@ -63,27 +63,42 @@ import jams.juice.ContextAttribute;
  */
 public class ComponentPanel extends JPanel {
 
-    private static final String DEFAULT_STRING = JUICE.resources.getString("[none]"),
-            ATTR_CONFIG_STRING = JUICE.resources.getString("Attribute_configuration:"),
-            MODEL_CONFIG_STRING = JUICE.resources.getString("Model_configuration:"),
-            ATTR_OVERVIEW_STRING = JUICE.resources.getString("Attribute_overview:");
+    private static final String DEFAULT_STRING = JUICE.resources.getString("[none]"),  ATTR_CONFIG_STRING = JUICE.resources.getString("Attribute_configuration:"),  MODEL_CONFIG_STRING = JUICE.resources.getString("Model_configuration:"),  ATTR_OVERVIEW_STRING = JUICE.resources.getString("Attribute_overview:");
+
     private static final Dimension BUTTON_DIMENSION = new Dimension(90, 20);
+
     private static final Dimension TABLE_DIMENSION = new Dimension(500, 200);
+
     private ComponentDescriptor componentDescriptor = null;
+
     private HashMap<String, JTextField> textFields = new HashMap<String, JTextField>();
+
     private JPanel componentPanel;
+
     private JTable varTable,  attributeTable;
+
     private Vector<String> varTableColumnIds = new Vector<String>(),  attributeTableColumnIds = new Vector<String>();
+
     private DefaultTableModel varTableModel,  attributeTableModel;
+
     private List<String> varNameList,  attrNameList;
+
     private int selectedVarRow,  selectedAttrRow;
+
     private JButton attributeEditButton,  attributeAddButton,  attributeDeleteButton;
+
     private ContextAttributeDlg attrEditDlg;
+
     private ModelView view;
+
     private JAMSNode node;
+
     private JTabbedPane tabPane;
+
     private ComponentAttributePanel attributeConfigPanel;
+
     private JPanel switchPanel;
+
     private JLabel configLabel;
 
     public ComponentPanel(ModelView view) {
@@ -98,11 +113,11 @@ public class ComponentPanel extends JPanel {
 
         // create some bold font for the labels
         Font labelFont = (Font) UIManager.getDefaults().get("Label.font");
-        labelFont = new Font(labelFont.getName(), Font.BOLD, labelFont.getSize()+1);                
-        
+        labelFont = new Font(labelFont.getName(), Font.BOLD, labelFont.getSize() + 1);
+
         GridBagLayout mainLayout = new GridBagLayout();
         componentPanel.setLayout(mainLayout);
-        
+
         JLabel nameLabel = new JLabel(JUICE.resources.getString("Name:"));
         nameLabel.setFont(labelFont);
         JLabel typeLabel = new JLabel(JUICE.resources.getString("Type:"));
@@ -291,9 +306,9 @@ public class ComponentPanel extends JPanel {
         attributeConfigPanel = new ComponentAttributePanel(view);
         configLabel = new JLabel(MODEL_CONFIG_STRING);
         configLabel.setFont(labelFont);
-        
+
         switchPanel = new JPanel();
-        
+
         JLabel attrOverviewLabel = new JLabel(ATTR_OVERVIEW_STRING);
         attrOverviewLabel.setFont(labelFont);
 
@@ -321,15 +336,11 @@ public class ComponentPanel extends JPanel {
 
         String attributeName = attrNameList.get(selectedAttrRow);
         ContextAttribute attr = componentDescriptor.getContextAttributes().get(attributeName);
-        attrEditDlg.show(attr.getName(), attr.getType().getName(), attr.getValue());
+        attrEditDlg.show(attr.getName(), attr.getType(), attr.getValue());
 
         if (attrEditDlg.getResult() == ContextAttributeDlg.APPROVE_OPTION) {
             attr.setValue(attrEditDlg.getValue());
-            try {
-                attr.setType(Class.forName(attrEditDlg.getType()));
-            } catch (ClassNotFoundException ex) {
-                ex.printStackTrace();
-            }
+            attr.setType(attrEditDlg.getType());
 
             attr.setName(attrEditDlg.getAttributeName());
             this.updateCtxtAttrs();
@@ -342,14 +353,10 @@ public class ComponentPanel extends JPanel {
         if (attrEditDlg == null) {
             attrEditDlg = new ContextAttributeDlg(JUICE.getJuiceFrame());
         }
-        attrEditDlg.show("", JUICE.JAMS_DATA_TYPES[10].getName(), "");
+        attrEditDlg.show("", JUICE.JAMS_DATA_TYPES[10], "");
 
         if (attrEditDlg.getResult() == ContextAttributeDlg.APPROVE_OPTION) {
-            try {
-                componentDescriptor.addContextAttribute(attrEditDlg.getAttributeName(), Class.forName(attrEditDlg.getType()), attrEditDlg.getValue());
-            } catch (ClassNotFoundException ex) {
-                ex.printStackTrace();
-            }
+            componentDescriptor.addContextAttribute(attrEditDlg.getAttributeName(), attrEditDlg.getType(), attrEditDlg.getValue());
             this.updateCtxtAttrs();
         }
     }

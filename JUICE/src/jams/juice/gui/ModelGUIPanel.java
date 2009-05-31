@@ -432,11 +432,11 @@ public class ModelGUIPanel extends JPanel {
         LHelper.addGBComponent(contentPanel, gbl, nameLabel, 0, row, 1, 1, 0, 0);
 
         if (property.var != null) {
-            ic = LHelper.createInputComponent(property.var.type.getSimpleName(), true);
+            ic = LHelper.createInputComponent(property.var.type, true);
         } else if (property.attribute != null) {
-            ic = LHelper.createInputComponent(property.attribute.getType().getSimpleName(), true);
+            ic = LHelper.createInputComponent(property.attribute.getType(), true);
         } else {
-            ic = LHelper.createInputComponent(JUICE.JAMS_DATA_TYPES[0].getSimpleName(), true);
+            ic = LHelper.createInputComponent(JUICE.JAMS_DATA_TYPES[0], true);
         }
         ic.setRange(property.lowerBound, property.upperBound);
         ic.setLength(property.length);

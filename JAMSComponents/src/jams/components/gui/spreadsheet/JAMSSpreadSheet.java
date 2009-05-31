@@ -809,7 +809,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
     ActionListener plotAction = new ActionListener(){
          public void actionPerformed(ActionEvent e) {
          
-//             if(table.getValueAt(0, 0).getClass() == JAMSCalendar.class){     
+//             if(table.getValueAt(0, 0).getImplementingClass() == JAMSCalendar.class){
 //                openCTS();
              
              
@@ -846,7 +846,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
                      openCXYS();
                  }
              }
-//             Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
+//             Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getImplementingClass();
 //             if(test == org.unijena.jams.data.JAMSCalendar.class){
 //                 
 //             } else {

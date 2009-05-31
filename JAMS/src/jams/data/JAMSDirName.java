@@ -26,7 +26,7 @@ package jams.data;
  *
  * @author S. Kralisch
  */
-public class JAMSDirName extends JAMSFileName {
+public class JAMSDirName extends JAMSString implements Attribute.DirName {
 
 
 }

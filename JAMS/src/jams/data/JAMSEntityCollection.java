@@ -28,7 +28,7 @@ import java.util.*;
  *
  * @author S. Kralisch
  */
-public class JAMSEntityCollection implements Attribute.EntityList {
+public class JAMSEntityCollection implements Attribute.EntityCollection {
 
     protected ArrayList<JAMSEntity> entities = new ArrayList<JAMSEntity>();
 

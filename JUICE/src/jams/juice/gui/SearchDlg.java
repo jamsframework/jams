@@ -97,7 +97,7 @@ public class SearchDlg extends JDialog {
         caseSensitive = new JCheckBox(JUICE.resources.getString("caseSensitiveSearch"), false);
         wholeString = new JCheckBox(JUICE.resources.getString("wholeStringSearch"), false);
 
-        searchText = LHelper.createInputComponent(JAMSString.class.getSimpleName());
+        searchText = LHelper.createInputComponent(JAMSString.class);
         searchText.setLength(TEXTFIELD_WIDTH);
 
         repo = new JRadioButton(JUICE.resources.getString("Search_in_Repo"));

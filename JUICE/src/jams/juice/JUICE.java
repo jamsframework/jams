@@ -206,6 +206,32 @@ public class JUICE {
 
     public static Class[] getJAMSDataClasses() {
         ArrayList<Class> classes = new ArrayList<Class>();
+        classes.add(jams.data.Attribute.Boolean.class);
+        classes.add(jams.data.Attribute.Calendar.class);
+        classes.add(jams.data.Attribute.Double.class);
+        classes.add(jams.data.Attribute.DirName.class);
+        classes.add(jams.data.Attribute.Entity.class);
+        classes.add(jams.data.Attribute.Float.class);
+        classes.add(jams.data.Attribute.FileName.class);
+        classes.add(jams.data.Attribute.Geometry.class);
+        classes.add(jams.data.Attribute.Integer.class);
+        classes.add(jams.data.Attribute.Long.class);
+        classes.add(jams.data.Attribute.String.class);
+        classes.add(jams.data.Attribute.BooleanArray.class);
+        classes.add(jams.data.Attribute.DoubleArray.class);
+        classes.add(jams.data.Attribute.FloatArray.class);
+        classes.add(jams.data.Attribute.IntegerArray.class);
+        classes.add(jams.data.Attribute.LongArray.class);
+        classes.add(jams.data.Attribute.StringArray.class);
+        classes.add(jams.data.Attribute.TimeInterval.class);
+
+        Class[] classesA = new Class[classes.size()];
+        classes.toArray(classesA);
+        return classesA;
+    }
+
+    public static Class[] getJAMSDataClasses_() {
+        ArrayList<Class> classes = new ArrayList<Class>();
         try {
             classes.add(Class.forName("jams.data.JAMSBoolean"));
             classes.add(Class.forName("jams.data.JAMSCalendar"));
