@@ -427,7 +427,7 @@ public class JAMSLauncher extends JFrame {
             // try to get the proper input component
             String typeName = property.getAttribute("type");
 
-            // check if old version is used in model definition, i.e. classes instead of interfaces
+            // check if old API version is used in model definition, i.e. classes instead of interfaces
             String prefix;
             if (typeName.startsWith("JAMS")) {
                 prefix = "jams.data.";

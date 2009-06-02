@@ -1,6 +1,6 @@
 /*
- * DSUser.java
- * Created on 16. Oktober 2008, 22:07
+ * ObjectTest2.java
+ * Created on 2. Juni 2009, 09:22
  *
  * This file is a JAMS component
  * Copyright (C) FSU Jena
@@ -20,40 +20,52 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.components.debug;
+
+package jams.components.demo;
 
 import jams.data.*;
 import jams.model.*;
+import java.util.GregorianCalendar;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-@JAMSComponentDescription(title = "Title",
-author = "Author",
-description = "Description")
-public class DSUser extends JAMSComponent {
-
+@JAMSComponentDescription(
+title="Title",
+        author="Author",
+        description="Description"
+        )
+        public class ObjectTest2 extends JAMSComponent {
+    
     /*
      *  Component variables
      */
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Description")
-    public JAMSDoubleArray doubleValues;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Description")
-    public JAMSDouble sum;
+    
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            description = "Description"
+            )
+            public Attribute.Object value;
+    
+    
     /*
      *  Component run stages
      */
-
-    double d;
+    
+    @Override
+    public void init() {
+        
+    }
+    
+    @Override
     public void run() {
-        d = 0;
-        for (double value : doubleValues.getValue()) {
-            d += value;
-        }
-        sum.setValue(d);
+        TestPOJO pojo = (TestPOJO) value.getValue();
+        System.out.println("Calendar: " + pojo.cal.getTime());
     }
 
+    @Override
+    public void cleanup() {
+        
+    }
 }
