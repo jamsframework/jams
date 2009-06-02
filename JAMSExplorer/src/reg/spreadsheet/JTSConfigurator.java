@@ -1262,9 +1262,10 @@ public class JTSConfigurator extends JFrame {
         
         String store = "";
         try{
-            store = sheet.getStore().getID();
+//            store = sheet.getStore().getID();
+            store = sheet.getID();
         } catch (NullPointerException npe){
-            store = "output_current";
+            store = "DEFAULT";
         }
         String names = "";
         String name;

@@ -350,6 +350,54 @@ public class GraphProperties {
         
     }
     
+    public GraphProperties(JAMSSpreadSheet sheet, STPConfigurator stpconf) {
+        
+        this.parent = stpconf;
+        this.plotType = 0;
+        
+//        this.ctsconf = ctsconf;
+        this.thisProp = this;
+        
+        this.table = sheet.table;
+        this.position = "left";
+        this.name = "Graph Name";
+        this.legendName = this.name;
+        
+        this.selectedColumn = 0;
+        this.rowSelection = null;
+        
+        columnCount = table.getColumnCount();
+        rowCount = table.getRowCount();
+        
+        String[] timeIntervals = new String[table.getRowCount()];
+        for(int i=0; i<table.getRowCount(); i++){
+            timeIntervals[i] = table.getValueAt(i,0).toString();
+        }
+        
+        timechoice_START = new JComboBox(timeIntervals);
+        timechoice_START.setPreferredSize(new Dimension(40,14));
+        timechoice_START.addActionListener(timeListener);
+        
+        timechoice_END = new JComboBox(timeIntervals);
+        timechoice_END.setPreferredSize(new Dimension(40,14));
+        timechoice_END.addActionListener(timeListener);
+        
+        colorTable.put("yellow", Color.yellow);
+        colorTable.put("orange", Color.orange);
+        colorTable.put("red", Color.red);
+        colorTable.put("pink", Color.pink);
+        colorTable.put("magenta", Color.magenta);
+        colorTable.put("cyan", Color.cyan);
+        colorTable.put("blue", Color.blue);
+        colorTable.put("green", Color.green);
+        colorTable.put("gray", Color.gray);
+        colorTable.put("lightgray", Color.lightGray);
+        colorTable.put("black", Color.black);
+        colorTable.put("white", Color.WHITE);
+        
+        createPanel();   
+    }
+    
     public void createPanel(){
         JPanel namePanel = new JPanel();
         namePanel.setLayout(new FlowLayout());

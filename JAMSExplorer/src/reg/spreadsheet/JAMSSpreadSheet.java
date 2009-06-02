@@ -405,7 +405,7 @@ public class JAMSSpreadSheet extends JPanel {
     }
 
     private void openSTP() {
-        STPConfigurator stp = new STPConfigurator(regionalizer);
+        STPConfigurator stp = new STPConfigurator(regionalizer, this);
     }
     ActionListener plotAction = new ActionListener() {
 

@@ -95,13 +95,19 @@ public class STPConfigurator extends JFrame{
     
     static String DATASET[] = {"tmax","tmean"};
     String[] dataset;
+    String[] output;
     String datasetID;
+    
+    final static int INPUT = 0;
+    final static int OUTPUT = 1;
 //    private JAMSTimePlot jts_01 = new JAMSTimePlot();
 //    private JAMSTimePlot jts_02 = new JAMSTimePlot();
     
     private JAMSTimePlot jts[];
     
     InputDataStore store;
+    
+//    boolean output_store = false;
     
     int rLeft, rRight = 0;
     boolean invLeft, invRight = false;
@@ -153,6 +159,49 @@ public class STPConfigurator extends JFrame{
         }
     }
     
+    public STPConfigurator(JAMSExplorer regionalizer, JAMSSpreadSheet output_sheet){
+
+        this.workspace = regionalizer.getWorkspace();
+        this.parent = regionalizer.getRegionalizerFrame();
+        this.setIconImage(parent.getIconImage());
+        setTitle("StackedTimePlot Configurator");
+        
+//        output_store = true;
+        sheet = output_sheet;
+        
+        Container cp = this.getContentPane();
+        JPanel bgPanel = new JPanel();
+        cp.setBackground(Color.WHITE);
+        cp.add(bgPanel);
+        bgPanel.setBackground(Color.WHITE);
+        
+        setLayout(new FlowLayout());
+        Point parentloc = parent.getLocation();
+        setLocation(parentloc.x + 30, parentloc.y + 30);
+        
+        dataset = getAccessibleIDs();
+        System.out.println("dataset.length = "+dataset.length);
+        if(dataset.length <= 2) this.numberOfPlots = dataset.length;
+        if(dataset.length == 0){
+            
+            String error_msg = "No template files found in the workspace directory! " +
+                    "Use the 'Save Template' Option in the JTS Configurator!";
+            LHelper.showErrorDlg(this, error_msg, "Error");
+            
+            // CLOSE!!!
+        }
+        if(dataset.length > 2) this.numberOfPlots = 2;
+            
+        if(numberOfPlots > 0){
+
+            createPanel();
+
+            pack();
+            setVisible(true);
+        }
+    }
+    
+    
     private void createPanel(){
         
 //        JPanel backgroundPanel = (JPanel)this.getContentPane();
@@ -193,25 +242,55 @@ public class STPConfigurator extends JFrame{
         
         for(int i = 0; i < numberOfPlots; i++){
             String datasetFileID = (String)templateBox[i].getSelectedItem();
+            this.propVector = new Vector<GraphProperties>();
+            
+            
             templateFiles[i] = new File(workspace.getInputDirectory(), datasetFileID);
-            
-            loadInputDSData(loadDatasetID(templateFiles[i]));
-            loadTemplate(templateFiles[i]); //set propVector
-            
-            jts[i] = new JAMSTimePlot();
-            jts[i].setPropVector(propVector);
-            jts[i].createPlot();
-            jts[i].setTitle(title);
-            try{
-               weights[i] = new Double(weightField[i].getText());
-            }catch(NumberFormatException nfe){
-                weights[i] = 1;
-                weightField[i].setText("1");
+            if(templateFiles[i].exists()){
+                String datasetID = loadDatasetID(templateFiles[i]);
+                loadInputDSData(datasetID);
+                loadTemplate(templateFiles[i], INPUT);
+                
+                jts[i] = new JAMSTimePlot();
+                jts[i].setPropVector(propVector);
+                jts[i].createPlot();
+                jts[i].setTitle(title);
+                try{
+                   weights[i] = new Double(weightField[i].getText());
+                }catch(NumberFormatException nfe){
+                    weights[i] = 1;
+                    weightField[i].setText("1");
+                }
+                titleLabel[i].setText(title);
+    //            jts[i].getPanel().add(templateBox[i]);
+
+                plot(i, INPUT);
+                
+            }else{ //case for output spreadsheet
+                templateFiles[i] = new File(workspace.getDirectory().toString()+"/output", datasetFileID);
+                System.out.println("InputDataDir: "+workspace.getInputDirectory());
+                System.out.println("Directory: "+workspace.getDirectory());
+                System.out.println("outputDataDir: "+workspace.getOutputDataDirectory());
+                System.out.println("Dump Dir: "+workspace.getLocalDumpDirectory());
+                loadTemplate(templateFiles[i], OUTPUT);
+                
+                jts[i] = new JAMSTimePlot();
+                jts[i].setPropVector(propVector);
+                jts[i].createPlot();
+                jts[i].setTitle(title);
+                try{
+                   weights[i] = new Double(weightField[i].getText());
+                }catch(NumberFormatException nfe){
+                    weights[i] = 1;
+                    weightField[i].setText("1");
+                }
+                titleLabel[i].setText(title);
+    //            jts[i].getPanel().add(templateBox[i]);
+
+                plot(i, OUTPUT);
             }
-            titleLabel[i].setText(title);
-//            jts[i].getPanel().add(templateBox[i]);
             
-            plot(i);
+            
             xyplots[i] = jts[i].getXYPlot();
             //last date axis
             if(timeButton[i].isSelected()) dateAxis = jts[i].getDateAxis();
@@ -441,37 +520,58 @@ public class STPConfigurator extends JFrame{
         weights = new double[numberOfPlots];
         
         for(int i = 0; i < numberOfPlots; i++){
-            
             String datasetFileID = (String)templateBox[i].getSelectedItem();
+            this.propVector = new Vector<GraphProperties>();
+            
+            
             templateFiles[i] = new File(workspace.getInputDirectory(), datasetFileID);
-            
-            
-            loadInputDSData(loadDatasetID(templateFiles[i]));
-            loadTemplate(templateFiles[i]);
-            
-            jts[i] = new JAMSTimePlot();
-            jts[i].setPropVector(propVector);
-            
-            jts[i].createPlot();
-            jts[i].setTitle(title);
-            try{
-                weights[i] = new Double(weightField[i].getText());
-            }catch(NumberFormatException nfe){
-                System.out.println("NumberFormatException catched");
-                weights[i] = 1;
-                weightField[i].setText("1");
+            if(templateFiles[i].exists()){
+                String datasetID = loadDatasetID(templateFiles[i]);
+                loadInputDSData(datasetID);
+                loadTemplate(templateFiles[i], INPUT);
+                
+                jts[i] = new JAMSTimePlot();
+                jts[i].setPropVector(propVector);
+                jts[i].createPlot();
+                jts[i].setTitle(title);
+                try{
+                   weights[i] = new Double(weightField[i].getText());
+                }catch(NumberFormatException nfe){
+                    weights[i] = 1;
+                    weightField[i].setText("1");
+                }
+                titleLabel[i].setText(title);
+    //            jts[i].getPanel().add(templateBox[i]);
+
+                plot(i, INPUT);
+                
+            }else{ //case for output spreadsheet
+                templateFiles[i] = new File(workspace.getDirectory().toString()+"/output", datasetFileID);
+                System.out.println("outputDataDir: "+workspace.getDirectory());
+                this.rows = sheet.table.getRowCount();
+                loadTemplate(templateFiles[i], OUTPUT);
+                
+                jts[i] = new JAMSTimePlot();
+                jts[i].setPropVector(propVector);
+                jts[i].createPlot();
+                jts[i].setTitle(title);
+                try{
+                   weights[i] = new Double(weightField[i].getText());
+                }catch(NumberFormatException nfe){
+                    weights[i] = 1;
+                    weightField[i].setText("1");
+                }
+                titleLabel[i].setText(title);
+    //            jts[i].getPanel().add(templateBox[i]);
+
+                plot(i, OUTPUT);
             }
-            titleLabel[i].setText(title);
             
-            plot(i);
+            
             xyplots[i] = jts[i].getXYPlot();
             //last date axis
-            if(timeButton[i].isSelected()){
-                
-                selectedTimeAxis = i;
-                dateAxis = jts[i].getDateAxis();
-            }
-
+            if(timeButton[i].isSelected()) dateAxis = jts[i].getDateAxis();
+            
         }
         
         title = titleField.getText();
@@ -517,7 +617,9 @@ public class STPConfigurator extends JFrame{
         
 //        File testfile = new File());
         File testfile = new File(workspace.getDirectory().toString()+"/input");
+        File testfile2 = new File(workspace.getDirectory().toString()+"/output");
         File[] filelist = testfile.listFiles();
+        File[] filelist2 = testfile2.listFiles();
 
         Set<String> idSet;
 //        idSet = JAMSExplorer.getRegionalizerFrame().getWorkspace().getInputDataStoreIDs();
@@ -530,21 +632,15 @@ public class STPConfigurator extends JFrame{
             String name = filelist[i].getName();
             if(name.indexOf(".ttp")!=-1){
                 accIDList.add(name);
-            }
-                
-                
+            }   
+        }
+        
+        for(int i = 0; i < filelist2.length; i++){
             
-//            File testFile = new File(JAMSExplorer.getRegionalizerFrame().getWorkspace().getInputDirectory(), idArray[i] +".ttp");
-//            if(testFile.exists()) accIDList.add(idArray[i]);
-//            else failedIDs++;
-////            try {
-//                FileInputStream fin = new FileInputStream(testFile);
-//                fin.close();
-//                accIDList.add(idArray[i]);
-//            }   catch (IOException ioe) {
-//                    failedIDs++;
-//            }
-            
+            String name = filelist2[i].getName();
+            if(name.indexOf(".ttp")!=-1){
+                accIDList.add(name);
+            }   
         }
         
         accessibleIDs = accIDList.size();
@@ -666,7 +762,7 @@ public class STPConfigurator extends JFrame{
         }
     }
     //attention: only for ONE tempFile
-    private void loadTemplate(File templateFile) {
+    private void loadTemplate(File templateFile, int type) {
             
     Properties properties = new Properties();
         boolean load_prop = false;
@@ -686,7 +782,7 @@ public class STPConfigurator extends JFrame{
         } catch (Exception e) {
         }
 
-        this.propVector = new Vector<GraphProperties>();
+//        this.propVector = new Vector<GraphProperties>();
         
         datasetID = (String) properties.getProperty("store");
         names = (String) properties.getProperty("names");
@@ -700,7 +796,12 @@ public class STPConfigurator extends JFrame{
         for (int i = 0; i < no_of_props; i++) {
 
             load_prop = false;
-            GraphProperties gprop = new GraphProperties(this);
+            GraphProperties gprop;
+            if(type == INPUT){
+                gprop = new GraphProperties(this);
+            }else{
+                gprop = new GraphProperties(sheet, this);
+            }
 
             if (nameTokenizer.hasMoreTokens()) {
 
@@ -843,24 +944,29 @@ public class STPConfigurator extends JFrame{
 
     }
     
-    private void updatePropVector() {
+    private void updatePropVector(int type) {
 
         for (int i = 0; i < propVector.size(); i++) {
-            propVector.get(i).applySTPProperties(arrayVector, timeVector);
+            if(type == INPUT) propVector.get(i).applySTPProperties(arrayVector, timeVector);
+            else propVector.get(i).applyTSProperties();
+            
         }
     }
     
-    public void plot(int plot_index) {
+    public void plot(int plot_index, int type) {
 
         final int index = plot_index;
+        final int p_type = type;
 
         Runnable r = new Runnable() {
             
             
             @Override
             public void run() {
-
-                updatePropVector();
+                
+               
+                    updatePropVector(p_type);
+               
 
                 int l = 0;
                 int r = 0;
@@ -1083,7 +1189,7 @@ public class STPConfigurator extends JFrame{
 
                         prop.setLegendName(prop.setLegend.getText());
                         prop.setColorLabelColor();
-                        prop.applySTPProperties(arrayVector, timeVector);
+//                        prop.applySTPProperties(arrayVector, timeVector);
                         
                     }
                 }

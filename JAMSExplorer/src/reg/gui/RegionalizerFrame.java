@@ -174,6 +174,14 @@ public class RegionalizerFrame extends JFrame {
         updateMainPanel(spreadSheetTabs);
     }
     
+    public void showTab(Component comp){
+        try{
+            spreadSheetTabs.setSelectedComponent(comp);
+        }catch(NullPointerException npe){
+            
+        }
+    }
+    
     public void removeFromTabbedPane(Component comp){
         spreadSheetTabs.remove(comp);
         updateMainPanel(spreadSheetTabs);

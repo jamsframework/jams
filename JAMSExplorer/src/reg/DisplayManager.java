@@ -23,7 +23,6 @@
 package reg;
 
 import jams.gui.LHelper;
-import jams.workspace.JAMSWorkspace;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import reg.spreadsheet.JAMSSpreadSheet;
@@ -36,6 +35,7 @@ import java.util.Observer;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import reg.gui.InputDSInfoPanel;
+import reg.gui.OutputDSPanel;
 import reg.gui.TSPanel;
 import reg.gui.TreePanel;
 import reg.tree.DSTreeNode;
@@ -110,6 +110,11 @@ public class DisplayManager implements Observer {
                         
                         spreadSheets.put(node.toString(), spreadSheet);
                         regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(), spreadSheet.getPanel());
+                    }else{
+                        if(spreadSheets.get(node.toString()) instanceof JAMSSpreadSheet){
+                            spreadSheet = (JAMSSpreadSheet) spreadSheets.get(node.toString());
+                            regionalizer.getRegionalizerFrame().showTab(spreadSheet.getPanel());
+                        }
                     }
 //                    spreadSheetTabs.add(node.toString(), spreadSheet.getPanel());
 //
@@ -129,13 +134,31 @@ public class DisplayManager implements Observer {
 //                JAMSExplorer.getRegionalizerFrame().updateMainPanel(odsPanel);
                 try {
                     JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(regionalizer, fo.getFile());
+                    if(outputPanel instanceof OutputDSPanel){
+                        OutputDSPanel odspanel = (OutputDSPanel) outputPanel;
+                        //JAMSSpreadSheet spreadsheet = odspanel.getSpreadsheet();
+                    
 //                    regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(),outputPanel);
                     
-                    if(!spreadSheets.containsKey(fo.getFile().getName())){
-                                                
-                        spreadSheets.put(fo.getFile().getName(), outputPanel);
-//                        regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(), outputPanel);
-                        regionalizer.getRegionalizerFrame().addToTabbedPane(fo.getFile().getName(), outputPanel);
+                        if(!spreadSheets.containsKey(fo.getFile().getName())){
+
+                            spreadSheets.put(fo.getFile().getName(), odspanel);
+    //                        regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(), outputPanel);
+                            regionalizer.getRegionalizerFrame().addToTabbedPane(fo.getFile().getName(), odspanel);
+                        }else{
+                            outputPanel = spreadSheets.get(fo.getFile().getName());
+                            regionalizer.getRegionalizerFrame().showTab(outputPanel);
+                        }
+                        
+                    } else {
+                        if(!spreadSheets.containsKey(fo.getFile().getName())){
+
+                            spreadSheets.put(fo.getFile().getName(), outputPanel);
+    //                        regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(), outputPanel);
+                            regionalizer.getRegionalizerFrame().addToTabbedPane(fo.getFile().getName(), outputPanel);
+                        }else{
+                            regionalizer.getRegionalizerFrame().showTab(spreadSheets.get(fo.getFile().getName()));
+                        }
                     }
                     
                 } catch (FileNotFoundException ex) {
