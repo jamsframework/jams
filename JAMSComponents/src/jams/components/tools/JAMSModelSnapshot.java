@@ -76,7 +76,7 @@ public class JAMSModelSnapshot extends JAMSComponent{
                 fileName = JAMSTools.CreateAbsoluteFileName(dirName.getValue() , snapshotFile.getValue());
             
             if (takeSnapshot != null && takeSnapshot.getValue()){                  
-                runtime.sendInfoMsg("Taking Snapshot" + " (" + this.instanceName + ")");                
+                runtime.sendInfoMsg("Taking Snapshot" + " (" + this.getInstanceName() + ")");
                 Snapshot snapshot = this.getModel().getModelState(holdInMemory != null && holdInMemory.getValue(),
                         fileName,this);                               
                 data.setObject("snapshot", snapshot);
@@ -88,7 +88,7 @@ public class JAMSModelSnapshot extends JAMSComponent{
                 }catch(Exception e){
                     System.out.println("Entity does not contain any snapshot-data," + e.toString());
                 }
-                runtime.sendInfoMsg("Restoring Snapshot" + " (" + this.instanceName + ")");
+                runtime.sendInfoMsg("Restoring Snapshot" + " (" + this.getInstanceName() + ")");
                 this.getModel().setModelState(snapshot);
             }
         }else{

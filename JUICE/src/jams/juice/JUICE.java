@@ -157,13 +157,15 @@ public class JUICE {
                 public Object doInBackground() {
                     JUICE.getJuiceFrame().getLibTreePanel().setEnabled(false);
                     JUICE.createClassLoader();
+                    getLibTree().update(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER));
+                    JUICE.getJuiceFrame().getLibTreePanel().setEnabled(true);
                     return null;
                 }
 
                 @Override
                 public void done() {
-                    getLibTree().update(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER));
-                    JUICE.getJuiceFrame().getLibTreePanel().setEnabled(true);
+//                    getLibTree().update(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER));
+//                    JUICE.getJuiceFrame().getLibTreePanel().setEnabled(true);
                 }
             });
             loadLibsDlg.execute();
@@ -178,30 +180,6 @@ public class JUICE {
         String[] libsArray = JAMSTools.toArray(libs, ";");
 
         JUICE.loader = JAMSClassLoader.createClassLoader(libsArray, new StandardRuntime());
-
-    /*
-     * This is the version the runtime is also using.
-     * Disadvantage: changes to classes during JUICE runtime do not become visible since
-     * older classes are not beeing overwritten
-     *
-    try {
-    ClassManager.addLibs(libsArray, rt);
-    JUICE.loader = Thread.currentThread().getContextClassLoader();
-    } catch (IOException ex) {
-    ex.printStackTrace();
-    }
-     *
-     *
-    
-    if (rt.getErrorLog().length()>0) {
-    System.out.println(rt.getErrorLog());
-    }
-    if (rt.getInfoLog().length()>0) {
-    System.out.println(rt.getInfoLog());
-    }
-     *
-     */
-
     }
 
     public static Class[] getJAMSDataClasses() {
@@ -224,36 +202,6 @@ public class JUICE {
         classes.add(jams.data.Attribute.LongArray.class);
         classes.add(jams.data.Attribute.StringArray.class);
         classes.add(jams.data.Attribute.TimeInterval.class);
-
-        Class[] classesA = new Class[classes.size()];
-        classes.toArray(classesA);
-        return classesA;
-    }
-
-    public static Class[] getJAMSDataClasses_() {
-        ArrayList<Class> classes = new ArrayList<Class>();
-        try {
-            classes.add(Class.forName("jams.data.JAMSBoolean"));
-            classes.add(Class.forName("jams.data.JAMSCalendar"));
-            classes.add(Class.forName("jams.data.JAMSDouble"));
-            classes.add(Class.forName("jams.data.JAMSDirName"));
-            classes.add(Class.forName("jams.data.JAMSEntity"));
-            classes.add(Class.forName("jams.data.JAMSFloat"));
-            classes.add(Class.forName("jams.data.JAMSFileName"));
-            classes.add(Class.forName("jams.data.JAMSGeometry"));
-            classes.add(Class.forName("jams.data.JAMSInteger"));
-            classes.add(Class.forName("jams.data.JAMSLong"));
-            classes.add(Class.forName("jams.data.JAMSString"));
-            classes.add(Class.forName("jams.data.JAMSBooleanArray"));
-            classes.add(Class.forName("jams.data.JAMSDoubleArray"));
-            classes.add(Class.forName("jams.data.JAMSFloatArray"));
-            classes.add(Class.forName("jams.data.JAMSIntegerArray"));
-            classes.add(Class.forName("jams.data.JAMSLongArray"));
-            classes.add(Class.forName("jams.data.JAMSStringArray"));
-            classes.add(Class.forName("jams.data.JAMSTimeInterval"));
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
 
         Class[] classesA = new Class[classes.size()];
         classes.toArray(classesA);

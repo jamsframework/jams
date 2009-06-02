@@ -35,25 +35,44 @@ import java.io.Serializable;
         title="JAMS Component",
         author="Sven Kralisch",
         date="27. Juni 2005",
-        description="This component represents a JAMS component which are the model building blocks in JAMS")
+        description="This component represents a JAMS component which is the " +
+        "main model building block in JAMS")
         public class JAMSComponent implements Serializable {
     
-    protected String instanceName = getClass().getName();
+    private String instanceName = getClass().getName();
     private JAMSContext context = null;
     private JAMSModel model = null;
     
+    /**
+     * Method to be executed at model's init stage
+     * @throws java.lang.Exception
+     */
     public void init() throws Exception {}
+
+    /**
+     * Method to be executed at model's run stage
+     * @throws java.lang.Exception
+     */
     public void run() throws Exception {}
+
+    /**
+     * Method to be executed at model's cleanup stage
+     * @throws java.lang.Exception
+     */
     public void cleanup() throws Exception {}
         
     /**
-     * Get the name of this component instance
+     * Gets the name of this component
      * @return The component's instance name
      */
     public String getInstanceName() {
         return instanceName;
     }
     
+    /**
+     * Sets the name of this component
+     * @param instanceName The component's instance name
+     */
     public void setInstanceName(String instanceName) {
         this.instanceName = instanceName;
     }
@@ -67,14 +86,26 @@ import java.io.Serializable;
         return context;
     }
     
+    /**
+     * Sets the context that this component is child of
+     * @param context The parent context
+     */
     public void setContext(JAMSContext context) {
         this.context = context;
     }
     
+    /**
+     * Gets the JAMS model that this component belongs to
+     * @return The model
+     */
     public JAMSModel getModel() {
         return model;
     }
     
+    /**
+     * Sets the JAMS model that this component belongs to
+     * @param model The model
+     */
     public void setModel(JAMSModel model) {
         this.model = model;
     }

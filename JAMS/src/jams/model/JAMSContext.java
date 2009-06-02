@@ -785,7 +785,7 @@ public class JAMSContext extends JAMSComponent {
 
     public JAMSComponent getComponent(String name) {
         for (int i = 0; i < components.size(); i++) {
-            if (components.get(i).instanceName.equals(name)) {
+            if (components.get(i).getInstanceName().equals(name)) {
                 return components.get(i);
             }
             if (components.get(i) instanceof JAMSContext) {
@@ -800,7 +800,7 @@ public class JAMSContext extends JAMSComponent {
 
     protected boolean componentInContext(JAMSComponent component) {
         for (int i = 0; i < components.size(); i++) {
-            if (components.get(i).instanceName.equals(component.instanceName)) {
+            if (components.get(i).getInstanceName().equals(component.getInstanceName())) {
                 return true;
             }
             if (components.get(i) instanceof JAMSContext) {
@@ -813,7 +813,7 @@ public class JAMSContext extends JAMSComponent {
     }
 
     protected int componentAllreadyProcessed(JAMSComponent position, JAMSComponent component) {
-        if (this.instanceName.equals(position.instanceName)) {
+        if (this.getInstanceName().equals(position.getInstanceName())) {
             return 0;
         }
         if (this == component) {
@@ -881,7 +881,7 @@ public class JAMSContext extends JAMSComponent {
         //look if there is an child context which uses this componentObj
         for (int j = 0; j < components.size(); j++) {
             JAMSComponent c = components.get(j);
-            if (c.instanceName.equals(position.instanceName)) {
+            if (c.getInstanceName().equals(position.getInstanceName())) {
                 return 0;
             }
             if (c instanceof JAMSContext) {

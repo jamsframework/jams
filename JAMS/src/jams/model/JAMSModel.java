@@ -195,7 +195,7 @@ public class JAMSModel extends JAMSContext {
 
     private void collectEntityCollections(JAMSContext currentContext, JAMSComponent position, HashMap<String, JAMSEntityCollection> collection) {
         currentContext.updateEntityData(position);
-        collection.put(currentContext.instanceName, currentContext.getEntities());
+        collection.put( currentContext.getInstanceName(),currentContext.getEntities());
 
         for (int i = 0; i < currentContext.components.size(); i++) {
             JAMSComponent c = (JAMSComponent) currentContext.getComponents().get(i);
@@ -206,7 +206,7 @@ public class JAMSModel extends JAMSContext {
     }
 
     private void restoreEntityCollections(JAMSContext currentContext, HashMap<String, JAMSEntityCollection> collection) {
-        JAMSEntityCollection e = collection.get(currentContext.instanceName);
+        JAMSEntityCollection e = collection.get(currentContext.getInstanceName());
         if (e != null) {
             currentContext.setEntities(e);
         }
