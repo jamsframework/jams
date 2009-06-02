@@ -29,8 +29,12 @@ import jams.workspace.datatypes.DataValue;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.stores.TSDataStore;
 import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import reg.DataTransfer;
 import reg.JAMSExplorer;
 import reg.dsproc.DataMatrix;
+import reg.viewer.Viewer;
 
 //import jams.components.*;
 //import org.unijena.jams.model;
@@ -129,12 +133,12 @@ public class JAMSSpreadSheet extends JPanel {
         regionalizer.getRegionalizerFrame().removeFromTabbedPane(this.getPanel());
         regionalizer.getDisplayManager().getSpreadSheets().remove(this.name);
     }
-    
-    public String getID(){
+
+    public String getID() {
         return name;
     }
-    
-    public void setID(String name){
+
+    public void setID(String name) {
         this.name = name;
         getPanel().setName(name);
     }
@@ -293,7 +297,7 @@ public class JAMSSpreadSheet extends JPanel {
         String[] headers = new String[attribtuteIDs.length + 1];
         headers[0] = "ID";
         for (int i = 1; i < headers.length; i++) {
-            headers[i] = attribtuteIDs[i-1];
+            headers[i] = attribtuteIDs[i - 1];
         }
 
         tmodel.setNewDataVector(arrayVector);
@@ -479,6 +483,53 @@ public class JAMSSpreadSheet extends JPanel {
         }
     };
 
+    Action joinMapAction = new AbstractAction("Auf Karte zeigen") {
+
+        public void actionPerformed(ActionEvent e) {
+
+            int[] columns = table.getSelectedColumns();
+            if (columns.length == 0) {
+                return;
+            }
+            int rowCount = table.getRowCount();
+
+            // create the header array
+            String[] headers = new String[columns.length];
+
+            // create the data array
+            double[][] data = new double[columns.length][rowCount];
+
+            // fill header and data arrays
+            for (int i = 0; i < columns.length; i++) {
+                headers[i] = table.getColumnName(columns[i]);
+
+                for (int j = 0; j < rowCount; j++) {
+                    data[i][j] = (Double) table.getValueAt(j, columns[i]);
+                }
+            }
+
+            // create and fill the id array
+            double[] ids = new double[rowCount];
+            for (int j = 0; j < rowCount; j++) {
+                ids[j] = (Double) table.getValueAt(j, 0);
+            }
+
+            // create and fill the DataTransfer object
+            DataTransfer dataTransfer = new DataTransfer();
+            dataTransfer.setNames(headers);
+            dataTransfer.setIds(ids);
+            dataTransfer.setData(data);
+
+            // get the Geowind viewer and pass the DataTransfer object
+            Viewer viewer = Viewer.startViewer();
+            try {
+                viewer.addData(dataTransfer);
+            } catch (Exception ex) {
+                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    };
+
     /*************** Math *******************************/
     private double calcsum() {
 
@@ -616,11 +667,14 @@ public class JAMSSpreadSheet extends JPanel {
         //LHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 2, 1, 1, 0, 0);
         //LHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 3, 1, 2, 0, 0);
 
+        JButton joinMapButton = new JButton(joinMapAction);
+
         LHelper.addGBComponent(controlpanel, gbl, closeButton, 0, 5, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 6, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 7, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 8, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 10, 1, 1, 0, 0);
 
 //              controlpanel.add(openbutton);
 //              controlpanel.add(savebutton);
