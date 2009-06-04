@@ -36,6 +36,7 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import reg.viewer.Viewer;
 
 /**
  *
@@ -110,6 +111,7 @@ public class JAMSExplorer {
         
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            Viewer.getViewer();
         } catch (Exception evt) {
         }
 
@@ -117,8 +119,9 @@ public class JAMSExplorer {
         JAMSExplorer reg = new JAMSExplorer();
         try {
             String[] libs = JAMSTools.toArray(reg.getProperties().getProperty("libs", ""), ";");
-            JAMSWorkspace workspace = new JAMSWorkspace(new File("d:/jamsapplication/JAMS-Gehlberg"), reg.getRuntime(), true);
+            //JAMSWorkspace workspace = new JAMSWorkspace(new File("C:/jams/data/JAMS-Gehlberg"), reg.getRuntime(), true);
             //JAMSWorkspace workspace = new JAMSWorkspace(new File("F:/Eigene Dateien/Java/jamsdata/JAMS-Gehlberg"), reg.getRuntime(), true);
+             JAMSWorkspace workspace = new JAMSWorkspace(new File("d:/jamsapplication/JAMS-Gehlberg"), reg.getRuntime(), true);
             workspace.setLibs(libs);
 
             reg.open(workspace);
