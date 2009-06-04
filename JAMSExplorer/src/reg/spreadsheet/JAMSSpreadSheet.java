@@ -519,10 +519,14 @@ public class JAMSSpreadSheet extends JPanel {
             dataTransfer.setNames(headers);
             dataTransfer.setIds(ids);
             dataTransfer.setData(data);
+            String shapeKeyColumn = "POLY_ID";
+            dataTransfer.setTargetKeyName(shapeKeyColumn);
 
             // get the Geowind viewer and pass the DataTransfer object
-            Viewer viewer = Viewer.startViewer();
+            Viewer viewer = Viewer.getViewer();
             try {
+                //System.out.println("Ich warte mal.");
+                //Thread.currentThread().sleep(10000);
                 viewer.addData(dataTransfer);
             } catch (Exception ex) {
                 Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.SEVERE, null, ex);
