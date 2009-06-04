@@ -23,10 +23,8 @@
 package reg.gui;
 
 import reg.*;
-import jams.JAMSTools;
 import jams.gui.LHelper;
 import jams.gui.WorkerDlg;
-import jams.workspace.JAMSWorkspace;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -35,7 +33,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -53,6 +50,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import reg.viewer.Viewer;
 
 /**
  *
@@ -235,6 +233,7 @@ public class RegionalizerFrame extends JFrame {
 
             @Override
             public void windowClosing(WindowEvent e) {
+                Viewer.destroy();
                 exit();
             }
 
