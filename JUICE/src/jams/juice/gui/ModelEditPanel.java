@@ -40,11 +40,9 @@ import java.awt.GridBagConstraints;
 import javax.swing.BorderFactory;
 import jams.juice.JUICE;
 import java.awt.event.ActionEvent;
-import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
-import reg.JAMSExplorer;
 
 /**
  *
