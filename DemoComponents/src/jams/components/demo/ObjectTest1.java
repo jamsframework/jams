@@ -20,69 +20,47 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.components.demo;
 
 import jams.data.*;
 import jams.model.*;
-import java.util.GregorianCalendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-@JAMSComponentDescription(
-title="Title",
-        author="Author",
-        description="Description"
-        )
-        public class ObjectTest1 extends JAMSComponent {
-    
+@JAMSComponentDescription (title = "Title",
+                           author = "Author",
+                           description = "Description")
+public class ObjectTest1 extends JAMSComponent {
+
     /*
      *  Component variables
      */
+    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
+                         description = "Description")
+    public Attribute.Double delay;
 
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            description = "Description"
-            )
-            public Attribute.Double delay;
+    @JAMSVarDescription (access = JAMSVarDescription.AccessType.WRITE,
+                         description = "Description")
+    public Attribute.Object value;
 
-
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.WRITE,
-            description = "Description"
-            )
-            public Attribute.Object value;
-    
-    
     /*
      *  Component run stages
      */
-    
     @Override
     public void init() {
-        
     }
-    
+
     @Override
     public void run() {
         TestPOJO pojo = new TestPOJO();
-        pojo.cal = new GregorianCalendar();
-        
-        try {
-            pojo.setX(delay.getValue());
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ObjectTest1.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        pojo.setX();
 
         value.setValue(pojo);
     }
-    
+
     @Override
     public void cleanup() {
-        
     }
 }

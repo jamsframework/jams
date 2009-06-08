@@ -25,7 +25,6 @@ package jams.components.demo;
 
 import jams.data.*;
 import jams.model.*;
-import java.util.GregorianCalendar;
 
 /**
  *
@@ -61,7 +60,7 @@ title="Title",
     @Override
     public void run() {
         TestPOJO pojo = (TestPOJO) value.getValue();
-        System.out.println("Calendar: " + pojo.cal.getTime());
+        System.out.println("X: " + pojo.getX());
     }
 
     @Override
