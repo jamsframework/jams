@@ -520,6 +520,7 @@ public class JAMSSpreadSheet extends JPanel {
             dataTransfer.setIds(ids);
             dataTransfer.setData(data);
             String shapeKeyColumn = "POLY_ID";
+            dataTransfer.setParentName("hrus.shp"); // just for test
             dataTransfer.setTargetKeyName(shapeKeyColumn);
 
             // get the Geowind viewer and pass the DataTransfer object
