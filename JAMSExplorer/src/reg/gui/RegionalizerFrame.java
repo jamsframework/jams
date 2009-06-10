@@ -58,15 +58,24 @@ import reg.viewer.Viewer;
  */
 public class RegionalizerFrame extends JFrame {
 
-    private static final int INOUT_PANE_WIDTH = 250,  INOUT_PANE_HEIGHT = 450;
+    private static final int INOUT_PANE_WIDTH = 250, INOUT_PANE_HEIGHT = 450;
+
     private static final int DIVIDER_WIDTH = 6;
+
     private JFileChooser jfc = LHelper.getJFileChooser();
+
     private WorkerDlg openWSDlg;
-    private Action openWSAction,  exitAction;
+
+    private Action openWSAction, exitAction;
+
     private JLabel statusLabel;
+
     private JSplitPane mainSplitPane;
+
     private JScrollPane mainScroll;
+
     private JTabbedPane spreadSheetTabs;
+
     private JAMSExplorer regionalizer;
 
     public RegionalizerFrame(JAMSExplorer regionalizer) {
@@ -102,7 +111,7 @@ public class RegionalizerFrame extends JFrame {
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         mainScroll = new JScrollPane();
-        
+
         spreadSheetTabs = new JTabbedPane();
 
         mainSplitPane = new JSplitPane();
@@ -164,33 +173,32 @@ public class RegionalizerFrame extends JFrame {
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(Math.min(d.width, JAMSExplorer.SCREEN_WIDTH), Math.min(d.height, JAMSExplorer.SCREEN_HEIGHT));
     }
-    
-    public void addToTabbedPane(String title, Component comp){
+
+    public void addToTabbedPane(String title, Component comp) {
         spreadSheetTabs.addTab(title, comp);
         spreadSheetTabs.setSelectedComponent(comp);
 //        spreadSheetTabs.
         updateMainPanel(spreadSheetTabs);
     }
-    
-    public void showTab(Component comp){
-        try{
+
+    public void showTab(Component comp) {
+        try {
             spreadSheetTabs.setSelectedComponent(comp);
-        }catch(NullPointerException npe){
-            
+        } catch (NullPointerException npe) {
         }
     }
-    
-    public void removeFromTabbedPane(Component comp){
+
+    public void removeFromTabbedPane(Component comp) {
         spreadSheetTabs.remove(comp);
         updateMainPanel(spreadSheetTabs);
     }
-    
-    public void removeFromTabbedPane(String name){
+
+    public void removeFromTabbedPane(String name) {
 //        spreadSheetTabs.remove(comp);
         spreadSheetTabs.remove(regionalizer.getDisplayManager().getSpreadSheets().get(name));
         updateMainPanel(spreadSheetTabs);
     }
-    
+
     public void updateMainPanel(Component comp) {
 //        mainScroll.setViewportView(comp);
 //        mainScroll.updateUI();
@@ -233,7 +241,9 @@ public class RegionalizerFrame extends JFrame {
 
             @Override
             public void windowClosing(WindowEvent e) {
-                Viewer.destroy();
+                if (JAMSExplorer.GEOWIND_ENABLE) {
+                    Viewer.destroy();
+                }
                 exit();
             }
 

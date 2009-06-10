@@ -51,8 +51,6 @@ public class JAMSSpreadSheet extends JPanel {
 
     private final String title = "";
 
-    private JAMSSpreadSheet thisSpreadSheet;
-
     private JPanel panel = new JPanel();
 
     private String panelname = "spreadsheet";
@@ -109,18 +107,20 @@ public class JAMSSpreadSheet extends JPanel {
 
     private int kindofcalc = 0;
 
-    private JFileChooser epsFileChooser,  templateChooser;
+    private JFileChooser epsFileChooser, templateChooser;
 
     private JAMSExplorer regionalizer;
 
-    /* Constructor */
-    public JAMSSpreadSheet() {
-    }
+    private boolean geoWindEnable = false;
 
-    public JAMSSpreadSheet(JAMSExplorer regionalizer, String[] headers) {
+    public JAMSSpreadSheet(JAMSExplorer regionalizer) {
         this.regionalizer = regionalizer;
         this.parent_frame = regionalizer.getRegionalizerFrame();
-        this.thisSpreadSheet = this;
+    }
+
+    public JAMSSpreadSheet(JAMSExplorer regionalizer, boolean geoWindEnable) {
+        this(regionalizer);
+        this.geoWindEnable = geoWindEnable;
     }
 
     /* Methods */
@@ -169,7 +169,7 @@ public class JAMSSpreadSheet extends JPanel {
             }
             if (kindofcalc == 1) {
                 calclabel.setText("Mean: " + calcmean());
-            //label.setText("MEAN");
+                //label.setText("MEAN");
             }
         }
     };
@@ -373,8 +373,8 @@ public class JAMSSpreadSheet extends JPanel {
 
         JTSConfigurator jts;
         jts = new JTSConfigurator(regionalizer.getRegionalizerFrame(), this, null);
-    //ctstabs.addGraph(table);
-    //ctsIsOpen = true;
+        //ctstabs.addGraph(table);
+        //ctsIsOpen = true;
     }
 
     private void openCTS(File templateFile) {
@@ -385,8 +385,8 @@ public class JAMSSpreadSheet extends JPanel {
         } else {
             jts = new JTSConfigurator(regionalizer.getRegionalizerFrame(), this, null);
         }
-    //ctstabs.addGraph(table);
-    //ctsIsOpen = true;
+        //ctstabs.addGraph(table);
+        //ctsIsOpen = true;
     }
 
     private void openCXYS() {
@@ -412,6 +412,7 @@ public class JAMSSpreadSheet extends JPanel {
     private void openSTP() {
         STPConfigurator stp = new STPConfigurator(regionalizer, this);
     }
+
     ActionListener plotAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -521,10 +522,10 @@ public class JAMSSpreadSheet extends JPanel {
             dataTransfer.setIds(ids);
             dataTransfer.setData(data);
             String shapeKeyColumn = "POLY_ID";
-            
+
             dataTransfer.setParentName("hrus.shp"); // just for test
             try {
-                URI theURI = new URI("file:///C:/Projekte/uni/tlug/dataReg/data/hrus.shp");
+                URI theURI = new URI("file:///D:/jamsapplication/JAMS-Gehlberg/data/gis/hrus/hrus.shp");
                 dataTransfer.setParentURI(theURI);
             } catch (Exception ex) {
                 System.out.println("URI-Exception: " + ex.getMessage());
@@ -681,14 +682,16 @@ public class JAMSSpreadSheet extends JPanel {
         //LHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 2, 1, 1, 0, 0);
         //LHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 3, 1, 2, 0, 0);
 
-        JButton joinMapButton = new JButton(joinMapAction);
-
         LHelper.addGBComponent(controlpanel, gbl, closeButton, 0, 5, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 6, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 7, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 8, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 10, 1, 1, 0, 0);
+
+        if (JAMSExplorer.GEOWIND_ENABLE && this.geoWindEnable) {
+            JButton joinMapButton = new JButton(joinMapAction);
+            LHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 10, 1, 1, 0, 0);
+        }
 
 //              controlpanel.add(openbutton);
 //              controlpanel.add(savebutton);
@@ -799,7 +802,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         public void mouseExited(MouseEvent e) {
             JTableHeader h = (JTableHeader) e.getSource();
-        //h.setCursor(new Cursor(-1)); //default curser
+            //h.setCursor(new Cursor(-1)); //default curser
         }
     }
 }

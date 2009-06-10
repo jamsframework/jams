@@ -46,7 +46,9 @@ public class JAMSExplorer {
 
     public static final String APP_TITLE = "Data Explorer";
 
-    public static final int SCREEN_WIDTH = 1200,  SCREEN_HEIGHT = 750;
+    public static boolean GEOWIND_ENABLE = true;
+
+    public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 750;
 
     private RegionalizerFrame regionalizerFrame;
 
@@ -108,10 +110,12 @@ public class JAMSExplorer {
     }
 
     public static void main(String[] args) {
-        
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            Viewer.getViewer();
+            if (GEOWIND_ENABLE) {
+                Viewer.getViewer();
+            }
         } catch (Exception evt) {
         }
 
@@ -121,7 +125,7 @@ public class JAMSExplorer {
             String[] libs = JAMSTools.toArray(reg.getProperties().getProperty("libs", ""), ";");
             //JAMSWorkspace workspace = new JAMSWorkspace(new File("C:/jams/data/JAMS-Gehlberg"), reg.getRuntime(), true);
             //JAMSWorkspace workspace = new JAMSWorkspace(new File("F:/Eigene Dateien/Java/jamsdata/JAMS-Gehlberg"), reg.getRuntime(), true);
-             JAMSWorkspace workspace = new JAMSWorkspace(new File("d:/jamsapplication/JAMS-Gehlberg"), reg.getRuntime(), true);
+            JAMSWorkspace workspace = new JAMSWorkspace(new File("d:/jamsapplication/JAMS-Gehlberg"), reg.getRuntime(), true);
             workspace.setLibs(libs);
 
             reg.open(workspace);

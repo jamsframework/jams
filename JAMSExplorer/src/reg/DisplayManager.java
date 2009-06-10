@@ -101,8 +101,7 @@ public class DisplayManager implements Observer {
                 InputDataStore store = regionalizer.getWorkspace().getInputDataStore(node.toString());
                 if (store instanceof TSDataStore) {
 
-                    String[] default_headers = {""};
-                    JAMSSpreadSheet spreadSheet = new JAMSSpreadSheet(regionalizer, default_headers);
+                    JAMSSpreadSheet spreadSheet = new JAMSSpreadSheet(regionalizer);
                     spreadSheet.init();
                     spreadSheet.setID(node.toString());
                     
