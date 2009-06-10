@@ -28,6 +28,7 @@ import jams.workspace.DataSet;
 import jams.workspace.datatypes.DataValue;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.stores.TSDataStore;
+import java.net.URI;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -520,11 +521,19 @@ public class JAMSSpreadSheet extends JPanel {
             dataTransfer.setIds(ids);
             dataTransfer.setData(data);
             String shapeKeyColumn = "POLY_ID";
+            
             dataTransfer.setParentName("hrus.shp"); // just for test
+            try {
+                URI theURI = new URI("file:///C:/Projekte/uni/tlug/dataReg/data/hrus.shp");
+                dataTransfer.setParentURI(theURI);
+            } catch (Exception ex) {
+                System.out.println("URI-Exception: " + ex.getMessage());
+            }
             dataTransfer.setTargetKeyName(shapeKeyColumn);
 
             // get the Geowind viewer and pass the DataTransfer object
             Viewer viewer = Viewer.getViewer();
+
             try {
                 //System.out.println("Ich warte mal.");
                 //Thread.currentThread().sleep(10000);
