@@ -225,6 +225,7 @@ public class TSDataStoreReader extends JAMSComponent {
         for (int i = 1; i < data.length; i++) {
             doubles[i - 1] = data[i].getDouble();
         }
+        dataArray.setValue(doubles);
         if (dataCaching.getValue() != 1) {
             regCoeff.setValue(Regression.calcLinReg(elevationArray, doubles));
         }
