@@ -28,6 +28,9 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -40,7 +43,10 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -50,6 +56,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -65,7 +73,7 @@ import reg.spreadsheet.JAMSSpreadSheet;
  */
 public class TimeSpaceDSPanel extends JPanel {
 
-    private static final Dimension ACTION_BUTTON_DIM = new Dimension(150, 25),  LIST_DIMENSION = new Dimension(150, 240);
+    private static final Dimension ACTION_BUTTON_DIM = new Dimension(150, 25), LIST_DIMENSION = new Dimension(150, 240);
 
     private TimeSpaceProcessor tsproc;
 
@@ -73,7 +81,7 @@ public class TimeSpaceDSPanel extends JPanel {
 
     private GridBagLayout mainLayout;
 
-    private JList timeList,  entityList,  monthList,  yearList;
+    private JList timeList, entityList, monthList, yearList;
 
     private CancelableWorkerDlg workerDlg;
 
@@ -84,6 +92,10 @@ public class TimeSpaceDSPanel extends JPanel {
     private JAMSSpreadSheet outputSpreadSheet;
 
     private File outputDSFile;
+
+    private JPanel aggregationPanel;
+
+    private GridBagLayout aggregationLayout;
 
 //    private Action timeStepAction,  spaceEntityAction,  timeAvgAction,  spaceAvgAction,  monthlyAvgAction,  yearlyAvgAction,  resetCacheAction;
     private Action[] actions = {
@@ -130,7 +142,7 @@ public class TimeSpaceDSPanel extends JPanel {
             }
         },};
 
-    private Action timePoint = actions[0],  timeMean = actions[1],  spacePoint = actions[2],  spaceMean = actions[3],  monthMean = actions[4],  yearMean = actions[5];
+    private Action timePoint = actions[0], timeMean = actions[1], spacePoint = actions[2], spaceMean = actions[3], monthMean = actions[4], yearMean = actions[5];
 
     private Action cacheReset = new AbstractAction("Reset Caches") {
 
@@ -329,6 +341,18 @@ public class TimeSpaceDSPanel extends JPanel {
         buttonPanelB.add(button);
 
         LHelper.addGBComponent(this, mainLayout, buttonPanelB, 70, 20, 1, 1, 0, 0);
+
+
+        LHelper.addGBComponent(this, mainLayout, new JLabel("Attribute/Aggregation:"), 80, 10, 1, 1, 0, 0);
+
+        aggregationLayout = new GridBagLayout();
+        aggregationPanel = new JPanel();
+        aggregationPanel.setLayout(aggregationLayout);
+        JScrollPane aggregationScroll = new JScrollPane(aggregationPanel);
+        aggregationScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width + 100, LIST_DIMENSION.height));
+
+        LHelper.addGBComponent(this, mainLayout, aggregationScroll, 80, 20, 1, 1, 0, 0);
+
     }
 
     public void setParent(Frame parent) {
@@ -369,7 +393,7 @@ public class TimeSpaceDSPanel extends JPanel {
         TimeSpaceProcessor tsproc = new TimeSpaceProcessor(dsdb);
         tsproc.isTimeSpaceDatastore();
         tsp.setTsProc(tsproc);
-    //tsproc.close();
+        //tsproc.close();
     }
 
     /**
@@ -503,6 +527,47 @@ public class TimeSpaceDSPanel extends JPanel {
             }
         });
 
+        ArrayList<DataStoreProcessor.AttributeData> attribs = TimeSpaceDSPanel.this.getTsproc().getDataStoreProcessor().getAttributes();
+        String[] attribNames = new String[attribs.size() + 1];
+        attribNames[0] = null;
+        int i = 1;
+        for (DataStoreProcessor.AttributeData attrib : attribs) {
+            attribNames[i++] = attrib.getName();
+        }
+
+        i = 0;
+        for (DataStoreProcessor.AttributeData attrib : attribs) {
+            LHelper.addGBComponent(aggregationPanel, aggregationLayout, new JLabel(attrib.getName()), 0, i, 1, 1, 0, 0);
+
+            AttribCheckBox attribCheck = new AttribCheckBox(attrib);
+            attribCheck.setSelected(attrib.isSelected());
+            attribCheck.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    AttribCheckBox thisCheck = (AttribCheckBox) e.getSource();
+                    thisCheck.getAttrib().setSelected(thisCheck.isSelected());
+                }
+            });
+            LHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCheck, 5, i, 1, 1, 0, 0);
+
+            AttribCombo attribCombo = new AttribCombo(attrib);
+            attribCombo.setModel(new DefaultComboBoxModel(attribNames));
+            attribCombo.addItemListener(new ItemListener() {
+
+                public void itemStateChanged(ItemEvent e) {
+                    if (e.getStateChange() == ItemEvent.DESELECTED) {
+                        return;
+                    }
+                    AttribCombo thisCombo = (AttribCombo) e.getSource();
+                    thisCombo.getAttrib().setAggregationWeight(thisCombo.getSelectedItem().toString());
+                }
+            });
+            LHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCombo, 10, i, 1, 1, 0, 0);
+
+            i++;
+        }
+        aggregationPanel.updateUI();
+
         cacheReset.setEnabled(true);
         timeField.setEnabled(true);
         indexReset.setEnabled(true);
@@ -514,6 +579,40 @@ public class TimeSpaceDSPanel extends JPanel {
             }
         });
 
+    }
+
+    private class AttribCombo extends JComboBox {
+
+        private DataStoreProcessor.AttributeData attrib;
+
+        public AttribCombo(DataStoreProcessor.AttributeData attrib) {
+            super();
+            this.attrib = attrib;
+        }
+
+        /**
+         * @return the attrib
+         */
+        public DataStoreProcessor.AttributeData getAttrib() {
+            return attrib;
+        }
+    }
+
+    private class AttribCheckBox extends JCheckBox {
+
+        private DataStoreProcessor.AttributeData attrib;
+
+        public AttribCheckBox(DataStoreProcessor.AttributeData attrib) {
+            super();
+            this.attrib = attrib;
+        }
+
+        /**
+         * @return the attrib
+         */
+        public DataStoreProcessor.AttributeData getAttrib() {
+            return attrib;
+        }
     }
 
     private void clearPanel() {
@@ -836,7 +935,10 @@ public class TimeSpaceDSPanel extends JPanel {
     }
 
     private void loadData(DataMatrix m, boolean timeSeries) {
-        if (m == null) {
+
+        m.output();
+
+        if (true || m == null) {
             return;
         }
 

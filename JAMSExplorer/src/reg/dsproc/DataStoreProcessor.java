@@ -45,7 +45,7 @@ public class DataStoreProcessor {
 
     public static final HashMap<String, String> TYPE_MAP = getTypeMap();
 
-    public static final String DB_USER = "jamsuser",  DB_PASSWORD = "";
+    public static final String DB_USER = "jamsuser", DB_PASSWORD = "";
 
     private File dsFile;
 
@@ -150,7 +150,7 @@ public class DataStoreProcessor {
         if ((conn != null) && !conn.isClosed()) {
             System.out.println("closing");
             conn.close();
-        //conn = null;
+            //conn = null;
         }
     }
 
@@ -460,7 +460,7 @@ public class DataStoreProcessor {
         });
 
         dsdb.createDB();
-    //dsdb.createIndex();
+        //dsdb.createIndex();
 
 //        DataMatrix m = dsdb.getData(7323914);
 ////        DataMatrix m = dsdb.getData(836);
@@ -665,6 +665,8 @@ public class DataStoreProcessor {
 
         private boolean selected;
 
+        private String aggregationWeight = null;
+
         public AttributeData(String type, String name) {
             this.type = type;
             this.name = name;
@@ -698,6 +700,22 @@ public class DataStoreProcessor {
         public void setSelected(boolean active) {
             synchronized (DataStoreProcessor.this) {
                 this.selected = active;
+            }
+        }
+
+        /**
+         * @return the aggregationWeight
+         */
+        public String getAggregationWeight() {
+            return aggregationWeight;
+        }
+
+        /**
+         * @param aggregationWeight the aggregationWeight to set
+         */
+        public void setAggregationWeight(String aggregationWeight) {
+            synchronized (DataStoreProcessor.this) {
+                this.aggregationWeight = aggregationWeight;
             }
         }
     }
