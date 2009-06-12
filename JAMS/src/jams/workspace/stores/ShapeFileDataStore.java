@@ -22,10 +22,13 @@
  */
 package jams.workspace.stores;
 
+import jams.JAMSTools;
 import jams.workspace.DataSet;
 import jams.workspace.JAMSWorkspace;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -35,24 +38,48 @@ import org.w3c.dom.Element;
  */
 public class ShapeFileDataStore extends GeoDataStore {
 
-    public ShapeFileDataStore(JAMSWorkspace ws, String id, Document doc) throws ClassNotFoundException {
+    /**
+     * the name of the shapefile
+     */
+    private String fileName = null;
+
+    /**
+     * the uri
+     */
+    private URI uri = null;
+
+    /**
+     * the key column, necessary for identifying values
+     */
+    private String keyColumn = null;
+
+    /**
+     * the shapeFile itself
+     */
+    private File shapeFile;
+
+    public ShapeFileDataStore(JAMSWorkspace ws, String id, Document doc) throws URISyntaxException {
         super(ws);
         this.id = id;
 
         Element sourceElement = (Element) doc.getElementsByTagName("source").item(0);
-
-        File sourceFile = null;
         if (sourceElement != null) {
-            String sourceFileName = sourceElement.getAttribute("value");
-            if (sourceFileName != null) {
-                sourceFile = new File(sourceFileName);
+            String uriString = sourceElement.getAttribute("value");
+            if (!JAMSTools.isEmptyString(uriString)) {
+                this.uri = new URI(uriString);
+                this.shapeFile = new File(this.uri);
             }
+            this.keyColumn = sourceElement.getAttribute("key");
         } else {
-            sourceFile = new File(ws.getLocalInputDirectory(), id + ".shp");
+            this.shapeFile = new File(ws.getLocalInputDirectory(), id + ".shp");
+        }
+        if (this.shapeFile != null && this.shapeFile.exists()) {
+            this.uri = this.shapeFile.toURI();
+            this.fileName = this.shapeFile.getName();
         }
 
-        // to be cont'd, reader implemented as jams.workspace.DataReader 
-        // in components project (Geotools dependencies outside JAMS!!)
+    // to be cont'd, reader implemented as jams.workspace.DataReader
+    // in components project (Geotools dependencies outside JAMS!!)
     }
 
     @Override
@@ -69,4 +96,21 @@ public class ShapeFileDataStore extends GeoDataStore {
     public void close() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public File getShapeFile() {
+        return shapeFile;
+    }
+
+    public URI getUri() {
+        return uri;
+    }
+
+    public String getKeyColumn() {
+        return keyColumn;
+    }
+
 }
