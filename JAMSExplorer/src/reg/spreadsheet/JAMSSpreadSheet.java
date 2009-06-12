@@ -11,6 +11,7 @@
  */
 package reg.spreadsheet;
 
+import jams.JAMSTools;
 import jams.io.JAMSFileFilter;
 import java.util.Vector;
 import java.awt.event.*;
@@ -27,6 +28,7 @@ import jams.gui.LHelper;
 import jams.workspace.DataSet;
 import jams.workspace.datatypes.DataValue;
 import jams.workspace.datatypes.DoubleValue;
+import jams.workspace.stores.ShapeFileDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.net.URI;
 import java.text.ParseException;
@@ -46,71 +48,44 @@ import reg.viewer.Viewer;
 public class JAMSSpreadSheet extends JPanel {
 
     File ttpFile;
-
     File dtpFile;
-
     private final String title = "";
-
     private JPanel panel = new JPanel();
-
     private String panelname = "spreadsheet";
-
     private int numberOfColumns = 0;
-
     private JFrame parent_frame;
-
     private boolean timeRuns = false;
-
     GridBagLayout panellayout = new GridBagLayout();
-
     GridBagConstraints grid = new GridBagConstraints();
-
     private JScrollPane scrollpane = new JScrollPane();
 
     //private JScrollPane scrollpane2;
     /* Buttons */
     private String name = "default";
-
     private JButton savebutton = new JButton("Save");
-
     private JButton plotButton = new JButton("Time Plot");
-
     private JButton dataplotButton = new JButton("Data Plot");
-
     private JButton closeButton = new JButton("Close Tab");
-
     private JCheckBox useTemplateButton = new JCheckBox("use Template");
-
     private JButton stpButton = new JButton("Stacked Time Plot");
+    private JComboBox shapeSelector = new JComboBox();
+
     /* Labels */
-
     private JLabel headerlabel = new JLabel();
-
     private JLabel titleLabel = new JLabel(title);
-
     private JLabel calclabel = new JLabel("calclabel");
     /* Table and TableModel */
-
     private JAMSTableModel tmodel;
-
     private JTableHeader tableHeader;
-
     private TSDataStore store;
-
     JTable table;
     /* ComboBox */
     /* String array contains words of the ComboBox */
-
     private String[] calclist = {"Sum    ", "Mean   "};
-
     JComboBox calculations = new JComboBox(calclist);
-
     private int kindofcalc = 0;
-
-    private JFileChooser epsFileChooser, templateChooser;
-
+    private JFileChooser epsFileChooser,  templateChooser;
     private JAMSExplorer regionalizer;
-
     private boolean geoWindEnable = false;
 
     public JAMSSpreadSheet(JAMSExplorer regionalizer) {
@@ -169,12 +144,11 @@ public class JAMSSpreadSheet extends JPanel {
             }
             if (kindofcalc == 1) {
                 calclabel.setText("Mean: " + calcmean());
-                //label.setText("MEAN");
+            //label.setText("MEAN");
             }
         }
     };
     /* Save */
-
     ActionListener saveAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -373,8 +347,8 @@ public class JAMSSpreadSheet extends JPanel {
 
         JTSConfigurator jts;
         jts = new JTSConfigurator(regionalizer.getRegionalizerFrame(), this, null);
-        //ctstabs.addGraph(table);
-        //ctsIsOpen = true;
+    //ctstabs.addGraph(table);
+    //ctsIsOpen = true;
     }
 
     private void openCTS(File templateFile) {
@@ -385,8 +359,8 @@ public class JAMSSpreadSheet extends JPanel {
         } else {
             jts = new JTSConfigurator(regionalizer.getRegionalizerFrame(), this, null);
         }
-        //ctstabs.addGraph(table);
-        //ctsIsOpen = true;
+    //ctstabs.addGraph(table);
+    //ctsIsOpen = true;
     }
 
     private void openCXYS() {
@@ -412,7 +386,6 @@ public class JAMSSpreadSheet extends JPanel {
     private void openSTP() {
         STPConfigurator stp = new STPConfigurator(regionalizer, this);
     }
-
     ActionListener plotAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -446,7 +419,6 @@ public class JAMSSpreadSheet extends JPanel {
             }
         }
     };
-
     ActionListener dataplotAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -465,7 +437,6 @@ public class JAMSSpreadSheet extends JPanel {
 
         }
     };
-
     ActionListener stpAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -484,10 +455,26 @@ public class JAMSSpreadSheet extends JPanel {
 
         }
     };
-
     Action joinMapAction = new AbstractAction("Auf Karte zeigen") {
 
         public void actionPerformed(ActionEvent e) {
+
+            String selectedShape = (String) shapeSelector.getSelectedItem();
+            if (JAMSTools.isEmptyString(selectedShape)) {
+                System.out.println("no shape selected.");
+                return;  // errorMessage?
+            }
+
+            System.out.println("shape selected >" + selectedShape + "<");
+            ShapeFileDataStore dataStore = (ShapeFileDataStore) regionalizer.getWorkspace().getInputDataStore(selectedShape);
+            if (dataStore == null) {
+                System.out.println("no datastore found.");
+                return;
+            }
+
+            URI uri = dataStore.getUri();
+            String keyColumn = dataStore.getKeyColumn();
+            String shapeFileName = dataStore.getFileName();
 
             int[] columns = table.getSelectedColumns();
             if (columns.length == 0) {
@@ -521,23 +508,14 @@ public class JAMSSpreadSheet extends JPanel {
             dataTransfer.setNames(headers);
             dataTransfer.setIds(ids);
             dataTransfer.setData(data);
-            String shapeKeyColumn = "POLY_ID";
-
-            dataTransfer.setParentName("hrus.shp"); // just for test
-            try {
-                URI theURI = new URI("file:///D:/jamsapplication/JAMS-Gehlberg/data/gis/hrus/hrus.shp");
-                dataTransfer.setParentURI(theURI);
-            } catch (Exception ex) {
-                System.out.println("URI-Exception: " + ex.getMessage());
-            }
-            dataTransfer.setTargetKeyName(shapeKeyColumn);
+            dataTransfer.setParentName(shapeFileName);
+            dataTransfer.setParentURI(uri);
+            dataTransfer.setTargetKeyName(keyColumn);
 
             // get the Geowind viewer and pass the DataTransfer object
             Viewer viewer = Viewer.getViewer();
 
             try {
-                //System.out.println("Ich warte mal.");
-                //Thread.currentThread().sleep(10000);
                 viewer.addData(dataTransfer);
             } catch (Exception ex) {
                 Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.SEVERE, null, ex);
@@ -689,8 +667,21 @@ public class JAMSSpreadSheet extends JPanel {
         LHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
 
         if (JAMSExplorer.GEOWIND_ENABLE && this.geoWindEnable) {
+
+            // populate shape-combobox
+            String defaultShapeName = null;
+            String[] shapeNames = this.regionalizer.getWorkspace().getInputShapeNames();
+            if (shapeNames != null && shapeNames.length > 0) {
+                defaultShapeName = shapeNames[0];
+            }
+            DefaultComboBoxModel shapeSelectorModel = new DefaultComboBoxModel(shapeNames);
+            shapeSelectorModel.setSelectedItem(defaultShapeName);
+            shapeSelector.setModel(shapeSelectorModel);
+
             JButton joinMapButton = new JButton(joinMapAction);
-            LHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 10, 1, 1, 0, 0);
+            LHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 11, 1, 1, 0, 0);
+            LHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 12, 1, 1, 0, 0);
+
         }
 
 //              controlpanel.add(openbutton);
@@ -738,11 +729,8 @@ public class JAMSSpreadSheet extends JPanel {
     private class HeaderHandler extends MouseAdapter {
 
         int button = -1;
-
         int[] selectedColumns;
-
         int col_START = 0; // is this nessesary?
-
         int col_END = 0;
 
         public void mouseClicked(MouseEvent e) {
@@ -802,7 +790,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         public void mouseExited(MouseEvent e) {
             JTableHeader h = (JTableHeader) e.getSource();
-            //h.setCursor(new Cursor(-1)); //default curser
+        //h.setCursor(new Cursor(-1)); //default curser
         }
     }
 }
