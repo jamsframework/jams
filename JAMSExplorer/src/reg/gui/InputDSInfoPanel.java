@@ -22,20 +22,11 @@
  */
 package reg.gui;
 
-import jams.data.JAMSCalendar;
-import jams.gui.LHelper;
-import jams.workspace.stores.DataStore;
+import jams.workspace.stores.ShapeFileDataStore;
+import jams.workspace.stores.StandardInputDataStore;
 import jams.workspace.stores.TSDataStore;
-import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.util.HashMap;
-import java.util.Map;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
 
 /**
  *
@@ -43,91 +34,40 @@ import javax.swing.UIManager;
  */
 public class InputDSInfoPanel extends JPanel {
 
-    private TSPanel tsPanel;
+    /**
+     * one info panel for each input source type
+     */
+    private HashMap<Class, InputInfoPanelSimple> infoPanels = new HashMap<Class, InputInfoPanelSimple>();
 
     public InputDSInfoPanel() {
         super();
     }
 
-    public void updateDS(DataStore store) {
+    public void updateDS(StandardInputDataStore store) {
         if (store == null) {
             this.removeAll();
             this.updateUI();
             return;
         }
 
-        if (store instanceof TSDataStore) {
-            updateTSPanel((TSDataStore) store);
-            this.removeAll();
-            this.add(tsPanel);
-            this.updateUI();
-        }
-    }
-
-    private void updateTSPanel(TSDataStore store) {
-        if (tsPanel == null) {
-            tsPanel = new TSPanel();
-        }
-        tsPanel.updateDS(store);
-    }
-
-    private class TSPanel extends JPanel {
-
-        private GridBagLayout mainLayout;
-        private int FIELD_COUNT = 6;
-        private JTextField[] fields;//idField, typField, startField, endField, stepUnitField, stepSizeField, missingDataField;
-        private JTextArea textArea;
-        private Map<Integer, String> indexMap = new HashMap<Integer, String>();
-
-        public TSPanel() {
-
-            mainLayout = new GridBagLayout();
-            this.setLayout(mainLayout);
-
-            LHelper.addGBComponent(this, mainLayout, new JLabel("Name:"), 1, 0, 1, 1, 0, 0);
-            LHelper.addGBComponent(this, mainLayout, new JLabel("Typ:"), 1, 1, 1, 1, 0, 0);
-            LHelper.addGBComponent(this, mainLayout, new JLabel("Beginn:"), 1, 2, 1, 1, 0, 0);
-            LHelper.addGBComponent(this, mainLayout, new JLabel("Ende:"), 1, 3, 1, 1, 0, 0);
-            LHelper.addGBComponent(this, mainLayout, new JLabel("Schrittweite:"), 1, 4, 1, 1, 0, 0);
-            LHelper.addGBComponent(this, mainLayout, new JLabel("Lückenwert:"), 1, 5, 1, 1, 0, 0);
-            LHelper.addGBComponent(this, mainLayout, new JLabel("Kommentar:"), 1, 6, 1, 1, 0, 0);
-
-            indexMap.put(JAMSCalendar.YEAR, "Jahr(e)");
-            indexMap.put(JAMSCalendar.MONTH, "Monat(e)");
-            indexMap.put(JAMSCalendar.DAY_OF_YEAR, "Tag(e)");
-            indexMap.put(JAMSCalendar.HOUR_OF_DAY, "Stunde(n)");
-            indexMap.put(JAMSCalendar.MINUTE, "Minute(n)");
-            indexMap.put(JAMSCalendar.SECOND, "Sekunde(n)");
-
-            fields = new JTextField[FIELD_COUNT];
-            for (int i = 0; i < fields.length; i++) {
-                fields[i] = new JTextField();
-                fields[i].setColumns(20);
-                fields[i].setEditable(false);
-                LHelper.addGBComponent(this, mainLayout, fields[i], 2, i, 1, 1, 0, 0);
+        Class storeClass = store.getClass();
+        //System.out.println("store:" + storeID + ", (" + store.getClass().getSimpleName() + ")");
+        InputInfoPanelSimple infoPanel = infoPanels.get(storeClass);
+        if (infoPanel == null) {
+            //System.out.println("create a new one.");
+            if (store instanceof TSDataStore) {
+                infoPanel = new InputInfoPanelTS();
             }
-
-            textArea = new JTextArea();
-            textArea.setRows(5);
-            textArea.setColumns(20);
-            textArea.setEditable(false);
-            Font textFont = (Font) UIManager.getDefaults().get("Label.font");
-            textFont = new Font(textFont.getName(), Font.PLAIN, textFont.getSize() - 1);
-            textArea.setFont(textFont);
-            JScrollPane textScrollPane = new JScrollPane(textArea);
-            LHelper.addGBComponent(this, mainLayout, textScrollPane, 2, FIELD_COUNT, 1, 2, 0, 0);
-
-
+            if (store instanceof ShapeFileDataStore) {
+                infoPanel = new InputInfoPanelShape();
+            }
         }
-
-        public void updateDS(TSDataStore store) {
-            fields[0].setText(store.getID());
-            fields[1].setText(store.getClass().getSimpleName());
-            fields[2].setText(store.getStartDate().toString());
-            fields[3].setText(store.getEndDate().toString());
-            fields[4].setText(Integer.toString(store.getTimeUnitCount()) + " " + indexMap.get(store.getTimeUnit()));
-            fields[5].setText(store.getMissingDataValue());
-            textArea.setText(store.getDescription());
+        this.removeAll();
+        if (infoPanel != null) {
+            infoPanel.updateInfoPanel(store);
+            this.add(infoPanel);
+            infoPanels.put(storeClass, infoPanel);
         }
+        this.updateUI();
     }
 }
