@@ -261,6 +261,17 @@ public class TimeSpaceDSPanel extends JPanel {
             }
         });
 
+        LHelper.addGBComponent(this, mainLayout, new JLabel("Attribute/Aggregation:"), 0, 10, 1, 1, 0, 0);
+
+        aggregationLayout = new GridBagLayout();
+        aggregationPanel = new JPanel();
+        aggregationPanel.setLayout(aggregationLayout);
+        JScrollPane aggregationScroll = new JScrollPane(aggregationPanel);
+        aggregationScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width + 100, LIST_DIMENSION.height));
+
+        LHelper.addGBComponent(this, mainLayout, aggregationScroll, 0, 20, 1, 1, 0, 0);
+
+
         LHelper.addGBComponent(this, mainLayout, new JLabel("Time Steps:"), 10, 10, 1, 1, 0, 0);
         LHelper.addGBComponent(this, mainLayout, timeListScroll, 10, 20, 1, 1, 0, 0);
         LHelper.addGBComponent(this, mainLayout, new JLabel("Entitiy IDs:"), 20, 10, 1, 1, 0, 0);
@@ -341,17 +352,6 @@ public class TimeSpaceDSPanel extends JPanel {
         buttonPanelB.add(button);
 
         LHelper.addGBComponent(this, mainLayout, buttonPanelB, 70, 20, 1, 1, 0, 0);
-
-
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Attribute/Aggregation:"), 80, 10, 1, 1, 0, 0);
-
-        aggregationLayout = new GridBagLayout();
-        aggregationPanel = new JPanel();
-        aggregationPanel.setLayout(aggregationLayout);
-        JScrollPane aggregationScroll = new JScrollPane(aggregationPanel);
-        aggregationScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width + 100, LIST_DIMENSION.height));
-
-        LHelper.addGBComponent(this, mainLayout, aggregationScroll, 80, 20, 1, 1, 0, 0);
 
     }
 
@@ -527,6 +527,10 @@ public class TimeSpaceDSPanel extends JPanel {
             }
         });
 
+
+        // create the attribute panel for switching on/off attributes and
+        // defining their aggregation weight
+
         ArrayList<DataStoreProcessor.AttributeData> attribs = TimeSpaceDSPanel.this.getTsproc().getDataStoreProcessor().getAttributes();
         String[] attribNames = new String[attribs.size() + 1];
         attribNames[0] = null;
@@ -536,19 +540,23 @@ public class TimeSpaceDSPanel extends JPanel {
         }
 
         i = 0;
+        ArrayList<JCheckBox> allChecks = new ArrayList<JCheckBox>();
         for (DataStoreProcessor.AttributeData attrib : attribs) {
-            LHelper.addGBComponent(aggregationPanel, aggregationLayout, new JLabel(attrib.getName()), 0, i, 1, 1, 0, 0);
+            //LHelper.addGBComponent(aggregationPanel, aggregationLayout, new JLabel(attrib.getName()), 0, i + 10, 1, 1, 0, 0);
 
             AttribCheckBox attribCheck = new AttribCheckBox(attrib);
             attribCheck.setSelected(attrib.isSelected());
-            attribCheck.addActionListener(new ActionListener() {
 
-                public void actionPerformed(ActionEvent e) {
+            attribCheck.addItemListener(new ItemListener() {
+
+                public void itemStateChanged(ItemEvent e) {
                     AttribCheckBox thisCheck = (AttribCheckBox) e.getSource();
                     thisCheck.getAttrib().setSelected(thisCheck.isSelected());
                 }
             });
-            LHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCheck, 5, i, 1, 1, 0, 0);
+
+            allChecks.add(attribCheck);
+            LHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCheck, 5, i + 10, 1, 1, 0, 0);
 
             AttribCombo attribCombo = new AttribCombo(attrib);
             attribCombo.setModel(new DefaultComboBoxModel(attribNames));
@@ -562,10 +570,28 @@ public class TimeSpaceDSPanel extends JPanel {
                     thisCombo.getAttrib().setAggregationWeight(thisCombo.getSelectedItem().toString());
                 }
             });
-            LHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCombo, 10, i, 1, 1, 0, 0);
+            LHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCombo, 10, i + 10, 1, 1, 0, 0);
 
             i++;
         }
+
+        GroupCheckBox allOnOffCheck = new GroupCheckBox("All on/off", allChecks);
+        allOnOffCheck.setSelected(DataStoreProcessor.AttributeData.SELECTION_DEFAULT);
+        //LHelper.addGBComponent(aggregationPanel, aggregationLayout, new JLabel("All on/off"), 0, 0, 1, 1, 0, 0);
+        LHelper.addGBComponent(aggregationPanel, aggregationLayout, allOnOffCheck, 5, 0, 1, 1, 0, 0);
+
+        allOnOffCheck.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                GroupCheckBox thisCheck = (GroupCheckBox) e.getSource();
+                boolean selected = thisCheck.isSelected();
+                ArrayList<JCheckBox> allChecks  = thisCheck.getCheckBoxList();
+                for (JCheckBox checkBox : allChecks) {
+                    checkBox.setSelected(selected);
+                }
+            }
+        });
+
         aggregationPanel.updateUI();
 
         cacheReset.setEnabled(true);
@@ -598,12 +624,29 @@ public class TimeSpaceDSPanel extends JPanel {
         }
     }
 
+    private class GroupCheckBox extends JCheckBox {
+
+        private ArrayList<JCheckBox> checkBoxList;
+
+        public GroupCheckBox(String title, ArrayList<JCheckBox> checkBoxList) {
+            super(title);
+            this.checkBoxList = checkBoxList;
+        }
+
+        /**
+         * @return the checkBoxList
+         */
+        public ArrayList<JCheckBox> getCheckBoxList() {
+            return checkBoxList;
+        }
+    }
+
     private class AttribCheckBox extends JCheckBox {
 
         private DataStoreProcessor.AttributeData attrib;
 
         public AttribCheckBox(DataStoreProcessor.AttributeData attrib) {
-            super();
+            super(attrib.getName());
             this.attrib = attrib;
         }
 
@@ -936,9 +979,9 @@ public class TimeSpaceDSPanel extends JPanel {
 
     private void loadData(DataMatrix m, boolean timeSeries) {
 
-        m.output();
+        //m.output();
 
-        if (true || m == null) {
+        if (false || m == null) {
             return;
         }
 

@@ -659,6 +659,8 @@ public class DataStoreProcessor {
 
     public class AttributeData {
 
+        public static final boolean SELECTION_DEFAULT = false;
+
         private String type;
 
         private String name;
@@ -670,7 +672,7 @@ public class DataStoreProcessor {
         public AttributeData(String type, String name) {
             this.type = type;
             this.name = name;
-            this.selected = true;
+            this.selected = SELECTION_DEFAULT;
         }
 
         /**
