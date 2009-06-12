@@ -83,6 +83,8 @@ public class JAMSWorkspace implements Serializable {
 
     private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
 
+    private ArrayList<ShapeFileDataStore> currentInputShapes = new ArrayList<ShapeFileDataStore>();
+
     public JAMSWorkspace(File directory, JAMSRuntime runtime) throws InvalidWorkspaceException {
         this(directory, runtime, false);
     }
@@ -305,6 +307,10 @@ public class JAMSWorkspace implements Serializable {
             getRuntime().sendErrorMsg(JAMS.resources.getString("Error_initializing_datastore_") + dsTitle + JAMS.resources.getString("!"));
             getRuntime().handle(ioe);
             return null;
+        } catch (Exception anyException) {
+            getRuntime().sendErrorMsg(JAMS.resources.getString("Error_initializing_datastore_") + dsTitle + JAMS.resources.getString("!"));
+            getRuntime().handle(anyException);
+            return null;
         }
 
         return store;
@@ -411,6 +417,14 @@ public class JAMSWorkspace implements Serializable {
             }
         }
 
+        // init input shapes
+        for (String dsTitle : this.getInputDataStoreIDs()) {
+            InputDataStore dataStore = getInputDataStore(dsTitle);
+            if (dataStore instanceof ShapeFileDataStore) {
+                currentInputShapes.add((ShapeFileDataStore) dataStore);
+            }
+        }
+
         File[] outChildren = outputDirectory.listFiles(filter);
         for (File child : outChildren) {
             try {
@@ -498,6 +512,21 @@ public class JAMSWorkspace implements Serializable {
         for (String dsTitle : this.getInputDataStoreIDs()) {
             inputDataStoreToFile(dsTitle);
         }
+    }
+
+    public ArrayList<ShapeFileDataStore> getInputShapes() {
+        return this.currentInputShapes;
+    }
+
+    public String[] getInputShapeNames() {
+        ArrayList<ShapeFileDataStore> theShapes = getInputShapes();
+        String[] shapeNames = new String[theShapes.size()];
+        int i = 0;
+        for (ShapeFileDataStore theStore : theShapes) {
+            shapeNames[i] = theStore.getID();
+            i++;
+        }
+        return shapeNames;
     }
 
     /**
