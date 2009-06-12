@@ -26,8 +26,8 @@ import jams.gui.LHelper;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import reg.spreadsheet.JAMSSpreadSheet;
-import jams.workspace.stores.DataStore;
 import jams.workspace.stores.InputDataStore;
+import jams.workspace.stores.StandardInputDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.util.HashMap;
 import java.util.Observable;
@@ -76,7 +76,7 @@ public class DisplayManager implements Observer {
         DSTreeNode node = (DSTreeNode) arg;
         if (node.getType() == DSTreeNode.INPUT_DS) {
             try {
-                DataStore store = regionalizer.getWorkspace().getInputDataStore(node.toString());
+                StandardInputDataStore store = (StandardInputDataStore) regionalizer.getWorkspace().getInputDataStore(node.toString());
                 inputDSInfoPanel.updateDS(store);
             } catch (Exception e) {
                 regionalizer.getRuntime().sendErrorMsg(e.toString());
