@@ -553,6 +553,10 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                             & (top.isNodeChild(node) || node.isLeaf())) {
                         
                         try {
+                            // modified by nsk due to ArrayIndexOutOfBoundExceptions (idxToTopNode = -1)
+                            if (idxToTopNode < 0) {
+                                return;
+                            }
                             setMap(mc[idxToTopNode]);
                             mp.setReset(true);
                             mp.repaint();

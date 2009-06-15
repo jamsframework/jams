@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -56,8 +57,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -533,7 +532,7 @@ public class TimeSpaceDSPanel extends JPanel {
 
         ArrayList<DataStoreProcessor.AttributeData> attribs = TimeSpaceDSPanel.this.getTsproc().getDataStoreProcessor().getAttributes();
         String[] attribNames = new String[attribs.size() + 1];
-        attribNames[0] = null;
+        attribNames[0] = DataStoreProcessor.AttributeData.SELECTION_NONE;
         int i = 1;
         for (DataStoreProcessor.AttributeData attrib : attribs) {
             attribNames[i++] = attrib.getName();
@@ -585,7 +584,7 @@ public class TimeSpaceDSPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 GroupCheckBox thisCheck = (GroupCheckBox) e.getSource();
                 boolean selected = thisCheck.isSelected();
-                ArrayList<JCheckBox> allChecks  = thisCheck.getCheckBoxList();
+                ArrayList<JCheckBox> allChecks = thisCheck.getCheckBoxList();
                 for (JCheckBox checkBox : allChecks) {
                     checkBox.setSelected(selected);
                 }
@@ -979,10 +978,16 @@ public class TimeSpaceDSPanel extends JPanel {
 
     private void loadData(DataMatrix m, boolean timeSeries) {
 
-        //m.output();
-
-        if (false || m == null) {
+        if (m == null) {
             return;
+        }
+
+        postProcess(m);
+
+        m.output();
+
+        if (true) {
+            //return;
         }
 
         if (m.getAttributeIDs() == null) {
@@ -993,6 +998,54 @@ public class TimeSpaceDSPanel extends JPanel {
             this.outputSpreadSheet.loadMatrix(m, outputDSFile.getParentFile(), timeSeries);
         } else {
             m.output();
+        }
+    }
+
+    private void postProcess(DataMatrix m) {
+
+        HashMap<String, double[]> weightMap = new HashMap<String, double[]>();
+        double[][] data = m.getArray();
+
+        ArrayList<DataStoreProcessor.AttributeData> attribs = this.getTsproc().getDataStoreProcessor().getAttributes();
+        int j = 0;
+        for (DataStoreProcessor.AttributeData attrib : attribs) {
+
+            if (!attrib.isSelected()) {
+                continue;
+            }
+
+            if (attrib.getAggregationWeight() != null) {
+
+                System.out.println("weighting " + attrib.getName());
+                double[] weights = weightMap.get(attrib.getAggregationWeight());
+                if (weights == null) {
+
+                    // calculate normalized weights
+                    weights = new double[data.length];
+
+                    // calc sum
+                    double sum = 0;
+                    for (int i = 0; i < data.length; i++) {
+                        System.out.println(i + " " + j);
+                        sum += data[i][j];
+                    }
+
+                    // calc weights
+                    for (int i = 0; i < data.length; i++) {
+                        weights[i] = data[i][j] / sum;
+                    }
+
+                    weightMap.put(attrib.getAggregationWeight(), weights);
+                }
+
+                for (int i = 0; i < data.length; i++) {
+                    data[i][j] *= weights[i];
+                    System.out.println(data[i][j]);
+                }
+            }
+
+            j++;
+
         }
     }
 }

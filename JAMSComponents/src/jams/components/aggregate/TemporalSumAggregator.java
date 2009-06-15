@@ -31,46 +31,49 @@ import jams.data.*;
  *
  * @author S. Kralisch
  */
+@JAMSComponentDescription(
+        title="TemporalSumAggregator",
+        author="Sven Kralisch",
+        description="Calculates the weighted average of given values in a given time interval"
+        )
 public class TemporalSumAggregator extends JAMSComponent {
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Current time"
             )
             public JAMSCalendar time;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "value attribute"
+            description = "The value(s) that shall be summed up"
             )
             public JAMSDouble[] value;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "weight attribute"
+            description = "A weight to be used to calculate the weighted average"
             )
             public JAMSDouble weight;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "sum attribute"
+            description = "The resulting weighted average(s) of the given values"
             )
             public JAMSDouble[] sum;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Aggregation time interval"
+            description = "A time interval defining start and end of the weighted temporal aggregation"
             )
             public JAMSTimeInterval aggregationTimeInterval;
         
     private long count;
     
     public void init() {
+        for (int i = 0; i < value.length; i++) {
+            sum[i].setValue(0);
+        }
         count = aggregationTimeInterval.getNumberOfTimesteps();
     }
 
@@ -79,12 +82,6 @@ public class TemporalSumAggregator extends JAMSComponent {
             for (int i = 0; i < value.length; i++) {
                 sum[i].setValue(sum[i].getValue()+ (value[i].getValue() / (weight.getValue()*count)));
             }
-        }
-    }
-    
-    public void cleanup() {
-        for (int i = 0; i < value.length; i++) {
-            sum[i].setValue(0);
         }
     }
     

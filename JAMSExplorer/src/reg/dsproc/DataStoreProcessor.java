@@ -661,6 +661,8 @@ public class DataStoreProcessor {
 
         public static final boolean SELECTION_DEFAULT = false;
 
+        public static final String SELECTION_NONE = "[none]";
+
         private String type;
 
         private String name;
@@ -717,6 +719,9 @@ public class DataStoreProcessor {
          */
         public void setAggregationWeight(String aggregationWeight) {
             synchronized (DataStoreProcessor.this) {
+                if (aggregationWeight.equals(SELECTION_NONE)) {
+                    aggregationWeight = null;
+                }
                 this.aggregationWeight = aggregationWeight;
             }
         }

@@ -87,7 +87,6 @@ public class JAMSExplorer {
 
         properties = JAMSProperties.createJAMSProperties();
         String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
-        System.out.println(defaultFile);
         File file = new File(defaultFile);
         if (file.exists()) {
             try {
