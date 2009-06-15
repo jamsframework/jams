@@ -661,7 +661,9 @@ public class DataStoreProcessor {
 
         public static final boolean SELECTION_DEFAULT = false;
 
-        public static final String SELECTION_NONE = "[none]";
+        public static final int AGGREGATION_NONE = 1;
+        public static final int AGGREGATION_WEIGHT = 2;
+        public static final int AGGREGATION_AREA = 3;
 
         private String type;
 
@@ -669,7 +671,7 @@ public class DataStoreProcessor {
 
         private boolean selected;
 
-        private String aggregationWeight = null;
+        private int aggregationWeight = 1;
 
         public AttributeData(String type, String name) {
             this.type = type;
@@ -710,18 +712,15 @@ public class DataStoreProcessor {
         /**
          * @return the aggregationWeight
          */
-        public String getAggregationWeight() {
+        public int getAggregationWeight() {
             return aggregationWeight;
         }
 
         /**
          * @param aggregationWeight the aggregationWeight to set
          */
-        public void setAggregationWeight(String aggregationWeight) {
+        public void setAggregationWeight(int aggregationWeight) {
             synchronized (DataStoreProcessor.this) {
-                if (aggregationWeight.equals(SELECTION_NONE)) {
-                    aggregationWeight = null;
-                }
                 this.aggregationWeight = aggregationWeight;
             }
         }

@@ -28,6 +28,7 @@ import jams.gui.LHelper;
 import jams.workspace.DataSet;
 import jams.workspace.datatypes.DataValue;
 import jams.workspace.datatypes.DoubleValue;
+import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.ShapeFileDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.net.URI;
@@ -670,7 +671,21 @@ public class JAMSSpreadSheet extends JPanel {
 
             // populate shape-combobox
             String defaultShapeName = null;
-            String[] shapeNames = this.regionalizer.getWorkspace().getInputShapeNames();
+            
+            String[] shapeStoreIDs = this.regionalizer.getWorkspace().
+                    getDataStoreIDs(InputDataStore.TYPE_SHAPEFILEDATASTORE);
+            
+            //String[] shapeNames = this.regionalizer.getWorkspace().getInputShapeNames();
+//            String[] shapeNames = new String[shapeStoreIDs.length];
+//            int i = 0;
+//            for (String shapeStoreID : shapeStoreIDs) {
+//                ShapeFileDataStore shapeDS = (ShapeFileDataStore) this.regionalizer.getWorkspace().getInputDataStore(shapeStoreID);
+//                shapeNames[i++] = shapeDS.getID();
+//            }
+//            
+            // is this the same?
+            String[] shapeNames = shapeStoreIDs;
+            
             if (shapeNames != null && shapeNames.length > 0) {
                 defaultShapeName = shapeNames[0];
             }

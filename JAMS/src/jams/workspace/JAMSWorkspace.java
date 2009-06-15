@@ -49,6 +49,7 @@ import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -82,8 +83,6 @@ public class JAMSWorkspace implements Serializable {
     private Properties properties = new Properties();
 
     private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
-
-    private ArrayList<ShapeFileDataStore> currentInputShapes = new ArrayList<ShapeFileDataStore>();
 
     public JAMSWorkspace(File directory, JAMSRuntime runtime) throws InvalidWorkspaceException {
         this(directory, runtime, false);
@@ -271,7 +270,7 @@ public class JAMSWorkspace implements Serializable {
      * @param store The datastore to be removed
      */
     public void removeDataStore(InputDataStore store) {
-        inputDataStores.remove(store);
+        inputDataStores.remove(store.getID());
     }
 
     /**
@@ -290,13 +289,13 @@ public class JAMSWorkspace implements Serializable {
         String type = doc.getDocumentElement().getTagName();
 
         try {
-            if (type.equals("tabledatastore")) {
+            if (type.equals(InputDataStore.TYPE_TABLEDATASTORE)) {
                 store = new TableDataStore(this, dsTitle, doc);
-            } else if (type.equals("tsdatastore")) {
+            } else if (type.equals(InputDataStore.TYPE_TSDATASTORE)) {
                 store = new TSDataStore(this, dsTitle, doc);
-            } else if (type.equals("j2ktsdatastore")) {
+            } else if (type.equals(InputDataStore.TYPE_J2KTSDATASTORE)) {
                 store = new J2KTSDataStore(this, dsTitle, doc);
-            } else if (type.equals("shapefiledatastore")) {
+            } else if (type.equals(InputDataStore.TYPE_SHAPEFILEDATASTORE)) {
                 store = new ShapeFileDataStore(this, dsTitle, doc);
             }
         } catch (ClassNotFoundException cnfe) {
@@ -307,9 +306,9 @@ public class JAMSWorkspace implements Serializable {
             getRuntime().sendErrorMsg(JAMS.resources.getString("Error_initializing_datastore_") + dsTitle + JAMS.resources.getString("!"));
             getRuntime().handle(ioe);
             return null;
-        } catch (Exception anyException) {
+        } catch (URISyntaxException use) {
             getRuntime().sendErrorMsg(JAMS.resources.getString("Error_initializing_datastore_") + dsTitle + JAMS.resources.getString("!"));
-            getRuntime().handle(anyException);
+            getRuntime().handle(use);
             return null;
         }
 
@@ -381,12 +380,12 @@ public class JAMSWorkspace implements Serializable {
 
     /**
      * Defines if the data output directory is overwritten or not
-     * @param inc If inc is true, a new data output directory will be created
+     * @param persistent If persistent is true, a new data output directory will be created
      * for model output, otherwise output will be directed to standard data
      * output directory ("current")
      */
-    public void setPersistent(boolean inc) {
-        properties.setProperty("persistent", Boolean.toString(inc));
+    public void setPersistent(boolean persistent) {
+        properties.setProperty("persistent", Boolean.toString(persistent));
     }
 
     private void createDataStores() {
@@ -414,14 +413,6 @@ public class JAMSWorkspace implements Serializable {
 
             } catch (FileNotFoundException fnfe) {
                 this.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.resources.getString("!"));
-            }
-        }
-
-        // init input shapes
-        for (String dsTitle : this.getInputDataStoreIDs()) {
-            InputDataStore dataStore = getInputDataStore(dsTitle);
-            if (dataStore instanceof ShapeFileDataStore) {
-                currentInputShapes.add((ShapeFileDataStore) dataStore);
             }
         }
 
@@ -514,19 +505,24 @@ public class JAMSWorkspace implements Serializable {
         }
     }
 
-    public ArrayList<ShapeFileDataStore> getInputShapes() {
-        return this.currentInputShapes;
-    }
-
-    public String[] getInputShapeNames() {
-        ArrayList<ShapeFileDataStore> theShapes = getInputShapes();
-        String[] shapeNames = new String[theShapes.size()];
-        int i = 0;
-        for (ShapeFileDataStore theStore : theShapes) {
-            shapeNames[i] = theStore.getID();
-            i++;
+    /**
+     * Get the IDs of all datastores of a given type
+     * @param type The type to look for
+     * @return A String array containg the datastores IDs
+     */
+    public String[] getDataStoreIDs(String type) {
+        
+        ArrayList<String> list = new ArrayList<String>();
+        
+        for (String dsTitle : this.getInputDataStoreIDs()) {
+            Document doc = inputDataStores.get(dsTitle);
+            String thisType = doc.getDocumentElement().getTagName();
+            if (type.equals(thisType)) {
+                list.add(dsTitle);
+            }
         }
-        return shapeNames;
+
+        return list.toArray(new String[list.size()]);
     }
 
     /**

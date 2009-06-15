@@ -44,6 +44,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -52,9 +53,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
@@ -72,7 +75,7 @@ import reg.spreadsheet.JAMSSpreadSheet;
  */
 public class TimeSpaceDSPanel extends JPanel {
 
-    private static final Dimension ACTION_BUTTON_DIM = new Dimension(150, 25), LIST_DIMENSION = new Dimension(150, 240);
+    private static final Dimension ACTION_BUTTON_DIM = new Dimension(150, 25), LIST_DIMENSION = new Dimension(150, 250);
 
     private TimeSpaceProcessor tsproc;
 
@@ -95,6 +98,8 @@ public class TimeSpaceDSPanel extends JPanel {
     private JPanel aggregationPanel;
 
     private GridBagLayout aggregationLayout;
+
+    private JComboBox attribCombo;
 
 //    private Action timeStepAction,  spaceEntityAction,  timeAvgAction,  spaceAvgAction,  monthlyAvgAction,  yearlyAvgAction,  resetCacheAction;
     private Action[] actions = {
@@ -529,14 +534,37 @@ public class TimeSpaceDSPanel extends JPanel {
 
         // create the attribute panel for switching on/off attributes and
         // defining their aggregation weight
+        JLabel label;
+
+        label = new JLabel("Area attribute");
+        label.setHorizontalAlignment(SwingConstants.LEFT);
+        LHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 5, 0, 1, 1, 0, 0);
 
         ArrayList<DataStoreProcessor.AttributeData> attribs = TimeSpaceDSPanel.this.getTsproc().getDataStoreProcessor().getAttributes();
-        String[] attribNames = new String[attribs.size() + 1];
-        attribNames[0] = DataStoreProcessor.AttributeData.SELECTION_NONE;
-        int i = 1;
+        String[] attribNames = new String[attribs.size()];
+        int i = 0;
         for (DataStoreProcessor.AttributeData attrib : attribs) {
             attribNames[i++] = attrib.getName();
         }
+
+        attribCombo = new JComboBox();
+        attribCombo.setModel(new DefaultComboBoxModel(attribNames));
+        LHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCombo, 10, 0, 5, 1, 0, 0);
+
+
+        label = new JLabel("Aggregation weight");
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        LHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 3, 3, 1, 0, 0);
+        label = new JLabel("1");
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        LHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 5, 1, 1, 0, 0);
+        label = new JLabel("a/A");
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        LHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 11, 5, 1, 1, 0, 0);
+        label = new JLabel("1/A");
+        label.setHorizontalAlignment(SwingConstants.LEFT);
+        LHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 12, 5, 1, 1, 0, 0);
+
 
         i = 0;
         ArrayList<JCheckBox> allChecks = new ArrayList<JCheckBox>();
@@ -550,41 +578,71 @@ public class TimeSpaceDSPanel extends JPanel {
 
                 public void itemStateChanged(ItemEvent e) {
                     AttribCheckBox thisCheck = (AttribCheckBox) e.getSource();
-                    thisCheck.getAttrib().setSelected(thisCheck.isSelected());
+                    thisCheck.attrib.setSelected(thisCheck.isSelected());
                 }
             });
 
             allChecks.add(attribCheck);
             LHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCheck, 5, i + 10, 1, 1, 0, 0);
 
-            AttribCombo attribCombo = new AttribCombo(attrib);
-            attribCombo.setModel(new DefaultComboBoxModel(attribNames));
-            attribCombo.addItemListener(new ItemListener() {
+//            AttribCombo attribCombo = new AttribCombo(attrib);
+//            attribCombo.setModel(new DefaultComboBoxModel(attribNames));
+//            attribCombo.addItemListener(new ItemListener() {
+//
+//                public void itemStateChanged(ItemEvent e) {
+//                    if (e.getStateChange() == ItemEvent.DESELECTED) {
+//                        return;
+//                    }
+//                    AttribCombo thisCombo = (AttribCombo) e.getSource();
+//                    thisCombo.attrib.setAggregationWeight(thisCombo.getSelectedItem().toString());
+//                }
+//            });
+//            LHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCombo, 10, i + 10, 1, 1, 0, 0);
+
+            AttribRadioButton button1, button2, button3;
+            button1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_NONE);
+            button2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_WEIGHT);
+            button3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_AREA);
+            button1.setSelected(true);
+
+            ItemListener attribRadioButtonListener = new ItemListener() {
 
                 public void itemStateChanged(ItemEvent e) {
                     if (e.getStateChange() == ItemEvent.DESELECTED) {
                         return;
                     }
-                    AttribCombo thisCombo = (AttribCombo) e.getSource();
-                    thisCombo.getAttrib().setAggregationWeight(thisCombo.getSelectedItem().toString());
+                    AttribRadioButton thisButton = (AttribRadioButton) e.getSource();
+                    thisButton.attrib.setAggregationWeight(thisButton.aggregationType);
                 }
-            });
-            LHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCombo, 10, i + 10, 1, 1, 0, 0);
+            };
+
+            button1.addItemListener(attribRadioButtonListener);
+            button2.addItemListener(attribRadioButtonListener);
+            button3.addItemListener(attribRadioButtonListener);
+
+            ButtonGroup bGroup = new ButtonGroup();
+            bGroup.add(button1);
+            bGroup.add(button2);
+            bGroup.add(button3);
+
+            LHelper.addGBComponent(aggregationPanel, aggregationLayout, button1, 10, i + 10, 1, 1, 0, 0);
+            LHelper.addGBComponent(aggregationPanel, aggregationLayout, button2, 11, i + 10, 1, 1, 0, 0);
+            LHelper.addGBComponent(aggregationPanel, aggregationLayout, button3, 12, i + 10, 1, 1, 0, 0);
 
             i++;
         }
 
         GroupCheckBox allOnOffCheck = new GroupCheckBox("All on/off", allChecks);
         allOnOffCheck.setSelected(DataStoreProcessor.AttributeData.SELECTION_DEFAULT);
-        //LHelper.addGBComponent(aggregationPanel, aggregationLayout, new JLabel("All on/off"), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(aggregationPanel, aggregationLayout, allOnOffCheck, 5, 0, 1, 1, 0, 0);
+
+        LHelper.addGBComponent(aggregationPanel, aggregationLayout, allOnOffCheck, 5, 3, 1, 1, 0, 0);
 
         allOnOffCheck.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 GroupCheckBox thisCheck = (GroupCheckBox) e.getSource();
                 boolean selected = thisCheck.isSelected();
-                ArrayList<JCheckBox> allChecks = thisCheck.getCheckBoxList();
+                ArrayList<JCheckBox> allChecks = thisCheck.checkBoxList;
                 for (JCheckBox checkBox : allChecks) {
                     checkBox.setSelected(selected);
                 }
@@ -606,54 +664,46 @@ public class TimeSpaceDSPanel extends JPanel {
 
     }
 
+    private class AttribRadioButton extends JRadioButton {
+
+        DataStoreProcessor.AttributeData attrib;
+
+        int aggregationType;
+
+        public AttribRadioButton(DataStoreProcessor.AttributeData attrib, int aggregationType) {
+            super();
+            this.attrib = attrib;
+            this.aggregationType = aggregationType;
+        }
+    }
+
     private class AttribCombo extends JComboBox {
 
-        private DataStoreProcessor.AttributeData attrib;
+        DataStoreProcessor.AttributeData attrib;
 
         public AttribCombo(DataStoreProcessor.AttributeData attrib) {
             super();
             this.attrib = attrib;
         }
-
-        /**
-         * @return the attrib
-         */
-        public DataStoreProcessor.AttributeData getAttrib() {
-            return attrib;
-        }
     }
 
     private class GroupCheckBox extends JCheckBox {
 
-        private ArrayList<JCheckBox> checkBoxList;
+        ArrayList<JCheckBox> checkBoxList;
 
         public GroupCheckBox(String title, ArrayList<JCheckBox> checkBoxList) {
             super(title);
             this.checkBoxList = checkBoxList;
         }
-
-        /**
-         * @return the checkBoxList
-         */
-        public ArrayList<JCheckBox> getCheckBoxList() {
-            return checkBoxList;
-        }
     }
 
     private class AttribCheckBox extends JCheckBox {
 
-        private DataStoreProcessor.AttributeData attrib;
+        DataStoreProcessor.AttributeData attrib;
 
         public AttribCheckBox(DataStoreProcessor.AttributeData attrib) {
             super(attrib.getName());
             this.attrib = attrib;
-        }
-
-        /**
-         * @return the attrib
-         */
-        public DataStoreProcessor.AttributeData getAttrib() {
-            return attrib;
         }
     }
 
@@ -1003,7 +1053,8 @@ public class TimeSpaceDSPanel extends JPanel {
 
     private void postProcess(DataMatrix m) {
 
-        HashMap<String, double[]> weightMap = new HashMap<String, double[]>();
+        double[] weights = null;
+        double sum = 0;
         double[][] data = m.getArray();
 
         ArrayList<DataStoreProcessor.AttributeData> attribs = this.getTsproc().getDataStoreProcessor().getAttributes();
@@ -1014,17 +1065,15 @@ public class TimeSpaceDSPanel extends JPanel {
                 continue;
             }
 
-            if (attrib.getAggregationWeight() != null) {
+            if (attrib.getAggregationWeight() != attrib.AGGREGATION_NONE) {
 
                 System.out.println("weighting " + attrib.getName());
-                double[] weights = weightMap.get(attrib.getAggregationWeight());
                 if (weights == null) {
 
                     // calculate normalized weights
                     weights = new double[data.length];
 
                     // calc sum
-                    double sum = 0;
                     for (int i = 0; i < data.length; i++) {
                         System.out.println(i + " " + j);
                         sum += data[i][j];
@@ -1034,8 +1083,6 @@ public class TimeSpaceDSPanel extends JPanel {
                     for (int i = 0; i < data.length; i++) {
                         weights[i] = data[i][j] / sum;
                     }
-
-                    weightMap.put(attrib.getAggregationWeight(), weights);
                 }
 
                 for (int i = 0; i < data.length; i++) {

@@ -30,6 +30,11 @@ import jams.workspace.*;
  */
 public interface InputDataStore extends DataStore {
 
+    public static final String TYPE_TABLEDATASTORE = "tabledatastore";
+    public static final String TYPE_TSDATASTORE = "tsdatastore";
+    public static final String TYPE_J2KTSDATASTORE = "j2ktsdatastore";
+    public static final String TYPE_SHAPEFILEDATASTORE = "shapefiledatastore";
+
     public String getDescription();
 
     public boolean hasNext();
