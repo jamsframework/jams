@@ -679,46 +679,28 @@ public class DataStoreProcessor {
             this.selected = SELECTION_DEFAULT;
         }
 
-        /**
-         * @return the type
-         */
         public String getType() {
             return type;
         }
 
-        /**
-         * @return the name
-         */
         public String getName() {
             return name;
         }
 
-        /**
-         * @return the active
-         */
         public boolean isSelected() {
             return selected;
         }
 
-        /**
-         * @param active the active to set
-         */
-        public void setSelected(boolean active) {
+        public void setSelected(boolean selected) {
             synchronized (DataStoreProcessor.this) {
-                this.selected = active;
+                this.selected = selected;
             }
         }
 
-        /**
-         * @return the aggregationWeight
-         */
         public int getAggregationWeight() {
             return aggregationWeight;
         }
 
-        /**
-         * @param aggregationWeight the aggregationWeight to set
-         */
         public void setAggregationWeight(int aggregationWeight) {
             synchronized (DataStoreProcessor.this) {
                 this.aggregationWeight = aggregationWeight;

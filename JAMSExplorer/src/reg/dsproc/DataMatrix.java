@@ -56,6 +56,23 @@ public class DataMatrix extends Matrix {
         return result;
     }
 
+    public double[] getSumRow() {
+
+        double[] result = new double[this.getColumnDimension()];
+        int colCount = this.getColumnDimension();
+        int rowCount = this.getRowDimension();
+        double[][] data = this.getArray();
+
+        for (int i = 0; i < colCount; i++) {
+            result[i] = 0;
+            for (int j = 0; j < rowCount; j++) {
+                result[i] += data[j][i];
+            }
+        }
+
+        return result;
+    }
+
     public int getIDPosition(String id) {
         int i = 0;
         boolean found = false;

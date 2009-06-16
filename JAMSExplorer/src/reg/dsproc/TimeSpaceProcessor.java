@@ -45,7 +45,7 @@ import reg.dsproc.DataStoreProcessor.AttributeData;
  */
 public class TimeSpaceProcessor {
 
-    private static final String TABLE_NAME_MONTHAVG = "MONTHAVG",  TABLE_NAME_YEARAVG = "YEARAVG",  TABLE_NAME_SPATAVG = "SPATAVG";
+    private static final String TABLE_NAME_MONTHAVG = "MONTHAVG",  TABLE_NAME_YEARAVG = "YEARAVG",  TABLE_NAME_SPATSUM = "SPATSUM";
 
     private DataStoreProcessor dsdb;
 
@@ -317,7 +317,7 @@ public class TimeSpaceProcessor {
     }
 
     /**
-     * Gets the mean values of the selected attributes for an array of
+     * Gets the sum of the selected attributes for an array of
      * spatial entities at all time steps
      * @param ids The id array of the spatial enties
      * @return A DataMatrix object containing one row per timestep with the
@@ -325,7 +325,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getSpatialMean(long[] ids) throws SQLException, IOException {
+    public synchronized DataMatrix getSpatialSum(long[] ids) throws SQLException, IOException {
 
         String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
         int attribCount = attributeIDs.length;
@@ -348,7 +348,7 @@ public class TimeSpaceProcessor {
                 }
                 a.add(m.getRow(idPosition[i]));
             }
-            data.add(getMean(a));
+            data.add(getSum(a));
             timeStamps.add(rs.getTimestamp(timeID).toString());
         } else {
             return null;
@@ -369,7 +369,7 @@ public class TimeSpaceProcessor {
             for (int i = 0; i < ids.length; i++) {
                 a.add(m.getRow(idPosition[i]));
             }
-            data.add(getMean(a));
+            data.add(getSum(a));
             timeStamps.add(rs.getTimestamp(timeID).toString());
 
             // update the observer
@@ -389,7 +389,7 @@ public class TimeSpaceProcessor {
         return result;
     }
 
-    private synchronized double[] getMean(ArrayList<double[]> a) {
+    private synchronized double[] getSum(ArrayList<double[]> a) {
 
         double[] result = a.get(0);
         double[] b;
@@ -399,33 +399,33 @@ public class TimeSpaceProcessor {
                 result[c] += b[c];
             }
         }
-        for (int c = 0; c < result.length; c++) {
-            result[c] /= a.size();
-        }
+//        for (int c = 0; c < result.length; c++) {
+//            result[c] /= a.size();
+//        }
 
         return result;
     }
 
     /**
-     * Gets the overall spatial average values of the selected
+     * Gets the overall spatial sum of the selected
      * attributes for all time steps
      * @return A DataMatrix object containing one row per timestep with the
      * spatial average values of selected attributes in columns
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getSpatialMean() throws SQLException, IOException {
+    public synchronized DataMatrix getSpatialSum() throws SQLException, IOException {
 
         DataMatrix result = null;
 
-        if (!isSpatMeanExisiting()) {
+        if (!isSpatSumExisiting()) {
             return result;
         }
 
         String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
         int attribCount = attributeIDs.length;
 
-        String q = "SELECT * FROM " + TABLE_NAME_SPATAVG;
+        String q = "SELECT * FROM " + TABLE_NAME_SPATSUM;
         ResultSet rs = customSelectQuery(q);
 
         ArrayList<double[]> data = new ArrayList<double[]>();
@@ -596,12 +596,12 @@ public class TimeSpaceProcessor {
         return isTableExisting(TABLE_NAME_MONTHAVG);
     }
 
-    public boolean isSpatMeanExisiting() throws SQLException {
-        return isTableExisting(TABLE_NAME_SPATAVG);
+    public boolean isSpatSumExisiting() throws SQLException {
+        return isTableExisting(TABLE_NAME_SPATSUM);
     }
 
     public synchronized void deleteCache() throws SQLException {
-        String[] tables = {TABLE_NAME_YEARAVG, TABLE_NAME_SPATAVG, TABLE_NAME_MONTHAVG};
+        String[] tables = {TABLE_NAME_YEARAVG, TABLE_NAME_SPATSUM, TABLE_NAME_MONTHAVG};
         for (String table : tables) {
             customQuery("DROP TABLE IF EXISTS " + table);
         }
@@ -796,7 +796,7 @@ public class TimeSpaceProcessor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix calcSpatialMean() throws SQLException, IOException {
+    public synchronized DataMatrix calcSpatialSum() throws SQLException, IOException {
 
         String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
         int attribCount = attributeIDs.length;
@@ -805,8 +805,8 @@ public class TimeSpaceProcessor {
         ArrayList<String> timeStamps = new ArrayList<String>();
 
         // create the db table to store the calculated spatial mean
-        customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_SPATAVG);
-        String q = "CREATE TABLE " + TABLE_NAME_SPATAVG + " (";
+        customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_SPATSUM);
+        String q = "CREATE TABLE " + TABLE_NAME_SPATSUM + " (";
         q += timeID + " " + DataStoreProcessor.TYPE_MAP.get("JAMSCalendar") + ",";
 
         for (int i = 1; i <= attribCount; i++) {
@@ -827,11 +827,11 @@ public class TimeSpaceProcessor {
         while (rs.next()) {
             position = rs.getLong("POSITION");
             DataMatrix m = dsdb.getData(position);
-            data.add(m.getAvgRow());
+            data.add(m.getSumRow());
             timeStamps.add(rs.getTimestamp(timeID).toString());
 
             if (abortOperation) {
-                customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_SPATAVG);
+                customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_SPATSUM);
                 return null;
             }
 
@@ -849,7 +849,7 @@ public class TimeSpaceProcessor {
 
         // write the calculated array to the database
         for (int i = 0; i < dataArray.length; i++) {
-            q = "INSERT INTO " + TABLE_NAME_SPATAVG + " VALUES ('" + timeStampArray[i] + "'";
+            q = "INSERT INTO " + TABLE_NAME_SPATSUM + " VALUES ('" + timeStampArray[i] + "'";
             for (int j = 0; j < dataArray[i].length; j++) {
                 q += ", " + dataArray[i][j];
             }
@@ -1030,14 +1030,14 @@ public class TimeSpaceProcessor {
                 break;
             case 3:
                 // calc/get overall spatial mean values
-                tsproc.calcSpatialMean();
-                m = tsproc.getSpatialMean();
+                tsproc.calcSpatialSum();
+                m = tsproc.getSpatialSum();
                 break;
             case 4:
                 // get spatial mean values for selected entities
                 //long[] ids = {1, 3, 5, 7, 9};
                 long[] ids = {1};
-                m = tsproc.getSpatialMean(ids);
+                m = tsproc.getSpatialSum(ids);
                 break;
             case 5:
                 // get values for a specific date
