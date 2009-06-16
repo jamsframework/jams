@@ -457,87 +457,87 @@ public class JAMSSpreadSheet extends JPanel {
 
         public void actionPerformed(ActionEvent e) {
 
-//            try {
+            try {
 
             openSTP();
 
-//            } catch (ClassCastException cce) {
-//
-//                if (timeRuns) {
-//                    table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
-//                    openCXYS(dtpFile);
-//                }
-//            }
+            } catch (ClassCastException cce) {
+
+                if (timeRuns) {
+                    table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
+                    openCXYS(dtpFile);
+                }
+            }
 
         }
     };
-//    Action joinMapAction = new AbstractAction("Auf Karte zeigen") {
-//
-//        public void actionPerformed(ActionEvent e) {
-//
-//            String selectedShape = (String) shapeSelector.getSelectedItem();
-//            if (JAMSTools.isEmptyString(selectedShape)) {
-//                System.out.println("no shape selected.");
-//                return;  // errorMessage?
-//            }
-//
-//            System.out.println("shape selected >" + selectedShape + "<");
-//            ShapeFileDataStore dataStore = (ShapeFileDataStore) regionalizer.getWorkspace().getInputDataStore(selectedShape);
-//            if (dataStore == null) {
-//                System.out.println("no datastore found.");
-//                return;
-//            }
-//
-//            URI uri = dataStore.getUri();
-//            String keyColumn = dataStore.getKeyColumn();
-//            String shapeFileName = dataStore.getFileName();
-//
-//            int[] columns = table.getSelectedColumns();
-//            if (columns.length == 0) {
-//                return;
-//            }
-//            int rowCount = table.getRowCount();
-//
-//            // create the header array
-//            String[] headers = new String[columns.length];
-//
-//            // create the data array
-//            double[][] data = new double[columns.length][rowCount];
-//
-//            // fill header and data arrays
-//            for (int i = 0; i < columns.length; i++) {
-//                headers[i] = table.getColumnName(columns[i]);
-//
-//                for (int j = 0; j < rowCount; j++) {
-//                    data[i][j] = (Double) table.getValueAt(j, columns[i]);
-//                }
-//            }
-//
-//            // create and fill the id array
-//            double[] ids = new double[rowCount];
-//            for (int j = 0; j < rowCount; j++) {
-//                ids[j] = (Double) table.getValueAt(j, 0);
-//            }
-//
-//            // create and fill the DataTransfer object
-//            DataTransfer dataTransfer = new DataTransfer();
-//            dataTransfer.setNames(headers);
-//            dataTransfer.setIds(ids);
-//            dataTransfer.setData(data);
-//            dataTransfer.setParentName(shapeFileName);
-//            dataTransfer.setParentURI(uri);
-//            dataTransfer.setTargetKeyName(keyColumn);
-//
-//            // get the Geowind viewer and pass the DataTransfer object
-//            Viewer viewer = Viewer.getViewer();
-//
-//            try {
-//                viewer.addData(dataTransfer);
-//            } catch (Exception ex) {
-//                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-//    };
+    Action joinMapAction = new AbstractAction("Auf Karte zeigen") {
+
+        public void actionPerformed(ActionEvent e) {
+
+            String selectedShape = (String) shapeSelector.getSelectedItem();
+            if (JAMSTools.isEmptyString(selectedShape)) {
+                System.out.println("no shape selected.");
+                return;  // errorMessage?
+            }
+
+            System.out.println("shape selected >" + selectedShape + "<");
+            ShapeFileDataStore dataStore = (ShapeFileDataStore) regionalizer.getWorkspace().getInputDataStore(selectedShape);
+            if (dataStore == null) {
+                System.out.println("no datastore found.");
+                return;
+            }
+
+            URI uri = dataStore.getUri();
+            String keyColumn = dataStore.getKeyColumn();
+            String shapeFileName = dataStore.getFileName();
+
+            int[] columns = table.getSelectedColumns();
+            if (columns.length == 0) {
+                return;
+            }
+            int rowCount = table.getRowCount();
+
+            // create the header array
+            String[] headers = new String[columns.length];
+
+            // create the data array
+            double[][] data = new double[columns.length][rowCount];
+
+            // fill header and data arrays
+            for (int i = 0; i < columns.length; i++) {
+                headers[i] = table.getColumnName(columns[i]);
+
+                for (int j = 0; j < rowCount; j++) {
+                    data[i][j] = (Double) table.getValueAt(j, columns[i]);
+                }
+            }
+
+            // create and fill the id array
+            double[] ids = new double[rowCount];
+            for (int j = 0; j < rowCount; j++) {
+                ids[j] = (Double) table.getValueAt(j, 0);
+            }
+
+            // create and fill the DataTransfer object
+            DataTransfer dataTransfer = new DataTransfer();
+            dataTransfer.setNames(headers);
+            dataTransfer.setIds(ids);
+            dataTransfer.setData(data);
+            dataTransfer.setParentName(shapeFileName);
+            dataTransfer.setParentURI(uri);
+            dataTransfer.setTargetKeyName(keyColumn);
+
+            // get the Geowind viewer and pass the DataTransfer object
+            Viewer viewer = Viewer.getViewer();
+
+            try {
+                viewer.addData(dataTransfer);
+            } catch (Exception ex) {
+                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    };
 
     /*************** Math *******************************/
     private double calcsum() {
@@ -569,30 +569,14 @@ public class JAMSSpreadSheet extends JPanel {
     }
 
     private double calcmean() {
-        double sum = 0;
+
+        double mean = 0;
+        double sum = calcsum();
 
         int[] rows = table.getSelectedRows();
         int ix = rows.length;
         int[] columns = table.getSelectedColumns();
         int kx = columns.length;
-
-
-        //sum= (String) table.getValueAt(rows[0], columns[0]);
-
-        for (int k = 0; k < kx; k++) {
-
-            for (int i = 0; i < ix; i++) {
-                //int val=(Integer) table.getValueAt(rows[i], columns[k]);
-                if (table.getValueAt(rows[i], columns[k]).getClass() != java.lang.String.class) {
-                    sum += (Double) table.getValueAt(rows[i], columns[k]);
-                } else {
-                    sum += 0;
-                }
-            }
-        }
-
-
-        double mean = 0;
 
         if (ix == 1) {
             mean = (double) sum / (double) (kx);
@@ -605,7 +589,7 @@ public class JAMSSpreadSheet extends JPanel {
             mean = (double) sum / (double) (kx * ix);
         }
 
-        return sum;
+        return mean;
     }
 
     public String getPanelName() {
@@ -683,37 +667,26 @@ public class JAMSSpreadSheet extends JPanel {
         LHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 10, 1, 1, 0, 0);
 
-//        if (JAMSExplorer.GEOWIND_ENABLE && this.geoWindEnable) {
-//
-//            // populate shape-combobox
-//            String defaultShapeName = null;
-//            
-//            String[] shapeStoreIDs = this.regionalizer.getWorkspace().
-//                    getDataStoreIDs(InputDataStore.TYPE_SHAPEFILEDATASTORE);
-//            
-//            //String[] shapeNames = this.regionalizer.getWorkspace().getInputShapeNames();
-////            String[] shapeNames = new String[shapeStoreIDs.length];
-////            int i = 0;
-////            for (String shapeStoreID : shapeStoreIDs) {
-////                ShapeFileDataStore shapeDS = (ShapeFileDataStore) this.regionalizer.getWorkspace().getInputDataStore(shapeStoreID);
-////                shapeNames[i++] = shapeDS.getID();
-////            }
-////            
-//            // is this the same?
-//            String[] shapeNames = shapeStoreIDs;
-//            
-//            if (shapeNames != null && shapeNames.length > 0) {
-//                defaultShapeName = shapeNames[0];
-//            }
-//            DefaultComboBoxModel shapeSelectorModel = new DefaultComboBoxModel(shapeNames);
-//            shapeSelectorModel.setSelectedItem(defaultShapeName);
-//            shapeSelector.setModel(shapeSelectorModel);
-//
-//            JButton joinMapButton = new JButton(joinMapAction);
-//            LHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 11, 1, 1, 0, 0);
-//            LHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 12, 1, 1, 0, 0);
-//
-//        }
+        if (JAMSExplorer.GEOWIND_ENABLE && this.geoWindEnable) {
+
+            // populate shape-combobox
+            String defaultShapeName = null;
+            
+            String[] shapeStoreIDs = this.regionalizer.getWorkspace().
+                    getDataStoreIDs(InputDataStore.TYPE_SHAPEFILEDATASTORE);
+            
+            String[] shapeNames = shapeStoreIDs;
+            
+            if (shapeNames != null && shapeNames.length > 0) {
+                defaultShapeName = shapeNames[0];
+            }
+            DefaultComboBoxModel shapeSelectorModel = new DefaultComboBoxModel(shapeNames);
+            shapeSelectorModel.setSelectedItem(defaultShapeName);
+            shapeSelector.setModel(shapeSelectorModel);
+            JButton joinMapButton = new JButton(joinMapAction);
+            LHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 11, 1, 1, 0, 0);
+            LHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 12, 1, 1, 0, 0);
+        }
 
 //              controlpanel.add(openbutton);
 //              controlpanel.add(savebutton);
