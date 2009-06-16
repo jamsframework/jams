@@ -169,6 +169,7 @@ public class JAMSSpreadSheet extends JPanel {
             String[] headers = getSelectedColumnNames();
             double[][] data = getSelectedData();
             StatisticDialogPanel statPanel = new StatisticDialogPanel(parent_frame, true, headers, data);
+            statPanel.setVisible(true);
             statPanel.getReturnStatus();
 
         }
