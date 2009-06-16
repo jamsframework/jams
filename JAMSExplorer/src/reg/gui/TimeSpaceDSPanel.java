@@ -381,7 +381,7 @@ public class TimeSpaceDSPanel extends JPanel {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        DataStoreProcessor dsdb = new DataStoreProcessor(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat"));
+        DataStoreProcessor dsdb = new DataStoreProcessor(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/TestData.dat"));
         //dsdb.removeDB();
         dsdb.addImportProgressObserver(new Observer() {
 
@@ -1065,7 +1065,7 @@ public class TimeSpaceDSPanel extends JPanel {
                 continue;
             }
 
-            if (attrib.getAggregationWeight() != attrib.AGGREGATION_NONE) {
+            if (attrib.getAggregationWeight() != DataStoreProcessor.AttributeData.AGGREGATION_NONE) {
 
                 System.out.println("weighting " + attrib.getName());
                 if (weights == null) {
@@ -1073,15 +1073,25 @@ public class TimeSpaceDSPanel extends JPanel {
                     // calculate normalized weights
                     weights = new double[data.length];
 
+                    String weightAttribName = attribCombo.getSelectedItem().toString();
+                    int attribIndex = 0;
+                    for (DataStoreProcessor.AttributeData weightAttrib : attribs) {
+                        if (weightAttrib.getName().equals(weightAttribName)) {
+                            break;
+                        }
+                        attribIndex++;
+                    }
+
+
                     // calc sum
                     for (int i = 0; i < data.length; i++) {
-                        System.out.println(i + " " + j);
-                        sum += data[i][j];
+                        System.out.println(i + " " + attribIndex);
+                        sum += data[i][attribIndex];
                     }
 
                     // calc weights
                     for (int i = 0; i < data.length; i++) {
-                        weights[i] = data[i][j] / sum;
+                        weights[i] = data[i][attribIndex] / sum;
                     }
                 }
 
@@ -1090,9 +1100,7 @@ public class TimeSpaceDSPanel extends JPanel {
                     System.out.println(data[i][j]);
                 }
             }
-
             j++;
-
         }
     }
 }
