@@ -38,6 +38,7 @@ import java.util.logging.Logger;
 import reg.DataTransfer;
 import reg.JAMSExplorer;
 import reg.dsproc.DataMatrix;
+import reg.gui.StatisticDialogPanel;
 import reg.viewer.Viewer;
 
 //import jams.components.*;
@@ -66,6 +67,7 @@ public class JAMSSpreadSheet extends JPanel {
     /* Buttons */
     private String name = "default";
     private JButton savebutton = new JButton("Save Data");
+    private JButton statButton = new JButton("Statistik");
     private JButton plotButton = new JButton("Time Plot");
     private JButton dataplotButton = new JButton("Data Plot");
     private JButton closeButton = new JButton("Close Tab");
@@ -156,6 +158,19 @@ public class JAMSSpreadSheet extends JPanel {
 
         public void actionPerformed(ActionEvent e) {
 //            save();
+        }
+    };
+
+    ActionListener statisticAction = new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+
+            System.out.println("Statistic für ");
+            String[] headers = getSelectedColumnNames();
+            double[][] data = getSelectedData();
+            StatisticDialogPanel statPanel = new StatisticDialogPanel(parent_frame, true, headers, data);
+            statPanel.getReturnStatus();
+
         }
     };
 
@@ -496,28 +511,9 @@ public class JAMSSpreadSheet extends JPanel {
             if (columns.length == 0) {
                 return;
             }
-            int rowCount = table.getRowCount();
-
-            // create the header array
-            String[] headers = new String[columns.length];
-
-            // create the data array
-            double[][] data = new double[columns.length][rowCount];
-
-            // fill header and data arrays
-            for (int i = 0; i < columns.length; i++) {
-                headers[i] = table.getColumnName(columns[i]);
-
-                for (int j = 0; j < rowCount; j++) {
-                    data[i][j] = (Double) table.getValueAt(j, columns[i]);
-                }
-            }
-
-            // create and fill the id array
-            double[] ids = new double[rowCount];
-            for (int j = 0; j < rowCount; j++) {
-                ids[j] = (Double) table.getValueAt(j, 0);
-            }
+            String[] headers = getSelectedColumnNames();
+            double[][] data = getSelectedData();
+            double[] ids = getIdValues();
 
             // create and fill the DataTransfer object
             DataTransfer dataTransfer = new DataTransfer();
@@ -538,6 +534,62 @@ public class JAMSSpreadSheet extends JPanel {
             }
         }
     };
+
+    /**
+     * get id values of table
+     * (id-column = 1st column)
+     *
+     **/
+    private double[] getIdValues() {
+
+        int rowCount = table.getRowCount();
+        double[] ids = new double[rowCount];
+        for (int j = 0; j < rowCount; j++) {
+            ids[j] = (Double) table.getValueAt(j, 0);
+        }
+        return ids;
+
+    }
+
+    /**
+     * get selected data of table
+     * 
+     **/
+    private double[][] getSelectedData() {
+
+        int[] columns = table.getSelectedColumns();
+        if (columns.length == 0) {
+            return null;
+        }
+
+        int rowCount = table.getRowCount();
+        double[][] data = new double[columns.length][rowCount];
+
+        // fill data arrays
+        for (int i = 0; i < columns.length; i++) {
+            for (int j = 0; j < rowCount; j++) {
+                data[i][j] = (Double) table.getValueAt(j, columns[i]);
+            }
+        }
+        return data;
+    }
+
+    /**
+     * get all selected column names
+     *
+     **/
+    private String[] getSelectedColumnNames() {
+        int[] columns = table.getSelectedColumns();
+        if (columns.length == 0) {
+            return null;
+        }
+
+        String[] headers = new String[columns.length];
+        for (int i = 0; i < columns.length; i++) {
+            headers[i] = table.getColumnName(columns[i]);
+        }
+        return headers;
+    }
 
     /*************** Math *******************************/
     private double calcsum() {
@@ -666,6 +718,7 @@ public class JAMSSpreadSheet extends JPanel {
         LHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 8, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 10, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, statButton, 0, 11, 1, 1, 0, 0);
 
         if (JAMSExplorer.GEOWIND_ENABLE && this.geoWindEnable) {
 
@@ -684,8 +737,8 @@ public class JAMSSpreadSheet extends JPanel {
             shapeSelectorModel.setSelectedItem(defaultShapeName);
             shapeSelector.setModel(shapeSelectorModel);
             JButton joinMapButton = new JButton(joinMapAction);
-            LHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 11, 1, 1, 0, 0);
-            LHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 12, 1, 1, 0, 0);
+            LHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 13, 1, 1, 0, 0);
+            LHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 14, 1, 1, 0, 0);
         }
 
 //              controlpanel.add(openbutton);
@@ -694,6 +747,7 @@ public class JAMSSpreadSheet extends JPanel {
 //              controlpanel.add(plotButton);
 //              controlpanel.add(dataplotButton);
 
+        statButton.addActionListener(statisticAction);
         savebutton.addActionListener(saveAction);
         plotButton.addActionListener(plotAction);
         dataplotButton.addActionListener(dataplotAction);
