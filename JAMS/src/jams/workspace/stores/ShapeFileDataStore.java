@@ -64,10 +64,15 @@ public class ShapeFileDataStore extends GeoDataStore {
 
         Element sourceElement = (Element) doc.getElementsByTagName("source").item(0);
         if (sourceElement != null) {
-            String uriString = sourceElement.getAttribute("value");
+            String uriString = sourceElement.getAttribute("uri");
             if (!JAMSTools.isEmptyString(uriString)) {
                 this.uri = new URI(uriString);
                 this.shapeFile = new File(this.uri);
+            } else {
+                String filename = sourceElement.getAttribute("filename");
+                if (!JAMSTools.isEmptyString(filename)) {
+                    this.shapeFile = new File(filename);
+                }
             }
             this.keyColumn = sourceElement.getAttribute("key");
         } else {
