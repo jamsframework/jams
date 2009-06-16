@@ -59,11 +59,13 @@ public class JAMSSpreadSheet extends JPanel {
     GridBagLayout panellayout = new GridBagLayout();
     GridBagConstraints grid = new GridBagConstraints();
     private JScrollPane scrollpane = new JScrollPane();
+    
+    private boolean output_sheet = false;
 
     //private JScrollPane scrollpane2;
     /* Buttons */
     private String name = "default";
-    private JButton savebutton = new JButton("Save");
+    private JButton savebutton = new JButton("Save Data");
     private JButton plotButton = new JButton("Time Plot");
     private JButton dataplotButton = new JButton("Data Plot");
     private JButton closeButton = new JButton("Close Tab");
@@ -153,34 +155,37 @@ public class JAMSSpreadSheet extends JPanel {
     ActionListener saveAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
-            save();
+//            save();
         }
     };
 
-    public void save() {
+    public void save(String filename) {
         /* Only for Time Series */
         int colcount = tmodel.getColumnCount();
         int rowcount = tmodel.getRowCount();
         String value;
         String[] columnNames = tmodel.getCoulumnNameArray();
 
-        JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
-        int returnVal = chooser.showSaveDialog(panel);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+//        JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
+        
+//        int returnVal = chooser.showSaveDialog(panel);
+//        if (returnVal == JFileChooser.APPROVE_OPTION) {
 
             try {
-
-                File file = chooser.getSelectedFile();
+                
+                File file = new File(regionalizer.getWorkspace().getDirectory().toString()+"/output/"+filename);
+                
+                //File file = chooser.getSelectedFile();
                 //File file = chooser.getSelectedFile();
                 FileWriter filewriter = new FileWriter(file);
 
-
+                filewriter.write("#headers"+"\r\n");
                 for (int j = 0; j < colcount; j++) {
                     filewriter.write(columnNames[j], 0, columnNames[j].length());
                     filewriter.write("\t");
                 }
 
-                filewriter.write("\r\n" + "#");
+                filewriter.write("\r\n" + "#data");
                 filewriter.write("\r\n");
 
                 for (int k = 0; k < rowcount; k++) {
@@ -192,18 +197,20 @@ public class JAMSSpreadSheet extends JPanel {
                     }
                     filewriter.write("\r\n");
                 }
-                //filewriter.write("#");
+                filewriter.write("#end");
                 filewriter.close();
 
             } catch (IOException ex) {
             }
-        }
+//        }
     }
 
     public JFileChooser getTemplateChooser() {
+        
         if (templateChooser == null) {
             templateChooser = new JFileChooser();
             templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
+            templateChooser.setCurrentDirectory(regionalizer.getWorkspace().getDirectory());
         }
         templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
         return templateChooser;
@@ -343,7 +350,15 @@ public class JAMSSpreadSheet extends JPanel {
 
         updateGUI();
     }
-
+    
+    public void setAsOutputSheet(){
+        this.output_sheet = true;
+    }
+    
+    public boolean isOutpusSheet(){
+        return this.output_sheet;
+    }
+    
     private void openCTS() {
 
         JTSConfigurator jts;
@@ -456,73 +471,73 @@ public class JAMSSpreadSheet extends JPanel {
 
         }
     };
-    Action joinMapAction = new AbstractAction("Auf Karte zeigen") {
-
-        public void actionPerformed(ActionEvent e) {
-
-            String selectedShape = (String) shapeSelector.getSelectedItem();
-            if (JAMSTools.isEmptyString(selectedShape)) {
-                System.out.println("no shape selected.");
-                return;  // errorMessage?
-            }
-
-            System.out.println("shape selected >" + selectedShape + "<");
-            ShapeFileDataStore dataStore = (ShapeFileDataStore) regionalizer.getWorkspace().getInputDataStore(selectedShape);
-            if (dataStore == null) {
-                System.out.println("no datastore found.");
-                return;
-            }
-
-            URI uri = dataStore.getUri();
-            String keyColumn = dataStore.getKeyColumn();
-            String shapeFileName = dataStore.getFileName();
-
-            int[] columns = table.getSelectedColumns();
-            if (columns.length == 0) {
-                return;
-            }
-            int rowCount = table.getRowCount();
-
-            // create the header array
-            String[] headers = new String[columns.length];
-
-            // create the data array
-            double[][] data = new double[columns.length][rowCount];
-
-            // fill header and data arrays
-            for (int i = 0; i < columns.length; i++) {
-                headers[i] = table.getColumnName(columns[i]);
-
-                for (int j = 0; j < rowCount; j++) {
-                    data[i][j] = (Double) table.getValueAt(j, columns[i]);
-                }
-            }
-
-            // create and fill the id array
-            double[] ids = new double[rowCount];
-            for (int j = 0; j < rowCount; j++) {
-                ids[j] = (Double) table.getValueAt(j, 0);
-            }
-
-            // create and fill the DataTransfer object
-            DataTransfer dataTransfer = new DataTransfer();
-            dataTransfer.setNames(headers);
-            dataTransfer.setIds(ids);
-            dataTransfer.setData(data);
-            dataTransfer.setParentName(shapeFileName);
-            dataTransfer.setParentURI(uri);
-            dataTransfer.setTargetKeyName(keyColumn);
-
-            // get the Geowind viewer and pass the DataTransfer object
-            Viewer viewer = Viewer.getViewer();
-
-            try {
-                viewer.addData(dataTransfer);
-            } catch (Exception ex) {
-                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    };
+//    Action joinMapAction = new AbstractAction("Auf Karte zeigen") {
+//
+//        public void actionPerformed(ActionEvent e) {
+//
+//            String selectedShape = (String) shapeSelector.getSelectedItem();
+//            if (JAMSTools.isEmptyString(selectedShape)) {
+//                System.out.println("no shape selected.");
+//                return;  // errorMessage?
+//            }
+//
+//            System.out.println("shape selected >" + selectedShape + "<");
+//            ShapeFileDataStore dataStore = (ShapeFileDataStore) regionalizer.getWorkspace().getInputDataStore(selectedShape);
+//            if (dataStore == null) {
+//                System.out.println("no datastore found.");
+//                return;
+//            }
+//
+//            URI uri = dataStore.getUri();
+//            String keyColumn = dataStore.getKeyColumn();
+//            String shapeFileName = dataStore.getFileName();
+//
+//            int[] columns = table.getSelectedColumns();
+//            if (columns.length == 0) {
+//                return;
+//            }
+//            int rowCount = table.getRowCount();
+//
+//            // create the header array
+//            String[] headers = new String[columns.length];
+//
+//            // create the data array
+//            double[][] data = new double[columns.length][rowCount];
+//
+//            // fill header and data arrays
+//            for (int i = 0; i < columns.length; i++) {
+//                headers[i] = table.getColumnName(columns[i]);
+//
+//                for (int j = 0; j < rowCount; j++) {
+//                    data[i][j] = (Double) table.getValueAt(j, columns[i]);
+//                }
+//            }
+//
+//            // create and fill the id array
+//            double[] ids = new double[rowCount];
+//            for (int j = 0; j < rowCount; j++) {
+//                ids[j] = (Double) table.getValueAt(j, 0);
+//            }
+//
+//            // create and fill the DataTransfer object
+//            DataTransfer dataTransfer = new DataTransfer();
+//            dataTransfer.setNames(headers);
+//            dataTransfer.setIds(ids);
+//            dataTransfer.setData(data);
+//            dataTransfer.setParentName(shapeFileName);
+//            dataTransfer.setParentURI(uri);
+//            dataTransfer.setTargetKeyName(keyColumn);
+//
+//            // get the Geowind viewer and pass the DataTransfer object
+//            Viewer viewer = Viewer.getViewer();
+//
+//            try {
+//                viewer.addData(dataTransfer);
+//            } catch (Exception ex) {
+//                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+//    };
 
     /*************** Math *******************************/
     private double calcsum() {
@@ -666,38 +681,39 @@ public class JAMSSpreadSheet extends JPanel {
         LHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 7, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 8, 1, 1, 0, 0);
         LHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
+        LHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 10, 1, 1, 0, 0);
 
-        if (JAMSExplorer.GEOWIND_ENABLE && this.geoWindEnable) {
-
-            // populate shape-combobox
-            String defaultShapeName = null;
-            
-            String[] shapeStoreIDs = this.regionalizer.getWorkspace().
-                    getDataStoreIDs(InputDataStore.TYPE_SHAPEFILEDATASTORE);
-            
-            //String[] shapeNames = this.regionalizer.getWorkspace().getInputShapeNames();
-//            String[] shapeNames = new String[shapeStoreIDs.length];
-//            int i = 0;
-//            for (String shapeStoreID : shapeStoreIDs) {
-//                ShapeFileDataStore shapeDS = (ShapeFileDataStore) this.regionalizer.getWorkspace().getInputDataStore(shapeStoreID);
-//                shapeNames[i++] = shapeDS.getID();
-//            }
+//        if (JAMSExplorer.GEOWIND_ENABLE && this.geoWindEnable) {
+//
+//            // populate shape-combobox
+//            String defaultShapeName = null;
 //            
-            // is this the same?
-            String[] shapeNames = shapeStoreIDs;
-            
-            if (shapeNames != null && shapeNames.length > 0) {
-                defaultShapeName = shapeNames[0];
-            }
-            DefaultComboBoxModel shapeSelectorModel = new DefaultComboBoxModel(shapeNames);
-            shapeSelectorModel.setSelectedItem(defaultShapeName);
-            shapeSelector.setModel(shapeSelectorModel);
-
-            JButton joinMapButton = new JButton(joinMapAction);
-            LHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 11, 1, 1, 0, 0);
-            LHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 12, 1, 1, 0, 0);
-
-        }
+//            String[] shapeStoreIDs = this.regionalizer.getWorkspace().
+//                    getDataStoreIDs(InputDataStore.TYPE_SHAPEFILEDATASTORE);
+//            
+//            //String[] shapeNames = this.regionalizer.getWorkspace().getInputShapeNames();
+////            String[] shapeNames = new String[shapeStoreIDs.length];
+////            int i = 0;
+////            for (String shapeStoreID : shapeStoreIDs) {
+////                ShapeFileDataStore shapeDS = (ShapeFileDataStore) this.regionalizer.getWorkspace().getInputDataStore(shapeStoreID);
+////                shapeNames[i++] = shapeDS.getID();
+////            }
+////            
+//            // is this the same?
+//            String[] shapeNames = shapeStoreIDs;
+//            
+//            if (shapeNames != null && shapeNames.length > 0) {
+//                defaultShapeName = shapeNames[0];
+//            }
+//            DefaultComboBoxModel shapeSelectorModel = new DefaultComboBoxModel(shapeNames);
+//            shapeSelectorModel.setSelectedItem(defaultShapeName);
+//            shapeSelector.setModel(shapeSelectorModel);
+//
+//            JButton joinMapButton = new JButton(joinMapAction);
+//            LHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 11, 1, 1, 0, 0);
+//            LHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 12, 1, 1, 0, 0);
+//
+//        }
 
 //              controlpanel.add(openbutton);
 //              controlpanel.add(savebutton);

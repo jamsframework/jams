@@ -21,9 +21,10 @@ import java.util.Vector;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -268,10 +269,13 @@ public class STPConfigurator extends JFrame{
                 
             }else{ //case for output spreadsheet
                 templateFiles[i] = new File(workspace.getDirectory().toString()+"/output", datasetFileID);
-                System.out.println("InputDataDir: "+workspace.getInputDirectory());
-                System.out.println("Directory: "+workspace.getDirectory());
-                System.out.println("outputDataDir: "+workspace.getOutputDataDirectory());
-                System.out.println("Dump Dir: "+workspace.getLocalDumpDirectory());
+                File ttpdatfile = new File(templateFiles[i].getPath()+".dat");
+                System.out.println("ttpdatFile:"+ttpdatfile.getPath());
+//                System.out.println("InputDataDir: "+workspace.getInputDirectory());
+//                System.out.println("Directory: "+workspace.getDirectory());
+//                System.out.println("outputDataDir: "+workspace.getOutputDataDirectory());
+//                System.out.println("Dump Dir: "+workspace.getLocalDumpDirectory());
+                loadOutputTTPData(ttpdatfile);
                 loadTemplate(templateFiles[i], OUTPUT);
                 
                 jts[i] = new JAMSTimePlot();
@@ -547,8 +551,13 @@ public class STPConfigurator extends JFrame{
                 
             }else{ //case for output spreadsheet
                 templateFiles[i] = new File(workspace.getDirectory().toString()+"/output", datasetFileID);
-                System.out.println("outputDataDir: "+workspace.getDirectory());
-                this.rows = sheet.table.getRowCount();
+                File ttpdatfile = new File(templateFiles[i].getPath()+".dat");
+                System.out.println("ttpdatFile:"+ttpdatfile.getPath());
+//                System.out.println("InputDataDir: "+workspace.getInputDirectory());
+//                System.out.println("Directory: "+workspace.getDirectory());
+//                System.out.println("outputDataDir: "+workspace.getOutputDataDirectory());
+//                System.out.println("Dump Dir: "+workspace.getLocalDumpDirectory());
+                loadOutputTTPData(ttpdatfile);
                 loadTemplate(templateFiles[i], OUTPUT);
                 
                 jts[i] = new JAMSTimePlot();
@@ -667,6 +676,106 @@ public class STPConfigurator extends JFrame{
         
 
         return id;
+    }
+    
+    private void loadOutputTTPData(File file){
+        
+        arrayVector = new Vector<double[]>();
+        timeVector = new Vector<JAMSCalendar>();
+        StringTokenizer st = new StringTokenizer("\t");
+        
+        ArrayList<String> headerList = new ArrayList<String>();
+//        ArrayList<Double> rowList = new ArrayList<Double>();
+        double[] rowBuffer;
+        boolean b_headers = false;
+        boolean b_data = false;
+        boolean time_set = false;
+        boolean stop = false;
+        
+        int file_columns = 0;
+        
+        final String ST_DATA =      "#data";
+        final String ST_HEADERS =   "#headers";
+        final String ST_END =       "#end";
+        
+        try{
+            BufferedReader in = new BufferedReader(new FileReader(file));
+          
+            while(in.ready()){
+                //NEXT LINE
+                String s = in.readLine();
+                st = new StringTokenizer(s ,"\t");
+                
+                String actual_string = "";
+                Double val;
+                
+                if(b_data){
+                    int i = 0;
+                    JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+                    rowBuffer = new double[file_columns];
+                    while(st.hasMoreTokens()){
+                        actual_string = st.nextToken();
+                        if(actual_string.compareTo(ST_END) != 0){
+                            if(!time_set){
+                                try {    
+                                //JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second)
+                                    timeval.setValue(actual_string, "yyyy-MM-dd hh:mm");
+                                    
+                                } catch (ParseException pe) {
+                                    pe.printStackTrace();
+                                }
+                            timeVector.add(timeval);
+                            time_set = true;
+                            }
+                            try{
+                                val = new Double(st.nextToken());
+                                rowBuffer[i++] = val.doubleValue();
+                            }catch(Exception pe2){
+                                pe2.printStackTrace();
+                            }
+                        }else{
+                            stop = true;
+                        }
+                    }
+                    if(!stop){
+                        arrayVector.add(rowBuffer);
+                        time_set = false;
+                    }
+                    
+                }else{
+                
+                    while(st.hasMoreTokens()){
+                        //NEXT STRING
+                        String test = st.nextToken();
+                        if(test.compareTo(ST_DATA) == 0){
+                            b_data = true;
+                            b_headers = false;
+                            file_columns = headerList.size();
+                            
+                        }
+                        if(b_headers){
+                            headerList.add(test);
+                        } 
+                        if(test.compareTo(ST_HEADERS) == 0){
+                            b_headers = true;
+                        }
+
+                    }
+                }
+            }
+            headers = headerList.toArray(headers);
+            headers[0] = "";
+            columns = file_columns-1;
+            rows = arrayVector.size();
+            //in.close();
+            System.out.println("TimeVectorSize:"+timeVector.size());
+            System.out.println("ArrayVectorSize:"+arrayVector.size());
+            
+            
+        }catch(Exception eee){
+            eee.printStackTrace();
+        }
+
     }
     
     private void loadInputDSData(String datasetID){
@@ -797,11 +906,11 @@ public class STPConfigurator extends JFrame{
 
             load_prop = false;
             GraphProperties gprop;
-            if(type == INPUT){
+            //if(type == INPUT){
                 gprop = new GraphProperties(this);
-            }else{
-                gprop = new GraphProperties(sheet, this);
-            }
+            //}else{
+//                gprop = new GraphProperties(sheet, this);
+            //}
 
             if (nameTokenizer.hasMoreTokens()) {
 
@@ -947,8 +1056,8 @@ public class STPConfigurator extends JFrame{
     private void updatePropVector(int type) {
 
         for (int i = 0; i < propVector.size(); i++) {
-            if(type == INPUT) propVector.get(i).applySTPProperties(arrayVector, timeVector);
-            else propVector.get(i).applyTSProperties();
+            propVector.get(i).applySTPProperties(arrayVector, timeVector);
+//            else propVector.get(i).applyTSProperties();
             
         }
     }

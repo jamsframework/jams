@@ -1255,7 +1255,7 @@ public class JTSConfigurator extends JFrame {
 //        
 //        JScrollPane propPane = new JScrollPane(proppanel);    
 //    }
-    private void saveTemplate() {
+    private String saveTemplate() {
 
         Properties properties = new Properties();
         int no_of_props = propVector.size();
@@ -1373,18 +1373,21 @@ public class JTSConfigurator extends JFrame {
         properties.setProperty("names", names);
 
         //Save Parameter File
-
+        String filename = "";
         try {
             JFileChooser chooser = sheet.getTemplateChooser();
             int returnVal = chooser.showSaveDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = chooser.getSelectedFile();
+                filename = file.getName();
                 FileOutputStream fout = new FileOutputStream(file);
                 properties.store(fout, "");
                 fout.close();
             }
         } catch (Exception fnfex) {
         }
+        
+        return filename;
     }
 
     private void loadTemplate(File templateFile) {
@@ -1673,7 +1676,13 @@ public class JTSConfigurator extends JFrame {
     ActionListener saveTempListener = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
-            saveTemplate();
+            String fileID = saveTemplate();
+            String filename = fileID+".dat";
+            System.out.println("output_sheet="+sheet.isOutpusSheet());
+            if(sheet.isOutpusSheet()){
+                sheet.save(filename);//String ID zurückgeben
+                //daten speichern im falle eines output sheets
+            }
         }
     };
 
