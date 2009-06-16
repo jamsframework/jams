@@ -113,8 +113,7 @@ public class JAMSExplorer {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             if (GEOWIND_ENABLE) {
-                // just for test
-                // Viewer.getViewer();
+                Viewer.getViewer();
             }
         } catch (Exception evt) {
         }
@@ -123,9 +122,9 @@ public class JAMSExplorer {
         JAMSExplorer reg = new JAMSExplorer();
         try {
             String[] libs = JAMSTools.toArray(reg.getProperties().getProperty("libs", ""), ";");
-            JAMSWorkspace workspace = new JAMSWorkspace(new File("C:/jams/data/JAMS-Gehlberg"), reg.getRuntime(), true);
+            //JAMSWorkspace workspace = new JAMSWorkspace(new File("C:/jams/data/JAMS-Gehlberg"), reg.getRuntime(), true);
             //JAMSWorkspace workspace = new JAMSWorkspace(new File("F:/Eigene Dateien/Java/jamsdata/JAMS-Gehlberg"), reg.getRuntime(), true);
-            //JAMSWorkspace workspace = new JAMSWorkspace(new File("d:/jamsapplication/JAMS-Gehlberg"), reg.getRuntime(), true);
+            JAMSWorkspace workspace = new JAMSWorkspace(new File("d:/jamsapplication/JAMS-Gehlberg"), reg.getRuntime(), true);
             workspace.setLibs(libs);
 
             reg.open(workspace);
