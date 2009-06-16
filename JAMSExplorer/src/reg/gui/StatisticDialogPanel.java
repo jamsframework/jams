@@ -11,6 +11,8 @@
 
 package reg.gui;
 
+import reg.dsproc.DataStatistic;
+
 /**
  *
  * @author hbusch
@@ -109,6 +111,17 @@ public class StatisticDialogPanel extends javax.swing.JDialog {
 
     private void setupComponents() {
 
+        String statText = "";
+        String fieldName;
+        double[] colData;
+        DataStatistic dataStatistic;
+        for (int i = 0; fieldNames != null && i < fieldNames.length; i++) {
+            fieldName = fieldNames[i];
+            colData = data[i];
+            dataStatistic = new DataStatistic(fieldName, colData);
+            statText += dataStatistic.toString();
+        }
+        resultTextArea.setText(statText);
     }
 
 
