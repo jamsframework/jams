@@ -24,13 +24,13 @@ public class DataStatistic {
     double stabw;
     double spannweite;
     double da;
+    double deviation;
     double kurt;
     double skew;
     double mean;
     double median;
     double quartil1;
     double quartil3;
-    private DescriptiveStatistics stats;
 
     public DataStatistic(String name, double[] data) {
         this.name = name;
@@ -42,7 +42,7 @@ public class DataStatistic {
      * compute all statistic data
      */
     private void init() {
-        this.stats = new DescriptiveStatistics();
+        DescriptiveStatistics stats = new DescriptiveStatistics();
 
         // add the data from the array
         for (int i = 0; i < data.length; i++) {
@@ -69,6 +69,11 @@ public class DataStatistic {
             da = da + F[i];
         }
         da = da / (data.length);
+
+        skew = stats.getSkewness();
+        kurt = stats.getKurtosis();
+        deviation = stats.getStandardDeviation();
+
     }
 
     public double getDa() {
@@ -123,6 +128,11 @@ public class DataStatistic {
         return varianz;
     }
 
+    public double getDeviation() {
+        return deviation;
+    }
+
+
     /**
      * get result as hashmap
      * @return hashmap String -> double
@@ -132,9 +142,14 @@ public class DataStatistic {
         result.put("Minimum", getMin());
         result.put("Maximum", getMax());
         result.put("Mittelwert", getMean());
-        result.put("Medialwert", getMedian());
+        result.put("unteres Quartil (Q.25)", getQuartil1());
+        result.put("mittleres Quartil (Median)", getMedian());
+        result.put("oberes Quartil (Q.75)", getQuartil3());
         result.put("Spannweite", getSpannweite());
         result.put("Varianz", getVarianz());
+        result.put("Standardabweichung", getDeviation());
+        result.put("Schiefe (Skewness)", getSkew());
+        result.put("Wölbung (Kurtosis)", getKurt());
 
         return result;
     }
