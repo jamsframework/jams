@@ -1028,6 +1028,7 @@ public class TimeSpaceDSPanel extends JPanel {
     }
 
     private void loadData(DataMatrix m, boolean timeSeries) {
+                System.out.println("loading data");
 
         if (m == null) {
             return;
@@ -1105,8 +1106,6 @@ public class TimeSpaceDSPanel extends JPanel {
                         weights[i] = data[i][attribIndex];
                     }
                 }
-
-                System.out.println("sum: " + area);
 
                 for (int i = 0; i < data.length; i++) {
                     switch (attrib.getAggregationWeight()) {
