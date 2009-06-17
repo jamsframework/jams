@@ -225,7 +225,7 @@ public class RegionalizerFrame extends JFrame {
 
         this.setVisible(false);
         this.dispose();
-        //System.exit(0);
+        System.exit(0);
     }
 
     private void createListener() {
