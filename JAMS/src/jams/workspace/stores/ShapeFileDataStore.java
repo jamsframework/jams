@@ -23,6 +23,7 @@
 package jams.workspace.stores;
 
 import jams.JAMSTools;
+import jams.io.XMLIO;
 import jams.workspace.DataSet;
 import jams.workspace.JAMSWorkspace;
 import java.io.File;
@@ -31,6 +32,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  *
@@ -42,17 +44,14 @@ public class ShapeFileDataStore extends GeoDataStore {
      * the name of the shapefile
      */
     private String fileName = null;
-
     /**
      * the uri
      */
     private URI uri = null;
-
     /**
      * the key column, necessary for identifying values
      */
     private String keyColumn = null;
-
     /**
      * the shapeFile itself
      */
@@ -61,26 +60,34 @@ public class ShapeFileDataStore extends GeoDataStore {
     public ShapeFileDataStore(JAMSWorkspace ws, String id, Document doc) throws URISyntaxException {
         super(ws);
         this.id = id;
-
+        // source can have uri of file
         Element sourceElement = (Element) doc.getElementsByTagName("source").item(0);
         if (sourceElement != null) {
-            String uriString = sourceElement.getAttribute("uri");
+            String uriString = getNodeValue(sourceElement, "uri");
             if (!JAMSTools.isEmptyString(uriString)) {
                 this.uri = new URI(uriString);
                 this.shapeFile = new File(this.uri);
-            } else {
-                String filename = sourceElement.getAttribute("filename");
-                if (!JAMSTools.isEmptyString(filename)) {
-                    this.shapeFile = new File(ws.getLocalInputDirectory(), filename);
+            }
+            if (this.shapeFile == null || !this.shapeFile.exists()) {
+                String i_filename = getNodeValue(sourceElement, "filename");
+                if (!JAMSTools.isEmptyString(i_filename)) {
+                    this.shapeFile = new File(ws.getLocalInputDirectory(), i_filename);
                 }
             }
-            this.keyColumn = sourceElement.getAttribute("key");
+
         } else {
+            System.out.println("try to get file from local directory (" + id + ".shp) ..");
             this.shapeFile = new File(ws.getLocalInputDirectory(), id + ".shp");
         }
+        Element keyElement = (Element) doc.getElementsByTagName("key").item(0);
+        if (keyElement != null)
+            this.keyColumn = keyElement.getNodeValue();
+
         if (this.shapeFile != null && this.shapeFile.exists()) {
             this.uri = this.shapeFile.toURI();
             this.fileName = this.shapeFile.getName();
+        } else {
+            System.out.println("Sorry, no shape file found.");
         }
 
     // to be cont'd, reader implemented as jams.workspace.DataReader
@@ -117,5 +124,4 @@ public class ShapeFileDataStore extends GeoDataStore {
     public String getKeyColumn() {
         return keyColumn;
     }
-
 }

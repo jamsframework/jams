@@ -221,6 +221,25 @@ public abstract class StandardInputDataStore implements InputDataStore {
         return _dataIO;
     }
 
+    /**
+     * helper method to get value of a sub-node
+     * @param theElement
+     * @param theNodeName
+     * @return value or null
+     */
+    protected String getNodeValue(Element theElement, String theNodeName) {
+        String theNodeValue = null;
+        NodeList uriNodes = theElement.getElementsByTagName(theNodeName);
+        if (uriNodes != null) {
+            Element uriNode = (Element) uriNodes.item(0);
+            if (uriNode != null) {
+
+                theNodeValue = uriNode.getTextContent();
+            }
+        }
+       return theNodeValue;
+    }
+
     public String getID() {
         return id;
     }
