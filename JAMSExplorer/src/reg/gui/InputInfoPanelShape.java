@@ -25,6 +25,7 @@ package reg.gui;
 import jams.gui.LHelper;
 import jams.workspace.stores.ShapeFileDataStore;
 import jams.workspace.stores.StandardInputDataStore;
+import java.net.URI;
 import javax.swing.JLabel;
 
 /**
@@ -50,7 +51,10 @@ public class InputInfoPanelShape extends InputInfoPanelSimple {
         fields[0].setText(store.getID());
         fields[1].setText(store.getClass().getSimpleName());
         fields[2].setText(store.getFileName());
-        fields[3].setText(store.getUri().toString());
+        URI uri = store.getUri();
+        if (uri != null) {
+            fields[3].setText(uri.toString());
+        }
         fields[4].setText(store.getKeyColumn());
         textArea.setText(store.getDescription());
     }
