@@ -71,7 +71,7 @@ public class ShapeFileDataStore extends GeoDataStore {
             } else {
                 String filename = sourceElement.getAttribute("filename");
                 if (!JAMSTools.isEmptyString(filename)) {
-                    this.shapeFile = new File(filename);
+                    this.shapeFile = new File(ws.getLocalInputDirectory(), filename);
                 }
             }
             this.keyColumn = sourceElement.getAttribute("key");
