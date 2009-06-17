@@ -1035,9 +1035,9 @@ public class TimeSpaceDSPanel extends JPanel {
 
         postProcess(m, timeSeries);
 
-        m.output();
+        //m.output();
 
-        if (true) {
+        if (false) {
             return;
         }
 
