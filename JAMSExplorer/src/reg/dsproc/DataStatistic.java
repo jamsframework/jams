@@ -6,6 +6,7 @@
  */
 package reg.dsproc;
 
+import java.util.HashMap;
 import org.apache.commons.math.stat.StatUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
@@ -31,18 +32,19 @@ public class DataStatistic {
     double quartil3;
     private DescriptiveStatistics stats;
 
-    private String newLine = "\n";
-
     public DataStatistic(String name, double[] data) {
         this.name = name;
         this.data = data;
         init();
     }
 
+    /**
+     * compute all statistic data
+     */
     private void init() {
         this.stats = new DescriptiveStatistics();
 
-        // Add the data from the array
+        // add the data from the array
         for (int i = 0; i < data.length; i++) {
             stats.addValue(data[i]);
         }
@@ -61,15 +63,12 @@ public class DataStatistic {
         spannweite = max - min;
 
         da = 0;
-
         double[] F = new double[data.length];
-
         for (int i = 0; i < data.length; i++) {
             F[i] = Math.abs(data[i] - mean);
             da = da + F[i];
         }
         da = da / (data.length);
-
     }
 
     public double getDa() {
@@ -124,12 +123,33 @@ public class DataStatistic {
         return varianz;
     }
 
+    /**
+     * get result as hashmap
+     * @return hashmap String -> double
+     */
+    public HashMap<String, Double> getResult() {
+        HashMap<String, Double> result = new HashMap<String, Double>();
+        result.put("Minimum", getMin());
+        result.put("Maximum", getMax());
+        result.put("Mittelwert", getMean());
+        result.put("Medialwert", getMedian());
+        result.put("Spannweite", getSpannweite());
+        result.put("Varianz", getVarianz());
 
+        return result;
+    }
+
+    @Override
     public String toString() {
-        String retString = "Statistik von " + name + ":" + newLine;
+        String newLine = "\n";
+        String retString = "========================";
+        retString += "Statistik von " + name + ":" + newLine;
         retString += "Minimum    :" + getMin() + newLine;
         retString += "Maximum    :" + getMax() + newLine;
-        retString += "Mittel    :" + getMean() + newLine;
+        retString += "Mittel     :" + getMean() + newLine;
+        retString += "Medianwert :" + getMedian() + newLine;
+        retString += "Spannweite :" + getSpannweite() + newLine;
+        retString += "Varianz    :" + getVarianz() + newLine;
 
         return retString;
     }

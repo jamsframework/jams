@@ -11,6 +11,9 @@
 
 package reg.gui;
 
+import java.util.HashMap;
+import java.util.Set;
+import javax.swing.table.DefaultTableModel;
 import reg.dsproc.DataStatistic;
 
 /**
@@ -54,7 +57,7 @@ public class StatisticDialogPanel extends javax.swing.JDialog {
 
         okButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        resultTextArea = new javax.swing.JTextArea();
+        out_Table = new javax.swing.JTable();
 
         setTitle("Statistik");
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -70,28 +73,27 @@ public class StatisticDialogPanel extends javax.swing.JDialog {
             }
         });
 
-        resultTextArea.setColumns(20);
-        resultTextArea.setRows(5);
-        jScrollPane1.setViewportView(resultTextArea);
+        jScrollPane1.setViewportView(out_Table);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(302, Short.MAX_VALUE)
-                .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(46, 46, 46))
             .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 348, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(146, 146, 146)
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(56, 56, 56)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(okButton)
                 .addContainerGap())
@@ -111,19 +113,47 @@ public class StatisticDialogPanel extends javax.swing.JDialog {
 
     private void setupComponents() {
 
+        if (fieldNames == null)
+            return;
+        int numberOfFields = fieldNames.length;
         String statText = "";
+        Object[][] statisticResult = null;
+        HashMap<String, Double> oneResult = null;
+        String[] header = new String[numberOfFields + 1];
+        header[0] = "Kennziffer";
+
         String fieldName;
         double[] colData;
         DataStatistic dataStatistic;
-        for (int i = 0; fieldNames != null && i < fieldNames.length; i++) {
+        for (int i = 0; i < numberOfFields; i++) {
             fieldName = fieldNames[i];
             colData = data[i];
+            header[i+1] = fieldName;
             dataStatistic = new DataStatistic(fieldName, colData);
+            oneResult = dataStatistic.getResult();
+            if (statisticResult == null) {
+                statisticResult = new Object[oneResult.size()][numberOfFields + 1];
+            }
+            addToResult(oneResult, statisticResult, i + 1);
+
             statText += dataStatistic.toString();
         }
-        resultTextArea.setText(statText);
+        out_Table.setModel(
+            new DefaultTableModel(statisticResult, header)
+        );
     }
 
+    private void addToResult(HashMap<String, Double> oneResult, Object[][] statisticResult, int colNumber) {
+        Set<String> keys = oneResult.keySet();
+        Double value;
+        int i = 0;
+        for (String key : keys) {
+            value = oneResult.get(key);
+            statisticResult[i][0] = key;
+            statisticResult[i][colNumber] = value;
+            i++;
+        }
+    }
 
     private void doClose(int retStatus) {
         returnStatus = retStatus;
@@ -135,7 +165,7 @@ public class StatisticDialogPanel extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton okButton;
-    private javax.swing.JTextArea resultTextArea;
+    private javax.swing.JTable out_Table;
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
