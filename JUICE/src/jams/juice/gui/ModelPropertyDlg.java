@@ -45,7 +45,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.gui.input.FloatInput;
 import jams.gui.input.IntegerInput;
 import jams.juice.ModelProperties.ModelProperty;
@@ -88,20 +88,20 @@ public class ModelPropertyDlg extends JDialog {
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(gbl);
 
-        LHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Group:")), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Component:")), 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Variable/Attribute:")), 0, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Name:")), 0, 4, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Description:")), 0, 5, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Lower_Boundary:")), 0, 6, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Upper_Boundary:")), 0, 7, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Length:")), 0, 8, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Help_URL:")), 0, 9, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Help_Text:")), 0, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Group:")), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Component:")), 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Variable/Attribute:")), 0, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Name:")), 0, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Description:")), 0, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Lower_Boundary:")), 0, 6, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Upper_Boundary:")), 0, 7, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Length:")), 0, 8, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Help_URL:")), 0, 9, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Help_Text:")), 0, 10, 1, 1, 0, 0);
 
         groupCombo = new JComboBox();
-        LHelper.addGBComponent(contentPanel, gbl, groupCombo, 1, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, groupCombo, 1, 1, 1, 1, 0, 0);
 
         componentCombo = new JComboBox();
         componentCombo.addItemListener(new ItemListener() {
@@ -112,10 +112,10 @@ public class ModelPropertyDlg extends JDialog {
                 }
             }
         });
-        LHelper.addGBComponent(contentPanel, gbl, componentCombo, 1, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, componentCombo, 1, 2, 1, 1, 0, 0);
 
         varCombo = new JComboBox();
-        LHelper.addGBComponent(contentPanel, gbl, varCombo, 1, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, varCombo, 1, 3, 1, 1, 0, 0);
 
         nameField = new JTextField();
         nameField.setPreferredSize(TEXT_FIELD_DIM);
@@ -126,18 +126,18 @@ public class ModelPropertyDlg extends JDialog {
         lengthField = new IntegerInput();
         helpURLField = new JTextField();
 
-        LHelper.addGBComponent(contentPanel, gbl, nameField, 1, 4, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, descriptionField, 1, 5, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, lowField.getComponent(), 1, 6, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, upField.getComponent(), 1, 7, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, lengthField.getComponent(), 1, 8, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, nameField, 1, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, descriptionField, 1, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, lowField.getComponent(), 1, 6, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, upField.getComponent(), 1, 7, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, lengthField.getComponent(), 1, 8, 1, 1, 0, 0);
 
-        LHelper.addGBComponent(contentPanel, gbl, helpURLField, 1, 9, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, helpURLField, 1, 9, 2, 1, 0, 0);
 
         helpTextField = new JTextArea();
         JScrollPane textScroll = new JScrollPane(helpTextField);
         textScroll.setPreferredSize(TEXT_AREA_DIM);
-        LHelper.addGBComponent(contentPanel, gbl, textScroll, 1, 10, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, textScroll, 1, 10, 2, 1, 0, 0);
 
         JButton okButton = new JButton(JUICE.resources.getString("OK"));
         ActionListener okListener = new ActionListener() {
@@ -172,6 +172,7 @@ public class ModelPropertyDlg extends JDialog {
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
         pack();
+        setResizable(false);
     }
 
     private void updateComponentVars(Object item) {

@@ -37,7 +37,7 @@ public class FileListInput extends ListInput {
 
     public FileListInput() {
         super();
-        jfc = LHelper.getJFileChooser();
+        jfc = GUIHelper.getJFileChooser();
         jfc.setFileFilter(JAMSFileFilter.getJarFilter());
         jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
     }

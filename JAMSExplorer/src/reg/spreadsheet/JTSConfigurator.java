@@ -35,7 +35,7 @@ import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 
 import jams.io.JAMSFileFilter;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.gui.WorkerDlg;
 
 /**
@@ -284,9 +284,9 @@ public class JTSConfigurator extends JFrame {
         savePanel = new JPanel();
         GridBagLayout sgbl = new GridBagLayout();
         savePanel.setLayout(sgbl);
-        LHelper.addGBComponent(savePanel, sgbl, saveButton, 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(savePanel, sgbl, saveTempButton, 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(savePanel, sgbl, loadTempButton, 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(savePanel, sgbl, saveButton, 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(savePanel, sgbl, saveTempButton, 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(savePanel, sgbl, loadTempButton, 0, 2, 1, 1, 0, 0);
 
         saveButton.addActionListener(saveImageAction);
         saveTempButton.addActionListener(saveTempListener);

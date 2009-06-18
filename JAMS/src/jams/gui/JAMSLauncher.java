@@ -148,7 +148,7 @@ public class JAMSLauncher extends JFrame {
                         new Observer() {
 
                             public void update(Observable obs, Object obj) {
-//                        LHelper.showErrorDlg(JAMSLauncher.this, "An error has occurred! Please check the error log for further information!", "JAMS Error");
+//                        GUIHelper.showErrorDlg(JAMSLauncher.this, "An error has occurred! Please check the error log for further information!", "JAMS Error");
                                 processErrorLog(obj.toString());
                             }
                         });
@@ -266,9 +266,9 @@ public class JAMSLauncher extends JFrame {
                 }
 
                 if (ic.getErrorCode() == InputComponent.INPUT_OUT_OF_RANGE) {
-                    LHelper.showErrorDlg(this, JAMS.resources.getString("Selected_value_out_of_range!") + info, JAMS.resources.getString("Range_error"));
+                    GUIHelper.showErrorDlg(this, JAMS.resources.getString("Selected_value_out_of_range!") + info, JAMS.resources.getString("Range_error"));
                 } else {
-                    LHelper.showErrorDlg(this, JAMS.resources.getString("Invalid_value_found!") + info, JAMS.resources.getString("Format_error"));
+                    GUIHelper.showErrorDlg(this, JAMS.resources.getString("Invalid_value_found!") + info, JAMS.resources.getString("Format_error"));
                 }
 
                 ic.setMarked(false);
@@ -332,7 +332,7 @@ public class JAMSLauncher extends JFrame {
 
                     // add the subgroup panel
                     row++;
-                    LHelper.addGBComponent(contentPanel, gbl, subgroupPanel,
+                    GUIHelper.addGBComponent(contentPanel, gbl, subgroupPanel,
                             0, row, 3, 1,
                             6, 2, 6, 2,
                             1, 1);
@@ -342,7 +342,7 @@ public class JAMSLauncher extends JFrame {
                         JPanel helpPanel = new JPanel();
                         HelpButton helpButton = createHelpButton(helpComponent);
                         helpPanel.add(helpButton);
-                        LHelper.addGBComponent(contentPanel, gbl, helpPanel,
+                        GUIHelper.addGBComponent(contentPanel, gbl, helpPanel,
                                 4, row, 1, 1,
                                 1, 1, 1, 1,
                                 1, 1);
@@ -412,14 +412,14 @@ public class JAMSLauncher extends JFrame {
 
             // case 3: attribute does not exist, property removed
             property.getParentNode().removeChild(property);
-            LHelper.showInfoDlg(this, JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist_in_component_") + componentName + JAMS.resources.getString("!_Removing_visual_editor!"), JAMS.resources.getString("Info"));
+            GUIHelper.showInfoDlg(this, JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist_in_component_") + componentName + JAMS.resources.getString("!_Removing_visual_editor!"), JAMS.resources.getString("Info"));
             return;
         }
 
         // create a label with the property's name and some space in front of it
         JLabel nameLabel = new JLabel(property.getAttribute("name"));
         nameLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-        LHelper.addGBComponent(contentPanel, gbl, nameLabel, 0, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, nameLabel, 0, row, 1, 1, 0, 0);
 
         InputComponent ic;
         try {
@@ -438,7 +438,7 @@ public class JAMSLauncher extends JFrame {
             if (!typeName.startsWith(prefix)) {
                 typeName = prefix + typeName;
             }
-            ic = LHelper.createInputComponent(Class.forName(typeName));
+            ic = GUIHelper.createInputComponent(Class.forName(typeName));
 
             StringTokenizer tok = new StringTokenizer(property.getAttribute("range"), ";");
             if (tok.countTokens() == 2) {
@@ -457,7 +457,7 @@ public class JAMSLauncher extends JFrame {
             getInputMap().put(ic, targetElement);
             getGroupMap().put(ic, scrollPane);
 
-            LHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
+            GUIHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -466,7 +466,7 @@ public class JAMSLauncher extends JFrame {
         HelpComponent helpComponent = new HelpComponent(property);
         if (!helpComponent.isEmpty()) {
             HelpButton helpButton = createHelpButton(helpComponent);
-            LHelper.addGBComponent(contentPanel, gbl, helpButton,
+            GUIHelper.addGBComponent(contentPanel, gbl, helpButton,
                     3, row, 1, 1,
                     1, 1, 1, 1,
                     1, 1);

@@ -23,7 +23,7 @@
 package jams.juice.gui;
 
 import jams.data.JAMSString;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.gui.input.InputComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
@@ -97,7 +97,7 @@ public class SearchDlg extends JDialog {
         caseSensitive = new JCheckBox(JUICE.resources.getString("caseSensitiveSearch"), false);
         wholeString = new JCheckBox(JUICE.resources.getString("wholeStringSearch"), false);
 
-        searchText = LHelper.createInputComponent(JAMSString.class);
+        searchText = GUIHelper.createInputComponent(JAMSString.class);
         searchText.setLength(TEXTFIELD_WIDTH);
 
         repo = new JRadioButton(JUICE.resources.getString("Search_in_Repo"));
@@ -129,22 +129,22 @@ public class SearchDlg extends JDialog {
         group.add(repo);
         group.add(model);
 
-        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Search_text")), 1, 0, 2, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, searchText.getComponent(), 1, 1, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Search_text")), 1, 0, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, searchText.getComponent(), 1, 1, 2, 1, 0, 0);
 
-        LHelper.addGBComponent(contentPanel, mainLayout, model, 1, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, repo, 2, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, model, 1, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, repo, 2, 2, 1, 1, 0, 0);
 
-        LHelper.addGBComponent(contentPanel, mainLayout, caseSensitive, 1, 5, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, wholeString, 2, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, caseSensitive, 1, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, wholeString, 2, 5, 1, 1, 0, 0);
 
-        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Where_to_search")), 1, 10, 2, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, inClassName, 1, 11, 2, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, inComponentAttribs, 1, 12, 2, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, inComponentMetadata, 1, 14, 2, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, inInstanceName, 1, 16, 2, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, inComponentValues, 1, 18, 2, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, inContextAttribs, 1, 20, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Where_to_search")), 1, 10, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, inClassName, 1, 11, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, inComponentAttribs, 1, 12, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, inComponentMetadata, 1, 14, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, inInstanceName, 1, 16, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, inComponentValues, 1, 18, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, inContextAttribs, 1, 20, 2, 1, 0, 0);
 
         JButton findButton = new JButton(JUICE.resources.getString("Find"));
         findButton.addActionListener(new ActionListener() {
@@ -228,13 +228,13 @@ public class SearchDlg extends JDialog {
 
         // check if we have found anything
         if (!foundResult) {
-            LHelper.showInfoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("No_searchresults_txt"), JUICE.resources.getString("Search_finished"));
+            GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("No_searchresults_txt"), JUICE.resources.getString("Search_finished"));
             reset();
             return;
         }
 
         // we've found all results, ask what to do next
-        if (LHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("No_further_searchresults_txt"), JUICE.resources.getString("Search_finished")) == JOptionPane.YES_OPTION) {
+        if (GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("No_further_searchresults_txt"), JUICE.resources.getString("Search_finished")) == JOptionPane.YES_OPTION) {
             reset();
             processFind();
         }

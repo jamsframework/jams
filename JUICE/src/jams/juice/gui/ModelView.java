@@ -49,7 +49,7 @@ import jams.JAMS;
 import jams.JAMSTools;
 import jams.gui.HelpComponent;
 import jams.gui.JAMSLauncher;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.io.ParameterProcessor;
 import jams.io.XMLIO;
@@ -383,7 +383,7 @@ public class ModelView {
             componentDescriptors = new HashMap<String, ComponentDescriptor>();
             this.setTree(new ModelTree(this, doc));
         } catch (Exception ex) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + paramsFile.getName() + JUICE.resources.getString("_could_not_be_loaded."), JUICE.resources.getString("File_open_error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + paramsFile.getName() + JUICE.resources.getString("_could_not_be_loaded."), JUICE.resources.getString("File_open_error"));
         }
     }
 
@@ -396,7 +396,7 @@ public class ModelView {
             ParameterProcessor.saveParams(getModelDoc(), paramsFile,
                     JUICE.getJamsProperties().getProperty("username"), path);
         } catch (Exception ex) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + paramsFile.getName() + JUICE.resources.getString("_could_not_be_saved."), JUICE.resources.getString("File_saving_error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + paramsFile.getName() + JUICE.resources.getString("_could_not_be_saved."), JUICE.resources.getString("File_saving_error"));
         }
     }
 
@@ -437,7 +437,7 @@ public class ModelView {
         String oldXMLString = XMLIO.getStringFromDocument(initialDoc);
 
         if (newXMLString.compareTo(oldXMLString) != 0) {
-            int result = LHelper.showYesNoCancelDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Save_modifications_in_") + this.getFrame().getTitle() + JUICE.resources.getString("_?"), JUICE.resources.getString("Unsaved_modifications"));
+            int result = GUIHelper.showYesNoCancelDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Save_modifications_in_") + this.getFrame().getTitle() + JUICE.resources.getString("_?"), JUICE.resources.getString("Unsaved_modifications"));
             if (result == JOptionPane.OK_OPTION) {
                 JUICE.getJuiceFrame().saveModel(this);
                 closeView();
@@ -523,7 +523,7 @@ public class ModelView {
         property.component = getComponentDescriptor(propertyElement.getAttribute("component"));
 
         if (property.component == null) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Component_") + propertyElement.getAttribute("component") +
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Component_") + propertyElement.getAttribute("component") +
                     JUICE.resources.getString("_does_not_exist,_but_is_referred_in_list_of_model_parameters!") +
                     JUICE.resources.getString("Will_be_removed_when_model_is_saved!"), JUICE.resources.getString("Model_loading_error"));
             return null;
@@ -546,7 +546,7 @@ public class ModelView {
         //check wether the referred parameter is existing or not
         if ((property.attribute == null) && (property.var == null) &&
                 !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Attribute_") + attributeName +
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Attribute_") + attributeName +
                     JUICE.resources.getString("_does_not_exist_in_component_") + property.component.getName() +
                     JUICE.resources.getString("._Removing_visual_editor!"), JUICE.resources.getString("Model_loading_error"));
             return null;
@@ -610,7 +610,7 @@ public class ModelView {
             // first do search&replace on the input xml file
             String newModelFilename = XMLProcessor.modelDocConverter(fileName);
             if (!newModelFilename.equalsIgnoreCase(fileName)) {
-                LHelper.showInfoDlg(JUICE.getJuiceFrame(),
+                GUIHelper.showInfoDlg(JUICE.getJuiceFrame(),
                         JUICE.resources.getString("The_model_definition_in_") + fileName + JUICE.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JUICE.resources.getString("_while_your_original_file_was_left_untouched."), JUICE.resources.getString("Info"));
             }
             fileName = newModelFilename;
@@ -621,9 +621,9 @@ public class ModelView {
             this.setInitialState();
 
         } catch (FileNotFoundException fnfe) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + fileName + JUICE.resources.getString("_could_not_be_loaded."), JUICE.resources.getString("File_open_error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + fileName + JUICE.resources.getString("_could_not_be_loaded."), JUICE.resources.getString("File_open_error"));
         } catch (Exception e) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Unknown_error_during_Model_loading"), JUICE.resources.getString("Model_loading_error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Unknown_error_during_Model_loading"), JUICE.resources.getString("Model_loading_error"));
             e.printStackTrace();
         }
     }

@@ -47,7 +47,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.model.JAMSModel;
 import java.awt.Font;
 import javax.swing.UIManager;
@@ -123,8 +123,8 @@ public class ComponentPanel extends JPanel {
         JLabel typeLabel = new JLabel(JUICE.resources.getString("Type:"));
         typeLabel.setFont(labelFont);
 
-        LHelper.addGBComponent(componentPanel, mainLayout, nameLabel, 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, typeLabel, 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, nameLabel, 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, typeLabel, 0, 1, 1, 1, 0, 0);
 
         JButton nameEditButton = new JButton(JUICE.resources.getString("..."));
         nameEditButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
@@ -134,7 +134,7 @@ public class ComponentPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String oldName = textFields.get("name").getText();
-                String newName = LHelper.showInputDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("New_component_name"), oldName);
+                String newName = GUIHelper.showInputDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("New_component_name"), oldName);
                 if ((newName != null) && !newName.equals(oldName)) {
                     textFields.get("name").setText(newName);
                     setComponentName();
@@ -145,12 +145,12 @@ public class ComponentPanel extends JPanel {
         nameEditButtonPanel.setLayout(new BorderLayout());
         nameEditButtonPanel.add(nameEditButton, BorderLayout.WEST);
 
-        LHelper.addGBComponent(componentPanel, mainLayout, getTextField("name", "", false), 1, 0, 1, 1, 1.0, 1.0);
-        LHelper.addGBComponent(componentPanel, mainLayout, nameEditButtonPanel, 2, 0, 1, 1, 1.0, 1.0);
-        LHelper.addGBComponent(componentPanel, mainLayout, getTextField("type", "", false), 1, 1, 1, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, getTextField("name", "", false), 1, 0, 1, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, nameEditButtonPanel, 2, 0, 1, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, getTextField("type", "", false), 1, 1, 1, 1, 1.0, 1.0);
 
-        //LHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 0, 1, 1, 1.0, 1.0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 3, 0, 1, 1, 1.0, 1.0);
+        //GUIHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 0, 1, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 3, 0, 1, 1, 1.0, 1.0);
 
         //create var table
         varTable = new JTable() {
@@ -312,12 +312,12 @@ public class ComponentPanel extends JPanel {
         JLabel attrOverviewLabel = new JLabel(ATTR_OVERVIEW_STRING);
         attrOverviewLabel.setFont(labelFont);
 
-        LHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 2, 4, 1, 1.0, 1.0);
-        LHelper.addGBComponent(componentPanel, mainLayout, attrOverviewLabel, 0, 10, 4, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, tabPane, 0, 20, 4, 1, 1.0, 1.0);
-        LHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 25, 4, 1, 1.0, 1.0);
-        LHelper.addGBComponent(componentPanel, mainLayout, configLabel, 0, 27, 4, 1, 0, 0);
-        LHelper.addGBComponent(componentPanel, mainLayout, switchPanel, 0, 30, 4, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 2, 4, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, attrOverviewLabel, 0, 10, 4, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, tabPane, 0, 20, 4, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 25, 4, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, configLabel, 0, 27, 4, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, switchPanel, 0, 30, 4, 1, 1.0, 1.0);
 
         switchPanel.add(attributeConfigPanel);
 
@@ -366,7 +366,7 @@ public class ComponentPanel extends JPanel {
         int tmpSelectedAttrRow = selectedAttrRow;
 
         String attrName = attrNameList.get(selectedAttrRow);
-        int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Delete_Attribute_") + attrName + "\"?", JUICE.resources.getString("Confirm"));
+        int result = GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Delete_Attribute_") + attrName + "\"?", JUICE.resources.getString("Confirm"));
         if (result == JOptionPane.NO_OPTION) {
             return;
         }
@@ -522,7 +522,7 @@ public class ComponentPanel extends JPanel {
             try {
                 componentDescriptor.setInstanceName(name);
             } catch (JUICEException.NameAlreadyUsedException ex) {
-                LHelper.showInfoDlg(this, JUICE.resources.getString("Name_") + name + JUICE.resources.getString("_is_already_in_use._Renamed_component_to_") +
+                GUIHelper.showInfoDlg(this, JUICE.resources.getString("Name_") + name + JUICE.resources.getString("_is_already_in_use._Renamed_component_to_") +
                         componentDescriptor.getName() + "!", JUICE.resources.getString("Component_name"));
                 textFields.get("name").setText(componentDescriptor.getName());
             }

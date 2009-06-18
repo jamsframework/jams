@@ -23,7 +23,7 @@
 package reg.gui;
 
 import reg.*;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.gui.WorkerDlg;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -62,7 +62,7 @@ public class RegionalizerFrame extends JFrame {
 
     private static final int DIVIDER_WIDTH = 6;
 
-    private JFileChooser jfc = LHelper.getJFileChooser();
+    private JFileChooser jfc = GUIHelper.getJFileChooser();
 
     private WorkerDlg openWSDlg;
 

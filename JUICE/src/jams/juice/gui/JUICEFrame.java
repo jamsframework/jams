@@ -33,7 +33,7 @@ import jams.JAMS;
 import jams.io.JAMSFileFilter;
 import jams.JAMSProperties;
 import jams.gui.AboutDlg;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.gui.LogViewDlg;
 import jams.gui.PropertyDlg;
 import jams.gui.RuntimeManagerPanel;
@@ -57,7 +57,7 @@ public class JUICEFrame extends JFrame {
 
     private PropertyDlg propertyDlg;
 
-    private JFileChooser jfc = LHelper.getJFileChooser();
+    private JFileChooser jfc = GUIHelper.getJFileChooser();
 
     private TreePanel libTreePanel;
 
@@ -344,7 +344,7 @@ public class JUICEFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                LHelper.openURL(JAMS.resources.getString("JAMS_URL"));
+                GUIHelper.openURL(JAMS.resources.getString("JAMS_URL"));
             }
         };
 
@@ -705,7 +705,7 @@ public class JUICEFrame extends JFrame {
     public void saveModel(ModelView view) {
         if (view.getSavePath() != null) {
             if (!view.save()) {
-                LHelper.showErrorDlg(this, JUICE.resources.getString("Error_saving_model_to_") + view.getSavePath(), JUICE.resources.getString("Error"));
+                GUIHelper.showErrorDlg(this, JUICE.resources.getString("Error_saving_model_to_") + view.getSavePath(), JUICE.resources.getString("Error"));
                 view.setSavePath(null);
             } else {
                 view.setInitialState();

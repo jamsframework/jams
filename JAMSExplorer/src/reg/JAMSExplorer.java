@@ -26,7 +26,7 @@ import reg.gui.RegionalizerFrame;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jams.JAMSTools;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import jams.workspace.JAMSWorkspace;
@@ -72,13 +72,13 @@ public class JAMSExplorer {
             this.runtime.addErrorLogObserver(new Observer() {
 
                 public void update(Observable o, Object arg) {
-                    LHelper.showErrorDlg(regionalizerFrame, arg.toString(), JAMS.resources.getString("Error"));
+                    GUIHelper.showErrorDlg(regionalizerFrame, arg.toString(), JAMS.resources.getString("Error"));
                 }
             });
             this.runtime.addInfoLogObserver(new Observer() {
 
                 public void update(Observable o, Object arg) {
-                    //LHelper.showInfoDlg(regFrame, arg.toString(), JAMS.resources.getString("Info"));
+                    //GUIHelper.showInfoDlg(regFrame, arg.toString(), JAMS.resources.getString("Info"));
                 }
             });
         } else {
@@ -124,7 +124,7 @@ public class JAMSExplorer {
             String[] libs = JAMSTools.toArray(reg.getProperties().getProperty("libs", ""), ";");
             //JAMSWorkspace workspace = new JAMSWorkspace(new File("C:/jams/data/TLUG-Regionalizer"), reg.getRuntime(), true);
             //JAMSWorkspace workspace = new JAMSWorkspace(new File("F:/Eigene Dateien/Java/jamsdata/TLUG-Regionalizer"), reg.getRuntime(), true);
-            JAMSWorkspace workspace = new JAMSWorkspace(new File("d:/jamsapplication/TLUG-Regionalizer"), reg.getRuntime(), true);
+            JAMSWorkspace workspace = new JAMSWorkspace(new File(args[0]), reg.getRuntime(), true);
             workspace.setLibs(libs);
 
             reg.open(workspace);

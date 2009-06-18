@@ -41,7 +41,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.gui.input.InputComponent;
 import jams.juice.*;
 import java.util.HashMap;
@@ -85,14 +85,14 @@ public class ContextAttributeDlg extends JDialog {
         mainPanel = new JPanel();
         mainPanel.setLayout(mainLayout);
 
-        LHelper.addGBComponent(mainPanel, mainLayout, new JPanel(), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("Name:")), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("Type:")), 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("Value:")), 0, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JPanel(), 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("Name:")), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("Type:")), 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("Value:")), 0, 3, 1, 1, 0, 0);
 
         nameText = new JTextField();
         nameText.setColumns(40);
-        valueInput = LHelper.createInputComponent(JAMSString.class, true);
+        valueInput = GUIHelper.createInputComponent(JAMSString.class, true);
 
         typeCombo = new JComboBox();
 
@@ -114,11 +114,11 @@ public class ContextAttributeDlg extends JDialog {
             }
         });
 
-        LHelper.addGBComponent(mainPanel, mainLayout, nameText, 1, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, typeCombo, 1, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, valueInput.getComponent(), 1, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, nameText, 1, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, typeCombo, 1, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, valueInput.getComponent(), 1, 3, 1, 1, 0, 0);
 
-        LHelper.addGBComponent(mainPanel, mainLayout, new JPanel(), 0, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JPanel(), 0, 4, 1, 1, 0, 0);
 
         this.getContentPane().add(new JScrollPane(mainPanel), BorderLayout.CENTER);
 
@@ -131,7 +131,7 @@ public class ContextAttributeDlg extends JDialog {
 
                 if (!valueInput.verify()) {
                     valueInput.setMarked(true);
-                    LHelper.showErrorDlg(ContextAttributeDlg.this, JUICE.resources.getString("Invalid_value!"), JUICE.resources.getString("Format_error"));
+                    GUIHelper.showErrorDlg(ContextAttributeDlg.this, JUICE.resources.getString("Invalid_value!"), JUICE.resources.getString("Format_error"));
                     valueInput.setMarked(false);
                     return;
                 }
@@ -167,15 +167,15 @@ public class ContextAttributeDlg extends JDialog {
 //            shortType = tok.nextToken();
 //        }
         if (valueInput != null) {
-            LHelper.removeGBComponent(mainPanel, valueInput.getComponent());
+            GUIHelper.removeGBComponent(mainPanel, valueInput.getComponent());
             oldValue = valueInput.getValue();
         }
-        valueInput = LHelper.createInputComponent(type, true);
+        valueInput = GUIHelper.createInputComponent(type, true);
 
         if (doUpdate) {
             valueInput.setValue(oldValue);
         }
-        LHelper.addGBComponent(mainPanel, mainLayout, valueInput.getComponent(), 1, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, valueInput.getComponent(), 1, 3, 1, 1, 0, 0);
 
         pack();
     }

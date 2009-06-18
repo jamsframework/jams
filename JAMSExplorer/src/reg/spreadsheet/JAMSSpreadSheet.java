@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import jams.data.*;
 
 
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.workspace.DataSet;
 import jams.workspace.datatypes.DataValue;
 import jams.workspace.datatypes.DoubleValue;
@@ -708,16 +708,16 @@ public class JAMSSpreadSheet extends JPanel {
         makeTable();
         //panel.add(scrollpane,grid);
 
-        //LHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 2, 1, 1, 0, 0);
-        //LHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 3, 1, 2, 0, 0);
+        //GUIHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 2, 1, 1, 0, 0);
+        //GUIHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 3, 1, 2, 0, 0);
 
-        LHelper.addGBComponent(controlpanel, gbl, closeButton, 0, 5, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 6, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 7, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 8, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 10, 1, 1, 0, 0);
-        LHelper.addGBComponent(controlpanel, gbl, statButton, 0, 11, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(controlpanel, gbl, closeButton, 0, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 6, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 7, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 8, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(controlpanel, gbl, statButton, 0, 11, 1, 1, 0, 0);
 
         if (JAMSExplorer.GEOWIND_ENABLE && this.geoWindEnable) {
 
@@ -736,8 +736,8 @@ public class JAMSSpreadSheet extends JPanel {
             shapeSelectorModel.setSelectedItem(defaultShapeName);
             shapeSelector.setModel(shapeSelectorModel);
             JButton joinMapButton = new JButton(joinMapAction);
-            LHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 13, 1, 1, 0, 0);
-            LHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 14, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 13, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 14, 1, 1, 0, 0);
         }
 
 //              controlpanel.add(openbutton);

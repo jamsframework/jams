@@ -29,7 +29,7 @@ import jams.JAMS;
 import jams.JAMSProperties;
 import jams.JAMSTools;
 import jams.gui.JAMSSplash;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.StandardRuntime;
@@ -142,7 +142,7 @@ public class JUICE {
                 s += "        at " + ste.toString() + "\n";
             }
             System.out.println(JUICE.resources.getString("JUICE_Error"));
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("An_error_occured_during_JUICE_execution") + t.toString() + "\n" + s, JUICE.resources.getString("JUICE_Error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("An_error_occured_during_JUICE_execution") + t.toString() + "\n" + s, JUICE.resources.getString("JUICE_Error"));
         }
     }
 

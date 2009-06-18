@@ -37,7 +37,7 @@ public class ListInput extends JPanel {
 
     private static ImageIcon UP_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowup.png")).getImage().getScaledInstance(10, 5, Image.SCALE_SMOOTH));
     private static ImageIcon DOWN_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowdown.png")).getImage().getScaledInstance(10, 5, Image.SCALE_SMOOTH));
-    static final int BUTTON_SIZE = 17;
+    static final int BUTTON_SIZE = 20;
     private static final Dimension BUTTON_DIMENSION = new Dimension(BUTTON_SIZE, BUTTON_SIZE);
     private JList listbox;
     private JButton addButton,  removeButton,  upButton,  downButton,  editButton;
@@ -52,7 +52,7 @@ public class ListInput extends JPanel {
 
     public ListInput(boolean orderButtons) {
 
-        jfc = LHelper.getJFileChooser();
+        jfc = GUIHelper.getJFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
         // create a panel to hold all other components
@@ -227,7 +227,7 @@ public class ListInput extends JPanel {
 
     protected void addItem() {
         // Get the text field value
-        String stringValue = LHelper.showInputDlg(ListInput.this, null, JAMS.resources.getString("New_value"), null);
+        String stringValue = GUIHelper.showInputDlg(ListInput.this, null, JAMS.resources.getString("New_value"), null);
 
         // add this item to the list and refresh
         if (stringValue != null && !listData.getValue().contains(stringValue)) {
@@ -260,7 +260,7 @@ public class ListInput extends JPanel {
         if (selection >= 0) {
             // edit this item
             String value = listData.getElementAt(selection);
-            value = LHelper.showInputDlg(ListInput.this, null, JAMS.resources.getString("New_value"), value);
+            value = GUIHelper.showInputDlg(ListInput.this, null, JAMS.resources.getString("New_value"), value);
             if (value != null) {
                 listData.setElementAt(selection, value);
                 scrollPane.revalidate();

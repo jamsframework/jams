@@ -23,7 +23,7 @@
 package reg.gui;
 
 import jams.data.JAMSCalendar;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.workspace.stores.StandardInputDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.util.HashMap;
@@ -41,13 +41,13 @@ public class InputInfoPanelTS extends InputInfoPanelSimple {
     public InputInfoPanelTS() {
         super(6);
 
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Name:"), 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Typ:"), 1, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Beginn:"), 1, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Ende:"), 1, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Schrittweite:"), 1, 4, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Lückenwert:"), 1, 5, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Kommentar:"), 1, 6, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Name:"), 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Typ:"), 1, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Beginn:"), 1, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Ende:"), 1, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Schrittweite:"), 1, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Lückenwert:"), 1, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Kommentar:"), 1, 6, 1, 1, 0, 0);
 
         indexMap.put(JAMSCalendar.YEAR, "Jahr(e)");
         indexMap.put(JAMSCalendar.MONTH, "Monat(e)");

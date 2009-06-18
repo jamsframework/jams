@@ -47,7 +47,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import jams.JAMSTools;
 import jams.JAMSVersion;
 import jams.gui.HelpComponent;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.io.ParameterProcessor;
 import jams.model.JAMSContext;
 import javax.swing.JFrame;
@@ -185,7 +185,7 @@ public class ModelTree extends JAMSTree {
 
             JAMSNode node = (JAMSNode) path.getLastPathComponent();
 
-            int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(),
+            int result = GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(),
                     JUICE.resources.getString("Really_delete_component_") +
                     node.getUserObject().toString() +
                     JUICE.resources.getString("Really_delete_component_2"), JUICE.resources.getString("Deleting_component"));
@@ -597,7 +597,7 @@ public class ModelTree extends JAMSTree {
                 try {
                     rootNode.add(getSubTree(element));
                 } catch (ModelLoadException mle) {
-                    LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Could_not_load_component_") +
+                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Could_not_load_component_") +
                             mle.getComponentName() + "\" (" + mle.getClassName() + "). " +
                             JUICE.resources.getString("Please_fix_the_model_definition_file!"), JUICE.resources.getString("Error_loading_model"));
                     this.view.getFrame().dispose();
@@ -731,7 +731,7 @@ public class ModelTree extends JAMSTree {
 
             ComponentDescriptor context = view.getComponentDescriptor(contextName);
             if (context == null) {
-                LHelper.showErrorDlg(this.view.getFrame(), JUICE.resources.getString("Error_while_loading_component_") + cd.getName() +
+                GUIHelper.showErrorDlg(this.view.getFrame(), JUICE.resources.getString("Error_while_loading_component_") + cd.getName() +
                         JUICE.resources.getString("_context_") + contextName + JUICE.resources.getString("_does_not_exist!"), JUICE.resources.getString("Model_loading_error"));
                 return;
             }
@@ -749,7 +749,7 @@ public class ModelTree extends JAMSTree {
             context.getDataRepository().addAttribute(new ContextAttribute(attribute, attributeType, context));
             }*/
             } catch (NullPointerException ex) {
-                LHelper.showErrorDlg(this.view.getFrame(), JUICE.resources.getString("Error_while_loading_component_") + cd.getName() +
+                GUIHelper.showErrorDlg(this.view.getFrame(), JUICE.resources.getString("Error_while_loading_component_") + cd.getName() +
                         JUICE.resources.getString("_component_attribute_") + name + JUICE.resources.getString("_does_not_exist!"), JUICE.resources.getString("Model_loading_error"));
                 return;
             }
@@ -759,7 +759,7 @@ public class ModelTree extends JAMSTree {
             try {
                 cd.getComponentAttributes().get(e.getAttribute("name")).setValue(e.getAttribute("value"));
             } catch (NullPointerException ex) {
-                LHelper.showErrorDlg(this.view.getFrame(), JUICE.resources.getString("Error_while_loading_component_") + cd.getName() +
+                GUIHelper.showErrorDlg(this.view.getFrame(), JUICE.resources.getString("Error_while_loading_component_") + cd.getName() +
                         JUICE.resources.getString("_component_attribute_") + e.getAttribute("name") + JUICE.resources.getString("_does_not_exist!"), JUICE.resources.getString("Model_loading_error"));
                 return;
             }

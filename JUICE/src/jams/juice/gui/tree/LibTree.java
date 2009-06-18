@@ -37,7 +37,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import jams.JAMSTools;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.model.JAMSComponent;
 import jams.model.JAMSContext;
 import javax.swing.KeyStroke;
@@ -198,11 +198,11 @@ public class LibTree extends JAMSTree {
 
                     } catch (ClassNotFoundException cnfe) {
 
-                        LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Error_while_loading_archive_") + jarName + JUICE.resources.getString("_(class_") + classString +
+                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Error_while_loading_archive_") + jarName + JUICE.resources.getString("_(class_") + classString +
                                 JUICE.resources.getString("_could_not_be_found)!"), JUICE.resources.getString("Error_while_loading_archive"));
 
                     } catch (NoClassDefFoundError ncdfe) {
-                        //LHelper.showErrorDlg(JUICE.getJuiceFrame(), "Missing class while loading component " + clazzFullName +
+                        //GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), "Missing class while loading component " + clazzFullName +
                         //        " in archive " + jarName + "!", "Error while loading archive");
                     } catch (Exception e) {
                         // other exception like e.g. java.lang.SecurityException
@@ -243,7 +243,7 @@ public class LibTree extends JAMSTree {
 
                     } catch (NoClassDefFoundError ncdfe) {
 
-                        LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Missing_class_while_loading_component_") + clazzFullName +
+                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Missing_class_while_loading_component_") + clazzFullName +
                                 JUICE.resources.getString("_in_archive_") + jarName + "\"!", JUICE.resources.getString("Error_while_loading_archive"));
 
                     }
@@ -253,7 +253,7 @@ public class LibTree extends JAMSTree {
 
         } catch (IOException ioe) {
 
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + jar + JUICE.resources.getString("_could_not_be_loaded."), JUICE.resources.getString("Error_while_loading_archive"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + jar + JUICE.resources.getString("_could_not_be_loaded."), JUICE.resources.getString("Error_while_loading_archive"));
             jarRoot = null;
 
         }

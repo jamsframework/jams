@@ -24,7 +24,7 @@ package jams.juice;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.awt.Dimension;
@@ -54,7 +54,7 @@ public class ComponentDescriptor {
 
     public ComponentDescriptor(String instanceName, Class clazz, JAMSTree tree) {
         if (clazz == null) {
-            LHelper.showInfoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Could_not_find_class_for_component_") + instanceName + "_!", JUICE.resources.getString("Error!"));
+            GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Could_not_find_class_for_component_") + instanceName + "_!", JUICE.resources.getString("Error!"));
         }
         this.clazz = clazz;
         this.tree = tree;
@@ -142,7 +142,7 @@ public class ComponentDescriptor {
         // info wenn attribut mit gleichem namen schon existent und dann zum repo adden!!!
         if (ma != null) {
 
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Context_attribute_") + name + JUICE.resources.getString("_does_already_exist._") +
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Context_attribute_") + name + JUICE.resources.getString("_does_already_exist._") +
                         JUICE.resources.getString("Please_remove_or_chose_a_different_name!"), JUICE.resources.getString("Error_adding_context_attribute"));
             return null;
 

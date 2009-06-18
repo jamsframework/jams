@@ -77,12 +77,12 @@ public class TimeintervalInput extends JPanel implements InputComponent {
 
         this.setLayout(gbl);
 
-        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Start:_")), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("End:_")), 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit:_")), 0, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit_Count:_")), 0, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Start:_")), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("End:_")), 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit:_")), 0, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit_Count:_")), 0, 4, 1, 1, 0, 0);
 
         syear = new JTextField();
         syear.setInputVerifier(new NumericIntervalVerifier(1900, 2100));
@@ -103,7 +103,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         panel.add(smonth);
         panel.add(new JLabel("/"));
         panel.add(sday);
-        LHelper.addGBComponent(this, gbl, panel, 1, 1, 10, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, panel, 1, 1, 10, 1, 0, 0);
 
         shour = new JTextField();
         shour.setInputVerifier(new NumericIntervalVerifier(0, 23));
@@ -118,7 +118,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         panel.add(shour);
         panel.add(new JLabel(":"));
         panel.add(sminute);
-        LHelper.addGBComponent(this, gbl, panel, 11, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, panel, 11, 1, 1, 1, 0, 0);
 
 
         eyear = new JTextField();
@@ -140,7 +140,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         panel.add(emonth);
         panel.add(new JLabel("/"));
         panel.add(eday);
-        LHelper.addGBComponent(this, gbl, panel, 1, 2, 10, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, panel, 1, 2, 10, 1, 0, 0);
 
         ehour = new JTextField();
         ehour.setInputVerifier(new NumericIntervalVerifier(0, 23));
@@ -155,7 +155,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         panel.add(ehour);
         panel.add(new JLabel(":"));
         panel.add(eminute);
-        LHelper.addGBComponent(this, gbl, panel, 11, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, panel, 11, 2, 1, 1, 0, 0);
 
         indexMap.put(JAMSCalendar.YEAR, 0);
         indexMap.put(JAMSCalendar.MONTH, 1);
@@ -179,12 +179,12 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         timeUnit.addItem(JAMS.resources.getString("MINUTE"));
         timeUnit.addItem(JAMS.resources.getString("SECOND"));
         timeUnit.setPreferredSize(new Dimension(40, 20));
-        LHelper.addGBComponent(this, gbl, timeUnit, 1, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, timeUnit, 1, 3, 1, 1, 0, 0);
 
         tuCount = new JTextField();
         tuCount.setInputVerifier(new NumericIntervalVerifier(0, 1000));
         tuCount.setPreferredSize(new Dimension(40, 20));
-        LHelper.addGBComponent(this, gbl, tuCount, 1, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, tuCount, 1, 4, 1, 1, 0, 0);
 
         sday.setBorder(BorderFactory.createEtchedBorder());
         smonth.setBorder(BorderFactory.createEtchedBorder());

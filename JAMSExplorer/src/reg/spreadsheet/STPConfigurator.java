@@ -10,7 +10,7 @@ package reg.spreadsheet;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.workspace.DataSet;
 import jams.workspace.JAMSWorkspace;
@@ -145,7 +145,7 @@ public class STPConfigurator extends JFrame{
             
             String error_msg = "No template files found in the workspace directory! " +
                     "Use the 'Save Template' Option in the Time Plot Configurator!";
-            LHelper.showErrorDlg(this, error_msg, "Error");
+            GUIHelper.showErrorDlg(this, error_msg, "Error");
             
             // CLOSE!!!
         }
@@ -187,7 +187,7 @@ public class STPConfigurator extends JFrame{
             
             String error_msg = "No template files found in the workspace directory! " +
                     "Use the 'Save Template' Option in the JTS Configurator!";
-            LHelper.showErrorDlg(this, error_msg, "Error");
+            GUIHelper.showErrorDlg(this, error_msg, "Error");
             
             // CLOSE!!!
         }
@@ -335,22 +335,22 @@ public class STPConfigurator extends JFrame{
 //        optionpanel.add(settitleButton);
 //        optionpanel.add(new JLabel("  "));
         
-        LHelper.addGBComponent(optionpanel, ogbl, new JLabel("Weight"), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 2, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(optionpanel, ogbl, addbutton,    0, numberOfPlots+1, 1, 1, 0, 0);
-        LHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots+1, 1, 1, 0, 0);
-        LHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots+2, 1, 1, 0, 0);
-        LHelper.addGBComponent(optionpanel, ogbl, titleField,   1, numberOfPlots+2, 1, 1, 0, 0);
-        LHelper.addGBComponent(optionpanel, ogbl, settitleButton,   2, numberOfPlots+2, 1, 1, 0, 0);
-        LHelper.addGBComponent(optionpanel, ogbl, plotbutton,   4, numberOfPlots+2, 1, 1, 0, 0);
-        LHelper.addGBComponent(optionpanel, ogbl, epsButton,    6, numberOfPlots+2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Weight"), 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 2, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, addbutton,    0, numberOfPlots+1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots+1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots+2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, titleField,   1, numberOfPlots+2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, settitleButton,   2, numberOfPlots+2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, plotbutton,   4, numberOfPlots+2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, epsButton,    6, numberOfPlots+2, 1, 1, 0, 0);
           
 //        if(numberOfPlots ==0){
 //            if(numberOfPlots == 0){
 //            String error_msg = "No template files found in the workspace directory!" +
 //                    "Use the 'Save Template' Option in the Time Plot Configurator!";
-//            LHelper.showErrorDlg(this, error_msg, "Error");
+//            GUIHelper.showErrorDlg(this, error_msg, "Error");
 //        }
 //        }
         
@@ -366,10 +366,10 @@ public class STPConfigurator extends JFrame{
             titleLabel[c] = new JLabel("");
 //            optionpanel.add(templateBox[c]);
             templateBox[c].setSelectedIndex(c);
-            LHelper.addGBComponent(optionpanel, ogbl, weightField[c], 0, c+1, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, templateBox[c], 1, c+1, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 2, c+1, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 3, c+1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, weightField[c], 0, c+1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, templateBox[c], 1, c+1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 2, c+1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 3, c+1, 1, 1, 0, 0);
         }
     }
     
@@ -379,7 +379,7 @@ public class STPConfigurator extends JFrame{
 //        if(numberOfPlots == 0){
 //            String error_msg = "No template files found in the workspace directory!" +
 //                    "Use the 'Save Template' Option in the Time Plot Configurator!";
-//            LHelper.showErrorDlg(this, error_msg, "Error");
+//            GUIHelper.showErrorDlg(this, error_msg, "Error");
 //        }
         if(numberOfPlots <dataset.length ){
 
@@ -409,15 +409,15 @@ public class STPConfigurator extends JFrame{
             removebutton.addActionListener(removeAction);
             dataset = getAccessibleIDs();
 
-            LHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 0, 0, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 2, 0, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots+1, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots+1, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots+2, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, titleField,   1, numberOfPlots+2, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, settitleButton,   2, numberOfPlots+2, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, plotbutton,   4, numberOfPlots+2, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, epsButton,   6, numberOfPlots+2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 0, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 2, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots+1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots+1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots+2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, titleField,   1, numberOfPlots+2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, settitleButton,   2, numberOfPlots+2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, plotbutton,   4, numberOfPlots+2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, epsButton,   6, numberOfPlots+2, 1, 1, 0, 0);
 
 
             for(int c = 0; c < numberOfPlots; c++){
@@ -431,10 +431,10 @@ public class STPConfigurator extends JFrame{
     //            optionpanel.add(templateBox[c]);
                 if(c<selectedTemplates.length) templateBox[c].setSelectedIndex(selectedTemplates[c]);
                 
-                LHelper.addGBComponent(optionpanel, ogbl, weightField[c], 0, c+1, 1, 1, 0, 0);
-                LHelper.addGBComponent(optionpanel, ogbl, templateBox[c], 1, c+1, 1, 1, 0, 0);
-                LHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 2, c+1, 1, 1, 0, 0);
-                LHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 3, c+1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, weightField[c], 0, c+1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, templateBox[c], 1, c+1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 2, c+1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 3, c+1, 1, 1, 0, 0);
             }
             
             repaintPlotPanel();
@@ -477,15 +477,15 @@ public class STPConfigurator extends JFrame{
             removebutton.addActionListener(removeAction);
             dataset = getAccessibleIDs();
 
-            LHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 0, 0, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 2, 0, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots+1, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots+1, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots+2, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, titleField,   1, numberOfPlots+2, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, settitleButton,   2, numberOfPlots+2, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, plotbutton,   4, numberOfPlots+2, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionpanel, ogbl, epsButton,   6, numberOfPlots+2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 0, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 2, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots+1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots+1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots+2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, titleField,   1, numberOfPlots+2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, settitleButton,   2, numberOfPlots+2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, plotbutton,   4, numberOfPlots+2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, epsButton,   6, numberOfPlots+2, 1, 1, 0, 0);
 
 
             for(int c = 0; c < numberOfPlots; c++){
@@ -499,10 +499,10 @@ public class STPConfigurator extends JFrame{
     //            optionpanel.add(templateBox[c]);
                 if(c<selectedTemplates.length) templateBox[c].setSelectedIndex(selectedTemplates[c]);
                 
-                LHelper.addGBComponent(optionpanel, ogbl, weightField[c],   0, c+1, 1, 1, 0, 0);
-                LHelper.addGBComponent(optionpanel, ogbl, templateBox[c],   1, c+1, 1, 1, 0, 0);
-                LHelper.addGBComponent(optionpanel, ogbl, titleLabel[c],    2, c+1, 1, 1, 0, 0);
-                LHelper.addGBComponent(optionpanel, ogbl, timeButton[c],    3, c+1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, weightField[c],   0, c+1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, templateBox[c],   1, c+1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, titleLabel[c],    2, c+1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, timeButton[c],    3, c+1, 1, 1, 0, 0);
             }
             
             repaintPlotPanel();

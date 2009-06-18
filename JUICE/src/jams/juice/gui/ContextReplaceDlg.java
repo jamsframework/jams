@@ -42,7 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.WindowConstants;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.juice.ComponentDescriptor;
 import jams.juice.JUICE;
 
@@ -77,13 +77,13 @@ public class ContextReplaceDlg extends JDialog {
         
         String replaceText = JUICE.resources.getString("Found_references_to_context");
         
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("Found_references_to_old_context")), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, oldComponentLabel, 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("from_the_following_components:_")), 0, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, getTextPane("components", "", 140, false), 0, 4, 1, 1, 0, 0);
-        LHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("Please_choose_new_context_from_this_list:")), 0, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("Found_references_to_old_context")), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, oldComponentLabel, 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("from_the_following_components:_")), 0, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, getTextPane("components", "", 140, false), 0, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JUICE.resources.getString("Please_choose_new_context_from_this_list:")), 0, 5, 1, 1, 0, 0);
         
-        LHelper.addGBComponent(mainPanel, mainLayout, contextCombo, 0, 6, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, contextCombo, 0, 6, 1, 1, 0, 0);
         
         this.getContentPane().add(new JScrollPane(mainPanel), BorderLayout.CENTER);
         

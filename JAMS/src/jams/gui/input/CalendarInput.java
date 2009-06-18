@@ -60,8 +60,8 @@ public class CalendarInput extends JPanel implements InputComponent {
 
         this.setLayout(gbl);
 
-        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
 
         syear = new JTextField();
         syear.setInputVerifier(new NumericIntervalVerifier(1900, 2100));
@@ -82,7 +82,7 @@ public class CalendarInput extends JPanel implements InputComponent {
         panel.add(smonth);
         panel.add(new JLabel("/"));
         panel.add(sday);
-        LHelper.addGBComponent(this, gbl, panel, 1, 1, 10, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, panel, 1, 1, 10, 1, 0, 0);
 
         shour = new JTextField();
         shour.setInputVerifier(new NumericIntervalVerifier(0, 23));
@@ -97,7 +97,7 @@ public class CalendarInput extends JPanel implements InputComponent {
         panel.add(shour);
         panel.add(new JLabel(":"));
         panel.add(sminute);
-        LHelper.addGBComponent(this, gbl, panel, 11, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, panel, 11, 1, 1, 1, 0, 0);
 
         indexMap.put(JAMSCalendar.YEAR, 0);
         indexMap.put(JAMSCalendar.MONTH, 1);

@@ -22,7 +22,7 @@
  */
 package reg.gui;
 
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.workspace.stores.ShapeFileDataStore;
 import jams.workspace.stores.StandardInputDataStore;
 import java.net.URI;
@@ -37,12 +37,12 @@ public class InputInfoPanelShape extends InputInfoPanelSimple {
 
     public InputInfoPanelShape() {
         super(5);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Name:"), 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Typ:"), 1, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Datei:"), 1, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("URI:"), 1, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("ID-Feld:"), 1, 4, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Kommentar:"), 1, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Name:"), 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Typ:"), 1, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Datei:"), 1, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("URI:"), 1, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("ID-Feld:"), 1, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Kommentar:"), 1, 5, 1, 1, 0, 0);
     }
 
     @Override

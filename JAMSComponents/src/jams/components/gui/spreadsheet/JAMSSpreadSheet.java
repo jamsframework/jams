@@ -26,7 +26,7 @@ import jams.data.*;
 import jams.model.*;
 
 
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import java.text.ParseException;
 
 //import jams.components.*;
@@ -547,9 +547,9 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
             /* FEHLERMELDUNG */
             
             try{
-                 LHelper.showErrorDlg(getModel().getRuntime().getFrame(), "File reading failed", "Error");
+                 GUIHelper.showErrorDlg(getModel().getRuntime().getFrame(), "File reading failed", "Error");
              }catch(NullPointerException npe){
-                 LHelper.showErrorDlg(parent_frame,"File reading failed", "Error");
+                 GUIHelper.showErrorDlg(parent_frame,"File reading failed", "Error");
              }
             System.out.println("Lesen fehlgeschlagen!");
         }
@@ -702,9 +702,9 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
              int result;
              
              try{
-                 result = LHelper.showYesNoCancelDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?", "Attention");
+                 result = GUIHelper.showYesNoCancelDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?", "Attention");
              }catch(NullPointerException npe){
-                 result = LHelper.showYesNoCancelDlg(parent_frame,"Do you want to save this sheet before?", "Attention");
+                 result = GUIHelper.showYesNoCancelDlg(parent_frame,"Do you want to save this sheet before?", "Attention");
              }
              if (result == JOptionPane.YES_OPTION) {
                  save();
@@ -739,9 +739,9 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
              int result;
              
              try{
-                 result = LHelper.showYesNoCancelDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?", "Attention");
+                 result = GUIHelper.showYesNoCancelDlg(getModel().getRuntime().getFrame(), "Do you want to save this sheet before?", "Attention");
              }catch(NullPointerException npe){
-                 result = LHelper.showYesNoCancelDlg(parent_frame,"Do you want to save this sheet before?", "Attention");
+                 result = GUIHelper.showYesNoCancelDlg(parent_frame,"Do you want to save this sheet before?", "Attention");
              }
              if (result == JOptionPane.YES_OPTION) {
                  save();
@@ -1062,15 +1062,15 @@ public class JAMSSpreadSheet extends JAMSGUIComponent{
         makeTable();
         //panel.add(scrollpane,grid);
             
-            LHelper.addGBComponent(controlpanel, gbl, importbutton, 0, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(controlpanel, gbl, importbutton, 0, 0, 1, 1, 0, 0);
         
-            LHelper.addGBComponent(controlpanel, gbl, openbutton,   0, 2, 1, 1, 0, 0);
-            LHelper.addGBComponent(controlpanel, gbl, savebutton,   0, 3, 1, 2, 0, 0);
+            GUIHelper.addGBComponent(controlpanel, gbl, openbutton,   0, 2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(controlpanel, gbl, savebutton,   0, 3, 1, 2, 0, 0);
             
-            LHelper.addGBComponent(controlpanel, gbl, plotButton,   0, 5, 1, 1, 0, 0);
-            LHelper.addGBComponent(controlpanel, gbl, dataplotButton,0, 6, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(controlpanel, gbl, plotButton,   0, 5, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(controlpanel, gbl, dataplotButton,0, 6, 1, 1, 0, 0);
             
-            LHelper.addGBComponent(controlpanel, gbl, onthefly,     0, 7, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(controlpanel, gbl, onthefly,     0, 7, 1, 1, 0, 0);
               
 //              controlpanel.add(openbutton);
 //              controlpanel.add(savebutton);

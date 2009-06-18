@@ -22,7 +22,7 @@
  */
 package reg;
 
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import reg.spreadsheet.JAMSSpreadSheet;
@@ -122,7 +122,7 @@ public class DisplayManager implements Observer {
                     try {
                         spreadSheet.loadTSDS((TSDataStore) store, regionalizer.getWorkspace().getInputDirectory());
                     } catch (Exception e) {
-                        LHelper.showErrorDlg(regionalizer.getRegionalizerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
+                        GUIHelper.showErrorDlg(regionalizer.getRegionalizerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
                         e.printStackTrace();
                     }
                 }

@@ -43,7 +43,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.gui.input.InputComponent;
 import jams.juice.*;
 import jams.juice.ModelProperties.Group;
@@ -169,13 +169,13 @@ public class ModelGUIPanel extends JPanel {
         innerButtonPanel.setLayout(gblButton);
         //innerButtonPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 
-        LHelper.addGBComponent(innerButtonPanel, gblButton, addPropertyButton, 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(innerButtonPanel, gblButton, addSubgroupButton, 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(innerButtonPanel, gblButton, addGroupButton, 1, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(innerButtonPanel, gblButton, editGroupButton, 1, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(innerButtonPanel, gblButton, moveupGroupButton, 2, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(innerButtonPanel, gblButton, movedownGroupButton, 2, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(innerButtonPanel, gblButton, delGroupButton, 3, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(innerButtonPanel, gblButton, addPropertyButton, 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(innerButtonPanel, gblButton, addSubgroupButton, 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(innerButtonPanel, gblButton, addGroupButton, 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(innerButtonPanel, gblButton, editGroupButton, 1, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(innerButtonPanel, gblButton, moveupGroupButton, 2, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(innerButtonPanel, gblButton, movedownGroupButton, 2, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(innerButtonPanel, gblButton, delGroupButton, 3, 0, 1, 1, 0, 0);
 
         mainButtonPanel.add(innerButtonPanel);
         this.setPreferredSize(PANEL_DIMENSION);
@@ -239,7 +239,7 @@ public class ModelGUIPanel extends JPanel {
         //  try to set group's name
 
         if (!view.getModelProperties().setGroupName(group, newGroupName)) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Group_name_already_in_use!"), JUICE.resources.getString("Error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Group_name_already_in_use!"), JUICE.resources.getString("Error"));
             return;
         }
 
@@ -262,7 +262,7 @@ public class ModelGUIPanel extends JPanel {
         // add group
 
         if (!view.getModelProperties().addGroup(groupName)) {
-            LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Group_name_already_in_use!"), JUICE.resources.getString("Error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Group_name_already_in_use!"), JUICE.resources.getString("Error"));
             return;
         }
 
@@ -292,7 +292,7 @@ public class ModelGUIPanel extends JPanel {
             return;
         }
 
-        if (LHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Really_delete_this_Group_and_all_of_its_properties?"), JUICE.resources.getString("Delete_Group")) != JOptionPane.YES_OPTION) {
+        if (GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Really_delete_this_Group_and_all_of_its_properties?"), JUICE.resources.getString("Delete_Group")) != JOptionPane.YES_OPTION) {
             return;
         }
 
@@ -338,7 +338,7 @@ public class ModelGUIPanel extends JPanel {
                 ModelProperty property = (ModelProperty) modelElement;
 
                 JPanel buttonPanel = createPropertyButtonPanel(contentPanel, gbl, property, y);
-                LHelper.addGBComponent(contentPanel, gbl, buttonPanel, 3, y, 1, 1, 1, 1);
+                GUIHelper.addGBComponent(contentPanel, gbl, buttonPanel, 3, y, 1, 1, 1, 1);
             }
 
             if (modelElement instanceof Group) {
@@ -355,13 +355,13 @@ public class ModelGUIPanel extends JPanel {
                         TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, titledBorderFont));
 
                 // add the subgroup panel
-                LHelper.addGBComponent(contentPanel, gbl, subgroupPanel,
+                GUIHelper.addGBComponent(contentPanel, gbl, subgroupPanel,
                         0, y, 3, height,
                         6, 2, 6, 2,
                         1, 1);
 
                 JPanel sgButtonPanel = createSubgroupButtonPanel(subgroup);
-                LHelper.addGBComponent(contentPanel, gbl, sgButtonPanel, 3, y, 3, 1, 1, 1);
+                GUIHelper.addGBComponent(contentPanel, gbl, sgButtonPanel, 3, y, 3, 1, 1, 1);
                 int row = y + 1;
                 for (int k = 0; k < subgroupProperties.size(); k++) {
                     Object subgroupElement = subgroupProperties.get(k);
@@ -371,7 +371,7 @@ public class ModelGUIPanel extends JPanel {
 
                         ModelProperty subgroupProperty = (ModelProperty) subgroupElement;
                         JPanel buttonPanel = createPropertyButtonPanel(subgroupPanel, gbl, subgroupProperty, row);
-                        LHelper.addGBComponent(subgroupPanel, gbl, buttonPanel, 3, row, 3, 1, 1, 1);
+                        GUIHelper.addGBComponent(subgroupPanel, gbl, buttonPanel, 3, row, 3, 1, 1, 1);
                     }
                 }
                 row = row + 2;
@@ -429,14 +429,14 @@ public class ModelGUIPanel extends JPanel {
         // create a label with the property's name and some space in front of it
         JLabel nameLabel = new JLabel(property.name);
         nameLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-        LHelper.addGBComponent(contentPanel, gbl, nameLabel, 0, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, nameLabel, 0, row, 1, 1, 0, 0);
 
         if (property.var != null) {
-            ic = LHelper.createInputComponent(property.var.type, true);
+            ic = GUIHelper.createInputComponent(property.var.type, true);
         } else if (property.attribute != null) {
-            ic = LHelper.createInputComponent(property.attribute.getType(), true);
+            ic = GUIHelper.createInputComponent(property.attribute.getType(), true);
         } else {
-            ic = LHelper.createInputComponent(JUICE.JAMS_DATA_TYPES[0], true);
+            ic = GUIHelper.createInputComponent(JUICE.JAMS_DATA_TYPES[0], true);
         }
         ic.setRange(property.lowerBound, property.upperBound);
         ic.setLength(property.length);
@@ -450,7 +450,7 @@ public class ModelGUIPanel extends JPanel {
         }
 
         inputMap.put(property, ic);
-        LHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
+        GUIHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder());
 
         ElementButton downButton = new ElementButton(property);
@@ -607,12 +607,12 @@ public class ModelGUIPanel extends JPanel {
         if (element instanceof Group) {
             Vector test = ((Group) element).getProperties();
             if (test.size() > 0) {
-                LHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Subgroup_needs_to_be_empty."), JUICE.resources.getString("Deletion_not_possible"));
+                GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Subgroup_needs_to_be_empty."), JUICE.resources.getString("Deletion_not_possible"));
                 return;
             }
         }
 
-        int result = LHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Really_delete_this_property?"), JUICE.resources.getString("Delete_property"));
+        int result = GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Really_delete_this_property?"), JUICE.resources.getString("Delete_property"));
         if (result != JOptionPane.YES_OPTION) {
             return;
         }

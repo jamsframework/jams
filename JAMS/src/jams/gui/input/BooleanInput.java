@@ -45,7 +45,7 @@ public class BooleanInput extends JCheckBox implements InputComponent {
     }
 
     public void setValue(String value) {
-        if ("1".equals(value)) {
+        if ("1".equals(value) || "true".equals(value)) {
             this.setSelected(true);
         } else {
             this.setSelected(false);
@@ -59,12 +59,6 @@ public class BooleanInput extends JCheckBox implements InputComponent {
     public void setRange(double lower, double upper) {
     }
 
-    
-    
-
-       
-         ;
-    
     public boolean verify() {
         return true;
     }

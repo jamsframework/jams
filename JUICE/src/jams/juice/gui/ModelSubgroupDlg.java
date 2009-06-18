@@ -40,7 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.juice.ModelProperties.Group;
 import jams.juice.JUICE;
 
@@ -75,26 +75,26 @@ public class ModelSubgroupDlg extends JDialog {
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(gbl);
         
-        LHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Group:")), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Name:")), 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Help_URL:")), 0, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Help_Text:")), 0, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Group:")), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Name:")), 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Help_URL:")), 0, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Help_Text:")), 0, 4, 1, 1, 0, 0);
         
         groupCombo = new JComboBox();
         nameField = new JTextField();
         helpURLField = new JTextField();
         helpTextField = new JTextArea();
         
-        LHelper.addGBComponent(contentPanel, gbl, groupCombo, 1, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, gbl, nameField, 1, 2, 1, 1, 30, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, groupCombo, 1, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, nameField, 1, 2, 1, 1, 30, 0);
 
         helpURLField.setPreferredSize(new Dimension(200, 20));
-        LHelper.addGBComponent(contentPanel, gbl, helpURLField, 1, 3, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, helpURLField, 1, 3, 2, 1, 0, 0);
         
         helpTextField.setColumns(30);
         helpTextField.setRows(5);
-        LHelper.addGBComponent(contentPanel, gbl, helpTextField, 1, 4, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, helpTextField, 1, 4, 2, 1, 0, 0);
 
         JButton okButton = new JButton(JUICE.resources.getString("OK"));
         ActionListener okListener = new ActionListener() {

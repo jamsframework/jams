@@ -54,7 +54,7 @@ import jams.JAMSProperties;
 import jams.JAMSTools;
 import jams.data.JAMSData;
 import jams.data.JAMSEntityCollection;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.io.ModelLoader;
 import jams.io.ParameterProcessor;
 import jams.model.JAMSGUIComponent;
@@ -283,9 +283,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
                     tabbedPane.addTab(comp.getInstanceName(), comp.getPanel());
                 } catch (Throwable t) {
                     this.handle(t, true);
-                    int result = LHelper.showYesNoDlg(frame, JAMS.resources.getString("Could_not_load_component") + comp.getInstanceName() +
+                    int result = GUIHelper.showYesNoDlg(frame, JAMS.resources.getString("Could_not_load_component") + comp.getInstanceName() +
                             JAMS.resources.getString("Proceed_anyway?"), JAMS.resources.getString("Error"));
-                    if (result == LHelper.NO_OPTION) {
+                    if (result == GUIHelper.NO_OPTION) {
                         this.setRunState(JAMSRuntime.STATE_STOP);
                     }
                 }

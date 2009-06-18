@@ -372,6 +372,22 @@ public class JAMSWorkspace implements Serializable {
 
     /**
      *
+     * @return The workspace description
+     */
+    public String getDescription() {
+        return properties.getProperty("description");
+    }
+
+    /**
+     * Sets the workspace description
+     * @param description The description
+     */
+    public void setDescription(String description) {
+        properties.setProperty("description", description);
+    }
+
+    /**
+     *
      * @return If the data output directory will be overwritten or not
      */
     public boolean isPersistent() {

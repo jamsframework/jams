@@ -38,7 +38,7 @@ import org.jfree.data.xy.*;
 import org.jfree.util.ShapeUtilities.*;
 
 import jams.data.JAMSCalendar;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 
 
 public class GraphProperties {
@@ -1418,41 +1418,41 @@ public class GraphProperties {
             fill_button.addActionListener(fill_button_listener);
             outline_button.addActionListener(outline_button_listener);
             //optionpanel
-            LHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Line"),    0, 0, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Symbol"),    4, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Line"),    0, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Symbol"),    4, 0, 1, 1, 0, 0);
 
                 //lines
-            LHelper.addGBComponent(optionspanel, option_gbl, stroke_label, 0, 1, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, stroke_slider,   1, 1, 1, 2, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, paint_label,  0, 3, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, stroke_button,    1, 3, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, lines_visible_label, 0, 4, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, lines_vis_box,1, 4, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, shapes_visible_label, 0, 5, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, shapes_vis_box,1, 5, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, stroke_label, 0, 1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, stroke_slider,   1, 1, 1, 2, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, paint_label,  0, 3, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, stroke_button,    1, 3, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, lines_visible_label, 0, 4, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, lines_vis_box,1, 4, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, shapes_visible_label, 0, 5, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, shapes_vis_box,1, 5, 1, 1, 0, 0);
                 //divider
-            LHelper.addGBComponent(optionspanel, option_gbl, divider,      2, 1, 1, 8, 1, 1);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, divider,      2, 1, 1, 8, 1, 1);
                 //shapes
-            LHelper.addGBComponent(optionspanel, option_gbl, shape_label,  4, 1, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, shape_box,    5, 1, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, shape_size_label,4, 2, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, shape_slider,5, 2, 1, 2, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, fill_label,    4, 4, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, fill_button,    5, 4, 1, 1, 0, 0);          
-            LHelper.addGBComponent(optionspanel, option_gbl, outline_stroke_label,4, 5, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, outline_slider,5, 5, 1, 2, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, outline_paint_label,4, 7, 1, 1, 0, 0);
-            LHelper.addGBComponent(optionspanel, option_gbl, outline_button,5, 7, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, shape_label,  4, 1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, shape_box,    5, 1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, shape_size_label,4, 2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, shape_slider,5, 2, 1, 2, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, fill_label,    4, 4, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, fill_button,    5, 4, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, outline_stroke_label,4, 5, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, outline_slider,5, 5, 1, 2, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, outline_paint_label,4, 7, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, outline_button,5, 7, 1, 1, 0, 0);
                   
             //buttonpanel
-            LHelper.addGBComponent(buttonpanel, button_gbl, ok_button, 0, 0, 1, 1, 1, 1);
-            LHelper.addGBComponent(buttonpanel, button_gbl, cancel_button, 1, 0, 1, 1, 1, 1);
-            LHelper.addGBComponent(buttonpanel, button_gbl, apply_button, 2, 0, 1, 1, 1, 1);
+            GUIHelper.addGBComponent(buttonpanel, button_gbl, ok_button, 0, 0, 1, 1, 1, 1);
+            GUIHelper.addGBComponent(buttonpanel, button_gbl, cancel_button, 1, 0, 1, 1, 1, 1);
+            GUIHelper.addGBComponent(buttonpanel, button_gbl, apply_button, 2, 0, 1, 1, 1, 1);
             
             //this-panel
-//            LHelper.addGBComponent(this, gbl, optionspanel, 0, 0, 1, 6, 1, 1);
-//            LHelper.addGBComponent(this, gbl, colorpanel  , 1, 0, 1, 5, 1, 1);
-//            LHelper.addGBComponent(this, gbl, buttonpanel , 1, 5, 1, 1, 1, 1);
+//            GUIHelper.addGBComponent(this, gbl, optionspanel, 0, 0, 1, 6, 1, 1);
+//            GUIHelper.addGBComponent(this, gbl, colorpanel  , 1, 0, 1, 5, 1, 1);
+//            GUIHelper.addGBComponent(this, gbl, buttonpanel , 1, 5, 1, 1, 1, 1);
             
             add(optionspanel, brl.CENTER);
             add(buttonpanel, brl.SOUTH);

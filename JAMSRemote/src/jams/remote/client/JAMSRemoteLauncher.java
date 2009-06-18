@@ -59,7 +59,7 @@ import javax.swing.event.ListSelectionListener;
 import jams.JAMSProperties;
 import jams.JAMSTools;
 import jams.gui.JAMSFrame;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.gui.LogViewDlg;
 import jams.gui.input.InputComponent;
 import jams.gui.input.ListInput;
@@ -132,7 +132,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         GridBagLayout gbl = new GridBagLayout();
         serverPanel.setLayout(gbl);
         
-        LHelper.addGBComponent(serverPanel, gbl, new JLabel("Server List:"), 0, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(serverPanel, gbl, new JLabel("Server List:"), 0, 5, 1, 1, 0, 0);
         
         serverList = new ListInput(false);
         serverList.setPreferredSize(new Dimension(100, 100));
@@ -172,9 +172,9 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             serverList.setListData(listData);
         }
         
-        LHelper.addGBComponent(serverPanel, gbl, serverList, 0, 10, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(serverPanel, gbl, serverList, 0, 10, 2, 1, 0, 0);
         
-        LHelper.addGBComponent(serverPanel, gbl, new JLabel("Account:"), 0, 11, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(serverPanel, gbl, new JLabel("Account:"), 0, 11, 1, 1, 0, 0);
         account = new JTextField();
         account.setText(getProperties().getProperty(JAMSProperties.SERVER_ACCOUNT_IDENTIFIER));
         account.getDocument().addDocumentListener(new DocumentListener() {
@@ -188,9 +188,9 @@ public class JAMSRemoteLauncher extends JAMSFrame {
                 updateAccount();
             }
         });
-        LHelper.addGBComponent(serverPanel, gbl, account, 1, 11, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(serverPanel, gbl, account, 1, 11, 1, 1, 0, 0);
         
-        LHelper.addGBComponent(serverPanel, gbl, new JLabel("Password:"), 0, 12, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(serverPanel, gbl, new JLabel("Password:"), 0, 12, 1, 1, 0, 0);
         password = new JPasswordField();
         password.setText(getProperties().getProperty(JAMSProperties.SERVER_PASSWORD_IDENTIFIER));
         password.getDocument().addDocumentListener(new DocumentListener() {
@@ -204,10 +204,10 @@ public class JAMSRemoteLauncher extends JAMSFrame {
                 updatePassword();
             }
         });
-        LHelper.addGBComponent(serverPanel, gbl, password, 1, 12, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(serverPanel, gbl, password, 1, 12, 1, 1, 0, 0);
         
         connectButton = new JButton(CLOSED_BUTTON_TEXT);
-        LHelper.addGBComponent(serverPanel, gbl, connectButton, 0, 15, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(serverPanel, gbl, connectButton, 0, 15, 2, 1, 0, 0);
         connectButton.setEnabled(false);
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -219,21 +219,21 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             }
         });
         
-        LHelper.addGBComponent(serverPanel, gbl, new JPanel(), 0, 19, 2, 1, 0, 0);
-        LHelper.addGBComponent(serverPanel, gbl, new JLabel("Server Info:"), 0, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(serverPanel, gbl, new JPanel(), 0, 19, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(serverPanel, gbl, new JLabel("Server Info:"), 0, 20, 1, 1, 0, 0);
         
         JPanel infoPanel = new JPanel();
         GridBagLayout gbl_info = new GridBagLayout();
         infoPanel.setLayout(gbl_info);
         infoPanel.setBorder(BorderFactory.createEtchedBorder());
         
-        LHelper.addGBComponent(infoPanel, gbl_info, new JLabel("Runs:"), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(infoPanel, gbl_info, new JLabel("Max Runs:"), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(infoPanel, gbl_info, new JLabel("Address:"), 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(infoPanel, gbl_info, new JLabel("Socket:"), 0, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, new JLabel("Runs:"), 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, new JLabel("Max Runs:"), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, new JLabel("Address:"), 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, new JLabel("Socket:"), 0, 3, 1, 1, 0, 0);
         JLabel test = new JLabel("Base Dir:");
         //test.setBorder(BorderFactory.createEtchedBorder());
-        LHelper.addGBComponent(infoPanel, gbl_info, test, 0, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, test, 0, 4, 1, 1, 0, 0);
         
         conClientLabel = new JLabel("", JLabel.RIGHT);
         maxClientLabel = new JLabel("", JLabel.RIGHT);
@@ -250,14 +250,14 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         socketLabel.setPreferredSize(dim);
         socketLabel.setPreferredSize(dim);
         
-        LHelper.addGBComponent(infoPanel, gbl_info, conClientLabel, 2, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(infoPanel, gbl_info, maxClientLabel, 2, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(infoPanel, gbl_info, addressLabel, 2, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(infoPanel, gbl_info, socketLabel, 2, 3, 1, 1, 0, 0);
-        LHelper.addGBComponent(infoPanel, gbl_info, baseDirLabel, 2, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, conClientLabel, 2, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, maxClientLabel, 2, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, addressLabel, 2, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, socketLabel, 2, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, baseDirLabel, 2, 4, 1, 1, 0, 0);
         
         refreshButton = new JButton("Refresh Info");
-        LHelper.addGBComponent(infoPanel, gbl_info, refreshButton, 0, 6, 3, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, refreshButton, 0, 6, 3, 1, 0, 0);
         refreshButton.setEnabled(false);
         refreshButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -265,7 +265,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             }
         });
         
-        LHelper.addGBComponent(infoPanel, gbl_info, new JLabel("Workspace:"), 0, 8, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, new JLabel("Workspace:"), 0, 8, 1, 1, 0, 0);
         if (workspaceSelector == null) {
             workspaceSelector = new JComboBox();
         }
@@ -278,9 +278,9 @@ public class JAMSRemoteLauncher extends JAMSFrame {
                 }
             }
         });
-        LHelper.addGBComponent(infoPanel, gbl_info, workspaceSelector, 0, 9, 3, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, workspaceSelector, 0, 9, 3, 1, 0, 0);
         
-        LHelper.addGBComponent(infoPanel, gbl_info, new JLabel("Excludes:"), 0, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, new JLabel("Excludes:"), 0, 10, 1, 1, 0, 0);
         excludes = new JTextField();
         excludes.setToolTipText("Semicolon-separated list of filename suffixes defining " +
                 "files to be exluded from file transfer");
@@ -296,11 +296,11 @@ public class JAMSRemoteLauncher extends JAMSFrame {
                 updateExcludes();
             }
         });
-        LHelper.addGBComponent(infoPanel, gbl_info, excludes, 0, 11, 3, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, excludes, 0, 11, 3, 1, 0, 0);
         
         uploadButton = new JButton("Upload WS");
         uploadButton.setToolTipText("Upload whole workspace to server");
-        LHelper.addGBComponent(infoPanel, gbl_info, uploadButton, 0, 15, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, uploadButton, 0, 15, 1, 1, 0, 0);
         uploadButton.setEnabled(false);
         uploadButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -310,7 +310,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         
         downloadButton = new JButton("Download WS");
         downloadButton.setToolTipText("Download whole workspace from server");
-        LHelper.addGBComponent(infoPanel, gbl_info, downloadButton, 2, 15, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, downloadButton, 2, 15, 1, 1, 0, 0);
         downloadButton.setEnabled(false);
         downloadButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -320,7 +320,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         
         uploadLibsButton = new JButton("Upload Libraries");
         uploadLibsButton.setToolTipText("Upload all libraries to server");
-        LHelper.addGBComponent(infoPanel, gbl_info, uploadLibsButton, 0, 20, 3, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, uploadLibsButton, 0, 20, 3, 1, 0, 0);
         uploadLibsButton.setEnabled(false);
         uploadLibsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -330,7 +330,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         
         cleanWSButton = new JButton("Clean Workspace");
         cleanWSButton.setToolTipText("Delete all server files inside the workspace");
-        LHelper.addGBComponent(infoPanel, gbl_info, cleanWSButton, 0, 25, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, cleanWSButton, 0, 25, 1, 1, 0, 0);
         cleanWSButton.setEnabled(false);
         cleanWSButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -340,7 +340,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         
         cleanAccountButton = new JButton("Clean Account");
         cleanAccountButton.setToolTipText("Delete all server files belonging to current account");
-        LHelper.addGBComponent(infoPanel, gbl_info, cleanAccountButton, 2, 25, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, cleanAccountButton, 2, 25, 1, 1, 0, 0);
         cleanAccountButton.setEnabled(false);
         cleanAccountButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -350,7 +350,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         
         updateLogsButton = new JButton("Update Logs");
         updateLogsButton.setToolTipText("Download model logs of current workspace from server");
-        LHelper.addGBComponent(infoPanel, gbl_info, updateLogsButton, 0, 28, 3, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, gbl_info, updateLogsButton, 0, 28, 3, 1, 0, 0);
         updateLogsButton.setEnabled(false);
         updateLogsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -359,7 +359,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         });
         
         
-        LHelper.addGBComponent(serverPanel, gbl, infoPanel, 0, 25, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(serverPanel, gbl, infoPanel, 0, 25, 2, 1, 0, 0);
         
         this.add(new JScrollPane(serverPanel), BorderLayout.WEST);
         
@@ -391,7 +391,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         client.addErrorLogObserver(new Observer() {
             public void update(Observable obs, Object obj) {
                 JAMSRemoteLauncher.this.serverErrorDlg.appendText(obj.toString());
-                LHelper.showErrorDlg(JAMSRemoteLauncher.this, obj.toString(), "Client error");
+                GUIHelper.showErrorDlg(JAMSRemoteLauncher.this, obj.toString(), "Client error");
             }
         });
         

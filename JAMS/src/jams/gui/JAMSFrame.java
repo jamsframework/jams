@@ -99,14 +99,14 @@ public class JAMSFrame extends JAMSLauncher {
             //check if file exists
             File file = new File(modelFilename);
             if (!file.exists()) {
-                LHelper.showErrorDlg(this, JAMS.resources.getString("Model_file_") + modelFilename + JAMS.resources.getString("_could_not_be_found!"), JAMS.resources.getString("File_Open_Error"));
+                GUIHelper.showErrorDlg(this, JAMS.resources.getString("Model_file_") + modelFilename + JAMS.resources.getString("_could_not_be_found!"), JAMS.resources.getString("File_Open_Error"));
                 return;
             }
 
             // first do search&replace on the input xml file
             String newModelFilename = XMLProcessor.modelDocConverter(modelFilename);
             if (!newModelFilename.equalsIgnoreCase(modelFilename)) {
-                LHelper.showInfoDlg(JAMSFrame.this,
+                GUIHelper.showInfoDlg(JAMSFrame.this,
                         JAMS.resources.getString("The_model_definition_in_") + modelFilename + JAMS.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JAMS.resources.getString("_while_your_original_file_was_left_untouched."), JAMS.resources.getString("Info"));
             }
 
@@ -133,12 +133,12 @@ public class JAMSFrame extends JAMSLauncher {
             modelMenu.setEnabled(true);
             getRunModelAction().setEnabled(true);
 
-        //LHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
+        //GUIHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
 
         } catch (IOException ioe) {
-            LHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("The_specified_model_configuration_file_") + modelFilename + JAMS.resources.getString("_could_not_be_found!"), JAMS.resources.getString("Error"));
+            GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("The_specified_model_configuration_file_") + modelFilename + JAMS.resources.getString("_could_not_be_found!"), JAMS.resources.getString("Error"));
         } catch (SAXException se) {
-            LHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("The_specified_model_configuration_file_") + modelFilename + JAMS.resources.getString("_contains_errors!"), JAMS.resources.getString("Error"));
+            GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("The_specified_model_configuration_file_") + modelFilename + JAMS.resources.getString("_contains_errors!"), JAMS.resources.getString("Error"));
         }
     }
 
@@ -255,7 +255,7 @@ public class JAMSFrame extends JAMSLauncher {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                LHelper.openURL(JAMS.resources.getString("JAMS_URL"));
+                GUIHelper.openURL(JAMS.resources.getString("JAMS_URL"));
             }
         };
 
@@ -316,7 +316,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         // create additional dialogs
         this.propertyDlg = new PropertyDlg(this, getProperties());
-        jfc = LHelper.getJFileChooser();
+        jfc = GUIHelper.getJFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setCurrentDirectory(JAMS.getBaseDir());
 
@@ -461,7 +461,7 @@ public class JAMSFrame extends JAMSLauncher {
             ParameterProcessor.loadParams(getModelDocument(), paramsFile);
             loadModelDefinition(getModelDocument());
         } catch (Exception ex) {
-            LHelper.showErrorDlg(this, JAMS.resources.getString("File_") + paramsFile.getName() + JAMS.resources.getString("_could_not_be_loaded."), JAMS.resources.getString("File_Open_Error"));
+            GUIHelper.showErrorDlg(this, JAMS.resources.getString("File_") + paramsFile.getName() + JAMS.resources.getString("_could_not_be_loaded."), JAMS.resources.getString("File_Open_Error"));
         }
     }
 
@@ -470,7 +470,7 @@ public class JAMSFrame extends JAMSLauncher {
             ParameterProcessor.saveParams(getModelDocument(), paramsFile,
                     getProperties().getProperty("username"), modelFilename);
         } catch (Exception ex) {
-            LHelper.showErrorDlg(this, JAMS.resources.getString("File_") + paramsFile.getName() + JAMS.resources.getString("_could_not_be_saved."), JAMS.resources.getString("File_saving_error"));
+            GUIHelper.showErrorDlg(this, JAMS.resources.getString("File_") + paramsFile.getName() + JAMS.resources.getString("_could_not_be_saved."), JAMS.resources.getString("File_saving_error"));
         }
     }
 
@@ -508,7 +508,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         // check for invalid parameter values
         if (!verifyInputs(false)) {
-            int result = LHelper.showYesNoDlg(this, JAMS.resources.getString("Found_invalid_parameter_values_which_won't_be_saved._Proceed_anyway?"), JAMS.resources.getString("Invalid_parameter_values"));
+            int result = GUIHelper.showYesNoDlg(this, JAMS.resources.getString("Found_invalid_parameter_values_which_won't_be_saved._Proceed_anyway?"), JAMS.resources.getString("Invalid_parameter_values"));
             if (result == JOptionPane.NO_OPTION) {
                 return false;
             }
@@ -520,7 +520,7 @@ public class JAMSFrame extends JAMSLauncher {
         if (getModelDocument() != null) {
             String modelDocString = XMLIO.getStringFromDocument(getModelDocument());
             if (!getInitialModelDocString().equals(modelDocString)) {
-                int result = LHelper.showYesNoCancelDlg(this, JAMS.resources.getString("Save_modifications_in_") + modelFilename + JAMS.resources.getString("?"), JAMS.resources.getString("JAMS_Launcher:_unsaved_modifications"));
+                int result = GUIHelper.showYesNoCancelDlg(this, JAMS.resources.getString("Save_modifications_in_") + modelFilename + JAMS.resources.getString("?"), JAMS.resources.getString("JAMS_Launcher:_unsaved_modifications"));
                 if (result == JOptionPane.CANCEL_OPTION) {
                     return false;
                 } else if (result == JOptionPane.OK_OPTION) {
@@ -541,7 +541,7 @@ public class JAMSFrame extends JAMSLauncher {
             this.initialModelDocString = XMLIO.getStringFromDocument(this.modelDocument);
             fillAttributes(getModelDocument());
         } catch (IOException ioe) {
-            LHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Error_saving_configuration_to_") + modelFilename, JAMS.resources.getString("Error"));
+            GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Error_saving_configuration_to_") + modelFilename, JAMS.resources.getString("Error"));
             return;
         }
     }

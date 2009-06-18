@@ -22,7 +22,7 @@
  */
 package reg.gui;
 
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.workspace.stores.StandardInputDataStore;
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -78,7 +78,7 @@ public class InputInfoPanelSimple extends JPanel {
             fields[i] = new JTextField();
             fields[i].setColumns(20);
             fields[i].setEditable(false);
-            LHelper.addGBComponent(this, mainLayout, fields[i], 2, i, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(this, mainLayout, fields[i], 2, i, 1, 1, 0, 0);
         }
         textArea = new JTextArea();
         textArea.setRows(5);
@@ -88,7 +88,7 @@ public class InputInfoPanelSimple extends JPanel {
         textFont = new Font(textFont.getName(), Font.PLAIN, textFont.getSize() - 1);
         textArea.setFont(textFont);
         JScrollPane textScrollPane = new JScrollPane(textArea);
-        LHelper.addGBComponent(this, mainLayout, textScrollPane, 2, FIELD_COUNT, 1, 2, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, textScrollPane, 2, FIELD_COUNT, 1, 2, 0, 0);
 
     }
 

@@ -73,7 +73,7 @@ public class HelpDlg extends JDialog {
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(gbl);
 
-        LHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
 
         JButton okButton = new JButton(JAMS.resources.getString("OK"));
         ActionListener okListener = new ActionListener() {
@@ -123,7 +123,7 @@ public class HelpDlg extends JDialog {
             try {
 //                webPagePane.setContentType("text/html");
 //                webPagePane.setPage(url);
-                LHelper.openURL(url);
+                GUIHelper.openURL(url);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(webPagePane, new String[]{
                             JAMS.resources.getString("Unable_to_open_file"), url

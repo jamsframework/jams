@@ -52,7 +52,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.gui.input.InputComponent;
 import jams.gui.input.ValueChangeListener;
 import jams.juice.*;
@@ -114,48 +114,48 @@ public class ComponentAttributePanel extends JPanel {
         this.add(detailPanel);
         this.add(listPanel);
 
-        LHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JUICE.resources.getString("Component:")), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JUICE.resources.getString("Local_name:")), 0, 10, 1, 1, 0, 0);
-        LHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JUICE.resources.getString("Link:")), 0, 15, 1, 1, 0, 0);
-        LHelper.addGBComponent(infoPanel, infoLayout, new JPanel(), 0, 17, 1, 1, 0, 0);
-        LHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JUICE.resources.getString("Value:")), 0, 20, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JUICE.resources.getString("Component:")), 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JUICE.resources.getString("Local_name:")), 0, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JUICE.resources.getString("Link:")), 0, 15, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, new JPanel(), 0, 17, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JUICE.resources.getString("Value:")), 0, 20, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
         compNameText = new JTextField();
         compNameText.setEditable(false);
         compNameText.setBorder(BorderFactory.createEtchedBorder());
         compNameText.setPreferredSize(new Dimension(300, 20));
-        LHelper.addGBComponent(infoPanel, infoLayout, compNameText, 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, compNameText, 1, 0, 1, 1, 0, 0);
 
         localNameText = new JTextField();
         localNameText.setEditable(false);
         localNameText.setBorder(BorderFactory.createEtchedBorder());
         localNameText.setPreferredSize(new Dimension(320, 20));
-        LHelper.addGBComponent(infoPanel, infoLayout, localNameText, 1, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, localNameText, 1, 10, 1, 1, 0, 0);
 
         linkText = new JTextField();
         linkText.setEditable(false);
         linkText.setBorder(BorderFactory.createEtchedBorder());
         linkText.setPreferredSize(new Dimension(300, 20));
-        LHelper.addGBComponent(infoPanel, infoLayout, linkText, 1, 15, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, linkText, 1, 15, 1, 1, 0, 0);
 
         linkButton = new JToggleButton("LINK");
         linkButton.setMargin(new Insets(1, 1, 1, 1));
         linkButton.setFocusable(false);
         linkButton.setPreferredSize(new Dimension(40, 20));
 
-        LHelper.addGBComponent(infoPanel, infoLayout, linkButton, 2, 15, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTH);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, linkButton, 2, 15, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTH);
 
         valuePanel = new JPanel();
         valuePanel.setLayout(new BorderLayout());
 
-        LHelper.addGBComponent(infoPanel, infoLayout, valuePanel, 1, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, valuePanel, 1, 20, 1, 1, 0, 0);
 
         setButton = new JToggleButton("SET");
         setButton.setMargin(new Insets(1, 1, 1, 1));
         setButton.setFocusable(false);
         setButton.setPreferredSize(new Dimension(40, 20));
 
-        LHelper.addGBComponent(infoPanel, infoLayout, setButton, 2, 20, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTH);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, setButton, 2, 20, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTH);
 
         contextCombo = new JComboBox();
         contextCombo.setBorder(BorderFactory.createEtchedBorder());
@@ -322,7 +322,7 @@ public class ComponentAttributePanel extends JPanel {
         }
 
         //create value input component
-        valueInput = LHelper.createInputComponent(var.type, true);
+        valueInput = GUIHelper.createInputComponent(var.type, true);
         valuePanel.add(valueInput.getComponent(), BorderLayout.WEST);
         valuePanel.updateUI();
 

@@ -32,7 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.swing.tree.TreePath;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.juice.JUICE;
 import jams.juice.gui.tree.JAMSNode;
 import jams.juice.gui.tree.JAMSTree;
@@ -104,7 +104,7 @@ public class TreeSearchDlg extends JDialog {
 
         nodeEnum = rootNode.depthFirstEnumeration();
 
-        LHelper.showInfoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Could_not_find_further_occurrences_of_") + "\"" + searchString + "\".", JUICE.resources.getString("Info"));
+        GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Could_not_find_further_occurrences_of_") + "\"" + searchString + "\".", JUICE.resources.getString("Info"));
 
     }
 }

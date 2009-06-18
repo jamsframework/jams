@@ -30,7 +30,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.text.SimpleAttributeSet;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import jams.juice.JUICE;
@@ -61,15 +61,15 @@ public class ComponentInfoPanel extends JPanel {
         mainLayout = new GridBagLayout();
         contentPanel.setLayout(mainLayout);
         
-        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Type:")), 0, 0, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Author:")), 0, 1, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Date:")), 0, 2, 1, 1, 0, 0);
-        LHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Description:")), 0, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Type:")), 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Author:")), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Date:")), 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Description:")), 0, 3, 1, 1, 0, 0);
         
-        LHelper.addGBComponent(contentPanel, mainLayout, getTextField("type", ""), 1, 0, 1, 1, 1.0, 1.0);
-        LHelper.addGBComponent(contentPanel, mainLayout, getTextField("author", ""), 1, 1, 1, 1, 1.0, 1.0);
-        LHelper.addGBComponent(contentPanel, mainLayout, getTextField("date", ""), 1, 2, 1, 1, 1.0, 1.0);
-        LHelper.addGBComponent(contentPanel, mainLayout, getTextPane("description", "", 140), 1, 3, 1, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, getTextField("type", ""), 1, 0, 1, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, getTextField("author", ""), 1, 1, 1, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, getTextField("date", ""), 1, 2, 1, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, getTextPane("description", "", 140), 1, 3, 1, 1, 1.0, 1.0);
         
         reset(DEFAULT_STRING);
         
@@ -114,7 +114,7 @@ public class ComponentInfoPanel extends JPanel {
         
         //create new components
         if (compFields.length > 0)
-            LHelper.addGBComponent(contentPanel, mainLayout, varLabel, 0, pos++, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(contentPanel, mainLayout, varLabel, 0, pos++, 1, 1, 0, 0);
         
         for (Field field : compFields) {
             JAMSVarDescription jvd = (JAMSVarDescription) field.getAnnotation(JAMSVarDescription.class);
@@ -125,22 +125,22 @@ public class ComponentInfoPanel extends JPanel {
                 JPanel fieldPanel = new JPanel();
                 varPanels.add(fieldPanel);
                 fieldPanel.setBorder(BorderFactory.createTitledBorder(field.getName()));
-                LHelper.addGBComponent(contentPanel, mainLayout, fieldPanel, 0, pos++, 2, 1, 0, 0);
+                GUIHelper.addGBComponent(contentPanel, mainLayout, fieldPanel, 0, pos++, 2, 1, 0, 0);
                 
                 GridBagLayout fieldLayout = new GridBagLayout();
                 fieldPanel.setLayout(fieldLayout);
                 
-                LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JUICE.resources.getString("Type:")), 0, 0, 1, 1, 0, 0);
-                LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JUICE.resources.getString("Access:")), 0, 1, 1, 1, 0, 0);
-                //LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Update:"), 0, 2, 1, 1, 0, 0);
-                LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JUICE.resources.getString("Description:")), 0, 3, 1, 1, 0, 0);
-                LHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JUICE.resources.getString("Unit:")), 0, 4, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JUICE.resources.getString("Type:")), 0, 0, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JUICE.resources.getString("Access:")), 0, 1, 1, 1, 0, 0);
+                //GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Update:"), 0, 2, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JUICE.resources.getString("Description:")), 0, 3, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JUICE.resources.getString("Unit:")), 0, 4, 1, 1, 0, 0);
                 
-                LHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", field.getType().getName()), 1, 0, 1, 1, 1.0, 1.0);
-                LHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.access().toString()), 1, 1, 1, 1, 1.0, 1.0);
-                //LHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.update().toString()), 1, 2, 1, 1, 1.0, 1.0);
-                LHelper.addGBComponent(fieldPanel, fieldLayout, getTextPane("", jvd.description(), 70), 1, 3, 1, 1, 1.0, 1.0);
-                LHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.unit()), 1, 4, 1, 1, 1.0, 1.0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", field.getType().getName()), 1, 0, 1, 1, 1.0, 1.0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.access().toString()), 1, 1, 1, 1, 1.0, 1.0);
+                //GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.update().toString()), 1, 2, 1, 1, 1.0, 1.0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextPane("", jvd.description(), 70), 1, 3, 1, 1, 1.0, 1.0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.unit()), 1, 4, 1, 1, 1.0, 1.0);
                 
 //                this.getParent().validate();
             }

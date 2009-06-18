@@ -1,5 +1,5 @@
 /*
- * LHelper.java
+ * GUIHelper.java
  * Created on 19. September 2006, 10:11
  *
  * This file is part of JAMS
@@ -57,7 +57,7 @@ import javax.swing.JFileChooser;
  * @author S. Kralisch
  *
  */
-public class LHelper {
+public class GUIHelper {
 
     public static final int NO_OPTION = JOptionPane.NO_OPTION;
 

@@ -60,7 +60,7 @@ public class FileInput extends JPanel implements InputComponent {
         textField.setBorder(BorderFactory.createEtchedBorder());
         add(textField, BorderLayout.CENTER);
 
-        jfc = LHelper.getJFileChooser();
+        jfc = GUIHelper.getJFileChooser();
 
         addButton = new JButton("...");
         addButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));

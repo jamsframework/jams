@@ -23,7 +23,7 @@
 package reg.gui;
 
 import jams.data.JAMSCalendar;
-import jams.gui.LHelper;
+import jams.gui.GUIHelper;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
@@ -265,7 +265,7 @@ public class TimeSpaceDSPanel extends JPanel {
             }
         });
 
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Attribute/Aggregation:"), 0, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Attribute/Aggregation:"), 0, 10, 1, 1, 0, 0);
 
         aggregationLayout = new GridBagLayout();
         aggregationPanel = new JPanel();
@@ -273,13 +273,13 @@ public class TimeSpaceDSPanel extends JPanel {
         JScrollPane aggregationScroll = new JScrollPane(aggregationPanel);
         aggregationScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width + 100, LIST_DIMENSION.height));
 
-        LHelper.addGBComponent(this, mainLayout, aggregationScroll, 0, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, aggregationScroll, 0, 20, 1, 1, 0, 0);
 
 
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Time Steps:"), 10, 10, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, timeListScroll, 10, 20, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Entitiy IDs:"), 20, 10, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, entityListScroll, 20, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Time Steps:"), 10, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, timeListScroll, 10, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Entitiy IDs:"), 20, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, entityListScroll, 20, 20, 1, 1, 0, 0);
 
         JPanel buttonPanelA = new JPanel();
         buttonPanelA.setPreferredSize(LIST_DIMENSION);
@@ -328,12 +328,12 @@ public class TimeSpaceDSPanel extends JPanel {
 
         buttonPanelA.add(filterPanel);
 
-        LHelper.addGBComponent(this, mainLayout, buttonPanelA, 30, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, buttonPanelA, 30, 20, 1, 1, 0, 0);
 
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Months:"), 50, 10, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, monthListScroll, 50, 20, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, new JLabel("Years:"), 60, 10, 1, 1, 0, 0);
-        LHelper.addGBComponent(this, mainLayout, yearListScroll, 60, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Months:"), 50, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, monthListScroll, 50, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Years:"), 60, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, yearListScroll, 60, 20, 1, 1, 0, 0);
 
         JPanel buttonPanelB = new JPanel();
         buttonPanelB.setPreferredSize(LIST_DIMENSION);
@@ -355,7 +355,7 @@ public class TimeSpaceDSPanel extends JPanel {
         button.setPreferredSize(ACTION_BUTTON_DIM);
         buttonPanelB.add(button);
 
-        LHelper.addGBComponent(this, mainLayout, buttonPanelB, 70, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, buttonPanelB, 70, 20, 1, 1, 0, 0);
 
     }
 
@@ -538,22 +538,22 @@ public class TimeSpaceDSPanel extends JPanel {
 
         label = new JLabel("Area attribute");
         label.setHorizontalAlignment(SwingConstants.LEFT);
-        LHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 5, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 5, 0, 1, 1, 0, 0);
 
         ArrayList<DataStoreProcessor.AttributeData> attribs = TimeSpaceDSPanel.this.getTsproc().getDataStoreProcessor().getAttributes();
 
         label = new JLabel("Aggregation weight");
         label.setHorizontalAlignment(SwingConstants.CENTER);
-        LHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 3, 3, 1, 0, 0);
+        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 3, 3, 1, 0, 0);
         label = new JLabel("1");
         label.setHorizontalAlignment(SwingConstants.CENTER);
-        LHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 5, 1, 1, 0, 0);
         label = new JLabel("a/A");
         label.setHorizontalAlignment(SwingConstants.CENTER);
-        LHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 11, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 11, 5, 1, 1, 0, 0);
         label = new JLabel("l->mm");
         label.setHorizontalAlignment(SwingConstants.LEFT);
-        LHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 12, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 12, 5, 1, 1, 0, 0);
 
         int i = 0;
         ArrayList<JCheckBox> allChecks = new ArrayList<JCheckBox>();
@@ -568,14 +568,14 @@ public class TimeSpaceDSPanel extends JPanel {
                     AttribCheckBox thisCheck = (AttribCheckBox) e.getSource();
                     if (!thisCheck.isSelected() && attribCombo.getSelectedItem().toString().equals(thisCheck.getText())) {
                         attribCombo.setSelectedIndex(0);
-                        LHelper.showInfoDlg(parent, "Area attribute has been reset!", "Info");
+                        GUIHelper.showInfoDlg(parent, "Area attribute has been reset!", "Info");
                     }
                     thisCheck.attrib.setSelected(thisCheck.isSelected());
                 }
             });
 
             allChecks.add(attribCheck);
-            LHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCheck, 5, i + 10, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCheck, 5, i + 10, 1, 1, 0, 0);
 
             AttribRadioButton button1, button2, button3;
             button1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_NONE);
@@ -603,9 +603,9 @@ public class TimeSpaceDSPanel extends JPanel {
             bGroup.add(button2);
             bGroup.add(button3);
 
-            LHelper.addGBComponent(aggregationPanel, aggregationLayout, button1, 10, i + 10, 1, 1, 0, 0);
-            LHelper.addGBComponent(aggregationPanel, aggregationLayout, button2, 11, i + 10, 1, 1, 0, 0);
-            LHelper.addGBComponent(aggregationPanel, aggregationLayout, button3, 12, i + 10, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, button1, 10, i + 10, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, button2, 11, i + 10, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, button3, 12, i + 10, 1, 1, 0, 0);
 
             i++;
         }
@@ -631,12 +631,12 @@ public class TimeSpaceDSPanel extends JPanel {
                 }
             }
         });
-        LHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCombo, 10, 0, 5, 1, 0, 0);
+        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCombo, 10, 0, 5, 1, 0, 0);
 
         GroupCheckBox allOnOffCheck = new GroupCheckBox("All on/off", allChecks);
         allOnOffCheck.setSelected(DataStoreProcessor.AttributeData.SELECTION_DEFAULT);
 
-        LHelper.addGBComponent(aggregationPanel, aggregationLayout, allOnOffCheck, 5, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, allOnOffCheck, 5, 3, 1, 1, 0, 0);
 
         allOnOffCheck.addActionListener(new ActionListener() {
 
@@ -1070,7 +1070,7 @@ public class TimeSpaceDSPanel extends JPanel {
             if (attrib.getAggregationWeight() != DataStoreProcessor.AttributeData.AGGREGATION_NONE) {
 
                 if (attribCombo.getSelectedIndex() == 0) {
-                    LHelper.showInfoDlg(parent, "No area attribute has been chosen! Skipping weighted aggregation for attribute \"" +
+                    GUIHelper.showInfoDlg(parent, "No area attribute has been chosen! Skipping weighted aggregation for attribute \"" +
                             attrib.getName() + "\".", "Info");
                     continue;
                 }
