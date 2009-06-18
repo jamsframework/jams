@@ -37,8 +37,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -589,7 +587,7 @@ public class JAMSLauncher extends JFrame {
         return toolBar;
     }
 
-    class HelpButton extends JButton {
+    protected class HelpButton extends JButton {
 
         HelpComponent helpComponent;
 

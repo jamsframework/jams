@@ -22,7 +22,7 @@
  */
 package reg;
 
-import reg.gui.RegionalizerFrame;
+import reg.gui.ExplorerFrame;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jams.JAMSTools;
@@ -50,7 +50,7 @@ public class JAMSExplorer {
 
     public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 750;
 
-    private RegionalizerFrame regionalizerFrame;
+    private ExplorerFrame regionalizerFrame;
 
     private JAMSRuntime runtime;
 
@@ -97,7 +97,7 @@ public class JAMSExplorer {
         }
 
         displayManager = new DisplayManager(this);
-        regionalizerFrame = new RegionalizerFrame(this);
+        regionalizerFrame = new ExplorerFrame(this);
 
     }
 
@@ -119,22 +119,22 @@ public class JAMSExplorer {
         }
 
         // create the JAMSExplorer object
-        JAMSExplorer reg = new JAMSExplorer();
+        JAMSExplorer explorer = new JAMSExplorer();
         try {
-            String[] libs = JAMSTools.toArray(reg.getProperties().getProperty("libs", ""), ";");
+            String[] libs = JAMSTools.toArray(explorer.getProperties().getProperty("libs", ""), ";");
             //JAMSWorkspace workspace = new JAMSWorkspace(new File("C:/jams/data/TLUG-Regionalizer"), reg.getRuntime(), true);
             //JAMSWorkspace workspace = new JAMSWorkspace(new File("F:/Eigene Dateien/Java/jamsdata/TLUG-Regionalizer"), reg.getRuntime(), true);
-            JAMSWorkspace workspace = new JAMSWorkspace(new File(args[0]), reg.getRuntime(), true);
+            JAMSWorkspace workspace = new JAMSWorkspace(new File(args[0]), explorer.getRuntime(), true);
             workspace.setLibs(libs);
 
-            reg.open(workspace);
+            explorer.open(workspace);
 
         } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
-            reg.getRuntime().sendHalt(iwe.getMessage());
+            explorer.getRuntime().sendHalt(iwe.getMessage());
         }
 
 
-        reg.getRegionalizerFrame().setVisible(true);
+        explorer.getRegionalizerFrame().setVisible(true);
     }
 
     /**
@@ -154,7 +154,7 @@ public class JAMSExplorer {
     /**
      * @return the regFrame
      */
-    public RegionalizerFrame getRegionalizerFrame() {
+    public ExplorerFrame getRegionalizerFrame() {
         return regionalizerFrame;
     }
 

@@ -22,26 +22,16 @@
  */
 package jams.gui;
 
-import jams.JAMS;
-import jams.JAMSProperties;
-import jams.JAMSTools;
 import jams.gui.input.BooleanInput;
 import jams.gui.input.InputComponent;
 import jams.gui.input.TextInput;
-import jams.runtime.JAMSRuntime;
-import jams.runtime.StandardRuntime;
 import jams.workspace.JAMSWorkspace;
-import jams.workspace.JAMSWorkspace.InvalidWorkspaceException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.Observable;
-import java.util.Observer;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -49,7 +39,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
 /**
@@ -57,7 +46,7 @@ import javax.swing.WindowConstants;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 public class WorkspaceDlg extends JDialog {
-    
+
     private JAMSWorkspace ws;
 
     private InputComponent titleInput;
@@ -98,8 +87,13 @@ public class WorkspaceDlg extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 ws.setTitle(titleInput.getValue());
                 ws.setDescription(descriptionInput.getText());
-                ws.setPersistent(Boolean.parseBoolean(persistenceInput.getValue()));
+                if (persistenceInput.getValue().equalsIgnoreCase("1")) {
+                    ws.setPersistent(true);
+                } else {
+                    ws.setPersistent(false);
+                }
                 ws.saveConfig();
+                setVisible(false);
             }
         });
         getRootPane().setDefaultButton(okButton);
@@ -110,7 +104,6 @@ public class WorkspaceDlg extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-
             }
         };
         cancelButton.addActionListener(cancelListener);
@@ -137,46 +130,5 @@ public class WorkspaceDlg extends JDialog {
         this.descriptionInput.setText(ws.getDescription());
         this.persistenceInput.setValue(Boolean.toString(ws.isPersistent()));
         setVisible(true);
-    }
-
-    public static void main(String[] args) throws IOException {
-
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception lnfe) {
-        }
-
-        JAMSRuntime runtime = new StandardRuntime();
-        runtime.setDebugLevel(JAMS.VERBOSE);
-        runtime.addErrorLogObserver(new Observer() {
-
-            @Override
-            public void update(Observable o, Object arg) {
-                System.out.print(arg);
-            }
-        });
-        runtime.addInfoLogObserver(new Observer() {
-
-            @Override
-            public void update(Observable o, Object arg) {
-                System.out.print(arg);
-            }
-        });
-
-        JAMSProperties properties = JAMSProperties.createJAMSProperties();
-        properties.load("D:/jamsapplication/nsk.jap");
-        String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
-
-
-        JAMSWorkspace ws;
-        try {
-            ws = new JAMSWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime, true);
-        } catch (InvalidWorkspaceException iwe) {
-            System.out.println(iwe.getMessage());
-            return;
-        }
-
-        WorkspaceDlg wsdlg = new WorkspaceDlg();
-        wsdlg.setVisible(ws);
     }
 }

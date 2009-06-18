@@ -38,11 +38,9 @@ public class TreePanel extends JPanel {
 
     private DSTree tree;
 
-    private JAMSExplorer regionalizer;
-    
-    public TreePanel(JAMSExplorer regionalizer) {
+    public TreePanel(JAMSExplorer explorer) {
         super();
-        tree = new DSTree(regionalizer);
+        tree = new DSTree(explorer);
         JScrollPane scrollPane = new JScrollPane(tree);
         this.setLayout(new BorderLayout());
         this.add(scrollPane, BorderLayout.CENTER);

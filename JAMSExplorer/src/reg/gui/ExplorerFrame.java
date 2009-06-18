@@ -1,5 +1,5 @@
 /*
- * RegionalizerFrame.java
+ * ExplorerFrame.java
  * Created on 18. November 2008, 21:40
  *
  * This file is part of JAMS
@@ -22,9 +22,16 @@
  */
 package reg.gui;
 
+import jams.JAMSTools;
+import jams.workspace.JAMSWorkspace.InvalidWorkspaceException;
+import java.io.FileNotFoundException;
 import reg.*;
 import jams.gui.GUIHelper;
+import jams.gui.JAMSLauncher;
 import jams.gui.WorkerDlg;
+import jams.gui.WorkspaceDlg;
+import jams.io.XMLIO;
+import jams.workspace.JAMSWorkspace;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -33,6 +40,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -50,13 +58,14 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import org.w3c.dom.Document;
 import reg.viewer.Viewer;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class RegionalizerFrame extends JFrame {
+public class ExplorerFrame extends JFrame {
 
     private static final int INOUT_PANE_WIDTH = 250, INOUT_PANE_HEIGHT = 450;
 
@@ -66,7 +75,7 @@ public class RegionalizerFrame extends JFrame {
 
     private WorkerDlg openWSDlg;
 
-    private Action openWSAction, exitAction;
+    private Action openWSAction, exitAction, editWSAction, launchModelAction;
 
     private JLabel statusLabel;
 
@@ -76,10 +85,12 @@ public class RegionalizerFrame extends JFrame {
 
     private JTabbedPane spreadSheetTabs;
 
-    private JAMSExplorer regionalizer;
+    private JAMSExplorer explorer;
 
-    public RegionalizerFrame(JAMSExplorer regionalizer) {
-        this.regionalizer = regionalizer;
+    private WorkspaceDlg wsDlg = new WorkspaceDlg();
+
+    public ExplorerFrame(JAMSExplorer regionalizer) {
+        this.explorer = regionalizer;
         init();
     }
 
@@ -87,7 +98,7 @@ public class RegionalizerFrame extends JFrame {
 
         createListener();
 
-        exitAction = new AbstractAction("Schliessen") {
+        exitAction = new AbstractAction("Close") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -95,11 +106,27 @@ public class RegionalizerFrame extends JFrame {
             }
         };
 
-        openWSAction = new AbstractAction("Arbeitsverzeichnis öffnen") {
+        openWSAction = new AbstractAction("Open Workspace") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 open();
+            }
+        };
+
+        editWSAction = new AbstractAction("Edit Workspace") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                wsDlg.setVisible(explorer.getWorkspace());
+            }
+        };
+
+        launchModelAction = new AbstractAction("Start Model") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                launchModel();
             }
         };
 
@@ -109,6 +136,7 @@ public class RegionalizerFrame extends JFrame {
         setTitle(JAMSExplorer.APP_TITLE);
 
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        jfc.setSelectedFile(new File(System.getProperty("user.dir")));
 
         mainScroll = new JScrollPane();
 
@@ -126,8 +154,8 @@ public class RegionalizerFrame extends JFrame {
 
         inoutSplitPane.setAutoscrolls(true);
         inoutSplitPane.setContinuousLayout(true);
-        inoutSplitPane.setLeftComponent(regionalizer.getDisplayManager().getTreePanel());
-        inoutSplitPane.setRightComponent(regionalizer.getDisplayManager().getInputDSInfoPanel());
+        inoutSplitPane.setLeftComponent(explorer.getDisplayManager().getTreePanel());
+        inoutSplitPane.setRightComponent(explorer.getDisplayManager().getInputDSInfoPanel());
         inoutSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         inoutSplitPane.setDividerLocation(INOUT_PANE_HEIGHT);
         inoutSplitPane.setOneTouchExpandable(false);
@@ -139,9 +167,21 @@ public class RegionalizerFrame extends JFrame {
 
         JButton wsOpenButton = new JButton(openWSAction);
         wsOpenButton.setText("");
-        wsOpenButton.setToolTipText(openWSAction.toString());
+        wsOpenButton.setToolTipText((String) openWSAction.getValue(Action.NAME));
         wsOpenButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelOpen.png")));
         toolBar.add(wsOpenButton);
+
+        JButton wsEditButton = new JButton(editWSAction);
+        wsEditButton.setText("");
+        wsEditButton.setToolTipText((String) editWSAction.getValue(Action.NAME));
+        wsEditButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
+        toolBar.add(wsEditButton);
+
+        JButton launchModelButton = new JButton(launchModelAction);
+        launchModelButton.setText("");
+        launchModelButton.setToolTipText((String) launchModelAction.getValue(Action.NAME));
+        launchModelButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
+        toolBar.add(launchModelButton);
 
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
@@ -195,7 +235,7 @@ public class RegionalizerFrame extends JFrame {
 
     public void removeFromTabbedPane(String name) {
 //        spreadSheetTabs.remove(comp);
-        spreadSheetTabs.remove(regionalizer.getDisplayManager().getSpreadSheets().get(name));
+        spreadSheetTabs.remove(explorer.getDisplayManager().getSpreadSheets().get(name));
         updateMainPanel(spreadSheetTabs);
     }
 
@@ -214,7 +254,15 @@ public class RegionalizerFrame extends JFrame {
             openWSDlg.setTask(new Runnable() {
 
                 public void run() {
-                    //JAMSExplorer.open(jfc.getSelectedFile());
+
+                    String[] libs = JAMSTools.toArray(explorer.getProperties().getProperty("libs", ""), ";");
+                    try {
+                        JAMSWorkspace workspace = new JAMSWorkspace(jfc.getSelectedFile(), explorer.getRuntime(), true);
+                        workspace.setLibs(libs);
+                        explorer.open(workspace);
+                    } catch (InvalidWorkspaceException ex) {
+                        explorer.getRuntime().handle(ex);
+                    }
                 }
             });
             openWSDlg.execute();
@@ -226,6 +274,18 @@ public class RegionalizerFrame extends JFrame {
         this.setVisible(false);
         this.dispose();
         System.exit(0);
+    }
+
+    private void launchModel() {
+
+        JAMSWorkspace ws = explorer.getWorkspace();
+        try {
+            Document modelDoc = XMLIO.getDocument(new File(ws.getDirectory(), ws.getModelFile()).getPath());
+            JAMSLauncher launcher = new JAMSLauncher(explorer.getProperties(), modelDoc);
+            launcher.setVisible(true);
+        } catch (FileNotFoundException ex) {
+            explorer.getRuntime().handle(ex);
+        }
     }
 
     private void createListener() {

@@ -111,6 +111,7 @@ public class JAMSWorkspace implements Serializable {
             properties.setProperty("description", "");
             properties.setProperty("title", "");
             properties.setProperty("persistent", "false");
+            properties.setProperty("defaultmodel", "model.jam");
 
             File file = new File(directory.getPath() + File.separator + CONFIG_FILE_NAME);
             if (file.exists()) {
@@ -402,6 +403,22 @@ public class JAMSWorkspace implements Serializable {
      */
     public void setPersistent(boolean persistent) {
         properties.setProperty("persistent", Boolean.toString(persistent));
+    }
+
+    /**
+     *
+     * @return The default model path of the workspace
+     */
+    public String getModelFile() {
+        return properties.getProperty("defaultmodel");
+    }
+
+    /**
+     * Sets the default model path of the workspace
+     * @param path The path
+     */
+    public void setModelFile(String path) {
+        properties.setProperty("defaultmodel", path);
     }
 
     private void createDataStores() {
