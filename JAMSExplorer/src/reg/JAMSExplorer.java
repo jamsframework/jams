@@ -124,7 +124,7 @@ public class JAMSExplorer {
             String[] libs = JAMSTools.toArray(reg.getProperties().getProperty("libs", ""), ";");
             //JAMSWorkspace workspace = new JAMSWorkspace(new File("C:/jams/data/TLUG-Regionalizer"), reg.getRuntime(), true);
             //JAMSWorkspace workspace = new JAMSWorkspace(new File("F:/Eigene Dateien/Java/jamsdata/TLUG-Regionalizer"), reg.getRuntime(), true);
-            JAMSWorkspace workspace = new JAMSWorkspace(new File("d:/jamsapplication/JAMS-Gehlberg"), reg.getRuntime(), true);
+            JAMSWorkspace workspace = new JAMSWorkspace(new File("d:/jamsapplication/TLUG-Regionalizer"), reg.getRuntime(), true);
             workspace.setLibs(libs);
 
             reg.open(workspace);
