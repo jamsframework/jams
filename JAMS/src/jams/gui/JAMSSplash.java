@@ -38,7 +38,7 @@ public class JAMSSplash {
 
     private Image img;
 
-    private int width,  height;
+    private int width, height;
 
     private JDialog dlg;
 
@@ -59,12 +59,16 @@ public class JAMSSplash {
         this.height = 0;
     }
 
+    public void show(JFrame frame, int timeInMillis) {
+        frame.setVisible(true);
+    }
+
     /**
      *
      * @param frame Frame to show after splash disappears
      * @param timeInMillis Time to show the splash
      */
-    public void show(JFrame frame, int timeInMillis) {
+    public void show_(JFrame frame, int timeInMillis) {
 
         if (timeInMillis == 0) {
             frame.setVisible(true);
