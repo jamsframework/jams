@@ -49,7 +49,7 @@ public class OutputDSPanel extends JPanel {
 
         // create the controller panel
         TimeSpaceDSPanel tsp = new TimeSpaceDSPanel();
-        tsp.setParent(regionalizer.getRegionalizerFrame());
+        tsp.setParent(regionalizer.getExplorerFrame());
         tsp.setOutputSpreadSheet(this.spreadsheet);
         tsp.createTsProc(file);
 

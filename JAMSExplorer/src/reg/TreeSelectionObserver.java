@@ -40,19 +40,19 @@ public class TreeSelectionObserver implements Observer {
 
     public TreeSelectionObserver(JAMSWorkspace workspace) {
         this.workspace = workspace;
-//        JAMSExplorer.getRegionalizerFrame().getTreePanel().getTree().addObserver(this);
+//        JAMSExplorer.getExplorerFrame().getTreePanel().getTree().addObserver(this);
     }
 
     public void update(Observable o, Object arg) {
         if (arg == null) {
-//            JAMSExplorer.getRegionalizerFrame().getInfoPanel().updateDS(null);
+//            JAMSExplorer.getExplorerFrame().getInfoPanel().updateDS(null);
             return;
         }
         DSTreeNode node = (DSTreeNode) arg;
         if (node.getType() == DSTreeNode.INPUT_DS) {
             try {
                 DataStore store = workspace.getInputDataStore(node.toString());
-//                JAMSExplorer.getRegionalizerFrame().getInfoPanel().updateDS(store);
+//                JAMSExplorer.getExplorerFrame().getInfoPanel().updateDS(store);
             } catch (Exception e) {
                 regionalizer.getRuntime().sendErrorMsg(e.toString());
                 e.printStackTrace();

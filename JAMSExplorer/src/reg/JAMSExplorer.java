@@ -105,9 +105,8 @@ public class JAMSExplorer {
 
     public void open(JAMSWorkspace workspace) {
         this.workspace = workspace;
-        regionalizerFrame.setTitle(JAMSExplorer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
         getDisplayManager().getTreePanel().update(workspace);
-        regionalizerFrame.updateMainPanel(new JPanel());
+        regionalizerFrame.update();
     }
 
     public static void main(String[] args) {
@@ -140,7 +139,7 @@ public class JAMSExplorer {
         }
 
 
-        explorer.getRegionalizerFrame().setVisible(true);
+        explorer.getExplorerFrame().setVisible(true);
     }
 
     /**
@@ -160,7 +159,7 @@ public class JAMSExplorer {
     /**
      * @return the regFrame
      */
-    public ExplorerFrame getRegionalizerFrame() {
+    public ExplorerFrame getExplorerFrame() {
         return regionalizerFrame;
     }
 

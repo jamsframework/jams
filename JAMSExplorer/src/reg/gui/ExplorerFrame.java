@@ -142,8 +142,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-        editWSAction.setEnabled(false);
-        launchModelAction.setEnabled(false);
+        update();
 
         propertyDlg = new PropertyDlg(this, explorer.getProperties());
 
@@ -282,19 +281,31 @@ public class ExplorerFrame extends JFrame {
                         JAMSWorkspace workspace = new JAMSWorkspace(jfc.getSelectedFile(), explorer.getRuntime(), true);
                         workspace.setLibs(libs);
                         explorer.open(workspace);
-                        editWSAction.setEnabled(true);
-
-                        // check if the default model is existing
-                        File modelFile = new File(workspace.getDirectory(), workspace.getModelFilename());
-                        if (modelFile.exists()) {
-                            launchModelAction.setEnabled(true);
-                        }
                     } catch (InvalidWorkspaceException ex) {
                         explorer.getRuntime().handle(ex);
                     }
                 }
             });
             openWSDlg.execute();
+        }
+    }
+
+    public void update() {
+        JAMSWorkspace workspace = explorer.getWorkspace();
+
+        if (workspace == null) {
+            editWSAction.setEnabled(false);
+            launchModelAction.setEnabled(false);
+        } else {
+            setTitle(JAMSExplorer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
+            updateMainPanel(new JPanel());
+            editWSAction.setEnabled(true);
+
+            // check if the default model is existing
+            File modelFile = new File(workspace.getDirectory(), workspace.getModelFilename());
+            if (modelFile.exists()) {
+                launchModelAction.setEnabled(true);
+            }
         }
     }
 

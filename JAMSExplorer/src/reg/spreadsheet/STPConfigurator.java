@@ -124,7 +124,7 @@ public class STPConfigurator extends JFrame{
     public STPConfigurator(JAMSExplorer regionalizer){
 
         this.workspace = regionalizer.getWorkspace();
-        this.parent = regionalizer.getRegionalizerFrame();
+        this.parent = regionalizer.getExplorerFrame();
         this.setIconImage(parent.getIconImage());
         setTitle("StackedTimePlot Configurator");
         
@@ -163,7 +163,7 @@ public class STPConfigurator extends JFrame{
     public STPConfigurator(JAMSExplorer regionalizer, JAMSSpreadSheet output_sheet){
 
         this.workspace = regionalizer.getWorkspace();
-        this.parent = regionalizer.getRegionalizerFrame();
+        this.parent = regionalizer.getExplorerFrame();
         this.setIconImage(parent.getIconImage());
         setTitle("StackedTimePlot Configurator");
         
@@ -631,7 +631,7 @@ public class STPConfigurator extends JFrame{
         File[] filelist2 = testfile2.listFiles();
 
         Set<String> idSet;
-//        idSet = JAMSExplorer.getRegionalizerFrame().getWorkspace().getInputDataStoreIDs();
+//        idSet = JAMSExplorer.getExplorerFrame().getWorkspace().getInputDataStoreIDs();
 //        totalIDs = idSet.size();
         
         //idArray = idSet.toArray(idArray);

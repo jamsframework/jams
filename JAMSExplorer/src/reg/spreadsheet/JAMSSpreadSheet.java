@@ -95,7 +95,7 @@ public class JAMSSpreadSheet extends JPanel {
 
     public JAMSSpreadSheet(JAMSExplorer regionalizer) {
         this.regionalizer = regionalizer;
-        this.parent_frame = regionalizer.getRegionalizerFrame();
+        this.parent_frame = regionalizer.getExplorerFrame();
     }
 
     public JAMSSpreadSheet(JAMSExplorer regionalizer, boolean geoWindEnable) {
@@ -110,8 +110,8 @@ public class JAMSSpreadSheet extends JPanel {
     }
 
     public void closeTab() {
-        regionalizer.getRegionalizerFrame().removeFromTabbedPane(this.name);
-        regionalizer.getRegionalizerFrame().removeFromTabbedPane(this.getPanel());
+        regionalizer.getExplorerFrame().removeFromTabbedPane(this.name);
+        regionalizer.getExplorerFrame().removeFromTabbedPane(this.getPanel());
         regionalizer.getDisplayManager().getSpreadSheets().remove(this.name);
     }
 
@@ -376,7 +376,7 @@ public class JAMSSpreadSheet extends JPanel {
     private void openCTS() {
 
         JTSConfigurator jts;
-        jts = new JTSConfigurator(regionalizer.getRegionalizerFrame(), this, null);
+        jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, null);
     //ctstabs.addGraph(table);
     //ctsIsOpen = true;
     }
@@ -385,9 +385,9 @@ public class JAMSSpreadSheet extends JPanel {
 
         JTSConfigurator jts;
         if (useTemplateButton.isSelected()) {
-            jts = new JTSConfigurator(regionalizer.getRegionalizerFrame(), this, templateFile);
+            jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, templateFile);
         } else {
-            jts = new JTSConfigurator(regionalizer.getRegionalizerFrame(), this, null);
+            jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, null);
         }
     //ctstabs.addGraph(table);
     //ctsIsOpen = true;
@@ -397,9 +397,9 @@ public class JAMSSpreadSheet extends JPanel {
         JXYConfigurator jxys;
 
         try {
-            jxys = new JXYConfigurator(regionalizer.getRegionalizerFrame(), this);
+            jxys = new JXYConfigurator(regionalizer.getExplorerFrame(), this);
         } catch (NullPointerException npe) {
-            jxys = new JXYConfigurator(regionalizer.getRegionalizerFrame(), this);
+            jxys = new JXYConfigurator(regionalizer.getExplorerFrame(), this);
         }
     }
 
@@ -407,9 +407,9 @@ public class JAMSSpreadSheet extends JPanel {
         JXYConfigurator jxys;
 
         if (useTemplateButton.isSelected()) {
-            jxys = new JXYConfigurator(regionalizer.getRegionalizerFrame(), this, templateFile);
+            jxys = new JXYConfigurator(regionalizer.getExplorerFrame(), this, templateFile);
         } else {
-            jxys = new JXYConfigurator(regionalizer.getRegionalizerFrame(), this, null);
+            jxys = new JXYConfigurator(regionalizer.getExplorerFrame(), this, null);
         }
     }
 

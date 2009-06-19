@@ -108,21 +108,21 @@ public class DisplayManager implements Observer {
                     if(!spreadSheets.containsKey(node.toString())){
                         
                         spreadSheets.put(node.toString(), spreadSheet);
-                        regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(), spreadSheet.getPanel());
+                        regionalizer.getExplorerFrame().addToTabbedPane(node.toString(), spreadSheet.getPanel());
                     }else{
                         if(spreadSheets.get(node.toString()) instanceof JAMSSpreadSheet){
                             spreadSheet = (JAMSSpreadSheet) spreadSheets.get(node.toString());
-                            regionalizer.getRegionalizerFrame().showTab(spreadSheet.getPanel());
+                            regionalizer.getExplorerFrame().showTab(spreadSheet.getPanel());
                         }
                     }
 //                    spreadSheetTabs.add(node.toString(), spreadSheet.getPanel());
 //
-//                    JAMSExplorer.getRegionalizerFrame().updateMainPanel(spreadSheetTabs);
-//                    JAMSExplorer.getRegionalizerFrame().updateMainPanel(spreadSheet.getPanel());
+//                    JAMSExplorer.getExplorerFrame().updateMainPanel(spreadSheetTabs);
+//                    JAMSExplorer.getExplorerFrame().updateMainPanel(spreadSheet.getPanel());
                     try {
                         spreadSheet.loadTSDS((TSDataStore) store, regionalizer.getWorkspace().getInputDirectory());
                     } catch (Exception e) {
-                        GUIHelper.showErrorDlg(regionalizer.getRegionalizerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
+                        GUIHelper.showErrorDlg(regionalizer.getExplorerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
                         e.printStackTrace();
                     }
                 }
@@ -130,33 +130,33 @@ public class DisplayManager implements Observer {
             case DSTreeNode.OUTPUT_DS:
                 FileObject fo = (FileObject) node.getUserObject();
 //                OutputDSPanel odsPanel = OutputDSPanel.createPanel(fo.getFile());
-//                JAMSExplorer.getRegionalizerFrame().updateMainPanel(odsPanel);
+//                JAMSExplorer.getExplorerFrame().updateMainPanel(odsPanel);
                 try {
                     JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(regionalizer, fo.getFile());
                     if(outputPanel instanceof OutputDSPanel){
                         OutputDSPanel odspanel = (OutputDSPanel) outputPanel;
                         //JAMSSpreadSheet spreadsheet = odspanel.getSpreadsheet();
                     
-//                    regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(),outputPanel);
+//                    regionalizer.getExplorerFrame().addToTabbedPane(node.toString(),outputPanel);
                     
                         if(!spreadSheets.containsKey(fo.getFile().getName())){
 
                             spreadSheets.put(fo.getFile().getName(), odspanel);
-    //                        regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(), outputPanel);
-                            regionalizer.getRegionalizerFrame().addToTabbedPane(fo.getFile().getName(), odspanel);
+    //                        regionalizer.getExplorerFrame().addToTabbedPane(node.toString(), outputPanel);
+                            regionalizer.getExplorerFrame().addToTabbedPane(fo.getFile().getName(), odspanel);
                         }else{
                             outputPanel = spreadSheets.get(fo.getFile().getName());
-                            regionalizer.getRegionalizerFrame().showTab(outputPanel);
+                            regionalizer.getExplorerFrame().showTab(outputPanel);
                         }
                         
                     } else {
                         if(!spreadSheets.containsKey(fo.getFile().getName())){
 
                             spreadSheets.put(fo.getFile().getName(), outputPanel);
-    //                        regionalizer.getRegionalizerFrame().addToTabbedPane(node.toString(), outputPanel);
-                            regionalizer.getRegionalizerFrame().addToTabbedPane(fo.getFile().getName(), outputPanel);
+    //                        regionalizer.getExplorerFrame().addToTabbedPane(node.toString(), outputPanel);
+                            regionalizer.getExplorerFrame().addToTabbedPane(fo.getFile().getName(), outputPanel);
                         }else{
-                            regionalizer.getRegionalizerFrame().showTab(spreadSheets.get(fo.getFile().getName()));
+                            regionalizer.getExplorerFrame().showTab(spreadSheets.get(fo.getFile().getName()));
                         }
                     }
                     
