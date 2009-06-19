@@ -23,7 +23,6 @@
 package jams.workspace.stores;
 
 import jams.JAMSTools;
-import jams.io.XMLIO;
 import jams.workspace.DataSet;
 import jams.workspace.JAMSWorkspace;
 import java.io.File;
@@ -32,7 +31,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  *
@@ -60,7 +58,7 @@ public class ShapeFileDataStore extends GeoDataStore {
     public ShapeFileDataStore(JAMSWorkspace ws, String id, Document doc) throws URISyntaxException {
         super(ws);
         this.id = id;
-        // source can have uri of file
+        // source can have uri or filename
         Element sourceElement = (Element) doc.getElementsByTagName("source").item(0);
         if (sourceElement != null) {
             String uriString = getNodeValue(sourceElement, "uri");
@@ -81,7 +79,7 @@ public class ShapeFileDataStore extends GeoDataStore {
         }
         Element keyElement = (Element) doc.getElementsByTagName("key").item(0);
         if (keyElement != null)
-            this.keyColumn = keyElement.getNodeValue();
+            this.keyColumn = keyElement.getTextContent();
 
         if (this.shapeFile != null && this.shapeFile.exists()) {
             this.uri = this.shapeFile.toURI();
