@@ -46,6 +46,8 @@ public class JAMSExplorer {
 
     public static final String APP_TITLE = "Data Explorer";
 
+    public static final String APP_VERSION = "V0.2";
+
     public static boolean GEOWIND_ENABLE = true;
 
     public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 750;
@@ -120,17 +122,21 @@ public class JAMSExplorer {
 
         // create the JAMSExplorer object
         JAMSExplorer explorer = new JAMSExplorer();
-        try {
-            String[] libs = JAMSTools.toArray(explorer.getProperties().getProperty("libs", ""), ";");
-            //JAMSWorkspace workspace = new JAMSWorkspace(new File("C:/jams/data/TLUG-Regionalizer"), reg.getRuntime(), true);
-            //JAMSWorkspace workspace = new JAMSWorkspace(new File("F:/Eigene Dateien/Java/jamsdata/TLUG-Regionalizer"), reg.getRuntime(), true);
-            JAMSWorkspace workspace = new JAMSWorkspace(new File(args[0]), explorer.getRuntime(), true);
-            workspace.setLibs(libs);
 
-            explorer.open(workspace);
+        if (args.length > 0) {
 
-        } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
-            explorer.getRuntime().sendHalt(iwe.getMessage());
+            try {
+                String[] libs = JAMSTools.toArray(explorer.getProperties().getProperty("libs", ""), ";");
+                //JAMSWorkspace workspace = new JAMSWorkspace(new File("C:/jams/data/TLUG-Regionalizer"), reg.getRuntime(), true);
+                //JAMSWorkspace workspace = new JAMSWorkspace(new File("F:/Eigene Dateien/Java/jamsdata/TLUG-Regionalizer"), reg.getRuntime(), true);
+                JAMSWorkspace workspace = new JAMSWorkspace(new File(args[0]), explorer.getRuntime(), true);
+                workspace.setLibs(libs);
+
+                explorer.open(workspace);
+
+            } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
+                explorer.getRuntime().sendHalt(iwe.getMessage());
+            }
         }
 
 

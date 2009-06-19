@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import reg.*;
 import jams.gui.GUIHelper;
 import jams.gui.JAMSLauncher;
+import jams.gui.PropertyDlg;
 import jams.gui.WorkerDlg;
 import jams.gui.WorkspaceDlg;
 import jams.io.XMLIO;
@@ -53,7 +54,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
@@ -75,17 +75,17 @@ public class ExplorerFrame extends JFrame {
 
     private WorkerDlg openWSDlg;
 
-    private Action openWSAction, exitAction, editWSAction, launchModelAction;
+    private Action openWSAction, exitAction, editWSAction, launchModelAction, editPrefsAction;
 
     private JLabel statusLabel;
 
     private JSplitPane mainSplitPane;
 
-    private JScrollPane mainScroll;
-
     private JTabbedPane spreadSheetTabs;
 
     private JAMSExplorer explorer;
+
+    private PropertyDlg propertyDlg;
 
     private WorkspaceDlg wsDlg = new WorkspaceDlg();
 
@@ -106,7 +106,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-        openWSAction = new AbstractAction("Open Workspace") {
+        openWSAction = new AbstractAction("Open Workspace...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -114,7 +114,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-        editWSAction = new AbstractAction("Edit Workspace") {
+        editWSAction = new AbstractAction("Edit Workspace...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -130,6 +130,23 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
+        editPrefsAction = new AbstractAction("Edit Preferences...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                propertyDlg.setProperties(explorer.getProperties());
+                propertyDlg.setVisible(true);
+                if (propertyDlg.getResult() == PropertyDlg.APPROVE_OPTION) {
+                    propertyDlg.validateProperties();
+                }
+            }
+        };
+
+        editWSAction.setEnabled(false);
+        launchModelAction.setEnabled(false);
+
+        propertyDlg = new PropertyDlg(this, explorer.getProperties());
+
         openWSDlg = new WorkerDlg(this, "Öffne Arbeitsverzeichnis");
 
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
@@ -138,8 +155,6 @@ public class ExplorerFrame extends JFrame {
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         jfc.setSelectedFile(new File(System.getProperty("user.dir")));
 
-        mainScroll = new JScrollPane();
-
         spreadSheetTabs = new JTabbedPane();
 
         mainSplitPane = new JSplitPane();
@@ -147,10 +162,10 @@ public class ExplorerFrame extends JFrame {
         mainSplitPane.setAutoscrolls(true);
         mainSplitPane.setContinuousLayout(true);
         mainSplitPane.setLeftComponent(inoutSplitPane);
-//        mainSplitPane.setRightComponent(mainScroll);
+        mainSplitPane.setRightComponent(new JPanel());
         mainSplitPane.setDividerLocation(INOUT_PANE_WIDTH);
-        //mainSplitPane.setOneTouchExpandable(true);
         mainSplitPane.setDividerSize(DIVIDER_WIDTH);
+        mainSplitPane.setOneTouchExpandable(false);
 
         inoutSplitPane.setAutoscrolls(true);
         inoutSplitPane.setContinuousLayout(true);
@@ -158,8 +173,8 @@ public class ExplorerFrame extends JFrame {
         inoutSplitPane.setRightComponent(explorer.getDisplayManager().getInputDSInfoPanel());
         inoutSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         inoutSplitPane.setDividerLocation(INOUT_PANE_HEIGHT);
-        inoutSplitPane.setOneTouchExpandable(false);
         inoutSplitPane.setDividerSize(DIVIDER_WIDTH);
+        inoutSplitPane.setOneTouchExpandable(false);
 
         getContentPane().add(mainSplitPane, java.awt.BorderLayout.CENTER);
 
@@ -190,15 +205,17 @@ public class ExplorerFrame extends JFrame {
         statusPanel.setBorder(BorderFactory.createEtchedBorder());
         statusPanel.setPreferredSize(new java.awt.Dimension(14, 20));
         statusLabel = new JLabel();
-        statusLabel.setText(JAMSExplorer.APP_TITLE + " v0.1");
+        statusLabel.setText(JAMSExplorer.APP_TITLE + " " + JAMSExplorer.APP_VERSION);
         statusPanel.add(statusLabel, java.awt.BorderLayout.CENTER);
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
 
 
         JMenuBar mainMenu = new JMenuBar();
 
-        JMenu fileMenu = new JMenu("Datei");
+        JMenu fileMenu = new JMenu("File");
         mainMenu.add(fileMenu);
+        JMenu prefsMenu = new JMenu("Preferences");
+        mainMenu.add(prefsMenu);
 
         JMenuItem openWSItem = new JMenuItem(openWSAction);
         openWSItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
@@ -208,6 +225,11 @@ public class ExplorerFrame extends JFrame {
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         fileMenu.add(exitItem);
 
+        JMenuItem editWSItem = new JMenuItem(editWSAction);
+        prefsMenu.add(editWSItem);
+
+        JMenuItem editPrefsItem = new JMenuItem(editPrefsAction);
+        prefsMenu.add(editPrefsItem);
 
         setJMenuBar(mainMenu);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -260,6 +282,13 @@ public class ExplorerFrame extends JFrame {
                         JAMSWorkspace workspace = new JAMSWorkspace(jfc.getSelectedFile(), explorer.getRuntime(), true);
                         workspace.setLibs(libs);
                         explorer.open(workspace);
+                        editWSAction.setEnabled(true);
+
+                        // check if the default model is existing
+                        File modelFile = new File(workspace.getDirectory(), workspace.getModelFilename());
+                        if (modelFile.exists()) {
+                            launchModelAction.setEnabled(true);
+                        }
                     } catch (InvalidWorkspaceException ex) {
                         explorer.getRuntime().handle(ex);
                     }
@@ -280,7 +309,7 @@ public class ExplorerFrame extends JFrame {
 
         JAMSWorkspace ws = explorer.getWorkspace();
         try {
-            Document modelDoc = XMLIO.getDocument(new File(ws.getDirectory(), ws.getModelFile()).getPath());
+            Document modelDoc = XMLIO.getDocument(new File(ws.getDirectory(), ws.getModelFilename()).getPath());
             JAMSLauncher launcher = new JAMSLauncher(explorer.getProperties(), modelDoc);
             launcher.setVisible(true);
         } catch (FileNotFoundException ex) {

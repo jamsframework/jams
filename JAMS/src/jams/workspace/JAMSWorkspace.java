@@ -409,7 +409,7 @@ public class JAMSWorkspace implements Serializable {
      *
      * @return The default model path of the workspace
      */
-    public String getModelFile() {
+    public String getModelFilename() {
         return properties.getProperty("defaultmodel");
     }
 
