@@ -42,14 +42,17 @@ public class ShapeFileDataStore extends GeoDataStore {
      * the name of the shapefile
      */
     private String fileName = null;
+
     /**
      * the uri
      */
     private URI uri = null;
+
     /**
      * the key column, necessary for identifying values
      */
     private String keyColumn = null;
+
     /**
      * the shapeFile itself
      */
@@ -72,24 +75,26 @@ public class ShapeFileDataStore extends GeoDataStore {
                     this.shapeFile = new File(ws.getLocalInputDirectory(), i_filename);
                 }
             }
+        }
 
-        } else {
-            System.out.println("try to get file from local directory (" + id + ".shp) ..");
+        if (shapeFile == null) {
             this.shapeFile = new File(ws.getLocalInputDirectory(), id + ".shp");
         }
-        Element keyElement = (Element) doc.getElementsByTagName("key").item(0);
-        if (keyElement != null)
-            this.keyColumn = keyElement.getTextContent();
 
-        if (this.shapeFile != null && this.shapeFile.exists()) {
+        if (this.shapeFile.exists()) {
+            ws.getRuntime().println("Trying to use shape file from " + shapeFile.toString() + " ..");
             this.uri = this.shapeFile.toURI();
             this.fileName = this.shapeFile.getName();
+            Element keyElement = (Element) doc.getElementsByTagName("key").item(0);
+            if (keyElement != null) {
+                this.keyColumn = keyElement.getTextContent();
+            }
         } else {
-            System.out.println("Sorry, no shape file found.");
+            ws.getRuntime().println("No shape file found for shape datastore \"" + id + "\" ..");
         }
 
-    // to be cont'd, reader implemented as jams.workspace.DataReader
-    // in components project (Geotools dependencies outside JAMS!!)
+        // to be cont'd, reader implemented as jams.workspace.DataReader
+        // in components project (Geotools dependencies outside JAMS!!)
     }
 
     @Override
@@ -104,7 +109,6 @@ public class ShapeFileDataStore extends GeoDataStore {
 
     @Override
     public void close() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public String getFileName() {
