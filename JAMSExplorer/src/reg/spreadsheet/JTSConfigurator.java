@@ -34,16 +34,19 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 
-import jams.io.JAMSFileFilter;
 import jams.gui.GUIHelper;
 import jams.gui.WorkerDlg;
+import jams.workspace.JAMSWorkspace;
+import reg.JAMSExplorer;
 
 /**
  *
  * @author Robert Riedel
  */
 public class JTSConfigurator extends JFrame {
-
+    
+    private JAMSWorkspace workspace;
+    
     GroupLayout gLayout;
     GroupLayout.SequentialGroup hGroup;
     GroupLayout.SequentialGroup vGroup;
@@ -124,7 +127,7 @@ public class JTSConfigurator extends JFrame {
     private JButton saveTempButton = new JButton("Save Template");
     private JButton loadTempButton = new JButton("Load Template");
     
- 
+    private final String INFO_MSG_SAVETEMP = "Please choose a template filename:";
 
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
 
@@ -181,13 +184,15 @@ public class JTSConfigurator extends JFrame {
     }
      **/
 
-    public JTSConfigurator(JFrame parent, JAMSSpreadSheet sheet) {
+    public JTSConfigurator(JFrame parent, JAMSSpreadSheet sheet, JAMSExplorer regionalizer) {
 
 //        super(parent, "JAMS JTS Viewer");
         this.setParent(parent);
         this.setIconImage(parent.getIconImage());
         setTitle("JTS Viewer");
-
+        
+        this.workspace = regionalizer.getWorkspace();
+        
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
@@ -216,13 +221,15 @@ public class JTSConfigurator extends JFrame {
 
     }
 
-    public JTSConfigurator(JFrame parent, JAMSSpreadSheet sheet, File templateFile) {
+    public JTSConfigurator(JFrame parent, JAMSSpreadSheet sheet, File templateFile, JAMSExplorer regionalizer) {
 
 //        super(parent, "JAMS JTS Viewer");
         this.setParent(parent);
         this.setIconImage(parent.getIconImage());
         setTitle("JTS Viewer");
-
+        
+        this.workspace = regionalizer.getWorkspace();
+        
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
@@ -1267,6 +1274,7 @@ public class JTSConfigurator extends JFrame {
         } catch (NullPointerException npe){
             store = "DEFAULT";
         }
+        String output;
         String names = "";
         String name;
         String[] legendname;
@@ -1289,7 +1297,16 @@ public class JTSConfigurator extends JFrame {
         Color linecolor_load;
         Color fillcolor_load;
         Color outcolor_load;
-
+        
+        //Input / Output Sheet
+        if(sheet.isOutputSheet()){
+            output = "true";
+        }else{
+            output = "false";
+        }
+        
+        properties.setProperty("output", output);
+        
         //Header Name
 
 
@@ -1374,16 +1391,19 @@ public class JTSConfigurator extends JFrame {
 
         //Save Parameter File
         String filename = "";
+        String inputString = "";
         try {
-            JFileChooser chooser = sheet.getTemplateChooser();
-            int returnVal = chooser.showSaveDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = chooser.getSelectedFile();
+//            JFileChooser chooser = sheet.getTemplateChooser();
+//            int returnVal = chooser.showSaveDialog(this);
+//            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                inputString = GUIHelper.showInputDlg(this, INFO_MSG_SAVETEMP, store);
+                inputString+= "ttp";
+                File file = new File(workspace.getDirectory().toString()+"/explorer", inputString);
                 filename = file.getName();
                 FileOutputStream fout = new FileOutputStream(file);
                 properties.store(fout, "");
                 fout.close();
-            }
+//            }
         } catch (Exception fnfex) {
         }
         
@@ -1678,8 +1698,8 @@ public class JTSConfigurator extends JFrame {
         public void actionPerformed(ActionEvent e) {
             String fileID = saveTemplate();
             String filename = fileID+".dat";
-            System.out.println("output_sheet="+sheet.isOutpusSheet());
-            if(sheet.isOutpusSheet()){
+            System.out.println("output_sheet="+sheet.isOutputSheet());
+            if(sheet.isOutputSheet()){
                 sheet.save(filename);//String ID zurückgeben
                 //daten speichern im falle eines output sheets
             }

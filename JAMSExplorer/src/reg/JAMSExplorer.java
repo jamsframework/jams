@@ -48,7 +48,7 @@ public class JAMSExplorer {
 
     public static final String APP_VERSION = "V0.2";
 
-    public static boolean GEOWIND_ENABLE = true;
+    public static boolean GEOWIND_ENABLE = false;
 
     public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 750;
 

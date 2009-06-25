@@ -53,14 +53,9 @@ public class JAMSStackedPlot {
     public ChartPanel getChartPanel(){
         return chartpanel;
     }
-    
-    
-    
+   
     public void saveAsEPS(File outfile){
-        
-            
-            
-            
+    
                  try{ 
 
                   OutputStream out = new java.io.FileOutputStream(outfile);

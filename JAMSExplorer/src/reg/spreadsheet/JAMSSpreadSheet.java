@@ -92,6 +92,8 @@ public class JAMSSpreadSheet extends JPanel {
     private JFileChooser epsFileChooser,  templateChooser;
     private JAMSExplorer regionalizer;
     private boolean geoWindEnable = false;
+    /* Messages */
+    final String ERR_MSG_CTS = "No Time Series Loaded";
 
     public JAMSSpreadSheet(JAMSExplorer regionalizer) {
         this.regionalizer = regionalizer;
@@ -157,7 +159,18 @@ public class JAMSSpreadSheet extends JPanel {
     ActionListener saveAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
-//            save();
+
+            //ACTION!
+//            try {
+//            JFileChooser chooser = new JFileChooser();
+//            int returnVal = chooser.showSaveDialog(panel);
+//            if (returnVal == JFileChooser.APPROVE_OPTION) {
+//                
+//                File file = chooser.getSelectedFile();
+//                save(file.getAbsolutePath());
+//            }
+//        } catch (Exception fnfex) {
+//        }
         }
     };
 
@@ -187,7 +200,7 @@ public class JAMSSpreadSheet extends JPanel {
 
             try {
                 
-                File file = new File(regionalizer.getWorkspace().getDirectory().toString()+"/output/"+filename);
+                File file = new File(regionalizer.getWorkspace().getDirectory().toString()+"/explorer/"+filename);
                 
                 //File file = chooser.getSelectedFile();
                 //File file = chooser.getSelectedFile();
@@ -369,25 +382,35 @@ public class JAMSSpreadSheet extends JPanel {
         this.output_sheet = true;
     }
     
-    public boolean isOutpusSheet(){
+    public boolean isOutputSheet(){
         return this.output_sheet;
     }
     
     private void openCTS() {
-
-        JTSConfigurator jts;
-        jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, null);
+        
+        if(table.getValueAt(0, 0).getClass().equals(JAMSCalendar.class)){
+            JTSConfigurator jts;
+            jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, null);
+        }else{
+            
+            GUIHelper.showErrorDlg(panel, ERR_MSG_CTS, "Error");
+        }
     //ctstabs.addGraph(table);
     //ctsIsOpen = true;
     }
 
     private void openCTS(File templateFile) {
 
-        JTSConfigurator jts;
-        if (useTemplateButton.isSelected()) {
-            jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, templateFile);
-        } else {
-            jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, null);
+            
+        if(table.getValueAt(0, 0).getClass().equals(JAMSCalendar.class)){
+            JTSConfigurator jts;
+            if (useTemplateButton.isSelected()) {
+                jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, templateFile, regionalizer);
+            } else {
+                jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, null, regionalizer);
+            }
+        }else{
+            GUIHelper.showErrorDlg(panel, ERR_MSG_CTS, "Error");
         }
     //ctstabs.addGraph(table);
     //ctsIsOpen = true;
