@@ -51,14 +51,14 @@ public class StandardEntityReader extends JAMSComponent {
             public JAMSEntityCollection hrus;
     
     
-    public void init() throws JAMSEntity.NoSuchAttributeException {
+    public void init() throws Attribute.Entity.NoSuchAttributeException {
         hrus.setEntities(readParas(getModel().getWorkspaceDirectory().getPath() + "/" + hruFileName.getValue()));
     }
     
-    public ArrayList<JAMSEntity> readParas(String fileName) {
+    public ArrayList<Attribute.Entity> readParas(String fileName) {
         
         BufferedReader reader;
-        ArrayList <JAMSEntity> entityList = new ArrayList<JAMSEntity>();
+        ArrayList <Attribute.Entity> entityList = new ArrayList<Attribute.Entity>();
         StringTokenizer tokenizer;
         
         try {

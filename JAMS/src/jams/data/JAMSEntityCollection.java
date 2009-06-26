@@ -30,17 +30,17 @@ import java.util.*;
  */
 public class JAMSEntityCollection implements Attribute.EntityCollection {
 
-    protected ArrayList<JAMSEntity> entities = new ArrayList<JAMSEntity>();
+    protected ArrayList<Attribute.Entity> entities = new ArrayList<Attribute.Entity>();
 
-    protected JAMSEntity[] entityArray;
+    protected Attribute.Entity[] entityArray;
 
-    protected JAMSEntity current;
+    protected Attribute.Entity current;
 
     JAMSEntityCollection() {
     }
 
     @Override
-    public JAMSEntity[] getEntityArray() {
+    public Attribute.Entity[] getEntityArray() {
         return this.entityArray;
     }
 
@@ -51,7 +51,7 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
 
     class EntityEnumerator implements JAMSEntityEnumerator {
 
-        JAMSEntity[] entityArray = getEntityArray();
+        Attribute.Entity[] entityArray = getEntityArray();
 
         int index = 0;
 
@@ -61,7 +61,7 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
         }
 
         @Override
-        public JAMSEntity next() {
+        public Attribute.Entity next() {
             index++;
             JAMSEntityCollection.this.current = entityArray[index];
             return entityArray[index];
@@ -75,12 +75,12 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     }
 
     @Override
-    public ArrayList<JAMSEntity> getEntities() {
+    public ArrayList<Attribute.Entity> getEntities() {
         return entities;
     }
 
     @Override
-    public void setEntities(ArrayList<JAMSEntity> entities) {
+    public void setEntities(ArrayList<Attribute.Entity> entities) {
         this.entities = entities;
         this.entityArray = entities.toArray(new JAMSEntity[entities.size()]);
         if (entityArray.length > 0) {
@@ -91,7 +91,7 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     }
 
     @Override
-    public JAMSEntity getCurrent() {
+    public Attribute.Entity getCurrent() {
         return current;
     }
 
@@ -101,12 +101,12 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     }
 
     @Override
-    public void setValue(ArrayList<JAMSEntity> entities) {
+    public void setValue(ArrayList<Attribute.Entity> entities) {
         setEntities(entities);
     }
 
     @Override
-    public ArrayList<JAMSEntity> getValue() {
+    public ArrayList<Attribute.Entity> getValue() {
         return getEntities();
     }
 }

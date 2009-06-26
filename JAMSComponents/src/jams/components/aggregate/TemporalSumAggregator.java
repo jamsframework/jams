@@ -39,7 +39,7 @@ public class TemporalSumAggregator extends JAMSComponent {
     public Attribute.Calendar time;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         description = "The value(s) that shall be summed up")
+                         description = "The value(s) to be summed up")
     public Attribute.Double[] value;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,

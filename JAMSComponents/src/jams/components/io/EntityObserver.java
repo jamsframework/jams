@@ -53,7 +53,7 @@ public class EntityObserver extends JAMSComponent {
 
     public void run() throws JAMSEntity.NoSuchAttributeException {
         String s;
-        for (JAMSEntity e : entities.getEntities()) {
+        for (Attribute.Entity e : entities.getEntities()) {
             if (e.getDouble(idAttribute.getValue()) == idValue.getValue()) {
                 getModel().getRuntime().println("******************************************************");
                 getModel().getRuntime().println("Entity information for entity " + e);

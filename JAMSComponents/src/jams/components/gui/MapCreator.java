@@ -85,6 +85,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
 
 @SuppressWarnings("deprecation")
@@ -205,9 +206,9 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                 this.getModel().getRuntime().handle(e);
             }
             
-            Iterator<JAMSEntity> hrusIterate = hrus.getEntities().iterator();
+            Iterator<Attribute.Entity> hrusIterate = hrus.getEntities().iterator();
             Set<Double> s = new TreeSet<Double>();
-            JAMSEntity e;
+            Attribute.Entity e;
             
             while (hrusIterate.hasNext()) {
                 e = hrusIterate.next();

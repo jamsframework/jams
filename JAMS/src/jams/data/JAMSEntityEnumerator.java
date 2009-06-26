@@ -32,7 +32,7 @@ public interface JAMSEntityEnumerator extends Serializable{
 
     boolean hasNext();
 
-    JAMSEntity next();
+    Attribute.Entity next();
 
     void reset();
 }

@@ -204,9 +204,9 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
                 e.printStackTrace();
             }
             
-            Iterator<JAMSEntity> hrusIterate = hrus.getEntities().iterator();
+            Iterator<Attribute.Entity> hrusIterate = hrus.getEntities().iterator();
             Set<Double> s = new TreeSet<Double>();
-            JAMSEntity e;
+            Attribute.Entity e;
             
             while (hrusIterate.hasNext()) {
                 e = hrusIterate.next();

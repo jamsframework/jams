@@ -6,13 +6,13 @@ import java.util.Iterator;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.Feature;
 
-import jams.data.JAMSEntity;
 import jams.data.JAMSEntityCollection;
 import jams.data.JAMSString;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 
 import com.vividsolutions.jts.geom.Geometry;
+import jams.data.Attribute;
 
 /**
  *
@@ -64,8 +64,8 @@ public class GeomReader extends JAMSComponent {
         	geomMap.put(id, f.getDefaultGeometry());
         }
         
-        JAMSEntity e;
-        Iterator<JAMSEntity> hruIterator = hrus.getEntities().iterator();
+        Attribute.Entity e;
+        Iterator<Attribute.Entity> hruIterator = hrus.getEntities().iterator();
         while (hruIterator.hasNext()) {
             e = hruIterator.next();
             long id = new Double(e.getDouble("ID")).longValue();

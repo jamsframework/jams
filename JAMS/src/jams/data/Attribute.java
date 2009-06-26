@@ -25,7 +25,6 @@ package jams.data;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 /**
@@ -157,10 +156,10 @@ public interface Attribute {
         public void setTimeInMillis(long millis);
     }
 
-    public interface FileName extends String {
+    public interface FileName extends Attribute.String {
     }
 
-    public interface DirName extends String {
+    public interface DirName extends Attribute.String {
     }
 
     public interface Document extends JAMSData {
@@ -225,19 +224,19 @@ public interface Attribute {
 
     public interface EntityCollection extends JAMSData {
 
-        public JAMSEntity[] getEntityArray();
+        public Attribute.Entity[] getEntityArray();
 
         public JAMSEntityEnumerator getEntityEnumerator();
 
-        public ArrayList<JAMSEntity> getEntities();
+        public ArrayList<Attribute.Entity> getEntities();
 
-        public void setEntities(ArrayList<JAMSEntity> entities);
+        public void setEntities(ArrayList<Attribute.Entity> entities);
 
-        public JAMSEntity getCurrent();
+        public Attribute.Entity getCurrent();
 
-        public void setValue(ArrayList<JAMSEntity> entities);
+        public void setValue(ArrayList<Attribute.Entity> entities);
 
-        public ArrayList<JAMSEntity> getValue();
+        public ArrayList<Attribute.Entity> getValue();
     }
 
     public interface TimeInterval extends JAMSData {

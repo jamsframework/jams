@@ -95,7 +95,7 @@ title="Entity file writer (temporal)",
         //always write time
         writer.addColumn("date/time");
         
-        for (JAMSEntity e : entities.getEntityArray()) {
+        for (Attribute.Entity e : entities.getEntityArray()) {
             writer.addColumn("HRU_"+(int)e.getDouble(idAttributeName.getValue()));
         }
         
@@ -109,7 +109,7 @@ title="Entity file writer (temporal)",
         //e.g. time.toString("%1$tY-%1$tm-%1$td %1$tH:%1$tM")
         writer.addData(time);
         
-        for (JAMSEntity e : entities.getEntityArray()) {
+        for (Attribute.Entity e : entities.getEntityArray()) {
             writer.addData(e.getObject(this.dataAttributeName.getValue()).toString());
         }
         

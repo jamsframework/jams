@@ -97,7 +97,7 @@ public class ShapeEntityReader extends JAMSComponent {
             }
         }
 
-        ArrayList<JAMSEntity> entityList = new ArrayList<JAMSEntity>();
+        ArrayList<Attribute.Entity> entityList = new ArrayList<Attribute.Entity>();
 
         while (featureIterator.hasNext()) {
             Feature f = (Feature) featureIterator.next();
@@ -127,7 +127,7 @@ public class ShapeEntityReader extends JAMSComponent {
             }
 
 //            System.out.println(e.getValue());
-            entityList.add((JAMSEntity) e);
+            entityList.add((Attribute.Entity) e);
         }
 
         entities.setEntities(entityList);

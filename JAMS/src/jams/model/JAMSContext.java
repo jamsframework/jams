@@ -81,7 +81,7 @@ public class JAMSContext extends JAMSComponent {
         try {
             //create an entity collection with one entity
 //            setCurrentEntity((JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class));
-            ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
+            ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
 //            list.add(getCurrentEntity());
             list.add((JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class));
             setEntities(JAMSDataFactory.createEntityCollection());
