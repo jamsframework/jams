@@ -287,8 +287,8 @@ public class JAMSContext extends JAMSComponent {
                 }
                 if (clazz.isArray()) {
 
-                    String className = clazz.getCanonicalName();
-                    className = className.substring(0, className.length() - 2);
+                    String className = clazz.getName();
+                    className = className.substring(2, className.length() - 1);
 
                     StringTokenizer tok = new StringTokenizer(accessSpec.attributeName, ";");
                     int count = tok.countTokens();

@@ -400,7 +400,7 @@ public class ModelLoader {
     }
 
     private ArrayList<Field> createMembers(JAMSComponent component) throws IllegalAccessException, InstantiationException {
-
+        
         Object o;
         Class dataType;
         ArrayList<Field> result = new ArrayList<Field>();
@@ -410,7 +410,7 @@ public class ModelLoader {
             o = fields[i].get(component);
             dataType = fields[i].getType();
 
-            if (!dataType.isInterface() && JAMSData.class.isAssignableFrom(dataType) && fields[i].isAnnotationPresent(JAMSVarDescription.class)) {
+            if (JAMSData.class.isAssignableFrom(dataType) && fields[i].isAnnotationPresent(JAMSVarDescription.class)) {
 
                 JAMSData dataObject = (JAMSData) o;
                 JAMSVarDescription jvd = fields[i].getAnnotation(JAMSVarDescription.class);

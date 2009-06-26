@@ -30,8 +30,8 @@ import java.util.StringTokenizer;
  */
 public class JAMSTimeInterval implements Attribute.TimeInterval {
 
-    protected JAMSCalendar start = new JAMSCalendar();
-    protected JAMSCalendar end = new JAMSCalendar();
+    protected Attribute.Calendar start = new JAMSCalendar();
+    protected Attribute.Calendar end = new JAMSCalendar();
     protected int timeUnit = 6;
     protected int timeUnitCount = 1;
     private long timestepCount = -1;
@@ -39,7 +39,7 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
     public JAMSTimeInterval() {
     }
 
-    public JAMSTimeInterval(JAMSCalendar start, JAMSCalendar end, int timeUnit, int timeUnitCount) {
+    public JAMSTimeInterval(Attribute.Calendar start, Attribute.Calendar end, int timeUnit, int timeUnitCount) {
         this.start = start;
         this.end = end;
         this.timeUnit = timeUnit;
@@ -101,20 +101,20 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
         return getValue();
     }
 
-    public JAMSCalendar getStart() {
+    public Attribute.Calendar getStart() {
         return start;
     }
 
-    public void setStart(JAMSCalendar start) {
+    public void setStart(Attribute.Calendar start) {
         this.start = start;
         this.timestepCount = -1;
     }
 
-    public JAMSCalendar getEnd() {
+    public Attribute.Calendar getEnd() {
         return end;
     }
 
-    public void setEnd(JAMSCalendar end) {
+    public void setEnd(Attribute.Calendar end) {
         this.end = end;
         this.timestepCount = -1;
     }

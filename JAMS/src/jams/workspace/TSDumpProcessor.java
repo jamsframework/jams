@@ -75,7 +75,6 @@ public class TSDumpProcessor {
         target.append("#MISSINGDATAVALUE: " + store.getMissingDataValue() + "\n");
 
         JAMSCalendar creationDate = JAMSDataFactory.createCalendar();
-        creationDate.setValue(new GregorianCalendar());
         target.append("#DATE: " + creationDate + "\n");
         target.append("#DESCRIPTION:\n");
         String description = store.getDescription();

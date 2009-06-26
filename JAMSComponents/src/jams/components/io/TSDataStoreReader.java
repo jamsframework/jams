@@ -153,8 +153,8 @@ public class TSDataStoreReader extends JAMSComponent {
         // check if we need to shift forward
         if (store.getStartDate().before(timeInterval.getStart()) && (store.getStartDate().compareTo(timeInterval.getStart(), timeInterval.getTimeUnit()) != 0)) {
 
-            JAMSCalendar current = store.getStartDate().clone();
-            JAMSCalendar targetDate = timeInterval.getStart().clone();
+            Attribute.Calendar current = store.getStartDate().clone();
+            Attribute.Calendar targetDate = timeInterval.getStart().clone();
             current.removeUnsignificantComponents(timeInterval.getTimeUnit());
             targetDate.removeUnsignificantComponents(timeInterval.getTimeUnit());
             int timeUnit = timeInterval.getTimeUnit();

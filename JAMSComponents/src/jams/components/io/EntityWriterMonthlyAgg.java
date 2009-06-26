@@ -153,8 +153,8 @@ title="Entity file writer (spatial+monthly)",
         //....
         //....
         
-        JAMSCalendar model_sd = this.modelTimeInterval.getStart().clone();
-        JAMSCalendar model_ed = this.modelTimeInterval.getEnd().clone();
+        Attribute.Calendar model_sd = this.modelTimeInterval.getStart().clone();
+        Attribute.Calendar model_ed = this.modelTimeInterval.getEnd().clone();
         int model_tres = this.modelTimeInterval.getTimeUnit();
         long sdMod = model_sd.getTimeInMillis();
         long edMod = model_ed.getTimeInMillis();
@@ -162,8 +162,8 @@ title="Entity file writer (spatial+monthly)",
         
         model_tsteps = modelTimeInterval.getNumberOfTimesteps();
         
-        JAMSCalendar agg_sd = this.aggTimeInterval.getStart().clone();
-        JAMSCalendar agg_ed = this.aggTimeInterval.getEnd().clone();
+        Attribute.Calendar agg_sd = this.aggTimeInterval.getStart().clone();
+        Attribute.Calendar agg_ed = this.aggTimeInterval.getEnd().clone();
         int agg_tres = this.aggTimeInterval.getTimeUnit();
         long sdAgg = agg_sd.getTimeInMillis();
         long edAgg = agg_ed.getTimeInMillis();

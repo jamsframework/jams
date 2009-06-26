@@ -73,7 +73,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         return dateFormat.format(date);
     }
 
-    public GregorianCalendar getValue() {
+    public Attribute.Calendar getValue() {
         return clone();
     }
     
@@ -90,14 +90,15 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
      * this calendar equals cal or 1 if this calendar represents a later date 
      * than cal, always leaving unsignificant fields unconsidered.
      */
-    public int compareTo(JAMSCalendar cal, int accuracy) {
-        JAMSCalendar cal1 = this.clone();
-        JAMSCalendar cal2 = cal.clone();
+    public int compareTo(Attribute.Calendar cal, int accuracy) {
+        Attribute.Calendar cal1 = this.clone();
+        Attribute.Calendar cal2 = cal.clone();
         cal1.removeUnsignificantComponents(accuracy);
         cal2.removeUnsignificantComponents(accuracy);
         return cal1.compareTo(cal2);
     }
 
+    @Override
     public void removeUnsignificantComponents(int accuracy) {
         if (accuracy < JAMSCalendar.SECOND) {
             this.set(JAMSCalendar.SECOND, 0);
@@ -116,23 +117,13 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         }
     }
 
-//    public static void main(String[] args) throws Exception {
-//
-//        JAMSCalendar cal1 = new JAMSCalendar();
-//        cal1.setValue("4.7.1979 07:30", "dd.MM.yyyy HH:mm");
-//        JAMSCalendar cal2 = new JAMSCalendar();
-//        cal2.setValue("12.7.1979 04:00", "dd.MM.yyyy HH:mm");
-//        System.out.println(cal1.compareTo(cal2, DAY_OF_MONTH));
-//        System.out.println(cal1);
-//        System.out.println(cal2);
-//
-//    }
-
-    public void setValue(GregorianCalendar cal) {
+    @Override
+    public void setValue(Attribute.Calendar cal) {
         setTimeInMillis(cal.getTimeInMillis());
         set(Calendar.MILLISECOND, 0);
     }
 
+    @Override
     public void setValue(String value) {
 
         String year = "1900";
@@ -191,5 +182,32 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
 
     public DateFormat getDateFormat() {
         return dateFormat;
+    }
+
+    @Override
+    public boolean after(Attribute.Calendar calendar) {
+        return super.after(calendar);
+    }
+
+    @Override
+    public boolean before(Attribute.Calendar calendar) {
+        return super.before(calendar);
+    }
+
+    @Override
+    public int compareTo(Attribute.Calendar cal) {
+        long thisTime = this.getTimeInMillis();
+        long calTime = cal.getTimeInMillis();
+	return (thisTime > calTime) ? 1 : (thisTime == calTime) ? 0 : -1;
+    }
+
+    @Override
+    public int get(int field) {
+        return super.get(field);
+    }
+
+    @Override
+    public void add(int field, int amount) {
+        super.add(field, amount);
     }
 }

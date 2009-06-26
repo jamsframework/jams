@@ -119,7 +119,7 @@ public class CheckedTSDataReader extends JAMSComponent {
     private JAMSTableDataStore store;
     private JAMSTableDataArray da;
     private int timeUnit;
-    private JAMSCalendar tsTime, currentTime;
+    private Attribute.Calendar tsTime, currentTime;
     private double[] noDataValues = new double[0];
     
     public void init() {

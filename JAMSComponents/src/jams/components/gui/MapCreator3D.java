@@ -531,18 +531,41 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
             info = new JTextPane();
             info.setEditable(false);
             info.setText("3D Map Pane has not been started yet, please wait ..");
-                        
+
+
+
+            boolean light2 = true;
+            int Resolution = 256;
+
+            if (resolution != null) {
+                Resolution = resolution.getValue();
+            }
+            if (light != null) {
+                light2 = light.getValue();
+            }
+            if (mp == null)
+                mp = new Styled3DMapPane();
+            mp.light = light2;
+            mp.setHeightMap(asg);
+            mp.xRes = Resolution;
+            mp.yRes = Resolution;
+            mp.textureWidth = 2.0*Resolution;
+            mp.textureHeight = 2.0*Resolution;
+
+            //mp.init();
+
+
             // create slider panel
             JSlider js = new JSlider();
             js.setMinimum(-20);
-            js.setMaximum(20);
-            js.setValue(0);
+            js.setMaximum(10);
             js.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
                     JSlider source = (JSlider)e.getSource();
                     mp.hScale = (float)Math.exp(((double)source.getValue())/10.0);
                 }
             });
+            js.setValue(-5);
 
             JPanel sliderPanel = new JPanel();
             sliderPanel.setBorder(BorderFactory.createTitledBorder("Vertical exaggeration"));
@@ -560,27 +583,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
             p = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
             p.setTopComponent(treeView);
             p.setBottomComponent(miscPanel);
-            
-            
-            boolean light2 = true;
-            int Resolution = 256;
-            
-            if (resolution != null) {
-                Resolution = resolution.getValue();
-            }
-            if (light != null) {
-                light2 = light.getValue();
-            }
-            if (mp == null)
-                mp = new Styled3DMapPane();
-            mp.light = light2;
-            mp.setHeightMap(asg);
-            mp.xRes = Resolution;
-            mp.yRes = Resolution;
-            mp.textureWidth = 2.0*Resolution;
-            mp.textureHeight = 2.0*Resolution;
-            
-            //mp.init();
+
             
             
             URL url = this.getClass().getResource("resources/select.gif");

@@ -45,8 +45,8 @@ public class JAMSTemporalContext extends JAMSContext {
     public JAMSTimeInterval timeInterval;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "Current date of temporal context")
-    public JAMSCalendar current;
-    private JAMSCalendar lastValue;
+    public Attribute.Calendar current;
+    private Attribute.Calendar lastValue;
 
     public JAMSTemporalContext(){     
         super();
@@ -54,7 +54,7 @@ public class JAMSTemporalContext extends JAMSContext {
     
     @Override
     protected DataTracer createDataTracer(OutputDataStore store) {
-        return new AbstractTracer(this, store, JAMSCalendar.class) {
+        return new AbstractTracer(this, store, Attribute.Calendar.class) {
 
             @Override
             public void trace() {

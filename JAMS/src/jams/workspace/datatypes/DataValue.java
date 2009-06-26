@@ -23,7 +23,7 @@
 package jams.workspace.datatypes;
 
 import com.vividsolutions.jts.geom.Geometry;
-import jams.data.JAMSCalendar;
+import jams.data.Attribute;
 
 /**
  *
@@ -37,7 +37,7 @@ public interface DataValue {
     
     public String getString();
 
-    public JAMSCalendar getCalendar();
+    public Attribute.Calendar getCalendar();
 
     public Geometry getGeometry();
 
@@ -49,7 +49,7 @@ public interface DataValue {
     
     public void setString(String value);
 
-    public void setCalendar(JAMSCalendar value);
+    public void setCalendar(Attribute.Calendar value);
 
     public void setGeometry(Geometry geometry);
 

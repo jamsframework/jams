@@ -23,7 +23,7 @@
 package jams.workspace.datatypes;
 
 import com.vividsolutions.jts.geom.Geometry;
-import jams.data.JAMSCalendar;
+import jams.data.Attribute;
 
 /**
  *
@@ -53,7 +53,7 @@ public class GeometryValue implements DataValue {
     }
 
     @Override
-    public JAMSCalendar getCalendar() {
+    public Attribute.Calendar getCalendar() {
         throw new UnsupportedOperationException("Not supported.");
     }
 
@@ -83,7 +83,7 @@ public class GeometryValue implements DataValue {
     }
 
     @Override
-    public void setCalendar(JAMSCalendar value) {
+    public void setCalendar(Attribute.Calendar value) {
         throw new UnsupportedOperationException("Not supported.");
     }
 

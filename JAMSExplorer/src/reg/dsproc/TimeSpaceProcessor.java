@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Observable;
 import java.util.Observer;
-import reg.dsproc.DataStoreProcessor.AttributeData;
 
 /**
  *

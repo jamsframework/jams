@@ -1397,7 +1397,7 @@ public class JTSConfigurator extends JFrame {
 //            int returnVal = chooser.showSaveDialog(this);
 //            if (returnVal == JFileChooser.APPROVE_OPTION) {
                 inputString = GUIHelper.showInputDlg(this, INFO_MSG_SAVETEMP, store);
-                inputString+= "ttp";
+                inputString+= ".ttp";
                 File file = new File(workspace.getDirectory().toString()+"/explorer", inputString);
                 filename = file.getName();
                 FileOutputStream fout = new FileOutputStream(file);

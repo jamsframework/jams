@@ -124,11 +124,13 @@ public interface Attribute {
 
     public interface Calendar extends JAMSData {
 
-        public GregorianCalendar getValue();
+        public Attribute.Calendar getValue();
 
-        public void setValue(GregorianCalendar value);
+        public void setValue(Attribute.Calendar value);
 
-        public int compareTo(JAMSCalendar cal, int accuracy);
+        public int compareTo(Attribute.Calendar cal, int accuracy);
+
+        public int compareTo(Attribute.Calendar cal);
 
         public void removeUnsignificantComponents(int accuracy);
 
@@ -139,6 +141,20 @@ public interface Attribute {
         public void setDateFormat(java.lang.String formatString);
 
         public DateFormat getDateFormat();
+
+        public boolean after(Attribute.Calendar calendar);
+
+        public boolean before(Attribute.Calendar calendar);
+
+        public Attribute.Calendar clone();
+
+        public long getTimeInMillis();
+
+        public int get(int field);
+
+        public void add(int field, int amount);
+
+        public void setTimeInMillis(long millis);
     }
 
     public interface FileName extends String {
@@ -232,13 +248,13 @@ public interface Attribute {
 
         public java.lang.String getValue();
 
-        public JAMSCalendar getStart();
+        public Attribute.Calendar getStart();
 
-        public void setStart(JAMSCalendar start);
+        public void setStart(Attribute.Calendar start);
 
-        public JAMSCalendar getEnd();
+        public Attribute.Calendar getEnd();
 
-        public void setEnd(JAMSCalendar end);
+        public void setEnd(Attribute.Calendar end);
 
         public int getTimeUnit();
 

@@ -390,7 +390,7 @@ public class JAMSSpreadSheet extends JPanel {
         
         if(table.getValueAt(0, 0).getClass().equals(JAMSCalendar.class)){
             JTSConfigurator jts;
-            jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, null);
+            jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, regionalizer);
         }else{
             
             GUIHelper.showErrorDlg(panel, ERR_MSG_CTS, "Error");

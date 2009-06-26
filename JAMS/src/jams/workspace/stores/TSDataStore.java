@@ -29,6 +29,7 @@ import org.w3c.dom.Element;
 import jams.workspace.datatypes.CalendarValue;
 import jams.workspace.datatypes.DataValue;
 import jams.JAMS;
+import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
 
 /**
@@ -38,7 +39,7 @@ import jams.data.JAMSDataFactory;
 public class TSDataStore extends TableDataStore {
 
     protected CalendarValue calendar;
-    protected JAMSCalendar currentDate,  startDate,  endDate,  stopDate;
+    protected Attribute.Calendar currentDate,  startDate,  endDate,  stopDate;
     protected int timeUnit,  timeUnitCount;
     protected String timeFormat;
 
@@ -94,7 +95,7 @@ public class TSDataStore extends TableDataStore {
                 long timeStamp2 = dataIOArray[i].getData()[1].getData()[0].getLong();
 
                 //compare the two time stamps
-                JAMSCalendar cal1 = JAMSDataFactory.createCalendar();
+                Attribute.Calendar cal1 = JAMSDataFactory.createCalendar();
                 cal1.setTimeInMillis(timeStamp1 * 1000);
                 JAMSCalendar cal2 = JAMSDataFactory.createCalendar();
                 cal2.setTimeInMillis(timeStamp2 * 1000);
@@ -102,7 +103,7 @@ public class TSDataStore extends TableDataStore {
                 cal1.add(timeUnit, timeUnitCount);
                 if (cal1.compareTo(cal2) != 0) {
 
-                    JAMSCalendar cal = cal1.clone();
+                    Attribute.Calendar cal = cal1.clone();
                     cal.add(timeUnit, -1 * timeUnitCount);
                     long demandedSeconds = Math.abs(cal1.getTimeInMillis() - cal.getTimeInMillis()) / 1000;
                     long currentSeconds = Math.abs(cal.getTimeInMillis() - cal2.getTimeInMillis()) / 1000;
@@ -181,11 +182,11 @@ public class TSDataStore extends TableDataStore {
         return result;
     }
 
-    public JAMSCalendar getStartDate() {
+    public Attribute.Calendar getStartDate() {
         return startDate;
     }
 
-    public JAMSCalendar getEndDate() {
+    public Attribute.Calendar getEndDate() {
         return endDate;
     }
 
