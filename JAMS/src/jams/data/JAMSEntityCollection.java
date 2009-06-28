@@ -22,6 +22,7 @@
  */
 package jams.data;
 
+import jams.data.Attribute.Entity;
 import java.util.*;
 
 /**
@@ -45,33 +46,31 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     }
 
     @Override
-    public JAMSEntityEnumerator getEntityEnumerator() {
-        return new EntityEnumerator();
-    }
+    public EntityEnumerator getEntityEnumerator() {
+        return new EntityEnumerator() {
 
-    class EntityEnumerator implements JAMSEntityEnumerator {
+            Attribute.Entity[] entityArray = getEntityArray();
 
-        Attribute.Entity[] entityArray = getEntityArray();
+            int index = 0;
 
-        int index = 0;
+            @Override
+            public boolean hasNext() {
+                return (index + 1 < entityArray.length);
+            }
 
-        @Override
-        public boolean hasNext() {
-            return (index + 1 < entityArray.length);
-        }
+            @Override
+            public Attribute.Entity next() {
+                index++;
+                JAMSEntityCollection.this.current = entityArray[index];
+                return entityArray[index];
+            }
 
-        @Override
-        public Attribute.Entity next() {
-            index++;
-            JAMSEntityCollection.this.current = entityArray[index];
-            return entityArray[index];
-        }
-
-        @Override
-        public void reset() {
-            index = 0;
-            JAMSEntityCollection.this.current = entityArray[index];
-        }
+            @Override
+            public void reset() {
+                index = 0;
+                JAMSEntityCollection.this.current = entityArray[index];
+            }
+        };
     }
 
     @Override

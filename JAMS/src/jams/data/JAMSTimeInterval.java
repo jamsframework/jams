@@ -64,15 +64,15 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
         }
     }
 
-    public boolean encloses(JAMSTimeInterval ti) {
-        if ((this.start.compareTo(ti.start) <= 0) && (this.end.compareTo(ti.end) >= 0)) {
+    public boolean encloses(Attribute.TimeInterval ti) {
+        if ((this.start.compareTo(ti.getStart()) <= 0) && (this.end.compareTo(ti.getEnd()) >= 0)) {
             return true;
         } else {
             return false;
         }
     }
 
-    public long getStartOffset(JAMSTimeInterval ti) {
+    public long getStartOffset(Attribute.TimeInterval ti) {
 
         if (!this.encloses(ti)) {
             return -1;
@@ -84,7 +84,7 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
         JAMSCalendar start = new JAMSCalendar();
         start.setValue(this.start);
         JAMSCalendar end = new JAMSCalendar();
-        end.setValue(ti.start);
+        end.setValue(ti.getStart());
         tmp.setStart(start);
         tmp.setEnd(end);
 

@@ -1,5 +1,5 @@
 /*
- * JAMSEntityEnumerator.java
+ * EntityEnumerator.java
  * Created on 1. August 2005, 16:51
  *
  * This file is part of JAMS
@@ -28,7 +28,7 @@ import java.io.Serializable;
  *
  * @author S. Kralisch
  */
-public interface JAMSEntityEnumerator extends Serializable{
+public interface EntityEnumerator extends Serializable{
 
     boolean hasNext();
 

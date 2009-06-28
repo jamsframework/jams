@@ -24,7 +24,7 @@ package jams.components.debug;
 
 import jams.data.JAMSEntity;
 import jams.data.JAMSEntityCollection;
-import jams.data.JAMSEntityEnumerator;
+import jams.data.EntityEnumerator;
 import jams.data.JAMSInteger;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentEnumerator;
@@ -116,7 +116,7 @@ public class JAMSConcurrentContext extends JAMSContext {
 
     class RunEnumerator implements JAMSComponentEnumerator {
 
-        JAMSEntityEnumerator ee = getEntities().getEntityEnumerator();
+        EntityEnumerator ee = getEntities().getEntityEnumerator();
 
         int index = 0;
 

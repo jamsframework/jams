@@ -746,7 +746,7 @@ public class JAMSContext extends JAMSComponent {
 
         JAMSComponentEnumerator ce = getChildrenEnumerator();
 
-        JAMSEntityEnumerator ee = getEntities().getEntityEnumerator();
+        EntityEnumerator ee = getEntities().getEntityEnumerator();
 
         int index = 0;
 
