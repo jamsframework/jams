@@ -186,10 +186,12 @@ public class JAMSSpreadSheet extends JPanel {
         }
     };
 
-    public void save(String filename) {
+    public void save(String filename, String[] write_headers) {
         /* Only for Time Series */
         int colcount = tmodel.getColumnCount();
         int rowcount = tmodel.getRowCount();
+        int write_col_cnt = write_headers.length;
+        int[] col_index = new int[write_col_cnt];
         String value;
         String[] columnNames = tmodel.getCoulumnNameArray();
 
@@ -207,18 +209,29 @@ public class JAMSSpreadSheet extends JPanel {
                 FileWriter filewriter = new FileWriter(file);
 
                 filewriter.write("#headers"+"\r\n");
+                String col_string = "";
                 for (int j = 0; j < colcount; j++) {
-                    filewriter.write(columnNames[j], 0, columnNames[j].length());
-                    filewriter.write("\t");
+                    col_string = columnNames[j];
+                    for(int c = 0; c < write_col_cnt; c++){
+                        
+                        if(col_string.compareTo(write_headers[c]) == 0){
+                            filewriter.write(columnNames[j], 0, columnNames[j].length());
+                            filewriter.write("\t");
+                            col_index[c] = j;
+                        }
+                    }
                 }
 
                 filewriter.write("\r\n" + "#data");
                 filewriter.write("\r\n");
 
                 for (int k = 0; k < rowcount; k++) {
-                    for (int i = 0; i < colcount; i++) {
-
-                        value = table.getValueAt(k, i).toString();
+//                        value = table.getValueAt(k, 0).toString();//timeRow
+//                        filewriter.write(value, 0, value.length());
+//                        filewriter.write("\t");
+                    for (int i = 0; i < write_col_cnt; i++) {
+                        
+                        value = table.getValueAt(k, col_index[i]).toString();
                         filewriter.write(value, 0, value.length());
                         filewriter.write("\t");
                     }
@@ -237,7 +250,8 @@ public class JAMSSpreadSheet extends JPanel {
         if (templateChooser == null) {
             templateChooser = new JFileChooser();
             templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
-            templateChooser.setCurrentDirectory(regionalizer.getWorkspace().getDirectory());
+            File explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString()+"/explorer");
+            templateChooser.setCurrentDirectory(explorerDir);
         }
         templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
         return templateChooser;

@@ -270,7 +270,12 @@ public class STPConfigurator extends JFrame{
                 
                 }else{ //case for output spreadsheet
                     
-                    File ttpdatfile = new File(templateFiles[i].getPath()+".dat");
+                    StringTokenizer name_tokenizer = new StringTokenizer(templateFiles[i].getPath(),".");
+                    String filename = "";
+                    filename = name_tokenizer.nextToken()+".dat";
+                    
+//                    File ttpdatfile = new File(templateFiles[i].getPath()+".dat");
+                    File ttpdatfile = new File(filename);
                     System.out.println("ttpdatFile:"+ttpdatfile.getPath());
                     loadOutputTTPData(ttpdatfile);
                     loadTemplate(templateFiles[i], OUTPUT);
@@ -549,7 +554,12 @@ public class STPConfigurator extends JFrame{
                 
                 }else{ //case for output spreadsheet
                     
-                    File ttpdatfile = new File(templateFiles[i].getPath()+".dat");
+                    StringTokenizer name_tokenizer = new StringTokenizer(templateFiles[i].getPath(),".");
+                    String filename = "";
+                    filename = name_tokenizer.nextToken()+".dat";
+                    
+//                    File ttpdatfile = new File(templateFiles[i].getPath()+".dat");
+                    File ttpdatfile = new File(filename);
                     System.out.println("ttpdatFile:"+ttpdatfile.getPath());
                     loadOutputTTPData(ttpdatfile);
                     loadTemplate(templateFiles[i], OUTPUT);
@@ -714,6 +724,7 @@ public class STPConfigurator extends JFrame{
                         actual_string = st.nextToken();
                         if(actual_string.compareTo(ST_END) != 0){
                             if(!time_set){
+                                System.out.print("time: "+actual_string+"\t");
                                 try {    
                                 //JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second)
                                     timeval.setValue(actual_string, "yyyy-MM-dd hh:mm");
@@ -721,14 +732,16 @@ public class STPConfigurator extends JFrame{
                                 } catch (ParseException pe) {
                                     pe.printStackTrace();
                                 }
-                            timeVector.add(timeval);
-                            time_set = true;
-                            }
-                            try{
-                                val = new Double(st.nextToken());
-                                rowBuffer[i++] = val.doubleValue();
-                            }catch(Exception pe2){
-                                pe2.printStackTrace();
+                                timeVector.add(timeval);
+                                time_set = true;
+                            }else{
+                                try{
+//                                    System.out.println("value: "+actual_string+"\t");
+                                    val = new Double(actual_string);
+                                    rowBuffer[i++] = val.doubleValue();
+                                }catch(Exception pe2){
+                                    pe2.printStackTrace();
+                                }
                             }
                         }else{
                             stop = true;
@@ -744,13 +757,14 @@ public class STPConfigurator extends JFrame{
                     while(st.hasMoreTokens()){
                         //NEXT STRING
                         String test = st.nextToken();
+                        
                         if(test.compareTo(ST_DATA) == 0){
                             b_data = true;
                             b_headers = false;
                             file_columns = headerList.size();
                             
                         }
-                        if(b_headers){
+                        if(b_headers){ //TIME HEADER/COL???
                             headerList.add(test);
                         } 
                         if(test.compareTo(ST_HEADERS) == 0){

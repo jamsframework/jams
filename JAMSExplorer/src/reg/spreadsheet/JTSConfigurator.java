@@ -11,6 +11,9 @@ package reg.spreadsheet;
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGEncodeParam;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import com.vividsolutions.jts.io.ParseException;
+import jams.data.JAMSCalendar;
+import jams.data.JAMSDataFactory;
 import java.util.HashMap;
 import java.util.Vector;
 import java.awt.event.*;
@@ -37,6 +40,9 @@ import org.jfree.chart.renderer.xy.XYStepRenderer;
 import jams.gui.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.workspace.JAMSWorkspace;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
 import reg.JAMSExplorer;
 
 /**
@@ -95,6 +101,10 @@ public class JTSConfigurator extends JFrame {
     private JScrollPane optScPane;
 
     private String[] headers;
+    private boolean output_ttp = false;
+    private int rows_cnt;
+    private Vector<double[]> arrayVector;
+    private Vector<JAMSCalendar> timeVector;
 
     private JLabel edTitle = new JLabel("Plot Title: ");
     private JLabel edLeft = new JLabel("Left axis title: ");
@@ -128,6 +138,7 @@ public class JTSConfigurator extends JFrame {
     private JButton loadTempButton = new JButton("Load Template");
     
     private final String INFO_MSG_SAVETEMP = "Please choose a template filename:";
+    
 
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
 
@@ -233,18 +244,53 @@ public class JTSConfigurator extends JFrame {
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
-
-        this.sheet = sheet;
-        this.table = sheet.table;
-        this.templateFile = templateFile;
-
-        this.rows = table.getSelectedRows();
-        this.columns = table.getSelectedColumns();
-        this.graphCount = columns.length;
-        this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
         
-        for(int k=0;k<graphCount;k++){
-            headers[k] = table.getColumnName(columns[k]);
+        //check for output template
+        Properties properties = new Properties();
+        String output_type = new String();
+        
+        this.templateFile = templateFile;
+        
+        try {
+            FileInputStream fin = new FileInputStream(templateFile);
+            properties.load(fin);
+            fin.close();
+            output_type = (String) properties.getProperty("output");
+            
+        } catch (Exception e) {
+            output_type = "false";
+        }
+        
+        if(output_type.compareTo("false") == 0){
+        
+            this.sheet = sheet;
+            this.table = sheet.table;
+//            this.templateFile = templateFile;
+
+            this.rows = table.getSelectedRows();
+            this.columns = table.getSelectedColumns();
+            this.graphCount = columns.length;
+            this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
+
+            for(int k=0;k<graphCount;k++){
+                headers[k] = table.getColumnName(columns[k]);
+            }
+        }else{  
+                System.out.println("OUTPUT FILE");
+//                this.templateFile = templateFile;
+                StringTokenizer name_tokenizer = new StringTokenizer(templateFile.getPath(),".");
+                String filename = "";
+                filename = name_tokenizer.nextToken()+".dat";
+
+                File ttpdatfile = new File(filename);
+                System.out.println("ttpdatFile:"+ttpdatfile.getPath());
+                output_ttp = true;
+                
+//                arrayVector; = new Vector<double[]>();
+//                timeVector; = new Vector<JAMSCalendar>();
+                
+                loadOutputTTPData(ttpdatfile);
+            
         }
         
         setPreferredSize(new Dimension(1024, 768));
@@ -255,9 +301,11 @@ public class JTSConfigurator extends JFrame {
         setVisible(true);
 
     }
+    
+    
 
     public void createPanel() {
-
+        System.out.println("CREATE PANEL TemplateFile = "+templateFile.toString());
         colour_cnt = 0;
         /* create ColorMap */
         colorTable.put("yellow", Color.yellow);
@@ -314,7 +362,9 @@ public class JTSConfigurator extends JFrame {
         graphpanel = new JPanel();
 
         initGroupUI();
-
+        
+        System.out.println("INIT GROUP UI TemplateFile = "+templateFile.toString());
+        
         southpanel = new JPanel();
         southpanel.setLayout(new FlowLayout());
 
@@ -353,13 +403,24 @@ public class JTSConfigurator extends JFrame {
         rRightBox.setSelectedIndex(0);
 
         ////////////////////////// RUN GRAPH ///////////
+        System.out.println("RUN GRAPH TemplateFile = "+templateFile.toString());
         if (templateFile != null) {
             try {
-                loadTemplate(templateFile);
+                if(!output_ttp){
+                    loadTemplate(templateFile);
+                }
+                else{ 
+                    loadOutputTemplate(templateFile);
+                    System.out.println("load OUTPUT TEMPLATE");
+                }
             } catch (Exception fnfe) {
+                System.out.println("ERROR");
+                fnfe.printStackTrace();
+                
                 initGraphLoad();
             }
         } else {
+            
             initGraphLoad();
         }
 
@@ -696,9 +757,15 @@ public class JTSConfigurator extends JFrame {
     }
 
     private void updatePropVector() {
-
-        for (int i = 0; i < propVector.size(); i++) {
-            propVector.get(i).applyTSProperties();
+        
+        if(!output_ttp){
+            for (int i = 0; i < propVector.size(); i++) {
+                propVector.get(i).applyTSProperties();
+            }
+        }else{
+            for (int i = 0; i < propVector.size(); i++) {
+                propVector.get(i).applySTPProperties(arrayVector, timeVector);
+            }
         }
     }
 
@@ -961,11 +1028,14 @@ public class JTSConfigurator extends JFrame {
                         prop.setLegendName(prop.setLegend.getText());
                         prop.setColorLabelColor();
 
-                        prop.applyTSProperties();
+                        if(!output_ttp) prop.applyTSProperties();
+                        else prop.applySTPProperties(arrayVector, timeVector);
 
                     }
                 }
 
+                
+                
                 ////////////////////////////////////////////////////////////////////////////
                 //Renderer direkt ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼bernehmen! //
 
@@ -1392,26 +1462,234 @@ public class JTSConfigurator extends JFrame {
         //Save Parameter File
         String filename = "";
         String inputString = "";
+        StringTokenizer name_tokenizer = new StringTokenizer(store,".");
+            String storename = "";
+            if(name_tokenizer.hasMoreTokens()){
+                storename = name_tokenizer.nextToken();
+            }else{
+                storename=store;
+            }
+        
+        
         try {
 //            JFileChooser chooser = sheet.getTemplateChooser();
 //            int returnVal = chooser.showSaveDialog(this);
 //            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                inputString = GUIHelper.showInputDlg(this, INFO_MSG_SAVETEMP, store);
+            boolean dont_save = true;
+            while(dont_save){
+                inputString = GUIHelper.showInputDlg(this, INFO_MSG_SAVETEMP, storename);
                 inputString+= ".ttp";
                 File file = new File(workspace.getDirectory().toString()+"/explorer", inputString);
-                filename = file.getName();
-                FileOutputStream fout = new FileOutputStream(file);
-                properties.store(fout, "");
-                fout.close();
+                if(!file.exists()){
+                    filename = file.getName();
+                    FileOutputStream fout = new FileOutputStream(file);
+                    properties.store(fout, "");
+                    fout.close();
+                    dont_save = false;
+                }else{
+                    String fileexists = "The File "+file+" already exists.\n Overwrite?";
+                    int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
+                    if(result==0){ //overwrite
+                        filename = file.getName();
+                        FileOutputStream fout = new FileOutputStream(file);
+                        properties.store(fout, "");
+                        fout.close();
+                        dont_save = false;
+                    }
+                    
+                }
+                }
 //            }
         } catch (Exception fnfex) {
         }
         
         return filename;
     }
+    
+    private void loadOutputTemplate(File templateFile) {
+            
+    Properties properties = new Properties();
+        boolean load_prop = false;
 
+        String names;
+        String name;
+        String stroke_color;
+        String shape_color;
+        String outline_color;
+        int no_of_props;
+        int returnVal = -1;
+
+        try {
+            FileInputStream fin = new FileInputStream(templateFile);
+            properties.load(fin);
+            fin.close();
+        } catch (Exception e) {
+        }
+
+//        this.propVector = new Vector<GraphProperties>();
+        
+//        datasetID = (String) properties.getProperty("store");
+        names = (String) properties.getProperty("names");
+
+        no_of_props = new Integer(properties.getProperty("number"));
+
+        this.graphCount = no_of_props;
+
+        StringTokenizer nameTokenizer = new StringTokenizer(names, ",");
+
+        for (int i = 0; i < no_of_props; i++) {
+
+            load_prop = false;
+            GraphProperties gprop;
+            //if(type == INPUT){
+                gprop = new GraphProperties(this);
+            //}else{
+//                gprop = new GraphProperties(sheet, this);
+            //}
+
+            if (nameTokenizer.hasMoreTokens()) {
+
+                name = nameTokenizer.nextToken();
+
+                for (int k = 0; k < graphCount; k++) {
+                    if (headers[k+1].compareTo(name) == 0) {
+
+                        gprop.setSelectedColumn(k);
+                        load_prop = true;
+                        break;
+                    }
+                }
+
+                boolean readStart = false, readEnd = false;
+                gprop.setTimeSTART(0);
+                gprop.setTimeEND(rows_cnt - 1);
+
+                if (load_prop) {
+                    //Legend Name
+                    gprop.setLegendName(properties.getProperty(name + ".legendname", "legend name"));
+                    //POSITION left/right
+                    gprop.setPosition(properties.getProperty(name + ".position"));
+                    //INTERVAL
+                    String timeSTART = properties.getProperty(name + ".timeSTART");
+                    String timeEND = properties.getProperty(name + ".timeEND");
+                    String read = null;
+
+                    for (int tc = 0; tc < rows_cnt; tc++) {
+
+                        if (readStart && readEnd) {
+                            break;
+                        }
+
+                        read = gprop.getTimeChoiceSTART().getItemAt(tc).toString();
+
+                        if (!readStart) {
+                            //start
+                            if (read.equals(timeSTART)) {
+                                gprop.setTimeSTART(tc);
+                                readStart = true;
+                            }
+                        } else {
+                            //end
+                            if (read.equals(timeEND)) {
+                                gprop.setTimeEND(tc);
+                                readEnd = true;
+                            }
+                        }
+                    }
+
+
+//                    gprop.setTimeSTART(0);
+//                    gprop.setTimeEND(table.getRowCount() - 1);
+
+                    //NAME
+                    gprop.setName(name);
+
+                    //STROKE
+                    gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke", "2")));
+                    gprop.setStrokeSlider(gprop.getStrokeType());
+
+                    //STROKE COLOR
+                    stroke_color = properties.getProperty(name + ".linecolor", "255,0,0");
+
+                    StringTokenizer colorTokenizer = new StringTokenizer(stroke_color, ",");
+
+                    gprop.setSeriesPaint(new Color(new Integer(colorTokenizer.nextToken()),
+                            new Integer(colorTokenizer.nextToken()),
+                            new Integer(colorTokenizer.nextToken())));
+
+                    //LINES VISIBLE
+                    boolean lv = new Boolean(properties.getProperty(name + ".linesvisible"));
+                    gprop.setLinesVisible(lv);
+                    gprop.setLinesVisBox(lv);
+                    //SHAPES VISIBLE
+                    boolean sv = new Boolean(properties.getProperty(name + ".shapesvisible"));
+                    gprop.setShapesVisible(sv);
+                    gprop.setShapesVisBox(sv);
+
+                    //SHAPE TYPE AND SIZE
+                    int stype = new Integer(properties.getProperty(name + ".shapetype", "0"));
+                    int ssize = new Integer(properties.getProperty(name + ".shapesize"));
+                    gprop.setShape(stype, ssize);
+                    gprop.setShapeBox(stype);
+                    gprop.setShapeSlider(ssize);
+
+                    //SHAPE COLOR
+                    shape_color = properties.getProperty(name + ".shapecolor", "255,0,0");
+
+                    StringTokenizer shapeTokenizer = new StringTokenizer(shape_color, ",");
+
+                    gprop.setSeriesFillPaint(new Color(new Integer(shapeTokenizer.nextToken()),
+                            new Integer(shapeTokenizer.nextToken()),
+                            new Integer(shapeTokenizer.nextToken())));
+
+                    //OUTLINE STROKE
+                    int os = new Integer(properties.getProperty(name + ".outlinestroke"));
+                    gprop.setOutlineStroke(os);
+                    gprop.setOutlineSlider(os);
+
+                    //OUTLINE COLOR
+                    outline_color = properties.getProperty(name + ".outlinecolor", "255,0,0");
+
+                    StringTokenizer outTokenizer = new StringTokenizer(outline_color, ",");
+
+                    gprop.setSeriesOutlinePaint(new Color(new Integer(outTokenizer.nextToken()),
+                            new Integer(outTokenizer.nextToken()),
+                            new Integer(outTokenizer.nextToken())));
+
+                    gprop.setColorLabelColor();
+                    propVector.add(gprop);
+                    //addPropGroup(gprop);
+                }
+            }
+        }
+
+        //////////////// hier implementieren!! /////////////////////////
+        //}
+        
+        //Titles
+        edTitleField.setText(properties.getProperty("title"));
+        edLeftField.setText(properties.getProperty("axisLTitle"));
+        edRightField.setText(properties.getProperty("axisRTitle"));
+        edXAxisField.setText(properties.getProperty("xAxisTitle"));
+        //RENDERER
+        rLeftBox.setSelectedIndex(new Integer(properties.getProperty("renderer_left")));
+        rRightBox.setSelectedIndex(new Integer(properties.getProperty("renderer_right")));
+        invLeftBox.setSelected(new Boolean(properties.getProperty("inv_left")));
+        invRightBox.setSelected(new Boolean(properties.getProperty("inv_right")));
+
+        //TimeFormat
+        timeFormat_yy.setSelected(new Boolean(properties.getProperty("timeFormat_yy")));
+        timeFormat_mm.setSelected(new Boolean(properties.getProperty("timeFormat_mmy")));
+        timeFormat_dd.setSelected(new Boolean(properties.getProperty("timeFormat_dd")));
+        timeFormat_hm.setSelected(new Boolean(properties.getProperty("timeFormat_hm")));
+
+//        jts.setPropVector(propVector);
+
+
+
+    }
+    
     private void loadTemplate(File templateFile) {
-
 
         //int no_of_props = propVector.size();
 
@@ -1432,10 +1710,6 @@ public class JTSConfigurator extends JFrame {
             fin.close();
         } catch (Exception e) {
         }
-
-
-
-
 
         this.propVector = new Vector<GraphProperties>();
 
@@ -1615,6 +1889,114 @@ public class JTSConfigurator extends JFrame {
 
 
     }
+    
+    private void loadOutputTTPData(File file){
+        
+        arrayVector = new Vector<double[]>();
+        timeVector = new Vector<JAMSCalendar>();
+        StringTokenizer st = new StringTokenizer("\t");
+        
+        ArrayList<String> headerList = new ArrayList<String>();
+//        ArrayList<Double> rowList = new ArrayList<Double>();
+        double[] rowBuffer;
+        boolean b_headers = false;
+        boolean b_data = false;
+        boolean time_set = false;
+        boolean stop = false;
+        
+        int file_columns = 0;
+        
+        final String ST_DATA =      "#data";
+        final String ST_HEADERS =   "#headers";
+        final String ST_END =       "#end";
+        
+        
+        
+        try{
+            BufferedReader in = new BufferedReader(new FileReader(file));
+          
+            while(in.ready()){
+                
+//                System.out.println("in.ready");
+                //NEXT LINE
+                String s = in.readLine();
+                st = new StringTokenizer(s ,"\t");
+                
+                String actual_string = "";
+                Double val;
+                
+                if(b_data){
+                    int i = 0;
+                    JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+                    rowBuffer = new double[file_columns];
+                    while(st.hasMoreTokens()){
+                        actual_string = st.nextToken();
+                        if(actual_string.compareTo(ST_END) != 0){
+                            if(!time_set){
+//                                System.out.print("time: "+actual_string+"\t");
+                                
+                                //JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second)
+                                    timeval.setValue(actual_string, "yyyy-MM-dd hh:mm");
+
+                                timeVector.add(timeval);
+                                time_set = true;
+                            }else{
+                                try{
+//                                    System.out.println("value: "+actual_string+"\t");
+                                    val = new Double(actual_string);
+                                    rowBuffer[i++] = val.doubleValue();
+                                }catch(Exception pe2){
+                                    pe2.printStackTrace();
+                                }
+                            }
+                        }else{
+                            stop = true;
+                        }
+                    }
+                    if(!stop){
+                        arrayVector.add(rowBuffer);
+                        time_set = false;
+                    }
+                    
+                }else{
+                
+                    while(st.hasMoreTokens()){
+                        //NEXT STRING
+                        String test = st.nextToken();
+                        
+                        if(test.compareTo(ST_DATA) == 0){
+                            b_data = true;
+                            b_headers = false;
+                            file_columns = headerList.size();
+                            
+                        }
+                        if(b_headers){ //TIME HEADER/COL???
+                            headerList.add(test);
+                        } 
+                        if(test.compareTo(ST_HEADERS) == 0){
+                            b_headers = true;
+                        }
+
+                    }
+                }
+            }
+            in.close();
+            headers = new String[file_columns];
+            headers = headerList.toArray(headers);
+            headers[0] = "";
+            graphCount = file_columns-1;
+            this.rows_cnt = arrayVector.size();
+            //in.close();
+            System.out.println("TimeVectorSize:"+timeVector.size());
+            System.out.println("ArrayVectorSize:"+arrayVector.size());
+            System.out.println("TemplateFile = "+templateFile.toString());
+            
+            
+        }catch(Exception eee){
+            eee.printStackTrace();
+        }
+
+    }
     /****** EVENT HANDLING ******/
     ActionListener titleListener = new ActionListener() {
 
@@ -1697,10 +2079,19 @@ public class JTSConfigurator extends JFrame {
 
         public void actionPerformed(ActionEvent e) {
             String fileID = saveTemplate();
-            String filename = fileID+".dat";
-            System.out.println("output_sheet="+sheet.isOutputSheet());
+            StringTokenizer name_tokenizer = new StringTokenizer(fileID,".");
+            String filename = "";
+            if(name_tokenizer.hasMoreTokens()){
+                filename = name_tokenizer.nextToken()+".dat";
+            }else{
+                filename = fileID+".dat";
+            }
+//            System.out.println("output_sheet="+sheet.isOutputSheet());
             if(sheet.isOutputSheet()){
-                sheet.save(filename);//String ID zurückgeben
+                String[] headers_with_time = new String[headers.length+1];
+                headers_with_time[0] = "ID";
+                java.lang.System.arraycopy(headers, 0, headers_with_time, 1, headers.length);
+                sheet.save(filename, headers_with_time);//String ID zurückgeben
                 //daten speichern im falle eines output sheets
             }
         }
