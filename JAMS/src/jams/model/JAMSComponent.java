@@ -35,8 +35,8 @@ import java.io.Serializable;
         title="JAMS Component",
         author="Sven Kralisch",
         date="27. Juni 2005",
-        description="This component represents a JAMS component which is the " +
-        "main model building block in JAMS")
+        description="This component represents a the base class for any JAMS " +
+        "component, which is the main model building block in JAMS")
         public class JAMSComponent implements Serializable {
     
     private String instanceName = getClass().getName();

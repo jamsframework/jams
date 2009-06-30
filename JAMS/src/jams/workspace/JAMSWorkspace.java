@@ -62,11 +62,11 @@ public class JAMSWorkspace implements Serializable {
     /**
      * Comment string used to mark dump files of input datastores
      */
-    public static final String DUMP_MARKER = "#JAMSdatadump", OUTPUT_FILE_ENDING = ".dat" ;
+    public static final String DUMP_MARKER = "#JAMSdatadump", OUTPUT_FILE_ENDING = ".dat";
 
-    private static final String CONFIG_FILE_NAME = "config.txt",  CONFIG_FILE_COMMENT = "JAMS workspace configuration",  CONTEXT_ATTRIBUTE_NAME = "context";
+    private static final String CONFIG_FILE_NAME = "config.txt", CONFIG_FILE_COMMENT = "JAMS workspace configuration", CONTEXT_ATTRIBUTE_NAME = "context";
 
-    private static final String INPUT_DIR_NAME = "input",  OUTPUT_DIR_NAME = "output",  TEMP_DIR_NAME = "tmp",  DUMP_DIR_NAME = "dump",  LOCAL_INDIR_NAME = "local";
+    private static final String INPUT_DIR_NAME = "input", OUTPUT_DIR_NAME = "output", TEMP_DIR_NAME = "tmp", DUMP_DIR_NAME = "dump", LOCAL_INDIR_NAME = "local";
 
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
 
@@ -78,7 +78,7 @@ public class JAMSWorkspace implements Serializable {
 
     private transient ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
-    private transient File directory,  inputDirectory,  outputDirectory = null,  outputDataDirectory,  localInputDirectory,  localDumpDirectory,  tmpDirectory;
+    private transient File directory, inputDirectory, outputDirectory = null, outputDataDirectory, localInputDirectory, localDumpDirectory, tmpDirectory;
 
     private Properties properties = new Properties();
 
@@ -277,9 +277,11 @@ public class JAMSWorkspace implements Serializable {
     /**
      *
      * @param dsTitle The name of the datastore to be returned
+     * @param mode The access mode, e.g. InputDataStore.LIVE_MODE or
+     * InputDataStore.CACHE_MODE
      * @return An input datastore named by dsTitle
      */
-    public InputDataStore getInputDataStore(String dsTitle) {
+    public InputDataStore getInputDataStore(String dsTitle, int mode) {
 
         Document doc = inputDataStores.get(dsTitle);
         if (doc == null) {
@@ -291,9 +293,9 @@ public class JAMSWorkspace implements Serializable {
 
         try {
             if (type.equals(InputDataStore.TYPE_TABLEDATASTORE)) {
-                store = new TableDataStore(this, dsTitle, doc);
+                store = new TableDataStore(this, dsTitle, doc, mode);
             } else if (type.equals(InputDataStore.TYPE_TSDATASTORE)) {
-                store = new TSDataStore(this, dsTitle, doc);
+                store = new TSDataStore(this, dsTitle, doc, mode);
             } else if (type.equals(InputDataStore.TYPE_J2KTSDATASTORE)) {
                 store = new J2KTSDataStore(this, dsTitle, doc);
             } else if (type.equals(InputDataStore.TYPE_SHAPEFILEDATASTORE)) {
@@ -478,11 +480,13 @@ public class JAMSWorkspace implements Serializable {
     /**
      * Creates a string dump of an input datastore
      * @param dsTitle The name of the datastore to be dumped
+     * @param mode The access mode, e.g. InputDataStore.LIVE_MODE or
+     * InputDataStore.CACHE_MODE
      * @return The string representation of the datastore
      * @throws java.io.IOException
      */
-    public String dataStoreToString(String dsTitle) throws IOException {
-        InputDataStore store = this.getInputDataStore(dsTitle);
+    public String dataStoreToString(String dsTitle, int mode) throws IOException {
+        InputDataStore store = this.getInputDataStore(dsTitle, mode);
         return dataStoreToString(store);
     }
 
@@ -508,21 +512,20 @@ public class JAMSWorkspace implements Serializable {
 
     /**
      * Creates a file dump of an input datastore
-     * @param dsTitle The name of the datastore to be dumped
+     * @param store The datastore to be dumped
      * @throws java.io.IOException
      */
-    public void inputDataStoreToFile(String dsTitle) throws IOException {
-        InputDataStore store = this.getInputDataStore(dsTitle);
+    public void inputDataStoreToFile(InputDataStore store) throws IOException {
 
-        if (store == null) {
+        if ((store == null) || (store.getMode() != InputDataStore.LIVE_MODE)) {
             return;
         }
 
         if (store instanceof TSDataStore) {
             TSDumpProcessor asciiConverter = new TSDumpProcessor();
-            File file = new File(this.getLocalDumpDirectory(), dsTitle + ".dump");
+            File file = new File(this.getLocalDumpDirectory(), store.getID() + ".dump");
             asciiConverter.toASCIIFile((TSDataStore) store, file);
-            getRuntime().sendInfoMsg(JAMS.resources.getString("Dumped_input_datastore_1") + dsTitle + JAMS.resources.getString("Dumped_input_datastore_2") + file + JAMS.resources.getString("Dumped_input_datastore_3"));
+            getRuntime().sendInfoMsg(JAMS.resources.getString("Dumped_input_datastore_1") + store.getID() + JAMS.resources.getString("Dumped_input_datastore_2") + file + JAMS.resources.getString("Dumped_input_datastore_3"));
         }
 
         store.close();
@@ -530,11 +533,13 @@ public class JAMSWorkspace implements Serializable {
 
     /**
      * Creates file dumps of all input datastores
+     * @param mode The access mode, e.g. InputDataStore.LIVE_MODE or
+     * InputDataStore.CACHE_MODE
      * @throws java.io.IOException
      */
     public void inputDataStoreToFile() throws IOException {
         for (String dsTitle : this.getInputDataStoreIDs()) {
-            inputDataStoreToFile(dsTitle);
+            inputDataStoreToFile(this.getInputDataStore(dsTitle, InputDataStore.LIVE_MODE));
         }
     }
 
@@ -544,9 +549,9 @@ public class JAMSWorkspace implements Serializable {
      * @return A String array containg the datastores IDs
      */
     public String[] getDataStoreIDs(String type) {
-        
+
         ArrayList<String> list = new ArrayList<String>();
-        
+
         for (String dsTitle : this.getInputDataStoreIDs()) {
             Document doc = inputDataStores.get(dsTitle);
             String thisType = doc.getDocumentElement().getTagName();
@@ -689,8 +694,12 @@ public class JAMSWorkspace implements Serializable {
 
         //System.out.println(ws.dataStoreToString("tmin"));
         //ws.inputDataStoreToFile("tmin");
-        ws.inputDataStoreToFile();
 
+//        ws.inputDataStoreToFile();
+
+        InputDataStore store = ws.getInputDataStore("precip", InputDataStore.CACHE_MODE);
+        TSDumpProcessor asciiConverter = new TSDumpProcessor();
+        System.out.println(asciiConverter.toASCIIString((TSDataStore) store));
     }
 }
 

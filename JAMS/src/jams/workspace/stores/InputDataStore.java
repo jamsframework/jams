@@ -30,6 +30,9 @@ import jams.workspace.*;
  */
 public interface InputDataStore extends DataStore {
 
+    public static final int LIVE_MODE = 0;
+    public static final int CACHE_MODE = 1;
+
     public static final String TYPE_TABLEDATASTORE = "tabledatastore";
     public static final String TYPE_TSDATASTORE = "tsdatastore";
     public static final String TYPE_J2KTSDATASTORE = "j2ktsdatastore";
@@ -40,6 +43,8 @@ public interface InputDataStore extends DataStore {
     public boolean hasNext();
 
     public DataSet getNext();
+
+    public int getMode();
 
     public DataSetDefinition getDataSetDefinition();
     

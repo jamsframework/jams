@@ -55,9 +55,9 @@ public class JAMSContext extends JAMSComponent {
 //    private JAMSEntity currentEntity;
     protected ArrayList<JAMSComponent> components = new ArrayList<JAMSComponent>();
 
-    protected JAMSComponentEnumerator runEnumerator = null;
+    protected ComponentEnumerator runEnumerator = null;
 
-    protected JAMSComponentEnumerator initCleanupEnumerator = null;
+    protected ComponentEnumerator initCleanupEnumerator = null;
 
     protected ArrayList<AccessSpec> accessSpecs = new ArrayList<AccessSpec>();
 
@@ -147,7 +147,7 @@ public class JAMSContext extends JAMSComponent {
      * @return An enumerator iterating over all child components depending on
      * this contexts functionality
      */
-    public JAMSComponentEnumerator getRunEnumerator() {
+    public ComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
     }
 
@@ -155,7 +155,7 @@ public class JAMSContext extends JAMSComponent {
      * 
      * @return An enumerator iterating once over all child components
      */
-    public JAMSComponentEnumerator getChildrenEnumerator() {
+    public ComponentEnumerator getChildrenEnumerator() {
         return new ChildrenEnumerator();
     }
 
@@ -647,16 +647,8 @@ public class JAMSContext extends JAMSComponent {
         for (int i = 0; i < dataAccessors.length; i++) {
             if (dataAccessors[i].getAccessType() == DataAccessor.WRITE_ACCESS) {
 
-//                if (dataAccessors[i] instanceof DoubleArrayAccessor) {
-//                    ((DoubleArrayAccessor) dataAccessors[i]).initEntityData();
-//                }
-
                 dataAccessors[i].initEntityData();
 
-//                for (int j = 0; j < getEntities().getEntities().size(); j++) {
-//                    dataAccessors[i].setIndex(j);
-//                    dataAccessors[i].write();
-//                }
             }
         }
     }
@@ -720,7 +712,7 @@ public class JAMSContext extends JAMSComponent {
         return daHash;
     }
 
-    class ChildrenEnumerator implements JAMSComponentEnumerator {
+    class ChildrenEnumerator implements ComponentEnumerator {
 
         JAMSComponent[] compArray = getCompArray();
 
@@ -742,9 +734,9 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
-    class RunEnumerator implements JAMSComponentEnumerator {
+    class RunEnumerator implements ComponentEnumerator {
 
-        JAMSComponentEnumerator ce = getChildrenEnumerator();
+        ComponentEnumerator ce = getChildrenEnumerator();
 
         EntityEnumerator ee = getEntities().getEntityEnumerator();
 

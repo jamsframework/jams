@@ -27,7 +27,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.GregorianCalendar;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 
@@ -37,7 +36,7 @@ import jams.data.JAMSDataFactory;
  */
 public class TSDumpProcessor {
 
-    private static final String commentTag = "@comments",  metadataTag = "@metadata",  dataTag = "@data",  endTag = "@end";
+    public static final String COMMENT_TAG = "@comments", METADATA_TAG = "@metadata", DATA_TAG = "@data", END_TAG = "@end";
 
     public String toASCIIString(TSDataStore store) throws IOException {
         StringTarget target = new StringTarget();
@@ -62,10 +61,16 @@ public class TSDumpProcessor {
         return null;
     }
 
+    private TSDataStore input(InputSource source) throws IOException {
+
+        return null;
+
+    }
+
     private void output(TSDataStore store, OutputTarget target) throws IOException {
 
         target.append(JAMSWorkspace.DUMP_MARKER + "\n");
-        target.append(commentTag + "\n");
+        target.append(COMMENT_TAG + "\n");
         target.append("#ID: " + store.getID() + "\n");
         target.append("#TYPE: " + store.getClass().getSimpleName() + "\n");
         target.append("#START: " + store.getStartDate() + "\n");
@@ -82,21 +87,26 @@ public class TSDumpProcessor {
             target.append("# " + description.replace("\n", "\n# ") + "\n");
         }
 
-        target.append(metadataTag + "\n");
+        target.append(METADATA_TAG + "\n");
 
-        target.append(store.getDataSetDefinition().toASCIIString() + "\n");
+        target.append(store.getDataSetDefinition().toASCIIString());
 
-        target.append(dataTag + "\n");
+        target.append(DATA_TAG + "\n");
         while (store.hasNext()) {
             DataSet ds = store.getNext();
             target.append(ds.toString() + "\n");
         }
-        target.append(endTag);
+        target.append(END_TAG);
     }
 
     interface OutputTarget {
 
         public void append(String s) throws IOException;
+    }
+
+    interface InputSource {
+
+        public String readln() throws IOException;
     }
 
     class StringTarget implements OutputTarget {

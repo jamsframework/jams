@@ -37,6 +37,10 @@ public class LongValue implements DataValue {
         this.value = new Long(value);
     }
 
+    public LongValue(String value) {
+        this.value = new Long(value);
+    }
+
     public double getDouble() {
         return new Double(value);
     }

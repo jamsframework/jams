@@ -124,7 +124,7 @@ public class JAMSModel extends JAMSContext {
         }
 
         if (!getNullFields().isEmpty()) {
-            getRuntime().println(JAMS.resources.getString("##############_UNDEFIENED_FIELDS_####################################"), JAMS.VVERBOSE);
+            getRuntime().println(JAMS.resources.getString("##############_UNDEFINED_FIELDS_####################################"), JAMS.VVERBOSE);
             for (JAMSComponent comp : getNullFields().keySet()) {
                 ArrayList<Field> nf = getNullFields().get(comp);
                 if (nf.isEmpty()) {
@@ -136,7 +136,7 @@ public class JAMSModel extends JAMSContext {
                 }
                 getRuntime().println(str, JAMS.VVERBOSE);
             }
-            getRuntime().println(JAMS.resources.getString("#####################################################################"), JAMS.VVERBOSE);
+            getRuntime().println(JAMS.resources.getString("####################################################################"), JAMS.VVERBOSE);
         }
         setupDataTracer();
     }

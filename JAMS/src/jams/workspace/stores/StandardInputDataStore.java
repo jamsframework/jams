@@ -41,19 +41,25 @@ import jams.JAMS;
  */
 public abstract class StandardInputDataStore implements InputDataStore {
 
-    protected HashMap<String, DataReader> dataIO;
+    protected HashMap<String, DataReader> dataIO = new HashMap<String, DataReader>();
+
     protected JAMSWorkspace ws;
+
     protected DataSetDefinition dsd;
+
     protected int bufferSize = 0;
-    protected String id,  description = "",  missingDataValue = "";
+
+    protected String id, description = "", missingDataValue = "";
+
+    protected int mode;
 
     public StandardInputDataStore(JAMSWorkspace ws) {
         this.ws = ws;
     }
 
-    public StandardInputDataStore(JAMSWorkspace ws, String id, Document doc) throws ClassNotFoundException {
+    public StandardInputDataStore(JAMSWorkspace ws, String id, Document doc, int  mode) throws ClassNotFoundException {
         this.ws = ws;
-
+        this.mode = mode;
         this.id = id;//doc.getDocumentElement().getAttribute("id");
 
         Node descriptionNode = doc.getDocumentElement().getElementsByTagName("description").item(0);
@@ -68,9 +74,10 @@ public abstract class StandardInputDataStore implements InputDataStore {
             this.bufferSize = Integer.parseInt(bufferSizeElement.getAttribute("value"));
         }
 
-        this.dataIO = createDataIO(doc);
-        this.dsd = createDataSetDefinitionFromDocument(doc);
-        
+        if (this.mode == InputDataStore.LIVE_MODE) {
+            this.dataIO = createDataIO(doc);
+            this.dsd = createDataSetDefinitionFromDocument(doc);
+        }
     }
 
     private DataSetDefinition createDataSetDefinitionFromDocument(Document doc) {
@@ -237,7 +244,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
                 theNodeValue = uriNode.getTextContent();
             }
         }
-       return theNodeValue;
+        return theNodeValue;
     }
 
     public String getID() {
@@ -258,5 +265,12 @@ public abstract class StandardInputDataStore implements InputDataStore {
 
     public String getMissingDataValue() {
         return missingDataValue;
+    }
+
+    /**
+     * @return the mode
+     */
+    public int getMode() {
+        return mode;
     }
 }

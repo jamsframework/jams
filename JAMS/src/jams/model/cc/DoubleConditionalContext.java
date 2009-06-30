@@ -42,12 +42,12 @@ public class DoubleConditionalContext extends JAMSContext {
     }
 
     @Override
-    public JAMSComponentEnumerator getRunEnumerator() {
+    public ComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
     }
 
     @Override
-    public JAMSComponentEnumerator getChildrenEnumerator() {
+    public ComponentEnumerator getChildrenEnumerator() {
         return new RunEnumerator();
     }
 
@@ -56,7 +56,7 @@ public class DoubleConditionalContext extends JAMSContext {
         return 1;
     }
 
-    class RunEnumerator implements JAMSComponentEnumerator {
+    class RunEnumerator implements ComponentEnumerator {
 
         JAMSComponent[] compArray = getCompArray();
         boolean next = true;

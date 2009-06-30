@@ -1,5 +1,5 @@
 /*
- * JAMSComponentEnumerator.java
+ * ComponentEnumerator.java
  * Created on 1. August 2005, 16:51
  *
  * This file is part of JAMS
@@ -31,7 +31,7 @@ import java.io.Serializable;
  *
  * @author S. Kralisch
  */
-public interface JAMSComponentEnumerator extends Serializable{
+public interface ComponentEnumerator extends Serializable{
     
     boolean hasNext();
     JAMSComponent next();

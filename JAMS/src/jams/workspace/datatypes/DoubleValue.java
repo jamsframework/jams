@@ -24,7 +24,6 @@ package jams.workspace.datatypes;
 
 import com.vividsolutions.jts.geom.Geometry;
 import jams.data.Attribute;
-import jams.data.JAMSCalendar;
 
 /**
  *
@@ -35,6 +34,10 @@ public class DoubleValue implements DataValue {
     private Double value;
 
     public DoubleValue(double value) {
+        this.value = new Double(value);
+    }
+
+    public DoubleValue(String value) {
         this.value = new Double(value);
     }
 

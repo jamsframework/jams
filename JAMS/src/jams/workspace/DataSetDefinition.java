@@ -35,9 +35,13 @@ import jams.JAMS;
 public class DataSetDefinition {
 
     private int columnCount;
+
     private ArrayList<Class> dataTypes;
+
     private ArrayList<String> attributeNames = new ArrayList<String>();
+
     private HashMap<String, Class> attributes = new HashMap<String, Class>();
+
     private HashMap<String, ArrayList<Object>> attributeValues = new HashMap<String, ArrayList<Object>>();
 
     public DataSetDefinition(ArrayList<Class> dataTypes) {
@@ -95,7 +99,7 @@ public class DataSetDefinition {
 
     public boolean setAttributeValues(String attributeName, Object value) {
 
-        ArrayList<Object> values = new ArrayList<Object>();        
+        ArrayList<Object> values = new ArrayList<Object>();
         for (int i = 0; i < columnCount; i++) {
             values.add(value);
         }
@@ -162,9 +166,17 @@ public class DataSetDefinition {
     public String toASCIIString() {
         String result = "";
 
+        result += "#$TYPE$";
+        for (Class type : dataTypes) {
+            result += "\t" + type.getName();
+        }
+        result += "\n";
+
         for (String attributeName : attributeNames) {
 
             result += "#" + attributeName;
+
+            result += "\t" + attributes.get(attributeName).getName();
 
             ArrayList<Object> values = getAttributeValues(attributeName);
             for (Object value : values) {
@@ -172,11 +184,6 @@ public class DataSetDefinition {
             }
 
             result += "\n";
-        }
-
-        result += "#TYPE_";
-        for (Class type : dataTypes) {
-            result += "\t" + type.getSimpleName();
         }
 
         return result;

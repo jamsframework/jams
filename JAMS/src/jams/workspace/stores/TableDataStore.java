@@ -44,15 +44,18 @@ public class TableDataStore extends StandardInputDataStore {
     /**
      * The maximal position within the buffer
      */
-    protected int currentPosition,  maxPosition;
+    protected int currentPosition, maxPosition;
+
     /**
      * A set of DataReader objects that this datastore uses to read data
      */
     protected Set<DataReader> dataIOSet = new HashSet<DataReader>();
+
     /**
      * An array of DataReader objects that this datastore uses to read data
      */
     protected DataReader[] dataIOArray;
+
     /**
      * An array of integers defining which column of the DataReader contains
      * the data
@@ -66,7 +69,7 @@ public class TableDataStore extends StandardInputDataStore {
     public TableDataStore(JAMSWorkspace ws) {
         super(ws);
     }
-    
+
     /**
      * Creates a new TableDataStore object
      * @param ws The workspace that the datastore belongs to
@@ -74,14 +77,16 @@ public class TableDataStore extends StandardInputDataStore {
      * @param doc A XML document that describes this datastore
      * @throws java.lang.ClassNotFoundException
      */
-    public TableDataStore(JAMSWorkspace ws, String id, Document doc) throws ClassNotFoundException {
-        super(ws, id, doc);
+    public TableDataStore(JAMSWorkspace ws, String id, Document doc, int mode) throws ClassNotFoundException {
+        super(ws, id, doc, mode);
 
         if (ws.getRuntime().getState() != JAMSRuntime.STATE_RUN) {
             return;
         }
 
-        initDataAccess(doc);
+        if (mode == InputDataStore.LIVE_MODE) {
+            initDataAccess(doc);
+        }
     }
 
     private void initDataAccess(Document doc) {

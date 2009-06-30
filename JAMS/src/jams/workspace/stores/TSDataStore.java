@@ -31,6 +31,17 @@ import jams.workspace.datatypes.DataValue;
 import jams.JAMS;
 import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
+import jams.runtime.JAMSRuntime;
+import jams.workspace.datatypes.DoubleValue;
+import jams.workspace.datatypes.LongValue;
+import jams.workspace.datatypes.ObjectValue;
+import jams.workspace.datatypes.StringValue;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 /**
  *
@@ -39,9 +50,24 @@ import jams.data.JAMSDataFactory;
 public class TSDataStore extends TableDataStore {
 
     protected CalendarValue calendar;
-    protected Attribute.Calendar currentDate,  startDate,  endDate,  stopDate;
-    protected int timeUnit,  timeUnitCount;
+
+    protected Attribute.Calendar currentDate, startDate, endDate, stopDate;
+
+    protected int timeUnit, timeUnitCount;
+
     protected String timeFormat;
+
+    private BufferedReader dumpFileReader;
+
+    private static final int DOUBLE = 0;
+
+    private static final int LONG = 1;
+
+    private static final int STRING = 2;
+
+    private static final int OBJECT = 3;
+
+    private int[] type;
 
     public TSDataStore(JAMSWorkspace ws) {
         super(ws);
@@ -51,8 +77,8 @@ public class TSDataStore extends TableDataStore {
         calendar = new CalendarValue(currentDate);
     }
 
-    public TSDataStore(JAMSWorkspace ws, String id, Document doc) throws ClassNotFoundException {
-        super(ws, id, doc);
+    public TSDataStore(JAMSWorkspace ws, String id, Document doc, int mode) throws IOException, ClassNotFoundException {
+        super(ws, id, doc, mode);
 
         Element tiNode = (Element) doc.getElementsByTagName("timeinterval").item(0);
         Element startElement = (Element) tiNode.getElementsByTagName("start").item(0);
@@ -84,62 +110,83 @@ public class TSDataStore extends TableDataStore {
         if (bufferSize == 1) {
             bufferSize = 2;
         }
-        fillBuffer();
-        if (maxPosition >= 2) {
 
-            // check interval size for all columns
-            for (int i = 0; i < dataIOArray.length; i++) {
+        if (this.mode == InputDataStore.LIVE_MODE) {
 
-                //get the timestamps of the first two rows
-                long timeStamp1 = dataIOArray[i].getData()[0].getData()[0].getLong();
-                long timeStamp2 = dataIOArray[i].getData()[1].getData()[0].getLong();
+            // check validity of the data, e.g. unique start dates
 
-                //compare the two time stamps
-                Attribute.Calendar cal1 = JAMSDataFactory.createCalendar();
-                cal1.setTimeInMillis(timeStamp1 * 1000);
-                JAMSCalendar cal2 = JAMSDataFactory.createCalendar();
-                cal2.setTimeInMillis(timeStamp2 * 1000);
+            fillBuffer();
+            if (maxPosition >= 2) {
 
-                cal1.add(timeUnit, timeUnitCount);
-                if (cal1.compareTo(cal2) != 0) {
+                // check interval size for all columns
+                for (int i = 0; i < dataIOArray.length; i++) {
 
-                    Attribute.Calendar cal = cal1.clone();
-                    cal.add(timeUnit, -1 * timeUnitCount);
-                    long demandedSeconds = Math.abs(cal1.getTimeInMillis() - cal.getTimeInMillis()) / 1000;
-                    long currentSeconds = Math.abs(cal.getTimeInMillis() - cal2.getTimeInMillis()) / 1000;
+                    //get the timestamps of the first two rows
+                    long timeStamp1 = dataIOArray[i].getData()[0].getData()[0].getLong();
+                    long timeStamp2 = dataIOArray[i].getData()[1].getData()[0].getLong();
 
-                    this.ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_in_") + this.getClass().getName() + JAMS.resources.getString(":_wrong_time_interval_in_column_") + i + JAMS.resources.getString("_(demanded_interval_=_") + demandedSeconds + JAMS.resources.getString("_sec,_provided_interval_=_") + currentSeconds + JAMS.resources.getString("_sec)!"));
+                    //compare the two time stamps
+                    Attribute.Calendar cal1 = JAMSDataFactory.createCalendar();
+                    cal1.setTimeInMillis(timeStamp1 * 1000);
+                    JAMSCalendar cal2 = JAMSDataFactory.createCalendar();
+                    cal2.setTimeInMillis(timeStamp2 * 1000);
 
-                    dataIOSet.clear();
-                    currentPosition = maxPosition;
+                    cal1.add(timeUnit, timeUnitCount);
+                    if (cal1.compareTo(cal2) != 0) {
+
+                        Attribute.Calendar cal = cal1.clone();
+                        cal.add(timeUnit, -1 * timeUnitCount);
+                        long demandedSeconds = Math.abs(cal1.getTimeInMillis() - cal.getTimeInMillis()) / 1000;
+                        long currentSeconds = Math.abs(cal.getTimeInMillis() - cal2.getTimeInMillis()) / 1000;
+
+                        this.ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_in_") + this.getClass().getName() + JAMS.resources.getString(":_wrong_time_interval_in_column_") + i + JAMS.resources.getString("_(demanded_interval_=_") + demandedSeconds + JAMS.resources.getString("_sec,_provided_interval_=_") + currentSeconds + JAMS.resources.getString("_sec)!"));
+
+                        dataIOSet.clear();
+                        currentPosition = maxPosition;
+                    }
+
                 }
 
+                // check identical start date of all columns
+
+                // for all but the first columns
+                boolean shifted = false;
+                for (int i = 0; i < dataIOArray.length; i++) {
+
+                    long timeStamp2 = dataIOArray[i].getData()[0].getData()[0].getLong();
+
+                    //compare the two time stamps
+                    JAMSCalendar cal = JAMSDataFactory.createCalendar();
+                    cal.setTimeInMillis(timeStamp2 * 1000);
+
+                    if (cal.compareTo(startDate, timeUnit) != 0) {
+
+                        this.ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_in_") + this.getClass().getName() + JAMS.resources.getString(":_wrong_start_time_in_column_") + i + JAMS.resources.getString("_(demanded_=_") + startDate + JAMS.resources.getString(",_provided_=_") + cal + JAMS.resources.getString(")!"));
+
+                        dataIOSet.clear();
+                        currentPosition = maxPosition;
+                    } else if (!shifted) {
+                        if (cal.compareTo(currentDate) != 0) {
+                            currentDate.setValue(cal);
+                        }
+                        shifted = true;
+                    }
+                }
             }
 
-            // check identical start date of all columns
+        } else {
 
-            // for all but the first columns
-            boolean shifted = false;
-            for (int i = 0; i < dataIOArray.length; i++) {
+            File file = new File(ws.getLocalDumpDirectory(), id + ".dump");
+            if (!file.exists()) {
+                throw new IOException("Dump file " + file.getPath() + " not found!");
+            }
 
-                long timeStamp2 = dataIOArray[i].getData()[0].getData()[0].getLong();
+            this.dumpFileReader = new BufferedReader(new FileReader(file));
 
-                //compare the two time stamps
-                JAMSCalendar cal = JAMSDataFactory.createCalendar();
-                cal.setTimeInMillis(timeStamp2 * 1000);
+            this.dsd = getDSDFromDumpFile();
 
-                if (cal.compareTo(startDate, timeUnit) != 0) {
-
-                    this.ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_in_") + this.getClass().getName() + JAMS.resources.getString(":_wrong_start_time_in_column_") + i + JAMS.resources.getString("_(demanded_=_") + startDate + JAMS.resources.getString(",_provided_=_") + cal + JAMS.resources.getString(")!"));
-
-                    dataIOSet.clear();
-                    currentPosition = maxPosition;
-                } else if (!shifted) {
-                    if (cal.compareTo(currentDate) != 0) {
-                        currentDate.setValue(cal);
-                    }
-                    shifted = true;
-                }
+            if (ws.getRuntime().getState() != JAMSRuntime.STATE_RUN) {
+                return;
             }
         }
 
@@ -149,12 +196,116 @@ public class TSDataStore extends TableDataStore {
         bufferSize = oldBufferSize;
     }
 
+    private DataSetDefinition getDSDFromDumpFile() throws IOException {
+
+        String str;
+        while ((str = dumpFileReader.readLine()) != null) {
+            if (str.startsWith("#$TYPE$")) {
+                break;
+            }
+        }
+
+        if (str == null) {
+            return null;
+        }
+
+        StringTokenizer tok = new StringTokenizer(str, "\t");
+        ArrayList<Class> dataTypes = new ArrayList<Class>();
+        // drop the first token ("#$TYPE$")
+        tok.nextToken();
+
+        while (tok.hasMoreTokens()) {
+            String className = tok.nextToken();
+            try {
+                dataTypes.add(Class.forName(className));
+            } catch (ClassNotFoundException ex) {
+                ws.getRuntime().sendErrorMsg("Referenced type in datastore " + id +
+                        " could not be found: " + className);
+            }
+        }
+
+        DataSetDefinition def = new DataSetDefinition(dataTypes);
+
+        type = new int[dataTypes.size()];
+        int i = 0;
+        for (Class clazz : dataTypes) {
+            if (clazz.equals(Long.class)) {
+                type[i] = LONG;
+            } else if (clazz.equals(Double.class)) {
+                type[i] = DOUBLE;
+            } else if (clazz.equals(String.class)) {
+                type[i] = STRING;
+            } else {
+                type[i] = OBJECT;
+            }
+            i++;
+        }
+
+        while ((str = dumpFileReader.readLine()) != null) {
+            if (str.startsWith(TSDumpProcessor.DATA_TAG)) {
+                break;
+            }
+
+            tok = new StringTokenizer(str, "\t");
+
+            String attributeName = tok.nextToken().substring(1);
+            String className = tok.nextToken();
+            ArrayList<Object> values = new ArrayList<Object>();
+            Class clazz = null;
+
+            try {
+                clazz = Class.forName(className);
+            } catch (ClassNotFoundException ex) {
+                ws.getRuntime().sendErrorMsg("Referenced type in datastore " + id +
+                        " could not be found: " + className);
+                return null;
+            }
+            def.addAttribute(attributeName, clazz);
+
+            while (tok.hasMoreTokens()) {
+                String valueString = tok.nextToken();
+                values.add(getDataValue(clazz, valueString));
+            }
+            def.setAttributeValues(attributeName, values);
+        }
+        return def;
+    }
+
+    private Object getDataValue(Class clazz, String valueString) {
+
+        Object o = null;
+
+        if (clazz.equals(Double.class)) {
+            o = new Double(valueString);
+        } else if (clazz.equals(Long.class)) {
+            o = new Long(valueString);
+        } else if (clazz.equals(Attribute.Calendar.class)) {
+            Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+            cal.setValue(valueString);
+            o = cal;
+        } else if (clazz.equals(String.class)) {
+            o = new String(valueString);
+        } else {
+            o = new Object();
+        }
+
+        return o;
+    }
+
     @Override
     public boolean hasNext() {
+
         if (currentDate.after(stopDate)) {
             return false;
         }
-        return super.hasNext();
+
+        if (this.mode == InputDataStore.LIVE_MODE) {
+
+            return super.hasNext();
+
+        } else {
+            return true;
+        }
     }
 
     @Override
@@ -164,24 +315,106 @@ public class TSDataStore extends TableDataStore {
             return null;
         }
 
-        DataSet result = new DataSet(positionArray.length + 1);
-
         currentDate.add(timeUnit, timeUnitCount);
-        result.setData(0, calendar);
+        DataSet result;
 
-        for (int i = 0; i < dataIOArray.length; i++) {
+        if (this.mode == InputDataStore.LIVE_MODE) {
 
-            DataSet ds = dataIOArray[i].getData()[currentPosition];
-            DataValue[] values = ds.getData();
-            result.setData(i + 1, values[positionArray[i]]);
+            result = new DataSet(positionArray.length + 1);
+            result.setData(0, calendar);
+            for (int i = 0; i < dataIOArray.length; i++) {
 
+                DataSet ds = dataIOArray[i].getData()[currentPosition];
+                DataValue[] values = ds.getData();
+                result.setData(i + 1, values[positionArray[i]]);
+
+            }
+
+            currentPosition++;
+
+        } else {
+
+            try {
+
+                String str = dumpFileReader.readLine();
+                StringTokenizer tok = new StringTokenizer(str, "\t");
+
+                int length = tok.countTokens();
+
+                result = new DataSet(length);
+                result.setData(0, calendar);
+
+                // dump date since this is not evaluated!
+                tok.nextToken();
+
+                for (int i = 1; i < length; i++) {
+
+                    DataValue value;
+                    String valueString = tok.nextToken();
+                    switch (type[i - 1]) {
+                        case DOUBLE:
+                            value = new DoubleValue(valueString);
+                            break;
+                        case LONG:
+                            value = new LongValue(valueString);
+                            break;
+                        case STRING:
+                            value = new StringValue(valueString);
+                            break;
+                        default:
+                            value = new ObjectValue(valueString);
+                    }
+
+                    result.setData(i, value);
+                }
+
+            } catch (IOException ex) {
+                ws.getRuntime().sendErrorMsg("Premature end of dump file for datastore" + id);
+                return null;
+            }
         }
-
-        currentPosition++;
 
         return result;
     }
 
+//    private DataValue getDSDataValue(Class clazz, String valueString) {
+//
+//        DataValue value = null;
+//
+//                    switch (clazz) {
+//                        case DOUBLE:
+//                            value = new DoubleValue(rs.getDouble(j + 1));
+//                            dataSet.setData(j, value);
+//                            break;
+//                        case LONG:
+//                            value = new LongValue(rs.getLong(j + 1));
+//                            dataSet.setData(j, value);
+//                            break;
+//                        case STRING:
+//                            value = new StringValue(rs.getString(j + 1));
+//                            dataSet.setData(j, value);
+//                            break;
+//                        default:
+//                            value = new ObjectValue(rs.getObject(j + 1));
+//                            dataSet.setData(j, value);
+//                    }
+//
+//        if (clazz.equals(Double.class)) {
+//            value = new Double(valueString);
+//        } else if (clazz.equals(Long.class)) {
+//            value = new Long(valueString);
+//        } else if (clazz.equals(Attribute.Calendar.class)) {
+//            Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+//            cal.setValue(valueString);
+//            value = cal;
+//        } else if (clazz.equals(String.class)) {
+//            value = new String(valueString);
+//        } else {
+//            value = new Object();
+//        }
+//
+//        return value;
+//    }
     public Attribute.Calendar getStartDate() {
         return startDate;
     }

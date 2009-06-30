@@ -91,7 +91,7 @@ public class JAMSTemporalContext extends JAMSContext {
     }
 
     @Override
-    public JAMSComponentEnumerator getRunEnumerator() {
+    public ComponentEnumerator getRunEnumerator() {
         // check if there are components to iterate on
         if (!components.isEmpty()) {
             // if yes, return standard enumerator
@@ -127,9 +127,9 @@ public class JAMSTemporalContext extends JAMSContext {
         return current.toString();
     }
 
-    class RunEnumerator implements JAMSComponentEnumerator {
+    class RunEnumerator implements ComponentEnumerator {
 
-        JAMSComponentEnumerator ce = getChildrenEnumerator();
+        ComponentEnumerator ce = getChildrenEnumerator();
         //DataTracer dataTracers = getDataTracer();
         @Override
         public boolean hasNext() {
