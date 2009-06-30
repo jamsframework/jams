@@ -708,7 +708,7 @@ public class STPConfigurator extends JFrame{
             BufferedReader in = new BufferedReader(new FileReader(file));
           
             while(in.ready()){
-                System.out.println("in.ready");
+//                System.out.println("in.ready");
                 //NEXT LINE
                 String s = in.readLine();
                 st = new StringTokenizer(s ,"\t");
@@ -724,7 +724,7 @@ public class STPConfigurator extends JFrame{
                         actual_string = st.nextToken();
                         if(actual_string.compareTo(ST_END) != 0){
                             if(!time_set){
-                                System.out.print("time: "+actual_string+"\t");
+//                                System.out.print("time: "+actual_string+"\t");
                                 try {    
                                 //JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second)
                                     timeval.setValue(actual_string, "yyyy-MM-dd hh:mm");
