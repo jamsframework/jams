@@ -77,14 +77,14 @@ public class TableDataStore extends StandardInputDataStore {
      * @param doc A XML document that describes this datastore
      * @throws java.lang.ClassNotFoundException
      */
-    public TableDataStore(JAMSWorkspace ws, String id, Document doc, int mode) throws ClassNotFoundException {
-        super(ws, id, doc, mode);
+    public TableDataStore(JAMSWorkspace ws, String id, Document doc) throws ClassNotFoundException {
+        super(ws, id, doc);
 
         if (ws.getRuntime().getState() != JAMSRuntime.STATE_RUN) {
             return;
         }
 
-        if (mode == InputDataStore.LIVE_MODE) {
+        if (accessMode != InputDataStore.USE_CACHE_MODE) {
             initDataAccess(doc);
         }
     }

@@ -276,14 +276,14 @@ public class JTSConfigurator extends JFrame {
                 headers[k] = table.getColumnName(columns[k]);
             }
         }else{  
-                System.out.println("OUTPUT FILE");
+//                System.out.println("OUTPUT FILE");
 //                this.templateFile = templateFile;
                 StringTokenizer name_tokenizer = new StringTokenizer(templateFile.getPath(),".");
                 String filename = "";
                 filename = name_tokenizer.nextToken()+".dat";
 
                 File ttpdatfile = new File(filename);
-                System.out.println("ttpdatFile:"+ttpdatfile.getPath());
+//                System.out.println("ttpdatFile:"+ttpdatfile.getPath());
                 output_ttp = true;
                 
 //                arrayVector; = new Vector<double[]>();
@@ -305,7 +305,7 @@ public class JTSConfigurator extends JFrame {
     
 
     public void createPanel() {
-        System.out.println("CREATE PANEL TemplateFile = "+templateFile.toString());
+//        System.out.println("CREATE PANEL TemplateFile = "+templateFile.toString());
         colour_cnt = 0;
         /* create ColorMap */
         colorTable.put("yellow", Color.yellow);
@@ -363,7 +363,7 @@ public class JTSConfigurator extends JFrame {
 
         initGroupUI();
         
-        System.out.println("INIT GROUP UI TemplateFile = "+templateFile.toString());
+//        System.out.println("INIT GROUP UI TemplateFile = "+templateFile.toString());
         
         southpanel = new JPanel();
         southpanel.setLayout(new FlowLayout());
@@ -403,7 +403,7 @@ public class JTSConfigurator extends JFrame {
         rRightBox.setSelectedIndex(0);
 
         ////////////////////////// RUN GRAPH ///////////
-        System.out.println("RUN GRAPH TemplateFile = "+templateFile.toString());
+//        System.out.println("RUN GRAPH TemplateFile = "+templateFile.toString());
         if (templateFile != null) {
             try {
                 if(!output_ttp){
@@ -411,10 +411,10 @@ public class JTSConfigurator extends JFrame {
                 }
                 else{ 
                     loadOutputTemplate(templateFile);
-                    System.out.println("load OUTPUT TEMPLATE");
+//                    System.out.println("load OUTPUT TEMPLATE");
                 }
             } catch (Exception fnfe) {
-                System.out.println("ERROR");
+//                System.out.println("ERROR");
                 fnfe.printStackTrace();
                 
                 initGraphLoad();
@@ -1987,9 +1987,9 @@ public class JTSConfigurator extends JFrame {
             graphCount = file_columns-1;
             this.rows_cnt = arrayVector.size();
             //in.close();
-            System.out.println("TimeVectorSize:"+timeVector.size());
-            System.out.println("ArrayVectorSize:"+arrayVector.size());
-            System.out.println("TemplateFile = "+templateFile.toString());
+//            System.out.println("TimeVectorSize:"+timeVector.size());
+//            System.out.println("ArrayVectorSize:"+arrayVector.size());
+//            System.out.println("TemplateFile = "+templateFile.toString());
             
             
         }catch(Exception eee){

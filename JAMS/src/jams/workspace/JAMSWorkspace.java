@@ -280,17 +280,6 @@ public class JAMSWorkspace implements Serializable {
      * @return An input datastore named by dsTitle
      */
     public InputDataStore getInputDataStore(String dsTitle) {
-        return getInputDataStore(dsTitle, InputDataStore.LIVE_MODE);
-    }
-
-    /**
-     *
-     * @param dsTitle The name of the datastore to be returned
-     * @param mode The access mode, e.g. InputDataStore.LIVE_MODE or
-     * InputDataStore.CACHE_MODE
-     * @return An input datastore named by dsTitle
-     */
-    public InputDataStore getInputDataStore(String dsTitle, int mode) {
 
         Document doc = inputDataStores.get(dsTitle);
         if (doc == null) {
@@ -302,9 +291,9 @@ public class JAMSWorkspace implements Serializable {
 
         try {
             if (type.equals(InputDataStore.TYPE_TABLEDATASTORE)) {
-                store = new TableDataStore(this, dsTitle, doc, mode);
+                store = new TableDataStore(this, dsTitle, doc);
             } else if (type.equals(InputDataStore.TYPE_TSDATASTORE)) {
-                store = new TSDataStore(this, dsTitle, doc, mode);
+                store = new TSDataStore(this, dsTitle, doc);
             } else if (type.equals(InputDataStore.TYPE_J2KTSDATASTORE)) {
                 store = new J2KTSDataStore(this, dsTitle, doc);
             } else if (type.equals(InputDataStore.TYPE_SHAPEFILEDATASTORE)) {
@@ -489,13 +478,11 @@ public class JAMSWorkspace implements Serializable {
     /**
      * Creates a string dump of an input datastore
      * @param dsTitle The name of the datastore to be dumped
-     * @param mode The access mode, e.g. InputDataStore.LIVE_MODE or
-     * InputDataStore.CACHE_MODE
      * @return The string representation of the datastore
      * @throws java.io.IOException
      */
-    public String dataStoreToString(String dsTitle, int mode) throws IOException {
-        InputDataStore store = this.getInputDataStore(dsTitle, mode);
+    public String dataStoreToString(String dsTitle) throws IOException {
+        InputDataStore store = this.getInputDataStore(dsTitle);
         return dataStoreToString(store);
     }
 
@@ -526,7 +513,7 @@ public class JAMSWorkspace implements Serializable {
      */
     public void inputDataStoreToFile(InputDataStore store) throws IOException {
 
-        if ((store == null) || (store.getMode() != InputDataStore.LIVE_MODE)) {
+        if ((store == null) || (store.getAccessMode() == InputDataStore.USE_CACHE_MODE)) {
             return;
         }
 
@@ -542,13 +529,11 @@ public class JAMSWorkspace implements Serializable {
 
     /**
      * Creates file dumps of all input datastores
-     * @param mode The access mode, e.g. InputDataStore.LIVE_MODE or
-     * InputDataStore.CACHE_MODE
      * @throws java.io.IOException
      */
     public void inputDataStoreToFile() throws IOException {
         for (String dsTitle : this.getInputDataStoreIDs()) {
-            inputDataStoreToFile(this.getInputDataStore(dsTitle, InputDataStore.LIVE_MODE));
+            inputDataStoreToFile(this.getInputDataStore(dsTitle));
         }
     }
 
@@ -706,7 +691,7 @@ public class JAMSWorkspace implements Serializable {
 
 //        ws.inputDataStoreToFile();
 
-        InputDataStore store = ws.getInputDataStore("precip", InputDataStore.CACHE_MODE);
+        InputDataStore store = ws.getInputDataStore("precip");
         TSDumpProcessor asciiConverter = new TSDumpProcessor();
         System.out.println(asciiConverter.toASCIIString((TSDataStore) store));
     }

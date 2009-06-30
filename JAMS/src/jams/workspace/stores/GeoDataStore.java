@@ -35,8 +35,8 @@ public abstract class GeoDataStore extends StandardInputDataStore {
         super(ws);
     }
 
-    public GeoDataStore(JAMSWorkspace ws, String id, Document doc, int mode) throws ClassNotFoundException {
-        super(ws, id, doc, mode);
+    public GeoDataStore(JAMSWorkspace ws, String id, Document doc) throws ClassNotFoundException {
+        super(ws, id, doc);
     }
 }
 

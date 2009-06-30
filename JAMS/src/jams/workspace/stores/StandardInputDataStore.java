@@ -51,15 +51,14 @@ public abstract class StandardInputDataStore implements InputDataStore {
 
     protected String id, description = "", missingDataValue = "";
 
-    protected int mode;
+    protected int accessMode = InputDataStore.LIVE_MODE;
 
     public StandardInputDataStore(JAMSWorkspace ws) {
         this.ws = ws;
     }
 
-    public StandardInputDataStore(JAMSWorkspace ws, String id, Document doc, int  mode) throws ClassNotFoundException {
+    public StandardInputDataStore(JAMSWorkspace ws, String id, Document doc) throws ClassNotFoundException {
         this.ws = ws;
-        this.mode = mode;
         this.id = id;//doc.getDocumentElement().getAttribute("id");
 
         Node descriptionNode = doc.getDocumentElement().getElementsByTagName("description").item(0);
@@ -74,7 +73,12 @@ public abstract class StandardInputDataStore implements InputDataStore {
             this.bufferSize = Integer.parseInt(bufferSizeElement.getAttribute("value"));
         }
 
-        if (this.mode == InputDataStore.LIVE_MODE) {
+        Element accessmodeElement = (Element) parameterElement.getElementsByTagName("accessmode").item(0);
+        if (accessmodeElement != null) {
+            this.accessMode = Integer.parseInt(accessmodeElement.getAttribute("value"));
+        }
+
+        if (this.accessMode != InputDataStore.USE_CACHE_MODE) {
             this.dataIO = createDataIO(doc);
             this.dsd = createDataSetDefinitionFromDocument(doc);
         }
@@ -268,9 +272,9 @@ public abstract class StandardInputDataStore implements InputDataStore {
     }
 
     /**
-     * @return the mode
+     * @return the accessMode
      */
-    public int getMode() {
-        return mode;
+    public int getAccessMode() {
+        return accessMode;
     }
 }

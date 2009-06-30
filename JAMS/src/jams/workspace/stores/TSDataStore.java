@@ -77,8 +77,8 @@ public class TSDataStore extends TableDataStore {
         calendar = new CalendarValue(currentDate);
     }
 
-    public TSDataStore(JAMSWorkspace ws, String id, Document doc, int mode) throws IOException, ClassNotFoundException {
-        super(ws, id, doc, mode);
+    public TSDataStore(JAMSWorkspace ws, String id, Document doc) throws IOException, ClassNotFoundException {
+        super(ws, id, doc);
 
         Element tiNode = (Element) doc.getElementsByTagName("timeinterval").item(0);
         Element startElement = (Element) tiNode.getElementsByTagName("start").item(0);
@@ -111,7 +111,7 @@ public class TSDataStore extends TableDataStore {
             bufferSize = 2;
         }
 
-        if (this.mode == InputDataStore.LIVE_MODE) {
+        if (this.accessMode != InputDataStore.USE_CACHE_MODE) {
 
             // check validity of the data, e.g. unique start dates
 
@@ -299,12 +299,14 @@ public class TSDataStore extends TableDataStore {
             return false;
         }
 
-        if (this.mode == InputDataStore.LIVE_MODE) {
+        if (this.accessMode != InputDataStore.USE_CACHE_MODE) {
 
             return super.hasNext();
 
         } else {
+
             return true;
+
         }
     }
 
@@ -318,7 +320,7 @@ public class TSDataStore extends TableDataStore {
         currentDate.add(timeUnit, timeUnitCount);
         DataSet result;
 
-        if (this.mode == InputDataStore.LIVE_MODE) {
+        if (this.accessMode != InputDataStore.USE_CACHE_MODE) {
 
             result = new DataSet(positionArray.length + 1);
             result.setData(0, calendar);
@@ -377,44 +379,6 @@ public class TSDataStore extends TableDataStore {
         return result;
     }
 
-//    private DataValue getDSDataValue(Class clazz, String valueString) {
-//
-//        DataValue value = null;
-//
-//                    switch (clazz) {
-//                        case DOUBLE:
-//                            value = new DoubleValue(rs.getDouble(j + 1));
-//                            dataSet.setData(j, value);
-//                            break;
-//                        case LONG:
-//                            value = new LongValue(rs.getLong(j + 1));
-//                            dataSet.setData(j, value);
-//                            break;
-//                        case STRING:
-//                            value = new StringValue(rs.getString(j + 1));
-//                            dataSet.setData(j, value);
-//                            break;
-//                        default:
-//                            value = new ObjectValue(rs.getObject(j + 1));
-//                            dataSet.setData(j, value);
-//                    }
-//
-//        if (clazz.equals(Double.class)) {
-//            value = new Double(valueString);
-//        } else if (clazz.equals(Long.class)) {
-//            value = new Long(valueString);
-//        } else if (clazz.equals(Attribute.Calendar.class)) {
-//            Attribute.Calendar cal = JAMSDataFactory.createCalendar();
-//            cal.setValue(valueString);
-//            value = cal;
-//        } else if (clazz.equals(String.class)) {
-//            value = new String(valueString);
-//        } else {
-//            value = new Object();
-//        }
-//
-//        return value;
-//    }
     public Attribute.Calendar getStartDate() {
         return startDate;
     }
