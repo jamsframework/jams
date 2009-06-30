@@ -150,11 +150,11 @@ public class JAMSSimpleParaSampler extends JAMSContext {
         //do nothing here
     }
     
-    public JAMSComponentEnumerator getRunEnumerator() {
+    public ComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
     }
     
-    public JAMSComponentEnumerator getChildrenEnumerator() {
+    public ComponentEnumerator getChildrenEnumerator() {
         return super.getRunEnumerator();
     }
     
@@ -162,9 +162,9 @@ public class JAMSSimpleParaSampler extends JAMSContext {
         return count.getValue();
     }
     
-    class RunEnumerator implements JAMSComponentEnumerator {
+    class RunEnumerator implements ComponentEnumerator {
         
-        JAMSComponentEnumerator ce = getChildrenEnumerator();
+        ComponentEnumerator ce = getChildrenEnumerator();
         
         public boolean hasNext() {
             boolean nextValue = value.getValue() <= (upperBound.getValue()-stepSize);

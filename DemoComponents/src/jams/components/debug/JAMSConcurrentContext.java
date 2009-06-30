@@ -27,7 +27,7 @@ import jams.data.JAMSEntityCollection;
 import jams.data.EntityEnumerator;
 import jams.data.JAMSInteger;
 import jams.model.JAMSComponent;
-import jams.model.JAMSComponentEnumerator;
+import jams.model.ComponentEnumerator;
 import jams.model.JAMSContext;
 import jams.model.JAMSVarDescription;
 import jams.runtime.concurrent.RunnableComponent;
@@ -87,7 +87,7 @@ public class JAMSConcurrentContext extends JAMSContext {
     }
 
     @Override
-    public JAMSComponentEnumerator getRunEnumerator() {
+    public ComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
     }
 
@@ -114,7 +114,7 @@ public class JAMSConcurrentContext extends JAMSContext {
         super.cleanup();
     }
 
-    class RunEnumerator implements JAMSComponentEnumerator {
+    class RunEnumerator implements ComponentEnumerator {
 
         EntityEnumerator ee = getEntities().getEntityEnumerator();
 

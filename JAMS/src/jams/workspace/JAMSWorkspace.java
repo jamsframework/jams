@@ -277,6 +277,15 @@ public class JAMSWorkspace implements Serializable {
     /**
      *
      * @param dsTitle The name of the datastore to be returned
+     * @return An input datastore named by dsTitle
+     */
+    public InputDataStore getInputDataStore(String dsTitle) {
+        return getInputDataStore(dsTitle, InputDataStore.LIVE_MODE);
+    }
+
+    /**
+     *
+     * @param dsTitle The name of the datastore to be returned
      * @param mode The access mode, e.g. InputDataStore.LIVE_MODE or
      * InputDataStore.CACHE_MODE
      * @return An input datastore named by dsTitle
