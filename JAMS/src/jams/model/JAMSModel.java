@@ -23,6 +23,7 @@
 package jams.model;
 
 import jams.JAMS;
+import jams.JAMSTools;
 import jams.data.JAMSDirName;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.OutputDataStore;
@@ -43,18 +44,18 @@ import java.util.ArrayList;
  *
  * @author S. Kralisch
  */
-@JAMSComponentDescription(title = "JAMS model",
-                          author = "Sven Kralisch",
-                          date = "26. September 2005",
-                          description = "This component represents a JAMS model which is a special type of context component")
+@JAMSComponentDescription (title = "JAMS model",
+                           author = "Sven Kralisch",
+                           date = "26. September 2005",
+                           description = "This component represents a JAMS model which is a special type of context component")
 public class JAMSModel extends JAMSContext {
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
+    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ)
     public JAMSDirName workspaceDirectory = new JAMSDirName();
 
     private JAMSRuntime runtime;
 
-    private String name,  author,  date;
+    private String name, author, date;
 
     public JAMSWorkspace workspace;
 
@@ -108,7 +109,7 @@ public class JAMSModel extends JAMSContext {
 
         // prepare workspace
         try {
-            this.workspace = new JAMSWorkspace(new File(workspaceDirectory.getValue()), runtime);
+            this.setWorkspace();
         } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
             this.getRuntime().sendHalt(iwe.getMessage());
             return;
@@ -143,16 +144,16 @@ public class JAMSModel extends JAMSContext {
 
     public boolean moveWorkspaceDirectory(String workspaceDirectory) {
         setWorkspaceDirectory(workspaceDirectory);
-        //erstelle output verzeichnis        
+        // create output dir
         try {
-            workspace = new JAMSWorkspace(new File(workspaceDirectory), getRuntime());
-            workspace.checkValidity(false);
+            this.setWorkspace();
+            this.workspace.checkValidity(false);
         } catch (InvalidWorkspaceException e) {
             getRuntime().sendHalt("Error during model setup: \"" +
-                    workspace.getDirectory().getAbsolutePath() + "\" is not a valid datastore, because: " + e.toString());
+                    this.workspace.getDirectory().getAbsolutePath() + "\" is not a valid datastore, because: " + e.toString());
             return false;
         }
-        //reanimate data tracers
+        // reanimate data tracers
         setupDataTracer();
         this.components.size();
         return true;
@@ -162,8 +163,17 @@ public class JAMSModel extends JAMSContext {
         this.workspaceDirectory.setValue(workspaceDirectory);
     }
 
+    private void setWorkspace() throws InvalidWorkspaceException {
+        String workspaceDir = workspaceDirectory.getValue();
+        if (JAMSTools.isEmptyString(workspaceDir)) {
+            this.workspace = null;
+        } else {
+            this.workspace = new JAMSWorkspace(new File(workspaceDir), getRuntime());
+        }
+    }
+
     public JAMSWorkspace getWorkspace() {
-        return workspace;
+        return this.workspace;
     }
 
     public File getWorkspaceDirectory() {
@@ -180,7 +190,7 @@ public class JAMSModel extends JAMSContext {
 
     public OutputDataStore[] getOutputDataStores(String contextName) {
         if (this.workspace == null) {
-            return null;
+            return new OutputDataStore[0];
         }
         return this.workspace.getOutputDataStores(contextName);
     }
@@ -195,7 +205,7 @@ public class JAMSModel extends JAMSContext {
 
     private void collectEntityCollections(JAMSContext currentContext, JAMSComponent position, HashMap<String, JAMSEntityCollection> collection) {
         currentContext.updateEntityData(position);
-        collection.put( currentContext.getInstanceName(),currentContext.getEntities());
+        collection.put(currentContext.getInstanceName(), currentContext.getEntities());
 
         for (int i = 0; i < currentContext.components.size(); i++) {
             JAMSComponent c = (JAMSComponent) currentContext.getComponents().get(i);
@@ -236,7 +246,7 @@ public class JAMSModel extends JAMSContext {
         return new Snapshot(holdInMemory, outStream.toByteArray(), fileName);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings ("unchecked")
     public void setModelState(Snapshot inData) {
         HashMap<String, JAMSEntityCollection> contextStates = null;
         try {

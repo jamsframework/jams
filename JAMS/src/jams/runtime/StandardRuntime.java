@@ -507,7 +507,13 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     @Override
     public void saveModelParameter() {
-        // save the model's parameter set to the workspace output dir
+        
+        // save the model's parameter set to the workspace output dir, if it exists
+
+        if (this.model.getWorkspace() == null) {
+            return;
+        }
+
         try {
             File modelFile = new File(this.model.getWorkspace().getOutputDataDirectory().getPath() +
                     File.separator + JAMS.DEFAULT_MODEL_FILENAME);

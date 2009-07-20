@@ -131,7 +131,7 @@ public class JAMSConcurrentContext extends JAMSContext {
             // entity and start with the new Component list again
             if (ee.hasNext()) {
                 updateEntityData();
-                setCurrentEntity(ee.next());
+//                setCurrentEntity(ee.next());
                 index++;
                 updateComponentData(index);
             }
@@ -141,7 +141,7 @@ public class JAMSConcurrentContext extends JAMSContext {
         @Override
         public void reset() {
             ee.reset();
-            setCurrentEntity(getEntities().getCurrent());
+//            setCurrentEntity(getEntities().getCurrent());
             index = 0;
             updateComponentData(index);
         }

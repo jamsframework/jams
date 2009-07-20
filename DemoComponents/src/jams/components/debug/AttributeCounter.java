@@ -22,6 +22,7 @@
  */
 package jams.components.debug;
 
+import jams.data.Attribute;
 import java.util.HashMap;
 import jams.data.JAMSEntity;
 import jams.data.JAMSEntityCollection;
@@ -67,7 +68,7 @@ public class AttributeCounter extends JAMSComponent {
         int unknownAttribs = 0;
         HashMap<Class, Long> typeMap = new HashMap<Class, Long>();
 
-        JAMSEntity e = entities.getEntityArray()[0];
+        Attribute.Entity e = entities.getEntityArray()[0];
         int attributeCount = e.getKeys().length;
         for (Object o : e.getKeys()) {
             Class clazz = e.getObject(o.toString()).getClass();
