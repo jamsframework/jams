@@ -46,6 +46,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import jams.JAMSTools;
 import jams.JAMSVersion;
+import jams.data.JAMSDataFactory;
 import jams.gui.HelpComponent;
 import jams.gui.GUIHelper;
 import jams.io.ParameterProcessor;
@@ -698,6 +699,12 @@ public class ModelTree extends JAMSTree {
             String attribute = e.getAttribute("name");
             String typeName = e.getAttribute("class");
             Class type = Class.forName(typeName);
+
+            // workaround for models that use the "old" API, i.e. JAMSData
+            // classes instead of interfaces
+            if (!type.isInterface()) {
+                type = JAMSDataFactory.getBelongingInterface(type);
+            }
 
             if (!type.isArray()) {
                 // if the type is not an array, simply create a context attribute

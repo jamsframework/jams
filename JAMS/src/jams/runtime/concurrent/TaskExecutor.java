@@ -58,7 +58,7 @@ public class TaskExecutor {
 
     public static void main(String[] args) {
 
-        int max = 10000;
+        int max = 1000;
         Runnable[] tasks = new RunnableComponent[max];
         for (int i = 0; i < max; i++) {
             tasks[i] = new RunnableComponent(new Task(i));

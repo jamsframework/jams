@@ -72,6 +72,7 @@ public class ContextAttributeDlg extends JDialog {
 
     /**
      * Creates a new instance of AttributeEditDlg
+     * @param owner The parent frame of this JDialog
      */
     public ContextAttributeDlg(Frame owner) {
 
@@ -109,7 +110,7 @@ public class ContextAttributeDlg extends JDialog {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    updateInputComponent(classMap.get(e.getItem()), true);
+                    updateInputComponent(classMap.get((String) e.getItem()), true);
                 }
             }
         });
@@ -127,6 +128,7 @@ public class ContextAttributeDlg extends JDialog {
         JButton okButton = new JButton(JUICE.resources.getString("OK"));
         okButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
 
                 if (!valueInput.verify()) {
@@ -145,6 +147,7 @@ public class ContextAttributeDlg extends JDialog {
         JButton cancelButton = new JButton(JUICE.resources.getString("Cancel"));
         ActionListener cancelActionListener = new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
                 result = ContextAttributeDlg.CANCEL_OPTION;
@@ -159,13 +162,8 @@ public class ContextAttributeDlg extends JDialog {
 
     private void updateInputComponent(Class type, boolean doUpdate) {
 
-//        String shortType = (String) type;
         String oldValue = "";
 
-//        StringTokenizer tok = new StringTokenizer(shortType, ".");
-//        while (tok.hasMoreTokens()) {
-//            shortType = tok.nextToken();
-//        }
         if (valueInput != null) {
             GUIHelper.removeGBComponent(mainPanel, valueInput.getComponent());
             oldValue = valueInput.getValue();
@@ -201,7 +199,7 @@ public class ContextAttributeDlg extends JDialog {
     }
 
     public Class getType() {
-        return classMap.get(typeCombo.getSelectedItem());
+        return classMap.get((String) typeCombo.getSelectedItem());
     }
 
     public int getResult() {

@@ -32,7 +32,7 @@ import java.util.HashMap;
  */
 public class JAMSDataFactory {
 
-    private static HashMap<Class, Class> interfaceLookup;
+    private static HashMap<Class, Class> interfaceLookup, classLookup;
 
     /**
      * Creates a new instance of a given JAMSData class
@@ -207,6 +207,12 @@ public class JAMSDataFactory {
         return new JAMSObject();
     }
 
+    /**
+     * Returns the standard implementation of a JAMSData interface
+     * @param interfaceType A JAMSData interface 
+     * @return The class that represents the standard implementation of the 
+     * provided interface
+     */
     public static Class getImplementingClass(Class interfaceType) {
         if (interfaceLookup == null) {
 
@@ -236,5 +242,26 @@ public class JAMSDataFactory {
         }
 
         return interfaceLookup.get(interfaceType);
+    }
+
+    /**
+     * Returns the JAMSData interface that belongs to a JAMSData class. This
+     * method exists for compatibility reasons only.
+     * @param clazz A class that implements a JAMSData interface
+     * @return The belonging JAMSData interface
+     */
+    public static Class getBelongingInterface(Class clazz) {
+        if (classLookup == null) {
+
+            classLookup = new HashMap<Class, Class>();
+
+            if (interfaceLookup == null) {
+                getImplementingClass(Attribute.Boolean.class);
+            }
+            for (Class key : interfaceLookup.keySet()) {
+                classLookup.put(interfaceLookup.get(key), key);
+            }
+        }
+        return classLookup.get(clazz);
     }
 }

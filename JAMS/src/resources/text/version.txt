@@ -1,4 +1,4 @@
 major_release=2
 minor_release=6
-revision=07
-date=20090422
+revision=08
+date=20090720

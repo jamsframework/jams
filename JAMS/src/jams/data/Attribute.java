@@ -107,6 +107,7 @@ public interface Attribute {
 
         public java.lang.String getValue();
 
+        @Override
         public void setValue(java.lang.String value);
 
         public int getLength();

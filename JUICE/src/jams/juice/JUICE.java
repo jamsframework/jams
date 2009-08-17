@@ -182,7 +182,7 @@ public class JUICE {
         JUICE.loader = JAMSClassLoader.createClassLoader(libsArray, new StandardRuntime());
     }
 
-    public static Class[] getJAMSDataClasses() {
+    private static Class[] getJAMSDataClasses() {
         ArrayList<Class> classes = new ArrayList<Class>();
         classes.add(jams.data.Attribute.Boolean.class);
         classes.add(jams.data.Attribute.Calendar.class);
