@@ -46,13 +46,13 @@ public class JUICE {
 
     public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/JUICEBundle");
 
+    public static final String APP_TITLE = resources.getString("JUICE");
+
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
 
     public static final int SCREEN_WIDTH = 1200;
 
     public static final int SCREEN_HEIGHT = 850;
-
-    public static final String APP_TITLE = java.util.ResourceBundle.getBundle("resources/JUICEBundle").getString("JUICE");
 
     private static JUICEFrame juiceFrame;
 
@@ -74,7 +74,7 @@ public class JUICE {
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception lnfe) {
             try {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -102,8 +102,9 @@ public class JUICE {
                 }
             }
 
+            // check if a different locale is forced by the config
             String forcelocale = getJamsProperties().getProperty("forcelocale");
-            if ((forcelocale != null) && !forcelocale.equals("")) {
+            if (!JAMSTools.isEmptyString(forcelocale)) {
                 Locale.setDefault(new Locale(forcelocale));
                 resources = java.util.ResourceBundle.getBundle("resources/JUICEBundle");
                 JAMS.resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
