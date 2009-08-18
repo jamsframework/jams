@@ -133,8 +133,9 @@ public class JAMS {
             }
         }
 
+        // check if a different locale is forced by the config
         String forcelocale = properties.getProperty("forcelocale");
-        if ((forcelocale != null) && !forcelocale.equals("")) {
+        if (!JAMSTools.isEmptyString(forcelocale)) {
             Locale.setDefault(new Locale(forcelocale));
             resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
         }
