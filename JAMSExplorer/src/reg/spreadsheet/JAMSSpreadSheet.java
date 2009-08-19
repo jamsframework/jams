@@ -772,6 +772,10 @@ public class JAMSSpreadSheet extends JPanel {
             DefaultComboBoxModel shapeSelectorModel = new DefaultComboBoxModel(shapeNames);
             shapeSelectorModel.setSelectedItem(defaultShapeName);
             shapeSelector.setModel(shapeSelectorModel);
+            // only 1 shape -> don't bother the user with it
+            if (shapeNames.length == 1) {
+                shapeSelector.setVisible(false);
+            }
             JButton joinMapButton = new JButton(joinMapAction);
             GUIHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 13, 1, 1, 0, 0);
             GUIHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 14, 1, 1, 0, 0);
