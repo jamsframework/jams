@@ -591,6 +591,8 @@ public class TimeSpaceDSPanel extends JPanel {
                     }
                     AttribRadioButton thisButton = (AttribRadioButton) e.getSource();
                     thisButton.attrib.setAggregationWeight(thisButton.aggregationType);
+                    setCheckBox(thisButton.attrib.getName());
+
                 }
             };
 
@@ -623,12 +625,7 @@ public class TimeSpaceDSPanel extends JPanel {
 
             public void itemStateChanged(ItemEvent e) {
                 AttribComboBox thisCombo = (AttribComboBox) e.getSource();
-                for (JCheckBox check : thisCombo.checkBoxList) {
-                    if (thisCombo.getSelectedItem().toString().equals(check.getText())) {
-                        check.setSelected(true);
-                        break;
-                    }
-                }
+                setCheckBox(thisCombo.getSelectedItem().toString());
             }
         });
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCombo, 10, 0, 5, 1, 0, 0);
@@ -663,6 +660,17 @@ public class TimeSpaceDSPanel extends JPanel {
             }
         });
 
+    }
+
+    private boolean setCheckBox(String theLabel) {
+
+        for (JCheckBox check : attribCombo.checkBoxList) {
+            if (theLabel.equals(check.getText())) {
+                check.setSelected(true);
+                return true;
+            }
+        }
+        return false;
     }
 
     private class AttribComboBox extends JComboBox {
