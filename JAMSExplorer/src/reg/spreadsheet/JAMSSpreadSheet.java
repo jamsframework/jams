@@ -91,7 +91,7 @@ public class JAMSSpreadSheet extends JPanel {
     private int kindofcalc = 0;
     private JFileChooser epsFileChooser,  templateChooser;
     private JAMSExplorer regionalizer;
-    private boolean geoWindEnable = false;
+    private boolean geoWindEnable = true;
     /* Messages */
     final String ERR_MSG_CTS = "No Time Series Loaded";
 
