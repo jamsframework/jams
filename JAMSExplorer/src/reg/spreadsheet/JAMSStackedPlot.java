@@ -31,7 +31,7 @@ public class JAMSStackedPlot {
         //final JFreeChart chart = createStackedChart(xyplots, DateAxis);
         int no_of_plots = xyplots.length;
         this.title = title;
-        final CombinedDomainXYPlot parentplot = new CombinedDomainXYPlot(timeAxis);
+        CombinedDomainXYPlot parentplot = new CombinedDomainXYPlot(timeAxis); //final?
         
         parentplot.setGap(10.0);
         

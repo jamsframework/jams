@@ -511,7 +511,7 @@ public class JXYConfigurator extends JFrame {
                         prop.getDataChoiceEND().setEnabled(true);
                         prop.getColorChoice().setEnabled(false);
                         prop.getPosChoice().setEnabled(false);
-                        prop.getLegendField().setEnabled(false);
+                        prop.getLegendLabel().setEnabled(false);
                         prop.getCustomizeButton().setEnabled(false);
 
                         prop.getAddButton().setEnabled(false);
@@ -1112,7 +1112,7 @@ public class JXYConfigurator extends JFrame {
                 propVector.get(i).getRemButton().setEnabled(true);
                 propVector.get(i).getUpButton().setEnabled(true);
                 propVector.get(i).getDownButton().setEnabled(true);
-                propVector.get(i).getLegendField().setEnabled(true);
+                propVector.get(i).getLegendLabel().setEnabled(true);
                 propVector.get(i).getCustomizeButton().setEnabled(true);
                 propVector.get(i).getMaxButton().setEnabled(false);
             //propVector.get(i).applyXYProperties();
@@ -1133,7 +1133,7 @@ public class JXYConfigurator extends JFrame {
         prop.getRemButton().setEnabled(false);
         prop.getUpButton().setEnabled(false);
         prop.getDownButton().setEnabled(false);
-        prop.getLegendField().setEnabled(false);
+        prop.getLegendLabel().setEnabled(false);
         prop.getCustomizeButton().setEnabled(false);
         prop.getMaxButton().setEnabled(true);
     //prop.applyXYProperties();
@@ -1204,6 +1204,8 @@ public class JXYConfigurator extends JFrame {
                 for (int i = 0; i < propVector.size(); i++) {
 
                     prop = propVector.get(i);
+
+//                    prop.setLegendName(prop.getLegendName());
 
                     if (prop.getPosChoice().getSelectedItem() == "left") {
                         if (!propVector.get(i).isXSeries()) {
@@ -1412,6 +1414,9 @@ public class JXYConfigurator extends JFrame {
 //                    if(!propVector.get(i).isXSeries()) r++;
 //                }
 //            }
+
+                jxys.setPropVector(propVector);
+
                 if (l > 0) {
                     jxys.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
                 }
@@ -1573,7 +1578,7 @@ public class JXYConfigurator extends JFrame {
         JLabel space4 = new JLabel(" ");
         JLabel space5 = new JLabel("   ");
         JLabel space6 = new JLabel("   ");
-        JTextField lf = prop.getLegendField();
+        JLabel lf = prop.getLegendLabel();
 
         group6.addComponent(space5);
 

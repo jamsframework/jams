@@ -33,6 +33,7 @@ import jams.workspace.stores.ShapeFileDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.net.URI;
 import java.text.ParseException;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import reg.DataTransfer;
@@ -67,6 +68,7 @@ public class JAMSSpreadSheet extends JPanel {
     /* Buttons */
     private String name = "default";
     private JButton savebutton = new JButton("Save Data");
+    private JButton loadbutton = new JButton("Import Data");
     private JButton statButton = new JButton("Statistik");
     private JButton plotButton = new JButton("Time Plot");
     private JButton dataplotButton = new JButton("Data Plot");
@@ -89,7 +91,7 @@ public class JAMSSpreadSheet extends JPanel {
     private String[] calclist = {"Sum    ", "Mean   "};
     JComboBox calculations = new JComboBox(calclist);
     private int kindofcalc = 0;
-    private JFileChooser epsFileChooser,  templateChooser;
+    private JFileChooser epsFileChooser,  templateChooser, datChooser;
     private JAMSExplorer regionalizer;
     private boolean geoWindEnable = true;
     /* Messages */
@@ -160,6 +162,19 @@ public class JAMSSpreadSheet extends JPanel {
 
         public void actionPerformed(ActionEvent e) {
 
+            int[] selectedColumns = table.getSelectedColumns();
+            String[] write_headers = new String[selectedColumns.length];
+
+            for(int i=0; i<selectedColumns.length; i++){
+                
+                    write_headers[i] = table.getColumnName(selectedColumns[i]);
+                
+            }
+            String[] headers_with_time = new String[write_headers.length+1];
+            headers_with_time[0] = null;
+            java.lang.System.arraycopy(write_headers, 0, headers_with_time, 1, write_headers.length);
+
+            save("testfile.dat",write_headers);
             //ACTION!
 //            try {
 //            JFileChooser chooser = new JFileChooser();
@@ -171,6 +186,28 @@ public class JAMSSpreadSheet extends JPanel {
 //            }
 //        } catch (Exception fnfex) {
 //        }
+        }
+    };
+
+    ActionListener loadAction = new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+
+            int returnVal = -1;
+
+            try {
+
+                returnVal = getDatChooser().showOpenDialog(panel);
+
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = getDatChooser().getSelectedFile();
+                    load(file);
+                }
+
+            } catch (Exception fnfexc) {
+                fnfexc.printStackTrace();
+                returnVal = -1;
+            }
         }
     };
 
@@ -215,10 +252,16 @@ public class JAMSSpreadSheet extends JPanel {
                     for(int c = 0; c < write_col_cnt; c++){
                         
                         if(col_string.compareTo(write_headers[c]) == 0){
-                            filewriter.write(columnNames[j], 0, columnNames[j].length());
-                            filewriter.write("\t");
-                            col_index[c] = j;
+                            if(c == write_col_cnt-1){
+                                filewriter.write(columnNames[j], 0, columnNames[j].length());
+                                col_index[c] = j;
+                            }else{
+                                filewriter.write(columnNames[j], 0, columnNames[j].length());
+                                filewriter.write("\t");
+                                col_index[c] = j;
+                            }
                         }
+                        
                     }
                 }
 
@@ -230,10 +273,17 @@ public class JAMSSpreadSheet extends JPanel {
 //                        filewriter.write(value, 0, value.length());
 //                        filewriter.write("\t");
                     for (int i = 0; i < write_col_cnt; i++) {
-                        
-                        value = table.getValueAt(k, col_index[i]).toString();
-                        filewriter.write(value, 0, value.length());
-                        filewriter.write("\t");
+
+                        if(i == write_col_cnt-1){
+                            value = table.getValueAt(k, col_index[i]).toString();
+                            filewriter.write(value, 0, value.length());
+//                            filewriter.write("\t");
+                        }else{
+
+                            value = table.getValueAt(k, col_index[i]).toString();
+                            filewriter.write(value, 0, value.length());
+                            filewriter.write("\t");
+                        }
                     }
                     filewriter.write("\r\n");
                 }
@@ -245,6 +295,128 @@ public class JAMSSpreadSheet extends JPanel {
 //        }
     }
 
+    private void load(File file){
+
+        Vector<double[]> arrayVector = new Vector<double[]>();
+        Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
+        StringTokenizer st = new StringTokenizer("\t");
+        String[] headers;
+
+        ArrayList<String> headerList = new ArrayList<String>();
+//        ArrayList<Double> rowList = new ArrayList<Double>();
+        double[] rowBuffer;
+        boolean b_headers = false;
+        boolean b_data = false;
+        boolean time_set = false;
+        boolean stop = false;
+
+        int file_columns = 0;
+
+        final String ST_DATA =      "#data";
+        final String ST_HEADERS =   "#headers";
+        final String ST_END =       "#end";
+
+        try{
+            BufferedReader in = new BufferedReader(new FileReader(file));
+
+            while(in.ready()){
+//                System.out.println("in.ready");
+                //NEXT LINE
+                String s = in.readLine();
+                st = new StringTokenizer(s ,"\t");
+
+                String actual_string = "";
+                Double val;
+                boolean breakpoint=false;
+
+                if(b_data){
+                    int i = 0;
+                    JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+                    rowBuffer = new double[file_columns];
+                    while(st.hasMoreTokens()){
+                        actual_string = st.nextToken();
+                        if(actual_string.compareTo(ST_END) != 0){
+                            if(!time_set){
+//                                System.out.print("time: "+actual_string+"\t");
+                                try {
+                                //JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second)
+                                    timeval.setValue(actual_string, "yyyy-MM-dd hh:mm");
+
+                                } catch (ParseException pe) {
+                                    GUIHelper.showErrorDlg(panel, " Time Series missing!", "Error");
+                                    breakpoint=true;
+                                    break;
+                                    //pe.printStackTrace();
+                                }
+                                timeVector.add(timeval);
+                                time_set = true;
+                            }else{
+                                try{
+//                                    System.out.println("value: "+actual_string+"\t");
+                                    val = new Double(actual_string);
+                                    rowBuffer[i++] = val.doubleValue();
+                                }catch(Exception pe2){
+                                    pe2.printStackTrace();
+                                }
+                            }
+                        }else{
+                            stop = true;
+                        }
+                    }
+                    if(breakpoint) break;
+                    if(!stop){
+                        arrayVector.add(rowBuffer);
+                        time_set = false;
+                    }
+
+                }else{
+
+                    while(st.hasMoreTokens()){
+                        //NEXT STRING
+                        String test = st.nextToken();
+
+                        if(test.compareTo(ST_DATA) == 0){
+                            b_data = true;
+                            b_headers = false;
+                            file_columns = headerList.size();
+
+                        }
+                        if(b_headers){ //TIME HEADER/COL???
+                            headerList.add(test);
+                        }
+                        if(test.compareTo(ST_HEADERS) == 0){
+                            b_headers = true;
+                        }
+
+                    }
+                }
+            }
+            headers = new String[file_columns];
+            headers = headerList.toArray(headers);
+            headers[0] = "";
+//            columns = file_columns-1;
+//            rows = arrayVector.size();
+
+            this.tmodel = new JAMSTableModel();
+            tmodel.setTimeRuns(true);
+            timeRuns = true;
+            tmodel.setTimeVector(timeVector);
+
+            tmodel.setNewDataVector(arrayVector);
+            tmodel.setColumnNames(headers);
+
+        updateGUI();
+            //in.close();
+//            System.out.println("TimeVectorSize:"+timeVector.size());
+//            System.out.println("ArrayVectorSize:"+arrayVector.size());
+//
+
+        }catch(Exception eee){
+            GUIHelper.showErrorDlg(panel, "File Not Found!", "Error!");
+//            eee.printStackTrace();
+
+    }}
+
     public JFileChooser getTemplateChooser() {
         
         if (templateChooser == null) {
@@ -255,6 +427,18 @@ public class JAMSSpreadSheet extends JPanel {
         }
         templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
         return templateChooser;
+    }
+
+    public JFileChooser getDatChooser() {
+
+        if (datChooser == null) {
+            datChooser = new JFileChooser();
+            datChooser.setFileFilter(JAMSFileFilter.getDatFilter());
+            File explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString()+"/explorer");
+            datChooser.setCurrentDirectory(explorerDir);
+        }
+        datChooser.setFileFilter(JAMSFileFilter.getDatFilter());
+        return datChooser;
     }
 
     public JFileChooser getEPSFileChooser() {
@@ -339,11 +523,18 @@ public class JAMSSpreadSheet extends JPanel {
         double[] rowBuffer;
         String[] headers;
 
-        getTemplateChooser().setCurrentDirectory(inputDSDir);
+//        getTemplateChooser().setCurrentDirectory(inputDSDir);
+        File explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString()+"/explorer");
+        getTemplateChooser().setCurrentDirectory(explorerDir);
         getEPSFileChooser().setCurrentDirectory(inputDSDir.getParentFile());
 
-        ttpFile = new File(inputDSDir, store.getID() + ".ttp");
-        dtpFile = new File(inputDSDir, store.getID() + ".dtp");
+        //regionalizer.getWorkspace().getDirectory().toString()+"/explorer";
+
+//        ttpFile = new File(inputDSDir, store.getID() + ".ttp");
+//        dtpFile = new File(inputDSDir, store.getID() + ".dtp");
+
+        ttpFile = new File(regionalizer.getWorkspace().getDirectory().toString()+"/explorer", store.getID() + ".ttp");
+        dtpFile = new File(regionalizer.getWorkspace().getDirectory().toString()+"/explorer", store.getID() + ".dtp");
 
         Vector<double[]> arrayVector = new Vector<double[]>();
         Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
@@ -460,7 +651,29 @@ public class JAMSSpreadSheet extends JPanel {
             if (useTemplateButton.isSelected()) {
                 if (ttpFile != null) {
                     if (ttpFile.exists()) {
-                        openCTS(ttpFile);
+                        try{
+                            openCTS(ttpFile);
+                        } catch(Exception ee){
+
+                            try {
+                            JFileChooser chooser = getTemplateChooser();
+                            int returnVal = chooser.showOpenDialog(parent_frame);
+                            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                                ttpFile = chooser.getSelectedFile();
+                                System.out.println("APPROVE_OPTION");
+                                openCTS(ttpFile);
+                            }
+//                            openCTS(ttpFile);
+
+                        } catch (Exception fnfex) {
+
+                            if (timeRuns) {
+//                                table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
+//                                openCTS();
+                            }
+                        }
+
+                        }
 
                     } else {
 
@@ -754,7 +967,8 @@ public class JAMSSpreadSheet extends JPanel {
         GUIHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 8, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 10, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(controlpanel, gbl, statButton, 0, 11, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(controlpanel, gbl, loadbutton, 0, 11, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(controlpanel, gbl, statButton, 0, 12, 1, 1, 0, 0);
 
         if (JAMSExplorer.GEOWIND_ENABLE && this.geoWindEnable) {
 
@@ -789,6 +1003,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         statButton.addActionListener(statisticAction);
         savebutton.addActionListener(saveAction);
+        loadbutton.addActionListener(loadAction);
         plotButton.addActionListener(plotAction);
         dataplotButton.addActionListener(dataplotAction);
         stpButton.addActionListener(stpAction);

@@ -130,7 +130,7 @@ public class GraphProperties {
     JLabel nameLabel;
     
     JTextField setName;
-    JTextField setLegend;
+    JLabel setLegend;
     
     JTSConfigurator ctsconf;
     JXYConfigurator cxyconf;
@@ -185,7 +185,7 @@ public class GraphProperties {
         this.table = ctsconf.table;
         this.position = "left";
         this.name = "Graph Name";
-        this.legendName = this.name;
+//      thithis.name);
         
         this.selectedColumn = 0;
         this.rowSelection = null;
@@ -435,6 +435,8 @@ public class GraphProperties {
         upButton.addActionListener(upListener);
         downButton.addActionListener(downListener);
         customizeButton.addActionListener(customize_listener);
+
+
         
 //        remButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         remButton.setPreferredSize(new Dimension(20,14));
@@ -523,14 +525,15 @@ public class GraphProperties {
         setColumn.setPreferredSize(new Dimension(40,14));
         setColumn.setSelectedIndex(1);
         nameLabel.setText((String) setColumn.getSelectedItem());
-        
-        String name = (String) setColumn.getSelectedItem();
 
         setName = new JTextField(name, 14);
         setName.setPreferredSize(new Dimension(40,14));
-        setLegend = new JTextField(name, 14);
+        setLegend = new JLabel(name);
         setLegend.setPreferredSize(new Dimension(40,14));
-        
+
+        String name = (String) setColumn.getSelectedItem();
+        setLegendName(name);
+
         namePanel.add(setNameLabel);
         namePanel.add(setName);
         legendPanel.add(setLegendLabel);
@@ -574,7 +577,7 @@ public class GraphProperties {
         int timeEND = getTimeEND();
         selectedColumn = setColumn.getSelectedIndex();
         //color = (String) colorchoice.getSelectedItem();
-        ts = new TimeSeries(getLegendName(), Second.class);
+        ts = new TimeSeries(this.legendName, Second.class);
         
         for(int i=timeSTART; i<=timeEND; i++){
             
@@ -726,9 +729,17 @@ public class GraphProperties {
     
     public void setLegendName(String legendName){
         this.legendName = legendName;
-        setLegend.setText(legendName);
+        setLegend.setText("  "+legendName);
         
     }
+
+    public void setLegendField(String s){
+        cr_dlg.setLegendField(s);
+    }
+
+//    public void setLegendName(){
+//        this.legendName = setLegend.getText();
+//    }
     
     public void setName(String name){
         this.name = name;
@@ -779,7 +790,8 @@ public class GraphProperties {
     }
     
     public String getLegendName(){
-        return this.setLegend.getText();
+        //return this.setLegend.getText();
+        return this.legendName;
     }
     
     public String getName(){
@@ -876,7 +888,7 @@ public class GraphProperties {
         return colorchoice;
     }
     
-    public JTextField getLegendField(){
+    public JLabel getLegendLabel(){
         return setLegend;
     }
     
@@ -1347,7 +1359,22 @@ public class GraphProperties {
             
         }
     };
-    
+
+//    DocumentListener legend_changed_listener = new DocumentListener(){
+//        public void changedUpdate(DocumentEvent e){
+//            setLegendName(setLegend.getText());
+//
+//        }
+//        public void removeUpdate(DocumentEvent e){
+//            setLegendName(setLegend.getText());
+//
+//        }
+//        public void insertUpdate(DocumentEvent e){
+//            setLegendName(setLegend.getText());
+//
+//        }
+//    };
+
     DocumentListener d_end_listener = new DocumentListener(){
         public void changedUpdate(DocumentEvent e){
             cxyconf.dEndChanged(true);
@@ -1391,7 +1418,11 @@ public class GraphProperties {
         JLabel shapes_visible_label;
         JLabel fill_label;
         JLabel shape_size_label;
-        
+
+
+        JLabel setLegendLabel;
+        JTextField setLegendField;
+
         JComboBox renderer_box;
         JComboBox stroke_box; //list for different strokes!
         JComboBox shape_box; //list for different shapes!!
@@ -1496,6 +1527,9 @@ public class GraphProperties {
         public void setShapeBox(int index){
             shape_box.setSelectedIndex(index);
         }
+        public void setLegendField(String legendName){
+            setLegendField.setText(legendName);
+        }
         
         
         
@@ -1551,6 +1585,9 @@ public class GraphProperties {
             fill_box = new JComboBox(SHAPE_COLORS);
             fill_box.setSelectedIndex(2);
             
+            setLegendLabel = new JLabel("Legend name:");
+            setLegendField = new JTextField();
+
             shape_size_label = new JLabel("Size");
 //            shape_size_box = new JComboBox(SIZES);
 //            shape_size_box.setSelectedIndex(2);
@@ -1619,6 +1656,9 @@ public class GraphProperties {
             GUIHelper.addGBComponent(optionspanel, option_gbl, lines_vis_box,1, 4, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionspanel, option_gbl, shapes_visible_label, 0, 5, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionspanel, option_gbl, shapes_vis_box,1, 5, 1, 1, 0, 0);
+                //legend
+            GUIHelper.addGBComponent(optionspanel, option_gbl, setLegendLabel,0, 6, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, setLegendField,1, 6, 1, 1, 0, 0);
                 //divider
             GUIHelper.addGBComponent(optionspanel, option_gbl, divider,      2, 1, 1, 8, 1, 1);
                 //shapes
@@ -1745,7 +1785,8 @@ public class GraphProperties {
                 setLinesVisible(lines_vis_box.isSelected());
                 setShapesVisible(shapes_vis_box.isSelected());
                 result = true;
-                
+
+                setLegendName(setLegendField.getText());
                 
                 
                 
@@ -1765,11 +1806,7 @@ public class GraphProperties {
             public void actionPerformed(ActionEvent e) {
                 setStroke(stroke_slider.getValue());
                 setShape(shape_box.getSelectedIndex(), shape_slider.getValue());
-                //setSeriesPaint(colorTable.get((String)paint_box.getSelectedItem()));
-                //setSeriesPaint(line_color);
-                //setSeriesOutlinePaint(outline_color);
-                //setSeriesFillPaint(colorTable.get((String)fill_box.getSelectedItem()));
-                //setSeriesFillPaint(shape_fill);
+
                 setSeriesPaint(line_color);
                 setSeriesFillPaint(shape_fill);
                 setSeriesOutlinePaint(outline_color);
@@ -1778,7 +1815,7 @@ public class GraphProperties {
                 setLinesVisible(lines_vis_box.isSelected());
                 setShapesVisible(shapes_vis_box.isSelected());
                 result = true;
-                
+                setLegendName(setLegendField.getText());
                 
                 
                 //ACHTUNG!!! Typen-Abhängig! XY oder TS?

@@ -339,7 +339,7 @@ public class STPConfigurator extends JFrame{
         
         GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Weight"), 0, 0, 1, 1, 0, 0);
         GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 1, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 2, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 3, 0, 1, 1, 0, 0);
         GUIHelper.addGBComponent(optionpanel, ogbl, addbutton,    0, numberOfPlots+1, 1, 1, 0, 0);
         GUIHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots+1, 1, 1, 0, 0);
         GUIHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots+2, 1, 1, 0, 0);
@@ -376,7 +376,7 @@ public class STPConfigurator extends JFrame{
     }
     
     private void addPlot(){
-        
+        System.out.println("removePlot()");
         dataset = getAccessibleIDs();
 //        if(numberOfPlots == 0){
 //            String error_msg = "No template files found in the workspace directory!" +
@@ -390,7 +390,7 @@ public class STPConfigurator extends JFrame{
             for(int k = 0; k < numberOfPlots; k++){
                 selectedTemplates[k] = templateBox[k].getSelectedIndex();
             }
-            numberOfPlots++;
+            numberOfPlots+=1;
             remove(optionpanel);
             optionpanel = new JPanel();
             ogbl = new GridBagLayout();
@@ -407,8 +407,8 @@ public class STPConfigurator extends JFrame{
             titleField.addActionListener(titleListener);
             settitleButton.addActionListener(titleListener);
             epsButton.addActionListener(saveImageAction);
-            addbutton.addActionListener(addAction);
-            removebutton.addActionListener(removeAction);
+            //addbutton.addActionListener(addAction);
+            //removebutton.addActionListener(removeAction);
             dataset = getAccessibleIDs();
 
             GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 0, 0, 1, 1, 0, 0);
@@ -438,7 +438,7 @@ public class STPConfigurator extends JFrame{
                 GUIHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 2, c+1, 1, 1, 0, 0);
                 GUIHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 3, c+1, 1, 1, 0, 0);
             }
-            
+            System.out.println("add: numberOfPlots = "+numberOfPlots);
             repaintPlotPanel();
             
         } else {
@@ -448,17 +448,17 @@ public class STPConfigurator extends JFrame{
     }
     
     private void removePlot(){
-        
+        System.out.println("removePlot()");
         dataset = getAccessibleIDs();
        
-        if(numberOfPlots <dataset.length ){
+        if((numberOfPlots <dataset.length) && (numberOfPlots > 1) ){
 
             int[] selectedTemplates = new int[numberOfPlots];
             
             for(int k = 0; k < numberOfPlots; k++){
                 selectedTemplates[k] = templateBox[k].getSelectedIndex();
             }
-            numberOfPlots--;
+            numberOfPlots-=1;
             remove(optionpanel);
             optionpanel = new JPanel();
             ogbl = new GridBagLayout();
@@ -475,8 +475,8 @@ public class STPConfigurator extends JFrame{
             titleField.addActionListener(titleListener);
             settitleButton.addActionListener(titleListener);
             epsButton.addActionListener(saveImageAction);
-            addbutton.addActionListener(addAction);
-            removebutton.addActionListener(removeAction);
+            //addbutton.addActionListener(addAction);
+            //removebutton.addActionListener(removeAction);
             dataset = getAccessibleIDs();
 
             GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 0, 0, 1, 1, 0, 0);
@@ -506,7 +506,7 @@ public class STPConfigurator extends JFrame{
                 GUIHelper.addGBComponent(optionpanel, ogbl, titleLabel[c],    2, c+1, 1, 1, 0, 0);
                 GUIHelper.addGBComponent(optionpanel, ogbl, timeButton[c],    3, c+1, 1, 1, 0, 0);
             }
-            
+            System.out.println("remove: numberOfPlots = "+numberOfPlots);
             repaintPlotPanel();
             
         } else {
@@ -560,7 +560,7 @@ public class STPConfigurator extends JFrame{
                     
 //                    File ttpdatfile = new File(templateFiles[i].getPath()+".dat");
                     File ttpdatfile = new File(filename);
-                    System.out.println("ttpdatFile:"+ttpdatfile.getPath());
+//                    System.out.println("ttpdatFile:"+ttpdatfile.getPath());
                     loadOutputTTPData(ttpdatfile);
                     loadTemplate(templateFiles[i], OUTPUT);
 
@@ -780,12 +780,13 @@ public class STPConfigurator extends JFrame{
             columns = file_columns-1;
             rows = arrayVector.size();
             //in.close();
-            System.out.println("TimeVectorSize:"+timeVector.size());
-            System.out.println("ArrayVectorSize:"+arrayVector.size());
-            
+//            System.out.println("TimeVectorSize:"+timeVector.size());
+//            System.out.println("ArrayVectorSize:"+arrayVector.size());
+//
             
         }catch(Exception eee){
-            eee.printStackTrace();
+            GUIHelper.showErrorDlg(this, "File Not Found: "+file.getName(), "Eror!");
+//            eee.printStackTrace();
         }
 
     }

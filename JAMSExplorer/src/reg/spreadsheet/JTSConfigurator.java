@@ -11,7 +11,6 @@ package reg.spreadsheet;
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGEncodeParam;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import com.vividsolutions.jts.io.ParseException;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 import java.util.HashMap;
@@ -41,6 +40,7 @@ import jams.gui.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.workspace.JAMSWorkspace;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import reg.JAMSExplorer;
@@ -131,7 +131,7 @@ public class JTSConfigurator extends JFrame {
     private JCheckBox timeFormat_dd = new JCheckBox("dd");
     private JCheckBox timeFormat_hm = new JCheckBox("hh:mm");
 
-    private JButton applyButton = new JButton("Apply");
+    private JButton applyButton = new JButton("PLOT");
     private JButton addButton = new JButton("Add Graph");
     private JButton saveButton = new JButton("EPS export");
     private JButton saveTempButton = new JButton("Save Template");
@@ -146,14 +146,6 @@ public class JTSConfigurator extends JFrame {
 
     //private static JFileChooser templateChooser;
     private JAMSSpreadSheet sheet;
-//    private String[] headers;
-//    //private String[] colors = {"yellow","orange","red","pink","magenta","cyan","blue","green","gray","lightgray","black"};
-    //private String[] colors = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
-//    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Difference","Step","StepArea"};
-//    private String[] positions = {"left","right"};
-    /* test*/
-//    private Color[] colors_ = {Color.RED, Color.BLUE};
-//    private String[] legendEntries;
 
     private int index;
 
@@ -288,8 +280,9 @@ public class JTSConfigurator extends JFrame {
                 
 //                arrayVector; = new Vector<double[]>();
 //                timeVector; = new Vector<JAMSCalendar>();
+               
+                 loadOutputTTPData(ttpdatfile);
                 
-                loadOutputTTPData(ttpdatfile);
             
         }
         
@@ -404,7 +397,7 @@ public class JTSConfigurator extends JFrame {
 
         ////////////////////////// RUN GRAPH ///////////
 //        System.out.println("RUN GRAPH TemplateFile = "+templateFile.toString());
-        if (templateFile != null) {
+        if ((templateFile != null) && (templateFile.exists())) {
             try {
                 if(!output_ttp){
                     loadTemplate(templateFile);
@@ -508,7 +501,9 @@ public class JTSConfigurator extends JFrame {
 //            prop.setPosition((String) poschoice.getSelectedItem());
 //            prop.setRendererType(typechoice.getSelectedIndex());
 //            prop.setName(table.getColumnName(k+1));
-                    prop.setLegendName(table.getColumnName(columns[k]));
+                    String s =table.getColumnName(columns[k]);
+                    prop.setLegendName(s);
+                    prop.setLegendField(s);
 
                     //prop.getPlotButton().addActionListener(plotbuttonclick);
 
@@ -610,6 +605,8 @@ public class JTSConfigurator extends JFrame {
             int t_s, t_e;
             GraphProperties newProp = new GraphProperties(this);
 
+            newProp.setLegendField(newProp.getName());
+
 
             //colour_cnt++;
 
@@ -620,9 +617,9 @@ public class JTSConfigurator extends JFrame {
             i = dlg.getPosition();
             dlg.dispose();
 
-            newProp.setSeriesPaint(Color.RED);
-            newProp.setSeriesFillPaint(Color.RED);
-            newProp.setSeriesOutlinePaint(Color.RED);
+            newProp.setSeriesPaint(Color.BLACK);
+            newProp.setSeriesFillPaint(Color.BLACK);
+            newProp.setSeriesOutlinePaint(Color.BLACK);
             newProp.setColorLabelColor();
             //newProp.setColor(colour_cnt % 11);
 
@@ -797,10 +794,10 @@ public class JTSConfigurator extends JFrame {
 //    }  
     public void plotAllGraphs() {
 
-        Runnable r = new Runnable() {
-
-            @Override
-            public void run() {
+//        Runnable r = new Runnable() {
+//
+//            @Override
+//            public void run() {
 
                 updatePropVector();
 
@@ -827,17 +824,13 @@ public class JTSConfigurator extends JFrame {
                 XYStepAreaRenderer sar_L = new XYStepAreaRenderer();
 
                 GraphProperties prop;
-                //2 Renderer einfÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼gen. Typ aus rLeftBox bzw rRightBox holen!
-                //Switch/Case Anweisung in den Configurator packen
-                //
-
-                /////////////// In dieser Schleife Eigenschaften ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼bernehmen!! /////////////
+                /* 2 renderers */
+                /////////////// In this Loop: Apply Preferences /////////////
                 for (int i = 0; i < propVector.size(); i++) {
 
-                    prop = propVector.get(i);
+                   prop = propVector.get(i);
 
-//                prop.setLegendName((String)prop.setColumn.getSelectedItem());
-//                prop.setName((String)prop.setColumn.getSelectedItem());
+
 
                     if (prop.getPosChoice().getSelectedItem() == "left") {
                         l++;
@@ -937,6 +930,9 @@ public class JTSConfigurator extends JFrame {
                                 break;
                         }
 
+//                       if(!output_ttp) prop.applyTSProperties();
+//                       else prop.applySTPProperties(arrayVector, timeVector);
+
                     }
                     if (prop.getPosChoice().getSelectedItem() == "right") {
                         r++;
@@ -1025,19 +1021,22 @@ public class JTSConfigurator extends JFrame {
                                 break;
                         }
 
-                        prop.setLegendName(prop.setLegend.getText());
                         prop.setColorLabelColor();
 
-                        if(!output_ttp) prop.applyTSProperties();
-                        else prop.applySTPProperties(arrayVector, timeVector);
+//                        if(!output_ttp) prop.applyTSProperties();
+//                        else prop.applySTPProperties(arrayVector, timeVector);
+                        
 
                     }
+                    
+                   
                 }
 
                 
                 
                 ////////////////////////////////////////////////////////////////////////////
                 //Renderer direkt ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼bernehmen! //
+                jts.setPropVector(propVector);
 
                 if (l > 0) {
                     jts.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
@@ -1053,16 +1052,16 @@ public class JTSConfigurator extends JFrame {
                 jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
                         timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
 
-            }
-        };
+//            }
+//        };
 
-        WorkerDlg dlg = new WorkerDlg(parent, "Creating Plot...");
-//        Point parentloc = parent.getLocation();
-//        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
-//        dlg.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2,
-//                Toolkit.getDefaultToolkit().getScreenSize().height / 2);
-        dlg.setTask(r);
-        dlg.execute();
+//        WorkerDlg dlg = new WorkerDlg(parent, "Creating Plot...");
+////        Point parentloc = parent.getLocation();
+////        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
+////        dlg.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2,
+////                Toolkit.getDefaultToolkit().getScreenSize().height / 2);
+//        dlg.setTask(r);
+//        dlg.execute();
         
         repaint();
         
@@ -1222,7 +1221,7 @@ public class JTSConfigurator extends JFrame {
         JLabel space4 = new JLabel(" ");
         JLabel space5 = new JLabel("   ");
         JLabel space6 = new JLabel("   ");
-        JTextField lf = prop.getLegendField();
+        JLabel lf = prop.getLegendLabel();
 
         group6.addComponent(space5).addComponent(space6);
 
@@ -1478,26 +1477,31 @@ public class JTSConfigurator extends JFrame {
             boolean dont_save = true;
             while(dont_save){
                 inputString = GUIHelper.showInputDlg(this, INFO_MSG_SAVETEMP, storename);
-                inputString+= ".ttp";
-                File file = new File(workspace.getDirectory().toString()+"/explorer", inputString);
-                if(!file.exists()){
-                    filename = file.getName();
-                    FileOutputStream fout = new FileOutputStream(file);
-                    properties.store(fout, "");
-                    fout.close();
-                    dont_save = false;
-                }else{
-                    String fileexists = "The File "+file+" already exists.\n Overwrite?";
-                    int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
-                    if(result==0){ //overwrite
+                if(!(inputString == null)){
+                    
+                    inputString+= ".ttp";
+                    File file = new File(workspace.getDirectory().toString()+"/explorer", inputString);
+                    if(!file.exists()){
                         filename = file.getName();
                         FileOutputStream fout = new FileOutputStream(file);
                         properties.store(fout, "");
                         fout.close();
                         dont_save = false;
+                    }else{
+                        String fileexists = "The File "+file+" already exists.\n Overwrite?";
+                        int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
+                        if(result==0){ //overwrite
+                            filename = file.getName();
+                            FileOutputStream fout = new FileOutputStream(file);
+                            properties.store(fout, "");
+                            fout.close();
+                            dont_save = false;
+                        }
+
                     }
-                    
-                }
+                    }else{
+                        dont_save = false; //CANCEL OPTION!
+                    }
                 }
 //            }
         } catch (Exception fnfex) {
@@ -1682,10 +1686,6 @@ public class JTSConfigurator extends JFrame {
         timeFormat_mm.setSelected(new Boolean(properties.getProperty("timeFormat_mmy")));
         timeFormat_dd.setSelected(new Boolean(properties.getProperty("timeFormat_dd")));
         timeFormat_hm.setSelected(new Boolean(properties.getProperty("timeFormat_hm")));
-
-//        jts.setPropVector(propVector);
-
-
 
     }
     
@@ -1992,6 +1992,11 @@ public class JTSConfigurator extends JFrame {
 //            System.out.println("TemplateFile = "+templateFile.toString());
             
             
+        }catch(FileNotFoundException fnfex){
+            final String ERROR_NODAT_MSG ="File not found: "+file.getName()+"! Or make sure" +
+                    " that .ttp files from output datasets are not named like input" +
+                    " data stores.";
+            GUIHelper.showErrorDlg(this, ERROR_NODAT_MSG, "DAT file not found!");
         }catch(Exception eee){
             eee.printStackTrace();
         }
