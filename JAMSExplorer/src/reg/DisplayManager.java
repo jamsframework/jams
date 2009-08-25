@@ -60,11 +60,11 @@ public class DisplayManager implements Observer {
     private JAMSExplorer regionalizer;
 
     public DisplayManager(JAMSExplorer regionalizer) {
+        this.regionalizer = regionalizer;
         treePanel = new TreePanel(regionalizer);
         inputDSInfoPanel = new InputDSInfoPanel();
         treePanel.getTree().addObserver(this);
         spreadSheetTabs = new JTabbedPane();
-        this.regionalizer = regionalizer;
     }
 
     // handle selection of tree nodes and show metadata

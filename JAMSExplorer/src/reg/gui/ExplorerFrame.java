@@ -75,7 +75,7 @@ public class ExplorerFrame extends JFrame {
 
     private WorkerDlg openWSDlg;
 
-    private Action openWSAction, exitAction, editWSAction, launchModelAction, editPrefsAction;
+    private Action openWSAction, exitAction, editWSAction, launchModelAction, editPrefsAction, reloadWSAction;
 
     private JLabel statusLabel;
 
@@ -142,11 +142,19 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
+        reloadWSAction = new AbstractAction("Reload Workspace") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                update();
+            }
+        };
+
         update();
 
         propertyDlg = new PropertyDlg(this, explorer.getProperties());
 
-        openWSDlg = new WorkerDlg(this, "Öffne Arbeitsverzeichnis");
+        openWSDlg = new WorkerDlg(this, "Opening Workspace");
 
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(JAMSExplorer.APP_TITLE);
@@ -184,6 +192,12 @@ public class ExplorerFrame extends JFrame {
         wsOpenButton.setToolTipText((String) openWSAction.getValue(Action.NAME));
         wsOpenButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelOpen.png")));
         toolBar.add(wsOpenButton);
+        
+        JButton reloadWSButton = new JButton(reloadWSAction);
+        reloadWSButton.setText("");
+        reloadWSButton.setToolTipText((String) reloadWSAction.getValue(Action.NAME));
+        reloadWSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Reload.png")));
+        toolBar.add(reloadWSButton);
 
         JButton wsEditButton = new JButton(editWSAction);
         wsEditButton.setText("");
@@ -296,16 +310,21 @@ public class ExplorerFrame extends JFrame {
         if (workspace == null) {
             editWSAction.setEnabled(false);
             launchModelAction.setEnabled(false);
+            reloadWSAction.setEnabled(false);
         } else {
+            jfc.setSelectedFile(workspace.getDirectory());
             setTitle(JAMSExplorer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
             updateMainPanel(new JPanel());
             editWSAction.setEnabled(true);
+            reloadWSAction.setEnabled(true);
 
             // check if the default model is existing
             File modelFile = new File(workspace.getDirectory(), workspace.getModelFilename());
             if (modelFile.exists()) {
                 launchModelAction.setEnabled(true);
             }
+            explorer.getDisplayManager().getTreePanel().update();
+            mainSplitPane.setDividerLocation(INOUT_PANE_WIDTH);
         }
     }
 

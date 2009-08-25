@@ -103,9 +103,9 @@ public class JUICE {
             }
 
             // check if a different locale is forced by the config
-            String forcelocale = getJamsProperties().getProperty("forcelocale");
-            if (!JAMSTools.isEmptyString(forcelocale)) {
-                Locale.setDefault(new Locale(forcelocale));
+            String forcedLocale = getJamsProperties().getProperty("forcelocale");
+            if (!JAMSTools.isEmptyString(forcedLocale)) {
+                Locale.setDefault(new Locale(forcedLocale));
                 resources = java.util.ResourceBundle.getBundle("resources/JUICEBundle");
                 JAMS.resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
             }

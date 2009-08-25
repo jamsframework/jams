@@ -46,8 +46,8 @@ public class TreePanel extends JPanel {
         this.add(scrollPane, BorderLayout.CENTER);
     }
 
-    public void update(JAMSWorkspace ws) {
-        tree.update(ws);
+    public void update() {
+        tree.update();
     }
 
     /**

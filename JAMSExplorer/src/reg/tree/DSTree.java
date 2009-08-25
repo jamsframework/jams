@@ -43,20 +43,19 @@ import reg.JAMSExplorer;
  */
 public class DSTree extends JAMSTree {
 
-    private static final String ROOT_NAME = "Datenspeicher",  INPUT_NAME = "Eingabedaten",  OUTPUT_NAME = "Ausgabedaten";
+    private static final String ROOT_NAME = "Datenspeicher", INPUT_NAME = "Eingabedaten", OUTPUT_NAME = "Ausgabedaten";
+
     private JPopupMenu popup;
-    private JAMSWorkspace workspace;
-    private DSTreeNode root;
+
     private NodeObservable nodeObservable = new NodeObservable();
-    private JAMSExplorer regionalizer;
+
+    private JAMSExplorer explorer;
 
     public DSTree(JAMSExplorer regionalizer) {
         super();
 
-        this.regionalizer = regionalizer;
+        this.explorer = regionalizer;
         setEditable(false);
-        root = new DSTreeNode(ROOT_NAME, DSTreeNode.IO_ROOT);
-        this.setModel(new DefaultTreeModel(root));
 
         JMenuItem detailItem = new JMenuItem("Zeige Daten");
         //detailItem.setAccelerator(KeyStroke.getKeyStroke('D'));
@@ -101,7 +100,7 @@ public class DSTree extends JAMSTree {
 
     private DSTreeNode createInputNode() {
         DSTreeNode inputRoot = new DSTreeNode(INPUT_NAME, DSTreeNode.INPUT_ROOT);
-        Set<String> inIDs = workspace.getInputDataStoreIDs();
+        Set<String> inIDs = explorer.getWorkspace().getInputDataStoreIDs();
         List<String> inIDList = new ArrayList<String>(inIDs);
         Collections.sort(inIDList);
         for (String id : inIDList) {
@@ -114,10 +113,10 @@ public class DSTree extends JAMSTree {
     private DSTreeNode createOutputNode() {
         DSTreeNode outputRoot = new DSTreeNode(OUTPUT_NAME, DSTreeNode.OUTPUT_ROOT);
 
-        File[] outputDirs = workspace.getOutputDataDirectories();
+        File[] outputDirs = explorer.getWorkspace().getOutputDataDirectories();
         for (File dir : outputDirs) {
             DSTreeNode outputDataDirNode = new DSTreeNode(dir.getName(), DSTreeNode.OUTPUT_DIR);
-            for (File file : workspace.getOutputDataFiles(dir)) {
+            for (File file : explorer.getWorkspace().getOutputDataFiles(dir)) {
                 DSTreeNode outputDataStoreNode = new DSTreeNode(new FileObject(file), DSTreeNode.OUTPUT_DS);
                 outputDataDirNode.add(outputDataStoreNode);
             }
@@ -135,7 +134,7 @@ public class DSTree extends JAMSTree {
     }
 
     private void displayDSData() {
-        regionalizer.getDisplayManager().displayDS((DSTreeNode) getLastSelectedPathComponent());
+        explorer.getDisplayManager().displayDS((DSTreeNode) getLastSelectedPathComponent());
     }
 
     private void showPopup(MouseEvent evt) {
@@ -147,21 +146,20 @@ public class DSTree extends JAMSTree {
         }
     }
 
-    public void update(JAMSWorkspace workspace) {
-
+    public void update() {
         this.setVisible(false);
-        this.workspace = workspace;
-        createIOTree();
+        DSTreeNode root = createIOTree();
+        this.setModel(new DefaultTreeModel(root));
         this.expandAll();
         this.setVisible(true);
     }
 
     private DSTreeNode createIOTree() {
 
+        DSTreeNode root = new DSTreeNode(ROOT_NAME, DSTreeNode.IO_ROOT);
         DSTreeNode inputRoot = createInputNode();
         DSTreeNode outputRoot = createOutputNode();
 
-        root.removeAllChildren();
         root.add(inputRoot);
         root.add(outputRoot);
 

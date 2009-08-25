@@ -51,7 +51,7 @@ public class JAMSExplorer {
 
     public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 750;
 
-    private ExplorerFrame regionalizerFrame;
+    private ExplorerFrame explorerFrame;
 
     private JAMSRuntime runtime;
 
@@ -73,7 +73,7 @@ public class JAMSExplorer {
             this.runtime.addErrorLogObserver(new Observer() {
 
                 public void update(Observable o, Object arg) {
-                    GUIHelper.showErrorDlg(regionalizerFrame, arg.toString(), JAMS.resources.getString("Error"));
+                    GUIHelper.showErrorDlg(explorerFrame, arg.toString(), JAMS.resources.getString("Error"));
                 }
             });
             this.runtime.addInfoLogObserver(new Observer() {
@@ -98,14 +98,13 @@ public class JAMSExplorer {
         }
 
         displayManager = new DisplayManager(this);
-        regionalizerFrame = new ExplorerFrame(this);
+        explorerFrame = new ExplorerFrame(this);
 
     }
 
     public void open(JAMSWorkspace workspace) {
         this.workspace = workspace;
-        getDisplayManager().getTreePanel().update(workspace);
-        regionalizerFrame.update();
+        explorerFrame.update();
     }
 
     public static void main(String[] args) {
@@ -157,7 +156,7 @@ public class JAMSExplorer {
      * @return the regFrame
      */
     public ExplorerFrame getExplorerFrame() {
-        return regionalizerFrame;
+        return explorerFrame;
     }
 
     /**

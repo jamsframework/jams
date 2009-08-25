@@ -124,7 +124,7 @@ public class LibTree extends JAMSTree {
         componentCount = 0;
         JUICE.setStatusText(JUICE.resources.getString("Loading_Libraries"));
         this.setVisible(false);
-        JAMSNode root = LibTree.this.createLibTree(LibTree.this.libsArray);
+        JAMSNode root = createLibTree(libsArray);
         this.setModel(new DefaultTreeModel(root));
         //this.collapseAll();
         this.setVisible(true);
