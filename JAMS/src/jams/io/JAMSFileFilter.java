@@ -96,12 +96,31 @@ public class JAMSFileFilter {
         }
     };
 
+    private static FileFilter datFilter = new FileFilter() {
+        @Override
+        public boolean accept(File f) {
+            return f.isDirectory() || f.getName().toLowerCase().endsWith(".dat") || f.getName().toLowerCase().endsWith(".dtp");
+        }
+        @Override
+        public String getDescription() {
+            return JAMS.resources.getString("Spreadsheet_data_(*.dat)");
+        }
+    };
+
     /**
      *
      * @return The filter for EPS files
      */
     public static FileFilter getEpsFilter() {
         return epsFilter;
+    }
+
+    /**
+     *
+     * @return The filter for EPS files
+     */
+    public static FileFilter getDatFilter() {
+        return datFilter;
     }
 
     /**
