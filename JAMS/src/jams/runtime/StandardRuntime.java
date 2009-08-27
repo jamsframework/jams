@@ -78,13 +78,13 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     private ArrayList<JAMSGUIComponent> guiComponents = new ArrayList<JAMSGUIComponent>();
 
-    private JButton stopButton,  closeButton;
+    private JButton stopButton, closeButton;
 
     private JFrame frame;
 
     private JAMSModel model;
 
-    transient private PrintStream infoStream,  errorStream;
+    transient private PrintStream infoStream, errorStream;
 
     private boolean guiEnabled = false;
 
@@ -434,14 +434,24 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         sendHalt();
     }
 
+    private String getCallerClass() {
+        StackTraceElement[] ste = new Throwable().getStackTrace();
+        int i = 1;
+        String caller = ste[i].getClassName();
+        while (caller.equals("jams.runtime.StandardRuntime")) {
+            caller = ste[++i].getClassName();
+        }
+        return "[" + caller + "]";
+    }
+
     @Override
     public void sendErrorMsg(String str) {
-        errorLog.print(JAMS.resources.getString("ERROR:_") + str + "\n");
+        errorLog.print(JAMS.resources.getString("ERROR") + ": " + str + "\n");
     }
 
     @Override
     public void sendInfoMsg(String str) {
-        infoLog.print(JAMS.resources.getString("INFO:_") + str + "\n");
+        infoLog.print(JAMS.resources.getString("INFO") + ": " + str + "\n");
     }
 
     @Override
@@ -507,7 +517,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     @Override
     public void saveModelParameter() {
-        
+
         // save the model's parameter set to the workspace output dir, if it exists
 
         if (this.model.getWorkspace() == null) {
