@@ -59,6 +59,7 @@ import jams.io.ModelLoader;
 import jams.io.ParameterProcessor;
 import jams.model.JAMSGUIComponent;
 import jams.model.JAMSModel;
+import jams.workspace.JAMSWorkspace;
 import org.w3c.dom.Document;
 
 /**
@@ -189,6 +190,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         ModelLoader modelLoader = new ModelLoader(null, this);
         this.model = modelLoader.loadModel(modelDocument);
         this.idMap = modelLoader.getIdMap();
+        this.idMap.put(JAMSWorkspace.class.getName(), 0);
+
 
 //        // create IDs for all used components
 //        HashSet<Class> componentClassSet = new HashSet<Class>();
@@ -216,6 +219,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         long end = System.currentTimeMillis();
         this.println(JAMS.resources.getString("JAMS_model_setup_time:_") + (end - start) + " ms", JAMS.STANDARD);
+        this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
 
 //        classLoader = null;
 //        Runtime.getRuntime().gc();
@@ -230,6 +234,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         if (this.getState() != JAMSRuntime.STATE_RUN) {
             return;
         }
+
+        this.println("", JAMS.STANDARD);
 
         // add this runtime to the runtime manager
         RuntimeManager.getInstance().addRuntime(this);
@@ -455,7 +461,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         sendHalt();
     }
 
-    private String getCallerClass() {
+    private String getCallerID() {
         if (getState() != JAMSRuntime.STATE_RUN) {
             return "[000]";
         }
@@ -478,7 +484,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     @Override
     public void sendInfoMsg(String str) {
-        infoLog.print(JAMS.resources.getString("INFO") + getCallerClass() + ": " + str + "\n");
+        infoLog.print(JAMS.resources.getString("INFO") + getCallerID() + ": " + str + "\n");
     }
 
     @Override
