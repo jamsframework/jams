@@ -28,7 +28,6 @@ import jams.model.*;
 import org.w3c.dom.*;
 import java.lang.reflect.*;
 import jams.JAMS;
-import jams.JAMSProperties;
 import jams.JAMSTools;
 import jams.data.*;
 import jams.runtime.JAMSRuntime;
@@ -48,14 +47,15 @@ public class ModelLoader {
 
     private JAMSModel jamsModel;
 
-    private JAMSProperties properties;
-
     transient private HashMap<JAMSComponent, ArrayList<Field>> nullFields = new HashMap<JAMSComponent, ArrayList<Field>>();
 
-    public ModelLoader(Document modelDoc, String[] globvars, JAMSRuntime rt, JAMSProperties properties) {
+    private HashMap<String, Integer> idMap = new HashMap<String, Integer>();
+
+    private int maxID = 0;
+
+    public ModelLoader(String[] globvars, JAMSRuntime rt) {
 
         this.loader = rt.getClassLoader();
-        this.properties = properties;
 
         if (globvars != null) {
             for (int i = 0; i < globvars.length; i++) {
@@ -66,13 +66,17 @@ public class ModelLoader {
             }
         }
 
+        // create an empty model
         jamsModel = new JAMSModel(rt);
         jamsModel.setModel(jamsModel);
-
-        this.loadModel(modelDoc);
     }
 
-    private void loadModel(Document modelDoc) {
+    /**
+     * Loads and returns a new model
+     * @param modelDoc The XML document describing the model
+     * @return The loaded model
+     */
+    public JAMSModel loadModel(Document modelDoc) {
 
         Element root, element;
         Node node;
@@ -121,6 +125,9 @@ public class ModelLoader {
         jamsModel.getRuntime().println(JAMS.resources.getString("date______:_") + jamsModel.getDate(), JAMS.STANDARD);
         jamsModel.getRuntime().println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
 
+        jamsModel.getRuntime().println("", JAMS.STANDARD);
+        jamsModel.getRuntime().println(JAMS.resources.getString("loading_components"), JAMS.STANDARD);
+        jamsModel.getRuntime().println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
 
         // create the model
         ArrayList<JAMSComponent> childComponentList = new ArrayList<JAMSComponent>();
@@ -138,13 +145,29 @@ public class ModelLoader {
                 } catch (ModelSpecificationException iae) {
 
                     jamsModel.getRuntime().handle(iae, false);
-                    return;
+                    return null;
 
                 }
             }
         }
         jamsModel.setComponents(childComponentList);
         jamsModel.setNullFields(nullFields);
+        jamsModel.getRuntime().println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
+
+        return jamsModel;
+    }
+
+    private int getID(String className) {
+
+        int id;
+        if (!idMap.containsKey(className)) {
+            id = ++maxID;
+            idMap.put(className, id);
+        } else {
+            id = idMap.get(className);
+        }
+
+        return id;
     }
 
     /**
@@ -169,13 +192,15 @@ public class ModelLoader {
                     JAMS.resources.getString(")._Please_make_sure_component_names_are_unique!_Stopping_model_loading!"));
         }
 
-        jamsModel.getRuntime().println(JAMS.resources.getString("Adding:_") + componentName + " (" + componentClassName + ")", JAMS.STANDARD);
+        jamsModel.getRuntime().println(/*JAMS.resources.getString("Adding:_") + */
+                componentName + " [classID=" + String.format("%03d", getID(componentClassName)) +
+                ", class=" + componentClassName + "]", JAMS.STANDARD);
 
         component = null;
         try {
 
             // create the JAMSComponent object
-            jamsModel.getRuntime().println(componentClassName, JAMS.VERBOSE);
+            //jamsModel.getRuntime().println(componentClassName, JAMS.VERBOSE);
 
             // try to load the class
             componentClazz = loader.loadClass(componentClassName);
@@ -196,7 +221,7 @@ public class ModelLoader {
             ArrayList<Field> nf = createMembers(component);
             nullFields.put(component, nf);
 
-        //createNumericMembers(component);            
+            //createNumericMembers(component);
 
         } catch (ClassNotFoundException cnfe) {
             jamsModel.getRuntime().handle(cnfe, false);
@@ -227,12 +252,12 @@ public class ModelLoader {
                     childComponentList.add(childComponent);
                 }
 
-            /*
-            if (childComponent instanceof JAMSGUIComponent) {
-            JAMSGUIComponent guiComponent = (JAMSGUIComponent) childComponent;
-            jamsModel.getRuntime().addGUIComponent(guiComponent);
-            }
-             */
+                /*
+                if (childComponent instanceof JAMSGUIComponent) {
+                JAMSGUIComponent guiComponent = (JAMSGUIComponent) childComponent;
+                jamsModel.getRuntime().addGUIComponent(guiComponent);
+                }
+                 */
 
             } else if (node.getNodeName().equals("var")) {
 
@@ -251,7 +276,7 @@ public class ModelLoader {
 
                         JAMSVarDescription jvd = field.getAnnotation(JAMSVarDescription.class);
 
-                        jamsModel.getRuntime().println("     " + componentName + JAMS.resources.getString("_var_declaration:_") + varName + " (" + varClassName + ", " + jvd.access() + ")", JAMS.VERBOSE);
+                        String connType = null;
 
                         // set the var object if value provided directly
                         if (element.hasAttribute("value")) {
@@ -279,24 +304,9 @@ public class ModelLoader {
                             String id = componentName + "." + varName;
                             jamsModel.getRuntime().getDataHandles().put(id, data);
 
-                        }
+                            connType = "value";
 
-                        // set the var object if value provided via globvar
-                        // attribute
-                        /*
-                        if (element.hasAttribute("globvar")) {
-                        // create the var object
-                        varClazz = loader.loadClass(varClassName);
-                        variable = (JAMSData) varClazz.newInstance();
-                        // variable = createInstance(varClazz);
-                        varValue = element.getAttribute("globvar");
-                        variable.setValue(constants.get(varValue));
-                        // attach the variable to the component's field..
-                        field.set(component, variable);
-                        }
-                         */
-
-                        if (element.hasAttribute("attribute")) {
+                        } else if (element.hasAttribute("attribute")) {
 
                             // obtain providing context
                             JAMSComponent context = this.componentRepository.get(element.getAttribute("context"));
@@ -327,15 +337,20 @@ public class ModelLoader {
                             }
 
                             nullFields.get(component).remove(field);
+
+                            connType = "link";
+
                         }
 
-                    /*
-                    if (jvd.trace() == JAMSVarDescription.UpdateType.INIT) {
-                    JAMSData data = (JAMSData) field.get(component);
-                    String id = componentName + "." + varName;
-                    jamsModel.getRuntime().getDataHandles().put(id, data);
-                    }
-                     */
+                        jamsModel.getRuntime().println(JAMS.resources.getString("_var_declaration:_") + varName + " [class=" + varClassName + ", access=" + jvd.access() + ", connection=" + connType + "]", JAMS.VERBOSE);
+
+                        /*
+                        if (jvd.trace() == JAMSVarDescription.UpdateType.INIT) {
+                        JAMSData data = (JAMSData) field.get(component);
+                        String id = componentName + "." + varName;
+                        jamsModel.getRuntime().getDataHandles().put(id, data);
+                        }
+                         */
                     } else {
                         throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_variable_") + varName + JAMS.resources.getString("_can_not_be_accessed_(missing_annotation)!"));
                     }
@@ -354,7 +369,7 @@ public class ModelLoader {
                     jamsModel.getRuntime().handle(ex);
                 }
 
-            // JAMS var declaration
+                // JAMS var declaration
 
             } else if (node.getNodeName().equals("attribute")) {
 
@@ -366,16 +381,16 @@ public class ModelLoader {
                 ((JAMSContext) component).addAttribute(element.getAttribute("name"), element.getAttribute("class"), element.getAttribute("value"));
 
             } /*else if (node.getNodeName().equals("trace")) {
-        
-        if (!JAMSContext.class.isAssignableFrom(component.getImplementingClass())) {
-        throw new ModelSpecificationException("Trace tag can only be used inside context components! (component " + componentName + ")");
-        }
-        
-        Element element = (Element) node;
-        ((JAMSContext) component).getDataTracer().registerAttribute(element.getAttribute("attribute"));
-        jamsModel.getRuntime().println("Registering trace for " + component.getInstanceName() + "->" + element.getAttribute("attribute"), JAMS.STANDARD);
-        
-        }*/
+
+            if (!JAMSContext.class.isAssignableFrom(component.getImplementingClass())) {
+            throw new ModelSpecificationException("Trace tag can only be used inside context components! (component " + componentName + ")");
+            }
+
+            Element element = (Element) node;
+            ((JAMSContext) component).getDataTracer().registerAttribute(element.getAttribute("attribute"));
+            jamsModel.getRuntime().println("Registering trace for " + component.getInstanceName() + "->" + element.getAttribute("attribute"), JAMS.STANDARD);
+
+            }*/
         }
         if (component instanceof JAMSContext) {
             ((JAMSContext) component).setComponents(childComponentList);
@@ -392,6 +407,13 @@ public class ModelLoader {
         this.nullFields = nullFields;
     }
 
+    /**
+     * @return the idMap
+     */
+    public HashMap<String, Integer> getIdMap() {
+        return idMap;
+    }
+
     class ModelSpecificationException extends Exception {
 
         public ModelSpecificationException(String errorMsg) {
@@ -400,7 +422,7 @@ public class ModelLoader {
     }
 
     private ArrayList<Field> createMembers(JAMSComponent component) throws IllegalAccessException, InstantiationException {
-        
+
         Object o;
         Class dataType;
         ArrayList<Field> result = new ArrayList<Field>();
@@ -431,13 +453,5 @@ public class ModelLoader {
             }
         }
         return result;
-    }
-
-    /**
-     * Returns the loaded model
-     * @return The loaded model
-     */
-    public JAMSModel getModel() {
-        return jamsModel;
     }
 }

@@ -96,7 +96,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     String[] libs = null;
 
-    private int runState = JAMSRuntime.STATE_RUN;
+    private int runState = -1;
+
+    private HashMap<String, Integer> idMap;
 
     @Override
     public void loadModel(Document modelDocument, JAMSProperties properties) {
@@ -184,8 +186,23 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         ParameterProcessor.preProcess(modelDocument);
 
         // load the model
-        ModelLoader modelLoader = new ModelLoader(modelDocument, null, this, properties);
-        this.model = modelLoader.getModel();
+        ModelLoader modelLoader = new ModelLoader(null, this);
+        this.model = modelLoader.loadModel(modelDocument);
+        this.idMap = modelLoader.getIdMap();
+
+//        // create IDs for all used components
+//        HashSet<Class> componentClassSet = new HashSet<Class>();
+//        for (JAMSComponent component : modelLoader.getComponentRepository().values()) {
+//            componentClassSet.add(component.getClass());
+//        }
+//
+//        int i = 1;
+//        for (Class c : componentClassSet) {
+//            componentMap.put(c, i);
+//            idMap.put(i, c);
+//            println(String.format("%03d", i) + ": " + c.getName(), JAMS.VERBOSE);
+//            i++;
+//        }
 
         // create GUI if needed
         int wEnable = Integer.parseInt(properties.getProperty("windowenable", "1"));
@@ -202,6 +219,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
 //        classLoader = null;
 //        Runtime.getRuntime().gc();
+
+        runState = JAMSRuntime.STATE_RUN;
     }
 
     @Override
@@ -236,6 +255,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         if (model.getWorkspace() != null) {
             model.getWorkspace().close();
         }
+
+        this.sendHalt();
 
         long end = System.currentTimeMillis();
         this.println(JAMS.resources.getString("JAMS_model_execution_time:_") + (end - start) + " ms", JAMS.STANDARD);
@@ -435,12 +456,18 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     }
 
     private String getCallerClass() {
+        if (getState() != JAMSRuntime.STATE_RUN) {
+            return "[000]";
+        }
+
         StackTraceElement[] ste = new Throwable().getStackTrace();
         int i = 1;
         String caller = ste[i].getClassName();
         while (caller.equals("jams.runtime.StandardRuntime")) {
             caller = ste[++i].getClassName();
         }
+
+        caller = String.format("%03d", idMap.get(caller));
         return "[" + caller + "]";
     }
 
@@ -451,7 +478,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     @Override
     public void sendInfoMsg(String str) {
-        infoLog.print(JAMS.resources.getString("INFO") + ": " + str + "\n");
+        infoLog.print(JAMS.resources.getString("INFO") + getCallerClass() + ": " + str + "\n");
     }
 
     @Override
