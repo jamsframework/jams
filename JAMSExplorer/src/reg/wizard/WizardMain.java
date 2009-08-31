@@ -21,7 +21,7 @@ public class WizardMain {
         UIManager.setLookAndFeel (UIManager.getSystemLookAndFeelClassName());
 
         WizardDisplayer.showWizard (new ExplorerWizard().createWizard(),
-                new Rectangle (20, 20, 500, 400));
+                new Rectangle (20, 20, 800, 400));
         System.exit(0);
     }
 

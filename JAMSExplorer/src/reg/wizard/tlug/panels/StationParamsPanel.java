@@ -23,7 +23,7 @@ public class StationParamsPanel extends javax.swing.JPanel {
     private final WizardController controller;
     private final Map wizardData;
 
-    /** Creates new form CatHairLengthPanel */
+    /** Creates new form  */
     public StationParamsPanel(WizardController controller, Map wizardData) {
         initComponents();
 
