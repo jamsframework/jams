@@ -152,7 +152,6 @@ public class ModelLoader {
         }
         jamsModel.setComponents(childComponentList);
         jamsModel.setNullFields(nullFields);
-        jamsModel.getRuntime().println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
 
         return jamsModel;
     }
@@ -194,7 +193,7 @@ public class ModelLoader {
 
         jamsModel.getRuntime().println(/*JAMS.resources.getString("Adding:_") + */
                 componentName + " [classID=" + String.format("%03d", getID(componentClassName)) +
-                ", class=" + componentClassName + "]", JAMS.STANDARD);
+                ", className=" + componentClassName + "]", JAMS.STANDARD);
 
         component = null;
         try {

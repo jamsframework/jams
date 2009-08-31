@@ -101,6 +101,10 @@ public class JAMSModel extends JAMSContext {
     @Override
     public void init() {
 
+        runtime.println("", JAMS.STANDARD);
+        runtime.println(JAMS.resources.getString("starting_simulation"), JAMS.STANDARD);
+        runtime.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
+
         // check if workspace directory was specified
         if (workspaceDirectory.getValue() == null) {
             runtime.sendHalt(JAMS.resources.getString("No_workspace_directory_specified,_stopping_execution!"));

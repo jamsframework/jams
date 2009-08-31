@@ -149,8 +149,11 @@ public class JAMSTools {
      * @return True, if theString is empty, false otherwise
      */
     public static boolean isEmptyString(String theString) {
+        if (theString == null) {
+            return true;
+        }
         theString = theString.trim();
-        if (theString == null || theString.length() == 0) {
+        if (theString.length() == 0) {
             return true;
         } else {
             return false;
