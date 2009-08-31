@@ -93,6 +93,16 @@ public class DataMatrix extends Matrix {
     public double[] getRow(int position) {
         return getArray()[position];
     }
+    
+    public double[] getCol(int position) {
+        double array[][] = this.getArray();
+        int n = array.length;
+        double[] column = new double[n];
+        for (int i=0;i<n;i++){
+            column[i] = array[i][position];
+        }
+        return column;
+    }
 
     public void output() {
         System.out.println(this.getIds()[0].getClass());

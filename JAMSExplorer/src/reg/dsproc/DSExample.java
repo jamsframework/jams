@@ -51,9 +51,9 @@ public class DSExample {
             dsdb.createDB();
         }
         TimeSpaceProcessor tsproc = new TimeSpaceProcessor(dsdb);
-        if (!tsproc.isTimeSpaceDatastore()) {
+        /*if (!tsproc.isTimeSpaceDatastore()) {
             return;
-        }
+        }*/
 
         tsproc.addProcessingProgressObserver(new Observer() {
 

@@ -36,11 +36,11 @@ import java.text.ParseException;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import reg.DataTransfer;
+//import reg.DataTransfer;
 import reg.JAMSExplorer;
 import reg.dsproc.DataMatrix;
 import reg.gui.StatisticDialogPanel;
-import reg.viewer.Viewer;
+//import reg.viewer.Viewer;
 
 //import jams.components.*;
 //import org.unijena.jams.model;
@@ -487,7 +487,11 @@ public class JAMSSpreadSheet extends JPanel {
                 rowBuffer = m.getRow(pos);
             } else {
                 rowBuffer = new double[m.getColumnDimension() + 1];
-                rowBuffer[0] = Double.parseDouble(id.toString());
+                try{
+                    rowBuffer[0] = Double.parseDouble(id.toString());
+                }catch(Exception e){
+                    rowBuffer[0] = 0.0;
+                }
                 source = m.getRow(pos);
                 System.arraycopy(source, 0, rowBuffer, 1, source.length);
             }
@@ -765,7 +769,7 @@ public class JAMSSpreadSheet extends JPanel {
             double[] ids = getIdValues();
 
             // create and fill the DataTransfer object
-            DataTransfer dataTransfer = new DataTransfer();
+            /*DataTransfer dataTransfer = new DataTransfer();
             dataTransfer.setNames(headers);
             dataTransfer.setIds(ids);
             dataTransfer.setData(data);
@@ -780,7 +784,7 @@ public class JAMSSpreadSheet extends JPanel {
                 viewer.addData(dataTransfer);
             } catch (Exception ex) {
                 Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            }*/
         }
     };
 

@@ -26,11 +26,8 @@ import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,32 +39,22 @@ import java.util.Observer;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class TimeSpaceProcessor {
+public class TimeSpaceProcessor extends Processor{
 
     private static final String TABLE_NAME_MONTHAVG = "MONTHAVG",  TABLE_NAME_YEARAVG = "YEARAVG",  TABLE_NAME_SPATSUM = "SPATSUM";
-
-    private DataStoreProcessor dsdb;
-
-    private Connection conn;
-
-    private ArrayList<DataStoreProcessor.ContextData> contexts;
-
+    
     private String spaceID,  timeID;
 
     private String timeFilter = null;
-
-    private ProcessingProgressObservable processingProgressObservable = new ProcessingProgressObservable();
-
-    private boolean abortOperation = false;
-
+    
     public TimeSpaceProcessor(File file) {
         this(new DataStoreProcessor(file));
     }
 
     public TimeSpaceProcessor(DataStoreProcessor dsdb) {
         this.dsdb = dsdb;
-
-        if (isTimeSpaceDatastore()) {
+        this.contexts = dsdb.getContexts();
+        if (dsdb.isTimeSpaceDatastore()) {
 
             spaceID = contexts.get(0).getName() + "ID";
             timeID = contexts.get(1).getName() + "ID";
@@ -79,51 +66,7 @@ public class TimeSpaceProcessor {
             }
         }
     }
-
-    /**
-     * Check if this is a datastore that contains spatial data that vary in time
-     * @return True or false
-     */
-    public synchronized boolean isTimeSpaceDatastore() {
-        ArrayList<DataStoreProcessor.ContextData> cntxt = dsdb.getContexts();
-        if (cntxt.size() != 2) {
-            return false;
-        }
-        if (!cntxt.get(0).getType().equals("jams.model.JAMSSpatialContext")) {
-            return false;
-        }
-        if (!cntxt.get(1).getType().equals("jams.model.JAMSTemporalContext")) {
-            return false;
-        }
-
-        this.contexts = cntxt;
-        return true;
-    }
-
-    /**
-     * Send a custom select-query to the database
-     * @param query The query string
-     * @return A JDBC result set
-     * @throws java.sql.SQLException
-     */
-    public synchronized ResultSet customSelectQuery(String query) throws SQLException {
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
-        return rs;
-    }
-
-    /**
-     * Send a custom query to the database
-     * @param query The query string
-     * @return true, if the query was sent successfully, false otherwise
-     * @throws java.sql.SQLException
-     */
-    public synchronized boolean customQuery(String query) throws SQLException {
-        Statement stmt = conn.createStatement();
-        boolean result = stmt.execute(query);
-        return result;
-    }
-
+            
     /**
      * Get data from the database based on defined filters on time and space
      * @return The data as JDBC result set
@@ -182,6 +125,29 @@ public class TimeSpaceProcessor {
         return rs.getInt("COUNT");
     }
 
+    public synchronized DataMatrix getCrossProduct(long[] entityIds, String[] dateIds) throws SQLException, IOException {
+        double [][] matrix = new double[dateIds.length][entityIds.length];
+        int idMap[] = null;
+        JAMSCalendar calendar = JAMSDataFactory.createCalendar();
+        for (int i=0;i<dateIds.length;i++){
+            calendar.setValue(dateIds[i]);
+            DataMatrix col = getTemporalData(calendar);
+            if (idMap == null){
+                idMap = new int[entityIds.length];                
+                //bad! quadratic time!!
+                for (int j=0;j<entityIds.length;j++)
+                    idMap[j] = col.getIDPosition(Long.toString(entityIds[j]));
+            }
+            double entities[] = col.getCol(0);
+            for (int j=0;j<entityIds.length;j++){
+                matrix[i][j] = entities[idMap[j]];
+            }
+        }        
+        String modelRunIdStrings[] = new String[entityIds.length];
+        for (int i=0;i<entityIds.length;i++)
+            modelRunIdStrings[i] = Long.toString(entityIds[i]);
+        return new DataMatrix(matrix,dateIds, modelRunIdStrings);
+    }
     /**
      * Gets the values of the selected attributes for all entities at a
      * specific date
@@ -387,24 +353,7 @@ public class TimeSpaceProcessor {
 
         return result;
     }
-
-    private synchronized double[] getSum(ArrayList<double[]> a) {
-
-        double[] result = a.get(0);
-        double[] b;
-        for (int i = 1; i < a.size(); i++) {
-            b = a.get(i);
-            for (int c = 0; c < result.length; c++) {
-                result[c] += b[c];
-            }
-        }
-//        for (int c = 0; c < result.length; c++) {
-//            result[c] /= a.size();
-//        }
-
-        return result;
-    }
-
+    
     /**
      * Gets the overall spatial sum of the selected
      * attributes for all time steps
@@ -576,17 +525,7 @@ public class TimeSpaceProcessor {
 
         return result;
     }
-
-    private synchronized boolean isTableExisting(String tableName) throws SQLException {
-        String q = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME='" + tableName + "'";
-        ResultSet rs = customSelectQuery(q);
-        if (rs.next()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
+    
     public boolean isYearlyMeanExisiting() throws SQLException {
         return isTableExisting(TABLE_NAME_YEARAVG);
     }
@@ -911,24 +850,7 @@ public class TimeSpaceProcessor {
 
         return result.toArray(new JAMSCalendar[result.size()]);
     }
-
-    public static void output(ResultSet rs) throws SQLException {
-        ResultSetMetaData rsmd = rs.getMetaData();
-        int numberOfColumns = rsmd.getColumnCount();
-
-        for (int i = 1; i <= numberOfColumns; i++) {
-            System.out.print(rsmd.getColumnName(i) + "\t");
-        }
-        System.out.println();
-
-        while (rs.next()) {
-            for (int i = 1; i <= numberOfColumns; i++) {
-                System.out.print(rs.getString(i) + "\t");
-            }
-            System.out.println();
-        }
-    }
-
+    
     /**
      * @param timeFilter the timeIDFilter to set
      */
@@ -939,43 +861,10 @@ public class TimeSpaceProcessor {
     public synchronized void resetTimeFilter() {
         timeFilter = null;
     }
-
-    /**
-     * @return the h2ds
-     */
-    public DataStoreProcessor getDataStoreProcessor() {
-        return dsdb;
-    }
-
-    public void close() throws SQLException {
-        dsdb.close();
-    }
-
-    public void addProcessingProgressObserver(Observer o) {
-        processingProgressObservable.addObserver(o);
-    }
-
-    public void sendAbortOperation() {
-        this.abortOperation = true;
-        synchronized (this) {
-            this.abortOperation = false;
-        }
-    }
-
-    private class ProcessingProgressObservable extends Observable {
-
-        private int progress;
-
-        private void setProgress(int progress) {
-            this.progress = progress;
-            this.setChanged();
-            this.notifyObservers(progress);
-        }
-    }
-
+        
     public static void main(String[] args) throws Exception {
         TimeSpaceProcessor tsproc = new TimeSpaceProcessor(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat"));
-        tsproc.isTimeSpaceDatastore();
+        tsproc.dsdb.isTimeSpaceDatastore();
 
 //        JAMSCalendar date = new JAMSCalendar();
 //        date.setValue("1995-11-01 07:30");

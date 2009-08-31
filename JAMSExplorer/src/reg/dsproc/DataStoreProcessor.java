@@ -448,9 +448,49 @@ public class DataStoreProcessor {
         return true;
     }
 
+    /**
+     * Check if this is a datastore that contains spatial data that vary in time
+     * @return True or false
+     */
+    public synchronized boolean isTimeSpaceDatastore() {
+        ArrayList<DataStoreProcessor.ContextData> cntxt = getContexts();
+        if (cntxt.size() != 2) {
+            return false;
+        }
+        if (!cntxt.get(0).getType().equals("jams.model.JAMSSpatialContext")) {
+            return false;
+        }
+        if (!cntxt.get(1).getType().equals("jams.model.JAMSTemporalContext")) {
+            return false;
+        }
+
+        this.contexts = cntxt;
+        return true;
+    }
+    
+    /**
+     * Check if this is a datastore that contains several model runs each having timeseries
+     * @return True or false
+     */
+    public synchronized boolean isEnsembleTimeSeriesDatastore() {
+        ArrayList<DataStoreProcessor.ContextData> cntxt = getContexts();
+        if (cntxt.size() != 2) {
+            return false;
+        }
+        if (!cntxt.get(0).getType().equals("jams.model.JAMSTemporalContext")) {
+            return false;
+        }
+        if (!cntxt.get(1).getType().contains("jams.components.optimizer")) {
+            return false;
+        }
+
+        this.contexts = cntxt;
+        return true;
+    }
+    
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
 
-        DataStoreProcessor dsdb = new DataStoreProcessor(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat"));
+        DataStoreProcessor dsdb = new DataStoreProcessor(new File("C:/Arbeit/ModelData/JAMS-Gehlberg/output/output_gehlberg_e2_gutmann/TimeLoop.dat"));
 //        DataStoreProcessor dsdb = new DataStoreProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/TimeLoop.dat");
         dsdb.addImportProgressObserver(new Observer() {
 
@@ -598,7 +638,8 @@ public class DataStoreProcessor {
                     this.idType = "JAMSCalendar";
                 } else if (type.equals("jams.model.JAMSSpatialContext")) {
                     this.idType = "JAMSLong";
-                }
+                } else if (type.contains("jams.components.optimizer"))
+                    this.idType = "JAMSLong";
             }
         }
 

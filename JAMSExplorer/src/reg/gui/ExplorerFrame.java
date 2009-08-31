@@ -59,7 +59,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import org.w3c.dom.Document;
-import reg.viewer.Viewer;
+//import reg.viewer.Viewer;
 
 /**
  *
@@ -361,7 +361,7 @@ public class ExplorerFrame extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 if (JAMSExplorer.GEOWIND_ENABLE) {
-                    Viewer.destroy();
+                    //Viewer.destroy();
                 }
                 exit();
             }
