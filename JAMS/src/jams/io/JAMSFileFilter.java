@@ -107,6 +107,18 @@ public class JAMSFileFilter {
         }
     };
 
+
+    private static FileFilter shapeFilter = new FileFilter() {
+        @Override
+        public boolean accept(File f) {
+            return f.isDirectory() || f.getName().toLowerCase().endsWith(".shp");
+        }
+        @Override
+        public String getDescription() {
+            return JAMS.resources.getString("Shapefiles_(*.shp)");
+        }
+    };
+
     /**
      *
      * @return The filter for EPS files
@@ -166,4 +178,14 @@ public class JAMSFileFilter {
     public static FileFilter getTtpFilter() {
         return ttpFilter;
     }
+
+    /**
+     * 
+     * @return the shape file filter
+     */
+    public static FileFilter getShapeFilter() {
+        return shapeFilter;
+    }
+
+
 }
