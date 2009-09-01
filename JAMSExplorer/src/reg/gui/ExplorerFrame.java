@@ -59,7 +59,12 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import org.w3c.dom.Document;
+//<<<<<<< .mine
+import reg.spreadsheet.STPConfigurator;
+import reg.viewer.Viewer;
+//=======
 //import reg.viewer.Viewer;
+//>>>>>>> .r1384
 
 /**
  *
@@ -75,7 +80,11 @@ public class ExplorerFrame extends JFrame {
 
     private WorkerDlg openWSDlg;
 
-    private Action openWSAction, exitAction, editWSAction, launchModelAction, editPrefsAction, reloadWSAction;
+//<<<<<<< .mine
+    //private Action openWSAction, exitAction, editWSAction, launchModelAction, editPrefsAction, openSTPAction;
+//=======
+    private Action openWSAction, exitAction, editWSAction, launchModelAction, editPrefsAction, reloadWSAction, openSTPAction;
+//>>>>>>> .r1384
 
     private JLabel statusLabel;
 
@@ -142,6 +151,16 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
+//<<<<<<< .mine
+        openSTPAction = new AbstractAction("Stacked Time Plot") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                STPConfigurator stp = new STPConfigurator(explorer);
+            }
+        };
+
+//=======
         reloadWSAction = new AbstractAction("Reload Workspace") {
 
             @Override
@@ -150,6 +169,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
+//>>>>>>> .r1384
         update();
 
         propertyDlg = new PropertyDlg(this, explorer.getProperties());
@@ -229,6 +249,8 @@ public class ExplorerFrame extends JFrame {
         mainMenu.add(fileMenu);
         JMenu prefsMenu = new JMenu("Preferences");
         mainMenu.add(prefsMenu);
+        JMenu plotMenu = new JMenu("Plot");
+        mainMenu.add(plotMenu);
 
         JMenuItem openWSItem = new JMenuItem(openWSAction);
         openWSItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
@@ -237,6 +259,10 @@ public class ExplorerFrame extends JFrame {
         JMenuItem exitItem = new JMenuItem(exitAction);
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         fileMenu.add(exitItem);
+
+        JMenuItem stpItem = new JMenuItem(openSTPAction);
+//        stpIcon.setAccelerator()
+        plotMenu.add(stpItem);
 
         JMenuItem editWSItem = new JMenuItem(editWSAction);
         prefsMenu.add(editWSItem);
