@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.UIManager;
-//import reg.viewer.Viewer;
+import reg.viewer.Viewer;
 
 /**
  *
@@ -112,7 +112,7 @@ public class JAMSExplorer {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             if (GEOWIND_ENABLE) {
-                //Viewer.getViewer();
+                Viewer.getViewer();
             }
         } catch (Exception evt) {
         }
