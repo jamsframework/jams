@@ -108,7 +108,7 @@ public class JAMSExplorer {
     }
 
     public static void main(String[] args) {
-
+           
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             if (GEOWIND_ENABLE) {

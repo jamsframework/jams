@@ -59,12 +59,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import org.w3c.dom.Document;
-//<<<<<<< .mine
 import reg.spreadsheet.STPConfigurator;
-import reg.viewer.Viewer;
-//=======
 //import reg.viewer.Viewer;
-//>>>>>>> .r1384
 
 /**
  *
@@ -79,12 +75,9 @@ public class ExplorerFrame extends JFrame {
     private JFileChooser jfc = GUIHelper.getJFileChooser();
 
     private WorkerDlg openWSDlg;
+    private MCAT5Dialog sensitivityDlg;
 
-//<<<<<<< .mine
-    //private Action openWSAction, exitAction, editWSAction, launchModelAction, editPrefsAction, openSTPAction;
-//=======
-    private Action openWSAction, exitAction, editWSAction, launchModelAction, editPrefsAction, reloadWSAction, openSTPAction;
-//>>>>>>> .r1384
+    private Action openWSAction, openSTPAction, exitAction, editWSAction, sensitivityAnalysisAction, launchModelAction, editPrefsAction, reloadWSAction;
 
     private JLabel statusLabel;
 
@@ -130,6 +123,14 @@ public class ExplorerFrame extends JFrame {
                 wsDlg.setVisible(explorer.getWorkspace());
             }
         };
+        
+        sensitivityAnalysisAction = new AbstractAction("MCAT5...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sensitivityDlg.setVisible(true);
+            }
+        };
 
         launchModelAction = new AbstractAction("Start Model") {
 
@@ -151,7 +152,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-//<<<<<<< .mine
+
         openSTPAction = new AbstractAction("Stacked Time Plot") {
 
             @Override
@@ -160,7 +161,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-//=======
+
         reloadWSAction = new AbstractAction("Reload Workspace") {
 
             @Override
@@ -169,13 +170,13 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-//>>>>>>> .r1384
         update();
 
         propertyDlg = new PropertyDlg(this, explorer.getProperties());
 
         openWSDlg = new WorkerDlg(this, "Opening Workspace");
-
+        sensitivityDlg = new MCAT5Dialog();
+        
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(JAMSExplorer.APP_TITLE);
 
@@ -224,6 +225,12 @@ public class ExplorerFrame extends JFrame {
         wsEditButton.setToolTipText((String) editWSAction.getValue(Action.NAME));
         wsEditButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
         toolBar.add(wsEditButton);
+        
+        JButton sensitivityAnalysisButton = new JButton(sensitivityAnalysisAction);
+        sensitivityAnalysisButton.setText("");
+        sensitivityAnalysisButton.setToolTipText((String) editWSAction.getValue(Action.NAME));
+        sensitivityAnalysisButton.setIcon(new ImageIcon(getClass().getResource("/reg/resources/images/gold.png")));
+        toolBar.add(sensitivityAnalysisButton);
 
         JButton launchModelButton = new JButton(launchModelAction);
         launchModelButton.setText("");

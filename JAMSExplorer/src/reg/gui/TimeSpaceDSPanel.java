@@ -1221,11 +1221,19 @@ public class TimeSpaceDSPanel extends JPanel {
         workerDlg.execute();
     }
 
-    private void showSpatEntity() {
-        if (modelRunList.getSelectedValues().length == 0) {
-            return;
+    private void showSpatEntity() {               
+        if (getProc() instanceof TimeSpaceProcessor){
+            if (entityList.getSelectedValues().length == 0) {                
+                return;
+            }
         }
-
+        
+        if (getProc() instanceof EnsembleTimeSeriesProcessor){
+            if (modelRunList.getSelectedValues().length == 0) {                
+                return;
+            }   
+        }
+                
         workerDlg.setInderminate(false);
         workerDlg.setProgress(0);
         workerDlg.setTask(new CancelableSwingWorker() {
@@ -1233,21 +1241,20 @@ public class TimeSpaceDSPanel extends JPanel {
             DataMatrix m = null;
 
             public Object doInBackground() {
-                try {
-
-                    Object[] objects = modelRunList.getSelectedValues();
-
-                    long[] ids = new long[objects.length];
-                    int c = 0;
-                    for (Object o : objects) {
-                        ids[c++] = (Long) o;
-                    }
-                    
+                try {                                        
                     if (getProc() instanceof TimeSpaceProcessor){
-                        TimeSpaceProcessor tsproc = (TimeSpaceProcessor)getProc();                        
+                        TimeSpaceProcessor tsproc = (TimeSpaceProcessor) getProc();
                         // check if number of selected ids is equal to all ids
                         // if so, we better derive temp avg from monthly means
-                        if (ids.length == modelRunList.getModel().getSize()) {
+                        Object[] objects = entityList.getSelectedValues();
+
+                        long[] ids = new long[objects.length];
+                        int c = 0;
+                        for (Object o : objects) {
+                            ids[c++] = (Long) o;
+                        }
+                    
+                        if (ids.length == entityList.getModel().getSize()) {
                             // check if cache tables are available
                             if (!tsproc.isSpatSumExisiting()) {
                                 tsproc.calcSpatialSum();
@@ -1264,6 +1271,14 @@ public class TimeSpaceDSPanel extends JPanel {
                             m = tsproc.getSpatialSum(ids);
                         }                        
                     }else if (getProc() instanceof EnsembleTimeSeriesProcessor){
+                        Object[] objects = modelRunList.getSelectedValues();
+
+                        long[] ids = new long[objects.length];
+                        int c = 0;
+                        for (Object o : objects) {
+                            ids[c++] = (Long) o;
+                        }
+                        
                         EnsembleTimeSeriesProcessor ensembleProc = (EnsembleTimeSeriesProcessor)getProc();                        
                         m = ensembleProc.getEnsembleMean(ids);                                                
                     }

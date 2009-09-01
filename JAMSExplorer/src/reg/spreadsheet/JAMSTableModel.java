@@ -148,7 +148,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
            
            if(timeRuns == false){
                if(columnIndex < this.arrayVector.get(rowIndex).length  ){
-
+                    //note: this is creating a Double
                     value = (double) arrayVector.get(rowIndex)[columnIndex];
                }
                else{
