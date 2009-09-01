@@ -22,27 +22,28 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jFileLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel1" alignment="0" min="-2" pref="103" max="-2" attributes="1"/>
                   <Component id="jRegLabel" alignment="0" min="-2" pref="127" max="-2" attributes="1"/>
                   <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel1" alignment="0" min="-2" pref="103" max="-2" attributes="1"/>
+                  <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jRadioButtonPrim" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
-                      <Component id="jRadioButtonSeku" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
                       <Component id="jRadioButtonTag" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jRadioButtonMonat" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jRadioButtonJahr" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jRadioButtonPrim" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                      <Component id="jRadioButtonSeku" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jFileName" min="-2" pref="148" max="-2" attributes="0"/>
@@ -50,8 +51,9 @@
                       <Component id="jFileButton" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jRegCombo" min="-2" pref="143" max="-2" attributes="0"/>
+                  <Component id="jIntervall" alignment="0" min="-2" pref="63" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="239" max="-2" attributes="0"/>
+              <EmptySpace pref="239" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -75,14 +77,19 @@
                   <Component id="jRegLabel" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                   <Component id="jRegCombo" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jRadioButtonTag" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jIntervall" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jRadioButtonTag" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jRadioButtonMonat" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jRadioButtonJahr" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="136" max="32767" attributes="0"/>
+              <EmptySpace pref="87" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -152,6 +159,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Tag"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonTagActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="jRadioButtonMonat">
       <Properties>
@@ -165,11 +175,24 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Jahr"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButtonJahrActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" value="Datenherkunft"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel3">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Zeitintervall"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jIntervall">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jIntervallActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
