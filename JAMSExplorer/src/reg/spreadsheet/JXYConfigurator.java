@@ -169,7 +169,7 @@ public class JXYConfigurator extends JFrame {
 
     private ButtonGroup isXAxisGroup = new ButtonGroup();
 
-    private JButton applyButton = new JButton("Apply");
+    private JButton applyButton = new JButton("PLOT");
 
     private JButton addButton = new JButton("Add Graph");
 

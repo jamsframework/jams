@@ -93,7 +93,7 @@ public class JAMSSpreadSheet extends JPanel {
     private int kindofcalc = 0;
     private JFileChooser epsFileChooser,  templateChooser, datChooser;
     private JAMSExplorer regionalizer;
-    private boolean geoWindEnable = true;
+    private boolean geoWindEnable = false;
     /* Messages */
     final String ERR_MSG_CTS = "No Time Series Loaded";
 
@@ -239,8 +239,13 @@ public class JAMSSpreadSheet extends JPanel {
 
             try {
                 
-                File file = new File(regionalizer.getWorkspace().getDirectory().toString()+"/explorer/"+filename);
-                
+                File file;
+                if(isOutputSheet()){
+//                    file = new File(regionalizer.getWorkspace().getOutputDataDirectory()+filename);
+                    file = new File(regionalizer.getWorkspace().getDirectory().toString()+"/output/current/"+filename);
+                }
+                else file = new File(regionalizer.getWorkspace().getDirectory().toString()+"/explorer/"+filename);
+
                 //File file = chooser.getSelectedFile();
                 //File file = chooser.getSelectedFile();
                 FileWriter filewriter = new FileWriter(file);
@@ -292,6 +297,8 @@ public class JAMSSpreadSheet extends JPanel {
 
             } catch (IOException ex) {
             }
+
+       
 //        }
     }
 
@@ -418,13 +425,23 @@ public class JAMSSpreadSheet extends JPanel {
     }}
 
     public JFileChooser getTemplateChooser() {
-        
+
+        File explorerDir;;
+        if(!isOutputSheet()) explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString()+"/explorer");
+        else{ 
+            
+//            explorerDir = new File(regionalizer.getWorkspace().getOutputDataDirectory().toString());
+
+                explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString()+"/output/current");
+        }
         if (templateChooser == null) {
             templateChooser = new JFileChooser();
             templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
-            File explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString()+"/explorer");
+            explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString()+"/explorer");
             templateChooser.setCurrentDirectory(explorerDir);
         }
+
+        templateChooser.setCurrentDirectory(explorerDir);
         templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
         return templateChooser;
     }
@@ -731,10 +748,10 @@ public class JAMSSpreadSheet extends JPanel {
 
             } catch (ClassCastException cce) {
 
-                if (timeRuns) {
-                    table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
-                    openCXYS(dtpFile);
-                }
+//                if (timeRuns) {
+//                    table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
+//                    openCXYS(dtpFile);
+//                }
             }
 
         }
@@ -990,10 +1007,6 @@ public class JAMSSpreadSheet extends JPanel {
             DefaultComboBoxModel shapeSelectorModel = new DefaultComboBoxModel(shapeNames);
             shapeSelectorModel.setSelectedItem(defaultShapeName);
             shapeSelector.setModel(shapeSelectorModel);
-            // only 1 shape -> don't bother the user with it
-            if (shapeNames.length == 1) {
-                shapeSelector.setVisible(false);
-            }
             JButton joinMapButton = new JButton(joinMapAction);
             GUIHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 13, 1, 1, 0, 0);
             GUIHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 14, 1, 1, 0, 0);

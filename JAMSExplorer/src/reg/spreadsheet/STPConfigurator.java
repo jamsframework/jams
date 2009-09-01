@@ -8,6 +8,7 @@ package reg.spreadsheet;
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGEncodeParam;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import jams.JAMSFileFilter;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 import jams.gui.GUIHelper;
@@ -78,6 +79,8 @@ public class STPConfigurator extends JFrame{
     JAMSSpreadSheet sheet;
     JAMSStackedPlot stackedplot;
     JFrame parent;
+
+    JFileChooser templateChooser;
 //    JTable table; //wichtig?
     File templateFile;
     private JAMSWorkspace workspace;
@@ -627,27 +630,37 @@ public class STPConfigurator extends JFrame{
         int failedIDs = 0;
         ArrayList<String> accIDList = new ArrayList<String>();
         String[] accIDArray;
-        
+        int counter = 0;
+
 //        File testfile = new File());
         File testfile = new File(workspace.getDirectory().toString()+"/explorer");
 //        File testfile2 = new File(workspace.getDirectory().toString()+"/output");
         File[] filelist = testfile.listFiles();
 //        File[] filelist2 = testfile2.listFiles();
-
         Set<String> idSet;
 //        idSet = JAMSExplorer.getExplorerFrame().getWorkspace().getInputDataStoreIDs();
 //        totalIDs = idSet.size();
-        
-        //idArray = idSet.toArray(idArray);
-        
+
         for(int i = 0; i < filelist.length; i++){
             
             String name = filelist[i].getName();
             if(name.indexOf(".ttp")!=-1 && name.indexOf(".dat") == -1){
                 accIDList.add(name);
+                counter = i;
             }   
         }
-        
+
+//        File testfile2 = new File(workspace.getDirectory().toString()+"/output/current");
+//        File[] filelist2 = testfile.listFiles();
+//
+//        for(int i = 0; i < filelist2.length; i++){
+//
+//            String name = filelist2[i].getName();
+//            if(name.indexOf(".ttp")!=-1 && name.indexOf(".dat") == -1){
+//                accIDList.add(name);
+//                counter = i;
+//            }
+//        }
 //        for(int i = 0; i < filelist2.length; i++){
 //            
 //            String name = filelist2[i].getName();
@@ -1348,7 +1361,22 @@ public class STPConfigurator extends JFrame{
         
     }
     
-    
+    public JFileChooser getTemplateChooser() {
+
+        File dir;
+        dir = new File(workspace.getDirectory().toString());
+
+        if (templateChooser == null) {
+            templateChooser = new JFileChooser();
+            templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
+            dir = new File(workspace.getDirectory().toString()+"/explorer");
+            templateChooser.setCurrentDirectory(dir);
+        }
+
+        templateChooser.setCurrentDirectory(dir);
+        templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
+        return templateChooser;
+    }
     
     public int getRowCount(){
         return rows;

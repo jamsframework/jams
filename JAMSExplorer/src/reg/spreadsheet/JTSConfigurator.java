@@ -1331,6 +1331,7 @@ public class JTSConfigurator extends JFrame {
 //        
 //        JScrollPane propPane = new JScrollPane(proppanel);    
 //    }
+
     private String saveTemplate() {
 
         Properties properties = new Properties();
@@ -1480,24 +1481,51 @@ public class JTSConfigurator extends JFrame {
                 if(!(inputString == null)){
                     
                     inputString+= ".ttp";
-                    File file = new File(workspace.getDirectory().toString()+"/explorer", inputString);
-                    if(!file.exists()){
-                        filename = file.getName();
-                        FileOutputStream fout = new FileOutputStream(file);
-                        properties.store(fout, "");
-                        fout.close();
-                        dont_save = false;
-                    }else{
-                        String fileexists = "The File "+file+" already exists.\n Overwrite?";
-                        int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
-                        if(result==0){ //overwrite
+
+                    if(sheet.isOutputSheet()){
+                        System.out.println("outputSheetAtSave="+sheet.isOutputSheet());
+//                        System.out.println("directory"+workspace.getOutputDataDirectory().toString());
+//                        File file = new File(workspace.getOutputDataDirectory(), inputString);
+                        File file = new File(workspace.getDirectory().toString()+"/output/current", inputString);
+
+                        if(!file.exists()){
                             filename = file.getName();
                             FileOutputStream fout = new FileOutputStream(file);
                             properties.store(fout, "");
                             fout.close();
                             dont_save = false;
-                        }
+                        }else{
+                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
+                            int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
+                            if(result==0){ //overwrite
+                                filename = file.getName();
+                                FileOutputStream fout = new FileOutputStream(file);
+                                properties.store(fout, "");
+                                fout.close();
+                                dont_save = false;
+                            }
 
+                        }
+                    }else{
+                        File file = new File(workspace.getDirectory().toString()+"/explorer", inputString);
+                        if(!file.exists()){
+                            filename = file.getName();
+                            FileOutputStream fout = new FileOutputStream(file);
+                            properties.store(fout, "");
+                            fout.close();
+                            dont_save = false;
+                        }else{
+                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
+                            int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
+                            if(result==0){ //overwrite
+                                filename = file.getName();
+                                FileOutputStream fout = new FileOutputStream(file);
+                                properties.store(fout, "");
+                                fout.close();
+                                dont_save = false;
+                            }
+
+                        }
                     }
                     }else{
                         dont_save = false; //CANCEL OPTION!
