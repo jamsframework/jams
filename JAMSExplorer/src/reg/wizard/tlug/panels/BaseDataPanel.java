@@ -8,7 +8,6 @@
  *
  * Created on 31.08.2009, 11:22:43
  */
-
 package reg.wizard.tlug.panels;
 
 import jams.io.JAMSFileFilter;
@@ -27,17 +26,17 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
     private final WizardController controller;
     private final Map wizardData;
-
     private BaseDataPanel thisPanel;
-
+    public static final String KEY_FILENAME = "fileName";
     public static final String KEY_DATA_ORIGIN = "dataOrigin";
-    public static final String VALUE_PRIM  = "prim";
-    public static final String VALUE_SEK   = "sek";
-
-    public static final String KEY_AGGR = "aggreg";
-    public static final String VALUE_TAG  = "dd";
-    public static final String VALUE_MON   = "mm";
-    public static final String VALUE_JAHR   = "yy";
+    public static final String KEY_REGIONALIZATION = "regionalizationData";
+    public static final String KEY_INTERVAL = "interval";
+    public static final String KEY_AGGR = "aggregation";
+    public static final String VALUE_PRIM = "prim";
+    public static final String VALUE_SEK = "sek";
+    public static final String VALUE_TAG = "dd";
+    public static final String VALUE_MON = "mm";
+    public static final String VALUE_JAHR = "yy";
 
     // all field contents
     private String r_shapeFileName = null;
@@ -45,7 +44,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
     private String r_region = null;
     private String r_interval = null;
     private String r_aggreg = null;
-
 
     /** Creates new form  */
     public BaseDataPanel(WizardController controller, Map wizardData) {
@@ -57,7 +55,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
         initComponents();
         setupComponents();
 
-        jRadioButtonPrim.putClientProperty (KEY_DATA_ORIGIN, VALUE_PRIM);
+        jRadioButtonPrim.putClientProperty(KEY_DATA_ORIGIN, VALUE_PRIM);
         jRadioButtonSeku.putClientProperty(KEY_DATA_ORIGIN, VALUE_SEK);
 
         r_region = "Niederschlag"; // default
@@ -100,6 +98,11 @@ public class BaseDataPanel extends javax.swing.JPanel {
         jFileName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jFileNameActionPerformed(evt);
+            }
+        });
+        jFileName.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jFileNameFocusLost(evt);
             }
         });
 
@@ -163,6 +166,18 @@ public class BaseDataPanel extends javax.swing.JPanel {
         jIntervall.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jIntervallActionPerformed(evt);
+            }
+        });
+        jIntervall.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jIntervallFocusLost(evt);
+            }
+        });
+        jIntervall.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                jIntervallInputMethodTextChanged(evt);
             }
         });
 
@@ -243,9 +258,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
     private void jFileNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileNameActionPerformed
         // TODO add your handling code here:
-        r_shapeFileName = jFileName.getText();
-        checkProblems();
-
     }//GEN-LAST:event_jFileNameActionPerformed
 
     private void jRadioButtonPrimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonPrimActionPerformed
@@ -291,9 +303,24 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
     private void jIntervallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jIntervallActionPerformed
         // TODO add your handling code here:
+    }//GEN-LAST:event_jIntervallActionPerformed
+
+    private void jIntervallInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_jIntervallInputMethodTextChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jIntervallInputMethodTextChanged
+
+    private void jIntervallFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jIntervallFocusLost
+        // TODO add your handling code here:
         r_interval = jIntervall.getText();
         checkProblems();
-    }//GEN-LAST:event_jIntervallActionPerformed
+
+    }//GEN-LAST:event_jIntervallFocusLost
+
+    private void jFileNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jFileNameFocusLost
+        // TODO add your handling code here:
+        r_shapeFileName = jFileName.getText();
+        checkProblems();
+    }//GEN-LAST:event_jFileNameFocusLost
 
     private void setupComponents() {
 
@@ -309,8 +336,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
     private void primSekSelected(java.awt.event.ActionEvent evt) {
 
-        Object val = ((JRadioButton ) evt.getSource()).getClientProperty(KEY_DATA_ORIGIN);
-        wizardData.put (KEY_DATA_ORIGIN, val);
+        Object val = ((JRadioButton) evt.getSource()).getClientProperty(KEY_DATA_ORIGIN);
         r_dataOrigin = (String) val;
         checkProblems();
 
@@ -318,31 +344,38 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
     private void aggregationSelected(java.awt.event.ActionEvent evt) {
 
-        Object val = ((JRadioButton ) evt.getSource()).getClientProperty(KEY_AGGR);
-        wizardData.put (KEY_AGGR, val);
+        Object val = ((JRadioButton) evt.getSource()).getClientProperty(KEY_AGGR);
         r_aggreg = (String) val;
         checkProblems();
 
     }
 
-
     private void checkProblems() {
         if (StringUtils.isNullOrEmpty(r_shapeFileName)) {
-            controller.setProblem ("Bitte Shape-File auswählen.");
-        } else
-        if (StringUtils.isNullOrEmpty(r_dataOrigin)) {
-            controller.setProblem ("Bitte Datenherkunft auswählen.");
-        } else
-        if (StringUtils.isNullOrEmpty(r_region)) {
-            controller.setProblem ("Bitte Regionalisierung festlegen.");
-        } else
-        if (StringUtils.isNullOrEmpty(r_interval)) {
-            controller.setProblem ("Bitte Zeitintervall auswählen.");
-        } else
-        if (StringUtils.isNullOrEmpty(r_aggreg)) {
-            controller.setProblem ("Bitte Aggregation bestimmen.");
+            controller.setProblem("Bitte Shape-File auswählen.");
         } else {
-            controller.setProblem (null);
+            wizardData.put(KEY_FILENAME, r_shapeFileName);
+            if (StringUtils.isNullOrEmpty(r_dataOrigin)) {
+                controller.setProblem("Bitte Datenherkunft auswählen.");
+            } else {
+                wizardData.put(KEY_DATA_ORIGIN, r_dataOrigin);
+                if (StringUtils.isNullOrEmpty(r_region)) {
+                    controller.setProblem("Bitte Regionalisierung festlegen.");
+                } else {
+                    wizardData.put(KEY_REGIONALIZATION, r_region);
+                    if (StringUtils.isNullOrEmpty(r_interval)) {
+                        controller.setProblem("Bitte Zeitintervall auswählen.");
+                    } else {
+                        wizardData.put(KEY_INTERVAL, r_interval);
+                        if (StringUtils.isNullOrEmpty(r_aggreg)) {
+                            controller.setProblem("Bitte Aggregation bestimmen.");
+                        } else {
+                            wizardData.put(KEY_AGGR, r_aggreg);
+                            controller.setProblem(null);
+                        }
+                    }
+                }
+            }
         }
         return;
     }
@@ -365,5 +398,4 @@ public class BaseDataPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox jRegCombo;
     private javax.swing.JLabel jRegLabel;
     // End of variables declaration//GEN-END:variables
-
 }

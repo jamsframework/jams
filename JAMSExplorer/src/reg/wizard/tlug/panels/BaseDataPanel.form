@@ -103,6 +103,7 @@
     <Component class="javax.swing.JTextField" name="jFileName">
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jFileNameActionPerformed"/>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jFileNameFocusLost"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jFileButton">
@@ -192,6 +193,8 @@
     <Component class="javax.swing.JTextField" name="jIntervall">
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jIntervallActionPerformed"/>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jIntervallFocusLost"/>
+        <EventHandler event="inputMethodTextChanged" listener="java.awt.event.InputMethodListener" parameters="java.awt.event.InputMethodEvent" handler="jIntervallInputMethodTextChanged"/>
       </Events>
     </Component>
   </SubComponents>
