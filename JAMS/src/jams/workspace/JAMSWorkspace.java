@@ -691,7 +691,7 @@ public class JAMSWorkspace implements Serializable {
 
 //        ws.inputDataStoreToFile();
 
-        InputDataStore store = ws.getInputDataStore("precip");
+        InputDataStore store = ws.getInputDataStore("sunh_db");
         TSDumpProcessor asciiConverter = new TSDumpProcessor();
         System.out.println(asciiConverter.toASCIIString((TSDataStore) store));
     }

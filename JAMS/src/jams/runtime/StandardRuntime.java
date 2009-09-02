@@ -59,7 +59,6 @@ import jams.io.ModelLoader;
 import jams.io.ParameterProcessor;
 import jams.model.JAMSGUIComponent;
 import jams.model.JAMSModel;
-import jams.workspace.JAMSWorkspace;
 import org.w3c.dom.Document;
 
 /**

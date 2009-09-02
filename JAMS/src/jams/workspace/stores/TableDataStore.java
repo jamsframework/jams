@@ -80,7 +80,7 @@ public class TableDataStore extends StandardInputDataStore {
     public TableDataStore(JAMSWorkspace ws, String id, Document doc) throws ClassNotFoundException {
         super(ws, id, doc);
 
-        if (ws.getRuntime().getState() != JAMSRuntime.STATE_RUN) {
+        if (ws.getRuntime().getState() == JAMSRuntime.STATE_STOP) {
             return;
         }
 
