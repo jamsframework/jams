@@ -27,7 +27,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
     private final WizardController controller;
     private final Map wizardData;
     private BaseDataPanel thisPanel;
-    public static final String KEY_FILENAME = "fileName";
+    public static final String KEY_SHAPE_FILENAME = "shapeFileName";
     public static final String KEY_DATA_ORIGIN = "dataOrigin";
     public static final String KEY_REGIONALIZATION = "regionalizationData";
     public static final String KEY_INTERVAL = "interval";
@@ -64,6 +64,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
         jRadioButtonMonat.putClientProperty(KEY_AGGR, VALUE_MON);
         jRadioButtonJahr.putClientProperty(KEY_AGGR, VALUE_JAHR);
 
+        initFromWizardData();
         checkProblems();
     }
 
@@ -354,7 +355,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
         if (StringUtils.isNullOrEmpty(r_shapeFileName)) {
             controller.setProblem("Bitte Shape-File auswählen.");
         } else {
-            wizardData.put(KEY_FILENAME, r_shapeFileName);
+            wizardData.put(KEY_SHAPE_FILENAME, r_shapeFileName);
             if (StringUtils.isNullOrEmpty(r_dataOrigin)) {
                 controller.setProblem("Bitte Datenherkunft auswählen.");
             } else {
@@ -379,6 +380,50 @@ public class BaseDataPanel extends javax.swing.JPanel {
         }
         return;
     }
+
+    /**
+     * init display data from wizard data
+     */
+    private void initFromWizardData() {
+        System.out.println("BaseDataPanel. initFromWizardData");
+
+        
+        String shapeFileName = (String) wizardData.get(KEY_SHAPE_FILENAME);
+        if (!StringUtils.isNullOrEmpty(shapeFileName)) {
+            r_shapeFileName = shapeFileName;
+            jFileName.setText(r_shapeFileName);
+        }
+        String dataOrigin = (String) wizardData.get(KEY_DATA_ORIGIN);
+        if (!StringUtils.isNullOrEmpty(dataOrigin)) {
+            r_dataOrigin = dataOrigin;
+            if (dataOrigin.equals(VALUE_PRIM))
+                jRadioButtonPrim.setSelected(true);
+            if (dataOrigin.equals(VALUE_SEK))
+                jRadioButtonSeku.setSelected(true);
+        }
+        String regionalizationData = (String) wizardData.get(KEY_REGIONALIZATION);
+        if (!StringUtils.isNullOrEmpty(regionalizationData)) {
+            r_region = regionalizationData;
+            jRegCombo.setSelectedItem(regionalizationData);
+        }
+
+        String interval = (String) wizardData.get(KEY_INTERVAL);
+        if (!StringUtils.isNullOrEmpty(interval)) {
+            r_interval = interval;
+            jIntervall.setText(interval);
+        }
+        String aggregation = (String) wizardData.get(KEY_AGGR);
+        if (!StringUtils.isNullOrEmpty(aggregation)) {
+            r_aggreg = aggregation;
+            if (aggregation.equals(VALUE_TAG))
+                jRadioButtonTag.setSelected(true);
+            if (aggregation.equals(VALUE_MON))
+                jRadioButtonMonat.setSelected(true);
+            if (aggregation.equals(VALUE_JAHR))
+                jRadioButtonJahr.setSelected(true);
+        }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;

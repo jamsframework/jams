@@ -8,6 +8,7 @@ package reg.wizard;
 import java.awt.Rectangle;
 import javax.swing.UIManager;
 import org.netbeans.api.wizard.WizardDisplayer;
+import org.netbeans.spi.wizard.Wizard;
 import reg.wizard.tlug.ExplorerWizard;
 
 /**
@@ -20,7 +21,8 @@ public class WizardMain {
         //Use native L&F
         UIManager.setLookAndFeel (UIManager.getSystemLookAndFeelClassName());
 
-        WizardDisplayer.showWizard (new ExplorerWizard().createWizard(),
+        Wizard explorerWizard = new ExplorerWizard().createWizard();
+        WizardDisplayer.showWizard (explorerWizard,
                 new Rectangle (20, 20, 800, 400));
         System.exit(0);
     }
