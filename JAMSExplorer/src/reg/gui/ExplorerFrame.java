@@ -58,9 +58,9 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.WindowConstants;
 import org.w3c.dom.Document;
 import reg.spreadsheet.STPConfigurator;
-//import reg.viewer.Viewer;
 
 /**
  *
@@ -89,7 +89,7 @@ public class ExplorerFrame extends JFrame {
 
     private PropertyDlg propertyDlg;
 
-    private WorkspaceDlg wsDlg = new WorkspaceDlg();
+    private WorkspaceDlg wsDlg;
 
     public ExplorerFrame(JAMSExplorer regionalizer) {
         this.explorer = regionalizer;
@@ -98,13 +98,17 @@ public class ExplorerFrame extends JFrame {
 
     private void init() {
 
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+        wsDlg = new WorkspaceDlg(this);
+
         createListener();
 
         exitAction = new AbstractAction("Close") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                exit();
+                explorer.exit();
             }
         };
 
@@ -213,7 +217,7 @@ public class ExplorerFrame extends JFrame {
         wsOpenButton.setToolTipText((String) openWSAction.getValue(Action.NAME));
         wsOpenButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelOpen.png")));
         toolBar.add(wsOpenButton);
-        
+
         JButton reloadWSButton = new JButton(reloadWSAction);
         reloadWSButton.setText("");
         reloadWSButton.setToolTipText((String) reloadWSAction.getValue(Action.NAME));
@@ -361,13 +365,6 @@ public class ExplorerFrame extends JFrame {
         }
     }
 
-    private void exit() {
-
-        this.setVisible(false);
-        this.dispose();
-        System.exit(0);
-    }
-
     private void launchModel() {
 
         JAMSWorkspace ws = explorer.getWorkspace();
@@ -393,10 +390,7 @@ public class ExplorerFrame extends JFrame {
 
             @Override
             public void windowClosing(WindowEvent e) {
-                if (JAMSExplorer.GEOWIND_ENABLE) {
-                    //Viewer.destroy();
-                }
-                exit();
+                explorer.exit();
             }
 
             @Override
