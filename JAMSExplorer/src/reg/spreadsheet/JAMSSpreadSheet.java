@@ -94,20 +94,13 @@ public class JAMSSpreadSheet extends JPanel {
     private boolean geoWindEnable = false;
     /* Messages */
     final String ERR_MSG_CTS = "No Time Series Loaded";
-    public static final DataFlavor FLAVOR = new DataFlavor(Object.class, "Object");
-
-    public static class TableData {
-
-        public double[][] values;
-        public String[] columns;
-        public String[] rows;
-    }
+    public static final DataFlavor FLAVOR = DataFlavor.stringFlavor;
 
     public class TableDataTransferable implements Transferable {
 
-        TableData myValue;
-
-        public TableDataTransferable(TableData value) {
+        //TableData myValue;
+        String myValue;
+        public TableDataTransferable(String value) {
             myValue = value;
         }
 
@@ -116,7 +109,7 @@ public class JAMSSpreadSheet extends JPanel {
         }
 
         public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return flavor == FLAVOR;
+            return flavor == FLAVOR;            
         }
 
         public Object getTransferData(DataFlavor flavor) throws
@@ -154,11 +147,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         @Override
         public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
-            if (myTable != comp) {
-                return false;
-            // eventuell DataFlavor noch prüfen
-            }
-            return true;
+            return false;
         }
 
         @Override
@@ -166,21 +155,24 @@ public class JAMSSpreadSheet extends JPanel {
             if (c == myTable) {
                 int rows[] = myTable.getSelectedRows();
                 int cols[] = myTable.getSelectedColumns();
-
-                TableModel model = myTable.getModel();
-                TableData data = new TableData();
-                double table[][] = new double[cols.length][rows.length];
-                for (int i = 0; i < cols.length; i++) {
-                    for (int j = 0; j < rows.length; j++) {
-                        //ok das funktioniert natürlich nicht, wenn hier nen string kommt. da müssen wir mal noch überlegen ;)
-                        table[i][j] = ((Double)model.getValueAt(rows[j], cols[i])).doubleValue();
+                TableModel model = myTable.getModel();    
+                
+                String t="";
+                for (int j = 0; j < rows.length; j++) {
+                    for (int i = 0; i < cols.length; i++) {                    
+                        try{
+                            if (i != cols.length-1)
+                                t += ((Double)model.getValueAt(rows[j], cols[i])).doubleValue() + "\t";
+                            else
+                                t += ((Double)model.getValueAt(rows[j], cols[i])).doubleValue();
+                        }catch(Throwable ta){
+                            t += "0.0";
+                        }
                     }
+                    if (j != rows.length-1)
+                        t+= "\n";
                 }
-                data.values = table;
-                data.columns = null;
-                data.rows = null;
-                // Hier ein entsprechendes Transferable benutzen
-                return new TableDataTransferable(data);
+                return new TableDataTransferable(t);
             } else {
                 return super.createTransferable(c);
             }
