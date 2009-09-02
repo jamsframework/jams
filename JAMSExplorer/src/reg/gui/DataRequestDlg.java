@@ -8,6 +8,7 @@ package reg.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -26,10 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.TransferHandler;
-import reg.gui.MCAT5Dialog.EfficiencyDataSet;
 import reg.gui.MCAT5Dialog.MonteCarloData;
-import reg.gui.MCAT5Dialog.ObservationDataSet;
-import reg.spreadsheet.JAMSSpreadSheet;
 
 /**
  *
@@ -63,7 +61,7 @@ public abstract class DataRequestDlg extends JDialog{
         @Override
         public boolean importData(JComponent comp, Transferable t) {
             try {
-                Object obj = t.getTransferData(JAMSSpreadSheet.FLAVOR);
+                /*Object obj = t.getTransferData(JAMSSpreadSheet.FLAVOR);
                 JAMSSpreadSheet.TableData value = (JAMSSpreadSheet.TableData) obj;
                 
                 if (this.request.request.type == OBSERVATED_TIMESERIE){
@@ -98,7 +96,7 @@ public abstract class DataRequestDlg extends JDialog{
                         request.info.setText(eff.toString());
                         request.setAccepted();
                     }
-                }        
+                }        */
                 return true;
             } catch (Exception e) {
             }
@@ -142,6 +140,7 @@ public abstract class DataRequestDlg extends JDialog{
             JPanel subrow = new JPanel();
             subrow.setLayout(new GridBagLayout());
             GridBagConstraints c = new GridBagConstraints();
+
             if (add)
                 sign.setIcon(icon_add);
             else
@@ -152,11 +151,9 @@ public abstract class DataRequestDlg extends JDialog{
             sign.setContentAreaFilled(false);
             sign.setFocusPainted(false);
             
-            del.setIcon(icon_del);
-            //sign.setBorderPainted(false);
+            del.setIcon(icon_del);           
             del.setMargin(new Insets(0,0,0,0));
-            //del.setContentAreaFilled(false);
-            //del.setFocusPainted(false);
+            
             
             if (add)
                 info.setBackground(new Color(255,255,64));
@@ -165,18 +162,23 @@ public abstract class DataRequestDlg extends JDialog{
             
             info.setLineWrap(true);
             info.setEnabled(false);
-            desc.setMinimumSize(new Dimension(300,75));
+            desc.setMinimumSize(new Dimension(300,70));
             desc.setEnabled(false);
             desc.setOpaque(false);
 
-            info.setMinimumSize(new Dimension(100,75));
+            info.setMinimumSize(new Dimension(100,50));
 
             c.gridx = 0;
             c.gridy = 0;
             c.gridwidth = 10;
             c.gridheight = 10;
             
-            subrow.add(desc,c);            
+            JPanel dummy1 = new JPanel();
+            dummy1.add(desc);
+            dummy1.setBorder(BorderFactory.createLineBorder(Color.black));
+            dummy1.setMinimumSize(new Dimension(100,80));
+           // dummy1.
+            subrow.add(dummy1,c);            
             
             c.gridx = 10;
             c.gridy = 0;
@@ -220,7 +222,7 @@ public abstract class DataRequestDlg extends JDialog{
             
             subrow.add(Box.createRigidArea(new Dimension(5,5)),c);
             subrow.setBorder(BorderFactory.createLineBorder(new Color(0,0,0)));
-            subrow.setMinimumSize(new Dimension(500,75));
+            subrow.setMinimumSize(new Dimension(500,50));
             
             row.setLayout(new BorderLayout());
             row.add(subrow,BorderLayout.NORTH);
@@ -254,25 +256,42 @@ public abstract class DataRequestDlg extends JDialog{
     MonteCarloData mcData = new MonteCarloData();
     
     DataRequestDlg(DataRequest[]req){
+        this.setTitle("Data Request");
+        
         JPanel dialogPanel = new JPanel(new BorderLayout());
+        
+        JTextArea descarea = new JTextArea("This Dialog list all data required to perfom the requested operation. Load the data you want to use into" +
+                " the JAMS Explorer and Drag and Drop it to this dialog!\n\n");        
+        descarea.setEnabled(false);
+        descarea.setBackground(dialogPanel.getBackground());
+        descarea.setForeground(new Color(0,0,0));
+        descarea.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        descarea.setLineWrap(true);
+        descarea.setWrapStyleWord(true);
+        descarea.setMinimumSize(new Dimension(500, 100));
+        
+        dialogPanel.add(descarea,BorderLayout.NORTH);
+        dialogPanel.add(Box.createRigidArea(new Dimension(50,50)),BorderLayout.WEST);
+        dialogPanel.add(Box.createRigidArea(new Dimension(50,50)),BorderLayout.EAST);
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel,BoxLayout.PAGE_AXIS));
-        mainPanel.setMinimumSize(new Dimension(350, Math.min(req.length*75+250,500)));
-                        
+        mainPanel.setMinimumSize(new Dimension(500, Math.min(req.length*50+150,500)));
+        mainPanel.setBorder(BorderFactory.createEtchedBorder());
+        
         for (int i=0;i<req.length;i++){
             dataRows.add(new DialogRow(req[i],mcData,false));
             mainPanel.add(dataRows.get(dataRows.size()-1).getComponent());
         }
         JScrollPane scroller = new JScrollPane(mainPanel);        
-        scroller.setMinimumSize(new Dimension(350, Math.min(req.length*75+250,500)));        
-        dialogPanel.add(scroller,BorderLayout.NORTH);
+        scroller.setMinimumSize(new Dimension(500, Math.min(req.length*50+150,500)));        
+        dialogPanel.add(scroller,BorderLayout.CENTER);
         dialogPanel.add(new JButton("OK"){
             public void actionPerformed(ActionEvent e){                
                 dataCollectAction();
             }        
         },BorderLayout.SOUTH);
         this.add(dialogPanel);
-        this.setMinimumSize(new Dimension(350, Math.min(req.length*75+250,500)));        
+        this.setMinimumSize(new Dimension(500, Math.min(req.length*50+150,500)));        
         this.setResizable(false);
         this.invalidate();
         this.setVisible(true);
