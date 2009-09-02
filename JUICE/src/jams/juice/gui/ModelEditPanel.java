@@ -22,6 +22,7 @@
  */
 package jams.juice.gui;
 
+import jams.JAMSTools;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDirName;
 import jams.data.JAMSString;
@@ -39,10 +40,13 @@ import jams.gui.input.ValueChangeListener;
 import java.awt.GridBagConstraints;
 import javax.swing.BorderFactory;
 import jams.juice.JUICE;
+import jams.workspace.JAMSWorkspace;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
+import reg.JAMSExplorer;
 
 /**
  *
@@ -54,7 +58,7 @@ import javax.swing.JButton;
  */
 public class ModelEditPanel extends JPanel {
 
-    private static final int TEXTAREA_WIDTH = 450,  TEXTAREA_HEIGHT = 100,  TEXTFIELD_WIDTH = 35;
+    private static final int TEXTAREA_WIDTH = 450, TEXTAREA_HEIGHT = 100, TEXTFIELD_WIDTH = 35;
 
     private JPanel componentPanel;
 
@@ -62,7 +66,7 @@ public class ModelEditPanel extends JPanel {
 
     private ModelView view;
 
-    private InputComponent workspace,  author,  date,  helpBaseURL;
+    private InputComponent workspace, author, date, helpBaseURL;
 
     private JTextPane description;
 
@@ -111,7 +115,7 @@ public class ModelEditPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //new JAMSExplorer(new File(workspace.getValue()));
+                openExplorer();
             }
         };
         explorerButton = new JButton(explorerAction);
@@ -201,6 +205,24 @@ public class ModelEditPanel extends JPanel {
         helpBaseURL.setValue(view.getHelpBaseUrl());
         description.setText(view.getDescription());
         workspace.setValue(view.getWorkspace());
+    }
+
+    private void openExplorer() {
+        JAMSExplorer explorer = new JAMSExplorer();
+
+        try {
+            String[] libs = JAMSTools.toArray(JUICE.getJamsProperties().getProperty("libs", ""), ";");
+            JAMSWorkspace ws = new JAMSWorkspace(new File(view.getWorkspace()), explorer.getRuntime(), true);
+            ws.setLibs(libs);
+
+            explorer.open(ws);
+
+        } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
+            explorer.getRuntime().sendHalt(iwe.getMessage());
+        }
+
+        explorer.getExplorerFrame().setVisible(true);
+
     }
 
     private void updateAuthor() {

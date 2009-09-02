@@ -28,6 +28,7 @@ import jams.gui.input.TextInput;
 import jams.workspace.JAMSWorkspace;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -55,9 +56,9 @@ public class WorkspaceDlg extends JDialog {
 
     private InputComponent persistenceInput;
 
-    public WorkspaceDlg() {
+    public WorkspaceDlg(Frame parent) {
 
-        super();
+        super(parent);
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 

@@ -47,7 +47,7 @@ public class JAMSExplorer {
 
     public static final String APP_VERSION = "V0.2";
 
-    public static boolean GEOWIND_ENABLE = false;
+    public static boolean GEOWIND_ENABLE = true;
 
     public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 750;
 
@@ -60,10 +60,6 @@ public class JAMSExplorer {
     private DisplayManager displayManager;
 
     private JAMSWorkspace workspace;
-
-    public JAMSExplorer() {
-        this(null);
-    }
 
     public JAMSExplorer(JAMSRuntime runtime) {
 
@@ -107,6 +103,15 @@ public class JAMSExplorer {
         explorerFrame.update();
     }
 
+    public void exit() {
+
+        if (JAMSExplorer.GEOWIND_ENABLE) {
+            Viewer.destroy();
+        }
+        explorerFrame.setVisible(false);
+        explorerFrame.dispose();
+    }
+
     public static void main(String[] args) {
            
         try {
@@ -118,7 +123,7 @@ public class JAMSExplorer {
         }
 
         // create the JAMSExplorer object
-        JAMSExplorer explorer = new JAMSExplorer();
+        JAMSExplorer explorer = new JAMSExplorer(null);
 
         if (args.length > 0) {
 
