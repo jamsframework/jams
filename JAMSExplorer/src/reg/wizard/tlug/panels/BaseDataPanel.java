@@ -385,8 +385,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
      * init display data from wizard data
      */
     private void initFromWizardData() {
-        System.out.println("BaseDataPanel. initFromWizardData");
-
         
         String shapeFileName = (String) wizardData.get(KEY_SHAPE_FILENAME);
         if (!StringUtils.isNullOrEmpty(shapeFileName)) {
