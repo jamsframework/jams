@@ -41,6 +41,7 @@ import jams.*;
 import jams.io.ParameterProcessor;
 import jams.io.XMLIO;
 import jams.io.XMLProcessor;
+import java.awt.Frame;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -77,13 +78,13 @@ public class JAMSFrame extends JAMSLauncher {
 
     private Action editPrefsAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  loadModelParamAction,  saveModelParamAction,  rtManagerAction,  infoLogAction,  errorLogAction,  onlineAction;
 
-    public JAMSFrame(JAMSProperties properties) {
-        super(properties);
+    public JAMSFrame(Frame parent, JAMSProperties properties) {
+        super(parent, properties);
     }
 
-    public JAMSFrame(JAMSProperties properties, String modelFilename, String cmdLineArgs) {
+    public JAMSFrame(Frame parent, JAMSProperties properties, String modelFilename, String cmdLineArgs) {
         //super(properties, modelFilename, cmdLineArgs);
-        this(properties);
+        this(parent, properties);
         loadModelDefinition(modelFilename, JAMSTools.toArray(cmdLineArgs, ";"));
     }
 

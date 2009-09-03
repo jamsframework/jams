@@ -274,7 +274,7 @@ public class ModelView {
      */
     public void runModelFromLauncher() {
         launcherPanel.updateProperties();
-        JAMSLauncher launcher = new JAMSLauncher(JUICE.getJamsProperties(), getModelDoc());
+        JAMSLauncher launcher = new JAMSLauncher(JUICE.getJuiceFrame(), JUICE.getJamsProperties(), getModelDoc());
         launcher.setVisible(true);
     }
 

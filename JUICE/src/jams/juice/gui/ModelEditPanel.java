@@ -46,7 +46,6 @@ import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
-import reg.JAMSExplorer;
 
 /**
  *
@@ -119,6 +118,7 @@ public class ModelEditPanel extends JPanel {
             }
         };
         explorerButton = new JButton(explorerAction);
+        explorerAction.setEnabled(false);
 
         GUIHelper.addGBComponent(componentPanel, mainLayout, workspace.getComponent(), 2, 0, 1, 1, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);
@@ -208,20 +208,20 @@ public class ModelEditPanel extends JPanel {
     }
 
     private void openExplorer() {
-        JAMSExplorer explorer = new JAMSExplorer();
-
-        try {
-            String[] libs = JAMSTools.toArray(JUICE.getJamsProperties().getProperty("libs", ""), ";");
-            JAMSWorkspace ws = new JAMSWorkspace(new File(view.getWorkspace()), explorer.getRuntime(), true);
-            ws.setLibs(libs);
-
-            explorer.open(ws);
-
-        } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
-            explorer.getRuntime().sendHalt(iwe.getMessage());
-        }
-
-        explorer.getExplorerFrame().setVisible(true);
+//        JAMSExplorer explorer = new JAMSExplorer(null);
+//
+//        try {
+//            String[] libs = JAMSTools.toArray(JUICE.getJamsProperties().getProperty("libs", ""), ";");
+//            JAMSWorkspace ws = new JAMSWorkspace(new File(view.getWorkspace()), explorer.getRuntime(), true);
+//            ws.setLibs(libs);
+//
+//            explorer.open(ws);
+//
+//        } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
+//            explorer.getRuntime().sendHalt(iwe.getMessage());
+//        }
+//
+//        explorer.getExplorerFrame().setVisible(true);
 
     }
 

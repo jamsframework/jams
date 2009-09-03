@@ -56,6 +56,7 @@ import jams.gui.input.InputComponent;
 import jams.io.ParameterProcessor;
 import jams.runtime.StandardRuntime;
 import jams.runtime.JAMSRuntime;
+import java.awt.Frame;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -100,13 +101,13 @@ public class JAMSLauncher extends JFrame {
 
     private JToolBar toolBar;
 
-    public JAMSLauncher(JAMSProperties properties) {
+    public JAMSLauncher(Frame parent, JAMSProperties properties) {
         this.properties = properties;
         init();
     }
 
-    public JAMSLauncher(JAMSProperties properties, Document modelDocument) {
-        this(properties);
+    public JAMSLauncher(Frame parent, JAMSProperties properties, Document modelDocument) {
+        this(parent, properties);
         loadModelDefinition(modelDocument);
     }
 
@@ -495,6 +496,7 @@ public class JAMSLauncher extends JFrame {
 
     protected void exit() {
         setVisible(false);
+        dispose();
     }
 
     protected void runModel() {

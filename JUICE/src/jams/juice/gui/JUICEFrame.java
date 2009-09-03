@@ -789,6 +789,7 @@ public class JUICEFrame extends JFrame {
                 JAMS.handle(ioe);
             }
 
+            this.setVisible(false);
             this.dispose();
             //System.exit(0);
         }

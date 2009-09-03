@@ -226,12 +226,12 @@ public class JAMS {
 
     protected void startGUI() {
         JAMSSplash splash = new JAMSSplash();
-        splash.show(new JAMSFrame(properties), splashTimeout);
+        splash.show(new JAMSFrame(null, properties), splashTimeout);
     }
 
     protected void startGUI(String modelFileName, String cmdLineParameterValues) {
         JAMSSplash splash = new JAMSSplash();
-        splash.show(new JAMSFrame(properties, modelFileName, cmdLineParameterValues), splashTimeout);
+        splash.show(new JAMSFrame(null, properties, modelFileName, cmdLineParameterValues), splashTimeout);
     }
 
     /**

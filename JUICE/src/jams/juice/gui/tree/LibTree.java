@@ -51,9 +51,12 @@ import jams.juice.JUICE;
 public class LibTree extends JAMSTree {
 
     private static final String ROOT_NAME = JUICE.resources.getString("Model_Components");
+
     private JPopupMenu popup;
+
     private String[] libsArray;
-    private int contextCount,  componentCount;
+
+    private int contextCount, componentCount;
 
     public LibTree() {
         super();
@@ -167,7 +170,6 @@ public class LibTree extends JAMSTree {
 
     private JAMSNode createJARNode(String jar, ClassLoader loader) {
 
-        //System.out.println("loading " + jar);
         JAMSNode jarRoot = new JAMSNode(jar, JAMSNode.ARCHIVE_NODE);
         ArrayList<Class> components = new ArrayList<Class>();
         JAMSNode compNode;
@@ -183,6 +185,9 @@ public class LibTree extends JAMSTree {
             Enumeration jarentries = jfile.entries();
             while (jarentries.hasMoreElements()) {
                 String entry = jarentries.nextElement().toString();
+//                if (entry.startsWith("org/geotools")) {
+//                    continue;
+//                }
                 if ((entry.endsWith(".class"))) {
                     String classString = entry.substring(0, entry.length() - 6);
                     classString = classString.replaceAll("/", ".");
@@ -198,16 +203,18 @@ public class LibTree extends JAMSTree {
 
                     } catch (ClassNotFoundException cnfe) {
 
-                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Error_while_loading_archive_") + jarName + JUICE.resources.getString("_(class_") + classString +
+                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Error_while_loading_archive_") + jarName + "\"" + JUICE.resources.getString("_(class_") + classString +
                                 JUICE.resources.getString("_could_not_be_found)!"), JUICE.resources.getString("Error_while_loading_archive"));
 
                     } catch (NoClassDefFoundError ncdfe) {
-                        //GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), "Missing class while loading component " + clazzFullName +
-                        //        " in archive " + jarName + "!", "Error while loading archive");
-                    } catch (Exception e) {
+                        // loading classes can cause a lot of NoClassDefFoundError
+                        // exceptions, they must be caught !
+                    } catch (Throwable e) {
                         // other exception like e.g. java.lang.SecurityException
                         // won't be handled since they hopefully don't occur
                         // while loading JARs containing JAMS components
+                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Error_while_loading_archive_") + jarName + "\"" + JUICE.resources.getString("_(class_") + classString +
+                                JUICE.resources.getString("_could_not_be_loaded)!") + "\n" + e.getMessage(), JUICE.resources.getString("Error_while_loading_archive"));
                     }
                 }
             }
