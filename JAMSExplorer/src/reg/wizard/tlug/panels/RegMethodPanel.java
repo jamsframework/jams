@@ -12,6 +12,10 @@
 package reg.wizard.tlug.panels;
 
 import java.util.Map;
+import javax.swing.JComboBox;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import org.h2.util.StringUtils;
 import org.netbeans.spi.wizard.WizardController;
 
 /**
@@ -24,12 +28,29 @@ public class RegMethodPanel extends javax.swing.JPanel {
     private final WizardController controller;
     private final Map wizardData;
 
+    public static final String KEY_REG = "regVerfahren";
+    public static final String KEY_STATION = "numberStations";
+    public static final String KEY_GEWICHTUNG = "gewichtung";
+    public static final String KEY_UMKREIS = "umkreis";
+    public static final String KEY_SCHWELLENWERT = "threshold";
+
+    // all field contents
+    private String r_regVerfahren = "IDW";  //default
+    private String r_numberstations = null;
+    private String r_gewichtung = null;
+    private String r_umkreis = null;
+    private int r_schwellenwert = 0;
+
     /** Creates new form CatHairLengthPanel */
     public RegMethodPanel(WizardController controller, Map wizardData) {
         initComponents();
 
         this.controller = controller;
         this.wizardData = wizardData;
+
+        initFromWizardData();
+        checkProblems();
+
     }
 
     /** This method is called from within the constructor to
@@ -41,20 +62,230 @@ public class RegMethodPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jComboRegVerfahren = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jNumberStations = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jUmkreis = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jGewichtung = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jSliderSchwellenwert = new javax.swing.JSlider();
+
+        jComboRegVerfahren.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "IDW" }));
+        jComboRegVerfahren.setToolTipText("IDW .. Inverse distance weighting");
+        jComboRegVerfahren.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboRegVerfahrenItemStateChanged(evt);
+            }
+        });
+
+        jLabel1.setText("Regionalisierungsverfahren");
+
+        jLabel2.setText("Anzahl Stationen");
+
+        jNumberStations.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jNumberStationsFocusLost(evt);
+            }
+        });
+
+        jLabel3.setText("Umkreis");
+
+        jUmkreis.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jUmkreisFocusLost(evt);
+            }
+        });
+
+        jLabel4.setText("Gewichtung");
+
+        jGewichtung.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jGewichtungFocusLost(evt);
+            }
+        });
+
+        jLabel5.setText("Schwellenwert r2");
+
+        jSliderSchwellenwert.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jSliderSchwellenwertMouseReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jComboRegVerfahren, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5))
+                        .addGap(66, 66, 66)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jGewichtung)
+                                .addComponent(jUmkreis)
+                                .addComponent(jNumberStations, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)))))
+                .addContainerGap(212, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jComboRegVerfahren, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jNumberStations, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jUmkreis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jGewichtung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jComboRegVerfahrenItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboRegVerfahrenItemStateChanged
+        // TODO add your handling code here:
+        r_regVerfahren = (String) ((JComboBox) evt.getSource()).getSelectedItem();
+        checkProblems();
+
+    }//GEN-LAST:event_jComboRegVerfahrenItemStateChanged
+
+    private void jSliderSchwellenwertMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSliderSchwellenwertMouseReleased
+        // TODO add your handling code here:
+        r_schwellenwert = ((JSlider) evt.getSource()).getValue();
+        checkProblems();
+
+    }//GEN-LAST:event_jSliderSchwellenwertMouseReleased
+
+    private void jNumberStationsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jNumberStationsFocusLost
+        // TODO add your handling code here:
+        r_numberstations = ((JTextField) evt.getSource()).getText();
+        checkProblems();
+
+
+    }//GEN-LAST:event_jNumberStationsFocusLost
+
+    private void jUmkreisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jUmkreisFocusLost
+        // TODO add your handling code here:
+        r_umkreis = ((JTextField) evt.getSource()).getText();
+        checkProblems();
+
+    }//GEN-LAST:event_jUmkreisFocusLost
+
+    private void jGewichtungFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jGewichtungFocusLost
+        // TODO add your handling code here:
+        r_gewichtung = ((JTextField) evt.getSource()).getText();
+        checkProblems();
+
+    }//GEN-LAST:event_jGewichtungFocusLost
+
+    private void checkProblems() {
+        if (StringUtils.isNullOrEmpty(r_regVerfahren)) {
+            controller.setProblem("Bitte Regionalisierungsverfahren auswählen.");
+        } else {
+            wizardData.put(KEY_REG, r_regVerfahren);
+            if (StringUtils.isNullOrEmpty(r_numberstations)) {
+                controller.setProblem("Bitte Anzahl der Stationen eingeben.");
+            } else {
+                wizardData.put(KEY_STATION, r_numberstations);
+                if (StringUtils.isNullOrEmpty(r_umkreis)) {
+                    controller.setProblem("Bitte Umkreis festlegen.");
+                } else {
+                    wizardData.put(KEY_UMKREIS, r_umkreis);
+                    if (StringUtils.isNullOrEmpty(r_gewichtung)) {
+                        controller.setProblem("Bitte Gewichtung auswählen.");
+                    } else {
+                        wizardData.put(KEY_GEWICHTUNG, r_gewichtung);
+                        if (r_schwellenwert == 0) {
+                            controller.setProblem("Bitte Schwellenwert definieren.");
+                        } else {
+                            wizardData.put(KEY_SCHWELLENWERT, r_schwellenwert);
+                            controller.setProblem(null);
+                        }
+                    }
+                }
+            }
+        }
+        return;
+    }
+
+    /**
+     * init display data from wizard data
+     */
+    private void initFromWizardData() {
+
+        String regVerfahren = (String) wizardData.get(KEY_REG);
+        if (!StringUtils.isNullOrEmpty(regVerfahren)) {
+            r_regVerfahren = regVerfahren;
+            jComboRegVerfahren.setSelectedItem(r_regVerfahren);
+        }
+
+        String station = (String) wizardData.get(KEY_STATION);
+        if (!StringUtils.isNullOrEmpty(station)) {
+            r_numberstations = station;
+            jNumberStations.setText(r_numberstations);
+        }
+
+        String umkreis = (String) wizardData.get(KEY_UMKREIS);
+        if (!StringUtils.isNullOrEmpty(umkreis)) {
+            r_umkreis = umkreis;
+            jUmkreis.setText(r_umkreis);
+        }
+
+        String gewichtung = (String) wizardData.get(KEY_GEWICHTUNG);
+        if (!StringUtils.isNullOrEmpty(gewichtung)) {
+            r_gewichtung = gewichtung;
+            jGewichtung.setText(r_gewichtung);
+        }
+
+        if (wizardData.containsKey(KEY_SCHWELLENWERT)) {
+            int schwellenwert = (Integer) wizardData.get(KEY_SCHWELLENWERT);
+            if (schwellenwert>0) {
+                r_schwellenwert = schwellenwert;
+                jSliderSchwellenwert.setValue(r_schwellenwert);
+            }
+        }
+
+
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox jComboRegVerfahren;
+    private javax.swing.JTextField jGewichtung;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JTextField jNumberStations;
+    private javax.swing.JSlider jSliderSchwellenwert;
+    private javax.swing.JTextField jUmkreis;
     // End of variables declaration//GEN-END:variables
 
 }
