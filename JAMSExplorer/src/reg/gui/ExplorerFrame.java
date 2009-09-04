@@ -43,6 +43,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -407,8 +409,14 @@ public class ExplorerFrame extends JFrame {
         try {
 
             Wizard explorerWizard = new ExplorerWizard().createWizard();
-            WizardDisplayer.showWizard (explorerWizard,
+            Map wizardSettings = (Map) WizardDisplayer.showWizard (explorerWizard,
                     new Rectangle (20, 20, 800, 400));
+            Set keys = wizardSettings.keySet();
+            System.out.println("settings coming from wizard:");
+            for (Object key : keys) {
+                System.out.println(key + "=" + wizardSettings.get(key));
+            }
+
 
         } catch (Exception ex) {
             explorer.getRuntime().handle(ex);
