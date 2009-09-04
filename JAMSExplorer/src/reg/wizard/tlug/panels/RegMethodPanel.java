@@ -72,6 +72,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
         jGewichtung = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jSliderSchwellenwert = new javax.swing.JSlider();
+        jSchwellenwert = new javax.swing.JTextField();
 
         jComboRegVerfahren.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "IDW" }));
         jComboRegVerfahren.setToolTipText("IDW .. Inverse distance weighting");
@@ -115,6 +116,17 @@ public class RegMethodPanel extends javax.swing.JPanel {
             }
         });
 
+        jSchwellenwert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jSchwellenwertActionPerformed(evt);
+            }
+        });
+        jSchwellenwert.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jSchwellenwertFocusLost(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -134,12 +146,16 @@ public class RegMethodPanel extends javax.swing.JPanel {
                             .addComponent(jLabel5))
                         .addGap(66, 66, 66)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                                .addComponent(jSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(jGewichtung)
                                 .addComponent(jUmkreis)
                                 .addComponent(jNumberStations, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)))))
-                .addContainerGap(212, Short.MAX_VALUE))
+                .addContainerGap(162, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -163,7 +179,9 @@ public class RegMethodPanel extends javax.swing.JPanel {
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
-                    .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(70, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -178,6 +196,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
     private void jSliderSchwellenwertMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSliderSchwellenwertMouseReleased
         // TODO add your handling code here:
         r_schwellenwert = ((JSlider) evt.getSource()).getValue();
+        jSchwellenwert.setText(Integer.toString(r_schwellenwert));
         checkProblems();
 
     }//GEN-LAST:event_jSliderSchwellenwertMouseReleased
@@ -203,6 +222,25 @@ public class RegMethodPanel extends javax.swing.JPanel {
         checkProblems();
 
     }//GEN-LAST:event_jGewichtungFocusLost
+
+    private void jSchwellenwertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSchwellenwertActionPerformed
+        // TODO add your handling code here:
+}//GEN-LAST:event_jSchwellenwertActionPerformed
+
+    private void jSchwellenwertFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jSchwellenwertFocusLost
+        // TODO add your handling code here:
+        String s = ((JTextField) evt.getSource()).getText();
+        try {
+            int sInt = Integer.parseInt(s);
+            if (sInt> 100)
+                throw new NumberFormatException("Wert ist zu groß.");
+            r_schwellenwert = sInt;
+            jSliderSchwellenwert.setValue(sInt);
+            checkProblems();
+        } catch (NumberFormatException e) {
+            controller.setProblem("Bitte Wert zwischen 1 .. 100 eingeben.");
+        }
+    }//GEN-LAST:event_jSchwellenwertFocusLost
 
     private void checkProblems() {
         if (StringUtils.isNullOrEmpty(r_regVerfahren)) {
@@ -268,6 +306,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
             if (schwellenwert>0) {
                 r_schwellenwert = schwellenwert;
                 jSliderSchwellenwert.setValue(r_schwellenwert);
+                jSchwellenwert.setText(Integer.toString(r_schwellenwert));
             }
         }
 
@@ -284,6 +323,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JTextField jNumberStations;
+    private javax.swing.JTextField jSchwellenwert;
     private javax.swing.JSlider jSliderSchwellenwert;
     private javax.swing.JTextField jUmkreis;
     // End of variables declaration//GEN-END:variables
