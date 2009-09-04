@@ -246,33 +246,27 @@ public class BaseDataPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jRegComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRegComboActionPerformed
-        // TODO add your handling code here:
         r_region = (String) jRegCombo.getSelectedItem();
         checkProblems();
 
 }//GEN-LAST:event_jRegComboActionPerformed
 
     private void jRadioButtonMonatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMonatActionPerformed
-        // TODO add your handling code here:
         aggregationSelected(evt);
 }//GEN-LAST:event_jRadioButtonMonatActionPerformed
 
     private void jFileNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileNameActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_jFileNameActionPerformed
 
     private void jRadioButtonPrimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonPrimActionPerformed
-        // TODO add your handling code here:
         primSekSelected(evt);
     }//GEN-LAST:event_jRadioButtonPrimActionPerformed
 
     private void jRadioButtonSekuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonSekuActionPerformed
-        // TODO add your handling code here:
         primSekSelected(evt);
     }//GEN-LAST:event_jRadioButtonSekuActionPerformed
 
     private void jFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileButtonActionPerformed
-        // TODO add your handling code here:
         String fileName = null;
         int returnVal = -1;
         JFileChooser chooser = new JFileChooser();
@@ -293,32 +287,26 @@ public class BaseDataPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jFileButtonActionPerformed
 
     private void jRadioButtonJahrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonJahrActionPerformed
-        // TODO add your handling code here:
         aggregationSelected(evt);
     }//GEN-LAST:event_jRadioButtonJahrActionPerformed
 
     private void jRadioButtonTagActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonTagActionPerformed
-        // TODO add your handling code here:
         aggregationSelected(evt);
     }//GEN-LAST:event_jRadioButtonTagActionPerformed
 
     private void jIntervallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jIntervallActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_jIntervallActionPerformed
 
     private void jIntervallInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_jIntervallInputMethodTextChanged
-        // TODO add your handling code here:
     }//GEN-LAST:event_jIntervallInputMethodTextChanged
 
     private void jIntervallFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jIntervallFocusLost
-        // TODO add your handling code here:
         r_interval = jIntervall.getText();
         checkProblems();
 
     }//GEN-LAST:event_jIntervallFocusLost
 
     private void jFileNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jFileNameFocusLost
-        // TODO add your handling code here:
         r_shapeFileName = jFileName.getText();
         checkProblems();
     }//GEN-LAST:event_jFileNameFocusLost

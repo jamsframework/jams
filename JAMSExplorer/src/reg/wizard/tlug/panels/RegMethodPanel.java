@@ -187,14 +187,12 @@ public class RegMethodPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboRegVerfahrenItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboRegVerfahrenItemStateChanged
-        // TODO add your handling code here:
         r_regVerfahren = (String) ((JComboBox) evt.getSource()).getSelectedItem();
         checkProblems();
 
     }//GEN-LAST:event_jComboRegVerfahrenItemStateChanged
 
     private void jSliderSchwellenwertMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSliderSchwellenwertMouseReleased
-        // TODO add your handling code here:
         r_schwellenwert = ((JSlider) evt.getSource()).getValue();
         jSchwellenwert.setText(Integer.toString(r_schwellenwert));
         checkProblems();
@@ -202,7 +200,6 @@ public class RegMethodPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jSliderSchwellenwertMouseReleased
 
     private void jNumberStationsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jNumberStationsFocusLost
-        // TODO add your handling code here:
         r_numberstations = ((JTextField) evt.getSource()).getText();
         checkProblems();
 
@@ -210,25 +207,21 @@ public class RegMethodPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jNumberStationsFocusLost
 
     private void jUmkreisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jUmkreisFocusLost
-        // TODO add your handling code here:
         r_umkreis = ((JTextField) evt.getSource()).getText();
         checkProblems();
 
     }//GEN-LAST:event_jUmkreisFocusLost
 
     private void jGewichtungFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jGewichtungFocusLost
-        // TODO add your handling code here:
         r_gewichtung = ((JTextField) evt.getSource()).getText();
         checkProblems();
 
     }//GEN-LAST:event_jGewichtungFocusLost
 
     private void jSchwellenwertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSchwellenwertActionPerformed
-        // TODO add your handling code here:
 }//GEN-LAST:event_jSchwellenwertActionPerformed
 
     private void jSchwellenwertFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jSchwellenwertFocusLost
-        // TODO add your handling code here:
         String s = ((JTextField) evt.getSource()).getText();
         try {
             int sInt = Integer.parseInt(s);

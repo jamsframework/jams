@@ -81,7 +81,6 @@ public class AddCompsPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jConfigFileFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jConfigFileFocusLost
-        // TODO add your handling code here:
 
 //        String fileName = jConfigFile.getText();
 //        if (fileName != null && !fileName.endsWith(JAMSFileFilter.PROPERTY_EXTENSION)) {

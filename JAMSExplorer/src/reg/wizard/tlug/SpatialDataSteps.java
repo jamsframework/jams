@@ -45,10 +45,7 @@ public class SpatialDataSteps  extends WizardPanelProvider {
 
     protected Object finish (Map settings) throws WizardException {
 
-        Set keys = settings.keySet();
-        for (Object key : keys) {
-            System.out.println(key + "-->>" + settings.get(key));
-        }
+        System.out.println("SpatialDataSteps.finish");
 
         String propertyFileName = (String) settings.get(DataDecisionPanel.KEY_CONFIG_FILENAME);
         if (!StringUtils.isNullOrEmpty(propertyFileName)) {
@@ -61,7 +58,7 @@ public class SpatialDataSteps  extends WizardPanelProvider {
                 System.out.println("error at storing properties: " + e.getMessage());
             }
         }
-        return null;
+        return settings;
     }
 
 

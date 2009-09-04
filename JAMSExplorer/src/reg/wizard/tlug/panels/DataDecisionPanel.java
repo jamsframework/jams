@@ -126,17 +126,14 @@ public class DataDecisionPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void spatialButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spatialButtonActionPerformed
-        // TODO add your handling code here:
         speciesSelected(evt);
     }//GEN-LAST:event_spatialButtonActionPerformed
 
     private void stationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stationButtonActionPerformed
-        // TODO add your handling code here:
         speciesSelected(evt);
     }//GEN-LAST:event_stationButtonActionPerformed
 
     private void jLoadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLoadButtonActionPerformed
-        // TODO add your handling code here:
         String fileName = null;
         int returnVal = -1;
         JFileChooser chooser = new JFileChooser();
