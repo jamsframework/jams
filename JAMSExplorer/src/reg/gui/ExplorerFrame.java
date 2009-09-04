@@ -36,6 +36,7 @@ import jams.workspace.JAMSWorkspace;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -59,8 +60,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
+import org.netbeans.api.wizard.WizardDisplayer;
+import org.netbeans.spi.wizard.Wizard;
 import org.w3c.dom.Document;
 import reg.spreadsheet.STPConfigurator;
+import reg.wizard.tlug.ExplorerWizard;
 
 /**
  *
@@ -77,7 +81,9 @@ public class ExplorerFrame extends JFrame {
     private WorkerDlg openWSDlg;
     private MCAT5Dialog sensitivityDlg;
 
-    private Action openWSAction, openSTPAction, exitAction, editWSAction, sensitivityAnalysisAction, launchModelAction, editPrefsAction, reloadWSAction;
+    private Action openWSAction, openSTPAction, exitAction, editWSAction, 
+                   sensitivityAnalysisAction, launchModelAction, editPrefsAction,
+                   reloadWSAction, launchWizardAction;
 
     private JLabel statusLabel;
 
@@ -143,6 +149,15 @@ public class ExplorerFrame extends JFrame {
                 launchModel();
             }
         };
+
+        launchWizardAction = new AbstractAction("Start new Regionalization...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                launchWizard();
+            }
+        };
+
 
         editPrefsAction = new AbstractAction("Edit Preferences...") {
 
@@ -241,6 +256,12 @@ public class ExplorerFrame extends JFrame {
         launchModelButton.setToolTipText((String) launchModelAction.getValue(Action.NAME));
         launchModelButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         toolBar.add(launchModelButton);
+
+        JButton launchWizardButton = new JButton(launchWizardAction);
+        launchWizardButton.setText("");
+        launchWizardButton.setToolTipText((String) launchWizardAction.getValue(Action.NAME));
+        launchWizardButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
+        toolBar.add(launchWizardButton);
 
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
@@ -347,6 +368,7 @@ public class ExplorerFrame extends JFrame {
         if (workspace == null) {
             editWSAction.setEnabled(false);
             launchModelAction.setEnabled(false);
+            launchWizardAction.setEnabled(false);
             reloadWSAction.setEnabled(false);
         } else {
             jfc.setSelectedFile(workspace.getDirectory());
@@ -354,6 +376,7 @@ public class ExplorerFrame extends JFrame {
             updateMainPanel(new JPanel());
             editWSAction.setEnabled(true);
             reloadWSAction.setEnabled(true);
+            launchWizardAction.setEnabled(true);
 
             // check if the default model is existing
             File modelFile = new File(workspace.getDirectory(), workspace.getModelFilename());
@@ -373,6 +396,21 @@ public class ExplorerFrame extends JFrame {
             JAMSLauncher launcher = new JAMSLauncher(explorer.getProperties(), modelDoc);
             launcher.setVisible(true);
         } catch (FileNotFoundException ex) {
+            explorer.getRuntime().handle(ex);
+        }
+    }
+
+    private void launchWizard() {
+
+        JAMSWorkspace ws = explorer.getWorkspace();
+
+        try {
+
+            Wizard explorerWizard = new ExplorerWizard().createWizard();
+            WizardDisplayer.showWizard (explorerWizard,
+                    new Rectangle (20, 20, 800, 400));
+
+        } catch (Exception ex) {
             explorer.getRuntime().handle(ex);
         }
     }
