@@ -21,9 +21,11 @@ public class WizardMain {
         //Use native L&F
         UIManager.setLookAndFeel (UIManager.getSystemLookAndFeelClassName());
 
-        Wizard explorerWizard = new ExplorerWizard().createWizard();
-        WizardDisplayer.showWizard (explorerWizard,
+        ExplorerWizard explorerWizard = new ExplorerWizard();
+        Wizard wizard = explorerWizard.createWizard();
+        Object result = WizardDisplayer.showWizard (wizard,
                 new Rectangle (20, 20, 800, 400));
+        System.out.println("Result of wizard:"+ result);
         System.exit(0);
     }
 
