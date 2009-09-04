@@ -69,7 +69,8 @@ public class JAMSProperties extends Observable {
      * @param properties A java.util.Properties object containing the properties
      */
     public JAMSProperties(Properties properties) {
-        this.properties = properties;
+        if (properties != null )
+            this.properties = properties;
     }
 
     /**

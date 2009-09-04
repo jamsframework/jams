@@ -32,11 +32,13 @@ import javax.swing.filechooser.FileFilter;
  * @author S. Kralisch
  */
 public class JAMSFileFilter {
-    
+
+    public static final String PROPERTY_EXTENSION = ".jap";
+
     private static FileFilter propertyFilter = new FileFilter() {
         @Override
         public boolean accept(File f) {
-            return f.isDirectory() || f.getName().toLowerCase().endsWith(".jap");
+            return f.isDirectory() || f.getName().toLowerCase().endsWith(PROPERTY_EXTENSION);
         }
         @Override
         public String getDescription() {

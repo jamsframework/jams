@@ -31,6 +31,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -244,4 +247,5 @@ public class JAMSTools {
         Object data = m.invoke(component);
         return data;
     }
+
 }
