@@ -27,6 +27,7 @@ import java.io.File;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import reg.JAMSExplorer;
+import reg.dsproc.DataStoreProcessor;
 import reg.spreadsheet.JAMSSpreadSheet;
 
 /**
@@ -48,12 +49,28 @@ public class OutputDSPanel extends JPanel {
         this.spreadsheet.setID(file.getName());
         this.setName(file.getName());
 
+        DSPanel tsp = null;
         // create the controller panel
-        TimeSpaceDSPanel tsp = new TimeSpaceDSPanel();
+        switch(DataStoreProcessor.getDataStoreType(file)){
+            case DataStoreProcessor.UnsupportedDataStore: 
+                System.out.println("unsupported datastore"); break;
+            
+            case DataStoreProcessor.EnsembleTimeSeriesDataStore:
+                tsp = new EnsembleTimeSeriesPanel();
+                break;
+                
+            case DataStoreProcessor.TimeSpaceDataStore:                
+                tsp = new TimeSpaceDSPanel();
+                break;
+                
+            default:
+                System.out.println("unsupported datastore"); break;    
+        }
+        
         tsp.setParent(regionalizer.getExplorerFrame());
         tsp.setOutputSpreadSheet(this.spreadsheet);
-        tsp.createTsProc(file);
-
+        tsp.createProc(file);
+                
         this.add(new JScrollPane(tsp), BorderLayout.NORTH);
         this.add(this.spreadsheet.getPanel(), BorderLayout.CENTER);
     }

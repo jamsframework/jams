@@ -42,7 +42,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
 
     private static final String TABLE_NAME_MONTHAVG = "MONTHAVG",  TABLE_NAME_YEARAVG = "YEARAVG",  TABLE_NAME_SPATSUM = "SPATSUM";
     
-    private String ensembleID,  timeID;
+    private String ensembleID;
 
     private String ensembleFilter = null;
     
@@ -56,8 +56,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
         if (dsdb.isEnsembleTimeSeriesDatastore()) {
 
             ensembleID = contexts.get(1).getName() + "ID";
-            timeID = contexts.get(0).getName() + "ID";
-
+            
             try {
                 this.conn = dsdb.getH2Connection(true);
             } catch (SQLException ex) {

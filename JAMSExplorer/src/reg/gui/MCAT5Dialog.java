@@ -133,67 +133,62 @@ public class MCAT5Dialog extends JDialog {
             return observations;
         }
 
-        public boolean addSimulationDataSet(SimulationDataSet p) {            
+        public String addSimulationDataSet(SimulationDataSet p) {            
             if (this.numberOfRuns == -1)
                 this.numberOfRuns = p.set.length;
             
             if (p.set.length != this.numberOfRuns) {      
-                JOptionPane.showMessageDialog(null, "There are series with different length, simulated data set was not added");
-                return false;
+                return "There are series with different length, simulated data set was not added";
             }
             p.parent = this;
             simulations.add(p);
-            return true;
+            return null;
         }
 
         public Vector<SimulationDataSet> getSimulationDataSet() {
             return simulations;
         }
 
-        public boolean addSimulationTimeSeriesDataSet(SimulationTimeSeriesDataSet p) {
+        public String addSimulationTimeSeriesDataSet(SimulationTimeSeriesDataSet p) {
             p.timeLength = p.set.length;
             if (this.numberOfRuns == -1)
                 if (p.set.length!=0)
                     this.numberOfRuns = p.set[0].set.length;
             for (int i = 0; i < ts_simulations.size(); i++) {
                 if (ts_simulations.get(i).timeLength != p.timeLength) {
-                    JOptionPane.showMessageDialog(null, "There are timeseries with different length, simulation time series were not added");
-                    return false;
+                    return "There are timeseries with different length, simulation time series were not added";
                 }
             }
             for (int i = 0; i < observations.size(); i++) {
                 if (observations.get(i).timeLength != p.timeLength) {
-                    JOptionPane.showMessageDialog(null, "There are timeseries with different length, simulation time series were not added");
-                    return false;
+                    return "There are timeseries with different length, simulation time series were not added";
                 }
             }            
             for (int i = 0; i < p.timeLength; i++) {
                 if (p.set[i].set.length != numberOfRuns) {                  
-                    JOptionPane.showMessageDialog(null, "There are dataseries with different length, time series were not added");
-                    return false;
+                    return "There are timeseries with different length, simulation time series were not added";
                 }
                 p.set[i].parent = this;
             }
             p.parent = this;
             ts_simulations.add(p);
-            return true;
+            return null;
         }
 
         public Vector<SimulationTimeSeriesDataSet> getSimulationTimeSeriesDataSet() {
             return ts_simulations;
         }
 
-        public boolean addParameterSet(ParameterSet p) {
+        public String addParameterSet(ParameterSet p) {
             if (this.numberOfRuns == -1)
                 this.numberOfRuns = p.set.length;
             
             if (p.set.length != numberOfRuns) {
-                JOptionPane.showMessageDialog(null, "Number of parameter sets does not fit number of monto carlo runs");
-                return false;
+                return "Number of parameter sets does not fit number of monto carlo runs";
             }
             p.parent = this;
             parameters.add(p);
-            return true;
+            return null;
         }
 
         public Vector<ParameterSet> getParameterSet() {
@@ -248,7 +243,7 @@ public class MCAT5Dialog extends JDialog {
             public void actionPerformed(ActionEvent evt) {
                 DataRequestDlg.DataRequest req[] = new DataRequestDlg.DataRequest[2];
                 req[0] = new DataRequestDlg.DataRequest(DataRequestDlg.ENSEMBLE_EFFICIENCY,"test",true); 
-                req[1] = new DataRequestDlg.DataRequest(DataRequestDlg.ENSEMBLE_VARIABLE,"test2",true); 
+                req[1] = new DataRequestDlg.DataRequest(DataRequestDlg.ENSEMBLE_PARAMETER,"test2",true); 
                 
                 new DataRequestDlg(req){
                     public void dataCollectAction(){

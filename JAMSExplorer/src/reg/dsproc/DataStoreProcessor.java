@@ -69,6 +69,12 @@ public class DataStoreProcessor {
 
     private boolean cancelCreateIndex = false;
 
+    public static final int UnsupportedDataStore = 0;
+    public static final int TimeSpaceDataStore = 1;
+    public static final int EnsembleTimeSeriesDataStore = 2;
+    public static final int SimpleSerieDataStore = 3;
+    
+    
     public DataStoreProcessor(File dsFile) {
         this.dsFile = dsFile;
 
@@ -82,6 +88,25 @@ public class DataStoreProcessor {
 
     }
 
+    public static int getDataStoreType(File file) {
+        DataStoreProcessor dsdb = new DataStoreProcessor(file);
+
+        try{
+            //if (!dsdb.existsH2DB()) {
+                if (dsdb.isTimeSpaceDatastore())
+                    return TimeSpaceDataStore;
+                if (dsdb.isSimpleSerieDatastore())
+                    return SimpleSerieDataStore;
+                if (dsdb.isEnsembleTimeSeriesDatastore())
+                    return EnsembleTimeSeriesDataStore;
+                return UnsupportedDataStore;
+            //}
+        }catch(Exception e){
+            
+        }
+        return UnsupportedDataStore;
+    }
+    
     public synchronized void createDB() throws IOException, SQLException, ClassNotFoundException {
         Class.forName("org.h2.Driver");
         clearDB();
@@ -484,6 +509,24 @@ public class DataStoreProcessor {
             return false;
         }
 
+        this.contexts = cntxt;
+        return true;
+    }
+    
+    /**
+     * Check if this is a datastore that contains no further inner contexts
+     * @return True or false
+     */
+    public synchronized boolean isSimpleSerieDatastore() {
+        ArrayList<DataStoreProcessor.ContextData> cntxt = getContexts();
+        if (cntxt.size() != 1) {
+            return false;
+        }
+        //any more restrictions?
+        /*if (!cntxt.get(0).getType().equals("jams.components.optimizer")) {
+            return false;
+        }*/
+        
         this.contexts = cntxt;
         return true;
     }

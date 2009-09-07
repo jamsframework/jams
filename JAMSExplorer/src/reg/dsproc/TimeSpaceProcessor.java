@@ -436,7 +436,7 @@ public class TimeSpaceProcessor extends Processor{
 
         // check if the values have already been calculated, return null if not
         if (!isMonthlyMeanExisiting()) {
-            return result;
+            this.calcMonthlyMean();
         }
 
         String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
