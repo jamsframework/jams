@@ -395,7 +395,7 @@ public class ExplorerFrame extends JFrame {
         JAMSWorkspace ws = explorer.getWorkspace();
         try {
             Document modelDoc = XMLIO.getDocument(new File(ws.getDirectory(), ws.getModelFilename()).getPath());
-            JAMSLauncher launcher = new JAMSLauncher(explorer.getProperties(), modelDoc);
+            JAMSLauncher launcher = new JAMSLauncher(this, explorer.getProperties(), modelDoc);
             launcher.setVisible(true);
         } catch (FileNotFoundException ex) {
             explorer.getRuntime().handle(ex);
