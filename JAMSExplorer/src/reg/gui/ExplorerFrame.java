@@ -411,10 +411,12 @@ public class ExplorerFrame extends JFrame {
             Wizard explorerWizard = new ExplorerWizard().createWizard();
             Map wizardSettings = (Map) WizardDisplayer.showWizard (explorerWizard,
                     new Rectangle (20, 20, 800, 400));
-            Set keys = wizardSettings.keySet();
-            System.out.println("settings coming from wizard:");
-            for (Object key : keys) {
-                System.out.println(key + "=" + wizardSettings.get(key));
+            if (wizardSettings != null) {
+                Set keys = wizardSettings.keySet();
+                System.out.println("settings coming from wizard:");
+                for (Object key : keys) {
+                    System.out.println(key + "=" + wizardSettings.get(key));
+                }
             }
 
 
