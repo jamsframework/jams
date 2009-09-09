@@ -328,7 +328,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
         Object val = ((JRadioButton) evt.getSource()).getClientProperty(KEY_DATA_ORIGIN);
         r_dataOrigin = (String) val;
         checkProblems();
-
     }
 
     private void aggregationSelected(java.awt.event.ActionEvent evt) {

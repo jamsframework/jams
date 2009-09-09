@@ -39,7 +39,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
     private String r_numberstations = null;
     private String r_gewichtung = null;
     private String r_umkreis = null;
-    private int r_schwellenwert = 0;
+    private String r_schwellenwert = null;
 
     /** Creates new form CatHairLengthPanel */
     public RegMethodPanel(WizardController controller, Map wizardData) {
@@ -193,8 +193,10 @@ public class RegMethodPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jComboRegVerfahrenItemStateChanged
 
     private void jSliderSchwellenwertMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSliderSchwellenwertMouseReleased
-        r_schwellenwert = ((JSlider) evt.getSource()).getValue();
-        jSchwellenwert.setText(Integer.toString(r_schwellenwert));
+        int schwellenwert = ((JSlider) evt.getSource()).getValue();
+        r_schwellenwert = Integer.toString(schwellenwert);
+        // System.out.println("jSliderSchwellenwertMouseReleased. r_schwellenwert:" + r_schwellenwert);
+        jSchwellenwert.setText(r_schwellenwert);
         checkProblems();
 
     }//GEN-LAST:event_jSliderSchwellenwertMouseReleased
@@ -227,7 +229,8 @@ public class RegMethodPanel extends javax.swing.JPanel {
             int sInt = Integer.parseInt(s);
             if (sInt> 100)
                 throw new NumberFormatException("Wert ist zu groß.");
-            r_schwellenwert = sInt;
+            r_schwellenwert = s;
+            // System.out.println("jSchwellenwertFocusLost. r_schwellenwert:" + r_schwellenwert);
             jSliderSchwellenwert.setValue(sInt);
             checkProblems();
         } catch (NumberFormatException e) {
@@ -252,7 +255,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
                         controller.setProblem("Bitte Gewichtung auswählen.");
                     } else {
                         wizardData.put(KEY_GEWICHTUNG, r_gewichtung);
-                        if (r_schwellenwert == 0) {
+                        if (r_schwellenwert == null || Integer.parseInt(r_schwellenwert) == 0) {
                             controller.setProblem("Bitte Schwellenwert definieren.");
                         } else {
                             wizardData.put(KEY_SCHWELLENWERT, r_schwellenwert);
@@ -295,14 +298,16 @@ public class RegMethodPanel extends javax.swing.JPanel {
         }
 
         if (wizardData.containsKey(KEY_SCHWELLENWERT)) {
-            int schwellenwert = (Integer) wizardData.get(KEY_SCHWELLENWERT);
-            if (schwellenwert>0) {
-                r_schwellenwert = schwellenwert;
-                jSliderSchwellenwert.setValue(r_schwellenwert);
-                jSchwellenwert.setText(Integer.toString(r_schwellenwert));
+            String sSchwellenwert = (String) wizardData.get(KEY_SCHWELLENWERT);
+            if (!StringUtils.isNullOrEmpty(sSchwellenwert)) {
+                int schwellenwert = Integer.parseInt(sSchwellenwert);
+                if (schwellenwert >= 0) {
+                    r_schwellenwert = sSchwellenwert;
+                    jSliderSchwellenwert.setValue(schwellenwert);
+                    jSchwellenwert.setText(sSchwellenwert);
+                }
             }
         }
-
 
     }
 

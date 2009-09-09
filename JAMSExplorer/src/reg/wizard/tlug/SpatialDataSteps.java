@@ -4,30 +4,23 @@
 
 package reg.wizard.tlug;
 
-import java.io.FileOutputStream;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 import javax.swing.JComponent;
-import org.h2.util.StringUtils;
 import org.netbeans.spi.wizard.WizardController;
-import org.netbeans.spi.wizard.WizardException;
-import org.netbeans.spi.wizard.WizardPanelProvider;
 import reg.wizard.tlug.panels.AddCompsPanel;
 import reg.wizard.tlug.panels.BaseDataPanel;
-import reg.wizard.tlug.panels.DataDecisionPanel;
 import reg.wizard.tlug.panels.RegMethodPanel;
 
 /**
  *
  * @author hbusch
  */
-public class SpatialDataSteps  extends WizardPanelProvider {
+public class SpatialDataSteps  extends DataStepPanelProvider {
 
     public SpatialDataSteps() {
         super (
-            new String[] { "baseData", "regMethod", "addComps" },
-            new String[] { "Datenbasis bestimmen", "Regionalisierungsverfahren auswählen", "Zusatzberechnungen" });
+            new String[] { "baseData", "regMethod", "finishIt"},
+            new String[] { "Datenbasis bestimmen", "Regionalisierungsverfahren auswählen", "Konfiguration speichern" });
     }
 
     protected JComponent createPanel(WizardController controller, String id, Map settings) {
@@ -42,24 +35,5 @@ public class SpatialDataSteps  extends WizardPanelProvider {
                 throw new IllegalArgumentException (id);
         }
     }
-
-    protected Object finish (Map settings) throws WizardException {
-
-        System.out.println("SpatialDataSteps.finish");
-
-        String propertyFileName = (String) settings.get(DataDecisionPanel.KEY_CONFIG_FILENAME);
-        if (!StringUtils.isNullOrEmpty(propertyFileName)) {
-            Properties properties = new Properties();
-            properties.putAll(settings);
-            try {
-                System.out.println("storing properties to  " + propertyFileName);
-                properties.store(new FileOutputStream(propertyFileName), "wizard configuration");
-            } catch (Exception e) {
-                System.out.println("error at storing properties: " + e.getMessage());
-            }
-        }
-        return settings;
-    }
-
 
 }

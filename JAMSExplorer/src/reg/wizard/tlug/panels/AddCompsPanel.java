@@ -82,11 +82,11 @@ public class AddCompsPanel extends javax.swing.JPanel {
 
     private void jConfigFileFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jConfigFileFocusLost
 
-//        String fileName = jConfigFile.getText();
-//        if (fileName != null && !fileName.endsWith(JAMSFileFilter.PROPERTY_EXTENSION)) {
-//            fileName = fileName + JAMSFileFilter.PROPERTY_EXTENSION;
-//        }
-//        wizardData.put(DataDecisionPanel.KEY_CONFIG_FILENAME, fileName);
+        String fileName = jConfigFile.getText();
+        if (fileName != null && !fileName.endsWith(JAMSFileFilter.PROPERTY_EXTENSION)) {
+            fileName = fileName + JAMSFileFilter.PROPERTY_EXTENSION;
+        }
+        wizardData.put(DataDecisionPanel.KEY_CONFIG_FILENAME, fileName);
 
     }//GEN-LAST:event_jConfigFileFocusLost
 
