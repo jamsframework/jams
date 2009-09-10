@@ -29,7 +29,6 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.BorderFactory;
-import javax.swing.InputVerifier;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -204,35 +203,41 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         timeUnit.setEnabled(intervalEdit);
     }
 
+    @Override
     public String getValue() {
-        JAMSTimeInterval ti = new JAMSTimeInterval();
-        JAMSCalendar start = JAMSDataFactory.createCalendar();
-        start.set(
-                Integer.parseInt(syear.getText()),
-                Integer.parseInt(smonth.getText()) - 1,
-                Integer.parseInt(sday.getText()),
-                Integer.parseInt(shour.getText()),
-                Integer.parseInt(sminute.getText()),
-                0);
-        ti.setStart(start);
-        JAMSCalendar end = JAMSDataFactory.createCalendar();
-        end.set(
-                Integer.parseInt(eyear.getText()),
-                Integer.parseInt(emonth.getText()) - 1,
-                Integer.parseInt(eday.getText()),
-                Integer.parseInt(ehour.getText()),
-                Integer.parseInt(eminute.getText()),
-                0);
-        ti.setEnd(end);
-        ti.setTimeUnit(fieldMap.get(timeUnit.getSelectedIndex()));
-        ti.setTimeUnitCount(Integer.parseInt(tuCount.getText()));
-        if (!ti.getStart().before(ti.getEnd())) {
+        try {
+            JAMSTimeInterval ti = new JAMSTimeInterval();
+            JAMSCalendar start = JAMSDataFactory.createCalendar();
+            start.set(
+                    Integer.parseInt(syear.getText()),
+                    Integer.parseInt(smonth.getText()) - 1,
+                    Integer.parseInt(sday.getText()),
+                    Integer.parseInt(shour.getText()),
+                    Integer.parseInt(sminute.getText()),
+                    0);
+            ti.setStart(start);
+            JAMSCalendar end = JAMSDataFactory.createCalendar();
+            end.set(
+                    Integer.parseInt(eyear.getText()),
+                    Integer.parseInt(emonth.getText()) - 1,
+                    Integer.parseInt(eday.getText()),
+                    Integer.parseInt(ehour.getText()),
+                    Integer.parseInt(eminute.getText()),
+                    0);
+            ti.setEnd(end);
+            ti.setTimeUnit(fieldMap.get(timeUnit.getSelectedIndex()));
+            ti.setTimeUnitCount(Integer.parseInt(tuCount.getText()));
+            if (!ti.getStart().before(ti.getEnd())) {
+                return null;
+            } else {
+                return ti.toString();
+            }
+        } catch (NumberFormatException nfe) {
             return null;
-        } else {
-            return ti.toString();
         }
     }
 
+    @Override
     public void setValue(String value) {
         //1996-11-01 7:30 2000-10-31 7:30 6 1
 
@@ -259,39 +264,16 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         tuCount.setText(Integer.toString(ti.getTimeUnitCount()));
     }
 
+    @Override
     public JComponent getComponent() {
         return this;
     }
 
-    class NumericIntervalVerifier extends InputVerifier {
-
-        double lower, upper;
-
-        public NumericIntervalVerifier(double lower, double upper) {
-            this.lower = lower;
-            this.upper = upper;
-        }
-
-        public boolean verify(JComponent input) {
-
-            boolean result = false;
-            double value;
-
-            try {
-                value = Double.parseDouble(((JTextField) input).getText());
-                if ((value >= lower) && (value <= upper)) {
-                    result = true;
-                }
-            } catch (NumberFormatException nfe) {
-            }
-
-            return (result);
-        }
-    }
-
+    @Override
     public void setRange(double lower, double upper) {
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         syear.setEnabled(enabled);
         smonth.setEnabled(enabled);
@@ -307,6 +289,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         tuCount.setEnabled(enabled && intervalEdit);
     }
 
+    @Override
     public boolean verify() {
 
         try {
@@ -320,13 +303,19 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         }
     }
 
+    @Override
     public int getErrorCode() {
-        return INPUT_OK;
+        if (verify())
+            return INPUT_OK;
+        else
+            return INPUT_WRONG_FORMAT;
     }
 
+    @Override
     public void setLength(int length) {
     }
 
+    @Override
     public void addValueChangeListener(ValueChangeListener l) {
         this.l = l;
         this.syear.getDocument().addDocumentListener(new DocumentListener() {
@@ -526,6 +515,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
     }
     private Color oldColor;
 
+    @Override
     public void setMarked(boolean marked) {
         if (marked == true) {
             oldColor = getBackground();

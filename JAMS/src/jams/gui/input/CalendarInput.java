@@ -157,31 +157,6 @@ public class CalendarInput extends JPanel implements InputComponent {
         return this;
     }
 
-    class NumericIntervalVerifier extends InputVerifier {
-
-        double lower, upper;
-
-        public NumericIntervalVerifier(double lower, double upper) {
-            this.lower = lower;
-            this.upper = upper;
-        }
-
-        public boolean verify(JComponent input) {
-
-            boolean result = false;
-            double value;
-
-            try {
-                value = Double.parseDouble(((JTextField) input).getText());
-                if ((value >= lower) && (value <= upper)) {
-                    result = true;
-                }
-            } catch (NumberFormatException nfe) {
-            }
-
-            return (result);
-        }
-    }
 
     public void setEnabled(boolean enabled) {
         syear.setEnabled(enabled);
