@@ -410,7 +410,7 @@ public class ExplorerFrame extends JFrame {
 
             Wizard explorerWizard = new ExplorerWizard().createWizard();
             Map wizardSettings = (Map) WizardDisplayer.showWizard (explorerWizard,
-                    new Rectangle (20, 20, 800, 400));
+                new Rectangle (20, 20, 850, 530));
             if (wizardSettings != null) {
                 Set keys = wizardSettings.keySet();
                 System.out.println("settings coming from wizard:");
