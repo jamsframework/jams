@@ -81,8 +81,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Start:_")), 0, 1, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("End:_")), 0, 2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit:_")), 0, 3, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit_Count:_")), 0, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit_Count:_")), 0, 3, 1, 1, 0, 0);
 
         syear = new JTextField();
         syear.setInputVerifier(new NumericIntervalVerifier(1900, 2100));
@@ -171,6 +170,12 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         fieldMap.put(4, JAMSCalendar.MINUTE);
         fieldMap.put(5, JAMSCalendar.SECOND);
 
+        tuCount = new JTextField();
+        tuCount.setInputVerifier(new NumericIntervalVerifier(0, 1000));
+        tuCount.setPreferredSize(new Dimension(10, 10));
+        GUIHelper.addGBComponent(this, gbl, tuCount, 1, 3, 1, 1, 0, 0);
+
+
         timeUnit = new JComboBox();
         timeUnit.addItem(JAMS.resources.getString("YEAR"));
         timeUnit.addItem(JAMS.resources.getString("MONTH"));
@@ -179,12 +184,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         timeUnit.addItem(JAMS.resources.getString("MINUTE"));
         timeUnit.addItem(JAMS.resources.getString("SECOND"));
         timeUnit.setPreferredSize(new Dimension(40, 20));
-        GUIHelper.addGBComponent(this, gbl, timeUnit, 1, 3, 1, 1, 0, 0);
-
-        tuCount = new JTextField();
-        tuCount.setInputVerifier(new NumericIntervalVerifier(0, 1000));
-        tuCount.setPreferredSize(new Dimension(40, 20));
-        GUIHelper.addGBComponent(this, gbl, tuCount, 1, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, timeUnit, 2, 3, 1, 1, 1, 0);
 
         sday.setBorder(BorderFactory.createEtchedBorder());
         smonth.setBorder(BorderFactory.createEtchedBorder());
@@ -305,10 +305,11 @@ public class TimeintervalInput extends JPanel implements InputComponent {
 
     @Override
     public int getErrorCode() {
-        if (verify())
+        if (verify()) {
             return INPUT_OK;
-        else
+        } else {
             return INPUT_WRONG_FORMAT;
+        }
     }
 
     @Override
