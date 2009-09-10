@@ -24,7 +24,7 @@ public class WizardMain {
         ExplorerWizard explorerWizard = new ExplorerWizard();
         Wizard wizard = explorerWizard.createWizard();
         Object result = WizardDisplayer.showWizard (wizard,
-                new Rectangle (20, 20, 800, 400));
+                new Rectangle (20, 20, 850, 530));
         System.out.println("Result of wizard:"+ result);
         System.exit(0);
     }

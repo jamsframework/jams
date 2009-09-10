@@ -7,9 +7,7 @@ package reg.wizard.tlug;
 import java.util.Map;
 import javax.swing.JComponent;
 import org.netbeans.spi.wizard.WizardController;
-import reg.wizard.tlug.panels.AddCompsPanel;
-import reg.wizard.tlug.panels.BaseDataPanel;
-import reg.wizard.tlug.panels.RegMethodPanel;
+import reg.wizard.tlug.panels.*;
 
 /**
  *
