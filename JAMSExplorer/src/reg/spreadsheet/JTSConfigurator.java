@@ -253,7 +253,7 @@ public class JTSConfigurator extends JFrame {
             output_type = "false";
         }
         
-        if(output_type.compareTo("false") == 0){
+        
         
             this.sheet = sheet;
             this.table = sheet.table;
@@ -267,24 +267,36 @@ public class JTSConfigurator extends JFrame {
             for(int k=0;k<graphCount;k++){
                 headers[k] = table.getColumnName(columns[k]);
             }
-        }else{  
-//                System.out.println("OUTPUT FILE");
-//                this.templateFile = templateFile;
-                StringTokenizer name_tokenizer = new StringTokenizer(templateFile.getPath(),".");
-                String filename = "";
-                filename = name_tokenizer.nextToken()+".dat";
-
-                File ttpdatfile = new File(filename);
-//                System.out.println("ttpdatFile:"+ttpdatfile.getPath());
-                output_ttp = true;
-                
-//                arrayVector; = new Vector<double[]>();
-//                timeVector; = new Vector<JAMSCalendar>();
-               
-                 loadOutputTTPData(ttpdatfile);
-                
-            
-        }
+//        if(output_type.compareTo("true") == 0){
+////                System.out.println("OUTPUT FILE");
+////                this.templateFile = templateFile;
+//                    String fileID = templateFile.getName();
+//                    File templateDir = templateFile.getParentFile();
+//                    StringTokenizer name_tokenizer = new StringTokenizer(fileID,".");
+//                    String filename = "";
+//                    if(name_tokenizer.hasMoreTokens()){
+//                        filename = name_tokenizer.nextToken()+SpreadsheetConstants.FILE_ENDING_TTP;
+//                    }else{
+//                        filename = fileID+SpreadsheetConstants.FILE_ENDING_DAT;
+//                    }
+//
+//                    File ttpdatfile = new File(templateDir, filename);
+//
+////                System.out.println("ttpdatFile:"+ttpdatfile.getPath());
+//                output_ttp = true;
+//
+//
+////            this.templateFile = templateFile;
+//
+//
+//
+////                arrayVector; = new Vector<double[]>();
+////                timeVector; = new Vector<JAMSCalendar>();
+//
+//                 loadOutputTTPData(ttpdatfile);
+//
+//
+//        }
         
         setPreferredSize(new Dimension(1024, 768));
 
@@ -404,7 +416,7 @@ public class JTSConfigurator extends JFrame {
                 }
                 else{ 
                     loadOutputTemplate(templateFile);
-//                    System.out.println("load OUTPUT TEMPLATE");
+                    System.out.println("load OUTPUT TEMPLATE");
                 }
             } catch (Exception fnfe) {
 //                System.out.println("ERROR");
@@ -2013,7 +2025,7 @@ public class JTSConfigurator extends JFrame {
             in.close();
             headers = new String[file_columns];
             headers = headerList.toArray(headers);
-            headers[0] = "";
+//            headers[0] = "";
             graphCount = file_columns-1;
             this.rows_cnt = arrayVector.size();
             //in.close();
@@ -2023,9 +2035,7 @@ public class JTSConfigurator extends JFrame {
             
             
         }catch(FileNotFoundException fnfex){
-            final String ERROR_NODAT_MSG ="File not found: "+file.getName()+"! Or make sure" +
-                    " that .ttp files from output datasets are not named like input" +
-                    " data stores.";
+            final String ERROR_NODAT_MSG ="File not found: "+file.getName()+"!";
             GUIHelper.showErrorDlg(this, ERROR_NODAT_MSG, "DAT file not found!");
         }catch(Exception eee){
             eee.printStackTrace();

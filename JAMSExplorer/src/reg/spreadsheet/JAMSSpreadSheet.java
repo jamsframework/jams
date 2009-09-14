@@ -720,7 +720,7 @@ public class JAMSSpreadSheet extends JPanel {
         Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
 
         this.outputDSDir = outputDSDir;
-        System.out.println("loadMatrix() outputDSDir:"+outputDSDir.toString());
+        
 
         double[] rowBuffer, source;
         int pos = 0;
@@ -784,7 +784,7 @@ public class JAMSSpreadSheet extends JPanel {
         String[] headers;
 
 //        getTemplateChooser().setCurrentDirectory(inputDSDir);
-        File explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString() + "/explorer");
+        File explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME);
         getTemplateChooser().setCurrentDirectory(explorerDir);
         getEPSFileChooser().setCurrentDirectory(inputDSDir.getParentFile());
 
@@ -793,8 +793,8 @@ public class JAMSSpreadSheet extends JPanel {
 //        ttpFile = new File(inputDSDir, store.getID() + ".ttp");
 //        dtpFile = new File(inputDSDir, store.getID() + ".dtp");
 
-        ttpFile = new File(regionalizer.getWorkspace().getDirectory().toString() + "/explorer", store.getID() + ".ttp");
-        dtpFile = new File(regionalizer.getWorkspace().getDirectory().toString() + "/explorer", store.getID() + ".dtp");
+        ttpFile = new File(regionalizer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, store.getID() + SpreadsheetConstants.FILE_ENDING_TTP);
+//        dtpFile = new File(regionalizer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, store.getID() + ".dtp");
 
         Vector<double[]> arrayVector = new Vector<double[]>();
         Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
@@ -909,18 +909,38 @@ public class JAMSSpreadSheet extends JPanel {
         public void actionPerformed(ActionEvent e) {
 
             if (useTemplateButton.isSelected()) {
+
+                if(isOutputSheet()){
+
+                    String fileID = getID();
+                    StringTokenizer name_tokenizer = new StringTokenizer(fileID,".");
+                    String filename = "";
+                    if(name_tokenizer.hasMoreTokens()){
+                        filename = name_tokenizer.nextToken()+SpreadsheetConstants.FILE_ENDING_TTP;
+                    }else{
+                        filename = fileID+SpreadsheetConstants.FILE_ENDING_TTP;
+                    }
+
+                    ttpFile = new File(getOutputDSDir(), filename);
+                    
+                }else{
+                    ttpFile = new File(regionalizer.getWorkspace().getDirectory().toString()
+                            + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, store.getID()
+                            + SpreadsheetConstants.FILE_ENDING_TTP);
+                }
+
                 if (ttpFile != null) {
                     if (ttpFile.exists()) {
                         try {
                             openCTS(ttpFile);
                         } catch (Exception ee) {
-
+                            ee.printStackTrace();
                             try {
                                 JFileChooser chooser = getTemplateChooser();
                                 int returnVal = chooser.showOpenDialog(parent_frame);
                                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                                     ttpFile = chooser.getSelectedFile();
-                                    System.out.println("APPROVE_OPTION");
+                                    
                                     openCTS(ttpFile);
                                 }
 //                            openCTS(ttpFile);

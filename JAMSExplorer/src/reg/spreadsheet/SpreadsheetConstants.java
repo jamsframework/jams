@@ -30,6 +30,7 @@ public class SpreadsheetConstants {
 
     /* FILE NAMES */
     public final static String FILE_ENDING_TTP = ".ttp";
+    public final static String FILE_ENDING_DAT = ".dat";
     public final static String FILE_EXPLORER_DIR_NAME = "/explorer";
 
     /* STP TITLE */
