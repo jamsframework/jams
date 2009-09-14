@@ -30,6 +30,8 @@ import javax.swing.JPanel;
 import reg.dsproc.BufferedFileReader;
 import reg.gui.OutputDSPanel;
 import reg.gui.SimpleOutputPanel;
+import reg.spreadsheet.JAMSSpreadSheet;
+import reg.spreadsheet.SpreadsheetConstants;
 
 /**
  *
@@ -48,6 +50,20 @@ public class OutputPanelFactory {
 
         if (line.startsWith("@context")) {
             return new OutputDSPanel(regionalizer, file);
+        }
+
+        if (line.startsWith(SpreadsheetConstants.LOAD_HEADERS)) {
+
+
+        // create the spreadsheet
+            JAMSSpreadSheet spreadsheet = new JAMSSpreadSheet(regionalizer, true);
+            spreadsheet.init();
+            spreadsheet.load(file);
+            spreadsheet.setAsOutputSheet();
+            spreadsheet.setID(file.getName());
+
+            return spreadsheet.getPanel();
+//            setName(file.getName());
         }
 
         return new SimpleOutputPanel(file);

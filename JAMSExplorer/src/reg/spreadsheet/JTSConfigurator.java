@@ -137,7 +137,7 @@ public class JTSConfigurator extends JFrame {
     private JButton saveTempButton = new JButton("Save Template");
     private JButton loadTempButton = new JButton("Load Template");
     
-    private final String INFO_MSG_SAVETEMP = "Please choose a template filename:";
+//    private final String INFO_MSG_SAVETEMP = "Please choose a template filename:";
     
 
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
@@ -1477,16 +1477,18 @@ public class JTSConfigurator extends JFrame {
 //            if (returnVal == JFileChooser.APPROVE_OPTION) {
             boolean dont_save = true;
             while(dont_save){
-                inputString = GUIHelper.showInputDlg(this, INFO_MSG_SAVETEMP, storename);
+                inputString = GUIHelper.showInputDlg(this, SpreadsheetConstants.INFO_MSG_SAVETEMP, storename);
                 if(!(inputString == null)){
                     
                     inputString+= ".ttp";
 
                     if(sheet.isOutputSheet()){
-                        System.out.println("outputSheetAtSave="+sheet.isOutputSheet());
+//                        System.out.println("outputSheetAtSave="+sheet.isOutputSheet());
 //                        System.out.println("directory"+workspace.getOutputDataDirectory().toString());
 //                        File file = new File(workspace.getOutputDataDirectory(), inputString);
-                        File file = new File(workspace.getDirectory().toString()+"/output/current", inputString);
+//                        File file = new File(workspace.getDirectory().toString()+"/output/current", inputString);
+
+                        File file = new File(sheet.getOutputDSDir(), inputString);
 
                         if(!file.exists()){
                             filename = file.getName();
@@ -1507,7 +1509,7 @@ public class JTSConfigurator extends JFrame {
 
                         }
                     }else{
-                        File file = new File(workspace.getDirectory().toString()+"/explorer", inputString);
+                        File file = new File(workspace.getDirectory().toString()+SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, inputString);
                         if(!file.exists()){
                             filename = file.getName();
                             FileOutputStream fout = new FileOutputStream(file);

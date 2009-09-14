@@ -82,7 +82,7 @@ public class JAMSSpreadSheet extends JPanel {
 
     private JButton savebutton = new JButton("Save Data");
 
-    private JButton loadbutton = new JButton("Import Data");
+//    private JButton loadbutton = new JButton("Import Data");
 
     private JButton statButton = new JButton("Statistik");
 
@@ -111,6 +111,10 @@ public class JAMSSpreadSheet extends JPanel {
     private JTableHeader tableHeader;
 
     private TSDataStore store;
+    
+    private File outputDSDir;
+
+
 
     JTable table;
     /* ComboBox */
@@ -182,6 +186,7 @@ public class JAMSSpreadSheet extends JPanel {
                 }
             });
         }
+
 
         @Override
         public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
@@ -308,20 +313,61 @@ public class JAMSSpreadSheet extends JPanel {
     ActionListener saveAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
+            String filename = null;
+            try{
 
-            int[] selectedColumns = table.getSelectedColumns();
-            String[] write_headers = new String[selectedColumns.length];
+            boolean dont_save = true;
+            while(dont_save){
+                String inputString = GUIHelper.showInputDlg(parent_frame, SpreadsheetConstants.INFO_MSG_SAVEDAT, getName());
+                if(!(inputString == null)){
 
-            for (int i = 0; i < selectedColumns.length; i++) {
+                    inputString+= ".dat";
 
-                write_headers[i] = table.getColumnName(selectedColumns[i]);
+                    if(isOutputSheet()){
 
+                        File file = new File(getOutputDSDir(), inputString);
+
+                        if(!file.exists()){
+                            filename = file.getName();
+                            save(filename, getSaveHeaders());
+                            dont_save = false;
+                        }else{
+                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
+                            int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, "File already exists");
+                            if(result==0){ //overwrite
+                                filename = file.getName();
+                                save(filename, getSaveHeaders());
+                                dont_save = false;
+                            }
+
+                        }
+                    }else{
+
+                        File file = new File(regionalizer.getWorkspace().getDirectory().toString()+"/explorer", inputString);
+                        if(!file.exists()){
+                            filename = file.getName();
+                            save(filename, getSaveHeaders());
+                            dont_save = false;
+                        }else{
+                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
+                            int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, "File already exists");
+                            if(result==0){ //overwrite
+                                filename = file.getName();
+                                save(filename, getSaveHeaders());
+                                dont_save = false;
+                            }
+
+                        }
+                    }
+                    }else{
+                        dont_save = false; //CANCEL OPTION!
+                    }
+                }
+            }catch(Exception ex){
+             ex.printStackTrace();
             }
-            String[] headers_with_time = new String[write_headers.length + 1];
-            headers_with_time[0] = null;
-            java.lang.System.arraycopy(write_headers, 0, headers_with_time, 1, write_headers.length);
 
-            save("testfile.dat", write_headers);
+            
             //ACTION!
 //            try {
 //            JFileChooser chooser = new JFileChooser();
@@ -335,6 +381,34 @@ public class JAMSSpreadSheet extends JPanel {
 //        }
         }
     };
+
+    private String[] getSaveHeaders(){
+
+        int[] selectedColumns = table.getSelectedColumns();
+            int[] writeColumns;
+
+            if(timeRuns && selectedColumns[0] == 0){
+                writeColumns = new int[selectedColumns.length - 1];
+                for(int i =0; i<writeColumns.length; i++){
+                    writeColumns[i] = selectedColumns[i+1];
+                }
+            }else{
+                writeColumns = selectedColumns;
+            }
+
+            String[] write_headers = new String[writeColumns.length];
+
+            for (int i = 0; i < writeColumns.length; i++) {
+
+                write_headers[i] = table.getColumnName(writeColumns[i]);
+
+            }
+            String[] headers_with_time = new String[write_headers.length + 1];
+            headers_with_time[0] = "ID";
+            java.lang.System.arraycopy(write_headers, 0, headers_with_time, 1, write_headers.length);
+
+            return headers_with_time;
+    }
 
     ActionListener loadAction = new ActionListener() {
 
@@ -389,16 +463,17 @@ public class JAMSSpreadSheet extends JPanel {
             File file;
             if (isOutputSheet()) {
 //                    file = new File(regionalizer.getWorkspace().getOutputDataDirectory()+filename);
-                file = new File(regionalizer.getWorkspace().getDirectory().toString() + "/output/current/" + filename);
+//                file = new File(regionalizer.getWorkspace().getDirectory().toString() + "/output/current/" + filename);
+                    file = new File(this.getOutputDSDir().toString() +"/"+ filename);
             } else {
-                file = new File(regionalizer.getWorkspace().getDirectory().toString() + "/explorer/" + filename);
+                file = new File(regionalizer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME + filename);
             }
 
             //File file = chooser.getSelectedFile();
             //File file = chooser.getSelectedFile();
             FileWriter filewriter = new FileWriter(file);
 
-            filewriter.write("#headers" + "\r\n");
+            filewriter.write(SpreadsheetConstants.LOAD_HEADERS + "\r\n");
             String col_string = "";
             for (int j = 0; j < colcount; j++) {
                 col_string = columnNames[j];
@@ -418,7 +493,7 @@ public class JAMSSpreadSheet extends JPanel {
                 }
             }
 
-            filewriter.write("\r\n" + "#data");
+            filewriter.write("\r\n" + SpreadsheetConstants.LOAD_DATA);
             filewriter.write("\r\n");
 
             for (int k = 0; k < rowcount; k++) {
@@ -440,7 +515,7 @@ public class JAMSSpreadSheet extends JPanel {
                 }
                 filewriter.write("\r\n");
             }
-            filewriter.write("#end");
+            filewriter.write(SpreadsheetConstants.LOAD_END);
             filewriter.close();
 
         } catch (IOException ex) {
@@ -450,12 +525,15 @@ public class JAMSSpreadSheet extends JPanel {
 //        }
     }
 
-    private void load(File file) {
+    public void load(File file) {
 
         Vector<double[]> arrayVector = new Vector<double[]>();
         Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
         StringTokenizer st = new StringTokenizer("\t");
         String[] headers;
+
+        this.outputDSDir = file.getParentFile();
+        System.out.println("load() outputDSDir:"+outputDSDir.toString());
 
         ArrayList<String> headerList = new ArrayList<String>();
 //        ArrayList<Double> rowList = new ArrayList<Double>();
@@ -467,9 +545,9 @@ public class JAMSSpreadSheet extends JPanel {
 
         int file_columns = 0;
 
-        final String ST_DATA = "#data";
-        final String ST_HEADERS = "#headers";
-        final String ST_END = "#end";
+        final String ST_DATA = SpreadsheetConstants.LOAD_DATA;
+        final String ST_HEADERS = SpreadsheetConstants.LOAD_HEADERS;
+        final String ST_END = SpreadsheetConstants.LOAD_END;
 
         try {
             BufferedReader in = new BufferedReader(new FileReader(file));
@@ -487,7 +565,7 @@ public class JAMSSpreadSheet extends JPanel {
                 if (b_data) {
                     int i = 0;
                     JAMSCalendar timeval = JAMSDataFactory.createCalendar();
-                    rowBuffer = new double[file_columns];
+                    rowBuffer = new double[file_columns-1];
                     while (st.hasMoreTokens()) {
                         actual_string = st.nextToken();
                         if (actual_string.compareTo(ST_END) != 0) {
@@ -498,7 +576,7 @@ public class JAMSSpreadSheet extends JPanel {
                                     timeval.setValue(actual_string, "yyyy-MM-dd hh:mm");
 
                                 } catch (ParseException pe) {
-                                    GUIHelper.showErrorDlg(panel, " Time Series missing!", "Error");
+                                    GUIHelper.showErrorDlg(panel, SpreadsheetConstants.SPREADSHEET_ERR_TSMISSING, "Error");
                                     breakpoint = true;
                                     break;
                                     //pe.printStackTrace();
@@ -550,7 +628,7 @@ public class JAMSSpreadSheet extends JPanel {
             }
             headers = new String[file_columns];
             headers = headerList.toArray(headers);
-            headers[0] = "";
+//            headers[0] = "";
 //            columns = file_columns-1;
 //            rows = arrayVector.size();
 
@@ -626,6 +704,11 @@ public class JAMSSpreadSheet extends JPanel {
         }
     };
 
+    public File getOutputDSDir(){
+        //call only if spreadsheet is output spreadsheet!
+        return outputDSDir;
+    }
+
     public void loadMatrix(DataMatrix m, File outputDSDir, boolean timeSeries) {
 
 //        getTemplateChooser().setCurrentDirectory(outputDSDir);
@@ -635,6 +718,9 @@ public class JAMSSpreadSheet extends JPanel {
 
         Vector<double[]> arrayVector = new Vector<double[]>();
         Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
+
+        this.outputDSDir = outputDSDir;
+        System.out.println("loadMatrix() outputDSDir:"+outputDSDir.toString());
 
         double[] rowBuffer, source;
         int pos = 0;
@@ -1143,7 +1229,7 @@ public class JAMSSpreadSheet extends JPanel {
         GUIHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 8, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 10, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(controlpanel, gbl, loadbutton, 0, 11, 1, 1, 0, 0);
+//        GUIHelper.addGBComponent(controlpanel, gbl, loadbutton, 0, 11, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, statButton, 0, 12, 1, 1, 0, 0);
 
         if (JAMSExplorer.GEOWIND_ENABLE && this.geoWindEnable) {
@@ -1175,7 +1261,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         statButton.addActionListener(statisticAction);
         savebutton.addActionListener(saveAction);
-        loadbutton.addActionListener(loadAction);
+//        loadbutton.addActionListener(loadAction);
         plotButton.addActionListener(plotAction);
         dataplotButton.addActionListener(dataplotAction);
         stpButton.addActionListener(stpAction);
@@ -1217,7 +1303,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         int[] selectedColumns;
 
-        int col_START = 0; // is this nessesary?
+        int col_START = 1; // is this nessesary?
 
         int col_END = 0;
 
@@ -1235,36 +1321,46 @@ public class JAMSSpreadSheet extends JPanel {
                 button = -1;
             }
 
-            switch (button) {
+//            if(!(timeRuns && viewCol == 0)){
+            
+//                if(table.getSelectedColumn() == 0){
+//                    col_START = 1;
+//                    button = 3;
+//                }
+                
+                switch (button) {
 
-                case 1: //SHIFT DOWN
-                    col_END = table.getColumnModel().getColumn(viewCol).getModelIndex();
-                    //table.setColumnSelectionInterval(col_START,col_END);
-                    table.addColumnSelectionInterval(col_START, col_END);
-                    break;
+                    case 1: //SHIFT DOWN
+                        col_END = table.getColumnModel().getColumn(viewCol).getModelIndex();
+                        //table.setColumnSelectionInterval(col_START,col_END);
+                        table.addColumnSelectionInterval(col_START, col_END);
+                        break;
 
-//                        
-                case 2: //CTRL DOWN
-                    selectedColumns = table.getSelectedColumns();
-                    col_END = table.getColumnModel().getColumn(viewCol).getModelIndex();
-                    table.addColumnSelectionInterval(col_END, col_END);
+    //
+                    case 2: //CTRL DOWN
+                        selectedColumns = table.getSelectedColumns();
+                        col_END = table.getColumnModel().getColumn(viewCol).getModelIndex();
+                        table.addColumnSelectionInterval(col_END, col_END);
 
-                    for (int k = 0; k < selectedColumns.length; k++) {
+                        for (int k = 0; k < selectedColumns.length; k++) {
 
-                        if (col_END == selectedColumns[k]) {
-                            table.removeColumnSelectionInterval(col_END, col_END);
-                            break;
+                            if (col_END == selectedColumns[k]) {
+                                table.removeColumnSelectionInterval(col_END, col_END);
+                                break;
+                            }
+
                         }
+                        //table.setColumnSelectionInterval(col_START,col_END);
 
-                    }
-                    //table.setColumnSelectionInterval(col_START,col_END);
+                        break;
 
-                    break;
+                    case 3:
 
-                default:
-                    col_START = table.getColumnModel().getColumn(viewCol).getModelIndex();
-                    table.setColumnSelectionInterval(col_START, col_START);
-            }
+                    default:
+                        col_START = table.getColumnModel().getColumn(viewCol).getModelIndex();
+                        table.setColumnSelectionInterval(col_START, col_START);
+                }
+//            }
 
 
             table.setRowSelectionInterval(0, table.getRowCount() - 1);
@@ -1272,8 +1368,12 @@ public class JAMSSpreadSheet extends JPanel {
         }
 
         public void mouseEntered(MouseEvent e) {
+
             JTableHeader h = (JTableHeader) e.getSource();
-            h.setCursor(new Cursor(12)); //hand curser
+
+                // Show hand cursor
+                h.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         }
 
         public void mouseExited(MouseEvent e) {

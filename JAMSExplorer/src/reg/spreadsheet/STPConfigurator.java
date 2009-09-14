@@ -8,7 +8,6 @@ package reg.spreadsheet;
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGEncodeParam;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import jams.io.JAMSFileFilter;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 import jams.gui.GUIHelper;
@@ -25,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.text.ParseException;
@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.BorderFactory.*;
 import javax.swing.GroupLayout.*;
@@ -85,6 +86,8 @@ public class STPConfigurator extends JFrame{
 //    JTable table; //wichtig?
     File templateFile;
     private JAMSWorkspace workspace;
+
+    HashMap<String, File> template_hashmap = new HashMap<String, File>();
             
     int rows, columns, graphCount, selectedTimeAxis;
     double[] weights;
@@ -130,7 +133,7 @@ public class STPConfigurator extends JFrame{
         this.workspace = regionalizer.getWorkspace();
         this.parent = regionalizer.getExplorerFrame();
         this.setIconImage(parent.getIconImage());
-        setTitle("StackedTimePlot Configurator");
+        setTitle(SpreadsheetConstants.STP_TITLE);
         
         Container cp = this.getContentPane();
         JPanel bgPanel = new JPanel();
@@ -142,14 +145,15 @@ public class STPConfigurator extends JFrame{
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
         
-        dataset = getAccessibleIDs();
+//        dataset = getAccessibleIDs();
+        dataset = createHashMap(getAccessibleTemplates());
         System.out.println("dataset.length = "+dataset.length);
         if(dataset.length <= 2) this.numberOfPlots = dataset.length;
         if(dataset.length == 0){
             
-            String error_msg = "No template files found in the workspace directory! " +
-                    "Use the 'Save Template' Option in the Time Plot Configurator!";
-            GUIHelper.showErrorDlg(this, error_msg, "Error");
+//            String error_msg = "No template files found in the workspace directory! " +
+//                    "Use the 'Save Template' Option in the Time Plot Configurator!";
+            GUIHelper.showErrorDlg(this, SpreadsheetConstants.STP_ERR_NOTEMPFOUND, "Error");
             
             // CLOSE!!!
         }
@@ -169,7 +173,7 @@ public class STPConfigurator extends JFrame{
         this.workspace = regionalizer.getWorkspace();
         this.parent = regionalizer.getExplorerFrame();
         this.setIconImage(parent.getIconImage());
-        setTitle("StackedTimePlot Configurator");
+        setTitle(SpreadsheetConstants.STP_TITLE);
         
 //        output_store = true;
         sheet = output_sheet;
@@ -184,14 +188,15 @@ public class STPConfigurator extends JFrame{
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
         
-        dataset = getAccessibleIDs();
+//        dataset = getAccessibleIDs();
+        dataset = createHashMap(getAccessibleTemplates());
         System.out.println("dataset.length = "+dataset.length);
         if(dataset.length <= 2) this.numberOfPlots = dataset.length;
         if(dataset.length == 0){
             
-            String error_msg = "No template files found in the workspace directory! " +
-                    "Use the 'Save Template' Option in the JTS Configurator!";
-            GUIHelper.showErrorDlg(this, error_msg, "Error");
+//            String error_msg = "No template files found in the workspace directory! " +
+//                    "Use the 'Save Template' Option in the JTS Configurator!";
+            GUIHelper.showErrorDlg(this, SpreadsheetConstants.STP_ERR_NOTEMPFOUND, "Error");
             
             // CLOSE!!!
         }
@@ -246,11 +251,11 @@ public class STPConfigurator extends JFrame{
         weights = new double[numberOfPlots];
         
         for(int i = 0; i < numberOfPlots; i++){
-            String datasetFileID = (String)templateBox[i].getSelectedItem();
+            String datasetFileKey = (String)templateBox[i].getSelectedItem();
             this.propVector = new Vector<GraphProperties>();
             
             
-            templateFiles[i] = new File(workspace.getDirectory().toString()+"/explorer", datasetFileID);
+            templateFiles[i] = template_hashmap.get(datasetFileKey);
 //            if(templateFiles[i].exists()){
                 String datasetID[] = loadDatasetID(templateFiles[i]);
                 if(datasetID[1].compareTo("false") == 0){
@@ -380,8 +385,8 @@ public class STPConfigurator extends JFrame{
     }
     
     private void addPlot(){
-        System.out.println("removePlot()");
-        dataset = getAccessibleIDs();
+//        System.out.println("removePlot()");
+        dataset = createHashMap(getAccessibleTemplates());
 //        if(numberOfPlots == 0){
 //            String error_msg = "No template files found in the workspace directory!" +
 //                    "Use the 'Save Template' Option in the Time Plot Configurator!";
@@ -413,7 +418,7 @@ public class STPConfigurator extends JFrame{
             epsButton.addActionListener(saveImageAction);
             //addbutton.addActionListener(addAction);
             //removebutton.addActionListener(removeAction);
-            dataset = getAccessibleIDs();
+//            dataset = getAccessibleIDs();
 
             GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 0, 0, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 2, 0, 1, 1, 0, 0);
@@ -453,7 +458,7 @@ public class STPConfigurator extends JFrame{
     
     private void removePlot(){
         System.out.println("removePlot()");
-        dataset = getAccessibleIDs();
+        dataset = createHashMap(getAccessibleTemplates());
        
         if((numberOfPlots <dataset.length) && (numberOfPlots > 1) ){
 
@@ -481,7 +486,7 @@ public class STPConfigurator extends JFrame{
             epsButton.addActionListener(saveImageAction);
             //addbutton.addActionListener(addAction);
             //removebutton.addActionListener(removeAction);
-            dataset = getAccessibleIDs();
+//            dataset = getAccessibleIDs();
 
             GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 0, 0, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 2, 0, 1, 1, 0, 0);
@@ -530,11 +535,11 @@ public class STPConfigurator extends JFrame{
         weights = new double[numberOfPlots];
         
         for(int i = 0; i < numberOfPlots; i++){
-            String datasetFileID = (String)templateBox[i].getSelectedItem();
+            String datasetFileKey = (String)templateBox[i].getSelectedItem();
             this.propVector = new Vector<GraphProperties>();
             
             
-            templateFiles[i] = new File(workspace.getDirectory().toString()+"/explorer", datasetFileID);
+            templateFiles[i] = template_hashmap.get(datasetFileKey);
 //            if(templateFiles[i].exists()){
                 String datasetID[] = loadDatasetID(templateFiles[i]);
                 if(datasetID[1].compareTo("false") == 0){
@@ -623,7 +628,67 @@ public class STPConfigurator extends JFrame{
     }
     
     
-    
+
+
+    private File[] getAccessibleTemplates(){
+
+        ArrayList<File> tempList = new ArrayList<File>();
+        File[] outputDirs = workspace.getOutputDataDirectories();
+        File inputDir = new File(workspace.getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME);
+        File[] temps_in_dir;
+        File[] templateFiles;
+
+         FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File pathname) {
+                if (pathname.isFile() && pathname.getName().endsWith(SpreadsheetConstants.FILE_ENDING_TTP)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
+        /* INPUT TTPs */
+        temps_in_dir = inputDir.listFiles(filter);
+        for(File temp : temps_in_dir){
+            tempList.add(temp);
+        }
+
+        /* OUTPUT TTPs */
+        for(File odir : outputDirs){
+
+            temps_in_dir = odir.listFiles(filter);
+            for(File temp : temps_in_dir){
+                tempList.add(temp);
+            }
+        }
+
+        templateFiles = new File[tempList.size()];
+        templateFiles = tempList.toArray(templateFiles);
+
+        return templateFiles;
+
+    }
+
+    private String[] createHashMap(File[] tempFiles){
+
+        template_hashmap = new HashMap<String, File>();
+        String[] hashKeys = new String[tempFiles.length];
+
+
+        for(int i=0;i<tempFiles.length;i++){
+            
+            File file = tempFiles[i];
+            hashKeys[i] =  file.getName() + " " + file.getParentFile().getName();
+
+            template_hashmap.put(hashKeys[i], file);
+        }
+
+        return hashKeys;
+    }
+
     private String[] getAccessibleIDs(){
         
 
