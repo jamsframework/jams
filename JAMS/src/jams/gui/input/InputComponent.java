@@ -42,5 +42,5 @@ public interface InputComponent {
     public int getErrorCode();
     public void addValueChangeListener(ValueChangeListener l);
     public void setMarked(boolean marked);
-    
+    public void setEnabled(boolean enabled);
 }

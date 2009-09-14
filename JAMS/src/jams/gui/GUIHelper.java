@@ -31,7 +31,6 @@ import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import jams.gui.input.BooleanInput;
-import jams.gui.input.CalendarInput;
 import jams.gui.input.FileInput;
 import jams.gui.input.FloatInput;
 import jams.gui.input.InputComponent;
@@ -48,7 +47,8 @@ import jams.data.JAMSFloat;
 import jams.data.JAMSInteger;
 import jams.data.JAMSLong;
 import jams.data.JAMSTimeInterval;
-import jams.gui.input.TimeintervalInput;
+import jams.gui.input.CalendarInput2;
+import jams.gui.input.TimeintervalInput2;
 import java.lang.reflect.Method;
 import javax.swing.JFileChooser;
 
@@ -277,9 +277,9 @@ public class GUIHelper {
         } else if (JAMSDirName.class.isAssignableFrom(type)) {
             ic = new FileInput(true);
         } else if (JAMSCalendar.class.isAssignableFrom(type)) {
-            ic = new CalendarInput();
+            ic = new CalendarInput2();
         } else if (JAMSTimeInterval.class.isAssignableFrom(type)) {
-            ic = new TimeintervalInput(extEdit);
+            ic = new TimeintervalInput2(extEdit);
         } else if (JAMSBoolean.class.isAssignableFrom(type)) {
             ic = new BooleanInput();
         } else if ((JAMSInteger.class.isAssignableFrom(type)) || (JAMSLong.class.isAssignableFrom(type))) {

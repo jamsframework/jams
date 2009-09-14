@@ -282,4 +282,5 @@ public class CalendarInput extends JPanel implements InputComponent {
         } else {
             setBackground(oldColor);
         }
-    }}
+    }
+}

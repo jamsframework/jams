@@ -157,11 +157,35 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
 
         try {
             set(YEAR, Integer.parseInt(year));
+        } catch (NumberFormatException nfe) {
+            jams.JAMS.handle(nfe);
+        }
+        try {
             set(MONTH, Integer.parseInt(month) - 1);
+        } catch (NumberFormatException nfe) {
+            jams.JAMS.handle(nfe);
+        }
+        try {
             set(DAY_OF_MONTH, Integer.parseInt(day));
+        } catch (NumberFormatException nfe) {
+            jams.JAMS.handle(nfe);
+        }
+        try {
             set(HOUR_OF_DAY, Integer.parseInt(hour));
+        } catch (NumberFormatException nfe) {
+            jams.JAMS.handle(nfe);
+        }
+        try {
             set(MINUTE, Integer.parseInt(minute));
+        } catch (NumberFormatException nfe) {
+            jams.JAMS.handle(nfe);
+        }
+        try {
             set(SECOND, Integer.parseInt(second));
+        } catch (NumberFormatException nfe) {
+            jams.JAMS.handle(nfe);
+        }
+        try {
             set(MILLISECOND, Integer.parseInt(millisecond));
         } catch (NumberFormatException nfe) {
             jams.JAMS.handle(nfe);
@@ -183,7 +207,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
     public DateFormat getDateFormat() {
         return dateFormat;
     }
-
+    
     @Override
     public boolean after(Attribute.Calendar calendar) {
         return super.after(calendar);

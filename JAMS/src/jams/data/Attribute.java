@@ -25,6 +25,7 @@ package jams.data;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -151,6 +152,10 @@ public interface Attribute {
         public long getTimeInMillis();
 
         public int get(int field);
+
+        public Date getTime();
+
+        public void setTime(Date date);
 
         public void add(int field, int amount);
 

@@ -525,4 +525,5 @@ public class TimeintervalInput extends JPanel implements InputComponent {
             setBackground(oldColor);
         }
     }
+
 }
