@@ -27,7 +27,7 @@ package jams.gui.input;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class TimeIntervalStepInput extends TimeintervalInput2 {
+public class TimeIntervalStepInput extends TimeintervalInput {
     
     public TimeIntervalStepInput() {
         super(true);

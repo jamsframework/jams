@@ -38,6 +38,7 @@ import javax.swing.event.DocumentListener;
 public class FloatInput extends JPanel implements InputComponent {
 
     private JTextField text = new JTextField();
+
     private ValueChangeListener l;
 
     public FloatInput() {
@@ -94,14 +95,46 @@ public class FloatInput extends JPanel implements InputComponent {
             }
         });
     }
-    
     private Color oldColor;
+
     public void setMarked(boolean marked) {
         if (marked == true) {
             oldColor = text.getBackground();
             text.setBackground(new Color(255, 0, 0));
         } else {
             text.setBackground(oldColor);
+        }
+    }
+
+    class NumericIntervalVerifier extends InputVerifier {
+
+        double lower, upper;
+
+        int result;
+
+        public NumericIntervalVerifier(double lower, double upper) {
+            this.lower = lower;
+            this.upper = upper;
+        }
+
+        @Override
+        public boolean verify(JComponent input) {
+
+            double value;
+
+            try {
+                value = Double.parseDouble(((JTextField) input).getText());
+                if ((value >= lower) && (value <= upper)) {
+                    result = InputComponent.INPUT_OK;
+                    return true;
+                } else {
+                    result = InputComponent.INPUT_OUT_OF_RANGE;
+                    return false;
+                }
+            } catch (NumberFormatException nfe) {
+                result = InputComponent.INPUT_WRONG_FORMAT;
+            }
+            return false;
         }
     }
 }

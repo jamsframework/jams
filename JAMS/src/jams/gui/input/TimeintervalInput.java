@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.BorderFactory;
+import javax.swing.InputVerifier;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -41,8 +42,11 @@ import jams.data.JAMSTimeInterval;
 import jams.gui.*;
 import java.awt.Color;
 import jams.JAMS;
+import jams.JAMSTools;
 import jams.data.Attribute;
-import jams.data.JAMSDataFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 /**
  *
@@ -50,7 +54,7 @@ import jams.data.JAMSDataFactory;
  */
 public class TimeintervalInput extends JPanel implements InputComponent {
 
-    private JTextField tuCount,  syear,  smonth,  sday,  shour,  sminute,  eyear,  emonth,  eday,  ehour,  eminute;
+    private JTextField tuCount;
 
     private JComboBox timeUnit;
 
@@ -62,7 +66,9 @@ public class TimeintervalInput extends JPanel implements InputComponent {
 
     private ValueChangeListener l;
 
-    protected boolean intervalEdit = false;
+    private CalendarInput startDate, endDate;
+
+    private Color oldColor;
 
     public TimeintervalInput() {
         this(false);
@@ -70,91 +76,23 @@ public class TimeintervalInput extends JPanel implements InputComponent {
 
     public TimeintervalInput(boolean intervalEdit) {
 
-        this.intervalEdit = intervalEdit;
-
         GridBagLayout gbl = new GridBagLayout();
         this.setBorder(BorderFactory.createEtchedBorder());
 
         this.setLayout(gbl);
 
-        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
+//        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
+//        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Start:_")), 0, 1, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("End:_")), 0, 2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit_Count:_")), 0, 3, 1, 1, 0, 0);
 
-        syear = new JTextField();
-        syear.setInputVerifier(new NumericIntervalVerifier(1900, 2100));
-        syear.setPreferredSize(new Dimension(40, 20));
+        startDate = new CalendarInput(false);
+        GUIHelper.addGBComponent(this, gbl, startDate.getDatePanel(), 1, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, startDate.getTimePanel(), 11, 1, 1, 1, 0, 0);
 
-        smonth = new JTextField();
-        smonth.setInputVerifier(new NumericIntervalVerifier(1, 12));
-        smonth.setPreferredSize(new Dimension(25, 20));
-
-        sday = new JTextField();
-        sday.setInputVerifier(new NumericIntervalVerifier(1, 31));
-        sday.setPreferredSize(new Dimension(25, 20));
-
-        panel = new JPanel();
-        panel.setBorder(BorderFactory.createEtchedBorder());
-        panel.add(syear);
-        panel.add(new JLabel("/"));
-        panel.add(smonth);
-        panel.add(new JLabel("/"));
-        panel.add(sday);
-        GUIHelper.addGBComponent(this, gbl, panel, 1, 1, 10, 1, 0, 0);
-
-        shour = new JTextField();
-        shour.setInputVerifier(new NumericIntervalVerifier(0, 23));
-        shour.setPreferredSize(new Dimension(25, 20));
-
-        sminute = new JTextField();
-        sminute.setInputVerifier(new NumericIntervalVerifier(0, 59));
-        sminute.setPreferredSize(new Dimension(25, 20));
-
-        panel = new JPanel();
-        panel.setBorder(BorderFactory.createEtchedBorder());
-        panel.add(shour);
-        panel.add(new JLabel(":"));
-        panel.add(sminute);
-        GUIHelper.addGBComponent(this, gbl, panel, 11, 1, 1, 1, 0, 0);
-
-
-        eyear = new JTextField();
-        eyear.setInputVerifier(new NumericIntervalVerifier(1900, 2100));
-        eyear.setPreferredSize(new Dimension(40, 20));
-
-        emonth = new JTextField();
-        emonth.setInputVerifier(new NumericIntervalVerifier(1, 12));
-        emonth.setPreferredSize(new Dimension(25, 20));
-
-        eday = new JTextField();
-        eday.setInputVerifier(new NumericIntervalVerifier(1, 31));
-        eday.setPreferredSize(new Dimension(25, 20));
-
-        panel = new JPanel();
-        panel.setBorder(BorderFactory.createEtchedBorder());
-        panel.add(eyear);
-        panel.add(new JLabel("/"));
-        panel.add(emonth);
-        panel.add(new JLabel("/"));
-        panel.add(eday);
-        GUIHelper.addGBComponent(this, gbl, panel, 1, 2, 10, 1, 0, 0);
-
-        ehour = new JTextField();
-        ehour.setInputVerifier(new NumericIntervalVerifier(0, 23));
-        ehour.setPreferredSize(new Dimension(25, 20));
-
-        eminute = new JTextField();
-        eminute.setInputVerifier(new NumericIntervalVerifier(0, 59));
-        eminute.setPreferredSize(new Dimension(25, 20));
-
-        panel = new JPanel();
-        panel.setBorder(BorderFactory.createEtchedBorder());
-        panel.add(ehour);
-        panel.add(new JLabel(":"));
-        panel.add(eminute);
-        GUIHelper.addGBComponent(this, gbl, panel, 11, 2, 1, 1, 0, 0);
+        endDate = new CalendarInput(false);
+        GUIHelper.addGBComponent(this, gbl, endDate.getDatePanel(), 1, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, endDate.getTimePanel(), 11, 2, 1, 1, 0, 0);
 
         indexMap.put(JAMSCalendar.YEAR, 0);
         indexMap.put(JAMSCalendar.MONTH, 1);
@@ -170,12 +108,6 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         fieldMap.put(4, JAMSCalendar.MINUTE);
         fieldMap.put(5, JAMSCalendar.SECOND);
 
-        tuCount = new JTextField();
-        tuCount.setInputVerifier(new NumericIntervalVerifier(0, 1000));
-        tuCount.setPreferredSize(new Dimension(10, 10));
-        GUIHelper.addGBComponent(this, gbl, tuCount, 1, 3, 1, 1, 0, 0);
-
-
         timeUnit = new JComboBox();
         timeUnit.addItem(JAMS.resources.getString("YEAR"));
         timeUnit.addItem(JAMS.resources.getString("MONTH"));
@@ -184,112 +116,102 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         timeUnit.addItem(JAMS.resources.getString("MINUTE"));
         timeUnit.addItem(JAMS.resources.getString("SECOND"));
         timeUnit.setPreferredSize(new Dimension(40, 20));
-        GUIHelper.addGBComponent(this, gbl, timeUnit, 2, 3, 1, 1, 1, 0);
 
-        sday.setBorder(BorderFactory.createEtchedBorder());
-        smonth.setBorder(BorderFactory.createEtchedBorder());
-        syear.setBorder(BorderFactory.createEtchedBorder());
-        shour.setBorder(BorderFactory.createEtchedBorder());
-        sminute.setBorder(BorderFactory.createEtchedBorder());
-        eday.setBorder(BorderFactory.createEtchedBorder());
-        emonth.setBorder(BorderFactory.createEtchedBorder());
-        eyear.setBorder(BorderFactory.createEtchedBorder());
-        ehour.setBorder(BorderFactory.createEtchedBorder());
-        eminute.setBorder(BorderFactory.createEtchedBorder());
-        tuCount.setBorder(BorderFactory.createEtchedBorder());
-        timeUnit.setBorder(BorderFactory.createEtchedBorder());
+        tuCount = new JTextField();
+        tuCount.setInputVerifier(new NumericIntervalVerifier(0, 1000));
+        tuCount.setPreferredSize(new Dimension(40, 20));
 
-        tuCount.setEnabled(intervalEdit);
-        timeUnit.setEnabled(intervalEdit);
+        if (intervalEdit) {
+            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit:_")), 0, 3, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit_Count:_")), 0, 4, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(this, gbl, timeUnit, 1, 3, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(this, gbl, tuCount, 1, 4, 1, 1, 0, 0);
+        }
+
+//        JButton test = new JButton("Value");
+//        test.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                System.out.println(getValue());
+//                System.out.println(verify());
+//            }
+//        });
+//        GUIHelper.addGBComponent(this, gbl, test, 1, 6, 1, 1, 0, 0);
+
     }
 
-    @Override
     public String getValue() {
-        try {
-            JAMSTimeInterval ti = new JAMSTimeInterval();
-            JAMSCalendar start = JAMSDataFactory.createCalendar();
-            start.set(
-                    Integer.parseInt(syear.getText()),
-                    Integer.parseInt(smonth.getText()) - 1,
-                    Integer.parseInt(sday.getText()),
-                    Integer.parseInt(shour.getText()),
-                    Integer.parseInt(sminute.getText()),
-                    0);
-            ti.setStart(start);
-            JAMSCalendar end = JAMSDataFactory.createCalendar();
-            end.set(
-                    Integer.parseInt(eyear.getText()),
-                    Integer.parseInt(emonth.getText()) - 1,
-                    Integer.parseInt(eday.getText()),
-                    Integer.parseInt(ehour.getText()),
-                    Integer.parseInt(eminute.getText()),
-                    0);
-            ti.setEnd(end);
-            ti.setTimeUnit(fieldMap.get(timeUnit.getSelectedIndex()));
-            ti.setTimeUnitCount(Integer.parseInt(tuCount.getText()));
-            if (!ti.getStart().before(ti.getEnd())) {
-                return null;
-            } else {
-                return ti.toString();
-            }
-        } catch (NumberFormatException nfe) {
+        Attribute.TimeInterval ti = new JAMSTimeInterval();
+        ti.setStart(startDate.getCalendarValue());
+        ti.setEnd(endDate.getCalendarValue());
+        ti.setTimeUnit(fieldMap.get(timeUnit.getSelectedIndex()));
+        ti.setTimeUnitCount(Integer.parseInt(tuCount.getText()));
+        if (!ti.getStart().before(ti.getEnd())) {
             return null;
+        } else {
+            return ti.toString();
         }
     }
 
-    @Override
     public void setValue(String value) {
         //1996-11-01 7:30 2000-10-31 7:30 6 1
 
         JAMSTimeInterval ti = new JAMSTimeInterval();
-        if ((value != null) && !value.equals("")) {
+        if (!JAMSTools.isEmptyString(value)) {
             ti.setValue(value);
         }
 
         Attribute.Calendar start = ti.getStart();
-        syear.setText(Integer.toString(start.get(JAMSCalendar.YEAR)));
-        smonth.setText(Integer.toString(start.get(JAMSCalendar.MONTH) + 1));
-        sday.setText(Integer.toString(start.get(JAMSCalendar.DAY_OF_MONTH)));
-        shour.setText(Integer.toString(start.get(JAMSCalendar.HOUR_OF_DAY)));
-        sminute.setText(Integer.toString(start.get(JAMSCalendar.MINUTE)));
+        startDate.setValue(start);
 
         Attribute.Calendar end = ti.getEnd();
-        eyear.setText(Integer.toString(end.get(JAMSCalendar.YEAR)));
-        emonth.setText(Integer.toString(end.get(JAMSCalendar.MONTH) + 1));
-        eday.setText(Integer.toString(end.get(JAMSCalendar.DAY_OF_MONTH)));
-        ehour.setText(Integer.toString(end.get(JAMSCalendar.HOUR_OF_DAY)));
-        eminute.setText(Integer.toString(end.get(JAMSCalendar.MINUTE)));
+        endDate.setValue(end);
 
         timeUnit.setSelectedIndex(indexMap.get(ti.getTimeUnit()));
         tuCount.setText(Integer.toString(ti.getTimeUnitCount()));
     }
 
-    @Override
     public JComponent getComponent() {
         return this;
     }
 
-    @Override
+    class NumericIntervalVerifier extends InputVerifier {
+
+        double lower, upper;
+
+        public NumericIntervalVerifier(double lower, double upper) {
+            this.lower = lower;
+            this.upper = upper;
+        }
+
+        public boolean verify(JComponent input) {
+
+            boolean result = false;
+            double value;
+
+            try {
+                value = Double.parseDouble(((JTextField) input).getText());
+                if ((value >= lower) && (value <= upper)) {
+                    result = true;
+                }
+            } catch (NumberFormatException nfe) {
+            }
+
+            return (result);
+        }
+    }
+
     public void setRange(double lower, double upper) {
     }
 
-    @Override
     public void setEnabled(boolean enabled) {
-        syear.setEnabled(enabled);
-        smonth.setEnabled(enabled);
-        sday.setEnabled(enabled);
-        shour.setEnabled(enabled);
-        sminute.setEnabled(enabled);
-        eyear.setEnabled(enabled);
-        emonth.setEnabled(enabled);
-        eday.setEnabled(enabled);
-        ehour.setEnabled(enabled);
-        eminute.setEnabled(enabled);
-        timeUnit.setEnabled(enabled && intervalEdit);
-        tuCount.setEnabled(enabled && intervalEdit);
+        startDate.setEnabled(enabled);
+        endDate.setEnabled(enabled);
+        timeUnit.setEnabled(enabled);
+        tuCount.setEnabled(enabled);
     }
 
-    @Override
     public boolean verify() {
 
         try {
@@ -303,192 +225,17 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         }
     }
 
-    @Override
     public int getErrorCode() {
-        if (verify()) {
-            return INPUT_OK;
-        } else {
-            return INPUT_WRONG_FORMAT;
-        }
+        return INPUT_OK;
     }
 
-    @Override
     public void setLength(int length) {
     }
 
-    @Override
     public void addValueChangeListener(ValueChangeListener l) {
         this.l = l;
-        this.syear.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-        });
-        this.smonth.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-        });
-        this.sday.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-        });
-        this.shour.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-        });
-        this.sminute.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-        });
-        this.eyear.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-        });
-        this.emonth.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-        });
-        this.eday.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-        });
-        this.ehour.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-        });
-        this.eminute.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                TimeintervalInput.this.l.valueChanged();
-            }
-        });
+        this.startDate.addValueChangeListener(l);
+        this.endDate.addValueChangeListener(l);
         this.timeUnit.addActionListener(new ActionListener() {
 
             @Override
@@ -514,9 +261,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
             }
         });
     }
-    private Color oldColor;
 
-    @Override
     public void setMarked(boolean marked) {
         if (marked == true) {
             oldColor = getBackground();
@@ -526,4 +271,17 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         }
     }
 
+    public static void main(String[] args) {
+        InputComponent tii = new TimeintervalInput(true);
+        tii.setValue("1996-11-01 07:30 2000-10-31 07:30 6 1");
+
+        tii.setEnabled(true);
+        //tii.setMarked(true);
+
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.add(tii.getComponent());
+        frame.pack();
+        frame.setVisible(true);
+    }
 }

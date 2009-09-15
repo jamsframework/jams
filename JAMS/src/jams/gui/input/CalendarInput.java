@@ -24,21 +24,33 @@ package jams.gui.input;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.util.HashMap;
-import java.util.Map;
 import javax.swing.BorderFactory;
-import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import jams.data.JAMSCalendar;
 import jams.gui.*;
 import java.awt.Color;
 import jams.JAMS;
+import jams.JAMSTools;
+import jams.data.Attribute;
+import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.TimeZone;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
+import org.sourceforge.jcalendarbutton.JCalendarButton;
+import org.sourceforge.jcalendarbutton.JTimeButton;
 
 /**
  *
@@ -46,132 +58,247 @@ import jams.data.JAMSDataFactory;
  */
 public class CalendarInput extends JPanel implements InputComponent {
 
-    private JTextField syear,  smonth,  sday,  shour,  sminute;
-    private Map<Integer, Integer> indexMap = new HashMap<Integer, Integer>();
-    private Map<Integer, Integer> fieldMap = new HashMap<Integer, Integer>();
-    private JPanel panel;
+    private JTextField dateText, timeText;
+
+    private JPanel datePanel, timePanel;
+
     private ValueChangeListener l;
 
-    /** Creates a new instance of TimeintervalInput */
+    private JCalendarButton dateButton;
+
+    private JTimeButton timeButton;
+
+    private String oldDateString;
+
+    private static DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
+
+    private static DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+
+    private static DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+
+    private Color oldColor;
+
     public CalendarInput() {
+        this(true);
+    }
 
-        GridBagLayout gbl = new GridBagLayout();
-        this.setBorder(BorderFactory.createEtchedBorder());
+    public CalendarInput(boolean doLayout) {
 
-        this.setLayout(gbl);
+        createPanels();
 
-        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
+        if (doLayout) {
+            GridBagLayout gbl = new GridBagLayout();
+            this.setBorder(BorderFactory.createEtchedBorder());
 
-        syear = new JTextField();
-        syear.setInputVerifier(new NumericIntervalVerifier(1900, 2100));
-        syear.setPreferredSize(new Dimension(40, 20));
+            this.setLayout(gbl);
 
-        smonth = new JTextField();
-        smonth.setInputVerifier(new NumericIntervalVerifier(1, 12));
-        smonth.setPreferredSize(new Dimension(25, 20));
+//            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Date")), 1, 0, 1, 1, 0, 0);
+//            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time")), 11, 0, 1, 1, 0, 0);
 
-        sday = new JTextField();
-        sday.setInputVerifier(new NumericIntervalVerifier(1, 31));
-        sday.setPreferredSize(new Dimension(25, 20));
+            GUIHelper.addGBComponent(this, gbl, datePanel, 1, 1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(this, gbl, timePanel, 11, 1, 1, 1, 0, 0);
 
-        panel = new JPanel();
-        panel.setBorder(BorderFactory.createEtchedBorder());
-        panel.add(syear);
-        panel.add(new JLabel("/"));
-        panel.add(smonth);
-        panel.add(new JLabel("/"));
-        panel.add(sday);
-        GUIHelper.addGBComponent(this, gbl, panel, 1, 1, 10, 1, 0, 0);
+//            JButton test = new JButton("Value");
+//            test.addActionListener(new ActionListener() {
+//
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    System.out.println(getValue());
+//                    System.out.println(verify());
+//                }
+//            });
+//            GUIHelper.addGBComponent(this, gbl, test, 1, 2, 1, 1, 0, 0);
 
-        shour = new JTextField();
-        shour.setInputVerifier(new NumericIntervalVerifier(0, 23));
-        shour.setPreferredSize(new Dimension(25, 20));
+        }
+    }
 
-        sminute = new JTextField();
-        sminute.setInputVerifier(new NumericIntervalVerifier(0, 59));
-        sminute.setPreferredSize(new Dimension(25, 20));
+    public void createPanels() {
+        dateFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
+        dateTimeFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
 
-        panel = new JPanel();
-        panel.setBorder(BorderFactory.createEtchedBorder());
-        panel.add(shour);
-        panel.add(new JLabel(":"));
-        panel.add(sminute);
-        GUIHelper.addGBComponent(this, gbl, panel, 11, 1, 1, 1, 0, 0);
+        // create the time panel
 
-        indexMap.put(JAMSCalendar.YEAR, 0);
-        indexMap.put(JAMSCalendar.MONTH, 1);
-        indexMap.put(JAMSCalendar.DAY_OF_YEAR, 2);
-        indexMap.put(JAMSCalendar.HOUR_OF_DAY, 3);
-        indexMap.put(JAMSCalendar.MINUTE, 4);
-        indexMap.put(JAMSCalendar.SECOND, 5);
+        datePanel = new JPanel();
+        //datePanel.setBorder(BorderFactory.createEtchedBorder());
 
-        fieldMap.put(0, JAMSCalendar.YEAR);
-        fieldMap.put(1, JAMSCalendar.MONTH);
-        fieldMap.put(2, JAMSCalendar.DAY_OF_YEAR);
-        fieldMap.put(3, JAMSCalendar.HOUR_OF_DAY);
-        fieldMap.put(4, JAMSCalendar.MINUTE);
-        fieldMap.put(5, JAMSCalendar.SECOND);
+        dateText = new JTextField();
+        dateText.setPreferredSize(new Dimension(100, 20));
+        dateText.setBorder(BorderFactory.createEtchedBorder());
 
-        sday.setBorder(BorderFactory.createEtchedBorder());
-        smonth.setBorder(BorderFactory.createEtchedBorder());
-        syear.setBorder(BorderFactory.createEtchedBorder());
-        shour.setBorder(BorderFactory.createEtchedBorder());
-        sminute.setBorder(BorderFactory.createEtchedBorder());
+        datePanel.add(dateText);
 
+        dateButton = new JCalendarButton();
+        dateButton.setText("");
+        dateButton.setPreferredSize(new Dimension(20, 20));
+        dateButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Calendar.gif")));
+        dateButton.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                if (evt.getNewValue() instanceof Date) {
+                    setDate((Date) evt.getNewValue());
+                }
+            }
+        });
+        dateText.addFocusListener(new java.awt.event.FocusAdapter() {
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                String dateString = dateText.getText();
+                Date date = null;
+                try {
+                    if (!JAMSTools.isEmptyString(dateString)) {
+                        date = dateFormat.parse(dateString);
+                    }
+                } catch (Exception e) {
+                    date = null;
+                }
+                setDate(date);
+            }
+        });
+
+        datePanel.add(dateButton);
+
+        // create the time panel
+
+        timePanel = new JPanel();
+        //timePanel.setBorder(BorderFactory.createEtchedBorder());
+
+        timeText = new JTextField();
+        timeText.setPreferredSize(new Dimension(80, 20));
+        timeText.setBorder(BorderFactory.createEtchedBorder());
+
+        timePanel.add(timeText);
+
+        timeButton = new JTimeButton();
+        timeButton.setText("");
+        timeButton.setPreferredSize(new Dimension(20, 20));
+        timeButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Time.gif")));
+        timeButton.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                if (evt.getNewValue() instanceof Date) {
+                    setTime((Date) evt.getNewValue());
+                }
+            }
+        });
+        timeText.addFocusListener(new java.awt.event.FocusAdapter() {
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                String timeString = timeText.getText();
+                Date time = null;
+                try {
+                    if (!JAMSTools.isEmptyString(timeString)) {
+                        time = timeFormat.parse(timeString);
+                    }
+                } catch (Exception e) {
+                    time = null;
+                }
+                setTime(time);
+            }
+        });
+
+        timePanel.add(timeButton);
+
+    }
+
+    public void setDate(Date date) {
+        String dateString = oldDateString;
+        if (date != null) {
+            dateString = dateFormat.format(date);
+            oldDateString = dateString;
+        }
+        dateText.setText(dateString);
+        dateButton.setTargetDate(date);
+    }
+
+    public void setTime(Date time) {
+        String timeString = "";
+        if (time != null) {
+            timeString = timeFormat.format(time);
+        }
+        timeText.setText(timeString);
+        timeButton.setTargetDate(time);
     }
 
     public String getValue() {
         try {
-            JAMSCalendar cal = JAMSDataFactory.createCalendar();
-            cal.set(
-                    Integer.parseInt(syear.getText()),
-                    Integer.parseInt(smonth.getText()) - 1,
-                    Integer.parseInt(sday.getText()),
-                    Integer.parseInt(shour.getText()),
-                    Integer.parseInt(sminute.getText()),
-                    0);
+
+            Date dateTime = dateTimeFormat.parse(dateText.getText() + " " + timeText.getText());
+            Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+            cal.setTime(dateTime);
             return cal.toString();
-        } catch (NumberFormatException nfe) {
+
+        } catch (ParseException pe) {
             return "";
+        }
+    }
+
+    public Attribute.Calendar getCalendarValue() {
+        try {
+
+            Date dateTime = dateTimeFormat.parse(dateText.getText() + " " + timeText.getText());
+            Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+            cal.setTime(dateTime);
+            return cal;
+
+        } catch (ParseException pe) {
+            return null;
         }
     }
 
     public void setValue(String value) {
 
         JAMSCalendar cal = JAMSDataFactory.createCalendar();
-
-        if ((value != null) && !value.equals("")) {
+        if (!JAMSTools.isEmptyString(value)) {
             cal.setValue(value);
         }
 
-        syear.setText(Integer.toString(cal.get(JAMSCalendar.YEAR)));
-        smonth.setText(Integer.toString(cal.get(JAMSCalendar.MONTH) + 1));
-        sday.setText(Integer.toString(cal.get(JAMSCalendar.DAY_OF_MONTH)));
-        shour.setText(Integer.toString(cal.get(JAMSCalendar.HOUR_OF_DAY)));
-        sminute.setText(Integer.toString(cal.get(JAMSCalendar.MINUTE)));
+        setValue(cal);
+    }
 
+    public void setValue(Attribute.Calendar calendar) {
+
+        Date d = calendar.getTime();
+
+        TimeZone oldZone = timeFormat.getTimeZone();
+
+        timeFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
+
+        String dateString = dateFormat.format(d);
+        String timeString = timeFormat.format(d);
+
+        oldDateString = dateString;
+
+        dateText.setText(dateString);
+        timeText.setText(timeString);
+
+        timeFormat.setTimeZone(oldZone);
+        try {
+            timeButton.setTargetDate(timeFormat.parse(timeString));
+            dateButton.setTargetDate(dateFormat.parse(dateString));
+        } catch (ParseException ex) {
+        }
     }
 
     public JComponent getComponent() {
         return this;
     }
 
-
     public void setEnabled(boolean enabled) {
-        syear.setEnabled(enabled);
-        smonth.setEnabled(enabled);
-        sday.setEnabled(enabled);
-        shour.setEnabled(enabled);
-        sminute.setEnabled(enabled);
+        dateText.setEnabled(enabled);
+        timeText.setEnabled(enabled);
+        dateButton.setEnabled(enabled);
+        timeButton.setEnabled(enabled);
     }
 
     public void setRange(double lower, double upper) {
     }
 
     public boolean verify() {
+
         try {
-            this.getValue();
+            if (JAMSTools.isEmptyString(this.getValue())) {
+                return false;
+            }
         } catch (Exception e) {
             return false;
         }
@@ -187,7 +314,7 @@ public class CalendarInput extends JPanel implements InputComponent {
 
     public void addValueChangeListener(ValueChangeListener l) {
         this.l = l;
-        this.syear.getDocument().addDocumentListener(new DocumentListener() {
+        this.dateText.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -204,58 +331,7 @@ public class CalendarInput extends JPanel implements InputComponent {
                 CalendarInput.this.l.valueChanged();
             }
         });
-        this.smonth.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                CalendarInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                CalendarInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                CalendarInput.this.l.valueChanged();
-            }
-        });
-        this.sday.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                CalendarInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                CalendarInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                CalendarInput.this.l.valueChanged();
-            }
-        });
-        this.shour.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                CalendarInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                CalendarInput.this.l.valueChanged();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                CalendarInput.this.l.valueChanged();
-            }
-        });
-        this.sminute.getDocument().addDocumentListener(new DocumentListener() {
+        this.timeText.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -273,8 +349,7 @@ public class CalendarInput extends JPanel implements InputComponent {
             }
         });
     }
-    
-    private Color oldColor;
+
     public void setMarked(boolean marked) {
         if (marked == true) {
             oldColor = getBackground();
@@ -282,5 +357,35 @@ public class CalendarInput extends JPanel implements InputComponent {
         } else {
             setBackground(oldColor);
         }
+    }
+
+    public static void main(String[] args) {
+        InputComponent tii = new CalendarInput();
+
+        Attribute.Calendar c = JAMSDataFactory.createCalendar();
+        c.setValue("1996-11-01 23:30");
+        //tii.setMarked(true);
+
+        tii.setValue(c.toString());
+
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.add(tii.getComponent());
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    /**
+     * @return the datePanel
+     */
+    public JPanel getDatePanel() {
+        return datePanel;
+    }
+
+    /**
+     * @return the timePanel
+     */
+    public JPanel getTimePanel() {
+        return timePanel;
     }
 }

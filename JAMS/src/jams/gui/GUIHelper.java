@@ -47,8 +47,8 @@ import jams.data.JAMSFloat;
 import jams.data.JAMSInteger;
 import jams.data.JAMSLong;
 import jams.data.JAMSTimeInterval;
-import jams.gui.input.CalendarInput2;
-import jams.gui.input.TimeintervalInput2;
+import jams.gui.input.CalendarInput;
+import jams.gui.input.TimeintervalInput;
 import java.lang.reflect.Method;
 import javax.swing.JFileChooser;
 
@@ -277,9 +277,9 @@ public class GUIHelper {
         } else if (JAMSDirName.class.isAssignableFrom(type)) {
             ic = new FileInput(true);
         } else if (JAMSCalendar.class.isAssignableFrom(type)) {
-            ic = new CalendarInput2();
+            ic = new CalendarInput();
         } else if (JAMSTimeInterval.class.isAssignableFrom(type)) {
-            ic = new TimeintervalInput2(extEdit);
+            ic = new TimeintervalInput(extEdit);
         } else if (JAMSBoolean.class.isAssignableFrom(type)) {
             ic = new BooleanInput();
         } else if ((JAMSInteger.class.isAssignableFrom(type)) || (JAMSLong.class.isAssignableFrom(type))) {
