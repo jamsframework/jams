@@ -111,8 +111,9 @@ public class FloatInput extends JPanel implements InputComponent {
 
     public void setHelpText(String text) {
         if (this.boundaryString != null) {
-            text = "<html>" + this.boundaryString + "<br>" + text + "</html>";
+            text = this.boundaryString + "<br>" + text;
         }
+        text = "<html>" + text + "</html>";
         getComponent().setToolTipText(text);
     }
 

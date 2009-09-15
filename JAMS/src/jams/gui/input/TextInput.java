@@ -104,6 +104,7 @@ public class TextInput extends JPanel implements InputComponent {
     }
 
     public void setHelpText(String text) {
+        text = "<html>" + text + "</html>";
         getComponent().setToolTipText(text);
     }
 }

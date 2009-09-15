@@ -171,6 +171,7 @@ public class FileInput extends JPanel implements InputComponent {
     }
 
     public void setHelpText(String text) {
-        getComponent().setToolTipText(text);
+        text = "<html>" + text + "</html>";
+        this.textField.setToolTipText(text);
     }
 }

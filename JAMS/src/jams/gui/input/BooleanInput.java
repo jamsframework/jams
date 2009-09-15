@@ -92,6 +92,7 @@ public class BooleanInput extends JCheckBox implements InputComponent {
     }
 
     public void setHelpText(String text) {
+        text = "<html>" + text + "</html>";
         getComponent().setToolTipText(text);
     }
 }

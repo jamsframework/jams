@@ -43,8 +43,6 @@ import java.util.TimeZone;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
-import org.sourceforge.jcalendarbutton.JCalendarButton;
-import org.sourceforge.jcalendarbutton.JTimeButton;
 
 /**
  *
@@ -400,6 +398,7 @@ public class CalendarInput extends JPanel implements InputComponent {
     }
 
     public void setHelpText(String text) {
+        text = "<html>" + text + "</html>";
         getComponent().setToolTipText(text);
     }
 

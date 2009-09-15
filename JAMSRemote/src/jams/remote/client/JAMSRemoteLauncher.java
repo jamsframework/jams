@@ -95,12 +95,12 @@ public class JAMSRemoteLauncher extends JAMSFrame {
     //private Map<Element, InputComponent> propertyInput;
     
     public JAMSRemoteLauncher(JAMSProperties properties) {
-        super(properties);
+        super(null, properties);
         adapt();
     }
     
     public JAMSRemoteLauncher(String modelFilename, JAMSProperties properties, String cmdLineArgs) {
-        super(properties, modelFilename, cmdLineArgs);
+        super(null, properties, modelFilename, cmdLineArgs);
         adapt();
     }
     

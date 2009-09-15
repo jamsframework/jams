@@ -276,6 +276,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
     }
 
     public void setHelpText(String text) {
+        text = "<html>" + text + "</html>";
         getComponent().setToolTipText(text);
     }
 
