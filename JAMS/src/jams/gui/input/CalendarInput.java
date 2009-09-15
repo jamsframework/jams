@@ -26,28 +26,22 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import jams.gui.*;
 import java.awt.Color;
-import jams.JAMS;
 import jams.JAMSTools;
 import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.TimeZone;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import org.sourceforge.jcalendarbutton.JCalendarButton;
 import org.sourceforge.jcalendarbutton.JTimeButton;
@@ -97,6 +91,8 @@ public class CalendarInput extends JPanel implements InputComponent {
 
             GUIHelper.addGBComponent(this, gbl, datePanel, 1, 1, 1, 1, 0, 0);
             GUIHelper.addGBComponent(this, gbl, timePanel, 11, 1, 1, 1, 0, 0);
+            dateText.setToolTipText(jams.JAMS.resources.getString("Date"));
+            timeText.setToolTipText(jams.JAMS.resources.getString("Time"));
 
 //            JButton test = new JButton("Value");
 //            test.addActionListener(new ActionListener() {
@@ -142,7 +138,7 @@ public class CalendarInput extends JPanel implements InputComponent {
         dateText.addFocusListener(new java.awt.event.FocusAdapter() {
 
             public void focusLost(java.awt.event.FocusEvent evt) {
-                String dateString = dateText.getText();
+                String dateString = getDateText().getText();
                 Date date = null;
                 try {
                     if (!JAMSTools.isEmptyString(dateString)) {
@@ -183,7 +179,7 @@ public class CalendarInput extends JPanel implements InputComponent {
         timeText.addFocusListener(new java.awt.event.FocusAdapter() {
 
             public void focusLost(java.awt.event.FocusEvent evt) {
-                String timeString = timeText.getText();
+                String timeString = getTimeText().getText();
                 Date time = null;
                 try {
                     if (!JAMSTools.isEmptyString(timeString)) {
@@ -388,4 +384,23 @@ public class CalendarInput extends JPanel implements InputComponent {
     public JPanel getTimePanel() {
         return timePanel;
     }
+
+    /**
+     * @return the dateText
+     */
+    public JTextField getDateText() {
+        return dateText;
+    }
+
+    /**
+     * @return the timeText
+     */
+    public JTextField getTimeText() {
+        return timeText;
+    }
+
+    public void setHelpText(String text) {
+        getComponent().setToolTipText(text);
+    }
+
 }

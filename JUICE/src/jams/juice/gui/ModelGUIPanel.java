@@ -440,7 +440,7 @@ public class ModelGUIPanel extends JPanel {
         }
         ic.setRange(property.lowerBound, property.upperBound);
         ic.setLength(property.length);
-        ic.getComponent().setToolTipText(property.description);
+        ic.setHelpText(property.description);
         ic.setValue(property.value);
 
         if ((property.attribute == null) && (property.var == null)) {

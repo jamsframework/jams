@@ -38,7 +38,10 @@ import javax.swing.event.DocumentListener;
 public class IntegerInput extends JPanel implements InputComponent {
 
     private JTextField text = new JTextField();
+
     private ValueChangeListener l;
+
+    private String boundaryString = null;
 
     public IntegerInput() {
         super();
@@ -59,40 +62,9 @@ public class IntegerInput extends JPanel implements InputComponent {
         return text;
     }
 
-    class LongIntervalVerifier extends InputVerifier {
-
-        long lower, upper;
-        int result;
-
-        public LongIntervalVerifier(long lower, long upper) {
-            this.lower = lower;
-            this.upper = upper;
-        }
-
-        public boolean verify(JComponent input) {
-
-            int result;
-            long value;
-
-            try {
-                value = Long.parseLong(((JTextField) input).getText());
-                if ((value >= lower) && (value <= upper)) {
-                    result = INPUT_OK;
-                    return true;
-                } else {
-                    result = INPUT_OUT_OF_RANGE;
-                    return false;
-                }
-            } catch (NumberFormatException nfe) {
-                result = INPUT_WRONG_FORMAT;
-            }
-
-            return false;
-        }
-    }
-
     public void setRange(double lower, double upper) {
-        this.setInputVerifier(new LongIntervalVerifier((long) lower, (long) upper));
+        this.boundaryString = "[" + (long) lower + "..." + (long) upper + "]";
+        this.setInputVerifier(new IntegerIntervalVerifier((long) lower, (long) upper));
     }
 
     public boolean verify() {
@@ -100,7 +72,7 @@ public class IntegerInput extends JPanel implements InputComponent {
     }
 
     public int getErrorCode() {
-        return ((LongIntervalVerifier) this.getInputVerifier()).result;
+        return ((IntegerIntervalVerifier) this.getInputVerifier()).result;
     }
 
     public void setLength(int length) {
@@ -126,8 +98,8 @@ public class IntegerInput extends JPanel implements InputComponent {
             }
         });
     }
-    
     private Color oldColor;
+
     public void setMarked(boolean marked) {
         if (marked == true) {
             oldColor = text.getBackground();
@@ -135,5 +107,45 @@ public class IntegerInput extends JPanel implements InputComponent {
         } else {
             text.setBackground(oldColor);
         }
-    }        
+    }
+
+    public void setHelpText(String text) {
+        if (this.boundaryString != null) {
+            text = "<html>" + this.boundaryString + "<br>" + text + "</html>";
+        }
+        getComponent().setToolTipText(text);
+    }
+
+    class IntegerIntervalVerifier extends InputVerifier {
+
+        long lower, upper;
+
+        int result;
+
+        public IntegerIntervalVerifier(long lower, long upper) {
+            this.lower = lower;
+            this.upper = upper;
+        }
+
+        public boolean verify(JComponent input) {
+
+            int result;
+            long value;
+
+            try {
+                value = Long.parseLong(((JTextField) input).getText());
+                if ((value >= lower) && (value <= upper)) {
+                    result = INPUT_OK;
+                    return true;
+                } else {
+                    result = INPUT_OUT_OF_RANGE;
+                    return false;
+                }
+            } catch (NumberFormatException nfe) {
+                result = INPUT_WRONG_FORMAT;
+            }
+
+            return false;
+        }
+    }
 }

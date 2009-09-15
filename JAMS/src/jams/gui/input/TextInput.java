@@ -102,4 +102,8 @@ public class TextInput extends JPanel implements InputComponent {
             text.setBackground(oldColor);
         }
     }
+
+    public void setHelpText(String text) {
+        getComponent().setToolTipText(text);
+    }
 }

@@ -450,7 +450,7 @@ public class JAMSLauncher extends JFrame {
                 ic.setLength(Integer.parseInt(lenStr));
             }
 
-            ic.getComponent().setToolTipText(property.getAttribute("description"));
+            ic.setHelpText(property.getAttribute("description"));
             ic.setValue(targetElement.getAttribute("value"));
 
             getInputMap().put(ic, targetElement);

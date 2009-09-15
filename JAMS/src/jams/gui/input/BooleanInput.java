@@ -90,4 +90,8 @@ public class BooleanInput extends JCheckBox implements InputComponent {
             this.setBackground(oldColor);
         }
     }
+
+    public void setHelpText(String text) {
+        getComponent().setToolTipText(text);
+    }
 }

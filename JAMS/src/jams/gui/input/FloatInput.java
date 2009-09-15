@@ -41,6 +41,8 @@ public class FloatInput extends JPanel implements InputComponent {
 
     private ValueChangeListener l;
 
+    private String boundaryString = null;
+
     public FloatInput() {
         super();
         setRange((-1 * Double.MAX_VALUE) + 1, Double.MAX_VALUE);
@@ -61,7 +63,8 @@ public class FloatInput extends JPanel implements InputComponent {
     }
 
     public void setRange(double lower, double upper) {
-        this.setInputVerifier(new NumericIntervalVerifier(lower, upper));
+        this.boundaryString = "[" + lower + "..." + upper + "]";
+        this.setInputVerifier(new FloatIntervalVerifier(lower, upper));
     }
 
     public boolean verify() {
@@ -69,7 +72,7 @@ public class FloatInput extends JPanel implements InputComponent {
     }
 
     public int getErrorCode() {
-        return ((NumericIntervalVerifier) this.getInputVerifier()).result;
+        return ((FloatIntervalVerifier) this.getInputVerifier()).result;
     }
 
     public void setLength(int length) {
@@ -106,13 +109,20 @@ public class FloatInput extends JPanel implements InputComponent {
         }
     }
 
-    class NumericIntervalVerifier extends InputVerifier {
+    public void setHelpText(String text) {
+        if (this.boundaryString != null) {
+            text = "<html>" + this.boundaryString + "<br>" + text + "</html>";
+        }
+        getComponent().setToolTipText(text);
+    }
+
+    class FloatIntervalVerifier extends InputVerifier {
 
         double lower, upper;
 
         int result;
 
-        public NumericIntervalVerifier(double lower, double upper) {
+        public FloatIntervalVerifier(double lower, double upper) {
             this.lower = lower;
             this.upper = upper;
         }

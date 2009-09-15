@@ -43,4 +43,5 @@ public interface InputComponent {
     public void addValueChangeListener(ValueChangeListener l);
     public void setMarked(boolean marked);
     public void setEnabled(boolean enabled);
+    public void setHelpText(String text);
 }

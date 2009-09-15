@@ -169,4 +169,8 @@ public class FileInput extends JPanel implements InputComponent {
             textField.setBackground(oldColor);
         }
     }
+
+    public void setHelpText(String text) {
+        getComponent().setToolTipText(text);
+    }
 }

@@ -89,10 +89,14 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         startDate = new CalendarInput(false);
         GUIHelper.addGBComponent(this, gbl, startDate.getDatePanel(), 1, 1, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, gbl, startDate.getTimePanel(), 11, 1, 1, 1, 0, 0);
+        startDate.getTimeText().setToolTipText(JAMS.resources.getString("Starttime"));
+        startDate.getDateText().setToolTipText(JAMS.resources.getString("Startdate"));
 
         endDate = new CalendarInput(false);
         GUIHelper.addGBComponent(this, gbl, endDate.getDatePanel(), 1, 2, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, gbl, endDate.getTimePanel(), 11, 2, 1, 1, 0, 0);
+        endDate.getTimeText().setToolTipText(JAMS.resources.getString("Endtime"));
+        endDate.getDateText().setToolTipText(JAMS.resources.getString("Enddate"));
 
         indexMap.put(JAMSCalendar.YEAR, 0);
         indexMap.put(JAMSCalendar.MONTH, 1);
@@ -269,6 +273,10 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         } else {
             setBackground(oldColor);
         }
+    }
+
+    public void setHelpText(String text) {
+        getComponent().setToolTipText(text);
     }
 
     public static void main(String[] args) {
