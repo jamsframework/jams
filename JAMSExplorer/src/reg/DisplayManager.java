@@ -94,77 +94,64 @@ public class DisplayManager implements Observer {
     }
 
     public void displayDS(DSTreeNode node) {
+
+        String dsID;
+
         if (node == null) {
             return;
         }
         switch (node.getType()) {
+
             case DSTreeNode.INPUT_DS:
 
-                String dsID = node.toString();
+                dsID = node.toString();
                 InputDataStore store = explorer.getWorkspace().getInputDataStore(dsID);
+
+                if (dataPanels.containsKey(dsID)) {
+
+                    JPanel panel = dataPanels.get(dsID);
+                    explorer.getExplorerFrame().getTPane().setSelectedComponent(panel);
+                    return;
+
+                }
 
                 if (store instanceof TSDataStore) {
 
-                    JAMSSpreadSheet spreadSheet;
-
-                    if (!dataPanels.containsKey(dsID)) {
-
-                        spreadSheet = new JAMSSpreadSheet(explorer);
-                        spreadSheet.init();
-                        spreadSheet.setID(dsID);
-                        dataPanels.put(dsID, spreadSheet);
-                        explorer.getExplorerFrame().getTPane().addTab(dsID, spreadSheet);
-                        explorer.getExplorerFrame().getTPane().setSelectedComponent(spreadSheet);
-                        try {
-                            spreadSheet.loadTSDS((TSDataStore) store, explorer.getWorkspace().getInputDirectory());
-                        } catch (Exception e) {
-                            GUIHelper.showErrorDlg(explorer.getExplorerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
-                            e.printStackTrace();
-                        }
-
-                    } else {
-
-                        JPanel panel = dataPanels.get(dsID);
-
-                        if (panel instanceof JAMSSpreadSheet) {
-                            spreadSheet = (JAMSSpreadSheet) panel;
-                            explorer.getExplorerFrame().getTPane().setSelectedComponent(panel);
-                        }
+                    JAMSSpreadSheet spreadSheet = new JAMSSpreadSheet(explorer);
+                    spreadSheet.init();
+                    spreadSheet.setID(dsID);
+                    dataPanels.put(dsID, spreadSheet);
+                    explorer.getExplorerFrame().getTPane().addTab(dsID, spreadSheet);
+                    explorer.getExplorerFrame().getTPane().setSelectedComponent(spreadSheet);
+                    try {
+                        spreadSheet.loadTSDS((TSDataStore) store, explorer.getWorkspace().getInputDirectory());
+                    } catch (Exception e) {
+                        GUIHelper.showErrorDlg(explorer.getExplorerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
+                        e.printStackTrace();
                     }
+
                 }
                 break;
+
             case DSTreeNode.OUTPUT_DS:
+
                 FileObject fo = (FileObject) node.getUserObject();
-//                OutputDSPanel odsPanel = OutputDSPanel.createPanel(fo.getFile());
-//                JAMSExplorer.getExplorerFrame().updateMainPanel(odsPanel);
+                dsID = fo.getFile().getName();
+
+                if (dataPanels.containsKey(dsID)) {
+
+                    JPanel panel = dataPanels.get(dsID);
+                    explorer.getExplorerFrame().getTPane().setSelectedComponent(panel);
+                    return;
+
+                }
+
                 try {
-                    JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(explorer, fo.getFile());
-                    if (outputPanel instanceof OutputDSPanel) {
-                        OutputDSPanel odspanel = (OutputDSPanel) outputPanel;
-                        //JAMSSpreadSheet spreadsheet = odspanel.getSpreadsheet();
 
-//                    regionalizer.getExplorerFrame().addToTabbedPane(node.toString(),outputPanel);
-
-                        if (!dataPanels.containsKey(fo.getFile().getName())) {
-
-                            dataPanels.put(fo.getFile().getName(), odspanel);
-                            //                        regionalizer.getExplorerFrame().addToTabbedPane(node.toString(), outputPanel);
-                            explorer.getExplorerFrame().addToTabbedPane(fo.getFile().getName(), odspanel);
-                        } else {
-                            outputPanel = dataPanels.get(fo.getFile().getName());
-                            explorer.getExplorerFrame().showTab(outputPanel);
-                        }
-
-                    } else {
-                        if (!dataPanels.containsKey(fo.getFile().getName())) {
-
-                            dataPanels.put(fo.getFile().getName(), outputPanel);
-                            //                        regionalizer.getExplorerFrame().addToTabbedPane(node.toString(), outputPanel);
-                            explorer.getExplorerFrame().addToTabbedPane(fo.getFile().getName(), outputPanel);
-                        } else {
-                            explorer.getExplorerFrame().showTab(dataPanels.get(fo.getFile().getName()));
-                        }
-                    }
+                    JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(explorer, fo.getFile(), dsID);
+                    dataPanels.put(dsID, outputPanel);
+                    explorer.getExplorerFrame().getTPane().addTab(dsID, outputPanel);
+                    explorer.getExplorerFrame().getTPane().setSelectedComponent(outputPanel);
 
                 } catch (FileNotFoundException ex) {
                     ex.printStackTrace();
@@ -196,6 +183,7 @@ public class DisplayManager implements Observer {
         if (tsPanel == null) {
             tsPanel = new TSPanel(explorer);
         }
+
         return tsPanel;
     }
 //    /**
