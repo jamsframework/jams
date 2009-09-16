@@ -4,7 +4,7 @@
  * Created on 2. September 2007, 00:40
  *
  * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * and setWorkspace the template in the editor.
  */
 package reg.spreadsheet;
 
@@ -179,7 +179,7 @@ public class JTSConfigurator extends JFrame {
 
     /** Creates a new instance of CTSConfigurator */
     public JTSConfigurator() {
-        /* open CTSConf */
+        /* setWorkspace CTSConf */
     }
     /*
     public CTSConfigurator(JAMSTableModel tmodel){

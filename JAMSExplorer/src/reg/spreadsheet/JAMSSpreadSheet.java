@@ -63,8 +63,6 @@ public class JAMSSpreadSheet extends JPanel {
 
     private String panelname = "spreadsheet";
 
-    private int numberOfColumns = 0;
-
     private JFrame parent_frame;
 
     private boolean timeRuns = false;
@@ -258,16 +256,8 @@ public class JAMSSpreadSheet extends JPanel {
         this.geoWindEnable = geoWindEnable;
     }
 
-    /* Methods */
-    public JPanel getPanel() {
-        //createPanel();
-        return panel;
-    }
-
-    public void closeTab() {
-        regionalizer.getExplorerFrame().removeFromTabbedPane(this.name);
-        regionalizer.getExplorerFrame().removeFromTabbedPane(this.getPanel());
-        regionalizer.getDisplayManager().getSpreadSheets().remove(this.name);
+    private void close() {
+        regionalizer.getDisplayManager().removeDisplay(name);
     }
 
     public String getID() {
@@ -276,7 +266,6 @@ public class JAMSSpreadSheet extends JPanel {
 
     public void setID(String name) {
         this.name = name;
-        getPanel().setName(name);
     }
 
     public TSDataStore getStore() {
@@ -418,7 +407,7 @@ public class JAMSSpreadSheet extends JPanel {
 
             try {
 
-                returnVal = getDatChooser().showOpenDialog(panel);
+                returnVal = getDatChooser().showOpenDialog(JAMSSpreadSheet.this);
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = getDatChooser().getSelectedFile();
@@ -576,7 +565,7 @@ public class JAMSSpreadSheet extends JPanel {
                                     timeval.setValue(actual_string, "yyyy-MM-dd hh:mm");
 
                                 } catch (ParseException pe) {
-                                    GUIHelper.showErrorDlg(panel, SpreadsheetConstants.SPREADSHEET_ERR_TSMISSING, "Error");
+                                    GUIHelper.showErrorDlg(this, SpreadsheetConstants.SPREADSHEET_ERR_TSMISSING, "Error");
                                     breakpoint = true;
                                     break;
                                     //pe.printStackTrace();
@@ -647,7 +636,7 @@ public class JAMSSpreadSheet extends JPanel {
 //
 
         } catch (Exception eee) {
-            GUIHelper.showErrorDlg(panel, "File Not Found!", "Error!");
+            GUIHelper.showErrorDlg(this, "File Not Found!", "Error!");
 //            eee.printStackTrace();
 
         }
@@ -700,7 +689,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         public void actionPerformed(ActionEvent e) {
 
-            closeTab();
+            close();
         }
     };
 
@@ -858,7 +847,7 @@ public class JAMSSpreadSheet extends JPanel {
             jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, regionalizer);
         } else {
 
-            GUIHelper.showErrorDlg(panel, ERR_MSG_CTS, "Error");
+            GUIHelper.showErrorDlg(this, ERR_MSG_CTS, "Error");
         }
         //ctstabs.addGraph(table);
         //ctsIsOpen = true;
@@ -875,7 +864,7 @@ public class JAMSSpreadSheet extends JPanel {
                 jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, null, regionalizer);
             }
         } else {
-            GUIHelper.showErrorDlg(panel, ERR_MSG_CTS, "Error");
+            GUIHelper.showErrorDlg(this, ERR_MSG_CTS, "Error");
         }
         //ctstabs.addGraph(table);
         //ctsIsOpen = true;
@@ -1061,7 +1050,7 @@ public class JAMSSpreadSheet extends JPanel {
             try {
                 viewer.addData(dataTransfer);
             } catch (Exception ex) {
-                GUIHelper.showErrorDlg(panel, "Error while trying to display map!", "Error!");
+                GUIHelper.showErrorDlg(JAMSSpreadSheet.this, "Error while trying to display map!", "Error!");
             }
         }
     };
@@ -1176,12 +1165,7 @@ public class JAMSSpreadSheet extends JPanel {
     }
 
     public String getPanelName() {
-        String name = this.panelname;
-        return name;
-    }
-
-    public void setNumberOfColumns(int numberOfColumns) {
-        this.numberOfColumns = numberOfColumns;
+        return this.panelname;
     }
 
     public void setColumnNameArray(String[] names) {
@@ -1191,7 +1175,7 @@ public class JAMSSpreadSheet extends JPanel {
     public void updateGUI() {
         table.setModel(tmodel);
         scrollpane.setViewportView(table);
-        panel.repaint();
+        this.repaint();
     }
 
     public void makeTable() {
@@ -1219,7 +1203,7 @@ public class JAMSSpreadSheet extends JPanel {
 
     public void createPanel() {
 
-        panel.setLayout(new BorderLayout(10, 10));
+        this.setLayout(new BorderLayout(10, 10));
         JPanel controlpanel = new JPanel();
         JPanel helperpanel = new JPanel();
         GridBagLayout gbl = new GridBagLayout();
@@ -1291,10 +1275,10 @@ public class JAMSSpreadSheet extends JPanel {
         headerpanel.add(headerlabel);
         helperpanel.add(controlpanel);
 
-        panel.add(headerpanel, BorderLayout.NORTH);
+        this.add(headerpanel, BorderLayout.NORTH);
 
-        panel.add(scrollpane, BorderLayout.CENTER);
-        panel.add(helperpanel, BorderLayout.EAST);
+        this.add(scrollpane, BorderLayout.CENTER);
+        this.add(helperpanel, BorderLayout.EAST);
 
 
     }

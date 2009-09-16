@@ -23,7 +23,6 @@
 
 package reg.gui;
 
-import jams.workspace.JAMSWorkspace;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;

@@ -72,7 +72,7 @@ public class OutputDSPanel extends JPanel {
         tsp.createProc(file);
                 
         this.add(new JScrollPane(tsp), BorderLayout.NORTH);
-        this.add(this.spreadsheet.getPanel(), BorderLayout.CENTER);
+        this.add(this.spreadsheet, BorderLayout.CENTER);
     }
 
     /**

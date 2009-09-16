@@ -98,11 +98,6 @@ public class JAMSExplorer {
 
     }
 
-    public void open(JAMSWorkspace workspace) {
-        this.workspace = workspace;
-        explorerFrame.update();
-    }
-
     public void exit() {
 
         if (JAMSExplorer.GEOWIND_ENABLE) {
@@ -124,23 +119,11 @@ public class JAMSExplorer {
 
         // create the JAMSExplorer object
         JAMSExplorer explorer = new JAMSExplorer(null);
+        explorer.getExplorerFrame().setVisible(true);
 
         if (args.length > 0) {
-
-            try {
-                String[] libs = JAMSTools.toArray(explorer.getProperties().getProperty("libs", ""), ";");
-                JAMSWorkspace workspace = new JAMSWorkspace(new File(args[0]), explorer.getRuntime(), true);
-                workspace.setLibs(libs);
-
-                explorer.open(workspace);
-
-            } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
-                explorer.getRuntime().sendHalt(iwe.getMessage());
-            }
+            explorer.getExplorerFrame().open(new File(args[0]));
         }
-
-
-        explorer.getExplorerFrame().setVisible(true);
     }
 
     /**
@@ -176,5 +159,10 @@ public class JAMSExplorer {
      */
     public JAMSWorkspace getWorkspace() {
         return workspace;
+    }
+
+
+    public void setWorkspace(JAMSWorkspace workspace) {
+        this.workspace = workspace;
     }
 }

@@ -113,7 +113,7 @@ public class CalendarInput extends JPanel implements InputComponent {
         // create the time panel
 
         datePanel = new JPanel();
-        //datePanel.setBorder(BorderFactory.createEtchedBorder());
+        //datePanel.setBorder(BorderFactory.c reateEtchedBorder());
 
         dateText = new JTextField();
         dateText.setPreferredSize(new Dimension(100, 20));

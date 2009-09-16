@@ -62,7 +62,7 @@ public class OutputPanelFactory {
             spreadsheet.setAsOutputSheet();
             spreadsheet.setID(file.getName());
 
-            return spreadsheet.getPanel();
+            return spreadsheet;
 //            setName(file.getName());
         }
 

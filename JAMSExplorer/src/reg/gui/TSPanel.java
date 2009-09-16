@@ -38,6 +38,6 @@ public class TSPanel extends JPanel {
     public TSPanel(JAMSExplorer regionalizer) {
         spreadsheet = new JAMSSpreadSheet(regionalizer);
         spreadsheet.init();
-        add(spreadsheet.getPanel());
+        add(spreadsheet);
     }
 }
