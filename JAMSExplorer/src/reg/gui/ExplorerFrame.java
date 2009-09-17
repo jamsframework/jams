@@ -22,9 +22,9 @@
  */
 package reg.gui;
 
+import reg.JAMSExplorer;
 import jams.JAMSTools;
 import java.io.FileNotFoundException;
-import reg.*;
 import jams.gui.GUIHelper;
 import jams.gui.JAMSLauncher;
 import jams.gui.PropertyDlg;

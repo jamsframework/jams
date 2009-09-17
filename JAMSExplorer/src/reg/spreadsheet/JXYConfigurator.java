@@ -231,13 +231,12 @@ public class JXYConfigurator extends JFrame {
     JComboBox[] typechoice;
 
     JComboBox[] colorchoice;
-    /* ActionListener */
 
     ActionListener[] activationChange;
 
     JAMSSpreadSheet sheet;
 
-    /** Creates a new instance of CTSConfigurator */
+
     public JXYConfigurator(JAMSExplorer explorer, JAMSSpreadSheet sheet, File templateFile) {
 
         this.setParent(explorer.getExplorerFrame());
@@ -2207,31 +2206,5 @@ public class JXYConfigurator extends JFrame {
     }
 }
 
-class XYRow implements Comparable<XYRow> {
 
-    double[] col;
-
-    int compare_index;
-
-    public XYRow(double[] rowdata, int compare_index) {
-        this.col = rowdata;
-        this.compare_index = compare_index;
-    }
-
-    public void setCompareIndex(int compare_index) {
-        this.compare_index = compare_index;
-    }
-
-    public int compareTo(XYRow arg) {
-
-        if (col[compare_index] < arg.col[compare_index]) {
-            return -1;
-        }
-        if (col[compare_index] > arg.col[compare_index]) {
-            return 1;
-        }
-        return 0;
-
-    }
-}
 
