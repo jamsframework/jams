@@ -38,12 +38,12 @@ public class OutputDSPanel extends JPanel {
         
     private JAMSSpreadSheet spreadsheet;
 
-    public OutputDSPanel(JAMSExplorer regionalizer, File file) {
+    public OutputDSPanel(JAMSExplorer explorer, File file) {
 
         this.setLayout(new BorderLayout());
 
         // create the spreadsheet
-        this.spreadsheet = new JAMSSpreadSheet(regionalizer, true);
+        this.spreadsheet = new JAMSSpreadSheet(explorer, true);
         this.spreadsheet.init();
         this.spreadsheet.setAsOutputSheet();
         this.spreadsheet.setID(file.getName());
@@ -67,7 +67,7 @@ public class OutputDSPanel extends JPanel {
                 System.out.println("unsupported datastore"); break;    
         }
         
-        tsp.setParent(regionalizer.getExplorerFrame());
+        tsp.setParent(explorer.getExplorerFrame());
         tsp.setOutputSpreadSheet(this.spreadsheet);
         tsp.createProc(file);
                 

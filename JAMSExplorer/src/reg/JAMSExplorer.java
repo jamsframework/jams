@@ -22,16 +22,19 @@
  */
 package reg;
 
+import java.awt.event.WindowEvent;
 import reg.gui.ExplorerFrame;
 import jams.JAMS;
 import jams.JAMSProperties;
-import jams.JAMSTools;
 import jams.gui.GUIHelper;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import jams.workspace.JAMSWorkspace;
+import java.awt.Window;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.UIManager;
@@ -60,6 +63,8 @@ public class JAMSExplorer {
     private DisplayManager displayManager;
 
     private JAMSWorkspace workspace;
+
+    private ArrayList<Window> childWindows = new ArrayList<Window>();
 
     public JAMSExplorer(JAMSRuntime runtime) {
 
@@ -98,17 +103,8 @@ public class JAMSExplorer {
 
     }
 
-    public void exit() {
-
-        if (JAMSExplorer.GEOWIND_ENABLE) {
-            Viewer.destroy();
-        }
-        explorerFrame.setVisible(false);
-        explorerFrame.dispose();
-    }
-
     public static void main(String[] args) {
-           
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             if (GEOWIND_ENABLE) {
@@ -161,8 +157,48 @@ public class JAMSExplorer {
         return workspace;
     }
 
-
     public void setWorkspace(JAMSWorkspace workspace) {
         this.workspace = workspace;
+    }
+
+    public void registerChild(Window window) {
+
+        synchronized (this) {
+            // add the window to the list
+            this.childWindows.add(window);
+
+            // make sure the window is removed from the list once it has been closed
+            window.addWindowListener(new WindowListener() {
+
+                public void windowOpened(WindowEvent e) {
+                }
+
+                public void windowClosing(WindowEvent e) {
+                }
+
+                public void windowClosed(WindowEvent e) {
+                    JAMSExplorer.this.getChildWindows().remove(e.getWindow());
+                }
+
+                public void windowIconified(WindowEvent e) {
+                }
+
+                public void windowDeiconified(WindowEvent e) {
+                }
+
+                public void windowActivated(WindowEvent e) {
+                }
+
+                public void windowDeactivated(WindowEvent e) {
+                }
+            });
+        }
+    }
+
+    /**
+     * @return the childWindows
+     */
+    public ArrayList<Window> getChildWindows() {
+        return childWindows;
     }
 }

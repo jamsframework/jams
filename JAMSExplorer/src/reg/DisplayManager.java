@@ -34,7 +34,6 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JPanel;
 import reg.gui.InputDSInfoPanel;
-import reg.gui.OutputDSPanel;
 import reg.gui.TSPanel;
 import reg.gui.TreePanel;
 import reg.tree.DSTreeNode;
@@ -56,9 +55,9 @@ public class DisplayManager implements Observer {
 
     private JAMSExplorer explorer;
 
-    public DisplayManager(JAMSExplorer regionalizer) {
-        this.explorer = regionalizer;
-        treePanel = new TreePanel(regionalizer);
+    public DisplayManager(JAMSExplorer explorer) {
+        this.explorer = explorer;
+        treePanel = new TreePanel(explorer);
         inputDSInfoPanel = new InputDSInfoPanel();
         treePanel.getTree().addObserver(this);
     }
@@ -186,10 +185,4 @@ public class DisplayManager implements Observer {
 
         return tsPanel;
     }
-//    /**
-//     * @return the spreadSheets
-//     */
-//    public HashMap<String, JAMSSpreadSheet> getDataPanels() {
-//        return spreadSheets;
-//    }
 }

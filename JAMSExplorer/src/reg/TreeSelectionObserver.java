@@ -36,7 +36,7 @@ public class TreeSelectionObserver implements Observer {
 
     private JAMSWorkspace workspace;
 
-    private JAMSExplorer regionalizer;
+    private JAMSExplorer explorer;
 
     public TreeSelectionObserver(JAMSWorkspace workspace) {
         this.workspace = workspace;
@@ -54,7 +54,7 @@ public class TreeSelectionObserver implements Observer {
                 DataStore store = workspace.getInputDataStore(node.toString());
 //                JAMSExplorer.getExplorerFrame().getInfoPanel().updateDS(store);
             } catch (Exception e) {
-                regionalizer.getRuntime().sendErrorMsg(e.toString());
+                explorer.getRuntime().sendErrorMsg(e.toString());
                 e.printStackTrace();
             }
         } else if (node.getType() == DSTreeNode.OUTPUT_DS) {

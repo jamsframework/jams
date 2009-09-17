@@ -23,7 +23,6 @@
 package reg.gui;
 
 import jams.JAMSTools;
-import jams.workspace.JAMSWorkspace.InvalidWorkspaceException;
 import java.io.FileNotFoundException;
 import reg.*;
 import jams.gui.GUIHelper;
@@ -38,6 +37,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
@@ -66,6 +66,7 @@ import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.Wizard;
 import org.w3c.dom.Document;
 import reg.spreadsheet.STPConfigurator;
+import reg.viewer.Viewer;
 import reg.wizard.tlug.ExplorerWizard;
 
 /**
@@ -100,8 +101,8 @@ public class ExplorerFrame extends JFrame {
 
     private WorkspaceDlg wsDlg;
 
-    public ExplorerFrame(JAMSExplorer regionalizer) {
-        this.explorer = regionalizer;
+    public ExplorerFrame(JAMSExplorer explorer) {
+        this.explorer = explorer;
         init();
     }
 
@@ -117,7 +118,7 @@ public class ExplorerFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                explorer.exit();
+                exit();
             }
         };
 
@@ -432,7 +433,7 @@ public class ExplorerFrame extends JFrame {
 
             @Override
             public void windowClosing(WindowEvent e) {
-                explorer.exit();
+                exit();
             }
 
             @Override
@@ -458,5 +459,19 @@ public class ExplorerFrame extends JFrame {
      */
     public JTabbedPane getTPane() {
         return tPane;
+    }
+
+    private void exit() {
+
+        if (JAMSExplorer.GEOWIND_ENABLE) {
+            Viewer.destroy();
+        }
+
+        for (Window window : explorer.getChildWindows()) {
+            window.dispose();
+        }
+        
+        this.setVisible(false);
+        this.dispose();
     }
 }

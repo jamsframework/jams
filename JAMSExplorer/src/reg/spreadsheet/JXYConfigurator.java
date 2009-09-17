@@ -36,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import reg.JAMSExplorer;
 
 /**
  *
@@ -237,64 +238,18 @@ public class JXYConfigurator extends JFrame {
     JAMSSpreadSheet sheet;
 
     /** Creates a new instance of CTSConfigurator */
-    public JXYConfigurator() {
-        /* open CXYConf */
-    }
-    /*
-    public CTSConfigurator(JAMSTableModel tmodel){
-    this.tmodel = tmodel;
-    }
-     **/
+    public JXYConfigurator(JAMSExplorer explorer, JAMSSpreadSheet sheet, File templateFile) {
 
-    public JXYConfigurator(JFrame parent, JAMSSpreadSheet sheet) {
-
-        this.setParent(parent);
-        this.setIconImage(parent.getIconImage());
+        this.setParent(explorer.getExplorerFrame());
+        this.setIconImage(explorer.getExplorerFrame().getIconImage());
         setTitle("XYPlot Viewer");
-//        URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
-//        ImageIcon icon = new ImageIcon(url);
-//        setIconImage(icon.getImage());
+
+        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        explorer.registerChild(this);
 
         setLayout(new FlowLayout());
-        Point parentloc = parent.getLocation();
+        Point parentloc = explorer.getExplorerFrame().getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
-//        this.thisJXY = this;
-        
-        this.sheet = sheet;
-        this.table = sheet.table;
-
-        this.rows = table.getSelectedRows();
-        this.columns = table.getSelectedColumns();
-        this.graphCount = columns.length;
-        this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
-
-        d_start_changed = false;
-        d_end_changed = false;
-
-        writeSortedData(columns[0]);
-
-        //setPreferredSize(new Dimension(1024, 768));
-
-        createPanel();
-
-        pack();
-        setVisible(true);
-
-    }
-
-    public JXYConfigurator(JFrame parent, JAMSSpreadSheet sheet, File templateFile) {
-
-        this.setParent(parent);
-        this.setIconImage(parent.getIconImage());
-        setTitle("XYPlot Viewer");
-//        URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
-//        ImageIcon icon = new ImageIcon(url);
-//        setIconImage(icon.getImage());
-
-        setLayout(new FlowLayout());
-        Point parentloc = parent.getLocation();
-        setLocation(parentloc.x + 30, parentloc.y + 30);
-//        this.thisJXY = this;
         
         this.sheet = sheet;
         this.table = sheet.table;
@@ -318,13 +273,10 @@ public class JXYConfigurator extends JFrame {
             writeSortedData(0);
         }
 
-        //setPreferredSize(new Dimension(1024, 768));
-
         createPanel();
 
         pack();
         setVisible(true);
-
     }
 
     public void createPanel() {

@@ -187,14 +187,18 @@ public class JTSConfigurator extends JFrame {
     }
      **/
 
-    public JTSConfigurator(JFrame parent, JAMSSpreadSheet sheet, JAMSExplorer regionalizer) {
+    public JTSConfigurator(JFrame parent, JAMSSpreadSheet sheet, JAMSExplorer explorer) {
 
 //        super(parent, "JAMS JTS Viewer");
         this.setParent(parent);
         this.setIconImage(parent.getIconImage());
+
+        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        explorer.registerChild(this);
+
         setTitle("JTS Viewer");
         
-        this.workspace = regionalizer.getWorkspace();
+        this.workspace = explorer.getWorkspace();
         
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
@@ -224,14 +228,18 @@ public class JTSConfigurator extends JFrame {
 
     }
 
-    public JTSConfigurator(JFrame parent, JAMSSpreadSheet sheet, File templateFile, JAMSExplorer regionalizer) {
+    public JTSConfigurator(JFrame parent, JAMSSpreadSheet sheet, File templateFile, JAMSExplorer explorer) {
 
 //        super(parent, "JAMS JTS Viewer");
         this.setParent(parent);
         this.setIconImage(parent.getIconImage());
+
+        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        explorer.registerChild(this);
+
         setTitle("JTS Viewer");
         
-        this.workspace = regionalizer.getWorkspace();
+        this.workspace = explorer.getWorkspace();
         
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();

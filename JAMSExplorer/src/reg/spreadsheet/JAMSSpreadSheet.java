@@ -123,7 +123,7 @@ public class JAMSSpreadSheet extends JPanel {
 
     private JFileChooser epsFileChooser, templateChooser, datChooser;
 
-    private JAMSExplorer regionalizer;
+    private JAMSExplorer explorer;
 
     private boolean geoWindEnable = false;
     /* Messages */
@@ -242,18 +242,18 @@ public class JAMSSpreadSheet extends JPanel {
         }
     }
 
-    public JAMSSpreadSheet(JAMSExplorer regionalizer) {
-        this.regionalizer = regionalizer;
-        this.parent_frame = regionalizer.getExplorerFrame();
+    public JAMSSpreadSheet(JAMSExplorer explorer) {
+        this.explorer = explorer;
+        this.parent_frame = explorer.getExplorerFrame();
     }
 
-    public JAMSSpreadSheet(JAMSExplorer regionalizer, boolean geoWindEnable) {
-        this(regionalizer);
+    public JAMSSpreadSheet(JAMSExplorer explorer, boolean geoWindEnable) {
+        this(explorer);
         this.geoWindEnable = geoWindEnable;
     }
 
     private void close() {
-        regionalizer.getDisplayManager().removeDisplay(name);
+        explorer.getDisplayManager().removeDisplay(name);
     }
 
     public String getID() {
@@ -328,7 +328,7 @@ public class JAMSSpreadSheet extends JPanel {
                             }
                         } else {
 
-                            File file = new File(regionalizer.getWorkspace().getDirectory().toString() + "/explorer", inputString);
+                            File file = new File(explorer.getWorkspace().getDirectory().toString() + "/explorer", inputString);
                             if (!file.exists()) {
                                 filename = file.getName();
                                 save(filename, getSaveHeaders());
@@ -450,7 +450,7 @@ public class JAMSSpreadSheet extends JPanel {
 //                file = new File(regionalizer.getWorkspace().getDirectory().toString() + "/output/current/" + filename);
                 file = new File(this.getOutputDSDir().toString() + "/" + filename);
             } else {
-                file = new File(regionalizer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME + filename);
+                file = new File(explorer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME + filename);
             }
 
             //File file = chooser.getSelectedFile();
@@ -606,15 +606,11 @@ public class JAMSSpreadSheet extends JPanel {
                         if (test.compareTo(ST_HEADERS) == 0) {
                             b_headers = true;
                         }
-
                     }
                 }
             }
             headers = new String[file_columns];
             headers = headerList.toArray(headers);
-//            headers[0] = "";
-//            columns = file_columns-1;
-//            rows = arrayVector.size();
 
             this.tmodel = new JAMSTableModel();
             tmodel.setTimeRuns(true);
@@ -625,34 +621,26 @@ public class JAMSSpreadSheet extends JPanel {
             tmodel.setColumnNames(headers);
 
             updateGUI();
-            //in.close();
-//            System.out.println("TimeVectorSize:"+timeVector.size());
-//            System.out.println("ArrayVectorSize:"+arrayVector.size());
-//
 
         } catch (Exception eee) {
             GUIHelper.showErrorDlg(this, "File Not Found!", "Error!");
-//            eee.printStackTrace();
-
         }
     }
 
     public JFileChooser getTemplateChooser() {
 
         File explorerDir;
-        ;
+
         if (!isOutputSheet()) {
-            explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString() + "/explorer");
+            explorerDir = new File(explorer.getWorkspace().getDirectory().toString() + "/explorer");
         } else {
-
-//            explorerDir = new File(regionalizer.getWorkspace().getOutputDataDirectory().toString());
-
-            explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString() + "/output/current");
+            explorerDir = new File(explorer.getWorkspace().getDirectory().toString() + "/output/current");
         }
+
         if (templateChooser == null) {
             templateChooser = new JFileChooser();
             templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
-            explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString() + "/explorer");
+            explorerDir = new File(explorer.getWorkspace().getDirectory().toString() + "/explorer");
             templateChooser.setCurrentDirectory(explorerDir);
         }
 
@@ -666,7 +654,7 @@ public class JAMSSpreadSheet extends JPanel {
         if (datChooser == null) {
             datChooser = new JFileChooser();
             datChooser.setFileFilter(JAMSFileFilter.getDatFilter());
-            File explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString() + "/explorer");
+            File explorerDir = new File(explorer.getWorkspace().getDirectory().toString() + "/explorer");
             datChooser.setCurrentDirectory(explorerDir);
         }
         datChooser.setFileFilter(JAMSFileFilter.getDatFilter());
@@ -767,7 +755,7 @@ public class JAMSSpreadSheet extends JPanel {
         String[] headers;
 
 //        getTemplateChooser().setCurrentDirectory(inputDSDir);
-        File explorerDir = new File(regionalizer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME);
+        File explorerDir = new File(explorer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME);
         getTemplateChooser().setCurrentDirectory(explorerDir);
         getEPSFileChooser().setCurrentDirectory(inputDSDir.getParentFile());
 
@@ -776,7 +764,7 @@ public class JAMSSpreadSheet extends JPanel {
 //        ttpFile = new File(inputDSDir, store.getID() + ".ttp");
 //        dtpFile = new File(inputDSDir, store.getID() + ".dtp");
 
-        ttpFile = new File(regionalizer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, store.getID() + SpreadsheetConstants.FILE_ENDING_TTP);
+        ttpFile = new File(explorer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, store.getID() + SpreadsheetConstants.FILE_ENDING_TTP);
 //        dtpFile = new File(regionalizer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, store.getID() + ".dtp");
 
         Vector<double[]> arrayVector = new Vector<double[]>();
@@ -838,7 +826,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         if (table.getValueAt(0, 0).getClass().equals(JAMSCalendar.class)) {
             JTSConfigurator jts;
-            jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, regionalizer);
+            jts = new JTSConfigurator(explorer.getExplorerFrame(), this, explorer);
         } else {
 
             GUIHelper.showErrorDlg(this, ERR_MSG_CTS, "Error");
@@ -853,9 +841,9 @@ public class JAMSSpreadSheet extends JPanel {
         if (table.getValueAt(0, 0).getClass().equals(JAMSCalendar.class)) {
             JTSConfigurator jts;
             if (useTemplateButton.isSelected()) {
-                jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, templateFile, regionalizer);
+                jts = new JTSConfigurator(explorer.getExplorerFrame(), this, templateFile, explorer);
             } else {
-                jts = new JTSConfigurator(regionalizer.getExplorerFrame(), this, null, regionalizer);
+                jts = new JTSConfigurator(explorer.getExplorerFrame(), this, null, explorer);
             }
         } else {
             GUIHelper.showErrorDlg(this, ERR_MSG_CTS, "Error");
@@ -868,9 +856,9 @@ public class JAMSSpreadSheet extends JPanel {
         JXYConfigurator jxys;
 
         try {
-            jxys = new JXYConfigurator(regionalizer.getExplorerFrame(), this);
+            jxys = new JXYConfigurator(explorer, this, null);
         } catch (NullPointerException npe) {
-            jxys = new JXYConfigurator(regionalizer.getExplorerFrame(), this);
+            jxys = new JXYConfigurator(explorer, this, null);
         }
     }
 
@@ -878,14 +866,14 @@ public class JAMSSpreadSheet extends JPanel {
         JXYConfigurator jxys;
 
         if (useTemplateButton.isSelected()) {
-            jxys = new JXYConfigurator(regionalizer.getExplorerFrame(), this, templateFile);
+            jxys = new JXYConfigurator(explorer, this, templateFile);
         } else {
-            jxys = new JXYConfigurator(regionalizer.getExplorerFrame(), this, null);
+            jxys = new JXYConfigurator(explorer, this, null);
         }
     }
 
     private void openSTP() {
-        STPConfigurator stp = new STPConfigurator(regionalizer, this);
+        STPConfigurator stp = new STPConfigurator(explorer, this);
     }
     ActionListener plotAction = new ActionListener() {
 
@@ -907,7 +895,7 @@ public class JAMSSpreadSheet extends JPanel {
                     ttpFile = new File(getOutputDSDir(), filename);
 
                 } else {
-                    ttpFile = new File(regionalizer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, store.getID() + SpreadsheetConstants.FILE_ENDING_TTP);
+                    ttpFile = new File(explorer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, store.getID() + SpreadsheetConstants.FILE_ENDING_TTP);
                 }
 
                 if (ttpFile != null) {
@@ -1009,7 +997,7 @@ public class JAMSSpreadSheet extends JPanel {
             }
 
             System.out.println("shape selected >" + selectedShape + "<");
-            ShapeFileDataStore dataStore = (ShapeFileDataStore) regionalizer.getWorkspace().getInputDataStore(selectedShape);
+            ShapeFileDataStore dataStore = (ShapeFileDataStore) explorer.getWorkspace().getInputDataStore(selectedShape);
             if (dataStore == null) {
                 System.out.println("no datastore found.");
                 return;
@@ -1233,7 +1221,7 @@ public class JAMSSpreadSheet extends JPanel {
             // populate shape-combobox
             String defaultShapeName = null;
 
-            String[] shapeStoreIDs = this.regionalizer.getWorkspace().
+            String[] shapeStoreIDs = this.explorer.getWorkspace().
                     getDataStoreIDs(InputDataStore.TYPE_SHAPEFILEDATASTORE);
 
             String[] shapeNames = shapeStoreIDs;

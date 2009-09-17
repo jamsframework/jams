@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and setWorkspace the template in the editor.
  */
-
 package reg.spreadsheet;
 
 //import com.sun.image.codec.jpeg.JPEGCodec;
@@ -49,117 +48,147 @@ import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import reg.JAMSExplorer;
 
-
 /**
  *
  * @author Robert Riedel
  */
-public class STPConfigurator extends JFrame{
+public class STPConfigurator extends JFrame {
 
     JPanel plotpanel;
+
     JPanel optionpanel;
+
     JPanel chooserpanel;
-    
+
     GridBagLayout ogbl;
-    
+
     JComboBox templateBox[];
+
     JRadioButton timeButton[];
+
     JLabel titleLabel[];
+
     JTextField weightField[];
+
     JTextField titleField;
+
     ButtonGroup axisGroup;
-    
+
     JButton plotbutton;
+
     JButton settitleButton;
+
     JButton epsButton;
+
     JButton addbutton;
+
     JButton removebutton;
+
     JLabel edTitleLabel;
-    
+
     JPanel chartpanel;
 
     JAMSSpreadSheet sheet;
+
     JAMSStackedPlot stackedplot;
+
     JFrame parent;
 
     JFileChooser templateChooser;
 //    JTable table; //wichtig?
+
     File templateFile;
+
     private JAMSWorkspace workspace;
 
     HashMap<String, File> template_hashmap = new HashMap<String, File>();
-            
+
     int rows, columns, graphCount, selectedTimeAxis;
+
     double[] weights;
+
     String[] headers;
-    
+
     Vector<double[]> arrayVector;
-    
+
     Vector<GraphProperties> propVector; //for one plot!!!
+
     Vector<JAMSCalendar> timeVector;
-    
+
 //    static String DATASET_01 = "tmax";
 //    static String DATASET_02 = "tmean";
-    
-    static String DATASET[] = {"tmax","tmean"};
+    static String DATASET[] = {"tmax", "tmean"};
+
     String[] dataset;
+
     String[] output;
+
     String datasetID;
-    
+
     final static int INPUT = 0;
+
     final static int OUTPUT = 1;
 //    private JAMSTimePlot jts_01 = new JAMSTimePlot();
 //    private JAMSTimePlot jts_02 = new JAMSTimePlot();
-    
-    private JAMSTimePlot jts[];
-    
-    InputDataStore store;
-    
-//    boolean output_store = false;
-    
-    int rLeft, rRight = 0;
-    boolean invLeft, invRight = false;
-    boolean timeFormat_yy, timeFormat_mm, timeFormat_dd, timeFormat_hm = true;
-    
-    String title, tLeft, tRight, xAxisTitle = "";
-    
-    JPanel plotPanel;
-    
-    File templateFiles[];
-    int numberOfPlots;
-    
-    public STPConfigurator(JAMSExplorer regionalizer){
 
-        this.workspace = regionalizer.getWorkspace();
-        this.parent = regionalizer.getExplorerFrame();
+    private JAMSTimePlot jts[];
+
+    InputDataStore store;
+
+//    boolean output_store = false;
+    int rLeft, rRight = 0;
+
+    boolean invLeft, invRight = false;
+
+    boolean timeFormat_yy, timeFormat_mm, timeFormat_dd, timeFormat_hm = true;
+
+    String title, tLeft, tRight, xAxisTitle = "";
+
+    JPanel plotPanel;
+
+    File templateFiles[];
+
+    int numberOfPlots;
+
+    public STPConfigurator(JAMSExplorer explorer) {
+
+        this.workspace = explorer.getWorkspace();
+        this.parent = explorer.getExplorerFrame();
         this.setIconImage(parent.getIconImage());
         setTitle(SpreadsheetConstants.STP_TITLE);
-        
+
+        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        explorer.registerChild(this);
+
         Container cp = this.getContentPane();
         JPanel bgPanel = new JPanel();
         cp.setBackground(Color.WHITE);
         cp.add(bgPanel);
         bgPanel.setBackground(Color.WHITE);
-        
+
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
-        
+
 //        dataset = getAccessibleIDs();
         dataset = createHashMap(getAccessibleTemplates());
-        System.out.println("dataset.length = "+dataset.length);
-        if(dataset.length <= 2) this.numberOfPlots = dataset.length;
-        if(dataset.length == 0){
-            
+        System.out.println("dataset.length = " + dataset.length);
+        if (dataset.length <= 2) {
+            this.numberOfPlots = dataset.length;
+        }
+        if (dataset.length == 0) {
+
 //            String error_msg = "No template files found in the workspace directory! " +
 //                    "Use the 'Save Template' Option in the Time Plot Configurator!";
             GUIHelper.showErrorDlg(this, SpreadsheetConstants.STP_ERR_NOTEMPFOUND, "Error");
-            
+
             // CLOSE!!!
         }
-        if(dataset.length > 2) this.numberOfPlots = 2;
-            
-        if(numberOfPlots > 0){
+        if (dataset.length > 2) {
+            this.numberOfPlots = 2;
+        }
+
+        if (numberOfPlots > 0) {
 
             createPanel();
 
@@ -167,42 +196,49 @@ public class STPConfigurator extends JFrame{
             setVisible(true);
         }
     }
-    
-    public STPConfigurator(JAMSExplorer regionalizer, JAMSSpreadSheet output_sheet){
 
-        this.workspace = regionalizer.getWorkspace();
-        this.parent = regionalizer.getExplorerFrame();
+    public STPConfigurator(JAMSExplorer explorer, JAMSSpreadSheet output_sheet) {
+
+        this.workspace = explorer.getWorkspace();
+        this.parent = explorer.getExplorerFrame();
         this.setIconImage(parent.getIconImage());
         setTitle(SpreadsheetConstants.STP_TITLE);
-        
+
+        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        explorer.registerChild(this);
+
 //        output_store = true;
         sheet = output_sheet;
-        
+
         Container cp = this.getContentPane();
         JPanel bgPanel = new JPanel();
         cp.setBackground(Color.WHITE);
         cp.add(bgPanel);
         bgPanel.setBackground(Color.WHITE);
-        
+
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
         setLocation(parentloc.x + 30, parentloc.y + 30);
-        
+
 //        dataset = getAccessibleIDs();
         dataset = createHashMap(getAccessibleTemplates());
-        System.out.println("dataset.length = "+dataset.length);
-        if(dataset.length <= 2) this.numberOfPlots = dataset.length;
-        if(dataset.length == 0){
-            
+        System.out.println("dataset.length = " + dataset.length);
+        if (dataset.length <= 2) {
+            this.numberOfPlots = dataset.length;
+        }
+        if (dataset.length == 0) {
+
 //            String error_msg = "No template files found in the workspace directory! " +
 //                    "Use the 'Save Template' Option in the JTS Configurator!";
             GUIHelper.showErrorDlg(this, SpreadsheetConstants.STP_ERR_NOTEMPFOUND, "Error");
-            
+
             // CLOSE!!!
         }
-        if(dataset.length > 2) this.numberOfPlots = 2;
-            
-        if(numberOfPlots > 0){
+        if (dataset.length > 2) {
+            this.numberOfPlots = 2;
+        }
+
+        if (numberOfPlots > 0) {
 
             createPanel();
 
@@ -210,26 +246,25 @@ public class STPConfigurator extends JFrame{
             setVisible(true);
         }
     }
-    
-    
-    private void createPanel(){
-        
+
+    private void createPanel() {
+
 //        JPanel backgroundPanel = (JPanel)this.getContentPane();
 //        backgroundPanel.setBackground(Color.white);
-        
+
         setLayout(new BorderLayout());
         plotpanel = new JPanel();
         plotpanel.setBackground(Color.WHITE);
 
         optionpanel = new JPanel();
         chooserpanel = new JPanel();
-        
+
         GridBagLayout gbl = new GridBagLayout();
         chooserpanel.setLayout(gbl);
         ogbl = new GridBagLayout();
         optionpanel.setLayout(ogbl);
-        
-        
+
+
         plotbutton = new JButton("PLOT");
         epsButton = new JButton("EPS Export");
         settitleButton = new JButton("set Title");
@@ -239,99 +274,101 @@ public class STPConfigurator extends JFrame{
         titleField.setSize(50, 10);
         titleField.setText("Stacked Time Plot");
         edTitleLabel = new JLabel("set Title: ");
-        
+
         // PROGRAMME //
         buildOptionPanel();
 //        optionpanel.add(plotbutton);
-        
+
         XYPlot[] xyplots = new XYPlot[numberOfPlots];
         DateAxis dateAxis = new DateAxis();
-        
+
         jts = new JAMSTimePlot[numberOfPlots];
         weights = new double[numberOfPlots];
-        
-        for(int i = 0; i < numberOfPlots; i++){
-            String datasetFileKey = (String)templateBox[i].getSelectedItem();
+
+        for (int i = 0; i < numberOfPlots; i++) {
+            String datasetFileKey = (String) templateBox[i].getSelectedItem();
             this.propVector = new Vector<GraphProperties>();
-            
-            
+
+
             templateFiles[i] = template_hashmap.get(datasetFileKey);
 //            if(templateFiles[i].exists()){
-                String datasetID[] = loadDatasetID(templateFiles[i]);
-                if(datasetID[1].compareTo("false") == 0){
-                    loadInputDSData(datasetID[0]);
-                    loadTemplate(templateFiles[i], INPUT);
+            String datasetID[] = loadDatasetID(templateFiles[i]);
+            if (datasetID[1].compareTo("false") == 0) {
+                loadInputDSData(datasetID[0]);
+                loadTemplate(templateFiles[i], INPUT);
 
-                    jts[i] = new JAMSTimePlot();
-                    jts[i].setPropVector(propVector);
-                    jts[i].createPlot();
-                    jts[i].setTitle(title);
-                    try{
-                       weights[i] = new Double(weightField[i].getText());
-                    }catch(NumberFormatException nfe){
-                        weights[i] = 1;
-                        weightField[i].setText("1");
-                    }
-                    titleLabel[i].setText(title);
-        //            jts[i].getPanel().add(templateBox[i]);
+                jts[i] = new JAMSTimePlot();
+                jts[i].setPropVector(propVector);
+                jts[i].createPlot();
+                jts[i].setTitle(title);
+                try {
+                    weights[i] = new Double(weightField[i].getText());
+                } catch (NumberFormatException nfe) {
+                    weights[i] = 1;
+                    weightField[i].setText("1");
+                }
+                titleLabel[i].setText(title);
+                //            jts[i].getPanel().add(templateBox[i]);
 
-                    plot(i, INPUT);
-                
-                }else{ //case for output spreadsheet
-                    
-                    StringTokenizer name_tokenizer = new StringTokenizer(templateFiles[i].getPath(),".");
-                    String filename = "";
-                    filename = name_tokenizer.nextToken()+".dat";
-                    
+                plot(i, INPUT);
+
+            } else { //case for output spreadsheet
+
+                StringTokenizer name_tokenizer = new StringTokenizer(templateFiles[i].getPath(), ".");
+                String filename = "";
+                filename = name_tokenizer.nextToken() + ".dat";
+
 //                    File ttpdatfile = new File(templateFiles[i].getPath()+".dat");
-                    File ttpdatfile = new File(filename);
-                    System.out.println("ttpdatFile:"+ttpdatfile.getPath());
-                    loadOutputTTPData(ttpdatfile);
-                    loadTemplate(templateFiles[i], OUTPUT);
+                File ttpdatfile = new File(filename);
+                System.out.println("ttpdatFile:" + ttpdatfile.getPath());
+                loadOutputTTPData(ttpdatfile);
+                loadTemplate(templateFiles[i], OUTPUT);
 
-                    jts[i] = new JAMSTimePlot();
-                    jts[i].setPropVector(propVector);
-                    jts[i].createPlot();
-                    jts[i].setTitle(title);
-                    try{
-                       weights[i] = new Double(weightField[i].getText());
-                    }catch(NumberFormatException nfe){
-                        weights[i] = 1;
-                        weightField[i].setText("1");
-                    }
-                    titleLabel[i].setText(title);
-        //            jts[i].getPanel().add(templateBox[i]);
+                jts[i] = new JAMSTimePlot();
+                jts[i].setPropVector(propVector);
+                jts[i].createPlot();
+                jts[i].setTitle(title);
+                try {
+                    weights[i] = new Double(weightField[i].getText());
+                } catch (NumberFormatException nfe) {
+                    weights[i] = 1;
+                    weightField[i].setText("1");
+                }
+                titleLabel[i].setText(title);
+                //            jts[i].getPanel().add(templateBox[i]);
 
-                    plot(i, OUTPUT);
+                plot(i, OUTPUT);
             }
-            
-            
+
+
             xyplots[i] = jts[i].getXYPlot();
             //last date axis
-            if(timeButton[i].isSelected()) dateAxis = jts[i].getDateAxis();
-            
+            if (timeButton[i].isSelected()) {
+                dateAxis = jts[i].getDateAxis();
+            }
+
         }
-        
+
         title = titleField.getText();
         stackedplot = new JAMSStackedPlot(xyplots, calc_weights(weights), dateAxis, title);
-        
+
         chartpanel = stackedplot.getChartPanel();
-        
+
         add(chartpanel, BorderLayout.CENTER);
         add(optionpanel, BorderLayout.SOUTH);
-        
+
         repaint();
     }
-    
-    private void buildOptionPanel(){
-        
+
+    private void buildOptionPanel() {
+
         templateFiles = new File[numberOfPlots];
         templateBox = new JComboBox[numberOfPlots];
         timeButton = new JRadioButton[numberOfPlots];
         titleLabel = new JLabel[numberOfPlots];
         weightField = new JTextField[numberOfPlots];
         axisGroup = new ButtonGroup();
-        
+
         plotbutton.addActionListener(plotaction);
         titleField.addActionListener(titleListener);
         settitleButton.addActionListener(titleListener);
@@ -339,24 +376,24 @@ public class STPConfigurator extends JFrame{
         addbutton.addActionListener(addAction);
         removebutton.addActionListener(removeAction);
 //        dataset = getAccessibleIDs();
-        
+
         //create optionpanel GUI
 //        optionpanel.add(edTitleLabel);
 //        optionpanel.add(titleField);
 //        optionpanel.add(settitleButton);
 //        optionpanel.add(new JLabel("  "));
-        
+
         GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Weight"), 0, 0, 1, 1, 0, 0);
         GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 1, 0, 1, 1, 0, 0);
         GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 3, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(optionpanel, ogbl, addbutton,    0, numberOfPlots+1, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots+1, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots+2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(optionpanel, ogbl, titleField,   1, numberOfPlots+2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(optionpanel, ogbl, settitleButton,   2, numberOfPlots+2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(optionpanel, ogbl, plotbutton,   4, numberOfPlots+2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(optionpanel, ogbl, epsButton,    6, numberOfPlots+2, 1, 1, 0, 0);
-          
+        GUIHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots + 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots + 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots + 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, titleField, 1, numberOfPlots + 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, settitleButton, 2, numberOfPlots + 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, plotbutton, 4, numberOfPlots + 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, epsButton, 6, numberOfPlots + 2, 1, 1, 0, 0);
+
 //        if(numberOfPlots ==0){
 //            if(numberOfPlots == 0){
 //            String error_msg = "No template files found in the workspace directory!" +
@@ -364,10 +401,10 @@ public class STPConfigurator extends JFrame{
 //            GUIHelper.showErrorDlg(this, error_msg, "Error");
 //        }
 //        }
-        
-        for(int c = 0; c < numberOfPlots; c++){
 
-            
+        for (int c = 0; c < numberOfPlots; c++) {
+
+
             templateBox[c] = new JComboBox(dataset);
             timeButton[c] = new JRadioButton();
             weightField[c] = new JTextField("1");
@@ -377,14 +414,14 @@ public class STPConfigurator extends JFrame{
             titleLabel[c] = new JLabel("");
 //            optionpanel.add(templateBox[c]);
             templateBox[c].setSelectedIndex(c);
-            GUIHelper.addGBComponent(optionpanel, ogbl, weightField[c], 0, c+1, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, templateBox[c], 1, c+1, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 2, c+1, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 3, c+1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, weightField[c], 0, c + 1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, templateBox[c], 1, c + 1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 2, c + 1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 3, c + 1, 1, 1, 0, 0);
         }
     }
-    
-    private void addPlot(){
+
+    private void addPlot() {
 //        System.out.println("removePlot()");
         dataset = createHashMap(getAccessibleTemplates());
 //        if(numberOfPlots == 0){
@@ -392,19 +429,19 @@ public class STPConfigurator extends JFrame{
 //                    "Use the 'Save Template' Option in the Time Plot Configurator!";
 //            GUIHelper.showErrorDlg(this, error_msg, "Error");
 //        }
-        if(numberOfPlots <dataset.length ){
+        if (numberOfPlots < dataset.length) {
 
             int[] selectedTemplates = new int[numberOfPlots];
-            
-            for(int k = 0; k < numberOfPlots; k++){
+
+            for (int k = 0; k < numberOfPlots; k++) {
                 selectedTemplates[k] = templateBox[k].getSelectedIndex();
             }
-            numberOfPlots+=1;
+            numberOfPlots += 1;
             remove(optionpanel);
             optionpanel = new JPanel();
             ogbl = new GridBagLayout();
             optionpanel.setLayout(ogbl);
-            
+
             templateFiles = new File[numberOfPlots];
             templateBox = new JComboBox[numberOfPlots];
             timeButton = new JRadioButton[numberOfPlots];
@@ -422,57 +459,61 @@ public class STPConfigurator extends JFrame{
 
             GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 0, 0, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 2, 0, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots+1, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots+1, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots+2, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, titleField,   1, numberOfPlots+2, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, settitleButton,   2, numberOfPlots+2, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, plotbutton,   4, numberOfPlots+2, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, epsButton,   6, numberOfPlots+2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots + 1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots + 1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots + 2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, titleField, 1, numberOfPlots + 2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, settitleButton, 2, numberOfPlots + 2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, plotbutton, 4, numberOfPlots + 2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, epsButton, 6, numberOfPlots + 2, 1, 1, 0, 0);
 
 
-            for(int c = 0; c < numberOfPlots; c++){
+            for (int c = 0; c < numberOfPlots; c++) {
 
                 templateBox[c] = new JComboBox(dataset);
                 timeButton[c] = new JRadioButton();
                 weightField[c] = new JTextField("1");
                 axisGroup.add(timeButton[c]);
-                if(c == selectedTimeAxis) timeButton[c].setSelected(true);
+                if (c == selectedTimeAxis) {
+                    timeButton[c].setSelected(true);
+                }
                 titleLabel[c] = new JLabel("");
-    //            optionpanel.add(templateBox[c]);
-                if(c<selectedTemplates.length) templateBox[c].setSelectedIndex(selectedTemplates[c]);
-                
-                GUIHelper.addGBComponent(optionpanel, ogbl, weightField[c], 0, c+1, 1, 1, 0, 0);
-                GUIHelper.addGBComponent(optionpanel, ogbl, templateBox[c], 1, c+1, 1, 1, 0, 0);
-                GUIHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 2, c+1, 1, 1, 0, 0);
-                GUIHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 3, c+1, 1, 1, 0, 0);
+                //            optionpanel.add(templateBox[c]);
+                if (c < selectedTemplates.length) {
+                    templateBox[c].setSelectedIndex(selectedTemplates[c]);
+                }
+
+                GUIHelper.addGBComponent(optionpanel, ogbl, weightField[c], 0, c + 1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, templateBox[c], 1, c + 1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 2, c + 1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 3, c + 1, 1, 1, 0, 0);
             }
-            System.out.println("add: numberOfPlots = "+numberOfPlots);
+            System.out.println("add: numberOfPlots = " + numberOfPlots);
             repaintPlotPanel();
-            
+
         } else {
             /* Not enough Templates */
         }
-        
+
     }
-    
-    private void removePlot(){
+
+    private void removePlot() {
         System.out.println("removePlot()");
         dataset = createHashMap(getAccessibleTemplates());
-       
-        if((numberOfPlots <dataset.length) && (numberOfPlots > 1) ){
+
+        if ((numberOfPlots < dataset.length) && (numberOfPlots > 1)) {
 
             int[] selectedTemplates = new int[numberOfPlots];
-            
-            for(int k = 0; k < numberOfPlots; k++){
+
+            for (int k = 0; k < numberOfPlots; k++) {
                 selectedTemplates[k] = templateBox[k].getSelectedIndex();
             }
-            numberOfPlots-=1;
+            numberOfPlots -= 1;
             remove(optionpanel);
             optionpanel = new JPanel();
             ogbl = new GridBagLayout();
             optionpanel.setLayout(ogbl);
-            
+
             templateFiles = new File[numberOfPlots];
             templateBox = new JComboBox[numberOfPlots];
             timeButton = new JRadioButton[numberOfPlots];
@@ -490,147 +531,150 @@ public class STPConfigurator extends JFrame{
 
             GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Template"), 0, 0, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel("Time Axis"), 2, 0, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots+1, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots+1, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots+2, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, titleField,   1, numberOfPlots+2, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, settitleButton,   2, numberOfPlots+2, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, plotbutton,   4, numberOfPlots+2, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, epsButton,   6, numberOfPlots+2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots + 1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots + 1, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots + 2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, titleField, 1, numberOfPlots + 2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, settitleButton, 2, numberOfPlots + 2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, plotbutton, 4, numberOfPlots + 2, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, epsButton, 6, numberOfPlots + 2, 1, 1, 0, 0);
 
 
-            for(int c = 0; c < numberOfPlots; c++){
+            for (int c = 0; c < numberOfPlots; c++) {
 
                 templateBox[c] = new JComboBox(dataset);
                 timeButton[c] = new JRadioButton();
                 weightField[c] = new JTextField("1");
                 axisGroup.add(timeButton[c]);
-                if(c == selectedTimeAxis) timeButton[c].setSelected(true);
+                if (c == selectedTimeAxis) {
+                    timeButton[c].setSelected(true);
+                }
                 titleLabel[c] = new JLabel("");
-    //            optionpanel.add(templateBox[c]);
-                if(c<selectedTemplates.length) templateBox[c].setSelectedIndex(selectedTemplates[c]);
-                
-                GUIHelper.addGBComponent(optionpanel, ogbl, weightField[c],   0, c+1, 1, 1, 0, 0);
-                GUIHelper.addGBComponent(optionpanel, ogbl, templateBox[c],   1, c+1, 1, 1, 0, 0);
-                GUIHelper.addGBComponent(optionpanel, ogbl, titleLabel[c],    2, c+1, 1, 1, 0, 0);
-                GUIHelper.addGBComponent(optionpanel, ogbl, timeButton[c],    3, c+1, 1, 1, 0, 0);
+                //            optionpanel.add(templateBox[c]);
+                if (c < selectedTemplates.length) {
+                    templateBox[c].setSelectedIndex(selectedTemplates[c]);
+                }
+
+                GUIHelper.addGBComponent(optionpanel, ogbl, weightField[c], 0, c + 1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, templateBox[c], 1, c + 1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 2, c + 1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 3, c + 1, 1, 1, 0, 0);
             }
-            System.out.println("remove: numberOfPlots = "+numberOfPlots);
+            System.out.println("remove: numberOfPlots = " + numberOfPlots);
             repaintPlotPanel();
-            
+
         } else {
             /* Not enough Templates */
         }
-        
+
     }
-    
-    private void repaintPlotPanel(){
-        
+
+    private void repaintPlotPanel() {
+
         this.remove(chartpanel);
 
         XYPlot[] xyplots = new XYPlot[numberOfPlots];
         DateAxis dateAxis = new DateAxis();
-        
+
         jts = new JAMSTimePlot[numberOfPlots];
         weights = new double[numberOfPlots];
-        
-        for(int i = 0; i < numberOfPlots; i++){
-            String datasetFileKey = (String)templateBox[i].getSelectedItem();
+
+        for (int i = 0; i < numberOfPlots; i++) {
+            String datasetFileKey = (String) templateBox[i].getSelectedItem();
             this.propVector = new Vector<GraphProperties>();
-            
-            
+
+
             templateFiles[i] = template_hashmap.get(datasetFileKey);
 //            if(templateFiles[i].exists()){
-                String datasetID[] = loadDatasetID(templateFiles[i]);
-                if(datasetID[1].compareTo("false") == 0){
-                    loadInputDSData(datasetID[0]);
-                    loadTemplate(templateFiles[i], INPUT);
+            String datasetID[] = loadDatasetID(templateFiles[i]);
+            if (datasetID[1].compareTo("false") == 0) {
+                loadInputDSData(datasetID[0]);
+                loadTemplate(templateFiles[i], INPUT);
 
-                    jts[i] = new JAMSTimePlot();
-                    jts[i].setPropVector(propVector);
-                    jts[i].createPlot();
-                    jts[i].setTitle(title);
-                    try{
-                       weights[i] = new Double(weightField[i].getText());
-                    }catch(NumberFormatException nfe){
-                        weights[i] = 1;
-                        weightField[i].setText("1");
-                    }
-                    titleLabel[i].setText(title);
-        //            jts[i].getPanel().add(templateBox[i]);
+                jts[i] = new JAMSTimePlot();
+                jts[i].setPropVector(propVector);
+                jts[i].createPlot();
+                jts[i].setTitle(title);
+                try {
+                    weights[i] = new Double(weightField[i].getText());
+                } catch (NumberFormatException nfe) {
+                    weights[i] = 1;
+                    weightField[i].setText("1");
+                }
+                titleLabel[i].setText(title);
+                //            jts[i].getPanel().add(templateBox[i]);
 
-                    plot(i, INPUT);
-                
-                }else{ //case for output spreadsheet
-                    
-                    StringTokenizer name_tokenizer = new StringTokenizer(templateFiles[i].getPath(),".");
-                    String filename = "";
-                    filename = name_tokenizer.nextToken()+".dat";
-                    
+                plot(i, INPUT);
+
+            } else { //case for output spreadsheet
+
+                StringTokenizer name_tokenizer = new StringTokenizer(templateFiles[i].getPath(), ".");
+                String filename = "";
+                filename = name_tokenizer.nextToken() + ".dat";
+
 //                    File ttpdatfile = new File(templateFiles[i].getPath()+".dat");
-                    File ttpdatfile = new File(filename);
+                File ttpdatfile = new File(filename);
 //                    System.out.println("ttpdatFile:"+ttpdatfile.getPath());
-                    loadOutputTTPData(ttpdatfile);
-                    loadTemplate(templateFiles[i], OUTPUT);
+                loadOutputTTPData(ttpdatfile);
+                loadTemplate(templateFiles[i], OUTPUT);
 
-                    jts[i] = new JAMSTimePlot();
-                    jts[i].setPropVector(propVector);
-                    jts[i].createPlot();
-                    jts[i].setTitle(title);
-                    try{
-                       weights[i] = new Double(weightField[i].getText());
-                    }catch(NumberFormatException nfe){
-                        weights[i] = 1;
-                        weightField[i].setText("1");
-                    }
-                    titleLabel[i].setText(title);
-        //            jts[i].getPanel().add(templateBox[i]);
+                jts[i] = new JAMSTimePlot();
+                jts[i].setPropVector(propVector);
+                jts[i].createPlot();
+                jts[i].setTitle(title);
+                try {
+                    weights[i] = new Double(weightField[i].getText());
+                } catch (NumberFormatException nfe) {
+                    weights[i] = 1;
+                    weightField[i].setText("1");
+                }
+                titleLabel[i].setText(title);
+                //            jts[i].getPanel().add(templateBox[i]);
 
-                    plot(i, OUTPUT);
+                plot(i, OUTPUT);
             }
-            
-            
+
+
             xyplots[i] = jts[i].getXYPlot();
             //last date axis
-            if(timeButton[i].isSelected()) dateAxis = jts[i].getDateAxis();
-            
+            if (timeButton[i].isSelected()) {
+                dateAxis = jts[i].getDateAxis();
+            }
+
         }
-        
+
         title = titleField.getText();
         stackedplot = new JAMSStackedPlot(xyplots, calc_weights(weights), dateAxis, title);
-        
+
         chartpanel = stackedplot.getChartPanel();
-        
+
         add(chartpanel, BorderLayout.CENTER);
         add(optionpanel, BorderLayout.SOUTH);
         pack();
         //repaint();
-        
+
     }
-   
-    private int[] calc_weights(double[] array){
+
+    private int[] calc_weights(double[] array) {
         final int DEC = 1000;
         int size = array.length;
         int[] internal_weights = new int[size];
-        
-        for(int i=0; i< size; i++){
-            internal_weights[i] = new Integer(""+Math.round(array[i]*DEC));
-                    //(array[i]*DEC);
+
+        for (int i = 0; i < size; i++) {
+            internal_weights[i] = new Integer("" + Math.round(array[i] * DEC));
+            //(array[i]*DEC);
         }
         return internal_weights;
     }
-    
-    private InputDataStore getInputDataStore(String datasetID){
-        
+
+    private InputDataStore getInputDataStore(String datasetID) {
+
         InputDataStore store = workspace.getInputDataStore(datasetID);
-        
+
         return store;
     }
-    
-    
 
-
-    private File[] getAccessibleTemplates(){
+    private File[] getAccessibleTemplates() {
 
         ArrayList<File> tempList = new ArrayList<File>();
         File[] outputDirs = workspace.getOutputDataDirectories();
@@ -638,7 +682,7 @@ public class STPConfigurator extends JFrame{
         File[] temps_in_dir;
         File[] templateFiles;
 
-         FileFilter filter = new FileFilter() {
+        FileFilter filter = new FileFilter() {
 
             @Override
             public boolean accept(File pathname) {
@@ -652,15 +696,15 @@ public class STPConfigurator extends JFrame{
 
         /* INPUT TTPs */
         temps_in_dir = inputDir.listFiles(filter);
-        for(File temp : temps_in_dir){
+        for (File temp : temps_in_dir) {
             tempList.add(temp);
         }
 
         /* OUTPUT TTPs */
-        for(File odir : outputDirs){
+        for (File odir : outputDirs) {
 
             temps_in_dir = odir.listFiles(filter);
-            for(File temp : temps_in_dir){
+            for (File temp : temps_in_dir) {
                 tempList.add(temp);
             }
         }
@@ -672,16 +716,16 @@ public class STPConfigurator extends JFrame{
 
     }
 
-    private String[] createHashMap(File[] tempFiles){
+    private String[] createHashMap(File[] tempFiles) {
 
         template_hashmap = new HashMap<String, File>();
         String[] hashKeys = new String[tempFiles.length];
 
 
-        for(int i=0;i<tempFiles.length;i++){
-            
+        for (int i = 0; i < tempFiles.length; i++) {
+
             File file = tempFiles[i];
-            hashKeys[i] =  file.getName() + " " + file.getParentFile().getName();
+            hashKeys[i] = file.getName() + " " + file.getParentFile().getName();
 
             template_hashmap.put(hashKeys[i], file);
         }
@@ -689,8 +733,8 @@ public class STPConfigurator extends JFrame{
         return hashKeys;
     }
 
-    private String[] getAccessibleIDs(){
-        
+    private String[] getAccessibleIDs() {
+
 
         int accessibleIDs = 0;
         int failedIDs = 0;
@@ -699,7 +743,7 @@ public class STPConfigurator extends JFrame{
         int counter = 0;
 
 //        File testfile = new File());
-        File testfile = new File(workspace.getDirectory().toString()+"/explorer");
+        File testfile = new File(workspace.getDirectory().toString() + "/explorer");
 //        File testfile2 = new File(workspace.getDirectory().toString()+"/output");
         File[] filelist = testfile.listFiles();
 //        File[] filelist2 = testfile2.listFiles();
@@ -707,13 +751,13 @@ public class STPConfigurator extends JFrame{
 //        idSet = JAMSExplorer.getExplorerFrame().getWorkspace().getInputDataStoreIDs();
 //        totalIDs = idSet.size();
 
-        for(int i = 0; i < filelist.length; i++){
-            
+        for (int i = 0; i < filelist.length; i++) {
+
             String name = filelist[i].getName();
-            if(name.indexOf(".ttp")!=-1 && name.indexOf(".dat") == -1){
+            if (name.indexOf(".ttp") != -1 && name.indexOf(".dat") == -1) {
                 accIDList.add(name);
                 counter = i;
-            }   
+            }
         }
 
 //        File testfile2 = new File(workspace.getDirectory().toString()+"/output/current");
@@ -734,41 +778,41 @@ public class STPConfigurator extends JFrame{
 //                accIDList.add(name);
 //            }   
 //        }
-        
+
         accessibleIDs = accIDList.size();
         //String idArray[] = new String[accessibleIDs];
         accIDArray = new String[accessibleIDs];
         accIDArray = accIDList.toArray(accIDArray);
-       
+
         return accIDArray;
     }
-    
-    private String[] loadDatasetID(File templateFile){
+
+    private String[] loadDatasetID(File templateFile) {
         Properties properties = new Properties();
         String id[] = new String[2];
-        
+
         try {
             FileInputStream fin = new FileInputStream(templateFile);
             properties.load(fin);
             fin.close();
             id[0] = (String) properties.getProperty("store");
             id[1] = (String) properties.getProperty("output");
-            
+
         } catch (Exception e) {
             id[0] = "---";
             id[1] = "false";
         }
-        
+
 
         return id;
     }
-    
-    private void loadOutputTTPData(File file){
-        
+
+    private void loadOutputTTPData(File file) {
+
         arrayVector = new Vector<double[]>();
         timeVector = new Vector<JAMSCalendar>();
         StringTokenizer st = new StringTokenizer("\t");
-        
+
         ArrayList<String> headerList = new ArrayList<String>();
 //        ArrayList<Double> rowList = new ArrayList<Double>();
         double[] rowBuffer;
@@ -776,77 +820,77 @@ public class STPConfigurator extends JFrame{
         boolean b_data = false;
         boolean time_set = false;
         boolean stop = false;
-        
+
         int file_columns = 0;
-        
-        final String ST_DATA =      "#data";
-        final String ST_HEADERS =   "#headers";
-        final String ST_END =       "#end";
-        
-        try{
+
+        final String ST_DATA = "#data";
+        final String ST_HEADERS = "#headers";
+        final String ST_END = "#end";
+
+        try {
             BufferedReader in = new BufferedReader(new FileReader(file));
-          
-            while(in.ready()){
+
+            while (in.ready()) {
 //                System.out.println("in.ready");
                 //NEXT LINE
                 String s = in.readLine();
-                st = new StringTokenizer(s ,"\t");
-                
+                st = new StringTokenizer(s, "\t");
+
                 String actual_string = "";
                 Double val;
-                
-                if(b_data){
+
+                if (b_data) {
                     int i = 0;
                     JAMSCalendar timeval = JAMSDataFactory.createCalendar();
                     rowBuffer = new double[file_columns];
-                    while(st.hasMoreTokens()){
+                    while (st.hasMoreTokens()) {
                         actual_string = st.nextToken();
-                        if(actual_string.compareTo(ST_END) != 0){
-                            if(!time_set){
+                        if (actual_string.compareTo(ST_END) != 0) {
+                            if (!time_set) {
 //                                System.out.print("time: "+actual_string+"\t");
-                                try {    
-                                //JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second)
+                                try {
+                                    //JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second)
                                     timeval.setValue(actual_string, "yyyy-MM-dd hh:mm");
-                                    
+
                                 } catch (ParseException pe) {
                                     pe.printStackTrace();
                                 }
                                 timeVector.add(timeval);
                                 time_set = true;
-                            }else{
-                                try{
+                            } else {
+                                try {
 //                                    System.out.println("value: "+actual_string+"\t");
                                     val = new Double(actual_string);
                                     rowBuffer[i++] = val.doubleValue();
-                                }catch(Exception pe2){
+                                } catch (Exception pe2) {
                                     pe2.printStackTrace();
                                 }
                             }
-                        }else{
+                        } else {
                             stop = true;
                         }
                     }
-                    if(!stop){
+                    if (!stop) {
                         arrayVector.add(rowBuffer);
                         time_set = false;
                     }
-                    
-                }else{
-                
-                    while(st.hasMoreTokens()){
+
+                } else {
+
+                    while (st.hasMoreTokens()) {
                         //NEXT STRING
                         String test = st.nextToken();
-                        
-                        if(test.compareTo(ST_DATA) == 0){
+
+                        if (test.compareTo(ST_DATA) == 0) {
                             b_data = true;
                             b_headers = false;
                             file_columns = headerList.size();
-                            
+
                         }
-                        if(b_headers){ //TIME HEADER/COL???
+                        if (b_headers) { //TIME HEADER/COL???
                             headerList.add(test);
-                        } 
-                        if(test.compareTo(ST_HEADERS) == 0){
+                        }
+                        if (test.compareTo(ST_HEADERS) == 0) {
                             b_headers = true;
                         }
 
@@ -856,25 +900,25 @@ public class STPConfigurator extends JFrame{
             headers = new String[file_columns];
             headers = headerList.toArray(headers);
             headers[0] = "";
-            columns = file_columns-1;
+            columns = file_columns - 1;
             rows = arrayVector.size();
             //in.close();
 //            System.out.println("TimeVectorSize:"+timeVector.size());
 //            System.out.println("ArrayVectorSize:"+arrayVector.size());
 //
-            
-        }catch(Exception eee){
-            GUIHelper.showErrorDlg(this, "File Not Found: "+file.getName(), "Eror!");
+
+        } catch (Exception eee) {
+            GUIHelper.showErrorDlg(this, "File Not Found: " + file.getName(), "Eror!");
 //            eee.printStackTrace();
         }
 
     }
-    
-    private void loadInputDSData(String datasetID){
-        
+
+    private void loadInputDSData(String datasetID) {
+
         arrayVector = new Vector<double[]>();
         timeVector = new Vector<JAMSCalendar>();
-        
+
         double rowBuffer[];
         this.store = getInputDataStore(datasetID);
 
@@ -909,63 +953,68 @@ public class STPConfigurator extends JFrame{
         }
         rows = arrayVector.size();
     }
-    
-    private void loadTimeIntervals(File[] templateFiles){
-            
-            String timeSTART = "";
-            String timeEND = "";
-            String names ="";
-            String name = "";
-            
-            int no_of_props;
-            boolean loadProp = false;
-            
-            Properties properties = new Properties();
-            
-            for(int i=0; i<numberOfPlots; i++){
 
-                try {
-                    FileInputStream fin = new FileInputStream(templateFiles[i]);
-                    properties.load(fin);
-                    fin.close();
-                } catch (Exception e) {
-                }
-                
-                names = properties.getProperty("names");
-                no_of_props = new Integer(properties.getProperty("number"));
-                StringTokenizer nameTokenizer = new StringTokenizer(names, ",");
-                
-                for(int c=0; c<no_of_props; c++){
-                    if (nameTokenizer.hasMoreTokens()) {
+    private void loadTimeIntervals(File[] templateFiles) {
 
-                        name = nameTokenizer.nextToken();
+        String timeSTART = "";
+        String timeEND = "";
+        String names = "";
+        String name = "";
 
-                        for (int k = 0; k < columns; k++) {
-                            if (headers[k].compareTo(name) == 0) { //stringcompare?
+        int no_of_props;
+        boolean loadProp = false;
 
-                                loadProp = true;
-                                break;
-                            }
+        Properties properties = new Properties();
+
+        for (int i = 0; i < numberOfPlots; i++) {
+
+            try {
+                FileInputStream fin = new FileInputStream(templateFiles[i]);
+                properties.load(fin);
+                fin.close();
+            } catch (Exception e) {
+            }
+
+            names = properties.getProperty("names");
+            no_of_props = new Integer(properties.getProperty("number"));
+            StringTokenizer nameTokenizer = new StringTokenizer(names, ",");
+
+            for (int c = 0; c < no_of_props; c++) {
+                if (nameTokenizer.hasMoreTokens()) {
+
+                    name = nameTokenizer.nextToken();
+
+                    for (int k = 0; k < columns; k++) {
+                        if (headers[k].compareTo(name) == 0) { //stringcompare?
+
+                            loadProp = true;
+                            break;
                         }
-                        if(loadProp){
-                            if(i == 0){
-                                timeSTART = (String)properties.getProperty(name + ".timeSTART");
-                                timeEND = (String)properties.getProperty(name + ".timeEND");
-                            } else {
-                                String read_tStart = (String)properties.getProperty(name + ".timeSTART");
-                                if(read_tStart.compareTo(timeSTART) < 0) timeSTART = read_tStart;
-                                String read_tEnd = (String)properties.getProperty(name + ".timeEND");
-                                if(read_tEnd.compareTo(timeEND) > 0) timeEND = read_tEnd;
+                    }
+                    if (loadProp) {
+                        if (i == 0) {
+                            timeSTART = (String) properties.getProperty(name + ".timeSTART");
+                            timeEND = (String) properties.getProperty(name + ".timeEND");
+                        } else {
+                            String read_tStart = (String) properties.getProperty(name + ".timeSTART");
+                            if (read_tStart.compareTo(timeSTART) < 0) {
+                                timeSTART = read_tStart;
+                            }
+                            String read_tEnd = (String) properties.getProperty(name + ".timeEND");
+                            if (read_tEnd.compareTo(timeEND) > 0) {
+                                timeEND = read_tEnd;
                             }
                         }
                     }
                 }
+            }
         }
     }
     //attention: only for ONE tempFile
+
     private void loadTemplate(File templateFile, int type) {
-            
-    Properties properties = new Properties();
+
+        Properties properties = new Properties();
         boolean load_prop = false;
 
         String names;
@@ -984,7 +1033,7 @@ public class STPConfigurator extends JFrame{
         }
 
 //        this.propVector = new Vector<GraphProperties>();
-        
+
         datasetID = (String) properties.getProperty("store");
         names = (String) properties.getProperty("names");
 
@@ -999,7 +1048,7 @@ public class STPConfigurator extends JFrame{
             load_prop = false;
             GraphProperties gprop;
             //if(type == INPUT){
-                gprop = new GraphProperties(this);
+            gprop = new GraphProperties(this);
             //}else{
 //                gprop = new GraphProperties(sheet, this);
             //}
@@ -1009,7 +1058,7 @@ public class STPConfigurator extends JFrame{
                 name = nameTokenizer.nextToken();
 
                 for (int k = 0; k < columns; k++) {
-                    if (headers[k+1].compareTo(name) == 0) {
+                    if (headers[k + 1].compareTo(name) == 0) {
 
                         gprop.setSelectedColumn(k);
                         load_prop = true;
@@ -1125,7 +1174,7 @@ public class STPConfigurator extends JFrame{
         //Titles
         title = (String) properties.getProperty("title");
         tLeft = (String) properties.getProperty("axisLTitle");
-        tRight = (String)properties.getProperty("axisRTitle");
+        tRight = (String) properties.getProperty("axisRTitle");
         xAxisTitle = (String) properties.getProperty("xAxisTitle");
         //RENDERER
         rLeft = new Integer(properties.getProperty("renderer_left"));
@@ -1144,30 +1193,29 @@ public class STPConfigurator extends JFrame{
 
 
     }
-    
+
     private void updatePropVector(int type) {
 
         for (int i = 0; i < propVector.size(); i++) {
             propVector.get(i).applySTPProperties(arrayVector, timeVector);
 //            else propVector.get(i).applyTSProperties();
-            
+
         }
     }
-    
+
     public void plot(int plot_index, int type) {
 
         final int index = plot_index;
         final int p_type = type;
 
         Runnable r = new Runnable() {
-            
-            
+
             @Override
             public void run() {
-                
-               
-                    updatePropVector(p_type);
-               
+
+
+                updatePropVector(p_type);
+
 
                 int l = 0;
                 int r = 0;
@@ -1391,13 +1439,13 @@ public class STPConfigurator extends JFrame{
                         prop.setLegendName(prop.setLegend.getText());
                         prop.setColorLabelColor();
 //                        prop.applySTPProperties(arrayVector, timeVector);
-                        
+
                     }
                 }
 
                 ////////////////////////////////////////////////////////////////////////////
                 //Renderer direkt ÃƒÆ’Ã‚Â¼bernehmen! //
-                
+
                 if (l > 0) {
                     jts[index].plotLeft(rendererLeft, tLeft, xAxisTitle, invLeft);
                 }
@@ -1422,11 +1470,11 @@ public class STPConfigurator extends JFrame{
 //                Toolkit.getDefaultToolkit().getScreenSize().height / 2);
         dlg.setTask(r);
         dlg.execute();
-        
+
         //repaint();
-        
+
     }
-    
+
     public JFileChooser getTemplateChooser() {
 
         File dir;
@@ -1435,7 +1483,7 @@ public class STPConfigurator extends JFrame{
         if (templateChooser == null) {
             templateChooser = new JFileChooser();
             templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
-            dir = new File(workspace.getDirectory().toString()+"/explorer");
+            dir = new File(workspace.getDirectory().toString() + "/explorer");
             templateChooser.setCurrentDirectory(dir);
         }
 
@@ -1443,23 +1491,22 @@ public class STPConfigurator extends JFrame{
         templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
         return templateChooser;
     }
-    
-    public int getRowCount(){
+
+    public int getRowCount() {
         return rows;
     }
-    
-    public int getColumnCount(){
+
+    public int getColumnCount() {
         return columns;
     }
-    
-    public String[] getHeaders(){
+
+    public String[] getHeaders() {
         return headers;
     }
-    
-    public Vector<double[]> getArrayVector(){
+
+    public Vector<double[]> getArrayVector() {
         return arrayVector;
     }
-    
     ActionListener plotaction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -1467,7 +1514,7 @@ public class STPConfigurator extends JFrame{
             setVisible(true);
         }
     };
-    
+
     ActionListener titleListener = new ActionListener() {
 
         public void actionPerformed(ActionEvent te) {
@@ -1475,8 +1522,8 @@ public class STPConfigurator extends JFrame{
             stackedplot.setTitle(title);
         }
     };
-    
-     ActionListener saveImageAction = new ActionListener() {
+
+    ActionListener saveImageAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
 
@@ -1485,10 +1532,11 @@ public class STPConfigurator extends JFrame{
                 final JFileChooser chooser = new JFileChooser();
                 int returnVal = chooser.showSaveDialog(parent);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    Runnable r = new Runnable(){
-                        public void run(){
-                        File file = chooser.getSelectedFile();
-                        stackedplot.saveAsEPS(file);
+                    Runnable r = new Runnable() {
+
+                        public void run() {
+                            File file = chooser.getSelectedFile();
+                            stackedplot.saveAsEPS(file);
                         }
                     };
                     WorkerDlg dlg = new WorkerDlg(parent, "EPS Export");
@@ -1500,19 +1548,19 @@ public class STPConfigurator extends JFrame{
             }
         }
     };
-    
+
     ActionListener addAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent te) {
-            
+
             addPlot();
         }
     };
-   
+
     ActionListener removeAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent te) {
-            
+
             removePlot();
         }
     };
