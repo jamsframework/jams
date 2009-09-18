@@ -55,7 +55,7 @@ public class OutputPanelFactory {
         if (line.startsWith(SpreadsheetConstants.LOAD_HEADERS)) {
 
             // create the spreadsheet
-            JAMSSpreadSheet spreadsheet = new JAMSSpreadSheet(explorer, true);
+            JAMSSpreadSheet spreadsheet = new JAMSSpreadSheet(explorer);
             spreadsheet.init();
             spreadsheet.load(file);
             spreadsheet.setAsOutputSheet();

@@ -255,17 +255,19 @@ public class ExplorerFrame extends JFrame {
         sensitivityAnalysisButton.setIcon(new ImageIcon(getClass().getResource("/reg/resources/images/gold.png")));
         toolBar.add(sensitivityAnalysisButton);
 
-        JButton launchModelButton = new JButton(launchModelAction);
-        launchModelButton.setText("");
-        launchModelButton.setToolTipText((String) launchModelAction.getValue(Action.NAME));
-        launchModelButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
-        toolBar.add(launchModelButton);
+        if (explorer.isTlugized()) {
+            JButton launchModelButton = new JButton(launchModelAction);
+            launchModelButton.setText("");
+            launchModelButton.setToolTipText((String) launchModelAction.getValue(Action.NAME));
+            launchModelButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
+            toolBar.add(launchModelButton);
 
-        JButton launchWizardButton = new JButton(launchWizardAction);
-        launchWizardButton.setText("");
-        launchWizardButton.setToolTipText((String) launchWizardAction.getValue(Action.NAME));
-        launchWizardButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
-        toolBar.add(launchWizardButton);
+            JButton launchWizardButton = new JButton(launchWizardAction);
+            launchWizardButton.setText("");
+            launchWizardButton.setToolTipText((String) launchWizardAction.getValue(Action.NAME));
+            launchWizardButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
+            toolBar.add(launchWizardButton);
+        }
 
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
@@ -463,14 +465,14 @@ public class ExplorerFrame extends JFrame {
 
     private void exit() {
 
-        if (JAMSExplorer.GEOWIND_ENABLE) {
+        if (explorer.isTlugized()) {
             Viewer.destroy();
         }
 
         for (Window window : explorer.getChildWindows()) {
             window.dispose();
         }
-        
+
         this.setVisible(false);
         this.dispose();
 

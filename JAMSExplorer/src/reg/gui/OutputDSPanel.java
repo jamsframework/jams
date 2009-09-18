@@ -43,7 +43,7 @@ public class OutputDSPanel extends JPanel {
         this.setLayout(new BorderLayout());
 
         // create the spreadsheet
-        this.spreadsheet = new JAMSSpreadSheet(explorer, true);
+        this.spreadsheet = new JAMSSpreadSheet(explorer);
         this.spreadsheet.init();
         this.spreadsheet.setAsOutputSheet();
         this.spreadsheet.setID(file.getName());

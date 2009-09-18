@@ -50,8 +50,6 @@ public class JAMSExplorer {
 
     public static final String APP_VERSION = "V0.2";
 
-    public static boolean GEOWIND_ENABLE = true;
-
     public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 750;
 
     private ExplorerFrame explorerFrame;
@@ -66,11 +64,17 @@ public class JAMSExplorer {
 
     private ArrayList<Window> childWindows = new ArrayList<Window>();
 
-    private boolean standAlone;
+    private boolean standAlone = true, tlugized = true;
 
-    public JAMSExplorer(JAMSRuntime runtime, boolean standAlone) {
+    public JAMSExplorer(JAMSRuntime runtime, boolean standAlone, boolean tlugized) {
 
+        this(runtime);
         this.standAlone = standAlone;
+        this.tlugized = tlugized;
+
+    }
+
+    public JAMSExplorer(JAMSRuntime runtime) {
 
         if (runtime == null) {
             this.runtime = new StandardRuntime();
@@ -111,15 +115,15 @@ public class JAMSExplorer {
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            if (GEOWIND_ENABLE) {
-                Viewer.getViewer();
-            }
         } catch (Exception evt) {
         }
 
         // create the JAMSExplorer object
-        JAMSExplorer explorer = new JAMSExplorer(null, true);
+        JAMSExplorer explorer = new JAMSExplorer(null, false, false);
         explorer.getExplorerFrame().setVisible(true);
+        if (explorer.tlugized) {
+            Viewer.getViewer();
+        }
 
         if (args.length > 0) {
             explorer.getExplorerFrame().open(new File(args[0]));
@@ -210,5 +214,12 @@ public class JAMSExplorer {
         if (standAlone) {
             System.exit(0);
         }
+    }
+
+    /**
+     * @return the tlugized
+     */
+    public boolean isTlugized() {
+        return tlugized;
     }
 }

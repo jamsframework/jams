@@ -37,7 +37,6 @@ public abstract class DSPanel extends JPanel {
     }
 
     protected void loadData(DataMatrix m, boolean timeSeries) {
-        System.out.println("loading data");
 
         if (m == null) {
             return;

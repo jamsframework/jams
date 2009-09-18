@@ -125,7 +125,6 @@ public class JAMSSpreadSheet extends JPanel {
 
     private JAMSExplorer explorer;
 
-    private boolean geoWindEnable = false;
     /* Messages */
 
     final String ERR_MSG_CTS = "No Time Series Loaded";
@@ -245,11 +244,6 @@ public class JAMSSpreadSheet extends JPanel {
     public JAMSSpreadSheet(JAMSExplorer explorer) {
         this.explorer = explorer;
         this.parent_frame = explorer.getExplorerFrame();
-    }
-
-    public JAMSSpreadSheet(JAMSExplorer explorer, boolean geoWindEnable) {
-        this(explorer);
-        this.geoWindEnable = geoWindEnable;
     }
 
     private void close() {
@@ -1216,7 +1210,7 @@ public class JAMSSpreadSheet extends JPanel {
 //        GUIHelper.addGBComponent(controlpanel, gbl, loadbutton, 0, 11, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, statButton, 0, 12, 1, 1, 0, 0);
 
-        if (JAMSExplorer.GEOWIND_ENABLE && this.geoWindEnable) {
+        if (explorer.isTlugized()) {
 
             // populate shape-combobox
             String defaultShapeName = null;
