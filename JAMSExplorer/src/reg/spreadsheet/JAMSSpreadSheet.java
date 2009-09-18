@@ -38,11 +38,11 @@ import java.awt.dnd.DnDConstants;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.StringTokenizer;
-import reg.DataTransfer;
+//import reg.DataTransfer;
 import reg.JAMSExplorer;
 import reg.dsproc.DataMatrix;
 import reg.gui.StatisticDialogPanel;
-import reg.viewer.Viewer;
+//import reg.viewer.Viewer;
 //import reg.viewer.Viewer;
 
 //import jams.components.*;
@@ -193,24 +193,29 @@ public class JAMSSpreadSheet extends JPanel {
                 int cols[] = myTable.getSelectedColumns();
                 TableModel model = myTable.getModel();
 
-                String t = "";
+                StringBuffer t = new StringBuffer(rows.length*cols.length*9);
+                //first header
+                for (int i = 0; i < cols.length; i++) {
+                    t.append(model.getColumnName(cols[i]) + "\t");
+                }
+                t.append("\n");
                 for (int j = 0; j < rows.length; j++) {
                     for (int i = 0; i < cols.length; i++) {
                         try {
                             if (i != cols.length - 1) {
-                                t += ((Double) model.getValueAt(rows[j], cols[i])).doubleValue() + "\t";
+                                t.append(((Double) model.getValueAt(rows[j], cols[i])).doubleValue() + "\t");
                             } else {
-                                t += ((Double) model.getValueAt(rows[j], cols[i])).doubleValue();
+                                t.append(((Double) model.getValueAt(rows[j], cols[i])).doubleValue());
                             }
                         } catch (Throwable ta) {
-                            t += "0.0";
+                            t.append("0.0");
                         }
                     }
                     if (j != rows.length - 1) {
-                        t += "\n";
+                        t.append("\n");
                     }
                 }
-                return new TableDataTransferable(t);
+                return new TableDataTransferable(t.toString());
             } else {
                 return super.createTransferable(c);
             }
@@ -1010,7 +1015,7 @@ public class JAMSSpreadSheet extends JPanel {
             double[] ids = getIdValues();
 
             // create and fill the DataTransfer object
-            DataTransfer dataTransfer = new DataTransfer();
+/*            DataTransfer dataTransfer = new DataTransfer();
             dataTransfer.setNames(headers);
             dataTransfer.setIds(ids);
             dataTransfer.setData(data);
@@ -1025,7 +1030,7 @@ public class JAMSSpreadSheet extends JPanel {
                 viewer.addData(dataTransfer);
             } catch (Exception ex) {
                 GUIHelper.showErrorDlg(JAMSSpreadSheet.this, "Error while trying to display map!", "Error!");
-            }
+            }*/
         }
     };
 

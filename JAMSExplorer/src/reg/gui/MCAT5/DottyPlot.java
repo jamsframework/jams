@@ -14,8 +14,8 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import reg.gui.MCAT5Dialog.EfficiencyDataSet;
-import reg.gui.MCAT5Dialog.ParameterSet;
+import reg.gui.MCAT5Toolbar.EfficiencyDataSet;
+import reg.gui.MCAT5Toolbar.ParameterSet;
 
 /**
  *

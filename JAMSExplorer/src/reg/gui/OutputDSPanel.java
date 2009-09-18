@@ -62,7 +62,12 @@ public class OutputDSPanel extends JPanel {
             case DataStoreProcessor.TimeSpaceDataStore:                
                 tsp = new TimeSpaceDSPanel();
                 break;
-                
+            case DataStoreProcessor.SimpleDataSerieDataStore:
+                tsp = new SimpleDSPanel();
+                break;
+            case DataStoreProcessor.SimpleTimeSerieDataStore:
+                tsp = new SimpleDSPanel();
+                break;
             default:
                 System.out.println("unsupported datastore"); break;    
         }

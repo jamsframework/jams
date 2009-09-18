@@ -83,7 +83,6 @@ public class ExplorerFrame extends JFrame {
 
     private WorkerDlg openWSDlg;
 
-    private MCAT5Dialog sensitivityDlg;
 
     private Action openWSAction, openSTPAction, exitAction, editWSAction,
             sensitivityAnalysisAction, launchModelAction, editPrefsAction,
@@ -100,10 +99,12 @@ public class ExplorerFrame extends JFrame {
     private PropertyDlg propertyDlg;
 
     private WorkspaceDlg wsDlg;
-
+    private MCAT5Toolbar mcat5ToolBar = null;
+    
     public ExplorerFrame(JAMSExplorer explorer) {
         this.explorer = explorer;
-        init();
+        mcat5ToolBar = new MCAT5Toolbar(this);
+        init();        
     }
 
     private void init() {
@@ -142,7 +143,7 @@ public class ExplorerFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                sensitivityDlg.setVisible(true);
+                mcat5ToolBar.setVisible(!mcat5ToolBar.isVisible());
             }
         };
 
@@ -198,8 +199,7 @@ public class ExplorerFrame extends JFrame {
         propertyDlg = new PropertyDlg(this, explorer.getProperties());
 
         openWSDlg = new WorkerDlg(this, "Opening Workspace");
-        sensitivityDlg = new MCAT5Dialog();
-
+                
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(JAMSExplorer.APP_TITLE);
 
@@ -247,13 +247,7 @@ public class ExplorerFrame extends JFrame {
         wsEditButton.setText("");
         wsEditButton.setToolTipText((String) editWSAction.getValue(Action.NAME));
         wsEditButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
-        toolBar.add(wsEditButton);
-
-        JButton sensitivityAnalysisButton = new JButton(sensitivityAnalysisAction);
-        sensitivityAnalysisButton.setText("");
-        sensitivityAnalysisButton.setToolTipText((String) editWSAction.getValue(Action.NAME));
-        sensitivityAnalysisButton.setIcon(new ImageIcon(getClass().getResource("/reg/resources/images/gold.png")));
-        toolBar.add(sensitivityAnalysisButton);
+        toolBar.add(wsEditButton);                
 
         if (explorer.isTlugized()) {
             JButton launchModelButton = new JButton(launchModelAction);
@@ -269,6 +263,13 @@ public class ExplorerFrame extends JFrame {
             toolBar.add(launchWizardButton);
         }
 
+        JButton sensitivityAnalysisButton = new JButton(sensitivityAnalysisAction);
+        sensitivityAnalysisButton.setText("");
+        sensitivityAnalysisButton.setToolTipText((String) sensitivityAnalysisAction.getValue(Action.NAME));
+        sensitivityAnalysisButton.setIcon(new ImageIcon(getClass().getResource("/reg/resources/images/gold.png")));
+        toolBar.add(sensitivityAnalysisButton);
+        toolBar.add(mcat5ToolBar);
+        
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
         JPanel statusPanel = new JPanel();
@@ -392,7 +393,7 @@ public class ExplorerFrame extends JFrame {
         JAMSWorkspace ws = explorer.getWorkspace();
         try {
             Document modelDoc = XMLIO.getDocument(new File(ws.getDirectory(), ws.getModelFilename()).getPath());
-            JAMSLauncher launcher = new JAMSLauncher(this, explorer.getProperties(), modelDoc);
+            JAMSLauncher launcher = new JAMSLauncher(null, explorer.getProperties(), modelDoc);
             launcher.setVisible(true);
         } catch (FileNotFoundException ex) {
             explorer.getRuntime().handle(ex);

@@ -12,9 +12,13 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import javax.swing.BorderFactory;
@@ -28,7 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.TransferHandler;
-import reg.gui.MCAT5Dialog.MonteCarloData;
+import reg.gui.MCAT5Toolbar.MonteCarloData;
 import reg.spreadsheet.JAMSSpreadSheet;
 
 /**
@@ -45,7 +49,7 @@ public abstract class DataRequestDlg extends JDialog{
     
     public class DataHandler extends TransferHandler {  
         DialogRow request;
-        
+               
         public DataHandler(DialogRow t) {
             this.request = t;
             this.request.info.setTransferHandler(this);            
@@ -68,17 +72,21 @@ public abstract class DataRequestDlg extends JDialog{
                 String obj = (String)t.getTransferData(JAMSSpreadSheet.FLAVOR);
                 
                 StringTokenizer tok = new StringTokenizer(obj,"\n");                
-                int n = tok.countTokens();
+                int n = tok.countTokens()-1;
                 double [][] tableData = new double[n][];
-                int m=-1;
+                StringTokenizer headerTok = new StringTokenizer(tok.nextToken(),"\t");                
+                int m = headerTok.countTokens();
+                String []header = new String[m];
+                for (int i=0;i<m;i++){
+                    header[i] = headerTok.nextToken();
+                }
+                
                 for (int i=0;i<n;i++){
                     String row = tok.nextToken();
-                    StringTokenizer rowTok = new StringTokenizer(row,"\t");
-                    if (m!=-1){ // error different row count
-                        if (m!=rowTok.countTokens())
-                            return false;
-                    }else
-                        m=rowTok.countTokens();
+                    StringTokenizer rowTok = new StringTokenizer(row,"\t");                    
+                    if (m!=rowTok.countTokens())
+                        return false;
+                                           
                     tableData[i] = new double[m];
                     for (int j=0;j<m;j++){
                         try{
@@ -88,17 +96,28 @@ public abstract class DataRequestDlg extends JDialog{
                         }
                     }
                 }
-                
+                if (m != 1 && n == 1){
+                    double [][] tableData2 = new double[m][];
+                    for (int i=0;i<m;i++){
+                        tableData2[i] = new double[n];
+                        for (int j=0;j<n;j++)
+                            tableData2[i][j] = tableData[j][i];
+                    }
+                    tableData = tableData2;
+                    int tmp = n;
+                    n = m;
+                    m = tmp;
+                }                
                 if (this.request.request.type == OBSERVATED_TIMESERIE){                    
-                    if (m == 0 || tableData[0].length != 1){
+                    if (m != 1 || tableData[0].length == 0){
                         request.info.setText("only one column allowed for observation data");
                         return false;
                     }
                                         
-                    MCAT5Dialog.ObservationDataSet obs = new MCAT5Dialog.ObservationDataSet();
-                    obs.name = "obsdata";
-                    obs.set = new double[m];
-                    for (int i=0;i<m;i++){
+                    MCAT5Toolbar.ObservationDataSet obs = new MCAT5Toolbar.ObservationDataSet();
+                    obs.name = "obsdata: " + header[0];
+                    obs.set = new double[n];
+                    for (int i=0;i<n;i++){
                         obs.set[i] = tableData[i][0];
                     }
                     obs.timeLength = m;
@@ -107,40 +126,41 @@ public abstract class DataRequestDlg extends JDialog{
                         request.info.setText(result);
                     else{
                         request.info.setText(obs.toString());
-                        request.setAccepted();
+                        request.setAccepted(true);
                     }
                 }else if (this.request.request.type == ENSEMBLE_EFFICIENCY){
-                    if (m == 0 || tableData[0].length != 1){
+                    if (m != 1 || tableData[0].length == 0){
                         request.info.setText("only one column allowed for efficiency data");
                         return false;
                     }
-                    double effSet[] = new double[m];
-                    for (int i=0;i<m;i++){
+                    double effSet[] = new double[n];
+                    for (int i=0;i<n;i++){
                         effSet[i] = tableData[i][0];
                     }
-                    MCAT5Dialog.EfficiencyDataSet eff = new MCAT5Dialog.EfficiencyDataSet("effdata",effSet,null,null,true);                    
+                    MCAT5Toolbar.EfficiencyDataSet eff = new MCAT5Toolbar.EfficiencyDataSet("effdata:" + header[0],effSet,null,null,true);                    
                     String result = request.target.addEfficiencyDataSet(eff);
                     if (result != null)
                         request.info.setText(result);
                     else{
                         request.info.setText(eff.toString());
-                        request.setAccepted();
+                        request.setAccepted(true);
                     }
                 }else if (this.request.request.type == SIMULATATED_TIMESERIE){
                     if (m == 0 || tableData[0].length == 0){
                         request.info.setText("at least one column and row is needed");
                         return false;
                     }
-                    MCAT5Dialog.SimulationTimeSeriesDataSet ensemble = new MCAT5Dialog.SimulationTimeSeriesDataSet();         
+                    MCAT5Toolbar.SimulationTimeSeriesDataSet ensemble = new MCAT5Toolbar.SimulationTimeSeriesDataSet();         
                     ensemble.name = "simdata";
-                    ensemble.timeLength = m;
+                    ensemble.timeLength = n;
+                    ensemble.set = new MCAT5Toolbar.SimulationDataSet[n];
                     
-                    for (int i=0;i<m;i++){
-                        ensemble.set[i] = new MCAT5Dialog.SimulationDataSet();
+                    for (int i=0;i<n;i++){
+                        ensemble.set[i] = new MCAT5Toolbar.SimulationDataSet();
                         ensemble.set[i].name = "data" + i;
-                        ensemble.set[i].set = new double[n];
-                        for (int j=0;j<n;j++){              
-                            ensemble.set[i].set[j] = tableData[j][i];
+                        ensemble.set[i].set = new double[m];
+                        for (int j=0;j<m;j++){              
+                            ensemble.set[i].set[j] = tableData[i][j];
                         }
                     }
                                         
@@ -150,19 +170,19 @@ public abstract class DataRequestDlg extends JDialog{
                         request.info.setText(result);
                     else{
                         request.info.setText(ensemble.toString());
-                        request.setAccepted();
+                        request.setAccepted(true);
                     }
                 }else if (this.request.request.type == ENSEMBLE_PARAMETER){
                     if (m != 1 || tableData[0].length == 0){
                         request.info.setText("exactly one column and at least a row is needed");
                         return false;
                     }
-                    MCAT5Dialog.ParameterSet parameterSet = new MCAT5Dialog.ParameterSet();         
-                    parameterSet.name = "paramSet";
+                    MCAT5Toolbar.ParameterSet parameterSet = new MCAT5Toolbar.ParameterSet();         
+                    parameterSet.name = "paramSet:" + header[0];
                     parameterSet.set = new double[n];
                     
                     for (int i=0;i<n;i++){
-                        parameterSet.set[i] = tableData[0][i];                        
+                        parameterSet.set[i] = tableData[i][0];                        
                     }
                                         
                     
@@ -171,32 +191,33 @@ public abstract class DataRequestDlg extends JDialog{
                         request.info.setText(result);
                     else{
                         request.info.setText(parameterSet.toString());
-                        request.setAccepted();
+                        request.setAccepted(true);
                     }
                 }else if (this.request.request.type == ENSEMBLE_SIMULATION_VARIABLE){
                     if (m != 1 || tableData[0].length == 0){
                         request.info.setText("exactly one column and at least a row is needed");
                         return false;
                     }
-                    MCAT5Dialog.SimulationDataSet simDataSet = new MCAT5Dialog.SimulationDataSet();         
-                    simDataSet.name = "simDataSet";
+                    MCAT5Toolbar.SimulationDataSet simDataSet = new MCAT5Toolbar.SimulationDataSet();         
+                    simDataSet.name = "simDataSet:" + header[0];
                     simDataSet.set = new double[n];
                     
                     for (int i=0;i<n;i++){
-                        simDataSet.set[i] = tableData[0][i];                        
+                        simDataSet.set[i] = tableData[i][0];                        
                     }
-                                        
-                    
-                    String result = request.target.addSimulationDataSet(simDataSet);
+                                                            
+                    String result = request.target.addSimulationDataSet(simDataSet);                    
                     if (result != null)
                         request.info.setText(result);
                     else{
                         request.info.setText(simDataSet.toString());
-                        request.setAccepted();
+                        request.setAccepted(true);                        
                     }
                 }
                 return true;
             } catch (Exception e) {
+                System.err.println(e);
+                e.printStackTrace();
             }
 
             return super.importData(comp, t);
@@ -222,12 +243,13 @@ public abstract class DataRequestDlg extends JDialog{
     static final ImageIcon icon_del = new ImageIcon(DataRequestDlg.class.getResource("/reg/resources/images/remove.png"));
     
     class DialogRow{
-        JButton     sign = new JButton("");
+        JButton    sign = new JButton("");
         JTextArea  desc  = new JTextArea("description");
         JTextArea  info  = new JTextArea("              ");
         JButton     del  = new JButton("");
         
         DialogRow parent = null;
+        DialogRow child  = null;
         
         DataRequest request = null;
         MonteCarloData target = null;
@@ -235,6 +257,8 @@ public abstract class DataRequestDlg extends JDialog{
         JPanel row = new JPanel();
         JPanel subrow = new JPanel();
         
+        boolean isAccepted = false;
+                        
         DialogRow(DialogRow parent){
             init(parent.request,parent.target,true);
             this.parent = parent;
@@ -254,6 +278,9 @@ public abstract class DataRequestDlg extends JDialog{
             this.request = request;            
             target = mc;
 
+            desc.setFont(new Font("SansSerif", Font.PLAIN, 11));
+            info.setFont(new Font("SansSerif", Font.PLAIN, 11));
+            
             subrow.setLayout(new GridBagLayout());
             if (add)
                 subrow.setBackground(new Color(255,255,128));
@@ -283,7 +310,18 @@ public abstract class DataRequestDlg extends JDialog{
             del.setContentAreaFilled(false);
             del.setIcon(icon_del);           
             del.setMargin(new Insets(0,0,0,0));
-                                               
+                             
+            del.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    if (parent == null){
+                        isAccepted = false;
+                    }else{
+                        
+                    }
+                }
+            });
+                
             info.setLineWrap(true);
             info.setEnabled(false);
             info.setOpaque(false);
@@ -315,17 +353,46 @@ public abstract class DataRequestDlg extends JDialog{
             row.setMaximumSize(new Dimension(400,35));
             row.add(Box.createRigidArea(new Dimension(5,5)),BorderLayout.CENTER);
             row.setMinimumSize(new Dimension(10,35));
-            new DataHandler(this);                        
+            new DataHandler(this);      
+            
+            if (this.request.type == OBSERVATED_TIMESERIE)
+                desc.setText("observed timeserie");
+            if (this.request.type == SIMULATATED_TIMESERIE)
+                desc.setText("simulated timeserie");
+            if (this.request.type == ENSEMBLE_EFFICIENCY)
+                desc.setText("efficiency data serie");
+            if (this.request.type == ENSEMBLE_PARAMETER)
+                desc.setText("parameter sets");
+            if (this.request.type == ENSEMBLE_SIMULATION_VARIABLE)
+                desc.setText("ensemble simulated variable");
         }
         
-        void setAccepted(){
-            sign.setIcon(icon_ok);
-            subrow.setBackground(new Color(192,255,192));
+        void setAccepted(boolean state){
+            if (state){
+                sign.setIcon(icon_ok);
+                subrow.setBackground(new Color(192,255,192));
             
-            if (this.request.multipleAllowed){
-                row.add((new DialogRow(this)).getComponent(),BorderLayout.SOUTH);                
-                
-            }            
+                if (this.request.multipleAllowed){
+                    child = (new DialogRow(this));
+                    row.add(child.getComponent(),BorderLayout.SOUTH);                                
+                }
+            }else{                
+                sign.setIcon(icon_required);
+                subrow.setBackground(new Color(255,192,192));
+            
+                if (child != null){
+                    if (child.child != null){
+                        this.desc.setText(child.desc.getText());
+                        this.info.setText(child.info.getText());
+                        
+                    }
+                }    
+            }
+            isAccepted = state;                        
+        }
+        
+        boolean isAccepted(){
+            return isAccepted;
         }
         
         DataRequest getRequest(){
@@ -343,9 +410,12 @@ public abstract class DataRequestDlg extends JDialog{
     
     ArrayList<DialogRow> dataRows = new ArrayList<DialogRow>();
     
-    MonteCarloData mcData = new MonteCarloData();
+    protected MonteCarloData mcData = new MonteCarloData();
     
-    DataRequestDlg(DataRequest[]req){
+    DataRequestDlg(DataRequest[]req, Window parent){
+        super(parent);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        
         this.setTitle("Data Request");
         
         JPanel dialogPanel = new JPanel(new BorderLayout());
@@ -360,6 +430,7 @@ public abstract class DataRequestDlg extends JDialog{
         descarea.setWrapStyleWord(true);
         descarea.setMinimumSize(new Dimension(500, 100));
         
+               
         dialogPanel.add(descarea,BorderLayout.NORTH);
         dialogPanel.add(Box.createRigidArea(new Dimension(50,20)),BorderLayout.WEST);
         dialogPanel.add(Box.createRigidArea(new Dimension(50,20)),BorderLayout.EAST);
@@ -393,7 +464,6 @@ public abstract class DataRequestDlg extends JDialog{
         c.weightx = 1.0;
 
         subrow.add(new JButton("drag&drop place") {
-
             {
                 setMinimumSize(new Dimension(130, 20));
                 setPreferredSize(new Dimension(130, 20));
@@ -406,7 +476,6 @@ public abstract class DataRequestDlg extends JDialog{
         c.gridx = 2;
         
         subrow.add(new JButton("ok?") {
-
             {
                 setMinimumSize(new Dimension(55, 20));
                 setPreferredSize(new Dimension(55, 20));
@@ -418,12 +487,11 @@ public abstract class DataRequestDlg extends JDialog{
         c.gridx = 3;
 
         subrow.add(new JButton("del") {
-
             {
                 setMinimumSize(new Dimension(55, 20));
                 setPreferredSize(new Dimension(55, 20));
                 setEnabled(false);
-                setBorderPainted(false);
+                setBorderPainted(false);                
             }
         }, c);
                                
@@ -445,18 +513,31 @@ public abstract class DataRequestDlg extends JDialog{
         downUnderPanel.setLayout(new BorderLayout());
         downUnderPanel.setMinimumSize(new Dimension(100,100));
         downUnderPanel.add(Box.createRigidArea(new Dimension(20,20)),BorderLayout.NORTH);
-        downUnderPanel.add(new JButton("OK"){
-            public void actionPerformed(ActionEvent e){                
-                dataCollectAction();
-            }        
+        downUnderPanel.add(new JButton("OK"){{                    
+            this.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){   
+                    for (int i=0;i<dataRows.size();i++)
+                        if (!dataRows.get(i).isAccepted())
+                            return;
+                    
+                    dataCollectAction();
+                }
+            });
+        }        
         },BorderLayout.CENTER);
         downUnderPanel.add(Box.createRigidArea(new Dimension(20,20)),BorderLayout.SOUTH);
         dialogPanel.add(downUnderPanel,BorderLayout.SOUTH);
         this.add(dialogPanel);
-        this.setMinimumSize(new Dimension(500, Math.min(req.length*50+250,500)));        
+        int height = Math.min(req.length*50+250,500);
+        this.setMinimumSize(new Dimension(500, height));        
         this.setResizable(false);
         this.invalidate();
         this.setVisible(true);
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        if (d.width>500 && d.height > height)
+            this.setLocation(new Point( (d.width-500) / 2, (d.height-height) / 2));
+        
+        this.setAlwaysOnTop(true);
     }
     
     abstract public void dataCollectAction();

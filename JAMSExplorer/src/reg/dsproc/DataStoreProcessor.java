@@ -72,7 +72,8 @@ public class DataStoreProcessor {
     public static final int UnsupportedDataStore = 0;
     public static final int TimeSpaceDataStore = 1;
     public static final int EnsembleTimeSeriesDataStore = 2;
-    public static final int SimpleSerieDataStore = 3;
+    public static final int SimpleDataSerieDataStore = 3;
+    public static final int SimpleTimeSerieDataStore = 4;
     
     
     public DataStoreProcessor(File dsFile) {
@@ -95,8 +96,10 @@ public class DataStoreProcessor {
             //if (!dsdb.existsH2DB()) {
                 if (dsdb.isTimeSpaceDatastore())
                     return TimeSpaceDataStore;
-                if (dsdb.isSimpleSerieDatastore())
-                    return SimpleSerieDataStore;
+                if (dsdb.isSimpleDataSerieDatastore())
+                    return SimpleDataSerieDataStore;
+                if (dsdb.isSimpleTimeSerieDatastore())
+                    return SimpleTimeSerieDataStore;
                 if (dsdb.isEnsembleTimeSeriesDatastore())
                     return EnsembleTimeSeriesDataStore;
                 return UnsupportedDataStore;
@@ -517,15 +520,27 @@ public class DataStoreProcessor {
      * Check if this is a datastore that contains no further inner contexts
      * @return True or false
      */
-    public synchronized boolean isSimpleSerieDatastore() {
+    public synchronized boolean isSimpleTimeSerieDatastore() {
         ArrayList<DataStoreProcessor.ContextData> cntxt = getContexts();
         if (cntxt.size() != 1) {
             return false;
         }
-        //any more restrictions?
-        /*if (!cntxt.get(0).getType().equals("jams.components.optimizer")) {
+        if (cntxt.get(0).getType().equals("jams.model.JAMSTemporalContext")) {
+            return true;
+        }
+        
+        this.contexts = cntxt;
+        return false;
+    }
+    
+    public synchronized boolean isSimpleDataSerieDatastore() {
+        ArrayList<DataStoreProcessor.ContextData> cntxt = getContexts();
+        if (cntxt.size() != 1) {
             return false;
-        }*/
+        }        
+        if (cntxt.get(0).getType().equals("jams.model.JAMSTemporalContext")) {
+            return false;
+        }
         
         this.contexts = cntxt;
         return true;
@@ -593,6 +608,14 @@ public class DataStoreProcessor {
         return size;
     }
 
+    public long getStartPosition()throws IOException {
+        reader.setPosition(0);
+        while(!reader.readLine().startsWith("@start")){
+            
+        }
+        return reader.getPosition();
+    }
+    
     public synchronized DataMatrix getData(long position) throws IOException {
 
         String line, token;
@@ -616,7 +639,7 @@ public class DataStoreProcessor {
 
         reader.setPosition(position);
 
-        while (!(line = reader.readLine()).equals("@end")) {
+        while ((line = reader.readLine()) != null && !line.equals("@end")) {
 
             cols = new double[numSelected];
             StringTokenizer tok = new StringTokenizer(line, "\t");
