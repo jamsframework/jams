@@ -33,8 +33,8 @@ import jams.gui.WorkspaceDlg;
 import jams.io.XMLIO;
 import jams.workspace.JAMSWorkspace;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -83,7 +83,6 @@ public class ExplorerFrame extends JFrame {
 
     private WorkerDlg openWSDlg;
 
-
     private Action openWSAction, openSTPAction, exitAction, editWSAction,
             sensitivityAnalysisAction, launchModelAction, editPrefsAction,
             reloadWSAction, launchWizardAction;
@@ -99,6 +98,7 @@ public class ExplorerFrame extends JFrame {
     private PropertyDlg propertyDlg;
 
     private WorkspaceDlg wsDlg;
+
     private MCAT5Toolbar mcat5ToolBar = null;
     
     public ExplorerFrame(JAMSExplorer explorer) {
@@ -268,9 +268,13 @@ public class ExplorerFrame extends JFrame {
         sensitivityAnalysisButton.setToolTipText((String) sensitivityAnalysisAction.getValue(Action.NAME));
         sensitivityAnalysisButton.setIcon(new ImageIcon(getClass().getResource("/reg/resources/images/gold.png")));
         toolBar.add(sensitivityAnalysisButton);
-        toolBar.add(mcat5ToolBar);
-        
-        getContentPane().add(toolBar, BorderLayout.NORTH);
+
+        JPanel toolBarPanel = new JPanel();
+        toolBarPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        toolBarPanel.add(toolBar);
+        toolBarPanel.add(mcat5ToolBar);
+
+        getContentPane().add(toolBarPanel, BorderLayout.NORTH);
 
         JPanel statusPanel = new JPanel();
         statusPanel.setLayout(new java.awt.BorderLayout());
@@ -280,7 +284,6 @@ public class ExplorerFrame extends JFrame {
         statusLabel.setText(JAMSExplorer.APP_TITLE + " " + JAMSExplorer.APP_VERSION);
         statusPanel.add(statusLabel, java.awt.BorderLayout.CENTER);
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
-
 
         JMenuBar mainMenu = new JMenuBar();
 
@@ -312,18 +315,6 @@ public class ExplorerFrame extends JFrame {
         setJMenuBar(mainMenu);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(Math.min(d.width, JAMSExplorer.SCREEN_WIDTH), Math.min(d.height, JAMSExplorer.SCREEN_HEIGHT));
-    }
-
-    public void addToTabbedPane(String title, Component comp) {
-        tPane.addTab(title, comp);
-        tPane.setSelectedComponent(comp);
-    }
-
-    public void showTab(Component comp) {
-        try {
-            tPane.setSelectedComponent(comp);
-        } catch (NullPointerException npe) {
-        }
     }
 
     public void open(File workspaceFile) {
