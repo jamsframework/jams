@@ -64,17 +64,16 @@ public class JAMSExplorer {
 
     private ArrayList<Window> childWindows = new ArrayList<Window>();
 
-    private boolean standAlone = true, tlugized = true;
+    private boolean standAlone, tlugized;
+
+    public JAMSExplorer(JAMSRuntime runtime) {
+        this(runtime, true, true);
+    }
 
     public JAMSExplorer(JAMSRuntime runtime, boolean standAlone, boolean tlugized) {
 
-        this(runtime);
         this.standAlone = standAlone;
         this.tlugized = tlugized;
-
-    }
-
-    public JAMSExplorer(JAMSRuntime runtime) {
 
         if (runtime == null) {
             this.runtime = new StandardRuntime();
@@ -119,7 +118,7 @@ public class JAMSExplorer {
         }
 
         // create the JAMSExplorer object
-        JAMSExplorer explorer = new JAMSExplorer(null, false, false);
+        JAMSExplorer explorer = new JAMSExplorer(null);
         explorer.getExplorerFrame().setVisible(true);
         if (explorer.tlugized) {
             Viewer.getViewer();
