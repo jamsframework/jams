@@ -473,5 +473,7 @@ public class ExplorerFrame extends JFrame {
         
         this.setVisible(false);
         this.dispose();
+
+        explorer.exit();
     }
 }

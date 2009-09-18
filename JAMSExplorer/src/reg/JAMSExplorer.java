@@ -50,7 +50,7 @@ public class JAMSExplorer {
 
     public static final String APP_VERSION = "V0.2";
 
-    public static boolean GEOWIND_ENABLE = false;
+    public static boolean GEOWIND_ENABLE = true;
 
     public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 750;
 
@@ -66,7 +66,11 @@ public class JAMSExplorer {
 
     private ArrayList<Window> childWindows = new ArrayList<Window>();
 
-    public JAMSExplorer(JAMSRuntime runtime) {
+    private boolean standAlone;
+
+    public JAMSExplorer(JAMSRuntime runtime, boolean standAlone) {
+
+        this.standAlone = standAlone;
 
         if (runtime == null) {
             this.runtime = new StandardRuntime();
@@ -114,7 +118,7 @@ public class JAMSExplorer {
         }
 
         // create the JAMSExplorer object
-        JAMSExplorer explorer = new JAMSExplorer(null);
+        JAMSExplorer explorer = new JAMSExplorer(null, true);
         explorer.getExplorerFrame().setVisible(true);
 
         if (args.length > 0) {
@@ -200,5 +204,11 @@ public class JAMSExplorer {
      */
     public ArrayList<Window> getChildWindows() {
         return childWindows;
+    }
+
+    public void exit() {
+        if (standAlone) {
+            System.exit(0);
+        }
     }
 }
