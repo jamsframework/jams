@@ -23,7 +23,7 @@
 
 package reg.gui;
 
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import java.io.File;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;

@@ -118,7 +118,7 @@ public class JAMSExplorer {
         }
 
         // create the JAMSExplorer object
-        JAMSExplorer explorer = new JAMSExplorer(null,false,false);
+        JAMSExplorer explorer = new JAMSExplorer(null,true,true);
         explorer.getExplorerFrame().setVisible(true);
         if (explorer.tlugized) {
             Viewer.getViewer();

@@ -11,7 +11,7 @@
  */
 package reg.spreadsheet;
 
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.io.JAMSFileFilter;
 import java.util.Vector;
 import java.awt.event.*;
