@@ -8,7 +8,7 @@ package jams.juice.optimizer.wizard;
 import jams.io.*;
 import java.io.File;
 import java.io.IOException;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.data.JAMSDocument;
 import jams.data.JAMSString;
 import jams.model.JAMSComponent;

@@ -22,6 +22,7 @@
  */
 package jams.gui;
 
+import jams.tools.JAMSTools;
 import jams.io.JAMSFileFilter;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -47,10 +48,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.WindowConstants;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
+//import reg.JAMSExplorer;
 
 /**
  *
@@ -60,9 +60,9 @@ public class JAMSFrame extends JAMSLauncher {
 
     private JMenuBar mainMenu;
 
-    private JMenu logsMenu,  modelMenu;
+    private JMenu logsMenu, modelMenu;
 
-    private JMenuItem saveItem,  saveAsItem;
+    private JMenuItem saveItem, saveAsItem;
 
     private JFileChooser jfc;
 
@@ -76,7 +76,11 @@ public class JAMSFrame extends JAMSLauncher {
 
     private String modelFilename;
 
-    private Action editPrefsAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  loadModelParamAction,  saveModelParamAction,  rtManagerAction,  infoLogAction,  errorLogAction,  onlineAction;
+    private Action editPrefsAction, loadPrefsAction, savePrefsAction,
+            loadModelAction, saveModelAction, saveAsModelAction, exitAction,
+            aboutAction, loadModelParamAction, saveModelParamAction,
+            rtManagerAction, infoLogAction, errorLogAction, onlineAction,
+            explorerAction;
 
     public JAMSFrame(Frame parent, JAMSProperties properties) {
         super(parent, properties);
@@ -134,7 +138,7 @@ public class JAMSFrame extends JAMSLauncher {
             modelMenu.setEnabled(true);
             getRunModelAction().setEnabled(true);
 
-        //GUIHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
+            //GUIHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
 
         } catch (IOException ioe) {
             GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("The_specified_model_configuration_file_") + modelFilename + JAMS.resources.getString("_could_not_be_found!"), JAMS.resources.getString("Error"));
@@ -315,6 +319,14 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
+        explorerAction = new AbstractAction(JAMS.resources.getString("JEDI")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openExplorer();
+            }
+        };
+
         // create additional dialogs
         this.propertyDlg = new PropertyDlg(this, getProperties());
         jfc = GUIHelper.getJFileChooser();
@@ -385,6 +397,10 @@ public class JAMSFrame extends JAMSLauncher {
         JMenuItem runModelItem = new JMenuItem(getRunModelAction());
         runModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         modelMenu.add(runModelItem);
+
+        JMenuItem explorerItem = new JMenuItem(explorerAction);
+        explorerItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, ActionEvent.CTRL_MASK));
+        modelMenu.add(explorerItem);
 
         modelMenu.add(new JSeparator());
 
@@ -554,6 +570,26 @@ public class JAMSFrame extends JAMSLauncher {
         Element root = doc.getDocumentElement();
         setTitle(BASE_TITLE + ": " + root.getAttribute("name") + " [" + modelFilename + "]");
         setHelpBaseUrl(root.getAttribute("helpbaseurl"));
+
+    }
+
+    private void openExplorer() {
+
+        // check if provided values are valid
+        if (!verifyInputs()) {
+            return;
+        }
+        updateProperties();
+
+        Document modelDoc = getModelDocument();
+
+        NodeList varList = modelDoc.getDocumentElement().getElementsByTagName("var");
+        Element varNode = (Element) varList.item(0);
+        String workspacePath = varNode.getAttribute("value");
+
+//        JAMSExplorer explorer = new JAMSExplorer(null, false, false);
+//        explorer.getExplorerFrame().setVisible(true);
+//        explorer.getExplorerFrame().open(new File(workspacePath));
 
     }
 

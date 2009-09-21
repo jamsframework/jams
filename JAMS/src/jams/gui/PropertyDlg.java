@@ -32,7 +32,7 @@ import jams.*;
 import jams.gui.input.BooleanInput;
 import jams.gui.input.FileInput;
 import jams.gui.input.TextInput;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.gui.input.FileListInput;
 
 /**

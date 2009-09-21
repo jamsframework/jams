@@ -51,7 +51,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import jams.JAMS;
 import jams.JAMSProperties;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.data.JAMSData;
 import jams.data.JAMSEntityCollection;
 import jams.gui.GUIHelper;

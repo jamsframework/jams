@@ -5,7 +5,7 @@
 
 package jams.components.tools;
 
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.model.*;
 import jams.data.JAMSBoolean;
 import jams.data.JAMSEntity;

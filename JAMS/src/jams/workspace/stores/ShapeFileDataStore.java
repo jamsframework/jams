@@ -22,7 +22,7 @@
  */
 package jams.workspace.stores;
 
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.workspace.DataSet;
 import jams.workspace.JAMSWorkspace;
 import java.io.File;

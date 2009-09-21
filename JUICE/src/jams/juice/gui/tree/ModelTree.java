@@ -44,7 +44,7 @@ import javax.swing.tree.TreeSelectionModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.JAMSVersion;
 import jams.data.JAMSDataFactory;
 import jams.gui.HelpComponent;

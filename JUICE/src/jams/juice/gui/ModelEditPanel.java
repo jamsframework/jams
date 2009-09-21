@@ -22,7 +22,6 @@
  */
 package jams.juice.gui;
 
-import jams.JAMSTools;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDirName;
 import jams.data.JAMSString;
@@ -40,7 +39,6 @@ import jams.gui.input.ValueChangeListener;
 import java.awt.GridBagConstraints;
 import javax.swing.BorderFactory;
 import jams.juice.JUICE;
-import jams.workspace.JAMSWorkspace;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import javax.swing.AbstractAction;
@@ -111,7 +109,7 @@ public class ModelEditPanel extends JPanel {
         scroll.setBorder(BorderFactory.createEtchedBorder());
         scroll.setPreferredSize(new Dimension(TEXTAREA_WIDTH, TEXTAREA_HEIGHT));
 
-        Action explorerAction = new AbstractAction(JUICE.resources.getString("JEDI")) {
+        Action explorerAction = new AbstractAction(jams.JAMS.resources.getString("JEDI")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {

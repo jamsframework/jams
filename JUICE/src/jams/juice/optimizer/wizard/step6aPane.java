@@ -5,7 +5,7 @@
 
 package jams.juice.optimizer.wizard;
 
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.io.XMLIO;
 import jams.model.JAMSContext;
 import jams.juice.*;

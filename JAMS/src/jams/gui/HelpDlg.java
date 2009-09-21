@@ -17,7 +17,7 @@ import javax.swing.JTextPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.JAMS;
 
 /**
