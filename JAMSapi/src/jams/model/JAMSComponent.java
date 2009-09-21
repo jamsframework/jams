@@ -37,76 +37,60 @@ import java.io.Serializable;
         date="27. Juni 2005",
         description="This component represents a JAMS component which is the " +
         "main model building block in JAMS")
-        public class JAMSComponent implements Serializable {
-    
-    private String instanceName = getClass().getName();
-    private JAMSContext context = null;
-    private JAMSModel model = null;
+        public interface JAMSComponent extends Serializable {
     
     /**
      * Method to be executed at model's init stage
      * @throws java.lang.Exception
      */
-    public void init() throws Exception {}
+    public void init() throws Exception;
 
     /**
      * Method to be executed at model's run stage
      * @throws java.lang.Exception
      */
-    public void run() throws Exception {}
+    public void run() throws Exception;
 
     /**
      * Method to be executed at model's cleanup stage
      * @throws java.lang.Exception
      */
-    public void cleanup() throws Exception {}
+    public void cleanup() throws Exception;
         
     /**
      * Gets the name of this component
      * @return The component's instance name
      */
-    public String getInstanceName() {
-        return instanceName;
-    }
+    public String getInstanceName();
     
     /**
      * Sets the name of this component
      * @param instanceName The component's instance name
      */
-    public void setInstanceName(String instanceName) {
-        this.instanceName = instanceName;
-    }
+    public void setInstanceName(String instanceName);
         
     /**
      * Gets the parent context of this component
      * @return The parent context of this component, null if this is a model
      * context
      */
-    public JAMSContext getContext() {
-        return context;
-    }
+    public JAMSContext getContext();
     
     /**
      * Sets the context that this component is child of
      * @param context The parent context
      */
-    public void setContext(JAMSContext context) {
-        this.context = context;
-    }
+    public void setContext(JAMSContext context);
     
     /**
      * Gets the JAMS model that this component belongs to
      * @return The model
      */
-    public JAMSModel getModel() {
-        return model;
-    }
+    public JAMSModel getModel();
     
     /**
      * Sets the JAMS model that this component belongs to
      * @param model The model
      */
-    public void setModel(JAMSModel model) {
-        this.model = model;
-    }
+    public void setModel(JAMSModel model);
 }

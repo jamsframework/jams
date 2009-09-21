@@ -78,19 +78,14 @@ public class JAMSContext extends JAMSComponent {
      */
     public JAMSContext() {
 
-        try {
             //create an entity collection with one entity
 //            setCurrentEntity((JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class));
             ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
 //            list.add(getCurrentEntity());
-            list.add((JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class));
+            list.add((JAMSEntity) JAMSDataFactory.createEntity());
             setEntities(JAMSDataFactory.createEntityCollection());
             getEntities().setEntities(list);
             attribs = new HashMap<String, JAMSData>();
-
-        } catch (InstantiationException ex) {
-        } catch (IllegalAccessException ex) {
-        }
     }
 
     /**
@@ -336,8 +331,8 @@ public class JAMSContext extends JAMSComponent {
                     JAMSTools.setField(accessSpec.component, field, dataObject);
 
 
-                // field has been set with some value, so
-                // remove it from list of nullFields
+                    // field has been set with some value, so
+                    // remove it from list of nullFields
 //                    if (getModel().getNullFields() != null) { // can be null after deserialization
 //                        ArrayList<Field> nullFields = getModel().getNullFields().get(accessSpec.component);
 //                        nullFields.remove(field);
@@ -547,8 +542,8 @@ public class JAMSContext extends JAMSComponent {
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {
                     getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Can't_trace_attribute_") + attributeName +
                             JAMS.resources.getString("_in_context_") + this.getInstanceName() + JAMS.resources.getString("_(not_found)!"));
-                // will do nothing here since this will be handled at 
-                // the DataTracer's init method below..
+                    // will do nothing here since this will be handled at
+                    // the DataTracer's init method below..
                 } catch (Exception e) {
                     getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Error_while_trying_to_trace_") + attributeName + ": " + this.getInstanceName());
                     getModel().getRuntime().handle(e, false);
@@ -581,7 +576,13 @@ public class JAMSContext extends JAMSComponent {
             if (componentObject != null) {
                 dataObject = componentObject;
             } else {
-                dataObject = JAMSDataFactory.createInstance(clazz, getModel().getRuntime());
+                try {
+                    dataObject = JAMSDataFactory.createInstance(clazz);
+                } catch (InstantiationException ex) {
+                    getModel().getRuntime().handle(ex, false);
+                } catch (IllegalAccessException ex) {
+                    getModel().getRuntime().handle(ex, false);
+                }
             }
 
             attribs.put(attributeName, dataObject);
@@ -704,7 +705,7 @@ public class JAMSContext extends JAMSComponent {
         }
 
         ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
-        list.add((JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class, getModel().getRuntime()));
+        list.add((JAMSEntity) JAMSDataFactory.createEntity());
 
     }
 
@@ -894,7 +895,7 @@ public class JAMSContext extends JAMSComponent {
         //if this context has not been executed at all, exit                
         if (this.getModel().componentAllreadyProcessed(currentComponent, this) != 1) {
             return;
-        //if this context is finished .. 
+            //if this context is finished ..
         }
         if (!componentInContext(currentComponent)) {
             return;
@@ -930,7 +931,7 @@ public class JAMSContext extends JAMSComponent {
 
     public class AttributeSpec implements Serializable {
 
-        public String attributeName,  className,  value;
+        public String attributeName, className, value;
 
         public AttributeSpec(String attributeName, String className, String value) {
             this.attributeName = attributeName;
@@ -965,7 +966,6 @@ public class JAMSContext extends JAMSComponent {
     public void setEntities(JAMSEntityCollection entities) {
         this.entities = entities;
     }
-
 //    public JAMSEntity getCurrentEntity() {
 //        return currentEntity;
 //    }

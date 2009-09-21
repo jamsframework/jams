@@ -23,7 +23,6 @@
 package jams.data;
 
 import com.vividsolutions.jts.geom.Geometry;
-import jams.runtime.JAMSRuntime;
 import java.util.HashMap;
 
 /**
@@ -62,22 +61,22 @@ public class JAMSDataFactory {
      * @param rt A runtime object that will be used to handle any exceptions ocurred
      * @return An instance of the provided class
      */
-    public static JAMSData createInstance(Class clazz, JAMSRuntime rt) {
-
-        if (clazz.isInterface()) {
-            clazz = getImplementingClass(clazz);
-        }
-
-        JAMSData value = null;
-        try {
-            value = createInstance(clazz);
-        } catch (InstantiationException ex) {
-            rt.handle(ex, false);
-        } catch (IllegalAccessException ex) {
-            rt.handle(ex, false);
-        }
-        return value;
-    }
+//    public static JAMSData createInstance(Class clazz, JAMSRuntime rt) {
+//
+//        if (clazz.isInterface()) {
+//            clazz = getImplementingClass(clazz);
+//        }
+//
+//        JAMSData value = null;
+//        try {
+//            value = createInstance(clazz);
+//        } catch (InstantiationException ex) {
+//            rt.handle(ex, false);
+//        } catch (IllegalAccessException ex) {
+//            rt.handle(ex, false);
+//        }
+//        return value;
+//    }
 
     /**
      * Creates a new JAMSData instance that is a representation of a given data object
