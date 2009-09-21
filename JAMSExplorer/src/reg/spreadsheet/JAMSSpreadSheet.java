@@ -39,9 +39,11 @@ import java.net.URI;
 import java.text.ParseException;
 import java.util.StringTokenizer;
 //import reg.DataTransfer;
+import reg.DataTransfer;
 import reg.JAMSExplorer;
 import reg.dsproc.DataMatrix;
 import reg.gui.StatisticDialogPanel;
+import reg.viewer.Viewer;
 //import reg.viewer.Viewer;
 //import reg.viewer.Viewer;
 
@@ -1015,7 +1017,7 @@ public class JAMSSpreadSheet extends JPanel {
             double[] ids = getIdValues();
 
             // create and fill the DataTransfer object
-/*            DataTransfer dataTransfer = new DataTransfer();
+            DataTransfer dataTransfer = new DataTransfer();
             dataTransfer.setNames(headers);
             dataTransfer.setIds(ids);
             dataTransfer.setData(data);
@@ -1030,7 +1032,7 @@ public class JAMSSpreadSheet extends JPanel {
                 viewer.addData(dataTransfer);
             } catch (Exception ex) {
                 GUIHelper.showErrorDlg(JAMSSpreadSheet.this, "Error while trying to display map!", "Error!");
-            }*/
+            }
         }
     };
 
