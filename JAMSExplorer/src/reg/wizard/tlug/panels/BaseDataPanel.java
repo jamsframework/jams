@@ -119,9 +119,11 @@ public class BaseDataPanel extends javax.swing.JPanel {
         jRegLabel.setText("Regionalisierung von");
 
         jRegCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Niederschlag", "Tmin", "Tmax", "Tmean", "Feuchtigkeit" }));
-        jRegCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRegComboActionPerformed(evt);
+        jRegCombo.addFocusListener(new java.awt.event.FocusListener() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jRegComboFocusLost(evt);
+            }
+            public void focusGained(java.awt.event.FocusEvent evt) {
             }
         });
 
@@ -230,7 +232,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
         );
     }
 
-    private void jRegComboActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jRegComboFocusLost(java.awt.event.FocusEvent evt) {
         r_region = (String) jRegCombo.getSelectedItem();
         checkProblems();
 
@@ -314,11 +316,11 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
     private void checkProblems() {
         if (StringUtils.isNullOrEmpty(r_shapeFileName)) {
-            controller.setProblem("Bitte Shape-File auswï¿½hlen.");
+            controller.setProblem("Bitte Shape-File auswählen.");
         } else {
             wizardData.put(KEY_SHAPE_FILENAME, r_shapeFileName);
             if (StringUtils.isNullOrEmpty(r_dataOrigin)) {
-                controller.setProblem("Bitte Datenherkunft auswï¿½hlen.");
+                controller.setProblem("Bitte Datenherkunft auswählen.");
             } else {
                 wizardData.put(KEY_DATA_ORIGIN, r_dataOrigin);
                 if (StringUtils.isNullOrEmpty(r_region)) {
@@ -327,13 +329,11 @@ public class BaseDataPanel extends javax.swing.JPanel {
                     wizardData.put(KEY_REGIONALIZATION, r_region);
 
                     int errorCode = jIntervall.getErrorCode();
-                    System.out.println("Interval-ErrorCode:" + errorCode);
                     if (errorCode>0) {
-                        controller.setProblem("Bitte Zeitintervall auswï¿½hlen.");
+                        controller.setProblem("Bitte Zeitintervall auswählen.");
 
                     } else {
                         r_interval = jIntervall.getValue();
-                    System.out.println("Interval-Value:" + r_interval);
                         wizardData.put(KEY_INTERVAL, r_interval);
                         if (StringUtils.isNullOrEmpty(r_aggreg)) {
                             controller.setProblem("Bitte Aggregation bestimmen.");
@@ -374,7 +374,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
         String interval = (String) wizardData.get(KEY_INTERVAL);
         if (!StringUtils.isNullOrEmpty(interval)) {
-            System.out.println("interval from config: " + interval);
             r_interval = interval;
             ((TimeintervalInput)jIntervall).setValue(interval);
         } else {
