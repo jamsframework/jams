@@ -62,7 +62,7 @@ public class JAMSWorkspace implements Serializable {
     /**
      * Comment string used to mark dump files of input datastores
      */
-    public static final String DUMP_MARKER = "#JAMSdatadump", OUTPUT_FILE_ENDING = ".dat";
+    public static final String DUMP_MARKER = "#JAMSdatadump", OUTPUT_FILE_ENDING = ".dat", SPREADSHEET_FILE_ENDING = ".sdat";
 
     private static final String CONFIG_FILE_NAME = "config.txt", CONFIG_FILE_COMMENT = "JAMS workspace configuration", CONTEXT_ATTRIBUTE_NAME = "context";
 
@@ -611,7 +611,7 @@ public class JAMSWorkspace implements Serializable {
 
             @Override
             public boolean accept(File pathname) {
-                if (pathname.isFile() && pathname.getName().endsWith(OUTPUT_FILE_ENDING)) {
+                if (pathname.isFile() && (pathname.getName().endsWith(OUTPUT_FILE_ENDING) || pathname.getName().endsWith(SPREADSHEET_FILE_ENDING))) {
                     return true;
                 } else {
                     return false;
