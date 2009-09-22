@@ -513,6 +513,13 @@ public class JTSConfigurator extends JFrame {
                     prop.setSeriesFillPaint(colorTable.get(colors[1]));
                     prop.setSeriesOutlinePaint(colorTable.get(colors[2]));
 
+                    prop.setStroke(SpreadsheetConstants.JTS_DEFAULT_STROKE);
+                    prop.setStrokeSlider(SpreadsheetConstants.JTS_DEFAULT_STROKE);
+                    prop.setShape(SpreadsheetConstants.JTS_DEFAULT_SHAPE, SpreadsheetConstants.JTS_DEFAULT_SHAPE_SIZE);
+                    prop.setShapeSlider(SpreadsheetConstants.JTS_DEFAULT_SHAPE_SIZE);
+
+
+
 
 
 //            colour_cnt = k;
@@ -2135,16 +2142,17 @@ public class JTSConfigurator extends JFrame {
             StringTokenizer name_tokenizer = new StringTokenizer(fileID,".");
             String filename = "";
             if(name_tokenizer.hasMoreTokens()){
-                filename = name_tokenizer.nextToken()+".dat";
+                filename = name_tokenizer.nextToken()+SpreadsheetConstants.FILE_ENDING_DAT;
             }else{
-                filename = fileID+".dat";
+                filename = fileID+SpreadsheetConstants.FILE_ENDING_DAT;
             }
 //            System.out.println("output_sheet="+sheet.isOutputSheet());
             if(sheet.isOutputSheet()){
                 String[] headers_with_time = new String[headers.length+1];
                 headers_with_time[0] = "ID";
                 java.lang.System.arraycopy(headers, 0, headers_with_time, 1, headers.length);
-                sheet.save(filename, headers_with_time);//String ID zurückgeben
+//                sheet.save(filename, headers_with_time);//String ID zurückgeben
+                sheet.saveAll(filename);
                 //daten speichern im falle eines output sheets
             }
         }

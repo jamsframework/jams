@@ -316,11 +316,11 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
     private void checkProblems() {
         if (StringUtils.isNullOrEmpty(r_shapeFileName)) {
-            controller.setProblem("Bitte Shape-File ausw‰hlen.");
+            controller.setProblem("Bitte Shape-File ausw√§hlen.");
         } else {
             wizardData.put(KEY_SHAPE_FILENAME, r_shapeFileName);
             if (StringUtils.isNullOrEmpty(r_dataOrigin)) {
-                controller.setProblem("Bitte Datenherkunft ausw‰hlen.");
+                controller.setProblem("Bitte Datenherkunft ausw√§hlen.");
             } else {
                 wizardData.put(KEY_DATA_ORIGIN, r_dataOrigin);
                 if (StringUtils.isNullOrEmpty(r_region)) {
@@ -330,7 +330,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
                     int errorCode = jIntervall.getErrorCode();
                     if (errorCode>0) {
-                        controller.setProblem("Bitte Zeitintervall ausw‰hlen.");
+                        controller.setProblem("Bitte Zeitintervall ausw√§hlen.");
 
                     } else {
                         r_interval = jIntervall.getValue();

@@ -399,8 +399,8 @@ public class GraphProperties {
     }
     
     public void createPanel(){
-        JPanel namePanel = new JPanel();
-        namePanel.setLayout(new FlowLayout());
+        //JPanel namePanel = new JPanel();
+        //namePanel.setLayout(new FlowLayout());
         JPanel legendPanel = new JPanel();
         legendPanel.setLayout(new FlowLayout());
         
@@ -523,7 +523,9 @@ public class GraphProperties {
         
         setColumn = new JComboBox(column);
         setColumn.setPreferredSize(new Dimension(40,14));
+        setColumn.addActionListener(nameChangedListener);
         setColumn.setSelectedIndex(1);
+
         nameLabel.setText((String) setColumn.getSelectedItem());
 
         setName = new JTextField(name, 14);
@@ -534,8 +536,8 @@ public class GraphProperties {
         String name = (String) setColumn.getSelectedItem();
         setLegendName(name);
 
-        namePanel.add(setNameLabel);
-        namePanel.add(setName);
+        //namePanel.add(setNameLabel);
+        //namePanel.add(setName);
         legendPanel.add(setLegendLabel);
         legendPanel.add(setLegend);
         
@@ -552,7 +554,7 @@ public class GraphProperties {
         this.buttonpanel.add(okButton);
         this.buttonpanel.add(cancelButton);
         
-        cr_dlg = new CustomizeRendererDlg();
+        cr_dlg = new CustomizeRendererDlg(getName());
         
         //linecolor label
         colorlabel = new JLabel("      ");
@@ -743,7 +745,7 @@ public class GraphProperties {
     
     public void setName(String name){
         this.name = name;
-        setName.setText(name);
+        //setName.setText(name);
         //nameLabel.setText(name);
     }
     
@@ -795,14 +797,16 @@ public class GraphProperties {
     }
     
     public String getName(){
-        if(this.selectedColumn != 0){
-            name = table.getColumnName(selectedColumn);
-        } 
+//        if(this.selectedColumn != 0){
+//            name = table.getColumnName(selectedColumn);
+//        }
 //        else {
 //            
 //            name = this.name;
 //        }
-        
+
+        name = (String) setColumn.getSelectedItem();
+
         return name;
     }
     
@@ -1309,6 +1313,14 @@ public class GraphProperties {
             cxyconf.setMaxDataIntervals(thisProp);
         }
     };
+
+    ActionListener nameChangedListener = new ActionListener(){
+        public void actionPerformed(ActionEvent me){
+
+            String name = (String) setColumn.getSelectedItem();
+            setName(name);
+        }
+    };
     
     ActionListener customize_listener = new ActionListener(){
         public void actionPerformed(ActionEvent me){
@@ -1326,7 +1338,7 @@ public class GraphProperties {
                 if(plotType == 1) setRendererType(cxyconf.getRendererRight());
             }
             cr_dlg.handleGUI();
-            
+            cr_dlg.updateName(getName());
           
             
             cr_dlg.setVisible(true);
@@ -1403,6 +1415,7 @@ public class GraphProperties {
         JPanel optionspanel;
         JPanel colorpanel;
         JPanel buttonpanel;
+        JPanel namepanel;
         
         Color line_color;
         Color shape_fill;
@@ -1421,6 +1434,7 @@ public class GraphProperties {
 
 
         JLabel setLegendLabel;
+        JLabel nameLabel;
         JTextField setLegendField;
 
         JComboBox renderer_box;
@@ -1460,8 +1474,8 @@ public class GraphProperties {
         final int SHAPE = 5;
         final int OUTLINE = 1;
 
-        public CustomizeRendererDlg(){
-            super(parent, "Customize Series Paint", true);
+        public CustomizeRendererDlg(String series_name){
+            super(parent, SpreadsheetConstants.DLG_TITLE_CUSTOMIZE, true);
             
             Point parentloc = parent.getLocation();
             setLocation(parentloc.x + 50, parentloc.y + 50);
@@ -1479,7 +1493,12 @@ public class GraphProperties {
             
             createPanel();
         }
-        
+
+        public void updateName(String name){
+
+            nameLabel.setText(name);
+        }
+
         public void updateColors(){
             
             line_color = getSeriesPaint();
@@ -1540,6 +1559,7 @@ public class GraphProperties {
             optionspanel = new JPanel();
             colorpanel = new JPanel();
             buttonpanel = new JPanel();
+            namepanel = new JPanel();
             GridBagLayout gbl = new GridBagLayout();
             BorderLayout brl = new BorderLayout();
             GridBagLayout option_gbl = new GridBagLayout();
@@ -1562,6 +1582,8 @@ public class GraphProperties {
 //            renderer_box = new JComboBox(RENDERER);
 //            renderer_box.setSelectedIndex()
             stroke_label = new JLabel("Stroke:");
+            nameLabel = new JLabel(getName());
+            nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD));
 //            stroke_box = new JComboBox(STROKES);
 //            stroke_box.setSelectedIndex(2);
             
@@ -1643,6 +1665,8 @@ public class GraphProperties {
             stroke_button.addActionListener(stroke_button_listener);
             fill_button.addActionListener(fill_button_listener);
             outline_button.addActionListener(outline_button_listener);
+            //name
+
             //optionpanel
             GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Line"),    0, 0, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Symbol"),    4, 0, 1, 1, 0, 0);
@@ -1677,14 +1701,18 @@ public class GraphProperties {
             GUIHelper.addGBComponent(buttonpanel, button_gbl, ok_button, 0, 0, 1, 1, 1, 1);
             GUIHelper.addGBComponent(buttonpanel, button_gbl, cancel_button, 1, 0, 1, 1, 1, 1);
             //GUIHelper.addGBComponent(buttonpanel, button_gbl, apply_button, 2, 0, 1, 1, 1, 1);
+
+            namepanel.add(nameLabel);
             
             //this-panel
 //            GUIHelper.addGBComponent(this, gbl, optionspanel, 0, 0, 1, 6, 1, 1);
 //            GUIHelper.addGBComponent(this, gbl, colorpanel  , 1, 0, 1, 5, 1, 1);
 //            GUIHelper.addGBComponent(this, gbl, buttonpanel , 1, 5, 1, 1, 1, 1);
-            
+
+            add(namepanel, brl.NORTH);
             add(optionspanel, brl.CENTER);
             add(buttonpanel, brl.SOUTH);
+
             
             //default values
             setStroke(stroke_slider.getValue());

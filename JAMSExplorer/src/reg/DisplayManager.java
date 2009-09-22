@@ -135,7 +135,8 @@ public class DisplayManager implements Observer {
             case DSTreeNode.OUTPUT_DS:
 
                 FileObject fo = (FileObject) node.getUserObject();
-                dsID = fo.getFile().getName();
+
+                dsID = fo.getFile().getName() + " " + fo.getFile().getParentFile().getName();
 
                 if (dataPanels.containsKey(dsID)) {
 

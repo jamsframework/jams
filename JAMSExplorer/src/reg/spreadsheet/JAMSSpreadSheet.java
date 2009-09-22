@@ -307,7 +307,7 @@ public class JAMSSpreadSheet extends JPanel {
                     String inputString = GUIHelper.showInputDlg(parent_frame, SpreadsheetConstants.INFO_MSG_SAVEDAT, getName());
                     if (!(inputString == null)) {
 
-                        inputString += ".dat";
+                        inputString += SpreadsheetConstants.FILE_ENDING_DAT;
 
                         if (isOutputSheet()) {
 
@@ -315,14 +315,16 @@ public class JAMSSpreadSheet extends JPanel {
 
                             if (!file.exists()) {
                                 filename = file.getName();
-                                save(filename, getSaveHeaders());
+//                                save(filename, getSaveHeaders());
+                                saveAll(filename);
                                 dont_save = false;
                             } else {
                                 String fileexists = "The File " + file + " already exists.\n Overwrite?";
                                 int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, "File already exists");
                                 if (result == 0) { //overwrite
                                     filename = file.getName();
-                                    save(filename, getSaveHeaders());
+//                                    save(filename, getSaveHeaders());
+                                    saveAll(filename);
                                     dont_save = false;
                                 }
 
@@ -332,14 +334,16 @@ public class JAMSSpreadSheet extends JPanel {
                             File file = new File(explorer.getWorkspace().getDirectory().toString() + "/explorer", inputString);
                             if (!file.exists()) {
                                 filename = file.getName();
-                                save(filename, getSaveHeaders());
+//                                save(filename, getSaveHeaders());
+                                saveAll(filename);
                                 dont_save = false;
                             } else {
                                 String fileexists = "The File " + file + " already exists.\n Overwrite?";
                                 int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, "File already exists");
                                 if (result == 0) { //overwrite
                                     filename = file.getName();
-                                    save(filename, getSaveHeaders());
+//                                    save(filename, getSaveHeaders());
+                                    saveAll(filename);
                                     dont_save = false;
                                 }
 
@@ -494,6 +498,83 @@ public class JAMSSpreadSheet extends JPanel {
                     } else {
 
                         value = table.getValueAt(k, col_index[i]).toString();
+                        filewriter.write(value, 0, value.length());
+                        filewriter.write("\t");
+                    }
+                }
+                filewriter.write("\r\n");
+            }
+            filewriter.write(SpreadsheetConstants.LOAD_END);
+            filewriter.close();
+
+        } catch (IOException ex) {
+        }
+
+
+//        }
+    }
+
+    public void saveAll(String filename) {
+        /* Only for Time Series */
+        int colcount = tmodel.getColumnCount();
+        int rowcount = tmodel.getRowCount();
+        //int write_col_cnt = write_headers.length;
+        //int[] col_index = new int[write_col_cnt];
+        String value;
+        String[] columnNames = tmodel.getCoulumnNameArray();
+
+//        JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
+
+//        int returnVal = chooser.showSaveDialog(panel);
+//        if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+        try {
+
+            File file;
+            if (isOutputSheet()) {
+//                    file = new File(regionalizer.getWorkspace().getOutputDataDirectory()+filename);
+//                file = new File(regionalizer.getWorkspace().getDirectory().toString() + "/output/current/" + filename);
+                file = new File(this.getOutputDSDir().toString() + "/" + filename);
+            } else {
+                file = new File(explorer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME + filename);
+            }
+
+            //File file = chooser.getSelectedFile();
+            //File file = chooser.getSelectedFile();
+            FileWriter filewriter = new FileWriter(file);
+
+            filewriter.write(SpreadsheetConstants.LOAD_HEADERS + "\r\n");
+            String col_string = "";
+            for (int j = 0; j < colcount; j++) {
+                col_string = columnNames[j];
+
+                if (j == colcount - 1) {
+                    filewriter.write(columnNames[j], 0, columnNames[j].length());
+
+                } else {
+                    filewriter.write(columnNames[j], 0, columnNames[j].length());
+                    filewriter.write("\t");
+
+                }
+
+            }
+
+            filewriter.write("\r\n" + SpreadsheetConstants.LOAD_DATA);
+            filewriter.write("\r\n");
+
+            for (int k = 0; k < rowcount; k++) {
+//                        value = table.getValueAt(k, 0).toString();//timeRow
+//                        filewriter.write(value, 0, value.length());
+//                        filewriter.write("\t");
+                for (int i = 0; i < colcount; i++) {
+
+                    if (i == colcount - 1) {
+                        value = table.getValueAt(k, i).toString();
+                        filewriter.write(value, 0, value.length());
+//                            filewriter.write("\t");
+                    } else {
+
+                        value = table.getValueAt(k, i).toString();
                         filewriter.write(value, 0, value.length());
                         filewriter.write("\t");
                     }
@@ -1194,6 +1275,8 @@ public class JAMSSpreadSheet extends JPanel {
 
         useTemplateButton.setEnabled(true);
         useTemplateButton.setSelected(false);
+
+        closeButton.setBackground(SpreadsheetConstants.GUI_COLOR_CLOSETAB);
         //dataplotButton.setEnabled(false);
 
         scrollpane.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));

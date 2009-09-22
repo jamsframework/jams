@@ -316,7 +316,7 @@ public class STPConfigurator extends JFrame {
 
                 StringTokenizer name_tokenizer = new StringTokenizer(templateFiles[i].getPath(), ".");
                 String filename = "";
-                filename = name_tokenizer.nextToken() + ".dat";
+                filename = name_tokenizer.nextToken() + SpreadsheetConstants.FILE_ENDING_DAT;
 
 //                    File ttpdatfile = new File(templateFiles[i].getPath()+".dat");
                 File ttpdatfile = new File(filename);
@@ -610,7 +610,7 @@ public class STPConfigurator extends JFrame {
 
                 StringTokenizer name_tokenizer = new StringTokenizer(templateFiles[i].getPath(), ".");
                 String filename = "";
-                filename = name_tokenizer.nextToken() + ".dat";
+                filename = name_tokenizer.nextToken() + SpreadsheetConstants.FILE_ENDING_DAT;
 
 //                    File ttpdatfile = new File(templateFiles[i].getPath()+".dat");
                 File ttpdatfile = new File(filename);
@@ -754,7 +754,7 @@ public class STPConfigurator extends JFrame {
         for (int i = 0; i < filelist.length; i++) {
 
             String name = filelist[i].getName();
-            if (name.indexOf(".ttp") != -1 && name.indexOf(".dat") == -1) {
+            if (name.indexOf(".ttp") != -1 && name.indexOf(SpreadsheetConstants.FILE_ENDING_DAT) == -1) {
                 accIDList.add(name);
                 counter = i;
             }
