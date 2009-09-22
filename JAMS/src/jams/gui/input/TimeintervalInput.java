@@ -42,7 +42,7 @@ import jams.data.JAMSTimeInterval;
 import jams.gui.*;
 import java.awt.Color;
 import jams.JAMS;
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 import jams.data.Attribute;
 import javax.swing.JButton;
 import javax.swing.JFrame;

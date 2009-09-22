@@ -36,7 +36,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 import jams.gui.GUIHelper;
 import jams.model.JAMSComponent;
 import jams.model.JAMSContext;

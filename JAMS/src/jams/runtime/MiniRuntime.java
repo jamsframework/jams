@@ -29,7 +29,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import jams.JAMS;
 import jams.JAMSProperties;
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 import jams.data.JAMSData;
 import jams.model.JAMSComponent;
 import jams.model.JAMSGUIComponent;

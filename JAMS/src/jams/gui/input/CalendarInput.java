@@ -32,7 +32,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import jams.gui.*;
 import java.awt.Color;
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;

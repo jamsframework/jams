@@ -5,7 +5,7 @@
 
 package jams.juice.optimizer.wizard;
 
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 import jams.juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
 import jams.juice.optimizer.wizard.OptimizationWizard.Efficiency;
 import jams.juice.*;

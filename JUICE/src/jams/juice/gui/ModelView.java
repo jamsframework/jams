@@ -46,7 +46,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import jams.JAMS;
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 import jams.gui.HelpComponent;
 import jams.gui.JAMSLauncher;
 import jams.gui.GUIHelper;

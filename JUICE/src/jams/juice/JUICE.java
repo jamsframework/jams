@@ -27,7 +27,7 @@ import java.util.*;
 import javax.swing.UIManager;
 import jams.JAMS;
 import jams.JAMSProperties;
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 import jams.gui.JAMSSplash;
 import jams.gui.GUIHelper;
 import jams.gui.WorkerDlg;

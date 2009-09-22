@@ -6,7 +6,7 @@
 package jams.juice.optimizer.wizard;
 
 import jams.JAMSProperties;
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 import jams.model.JAMSContext;
 import jams.juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
 import jams.juice.optimizer.wizard.OptimizationWizard.Parameter;

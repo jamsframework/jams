@@ -23,7 +23,7 @@
 package reg.gui;
 
 import reg.JAMSExplorer;
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 import java.io.FileNotFoundException;
 import jams.gui.GUIHelper;
 import jams.gui.JAMSLauncher;

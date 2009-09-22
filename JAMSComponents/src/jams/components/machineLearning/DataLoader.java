@@ -14,7 +14,7 @@ import jams.data.*;
 import java.util.*;
 import java.io.*;
 import jams.JAMS;
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 /**
  *
  * @author Christian(web)

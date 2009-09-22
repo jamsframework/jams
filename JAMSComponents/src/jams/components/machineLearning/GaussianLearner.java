@@ -15,7 +15,7 @@ import jams.model.*;
 import java.io.*;
 import Jama.*;
 import Jama.Matrix;
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 import jams.components.machineLearning.kernels.*;
 
 public class GaussianLearner extends Learner  {

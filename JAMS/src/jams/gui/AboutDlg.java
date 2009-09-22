@@ -29,7 +29,7 @@ import java.io.*;
 import java.net.URL;
 import javax.swing.*;
 import jams.JAMS;
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 import jams.JAMSVersion;
 
 /**

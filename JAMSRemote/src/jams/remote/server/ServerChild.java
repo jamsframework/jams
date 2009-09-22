@@ -38,7 +38,7 @@ import java.net.SocketException;
 import java.util.Observable;
 import java.util.Observer;
 import jams.JAMSProperties;
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 import jams.io.XMLIO;
 import jams.io.XMLProcessor;
 import jams.runtime.JAMSRuntime;

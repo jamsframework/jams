@@ -57,7 +57,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import jams.JAMSProperties;
-import jams.tools.JAMSTools;
+import jams.JAMSTools;
 import jams.gui.JAMSFrame;
 import jams.gui.GUIHelper;
 import jams.gui.LogViewDlg;
