@@ -157,11 +157,11 @@ public class GPSearch extends Optimizer {
             for (int i=0;i<sampleValue.size();i++){
                 predict[i] = sampleValue.get(i).doubleValue();
             }
-            GP.trainData = (JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class, getModel().getRuntime());
+            GP.trainData = JAMSDataFactory.createEntity();
             GP.trainData.setObject("data",data);
             GP.trainData.setObject("predict",predict);
         
-            GP.optimizationData = (JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class, getModel().getRuntime());
+            GP.optimizationData = JAMSDataFactory.createEntity();
             GP.optimizationData.setObject("data",data);
             GP.optimizationData.setObject("predict",predict);
                         

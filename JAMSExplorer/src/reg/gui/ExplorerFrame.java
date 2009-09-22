@@ -322,6 +322,7 @@ public class ExplorerFrame extends JFrame {
             String[] libs = JAMSTools.toArray(explorer.getProperties().getProperty("libs", ""), ";");
             JAMSWorkspace workspace = new JAMSWorkspace(workspaceFile, explorer.getRuntime(), true);
             workspace.setLibs(libs);
+            explorer.getDisplayManager().removeAllDisplays();
             explorer.setWorkspace(workspace);
             this.update();
 

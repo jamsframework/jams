@@ -82,8 +82,10 @@ public class DisplayManager implements Observer {
         }
     }
 
-    public HashMap<String, JPanel> getDataPanels() {
-        return dataPanels;
+    public void removeAllDisplays() {
+        for (String name : dataPanels.keySet()) {
+            removeDisplay(name);
+        }
     }
 
     public void removeDisplay(String name) {

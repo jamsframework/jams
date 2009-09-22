@@ -93,7 +93,7 @@ public class StandardEntityReader extends JAMSComponent {
             
             while ((s != null) && !s.startsWith("#"))  {
                 
-                JAMSEntity e = (JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class, getModel().getRuntime());
+                JAMSEntity e = JAMSDataFactory.createEntity();
                 tokenizer = new StringTokenizer(s, "\t");
                 
                 String token;
