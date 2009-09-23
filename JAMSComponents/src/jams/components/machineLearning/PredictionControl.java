@@ -2,7 +2,7 @@
  * PredictionNETCreator.java
  * Created on 12. Mai 2006, 17:41
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2005 S. Kralisch and P. Krause
  *
  * This program is free software; you can redistribute it and/or

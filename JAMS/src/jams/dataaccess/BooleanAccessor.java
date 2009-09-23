@@ -2,7 +2,7 @@
  * BooleanAccessor.java
  * Created on 28. November 2005, 09:19
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or

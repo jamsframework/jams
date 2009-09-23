@@ -2,7 +2,7 @@
  * J2KTSDataStore.java
  * Created on 13. Oktober 2008, 17:22
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or

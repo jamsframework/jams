@@ -2,7 +2,7 @@
  * ModelEditPanel.java
  * Created on 12. Dezember 2006, 22:43
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2006 FSU Jena
  *
  * This program is free software; you can redistribute it and/or

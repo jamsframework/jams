@@ -2,7 +2,7 @@
  * GUIHelper.java
  * Created on 19. September 2006, 10:11
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or

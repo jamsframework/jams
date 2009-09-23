@@ -2,7 +2,7 @@
  * JAMSLongAccessor.java
  * Created on 03. October 2005, 10:58
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or

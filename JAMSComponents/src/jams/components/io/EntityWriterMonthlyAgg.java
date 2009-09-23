@@ -2,7 +2,7 @@
  * EntityWriterMonthlyAgg.java
  * Created on 03. September 2007
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2005 S. Kralisch and P. Krause
  *
  * This program is free software; you can redistribute it and/or

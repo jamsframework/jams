@@ -2,7 +2,7 @@
  * JAMSExecInfo.java
  * Created on 1. Dezember 2005, 19:46
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or

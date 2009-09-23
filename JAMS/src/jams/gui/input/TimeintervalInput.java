@@ -2,7 +2,7 @@
  * TimeintervalInput.java
  * Created on 5. September 2006, 23:43
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or

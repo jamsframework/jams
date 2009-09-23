@@ -2,7 +2,7 @@
  * JAMSConstants.java
  * Created on 2. Oktober 2005, 16:05
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or

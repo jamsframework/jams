@@ -2,7 +2,7 @@
  * DoubleArrayAccessor.java
  * Created on 19. März 2006, 14:07
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or

@@ -2,7 +2,7 @@
  * StandardInputDataStore.java
  * Created on 4. Februar 2008, 23:21
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or

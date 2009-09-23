@@ -2,7 +2,7 @@
  * JUICEFrame.java
  * Created on 4. April 2006, 14:18
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or

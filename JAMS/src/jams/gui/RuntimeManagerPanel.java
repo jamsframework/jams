@@ -2,7 +2,7 @@
  * RuntimeManagerPanel.java
  * Created on 1. Dezember 2008, 10:43
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or

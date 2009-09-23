@@ -2,7 +2,7 @@
  * AbstractTracer.java
  * Created on 28. August 2008, 13:40
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or

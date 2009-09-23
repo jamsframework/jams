@@ -2,7 +2,7 @@
  * JAMSExplorer.java
  * Created on 18. November 2008, 21:37
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or

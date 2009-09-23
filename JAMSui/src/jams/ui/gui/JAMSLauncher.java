@@ -2,7 +2,7 @@
  * JAMSLauncher.java
  * Created on 14. August 2008, 13:37
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or

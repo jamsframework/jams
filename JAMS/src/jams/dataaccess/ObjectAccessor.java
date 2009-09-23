@@ -2,7 +2,7 @@
  * ObjectAccessor.java
  * Created on 28. Mai 2009, 22:40
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or

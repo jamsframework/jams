@@ -2,7 +2,7 @@
  * DoubleAccessor.java
  * Created on 28. September 2005, 16:39
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or

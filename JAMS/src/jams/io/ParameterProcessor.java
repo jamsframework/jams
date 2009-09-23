@@ -2,7 +2,7 @@
  * ParameterProcessor.java
  * Created on 10. Juli 2008, 15:48
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or

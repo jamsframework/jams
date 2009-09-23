@@ -2,7 +2,7 @@
  * CalendarInput.java
  * Created on 2. October 2007, 15:10
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2007 FSU Jena
  *
  * This program is free software; you can redistribute it and/or

@@ -2,7 +2,7 @@
  * Ping.java
  * Created on 15. Dezember 2006, 14:13
  *
- * This file is part of JAMSConstants
+ * This file is part of JAMS
  * Copyright (C) 2006 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
