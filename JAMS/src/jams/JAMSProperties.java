@@ -2,7 +2,7 @@
  * JAMSProperties.java
  * Created on 18. April 2006, 23:11
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -94,7 +94,7 @@ public class JAMSProperties extends Observable {
             }
 
         } catch (Exception ex) {
-            JAMS.handle(ex);
+            JAMSTools.handle(ex);
         }
     }
 
@@ -105,10 +105,10 @@ public class JAMSProperties extends Observable {
      */
     public void save(String fileName) throws IOException {
         try {
-            properties.store(new FileOutputStream(fileName), JAMS.resources.getString("JAMS_configuration_file"));
+            properties.store(new FileOutputStream(fileName), JAMSConstants.resources.getString("JAMS_configuration_file"));
             defaultFilename = fileName;
         } catch (Exception ex) {
-            JAMS.handle(ex);
+            JAMSTools.handle(ex);
         }
     }
 
@@ -197,21 +197,21 @@ public class JAMSProperties extends Observable {
         p.setProperty("splashtimeout", "1000");
 
         JAMSProperties jp = new JAMSProperties(p);
-        jp.setDefaultFilename(System.getProperty("user.dir") + File.separator + JAMS.DEFAULT_PARAMETER_FILENAME);
+        jp.setDefaultFilename(System.getProperty("user.dir") + File.separator + JAMSConstants.DEFAULT_PARAMETER_FILENAME);
 
         return jp;
     }
 
     /**
      *
-     * @return The default file name for storing JAMS properties
+     * @return The default file name for storing JAMSConstants properties
      */
     public String getDefaultFilename() {
         return defaultFilename;
     }
 
     /**
-     * Set the default file name for storing JAMS properties
+     * Set the default file name for storing JAMSConstants properties
      * @param defaultFilename The default file name
      */
     public void setDefaultFilename(String defaultFilename) {

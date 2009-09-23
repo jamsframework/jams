@@ -13,7 +13,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
-import jams.JAMS;
+import jams.JAMSConstants;
+import jams.JAMSTools;
 import jams.data.*;
 import jams.io.GenericDataWriter;
 import jams.model.JAMSComponentDescription;
@@ -183,7 +184,7 @@ public class GPSearch extends Optimizer {
         try {
             writer = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + file));
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
                 
         for (int i=0;i<samplePoint.size();i++){           
@@ -218,7 +219,7 @@ public class GPSearch extends Optimizer {
             writer_mean = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + GPmeanFile));
             writer_var = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + GPvarFile));
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }                        
         for (int i=0;i<51;i++){
             for (int j=0;j<51;j++){
@@ -260,7 +261,7 @@ public class GPSearch extends Optimizer {
         try {
             writer_prob = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + GPprobFile));
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }     
         GaussEffFunction function = new GaussEffFunction();
         function.GP = GP;

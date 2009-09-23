@@ -2,7 +2,7 @@
  * EntityAccessor.java
  * Created on 22. März 2006, 08:33
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 package jams.dataaccess;
 
 import jams.data.*;
-import jams.JAMS;
+import jams.JAMSConstants;
 
 /**
  *
@@ -60,7 +60,7 @@ public class EntityAccessor implements DataAccessor {
                     }
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
-                    throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist!"));
+                    throw new JAMSEntity.NoSuchAttributeException(JAMSConstants.resources.getString("Attribute_") + attributeName + JAMSConstants.resources.getString("_does_not_exist!"));
                 }
             }
         }

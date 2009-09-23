@@ -24,6 +24,7 @@
 
 package jams.io;
 
+import jams.JAMSTools;
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 import java.io.*;
@@ -36,7 +37,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import jams.JAMS;
 import org.w3c.dom.*;
 
 /**
@@ -69,15 +69,15 @@ public class XMLIO {
             
         } catch (SAXException sxe) {
             // Error generated during parsing
-            JAMS.handle(sxe);
+            JAMSTools.handle(sxe);
             
         } catch (ParserConfigurationException pce) {
             // Parser with specified options can't be built
-            JAMS.handle(pce);
+            JAMSTools.handle(pce);
             
         } catch (IOException ioe) {
             // I/O error
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
         
         return document;

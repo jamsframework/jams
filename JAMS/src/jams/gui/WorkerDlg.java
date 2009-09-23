@@ -22,7 +22,7 @@
  */
 package jams.gui;
 
-import jams.JAMS;
+import jams.JAMSTools;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -134,7 +134,7 @@ public class WorkerDlg extends JDialog {
                 try {
                     WorkerDlg.this.task.run();
                 } catch (Throwable t) {
-                    JAMS.handle(t);
+                    JAMSTools.handle(t);
                 }
                 return null;
             }

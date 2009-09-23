@@ -2,7 +2,7 @@
  * ModelPreprocessor.java
  * Created on 28. August 2006, 08:25
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -72,7 +72,7 @@ public class ModelPreprocessor {
                 for (Setting s : list) {
                     if (s.getAttribute().equals("%enable%") && (s.getValue().equals("0"))) {
                         rootElement.getParentNode().removeChild(rootElement);
-                        rt.println(JAMS.resources.getString("Disabling_component_") + compName, JAMS.VERBOSE);
+                        rt.println(JAMSConstants.resources.getString("Disabling_component_") + compName, JAMSConstants.VERBOSE);
                         return;
                     }
                 }
@@ -82,7 +82,7 @@ public class ModelPreprocessor {
                     for (Setting s : list) {
                         if (s.getAttribute().equals(attribute.getAttribute("name"))) {
                             attribute.setAttribute("value", s.getValue());
-                            rt.println(JAMS.resources.getString("Setting_") + attribute.getAttribute("name") + JAMS.resources.getString("_to_") + s.getValue(), JAMS.VERBOSE);
+                            rt.println(JAMSConstants.resources.getString("Setting_") + attribute.getAttribute("name") + JAMSConstants.resources.getString("_to_") + s.getValue(), JAMSConstants.VERBOSE);
                         }
                     }
                 }
@@ -92,7 +92,7 @@ public class ModelPreprocessor {
                     for (Setting s : list) {
                         if (s.getAttribute().equals(var.getAttribute("name"))) {
                             var.setAttribute("value", s.getValue());
-                            rt.println(JAMS.resources.getString("Setting_") + var.getAttribute("name") + JAMS.resources.getString("_to_") + s.getValue(), JAMS.VERBOSE);
+                            rt.println(JAMSConstants.resources.getString("Setting_") + var.getAttribute("name") + JAMSConstants.resources.getString("_to_") + s.getValue(), JAMSConstants.VERBOSE);
                         }
                     }
                 }

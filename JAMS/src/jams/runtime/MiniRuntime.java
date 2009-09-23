@@ -2,7 +2,7 @@
  * MiniRuntime.java
  * Created on 7. November 2007, 14:51
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Observer;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.JAMSProperties;
 import jams.JAMSTools;
 import jams.data.JAMSData;
@@ -43,7 +43,7 @@ import org.w3c.dom.Document;
 public class MiniRuntime implements JAMSRuntime {
 
     private JFrame frame;
-    private int debugLevel = JAMS.VVERBOSE;
+    private int debugLevel = JAMSConstants.VVERBOSE;
     private JAMSLog errorLog = new JAMSLog();
     private JAMSLog infoLog = new JAMSLog();
 
@@ -125,7 +125,7 @@ public class MiniRuntime implements JAMSRuntime {
         }
 
         message += t.toString();
-        if (getDebugLevel() > JAMS.STANDARD) {
+        if (getDebugLevel() > JAMSConstants.STANDARD) {
             message += "\n" + JAMSTools.getStackTraceString(t.getStackTrace());
         }
         sendErrorMsg(message);

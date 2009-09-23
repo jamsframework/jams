@@ -2,7 +2,7 @@
  * PredictionNETCreator.java
  * Created on 12. Mai 2006, 17:41
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 S. Kralisch and P. Krause
  *
  * This program is free software; you can redistribute it and/or
@@ -23,11 +23,11 @@
 
 package jams.components.machineLearning;
 
+import jams.JAMSTools;
 import jams.model.*;
 import jams.data.*;
 import java.util.*;
 import java.io.*;
-import jams.JAMS;
 
 /**
  *
@@ -155,7 +155,7 @@ public class PredictionControl extends JAMSComponent {
         try {
             reader = new BufferedReader(new FileReader(datafile.getValue()));
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
 	String nextString = null;
 	try {
@@ -186,7 +186,7 @@ public class PredictionControl extends JAMSComponent {
 	}
 	
 	} catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
 					
 	data = new double[numOfExampl][RelevantTime*ExamplLength];

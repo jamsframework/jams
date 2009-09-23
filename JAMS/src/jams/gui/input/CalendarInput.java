@@ -2,7 +2,7 @@
  * CalendarInput.java
  * Created on 2. October 2007, 15:10
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2007 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -84,13 +84,13 @@ public class CalendarInput extends JPanel implements InputComponent {
 
             this.setLayout(gbl);
 
-//            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Date")), 1, 0, 1, 1, 0, 0);
-//            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time")), 11, 0, 1, 1, 0, 0);
+//            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMSConstants.resources.getString("Date")), 1, 0, 1, 1, 0, 0);
+//            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMSConstants.resources.getString("Time")), 11, 0, 1, 1, 0, 0);
 
             GUIHelper.addGBComponent(this, gbl, datePanel, 1, 1, 1, 1, 0, 0);
             GUIHelper.addGBComponent(this, gbl, timePanel, 11, 1, 1, 1, 0, 0);
-            dateText.setToolTipText(jams.JAMS.resources.getString("Date"));
-            timeText.setToolTipText(jams.JAMS.resources.getString("Time"));
+            dateText.setToolTipText(jams.JAMSConstants.resources.getString("Date"));
+            timeText.setToolTipText(jams.JAMSConstants.resources.getString("Time"));
 
 //            JButton test = new JButton("Value");
 //            test.addActionListener(new ActionListener() {

@@ -244,4 +244,24 @@ public class JAMSTools {
         Object data = m.invoke(component);
         return data;
     }
+
+    /**
+     * Exception handling method
+     * @param t Throwable to be handled
+     */
+    public static void handle(Throwable t) {
+        handle(t, true);
+    }
+
+    /**
+     * Exception handling method
+     * @param t Throwable to be handled
+     * @param proceed Proceed or not?
+     */
+    public static void handle(Throwable t, boolean proceed) {
+        t.printStackTrace();
+        if (!proceed) {
+            System.exit(-1);
+        }
+    }
 }

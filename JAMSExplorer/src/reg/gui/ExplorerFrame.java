@@ -22,16 +22,16 @@
  */
 package reg.gui;
 
-import reg.JAMSExplorer;
 import jams.JAMSTools;
-import java.io.FileNotFoundException;
 import jams.gui.GUIHelper;
-import jams.gui.JAMSLauncher;
 import jams.gui.PropertyDlg;
 import jams.gui.WorkerDlg;
 import jams.gui.WorkspaceDlg;
 import jams.io.XMLIO;
+import jams.ui.gui.JAMSLauncher;
 import jams.workspace.JAMSWorkspace;
+import reg.JAMSExplorer;
+import java.io.FileNotFoundException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;

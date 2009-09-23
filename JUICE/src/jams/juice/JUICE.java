@@ -2,7 +2,7 @@
  * JUICE.java
  * Created on 4. April 2006, 14:44
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ package jams.juice;
 import java.io.File;
 import java.util.*;
 import javax.swing.UIManager;
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.JAMSProperties;
 import jams.JAMSTools;
 import jams.gui.JAMSSplash;
@@ -79,7 +79,7 @@ public class JUICE {
             try {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             } catch (Exception ex) {
-                JAMS.handle(ex);
+                JAMSTools.handle(ex);
             }
         }
 
@@ -94,7 +94,7 @@ public class JUICE {
                 baseDir = new File(cmdLine.getConfigFileName()).getParentFile();
             } else {
                 //check for default file
-                String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
+                String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMSConstants.DEFAULT_PARAMETER_FILENAME;
                 baseDir = new File(System.getProperty("user.dir"));
                 File file = new File(defaultFile);
                 if (file.exists()) {
@@ -107,7 +107,7 @@ public class JUICE {
             if (!JAMSTools.isEmptyString(forcedLocale)) {
                 Locale.setDefault(new Locale(forcedLocale));
                 resources = java.util.ResourceBundle.getBundle("resources/JUICEBundle");
-                JAMS.resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
+                JAMSConstants.resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
             }
 
             int splashTimeout = Integer.parseInt(getJamsProperties().getProperty("splashtimeout", "1000"));

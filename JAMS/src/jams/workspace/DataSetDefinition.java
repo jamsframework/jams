@@ -2,7 +2,7 @@
  * DataSetDefinition.java
  * Created on 24. Januar 2008, 08:53
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
-import jams.JAMS;
+import jams.JAMSConstants;
 
 /**
  *
@@ -88,7 +88,7 @@ public class DataSetDefinition {
         Class<?> type = attributes.get(attributeName);
         for (int i = 0; i < values.size(); i++) {
             if (!type.isAssignableFrom(values.get(i).getClass())) {
-                System.out.println(JAMS.resources.getString("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type);
+                System.out.println(JAMSConstants.resources.getString("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type);
                 return false;
             }
         }
@@ -126,7 +126,7 @@ public class DataSetDefinition {
             Class<?> type = attributes.get(attributeName);
 
             if (!type.isAssignableFrom(values.get(i).getClass())) {
-                System.out.println(JAMS.resources.getString("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type);
+                System.out.println(JAMSConstants.resources.getString("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type);
                 return false;
             }
 

@@ -2,7 +2,7 @@
  * ModelTree.java
  * Created on 20. April 2006, 11:53
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@
  */
 package jams.juice.gui.tree;
 
-import jams.JAMS;
+import jams.JAMSConstants;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -438,7 +438,7 @@ public class ModelTree extends JAMSTree {
         return document;
     }
 
-    // return XML element representing a JAMS model property based on a 
+    // return XML element representing a JAMSConstants model property based on a
     // ModelProperty object
     private Element createPropertyElement(Document document, ModelProperty property) {
         Element propertyElement = (Element) document.createElement("property");

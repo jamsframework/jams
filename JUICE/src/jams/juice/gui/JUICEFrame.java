@@ -2,7 +2,7 @@
  * JUICEFrame.java
  * Created on 4. April 2006, 14:18
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -29,9 +29,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.io.JAMSFileFilter;
 import jams.JAMSProperties;
+import jams.JAMSTools;
 import jams.gui.AboutDlg;
 import jams.gui.GUIHelper;
 import jams.gui.LogViewDlg;
@@ -165,7 +166,7 @@ public class JUICEFrame extends JFrame {
                         properties.load(stringValue);
 
                     } catch (IOException ioe) {
-                        JAMS.handle(ioe);
+                        JAMSTools.handle(ioe);
                     }
                 }
             }
@@ -184,7 +185,7 @@ public class JUICEFrame extends JFrame {
                         JAMSProperties properties = JUICE.getJamsProperties();
                         properties.save(stringValue);
                     } catch (IOException ioe) {
-                        JAMS.handle(ioe);
+                        JAMSTools.handle(ioe);
                     }
                 }
             }
@@ -221,7 +222,7 @@ public class JUICEFrame extends JFrame {
         };
         saveAsModelAction.setEnabled(false);
 
-        exitAction = new AbstractAction(JAMS.resources.getString("Exit")) {
+        exitAction = new AbstractAction(JAMSConstants.resources.getString("Exit")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -229,7 +230,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        aboutAction = new AbstractAction(JAMS.resources.getString("About")) {
+        aboutAction = new AbstractAction(JAMSConstants.resources.getString("About")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -306,7 +307,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        runModelAction = new AbstractAction(JAMS.resources.getString("Run_Model")) {
+        runModelAction = new AbstractAction(JAMSConstants.resources.getString("Run_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -340,11 +341,11 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        onlineAction = new AbstractAction(JAMS.resources.getString("JAMS_online...")) {
+        onlineAction = new AbstractAction(JAMSConstants.resources.getString("JAMS_online...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                GUIHelper.openURL(JAMS.resources.getString("JAMS_URL"));
+                GUIHelper.openURL(JAMSConstants.resources.getString("JAMS_URL"));
             }
         };
 
@@ -372,7 +373,7 @@ public class JUICEFrame extends JFrame {
 
         JPanel rtManagerPanel = new JPanel();
         rtManagerPanel.setLayout(new BorderLayout());
-        rtManagerPanel.add(new JLabel(" " + JAMS.resources.getString("Runtime_Manager") + ":"), BorderLayout.NORTH);
+        rtManagerPanel.add(new JLabel(" " + JAMSConstants.resources.getString("Runtime_Manager") + ":"), BorderLayout.NORTH);
         rtManagerPanel.add(new RuntimeManagerPanel(), BorderLayout.CENTER);
 
         JSplitPane leftSplitPane = new JSplitPane();
@@ -395,7 +396,7 @@ public class JUICEFrame extends JFrame {
         getContentPane().add(mainSplitPane, java.awt.BorderLayout.CENTER);
 
         JToolBar toolBar = new JToolBar();
-        //toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
+        //toolBar.setPreferredSize(new Dimension(0, JAMSConstants.TOOLBAR_HEIGHT));
 
         /*
          * toolbar buttons
@@ -432,25 +433,25 @@ public class JUICEFrame extends JFrame {
 
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
-        infoLogButton.setToolTipText(JAMS.resources.getString("Show_Info_Log..."));
+        infoLogButton.setToolTipText(JAMSConstants.resources.getString("Show_Info_Log..."));
         infoLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/InfoLog.png")));
         toolBar.add(infoLogButton);
 
         JButton errorLogButton = new JButton(errorLogAction);
         errorLogButton.setText("");
-        errorLogButton.setToolTipText(JAMS.resources.getString("Show_Error_Log..."));
+        errorLogButton.setToolTipText(JAMSConstants.resources.getString("Show_Error_Log..."));
         errorLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ErrorLog.png")));
         toolBar.add(errorLogButton);
 
         JButton helpButton = new JButton(onlineAction);
         helpButton.setText("");
-        helpButton.setToolTipText(JAMS.resources.getString("JAMS_online..."));
+        helpButton.setToolTipText(JAMSConstants.resources.getString("JAMS_online..."));
         helpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Browser.png")));
         toolBar.add(helpButton);
 
         JButton exitButton = new JButton(exitAction);
         exitButton.setText("");
-        exitButton.setToolTipText(JAMS.resources.getString("Exit"));
+        exitButton.setToolTipText(JAMSConstants.resources.getString("Exit"));
         exitButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/system-shutdown.png")));
         toolBar.add(exitButton);
 
@@ -596,7 +597,7 @@ public class JUICEFrame extends JFrame {
                             try {
                                 item.frame.setSelected(true);
                             } catch (PropertyVetoException pve) {
-                                JAMS.handle(pve);
+                                JAMSTools.handle(pve);
                             }
                         }
                     });
@@ -786,7 +787,7 @@ public class JUICEFrame extends JFrame {
                 String defaultFile = JUICE.getJamsProperties().getDefaultFilename();
                 JUICE.getJamsProperties().save(defaultFile);
             } catch (IOException ioe) {
-                JAMS.handle(ioe);
+                JAMSTools.handle(ioe);
             }
 
             this.setVisible(false);

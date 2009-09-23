@@ -2,7 +2,7 @@
  * StandardInputDataStore.java
  * Created on 4. Februar 2008, 23:21
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.workspace.DataReader;
-import jams.JAMS;
+import jams.JAMSConstants;
 
 /**
  *
@@ -121,13 +121,13 @@ public abstract class StandardInputDataStore implements InputDataStore {
             if (metadataIO != null) {
                 int result = metadataIO.init();
                 if (result < 0) {
-                    ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Initialization_of_data_I/O_component_") +
-                            this.getID() + JAMS.resources.getString("_(") + this.getClass().getName() + JAMS.resources.getString(")_failed!"));
+                    ws.getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Initialization_of_data_I/O_component_") +
+                            this.getID() + JAMSConstants.resources.getString("_(") + this.getClass().getName() + JAMSConstants.resources.getString(")_failed!"));
                     return null;
                 }
             } else {
-                ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Initialization_of_data_I/O_component_") +
-                        this.getID() + JAMS.resources.getString("_(") + this.getClass().getName() + JAMS.resources.getString(")_failed!"));
+                ws.getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Initialization_of_data_I/O_component_") +
+                        this.getID() + JAMSConstants.resources.getString("_(") + this.getClass().getName() + JAMSConstants.resources.getString(")_failed!"));
                 return null;
             }
         }

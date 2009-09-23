@@ -2,7 +2,7 @@
  * AbstractTracer.java
  * Created on 28. August 2008, 13:40
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 import jams.dataaccess.DataAccessor;
 import jams.model.JAMSContext;
-import jams.JAMS;
+import jams.JAMSConstants;
 
 /**
  *
@@ -103,7 +103,7 @@ public abstract class AbstractTracer implements DataTracer {
         try {
             store.open();
         } catch (IOException ioe) {
-            context.getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Error_creating_data_output_directory!"));
+            context.getModel().getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Error_creating_data_output_directory!"));
             return;
         }
 

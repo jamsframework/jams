@@ -58,12 +58,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import jams.JAMSProperties;
 import jams.JAMSTools;
-import jams.gui.JAMSFrame;
 import jams.gui.GUIHelper;
 import jams.gui.LogViewDlg;
 import jams.gui.input.InputComponent;
 import jams.gui.input.ListInput;
 import jams.io.XMLIO;
+import jams.ui.gui.JAMSFrame;
 import org.w3c.dom.Element;
 
 /**

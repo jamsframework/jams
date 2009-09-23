@@ -2,7 +2,7 @@
  * ModelView.java
  * Created on 12. Mai 2006, 08:25
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -45,10 +45,10 @@ import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.JAMSTools;
 import jams.gui.HelpComponent;
-import jams.gui.JAMSLauncher;
+import jams.ui.gui.JAMSLauncher;
 import jams.gui.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.io.ParameterProcessor;
@@ -56,7 +56,6 @@ import jams.io.XMLIO;
 import jams.io.XMLProcessor;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
-import java.awt.Dimension;
 import jams.juice.*;
 import jams.juice.ComponentDescriptor;
 import jams.juice.ModelProperties.Group;
@@ -200,11 +199,11 @@ public class ModelView {
          * create the toolbar
          */
         JToolBar toolBar = new JToolBar();
-        //toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
+        //toolBar.setPreferredSize(new Dimension(0, JAMSConstants.TOOLBAR_HEIGHT));
 
         modelRunButton = new JButton(JUICE.getJuiceFrame().getRunModelAction());
         modelRunButton.setText("");
-        modelRunButton.setToolTipText(JAMS.resources.getString("Run_Model"));
+        modelRunButton.setToolTipText(JAMSConstants.resources.getString("Run_Model"));
         modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         toolBar.add(modelRunButton);
 
@@ -264,7 +263,7 @@ public class ModelView {
                 frame.setMaximum(true);
             }
         } catch (PropertyVetoException pve) {
-            JAMS.handle(pve);
+            JAMSTools.handle(pve);
         }
     }
 
@@ -468,7 +467,7 @@ public class ModelView {
                     currentView.getFrame().setMaximum(true);
                 }
             } catch (PropertyVetoException pve) {
-                JAMS.handle(pve);
+                JAMSTools.handle(pve);
             }
         }
     }
@@ -602,7 +601,7 @@ public class ModelView {
     }
 
     /**
-     * Loads a JAMS model from file
+     * Loads a JAMSConstants model from file
      * @param fileName The file containing the models XML document.
      */
     public void loadModel(String fileName) {

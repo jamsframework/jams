@@ -2,7 +2,7 @@
  * StandardEntityWriterN.java
  * Created on 15. Febuary 2006, 11:05
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 S. Kralisch and P. Krause
  *
  * This program is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@
 package jams.components.io;
 
 import java.util.Locale;
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.data.*;
 import jams.model.*;
 import jams.io.*;
@@ -196,18 +196,18 @@ title="Entity file writer (spatial+monthly)",
         //otherwise it will be set to the model interval bounds
         if(agg_sd.before(model_sd)){
             this.aggTimeInterval.setStart(model_sd);
-            getModel().getRuntime().println("aggStartdate was set equal to model startdate", JAMS.STANDARD);
+            getModel().getRuntime().println("aggStartdate was set equal to model startdate", JAMSConstants.STANDARD);
         }
         if(model_ed.before(agg_ed)){
             this.aggTimeInterval.setEnd(model_ed);
-            getModel().getRuntime().println("aggEnddate was set equal to model enddate", JAMS.STANDARD);
+            getModel().getRuntime().println("aggEnddate was set equal to model enddate", JAMSConstants.STANDARD);
         }
         
         aggTsteps = (int) aggTimeInterval.getNumberOfTimesteps();
         
         int ts = (int) this.getContext().getNumberOfIterations();
-        getModel().getRuntime().println("aggStartdate:\t" + agg_sd.toString(), JAMS.VERBOSE);
-        getModel().getRuntime().println("aggEnddate:\t" + agg_ed.toString(), JAMS.VERBOSE);
+        getModel().getRuntime().println("aggStartdate:\t" + agg_sd.toString(), JAMSConstants.VERBOSE);
+        getModel().getRuntime().println("aggEnddate:\t" + agg_ed.toString(), JAMSConstants.VERBOSE);
         
 //Anpassungen des Anfangs- und Endzeitpunkts (einen Tag eher Berechnung durchführen, einen Tag länger laufen um Daten schreiben zu können
         dayBeforeAggTI = sdAgg - 86400000;
@@ -378,7 +378,7 @@ title="Entity file writer (spatial+monthly)",
     
     public void cleanup() throws JAMSEntity.NoSuchAttributeException {
         
-        getModel().getRuntime().println("Writing distributed output file ... may take a while ... please wait ...", JAMS.STANDARD);
+        getModel().getRuntime().println("Writing distributed output file ... may take a while ... please wait ...", JAMSConstants.STANDARD);
         getModel().getRuntime().println("Number of entities: " + nEnts + ", number of timeSteps: " + dateVals.length);
         try {
             writer.addComment("J2K model output: "+header.getValue());
@@ -453,6 +453,6 @@ title="Entity file writer (spatial+monthly)",
         }
         writer.flush();
         writer.close();
-        getModel().getRuntime().println("Finished distributed output file ... you may continue ...", JAMS.STANDARD);
+        getModel().getRuntime().println("Finished distributed output file ... you may continue ...", JAMSConstants.STANDARD);
     }
 }

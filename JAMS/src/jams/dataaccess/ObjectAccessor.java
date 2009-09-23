@@ -2,7 +2,7 @@
  * ObjectAccessor.java
  * Created on 28. Mai 2009, 22:40
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ import jams.data.Attribute;
 import jams.data.JAMSData;
 import jams.data.JAMSDataFactory;
 import jams.data.JAMSEntity;
-import jams.JAMS;
+import jams.JAMSConstants;
 
 /**
  *
@@ -57,7 +57,7 @@ public class ObjectAccessor implements DataAccessor {
                     entityObject[i] = JAMSDataFactory.createObject();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
-                    throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist!"));
+                    throw new JAMSEntity.NoSuchAttributeException(JAMSConstants.resources.getString("Attribute_") + attributeName + JAMSConstants.resources.getString("_does_not_exist!"));
                 }
             }
         }

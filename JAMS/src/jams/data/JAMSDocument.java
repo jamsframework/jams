@@ -2,7 +2,7 @@
  * JAMSString.java
  * Created on 28. September 2005, 15:11
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ import org.w3c.dom.*;
 import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.xml.sax.InputSource;
-import jams.JAMS;
+import jams.JAMSConstants;
 
 /**
  *
@@ -56,7 +56,7 @@ public class JAMSDocument implements Attribute.Document {
         try{
             this.value = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(value)));
         }catch(Exception e){
-            System.out.println(JAMS.resources.getString("cant_parse_string_to_xml_document,_because") + e.toString() + value);
+            System.out.println(JAMSConstants.resources.getString("cant_parse_string_to_xml_document,_because") + e.toString() + value);
         }
     }
   

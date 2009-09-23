@@ -2,7 +2,7 @@
  * LogViewDlg.java
  * Created on 12. November 2006, 15:50
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ package jams.gui;
 
 import java.awt.*;
 import javax.swing.*;
-import jams.JAMS;
+import jams.JAMSConstants;
 
 /**
  *
@@ -62,7 +62,7 @@ public class LogViewDlg extends JDialog {
         getContentPane().add(scrollPane, BorderLayout.CENTER);
 
         JButton closeButton = new JButton();
-        closeButton.setText(JAMS.resources.getString("Close"));
+        closeButton.setText(JAMSConstants.resources.getString("Close"));
         closeButton.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -70,7 +70,7 @@ public class LogViewDlg extends JDialog {
             }
         });
         JButton clearButton = new JButton();
-        clearButton.setText(JAMS.resources.getString("Clear"));
+        clearButton.setText(JAMSConstants.resources.getString("Clear"));
         clearButton.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {

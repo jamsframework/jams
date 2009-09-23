@@ -2,7 +2,7 @@
  * ModelEditPanel.java
  * Created on 12. Dezember 2006, 22:43
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2006 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -109,7 +109,7 @@ public class ModelEditPanel extends JPanel {
         scroll.setBorder(BorderFactory.createEtchedBorder());
         scroll.setPreferredSize(new Dimension(TEXTAREA_WIDTH, TEXTAREA_HEIGHT));
 
-        Action explorerAction = new AbstractAction(jams.JAMS.resources.getString("JEDI")) {
+        Action explorerAction = new AbstractAction(jams.JAMSConstants.resources.getString("JEDI")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {

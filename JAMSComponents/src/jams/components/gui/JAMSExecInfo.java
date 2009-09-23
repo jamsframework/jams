@@ -2,7 +2,7 @@
  * JAMSExecInfo.java
  * Created on 1. Dezember 2005, 19:46
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
-import jams.JAMS;
+import jams.JAMSConstants;
 
 /**
  *
@@ -101,7 +101,7 @@ import jams.JAMS;
         logArea.setRows(5);
         logArea.setLineWrap(false);
         logArea.setEditable(false);
-        logArea.setFont(JAMS.STANDARD_FONT);
+        logArea.setFont(JAMSConstants.STANDARD_FONT);
         scrollPanel.setViewportView(logArea);
         
         panel.add(scrollPanel, BorderLayout.CENTER);

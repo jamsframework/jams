@@ -2,7 +2,7 @@
  * RuntimeManagerPanel.java
  * Created on 1. Dezember 2008, 10:43
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@
  */
 package jams.gui;
 
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.runtime.RuntimeManager;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -83,7 +83,7 @@ public class RuntimeManagerPanel extends JPanel {
             }
         });
 
-        stopButton = new JButton(JAMS.resources.getString("stop_model"));
+        stopButton = new JButton(JAMSConstants.resources.getString("stop_model"));
         stopButton.setEnabled(false);
         stopButton.addActionListener(new ActionListener() {
 

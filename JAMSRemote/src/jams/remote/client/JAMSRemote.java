@@ -22,15 +22,15 @@
  */
 package jams.remote.client;
 
-import jams.JAMS;
 import jams.gui.JAMSSplash;
 import jams.io.JAMSCmdLine;
+import jams.ui.JAMSui;
 
 /**
  *
  * @author Sven Kralisch
  */
-public class JAMSRemote extends JAMS {
+public class JAMSRemote extends JAMSui {
     
     public JAMSRemote(JAMSCmdLine cmdLine) {   
         super(cmdLine);

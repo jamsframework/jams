@@ -9,20 +9,12 @@
 
 package jams.components.optimizer;
 
-import jams.components.optimizer.nn.InputNeuron;
-import jams.components.optimizer.nn.Neuron;
+import jams.JAMSTools;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Random;
-import java.util.StringTokenizer;
 import java.util.Vector;
-import jams.JAMS;
 import jams.data.*;
-import jams.io.GenericDataWriter;
-import jams.model.JAMSComponent;
-import jams.model.JAMSComponentDescription;
-import jams.model.JAMSContext;
 import jams.model.JAMSVarDescription;
 import jams.components.machineLearning.GaussianLearner;
 
@@ -178,7 +170,7 @@ public class SensitivityAnalyser extends Optimizer{
             writer.write(infoString);
             writer.close();
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         } 
     }
     
@@ -242,7 +234,7 @@ public class SensitivityAnalyser extends Optimizer{
             writer.write(infoString);
             writer.close();
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         } 
     }
     

@@ -3,7 +3,7 @@
  *
  * Created on 04. October 2005, 01:49
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -26,7 +26,8 @@ package jams.io;
 
 import java.util.*;
 import java.io.*;
-import jams.JAMS;
+import jams.JAMSConstants;
+import jams.JAMSTools;
 import jams.data.*;
 
 /**
@@ -75,7 +76,7 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
         try {
             reader = new SerializableBufferedReader(new FileReader(fileName));
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
     }
     
@@ -162,7 +163,7 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
             try {
                 nextString = reader.readLine();
             } catch (IOException ioex) {
-                JAMS.handle(ioex);
+                JAMSTools.handle(ioex);
             }
             active = true;
         }
@@ -215,7 +216,7 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
         try {
             reader.close();
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
     }
 }

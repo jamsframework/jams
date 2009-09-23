@@ -13,12 +13,12 @@ package jams.components.optimizer;
  *
  * @author Christian Fischer
  */    
+import jams.JAMSTools;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import jams.JAMS;
 import jams.data.*;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
@@ -132,7 +132,7 @@ public class MatlabConnector extends Optimizer{
         try {
             writer = new BufferedWriter(new FileWriter(this.dirName + "/" + SampleDumpFileName.getValue()));
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
     }
     

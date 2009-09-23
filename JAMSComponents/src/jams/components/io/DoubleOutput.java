@@ -2,7 +2,7 @@
  * DoubleOutput.java
  * Created on 21. M^rz 2007, 17:26
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2006 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 
 package jams.components.io;
 
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.data.*;
 import jams.model.*;
 
@@ -54,7 +54,7 @@ title="DoubleOutput",
      *  Component run stages
      */    
     public void run() {
-        getModel().getRuntime().println(this.getInstanceName()+ ": " + value.toString(), JAMS.STANDARD);
+        getModel().getRuntime().println(this.getInstanceName()+ ": " + value.toString(), JAMSConstants.STANDARD);
     }
     
 }

@@ -2,7 +2,7 @@
  * TSDataStore.java
  * Created on 23. Januar 2008, 15:53
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import jams.workspace.datatypes.CalendarValue;
 import jams.workspace.datatypes.DataValue;
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
 import jams.runtime.JAMSRuntime;
@@ -139,7 +139,7 @@ public class TSDataStore extends TableDataStore {
                         long demandedSeconds = Math.abs(cal1.getTimeInMillis() - cal.getTimeInMillis()) / 1000;
                         long currentSeconds = Math.abs(cal.getTimeInMillis() - cal2.getTimeInMillis()) / 1000;
 
-                        this.ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_in_") + this.getClass().getName() + JAMS.resources.getString(":_wrong_time_interval_in_column_") + i + JAMS.resources.getString("_(demanded_interval_=_") + demandedSeconds + JAMS.resources.getString("_sec,_provided_interval_=_") + currentSeconds + JAMS.resources.getString("_sec)!"));
+                        this.ws.getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Error_in_") + this.getClass().getName() + JAMSConstants.resources.getString(":_wrong_time_interval_in_column_") + i + JAMSConstants.resources.getString("_(demanded_interval_=_") + demandedSeconds + JAMSConstants.resources.getString("_sec,_provided_interval_=_") + currentSeconds + JAMSConstants.resources.getString("_sec)!"));
 
                         dataIOSet.clear();
                         currentPosition = maxPosition;
@@ -161,7 +161,7 @@ public class TSDataStore extends TableDataStore {
 
                     if (cal.compareTo(startDate, timeUnit) != 0) {
 
-                        this.ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_in_") + this.getClass().getName() + JAMS.resources.getString(":_wrong_start_time_in_column_") + i + JAMS.resources.getString("_(demanded_=_") + startDate + JAMS.resources.getString(",_provided_=_") + cal + JAMS.resources.getString(")!"));
+                        this.ws.getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Error_in_") + this.getClass().getName() + JAMSConstants.resources.getString(":_wrong_start_time_in_column_") + i + JAMSConstants.resources.getString("_(demanded_=_") + startDate + JAMSConstants.resources.getString(",_provided_=_") + cal + JAMSConstants.resources.getString(")!"));
 
                         dataIOSet.clear();
                         currentPosition = maxPosition;

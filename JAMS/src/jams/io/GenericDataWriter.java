@@ -3,7 +3,7 @@
  *
  * Created on 6. Oktober 2005, 01:41
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -27,7 +27,8 @@ import java.io.*;
 import java.util.*;
 import jams.data.*;
 import jams.runtime.RuntimeException;
-import jams.JAMS;
+import jams.JAMSConstants;
+import jams.JAMSTools;
 
 /**
  *
@@ -53,7 +54,7 @@ public class GenericDataWriter implements Serializable{
         try {
             writer = new SerializableBufferedWriter(new FileWriter(fileName));
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
     }
 
@@ -61,7 +62,7 @@ public class GenericDataWriter implements Serializable{
         try {
             writer.flush();
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
     }
 
@@ -96,7 +97,7 @@ public class GenericDataWriter implements Serializable{
             s += i.next() + "\n";
         }
 
-//        String s = "#JAMS output file\n#\n";
+//        String s = "#JAMSConstants output file\n#\n";
         //s += "#";
         i = header.iterator();
         if (i.hasNext()) {
@@ -109,7 +110,7 @@ public class GenericDataWriter implements Serializable{
             writer.write(s);
             writer.newLine();
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
         headerClosed = true;
         data = new ArrayList<Object>(header.size());
@@ -132,7 +133,7 @@ public class GenericDataWriter implements Serializable{
             writer.write(line);
             writer.newLine();
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
     }
 
@@ -140,7 +141,7 @@ public class GenericDataWriter implements Serializable{
         try {
             writer.write(line);
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
     }
 
@@ -149,7 +150,7 @@ public class GenericDataWriter implements Serializable{
         String s = "";
 
         if (data.size() != header.size()) {
-            throw new RuntimeException(JAMS.resources.getString("Wrong_number_of_output_columns!"));
+            throw new RuntimeException(JAMSConstants.resources.getString("Wrong_number_of_output_columns!"));
         } else {
             Iterator<Object> i = data.iterator();
             if (i.hasNext()) {
@@ -162,7 +163,7 @@ public class GenericDataWriter implements Serializable{
                 writer.write(s);
                 writer.newLine();
             } catch (IOException ioe) {
-                JAMS.handle(ioe);
+                JAMSTools.handle(ioe);
             }
             data.clear();
         }
@@ -173,7 +174,7 @@ public class GenericDataWriter implements Serializable{
         String s = "";
 
         if (data.size() != header.size()) {
-            throw new RuntimeException(JAMS.resources.getString("Wrong_number_of_output_columns!"));
+            throw new RuntimeException(JAMSConstants.resources.getString("Wrong_number_of_output_columns!"));
         } else {
             Iterator<Object> i = data.iterator();
             //date first
@@ -190,7 +191,7 @@ public class GenericDataWriter implements Serializable{
                 writer.write(s);
                 writer.newLine();
             } catch (IOException ioe) {
-                JAMS.handle(ioe);
+                JAMSTools.handle(ioe);
             }
             data.clear();
         }
@@ -201,7 +202,7 @@ public class GenericDataWriter implements Serializable{
             writer.flush();
             writer.close();
         } catch (IOException ioe) {
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
     }
 }

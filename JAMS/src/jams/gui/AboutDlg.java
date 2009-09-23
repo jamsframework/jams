@@ -2,7 +2,7 @@
  * AboutDlg.java
  * Created on 5. April 2006, 10:49
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.URL;
 import javax.swing.*;
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.JAMSTools;
 import jams.JAMSVersion;
 
@@ -65,7 +65,7 @@ public class AboutDlg extends JDialog {
             if (textURL != null) {
                 gplText = JAMSTools.streamToString(textURL.openStream());
             }
-            versionText = JAMS.resources.getString("Version") + JAMSVersion.getInstance().getVersionDateString();
+            versionText = JAMSConstants.resources.getString("Version") + JAMSVersion.getInstance().getVersionDateString();
         } catch (IOException ioe) {
         }
 
@@ -128,7 +128,7 @@ public class AboutDlg extends JDialog {
         versionTextLabel.setText("Test");*/
 
         JButton closeButton = new JButton();
-        closeButton.setText(JAMS.resources.getString("OK"));
+        closeButton.setText(JAMSConstants.resources.getString("OK"));
         closeButton.addActionListener(new ActionListener() {
 
             @Override
@@ -141,7 +141,7 @@ public class AboutDlg extends JDialog {
         //this.setAlwaysOnTop(true);
         //this.setUndecorated(true);
         //this.setModal(true);
-        this.setTitle(JAMS.resources.getString("About"));
+        this.setTitle(JAMSConstants.resources.getString("About"));
 
         pack();
 

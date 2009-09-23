@@ -2,7 +2,7 @@
  * CheckedTSDataReader.java
  * Created on 1. Juni 2007, 14:12
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2007 S. Kralisch and P. Krause
  *
  * This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ import jams.data.*;
 import jams.model.*;
 import java.util.*;
 import java.io.*;
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.io.GenericDataReader;
 import jams.io.JAMSTableDataArray;
 import jams.io.JAMSTableDataConverter;
@@ -254,7 +254,7 @@ public class CheckedTSDataReader extends JAMSComponent {
         tsTime = JAMSDataFactory.createCalendar();
         tsTime.setValue("0-01-01 00:00");
         
-        getModel().getRuntime().println(dataSetName.getValue() + " data file initalised ... ", JAMS.VERBOSE);
+        getModel().getRuntime().println(dataSetName.getValue() + " data file initalised ... ", JAMSConstants.VERBOSE);
     }
     
     public void run() {

@@ -2,7 +2,7 @@
  * JAMSLauncher.java
  * Created on 14. August 2008, 13:37
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -20,8 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.gui;
+package jams.ui.gui;
 
+import jams.gui.*;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -69,7 +70,7 @@ import org.w3c.dom.NodeList;
  */
 public class JAMSLauncher extends JFrame {
 
-    protected static final String BASE_TITLE = JAMS.resources.getString("JAMS_Launcher");
+    protected static final String BASE_TITLE = JAMSConstants.resources.getString("JAMS_Launcher");
 
     private static final int BUTTON_SIZE = 20;
 
@@ -147,7 +148,7 @@ public class JAMSLauncher extends JFrame {
                         new Observer() {
 
                             public void update(Observable obs, Object obj) {
-//                        GUIHelper.showErrorDlg(JAMSLauncher.this, "An error has occurred! Please check the error log for further information!", "JAMS Error");
+//                        GUIHelper.showErrorDlg(JAMSLauncher.this, "An error has occurred! Please check the error log for further information!", "JAMSConstants Error");
                                 processErrorLog(obj.toString());
                             }
                         });
@@ -157,7 +158,7 @@ public class JAMSLauncher extends JFrame {
             }
         };
 
-        runModelAction = new AbstractAction(JAMS.resources.getString("Run_Model")) {
+        runModelAction = new AbstractAction(JAMSConstants.resources.getString("Run_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -174,7 +175,7 @@ public class JAMSLauncher extends JFrame {
             }
         };
 
-        loadModelDlg = new WorkerDlg(this, JAMS.resources.getString("Model_Setup"));
+        loadModelDlg = new WorkerDlg(this, JAMSConstants.resources.getString("Model_Setup"));
 
         // create some nice font for the border title
         titledBorderFont = (Font) UIManager.getDefaults().get("TitledBorder.font");
@@ -222,7 +223,7 @@ public class JAMSLauncher extends JFrame {
 
         runButton = new JButton(runModelAction);
         runButton.setText("");
-        runButton.setToolTipText(JAMS.resources.getString("Run_Model"));
+        runButton.setToolTipText(JAMSConstants.resources.getString("Run_Model"));
         runButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         runButton.setEnabled(false);
 
@@ -261,13 +262,13 @@ public class JAMSLauncher extends JFrame {
 
                 String info = "";
                 if (runModel) {
-                    info = JAMS.resources.getString("_Stopping_model_execution.");
+                    info = JAMSConstants.resources.getString("_Stopping_model_execution.");
                 }
 
                 if (ic.getErrorCode() == InputComponent.INPUT_OUT_OF_RANGE) {
-                    GUIHelper.showErrorDlg(this, JAMS.resources.getString("Selected_value_out_of_range!") + info, JAMS.resources.getString("Range_error"));
+                    GUIHelper.showErrorDlg(this, JAMSConstants.resources.getString("Selected_value_out_of_range!") + info, JAMSConstants.resources.getString("Range_error"));
                 } else {
-                    GUIHelper.showErrorDlg(this, JAMS.resources.getString("Invalid_value_found!") + info, JAMS.resources.getString("Format_error"));
+                    GUIHelper.showErrorDlg(this, JAMSConstants.resources.getString("Invalid_value_found!") + info, JAMSConstants.resources.getString("Format_error"));
                 }
 
                 ic.setMarked(false);
@@ -411,7 +412,7 @@ public class JAMSLauncher extends JFrame {
 
             // case 3: attribute does not exist, property removed
             property.getParentNode().removeChild(property);
-            GUIHelper.showInfoDlg(this, JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist_in_component_") + componentName + JAMS.resources.getString("!_Removing_visual_editor!"), JAMS.resources.getString("Info"));
+            GUIHelper.showInfoDlg(this, JAMSConstants.resources.getString("Attribute_") + attributeName + JAMSConstants.resources.getString("_does_not_exist_in_component_") + componentName + JAMSConstants.resources.getString("!_Removing_visual_editor!"), JAMSConstants.resources.getString("Info"));
             return;
         }
 
@@ -600,7 +601,7 @@ public class JAMSLauncher extends JFrame {
             this.getInsets().set(0, 0, 0, 0);
             this.setText("?");
             this.setFont(titledBorderFont);
-            this.setToolTipText(JAMS.resources.getString("Help"));
+            this.setToolTipText(JAMSConstants.resources.getString("Help"));
             this.helpComponent = helpComponent;
 
         }

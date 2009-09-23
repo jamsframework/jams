@@ -2,7 +2,7 @@
  * ParameterProcessor.java
  * Created on 10. Juli 2008, 15:48
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import jams.JAMS;
+import jams.JAMSConstants;
 
 /**
  *
@@ -118,7 +118,7 @@ public class ParameterProcessor {
             modelNameString +=  " <" + modelFileName + ">";
         }
         
-        params.store(new FileOutputStream(paramsFile), JAMS.resources.getString("JAMS_model_parameter_file") +
+        params.store(new FileOutputStream(paramsFile), JAMSConstants.resources.getString("JAMS_model_parameter_file") +
                 "\nUser: " + userNameString + "\nModel: " + modelNameString);
     }
 

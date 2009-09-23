@@ -13,7 +13,7 @@ import jams.model.*;
 import jams.data.*;
 import java.util.*;
 import java.io.*;
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.JAMSTools;
 /**
  *
@@ -96,7 +96,7 @@ public class DataLoader extends JAMSComponent {
                     datafile.getValue())));
         } catch (IOException ioe) {
             this.getModel().getRuntime().sendHalt("could not open datafile " + datafile.getValue() + "; wrong path?");
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
             return;
         }
 	String nextString = null;
@@ -114,11 +114,11 @@ public class DataLoader extends JAMSComponent {
 		    Predict[0] = (new Double(st.nextToken())).doubleValue();
 		}catch(NoSuchElementException e) {
                     this.getModel().getRuntime().sendHalt("Error in row " + i + "\nstop reading! (not enough numbers in row\nExpected " + (ExamplLength+1) + ")");
-		    JAMS.handle(e);
+		    JAMSTools.handle(e);
                     break;
 		}catch(NumberFormatException e) {
                     this.getModel().getRuntime().sendHalt("Error in row " + i + "\nstop reading!\nNot a number!!");
-		    JAMS.handle(e);
+		    JAMSTools.handle(e);
                     break;
                 }
 		if (st.hasMoreTokens()) {
@@ -134,7 +134,7 @@ public class DataLoader extends JAMSComponent {
             numOfExampl = i;
 	} catch (IOException ioe) {
             this.getModel().getRuntime().sendHalt("could not read datafile " + datafile.getValue());
-            JAMS.handle(ioe);
+            JAMSTools.handle(ioe);
         }
 
         Vector<double[]> data = new Vector<double[]>();

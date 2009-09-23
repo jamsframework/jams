@@ -2,7 +2,7 @@
  * DoubleAccessor.java
  * Created on 28. September 2005, 16:39
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 package jams.dataaccess;
 
 import jams.data.*;
-import jams.JAMS;
+import jams.JAMSConstants;
 import org.w3c.dom.Document;
 
 /**
@@ -55,7 +55,7 @@ public class DocumentAccessor implements DataAccessor {
                     entityObject[i] = JAMSDataFactory.createDocument();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
-                    throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist!"));
+                    throw new JAMSEntity.NoSuchAttributeException(JAMSConstants.resources.getString("Attribute_") + attributeName + JAMSConstants.resources.getString("_does_not_exist!"));
                 }
             }
         }

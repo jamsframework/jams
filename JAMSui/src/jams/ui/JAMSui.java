@@ -1,8 +1,8 @@
 /*
- * JAMS.java
+ * JAMSui.java
  * Created on 2. Oktober 2005, 16:05
  *
- * This file is part of JAMS
+ * This file is part of JAMSui
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -20,17 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams;
+package jams.ui;
 
-import java.awt.Font;
+import jams.JAMSProperties;
+import jams.JAMSTools;
 import java.io.*;
 import javax.swing.UIManager;
-import jams.gui.JAMSFrame;
 import jams.gui.JAMSSplash;
 import jams.runtime.*;
 import jams.io.*;
+import jams.JAMSConstants;
+import jams.ui.gui.JAMSFrame;
 import java.util.Locale;
-import java.util.ResourceBundle;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -38,63 +39,22 @@ import org.xml.sax.SAXException;
  *
  * @author Sven Kralisch
  */
-public class JAMS {
-
-    /**
-     * Verbosity level 0 of 3
-     */
-    public static final int SILENT = 0;
-
-    /**
-     * Verbosity level 1 of 3
-     */
-    public static final int STANDARD = 1;
-
-    /**
-     * Verbosity level 2 of 3
-     */
-    public static final int VERBOSE = 2;
-
-    /**
-     * Verbosity level 3 of 3
-     */
-    public static final int VVERBOSE = 3;
-
-    /**
-     * Resource bundle containing all string literals for some localization
-     */
-    public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
-
-    /**
-     * The standard font
-     */
-    public static final Font STANDARD_FONT = new java.awt.Font("Courier", 0, 11);
-
-    /**
-     * Default name of model output file
-     */
-    public static final String DEFAULT_MODEL_FILENAME = "model.jmp";
-
-    /**
-     * Default name of parameter output file
-     */
-    public static final String DEFAULT_PARAMETER_FILENAME = "default.jap";
-
-    private JAMSCmdLine cmdLine;
-
-    private static File baseDir = new File(System.getProperty("user.dir"));
+public class JAMSui {
 
     protected int splashTimeout;
 
     protected JAMSProperties properties;
 
     /**
-     * JAMS contructor
+     * JAMSConstants base directory
+     */
+    private static File baseDir = new File(System.getProperty("user.dir"));
+
+    /**
+     * JAMSui contructor
      * @param cmdLine A JAMSCmdLine object containing the command line arguments
      */
-    public JAMS(JAMSCmdLine cmdLine) {
-
-        this.cmdLine = cmdLine;
+    public JAMSui(JAMSCmdLine cmdLine) {
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -106,7 +66,7 @@ public class JAMS {
             }
         }
 
-        //create a JAMS default set of property values
+        //create a JAMSui default set of property values
         properties = JAMSProperties.createJAMSProperties();
 
         //try to load property values from file
@@ -115,19 +75,19 @@ public class JAMS {
             try {
                 properties.load(cmdLine.getConfigFileName());
             } catch (IOException ioe) {
-                System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + cmdLine.getConfigFileName());
+                System.out.println(JAMSConstants.resources.getString("Error_while_loading_config_from") + cmdLine.getConfigFileName());
                 handle(ioe);
             }
             baseDir = new File(cmdLine.getConfigFileName()).getParentFile();
         } else {
             //check for default file
-            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
+            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMSConstants.DEFAULT_PARAMETER_FILENAME;
             File file = new File(defaultFile);
             if (file.exists()) {
                 try {
                     properties.load(defaultFile);
                 } catch (IOException ioe) {
-                    System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + defaultFile);
+                    System.out.println(JAMSConstants.resources.getString("Error_while_loading_config_from") + defaultFile);
                     handle(ioe);
                 }
             }
@@ -137,7 +97,7 @@ public class JAMS {
         String forcedLocale = properties.getProperty("forcelocale");
         if (!JAMSTools.isEmptyString(forcedLocale)) {
             Locale.setDefault(new Locale(forcedLocale));
-            resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
+            JAMSConstants.resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
         }
 
         splashTimeout = Integer.parseInt(properties.getProperty("splashtimeout", "1000"));
@@ -152,7 +112,7 @@ public class JAMS {
             if (guiConfig == 1) {
                 startGUI();
             } else {
-                System.out.println(JAMS.resources.getString("You_must_provide_a_model_file_name_(see_JAMS_--help)_when_disabling_GUI_config!"));
+                System.out.println(JAMSConstants.resources.getString("You_must_provide_a_model_file_name_(see_JAMS_--help)_when_disabling_GUI_config!"));
                 System.exit(-1);
             }
 
@@ -166,7 +126,7 @@ public class JAMS {
                 try {
                     startGUI(modelFileName, cmdLineParameterValues);
                 } catch (Exception e) {
-                    JAMS.handle(e);
+                    JAMSui.handle(e);
                 }
 
             } else {
@@ -179,14 +139,14 @@ public class JAMS {
                 //check if file exists
                 File file = new File(modelFileName);
                 if (!file.exists()) {
-                    System.out.println(JAMS.resources.getString("Model_file_") + modelFileName + JAMS.resources.getString("_could_not_be_found_-_exiting!"));
+                    System.out.println(JAMSConstants.resources.getString("Model_file_") + modelFileName + JAMSConstants.resources.getString("_could_not_be_found_-_exiting!"));
                     return;
                 }
 
                 // do some search and replace on the input file and create new file if necessary
                 String newModelFilename = XMLProcessor.modelDocConverter(modelFileName);
                 if (!newModelFilename.equalsIgnoreCase(modelFileName)) {
-                    info = JAMS.resources.getString("The_model_definition_in_") + modelFileName + JAMS.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JAMS.resources.getString("_while_your_original_file_was_left_untouched.");
+                    info = JAMSConstants.resources.getString("The_model_definition_in_") + modelFileName + JAMSConstants.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JAMSConstants.resources.getString("_while_your_original_file_was_left_untouched.");
                     modelFileName = newModelFilename;
                 }
 
@@ -210,9 +170,9 @@ public class JAMS {
                     runtime.runModel();
 
                 } catch (IOException ioe) {
-                    System.out.println(JAMS.resources.getString("The_model_definition_file_") + modelFileName + JAMS.resources.getString("_could_not_be_loaded,_because:_") + ioe.toString());
+                    System.out.println(JAMSConstants.resources.getString("The_model_definition_file_") + modelFileName + JAMSConstants.resources.getString("_could_not_be_loaded,_because:_") + ioe.toString());
                 } catch (SAXException se) {
-                    System.out.println(JAMS.resources.getString("The_model_definition_file_") + modelFileName + JAMS.resources.getString("_contained_errors!"));
+                    System.out.println(JAMSConstants.resources.getString("The_model_definition_file_") + modelFileName + JAMSConstants.resources.getString("_contained_errors!"));
                 } catch (Exception ex) {
                     if (runtime != null) {
                         runtime.handle(ex);
@@ -235,12 +195,12 @@ public class JAMS {
     }
 
     /**
-     * JAMS main method
+     * JAMSui main method
      * @param args The command line arguments
      */
     public static void main(String[] args) {
 
-        new JAMS(new JAMSCmdLine(args));
+        new JAMSui(new JAMSCmdLine(args));
 
     }
 
@@ -265,8 +225,8 @@ public class JAMS {
     }
 
     /**
-     * Get the JAMS base directory
-     * @return The JAMS base directory
+     * Get the JAMSui base directory
+     * @return The JAMSui base directory
      */
     public static File getBaseDir() {
         return baseDir;

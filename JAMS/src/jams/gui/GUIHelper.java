@@ -2,7 +2,7 @@
  * GUIHelper.java
  * Created on 19. September 2006, 10:11
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ import jams.gui.input.FloatInput;
 import jams.gui.input.InputComponent;
 import jams.gui.input.IntegerInput;
 import jams.gui.input.TextInput;
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.data.JAMSBoolean;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
@@ -183,7 +183,7 @@ public class GUIHelper {
      * @return
      */
     public static int showYesNoCancelDlg(Component owner, String message, String title) {
-        Object[] options = {JAMS.resources.getString("Yes"), JAMS.resources.getString("No"), JAMS.resources.getString("Cancel")};
+        Object[] options = {JAMSConstants.resources.getString("Yes"), JAMSConstants.resources.getString("No"), JAMSConstants.resources.getString("Cancel")};
         int result = JOptionPane.showOptionDialog(owner, message, title,
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
@@ -198,7 +198,7 @@ public class GUIHelper {
      * @return
      */
     public static int showYesNoDlg(Component owner, String message, String title) {
-        Object[] options = {JAMS.resources.getString("Yes"), JAMS.resources.getString("No")};
+        Object[] options = {JAMSConstants.resources.getString("Yes"), JAMSConstants.resources.getString("No")};
         int result = JOptionPane.showOptionDialog(owner, message, title,
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         //int result = JOptionPane.showConfirmDialog(JUICE.getJuiceFrame(), "Delete Attribute \"" + attrName + "\"?", "Confirm", JOptionPane.YES_NO_OPTION);
@@ -324,7 +324,7 @@ public class GUIHelper {
     public static void openURL(String url) {
 
         String osName = System.getProperty("os.name");
-        String errMsg = JAMS.resources.getString("Error_attempting_to_launch_web_browser");
+        String errMsg = JAMSConstants.resources.getString("Error_attempting_to_launch_web_browser");
 
         try {
             if (osName.startsWith("Mac OS")) {
@@ -346,7 +346,7 @@ public class GUIHelper {
                     }
                 }
                 if (browser == null) {
-                    throw new Exception(JAMS.resources.getString("Could_not_find_web_browser"));
+                    throw new Exception(JAMSConstants.resources.getString("Could_not_find_web_browser"));
                 } else {
                     Runtime.getRuntime().exec(new String[]{browser, url});
                 }

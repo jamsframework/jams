@@ -2,7 +2,7 @@
  * ABCGradientDescent.java
  * Created on 30. Juni 2006, 15:12
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2005 S. Kralisch and P. Krause
  *
  * This program is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ package jams.components.optimizer.gradient;
 
 import java.util.Random;
 import java.util.StringTokenizer;
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.data.*;
 import jams.io.GenericDataWriter;
 import jams.model.*;

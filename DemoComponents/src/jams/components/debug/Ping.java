@@ -2,7 +2,7 @@
  * Ping.java
  * Created on 15. Dezember 2006, 14:13
  *
- * This file is part of JAMS
+ * This file is part of JAMSConstants
  * Copyright (C) 2006 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 
 package jams.components.debug;
 
-import jams.JAMS;
+import jams.JAMSConstants;
 import jams.model.*;
 
 /**
@@ -47,14 +47,14 @@ title="Ping",
     private long cleanupCounter = 0;
     
     public void init() {
-        getModel().getRuntime().println(getInstanceName() + "@init (" + (++initCounter) + ")", JAMS.VERBOSE);
+        getModel().getRuntime().println(getInstanceName() + "@init (" + (++initCounter) + ")", JAMSConstants.VERBOSE);
     }
     
     public void run() {
-        getModel().getRuntime().println(getInstanceName() + "@run (" + (++runCounter) + ")", JAMS.VERBOSE);        
+        getModel().getRuntime().println(getInstanceName() + "@run (" + (++runCounter) + ")", JAMSConstants.VERBOSE);
     }
     
     public void cleanup() {
-        getModel().getRuntime().println(getInstanceName() + "@cleanup (" + (++cleanupCounter) + ")", JAMS.VERBOSE);        
+        getModel().getRuntime().println(getInstanceName() + "@cleanup (" + (++cleanupCounter) + ")", JAMSConstants.VERBOSE);
     }
 }
