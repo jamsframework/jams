@@ -29,7 +29,7 @@ import javax.swing.UIManager;
 import jams.gui.JAMSSplash;
 import jams.runtime.*;
 import jams.io.*;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.ui.gui.JAMSFrame;
 import java.util.Locale;
 import org.w3c.dom.Document;
@@ -46,7 +46,7 @@ public class JAMSui {
     protected JAMSProperties properties;
 
     /**
-     * JAMSConstants base directory
+     * JAMS base directory
      */
     private static File baseDir = new File(System.getProperty("user.dir"));
 
@@ -75,19 +75,19 @@ public class JAMSui {
             try {
                 properties.load(cmdLine.getConfigFileName());
             } catch (IOException ioe) {
-                System.out.println(JAMSConstants.resources.getString("Error_while_loading_config_from") + cmdLine.getConfigFileName());
+                System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + cmdLine.getConfigFileName());
                 handle(ioe);
             }
             baseDir = new File(cmdLine.getConfigFileName()).getParentFile();
         } else {
             //check for default file
-            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMSConstants.DEFAULT_PARAMETER_FILENAME;
+            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
             File file = new File(defaultFile);
             if (file.exists()) {
                 try {
                     properties.load(defaultFile);
                 } catch (IOException ioe) {
-                    System.out.println(JAMSConstants.resources.getString("Error_while_loading_config_from") + defaultFile);
+                    System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + defaultFile);
                     handle(ioe);
                 }
             }
@@ -97,7 +97,7 @@ public class JAMSui {
         String forcedLocale = properties.getProperty("forcelocale");
         if (!JAMSTools.isEmptyString(forcedLocale)) {
             Locale.setDefault(new Locale(forcedLocale));
-            JAMSConstants.resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
+            JAMS.resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
         }
 
         splashTimeout = Integer.parseInt(properties.getProperty("splashtimeout", "1000"));
@@ -112,7 +112,7 @@ public class JAMSui {
             if (guiConfig == 1) {
                 startGUI();
             } else {
-                System.out.println(JAMSConstants.resources.getString("You_must_provide_a_model_file_name_(see_JAMS_--help)_when_disabling_GUI_config!"));
+                System.out.println(JAMS.resources.getString("You_must_provide_a_model_file_name_(see_JAMS_--help)_when_disabling_GUI_config!"));
                 System.exit(-1);
             }
 
@@ -139,14 +139,14 @@ public class JAMSui {
                 //check if file exists
                 File file = new File(modelFileName);
                 if (!file.exists()) {
-                    System.out.println(JAMSConstants.resources.getString("Model_file_") + modelFileName + JAMSConstants.resources.getString("_could_not_be_found_-_exiting!"));
+                    System.out.println(JAMS.resources.getString("Model_file_") + modelFileName + JAMS.resources.getString("_could_not_be_found_-_exiting!"));
                     return;
                 }
 
                 // do some search and replace on the input file and create new file if necessary
                 String newModelFilename = XMLProcessor.modelDocConverter(modelFileName);
                 if (!newModelFilename.equalsIgnoreCase(modelFileName)) {
-                    info = JAMSConstants.resources.getString("The_model_definition_in_") + modelFileName + JAMSConstants.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JAMSConstants.resources.getString("_while_your_original_file_was_left_untouched.");
+                    info = JAMS.resources.getString("The_model_definition_in_") + modelFileName + JAMS.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JAMS.resources.getString("_while_your_original_file_was_left_untouched.");
                     modelFileName = newModelFilename;
                 }
 
@@ -170,9 +170,9 @@ public class JAMSui {
                     runtime.runModel();
 
                 } catch (IOException ioe) {
-                    System.out.println(JAMSConstants.resources.getString("The_model_definition_file_") + modelFileName + JAMSConstants.resources.getString("_could_not_be_loaded,_because:_") + ioe.toString());
+                    System.out.println(JAMS.resources.getString("The_model_definition_file_") + modelFileName + JAMS.resources.getString("_could_not_be_loaded,_because:_") + ioe.toString());
                 } catch (SAXException se) {
-                    System.out.println(JAMSConstants.resources.getString("The_model_definition_file_") + modelFileName + JAMSConstants.resources.getString("_contained_errors!"));
+                    System.out.println(JAMS.resources.getString("The_model_definition_file_") + modelFileName + JAMS.resources.getString("_contained_errors!"));
                 } catch (Exception ex) {
                     if (runtime != null) {
                         runtime.handle(ex);

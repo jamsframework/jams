@@ -14,7 +14,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.JAMSTools;
 import jams.data.JAMSDataFactory;
 import jams.model.JAMSComponentDescription;
@@ -285,7 +285,7 @@ public class GutmannMethod extends Optimizer {
         try {
             writer_prob = new BufferedWriter(new FileWriter(this.dirName + "/" + GPprobFile));
         } catch (IOException ioe) {
-            JAMSConstants.handle(ioe);
+            JAMS.handle(ioe);
         }     
         GaussEffFunction function = new GaussEffFunction();
         function.GP = GP;

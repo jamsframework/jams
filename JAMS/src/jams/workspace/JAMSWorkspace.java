@@ -32,7 +32,7 @@ import jams.workspace.stores.InputDataStore;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.JAMSProperties;
 import jams.JAMSTools;
 import jams.io.XMLIO;
@@ -149,14 +149,14 @@ public class JAMSWorkspace implements Serializable {
     public void checkValidity(boolean readonly) throws InvalidWorkspaceException {
 
         if (!directory.isDirectory()) {
-            throw new InvalidWorkspaceException(JAMSConstants.resources.getString("Error_during_model_setup:_") +
-                    directory.toString() + JAMSConstants.resources.getString("_is_not_a_directory"));
+            throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
+                    directory.toString() + JAMS.resources.getString("_is_not_a_directory"));
         }
 
         File configFile = new File(directory, "config.txt");
         if (!configFile.exists()) {
-            throw new InvalidWorkspaceException(JAMSConstants.resources.getString("Error_during_model_setup:_") +
-                    directory.toString() + JAMSConstants.resources.getString("_does_not_contain_config_file"));
+            throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
+                    directory.toString() + JAMS.resources.getString("_does_not_contain_config_file"));
         }
 
         File inDir = new File(directory, INPUT_DIR_NAME);
@@ -169,9 +169,9 @@ public class JAMSWorkspace implements Serializable {
             File[] allDirs = {inDir, outDir, localInDir, localDumpDir};
             for (File dir : allDirs) {
                 if (!dir.exists()) {
-                    throw new InvalidWorkspaceException(JAMSConstants.resources.getString("Error_during_model_setup:_") +
-                            directory.toString() + JAMSConstants.resources.getString("_does_not_contain_needed_directory_") +
-                            dir.toString() + JAMSConstants.resources.getString("_)"));
+                    throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
+                            directory.toString() + JAMS.resources.getString("_does_not_contain_needed_directory_") +
+                            dir.toString() + JAMS.resources.getString("_)"));
                 }
             }
             this.inputDirectory = inDir;
@@ -205,8 +205,8 @@ public class JAMSWorkspace implements Serializable {
                 }
 
             } catch (SecurityException se) {
-                throw new InvalidWorkspaceException(JAMSConstants.resources.getString("Error_during_model_setup:_") +
-                        directory.toString() + JAMSConstants.resources.getString("_is_not_a_valid_workspace!"));
+                throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
+                        directory.toString() + JAMS.resources.getString("_is_not_a_valid_workspace!"));
             }
         }
     }
@@ -300,15 +300,15 @@ public class JAMSWorkspace implements Serializable {
                 store = new ShapeFileDataStore(this, dsTitle, doc);
             }
         } catch (ClassNotFoundException cnfe) {
-            getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Error_initializing_datastore_") + dsTitle + JAMSConstants.resources.getString("!"));
+            getRuntime().sendErrorMsg(JAMS.resources.getString("Error_initializing_datastore_") + dsTitle + JAMS.resources.getString("!"));
             getRuntime().handle(cnfe);
             return null;
         } catch (IOException ioe) {
-            getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Error_initializing_datastore_") + dsTitle + JAMSConstants.resources.getString("!"));
+            getRuntime().sendErrorMsg(JAMS.resources.getString("Error_initializing_datastore_") + dsTitle + JAMS.resources.getString("!"));
             getRuntime().handle(ioe);
             return null;
         } catch (URISyntaxException use) {
-            getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Error_initializing_datastore_") + dsTitle + JAMSConstants.resources.getString("!"));
+            getRuntime().sendErrorMsg(JAMS.resources.getString("Error_initializing_datastore_") + dsTitle + JAMS.resources.getString("!"));
             getRuntime().handle(use);
             return null;
         }
@@ -442,10 +442,10 @@ public class JAMSWorkspace implements Serializable {
                 String storeID = getStoreID(child);
                 Document doc = XMLIO.getDocument(child.getAbsolutePath());
                 inputDataStores.put(storeID, doc);
-                this.getRuntime().println(JAMSConstants.resources.getString("Added_input_store_") + storeID + JAMSConstants.resources.getString("_from_") + child.getAbsolutePath() + JAMSConstants.resources.getString("."), JAMSConstants.VERBOSE);
+                this.getRuntime().println(JAMS.resources.getString("Added_input_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
 
             } catch (FileNotFoundException fnfe) {
-                this.getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Error_reading_datastore_") + child.getAbsolutePath() + JAMSConstants.resources.getString("!"));
+                this.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.resources.getString("!"));
             }
         }
 
@@ -467,10 +467,10 @@ public class JAMSWorkspace implements Serializable {
                 }
                 stores.add(storeID);
 
-                this.getRuntime().println(JAMSConstants.resources.getString("Added_output_store_") + storeID + JAMSConstants.resources.getString("_from_") + child.getAbsolutePath() + JAMSConstants.resources.getString("."), JAMSConstants.VERBOSE);
+                this.getRuntime().println(JAMS.resources.getString("Added_output_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
 
             } catch (FileNotFoundException fnfe) {
-                this.getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Error_reading_datastore_") + child.getAbsolutePath() + JAMSConstants.resources.getString("!"));
+                this.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.resources.getString("!"));
             }
         }
     }
@@ -502,7 +502,7 @@ public class JAMSWorkspace implements Serializable {
             String result = asciiConverter.toASCIIString((TSDataStore) store);
             return result;
         } else {
-            return store.getClass().toString() + JAMSConstants.resources.getString("_not_yet_supported!");
+            return store.getClass().toString() + JAMS.resources.getString("_not_yet_supported!");
         }
     }
 
@@ -521,7 +521,7 @@ public class JAMSWorkspace implements Serializable {
             TSDumpProcessor asciiConverter = new TSDumpProcessor();
             File file = new File(this.getLocalDumpDirectory(), store.getID() + ".dump");
             asciiConverter.toASCIIFile((TSDataStore) store, file);
-            getRuntime().sendInfoMsg(JAMSConstants.resources.getString("Dumped_input_datastore_1") + store.getID() + JAMSConstants.resources.getString("Dumped_input_datastore_2") + file + JAMSConstants.resources.getString("Dumped_input_datastore_3"));
+            getRuntime().sendInfoMsg(JAMS.resources.getString("Dumped_input_datastore_1") + store.getID() + JAMS.resources.getString("Dumped_input_datastore_2") + file + JAMS.resources.getString("Dumped_input_datastore_3"));
         }
 
         store.close();
@@ -655,7 +655,7 @@ public class JAMSWorkspace implements Serializable {
     public static void main(String[] args) throws IOException {
 
         JAMSRuntime runtime = new StandardRuntime();
-        runtime.setDebugLevel(JAMSConstants.VERBOSE);
+        runtime.setDebugLevel(JAMS.VERBOSE);
         runtime.addErrorLogObserver(new Observer() {
 
             @Override

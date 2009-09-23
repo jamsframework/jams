@@ -27,7 +27,7 @@ import jams.dataaccess.DataAccessor;
 import jams.model.*;
 import org.w3c.dom.*;
 import java.lang.reflect.*;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.JAMSTools;
 import jams.data.*;
 import jams.runtime.JAMSRuntime;
@@ -118,16 +118,16 @@ public class ModelLoader {
             }
         }
 
-        jamsModel.getRuntime().println(JAMSConstants.resources.getString("*************************************"), JAMSConstants.STANDARD);
-        jamsModel.getRuntime().println(JAMSConstants.resources.getString("model_____:_") + jamsModel.getName(), JAMSConstants.STANDARD);
-        jamsModel.getRuntime().println(JAMSConstants.resources.getString("workspace_:_") + jamsModel.workspaceDirectory.getValue(), JAMSConstants.STANDARD);
-        jamsModel.getRuntime().println(JAMSConstants.resources.getString("author____:_") + jamsModel.getAuthor(), JAMSConstants.STANDARD);
-        jamsModel.getRuntime().println(JAMSConstants.resources.getString("date______:_") + jamsModel.getDate(), JAMSConstants.STANDARD);
-        jamsModel.getRuntime().println(JAMSConstants.resources.getString("*************************************"), JAMSConstants.STANDARD);
+        jamsModel.getRuntime().println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
+        jamsModel.getRuntime().println(JAMS.resources.getString("model_____:_") + jamsModel.getName(), JAMS.STANDARD);
+        jamsModel.getRuntime().println(JAMS.resources.getString("workspace_:_") + jamsModel.workspaceDirectory.getValue(), JAMS.STANDARD);
+        jamsModel.getRuntime().println(JAMS.resources.getString("author____:_") + jamsModel.getAuthor(), JAMS.STANDARD);
+        jamsModel.getRuntime().println(JAMS.resources.getString("date______:_") + jamsModel.getDate(), JAMS.STANDARD);
+        jamsModel.getRuntime().println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
 
-        jamsModel.getRuntime().println("", JAMSConstants.STANDARD);
-        jamsModel.getRuntime().println(JAMSConstants.resources.getString("loading_components"), JAMSConstants.STANDARD);
-        jamsModel.getRuntime().println(JAMSConstants.resources.getString("*************************************"), JAMSConstants.STANDARD);
+        jamsModel.getRuntime().println("", JAMS.STANDARD);
+        jamsModel.getRuntime().println(JAMS.resources.getString("loading_components"), JAMS.STANDARD);
+        jamsModel.getRuntime().println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
 
         // create the model
         ArrayList<JAMSComponent> childComponentList = new ArrayList<JAMSComponent>();
@@ -186,20 +186,20 @@ public class ModelLoader {
         // check if a component with that name is already existing
         JAMSComponent existingComponent = this.componentRepository.get(componentName);
         if (existingComponent != null) {
-            throw new ModelSpecificationException(JAMSConstants.resources.getString("Component_with_name_") + componentName +
-                    JAMSConstants.resources.getString("_is_already_exisiting_(") + existingComponent.getClass() +
-                    JAMSConstants.resources.getString(")._Please_make_sure_component_names_are_unique!_Stopping_model_loading!"));
+            throw new ModelSpecificationException(JAMS.resources.getString("Component_with_name_") + componentName +
+                    JAMS.resources.getString("_is_already_exisiting_(") + existingComponent.getClass() +
+                    JAMS.resources.getString(")._Please_make_sure_component_names_are_unique!_Stopping_model_loading!"));
         }
 
-        jamsModel.getRuntime().println(/*JAMSConstants.resources.getString("Adding:_") + */
+        jamsModel.getRuntime().println(/*JAMS.resources.getString("Adding:_") + */
                 componentName + " [classID=" + String.format("%03d", getID(componentClassName)) +
-                ", className=" + componentClassName + "]", JAMSConstants.STANDARD);
+                ", className=" + componentClassName + "]", JAMS.STANDARD);
 
         component = null;
         try {
 
             // create the JAMSComponent object
-            //jamsModel.getRuntime().println(componentClassName, JAMSConstants.VERBOSE);
+            //jamsModel.getRuntime().println(componentClassName, JAMS.VERBOSE);
 
             // try to load the class
             componentClazz = loader.loadClass(componentClassName);
@@ -294,7 +294,7 @@ public class ModelLoader {
                             try {
                                 data = (JAMSData) JAMSTools.setField(component, field, variable);
                             } catch (NoSuchMethodException nsme) {
-                                throw new ModelSpecificationException(JAMSConstants.resources.getString("Component_") + componentName + JAMSConstants.resources.getString(":_variable_") + varName + JAMSConstants.resources.getString(":_Access_exception!"));
+                                throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_variable_") + varName + JAMS.resources.getString(":_Access_exception!"));
                             }
 
                             // this field can be removed from the null field list
@@ -319,7 +319,7 @@ public class ModelLoader {
                             // ...
 
                             if (!(context instanceof JAMSContext)) {
-                                throw new ModelSpecificationException(JAMSConstants.resources.getString("Component_") + componentName + JAMSConstants.resources.getString(":_Component_") + element.getAttribute("context") + JAMSConstants.resources.getString("_must_be_of_type_JAMSSpatialContext!"));
+                                throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_Component_") + element.getAttribute("context") + JAMS.resources.getString("_must_be_of_type_JAMSSpatialContext!"));
                             }
 
                             JAMSContext sc = (JAMSContext) context;
@@ -341,7 +341,7 @@ public class ModelLoader {
 
                         }
 
-                        jamsModel.getRuntime().println(JAMSConstants.resources.getString("_var_declaration:_") + varName + " [class=" + varClassName + ", access=" + jvd.access() + ", connection=" + connType + "]", JAMSConstants.VERBOSE);
+                        jamsModel.getRuntime().println(JAMS.resources.getString("_var_declaration:_") + varName + " [class=" + varClassName + ", access=" + jvd.access() + ", connection=" + connType + "]", JAMS.VERBOSE);
 
                         /*
                         if (jvd.trace() == JAMSVarDescription.UpdateType.INIT) {
@@ -351,29 +351,29 @@ public class ModelLoader {
                         }
                          */
                     } else {
-                        throw new ModelSpecificationException(JAMSConstants.resources.getString("Component_") + componentName + JAMSConstants.resources.getString(":_variable_") + varName + JAMSConstants.resources.getString("_can_not_be_accessed_(missing_annotation)!"));
+                        throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_variable_") + varName + JAMS.resources.getString("_can_not_be_accessed_(missing_annotation)!"));
                     }
 
                 } catch (NoSuchFieldException nsfe) {
-                    throw new ModelSpecificationException(JAMSConstants.resources.getString("Component_") + componentName + JAMSConstants.resources.getString(":_variable_") + varName + JAMSConstants.resources.getString("_not_found!"));
+                    throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_variable_") + varName + JAMS.resources.getString("_not_found!"));
                 } catch (ClassNotFoundException cnfe) {
-                    throw new ModelSpecificationException(JAMSConstants.resources.getString("Component_") + componentName + JAMSConstants.resources.getString(":_variable_class_") + varClassName + JAMSConstants.resources.getString("_not_found!"));
+                    throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_variable_class_") + varClassName + JAMS.resources.getString("_not_found!"));
                 } catch (IllegalArgumentException iae) {
-                    throw new ModelSpecificationException(JAMSConstants.resources.getString("Component_") + componentName + JAMSConstants.resources.getString(":_variable_") + varName + JAMSConstants.resources.getString(":_wrong_type!"));
+                    throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_variable_") + varName + JAMS.resources.getString(":_wrong_type!"));
                 } catch (InstantiationException ie) {
-                    throw new ModelSpecificationException(JAMSConstants.resources.getString("Component_") + componentName + JAMSConstants.resources.getString(":_variable_") + varName + JAMSConstants.resources.getString(":_Instantiation_exception!"));
+                    throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_variable_") + varName + JAMS.resources.getString(":_Instantiation_exception!"));
                 } catch (IllegalAccessException iae) {
-                    throw new ModelSpecificationException(JAMSConstants.resources.getString("Component_") + componentName + JAMSConstants.resources.getString(":_variable_") + varName + JAMSConstants.resources.getString(":_Access_exception!"));
+                    throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_variable_") + varName + JAMS.resources.getString(":_Access_exception!"));
                 } catch (Exception ex) {
                     jamsModel.getRuntime().handle(ex);
                 }
 
-                // JAMSConstants var declaration
+                // JAMS var declaration
 
             } else if (node.getNodeName().equals("attribute")) {
 
                 if (!JAMSContext.class.isAssignableFrom(component.getClass())) {
-                    throw new ModelSpecificationException(JAMSConstants.resources.getString("Attribute_tag_can_only_be_used_inside_context_components!_(component_") + componentName + JAMSConstants.resources.getString(")"));
+                    throw new ModelSpecificationException(JAMS.resources.getString("Attribute_tag_can_only_be_used_inside_context_components!_(component_") + componentName + JAMS.resources.getString(")"));
                 }
 
                 Element element = (Element) node;
@@ -387,7 +387,7 @@ public class ModelLoader {
 
             Element element = (Element) node;
             ((JAMSContext) component).getDataTracer().registerAttribute(element.getAttribute("attribute"));
-            jamsModel.getRuntime().println("Registering trace for " + component.getInstanceName() + "->" + element.getAttribute("attribute"), JAMSConstants.STANDARD);
+            jamsModel.getRuntime().println("Registering trace for " + component.getInstanceName() + "->" + element.getAttribute("attribute"), JAMS.STANDARD);
 
             }*/
         }

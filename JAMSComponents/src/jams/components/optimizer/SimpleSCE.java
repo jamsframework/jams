@@ -38,7 +38,7 @@ import jams.model.*;
 import java.util.Arrays.*;
 import java.util.Comparator;
 import java.util.StringTokenizer;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.JAMSTools;
 import jams.io.SerializableBufferedWriter;
 

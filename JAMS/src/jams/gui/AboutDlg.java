@@ -28,7 +28,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.URL;
 import javax.swing.*;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.JAMSTools;
 import jams.JAMSVersion;
 
@@ -65,7 +65,7 @@ public class AboutDlg extends JDialog {
             if (textURL != null) {
                 gplText = JAMSTools.streamToString(textURL.openStream());
             }
-            versionText = JAMSConstants.resources.getString("Version") + JAMSVersion.getInstance().getVersionDateString();
+            versionText = JAMS.resources.getString("Version") + JAMSVersion.getInstance().getVersionDateString();
         } catch (IOException ioe) {
         }
 
@@ -128,7 +128,7 @@ public class AboutDlg extends JDialog {
         versionTextLabel.setText("Test");*/
 
         JButton closeButton = new JButton();
-        closeButton.setText(JAMSConstants.resources.getString("OK"));
+        closeButton.setText(JAMS.resources.getString("OK"));
         closeButton.addActionListener(new ActionListener() {
 
             @Override
@@ -141,7 +141,7 @@ public class AboutDlg extends JDialog {
         //this.setAlwaysOnTop(true);
         //this.setUndecorated(true);
         //this.setModal(true);
-        this.setTitle(JAMSConstants.resources.getString("About"));
+        this.setTitle(JAMS.resources.getString("About"));
 
         pack();
 

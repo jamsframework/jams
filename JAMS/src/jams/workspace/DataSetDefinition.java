@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
-import jams.JAMSConstants;
+import jams.JAMS;
 
 /**
  *
@@ -88,7 +88,7 @@ public class DataSetDefinition {
         Class<?> type = attributes.get(attributeName);
         for (int i = 0; i < values.size(); i++) {
             if (!type.isAssignableFrom(values.get(i).getClass())) {
-                System.out.println(JAMSConstants.resources.getString("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type);
+                System.out.println(JAMS.resources.getString("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type);
                 return false;
             }
         }
@@ -126,7 +126,7 @@ public class DataSetDefinition {
             Class<?> type = attributes.get(attributeName);
 
             if (!type.isAssignableFrom(values.get(i).getClass())) {
-                System.out.println(JAMSConstants.resources.getString("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type);
+                System.out.println(JAMS.resources.getString("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type);
                 return false;
             }
 

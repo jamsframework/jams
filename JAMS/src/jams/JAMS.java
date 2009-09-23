@@ -1,5 +1,5 @@
 /*
- * JAMSConstants.java
+ * JAMS.java
  * Created on 2. Oktober 2005, 16:05
  *
  * This file is part of JAMS
@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
  *
  * @author Sven Kralisch
  */
-public class JAMSConstants {
+public class JAMS {
 
     /**
      * Verbosity level 0 of 3

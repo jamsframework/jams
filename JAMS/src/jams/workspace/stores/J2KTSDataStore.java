@@ -22,7 +22,7 @@
  */
 package jams.workspace.stores;
 
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.runtime.JAMSRuntime;
 import jams.workspace.DataSet;
@@ -183,14 +183,14 @@ public class J2KTSDataStore extends TSDataStore {
                 try {
                     startDate.setValue(startString, "dd.MM.yyyy HH:mm");
                 } catch (ParseException pe) {
-                    ws.getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Could_not_parse_date_\"") + startString + JAMSConstants.resources.getString("\"_-_date_kept_unchanged!"));
+                    ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Could_not_parse_date_\"") + startString + JAMS.resources.getString("\"_-_date_kept_unchanged!"));
                 }
             } else if (key.equals("dataEnd")) {
                 String endString = tok2.nextToken() + " " + tok2.nextToken();
                 try {
                     endDate.setValue(endString, "dd.MM.yyyy HH:mm");
                 } catch (ParseException pe) {
-                    ws.getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Could_not_parse_date_\"") + endString + JAMSConstants.resources.getString("\"_-_date_kept_unchanged!"));
+                    ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Could_not_parse_date_\"") + endString + JAMS.resources.getString("\"_-_date_kept_unchanged!"));
                 }
             } else if (key.equals("tres")) {
                 String tres = tok2.nextToken();

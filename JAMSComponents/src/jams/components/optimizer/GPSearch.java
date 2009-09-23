@@ -13,7 +13,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.JAMSTools;
 import jams.data.*;
 import jams.io.GenericDataWriter;

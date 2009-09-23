@@ -25,7 +25,7 @@ package jams.runtime;
 import java.util.*;
 import java.net.*;
 import java.io.*;
-import jams.JAMSConstants;
+import jams.JAMS;
 
 public class JAMSClassLoader extends URLClassLoader {
 
@@ -55,10 +55,10 @@ public class JAMSClassLoader extends URLClassLoader {
         try {
             URL url = f.toURI().toURL();
             if (!urls.add(url)) {
-                rt.println(JAMSConstants.resources.getString("WARNING_:_The_file_") + f.getAbsolutePath() + JAMSConstants.resources.getString("_is_already_loaded"));
+                rt.println(JAMS.resources.getString("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.resources.getString("_is_already_loaded"));
             }
         } catch (MalformedURLException murle) {
-            rt.println(JAMSConstants.resources.getString("WARNING_:_The_file_") + f.getAbsolutePath() + JAMSConstants.resources.getString("_could_not_be_converted_to_URL."));
+            rt.println(JAMS.resources.getString("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.resources.getString("_could_not_be_converted_to_URL."));
         }
     }
 
@@ -69,7 +69,7 @@ public class JAMSClassLoader extends URLClassLoader {
             File dir = new File(lib);
 
             if (!dir.exists()) {
-                rt.println(JAMSConstants.resources.getString("DANGER_-_directory_") + dir.getAbsolutePath() + JAMSConstants.resources.getString("_does_not_exist"), JAMSConstants.STANDARD);
+                rt.println(JAMS.resources.getString("DANGER_-_directory_") + dir.getAbsolutePath() + JAMS.resources.getString("_does_not_exist"), JAMS.STANDARD);
                 continue;
             }
 
@@ -86,7 +86,7 @@ public class JAMSClassLoader extends URLClassLoader {
 
             }
         }
-        rt.println(JAMSConstants.resources.getString("created_class_loader_using_") + urls, JAMSConstants.STANDARD);
+        rt.println(JAMS.resources.getString("created_class_loader_using_") + urls, JAMS.STANDARD);
 
         URL[] urlArray = urls.toArray(new URL[urls.size()]);
 

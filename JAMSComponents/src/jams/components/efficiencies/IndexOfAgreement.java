@@ -9,7 +9,7 @@
 
 package jams.components.efficiencies;
 
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.model.JAMSModel;
 
 /**

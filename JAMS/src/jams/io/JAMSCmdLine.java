@@ -36,11 +36,11 @@ public class JAMSCmdLine {
     private String parameterValues = null;
     private String[] otherArgs = null;
     private String appTitle;
-    private static final String USAGE_STRING = JAMSConstants.resources.getString("[Options]") +
-            JAMSConstants.resources.getString("__-h,_--help_________________________________________Print_help") +
-            JAMSConstants.resources.getString("__-c,_--config_<config_file_name>____________________Provide_config_file_name") +
-            JAMSConstants.resources.getString("__-m,_--model_<model_definition_file_name>___________Provide_model_file_name") +
-            JAMSConstants.resources.getString("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons");
+    private static final String USAGE_STRING = JAMS.resources.getString("[Options]") +
+            JAMS.resources.getString("__-h,_--help_________________________________________Print_help") +
+            JAMS.resources.getString("__-c,_--config_<config_file_name>____________________Provide_config_file_name") +
+            JAMS.resources.getString("__-m,_--model_<model_definition_file_name>___________Provide_model_file_name") +
+            JAMS.resources.getString("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons");
     
     /**
      * Creates a new JAMSCmdLine object
@@ -68,13 +68,13 @@ public class JAMSCmdLine {
             parser.parse(args);
         } catch (CmdLineParser.OptionException e) {
             System.err.println(e.getMessage());
-            System.err.println(JAMSConstants.resources.getString("Usage:_") + appTitle + " " + USAGE_STRING);
+            System.err.println(JAMS.resources.getString("Usage:_") + appTitle + " " + USAGE_STRING);
             System.exit(2);
         }
         
         boolean usage = ((Boolean) parser.getOptionValue(helpOption, Boolean.FALSE)).booleanValue();
         if (usage) {
-            System.out.println(JAMSConstants.resources.getString("Usage:_") + appTitle + " " + USAGE_STRING);
+            System.out.println(JAMS.resources.getString("Usage:_") + appTitle + " " + USAGE_STRING);
             System.exit(0);
         }
         

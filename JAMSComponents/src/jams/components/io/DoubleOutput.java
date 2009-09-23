@@ -23,7 +23,7 @@
 
 package jams.components.io;
 
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.data.*;
 import jams.model.*;
 
@@ -54,7 +54,7 @@ title="DoubleOutput",
      *  Component run stages
      */    
     public void run() {
-        getModel().getRuntime().println(this.getInstanceName()+ ": " + value.toString(), JAMSConstants.STANDARD);
+        getModel().getRuntime().println(this.getInstanceName()+ ": " + value.toString(), JAMS.STANDARD);
     }
     
 }

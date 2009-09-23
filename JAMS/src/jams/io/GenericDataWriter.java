@@ -27,7 +27,7 @@ import java.io.*;
 import java.util.*;
 import jams.data.*;
 import jams.runtime.RuntimeException;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.JAMSTools;
 
 /**
@@ -97,7 +97,7 @@ public class GenericDataWriter implements Serializable{
             s += i.next() + "\n";
         }
 
-//        String s = "#JAMSConstants output file\n#\n";
+//        String s = "#JAMS output file\n#\n";
         //s += "#";
         i = header.iterator();
         if (i.hasNext()) {
@@ -150,7 +150,7 @@ public class GenericDataWriter implements Serializable{
         String s = "";
 
         if (data.size() != header.size()) {
-            throw new RuntimeException(JAMSConstants.resources.getString("Wrong_number_of_output_columns!"));
+            throw new RuntimeException(JAMS.resources.getString("Wrong_number_of_output_columns!"));
         } else {
             Iterator<Object> i = data.iterator();
             if (i.hasNext()) {
@@ -174,7 +174,7 @@ public class GenericDataWriter implements Serializable{
         String s = "";
 
         if (data.size() != header.size()) {
-            throw new RuntimeException(JAMSConstants.resources.getString("Wrong_number_of_output_columns!"));
+            throw new RuntimeException(JAMS.resources.getString("Wrong_number_of_output_columns!"));
         } else {
             Iterator<Object> i = data.iterator();
             //date first

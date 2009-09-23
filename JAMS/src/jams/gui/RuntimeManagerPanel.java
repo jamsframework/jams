@@ -22,7 +22,7 @@
  */
 package jams.gui;
 
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.runtime.RuntimeManager;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -83,7 +83,7 @@ public class RuntimeManagerPanel extends JPanel {
             }
         });
 
-        stopButton = new JButton(JAMSConstants.resources.getString("stop_model"));
+        stopButton = new JButton(JAMS.resources.getString("stop_model"));
         stopButton.setEnabled(false);
         stopButton.addActionListener(new ActionListener() {
 

@@ -42,7 +42,7 @@ public class JAMSFileFilter {
         }
         @Override
         public String getDescription() {
-            return JAMSConstants.resources.getString("JAMS_Preferences_(*.jap)");
+            return JAMS.resources.getString("JAMS_Preferences_(*.jap)");
         }
     };
     private static FileFilter modelFilter = new FileFilter() {
@@ -52,7 +52,7 @@ public class JAMSFileFilter {
         }
         @Override
         public String getDescription() {
-            return JAMSConstants.resources.getString("JAMS_Model_(*.jam;_*.xml)");
+            return JAMS.resources.getString("JAMS_Model_(*.jam;_*.xml)");
         }
     };
     private static FileFilter jarFilter = new FileFilter() {
@@ -62,7 +62,7 @@ public class JAMSFileFilter {
         }
         @Override
         public String getDescription() {
-            return JAMSConstants.resources.getString("Java_Archive_(*.jar)");
+            return JAMS.resources.getString("Java_Archive_(*.jar)");
         }
     };
     private static FileFilter parameterFilter = new FileFilter() {
@@ -72,7 +72,7 @@ public class JAMSFileFilter {
         }
         @Override
         public String getDescription() {
-            return JAMSConstants.resources.getString("JAMS_Model_Parameter_(*.jmp)");
+            return JAMS.resources.getString("JAMS_Model_Parameter_(*.jmp)");
         }
     };
     
@@ -83,7 +83,7 @@ public class JAMSFileFilter {
         }
         @Override
         public String getDescription() {
-            return JAMSConstants.resources.getString("Encapsulated_Postscript_(*.eps)");
+            return JAMS.resources.getString("Encapsulated_Postscript_(*.eps)");
         }
     };
 
@@ -94,7 +94,7 @@ public class JAMSFileFilter {
         }
         @Override
         public String getDescription() {
-            return JAMSConstants.resources.getString("Plot_template_(*.ttp)");
+            return JAMS.resources.getString("Plot_template_(*.ttp)");
         }
     };
 
@@ -105,7 +105,7 @@ public class JAMSFileFilter {
         }
         @Override
         public String getDescription() {
-            return JAMSConstants.resources.getString("Spreadsheet_data_(*.dat)");
+            return JAMS.resources.getString("Spreadsheet_data_(*.dat)");
         }
     };
 
@@ -117,7 +117,7 @@ public class JAMSFileFilter {
         }
         @Override
         public String getDescription() {
-            return JAMSConstants.resources.getString("Shapefiles_(*.shp)");
+            return JAMS.resources.getString("Shapefiles_(*.shp)");
         }
     };
 

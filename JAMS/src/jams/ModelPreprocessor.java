@@ -72,7 +72,7 @@ public class ModelPreprocessor {
                 for (Setting s : list) {
                     if (s.getAttribute().equals("%enable%") && (s.getValue().equals("0"))) {
                         rootElement.getParentNode().removeChild(rootElement);
-                        rt.println(JAMSConstants.resources.getString("Disabling_component_") + compName, JAMSConstants.VERBOSE);
+                        rt.println(JAMS.resources.getString("Disabling_component_") + compName, JAMS.VERBOSE);
                         return;
                     }
                 }
@@ -82,7 +82,7 @@ public class ModelPreprocessor {
                     for (Setting s : list) {
                         if (s.getAttribute().equals(attribute.getAttribute("name"))) {
                             attribute.setAttribute("value", s.getValue());
-                            rt.println(JAMSConstants.resources.getString("Setting_") + attribute.getAttribute("name") + JAMSConstants.resources.getString("_to_") + s.getValue(), JAMSConstants.VERBOSE);
+                            rt.println(JAMS.resources.getString("Setting_") + attribute.getAttribute("name") + JAMS.resources.getString("_to_") + s.getValue(), JAMS.VERBOSE);
                         }
                     }
                 }
@@ -92,7 +92,7 @@ public class ModelPreprocessor {
                     for (Setting s : list) {
                         if (s.getAttribute().equals(var.getAttribute("name"))) {
                             var.setAttribute("value", s.getValue());
-                            rt.println(JAMSConstants.resources.getString("Setting_") + var.getAttribute("name") + JAMSConstants.resources.getString("_to_") + s.getValue(), JAMSConstants.VERBOSE);
+                            rt.println(JAMS.resources.getString("Setting_") + var.getAttribute("name") + JAMS.resources.getString("_to_") + s.getValue(), JAMS.VERBOSE);
                         }
                     }
                 }

@@ -24,7 +24,7 @@ package reg;
 
 import java.awt.event.WindowEvent;
 import reg.gui.ExplorerFrame;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.JAMSProperties;
 import jams.gui.GUIHelper;
 import jams.runtime.JAMSRuntime;
@@ -77,17 +77,17 @@ public class JAMSExplorer {
 
         if (runtime == null) {
             this.runtime = new StandardRuntime();
-            this.runtime.setDebugLevel(JAMSConstants.VERBOSE);
+            this.runtime.setDebugLevel(JAMS.VERBOSE);
             this.runtime.addErrorLogObserver(new Observer() {
 
                 public void update(Observable o, Object arg) {
-                    GUIHelper.showErrorDlg(explorerFrame, arg.toString(), JAMSConstants.resources.getString("Error"));
+                    GUIHelper.showErrorDlg(explorerFrame, arg.toString(), JAMS.resources.getString("Error"));
                 }
             });
             this.runtime.addInfoLogObserver(new Observer() {
 
                 public void update(Observable o, Object arg) {
-                    //GUIHelper.showInfoDlg(regFrame, arg.toString(), JAMSConstants.resources.getString("Info"));
+                    //GUIHelper.showInfoDlg(regFrame, arg.toString(), JAMS.resources.getString("Info"));
                 }
             });
         } else {
@@ -95,7 +95,7 @@ public class JAMSExplorer {
         }
 
         properties = JAMSProperties.createJAMSProperties();
-        String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMSConstants.DEFAULT_PARAMETER_FILENAME;
+        String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
         File file = new File(defaultFile);
         if (file.exists()) {
             try {

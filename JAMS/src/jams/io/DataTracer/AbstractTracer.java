@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 import jams.dataaccess.DataAccessor;
 import jams.model.JAMSContext;
-import jams.JAMSConstants;
+import jams.JAMS;
 
 /**
  *
@@ -103,7 +103,7 @@ public abstract class AbstractTracer implements DataTracer {
         try {
             store.open();
         } catch (IOException ioe) {
-            context.getModel().getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Error_creating_data_output_directory!"));
+            context.getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Error_creating_data_output_directory!"));
             return;
         }
 

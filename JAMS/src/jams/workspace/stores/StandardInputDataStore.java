@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.workspace.DataReader;
-import jams.JAMSConstants;
+import jams.JAMS;
 
 /**
  *
@@ -121,13 +121,13 @@ public abstract class StandardInputDataStore implements InputDataStore {
             if (metadataIO != null) {
                 int result = metadataIO.init();
                 if (result < 0) {
-                    ws.getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Initialization_of_data_I/O_component_") +
-                            this.getID() + JAMSConstants.resources.getString("_(") + this.getClass().getName() + JAMSConstants.resources.getString(")_failed!"));
+                    ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Initialization_of_data_I/O_component_") +
+                            this.getID() + JAMS.resources.getString("_(") + this.getClass().getName() + JAMS.resources.getString(")_failed!"));
                     return null;
                 }
             } else {
-                ws.getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Initialization_of_data_I/O_component_") +
-                        this.getID() + JAMSConstants.resources.getString("_(") + this.getClass().getName() + JAMSConstants.resources.getString(")_failed!"));
+                ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Initialization_of_data_I/O_component_") +
+                        this.getID() + JAMS.resources.getString("_(") + this.getClass().getName() + JAMS.resources.getString(")_failed!"));
                 return null;
             }
         }

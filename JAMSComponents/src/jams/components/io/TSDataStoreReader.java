@@ -2,7 +2,7 @@
  * TSDataStoreReader.java
  * Created on 16. Oktober 2008, 17:34
  *
- * This file is a JAMSConstants component
+ * This file is a JAMS component
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@
  */
 package jams.components.io;
 
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.components.efficiencies.Regression;
 import jams.data.*;
 import jams.model.*;
@@ -203,7 +203,7 @@ public class TSDataStoreReader extends JAMSComponent {
             }
         }
 
-        getModel().getRuntime().println("Datastore " + id + " initialized!", JAMSConstants.VVERBOSE);
+        getModel().getRuntime().println("Datastore " + id + " initialized!", JAMS.VVERBOSE);
         doubles = new double[store.getDataSetDefinition().getColumnCount()];
         dataArray.setValue(doubles);
     }

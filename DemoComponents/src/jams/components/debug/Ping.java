@@ -23,7 +23,7 @@
 
 package jams.components.debug;
 
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.model.*;
 
 /**
@@ -47,14 +47,14 @@ title="Ping",
     private long cleanupCounter = 0;
     
     public void init() {
-        getModel().getRuntime().println(getInstanceName() + "@init (" + (++initCounter) + ")", JAMSConstants.VERBOSE);
+        getModel().getRuntime().println(getInstanceName() + "@init (" + (++initCounter) + ")", JAMS.VERBOSE);
     }
     
     public void run() {
-        getModel().getRuntime().println(getInstanceName() + "@run (" + (++runCounter) + ")", JAMSConstants.VERBOSE);
+        getModel().getRuntime().println(getInstanceName() + "@run (" + (++runCounter) + ")", JAMS.VERBOSE);
     }
     
     public void cleanup() {
-        getModel().getRuntime().println(getInstanceName() + "@cleanup (" + (++cleanupCounter) + ")", JAMSConstants.VERBOSE);
+        getModel().getRuntime().println(getInstanceName() + "@cleanup (" + (++cleanupCounter) + ")", JAMS.VERBOSE);
     }
 }

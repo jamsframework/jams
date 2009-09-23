@@ -22,7 +22,7 @@
  */
 package jams.juice.gui.tree;
 
-import jams.JAMSConstants;
+import jams.JAMS;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -438,7 +438,7 @@ public class ModelTree extends JAMSTree {
         return document;
     }
 
-    // return XML element representing a JAMSConstants model property based on a
+    // return XML element representing a JAMS model property based on a
     // ModelProperty object
     private Element createPropertyElement(Document document, ModelProperty property) {
         Element propertyElement = (Element) document.createElement("property");

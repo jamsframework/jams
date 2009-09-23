@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Observer;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.JAMSProperties;
 import jams.JAMSTools;
 import jams.data.JAMSData;
@@ -43,7 +43,7 @@ import org.w3c.dom.Document;
 public class MiniRuntime implements JAMSRuntime {
 
     private JFrame frame;
-    private int debugLevel = JAMSConstants.VVERBOSE;
+    private int debugLevel = JAMS.VVERBOSE;
     private JAMSLog errorLog = new JAMSLog();
     private JAMSLog infoLog = new JAMSLog();
 
@@ -125,7 +125,7 @@ public class MiniRuntime implements JAMSRuntime {
         }
 
         message += t.toString();
-        if (getDebugLevel() > JAMSConstants.STANDARD) {
+        if (getDebugLevel() > JAMS.STANDARD) {
             message += "\n" + JAMSTools.getStackTraceString(t.getStackTrace());
         }
         sendErrorMsg(message);

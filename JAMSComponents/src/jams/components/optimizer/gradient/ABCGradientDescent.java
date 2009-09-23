@@ -25,7 +25,7 @@ package jams.components.optimizer.gradient;
 
 import java.util.Random;
 import java.util.StringTokenizer;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.data.*;
 import jams.io.GenericDataWriter;
 import jams.model.*;

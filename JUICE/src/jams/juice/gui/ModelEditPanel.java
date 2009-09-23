@@ -109,7 +109,7 @@ public class ModelEditPanel extends JPanel {
         scroll.setBorder(BorderFactory.createEtchedBorder());
         scroll.setPreferredSize(new Dimension(TEXTAREA_WIDTH, TEXTAREA_HEIGHT));
 
-        Action explorerAction = new AbstractAction(jams.JAMSConstants.resources.getString("JEDI")) {
+        Action explorerAction = new AbstractAction(jams.JAMS.resources.getString("JEDI")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -45,7 +45,7 @@ import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.JAMSTools;
 import jams.gui.HelpComponent;
 import jams.ui.gui.JAMSLauncher;
@@ -199,11 +199,11 @@ public class ModelView {
          * create the toolbar
          */
         JToolBar toolBar = new JToolBar();
-        //toolBar.setPreferredSize(new Dimension(0, JAMSConstants.TOOLBAR_HEIGHT));
+        //toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
         modelRunButton = new JButton(JUICE.getJuiceFrame().getRunModelAction());
         modelRunButton.setText("");
-        modelRunButton.setToolTipText(JAMSConstants.resources.getString("Run_Model"));
+        modelRunButton.setToolTipText(JAMS.resources.getString("Run_Model"));
         modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         toolBar.add(modelRunButton);
 
@@ -601,7 +601,7 @@ public class ModelView {
     }
 
     /**
-     * Loads a JAMSConstants model from file
+     * Loads a JAMS model from file
      * @param fileName The file containing the models XML document.
      */
     public void loadModel(String fileName) {

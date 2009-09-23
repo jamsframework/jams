@@ -13,7 +13,7 @@ import jams.model.*;
 import jams.data.*;
 import java.util.*;
 import java.io.*;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.JAMSTools;
 /**
  *

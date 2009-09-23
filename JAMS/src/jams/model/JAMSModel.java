@@ -22,7 +22,7 @@
  */
 package jams.model;
 
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.JAMSTools;
 import jams.data.JAMSDirName;
 import jams.workspace.JAMSWorkspace;
@@ -101,13 +101,13 @@ public class JAMSModel extends JAMSContext {
     @Override
     public void init() {
 
-        runtime.println("", JAMSConstants.STANDARD);
-        runtime.println(JAMSConstants.resources.getString("starting_simulation"), JAMSConstants.STANDARD);
-        runtime.println(JAMSConstants.resources.getString("*************************************"), JAMSConstants.STANDARD);
+        runtime.println("", JAMS.STANDARD);
+        runtime.println(JAMS.resources.getString("starting_simulation"), JAMS.STANDARD);
+        runtime.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
 
         // check if workspace directory was specified
         if (workspaceDirectory.getValue() == null) {
-            runtime.sendHalt(JAMSConstants.resources.getString("No_workspace_directory_specified,_stopping_execution!"));
+            runtime.sendHalt(JAMS.resources.getString("No_workspace_directory_specified,_stopping_execution!"));
             return;
         }
 
@@ -129,19 +129,19 @@ public class JAMSModel extends JAMSContext {
         }
 
         if (!getNullFields().isEmpty()) {
-            getRuntime().println(JAMSConstants.resources.getString("##############_UNDEFINED_FIELDS_####################################"), JAMSConstants.VVERBOSE);
+            getRuntime().println(JAMS.resources.getString("##############_UNDEFINED_FIELDS_####################################"), JAMS.VVERBOSE);
             for (JAMSComponent comp : getNullFields().keySet()) {
                 ArrayList<Field> nf = getNullFields().get(comp);
                 if (nf.isEmpty()) {
                     continue;
                 }
-                String str = JAMSConstants.resources.getString("##_") + comp.getInstanceName() + ": ";
+                String str = JAMS.resources.getString("##_") + comp.getInstanceName() + ": ";
                 for (Field field : nf) {
                     str += field.getName() + " ";
                 }
-                getRuntime().println(str, JAMSConstants.VVERBOSE);
+                getRuntime().println(str, JAMS.VVERBOSE);
             }
-            getRuntime().println(JAMSConstants.resources.getString("####################################################################"), JAMSConstants.VVERBOSE);
+            getRuntime().println(JAMS.resources.getString("####################################################################"), JAMS.VVERBOSE);
         }
         setupDataTracer();
     }
@@ -244,7 +244,7 @@ public class JAMSModel extends JAMSContext {
             objOut = new ObjectOutputStream(outStream);
             objOut.writeObject(contextStates);
         } catch (IOException e) {
-            this.getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Unable_to_save_model_state_because,") + e.toString());
+            this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_save_model_state_because,") + e.toString());
         }
 
         return new Snapshot(holdInMemory, outStream.toByteArray(), fileName);
@@ -259,7 +259,7 @@ public class JAMSModel extends JAMSContext {
 
             objIn.close();
         } catch (Exception e) {
-            this.getRuntime().sendErrorMsg(JAMSConstants.resources.getString("Unable_to_deserialize_jamsentity_collection,_because") + e.toString());
+            this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_deserialize_jamsentity_collection,_because") + e.toString());
         }
         restoreEntityCollections(this.getModel(), contextStates);
     }

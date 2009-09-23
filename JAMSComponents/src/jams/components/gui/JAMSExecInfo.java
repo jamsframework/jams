@@ -28,7 +28,7 @@ import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
-import jams.JAMSConstants;
+import jams.JAMS;
 
 /**
  *
@@ -101,7 +101,7 @@ import jams.JAMSConstants;
         logArea.setRows(5);
         logArea.setLineWrap(false);
         logArea.setEditable(false);
-        logArea.setFont(JAMSConstants.STANDARD_FONT);
+        logArea.setFont(JAMS.STANDARD_FONT);
         scrollPanel.setViewportView(logArea);
         
         panel.add(scrollPanel, BorderLayout.CENTER);

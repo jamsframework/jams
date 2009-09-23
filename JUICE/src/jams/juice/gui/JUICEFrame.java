@@ -29,7 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
-import jams.JAMSConstants;
+import jams.JAMS;
 import jams.io.JAMSFileFilter;
 import jams.JAMSProperties;
 import jams.JAMSTools;
@@ -222,7 +222,7 @@ public class JUICEFrame extends JFrame {
         };
         saveAsModelAction.setEnabled(false);
 
-        exitAction = new AbstractAction(JAMSConstants.resources.getString("Exit")) {
+        exitAction = new AbstractAction(JAMS.resources.getString("Exit")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -230,7 +230,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        aboutAction = new AbstractAction(JAMSConstants.resources.getString("About")) {
+        aboutAction = new AbstractAction(JAMS.resources.getString("About")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -307,7 +307,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        runModelAction = new AbstractAction(JAMSConstants.resources.getString("Run_Model")) {
+        runModelAction = new AbstractAction(JAMS.resources.getString("Run_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -341,11 +341,11 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        onlineAction = new AbstractAction(JAMSConstants.resources.getString("JAMS_online...")) {
+        onlineAction = new AbstractAction(JAMS.resources.getString("JAMS_online...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                GUIHelper.openURL(JAMSConstants.resources.getString("JAMS_URL"));
+                GUIHelper.openURL(JAMS.resources.getString("JAMS_URL"));
             }
         };
 
@@ -373,7 +373,7 @@ public class JUICEFrame extends JFrame {
 
         JPanel rtManagerPanel = new JPanel();
         rtManagerPanel.setLayout(new BorderLayout());
-        rtManagerPanel.add(new JLabel(" " + JAMSConstants.resources.getString("Runtime_Manager") + ":"), BorderLayout.NORTH);
+        rtManagerPanel.add(new JLabel(" " + JAMS.resources.getString("Runtime_Manager") + ":"), BorderLayout.NORTH);
         rtManagerPanel.add(new RuntimeManagerPanel(), BorderLayout.CENTER);
 
         JSplitPane leftSplitPane = new JSplitPane();
@@ -396,7 +396,7 @@ public class JUICEFrame extends JFrame {
         getContentPane().add(mainSplitPane, java.awt.BorderLayout.CENTER);
 
         JToolBar toolBar = new JToolBar();
-        //toolBar.setPreferredSize(new Dimension(0, JAMSConstants.TOOLBAR_HEIGHT));
+        //toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
         /*
          * toolbar buttons
@@ -433,25 +433,25 @@ public class JUICEFrame extends JFrame {
 
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
-        infoLogButton.setToolTipText(JAMSConstants.resources.getString("Show_Info_Log..."));
+        infoLogButton.setToolTipText(JAMS.resources.getString("Show_Info_Log..."));
         infoLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/InfoLog.png")));
         toolBar.add(infoLogButton);
 
         JButton errorLogButton = new JButton(errorLogAction);
         errorLogButton.setText("");
-        errorLogButton.setToolTipText(JAMSConstants.resources.getString("Show_Error_Log..."));
+        errorLogButton.setToolTipText(JAMS.resources.getString("Show_Error_Log..."));
         errorLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ErrorLog.png")));
         toolBar.add(errorLogButton);
 
         JButton helpButton = new JButton(onlineAction);
         helpButton.setText("");
-        helpButton.setToolTipText(JAMSConstants.resources.getString("JAMS_online..."));
+        helpButton.setToolTipText(JAMS.resources.getString("JAMS_online..."));
         helpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Browser.png")));
         toolBar.add(helpButton);
 
         JButton exitButton = new JButton(exitAction);
         exitButton.setText("");
-        exitButton.setToolTipText(JAMSConstants.resources.getString("Exit"));
+        exitButton.setToolTipText(JAMS.resources.getString("Exit"));
         exitButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/system-shutdown.png")));
         toolBar.add(exitButton);
 

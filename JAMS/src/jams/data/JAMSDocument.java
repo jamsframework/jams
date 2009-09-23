@@ -26,7 +26,7 @@ import org.w3c.dom.*;
 import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.xml.sax.InputSource;
-import jams.JAMSConstants;
+import jams.JAMS;
 
 /**
  *
@@ -56,7 +56,7 @@ public class JAMSDocument implements Attribute.Document {
         try{
             this.value = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(value)));
         }catch(Exception e){
-            System.out.println(JAMSConstants.resources.getString("cant_parse_string_to_xml_document,_because") + e.toString() + value);
+            System.out.println(JAMS.resources.getString("cant_parse_string_to_xml_document,_because") + e.toString() + value);
         }
     }
   

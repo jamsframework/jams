@@ -8,7 +8,7 @@ package jams.model;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.Serializable;
-import jams.JAMSConstants;
+import jams.JAMS;
 
 /**
  *
@@ -30,7 +30,7 @@ public class Snapshot implements Serializable{
                     fos.write(data);
                     fos.close();
                 }catch(Exception e){
-                    System.out.println(JAMSConstants.resources.getString("Could_not_open_or_write_snapshot_file,_because_") + e.toString());
+                    System.out.println(JAMS.resources.getString("Could_not_open_or_write_snapshot_file,_because_") + e.toString());
                 }
             }
         }
@@ -43,7 +43,7 @@ public class Snapshot implements Serializable{
                     fis.close(); 
                     return snapShotByteArray;
                 }catch(Exception e){
-                    System.out.println(JAMSConstants.resources.getString("Could_not_open_or_read_snapshot_file,_because_") + e.toString());
+                    System.out.println(JAMS.resources.getString("Could_not_open_or_read_snapshot_file,_because_") + e.toString());
                     return null;
                 }
             }else{
