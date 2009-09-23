@@ -21,7 +21,7 @@
  *
  */
 
-package jams;
+package jams.io;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

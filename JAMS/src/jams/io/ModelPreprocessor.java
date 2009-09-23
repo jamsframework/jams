@@ -21,10 +21,11 @@
  *
  */
 
-package jams;
+package jams.io;
 
+import jams.*;
 import java.util.ArrayList;
-import jams.ModelConfig.Setting;
+import jams.io.ModelConfig.Setting;
 import jams.runtime.JAMSRuntime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -58,7 +59,7 @@ public class ModelPreprocessor {
         
         String type = rootElement.getNodeName();
         
-        if ((type == "contextcomponent") || (type == "component") || (type == "model")) {
+        if (type.equals("contextcomponent") || type.equals("component") || type.equals("model")) {
             String compName = rootElement.getAttribute("name");
             
             ArrayList<Setting> list = config.getSettings(compName);
@@ -99,11 +100,11 @@ public class ModelPreprocessor {
             }
         }
         
-        if ((type == "contextcomponent") || (type == "model")) {
+        if (type.equals("contextcomponent") || type.equals("model")) {
             NodeList childs = rootElement.getChildNodes();
             for (int index = 0; index < childs.getLength(); index++) {
                 node = childs.item(index);
-                if (node.getNodeName() == "contextcomponent" || node.getNodeName() == "component") {
+                if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
                     processNode((Element) node);
                 }
             }
