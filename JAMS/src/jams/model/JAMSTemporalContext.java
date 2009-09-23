@@ -106,7 +106,7 @@ public class JAMSTemporalContext extends JAMSContext {
                 }
 
                 @Override
-                public JAMSComponent next() {
+                public Component next() {
                     return null;
                 }
 
@@ -139,7 +139,7 @@ public class JAMSTemporalContext extends JAMSContext {
         }
 
         @Override
-        public JAMSComponent next() {
+        public Component next() {
             // check end of component elements list, if required switch to the next
             // timestep start with the new Component list again
             if (!ce.hasNext() && current.before(lastValue)) {

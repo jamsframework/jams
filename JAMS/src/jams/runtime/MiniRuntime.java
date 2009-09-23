@@ -31,7 +31,7 @@ import jams.JAMS;
 import jams.JAMSProperties;
 import jams.tools.JAMSTools;
 import jams.data.JAMSData;
-import jams.model.JAMSComponent;
+import jams.model.Component;
 import jams.model.JAMSGUIComponent;
 import jams.model.JAMSModel;
 import org.w3c.dom.Document;
@@ -52,7 +52,7 @@ public class MiniRuntime implements JAMSRuntime {
      * test a single component without model, e.g. for debugging purposes.
      * @param component The component to be tested
      */
-    public MiniRuntime(JAMSComponent component) {
+    public MiniRuntime(Component component) {
         JAMSModel model = new JAMSModel(this);
         component.setModel(model);
         component.setContext(model);

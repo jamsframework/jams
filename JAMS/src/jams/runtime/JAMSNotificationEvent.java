@@ -31,17 +31,17 @@ import jams.model.*;
  */
 public class JAMSNotificationEvent extends EventObject {
 
-    protected JAMSComponent source;
+    protected Component source;
     protected String message;
 
     /** Creates a new instance of JAMSNotificationEvent */
-    public JAMSNotificationEvent(JAMSComponent source, String message) {
+    public JAMSNotificationEvent(Component source, String message) {
         super(source);
         this.source = source;
         this.message = message;
     }
 
-    public JAMSComponent getComponent() {
+    public Component getComponent() {
         return source;
     }
 }

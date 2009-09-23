@@ -39,7 +39,7 @@ import java.util.ArrayList;
  */
 public class ModelLoader {
 
-    private HashMap<String, JAMSComponent> componentRepository = new HashMap<String, JAMSComponent>();
+    private HashMap<String, Component> componentRepository = new HashMap<String, Component>();
 
     private HashMap<String, String> constants = new HashMap<String, String>();
 
@@ -47,7 +47,7 @@ public class ModelLoader {
 
     private JAMSModel jamsModel;
 
-    transient private HashMap<JAMSComponent, ArrayList<Field>> nullFields = new HashMap<JAMSComponent, ArrayList<Field>>();
+    transient private HashMap<Component, ArrayList<Field>> nullFields = new HashMap<Component, ArrayList<Field>>();
 
     private HashMap<String, Integer> idMap = new HashMap<String, Integer>();
 
@@ -80,7 +80,7 @@ public class ModelLoader {
 
         Element root, element;
         Node node;
-        JAMSComponent topComponent;
+        Component topComponent;
 
         root = modelDoc.getDocumentElement();
 
@@ -130,7 +130,7 @@ public class ModelLoader {
         jamsModel.getRuntime().println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
 
         // create the model
-        ArrayList<JAMSComponent> childComponentList = new ArrayList<JAMSComponent>();
+        ArrayList<Component> childComponentList = new ArrayList<Component>();
         for (int index = 0; index < childs.getLength(); index++) {
             node = childs.item(index);
             if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
@@ -172,19 +172,19 @@ public class ModelLoader {
     /**
      * Recursively create all components used in the model and add them to the component repository for easy access
      */
-    private JAMSComponent loadComponent(Element root, JAMSComponent rootComponent) throws ModelSpecificationException {
+    private Component loadComponent(Element root, Component rootComponent) throws ModelSpecificationException {
 
         String componentName, componentClassName, varName, varClassName = "", varValue;
-        JAMSComponent component, childComponent;
+        Component component, childComponent;
         JAMSData variable;
         Class<?> componentClazz = null, varClazz = null;
-        ArrayList<JAMSComponent> childComponentList = new ArrayList<JAMSComponent>();
+        ArrayList<Component> childComponentList = new ArrayList<Component>();
 
         componentName = root.getAttribute("name");
         componentClassName = root.getAttribute("class");
 
         // check if a component with that name is already existing
-        JAMSComponent existingComponent = this.componentRepository.get(componentName);
+        Component existingComponent = this.componentRepository.get(componentName);
         if (existingComponent != null) {
             throw new ModelSpecificationException(JAMS.resources.getString("Component_with_name_") + componentName +
                     JAMS.resources.getString("_is_already_exisiting_(") + existingComponent.getClass() +
@@ -198,14 +198,14 @@ public class ModelLoader {
         component = null;
         try {
 
-            // create the JAMSComponent object
+            // create the Component object
             //jamsModel.getRuntime().println(componentClassName, JAMS.VERBOSE);
 
             // try to load the class
             componentClazz = loader.loadClass(componentClassName);
 
             // generate an instance of that class
-            component = (JAMSComponent) componentClazz.newInstance();
+            component = (Component) componentClazz.newInstance();
 
             // do some basic setup
             component.setModel(jamsModel);
@@ -233,7 +233,7 @@ public class ModelLoader {
             jamsModel.getRuntime().handle(t, false);
         }
 
-        // put the JAMSComponent object into the component repository
+        // put the Component object into the component repository
         this.componentRepository.put(componentName, component);
 
         // get element child nodes
@@ -308,7 +308,7 @@ public class ModelLoader {
                         } else if (element.hasAttribute("attribute")) {
 
                             // obtain providing context
-                            JAMSComponent context = this.componentRepository.get(element.getAttribute("context"));
+                            Component context = this.componentRepository.get(element.getAttribute("context"));
 
                             if (context == null) {
                                 // throw new ModelSpecificationException("Component " + componentName + ": Component \"" + element.getAttribute("context") + "\" not available!");
@@ -398,11 +398,11 @@ public class ModelLoader {
         return component;
     }
 
-    public HashMap<JAMSComponent, ArrayList<Field>> getNullFields() {
+    public HashMap<Component, ArrayList<Field>> getNullFields() {
         return nullFields;
     }
 
-    public void setNullFields(HashMap<JAMSComponent, ArrayList<Field>> nullFields) {
+    public void setNullFields(HashMap<Component, ArrayList<Field>> nullFields) {
         this.nullFields = nullFields;
     }
 
@@ -420,7 +420,7 @@ public class ModelLoader {
         }
     }
 
-    private ArrayList<Field> createMembers(JAMSComponent component) throws IllegalAccessException, InstantiationException {
+    private ArrayList<Field> createMembers(Component component) throws IllegalAccessException, InstantiationException {
 
         Object o;
         Class dataType;

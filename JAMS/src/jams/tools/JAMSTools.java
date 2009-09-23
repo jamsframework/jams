@@ -22,7 +22,7 @@
  */
 package jams.tools;
 
-import jams.model.JAMSComponent;
+import jams.model.Component;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -189,7 +189,7 @@ public class JAMSTools {
      * @throws java.lang.reflect.InvocationTargetException
      * @throws java.lang.IllegalArgumentException
      */
-    public static void setAttribute(JAMSComponent component, String attribName, Object value) throws SecurityException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, IllegalArgumentException {
+    public static void setAttribute(Component component, String attribName, Object value) throws SecurityException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, IllegalArgumentException {
         Class<?> componentClazz = component.getClass();
         Class<?> attribClazz = value.getClass();
         String methodName = "set" + Character.toUpperCase(attribName.charAt(0)) + attribName.substring(1);
@@ -211,7 +211,7 @@ public class JAMSTools {
      * @throws java.lang.reflect.InvocationTargetException
      * @throws java.lang.IllegalArgumentException
      */
-    public static Object setField(JAMSComponent component, Field field, Object value) throws SecurityException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, IllegalArgumentException {
+    public static Object setField(Component component, Field field, Object value) throws SecurityException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, IllegalArgumentException {
         Object data;
         if (field.getModifiers() == Modifier.PUBLIC) {
             // if field is public, set it directly
@@ -237,7 +237,7 @@ public class JAMSTools {
      * @throws java.lang.NoSuchMethodException
      * @throws java.lang.IllegalAccessException
      */
-    public static Object getAttribute(JAMSComponent component, String attribName) throws IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public static Object getAttribute(Component component, String attribName) throws IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Class<?> componentClazz = component.getClass();
         String methodName = "get" + Character.toUpperCase(attribName.charAt(0)) + attribName.substring(1);
         Method m = componentClazz.getDeclaredMethod(methodName);

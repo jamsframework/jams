@@ -24,8 +24,6 @@
 
 package jams.model;
 
-import java.io.Serializable;
-
 /**
  *
  * @author S. Kralisch
@@ -37,7 +35,7 @@ import java.io.Serializable;
         date="27. Juni 2005",
         description="This component represents a the base class for any JAMS " +
         "component, which is the main model building block in JAMS")
-        public class JAMSComponent implements Serializable {
+        public class JAMSComponent implements Component {
     
     private String instanceName = getClass().getName();
     private JAMSContext context = null;

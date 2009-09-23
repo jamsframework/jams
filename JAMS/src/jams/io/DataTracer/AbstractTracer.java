@@ -64,7 +64,7 @@ public abstract class AbstractTracer implements DataTracer {
 
     @Override
     public void updateDateAccessors(){
-        HashMap<String, DataAccessor> dataObjectHash = context.getDaHash();
+        HashMap<String, DataAccessor> dataObjectHash = context.getDataAccessors();
         ArrayList<DataAccessor> accessorObjectList = new ArrayList<DataAccessor>();
         this.attributeNames = new ArrayList<String>();
 

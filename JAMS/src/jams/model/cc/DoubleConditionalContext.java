@@ -58,7 +58,7 @@ public class DoubleConditionalContext extends JAMSContext {
 
     class RunEnumerator implements ComponentEnumerator {
 
-        JAMSComponent[] compArray = getCompArray();
+        Component[] compArray = getCompArray();
         boolean next = true;
 
         @Override
@@ -72,7 +72,7 @@ public class DoubleConditionalContext extends JAMSContext {
         }
 
         @Override
-        public JAMSComponent next() {
+        public Component next() {
             // if condition is true return first component, else second component
             if (value1.getValue() == value2.getValue()) {
                 return compArray[0];

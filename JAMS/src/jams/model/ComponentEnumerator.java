@@ -34,7 +34,7 @@ import java.io.Serializable;
 public interface ComponentEnumerator extends Serializable{
     
     boolean hasNext();
-    JAMSComponent next();
+    Component next();
     void reset();
     
 }

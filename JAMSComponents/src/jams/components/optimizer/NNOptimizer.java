@@ -20,7 +20,7 @@ import jams.data.JAMSDouble;
 import jams.data.JAMSInteger;
 import jams.data.JAMSString;
 import jams.io.GenericDataWriter;
-import jams.model.JAMSComponent;
+import jams.model.Component;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSContext;
 import jams.model.JAMSVarDescription;
@@ -264,7 +264,7 @@ public class NNOptimizer extends JAMSContext {
         }
         runEnumerator.reset();
         while(runEnumerator.hasNext() && doRun) {
-            JAMSComponent comp = runEnumerator.next();
+            Component comp = runEnumerator.next();
             try {
                 comp.init();
             } catch (Exception e) {
@@ -274,7 +274,7 @@ public class NNOptimizer extends JAMSContext {
         
         runEnumerator.reset();
         while(runEnumerator.hasNext() && doRun) {
-            JAMSComponent comp = runEnumerator.next();
+            Component comp = runEnumerator.next();
             try {
                 comp.run();
             } catch (Exception e) {
@@ -284,7 +284,7 @@ public class NNOptimizer extends JAMSContext {
         
         runEnumerator.reset();
         while(runEnumerator.hasNext() && doRun) {
-            JAMSComponent comp = runEnumerator.next();
+            Component comp = runEnumerator.next();
             try {
                 comp.cleanup();
             } catch (Exception e) {

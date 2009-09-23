@@ -195,7 +195,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
 //        // create IDs for all used components
 //        HashSet<Class> componentClassSet = new HashSet<Class>();
-//        for (JAMSComponent component : modelLoader.getComponentRepository().values()) {
+//        for (Component component : modelLoader.getComponentRepository().values()) {
 //            componentClassSet.add(component.getClass());
 //        }
 //

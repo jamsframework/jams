@@ -26,6 +26,7 @@ import jams.data.JAMSEntity;
 import jams.data.JAMSEntityCollection;
 import jams.data.EntityEnumerator;
 import jams.data.JAMSInteger;
+import jams.model.Component;
 import jams.model.JAMSComponent;
 import jams.model.ComponentEnumerator;
 import jams.model.JAMSContext;
@@ -78,7 +79,7 @@ public class JAMSConcurrentContext extends JAMSContext {
     @Override
     public void init() {
         super.init();
-        JAMSComponent[] compArray = getCompArray();
+        Component[] compArray = getCompArray();
         tasks = new RunnableComponent[compArray.length];
         for (int i = 0; i < compArray.length; i++) {
             tasks[i] = new RunnableComponent(compArray[i]);

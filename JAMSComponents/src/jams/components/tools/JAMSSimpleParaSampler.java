@@ -111,7 +111,7 @@ public class JAMSSimpleParaSampler extends JAMSContext {
                         
             runEnumerator.reset();
             while(runEnumerator.hasNext()) {
-                JAMSComponent comp = runEnumerator.next();
+                Component comp = runEnumerator.next();
                 //comp.updateInit();
                 try {
                     comp.init();
@@ -122,7 +122,7 @@ public class JAMSSimpleParaSampler extends JAMSContext {
             
             runEnumerator.reset();
             while(runEnumerator.hasNext()) {
-                JAMSComponent comp = runEnumerator.next();
+                Component comp = runEnumerator.next();
                 //comp.updateRun();
 //                comp.updateReadEntity();
                 try {
@@ -135,7 +135,7 @@ public class JAMSSimpleParaSampler extends JAMSContext {
             
             runEnumerator.reset();
             while(runEnumerator.hasNext()) {
-                JAMSComponent comp = runEnumerator.next();
+                Component comp = runEnumerator.next();
                 try {
                     comp.cleanup();
                 } catch (Exception e) {
@@ -172,7 +172,7 @@ public class JAMSSimpleParaSampler extends JAMSContext {
             return (nextValue || nextComp) ;
         }
         
-        public JAMSComponent next() {
+        public Component next() {
             // check end of component elements list, if required switch to the next
             // value and start with the new Component list again
             if (!ce.hasNext() && (value.getValue() <= (upperBound.getValue()-stepSize))) {

@@ -6,7 +6,7 @@
 package jams.model.metaoptimizer;
 
 import jams.tools.JAMSTools;
-import jams.model.JAMSComponent;
+import jams.model.Component;
 import jams.model.JAMSContext;
 import jams.model.JAMSModel;
 import jams.model.JAMSSpatialContext;
@@ -136,7 +136,7 @@ public class metaModelOptimizer {
     
     //this function return an attribute r/w set for each context
     //the r/w set contains a list for every attribute which components are reading and writing that attr.
-    static public Hashtable<String,AttributeReadWriteSet> getAttributeReadWriteSet(Node root,JAMSComponent parent,String currentContext,Hashtable<String,String> contextEntityAttributes) {                                
+    static public Hashtable<String,AttributeReadWriteSet> getAttributeReadWriteSet(Node root,Component parent,String currentContext,Hashtable<String,String> contextEntityAttributes) {                                
         NodeList childs = root.getChildNodes();
         
         Hashtable<String,AttributeReadWriteSet> table = new Hashtable<String,AttributeReadWriteSet>();        
@@ -147,7 +147,7 @@ public class metaModelOptimizer {
             if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("model")) {                
                 Element elem = (Element)node;
                 String name = elem.getAttribute("name");
-                JAMSComponent comp = ((JAMSContext)parent).getComponent(name);
+                Component comp = ((JAMSContext)parent).getComponent(name);
                 //recursive procedure
                 Hashtable<String,AttributeReadWriteSet> subTable = getAttributeReadWriteSet(node,comp,name,contextEntityAttributes);
                 table = mergeTables(subTable,table);
@@ -155,7 +155,7 @@ public class metaModelOptimizer {
             if (node.getNodeName().equals("component")) {  
                 Element elem = (Element)node;
                 String name = elem.getAttribute("name");
-                JAMSComponent comp = ((JAMSContext)parent).getComponent(name);
+                Component comp = ((JAMSContext)parent).getComponent(name);
                 Hashtable<String,AttributeReadWriteSet> subTable = getAttributeReadWriteSet(node,comp,currentContext,contextEntityAttributes);
                 table = mergeTables(subTable,table);                
             }

@@ -56,7 +56,7 @@ public class BooleanConditionalContext extends JAMSContext {
     
     class RunEnumerator implements ComponentEnumerator {
 
-        JAMSComponent[] compArray = getCompArray();
+        Component[] compArray = getCompArray();
         boolean next = true;
 
         @Override
@@ -70,7 +70,7 @@ public class BooleanConditionalContext extends JAMSContext {
         }
 
         @Override
-        public JAMSComponent next() {
+        public Component next() {
             // if condition is true return first component, else second component
             if (condition.getValue()) {
                 return compArray[0];

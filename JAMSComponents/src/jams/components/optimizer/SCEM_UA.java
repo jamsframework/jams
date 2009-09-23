@@ -238,7 +238,7 @@ title="Title",
         
         runEnumerator.reset();
         while(runEnumerator.hasNext() && doRun) {
-            JAMSComponent comp = runEnumerator.next();
+            Component comp = runEnumerator.next();
             try {
                 comp.init();
             } catch (Exception e) {
@@ -248,7 +248,7 @@ title="Title",
         
         runEnumerator.reset();
         while(runEnumerator.hasNext() && doRun) {
-            JAMSComponent comp = runEnumerator.next();
+            Component comp = runEnumerator.next();
             try {
                 comp.run();
             } catch (Exception e) {
@@ -258,7 +258,7 @@ title="Title",
         
         runEnumerator.reset();
         while(runEnumerator.hasNext() && doRun) {
-            JAMSComponent comp = runEnumerator.next();
+            Component comp = runEnumerator.next();
             try {
                 comp.cleanup();
             } catch (Exception e) {

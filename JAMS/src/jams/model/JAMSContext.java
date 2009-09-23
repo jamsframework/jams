@@ -53,7 +53,7 @@ public class JAMSContext extends JAMSComponent {
     private JAMSEntityCollection entities;
 
 //    private JAMSEntity currentEntity;
-    protected ArrayList<JAMSComponent> components = new ArrayList<JAMSComponent>();
+    protected ArrayList<Component> components = new ArrayList<Component>();
 
     protected ComponentEnumerator runEnumerator = null;
 
@@ -94,8 +94,8 @@ public class JAMSContext extends JAMSComponent {
      * @param j The position of the second component
      */
     public void exchange(int i, int j) {
-        JAMSComponent oi = components.get(i);
-        JAMSComponent oj = components.get(j);
+        Component oi = components.get(i);
+        Component oj = components.get(j);
         components.set(i, oj);
         components.set(j, oi);
     }
@@ -104,7 +104,7 @@ public class JAMSContext extends JAMSComponent {
      * Add a single component to this context
      * @param c The component to be added
      */
-    public void addComponent(JAMSComponent c) {
+    public void addComponent(Component c) {
         components.add(c);
     }
 
@@ -129,9 +129,9 @@ public class JAMSContext extends JAMSComponent {
      * @param components Set the child components of this context and set this
      * object as their context
      */
-    public void setComponents(ArrayList<JAMSComponent> components) {
+    public void setComponents(ArrayList<Component> components) {
         this.components = components;
-        Iterator<JAMSComponent> i = components.iterator();
+        Iterator<Component> i = components.iterator();
         while (i.hasNext()) {
             i.next().setContext(this);
         }
@@ -142,7 +142,7 @@ public class JAMSContext extends JAMSComponent {
      * @return An enumerator iterating over all child components depending on
      * this contexts functionality
      */
-    public ComponentEnumerator getRunEnumerator() {
+    protected ComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
     }
 
@@ -150,7 +150,7 @@ public class JAMSContext extends JAMSComponent {
      * 
      * @return An enumerator iterating once over all child components
      */
-    public ComponentEnumerator getChildrenEnumerator() {
+    protected ComponentEnumerator getChildrenEnumerator() {
         return new ChildrenEnumerator();
     }
 
@@ -158,8 +158,8 @@ public class JAMSContext extends JAMSComponent {
      * 
      * @return All child components as array
      */
-    public JAMSComponent[] getCompArray() {
-        JAMSComponent[] comps = new JAMSComponent[components.size()];
+    protected Component[] getCompArray() {
+        Component[] comps = new Component[components.size()];
         components.toArray(comps);
         return comps;
     }
@@ -172,7 +172,7 @@ public class JAMSContext extends JAMSComponent {
      * @param accessType The permission type (DataAccessor.READ_ACCESS, 
      * DataAccessor.WRITE_ACCESS or DataAccessor.READWRITE_ACCESS)
      */
-    public void addAccess(JAMSComponent user, String varName, String attributeName, int accessType) {
+    public void addAccess(Component user, String varName, String attributeName, int accessType) {
         accessSpecs.add(new AccessSpec(user, varName, attributeName, accessType));
     }
 
@@ -190,14 +190,14 @@ public class JAMSContext extends JAMSComponent {
      * get registered attributes     
      * @return registered attributes
      */
-    public ArrayList<AttributeSpec> getAttributes() {
-        ArrayList<AttributeSpec> attributes = new ArrayList<AttributeSpec>();
-        for (int i = 0; i < this.attributeSpecs.size(); i++) {
-            AttributeSpec orginial = attributeSpecs.get(i);
-            attributes.add(new AttributeSpec(orginial.attributeName, orginial.className, orginial.value));
-        }
-        return attributes;
-    }
+//    public ArrayList<AttributeSpec> getAttributes() {
+//        ArrayList<AttributeSpec> attributes = new ArrayList<AttributeSpec>();
+//        for (int i = 0; i < this.attributeSpecs.size(); i++) {
+//            AttributeSpec orginial = attributeSpecs.get(i);
+//            attributes.add(new AttributeSpec(orginial.attributeName, orginial.className, orginial.value));
+//        }
+//        return attributes;
+//    }
 
     /**
      * Sets the model for this context. Additionally an observer of the runtimes
@@ -455,7 +455,7 @@ public class JAMSContext extends JAMSComponent {
             // if there is no store create a NullTracer (does nothing) and exit
             //this.dataTracers = new NullTracer();
             for (int j = 0; j < this.components.size(); j++) {
-                JAMSComponent comp = components.get(j);
+                Component comp = components.get(j);
                 if (comp instanceof JAMSContext) {
                     ((JAMSContext) comp).setupDataTracer();
                 }
@@ -471,7 +471,7 @@ public class JAMSContext extends JAMSComponent {
         initTracerDataAccess();
 
         for (int j = 0; j < this.components.size(); j++) {
-            JAMSComponent comp = components.get(j);
+            Component comp = components.get(j);
             if (comp instanceof JAMSContext) {
                 ((JAMSContext) comp).setupDataTracer();
             }
@@ -510,7 +510,7 @@ public class JAMSContext extends JAMSComponent {
         // initialize init/cleanup enumerator and start iteration
         initCleanupEnumerator.reset();
         while (initCleanupEnumerator.hasNext() && doRun) {
-            JAMSComponent comp = initCleanupEnumerator.next();
+            Component comp = initCleanupEnumerator.next();
             //comp.updateInit();
             try {
                 comp.init();
@@ -669,7 +669,7 @@ public class JAMSContext extends JAMSComponent {
 
         runEnumerator.reset();
         while (runEnumerator.hasNext() && doRun) {
-            JAMSComponent comp = runEnumerator.next();
+            Component comp = runEnumerator.next();
             //comp.updateRun();
             try {
                 comp.run();
@@ -696,7 +696,7 @@ public class JAMSContext extends JAMSComponent {
         initCleanupEnumerator.reset();
 
         while (initCleanupEnumerator.hasNext() && doRun) {
-            JAMSComponent comp = initCleanupEnumerator.next();
+            Component comp = initCleanupEnumerator.next();
             try {
                 comp.cleanup();
             } catch (Exception e) {
@@ -709,13 +709,13 @@ public class JAMSContext extends JAMSComponent {
 
     }
 
-    public HashMap<String, DataAccessor> getDaHash() {
+    public HashMap<String, DataAccessor> getDataAccessors() {
         return daHash;
     }
 
     class ChildrenEnumerator implements ComponentEnumerator {
 
-        JAMSComponent[] compArray = getCompArray();
+        Component[] compArray = getCompArray();
 
         int index = 0;
 
@@ -725,7 +725,7 @@ public class JAMSContext extends JAMSComponent {
         }
 
         @Override
-        public JAMSComponent next() {
+        public Component next() {
             return compArray[index++];
         }
 
@@ -751,7 +751,7 @@ public class JAMSContext extends JAMSComponent {
         }
 
         @Override
-        public JAMSComponent next() {
+        public Component next() {
             // check end of component elements list, if required switch to the next
             // entity and start with the new Component list again
             if (!ce.hasNext() && ee.hasNext()) {
@@ -776,13 +776,13 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
-    public JAMSComponent getComponent(String name) {
+    public Component getComponent(String name) {
         for (int i = 0; i < components.size(); i++) {
             if (components.get(i).getInstanceName().equals(name)) {
                 return components.get(i);
             }
             if (components.get(i) instanceof JAMSContext) {
-                JAMSComponent comp = ((JAMSContext) components.get(i)).getComponent(name);
+                Component comp = ((JAMSContext) components.get(i)).getComponent(name);
                 if (comp != null) {
                     return comp;
                 }
@@ -791,7 +791,7 @@ public class JAMSContext extends JAMSComponent {
         return null;
     }
 
-    protected boolean componentInContext(JAMSComponent component) {
+    protected boolean componentInContext(Component component) {
         for (int i = 0; i < components.size(); i++) {
             if (components.get(i).getInstanceName().equals(component.getInstanceName())) {
                 return true;
@@ -805,7 +805,7 @@ public class JAMSContext extends JAMSComponent {
         return false;
     }
 
-    protected int componentAllreadyProcessed(JAMSComponent position, JAMSComponent component) {
+    protected int componentAllreadyProcessed(Component position, Component component) {
         if (this.getInstanceName().equals(position.getInstanceName())) {
             return 0;
         }
@@ -813,7 +813,7 @@ public class JAMSContext extends JAMSComponent {
             return 1;
         }
         for (int j = 0; j < this.components.size(); j++) {
-            JAMSComponent c = this.components.get(j);
+            Component c = this.components.get(j);
             if (c == position) {
                 return 0;
             }
@@ -835,7 +835,7 @@ public class JAMSContext extends JAMSComponent {
      * looks if component object contains valid data
      * used when making a model snapshot
      */
-    protected int containsValidData(JAMSComponent position, Object componentObj) {
+    protected int containsValidData(Component position, Object componentObj) {
         /* three steps:
          * 1. get name of attribute to componentObj in this context
          *    <context> attribName specifies attribute fully
@@ -856,7 +856,7 @@ public class JAMSContext extends JAMSComponent {
         }
 
         //search in accessSpecs for components which use this attrib
-        JAMSComponent component = null;
+        Component component = null;
         if (attribName != null) {
             for (int i = 0; i < this.accessSpecs.size(); i++) {
                 if (this.accessSpecs.get(i).attributeName.compareTo(attribName) == 0) {
@@ -873,7 +873,7 @@ public class JAMSContext extends JAMSComponent {
         }
         //look if there is an child context which uses this componentObj
         for (int j = 0; j < components.size(); j++) {
-            JAMSComponent c = components.get(j);
+            Component c = components.get(j);
             if (c.getInstanceName().equals(position.getInstanceName())) {
                 return 0;
             }
@@ -891,7 +891,7 @@ public class JAMSContext extends JAMSComponent {
      * which means that data source component is executed before currentComponent
      * used when making a model snapshot
      */
-    protected void updateEntityData(JAMSComponent currentComponent) {
+    protected void updateEntityData(Component currentComponent) {
         //if this context has not been executed at all, exit                
         if (this.getModel().componentAllreadyProcessed(currentComponent, this) != 1) {
             return;
@@ -929,7 +929,7 @@ public class JAMSContext extends JAMSComponent {
         return getEntities().getEntities().size();
     }
 
-    public class AttributeSpec implements Serializable {
+    class AttributeSpec implements Serializable {
 
         public String attributeName, className, value;
 
@@ -940,10 +940,9 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
-    protected class AccessSpec
-            implements Serializable {
+    class AccessSpec implements Serializable {
 
-        JAMSComponent component;
+        Component component;
 
         String varName;
 
@@ -951,7 +950,7 @@ public class JAMSContext extends JAMSComponent {
 
         int accessType;
 
-        public AccessSpec(JAMSComponent component, String varName, String attributeName, int accessType) {
+        public AccessSpec(Component component, String varName, String attributeName, int accessType) {
             this.component = component;
             this.varName = varName;
             this.attributeName = attributeName;
@@ -959,7 +958,7 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
-    public JAMSEntityCollection getEntities() {
+    public Attribute.EntityCollection getEntities() {
         return entities;
     }
 

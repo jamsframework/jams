@@ -15,7 +15,7 @@ import java.util.Vector;
 import jams.data.*;
 import jams.dataaccess.DataAccessor;
 import jams.io.DataTracer.*;
-import jams.model.JAMSComponent;
+import jams.model.Component;
 import jams.model.JAMSContext;
 import jams.model.Snapshot;
 import jams.model.JAMSVarDescription;
@@ -381,7 +381,7 @@ public abstract class Optimizer extends JAMSContext {
         }        
         runEnumerator.reset();
         while (runEnumerator.hasNext() && doRun) {
-            JAMSComponent comp = runEnumerator.next();
+            Component comp = runEnumerator.next();
             try {
                 comp.init();
             } catch (Exception e) {                
@@ -392,7 +392,7 @@ public abstract class Optimizer extends JAMSContext {
 
         runEnumerator.reset();
         while (runEnumerator.hasNext() && doRun) {
-            JAMSComponent comp = runEnumerator.next();
+            Component comp = runEnumerator.next();
             try {
                 comp.run();
             } catch (Exception e) {
@@ -403,7 +403,7 @@ public abstract class Optimizer extends JAMSContext {
 
         runEnumerator.reset();
         while (runEnumerator.hasNext() && doRun) {
-            JAMSComponent comp = runEnumerator.next();
+            Component comp = runEnumerator.next();
             try {
                 comp.cleanup();
             } catch (Exception e) {
