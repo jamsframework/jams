@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.gui;
+package jams.ui.gui;
 
 import java.awt.*;
 import java.net.URL;

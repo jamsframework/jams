@@ -42,7 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.WindowConstants;
-import jams.gui.GUIHelper;
+import jams.tools.GUIHelper;
 import jams.juice.ComponentDescriptor;
 import jams.juice.JUICE;
 

@@ -21,7 +21,7 @@
  *
  */
 
-package jams.gui.input;
+package jams.ui.gui.input;
 
 /**
  *

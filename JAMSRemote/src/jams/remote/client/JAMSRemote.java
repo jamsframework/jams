@@ -22,7 +22,7 @@
  */
 package jams.remote.client;
 
-import jams.gui.JAMSSplash;
+import jams.ui.gui.JAMSSplash;
 import jams.io.JAMSCmdLine;
 import jams.ui.JAMSui;
 

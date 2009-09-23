@@ -22,7 +22,7 @@
  */
 package jams.ui.gui;
 
-import jams.gui.*;
+import jams.tools.GUIHelper;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -53,10 +53,11 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 import jams.*;
-import jams.gui.input.InputComponent;
+import jams.ui.gui.input.InputComponent;
 import jams.io.ParameterProcessor;
 import jams.runtime.StandardRuntime;
 import jams.runtime.JAMSRuntime;
+import jams.ui.gui.input.InputComponentFactory;
 import java.awt.Frame;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -438,7 +439,7 @@ public class JAMSLauncher extends JFrame {
             if (!typeName.startsWith(prefix)) {
                 typeName = prefix + typeName;
             }
-            ic = GUIHelper.createInputComponent(Class.forName(typeName));
+            ic = InputComponentFactory.createInputComponent(Class.forName(typeName));
 
             StringTokenizer tok = new StringTokenizer(property.getAttribute("range"), ";");
             if (tok.countTokens() == 2) {

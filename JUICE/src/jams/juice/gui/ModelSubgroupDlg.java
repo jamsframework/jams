@@ -40,7 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import jams.gui.GUIHelper;
+import jams.tools.GUIHelper;
 import jams.juice.ModelProperties.Group;
 import jams.juice.JUICE;
 

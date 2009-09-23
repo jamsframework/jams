@@ -33,12 +33,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import jams.gui.GUIHelper;
-import jams.gui.input.InputComponent;
-import jams.gui.input.ValueChangeListener;
+import jams.tools.GUIHelper;
+import jams.ui.gui.input.InputComponent;
+import jams.ui.gui.input.ValueChangeListener;
 import java.awt.GridBagConstraints;
 import javax.swing.BorderFactory;
 import jams.juice.JUICE;
+import jams.ui.gui.input.InputComponentFactory;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import javax.swing.AbstractAction;
@@ -90,16 +91,16 @@ public class ModelEditPanel extends JPanel {
         GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Date:")), 1, 3, 1, 1, 0, 0);
         GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Description:")), 1, 4, 1, 1, 0, 0);
 
-        workspace = GUIHelper.createInputComponent(JAMSDirName.class);
+        workspace = InputComponentFactory.createInputComponent(JAMSDirName.class);
         workspace.setLength(TEXTFIELD_WIDTH);
 
-        author = GUIHelper.createInputComponent(JAMSString.class);
+        author = InputComponentFactory.createInputComponent(JAMSString.class);
         author.setLength(TEXTFIELD_WIDTH);
 
-        date = GUIHelper.createInputComponent(JAMSCalendar.class);
+        date = InputComponentFactory.createInputComponent(JAMSCalendar.class);
         date.setLength(TEXTFIELD_WIDTH);
 
-        helpBaseURL = GUIHelper.createInputComponent(JAMSString.class);
+        helpBaseURL = InputComponentFactory.createInputComponent(JAMSString.class);
         helpBaseURL.setLength(TEXTFIELD_WIDTH);
 
         description = new JTextPane();

@@ -1,6 +1,6 @@
 /*
- * FloatInput.java
- * Created on 7. September 2006, 10:47
+ * TextInput.java
+ * Created on 29. August 2006, 15:15
  *
  * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena
@@ -20,11 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.gui.input;
+package jams.ui.gui.input;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -35,17 +34,13 @@ import javax.swing.event.DocumentListener;
  *
  * @author S. Kralisch
  */
-public class FloatInput extends JPanel implements InputComponent {
+public class TextInput extends JPanel implements InputComponent {
 
     private JTextField text = new JTextField();
-
     private ValueChangeListener l;
 
-    private String boundaryString = null;
-
-    public FloatInput() {
+    public TextInput() {
         super();
-        setRange((-1 * Double.MAX_VALUE) + 1, Double.MAX_VALUE);
         setLayout(new BorderLayout());
         add(text, BorderLayout.WEST);
     }
@@ -63,43 +58,42 @@ public class FloatInput extends JPanel implements InputComponent {
     }
 
     public void setRange(double lower, double upper) {
-        this.boundaryString = "[" + lower + "..." + upper + "]";
-        this.setInputVerifier(new FloatIntervalVerifier(lower, upper));
     }
-
+    
     public boolean verify() {
-        return this.getInputVerifier().verify(text);
+        return true;
     }
 
     public int getErrorCode() {
-        return ((FloatIntervalVerifier) this.getInputVerifier()).result;
+        return INPUT_OK;
     }
 
     public void setLength(int length) {
+        text.setColumns(length);
     }
-
+    
     public void addValueChangeListener(ValueChangeListener l) {
         this.l = l;
         this.text.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                FloatInput.this.l.valueChanged();
+                TextInput.this.l.valueChanged();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                FloatInput.this.l.valueChanged();
+                TextInput.this.l.valueChanged();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                FloatInput.this.l.valueChanged();
+                TextInput.this.l.valueChanged();
             }
         });
     }
-    private Color oldColor;
 
+    private Color oldColor;
     public void setMarked(boolean marked) {
         if (marked == true) {
             oldColor = text.getBackground();
@@ -110,42 +104,7 @@ public class FloatInput extends JPanel implements InputComponent {
     }
 
     public void setHelpText(String text) {
-        if (this.boundaryString != null) {
-            text = this.boundaryString + "<br>" + text;
-        }
         text = "<html>" + text + "</html>";
         getComponent().setToolTipText(text);
-    }
-
-    class FloatIntervalVerifier extends InputVerifier {
-
-        double lower, upper;
-
-        int result;
-
-        public FloatIntervalVerifier(double lower, double upper) {
-            this.lower = lower;
-            this.upper = upper;
-        }
-
-        @Override
-        public boolean verify(JComponent input) {
-
-            double value;
-
-            try {
-                value = Double.parseDouble(((JTextField) input).getText());
-                if ((value >= lower) && (value <= upper)) {
-                    result = InputComponent.INPUT_OK;
-                    return true;
-                } else {
-                    result = InputComponent.INPUT_OUT_OF_RANGE;
-                    return false;
-                }
-            } catch (NumberFormatException nfe) {
-                result = InputComponent.INPUT_WRONG_FORMAT;
-            }
-            return false;
-        }
     }
 }

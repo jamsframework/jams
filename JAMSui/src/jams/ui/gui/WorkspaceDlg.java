@@ -20,11 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.gui;
+package jams.ui.gui;
 
-import jams.gui.input.BooleanInput;
-import jams.gui.input.InputComponent;
-import jams.gui.input.TextInput;
+import jams.tools.GUIHelper;
+import jams.ui.gui.input.BooleanInput;
+import jams.ui.gui.input.InputComponent;
+import jams.ui.gui.input.TextInput;
 import jams.workspace.JAMSWorkspace;
 import java.awt.BorderLayout;
 import java.awt.Dimension;

@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jams.gui;
+package jams.ui.gui;
 
+import jams.tools.GUIHelper;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -17,7 +18,7 @@ import javax.swing.JTextPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.JAMS;
 
 /**

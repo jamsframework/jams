@@ -6,7 +6,7 @@
  * @version 1.0.0
  */
  
-package jams.gui;
+package jams.ui.gui.input;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

@@ -24,12 +24,8 @@ package jams.ui.gui;
 
 import jams.JAMS;
 import jams.JAMSProperties;
-import jams.JAMSTools;
-import jams.gui.AboutDlg;
-import jams.gui.GUIHelper;
-import jams.gui.LogViewDlg;
-import jams.gui.PropertyDlg;
-import jams.gui.RuntimeManagerPanel;
+import jams.tools.JAMSTools;
+import jams.tools.GUIHelper;
 import jams.io.JAMSFileFilter;
 import jams.io.ParameterProcessor;
 import jams.io.XMLIO;

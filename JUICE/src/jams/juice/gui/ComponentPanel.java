@@ -47,7 +47,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import jams.gui.GUIHelper;
+import jams.tools.GUIHelper;
 import jams.model.JAMSModel;
 import java.awt.Font;
 import javax.swing.UIManager;

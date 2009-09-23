@@ -23,10 +23,10 @@
 package jams.ui;
 
 import jams.JAMSProperties;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import java.io.*;
 import javax.swing.UIManager;
-import jams.gui.JAMSSplash;
+import jams.ui.gui.JAMSSplash;
 import jams.runtime.*;
 import jams.io.*;
 import jams.JAMS;

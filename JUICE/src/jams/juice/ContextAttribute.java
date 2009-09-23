@@ -24,7 +24,7 @@
 package jams.juice;
 
 import java.util.HashMap;
-import jams.gui.GUIHelper;
+import jams.tools.GUIHelper;
 
 /**
  *

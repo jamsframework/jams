@@ -22,7 +22,7 @@
  */
 package reg;
 
-import jams.gui.GUIHelper;
+import jams.tools.GUIHelper;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import reg.spreadsheet.JAMSSpreadSheet;

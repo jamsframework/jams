@@ -22,6 +22,7 @@
  */
 package jams;
 
+import jams.tools.JAMSTools;
 import java.io.*;
 import java.util.*;
 

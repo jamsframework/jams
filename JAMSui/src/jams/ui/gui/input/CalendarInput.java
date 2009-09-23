@@ -20,8 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.gui.input;
+package jams.ui.gui.input;
 
+import jams.tools.GUIHelper;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
@@ -30,9 +31,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import jams.gui.*;
 import java.awt.Color;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;

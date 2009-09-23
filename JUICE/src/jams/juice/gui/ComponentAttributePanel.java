@@ -52,13 +52,14 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
-import jams.gui.GUIHelper;
-import jams.gui.input.InputComponent;
-import jams.gui.input.ValueChangeListener;
+import jams.tools.GUIHelper;
+import jams.ui.gui.input.InputComponent;
+import jams.ui.gui.input.ValueChangeListener;
 import jams.juice.*;
 import jams.juice.ComponentDescriptor;
 import jams.juice.ComponentDescriptor.ComponentAttribute;
 import jams.juice.ContextAttribute;
+import jams.ui.gui.input.InputComponentFactory;
 
 /**
  *
@@ -322,7 +323,7 @@ public class ComponentAttributePanel extends JPanel {
         }
 
         //create value input component
-        valueInput = GUIHelper.createInputComponent(var.type, true);
+        valueInput = InputComponentFactory.createInputComponent(var.type, true);
         valuePanel.add(valueInput.getComponent(), BorderLayout.WEST);
         valuePanel.updateUI();
 

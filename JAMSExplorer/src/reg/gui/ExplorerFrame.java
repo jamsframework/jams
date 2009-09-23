@@ -22,11 +22,11 @@
  */
 package reg.gui;
 
-import jams.JAMSTools;
-import jams.gui.GUIHelper;
-import jams.gui.PropertyDlg;
-import jams.gui.WorkerDlg;
-import jams.gui.WorkspaceDlg;
+import jams.tools.JAMSTools;
+import jams.tools.GUIHelper;
+import jams.ui.gui.PropertyDlg;
+import jams.ui.gui.WorkerDlg;
+import jams.ui.gui.WorkspaceDlg;
 import jams.io.XMLIO;
 import jams.ui.gui.JAMSLauncher;
 import jams.workspace.JAMSWorkspace;

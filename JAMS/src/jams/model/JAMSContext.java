@@ -36,14 +36,14 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import jams.JAMS;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.data.*;
 import jams.dataaccess.*;
 import jams.dataaccess.CalendarAccessor;
 import jams.io.DataTracer.AbstractTracer;
 import jams.runtime.JAMSRuntime;
 
-@JAMSComponentDescription (title = "JAMS Component",
+@JAMSComponentDescription (title = "JAMS Context",
                            author = "Sven Kralisch",
                            date = "27. Juni 2005",
                            description = "This component represents a JAMS context which is the top level " +
@@ -78,14 +78,14 @@ public class JAMSContext extends JAMSComponent {
      */
     public JAMSContext() {
 
-            //create an entity collection with one entity
+        //create an entity collection with one entity
 //            setCurrentEntity((JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class));
-            ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
+        ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
 //            list.add(getCurrentEntity());
-            list.add((JAMSEntity) JAMSDataFactory.createEntity());
-            setEntities(JAMSDataFactory.createEntityCollection());
-            getEntities().setEntities(list);
-            attribs = new HashMap<String, JAMSData>();
+        list.add((JAMSEntity) JAMSDataFactory.createEntity());
+        setEntities(JAMSDataFactory.createEntityCollection());
+        getEntities().setEntities(list);
+        attribs = new HashMap<String, JAMSData>();
     }
 
     /**

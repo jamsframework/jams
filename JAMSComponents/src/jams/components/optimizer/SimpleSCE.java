@@ -39,7 +39,7 @@ import java.util.Arrays.*;
 import java.util.Comparator;
 import java.util.StringTokenizer;
 import jams.JAMS;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.io.SerializableBufferedWriter;
 
 /**

@@ -10,7 +10,7 @@
 package jams.components.optimizer;
 
 import Jama.Matrix;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;

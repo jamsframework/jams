@@ -43,12 +43,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
-import jams.gui.GUIHelper;
-import jams.gui.input.InputComponent;
+import jams.tools.GUIHelper;
+import jams.ui.gui.input.InputComponent;
 import jams.juice.*;
 import jams.juice.ModelProperties.Group;
 import jams.juice.ModelProperties.ModelElement;
 import jams.juice.ModelProperties.ModelProperty;
+import jams.ui.gui.input.InputComponentFactory;
 
 /**
  *
@@ -432,11 +433,11 @@ public class ModelGUIPanel extends JPanel {
         GUIHelper.addGBComponent(contentPanel, gbl, nameLabel, 0, row, 1, 1, 0, 0);
 
         if (property.var != null) {
-            ic = GUIHelper.createInputComponent(property.var.type, true);
+            ic = InputComponentFactory.createInputComponent(property.var.type, true);
         } else if (property.attribute != null) {
-            ic = GUIHelper.createInputComponent(property.attribute.getType(), true);
+            ic = InputComponentFactory.createInputComponent(property.attribute.getType(), true);
         } else {
-            ic = GUIHelper.createInputComponent(JUICE.JAMS_DATA_TYPES[0], true);
+            ic = InputComponentFactory.createInputComponent(JUICE.JAMS_DATA_TYPES[0], true);
         }
         ic.setRange(property.lowerBound, property.upperBound);
         ic.setLength(property.length);

@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import jams.JAMS;
 import jams.JAMSProperties;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.io.XMLIO;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSRuntime;

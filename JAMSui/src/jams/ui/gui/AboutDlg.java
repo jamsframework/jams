@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.gui;
+package jams.ui.gui;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -29,7 +29,7 @@ import java.io.*;
 import java.net.URL;
 import javax.swing.*;
 import jams.JAMS;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.JAMSVersion;
 
 /**

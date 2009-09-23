@@ -24,7 +24,7 @@ package jams.juice;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import jams.gui.GUIHelper;
+import jams.tools.GUIHelper;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.awt.Dimension;

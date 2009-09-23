@@ -20,35 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.gui;
+package jams.tools;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
-import jams.gui.input.BooleanInput;
-import jams.gui.input.FileInput;
-import jams.gui.input.FloatInput;
-import jams.gui.input.InputComponent;
-import jams.gui.input.IntegerInput;
-import jams.gui.input.TextInput;
 import jams.JAMS;
-import jams.data.JAMSBoolean;
-import jams.data.JAMSCalendar;
-import jams.data.JAMSDataFactory;
-import jams.data.JAMSDirName;
-import jams.data.JAMSDouble;
-import jams.data.JAMSFileName;
-import jams.data.JAMSFloat;
-import jams.data.JAMSInteger;
-import jams.data.JAMSLong;
-import jams.data.JAMSTimeInterval;
-import jams.gui.input.CalendarInput;
-import jams.gui.input.TimeintervalInput;
 import java.lang.reflect.Method;
 import javax.swing.JFileChooser;
 
@@ -64,14 +44,6 @@ public class GUIHelper {
     public static final int YES_OPTION = JOptionPane.YES_OPTION;
 
     public static final int CANCEL_OPTION = JOptionPane.CANCEL_OPTION;
-
-    private static final int JCOMP_HEIGHT = 20;
-
-    private static final int NUMBERINPUT_WIDTH = 100;
-
-    private static final int TEXTINPUT_WIDTH = 250;
-
-    private static final int FILEINPUT_WIDTH = 250;
 
     /**
      * Remove swing component from container
@@ -247,57 +219,6 @@ public class GUIHelper {
      */
     public static String showInputDlg(Component owner, String message, String title, String initalValue) {
         return (String) JOptionPane.showInputDialog(owner, message, title, JOptionPane.QUESTION_MESSAGE, null, null, initalValue);
-    }
-
-    /**
-     * Create swing input component based on data type
-     * @param type Data type
-     * @return InputComponent object that provides an editor for the type
-     */
-    public static InputComponent createInputComponent(Class type) {
-        return createInputComponent(type, false);
-    }
-
-    /**
-     * Create swing input component based on data type
-     * @param type Data type
-     * @param extEdit A flag defining if the editors will provide extended or
-     * limited access to data (e.g. step size for timeintervals)
-     * @return InputComponent object that provides an editor for the type
-     */
-    public static InputComponent createInputComponent(Class type, boolean extEdit) {
-        InputComponent ic;
-
-        if (type.isInterface()) {
-            type = JAMSDataFactory.getImplementingClass(type);
-        }
-
-        if (JAMSFileName.class.isAssignableFrom(type)) {
-            ic = new FileInput(false);
-        } else if (JAMSDirName.class.isAssignableFrom(type)) {
-            ic = new FileInput(true);
-        } else if (JAMSCalendar.class.isAssignableFrom(type)) {
-            ic = new CalendarInput();
-        } else if (JAMSTimeInterval.class.isAssignableFrom(type)) {
-            ic = new TimeintervalInput(extEdit);
-        } else if (JAMSBoolean.class.isAssignableFrom(type)) {
-            ic = new BooleanInput();
-        } else if ((JAMSInteger.class.isAssignableFrom(type)) || (JAMSLong.class.isAssignableFrom(type))) {
-            ic = new IntegerInput();
-            ic.getComponent().setPreferredSize(new Dimension(NUMBERINPUT_WIDTH, JCOMP_HEIGHT));
-            ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
-        } else if ((JAMSFloat.class.isAssignableFrom(type)) || (JAMSDouble.class.isAssignableFrom(type))) {
-            ic = new FloatInput();
-            ic.getComponent().setPreferredSize(new Dimension(NUMBERINPUT_WIDTH, JCOMP_HEIGHT));
-            ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
-        } else {
-            ic = new TextInput();
-            ic.getComponent().setPreferredSize(new Dimension(TEXTINPUT_WIDTH, JCOMP_HEIGHT));
-            ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
-        }
-
-        //ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
-        return ic;
     }
 
     /**

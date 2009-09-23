@@ -20,8 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.gui;
+package jams.ui.gui;
 
+import jams.tools.GUIHelper;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,11 +30,11 @@ import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.*;
 import jams.*;
-import jams.gui.input.BooleanInput;
-import jams.gui.input.FileInput;
-import jams.gui.input.TextInput;
-import jams.JAMSTools;
-import jams.gui.input.FileListInput;
+import jams.ui.gui.input.BooleanInput;
+import jams.ui.gui.input.FileInput;
+import jams.ui.gui.input.TextInput;
+import jams.tools.JAMSTools;
+import jams.ui.gui.input.FileListInput;
 
 /**
  *

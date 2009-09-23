@@ -36,8 +36,8 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 
-import jams.gui.GUIHelper;
-import jams.gui.WorkerDlg;
+import jams.tools.GUIHelper;
+import jams.ui.gui.WorkerDlg;
 import jams.workspace.JAMSWorkspace;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

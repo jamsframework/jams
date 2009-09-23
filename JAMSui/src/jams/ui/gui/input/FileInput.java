@@ -20,15 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.gui.input;
+package jams.ui.gui.input;
 
+import jams.tools.GUIHelper;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import jams.gui.*;
 
 /**
  *

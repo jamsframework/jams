@@ -5,7 +5,7 @@
 
 package jams.model.metaoptimizer;
 
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.model.JAMSComponent;
 import jams.model.JAMSContext;
 import jams.model.JAMSModel;

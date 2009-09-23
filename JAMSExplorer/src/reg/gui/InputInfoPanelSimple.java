@@ -22,7 +22,7 @@
  */
 package reg.gui;
 
-import jams.gui.GUIHelper;
+import jams.tools.GUIHelper;
 import jams.workspace.stores.StandardInputDataStore;
 import java.awt.Font;
 import java.awt.GridBagLayout;

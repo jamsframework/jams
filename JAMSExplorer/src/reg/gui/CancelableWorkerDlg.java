@@ -22,7 +22,7 @@
  */
 package reg.gui;
 
-import jams.gui.WorkerDlg;
+import jams.ui.gui.WorkerDlg;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;

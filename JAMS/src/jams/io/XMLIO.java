@@ -24,7 +24,7 @@
 
 package jams.io;
 
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 import java.io.*;

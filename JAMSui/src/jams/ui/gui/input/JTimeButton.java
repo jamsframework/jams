@@ -1,11 +1,11 @@
 /**
- * CalendarButton.java
- *
+ * TimeButton.java
+
  * @author Don Corley <don@donandann.com>
  * @version 1.0.0
  */
- 
-package jams.gui;
+  
+package jams.ui.gui.input;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,45 +17,45 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 /** 
- * A JCalendarButton is a button that displays a popup calendar (A JCalendarPopup).
+ * A JTimeButton is a button that displays a popup time (A JTimePopup).
  * Note: This button doesn't use some of the global constants and methods
  * because it is used in other programs where they are not available.
  * @author  Administrator
  * @version 1.0.0
  */
-public class JCalendarButton extends JButton
+public class JTimeButton extends JButton
     implements PropertyChangeListener, ActionListener
 {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
+	/**
      * The language property key.
      */
     public static final String LANGUAGE_PARAM = "language";
     /**
-     * The name of the date property (defaults to "date").
+     * The name of the date property (defaults to "time").
      */
-    protected String m_strDateParam = JCalendarPopup.DATE_PARAM;
+    protected String m_strTimeParam = JCalendarPopup.DATE_PARAM;
     /**
      * The initial date for this button.
      */
-    protected Date m_dateTarget = null;
+    protected Date m_timeTarget = null;
     /**
      * The language to use.
      */
     protected String m_strLanguage = null;
     
     /**
-     * Creates new CalendarButton.
+     * Creates new TimeButton.
      */
-    public JCalendarButton()
+    public JTimeButton()
     {
         super();
         // Get current classloader
         ClassLoader cl = this.getClass().getClassLoader();
         // Create icons
         try   {
-            Icon icon  = new ImageIcon(cl.getResource("images/buttons/" + JCalendarPopup.CALENDAR_ICON + ".gif"));
+            Icon icon  = new ImageIcon(cl.getResource("images/buttons/" + JTimePopup.TIME_ICON + ".gif"));
             this.setIcon(icon);
         } catch (Exception ex)  {
             this.setText("change");
@@ -67,72 +67,72 @@ public class JCalendarButton extends JButton
         this.addActionListener(this);
     }
     /**
-     * Creates new CalendarButton.
+     * Creates new TimeButton.
      * @param dateTarget The initial date for this button.
      */
-    public JCalendarButton(Date dateTarget)
-    {
-        this();
-        this.init(null, dateTarget, null);
-    }
-    /**
-     * Creates new CalendarButton.
-     * @param strDateParam The name of the date property (defaults to "date").
-     * @param dateTarget The initial date for this button.
-     */
-    public JCalendarButton(String strDateParam, Date dateTarget)
+    public JTimeButton(Date timeTarget)
     {
     	this();
-        this.init(strDateParam, dateTarget, null);
+        this.init(null, timeTarget, null);
     }
     /**
-     * Creates new CalendarButton.
-     * @param strDateParam The name of the date property (defaults to "date").
+     * Creates new TimeButton.
+     * @param strDateParam The name of the date property (defaults to 'date').
+     * @param dateTarget The initial date for this button.
+     */
+    public JTimeButton(String strDateParam, Date timeTarget)
+    {
+    	this();
+        this.init(strDateParam, timeTarget, null);
+    }
+    /**
+     * Creates new TimeButton.
+     * @param strDateParam The name of the date property (defaults to 'date').
      * @param dateTarget The initial date for this button.
      * @param strLanguage The language to use.
      */
-    public JCalendarButton(String strDateParam, Date dateTarget, String strLanguage)
+    public JTimeButton(String strDateParam, Date timeTarget, String strLanguage)
     {
     	this();
-        this.init(strDateParam, dateTarget, strLanguage);
+        this.init(strDateParam, timeTarget, strLanguage);
     }
     /**
-     * Creates new CalendarButton.
-     * @param strDateParam The name of the date property (defaults to "date").
+     * Creates new TimeButton.
+     * @param strDateParam The name of the date property (defaults to 'date').
      * @param dateTarget The initial date for this button.
      * @param strLanguage The language to use.
      */
-    public void init(String strDateParam, Date dateTarget, String strLanguage)
+    public void init(String strTimeParam, Date timeTarget, String strLanguage)
     {
-        if (strDateParam == null)
-            strDateParam = JCalendarPopup.DATE_PARAM;
-        m_strDateParam = strDateParam; 
-        m_dateTarget = dateTarget;
+        if (strTimeParam == null)
+            strTimeParam = JCalendarPopup.DATE_PARAM;
+        m_strTimeParam = strTimeParam; 
+        m_timeTarget = timeTarget;
         m_strLanguage = strLanguage;
+    }
+    /**
+     * Set the current date.
+     */
+    public void setTargetDate(Date timeTarget)
+    {
+        m_timeTarget = timeTarget;
     }
     /**
      * Get the current date.
      */
     public Date getTargetDate()
     {
-        return m_dateTarget;
-    }
-    /**
-     * Set the current date.
-     */
-    public void setTargetDate(Date dateTarget)
-    {
-        m_dateTarget = dateTarget;
+        return m_timeTarget;
     }
     /**
      * Get the name of the date property for this button.
      */
     public String getDateParam()
     {
-        return m_strDateParam;
+        return m_strTimeParam;
     }
     /**
-     * The user pressed the button, display the JCalendarPopup.
+     * The user pressed the button, display the JTimePopup.
      * @param e The ActionEvent.
      */
     public void actionPerformed(ActionEvent e)
@@ -140,21 +140,21 @@ public class JCalendarButton extends JButton
         if (e.getSource() == this)
         {
             Date dateTarget = this.getTargetDate();
-            JCalendarPopup popup = JCalendarPopup.createCalendarPopup(this.getDateParam(), dateTarget, this, m_strLanguage);
+            JTimePopup popup = JTimePopup.createTimePopup(this.getDateParam(), dateTarget, this, m_strLanguage);
             popup.addPropertyChangeListener(this);
         }
     }
     /**
-     * Propagate the change to my listeners.
+     * Propogate the change to my listeners.
      * Watch for date and language changes, so I can keep up to date.
      * @param evt The property change event.
      */
     public void propertyChange(final java.beans.PropertyChangeEvent evt)
     {
         this.firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
-        if (m_strDateParam.equalsIgnoreCase(evt.getPropertyName()))
+        if (m_strTimeParam.equalsIgnoreCase(evt.getPropertyName()))
             if (evt.getNewValue() instanceof Date)
-                m_dateTarget = (Date)evt.getNewValue();
+                m_timeTarget = (Date)evt.getNewValue();
         if (LANGUAGE_PARAM.equalsIgnoreCase(evt.getPropertyName()))
             if (evt.getNewValue() instanceof String)
         {

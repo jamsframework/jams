@@ -1,6 +1,6 @@
 /*
- * TextInput.java
- * Created on 29. August 2006, 15:15
+ * IntegerInput.java
+ * Created on 7. September 2006, 10:47
  *
  * This file is part of JAMS
  * Copyright (C) 2005 FSU Jena
@@ -20,10 +20,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.gui.input;
+package jams.ui.gui.input;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -34,13 +35,17 @@ import javax.swing.event.DocumentListener;
  *
  * @author S. Kralisch
  */
-public class TextInput extends JPanel implements InputComponent {
+public class IntegerInput extends JPanel implements InputComponent {
 
     private JTextField text = new JTextField();
+
     private ValueChangeListener l;
 
-    public TextInput() {
+    private String boundaryString = null;
+
+    public IntegerInput() {
         super();
+        setRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
         setLayout(new BorderLayout());
         add(text, BorderLayout.WEST);
     }
@@ -58,42 +63,43 @@ public class TextInput extends JPanel implements InputComponent {
     }
 
     public void setRange(double lower, double upper) {
+        this.boundaryString = "[" + (long) lower + "..." + (long) upper + "]";
+        this.setInputVerifier(new IntegerIntervalVerifier((long) lower, (long) upper));
     }
-    
+
     public boolean verify() {
-        return true;
+        return this.getInputVerifier().verify(text);
     }
 
     public int getErrorCode() {
-        return INPUT_OK;
+        return ((IntegerIntervalVerifier) this.getInputVerifier()).result;
     }
 
     public void setLength(int length) {
-        text.setColumns(length);
     }
-    
+
     public void addValueChangeListener(ValueChangeListener l) {
         this.l = l;
         this.text.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                TextInput.this.l.valueChanged();
+                IntegerInput.this.l.valueChanged();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                TextInput.this.l.valueChanged();
+                IntegerInput.this.l.valueChanged();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                TextInput.this.l.valueChanged();
+                IntegerInput.this.l.valueChanged();
             }
         });
     }
-
     private Color oldColor;
+
     public void setMarked(boolean marked) {
         if (marked == true) {
             oldColor = text.getBackground();
@@ -104,7 +110,43 @@ public class TextInput extends JPanel implements InputComponent {
     }
 
     public void setHelpText(String text) {
+        if (this.boundaryString != null) {
+            text = this.boundaryString + "<br>" + text;
+        }
         text = "<html>" + text + "</html>";
         getComponent().setToolTipText(text);
+    }
+
+    class IntegerIntervalVerifier extends InputVerifier {
+
+        long lower, upper;
+
+        int result;
+
+        public IntegerIntervalVerifier(long lower, long upper) {
+            this.lower = lower;
+            this.upper = upper;
+        }
+
+        public boolean verify(JComponent input) {
+
+            int result;
+            long value;
+
+            try {
+                value = Long.parseLong(((JTextField) input).getText());
+                if ((value >= lower) && (value <= upper)) {
+                    result = INPUT_OK;
+                    return true;
+                } else {
+                    result = INPUT_OUT_OF_RANGE;
+                    return false;
+                }
+            } catch (NumberFormatException nfe) {
+                result = INPUT_WRONG_FORMAT;
+            }
+
+            return false;
+        }
     }
 }

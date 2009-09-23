@@ -14,7 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
 import jams.JAMS;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.data.*;
 import jams.io.GenericDataWriter;
 import jams.model.JAMSComponentDescription;

@@ -41,9 +41,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
-import jams.gui.GUIHelper;
-import jams.gui.input.InputComponent;
+import jams.tools.GUIHelper;
+import jams.ui.gui.input.InputComponent;
 import jams.juice.*;
+import jams.ui.gui.input.InputComponentFactory;
 import java.util.HashMap;
 
 /**
@@ -93,7 +94,7 @@ public class ContextAttributeDlg extends JDialog {
 
         nameText = new JTextField();
         nameText.setColumns(40);
-        valueInput = GUIHelper.createInputComponent(JAMSString.class, true);
+        valueInput = InputComponentFactory.createInputComponent(JAMSString.class, true);
 
         typeCombo = new JComboBox();
 
@@ -168,7 +169,7 @@ public class ContextAttributeDlg extends JDialog {
             GUIHelper.removeGBComponent(mainPanel, valueInput.getComponent());
             oldValue = valueInput.getValue();
         }
-        valueInput = GUIHelper.createInputComponent(type, true);
+        valueInput = InputComponentFactory.createInputComponent(type, true);
 
         if (doUpdate) {
             valueInput.setValue(oldValue);

@@ -25,8 +25,8 @@ package jams.juice;
 import java.util.Vector;
 import java.util.ArrayList;
 import java.util.HashMap;
-import jams.JAMSTools;
-import jams.gui.HelpComponent;
+import jams.tools.JAMSTools;
+import jams.ui.gui.HelpComponent;
 
 /**
  *

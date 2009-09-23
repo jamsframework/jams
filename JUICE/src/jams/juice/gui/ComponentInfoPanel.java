@@ -30,7 +30,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.text.SimpleAttributeSet;
-import jams.gui.GUIHelper;
+import jams.tools.GUIHelper;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import jams.juice.JUICE;

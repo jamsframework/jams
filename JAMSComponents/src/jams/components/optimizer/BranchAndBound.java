@@ -14,7 +14,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Vector;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.model.JAMSComponentDescription;
 
 @JAMSComponentDescription(

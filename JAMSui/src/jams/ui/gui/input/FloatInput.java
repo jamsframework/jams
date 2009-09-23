@@ -1,5 +1,5 @@
 /*
- * IntegerInput.java
+ * FloatInput.java
  * Created on 7. September 2006, 10:47
  *
  * This file is part of JAMS
@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.gui.input;
+package jams.ui.gui.input;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -35,7 +35,7 @@ import javax.swing.event.DocumentListener;
  *
  * @author S. Kralisch
  */
-public class IntegerInput extends JPanel implements InputComponent {
+public class FloatInput extends JPanel implements InputComponent {
 
     private JTextField text = new JTextField();
 
@@ -43,9 +43,9 @@ public class IntegerInput extends JPanel implements InputComponent {
 
     private String boundaryString = null;
 
-    public IntegerInput() {
+    public FloatInput() {
         super();
-        setRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        setRange((-1 * Double.MAX_VALUE) + 1, Double.MAX_VALUE);
         setLayout(new BorderLayout());
         add(text, BorderLayout.WEST);
     }
@@ -63,8 +63,8 @@ public class IntegerInput extends JPanel implements InputComponent {
     }
 
     public void setRange(double lower, double upper) {
-        this.boundaryString = "[" + (long) lower + "..." + (long) upper + "]";
-        this.setInputVerifier(new IntegerIntervalVerifier((long) lower, (long) upper));
+        this.boundaryString = "[" + lower + "..." + upper + "]";
+        this.setInputVerifier(new FloatIntervalVerifier(lower, upper));
     }
 
     public boolean verify() {
@@ -72,7 +72,7 @@ public class IntegerInput extends JPanel implements InputComponent {
     }
 
     public int getErrorCode() {
-        return ((IntegerIntervalVerifier) this.getInputVerifier()).result;
+        return ((FloatIntervalVerifier) this.getInputVerifier()).result;
     }
 
     public void setLength(int length) {
@@ -84,17 +84,17 @@ public class IntegerInput extends JPanel implements InputComponent {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                IntegerInput.this.l.valueChanged();
+                FloatInput.this.l.valueChanged();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                IntegerInput.this.l.valueChanged();
+                FloatInput.this.l.valueChanged();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                IntegerInput.this.l.valueChanged();
+                FloatInput.this.l.valueChanged();
             }
         });
     }
@@ -117,35 +117,34 @@ public class IntegerInput extends JPanel implements InputComponent {
         getComponent().setToolTipText(text);
     }
 
-    class IntegerIntervalVerifier extends InputVerifier {
+    class FloatIntervalVerifier extends InputVerifier {
 
-        long lower, upper;
+        double lower, upper;
 
         int result;
 
-        public IntegerIntervalVerifier(long lower, long upper) {
+        public FloatIntervalVerifier(double lower, double upper) {
             this.lower = lower;
             this.upper = upper;
         }
 
+        @Override
         public boolean verify(JComponent input) {
 
-            int result;
-            long value;
+            double value;
 
             try {
-                value = Long.parseLong(((JTextField) input).getText());
+                value = Double.parseDouble(((JTextField) input).getText());
                 if ((value >= lower) && (value <= upper)) {
-                    result = INPUT_OK;
+                    result = InputComponent.INPUT_OK;
                     return true;
                 } else {
-                    result = INPUT_OUT_OF_RANGE;
+                    result = InputComponent.INPUT_OUT_OF_RANGE;
                     return false;
                 }
             } catch (NumberFormatException nfe) {
-                result = INPUT_WRONG_FORMAT;
+                result = InputComponent.INPUT_WRONG_FORMAT;
             }
-
             return false;
         }
     }

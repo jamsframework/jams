@@ -23,7 +23,7 @@
 package jams.model;
 
 import jams.JAMS;
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.data.JAMSDirName;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.OutputDataStore;

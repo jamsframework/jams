@@ -23,7 +23,7 @@
 
 package jams.components.machineLearning;
 
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import jams.model.*;
 import jams.data.*;
 import java.util.*;

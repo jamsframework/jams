@@ -23,8 +23,8 @@
 package jams.juice.gui;
 
 import jams.data.JAMSString;
-import jams.gui.GUIHelper;
-import jams.gui.input.InputComponent;
+import jams.tools.GUIHelper;
+import jams.ui.gui.input.InputComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.awt.BorderLayout;
@@ -56,6 +56,7 @@ import jams.juice.gui.tree.JAMSTree;
 import jams.juice.gui.tree.LibTree;
 import jams.juice.gui.tree.ModelTree;
 import jams.juice.JUICE;
+import jams.ui.gui.input.InputComponentFactory;
 
 /**
  *
@@ -97,7 +98,7 @@ public class SearchDlg extends JDialog {
         caseSensitive = new JCheckBox(JUICE.resources.getString("caseSensitiveSearch"), false);
         wholeString = new JCheckBox(JUICE.resources.getString("wholeStringSearch"), false);
 
-        searchText = GUIHelper.createInputComponent(JAMSString.class);
+        searchText = InputComponentFactory.createInputComponent(JAMSString.class);
         searchText.setLength(TEXTFIELD_WIDTH);
 
         repo = new JRadioButton(JUICE.resources.getString("Search_in_Repo"));

@@ -13,7 +13,7 @@ package jams.components.optimizer;
  *
  * @author Christian Fischer
  */    
-import jams.JAMSTools;
+import jams.tools.JAMSTools;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
