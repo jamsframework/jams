@@ -25,13 +25,17 @@ package jams.tools;
 import jams.model.Component;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  *
@@ -243,6 +247,75 @@ public class JAMSTools {
         Method m = componentClazz.getDeclaredMethod(methodName);
         Object data = m.invoke(component);
         return data;
+    }
+
+    /**
+     * Asserts that the given directory is existing
+     *
+     * @param dirName the full directory name
+     * @throws IOException
+     */
+    public static File assertDirectory (String dirName)
+            throws IOException {
+        File dir = new File(dirName);
+        if (dir.isDirectory() && dir.exists()) return dir;
+        dir.mkdirs();
+        if (!(dir.isDirectory() && dir.exists())) throw new IOException("Could not create directory '" + dirName + "' !");
+        return dir;
+    }
+
+
+    /**
+     * get array of files
+     *
+     * @param directoryName
+     * @param fileExtension
+     * @return filearray
+     * @throws IOException
+     */
+    public static File[] getFiles (String directoryName, String fileExtension) throws IOException {
+        //check for existing of the requested directory
+        File directory = assertDirectory(directoryName);
+        if (!directory.isDirectory()) throw new IOException("Can't load filelist because directory '" + directoryName + "' not found.");
+        //write all files within the given directory in the File-Array
+        String ext = null;
+        if (fileExtension != null)
+            ext = fileExtension.toLowerCase();
+        final String fileExtensionLower = ext;
+        File[] fileArray;
+        fileArray = directory.listFiles(new FilenameFilter() {
+            public boolean accept (File dir, String name) {
+                String nameLower = name.toLowerCase();
+                if (fileExtensionLower == null || nameLower.endsWith("." + fileExtensionLower)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+        if (fileExtension == null) {
+            // remove directories
+            Vector<File> files = new Vector<File>();
+            for (int i = 0; i < fileArray.length; i++) {
+                File file = fileArray[i];
+                if (!file.isDirectory()) {
+                    files.add(file);
+                }
+            }
+            fileArray = new File[files.size()];
+            for (int i = 0; i < files.size(); i++) {
+                File file = files.elementAt(i);
+                fileArray[i] = file;
+            }
+        }
+        Arrays.sort(fileArray, new Comparator<File>() {
+            public int compare (File o1, File o2) {
+                String fileName1 = o1.getName();
+                String fileName2 = o1.getName();
+                return fileName1.compareToIgnoreCase(fileName2);
+            }
+        });
+        return fileArray;
     }
 
     /**
