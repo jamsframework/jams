@@ -38,7 +38,7 @@ package jams.model;
         public class JAMSComponent implements Component {
     
     private String instanceName = getClass().getName();
-    private JAMSContext context = null;
+    private Context context = null;
     private JAMSModel model = null;
     
     /**
@@ -80,7 +80,7 @@ package jams.model;
      * @return The parent context of this component, null if this is a model
      * context
      */
-    public JAMSContext getContext() {
+    public Context getContext() {
         return context;
     }
     
@@ -88,7 +88,7 @@ package jams.model;
      * Sets the context that this component is child of
      * @param context The parent context
      */
-    public void setContext(JAMSContext context) {
+    public void setContext(Context context) {
         this.context = context;
     }
     

@@ -24,7 +24,7 @@ public interface Component extends Serializable {
      * @return The parent context of this component, null if this is a model
      * context
      */
-    JAMSContext getContext();
+    Context getContext();
 
     /**
      * Gets the name of this component
@@ -54,7 +54,7 @@ public interface Component extends Serializable {
      * Sets the context that this component is child of
      * @param context The parent context
      */
-    void setContext(JAMSContext context);
+    void setContext(Context context);
 
     /**
      * Sets the name of this component

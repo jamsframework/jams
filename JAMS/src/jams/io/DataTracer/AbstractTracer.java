@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 import jams.dataaccess.DataAccessor;
-import jams.model.JAMSContext;
+import jams.model.Context;
 import jams.JAMS;
 
 /**
@@ -39,8 +39,8 @@ public abstract class AbstractTracer implements DataTracer {
 
     protected DataAccessor[] accessorObjects;
     private ArrayList<String> attributeNames;
-    protected JAMSContext context;
-    private JAMSContext[] parents;
+    protected Context context;
+    private Context[] parents;
     protected OutputDataStore store;
     private Class idClazz;
 
@@ -50,7 +50,7 @@ public abstract class AbstractTracer implements DataTracer {
      * @param store The store that should be used by the DataTracer 
      * @param idClazz The type of the ID attribute, needed for type output
      */
-    public AbstractTracer(JAMSContext context, OutputDataStore store, Class idClazz) {
+    public AbstractTracer(Context context, OutputDataStore store, Class idClazz) {
         this.context = context;
         this.store = store;
         this.idClazz = idClazz;
@@ -64,7 +64,7 @@ public abstract class AbstractTracer implements DataTracer {
 
     @Override
     public void updateDateAccessors(){
-        HashMap<String, DataAccessor> dataObjectHash = context.getDataAccessors();
+        HashMap<String, DataAccessor> dataObjectHash = context.getDataAccessorMap();
         ArrayList<DataAccessor> accessorObjectList = new ArrayList<DataAccessor>();
         this.attributeNames = new ArrayList<String>();
 
@@ -79,7 +79,7 @@ public abstract class AbstractTracer implements DataTracer {
 
         for (OutputDataStore.Filter filter : store.getFilters()) {
 
-            JAMSContext superContext = context;
+            Context superContext = context;
             while (superContext != null) {
                 if (superContext.getInstanceName().equals(filter.getContextName())) {
                     filter.setPattern(Pattern.compile(filter.getExpression()));
@@ -107,8 +107,8 @@ public abstract class AbstractTracer implements DataTracer {
             return;
         }
 
-        JAMSContext parent = context;
-        ArrayList<JAMSContext> parentList = new ArrayList<JAMSContext>();
+        Context parent = context;
+        ArrayList<Context> parentList = new ArrayList<Context>();
         while (parent != context.getModel()) {
             parent = parent.getContext();
 
@@ -119,13 +119,13 @@ public abstract class AbstractTracer implements DataTracer {
                 parentList.add(parent);
             }
         }
-        this.parents = parentList.toArray(new JAMSContext[parentList.size()]);
+        this.parents = parentList.toArray(new Context[parentList.size()]);
 
         output("@context\n");
         output(this.context.getClass().getName() + "\t" + this.context.getInstanceName() + "\t" + context.getNumberOfIterations() + "\n");
 
         output("@ancestors\n");
-        for (JAMSContext p : this.parents) {
+        for (Context p : this.parents) {
             output(p.getClass().getName() + "\t" + p.getInstanceName() + "\t" + p.getNumberOfIterations() + "\n");
         }
 
@@ -183,11 +183,11 @@ public abstract class AbstractTracer implements DataTracer {
      * Output some mark at the beginning of the contexts output within it's
      * run() method. If this context has parent contexts with more than
      * one iteration, some status information of those parent contexts are
-     * provided here as well (JAMSContext::getTraceMark()).
+     * provided here as well (Context::getTraceMark()).
      */
     @Override
     public void startMark() {
-        for (JAMSContext parent : parents) {
+        for (Context parent : parents) {
             output(parent.getInstanceName() + "\t" + parent.getTraceMark() + "\n");
         }
         output("@start\n");

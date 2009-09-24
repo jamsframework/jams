@@ -23,6 +23,7 @@
 package jams.tools;
 
 import jams.model.Component;
+import jams.model.Context;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;

@@ -48,7 +48,7 @@ import jams.runtime.JAMSRuntime;
                            date = "27. Juni 2005",
                            description = "This component represents a JAMS context which is the top level " +
 "component of every component hierarchie in JAMS")
-public class JAMSContext extends JAMSComponent {
+public class JAMSContext extends JAMSComponent implements Context {
 
     private JAMSEntityCollection entities;
 
@@ -59,15 +59,15 @@ public class JAMSContext extends JAMSComponent {
 
     protected ComponentEnumerator initCleanupEnumerator = null;
 
-    protected ArrayList<AccessSpec> accessSpecs = new ArrayList<AccessSpec>();
+    private ArrayList<AttributeAccess> attributeAccessList = new ArrayList<AttributeAccess>();
 
-    protected ArrayList<AttributeSpec> attributeSpecs = new ArrayList<AttributeSpec>();
+    private ArrayList<AttributeSpec> attributeSpecs = new ArrayList<AttributeSpec>();
 
     protected DataAccessor[] dataAccessors = new DataAccessor[0];
 
-    private HashMap<String, DataAccessor> daHash;
+    private HashMap<String, DataAccessor> dataAccessorMap;
 
-    protected HashMap<String, JAMSData> attribs;
+    private HashMap<String, JAMSData> attributeMap;
 
     transient protected DataTracer[] dataTracers;
 
@@ -85,7 +85,7 @@ public class JAMSContext extends JAMSComponent {
         list.add((JAMSEntity) JAMSDataFactory.createEntity());
         setEntities(JAMSDataFactory.createEntityCollection());
         getEntities().setEntities(list);
-        attribs = new HashMap<String, JAMSData>();
+        attributeMap = new HashMap<String, JAMSData>();
     }
 
     /**
@@ -120,7 +120,7 @@ public class JAMSContext extends JAMSComponent {
      * 
      * @return All child components as ArrayList
      */
-    public ArrayList getComponents() {
+    public ArrayList<Component> getComponents() {
         return components;
     }
 
@@ -173,7 +173,7 @@ public class JAMSContext extends JAMSComponent {
      * DataAccessor.WRITE_ACCESS or DataAccessor.READWRITE_ACCESS)
      */
     public void addAccess(Component user, String varName, String attributeName, int accessType) {
-        accessSpecs.add(new AccessSpec(user, varName, attributeName, accessType));
+        attributeAccessList.add(new AttributeAccess(user, varName, attributeName, accessType));
     }
 
     /**
@@ -227,10 +227,10 @@ public class JAMSContext extends JAMSComponent {
      */
     public void initAccessors() {
 
-        attribs = new HashMap<String, JAMSData>();
-        daHash = new HashMap<String, DataAccessor>();
+        attributeMap = new HashMap<String, JAMSData>();
+        dataAccessorMap = new HashMap<String, DataAccessor>();
 
-        AccessSpec accessSpec;
+        AttributeAccess accessSpec;
         AttributeSpec attributeSpec;
         JAMSData dataObject;
         Class clazz;
@@ -247,7 +247,7 @@ public class JAMSContext extends JAMSComponent {
                 clazz = Class.forName(attributeSpec.className);
                 JAMSData data = JAMSDataFactory.createInstance(clazz);
                 data.setValue(attributeSpec.value);
-                attribs.put(attributeSpec.attributeName, data);
+                attributeMap.put(attributeSpec.attributeName, data);
 
                 //add attributes to "handle map"
                 /*
@@ -269,13 +269,13 @@ public class JAMSContext extends JAMSComponent {
             }
         }
 
-        Iterator<AccessSpec> accessIterator = accessSpecs.iterator();
+        Iterator<AttributeAccess> accessIterator = attributeAccessList.iterator();
         while (accessIterator.hasNext()) {
             accessSpec = accessIterator.next();
 
             try {
 
-                clazz = JAMSTools.getField(accessSpec.component.getClass(), accessSpec.varName).getType();
+                clazz = JAMSTools.getField(accessSpec.getComponent().getClass(), accessSpec.getVarName()).getType();
 
                 if (clazz == null) {
                     clazz = null;
@@ -285,26 +285,26 @@ public class JAMSContext extends JAMSComponent {
                     String className = clazz.getName();
                     className = className.substring(2, className.length() - 1);
 
-                    StringTokenizer tok = new StringTokenizer(accessSpec.attributeName, ";");
+                    StringTokenizer tok = new StringTokenizer(accessSpec.getAttributeName(), ";");
                     int count = tok.countTokens();
 
                     Class componentClass = Class.forName(className);
                     JAMSData[] array = (JAMSData[]) Array.newInstance(componentClass, count);
 
                     for (int i = 0; i < count; i++) {
-                        array[i] = getDataObject(entityArray, componentClass, tok.nextToken(), accessSpec.accessType, null);
+                        array[i] = getDataObject(entityArray, componentClass, tok.nextToken(), accessSpec.getAccessType(), null);
                     }
 
-                    Field field = JAMSTools.getField(accessSpec.component.getClass(), accessSpec.varName);
+                    Field field = JAMSTools.getField(accessSpec.getComponent().getClass(), accessSpec.getVarName());
 
                     // set the component's field value to dataObject
-                    JAMSTools.setField(accessSpec.component, field, array);
+                    JAMSTools.setField(accessSpec.getComponent(), field, array);
                     //field.set(accessSpec.component, array);
 
                     // field has been set with some value, so
                     // remove it from list of nullFields
                     if (getModel().getNullFields() != null) {
-                        ArrayList<Field> nullFields = getModel().getNullFields().get(accessSpec.component);
+                        ArrayList<Field> nullFields = getModel().getNullFields().get(accessSpec.getComponent());
                         nullFields.remove(field);
                     }
 
@@ -322,13 +322,13 @@ public class JAMSContext extends JAMSComponent {
                     //JAMSData componentObject = (JAMSData) accessSpec.component.getImplementingClass().getDeclaredField(accessSpec.varName).get(accessSpec.component);
 
                     //get the data object belonging to the attribute
-                    dataObject = getDataObject(entityArray, clazz, accessSpec.attributeName, accessSpec.accessType, componentObject);
+                    dataObject = getDataObject(entityArray, clazz, accessSpec.getAttributeName(), accessSpec.getAccessType(), componentObject);
 
                     //assign the dataObject to the component
-                    Field field = JAMSTools.getField(accessSpec.component.getClass(), accessSpec.varName);
+                    Field field = JAMSTools.getField(accessSpec.getComponent().getClass(), accessSpec.getVarName());
 
                     // set the component's field value to dataObject
-                    JAMSTools.setField(accessSpec.component, field, dataObject);
+                    JAMSTools.setField(accessSpec.getComponent(), field, dataObject);
 
 
                     // field has been set with some value, so
@@ -339,13 +339,13 @@ public class JAMSContext extends JAMSComponent {
 //                    }
                 }
             } catch (Exception e) {
-                getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Error_occured_in_") + accessSpec.component.getInstanceName() + ": " + accessSpec.varName);
+                getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Error_occured_in_") + accessSpec.getComponent().getInstanceName() + ": " + accessSpec.getVarName());
                 getModel().getRuntime().handle(e, false);
             }
 
             // create DataAccessor array from DataAccessor list
-            if (daHash.size() > 0) {
-                this.dataAccessors = daHash.values().toArray(new DataAccessor[daHash.size()]);
+            if (dataAccessorMap.size() > 0) {
+                this.dataAccessors = dataAccessorMap.values().toArray(new DataAccessor[dataAccessorMap.size()]);
             }
         }
     }
@@ -445,7 +445,7 @@ public class JAMSContext extends JAMSComponent {
         }
     }
 
-    protected void setupDataTracer() {
+    public void setupDataTracer() {
 
         // get the output stores if existing
         OutputDataStore[] stores = getModel().getOutputDataStores(this.getInstanceName());
@@ -456,8 +456,8 @@ public class JAMSContext extends JAMSComponent {
             //this.dataTracers = new NullTracer();
             for (int j = 0; j < this.components.size(); j++) {
                 Component comp = components.get(j);
-                if (comp instanceof JAMSContext) {
-                    ((JAMSContext) comp).setupDataTracer();
+                if (comp instanceof Context) {
+                    ((Context) comp).setupDataTracer();
                 }
             }
             return;
@@ -472,8 +472,8 @@ public class JAMSContext extends JAMSComponent {
 
         for (int j = 0; j < this.components.size(); j++) {
             Component comp = components.get(j);
-            if (comp instanceof JAMSContext) {
-                ((JAMSContext) comp).setupDataTracer();
+            if (comp instanceof Context) {
+                ((Context) comp).setupDataTracer();
             }
         }
 
@@ -490,7 +490,7 @@ public class JAMSContext extends JAMSComponent {
     @Override
     public void init() {
 
-        attribs = new HashMap<String, JAMSData>();
+        attributeMap = new HashMap<String, JAMSData>();
 
         runEnumerator = null;
 
@@ -553,8 +553,8 @@ public class JAMSContext extends JAMSComponent {
 
         // check if new dataAccessor objects where added
         // if so, create new array from list
-        if (this.daHash.size() > this.dataAccessors.length) {
-            this.dataAccessors = daHash.values().toArray(new DataAccessor[daHash.size()]);
+        if (this.dataAccessorMap.size() > this.dataAccessors.length) {
+            this.dataAccessors = dataAccessorMap.values().toArray(new DataAccessor[dataAccessorMap.size()]);
         }
 
         if (this.dataTracers != null) {
@@ -570,7 +570,7 @@ public class JAMSContext extends JAMSComponent {
         JAMSData dataObject;
         DataAccessor da = null;
 
-        dataObject = attribs.get(attributeName);
+        dataObject = attributeMap.get(attributeName);
         if (dataObject == null) {
 
             if (componentObject != null) {
@@ -585,7 +585,7 @@ public class JAMSContext extends JAMSComponent {
                 }
             }
 
-            attribs.put(attributeName, dataObject);
+            attributeMap.put(attributeName, dataObject);
 
             if (clazz.isInterface()) {
                 clazz = JAMSDataFactory.getImplementingClass(clazz);
@@ -636,7 +636,7 @@ public class JAMSContext extends JAMSComponent {
             }
 
             if (da != null) {
-                daHash.put(attributeName, da);
+                dataAccessorMap.put(attributeName, da);
             }
         }
         return dataObject;
@@ -709,8 +709,26 @@ public class JAMSContext extends JAMSComponent {
 
     }
 
-    public HashMap<String, DataAccessor> getDataAccessors() {
-        return daHash;
+    public HashMap<String, DataAccessor> getDataAccessorMap() {
+        return dataAccessorMap;
+    }
+
+    public HashMap<String, JAMSData> getAttributeMap() {
+        return attributeMap;
+    }
+
+    /**
+     * @return the accessSpecs
+     */
+    public ArrayList<AttributeAccess> getAttributeAccessList() {
+        return attributeAccessList;
+    }
+
+    /**
+     * @param accessSpecs the accessSpecs to set
+     */
+    public void setAccessSpecs(ArrayList<AttributeAccess> accessSpecs) {
+        this.attributeAccessList = accessSpecs;
     }
 
     class ChildrenEnumerator implements ComponentEnumerator {
@@ -781,8 +799,8 @@ public class JAMSContext extends JAMSComponent {
             if (components.get(i).getInstanceName().equals(name)) {
                 return components.get(i);
             }
-            if (components.get(i) instanceof JAMSContext) {
-                Component comp = ((JAMSContext) components.get(i)).getComponent(name);
+            if (components.get(i) instanceof Context) {
+                Component comp = ((Context) components.get(i)).getComponent(name);
                 if (comp != null) {
                     return comp;
                 }
@@ -791,13 +809,13 @@ public class JAMSContext extends JAMSComponent {
         return null;
     }
 
-    protected boolean componentInContext(Component component) {
+    public boolean componentInContext(Component component) {
         for (int i = 0; i < components.size(); i++) {
             if (components.get(i).getInstanceName().equals(component.getInstanceName())) {
                 return true;
             }
-            if (components.get(i) instanceof JAMSContext) {
-                if (((JAMSContext) components.get(i)).componentInContext(component)) {
+            if (components.get(i) instanceof Context) {
+                if (((Context) components.get(i)).componentInContext(component)) {
                     return true;
                 }
             }
@@ -805,119 +823,119 @@ public class JAMSContext extends JAMSComponent {
         return false;
     }
 
-    protected int componentAllreadyProcessed(Component position, Component component) {
-        if (this.getInstanceName().equals(position.getInstanceName())) {
-            return 0;
-        }
-        if (this == component) {
-            return 1;
-        }
-        for (int j = 0; j < this.components.size(); j++) {
-            Component c = this.components.get(j);
-            if (c == position) {
-                return 0;
-            }
-            if (c == component) {
-                return 1;
-            }
-            if (c instanceof JAMSContext) {
-                JAMSContext context = (JAMSContext) c;
-                int result = context.componentAllreadyProcessed(position, component);
-                if (result == 0 || result == 1) {
-                    return result;
-                }
-            }
-        }
-        return 2;
-    }
+//    public int componentAllreadyProcessed(Component position, Component component) {
+//        if (this.getInstanceName().equals(position.getInstanceName())) {
+//            return 0;
+//        }
+//        if (this == component) {
+//            return 1;
+//        }
+//        for (int j = 0; j < this.components.size(); j++) {
+//            Component c = this.components.get(j);
+//            if (c == position) {
+//                return 0;
+//            }
+//            if (c == component) {
+//                return 1;
+//            }
+//            if (c instanceof Context) {
+//                Context context = (Context) c;
+//                int result = context.componentAllreadyProcessed(position, component);
+//                if (result == 0 || result == 1) {
+//                    return result;
+//                }
+//            }
+//        }
+//        return 2;
+//    }
 
     /*
      * looks if component object contains valid data
      * used when making a model snapshot
      */
-    protected int containsValidData(Component position, Object componentObj) {
-        /* three steps:
-         * 1. get name of attribute to componentObj in this context
-         *    <context> attribName specifies attribute fully
-         * 2. get name of components which use this attribute in write or read-write mode
-         * 3. look one of these components has allready been executed
-         * 
-         */
-
-        //search for attribname
-        Iterator<Entry<String, JAMSData>> iter = this.attribs.entrySet().iterator();
-        String attribName = null;
-        while (iter.hasNext()) {
-            Entry<String, JAMSData> e = iter.next();
-            if ((Object) e.getValue() == componentObj) {
-                attribName = e.getKey();
-                break;
-            }
-        }
-
-        //search in accessSpecs for components which use this attrib
-        Component component = null;
-        if (attribName != null) {
-            for (int i = 0; i < this.accessSpecs.size(); i++) {
-                if (this.accessSpecs.get(i).attributeName.compareTo(attribName) == 0) {
-                    //do they write this attrib?
-                    if (this.accessSpecs.get(i).accessType != DataAccessor.READ_ACCESS) {
-                        component = this.accessSpecs.get(i).component;
-                        //has component been executed
-                        if (componentAllreadyProcessed(position, component) == 1) {
-                            return 1;
-                        }
-                    }
-                }
-            }
-        }
-        //look if there is an child context which uses this componentObj
-        for (int j = 0; j < components.size(); j++) {
-            Component c = components.get(j);
-            if (c.getInstanceName().equals(position.getInstanceName())) {
-                return 0;
-            }
-            if (c instanceof JAMSContext) {
-                if (((JAMSContext) components.get(j)).containsValidData(position, componentObj) == 1) {
-                    return 1;
-                }
-            }
-        }
-        return 2;
-    }
+//    public int containsValidData(Component position, Object componentObj) {
+//        /* three steps:
+//         * 1. get name of attribute to componentObj in this context
+//         *    <context> attribName specifies attribute fully
+//         * 2. get name of components which use this attribute in write or read-write mode
+//         * 3. look one of these components has allready been executed
+//         *
+//         */
+//
+//        //search for attribname
+//        Iterator<Entry<String, JAMSData>> iter = this.attribs.entrySet().iterator();
+//        String attribName = null;
+//        while (iter.hasNext()) {
+//            Entry<String, JAMSData> e = iter.next();
+//            if ((Object) e.getValue() == componentObj) {
+//                attribName = e.getKey();
+//                break;
+//            }
+//        }
+//
+//        //search in accessSpecs for components which use this attrib
+//        Component component = null;
+//        if (attribName != null) {
+//            for (int i = 0; i < this.attributeAccessList.size(); i++) {
+//                if (this.attributeAccessList.get(i).attributeName.compareTo(attribName) == 0) {
+//                    //do they write this attrib?
+//                    if (this.attributeAccessList.get(i).accessType != DataAccessor.READ_ACCESS) {
+//                        component = this.attributeAccessList.get(i).component;
+//                        //has component been executed
+//                        if (componentAllreadyProcessed(position, component) == 1) {
+//                            return 1;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        //look if there is an child context which uses this componentObj
+//        for (int j = 0; j < components.size(); j++) {
+//            Component c = components.get(j);
+//            if (c.getInstanceName().equals(position.getInstanceName())) {
+//                return 0;
+//            }
+//            if (c instanceof Context) {
+//                if (((Context) components.get(j)).containsValidData(position, componentObj) == 1) {
+//                    return 1;
+//                }
+//            }
+//        }
+//        return 2;
+//    }
 
     /*
      * trace entity data, but trace data only, if data source component has already been executed,
      * which means that data source component is executed before currentComponent
      * used when making a model snapshot
      */
-    protected void updateEntityData(Component currentComponent) {
-        //if this context has not been executed at all, exit                
-        if (this.getModel().componentAllreadyProcessed(currentComponent, this) != 1) {
-            return;
-            //if this context is finished ..
-        }
-        if (!componentInContext(currentComponent)) {
-            return;
-        }
-        for (int i = 0; i < dataAccessors.length; i++) {
-            //get pointer to component data
-            Object componentObj = dataAccessors[i].getComponentObject();
-            //look if component data is already up to date
-            if (containsValidData(currentComponent, componentObj) == 1) {
-                dataAccessors[i].write();
-            }
-        }
-    }
+//    public void updateEntityData(Component currentComponent) {
+//        //if this context has not been executed at all, exit
+//        if (this.getModel().componentAllreadyProcessed(currentComponent, this) != 1) {
+//            return;
+//            //if this context is finished ..
+//        }
+//        if (!componentInContext(currentComponent)) {
+//            return;
+//        }
+//        for (int i = 0; i < dataAccessors.length; i++) {
+//            //get pointer to component data
+//            Object componentObj = dataAccessors[i].getComponentObject();
+//            //look if component data is already up to date
+//            if (containsValidData(currentComponent, componentObj) == 1) {
+//                dataAccessors[i].write();
+//            }
+//        }
+//    }
 
-    protected void updateEntityData() {
+    public void updateEntityData() {
         //write entity data after execution
         for (int i = 0; i < dataAccessors.length; i++) {
             dataAccessors[i].write();
         }
     }
 
-    protected void updateComponentData(int index) {
+    public void updateComponentData(int index) {
         for (int i = 0; i < dataAccessors.length; i++) {
             dataAccessors[i].setIndex(index);
             //read entity data before execution
@@ -937,24 +955,6 @@ public class JAMSContext extends JAMSComponent {
             this.attributeName = attributeName;
             this.className = className;
             this.value = value;
-        }
-    }
-
-    class AccessSpec implements Serializable {
-
-        Component component;
-
-        String varName;
-
-        String attributeName;
-
-        int accessType;
-
-        public AccessSpec(Component component, String varName, String attributeName, int accessType) {
-            this.component = component;
-            this.varName = varName;
-            this.attributeName = attributeName;
-            this.accessType = accessType;
         }
     }
 

@@ -37,6 +37,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import jams.data.JAMSEntityCollection;
 import jams.runtime.JAMSRuntime;
+import jams.tools.SnapshotTools;
 import jams.workspace.JAMSWorkspace.InvalidWorkspaceException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -208,27 +209,27 @@ public class JAMSModel extends JAMSContext {
         this.nullFields = nullFields;
     }
 
-    private void collectEntityCollections(JAMSContext currentContext, Component position, HashMap<String, Attribute.EntityCollection> collection) {
-        currentContext.updateEntityData(position);
+    private void collectEntityCollections(Context currentContext, Component position, HashMap<String, Attribute.EntityCollection> collection) {
+        SnapshotTools.updateEntityData(currentContext, position);
         collection.put(currentContext.getInstanceName(), currentContext.getEntities());
 
-        for (int i = 0; i < currentContext.components.size(); i++) {
+        for (int i = 0; i < currentContext.getComponents().size(); i++) {
             Component c = (Component) currentContext.getComponents().get(i);
-            if (c instanceof JAMSContext) {
-                collectEntityCollections((JAMSContext) c, position, collection);
+            if (c instanceof Context) {
+                collectEntityCollections((Context) c, position, collection);
             }
         }
     }
 
-    private void restoreEntityCollections(JAMSContext currentContext, HashMap<String, JAMSEntityCollection> collection) {
+    private void restoreEntityCollections(Context currentContext, HashMap<String, JAMSEntityCollection> collection) {
         JAMSEntityCollection e = collection.get(currentContext.getInstanceName());
         if (e != null) {
             currentContext.setEntities(e);
         }
-        for (int i = 0; i < currentContext.components.size(); i++) {
+        for (int i = 0; i < currentContext.getComponents().size(); i++) {
             Component c = (Component) currentContext.getComponents().get(i);
-            if (c instanceof JAMSContext) {
-                restoreEntityCollections((JAMSContext) c, collection);
+            if (c instanceof Context) {
+                restoreEntityCollections((Context) c, collection);
             }
         }
         currentContext.initAccessors();

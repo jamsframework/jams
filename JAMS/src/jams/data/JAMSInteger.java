@@ -26,7 +26,7 @@ package jams.data;
  *
  * @author S. Kralisch
  */
-public class JAMSInteger implements Attribute.Integer, JAMSNumeric {
+public class JAMSInteger implements Attribute.Integer {
 
     private int value;
 

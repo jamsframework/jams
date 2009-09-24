@@ -28,7 +28,7 @@ import java.util.*;
  *
  * @author S. Kralisch
  */
-public class JAMSFloatArray implements JAMSData {
+public class JAMSFloatArray implements Attribute.FloatArray {
 
     private float[] value;
 

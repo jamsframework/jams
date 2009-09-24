@@ -48,7 +48,7 @@ public interface Attribute {
         public void setValue(boolean[] value);
     }
 
-    public interface Double extends JAMSData {
+    public interface Double extends JAMSNumeric {
 
         public double getValue();
 
@@ -62,7 +62,7 @@ public interface Attribute {
         public void setValue(double[] value);
     }
 
-    public interface Float extends JAMSData {
+    public interface Float extends JAMSNumeric {
 
         public float getValue();
 
@@ -76,7 +76,7 @@ public interface Attribute {
         public void setValue(float[] value);
     }
 
-    public interface Integer extends JAMSData {
+    public interface Integer extends JAMSNumeric {
 
         public int getValue();
 
@@ -90,7 +90,7 @@ public interface Attribute {
         public void setValue(int[] value);
     }
 
-    public interface Long extends JAMSData {
+    public interface Long extends JAMSNumeric {
 
         public long getValue();
 

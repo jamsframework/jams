@@ -31,7 +31,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.regex.Pattern;
-import jams.model.JAMSContext;
+import jams.model.Context;
 import java.io.Serializable;
 
 /**
@@ -114,7 +114,7 @@ public class OutputDataStore implements DataStore,Serializable {
 
         private String contextName,  expression;
         private Pattern pattern = null;
-        private JAMSContext context = null;
+        private Context context = null;
 
         public Filter(String contextName, String expression) {
             this.contextName = contextName;
@@ -137,11 +137,11 @@ public class OutputDataStore implements DataStore,Serializable {
             this.pattern = pattern;
         }
 
-        public JAMSContext getContext() {
+        public Context getContext() {
             return context;
         }
 
-        public void setContext(JAMSContext context) {
+        public void setContext(Context context) {
             this.context = context;
         }
     }

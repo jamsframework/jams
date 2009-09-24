@@ -28,7 +28,7 @@ import java.util.*;
  *
  * @author S. Kralisch
  */
-public class JAMSDoubleArray implements Attribute.DoubleArray, JAMSData {
+public class JAMSDoubleArray implements Attribute.DoubleArray {
 
     private double[] value;
 

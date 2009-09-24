@@ -318,11 +318,11 @@ public class ModelLoader {
                             // check if providing context supplies specified variable
                             // ...
 
-                            if (!(context instanceof JAMSContext)) {
+                            if (!(context instanceof Context)) {
                                 throw new ModelSpecificationException(JAMS.resources.getString("Component_") + componentName + JAMS.resources.getString(":_Component_") + element.getAttribute("context") + JAMS.resources.getString("_must_be_of_type_JAMSSpatialContext!"));
                             }
 
-                            JAMSContext sc = (JAMSContext) context;
+                            Context sc = (Context) context;
                             String attributeName;
 
                             attributeName = element.getAttribute("attribute");
@@ -372,27 +372,27 @@ public class ModelLoader {
 
             } else if (node.getNodeName().equals("attribute")) {
 
-                if (!JAMSContext.class.isAssignableFrom(component.getClass())) {
+                if (!Context.class.isAssignableFrom(component.getClass())) {
                     throw new ModelSpecificationException(JAMS.resources.getString("Attribute_tag_can_only_be_used_inside_context_components!_(component_") + componentName + JAMS.resources.getString(")"));
                 }
 
                 Element element = (Element) node;
-                ((JAMSContext) component).addAttribute(element.getAttribute("name"), element.getAttribute("class"), element.getAttribute("value"));
+                ((Context) component).addAttribute(element.getAttribute("name"), element.getAttribute("class"), element.getAttribute("value"));
 
             } /*else if (node.getNodeName().equals("trace")) {
 
-            if (!JAMSContext.class.isAssignableFrom(component.getImplementingClass())) {
+            if (!Context.class.isAssignableFrom(component.getImplementingClass())) {
             throw new ModelSpecificationException("Trace tag can only be used inside context components! (component " + componentName + ")");
             }
 
             Element element = (Element) node;
-            ((JAMSContext) component).getDataTracer().registerAttribute(element.getAttribute("attribute"));
+            ((Context) component).getDataTracer().registerAttribute(element.getAttribute("attribute"));
             jamsModel.getRuntime().println("Registering trace for " + component.getInstanceName() + "->" + element.getAttribute("attribute"), JAMS.STANDARD);
 
             }*/
         }
-        if (component instanceof JAMSContext) {
-            ((JAMSContext) component).setComponents(childComponentList);
+        if (component instanceof Context) {
+            ((Context) component).setComponents(childComponentList);
         }
 
         return component;

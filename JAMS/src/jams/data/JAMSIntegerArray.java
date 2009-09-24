@@ -28,7 +28,7 @@ import java.util.*;
  *
  * @author S. Kralisch
  */
-public class JAMSIntegerArray implements JAMSData {
+public class JAMSIntegerArray implements Attribute.IntegerArray {
 
     private int[] value;
 

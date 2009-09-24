@@ -7,7 +7,7 @@ package jams.model.metaoptimizer;
 
 import jams.tools.JAMSTools;
 import jams.model.Component;
-import jams.model.JAMSContext;
+import jams.model.Context;
 import jams.model.JAMSModel;
 import jams.model.JAMSSpatialContext;
 import jams.model.JAMSVarDescription;
@@ -147,7 +147,7 @@ public class metaModelOptimizer {
             if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("model")) {                
                 Element elem = (Element)node;
                 String name = elem.getAttribute("name");
-                Component comp = ((JAMSContext)parent).getComponent(name);
+                Component comp = ((Context)parent).getComponent(name);
                 //recursive procedure
                 Hashtable<String,AttributeReadWriteSet> subTable = getAttributeReadWriteSet(node,comp,name,contextEntityAttributes);
                 table = mergeTables(subTable,table);
@@ -155,7 +155,7 @@ public class metaModelOptimizer {
             if (node.getNodeName().equals("component")) {  
                 Element elem = (Element)node;
                 String name = elem.getAttribute("name");
-                Component comp = ((JAMSContext)parent).getComponent(name);
+                Component comp = ((Context)parent).getComponent(name);
                 Hashtable<String,AttributeReadWriteSet> subTable = getAttributeReadWriteSet(node,comp,currentContext,contextEntityAttributes);
                 table = mergeTables(subTable,table);                
             }
