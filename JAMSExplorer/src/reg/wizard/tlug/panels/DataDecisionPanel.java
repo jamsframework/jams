@@ -45,7 +45,7 @@ public class DataDecisionPanel extends javax.swing.JPanel {
         setupComponents();
 
         //By default, nothing is selected
-        controller.setProblem("keine Datenart ausgew√§hlt");
+        controller.setProblem("keine Datenart ausgew‰hlt");
 
         //Associate the values with the radio buttons, so the event handler
         //can be very simple
@@ -71,14 +71,14 @@ public class DataDecisionPanel extends javax.swing.JPanel {
 
         jLabel1.setText("Konfiguration laden");
 
-        jLoadButton.setText("Ausw√§hlen");
+        jLoadButton.setText("Ausw‰hlen");
         jLoadButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jLoadButtonActionPerformed(evt);
             }
         });
 
-        spatialButton.setText("r√§umliche Daten regionalisieren");
+        spatialButton.setText("r‰umliche Daten regionalisieren");
         spatialButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 spatialButtonActionPerformed(evt);

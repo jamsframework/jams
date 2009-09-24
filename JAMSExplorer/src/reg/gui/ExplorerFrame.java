@@ -68,6 +68,8 @@ import org.w3c.dom.Document;
 import reg.spreadsheet.STPConfigurator;
 import reg.viewer.Viewer;
 import reg.wizard.tlug.ExplorerWizard;
+import reg.wizard.tlug.panels.DataDecisionPanel;
+import reg.wizard.tlug.panels.StationParamsPanel;
 
 /**
  *
@@ -407,6 +409,55 @@ public class ExplorerFrame extends JFrame {
                 for (Object key : keys) {
                     System.out.println(key + "=" + wizardSettings.get(key));
                 }
+
+                // station data -> copy the wished files
+                String dataDecision = (String) wizardSettings.get(DataDecisionPanel.KEY_DATA);
+                if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_STATION)) {
+                    String computation = (String) wizardSettings.get(StationParamsPanel.KEY_COMPUTATION);
+                    // look into directory &computation and get model + output files
+                    String workSpaceDir = ws.getDirectory().getCanonicalPath();
+                    String sourceDir = workSpaceDir +
+                            File.separator + "variants" +
+                            File.separator + computation;
+                    System.out.println("sourceDir: " + sourceDir);
+
+                    // copy model file
+                    String modelSourceDir = sourceDir + File.separator + "workspace";
+                    File[] modelFiles = JAMSTools.getFiles(modelSourceDir, null);
+                    if (modelFiles == null || modelFiles.length == 0) {
+                        System.out.println("no model files found ind " + modelSourceDir);
+                    } else {
+                        File modelFile = modelFiles[0];
+                        String completeModelFileName = modelFile.getAbsolutePath();
+                        String modelFileName = modelFile.getName();
+                        System.out.println("model file found: " + completeModelFileName);
+                        String copyCommand = "cmd /c copy \"" + completeModelFileName + "\" \"" + workSpaceDir + "\" /Y";
+                        Runtime.getRuntime().exec(copyCommand);
+
+                        // copy output files
+                        String outputSourceDir = sourceDir + File.separator + "output";
+                        String outputTargetDir = workSpaceDir + File.separator + "output";
+                        File[] outputFiles = JAMSTools.getFiles(outputSourceDir, "xml");
+                        if (outputFiles == null || outputFiles.length == 0) {
+                            System.out.println("no output files found in " + outputSourceDir);
+                        } else {
+                            for (File outputFile: outputFiles) {
+                                String outputFileName = outputFile.getAbsolutePath();
+                                System.out.println("outputFile file found: " + outputFileName);
+                                copyCommand = "cmd /c copy \"" + outputFileName + "\" \"" + outputTargetDir + "\" /Y";
+                                Runtime.getRuntime().exec(copyCommand);
+                            }
+                        }
+
+                        // and now activate the new model
+                        ws.setModelFile(modelFileName);
+                        this.update();
+                        launchModel();
+
+                    } // model file found
+
+                }
+
             }
 
 

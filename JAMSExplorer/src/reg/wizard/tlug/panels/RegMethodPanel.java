@@ -240,7 +240,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
 
     private void checkProblems() {
         if (StringUtils.isNullOrEmpty(r_regVerfahren)) {
-            controller.setProblem("Bitte Regionalisierungsverfahren ausw√§hlen.");
+            controller.setProblem("Bitte Regionalisierungsverfahren ausw‰hlen.");
         } else {
             wizardData.put(KEY_REG, r_regVerfahren);
             if (StringUtils.isNullOrEmpty(r_numberstations)) {
@@ -252,7 +252,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
                 } else {
                     wizardData.put(KEY_UMKREIS, r_umkreis);
                     if (StringUtils.isNullOrEmpty(r_gewichtung)) {
-                        controller.setProblem("Bitte Gewichtung ausw√§hlen.");
+                        controller.setProblem("Bitte Gewichtung ausw‰hlen.");
                     } else {
                         wizardData.put(KEY_GEWICHTUNG, r_gewichtung);
                         if (r_schwellenwert == null || Integer.parseInt(r_schwellenwert) == 0) {

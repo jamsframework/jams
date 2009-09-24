@@ -25,17 +25,15 @@ public class StationParamsPanel extends javax.swing.JPanel {
     private final WizardController controller;
     private final Map wizardData;
 
-    public static final String KEY_PRECIP_CORR = "precipitationCorrection";
     public static final String KEY_COMPUTATION = "computation";
     public static final String VALUE_EVAPOR = "evaporation";
     public static final String VALUE_RADIATION = "radiation";
+    public static final String VALUE_AHUM = "ahum";
+    public static final String VALUE_PRECIPCORR = "precipCorrection";
+    public static final String VALUE_ALL = "all";
 
     // all field contents
-    private String r_precip_corr = null;
     private String r_computation = null;
-
-    private static final String ON ="1";
-    private static final String OFF ="0";
 
 
     /** Creates new form  */
@@ -49,9 +47,15 @@ public class StationParamsPanel extends javax.swing.JPanel {
         // group buttons
         buttonGroup1.add(jRadioEvapor);
         buttonGroup1.add(jRadioRadiation);
+        buttonGroup1.add(jRadioPrecipCorr);
+        buttonGroup1.add(jRadioHumidity);
+        buttonGroup1.add(jRadioAlles);
 
         jRadioEvapor.putClientProperty(KEY_COMPUTATION, VALUE_EVAPOR);
         jRadioRadiation.putClientProperty(KEY_COMPUTATION, VALUE_RADIATION);
+        jRadioPrecipCorr.putClientProperty(KEY_COMPUTATION, VALUE_PRECIPCORR);
+        jRadioHumidity.putClientProperty(KEY_COMPUTATION, VALUE_AHUM);
+        jRadioAlles.putClientProperty(KEY_COMPUTATION, VALUE_ALL);
 
         initFromWizardData();
         checkProblems();
@@ -68,21 +72,11 @@ public class StationParamsPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jPrecipKorr = new javax.swing.JCheckBox();
         jRadioEvapor = new javax.swing.JRadioButton();
         jRadioRadiation = new javax.swing.JRadioButton();
-
-        jPrecipKorr.setText("Niederschlagskorrektur");
-        jPrecipKorr.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jPrecipKorrActionPerformed(evt);
-            }
-        });
-        jPrecipKorr.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jPrecipKorrFocusLost(evt);
-            }
-        });
+        jRadioHumidity = new javax.swing.JRadioButton();
+        jRadioPrecipCorr = new javax.swing.JRadioButton();
+        jRadioAlles = new javax.swing.JRadioButton();
 
         jRadioEvapor.setText("Verdunstung");
         jRadioEvapor.addActionListener(new java.awt.event.ActionListener() {
@@ -98,6 +92,27 @@ public class StationParamsPanel extends javax.swing.JPanel {
             }
         });
 
+        jRadioHumidity.setText("absolute Luftfeuchte");
+        jRadioHumidity.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioHumidityActionPerformed(evt);
+            }
+        });
+
+        jRadioPrecipCorr.setText("Niederschlagskorrektur");
+        jRadioPrecipCorr.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioPrecipCorrActionPerformed(evt);
+            }
+        });
+
+        jRadioAlles.setText("Alles berechnen");
+        jRadioAlles.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioAllesActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -105,29 +120,29 @@ public class StationParamsPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jRadioEvapor)
-                        .addGap(44, 44, 44)
-                        .addComponent(jRadioRadiation))
-                    .addComponent(jPrecipKorr))
-                .addContainerGap(64, Short.MAX_VALUE))
+                    .addComponent(jRadioAlles)
+                    .addComponent(jRadioHumidity)
+                    .addComponent(jRadioRadiation)
+                    .addComponent(jRadioEvapor)
+                    .addComponent(jRadioPrecipCorr))
+                .addContainerGap(201, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(67, 67, 67)
-                .addComponent(jPrecipKorr)
-                .addGap(35, 35, 35)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioEvapor)
-                    .addComponent(jRadioRadiation))
-                .addContainerGap(148, Short.MAX_VALUE))
+                .addGap(41, 41, 41)
+                .addComponent(jRadioHumidity)
+                .addGap(18, 18, 18)
+                .addComponent(jRadioRadiation)
+                .addGap(18, 18, 18)
+                .addComponent(jRadioEvapor)
+                .addGap(18, 18, 18)
+                .addComponent(jRadioPrecipCorr)
+                .addGap(18, 18, 18)
+                .addComponent(jRadioAlles)
+                .addContainerGap(62, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jPrecipKorrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPrecipKorrActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jPrecipKorrActionPerformed
 
     private void jRadioRadiationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioRadiationActionPerformed
         computationSelected(evt);
@@ -137,13 +152,17 @@ public class StationParamsPanel extends javax.swing.JPanel {
         computationSelected(evt);
     }//GEN-LAST:event_jRadioEvaporActionPerformed
 
-    private void jPrecipKorrFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPrecipKorrFocusLost
-        System.out.println("jPrecipKorrFocusLost.");
-        r_precip_corr = OFF;
-        if (jPrecipKorr.isSelected())
-            r_precip_corr = ON;
-        checkProblems();
-    }//GEN-LAST:event_jPrecipKorrFocusLost
+    private void jRadioHumidityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioHumidityActionPerformed
+        computationSelected(evt);
+    }//GEN-LAST:event_jRadioHumidityActionPerformed
+
+    private void jRadioPrecipCorrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioPrecipCorrActionPerformed
+        computationSelected(evt);
+    }//GEN-LAST:event_jRadioPrecipCorrActionPerformed
+
+    private void jRadioAllesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioAllesActionPerformed
+        computationSelected(evt);
+    }//GEN-LAST:event_jRadioAllesActionPerformed
 
     private void computationSelected(java.awt.event.ActionEvent evt) {
 
@@ -165,24 +184,20 @@ public class StationParamsPanel extends javax.swing.JPanel {
                 jRadioEvapor.setSelected(true);
             if (computation.equals(VALUE_RADIATION))
                 jRadioRadiation.setSelected(true);
+            if (computation.equals(VALUE_AHUM))
+                jRadioHumidity.setSelected(true);
+            if (computation.equals(VALUE_PRECIPCORR))
+                jRadioPrecipCorr.setSelected(true);
+            if (computation.equals(VALUE_ALL))
+                jRadioAlles.setSelected(true);
         }
-
-        jPrecipKorr.setSelected(false);
-        String precipCorr = (String) wizardData.get(KEY_PRECIP_CORR);
-        if (!StringUtils.isNullOrEmpty(precipCorr)) {
-            r_precip_corr = precipCorr;
-            if (precipCorr.equals(ON));
-                jPrecipKorr.setSelected(true);
-        }
-
     }
 
     private void checkProblems() {
 
         controller.setProblem(null);
-        wizardData.put(KEY_PRECIP_CORR, r_precip_corr);
         if (StringUtils.isNullOrEmpty(r_computation)) {
-            controller.setProblem("Bitte Berechnungsart ausw√§hlen.");
+            controller.setProblem("Bitte Berechnungsart ausw‰hlen.");
         } else {
             wizardData.put(KEY_COMPUTATION, r_computation);
         }
@@ -191,8 +206,10 @@ public class StationParamsPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JCheckBox jPrecipKorr;
+    private javax.swing.JRadioButton jRadioAlles;
     private javax.swing.JRadioButton jRadioEvapor;
+    private javax.swing.JRadioButton jRadioHumidity;
+    private javax.swing.JRadioButton jRadioPrecipCorr;
     private javax.swing.JRadioButton jRadioRadiation;
     // End of variables declaration//GEN-END:variables
 

@@ -23,42 +23,35 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="jRadioEvapor" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
-                      <Component id="jRadioRadiation" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Component id="jPrecipKorr" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="jRadioAlles" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="jRadioHumidity" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="jRadioRadiation" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="jRadioEvapor" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="jRadioPrecipCorr" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="64" max="32767" attributes="0"/>
+              <EmptySpace pref="201" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="67" max="-2" attributes="0"/>
-              <Component id="jPrecipKorr" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jRadioEvapor" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jRadioRadiation" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace pref="148" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
+              <Component id="jRadioHumidity" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="jRadioRadiation" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="jRadioEvapor" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="jRadioPrecipCorr" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="jRadioAlles" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="62" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JCheckBox" name="jPrecipKorr">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Niederschlagskorrektur"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jPrecipKorrActionPerformed"/>
-        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jPrecipKorrFocusLost"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JRadioButton" name="jRadioEvapor">
       <Properties>
         <Property name="text" type="java.lang.String" value="Verdunstung"/>
@@ -73,6 +66,30 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioRadiationActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="jRadioHumidity">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="absolute Luftfeuchte"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioHumidityActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="jRadioPrecipCorr">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Niederschlagskorrektur"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioPrecipCorrActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="jRadioAlles">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Alles berechnen"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioAllesActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
