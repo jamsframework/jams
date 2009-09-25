@@ -23,10 +23,10 @@
 package reg;
 
 import jams.tools.GUIHelper;
+import jams.workspace.stores.InputDataStore;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import reg.spreadsheet.JAMSSpreadSheet;
-import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.StandardInputDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.util.HashMap;

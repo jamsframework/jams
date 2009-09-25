@@ -124,7 +124,7 @@ public class RuntimeManager extends Observable {
                 SimpleDateFormat sdf = new SimpleDateFormat();
                 result += "start=" + sdf.format(startTime.getTime()) + ", ";
                 if (runtime != null) {
-                    result += "workspace=" + runtime.getModel().workspaceDirectory.getValue();
+                    result += "workspace=" + runtime.getModel().getWorkspaceDirectory().getAbsolutePath();
                 }
                 result += "]";
                 stringRepresentation = result;

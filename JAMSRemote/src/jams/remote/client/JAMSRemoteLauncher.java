@@ -57,13 +57,14 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import jams.JAMSProperties;
+import jams.SystemProperties;
 import jams.tools.JAMSTools;
 import jams.tools.GUIHelper;
 import jams.ui.gui.LogViewDlg;
+import jams.tools.XMLIO;
+import jams.ui.gui.JAMSFrame;
 import jams.ui.gui.input.InputComponent;
 import jams.ui.gui.input.ListInput;
-import jams.io.XMLIO;
-import jams.ui.gui.JAMSFrame;
 import org.w3c.dom.Element;
 
 /**
@@ -94,12 +95,12 @@ public class JAMSRemoteLauncher extends JAMSFrame {
     
     //private Map<Element, InputComponent> propertyInput;
     
-    public JAMSRemoteLauncher(JAMSProperties properties) {
+    public JAMSRemoteLauncher(SystemProperties properties) {
         super(null, properties);
         adapt();
     }
     
-    public JAMSRemoteLauncher(String modelFilename, JAMSProperties properties, String cmdLineArgs) {
+    public JAMSRemoteLauncher(String modelFilename, SystemProperties properties, String cmdLineArgs) {
         super(null, properties, modelFilename, cmdLineArgs);
         adapt();
     }

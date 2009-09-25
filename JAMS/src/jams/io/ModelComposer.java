@@ -22,6 +22,7 @@
  */
 package jams.io;
 
+import jams.tools.XMLIO;
 import java.util.HashMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

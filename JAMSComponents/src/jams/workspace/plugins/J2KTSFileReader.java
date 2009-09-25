@@ -23,7 +23,7 @@
 package jams.workspace.plugins;
 
 import jams.workspace.DataReader;
-import jams.workspace.DataSet;
+import jams.workspace.DefaultDataSet;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -86,7 +86,7 @@ import java.io.IOException;
     }
 
     @Override
-    public DataSet[] getData() {
+    public DefaultDataSet[] getData() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

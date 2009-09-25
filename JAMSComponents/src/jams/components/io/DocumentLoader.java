@@ -15,6 +15,7 @@ import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 import org.xml.sax.SAXException;
 import jams.JAMS;
+import jams.tools.XMLIO;
 
 /**
  *

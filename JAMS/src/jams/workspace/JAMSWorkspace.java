@@ -33,14 +33,14 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
 import jams.JAMS;
-import jams.JAMSProperties;
+import jams.SystemProperties;
 import jams.tools.JAMSTools;
-import jams.io.XMLIO;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSRuntime;
-import jams.runtime.StandardRuntime;
+import jams.tools.XMLIO;
 import org.w3c.dom.Document;
 import jams.workspace.stores.DataStore;
+import jams.workspace.stores.DefaultOutputDataStore;
 import jams.workspace.stores.J2KTSDataStore;
 import jams.workspace.stores.OutputDataStore;
 import jams.workspace.stores.ShapeFileDataStore;
@@ -48,7 +48,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,12 +56,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Properties;
 
-public class JAMSWorkspace implements Serializable {
-
-    /**
-     * Comment string used to mark dump files of input datastores
-     */
-    public static final String DUMP_MARKER = "#JAMSdatadump", OUTPUT_FILE_ENDING = ".dat", SPREADSHEET_FILE_ENDING = ".sdat";
+public class JAMSWorkspace implements Workspace {
 
     private static final String CONFIG_FILE_NAME = "config.txt", CONFIG_FILE_COMMENT = "JAMS workspace configuration", CONTEXT_ATTRIBUTE_NAME = "context";
 
@@ -333,7 +327,7 @@ public class JAMSWorkspace implements Serializable {
         int i = 0;
         for (String storeID : stores) {
             Document doc = outputDataStores.get(storeID);
-            OutputDataStore store = new OutputDataStore(this, doc, storeID);
+            OutputDataStore store = new DefaultOutputDataStore(this, doc, storeID);
             currentStores.add(store);
             result[i] = store;
             i++;
@@ -583,7 +577,7 @@ public class JAMSWorkspace implements Serializable {
     }
 
     /**
-     * 
+     *
      * @return All existing data output directories
      */
     public File[] getOutputDataDirectories() {
@@ -645,55 +639,48 @@ public class JAMSWorkspace implements Serializable {
         return tmpDirectory;
     }
 
-    public class InvalidWorkspaceException extends Exception {
-
-        public InvalidWorkspaceException(String msg) {
-            super(msg);
-        }
-    }
-
-    public static void main(String[] args) throws IOException {
-
-        JAMSRuntime runtime = new StandardRuntime();
-        runtime.setDebugLevel(JAMS.VERBOSE);
-        runtime.addErrorLogObserver(new Observer() {
-
-            @Override
-            public void update(Observable o, Object arg) {
-                System.out.print(arg);
-            }
-        });
-        runtime.addInfoLogObserver(new Observer() {
-
-            @Override
-            public void update(Observable o, Object arg) {
-                System.out.print(arg);
-            }
-        });
-
-        JAMSProperties properties = JAMSProperties.createJAMSProperties();
-        properties.load("D:/jamsapplication/nsk.jap");
-        String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
-
-
-        JAMSWorkspace ws;
-        try {
-            ws = new JAMSWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime, true);
-        } catch (InvalidWorkspaceException iwe) {
-            System.out.println(iwe.getMessage());
-            return;
-        }
-        //JAMSWorkspace ws = new JAMSWorkspace(new File("D:/jamsapplication/ws_test"), runtime);
-        ws.setLibs(libs);
-
-        //System.out.println(ws.dataStoreToString("tmin"));
-        //ws.inputDataStoreToFile("tmin");
-
-//        ws.inputDataStoreToFile();
-
-        InputDataStore store = ws.getInputDataStore("sunh_db");
-        TSDumpProcessor asciiConverter = new TSDumpProcessor();
-        System.out.println(asciiConverter.toASCIIString((TSDataStore) store));
-    }
+//    public static void main(String[] args) throws IOException {
+//
+//        JAMSRuntime runtime = new StandardRuntime();
+//        runtime.setDebugLevel(JAMS.VERBOSE);
+//        runtime.addErrorLogObserver(new Observer() {
+//
+//            @Override
+//            public void update(Observable o, Object arg) {
+//                System.out.print(arg);
+//            }
+//        });
+//        runtime.addInfoLogObserver(new Observer() {
+//
+//            @Override
+//            public void update(Observable o, Object arg) {
+//                System.out.print(arg);
+//            }
+//        });
+//
+//        SystemProperties properties = JAMSProperties.createProperties();
+//        properties.load("D:/jamsapplication/nsk.jap");
+//        String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
+//
+//
+//        JAMSWorkspace ws;
+//        try {
+//            ws = new JAMSWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime, true);
+//        } catch (InvalidWorkspaceException iwe) {
+//            System.out.println(iwe.getMessage());
+//            return;
+//        }
+//        //JAMSWorkspace ws = new JAMSWorkspace(new File("D:/jamsapplication/ws_test"), runtime);
+//        ws.setLibs(libs);
+//
+//        //System.out.println(ws.dataStoreToString("tmin"));
+//        //ws.inputDataStoreToFile("tmin");
+//
+////        ws.inputDataStoreToFile();
+//
+//        InputDataStore store = ws.getInputDataStore("sunh_db");
+//        TSDumpProcessor asciiConverter = new TSDumpProcessor();
+//        System.out.println(asciiConverter.toASCIIString((TSDataStore) store));
+//    }
 }
 

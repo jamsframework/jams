@@ -38,7 +38,7 @@ import java.util.HashMap;
 import jams.data.JAMSEntityCollection;
 import jams.runtime.JAMSRuntime;
 import jams.tools.SnapshotTools;
-import jams.workspace.JAMSWorkspace.InvalidWorkspaceException;
+import jams.workspace.InvalidWorkspaceException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -50,7 +50,7 @@ import java.util.ArrayList;
                            author = "Sven Kralisch",
                            date = "26. September 2005",
                            description = "This component represents a JAMS model which is a special type of context component")
-public class JAMSModel extends JAMSContext {
+public class JAMSModel extends JAMSContext implements Model {
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ)
     public JAMSDirName workspaceDirectory = new JAMSDirName();
@@ -69,10 +69,6 @@ public class JAMSModel extends JAMSContext {
 
     public JAMSRuntime getRuntime() {
         return runtime;
-    }
-
-    public void setRuntime(JAMSRuntime runtime) {
-        this.runtime = runtime;
     }
 
     public String getName() {
@@ -116,7 +112,7 @@ public class JAMSModel extends JAMSContext {
         // prepare workspace
         try {
             this.setWorkspace();
-        } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
+        } catch (InvalidWorkspaceException iwe) {
             this.getRuntime().sendHalt(iwe.getMessage());
             return;
         }
@@ -148,7 +144,7 @@ public class JAMSModel extends JAMSContext {
         setupDataTracer();
     }
 
-    public boolean moveWorkspaceDirectory(String workspaceDirectory) {
+    private boolean moveWorkspaceDirectory(String workspaceDirectory) {
         setWorkspaceDirectory(workspaceDirectory);
         // create output dir
         try {
@@ -186,11 +182,11 @@ public class JAMSModel extends JAMSContext {
         return workspace.getDirectory();
     }
 
-    public File getOutputDataDirectory() {
+    private File getOutputDataDirectory() {
         return workspace.getOutputDataDirectory();
     }
 
-    public File getInputDirectory() {
+    private File getInputDirectory() {
         return workspace.getInputDirectory();
     }
 
@@ -249,7 +245,7 @@ public class JAMSModel extends JAMSContext {
             this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_save_model_state_because,") + e.toString());
         }
 
-        return new Snapshot(holdInMemory, outStream.toByteArray(), fileName);
+        return new JAMSSnapshot(holdInMemory, outStream.toByteArray(), fileName);
     }
 
     @SuppressWarnings ("unchecked")

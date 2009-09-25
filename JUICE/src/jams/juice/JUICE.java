@@ -56,7 +56,7 @@ public class JUICE {
 
     private static JUICEFrame juiceFrame;
 
-    private static JAMSProperties jamsProperties = JAMSProperties.createJAMSProperties();
+    private static JAMSProperties jamsProperties = JAMSProperties.createProperties();
 
     private static File baseDir = null;
 

@@ -28,11 +28,11 @@ import java.util.Observer;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import jams.JAMS;
-import jams.JAMSProperties;
+import jams.SystemProperties;
 import jams.tools.JAMSTools;
 import jams.data.JAMSData;
 import jams.model.Component;
-import jams.model.JAMSGUIComponent;
+import jams.model.GUIComponent;
 import jams.model.JAMSModel;
 import org.w3c.dom.Document;
 
@@ -56,13 +56,13 @@ public class MiniRuntime implements JAMSRuntime {
         JAMSModel model = new JAMSModel(this);
         component.setModel(model);
         component.setContext(model);
-        if (component instanceof JAMSGUIComponent) {
+        if (component instanceof GUIComponent) {
             frame = new JFrame();
             frame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
             frame.setTitle("MiniRuntime");
             frame.setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
             frame.setPreferredSize(new java.awt.Dimension(800, 600));
-            frame.getContentPane().add(((JAMSGUIComponent) component).getPanel(), BorderLayout.CENTER);
+            frame.getContentPane().add(((GUIComponent) component).getPanel(), BorderLayout.CENTER);
             frame.pack();
             frame.setVisible(true);
         }
@@ -199,7 +199,7 @@ public class MiniRuntime implements JAMSRuntime {
     }
 
     @Override
-    public void addGUIComponent(JAMSGUIComponent component) {
+    public void addGUIComponent(GUIComponent component) {
     }
 
     @Override
@@ -216,7 +216,7 @@ public class MiniRuntime implements JAMSRuntime {
     }
 
     @Override
-    public void loadModel(Document modelDocument, JAMSProperties properties) {
+    public void loadModel(Document modelDocument, SystemProperties properties) {
     }
 
     @Override

@@ -23,7 +23,6 @@
 package jams.workspace.stores;
 
 import jams.workspace.*;
-import jams.workspace.datatypes.DataValue;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -45,7 +44,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
 
     protected JAMSWorkspace ws;
 
-    protected DataSetDefinition dsd;
+    protected DefaultDataSetDefinition dsd;
 
     protected int bufferSize = 0;
 
@@ -84,7 +83,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
         }
     }
 
-    private DataSetDefinition createDataSetDefinitionFromDocument(Document doc) {
+    private DefaultDataSetDefinition createDataSetDefinitionFromDocument(Document doc) {
 
         ArrayList<Class> dataTypes = new ArrayList<Class>();
 
@@ -101,7 +100,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
             }
         }
 
-        DataSetDefinition def = new DataSetDefinition(dataTypes);
+        DefaultDataSetDefinition def = new DefaultDataSetDefinition(dataTypes);
 
         NodeList rowList = metadataElement.getElementsByTagName("row");
         for (int i = 0; i < rowList.getLength(); i++) {
@@ -259,7 +258,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
         return description;
     }
 
-    public DataSetDefinition getDataSetDefinition() {
+    public DefaultDataSetDefinition getDataSetDefinition() {
         return this.dsd;
     }
 

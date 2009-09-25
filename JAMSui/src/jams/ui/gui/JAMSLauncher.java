@@ -83,7 +83,7 @@ public class JAMSLauncher extends JFrame {
 
     private JTabbedPane tabbedPane = new JTabbedPane();
 
-    private JAMSProperties properties;
+    private SystemProperties properties;
 
     private JButton runButton;
 
@@ -103,12 +103,12 @@ public class JAMSLauncher extends JFrame {
 
     private JToolBar toolBar;
 
-    public JAMSLauncher(Frame parent, JAMSProperties properties) {
+    public JAMSLauncher(Frame parent, SystemProperties properties) {
         this.properties = properties;
         init();
     }
 
-    public JAMSLauncher(Frame parent, JAMSProperties properties, Document modelDocument) {
+    public JAMSLauncher(Frame parent, SystemProperties properties, Document modelDocument) {
         this(parent, properties);
         loadModelDefinition(modelDocument);
     }
@@ -530,7 +530,7 @@ public class JAMSLauncher extends JFrame {
         t.start();
     }
 
-    protected JAMSProperties getProperties() {
+    protected SystemProperties getProperties() {
         return properties;
     }
 

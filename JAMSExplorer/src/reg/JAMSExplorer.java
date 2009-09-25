@@ -26,6 +26,7 @@ import java.awt.event.WindowEvent;
 import reg.gui.ExplorerFrame;
 import jams.JAMS;
 import jams.JAMSProperties;
+import jams.SystemProperties;
 import jams.tools.GUIHelper;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
@@ -56,7 +57,7 @@ public class JAMSExplorer {
 
     private JAMSRuntime runtime;
 
-    private JAMSProperties properties;
+    private SystemProperties properties;
 
     private DisplayManager displayManager;
 
@@ -94,7 +95,7 @@ public class JAMSExplorer {
             this.runtime = runtime;
         }
 
-        properties = JAMSProperties.createJAMSProperties();
+        properties = JAMSProperties.createProperties();
         String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
         File file = new File(defaultFile);
         if (file.exists()) {
@@ -139,7 +140,7 @@ public class JAMSExplorer {
     /**
      * @return the properties
      */
-    public JAMSProperties getProperties() {
+    public SystemProperties getProperties() {
         return properties;
     }
 

@@ -5,17 +5,18 @@
 
 package jams.components.optimizer;
 
+import jams.JAMSProperties;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import jams.JAMSProperties;
+import jams.SystemProperties;
 import jams.data.*;
-import jams.io.XMLIO;
 import jams.model.*;
 import jams.runtime.StandardRuntime;
+import jams.tools.XMLIO;
 import org.w3c.dom.*;
 
 /**
@@ -524,7 +525,7 @@ public class ModelOptimizer extends JAMSComponent{
         for (int i=0;i<n;i++){
             params[i] = tok.nextToken();
         }
-        JAMSProperties properties = JAMSProperties.createJAMSProperties();
+        SystemProperties properties = JAMSProperties.createProperties();
 
         //try to load property values from file
         if (propertyFile.getValue() != null) {

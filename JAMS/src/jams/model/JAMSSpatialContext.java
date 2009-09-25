@@ -37,19 +37,19 @@ public class JAMSSpatialContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "List of spatial entities")
-    public JAMSEntityCollection entities;
+    public Attribute.EntityCollection entities;
     
 //    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
 //    description = "Current spatial entity")
 //    public JAMSEntity currentEntity;
 
     @Override
-    public JAMSEntityCollection getEntities() {
+    public Attribute.EntityCollection getEntities() {
         return entities;
     }
 
     @Override
-    public void setEntities(JAMSEntityCollection entities) {
+    public void setEntities(Attribute.EntityCollection entities) {
         this.entities = entities;
     }
 

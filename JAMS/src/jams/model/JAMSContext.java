@@ -33,7 +33,6 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import jams.JAMS;
 import jams.tools.JAMSTools;
@@ -42,6 +41,7 @@ import jams.dataaccess.*;
 import jams.dataaccess.CalendarAccessor;
 import jams.io.DataTracer.AbstractTracer;
 import jams.runtime.JAMSRuntime;
+import jams.workspace.stores.Filter;
 
 @JAMSComponentDescription (title = "JAMS Context",
                            author = "Sven Kralisch",
@@ -50,7 +50,7 @@ import jams.runtime.JAMSRuntime;
 "component of every component hierarchie in JAMS")
 public class JAMSContext extends JAMSComponent implements Context {
 
-    private JAMSEntityCollection entities;
+    private Attribute.EntityCollection entities;
 
 //    private JAMSEntity currentEntity;
     protected ArrayList<Component> components = new ArrayList<Component>();
@@ -205,7 +205,7 @@ public class JAMSContext extends JAMSComponent implements Context {
      * @param model The model object
      */
     @Override
-    public void setModel(JAMSModel model) {
+    public void setModel(Model model) {
         super.setModel(model);
         JAMSRuntime rt = getModel().getRuntime();
         rt.addStateObserver(new Observer() {
@@ -397,7 +397,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                 public void trace() {
 
                     // check for filters on other contexts first
-                    for (OutputDataStore.Filter filter : store.getFilters()) {
+                    for (Filter filter : store.getFilters()) {
                         if (filter.getContext() != JAMSContext.this) {
                             String s = filter.getContext().getTraceMark();
                             Matcher matcher = filter.getPattern().matcher(s);
@@ -414,7 +414,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                         boolean doBreak = false;
 
                         // take care of filters in this context
-                        for (OutputDataStore.Filter filter : store.getFilters()) {
+                        for (Filter filter : store.getFilters()) {
                             if (filter.getContext() == JAMSContext.this) {
                                 String s = Long.toString(entities[j].getId());
                                 Matcher matcher = filter.getPattern().matcher(s);
@@ -958,11 +958,13 @@ public class JAMSContext extends JAMSComponent implements Context {
         }
     }
 
+    @Override
     public Attribute.EntityCollection getEntities() {
         return entities;
     }
 
-    public void setEntities(JAMSEntityCollection entities) {
+    @Override
+    public void setEntities(Attribute.EntityCollection entities) {
         this.entities = entities;
     }
 //    public JAMSEntity getCurrentEntity() {

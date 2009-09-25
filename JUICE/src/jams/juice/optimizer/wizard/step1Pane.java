@@ -50,7 +50,7 @@ public class step1Pane extends stepPane {
         }
 
         //try to load property values from file        
-        properties = JAMSProperties.createJAMSProperties();
+        properties = JAMSProperties.createProperties();
         try {
             properties.load(selectedConfigurationFile.getText());
         } catch (IOException e) {

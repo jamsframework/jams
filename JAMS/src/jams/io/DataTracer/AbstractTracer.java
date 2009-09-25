@@ -27,9 +27,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
-import jams.dataaccess.DataAccessor;
 import jams.model.Context;
 import jams.JAMS;
+import jams.dataaccess.DataAccessor;
+import jams.workspace.stores.Filter;
 
 /**
  *
@@ -77,7 +78,7 @@ public abstract class AbstractTracer implements DataTracer {
         }
         this.accessorObjects = accessorObjectList.toArray(new DataAccessor[accessorObjectList.size()]);
 
-        for (OutputDataStore.Filter filter : store.getFilters()) {
+        for (Filter filter : store.getFilters()) {
 
             Context superContext = context;
             while (superContext != null) {
@@ -130,7 +131,7 @@ public abstract class AbstractTracer implements DataTracer {
         }
 
         output("@filters\n");
-        for (OutputDataStore.Filter filter : store.getFilters()) {
+        for (Filter filter : store.getFilters()) {
             output(filter.getContextName() + "\t" + filter.getExpression() + "\n");
         }
 

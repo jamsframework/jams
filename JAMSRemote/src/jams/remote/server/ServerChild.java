@@ -39,7 +39,7 @@ import java.util.Observable;
 import java.util.Observer;
 import jams.JAMSProperties;
 import jams.tools.JAMSTools;
-import jams.io.XMLIO;
+import jams.tools.XMLIO;
 import jams.io.XMLProcessor;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
@@ -188,7 +188,7 @@ public class ServerChild {
         Server.writeLog("Executing JAMS: " + workspaceDir + " - " + libDir);
         
         //String modelFilename = workspaceDir + "/$model.jam";
-        JAMSProperties properties = JAMSProperties.createJAMSProperties();
+        JAMSProperties properties = JAMSProperties.createProperties();
         properties.setProperty("verbose", "0");
         properties.setProperty("windowenable", "0");
         properties.setProperty("debug", debug);

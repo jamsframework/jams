@@ -93,7 +93,7 @@ public class TSDumpProcessor {
 
         target.append(DATA_TAG + "\n");
         while (store.hasNext()) {
-            DataSet ds = store.getNext();
+            DefaultDataSet ds = store.getNext();
             target.append(ds.toString() + "\n");
         }
         target.append(END_TAG);

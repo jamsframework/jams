@@ -27,8 +27,9 @@ import jams.tools.GUIHelper;
 import jams.ui.gui.PropertyDlg;
 import jams.ui.gui.WorkerDlg;
 import jams.ui.gui.WorkspaceDlg;
-import jams.io.XMLIO;
+import jams.tools.XMLIO;
 import jams.ui.gui.JAMSLauncher;
+import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.JAMSWorkspace;
 import reg.JAMSExplorer;
 import java.io.FileNotFoundException;
@@ -328,7 +329,7 @@ public class ExplorerFrame extends JFrame {
             explorer.setWorkspace(workspace);
             this.update();
 
-        } catch (JAMSWorkspace.InvalidWorkspaceException iwe) {
+        } catch (InvalidWorkspaceException iwe) {
             explorer.getRuntime().handle(iwe);
         }
     }

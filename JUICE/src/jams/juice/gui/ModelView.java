@@ -52,7 +52,7 @@ import jams.ui.gui.JAMSLauncher;
 import jams.tools.GUIHelper;
 import jams.ui.gui.WorkerDlg;
 import jams.io.ParameterProcessor;
-import jams.io.XMLIO;
+import jams.tools.XMLIO;
 import jams.io.XMLProcessor;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;

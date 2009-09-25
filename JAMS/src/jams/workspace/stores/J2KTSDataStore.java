@@ -25,8 +25,8 @@ package jams.workspace.stores;
 import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.runtime.JAMSRuntime;
-import jams.workspace.DataSet;
-import jams.workspace.DataSetDefinition;
+import jams.workspace.DefaultDataSet;
+import jams.workspace.DefaultDataSetDefinition;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.StringValue;
@@ -129,7 +129,7 @@ public class J2KTSDataStore extends TSDataStore {
             line = j2kTSFileReader.readLine();
         }
 
-        // create a DataSetDefinition object
+        // create a DefaultDataSetDefinition object
 
         StringTokenizer tok1 = new StringTokenizer(statAttribVal.toString(), "\n");
         tok1.nextToken();
@@ -140,7 +140,7 @@ public class J2KTSDataStore extends TSDataStore {
         for (int i = 0; i < attributeCount; i++) {
             dataTypes.add(Double.class);
         }
-        DataSetDefinition def = new DataSetDefinition(dataTypes);
+        DefaultDataSetDefinition def = new DefaultDataSetDefinition(dataTypes);
 
         while (tok1.hasMoreTokens()) {
 
@@ -227,13 +227,13 @@ public class J2KTSDataStore extends TSDataStore {
     }
 
     @Override
-    public DataSet getNext() {
+    public DefaultDataSet getNext() {
 
         if (!hasNext()) {
             return null;
         }
 
-        DataSet result = new DataSet(columnCount + 1);
+        DefaultDataSet result = new DefaultDataSet(columnCount + 1);
         StringTokenizer tok = new StringTokenizer(cache, "\t");
 
         String dateTimeString = tok.nextToken() + " " + tok.nextToken();

@@ -28,6 +28,7 @@ import jams.data.*;
 import jams.dataaccess.DataAccessor;
 import jams.io.DataTracer.DataTracer;
 import jams.io.DataTracer.AbstractTracer;
+import jams.workspace.stores.Filter;
 
 /**
  *
@@ -60,7 +61,7 @@ public class JAMSTemporalContext extends JAMSContext {
             public void trace() {
 
                 // check for filters on other contexts first
-                for (OutputDataStore.Filter filter : store.getFilters()) {
+                for (Filter filter : store.getFilters()) {
                     String s = filter.getContext().getTraceMark();
                     Matcher matcher = filter.getPattern().matcher(s);
                     if (!matcher.matches()) {

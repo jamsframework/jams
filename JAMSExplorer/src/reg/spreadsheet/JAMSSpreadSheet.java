@@ -25,8 +25,8 @@ import jams.data.*;
 
 
 import jams.tools.GUIHelper;
-import jams.workspace.DataSet;
-import jams.workspace.datatypes.DataValue;
+import jams.workspace.DataValue;
+import jams.workspace.DefaultDataSet;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.ShapeFileDataStore;
@@ -866,7 +866,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         // read table values from store
         while (store.hasNext()) {
-            DataSet ds = store.getNext();
+            DefaultDataSet ds = store.getNext();
 
             DataValue[] rowData = ds.getData();
 

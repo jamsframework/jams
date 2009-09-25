@@ -22,6 +22,7 @@
  */
 package jams.components.debug;
 
+import jams.data.Attribute;
 import jams.data.JAMSEntity;
 import jams.data.JAMSEntityCollection;
 import jams.data.EntityEnumerator;
@@ -43,7 +44,7 @@ public class JAMSConcurrentContext extends JAMSContext {
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
                          update = JAMSVarDescription.UpdateType.RUN,
                          description = "List of spatial entities")
-    public JAMSEntityCollection entities;
+    public Attribute.EntityCollection entities;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.WRITE,
                          update = JAMSVarDescription.UpdateType.RUN,
@@ -56,12 +57,12 @@ public class JAMSConcurrentContext extends JAMSContext {
     public JAMSInteger maxThreads;
 
     @Override
-    public JAMSEntityCollection getEntities() {
+    public Attribute.EntityCollection getEntities() {
         return entities;
     }
 
     @Override
-    public void setEntities(JAMSEntityCollection entities) {
+    public void setEntities(Attribute.EntityCollection entities) {
         this.entities = entities;
     }
 

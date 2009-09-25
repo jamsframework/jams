@@ -36,7 +36,7 @@ import java.util.Map.Entry;
  */
 public class SnapshotTools {
 
-    public static int componentAllreadyProcessed(Context context, Component position, Component component) {
+    private static int componentAlreadyProcessed(Context context, Component position, Component component) {
         if (context.getInstanceName().equals(position.getInstanceName())) {
             return 0;
         }
@@ -53,7 +53,7 @@ public class SnapshotTools {
             }
             if (c instanceof Context) {
                 Context subContext = (Context) c;
-                int result = componentAllreadyProcessed(subContext, position, component);
+                int result = componentAlreadyProcessed(subContext, position, component);
                 if (result == 0 || result == 1) {
                     return result;
                 }
@@ -62,7 +62,7 @@ public class SnapshotTools {
         return 2;
     }
 
-    public static int containsValidData(Context context, Component position, Object componentObj) {
+    private static int containsValidData(Context context, Component position, Object componentObj) {
         /* three steps:
          * 1. get name of attribute to componentObj in this context
          *    <context> attribName specifies attribute fully
@@ -94,7 +94,7 @@ public class SnapshotTools {
                     if (aAccess.getAccessType() != DataAccessor.READ_ACCESS) {
                         component = aAccess.getComponent();
                         //has component been executed
-                        if (componentAllreadyProcessed(context, position, component) == 1) {
+                        if (componentAlreadyProcessed(context, position, component) == 1) {
                             return 1;
                         }
                     }
@@ -118,7 +118,7 @@ public class SnapshotTools {
 
     public static void updateEntityData(Context context, Component currentComponent) {
         //if this context has not been executed at all, exit
-        if (componentAllreadyProcessed(context.getModel(), currentComponent, context) != 1) {
+        if (componentAlreadyProcessed(context.getModel(), currentComponent, context) != 1) {
             return;
             //if this context is finished ..
         }

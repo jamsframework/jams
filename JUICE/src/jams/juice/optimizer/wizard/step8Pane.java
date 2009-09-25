@@ -5,7 +5,7 @@
 
 package jams.juice.optimizer.wizard;
 
-import jams.io.XMLIO;
+import jams.tools.XMLIO;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import jams.juice.*;

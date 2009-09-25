@@ -17,8 +17,9 @@ import jams.dataaccess.DataAccessor;
 import jams.io.DataTracer.*;
 import jams.model.Component;
 import jams.model.JAMSContext;
-import jams.model.Snapshot;
 import jams.model.JAMSVarDescription;
+import jams.model.Snapshot;
+import jams.workspace.stores.Filter;
 import jams.workspace.stores.OutputDataStore;
 import java.util.regex.Matcher;
 
@@ -298,7 +299,7 @@ public abstract class Optimizer extends JAMSContext {
             @Override
             public void trace() {
                 // check for filters on other contexts first
-                for (OutputDataStore.Filter filter : store.getFilters()) {
+                for (Filter filter : store.getFilters()) {
                     String s = filter.getContext().getTraceMark();
                     Matcher matcher = filter.getPattern().matcher(s);
                     if (!matcher.matches()) {

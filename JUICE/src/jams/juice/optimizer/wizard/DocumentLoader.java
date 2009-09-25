@@ -5,6 +5,7 @@
 
 package jams.juice.optimizer.wizard;
 
+import jams.tools.XMLIO;
 import jams.io.*;
 import java.io.File;
 import java.io.IOException;

@@ -30,36 +30,7 @@ import java.util.*;
  *
  * @author S. Kralisch
  */
-public class JAMSProperties extends Observable {
-
-    /**
-     * Identifier for model value
-     */
-    public static final String MODEL_IDENTIFIER = "model";
-    /**
-     * Identifier for libraries value
-     */
-    public static final String LIBS_IDENTIFIER = "libs";
-    /**
-     * Identifier for server value
-     */
-    public static final String SERVER_IDENTIFIER = "server";
-    /**
-     * Identifier for server account value
-     */
-    public static final String SERVER_ACCOUNT_IDENTIFIER = "serveraccount";
-    /**
-     * Identifier for server password value
-     */
-    public static final String SERVER_PASSWORD_IDENTIFIER = "serverpassword";
-    /**
-     * Identifier for excludes value
-     */
-    public static final String SERVER_EXCLUDES_IDENTIFIER = "excludes";
-    /**
-     * Identifier for workspace value
-     */
-    public static final String WORKSPACE_IDENTIFIER = "workspace";
+public class JAMSProperties extends Observable implements SystemProperties {
 
     private Properties properties = new Properties();
     private String defaultFilename = "";
@@ -180,7 +151,7 @@ public class JAMSProperties extends Observable {
      * Creates a new JAMSProperties object
      * @return The JAMSProperties object
      */
-    public static JAMSProperties createJAMSProperties() {
+    public static JAMSProperties createProperties() {
         Properties p = new Properties();
         p.setProperty("model", "");
         p.setProperty("libs", "lib");

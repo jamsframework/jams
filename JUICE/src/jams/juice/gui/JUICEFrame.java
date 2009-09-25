@@ -32,6 +32,7 @@ import javax.swing.*;
 import jams.JAMS;
 import jams.io.JAMSFileFilter;
 import jams.JAMSProperties;
+import jams.SystemProperties;
 import jams.tools.JAMSTools;
 import jams.ui.gui.AboutDlg;
 import jams.tools.GUIHelper;
@@ -162,7 +163,7 @@ public class JUICEFrame extends JFrame {
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String stringValue = jfc.getSelectedFile().getAbsolutePath();
                     try {
-                        JAMSProperties properties = JUICE.getJamsProperties();
+                        SystemProperties properties = JUICE.getJamsProperties();
                         properties.load(stringValue);
 
                     } catch (IOException ioe) {

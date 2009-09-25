@@ -23,12 +23,12 @@
 package jams.ui.gui;
 
 import jams.JAMS;
-import jams.JAMSProperties;
+import jams.SystemProperties;
 import jams.tools.JAMSTools;
 import jams.tools.GUIHelper;
 import jams.io.JAMSFileFilter;
 import jams.io.ParameterProcessor;
-import jams.io.XMLIO;
+import jams.tools.XMLIO;
 import jams.io.XMLProcessor;
 import jams.ui.JAMSui;
 import java.awt.HeadlessException;
@@ -85,11 +85,11 @@ public class JAMSFrame extends JAMSLauncher {
             rtManagerAction, infoLogAction, errorLogAction, onlineAction,
             explorerAction;
 
-    public JAMSFrame(Frame parent, JAMSProperties properties) {
+    public JAMSFrame(Frame parent, SystemProperties properties) {
         super(parent, properties);
     }
 
-    public JAMSFrame(Frame parent, JAMSProperties properties, String modelFilename, String cmdLineArgs) {
+    public JAMSFrame(Frame parent, SystemProperties properties, String modelFilename, String cmdLineArgs) {
         //super(properties, modelFilename, cmdLineArgs);
         this(parent, properties);
         loadModelDefinition(modelFilename, JAMSTools.toArray(cmdLineArgs, ";"));

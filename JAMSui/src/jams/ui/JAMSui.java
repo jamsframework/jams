@@ -22,7 +22,7 @@
  */
 package jams.ui;
 
-import jams.JAMSProperties;
+import jams.tools.XMLIO;
 import jams.tools.JAMSTools;
 import java.io.*;
 import javax.swing.UIManager;
@@ -30,6 +30,8 @@ import jams.ui.gui.JAMSSplash;
 import jams.runtime.*;
 import jams.io.*;
 import jams.JAMS;
+import jams.JAMSProperties;
+import jams.SystemProperties;
 import jams.ui.gui.JAMSFrame;
 import java.util.Locale;
 import org.w3c.dom.Document;
@@ -43,7 +45,7 @@ public class JAMSui {
 
     protected int splashTimeout;
 
-    protected JAMSProperties properties;
+    protected SystemProperties properties;
 
     /**
      * JAMS base directory
@@ -67,7 +69,7 @@ public class JAMSui {
         }
 
         //create a JAMSui default set of property values
-        properties = JAMSProperties.createJAMSProperties();
+        properties = JAMSProperties.createProperties();
 
         //try to load property values from file
         if (cmdLine.getConfigFileName() != null) {

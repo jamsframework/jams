@@ -48,12 +48,12 @@ public class PropertyDlg extends JDialog {
     private JSpinner debugSpinner;
     private FileInput infoFile,  errorFile;
     private TextInput windowHeight,  windowWidth, helpBaseURL, userName, forceLocale;
-    private JAMSProperties properties;
+    private SystemProperties properties;
     public static final int APPROVE_OPTION = 1;
     public static final int CANCEL_OPTION = 0;
     private int result = CANCEL_OPTION;
 
-    public PropertyDlg(Frame owner, JAMSProperties properties) {
+    public PropertyDlg(Frame owner, SystemProperties properties) {
 
         super(owner);
         this.setLayout(new BorderLayout());
@@ -223,7 +223,7 @@ public class PropertyDlg extends JDialog {
         return pane;
     }
 
-    public void setProperties(JAMSProperties properties) {
+    public void setProperties(SystemProperties properties) {
 
         this.properties = properties;
 
@@ -283,7 +283,7 @@ public class PropertyDlg extends JDialog {
         properties.setProperty("helpbaseurl", helpBaseURL.getValue());
     }
 
-    public JAMSProperties getProperties() {
+    public SystemProperties getProperties() {
         validateProperties();
         return properties;
     }

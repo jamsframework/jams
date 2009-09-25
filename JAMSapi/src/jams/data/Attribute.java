@@ -25,6 +25,7 @@ package jams.data;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -47,7 +48,7 @@ public interface Attribute {
         public void setValue(boolean[] value);
     }
 
-    public interface Double extends JAMSData {
+    public interface Double extends JAMSNumeric {
 
         public double getValue();
 
@@ -61,7 +62,7 @@ public interface Attribute {
         public void setValue(double[] value);
     }
 
-    public interface Float extends JAMSData {
+    public interface Float extends JAMSNumeric {
 
         public float getValue();
 
@@ -75,7 +76,7 @@ public interface Attribute {
         public void setValue(float[] value);
     }
 
-    public interface Integer extends JAMSData {
+    public interface Integer extends JAMSNumeric {
 
         public int getValue();
 
@@ -89,7 +90,7 @@ public interface Attribute {
         public void setValue(int[] value);
     }
 
-    public interface Long extends JAMSData {
+    public interface Long extends JAMSNumeric {
 
         public long getValue();
 
@@ -107,6 +108,7 @@ public interface Attribute {
 
         public java.lang.String getValue();
 
+        @Override
         public void setValue(java.lang.String value);
 
         public int getLength();
@@ -123,7 +125,35 @@ public interface Attribute {
 
     public interface Calendar extends JAMSData {
 
+//        public final static int YEAR = java.util.Calendar.YEAR;
+//
+//        public final static int MONTH = java.util.Calendar.MONTH;
+//
+//        public final static int WEEK_OF_YEAR = java.util.Calendar.WEEK_OF_YEAR;
+//
+//        public final static int WEEK_OF_MONTH = java.util.Calendar.WEEK_OF_MONTH;
+//
+//        public final static int DAY_OF_YEAR = java.util.Calendar.DAY_OF_YEAR;
+//
+//        public final static int DAY_OF_MONTH = java.util.Calendar.DAY_OF_MONTH;
+//
+//        public final static int DAY_OF_WEEK = java.util.Calendar.DAY_OF_WEEK;
+//
+//        public final static int HOUR_OF_DAY = java.util.Calendar.HOUR_OF_DAY;
+//
+//        public final static int MINUTE = java.util.Calendar.MINUTE;
+//
+//        public final static int DST_OFFSET = java.util.Calendar.DST_OFFSET;
+//
+//        public final static int SECOND = java.util.Calendar.SECOND;
+//
+//        public final static int ZONE_OFFSET = java.util.Calendar.ZONE_OFFSET;
+
         public Attribute.Calendar getValue();
+
+        public int getActualMaximum(int field);
+
+        public int getActualMinimum(int field);
 
         public void setValue(Attribute.Calendar value);
 
@@ -150,6 +180,10 @@ public interface Attribute {
         public long getTimeInMillis();
 
         public int get(int field);
+
+        public Date getTime();
+
+        public void setTime(Date date);
 
         public void add(int field, int amount);
 

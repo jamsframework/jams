@@ -26,7 +26,7 @@ package jams.io;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import jams.io.XMLIO;
+import jams.tools.XMLIO;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

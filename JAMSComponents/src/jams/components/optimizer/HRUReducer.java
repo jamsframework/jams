@@ -519,7 +519,7 @@ public class HRUReducer extends JAMSContext{
     //wont have 
     public void init(){ 
         try{
-            mySnapShot = (Snapshot)this.snapshot.getObject("snapshot");            
+            mySnapShot = (Snapshot)this.snapshot.getObject("snapshot");
         }catch(Exception e){
             System.out.println("Could not find snapshot attribute: " + e.toString());
         }

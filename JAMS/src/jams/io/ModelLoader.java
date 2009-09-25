@@ -211,8 +211,8 @@ public class ModelLoader {
             component.setModel(jamsModel);
             component.setInstanceName(componentName);
 
-            if (component instanceof JAMSGUIComponent) {
-                JAMSGUIComponent guiComponent = (JAMSGUIComponent) component;
+            if (component instanceof GUIComponent) {
+                GUIComponent guiComponent = (GUIComponent) component;
                 jamsModel.getRuntime().addGUIComponent(guiComponent);
             }
 
@@ -252,8 +252,8 @@ public class ModelLoader {
                 }
 
                 /*
-                if (childComponent instanceof JAMSGUIComponent) {
-                JAMSGUIComponent guiComponent = (JAMSGUIComponent) childComponent;
+                if (childComponent instanceof GUIComponent) {
+                GUIComponent guiComponent = (GUIComponent) childComponent;
                 jamsModel.getRuntime().addGUIComponent(guiComponent);
                 }
                  */
