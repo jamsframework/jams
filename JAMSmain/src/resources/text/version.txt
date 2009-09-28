@@ -1,4 +1,0 @@
-major_release=2
-minor_release=7
-revision=00
-date=20090915
