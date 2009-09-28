@@ -22,6 +22,7 @@
  */
 package jams.juice.gui;
 
+import jamsui.juice.gui.ModelView;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -52,14 +53,14 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
-import jams.tools.GUIHelper;
-import jams.ui.gui.input.InputComponent;
-import jams.ui.gui.input.ValueChangeListener;
-import jams.juice.*;
-import jams.juice.ComponentDescriptor;
-import jams.juice.ComponentDescriptor.ComponentAttribute;
-import jams.juice.ContextAttribute;
-import jams.ui.gui.input.InputComponentFactory;
+import jams.gui.tools.GUIHelper;
+import jams.gui.input.InputComponent;
+import jams.gui.input.ValueChangeListener;
+import jamsui.juice.*;
+import jamsui.juice.ComponentDescriptor;
+import jamsui.juice.ComponentDescriptor.ComponentAttribute;
+import jamsui.juice.ContextAttribute;
+import jams.gui.input.InputComponentFactory;
 
 /**
  *

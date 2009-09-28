@@ -22,6 +22,7 @@
  */
 package jams.juice.gui;
 
+import jamsui.juice.gui.ContextAttributeDlg;
 import jams.data.JAMSString;
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -41,10 +42,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
-import jams.tools.GUIHelper;
-import jams.ui.gui.input.InputComponent;
-import jams.juice.*;
-import jams.ui.gui.input.InputComponentFactory;
+import jams.gui.tools.GUIHelper;
+import jams.gui.input.InputComponent;
+import jamsui.juice.*;
+import jams.gui.input.InputComponentFactory;
 import java.util.HashMap;
 
 /**

@@ -5,7 +5,8 @@
 
 package jams.juice.optimizer.wizard;
 
-import jams.juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
+import jamsui.juice.optimizer.wizard.Tools;
+import jamsui.juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
 import java.awt.Component;
 import java.awt.Image;
 import javax.swing.Icon;

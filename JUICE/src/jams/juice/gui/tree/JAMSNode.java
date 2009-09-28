@@ -23,11 +23,13 @@
 
 package jams.juice.gui.tree;
 
+import jamsui.juice.gui.tree.JAMSTree;
+import jamsui.juice.gui.tree.JAMSNode;
 import java.awt.Image;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.tree.DefaultMutableTreeNode;
-import jams.juice.ComponentDescriptor;
+import jamsui.juice.ComponentDescriptor;
 
 /**
  *

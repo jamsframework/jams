@@ -23,7 +23,7 @@
 package reg.gui;
 
 import jams.data.JAMSCalendar;
-import jams.tools.GUIHelper;
+import jams.gui.tools.GUIHelper;
 import jams.workspace.stores.StandardInputDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.util.HashMap;

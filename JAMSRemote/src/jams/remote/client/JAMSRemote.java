@@ -22,9 +22,9 @@
  */
 package jams.remote.client;
 
-import jams.ui.gui.JAMSSplash;
-import jams.io.JAMSCmdLine;
-import jams.ui.JAMSui;
+import jams.gui.JAMSSplash;
+import jamsui.JAMSCmdLine;
+import jamsui.launcher.JAMSui;
 
 /**
  *
@@ -50,7 +50,7 @@ public class JAMSRemote extends JAMSui {
 
     public static void main(String[] args) {
 
-        new JAMSRemote(new JAMSCmdLine(args));
+        new JAMSRemote(new JAMSCmdLine(args, JAMSui.APP_TITLE));
 
     }
 

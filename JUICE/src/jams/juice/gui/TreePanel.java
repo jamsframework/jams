@@ -31,8 +31,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import jams.juice.gui.tree.JAMSTree;
-import jams.juice.JUICE;
+import jamsui.juice.gui.tree.JAMSTree;
+import jamsui.juice.JUICE;
 
 /**
  *

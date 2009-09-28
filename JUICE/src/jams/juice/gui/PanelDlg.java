@@ -30,7 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
-import jams.juice.JUICE;
+import jamsui.juice.JUICE;
 
 /**
  *

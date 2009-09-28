@@ -22,20 +22,22 @@
  */
 package jams.juice;
 
+import jamsui.juice.JUICE;
 import java.io.File;
 import java.util.*;
 import javax.swing.UIManager;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jams.tools.JAMSTools;
-import jams.ui.gui.JAMSSplash;
-import jams.tools.GUIHelper;
-import jams.ui.gui.WorkerDlg;
+import jams.gui.JAMSSplash;
+import jams.gui.tools.GUIHelper;
+import jams.gui.WorkerDlg;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.StandardRuntime;
-import jams.juice.gui.JUICEFrame;
-import jams.juice.gui.ModelView;
-import jams.juice.gui.tree.LibTree;
+import jamsui.juice.gui.JUICEFrame;
+import jamsui.juice.gui.ModelView;
+import jamsui.juice.gui.tree.LibTree;
+import jamsui.JAMSCmdLine;
 import javax.swing.SwingWorker;
 
 /**
@@ -46,7 +48,7 @@ public class JUICE {
 
     public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/JUICEBundle");
 
-    public static final String APP_TITLE = resources.getString("JUICE");
+    public static final String APP_TITLE = "JUICE";
 
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
 
@@ -64,7 +66,7 @@ public class JUICE {
 
     private static ClassLoader loader;
 
-    private static JUICECmdLine cmdLine;
+    private static JAMSCmdLine cmdLine;
 
     private static LibTree libTree;
 
@@ -83,7 +85,7 @@ public class JUICE {
             }
         }
 
-        cmdLine = new JUICECmdLine(args);
+        cmdLine = new JAMSCmdLine(args, JUICE.APP_TITLE);
 
         try {
 

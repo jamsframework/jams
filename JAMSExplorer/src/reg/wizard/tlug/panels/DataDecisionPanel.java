@@ -10,7 +10,7 @@
  */
 package reg.wizard.tlug.panels;
 
-import jams.io.JAMSFileFilter;
+import jams.JAMSFileFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

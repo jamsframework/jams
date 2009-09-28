@@ -23,12 +23,12 @@
 package reg.gui;
 
 import jams.tools.JAMSTools;
-import jams.tools.GUIHelper;
-import jams.ui.gui.PropertyDlg;
-import jams.ui.gui.WorkerDlg;
-import jams.ui.gui.WorkspaceDlg;
+import jams.gui.tools.GUIHelper;
+import jams.gui.PropertyDlg;
+import jams.gui.WorkerDlg;
+import jams.gui.WorkspaceDlg;
 import jams.tools.XMLIO;
-import jams.ui.gui.JAMSLauncher;
+import jams.gui.JAMSLauncher;
 import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.JAMSWorkspace;
 import reg.JAMSExplorer;

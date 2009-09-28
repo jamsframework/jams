@@ -5,11 +5,12 @@
 
 package jams.juice.optimizer.wizard;
 
-import jams.juice.optimizer.wizard.OptimizationWizard.Efficiency;
-import jams.juice.optimizer.wizard.OptimizationWizard.Parameter;
-import jams.juice.optimizer.wizard.step6Pane.AttributeDescription;
-import jams.juice.optimizer.wizard.step6Pane.OptimizerDescription;
-import jams.juice.*;
+import jamsui.juice.optimizer.wizard.stepPane;
+import jamsui.juice.optimizer.wizard.OptimizationWizard.Efficiency;
+import jamsui.juice.optimizer.wizard.OptimizationWizard.Parameter;
+import jamsui.juice.optimizer.wizard.step6Pane.AttributeDescription;
+import jamsui.juice.optimizer.wizard.step6Pane.OptimizerDescription;
+import jamsui.juice.*;
 import jams.model.JAMSModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -27,7 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
-import jams.juice.optimizer.wizard.OptimizationWizard.AttributeWrapper;
+import jamsui.juice.optimizer.wizard.OptimizationWizard.AttributeWrapper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

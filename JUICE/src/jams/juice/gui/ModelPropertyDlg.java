@@ -45,14 +45,14 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
-import jams.tools.GUIHelper;
-import jams.ui.gui.input.FloatInput;
-import jams.ui.gui.input.IntegerInput;
-import jams.juice.ModelProperties.ModelProperty;
-import jams.juice.ComponentDescriptor;
-import jams.juice.ComponentDescriptor.ComponentAttribute;
-import jams.juice.ContextAttribute;
-import jams.juice.JUICE;
+import jams.gui.tools.GUIHelper;
+import jams.gui.input.FloatInput;
+import jams.gui.input.IntegerInput;
+import jamsui.juice.ModelProperties.ModelProperty;
+import jamsui.juice.ComponentDescriptor;
+import jamsui.juice.ComponentDescriptor.ComponentAttribute;
+import jamsui.juice.ContextAttribute;
+import jamsui.juice.JUICE;
 
 /**
  *

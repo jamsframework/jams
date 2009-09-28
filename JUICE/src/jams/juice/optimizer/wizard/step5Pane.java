@@ -5,8 +5,9 @@
 
 package jams.juice.optimizer.wizard;
 
-import jams.juice.optimizer.wizard.OptimizationWizard.Efficiency;
-import jams.juice.*;
+import jamsui.juice.optimizer.wizard.stepPane;
+import jamsui.juice.optimizer.wizard.OptimizationWizard.Efficiency;
+import jamsui.juice.*;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;

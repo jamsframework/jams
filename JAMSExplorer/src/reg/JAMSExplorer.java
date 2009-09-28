@@ -27,7 +27,7 @@ import reg.gui.ExplorerFrame;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jams.SystemProperties;
-import jams.tools.GUIHelper;
+import jams.gui.tools.GUIHelper;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import jams.workspace.JAMSWorkspace;

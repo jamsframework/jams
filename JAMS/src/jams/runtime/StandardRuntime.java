@@ -54,7 +54,6 @@ import jams.SystemProperties;
 import jams.tools.JAMSTools;
 import jams.data.JAMSData;
 import jams.data.JAMSEntityCollection;
-import jams.tools.GUIHelper;
 import jams.io.ModelLoader;
 import jams.io.ParameterProcessor;
 import jams.model.GUIComponent;
@@ -310,12 +309,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
                 try {
                     tabbedPane.addTab(comp.getInstanceName(), comp.getPanel());
                 } catch (Throwable t) {
+                    this.sendErrorMsg(JAMS.resources.getString("Could_not_load_component") + comp.getInstanceName() +
+                            JAMS.resources.getString("Proceed_anyway?"));
                     this.handle(t, true);
-                    int result = GUIHelper.showYesNoDlg(frame, JAMS.resources.getString("Could_not_load_component") + comp.getInstanceName() +
-                            JAMS.resources.getString("Proceed_anyway?"), JAMS.resources.getString("Error"));
-                    if (result == GUIHelper.NO_OPTION) {
-                        this.setRunState(JAMSRuntime.STATE_STOP);
-                    }
                 }
             }
             frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);

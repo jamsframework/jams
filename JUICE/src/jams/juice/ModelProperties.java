@@ -22,11 +22,14 @@
  */
 package jams.juice;
 
+import jamsui.juice.ComponentDescriptor;
+import jamsui.juice.ModelProperties;
+import jamsui.juice.ContextAttribute;
 import java.util.Vector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import jams.tools.JAMSTools;
-import jams.ui.gui.HelpComponent;
+import jams.gui.HelpComponent;
 
 /**
  *

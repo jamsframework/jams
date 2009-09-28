@@ -4,6 +4,8 @@
  */
 package jams.juice.optimizer.wizard;
 
+import jamsui.juice.optimizer.wizard.stepPane;
+import jamsui.juice.optimizer.wizard.DocumentLoader;
 import jams.JAMSProperties;
 import jams.data.JAMSDataFactory;
 import java.awt.BorderLayout;

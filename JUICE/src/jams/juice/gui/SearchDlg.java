@@ -23,8 +23,8 @@
 package jams.juice.gui;
 
 import jams.data.JAMSString;
-import jams.tools.GUIHelper;
-import jams.ui.gui.input.InputComponent;
+import jams.gui.tools.GUIHelper;
+import jams.gui.input.InputComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.awt.BorderLayout;
@@ -50,13 +50,13 @@ import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import javax.swing.tree.TreePath;
-import jams.juice.ComponentDescriptor;
-import jams.juice.gui.tree.JAMSNode;
-import jams.juice.gui.tree.JAMSTree;
-import jams.juice.gui.tree.LibTree;
-import jams.juice.gui.tree.ModelTree;
-import jams.juice.JUICE;
-import jams.ui.gui.input.InputComponentFactory;
+import jamsui.juice.ComponentDescriptor;
+import jamsui.juice.gui.tree.JAMSNode;
+import jamsui.juice.gui.tree.JAMSTree;
+import jamsui.juice.gui.tree.LibTree;
+import jamsui.juice.gui.tree.ModelTree;
+import jamsui.juice.JUICE;
+import jams.gui.input.InputComponentFactory;
 
 /**
  *

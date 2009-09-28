@@ -5,9 +5,10 @@
 
 package jams.juice.optimizer.wizard;
 
-import jams.juice.optimizer.wizard.OptimizationWizard.Efficiency;
-import jams.juice.optimizer.wizard.OptimizationWizard.Parameter;
-import jams.juice.*;
+import jamsui.juice.optimizer.wizard.stepPane;
+import jamsui.juice.optimizer.wizard.OptimizationWizard.Efficiency;
+import jamsui.juice.optimizer.wizard.OptimizationWizard.Parameter;
+import jamsui.juice.*;
 import jams.data.JAMSBoolean;
 import java.awt.BorderLayout;
 import java.awt.Color;

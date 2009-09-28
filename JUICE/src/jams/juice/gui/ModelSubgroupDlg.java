@@ -40,9 +40,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import jams.tools.GUIHelper;
-import jams.juice.ModelProperties.Group;
-import jams.juice.JUICE;
+import jams.gui.tools.GUIHelper;
+import jamsui.juice.ModelProperties.Group;
+import jamsui.juice.JUICE;
 
 /**
  *

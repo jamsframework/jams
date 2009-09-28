@@ -22,6 +22,10 @@
  */
 package jams.juice.gui;
 
+import jamsui.juice.gui.ComponentPanel;
+import jamsui.juice.gui.ContextAttributeDlg;
+import jamsui.juice.gui.ModelView;
+import jamsui.juice.gui.ComponentAttributePanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -47,15 +51,15 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import jams.tools.GUIHelper;
+import jams.gui.tools.GUIHelper;
 import jams.model.JAMSModel;
 import java.awt.Font;
 import javax.swing.UIManager;
-import jams.juice.*;
-import jams.juice.ComponentDescriptor;
-import jams.juice.ComponentDescriptor.ComponentAttribute;
-import jams.juice.gui.tree.JAMSNode;
-import jams.juice.ContextAttribute;
+import jamsui.juice.*;
+import jamsui.juice.ComponentDescriptor;
+import jamsui.juice.ComponentDescriptor.ComponentAttribute;
+import jamsui.juice.gui.tree.JAMSNode;
+import jamsui.juice.ContextAttribute;
 
 /**
  *

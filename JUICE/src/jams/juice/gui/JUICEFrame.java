@@ -22,6 +22,10 @@
  */
 package jams.juice.gui;
 
+import jamsui.juice.gui.JUICEFrame;
+import jamsui.juice.gui.SearchDlg;
+import jamsui.juice.gui.ModelView;
+import jamsui.juice.gui.TreePanel;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
@@ -30,20 +34,20 @@ import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
 import jams.JAMS;
-import jams.io.JAMSFileFilter;
+import jams.JAMSFileFilter;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.tools.JAMSTools;
-import jams.ui.gui.AboutDlg;
-import jams.tools.GUIHelper;
-import jams.ui.gui.LogViewDlg;
-import jams.ui.gui.PropertyDlg;
-import jams.ui.gui.RuntimeManagerPanel;
-import jams.ui.gui.WorkerDlg;
-import jams.juice.*;
-import jams.juice.gui.tree.LibTree;
-import jams.juice.gui.tree.ModelTree;
-import jams.juice.optimizer.wizard.OptimizationWizard;
+import jams.gui.AboutDlg;
+import jams.gui.tools.GUIHelper;
+import jams.gui.LogViewDlg;
+import jams.gui.PropertyDlg;
+import jams.gui.RuntimeManagerPanel;
+import jams.gui.WorkerDlg;
+import jamsui.juice.*;
+import jamsui.juice.gui.tree.LibTree;
+import jamsui.juice.gui.tree.ModelTree;
+import jamsui.juice.optimizer.wizard.OptimizationWizard;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 

@@ -4,7 +4,7 @@
  */
 package reg.gui;
 
-import jams.tools.GUIHelper;
+import jams.gui.tools.GUIHelper;
 import java.awt.Frame;
 import java.io.File;
 import java.util.ArrayList;

@@ -22,11 +22,13 @@
  */
 package jams.juice.gui.tree;
 
+import jamsui.juice.gui.tree.JAMSTree;
+import jamsui.juice.gui.tree.JAMSNode;
 import java.util.*;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
-import jams.juice.ComponentDescriptor;
+import jamsui.juice.ComponentDescriptor;
 
 public class JAMSTree extends JTree {
 

@@ -22,8 +22,7 @@
  */
 package reg.gui;
 
-import jams.data.JAMSCalendar;
-import jams.tools.GUIHelper;
+import jams.gui.tools.GUIHelper;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -53,7 +52,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -61,7 +59,6 @@ import javax.swing.event.ListSelectionListener;
 import reg.dsproc.DataMatrix;
 import reg.dsproc.DataStoreProcessor;
 import reg.dsproc.SimpleSerieProcessor;
-import reg.dsproc.TimeSpaceProcessor;
 
 /**
  *

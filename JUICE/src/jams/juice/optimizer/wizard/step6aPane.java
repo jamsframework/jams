@@ -5,10 +5,12 @@
 
 package jams.juice.optimizer.wizard;
 
+import jamsui.juice.optimizer.wizard.stepPane;
+import jamsui.juice.optimizer.wizard.Tools;
 import jams.tools.JAMSTools;
 import jams.tools.XMLIO;
 import jams.model.JAMSContext;
-import jams.juice.*;
+import jamsui.juice.*;
 import jams.model.JAMSModel;
 import jams.model.JAMSVarDescription;
 import jams.runtime.StandardRuntime;
@@ -27,12 +29,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import jams.juice.optimizer.wizard.OptimizationWizard.AttributeWrapper;
-import jams.juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
-import jams.juice.optimizer.wizard.OptimizationWizard.Efficiency;
-import jams.juice.optimizer.wizard.OptimizationWizard.Parameter;
-import jams.juice.optimizer.wizard.step6Pane.AttributeDescription;
-import jams.juice.optimizer.wizard.step6Pane.OptimizerDescription;
+import jamsui.juice.optimizer.wizard.OptimizationWizard.AttributeWrapper;
+import jamsui.juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
+import jamsui.juice.optimizer.wizard.OptimizationWizard.Efficiency;
+import jamsui.juice.optimizer.wizard.OptimizationWizard.Parameter;
+import jamsui.juice.optimizer.wizard.step6Pane.AttributeDescription;
+import jamsui.juice.optimizer.wizard.step6Pane.OptimizerDescription;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;

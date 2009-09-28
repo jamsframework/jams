@@ -22,6 +22,9 @@
  */
 package jams.juice.gui.tree;
 
+import jamsui.juice.gui.tree.JAMSTree;
+import jamsui.juice.gui.tree.JAMSNode;
+import jamsui.juice.gui.tree.DefaultTreeTransferHandler;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,12 +40,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import jams.tools.JAMSTools;
-import jams.tools.GUIHelper;
+import jams.gui.tools.GUIHelper;
 import jams.model.JAMSComponent;
 import jams.model.JAMSContext;
 import javax.swing.KeyStroke;
-import jams.juice.ComponentDescriptor;
-import jams.juice.JUICE;
+import jamsui.juice.ComponentDescriptor;
+import jamsui.juice.JUICE;
 
 /**
  *

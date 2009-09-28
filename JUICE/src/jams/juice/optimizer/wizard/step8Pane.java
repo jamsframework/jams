@@ -5,10 +5,11 @@
 
 package jams.juice.optimizer.wizard;
 
+import jamsui.juice.optimizer.wizard.stepPane;
 import jams.tools.XMLIO;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import jams.juice.*;
+import jamsui.juice.*;
 import org.w3c.dom.Document;
 
 /**

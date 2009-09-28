@@ -22,9 +22,14 @@
  */
 package jams.juice;
 
+import jamsui.juice.AttributeRepository;
+import jamsui.juice.JUICE;
+import jamsui.juice.ComponentDescriptor;
+import jamsui.juice.ContextAttribute;
+import jamsui.juice.JUICEException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import jams.tools.GUIHelper;
+import jams.gui.tools.GUIHelper;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.awt.Dimension;
@@ -33,9 +38,9 @@ import java.util.ArrayList;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
-import jams.juice.gui.ComponentInfoPanel;
-import jams.juice.gui.ModelView;
-import jams.juice.gui.tree.*;
+import jamsui.juice.gui.ComponentInfoPanel;
+import jamsui.juice.gui.ModelView;
+import jamsui.juice.gui.tree.*;
 
 /**
  *

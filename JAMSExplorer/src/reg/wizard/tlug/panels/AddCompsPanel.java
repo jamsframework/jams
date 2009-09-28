@@ -11,7 +11,7 @@
 
 package reg.wizard.tlug.panels;
 
-import jams.io.JAMSFileFilter;
+import jams.JAMSFileFilter;
 import java.util.Map;
 import org.h2.util.StringUtils;
 import org.netbeans.spi.wizard.WizardController;

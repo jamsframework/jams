@@ -23,6 +23,8 @@
 
 package jams.juice;
 
+import jamsui.juice.ComponentDescriptor;
+import jamsui.juice.ContextAttribute;
 import java.util.ArrayList;
 import java.util.HashMap;
 

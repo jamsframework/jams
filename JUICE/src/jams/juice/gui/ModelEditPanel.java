@@ -22,6 +22,7 @@
  */
 package jams.juice.gui;
 
+import jamsui.juice.gui.ModelView;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDirName;
 import jams.data.JAMSString;
@@ -33,13 +34,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import jams.tools.GUIHelper;
-import jams.ui.gui.input.InputComponent;
-import jams.ui.gui.input.ValueChangeListener;
+import jams.gui.tools.GUIHelper;
+import jams.gui.input.InputComponent;
+import jams.gui.input.ValueChangeListener;
 import java.awt.GridBagConstraints;
 import javax.swing.BorderFactory;
-import jams.juice.JUICE;
-import jams.ui.gui.input.InputComponentFactory;
+import jamsui.juice.JUICE;
+import jams.gui.input.InputComponentFactory;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import javax.swing.AbstractAction;

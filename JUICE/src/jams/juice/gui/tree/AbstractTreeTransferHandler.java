@@ -1,5 +1,8 @@
 package jams.juice.gui.tree;
 
+import jamsui.juice.gui.tree.JAMSTree;
+import jamsui.juice.gui.tree.JAMSNode;
+import jamsui.juice.gui.tree.TransferableNode;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.dnd.*;

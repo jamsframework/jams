@@ -22,7 +22,7 @@
  */
 package reg.gui;
 
-import jams.tools.GUIHelper;
+import jams.gui.tools.GUIHelper;
 import jams.workspace.stores.ShapeFileDataStore;
 import jams.workspace.stores.StandardInputDataStore;
 import java.net.URI;

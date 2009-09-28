@@ -12,7 +12,7 @@
 package reg.spreadsheet;
 
 import jams.tools.JAMSTools;
-import jams.io.JAMSFileFilter;
+import jams.JAMSFileFilter;
 import java.util.Vector;
 import java.awt.event.*;
 import java.awt.*;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import jams.data.*;
 
 
-import jams.tools.GUIHelper;
+import jams.gui.tools.GUIHelper;
 import jams.workspace.DataValue;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.datatypes.DoubleValue;

@@ -23,7 +23,7 @@
 package reg.gui;
 
 import jams.data.JAMSCalendar;
-import jams.tools.GUIHelper;
+import jams.gui.tools.GUIHelper;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;

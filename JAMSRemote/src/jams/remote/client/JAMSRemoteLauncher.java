@@ -23,6 +23,7 @@
 
 package jams.remote.client;
 
+import jams.gui.LogViewDlg;
 import jams.remote.server.Server;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -59,12 +60,12 @@ import javax.swing.event.ListSelectionListener;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.tools.JAMSTools;
-import jams.tools.GUIHelper;
-import jams.ui.gui.LogViewDlg;
+import jams.gui.tools.GUIHelper;
+import jams.gui.LogViewDlg;
 import jams.tools.XMLIO;
-import jams.ui.gui.JAMSFrame;
-import jams.ui.gui.input.InputComponent;
-import jams.ui.gui.input.ListInput;
+import jamsui.launcher.JAMSFrame;
+import jams.gui.input.InputComponent;
+import jams.gui.input.ListInput;
 import org.w3c.dom.Element;
 
 /**

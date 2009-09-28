@@ -1,5 +1,9 @@
 package jams.juice.gui.tree;
 
+import jamsui.juice.gui.tree.ModelTree;
+import jamsui.juice.gui.tree.JAMSTree;
+import jamsui.juice.gui.tree.JAMSNode;
+import jamsui.juice.gui.tree.AbstractTreeTransferHandler;
 import java.awt.*;
 import java.util.Collections;
 import javax.swing.tree.*;
@@ -10,10 +14,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 import jams.model.JAMSContext;
-import jams.juice.ComponentDescriptor;
-import jams.juice.ComponentDescriptor.ComponentAttribute;
-import jams.juice.gui.ContextReplaceDlg;
-import jams.juice.JUICE;
+import jamsui.juice.ComponentDescriptor;
+import jamsui.juice.ComponentDescriptor.ComponentAttribute;
+import jamsui.juice.gui.ContextReplaceDlg;
+import jamsui.juice.JUICE;
 
 public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
 

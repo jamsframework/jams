@@ -22,6 +22,9 @@
  */
 package jams.juice.gui.tree;
 
+import jamsui.juice.gui.tree.JAMSTree;
+import jamsui.juice.gui.tree.JAMSNode;
+import jamsui.juice.gui.tree.DefaultTreeTransferHandler;
 import jams.JAMS;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
@@ -47,18 +50,18 @@ import javax.xml.parsers.ParserConfigurationException;
 import jams.tools.JAMSTools;
 import jams.JAMSVersion;
 import jams.data.JAMSDataFactory;
-import jams.ui.gui.HelpComponent;
-import jams.tools.GUIHelper;
+import jams.gui.HelpComponent;
+import jams.gui.tools.GUIHelper;
 import jams.io.ParameterProcessor;
 import jams.model.JAMSContext;
 import javax.swing.JFrame;
-import jams.juice.ComponentDescriptor;
-import jams.juice.ComponentDescriptor.ComponentAttribute;
-import jams.juice.ContextAttribute;
-import jams.juice.JUICE;
-import jams.juice.ModelProperties.ModelProperty;
-import jams.juice.ModelProperties.Group;
-import jams.juice.gui.ModelView;
+import jamsui.juice.ComponentDescriptor;
+import jamsui.juice.ComponentDescriptor.ComponentAttribute;
+import jamsui.juice.ContextAttribute;
+import jamsui.juice.JUICE;
+import jamsui.juice.ModelProperties.ModelProperty;
+import jamsui.juice.ModelProperties.Group;
+import jamsui.juice.gui.ModelView;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

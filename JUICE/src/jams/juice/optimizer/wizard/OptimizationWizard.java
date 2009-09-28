@@ -4,9 +4,19 @@
  */
 package jams.juice.optimizer.wizard;
 
+import jamsui.juice.optimizer.wizard.stepPane;
+import jamsui.juice.optimizer.wizard.step2Pane;
+import jamsui.juice.optimizer.wizard.step8Pane;
+import jamsui.juice.optimizer.wizard.step5Pane;
+import jamsui.juice.optimizer.wizard.step3Pane;
+import jamsui.juice.optimizer.wizard.step4Pane;
+import jamsui.juice.optimizer.wizard.step6Pane;
+import jamsui.juice.optimizer.wizard.OptimizationWizard;
+import jamsui.juice.optimizer.wizard.step6aPane;
+import jamsui.juice.optimizer.wizard.step7Pane;
 import jams.JAMSProperties;
 import jams.model.JAMSComponent;
-import jams.juice.*;
+import jamsui.juice.*;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -17,9 +27,9 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import jams.juice.gui.JUICEFrame;
-import jams.juice.gui.ModelView;
-import jams.juice.gui.tree.ModelTree;
+import jamsui.juice.gui.JUICEFrame;
+import jamsui.juice.gui.ModelView;
+import jamsui.juice.gui.tree.ModelTree;
 import org.w3c.dom.Document;
 
 /**

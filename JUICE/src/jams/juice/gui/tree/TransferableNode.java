@@ -1,5 +1,6 @@
 package jams.juice.gui.tree;
 
+import jamsui.juice.gui.tree.JAMSNode;
 import java.awt.datatransfer.*;
 import java.util.*;
 

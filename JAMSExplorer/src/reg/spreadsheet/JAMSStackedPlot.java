@@ -5,7 +5,7 @@
 
 package reg.spreadsheet;
 
-import jams.ui.gui.WorkerDlg;
+import jams.gui.WorkerDlg;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.io.File;

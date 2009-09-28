@@ -23,6 +23,7 @@
 
 package jams.juice.gui;
 
+import jamsui.juice.gui.ContextAttributeDlg;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -42,9 +43,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.WindowConstants;
-import jams.tools.GUIHelper;
-import jams.juice.ComponentDescriptor;
-import jams.juice.JUICE;
+import jams.gui.tools.GUIHelper;
+import jamsui.juice.ComponentDescriptor;
+import jamsui.juice.JUICE;
 
 /**
  *

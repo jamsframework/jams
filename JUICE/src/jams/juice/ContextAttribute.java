@@ -23,8 +23,11 @@
 
 package jams.juice;
 
+import jamsui.juice.ComponentDescriptor;
+import jamsui.juice.JUICE;
+import jamsui.juice.ContextAttribute;
 import java.util.HashMap;
-import jams.tools.GUIHelper;
+import jams.gui.tools.GUIHelper;
 
 /**
  *

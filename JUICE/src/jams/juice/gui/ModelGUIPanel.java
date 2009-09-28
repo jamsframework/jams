@@ -22,6 +22,9 @@
  */
 package jams.juice.gui;
 
+import jamsui.juice.gui.ModelPropertyDlg;
+import jamsui.juice.gui.ModelSubgroupDlg;
+import jamsui.juice.gui.ModelView;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -43,13 +46,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
-import jams.tools.GUIHelper;
-import jams.ui.gui.input.InputComponent;
-import jams.juice.*;
-import jams.juice.ModelProperties.Group;
-import jams.juice.ModelProperties.ModelElement;
-import jams.juice.ModelProperties.ModelProperty;
-import jams.ui.gui.input.InputComponentFactory;
+import jams.gui.tools.GUIHelper;
+import jams.gui.input.InputComponent;
+import jamsui.juice.*;
+import jamsui.juice.ModelProperties.Group;
+import jamsui.juice.ModelProperties.ModelElement;
+import jamsui.juice.ModelProperties.ModelProperty;
+import jams.gui.input.InputComponentFactory;
 
 /**
  *

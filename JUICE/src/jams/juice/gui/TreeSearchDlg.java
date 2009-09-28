@@ -22,6 +22,7 @@
  */
 package jams.juice.gui;
 
+import jamsui.juice.gui.TreeSearchDlg;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -32,10 +33,10 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.swing.tree.TreePath;
-import jams.tools.GUIHelper;
-import jams.juice.JUICE;
-import jams.juice.gui.tree.JAMSNode;
-import jams.juice.gui.tree.JAMSTree;
+import jams.gui.tools.GUIHelper;
+import jamsui.juice.JUICE;
+import jamsui.juice.gui.tree.JAMSNode;
+import jamsui.juice.gui.tree.JAMSTree;
 
 /**
  *

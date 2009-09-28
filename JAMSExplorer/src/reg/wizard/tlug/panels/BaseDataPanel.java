@@ -11,10 +11,10 @@
 package reg.wizard.tlug.panels;
 
 import jams.data.JAMSTimeInterval;
-import jams.ui.gui.input.InputComponent;
-import jams.ui.gui.input.TimeintervalInput;
-import jams.io.JAMSFileFilter;
-import jams.ui.gui.input.InputComponentFactory;
+import jams.gui.input.InputComponent;
+import jams.gui.input.TimeintervalInput;
+import jams.JAMSFileFilter;
+import jams.gui.input.InputComponentFactory;
 import java.io.File;
 import java.util.Map;
 import javax.swing.JFileChooser;
