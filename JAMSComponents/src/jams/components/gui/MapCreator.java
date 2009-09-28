@@ -156,6 +156,10 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
     
     @SuppressWarnings("unchecked")
     public void run() throws Exception {
+
+        if (panel == null) {
+            return;
+        }
         
         if (shapeFileName1 == null)
             shapeFileName1 = JAMSDataFactory.createString();

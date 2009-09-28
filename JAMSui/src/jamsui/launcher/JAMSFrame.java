@@ -53,7 +53,7 @@ import javax.swing.JDialog;
 import javax.swing.WindowConstants;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
-//import reg.JAMSExplorer;
+import reg.JAMSExplorer;
 
 /**
  *
@@ -590,9 +590,9 @@ public class JAMSFrame extends JAMSLauncher {
         Element varNode = (Element) varList.item(0);
         String workspacePath = varNode.getAttribute("value");
 
-//        JAMSExplorer explorer = new JAMSExplorer(null, false, false);
-//        explorer.getExplorerFrame().setVisible(true);
-//        explorer.getExplorerFrame().open(new File(workspacePath));
+        JAMSExplorer explorer = new JAMSExplorer(null, false, false);
+        explorer.getExplorerFrame().setVisible(true);
+        explorer.getExplorerFrame().open(new File(workspacePath));
 
     }
 

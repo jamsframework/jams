@@ -151,6 +151,10 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
     
     @SuppressWarnings({"unchecked","deprecation"})
     public void run() throws Exception {
+
+        if (panel == null) {
+            return;
+        }
         
         if (!System.getProperty("os.name").contains("Windows")) {
             //return;
