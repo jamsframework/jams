@@ -197,7 +197,7 @@ public class StationParamsPanel extends javax.swing.JPanel {
 
         controller.setProblem(null);
         if (StringUtils.isNullOrEmpty(r_computation)) {
-            controller.setProblem("Bitte Berechnungsart ausw‰hlen.");
+            controller.setProblem("Bitte Berechnungsart ausw√§hlen.");
         } else {
             wizardData.put(KEY_COMPUTATION, r_computation);
         }

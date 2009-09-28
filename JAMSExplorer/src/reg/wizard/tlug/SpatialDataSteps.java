@@ -18,7 +18,7 @@ public class SpatialDataSteps  extends DataStepPanelProvider {
     public SpatialDataSteps() {
         super (
             new String[] { "baseData", "regMethod", "finishIt"},
-            new String[] { "Datenbasis bestimmen", "Regionalisierungsverfahren ausw‰hlen", "Konfiguration speichern" });
+            new String[] { "Datenbasis bestimmen", "Regionalisierungsverfahren ausw√§hlen", "Konfiguration speichern" });
     }
 
     protected JComponent createPanel(WizardController controller, String id, Map settings) {
