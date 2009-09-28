@@ -26,7 +26,7 @@ import jams.tools.XMLIO;
 import jams.tools.JAMSTools;
 import java.io.*;
 import javax.swing.UIManager;
-import jams.ui.gui.JAMSSplash;
+import jams.gui.JAMSSplash;
 import jams.runtime.*;
 import jams.io.*;
 import jams.JAMS;
@@ -43,14 +43,13 @@ import org.xml.sax.SAXException;
  */
 public class JAMSui {
 
+    private static File baseDir = new File(System.getProperty("user.dir"));
+
+    public static final String APP_TITLE = "JAMS";
+
     protected int splashTimeout;
 
     protected SystemProperties properties;
-
-    /**
-     * JAMS base directory
-     */
-    private static File baseDir = new File(System.getProperty("user.dir"));
 
     /**
      * JAMSui contructor
@@ -202,7 +201,7 @@ public class JAMSui {
      */
     public static void main(String[] args) {
 
-        new JAMSui(new JAMSCmdLine(args));
+        new JAMSui(new JAMSCmdLine(args, APP_TITLE));
 
     }
 

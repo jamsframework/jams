@@ -22,11 +22,12 @@
  */
 package jams.ui.gui;
 
+import jams.gui.*;
 import jams.JAMS;
 import jams.SystemProperties;
 import jams.tools.JAMSTools;
-import jams.tools.GUIHelper;
-import jams.io.JAMSFileFilter;
+import jams.gui.tools.GUIHelper;
+import jams.JAMSFileFilter;
 import jams.io.ParameterProcessor;
 import jams.tools.XMLIO;
 import jams.io.XMLProcessor;
