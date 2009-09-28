@@ -208,7 +208,7 @@ public class LibTree extends JAMSTree {
 
                     } catch (NoClassDefFoundError ncdfe) {
                         // loading classes can cause a lot of NoClassDefFoundError
-                        // exceptions, they must be caught !
+                        // exceptions, they are caught silently!
                     } catch (Throwable e) {
                         // other exception like e.g. java.lang.SecurityException
                         // won't be handled since they hopefully don't occur
@@ -225,7 +225,6 @@ public class LibTree extends JAMSTree {
                 newPackage = clazz.getPackage().getName();
                 if (!newPackage.equals(oldPackage)) {
                     packageNode = new JAMSNode(newPackage, JAMSNode.PACKAGE_NODE);
-                    jarRoot.add(packageNode);
                     oldPackage = newPackage;
                 }
 
@@ -255,6 +254,10 @@ public class LibTree extends JAMSTree {
 
                     }
                 }
+
+                if (packageNode.getChildCount() > 0) {
+                    jarRoot.add(packageNode);
+                }
             }
 
 
@@ -265,7 +268,7 @@ public class LibTree extends JAMSTree {
 
         }
 
-        if (components.size() > 0) {
+        if (jarRoot.getChildCount() > 0) {
             return jarRoot;
         } else {
             return null;
