@@ -36,7 +36,7 @@ import jams.runtime.StandardRuntime;
 import jamsui.juice.gui.JUICEFrame;
 import jamsui.juice.gui.ModelView;
 import jamsui.juice.gui.tree.LibTree;
-import jamsui.JAMSCmdLine;
+import jamsui.cmdline.JAMSCmdLine;
 import javax.swing.SwingWorker;
 
 /**

@@ -22,7 +22,7 @@
  */
 package jamsui.launcher;
 
-import jamsui.*;
+import jamsui.cmdline.*;
 import jams.tools.XMLIO;
 import jams.tools.JAMSTools;
 import java.io.*;

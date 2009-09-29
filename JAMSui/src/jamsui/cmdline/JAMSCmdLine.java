@@ -21,7 +21,7 @@
  *
  */
 
-package jamsui;
+package jamsui.cmdline;
 
 import jams.io.*;
 import jams.*;

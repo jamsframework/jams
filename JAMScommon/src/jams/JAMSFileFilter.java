@@ -23,7 +23,6 @@
 
 package jams;
 
-import jams.*;
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
