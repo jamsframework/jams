@@ -1,5 +1,5 @@
 #JAMS-Konfigurationsdatei
-#Tue Sep 29 17:09:20 CEST 2009
+#Tue Sep 29 17:32:45 CEST 2009
 infolog=
 libs=..\\..\\lib;..\\..\\bin
 guiconfig=1
@@ -11,8 +11,8 @@ windowenable=1
 errordlg=1
 serverpassword=
 windowontop=0
-forcelocale=
 serveraccount=
+forcelocale=
 windowheight=768
 verbose=0
 debug=1
