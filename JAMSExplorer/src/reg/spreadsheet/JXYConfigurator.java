@@ -30,6 +30,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import jams.JAMSFileFilter;
+
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
 import java.io.FileInputStream;
@@ -241,7 +242,7 @@ public class JXYConfigurator extends JFrame {
 
         this.setParent(explorer.getExplorerFrame());
         this.setIconImage(explorer.getExplorerFrame().getIconImage());
-        setTitle("XYPlot Viewer");
+        setTitle(SpreadsheetConstants.DLG_TITLE_JXYSCONFIGURATOR);
 
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         explorer.registerChild(this);
@@ -382,8 +383,10 @@ public class JXYConfigurator extends JFrame {
         rRightBox.setSelectedIndex(0);
 
         ////////////////////////// GRAPH AUSFÜHREN ///////////
-        if (templateFile != null) {
+        if ((templateFile != null) && templateFile.exists()) {
             try {
+
+
                 loadTemplate(templateFile);
                 tempLoaded = true;
             } catch (Exception fnfe) {
@@ -490,8 +493,14 @@ public class JXYConfigurator extends JFrame {
                     prop.setSeriesOutlinePaint(colorTable.get(colors[2]));
                     prop.setLinesVisible(false);
                     prop.setLinesVisBox(false);
-                    prop.setName(table.getColumnName(k + 1));
-                    prop.setLegendName(table.getColumnName(k + 1));
+//                    prop.setName(table.getColumnName(k + 1));
+//                    prop.setLegendName(table.getColumnName(k + 1));
+
+                    String s =table.getColumnName(columns[k]);
+                    prop.setLegendName(s);
+                    prop.setName(s);
+                    prop.setLegendField(s);
+
                     propVector.add(k, prop);
 
                 }
@@ -1350,9 +1359,9 @@ public class JXYConfigurator extends JFrame {
                                 break;
                         }
 
-                        prop.setLegendName(prop.setLegend.getText());
+//                        prop.setLegendName(prop.setLegend.getText());
                         prop.setColorLabelColor();
-                        prop.applyXYProperties();
+//                        prop.applyXYProperties();
                     }
                 }
 
@@ -1611,19 +1620,16 @@ public class JXYConfigurator extends JFrame {
         String number = "" + no_of_props;
         String stroke_type;
         String stroke_color;
-        //String stroke_color_G;
-        //String stroke_color_B;
+
         String lines_vis;
         String shapes_vis;
         String shape_type;
         String size_type;
         String shape_color;
-        //String shape_color_G;
-        //String shape_color_B;
+
         String outline_type;
         String outline_color;
-        //String outline_color_G;
-        //String outline_color_B;
+
         Color linecolor_load;
         Color fillcolor_load;
         Color outcolor_load;

@@ -27,6 +27,8 @@ public class SpreadsheetConstants {
     /* DIALOG TITLES */
 
     public final static String DLG_TITLE_CUSTOMIZE = "Customize Renderer";
+    public final static String DLG_TITLE_JTSCONFIGURATOR ="JTS Viewer";
+    public final static String DLG_TITLE_JXYSCONFIGURATOR ="XYPlot Viewer";
 
     /* DIALOG ERROR MESSAGES */
 
@@ -36,7 +38,7 @@ public class SpreadsheetConstants {
 
     /* GUI ELEMENT COLORS */
 
-    public final static Color GUI_COLOR_CLOSETAB = Color.DARK_GRAY;
+//    public final static Color GUI_COLOR_CLOSETAB = Color.DARK_GRAY;
 
     /* FILE NAMES */
     public final static String FILE_ENDING_TTP = ".ttp";

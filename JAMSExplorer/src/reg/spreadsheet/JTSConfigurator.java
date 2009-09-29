@@ -196,7 +196,7 @@ public class JTSConfigurator extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         explorer.registerChild(this);
 
-        setTitle("JTS Viewer");
+        setTitle(SpreadsheetConstants.DLG_TITLE_JTSCONFIGURATOR);
         
         this.workspace = explorer.getWorkspace();
         

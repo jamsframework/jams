@@ -1276,7 +1276,7 @@ public class JAMSSpreadSheet extends JPanel {
         useTemplateButton.setEnabled(true);
         useTemplateButton.setSelected(false);
 
-        closeButton.setBackground(SpreadsheetConstants.GUI_COLOR_CLOSETAB);
+//        closeButton.setBackground(SpreadsheetConstants.GUI_COLOR_CLOSETAB);
         //dataplotButton.setEnabled(false);
 
         scrollpane.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));

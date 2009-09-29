@@ -770,20 +770,20 @@ public class GraphProperties {
     }
     
     public void setDataSTART(double d_start){
-        data_range_start = d_start;
-        String s;
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
-        nf.setMaximumFractionDigits(4);
-        s = nf.format(d_start);
+        data_range_start = (double) d_start;
+        String s = ""+d_start;
+//        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+//        nf.setMaximumFractionDigits(4);
+//        s = nf.format(data_range_start);
         datachoice_START.setText(s);
     }
     
     public void setDataEND(double d_end){
-        data_range_end = d_end;
-        String s;
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
-        nf.setMaximumFractionDigits(4);
-        s = nf.format(d_end);
+        data_range_end =  (double)d_end;
+        String s = ""+d_end;
+//        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+//        nf.setMaximumFractionDigits(4);
+//        s = nf.format(data_range_end);
         datachoice_END.setText(s);
     }
     
