@@ -10,6 +10,15 @@
 <project name="jams-api" default="default" basedir=".">
     <description>Builds, tests, and runs the project jams-api.</description>
     <import file="nbproject/build-impl.xml"/>
+
+    <property file="../../build/jams.properties"/>
+    <target name="-post-jar">
+        <delete>
+            <fileset dir="${bin.dir}" includes="**/${application.title}*"/>
+        </delete>
+        <copy file="${dist.jar}" tofile="${bin.dir}/${application.title}-${api.version}.jar"/>
+    </target>
+
     <!--
 
     There exist several targets which are by default empty and which can be 

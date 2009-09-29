@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="createjams">
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="./antlib/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+    
+    <target name="createjams" depends="deleteall, buildall"/>
+
+    <target name="deleteall">
+        <delete>
+            <fileset dir="../bin" includes="**/*.jar"/>
+        </delete>
+    </target>
+
+    <target name="buildall" description="Build all NetBeans projects in this directory">
+        <foreach target="buildproject" param="buildxml">
+            <path>
+                <fileset dir="../nbprojects">
+                    <include name="**/build.xml"/>
+                </fileset>
+            </path>
+        </foreach>
+    </target>
+
+    <target name="buildproject" description="Build a single NetBeans project">
+        <echo>"${buildxml}"</echo>
+        <ant antfile="${buildxml}" inheritall="false" target="jar"/>
+    </target>
+
+</project>
