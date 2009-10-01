@@ -1,7 +1,7 @@
 #JAMS-Konfigurationsdatei
-#Tue Sep 29 17:32:45 CEST 2009
+#Thu Oct 01 12:03:11 CEST 2009
 infolog=
-libs=..\\..\\lib;..\\..\\bin
+libs=..\\..\\lib;..\\..\\bin;D\:\\nbprojects\\J2K\\dist\\J2K.jar
 guiconfig=1
 excludes=.cache;.svn;.xls
 model=
