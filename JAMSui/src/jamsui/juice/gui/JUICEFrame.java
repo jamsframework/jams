@@ -793,7 +793,7 @@ public class JUICEFrame extends JFrame {
 
             this.setVisible(false);
             this.dispose();
-            //System.exit(0);
+            System.exit(0);
         }
     }
 }

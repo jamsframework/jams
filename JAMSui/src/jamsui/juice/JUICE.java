@@ -117,8 +117,6 @@ public class JUICE {
 
             JAMSSplash splash = new JAMSSplash();
             splash.show(juiceFrame, splashTimeout);
-            Thread.sleep(splashTimeout);
-            //juiceFrame.setVisible(true);
 
             libTree = new LibTree();
             JUICE.updateLibs();
