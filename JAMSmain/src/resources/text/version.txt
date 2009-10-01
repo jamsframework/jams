@@ -1,4 +1,6 @@
-major_release=2
-minor_release=7
-revision=00
+main.majorversion=2
+main.minorversion=7
+main.revision=00
+api.majorversion=1
+api.minorversion=0
 date=20090915

@@ -58,6 +58,7 @@ import jams.io.ModelLoader;
 import jams.io.ParameterProcessor;
 import jams.model.GUIComponent;
 import jams.model.JAMSModel;
+import jams.workspace.InvalidWorkspaceException;
 import org.w3c.dom.Document;
 
 /**
@@ -232,6 +233,14 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         //check if runstate is on "run"
         if (this.getState() != JAMSRuntime.STATE_RUN) {
+            return;
+        }
+
+        // prepare the model's workspace
+        try {
+            model.initWorkspace();
+        } catch (InvalidWorkspaceException iwe) {
+            this.sendHalt(iwe.getMessage());
             return;
         }
 

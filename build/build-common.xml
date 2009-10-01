@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jams-common-tasks" default="default" basedir=".">
+    <description>Common tasks for the JAMS projects builds.</description>
+
+    <property file="../../JAMSmain/src/resources/text/version.txt"/>
+    <property file="../../build/jams.properties"/>
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="../../build/antlib/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
+    <target name="-post-jar">
+        <!--copy file="${dist.jar}" tofile="${bin.dir}/${application.title}-${main.majorversion}.${main.minorversion}.jar"/-->
+        <if>
+            <equals arg1="${application.title}" arg2="jams-api"/>
+            <then>
+                <copy file="${dist.jar}" tofile="${bin.dir}/${application.title}${api.postfix}.jar"/>
+            </then>
+            <else>
+                <copy file="${dist.jar}" tofile="${bin.dir}/${application.title}${main.postfix}.jar"/>
+            </else>
+        </if>
+    </target>
+    
+    <target name="-post-clean">
+        <delete>
+            <fileset dir="${bin.dir}" includes="**/${application.title}*"/>
+        </delete>
+    </target>
+</project>

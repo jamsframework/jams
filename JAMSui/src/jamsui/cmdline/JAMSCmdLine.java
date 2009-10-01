@@ -32,7 +32,7 @@ import jams.*;
  */
 public class JAMSCmdLine {
     
-    private String configFileName = null;
+    private String configFileName;
     private String modelFileName = null;
     private String parameterValues = null;
     private String[] otherArgs = null;

@@ -45,9 +45,9 @@ public class JAMSVersion {
         } catch (IOException ioe) {
         }
 
-        major = Integer.parseInt(p.getProperty("major_release"));
-        minor = Integer.parseInt(p.getProperty("minor_release"));
-        revision = Integer.parseInt(p.getProperty("revision"));
+        major = Integer.parseInt(p.getProperty("main.majorversion"));
+        minor = Integer.parseInt(p.getProperty("main.minorversion"));
+        revision = Integer.parseInt(p.getProperty("main.revision"));
         dateString = p.getProperty("date");
     }
 

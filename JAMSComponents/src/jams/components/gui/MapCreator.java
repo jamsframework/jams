@@ -69,7 +69,6 @@ import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
-import jams.data.JAMSEntity;
 import jams.data.JAMSEntityCollection;
 import jams.data.JAMSInteger;
 import jams.data.JAMSString;

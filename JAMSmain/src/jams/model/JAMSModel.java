@@ -109,14 +109,6 @@ public class JAMSModel extends JAMSContext implements Model {
             return;
         }
 
-        // prepare workspace
-        try {
-            this.setWorkspace();
-        } catch (InvalidWorkspaceException iwe) {
-            this.getRuntime().sendHalt(iwe.getMessage());
-            return;
-        }
-
         // save current model parameter to workspace output directory
         getRuntime().saveModelParameter();
 
@@ -148,7 +140,7 @@ public class JAMSModel extends JAMSContext implements Model {
         setWorkspaceDirectory(workspaceDirectory);
         // create output dir
         try {
-            this.setWorkspace();
+            this.initWorkspace();
             this.workspace.checkValidity(false);
         } catch (InvalidWorkspaceException e) {
             getRuntime().sendHalt("Error during model setup: \"" +
@@ -165,7 +157,7 @@ public class JAMSModel extends JAMSContext implements Model {
         this.workspaceDirectory.setValue(workspaceDirectory);
     }
 
-    private void setWorkspace() throws InvalidWorkspaceException {
+    public void initWorkspace() throws InvalidWorkspaceException {
         String workspaceDir = workspaceDirectory.getValue();
         if (JAMSTools.isEmptyString(workspaceDir)) {
             this.workspace = null;
