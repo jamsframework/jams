@@ -708,10 +708,7 @@ public class GraphProperties {
     public void setSelectedColumn(int col){
         this.selectedColumn = col;
         this.setColumn.setSelectedIndex(col);
-        //setLegendName((String)setColumn.getSelectedItem());
-        //setName((String)setColumn.getSelectedItem());
-        
-        
+    
     }
     
     public void setSelectedRows(int[] rows){

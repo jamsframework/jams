@@ -8,9 +8,6 @@
  */
 package reg.spreadsheet;
 
-//import com.sun.image.codec.jpeg.JPEGCodec;
-//import com.sun.image.codec.jpeg.JPEGEncodeParam;
-//import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 import java.util.HashMap;
@@ -1804,6 +1801,7 @@ public class JTSConfigurator extends JFrame {
                 if (load_prop) {
                     //Legend Name
                     gprop.setLegendName(properties.getProperty(name + ".legendname", "legend name"));
+                    gprop.setLegendField(properties.getProperty(name + ".legendname", "legend name"));
                     //POSITION left/right
                     gprop.setPosition(properties.getProperty(name + ".position"));
                     //INTERVAL

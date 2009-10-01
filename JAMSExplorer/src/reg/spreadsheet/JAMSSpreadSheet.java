@@ -23,7 +23,6 @@ import java.io.*;
 import java.util.ArrayList;
 import jams.data.*;
 
-
 import jams.gui.tools.GUIHelper;
 import jams.workspace.DataValue;
 import jams.workspace.DefaultDataSet;
