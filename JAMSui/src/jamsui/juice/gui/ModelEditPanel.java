@@ -71,6 +71,8 @@ public class ModelEditPanel extends JPanel {
 
     private JButton explorerButton;
 
+    private Action explorerAction;
+
     public ModelEditPanel(ModelView view) {
         super();
         this.view = view;
@@ -110,7 +112,7 @@ public class ModelEditPanel extends JPanel {
         scroll.setBorder(BorderFactory.createEtchedBorder());
         scroll.setPreferredSize(new Dimension(TEXTAREA_WIDTH, TEXTAREA_HEIGHT));
 
-        Action explorerAction = new AbstractAction(jams.JAMS.resources.getString("JEDI")) {
+        explorerAction = new AbstractAction(jams.JAMS.resources.getString("JEDI")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -208,9 +210,14 @@ public class ModelEditPanel extends JPanel {
     }
 
     private void openExplorer() {
-        JAMSExplorer explorer = new JAMSExplorer(null, false, false);
-        explorer.getExplorerFrame().setVisible(true);
-        explorer.getExplorerFrame().open(new File(view.getWorkspace()));
+        try {
+            JAMSExplorer explorer = new JAMSExplorer(null, false, false);
+            explorer.getExplorerFrame().setVisible(true);
+            explorer.getExplorerFrame().open(new File(view.getWorkspace()));
+        } catch (NoClassDefFoundError ncdfe) {
+            GUIHelper.showInfoDlg(this, jams.JAMS.resources.getString("ExplorerDisabled"), jams.JAMS.resources.getString("Info"));
+            explorerAction.setEnabled(false);
+        }
     }
 
     private void updateAuthor() {
