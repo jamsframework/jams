@@ -59,7 +59,7 @@ public class JAMS {
     /**
      * The standard font
      */
-    public static final Font STANDARD_FONT = new java.awt.Font("Courier", 0, 11);
+    public static final Font STANDARD_FONT = new java.awt.Font(Font.MONOSPACED, Font.PLAIN, 11);
 
     /**
      * Default name of model output file
