@@ -4,7 +4,9 @@
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>jams-starter</name>
-            <source-roots/>
+            <source-roots>
+                <root id="src.src.dir" name="Source Packages"/>
+            </source-roots>
             <test-roots/>
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1"/>
