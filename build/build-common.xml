@@ -29,7 +29,7 @@
             <else>
                 <copy todir="${bin.dir}/lib">
                     <fileset dir="dist/lib">
-                        <exclude name="**/jams-*.jar"/>
+                        <!--exclude name="**/jams-*.jar"/-->
                     </fileset>
                 </copy>
             </else>
