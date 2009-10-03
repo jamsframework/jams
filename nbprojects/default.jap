@@ -1,7 +1,7 @@
 #JAMS-Konfigurationsdatei
 #Thu Oct 01 14:15:15 CEST 2009
 infolog=
-libs=..\\..\\lib;..\\..\\bin
+libs=..\\..\\bin
 guiconfig=1
 excludes=.cache;.svn;.xls
 model=
