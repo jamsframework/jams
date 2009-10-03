@@ -154,7 +154,7 @@ public class JAMSProperties extends Observable implements SystemProperties {
     public static JAMSProperties createProperties() {
         Properties p = new Properties();
         p.setProperty("model", "");
-        p.setProperty("libs", "lib");
+        p.setProperty("libs", ".");
         p.setProperty("debug", "1");
         p.setProperty("verbose", "0");
         p.setProperty("infolog", "");
