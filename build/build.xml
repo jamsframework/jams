@@ -67,4 +67,12 @@
         <move file="../bin/${starterproj}${main.postfix}.jar" tofile="../bin/jams-starter${main.postfix}.jar"/>
     </target>
 
+    <target name="remotestarter">
+        <property name="starterproj" value="jams-starter"/>
+        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="jar">
+            <property name="config" value="JAMS_Remote"/>
+        </ant>
+        <property file="jams.properties"/>
+        <move file="../bin/${starterproj}${main.postfix}.jar" tofile="../bin/jamsremote-starter${main.postfix}.jar"/>
+    </target>
 </project>
