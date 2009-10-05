@@ -2,7 +2,7 @@
 
 SET ARGUMENTS=
 SET VM=java
-SET OPTIONS=-Xms128M -Xmx512M
+SET OPTIONS=-Xms128M -Xmx512M -Djava.library.path=bin/lib
 
 @echo on
 %VM% %OPTIONS% -jar bin/jams-starter.jar %ARGUMENTS%
