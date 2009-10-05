@@ -152,7 +152,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
     @SuppressWarnings({"unchecked","deprecation"})
     public void run() throws Exception {
 
-        if (panel == null) {
+        if (panel == null || panel.getClass() == JPanel.class) {
             return;
         }
         
@@ -611,9 +611,9 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
     @Override
     public JPanel getPanel() {
         try {
-//            if (System.getProperty("os.name").contains("Windows")) {
+            if (System.getProperty("os.name").contains("Windows")) {
                 panel = new GISPanel();
-//            }
+            }
         } catch (Exception e) {
             System.out.println("Error during initialization of GIS Panel-->" + e.toString());
         }
