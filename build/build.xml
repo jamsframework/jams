@@ -9,10 +9,10 @@
     
     <target name="cleanbuild" depends="clean, build"/>
 
-    <target name="cleanbin">
+    <target name="cleanlib">
         <delete>
-            <fileset dir="../bin" includes="**/*"/>
-            <fileset dir="../bin/lib" includes="**/*"/>
+            <fileset dir="../lib" includes="**/*"/>
+            <fileset dir="../lib/lib" includes="**/*"/>
         </delete>
     </target>
 
@@ -26,7 +26,7 @@
         </foreach>
     </target>
 
-    <target name="clean" depends="cleanbin" description="Clean all NetBeans projects and delete libs in this directory">
+    <target name="clean" depends="cleanlib" description="Clean all NetBeans projects and delete libs in this directory">
         <foreach target="cleanproject" param="buildxml">
             <path>
                 <fileset dir="../nbprojects">
@@ -49,13 +49,16 @@
         <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="jar"/>
     </target>
 
+    <target name="dostarters" depends="juicestarter, remotestarter, jamsstarter" />
+
     <target name="juicestarter">
         <property name="starterproj" value="jams-starter"/>
         <ant antfile="../nbprojects/${starterproj}/build.xml" inheritall="false" target="jar">
             <property name="config" value="JUICE"/>
         </ant>
         <property file="jams.properties"/>
-        <move file="../bin/${starterproj}${main.postfix}.jar" tofile="../bin/juice-starter${main.postfix}.jar"/>
+        <move file="../lib/${starterproj}${main.postfix}.jar" tofile="../lib/juice-starter${main.postfix}.jar"/>
+        <echo>Created juicestarter</echo>
     </target>
 
     <target name="jamsstarter">
@@ -64,7 +67,8 @@
             <property name="config" value="JAMS_Launcher"/>
         </ant>
         <property file="jams.properties"/>
-        <move file="../bin/${starterproj}${main.postfix}.jar" tofile="../bin/jams-starter${main.postfix}.jar"/>
+        <move file="../lib/${starterproj}${main.postfix}.jar" tofile="../lib/jams-starter${main.postfix}.jar"/>
+        <echo>Created jamsstarter</echo>
     </target>
 
     <target name="remotestarter">
@@ -73,6 +77,7 @@
             <property name="config" value="JAMS_Remote"/>
         </ant>
         <property file="jams.properties"/>
-        <move file="../bin/${starterproj}${main.postfix}.jar" tofile="../bin/jamsremote-starter${main.postfix}.jar"/>
+        <move file="../lib/${starterproj}${main.postfix}.jar" tofile="../lib/jamsremote-starter${main.postfix}.jar"/>
+        <echo>Created remotestarter</echo>
     </target>
 </project>
