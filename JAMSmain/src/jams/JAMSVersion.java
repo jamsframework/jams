@@ -32,7 +32,7 @@ import java.util.Properties;
  */
 public class JAMSVersion {
 
-    private String dateString;
+    private String dateString, contactString;
     private int major, minor, revision;
     private static JAMSVersion instance;
 
@@ -49,6 +49,7 @@ public class JAMSVersion {
         minor = Integer.parseInt(p.getProperty("main.minorversion"));
         revision = Integer.parseInt(p.getProperty("main.revision"));
         dateString = p.getProperty("date");
+        contactString = p.getProperty("contact");
     }
 
     /**
@@ -104,5 +105,12 @@ public class JAMSVersion {
      */
     public int getRevision() {
         return revision;
+    }
+
+    /**
+     * @return the contactString
+     */
+    public String getContactString() {
+        return contactString;
     }
 }

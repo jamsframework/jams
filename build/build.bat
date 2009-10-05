@@ -1,4 +1,5 @@
 @echo off
 
-ant 
-ant dostarters
+ant -quiet clean
+ant -quiet 
+ant -quiet dostarters

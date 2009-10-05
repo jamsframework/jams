@@ -21,9 +21,13 @@
             <path>
                 <fileset dir="../nbprojects">
                     <include name="**/build.xml"/>
+                    <exclude name="**/jams-starter/build.xml"/>
                 </fileset>
             </path>
         </foreach>
+        <antcall target="buildproject">
+            <param  name="buildxml" value="../nbprojects/jams-starter/build.xml"/>
+        </antcall>
     </target>
 
     <target name="clean" depends="cleanlib" description="Clean all NetBeans projects and delete libs in this directory">
