@@ -21,7 +21,7 @@
  *
  */
 
-package jams.components.gui.spreadsheet;
+package reg.spreadsheet;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

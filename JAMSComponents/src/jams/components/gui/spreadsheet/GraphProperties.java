@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package jams.components.gui.spreadsheet;
+package reg.spreadsheet;
 
 /**
  *
@@ -38,6 +38,8 @@ import org.jfree.data.xy.*;
 import org.jfree.util.ShapeUtilities.*;
 
 import jams.data.JAMSCalendar;
+import jams.gui.tools.GUIHelper;
+import java.util.Vector;
 
 
 public class GraphProperties {
@@ -47,20 +49,20 @@ public class GraphProperties {
     
     JFrame parent;
     
-    URL url1 = this.getClass().getResource("/jams/components/gui/resources/arrowup.png");
-    ImageIcon up_icon = new ImageIcon(url1);
+    URL url1 = this.getClass().getResource("/reg/resources/images/arrowup.png");
+    ImageIcon up_icon = new ImageIcon(new ImageIcon(url1).getImage().getScaledInstance(10, 10, Image.SCALE_SMOOTH));
     
-    URL url2 = this.getClass().getResource("/jams/components/gui/resources/arrowdown.png");
-    ImageIcon down_icon = new ImageIcon(url2);
+    URL url2 = this.getClass().getResource("/reg/resources/images/arrowdown.png");
+    ImageIcon down_icon = new ImageIcon(new ImageIcon(url2).getImage().getScaledInstance(10, 10, Image.SCALE_SMOOTH));
     
-    URL url3 = this.getClass().getResource("/jams/components/gui/resources/correct.png");
+    URL url3 = this.getClass().getResource("/reg/resources/images/correct.png");
     ImageIcon plot_icon = new ImageIcon(url3);
     
-    URL url4 = this.getClass().getResource("/jams/components/gui/resources/add.png");
+    URL url4 = this.getClass().getResource("/reg/resources/images/add.png");
     ImageIcon add_icon = new ImageIcon(url4);
     
-    URL url5 = this.getClass().getResource("/jams/components/gui/resources/remove.png");
-    ImageIcon rem_icon = new ImageIcon(url5);
+    URL url5 = this.getClass().getResource("/reg/resources/images/remove.png");
+    ImageIcon rem_icon = new ImageIcon(new ImageIcon(url5).getImage().getScaledInstance(10, 10, Image.SCALE_SMOOTH));
     //ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/root.png
     
     GraphProperties thisProp;
@@ -128,10 +130,11 @@ public class GraphProperties {
     JLabel nameLabel;
     
     JTextField setName;
-    JTextField setLegend;
+    JLabel setLegend;
     
     JTSConfigurator ctsconf;
     JXYConfigurator cxyconf;
+    STPConfigurator stpconf;
     
     //XYPair[] data;
     double[] x_dataIntervals;
@@ -153,7 +156,8 @@ public class GraphProperties {
     Color series_outline_paint;
     Color series_fill_paint;
     
-    ColorLabel colorlabel;
+    JLabel colorlabel;
+    JLabel scolorlabel;
     
     boolean outlineVisible;
     boolean linesVisible;
@@ -163,29 +167,32 @@ public class GraphProperties {
     
     CustomizeRendererDlg cr_dlg;
     
+    String headers[];
+    int columnCount = 0;
+    int rowCount = 0;
+    
+    //String column[];
     
     /** Creates a new instance of GraphProperties */
     public GraphProperties(JTSConfigurator ctsconf) {
         
         this.parent = ctsconf;
         this.plotType = 0;
-        //super(parent, "Select Properties");
-        //this.parent = parent;
-        //setLayout(new FlowLayout());
-        //Point parentloc = parent.getLocation();
+        
         this.ctsconf = ctsconf;
         this.thisProp = this;
-        //setLocation(parentloc.x + 30, parentloc.y + 30);
         
         this.table = ctsconf.table;
-        //this.color = "red";
         this.position = "left";
         this.name = "Graph Name";
-        this.legendName = this.name;
+//      thithis.name);
         
         this.selectedColumn = 0;
         this.rowSelection = null;
-    
+        
+        columnCount = table.getColumnCount();
+        rowCount = table.getRowCount();
+        
         String[] timeIntervals = new String[table.getRowCount()];
         for(int i=0; i<table.getRowCount(); i++){
             timeIntervals[i] = table.getValueAt(i,0).toString();
@@ -212,16 +219,22 @@ public class GraphProperties {
         colorTable.put("black", Color.black);
         colorTable.put("white", Color.WHITE);
         
-       
-                
-           
+//        for(int i=0;i<columnCount;i++){ 
+//               
+//                if(i!=0){
+//                    column[i] = table.getColumnName(i);
+//                }else{
+//                    column[i] = "---";
+//                }
+//        }
         
         createPanel();
-        applyTSProperties();
+        //applyTSProperties();
         
     }
     
     public GraphProperties(JXYConfigurator cxyconf) {
+        
         
         this.parent = cxyconf;
         
@@ -238,6 +251,9 @@ public class GraphProperties {
         
         this.rowSelection = null;
         
+        
+        columnCount = table.getColumnCount();
+        rowCount = table.getRowCount();
         //data = new XYPair[table.getRowCount()];
 
         rowSelection = table.getSelectedRows();
@@ -266,13 +282,125 @@ public class GraphProperties {
         datachoice_panel.add(datachoice_END);
         datachoice_panel.add(datachoice_max);
         
+        //column = new String[columnCount];
+        
+//        for(int i=0;i<columnCount;i++){ 
+//
+//               column[i] = table.getColumnName(i);
+//     
+//            }
         
         createPanel();     
     }
     
+    public GraphProperties(STPConfigurator stpconf) {
+        //for stacked time plot
+        this.parent = stpconf;
+        this.plotType = 2;
+        //super(parent, "Select Properties");
+        //this.parent = parent;
+        //setLayout(new FlowLayout());
+        //Point parentloc = parent.getLocation();
+        this.stpconf = stpconf;
+        this.thisProp = this;
+        //setLocation(parentloc.x + 30, parentloc.y + 30);
+        
+        //this.table = stpconf.table;
+        //this.color = "red";
+        this.position = "left";
+        this.name = "Graph Name";
+        this.legendName = this.name;
+        
+        this.selectedColumn = 0;
+        this.rowSelection = null;
+    
+        columnCount = stpconf.getColumnCount();
+        rowCount = stpconf.getRowCount();
+
+        String[] timeIntervals = new String[rowCount];
+        for(int i=0; i<rowCount; i++){
+            timeIntervals[i] = stpconf.timeVector.get(i).toString();
+        }
+        
+        timechoice_START = new JComboBox(timeIntervals);
+        timechoice_START.setPreferredSize(new Dimension(40,14));
+        timechoice_START.addActionListener(timeListener);
+        
+        timechoice_END = new JComboBox(timeIntervals);
+        timechoice_END.setPreferredSize(new Dimension(40,14));
+        timechoice_END.addActionListener(timeListener);
+        
+        colorTable.put("yellow", Color.yellow);
+        colorTable.put("orange", Color.orange);
+        colorTable.put("red", Color.red);
+        colorTable.put("pink", Color.pink);
+        colorTable.put("magenta", Color.magenta);
+        colorTable.put("cyan", Color.cyan);
+        colorTable.put("blue", Color.blue);
+        colorTable.put("green", Color.green);
+        colorTable.put("gray", Color.gray);
+        colorTable.put("lightgray", Color.lightGray);
+        colorTable.put("black", Color.black);
+        colorTable.put("white", Color.WHITE);
+        
+        
+        
+        createPanel();
+        //applyTSProperties();
+        
+    }
+    
+    public GraphProperties(JAMSSpreadSheet sheet, STPConfigurator stpconf) {
+        
+        this.parent = stpconf;
+        this.plotType = 0;
+        
+//        this.ctsconf = ctsconf;
+        this.thisProp = this;
+        
+        this.table = sheet.table;
+        this.position = "left";
+        this.name = "Graph Name";
+        this.legendName = this.name;
+        
+        this.selectedColumn = 0;
+        this.rowSelection = null;
+        
+        columnCount = table.getColumnCount();
+        rowCount = table.getRowCount();
+        
+        String[] timeIntervals = new String[table.getRowCount()];
+        for(int i=0; i<table.getRowCount(); i++){
+            timeIntervals[i] = table.getValueAt(i,0).toString();
+        }
+        
+        timechoice_START = new JComboBox(timeIntervals);
+        timechoice_START.setPreferredSize(new Dimension(40,14));
+        timechoice_START.addActionListener(timeListener);
+        
+        timechoice_END = new JComboBox(timeIntervals);
+        timechoice_END.setPreferredSize(new Dimension(40,14));
+        timechoice_END.addActionListener(timeListener);
+        
+        colorTable.put("yellow", Color.yellow);
+        colorTable.put("orange", Color.orange);
+        colorTable.put("red", Color.red);
+        colorTable.put("pink", Color.pink);
+        colorTable.put("magenta", Color.magenta);
+        colorTable.put("cyan", Color.cyan);
+        colorTable.put("blue", Color.blue);
+        colorTable.put("green", Color.green);
+        colorTable.put("gray", Color.gray);
+        colorTable.put("lightgray", Color.lightGray);
+        colorTable.put("black", Color.black);
+        colorTable.put("white", Color.WHITE);
+        
+        createPanel();   
+    }
+    
     public void createPanel(){
-        JPanel namePanel = new JPanel();
-        namePanel.setLayout(new FlowLayout());
+        //JPanel namePanel = new JPanel();
+        //namePanel.setLayout(new FlowLayout());
         JPanel legendPanel = new JPanel();
         legendPanel.setLayout(new FlowLayout());
         
@@ -307,14 +435,16 @@ public class GraphProperties {
         upButton.addActionListener(upListener);
         downButton.addActionListener(downListener);
         customizeButton.addActionListener(customize_listener);
+
+
         
-        remButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+//        remButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         remButton.setPreferredSize(new Dimension(20,14));
-        upButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+//        upButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         upButton.setPreferredSize(new Dimension(20,14));
-        plotButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+//        plotButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         plotButton.setPreferredSize(new Dimension(20,14));
-        downButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+//        downButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         downButton.setPreferredSize(new Dimension(20,14));
         
         colorchoice = new JComboBox(colors);
@@ -343,38 +473,71 @@ public class GraphProperties {
         JLabel setLegendLabel = new JLabel("Legend Entry:");
         nameLabel = new JLabel();
 
-        String[] column = new String[table.getColumnCount()];
-        
-        Class test = table.getValueAt(0, 0).getClass();
-        
-        
-        
-            for(int i=0;i<table.getColumnCount();i++){ 
-                if(this.plotType == 0){
+        String[] column = new String[columnCount];
+        for(int i=0;i<columnCount;i++){ 
+            
+             switch(plotType){
+                 case 0:
                     if(i!=0){
                         column[i] = table.getColumnName(i);
                     }else{
                         column[i] = "---";
-                    }
-                }else{
+                    } break;
+                  
+                 case 1:    
                     column[i] = table.getColumnName(i);
-                    }
-            }
+                    break;
+                    
+                 case 2:
+                    column = stpconf.getHeaders();
+                    break;
+                    
+             }
+        }
+            
+//                if(this.plotType == 0){
+//                    if(i!=0){
+//                        column[i] = table.getColumnName(i);
+//                    }else{
+//                        column[i] = "---";
+//                    }
+//                }else{
+//                    column[i] = table.getColumnName(i);
+//                    }
+            
+        
+        
+//        Class test = table.getValueAt(0, 0).getClass();
+
+//            for(int i=0;i<columnCount;i++){ 
+//                if(this.plotType == 0){
+//                    if(i!=0){
+//                        column[i] = table.getColumnName(i);
+//                    }else{
+//                        column[i] = "---";
+//                    }
+//                }else{
+//                    column[i] = table.getColumnName(i);
+//                    }
+//            }
         
         setColumn = new JComboBox(column);
         setColumn.setPreferredSize(new Dimension(40,14));
+        setColumn.addActionListener(nameChangedListener);
         setColumn.setSelectedIndex(1);
+
         nameLabel.setText((String) setColumn.getSelectedItem());
-        
-        String name = (String) setColumn.getSelectedItem();
 
         setName = new JTextField(name, 14);
         setName.setPreferredSize(new Dimension(40,14));
-        setLegend = new JTextField(name, 14);
+        setLegend = new JLabel(name);
         setLegend.setPreferredSize(new Dimension(40,14));
-        
-        namePanel.add(setNameLabel);
-        namePanel.add(setName);
+
+        String name = (String) setColumn.getSelectedItem();
+        setLegendName(name);
+
+        //namePanel.add(setNameLabel);
+        //namePanel.add(setName);
         legendPanel.add(setLegendLabel);
         legendPanel.add(setLegend);
         
@@ -391,67 +554,81 @@ public class GraphProperties {
         this.buttonpanel.add(okButton);
         this.buttonpanel.add(cancelButton);
         
-        cr_dlg = new CustomizeRendererDlg();
+        cr_dlg = new CustomizeRendererDlg(getName());
         
-        colorlabel = new ColorLabel(cr_dlg.shape_fill, cr_dlg.outline_color, getSeriesShape());
+        //linecolor label
+        colorlabel = new JLabel("      ");
+        colorlabel.setOpaque(true);
+        colorlabel.setBackground(getSeriesPaint());
+        //shapecolorlabel
+        scolorlabel = new JLabel("");
+        scolorlabel.setOpaque(false);
+        scolorlabel.setBackground(getSeriesPaint());
+
         //plotButton.addActionListener(okListener);
+    }
+    
+    public void applySelectedColumn(){
+        selectedColumn = setColumn.getSelectedIndex();
     }
     
     public void applyTSProperties(){
         JAMSCalendar time;
         double value;
+        int timeSTART = getTimeSTART();
+        int timeEND = getTimeEND();
         selectedColumn = setColumn.getSelectedIndex();
         //color = (String) colorchoice.getSelectedItem();
-        ts = new TimeSeries(getLegendName(), Second.class);
+        ts = new TimeSeries(this.legendName, Second.class);
         
-        for(int i=getTimeSTART(); i<=getTimeEND(); i++){
+        for(int i=timeSTART; i<=timeEND; i++){
             
             time =  (JAMSCalendar) table.getValueAt(i,0); //ONLY FOR TIME SERIES TABLE WITH TIME IN COL 0!!!
             if(!setColumn.getSelectedItem().equals("---")){
                 value = (Double) table.getValueAt(i, selectedColumn);
-                ts.add(new Second(new Date(time.getTimeInMillis())), value);
-            }
+            ts.add(new Second(new Date(time.getTimeInMillis())), value);
+          }
         }
         cr_dlg.updateColors();
     }
-    
+
     public void applyXYProperties(){
-        
-        //System.out.println("ApplyXYProperties()");
-        
-        
+
         selectedColumn = setColumn.getSelectedIndex();
         
-        //color = (String) colorchoice.getSelectedItem();
         xys = new XYSeries(getLegendName());
        
-        //sort xy data
-        
-        //check data intervals
-        //int[] d_range = setPossibleDataIntervals();
-        //if(!isXSeries()){
-            //cxyconf.setXIntervals();
-            //write xy series
         for(int i=this.d_range[0]; i<=this.d_range[1]; i++){
             xys.add(cxyconf.sorted_Row[i].col[x_series_col], cxyconf.sorted_Row[i].col[selectedColumn]);
-            //System.out.println("x: "+cxyconf.sorted_Row[i].col[x_series_col]+" y: "+cxyconf.sorted_Row[i].col[selectedColumn]);
+            
         }
         
-        //System.out.println("x_series_col: " + x_series_col);
-        
-      //}
+        cr_dlg.updateColors();    
     }
     
-//    public void writeXYPairs(){
-//        selectedColumn = setColumn.getSelectedIndex();
-//        for(int i=0; i<table.getRowCount(); i++){
-//            
-//              data[i] = new XYPair((Double) table.getValueAt(i, x_series_col),
-//                                    (Double) table.getValueAt(i, selectedColumn));
-//        }
-//        java.util.Arrays.sort(data);
-//    }
-  
+    public void applySTPProperties(Vector<double[]> rowVector, Vector<JAMSCalendar> timeVector){
+        JAMSCalendar time;
+        double value;
+        int timeSTART = getTimeSTART();
+        int timeEND = getTimeEND();
+        selectedColumn = setColumn.getSelectedIndex();
+        //color = (String) colorchoice.getSelectedItem();
+        ts = new TimeSeries(getLegendName(), Second.class);
+        
+        double row[] = new double[columnCount];
+        
+        for(int i=timeSTART; i<=timeEND; i++){
+            
+            row = rowVector.get(i);
+            time =  timeVector.get(i); //ONLY FOR TIME SERIES TABLE WITH TIME IN COL 0!!!
+//            if(!setColumn.getSelectedItem().equals("---")){
+            value = row[selectedColumn];//table.getValueAt(i, selectedColumn);
+            ts.add(new Second(new Date(time.getTimeInMillis())), value);
+//            }
+        }
+        
+    }
+
     public TimeSeries getTS(){
         return ts;
     }
@@ -468,7 +645,15 @@ public class GraphProperties {
         return index;
     }
  
-
+    public void setColorLabelColor(){
+        if(linesVisible) colorlabel.setBackground(getSeriesPaint());
+        else colorlabel.setBackground(getSeriesFillPaint());
+  
+    }
+    
+    public void setSColorLabelColor(){
+        scolorlabel.setBackground(getSeriesFillPaint());
+    }
     
     private void setPossibleTimeIntervals(){
         int s = timechoice_START.getSelectedIndex();
@@ -515,15 +700,15 @@ public class GraphProperties {
         this.x_changed = state;
     }
     
-    public void setDataSelection(){
-        this.rowSelection = table.getSelectedRows();
-        this.selectedColumn = table.getSelectedColumn();
-    }
+//    public void setDataSelection(){
+//        this.rowSelection = table.getSelectedRows();
+//        this.selectedColumn = table.getSelectedColumn();
+//    }
     
     public void setSelectedColumn(int col){
         this.selectedColumn = col;
         this.setColumn.setSelectedIndex(col);
-        this.nameLabel.setText((String)setColumn.getSelectedItem());
+    
     }
     
     public void setSelectedRows(int[] rows){
@@ -543,13 +728,21 @@ public class GraphProperties {
     
     public void setLegendName(String legendName){
         this.legendName = legendName;
-        setLegend.setText(legendName);
+        setLegend.setText("  "+legendName);
         
     }
+
+    public void setLegendField(String s){
+        cr_dlg.setLegendField(s);
+    }
+
+//    public void setLegendName(){
+//        this.legendName = setLegend.getText();
+//    }
     
     public void setName(String name){
         this.name = name;
-        setName.setText(name);
+        //setName.setText(name);
         //nameLabel.setText(name);
     }
     
@@ -574,20 +767,20 @@ public class GraphProperties {
     }
     
     public void setDataSTART(double d_start){
-        data_range_start = d_start;
-        String s;
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
-        nf.setMaximumFractionDigits(4);
-        s = nf.format(d_start);
+        data_range_start = (double) d_start;
+        String s = ""+d_start;
+//        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+//        nf.setMaximumFractionDigits(4);
+//        s = nf.format(data_range_start);
         datachoice_START.setText(s);
     }
     
     public void setDataEND(double d_end){
-        data_range_end = d_end;
-        String s;
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
-        nf.setMaximumFractionDigits(4);
-        s = nf.format(d_end);
+        data_range_end =  (double)d_end;
+        String s = ""+d_end;
+//        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+//        nf.setMaximumFractionDigits(4);
+//        s = nf.format(data_range_end);
         datachoice_END.setText(s);
     }
     
@@ -596,16 +789,21 @@ public class GraphProperties {
     }
     
     public String getLegendName(){
-        return this.setLegend.getText();
+        //return this.setLegend.getText();
+        return this.legendName;
     }
     
     public String getName(){
-        if(this.selectedColumn != 0){
-            name = table.getColumnName(selectedColumn);
-        } else {
-            name = this.name;
-        }
-        
+//        if(this.selectedColumn != 0){
+//            name = table.getColumnName(selectedColumn);
+//        }
+//        else {
+//            
+//            name = this.name;
+//        }
+
+        name = (String) setColumn.getSelectedItem();
+
         return name;
     }
     
@@ -631,6 +829,7 @@ public class GraphProperties {
 
     public int getTimeEND(){
         return timechoice_END.getSelectedIndex();
+//        return 5000;
     }
     
     public double readDataSTART(){
@@ -690,7 +889,7 @@ public class GraphProperties {
         return colorchoice;
     }
     
-    public JTextField getLegendField(){
+    public JLabel getLegendLabel(){
         return setLegend;
     }
     
@@ -742,8 +941,12 @@ public class GraphProperties {
         return this.customizeButton;
     }
     
-    public ColorLabel getColorLabel(){
+    public JLabel getColorLabel(){
         return this.colorlabel;
+    }
+    
+    public JLabel getSColorLabel(){
+        return this.scolorlabel;
     }
     
     //Methods for renderer configuration
@@ -778,9 +981,13 @@ public class GraphProperties {
         this.linesVisible = flag;
     }
     
+ 
+    
     public void setShapesVisible(boolean flag){
         this.shapesVisible = flag;
+        //cr_dlg.shapes_vis_box.setSelected(flag);
     }
+    
     
     public void setStroke(int type){
         stroke_type = type;
@@ -1090,10 +1297,25 @@ public class GraphProperties {
         }
     };
     
+    ItemListener endListener = new ItemListener(){
+        public void itemStateChanged(ItemEvent xe){
+            
+//            time_END = timechoice_END.getSelectedIndex();
+        }
+    };
+    
     ActionListener max_listener = new ActionListener(){
         public void actionPerformed(ActionEvent me){
             
             cxyconf.setMaxDataIntervals(thisProp);
+        }
+    };
+
+    ActionListener nameChangedListener = new ActionListener(){
+        public void actionPerformed(ActionEvent me){
+
+            String name = (String) setColumn.getSelectedItem();
+            setName(name);
         }
     };
     
@@ -1113,7 +1335,7 @@ public class GraphProperties {
                 if(plotType == 1) setRendererType(cxyconf.getRendererRight());
             }
             cr_dlg.handleGUI();
-            
+            cr_dlg.updateName(getName());
           
             
             cr_dlg.setVisible(true);
@@ -1146,7 +1368,22 @@ public class GraphProperties {
             
         }
     };
-    
+
+//    DocumentListener legend_changed_listener = new DocumentListener(){
+//        public void changedUpdate(DocumentEvent e){
+//            setLegendName(setLegend.getText());
+//
+//        }
+//        public void removeUpdate(DocumentEvent e){
+//            setLegendName(setLegend.getText());
+//
+//        }
+//        public void insertUpdate(DocumentEvent e){
+//            setLegendName(setLegend.getText());
+//
+//        }
+//    };
+
     DocumentListener d_end_listener = new DocumentListener(){
         public void changedUpdate(DocumentEvent e){
             cxyconf.dEndChanged(true);
@@ -1161,7 +1398,6 @@ public class GraphProperties {
             
         }
     };
-        
 
     private class CustomizeRendererDlg extends JDialog{
  
@@ -1176,6 +1412,7 @@ public class GraphProperties {
         JPanel optionspanel;
         JPanel colorpanel;
         JPanel buttonpanel;
+        JPanel namepanel;
         
         Color line_color;
         Color shape_fill;
@@ -1191,7 +1428,12 @@ public class GraphProperties {
         JLabel shapes_visible_label;
         JLabel fill_label;
         JLabel shape_size_label;
-        
+
+
+        JLabel setLegendLabel;
+        JLabel nameLabel;
+        JTextField setLegendField;
+
         JComboBox renderer_box;
         JComboBox stroke_box; //list for different strokes!
         JComboBox shape_box; //list for different shapes!!
@@ -1208,12 +1450,7 @@ public class GraphProperties {
         JSlider outline_slider;
         
         JSeparator divider;
-        
-        //JButton stroke_button;
-//        ColorButton stroke_button;
-//        ColorButton fill_button;
-//        ColorButton outline_button;
-        
+               
         JButton stroke_button;
         JButton fill_button;
         JButton outline_button;
@@ -1222,8 +1459,6 @@ public class GraphProperties {
         JButton apply_button;
         JButton cancel_button;
         
-//        final String[] STROKES = {"thin", "0.5", "1.0", "2.0", "5.0"};
-//        final String[] SIZES = {"1", "2", "4", "6", "8", "10", "12"};
         final String[] SHAPES = {"Square", "Circle", "Triangle up", "Triangle down", "Diamond", "Cross diagonal", "Cross regular"};//, "Square", "Star"};
         final String[] COLORS = {"custom","red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
         final String[] SHAPE_COLORS = {"custom","white","red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
@@ -1235,13 +1470,10 @@ public class GraphProperties {
         final int STROKE = 2;
         final int SHAPE = 5;
         final int OUTLINE = 1;
-       
-        
-        public CustomizeRendererDlg(){
-            super(parent, "Customize Series Paint", true);
-            URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
-            ImageIcon icon = new ImageIcon(url);
-            setIconImage(icon.getImage());
+
+        public CustomizeRendererDlg(String series_name){
+            super(parent, SpreadsheetConstants.DLG_TITLE_CUSTOMIZE, true);
+            
             Point parentloc = parent.getLocation();
             setLocation(parentloc.x + 50, parentloc.y + 50);
             
@@ -1258,7 +1490,12 @@ public class GraphProperties {
             
             createPanel();
         }
-        
+
+        public void updateName(String name){
+
+            nameLabel.setText(name);
+        }
+
         public void updateColors(){
             
             line_color = getSeriesPaint();
@@ -1306,6 +1543,9 @@ public class GraphProperties {
         public void setShapeBox(int index){
             shape_box.setSelectedIndex(index);
         }
+        public void setLegendField(String legendName){
+            setLegendField.setText(legendName);
+        }
         
         
         
@@ -1316,6 +1556,7 @@ public class GraphProperties {
             optionspanel = new JPanel();
             colorpanel = new JPanel();
             buttonpanel = new JPanel();
+            namepanel = new JPanel();
             GridBagLayout gbl = new GridBagLayout();
             BorderLayout brl = new BorderLayout();
             GridBagLayout option_gbl = new GridBagLayout();
@@ -1325,7 +1566,7 @@ public class GraphProperties {
             setLayout(brl);
             optionspanel.setLayout(option_gbl);
             
-            ok_button = new JButton("OK");
+            ok_button = new JButton("Set Properties");
             cancel_button = new JButton("Cancel");
             
             ok_button.addActionListener(ok);
@@ -1338,6 +1579,8 @@ public class GraphProperties {
 //            renderer_box = new JComboBox(RENDERER);
 //            renderer_box.setSelectedIndex()
             stroke_label = new JLabel("Stroke:");
+            nameLabel = new JLabel(getName());
+            nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD));
 //            stroke_box = new JComboBox(STROKES);
 //            stroke_box.setSelectedIndex(2);
             
@@ -1361,6 +1604,9 @@ public class GraphProperties {
             fill_box = new JComboBox(SHAPE_COLORS);
             fill_box.setSelectedIndex(2);
             
+            setLegendLabel = new JLabel("Legend name:");
+            setLegendField = new JTextField();
+
             shape_size_label = new JLabel("Size");
 //            shape_size_box = new JComboBox(SIZES);
 //            shape_size_box.setSelectedIndex(2);
@@ -1416,6 +1662,8 @@ public class GraphProperties {
             stroke_button.addActionListener(stroke_button_listener);
             fill_button.addActionListener(fill_button_listener);
             outline_button.addActionListener(outline_button_listener);
+            //name
+
             //optionpanel
             GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Line"),    0, 0, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Symbol"),    4, 0, 1, 1, 0, 0);
@@ -1429,6 +1677,9 @@ public class GraphProperties {
             GUIHelper.addGBComponent(optionspanel, option_gbl, lines_vis_box,1, 4, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionspanel, option_gbl, shapes_visible_label, 0, 5, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionspanel, option_gbl, shapes_vis_box,1, 5, 1, 1, 0, 0);
+                //legend
+            GUIHelper.addGBComponent(optionspanel, option_gbl, setLegendLabel,0, 6, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, setLegendField,1, 6, 1, 1, 0, 0);
                 //divider
             GUIHelper.addGBComponent(optionspanel, option_gbl, divider,      2, 1, 1, 8, 1, 1);
                 //shapes
@@ -1446,15 +1697,19 @@ public class GraphProperties {
             //buttonpanel
             GUIHelper.addGBComponent(buttonpanel, button_gbl, ok_button, 0, 0, 1, 1, 1, 1);
             GUIHelper.addGBComponent(buttonpanel, button_gbl, cancel_button, 1, 0, 1, 1, 1, 1);
-            GUIHelper.addGBComponent(buttonpanel, button_gbl, apply_button, 2, 0, 1, 1, 1, 1);
+            //GUIHelper.addGBComponent(buttonpanel, button_gbl, apply_button, 2, 0, 1, 1, 1, 1);
+
+            namepanel.add(nameLabel);
             
             //this-panel
 //            GUIHelper.addGBComponent(this, gbl, optionspanel, 0, 0, 1, 6, 1, 1);
 //            GUIHelper.addGBComponent(this, gbl, colorpanel  , 1, 0, 1, 5, 1, 1);
 //            GUIHelper.addGBComponent(this, gbl, buttonpanel , 1, 5, 1, 1, 1, 1);
-            
+
+            add(namepanel, brl.NORTH);
             add(optionspanel, brl.CENTER);
             add(buttonpanel, brl.SOUTH);
+
             
             //default values
             setStroke(stroke_slider.getValue());
@@ -1555,17 +1810,20 @@ public class GraphProperties {
                 setLinesVisible(lines_vis_box.isSelected());
                 setShapesVisible(shapes_vis_box.isSelected());
                 result = true;
+
+                setLegendName(setLegendField.getText());
                 
-                colorlabel.setSymbol(getSeriesShape(), shape_fill, outline_color);
                 
                 
-                //ACHTUNG!!! Typen-Abh^ngig! XY oder TS?
-                if(plotType == 0) ctsconf.plotAllGraphs();
-                if(plotType == 1) cxyconf.plotAllGraphs();
+                //ACHTUNG!!! Typen-Abh�ngig! XY oder TS?
+//                if(plotType == 0) ctsconf.plotAllGraphs();
+//                if(plotType == 1) cxyconf.plotAllGraphs();
  
                 setVisible(false);
                 
                 updateColors();
+                setColorLabelColor();
+                setSColorLabelColor();
             }
         };
         
@@ -1573,11 +1831,7 @@ public class GraphProperties {
             public void actionPerformed(ActionEvent e) {
                 setStroke(stroke_slider.getValue());
                 setShape(shape_box.getSelectedIndex(), shape_slider.getValue());
-                //setSeriesPaint(colorTable.get((String)paint_box.getSelectedItem()));
-                //setSeriesPaint(line_color);
-                //setSeriesOutlinePaint(outline_color);
-                //setSeriesFillPaint(colorTable.get((String)fill_box.getSelectedItem()));
-                //setSeriesFillPaint(shape_fill);
+
                 setSeriesPaint(line_color);
                 setSeriesFillPaint(shape_fill);
                 setSeriesOutlinePaint(outline_color);
@@ -1586,12 +1840,12 @@ public class GraphProperties {
                 setLinesVisible(lines_vis_box.isSelected());
                 setShapesVisible(shapes_vis_box.isSelected());
                 result = true;
+                setLegendName(setLegendField.getText());
                 
                 
-                
-                //ACHTUNG!!! Typen-Abh^ngig! XY oder TS?
-                if(plotType == 0) ctsconf.plotAllGraphs();  
-                if(plotType == 1) cxyconf.plotAllGraphs();
+                //ACHTUNG!!! Typen-Abhängig! XY oder TS?
+//                if(plotType == 0) ctsconf.plotAllGraphs();  
+//                if(plotType == 1) cxyconf.plotAllGraphs();
                 
                 updateColors();
                 
