@@ -1401,7 +1401,10 @@ public class JTSConfigurator extends JFrame {
         }
         
         properties.setProperty("output", output);
-        
+
+        //TYPE
+        properties.setProperty("template_type", "TIME");
+
         //Header Name
 
 
@@ -1842,7 +1845,7 @@ public class JTSConfigurator extends JFrame {
 
                     }else{
                         gprop.setTimeSTART(0);
-                        gprop.setTimeEND(table.getRowCount());
+                        gprop.setTimeEND(table.getRowCount()-1);
 
                     }
 

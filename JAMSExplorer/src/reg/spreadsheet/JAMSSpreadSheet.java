@@ -937,9 +937,9 @@ public class JAMSSpreadSheet extends JPanel {
         JXYConfigurator jxys;
 
         try {
-            jxys = new JXYConfigurator(explorer, this, null);
+            jxys = new JXYConfigurator(explorer.getExplorerFrame(), this, null, explorer);
         } catch (NullPointerException npe) {
-            jxys = new JXYConfigurator(explorer, this, null);
+            jxys = new JXYConfigurator(explorer.getExplorerFrame(), this, null, explorer);
         }
     }
 
@@ -947,9 +947,9 @@ public class JAMSSpreadSheet extends JPanel {
         JXYConfigurator jxys;
 
         if (useTemplateButton.isSelected()) {
-            jxys = new JXYConfigurator(explorer, this, templateFile);
+            jxys = new JXYConfigurator(explorer.getExplorerFrame(), this, templateFile, explorer);
         } else {
-            jxys = new JXYConfigurator(explorer, this, null);
+            jxys = new JXYConfigurator(explorer.getExplorerFrame(), this, null, explorer);
         }
     }
 
@@ -1034,19 +1034,75 @@ public class JAMSSpreadSheet extends JPanel {
 
         public void actionPerformed(ActionEvent e) {
 
-            try {
+            if (useTemplateButton.isSelected()) {
 
-                openCXYS(dtpFile);
+            if (isOutputSheet()) {
 
-            } catch (ClassCastException cce) {
+                    String fileID = getID();
+                    StringTokenizer name_tokenizer = new StringTokenizer(fileID, ".");
+                    String filename = "";
+                    if (name_tokenizer.hasMoreTokens()) {
+                        filename = name_tokenizer.nextToken() + SpreadsheetConstants.FILE_ENDING_TTP;
+                    } else {
+                        filename = fileID + SpreadsheetConstants.FILE_ENDING_TTP;
+                    }
 
-                if (timeRuns) {
-                    table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
-                    openCXYS(dtpFile);
+                    ttpFile = new File(getOutputDSDir(), filename);
+
+                } else {
+                    ttpFile = new File(explorer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, store.getID() + SpreadsheetConstants.FILE_ENDING_TTP);
                 }
-            }
 
+                if (ttpFile != null) {
+                    if (ttpFile.exists()) {
+                        try {
+                            openCXYS(ttpFile);
+                        } catch (Exception ee) {
+                            ee.printStackTrace();
+                            try {
+                                JFileChooser chooser = getTemplateChooser();
+                                int returnVal = chooser.showOpenDialog(parent_frame);
+                                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                                    ttpFile = chooser.getSelectedFile();
+
+                                    openCXYS(ttpFile);
+                                }
+//                            openCTS(ttpFile);
+
+                            } catch (Exception fnfex) {
+
+                                if (timeRuns) {
+//                                table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
+//                                openCTS();
+                                }
+                            }
+
+                        }
+
+                    } else {
+
+                        try {
+                            JFileChooser chooser = getTemplateChooser();
+                            int returnVal = chooser.showOpenDialog(parent_frame);
+                            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                                ttpFile = chooser.getSelectedFile();
+                            }
+                            openCXYS(ttpFile);
+
+                        } catch (Exception fnfex) {
+
+                            if (timeRuns) {
+                                table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
+                                openCXYS();
+                            }
+                        }
+                    }
+                }
+            } else {
+                openCXYS();
+            }
         }
+        
     };
 
     ActionListener stpAction = new ActionListener() {

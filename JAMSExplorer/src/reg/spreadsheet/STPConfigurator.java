@@ -686,11 +686,40 @@ public class STPConfigurator extends JFrame {
 
             @Override
             public boolean accept(File pathname) {
+
+                Properties properties = new Properties();
+                boolean result = false;
+
+
                 if (pathname.isFile() && pathname.getName().endsWith(SpreadsheetConstants.FILE_ENDING_TTP)) {
-                    return true;
+
+                    // open ttp file and check for time template
+
+                    try {
+                        FileInputStream fin = new FileInputStream(pathname);
+                        properties.load(fin);
+                        fin.close();
+
+                    } catch (Exception e) {
+                    }
+
+                    try{
+                        String typetest = (String) properties.getProperty("template_type");
+                        if(typetest.compareTo("TIME") == 0){
+                            result = true;
+                        } else {
+                            result = false;
+                        }
+
+                    } catch(NullPointerException npe){
+                        result = false;
+                    }
+
                 } else {
-                    return false;
+                    result = false;
                 }
+
+                return result;
             }
         };
 
@@ -795,8 +824,13 @@ public class STPConfigurator extends JFrame {
             FileInputStream fin = new FileInputStream(templateFile);
             properties.load(fin);
             fin.close();
-            id[0] = (String) properties.getProperty("store");
-            id[1] = (String) properties.getProperty("output");
+            String typetest = properties.getProperty("template_type");
+            if(typetest.compareTo("TIME") == 0){
+                id[0] = (String) properties.getProperty("store");
+                id[1] = (String) properties.getProperty("output");
+            }else{
+
+            }
 
         } catch (Exception e) {
             id[0] = "---";

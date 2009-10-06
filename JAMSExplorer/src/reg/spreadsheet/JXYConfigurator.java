@@ -95,6 +95,8 @@ public class JXYConfigurator extends JFrame {
     private File templateFile;
     //private static JFileChooser templateChooser;
 
+    private boolean output_ttp = false;
+
     private JButton saveTempButton = new JButton("Save Template");
     private JButton loadTempButton = new JButton("Load Template");
     private JLabel edTitle = new JLabel("Plot Title: ");
@@ -178,10 +180,10 @@ public class JXYConfigurator extends JFrame {
     JAMSSpreadSheet sheet;
 
 
-    public JXYConfigurator(JAMSExplorer explorer, JAMSSpreadSheet sheet, File templateFile) {
+    public JXYConfigurator(JFrame parent, JAMSSpreadSheet sheet, File templateFile, JAMSExplorer explorer) {
 
-        this.setParent(explorer.getExplorerFrame());
-        this.setIconImage(explorer.getExplorerFrame().getIconImage());
+        this.setParent(parent);
+        this.setIconImage(parent.getIconImage());
         setTitle(SpreadsheetConstants.DLG_TITLE_JXYSCONFIGURATOR);
         
         this.workspace = explorer.getWorkspace();
@@ -325,19 +327,25 @@ public class JXYConfigurator extends JFrame {
         rRightBox.setSelectedIndex(0);
 
         ////////////////////////// GRAPH AUSFÜHREN ///////////
-        if ((templateFile != null) && templateFile.exists()) {
+        if ((templateFile != null) && (templateFile.exists())) {
             try {
-
-
-                loadTemplate(templateFile);
-                tempLoaded = true;
+                if(!output_ttp){
+                    loadTemplate(templateFile);
+                }
+                else{
+//                    loadOutputTemplate(templateFile);
+                    loadTemplate(templateFile);
+                    System.out.println("load OUTPUT TEMPLATE");
+                }
             } catch (Exception fnfe) {
+//                System.out.println("ERROR");
+                fnfe.printStackTrace();
+
                 initGraphLoad();
-                tempLoaded = false;
             }
         } else {
+
             initGraphLoad();
-            tempLoaded = false;
         }
         ////////////////////////////////////////////
 
@@ -1593,7 +1601,8 @@ public class JXYConfigurator extends JFrame {
         
         properties.setProperty("output", output);
         
-        //Header Name
+        //TYPE
+        properties.setProperty("template_type", "DATA");
 
 
         properties.setProperty("number", number);
@@ -1633,6 +1642,11 @@ public class JXYConfigurator extends JFrame {
             //end
             properties.setProperty("dataEND", ""+row_end);
             }
+            //TIME INTERVAL
+                    //start
+                    properties.setProperty(name + ".timeSTART", "DEFAULT");
+                    //end
+                    properties.setProperty(name + ".timeEND", "DEFAULT");
 
             //Legend Name
             properties.setProperty(name + ".legendname", gprop.getLegendName());
@@ -1803,13 +1817,13 @@ public class JXYConfigurator extends JFrame {
 
         initGroupUI();
         
-        String x_series_index_string = properties.getProperty("x_series_index");
+        String x_series_index_string = (String) properties.getProperty("x_series_index");
         if(x_series_index_string.compareTo("DEFAULT") != 0){
             x_series_index = new Integer(x_series_index_string);
         }else{
 
-            if(sheet.timeRuns()) x_series_index = 0;
-            else x_series_index = 1;
+            if(sheet.timeRuns()) x_series_index = 1;
+            else x_series_index = 0;
         }
         
         
@@ -1825,7 +1839,7 @@ public class JXYConfigurator extends JFrame {
                 gprop.setIsXSeries(true);
                 gprop.getIsXAxisButton().setSelected(true);
 
-                String data_start_string = properties.getProperty("dataSTART");
+                String data_start_string = (String) properties.getProperty("dataSTART");
                 //DATA INTERVAL
                 if(data_start_string.compareTo("DEFAULT") != 0){
                       //start
@@ -1867,12 +1881,7 @@ public class JXYConfigurator extends JFrame {
                     //POSITION left/right
                     gprop.setPosition(properties.getProperty(name + ".position"));
                     
-                    //TIME INTERVAL
-                    //start
-                    properties.setProperty(name + ".timeSTART", "DEFAULT");
-                    //end
-                    properties.setProperty(name + ".timeEND", "DEFAULT");
-
+                    
                     //NAME
                     gprop.setName(name);
                     
