@@ -8,16 +8,20 @@
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-package reg.spreadsheet;
+package jams.components.gui.spreadsheet;
 
 /**
  *
  * @author Robert Riedel
  */
 import java.util.*;
+import javax.swing.*;
 import javax.swing.table.*;
+
 import java.io.*;
+
 import jams.data.*;
+import jams.model.*;
 
 //import jams.components.*;
 
@@ -26,12 +30,17 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
 
     /* JAMS works with double[]-Arrays as row data of input/output data */
     private Vector<double[]> arrayVector = new Vector<double[]>();
+    private Vector<String> timeAxis = new Vector<String>();
     private Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
     private int rows=0;
     private int columns=0;
+    
     private String[] colnames;
     private boolean colnamesset = false;
     private boolean timeRuns = false;
+    
+
+    
     
     
     /** Creates a new instance of JAMSTableModel */
@@ -148,7 +157,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
            
            if(timeRuns == false){
                if(columnIndex < this.arrayVector.get(rowIndex).length  ){
-                    //note: this is creating a Double
+
                     value = (double) arrayVector.get(rowIndex)[columnIndex];
                }
                else{

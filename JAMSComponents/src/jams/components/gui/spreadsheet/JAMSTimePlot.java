@@ -21,7 +21,7 @@
  *
  */
 
-package reg.spreadsheet;
+package jams.components.gui.spreadsheet;
 
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGEncodeParam;
@@ -72,7 +72,6 @@ public class JAMSTimePlot {
     int graphCountRight=0;
     int graphCountLeft=0;
     
-    double weight;
 
     String xAxisTitle;
     String leftAxisTitle;
@@ -130,21 +129,13 @@ public class JAMSTimePlot {
         
     }
     
-    public XYPlot getXYPlot(){
-        return chart.getXYPlot();
-    }
-    
-    public DateAxis getDateAxis(){
-        return dateAxis;
-    }
-    
     public void setDefaultValues(){
 
             String xAxisTitle = "x axis title";
             String leftAxisTitle = "left axis title";
             String rightAxisTitle = "right axis title";
 
-            String title = "CTSPlot ver. 1.00";
+            String title = "CTSPlot ver. 0.10";
     }
     public ChartPanel getChartPanel(){
         //createPlot();
@@ -204,11 +195,6 @@ public class JAMSTimePlot {
         return chart;
     }
     
-    public void removeLegendAndXAxis(){
-        chart.removeLegend();
-        dateAxis.setVisible(false);
-    }
-    
     private XYItemRenderer getRenderer(int type) {
         XYItemRenderer r;
         switch (type) {
@@ -259,7 +245,59 @@ public class JAMSTimePlot {
         }
         return r;
     }
- 
+    
+//    private void customizeRenderer(XYItemRenderer renderer, int series, int type, java.awt.Stroke stroke, java.awt.Shape shape, java.awt.Paint color, boolean lines_vis, boolean shapes_vis) {
+//        XYItemRenderer r;
+//        switch (type) {
+//            case 0:
+//                
+//                renderer.setSeriesPaint(series, color);
+//                renderer.setSeriesStroke(series, stroke);
+//                renderer.setSeriesShape(series, shape);
+//                renderer.setSeriesShapesVisible(series, shapes_vis);
+//                renderer.setSeriesLinesVisible(series, lines_vis);
+//                renderer = lsr;
+//                break;
+//                
+//            case 1:
+//                r = new XYBarRenderer();
+//                break;
+//                
+//            case 2:
+//                r = new XYAreaRenderer();
+//                break;
+// 
+//            case 3:
+//                r = new XYStepRenderer();
+//                r.setSeriesPaint(series, color);
+//                r.setSeriesStroke(series, stroke);
+//                r.setSeriesShape(series, shape);
+//                
+//                break;
+//                
+//            case 4:
+//                r = new XYStepAreaRenderer();
+//                r.setSeriesPaint(series, color);
+//                r.setSeriesStroke(series, stroke);
+//                r.setSeriesShape(series, shape);
+//                break;
+//                
+//            case 5:
+//                r = new XYDifferenceRenderer();
+//                r.setSeriesPaint(series, color);
+//                r.setSeriesStroke(series, stroke);
+//                r.setSeriesShape(series, shape);
+//                break;
+//              
+//            default:
+//                lsr = new XYLineAndShapeRenderer();
+//                lsr.setBaseShapesVisible(true);
+//                r = lsr;
+//        }
+//        return r;
+//    }
+    
+    
     public void createPlot() {
 
         chart = ChartFactory.createTimeSeriesChart(
@@ -272,13 +310,16 @@ public class JAMSTimePlot {
                 false);
         
         chartPanel = new ChartPanel(chart, true);
+        
+//        chartPanel.setMinimumDrawHeight(4096);
+//        chartPanel.setMinimumDrawWidth(4096);
+//        chartPanel.setSize(4096, 4096);
         chartPanel.setBackground(Color.WHITE);
         
         panel = new JPanel();
-        
+//        panel.setSize(4096,4096);
         panel.setLayout(new BorderLayout());
-        panel.setBackground(Color.WHITE);
-        
+        //panel.setBackground(Color.WHITE);
         panel.add(chartPanel, BorderLayout.CENTER);
         panel.add(chartPanel);
         
@@ -286,7 +327,9 @@ public class JAMSTimePlot {
         
         DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
         dateAxis.setDateFormatOverride(new SimpleDateFormat("dd-MM-yyyy"));
-
+        
+        //plot.clearRangeAxes();
+        //axisLEFT = plot.getRangeAxis();
         axisLEFT = new NumberAxis(leftAxisTitle);
         axisRIGHT = new NumberAxis(rightAxisTitle);
         
@@ -304,69 +347,133 @@ public class JAMSTimePlot {
     }
         
     public void plotLeft(XYItemRenderer leftRenderer, String nameLeft, String xAxisTitle, boolean inverted){ //plotLeft(renderer, axisname, inverted)
-        int plot_count = 0;
-        int c = propVector.size();
-        int right = 0;
+        
         dataLeft = new TimeSeriesCollection();
         DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
-   
+        final XYItemRenderer lRenderer = leftRenderer;
+        
         axisLEFT.setInverted(inverted);
         axisLEFT.setLabel(nameLeft);
         dateAxis.setLabel(xAxisTitle);
+        
+        //7leftRenderer = getRenderer(renderer);
 
-        for(int k=0; k<c; k++){ 
+        //dataRight.removeAllSeries();
+        
+        new Thread(new Runnable(){
+ 
+        int plot_count = 0;
+        int c = propVector.size();
+        int right = 0;
             
-            GraphProperties prop = propVector.get(k);
-            if(propVector.get(k).getPosChoice().getSelectedItem() == "left"){
-                plot_count++;
-                //GraphProperties prop = propVector.get(k);
-                dataLeft.addSeries(prop.getTS());
-                dataRight.removeSeries(prop.getTS());
+        public void run(){
+            
+            for(int k=0; k<c; k++){ 
 
-            }else{
-                dataLeft.removeSeries(prop.getTS());
-                right++;
+                GraphProperties prop = propVector.get(k);
+                if(propVector.get(k).getPosChoice().getSelectedItem() == "left"){
+                    plot_count++;
+                    //GraphProperties prop = propVector.get(k);
+                    dataLeft.addSeries(prop.getTS());
+                    dataRight.removeSeries(prop.getTS());
 
+    //                leftRenderer.setSeriesPaint(k-right, prop.getSeriesPaint());
+    //                leftRenderer.setSeriesStroke(k-right, prop.getSeriesStroke());
+    //                leftRenderer.setSeriesShape(k-right, prop.getSeriesShape());
+
+                    //leftRenderer.setSeriesPaint(k-right,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
+                }else{
+                    dataLeft.removeSeries(prop.getTS());
+                    right++;
+    //                if(right <= dataRight.getSeriesCount()){
+    //                    dataRight.removeSeries(prop.getTS());
+    //                }
+                }
             }
+
+            //if((plot_count<2 || plot_count>2) && renderer == 7) leftRenderer = getRenderer(0);
+
+
+            if(right == 0){
+                dataRight.removeAllSeries();
+                axisRIGHT.setVisible(false);
+                axisLEFT.setVisible(true);
+                plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+                plot.setRangeAxis(0, axisLEFT);
+                plot.setDataset(0, dataLeft);
+
+                plot.setRenderer(0, lRenderer);
+                plot.mapDatasetToRangeAxis(0, 0);
+
+            } else {
+                axisRIGHT.setVisible(true);
+                plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+                plot.setRangeAxis(0, axisLEFT);
+                plot.setDataset(0, dataLeft);
+                plot.setRenderer(0, lRenderer);
+                plot.mapDatasetToRangeAxis(0, 0);
+            }
+        
         }
-      
-        if(right == 0){
-            dataRight.removeAllSeries();
-            axisRIGHT.setVisible(false);
-            axisLEFT.setVisible(true);
-            plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
-            plot.setRangeAxis(0, axisLEFT);
-            plot.setDataset(0, dataLeft);
-            
-            plot.setRenderer(0, leftRenderer);
-            plot.mapDatasetToRangeAxis(0, 0);
-            
-        } else {
-            axisRIGHT.setVisible(true);
-            plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
-            plot.setRangeAxis(0, axisLEFT);
-            plot.setDataset(0, dataLeft);
-            plot.setRenderer(0, leftRenderer);
-            plot.mapDatasetToRangeAxis(0, 0);
-        }
+        }).start();
+        
+        /////////////ohne thread//////////////
+//        int plot_count = 0;
+//        int c = propVector.size();
+//        int right = 0;
+//        
+//        for(int k=0; k<c; k++){ 
+//
+//                GraphProperties prop = propVector.get(k);
+//                if(propVector.get(k).getPosChoice().getSelectedItem() == "left"){
+//                    plot_count++;
+//                    //GraphProperties prop = propVector.get(k);
+//                    dataLeft.addSeries(prop.getTS());
+//                    dataRight.removeSeries(prop.getTS());
+//
+//    //                leftRenderer.setSeriesPaint(k-right, prop.getSeriesPaint());
+//    //                leftRenderer.setSeriesStroke(k-right, prop.getSeriesStroke());
+//    //                leftRenderer.setSeriesShape(k-right, prop.getSeriesShape());
+//
+//                    //leftRenderer.setSeriesPaint(k-right,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
+//                }else{
+//                    dataLeft.removeSeries(prop.getTS());
+//                    right++;
+//    //                if(right <= dataRight.getSeriesCount()){
+//    //                    dataRight.removeSeries(prop.getTS());
+//    //                }
+//                }
+//            }
+
+           
+
+
+//            if(right == 0){
+//                dataRight.removeAllSeries();
+//                axisRIGHT.setVisible(false);
+//                axisLEFT.setVisible(true);
+//                plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+//                plot.setRangeAxis(0, axisLEFT);
+//                plot.setDataset(0, dataLeft);
+//
+//                plot.setRenderer(0, lRenderer);
+//                plot.mapDatasetToRangeAxis(0, 0);
+//
+//            } else {
+//                axisRIGHT.setVisible(true);
+//                plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
+//                plot.setRangeAxis(0, axisLEFT);
+//                plot.setDataset(0, dataLeft);
+//                plot.setRenderer(0, lRenderer);
+//                plot.mapDatasetToRangeAxis(0, 0);
+//            }
+        
+        
         
     }
     
     public void setTitle(String title){
         chart.setTitle(title);
-    }
-    
-    public String getTitle(){
-        return title;
-    }
-    
-    public void setWeight(double weight){
-        this.weight = weight;
-        
-    }
-    
-    public double getWeight(){
-        return this.weight;
     }
     
     public void plotEmpty(){
@@ -428,13 +535,19 @@ public class JAMSTimePlot {
                 //GraphProperties prop = propVector.get(k);
                 dataRight.addSeries(prop.getTS());
                 dataLeft.removeSeries(prop.getTS());
-
+                
+//                rightRenderer.setSeriesPaint(k-left, prop.getSeriesPaint());
+//                rightRenderer.setSeriesStroke(k-left, prop.getSeriesStroke());
+//                rightRenderer.setSeriesShape(k-left, prop.getSeriesShape());
+                
+                //rightRenderer.setSeriesPaint(k-left,colorTable.get((String)prop.getColorChoice().getSelectedItem()));
             }else{
                 left++;
                 dataRight.removeSeries(prop.getTS());
             }
         }
- 
+        //if((plot_count<2 || plot_count>2) && renderer == 7) rightRenderer = getRenderer(0);
+        
         if(left == 0){
             dataLeft.removeAllSeries();     
             axisLEFT.setVisible(false);
@@ -452,13 +565,32 @@ public class JAMSTimePlot {
             plot.setRenderer(1, rightRenderer);
             plot.mapDatasetToRangeAxis(1, 1);
         }
-       
+        
+        //plot.mapDatasetToRangeAxis(1, 1);
+        
         plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
     }
 
+//    public void plot(JAMSCalendar time, double[] valueLeft, double[] valueRight) {
+//        try {
+//            for (i = 0; i < graphCountRight; i++) {
+//                double value = valueRight[i];
+//                if(value == -9999)
+//                    value = 0;
+//                //tsRight[i].add(new Hour(new Date(time.getTimeInMillis())), valueRight[i].getValue());
+//                tsRight[i].add(new Second(new Date(time.getTimeInMillis())), value);
+//            }
+//            for (i = 0; i < graphCountLeft; i++) {
+//                double value = valueLeft[i];
+//                if(value == -9999)
+//                    value = 0;
+//                tsLeft[i].add(new Second(new Date(time.getTimeInMillis())), value);
+//            }
+//        } catch (Exception e) {} //caused by bugs in JFreeChart
+//    }
     
     public void cleanup() {
-
+//        saveButton.setEnabled(true);
     }
     
 }
