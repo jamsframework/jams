@@ -420,7 +420,8 @@ public class JTSConfigurator extends JFrame {
                     loadTemplate(templateFile);
                 }
                 else{ 
-                    loadOutputTemplate(templateFile);
+//                    loadOutputTemplate(templateFile);
+                    loadTemplate(templateFile);
                     System.out.println("load OUTPUT TEMPLATE");
                 }
             } catch (Exception fnfe) {
@@ -1418,6 +1419,11 @@ public class JTSConfigurator extends JFrame {
         properties.setProperty("inv_left", "" + invLeftBox.isSelected());
         properties.setProperty("inv_right", "" + invRightBox.isSelected());
 
+        //X-Col
+        properties.setProperty("x_series_index", "DEFAULT");
+        properties.setProperty("dataSTART", "DEFAULT");
+        properties.setProperty("dataEND", "DEFAULT");
+
         //TimeFormat
         properties.setProperty("timeFormat_yy", "" + timeFormat_yy.isSelected());
         properties.setProperty("timeFormat_mmy", "" + timeFormat_mm.isSelected());
@@ -1496,9 +1502,7 @@ public class JTSConfigurator extends JFrame {
         
         
         try {
-//            JFileChooser chooser = sheet.getTemplateChooser();
-//            int returnVal = chooser.showSaveDialog(this);
-//            if (returnVal == JFileChooser.APPROVE_OPTION) {
+
             boolean dont_save = true;
             while(dont_save){
                 inputString = GUIHelper.showInputDlg(this, SpreadsheetConstants.INFO_MSG_SAVETEMP, storename);
@@ -1809,28 +1813,39 @@ public class JTSConfigurator extends JFrame {
                     String timeEND = properties.getProperty(name + ".timeEND");
                     String read = null;
 
-                    for (int tc = 0; tc < table.getRowCount(); tc++) {
+                    if(timeSTART.compareTo("DEFAULT") != 0){
 
-                        if (readStart && readEnd) {
-                            break;
+                        for (int tc = 0; tc < table.getRowCount(); tc++) {
+
+
+                            if (readStart && readEnd) {
+                                break;
+                            }
+
+                            read = gprop.getTimeChoiceSTART().getItemAt(tc).toString();
+
+                            if (!readStart) {
+                                //start
+                                if (read.equals(timeSTART)) {
+                                    gprop.setTimeSTART(tc);
+                                    readStart = true;
+                                }
+                            } else {
+                                //end
+                                if (read.equals(timeEND)) {
+                                    gprop.setTimeEND(tc);
+                                    readEnd = true;
+                                }
+                            }
+
                         }
 
-                        read = gprop.getTimeChoiceSTART().getItemAt(tc).toString();
+                    }else{
+                        gprop.setTimeSTART(0);
+                        gprop.setTimeEND(table.getRowCount());
 
-                        if (!readStart) {
-                            //start
-                            if (read.equals(timeSTART)) {
-                                gprop.setTimeSTART(tc);
-                                readStart = true;
-                            }
-                        } else {
-                            //end
-                            if (read.equals(timeEND)) {
-                                gprop.setTimeEND(tc);
-                                readEnd = true;
-                            }
-                        }
                     }
+
 
 //                    gprop.setTimeSTART(0);
 //                    gprop.setTimeEND(table.getRowCount() - 1);

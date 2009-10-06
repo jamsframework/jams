@@ -1116,6 +1116,11 @@ public class JAMSSpreadSheet extends JPanel {
         }
     };
 
+
+    public boolean timeRuns(){
+        return timeRuns;
+    }
+
     /**
      * get id values of table
      * (id-column = 1st column)

@@ -33,6 +33,7 @@ import jams.JAMSFileFilter;
 
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
+import jams.workspace.JAMSWorkspace;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
@@ -44,145 +45,84 @@ import reg.JAMSExplorer;
  * @author Robert Riedel
  */
 public class JXYConfigurator extends JFrame {
-
+    
+    private JAMSWorkspace workspace;
+    
+    
     GroupLayout gLayout;
-
     GroupLayout.SequentialGroup hGroup;
-
     GroupLayout.SequentialGroup vGroup;
-
     Group group1;
-
     Group group2;
-
     Group group3;
-
     Group group4;
-
     Group group5;
-
     Group group6;
-
     Group group7;
-
     Group group8;
-
     Group group9;
-
     Group group10;
-
     Group group11;
-
     Group group12;
-
     Group group13;
-
     Group group14;
-
     Group group15;
     //private Vector<ActionListener> addAction = new Vector<ActionListener>();    
 
     private JFrame parent;
-
     private JFrame thisDlg;
-
     private JXYConfigurator thisJXY = this;
-
     private JPanel frame;
-
     private JPanel mainpanel;
-
     private JPanel plotpanel;
-
     private JPanel optionpanel;
-
     private JPanel graphpanel;
-
     private JPanel southpanel;
     //private Vector<JPanel> datapanels = new Vector<JPanel>();
-
     private JPanel edTitlePanel;
-
     private JPanel edLeftAxisPanel;
-
     private JPanel edRightAxisPanel;
-
     private JPanel edTimeAxisPanel;
-
     private JSplitPane split_hor = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-
     private JSplitPane split_vert = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-
     private JPanel[] datapanels;
-
     private JScrollPane graphScPane;
-
     private JScrollPane plotScPane;
-
     private JScrollPane mainScPane;
-
     private JScrollPane optScPane;
-
     private JPanel savePanel;
-
     private String[] headers;
-
     private File templateFile;
     //private static JFileChooser templateChooser;
 
     private JButton saveTempButton = new JButton("Save Template");
-
     private JButton loadTempButton = new JButton("Load Template");
-
     private JLabel edTitle = new JLabel("Plot Title: ");
-
     private JLabel edLeft = new JLabel("Left axis title: ");
-
     private JLabel edXAxis = new JLabel("X axis title");
-
     private JLabel edRight = new JLabel("Right axis title: ");
-
     private JLabel rLeftLabel = new JLabel("Renderer left");
-
     private JLabel rRightLabel = new JLabel("Renderer right");
-
     private JLabel invLeftLabel = new JLabel("Invert left axis");
-
     private JLabel invRightLabel = new JLabel("Invert right axis");
-
     private JTextField edTitleField = new JTextField(14);
-
     private JTextField edLeftField = new JTextField(14);
-
     private JTextField edRightField = new JTextField(14);
-
     private JTextField edXAxisField = new JTextField(14);
     //private String[] types = {"Line","Bar","Area","Line and Base","Dot","Step","StepArea","Difference"};
 
     private String[] types = {"Line and Shape", "Bar", "Area", "Step", "StepArea", "Difference"};
-
     private JComboBox rLeftBox = new JComboBox(types);
-
     private JComboBox rRightBox = new JComboBox(types);
-
     private JCheckBox invLeftBox = new JCheckBox("Invert left Axis");
-
     private JCheckBox invRightBox = new JCheckBox("Invert right Axis");
-
     private ButtonGroup isXAxisGroup = new ButtonGroup();
-
     private JButton applyButton = new JButton("PLOT");
-
     private JButton addButton = new JButton("Add Graph");
-
     private JButton saveButton = new JButton("EPS export");
-
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
-
     private JAMSXYPlot jxys = new JAMSXYPlot();
-
     public XYRow[] sorted_Row;
-
     private boolean tempLoaded = true;
 //    private String[] headers;
 //    //private String[] colors = {"yellow","orange","red","pink","magenta","cyan","blue","green","gray","lightgray","black"};
@@ -243,7 +183,9 @@ public class JXYConfigurator extends JFrame {
         this.setParent(explorer.getExplorerFrame());
         this.setIconImage(explorer.getExplorerFrame().getIconImage());
         setTitle(SpreadsheetConstants.DLG_TITLE_JXYSCONFIGURATOR);
-
+        
+        this.workspace = explorer.getWorkspace();
+        
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         explorer.registerChild(this);
 
@@ -1608,11 +1550,19 @@ public class JXYConfigurator extends JFrame {
         this.parent = parent;
     }
 
-    private void saveTemplate() {
+    private String saveTemplate() {
 
         Properties properties = new Properties();
         int no_of_props = propVector.size();
-
+        
+        String store = "";
+        try{
+//            store = sheet.getStore().getID();
+            store = sheet.getID();
+        } catch (NullPointerException npe){
+            store = "DEFAULT";
+        }
+        String output;
 
         String names = "";
         String name;
@@ -1633,7 +1583,16 @@ public class JXYConfigurator extends JFrame {
         Color linecolor_load;
         Color fillcolor_load;
         Color outcolor_load;
-
+        
+        //Input / Output Sheet
+        if(sheet.isOutputSheet()){
+            output = "true";
+        }else{
+            output = "false";
+        }
+        
+        properties.setProperty("output", output);
+        
         //Header Name
 
 
@@ -1723,20 +1682,85 @@ public class JXYConfigurator extends JFrame {
         properties.setProperty("names", names);
 
         //Save Parameter File
-
-        try {
-            JFileChooser chooser = sheet.getTemplateChooser();
-            int returnVal = chooser.showSaveDialog(thisDlg);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = chooser.getSelectedFile();
-                FileOutputStream fout = new FileOutputStream(file);
-                properties.store(fout, "");
-
-                fout.close();
-            }
-
-        } catch (Exception fnfex) {
+        //Save Parameter File
+        String filename = "";
+        String inputString = "";
+        StringTokenizer name_tokenizer = new StringTokenizer(store,".");
+        String storename = "";
+        if(name_tokenizer.hasMoreTokens()){
+            storename = name_tokenizer.nextToken();
+        }else{
+            storename=store;
         }
+        
+        
+       try {
+
+            boolean dont_save = true;
+            while(dont_save){
+                inputString = GUIHelper.showInputDlg(this, SpreadsheetConstants.INFO_MSG_SAVETEMP, storename);
+                if(!(inputString == null)){
+                    
+                    inputString+= ".ttp";
+                 
+
+                    if(sheet.isOutputSheet()){
+//                        System.out.println("outputSheetAtSave="+sheet.isOutputSheet());
+//                        System.out.println("directory"+workspace.getOutputDataDirectory().toString());
+//                        File file = new File(workspace.getOutputDataDirectory(), inputString);
+//                        File file = new File(workspace.getDirectory().toString()+"/output/current", inputString);
+
+                        File file = new File(sheet.getOutputDSDir(), inputString);
+
+                        if(!file.exists()){
+                            filename = file.getName();
+                            FileOutputStream fout = new FileOutputStream(file);
+                            properties.store(fout, "");
+                            fout.close();
+                            dont_save = false;
+                        }else{
+                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
+                            int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
+                            if(result==0){ //overwrite
+                                filename = file.getName();
+                                FileOutputStream fout = new FileOutputStream(file);
+                                properties.store(fout, "");
+                                fout.close();
+                                dont_save = false;
+                            }
+
+                        }
+                    }else{
+                        File file = new File(workspace.getDirectory().toString()+SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, inputString);
+                        if(!file.exists()){
+                            filename = file.getName();
+                            FileOutputStream fout = new FileOutputStream(file);
+                            properties.store(fout, "");
+                            fout.close();
+                            dont_save = false;
+                        }else{
+                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
+                            int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
+                            if(result==0){ //overwrite
+                                filename = file.getName();
+                                FileOutputStream fout = new FileOutputStream(file);
+                                properties.store(fout, "");
+                                fout.close();
+                                dont_save = false;
+                            }
+
+                        }
+                    }
+                    }else{
+                        dont_save = false; //CANCEL OPTION!
+                    }
+                }
+//            }
+        } catch (Exception fnfex) {
+            fnfex.printStackTrace();
+        }
+        
+        return filename;
     }
 
     private void loadTemplate(File templateFile) {
@@ -1778,9 +1802,18 @@ public class JXYConfigurator extends JFrame {
         StringTokenizer nameTokenizer = new StringTokenizer(names, ",");
 
         initGroupUI();
+        
+        String x_series_index_string = properties.getProperty("x_series_index");
+        if(x_series_index_string.compareTo("DEFAULT") != 0){
+            x_series_index = new Integer(x_series_index_string);
+        }else{
 
-        x_series_index = new Integer(properties.getProperty("x_series_index"));
-
+            if(sheet.timeRuns()) x_series_index = 0;
+            else x_series_index = 1;
+        }
+        
+        
+        
         ///////Runnable //////////////
 
         for (int i = 0; i < no_of_props; i++) {
@@ -1791,12 +1824,18 @@ public class JXYConfigurator extends JFrame {
             if (i == x_series_index) {
                 gprop.setIsXSeries(true);
                 gprop.getIsXAxisButton().setSelected(true);
-                
+
+                String data_start_string = properties.getProperty("dataSTART");
                 //DATA INTERVAL
+                if(data_start_string.compareTo("DEFAULT") != 0){
                       //start
                       data_start = new Double(properties.getProperty("dataSTART"));
                       //end
                       data_end = new Double(properties.getProperty("dataEND"));
+                }
+                else{
+                    this.setPossibleDataIntervals();
+                }
                 
             } else {
                 gprop.setIsXSeries(false);
@@ -1819,6 +1858,7 @@ public class JXYConfigurator extends JFrame {
                 if (load_prop) {
                     //Legend Name
                     gprop.setLegendName(properties.getProperty(name + ".legendname", "legend name"));
+                    gprop.setLegendField(properties.getProperty(name + ".legendname", "legend name"));
 //                    //DATA INTERVAL
 //                      //start
 //                      gprop.setDataSTART(new Double(properties.getProperty(name + ".dataSTART")));
@@ -1826,7 +1866,16 @@ public class JXYConfigurator extends JFrame {
 //                      gprop.setDataEND(new Double(properties.getProperty(name + ".dataEND")));
                     //POSITION left/right
                     gprop.setPosition(properties.getProperty(name + ".position"));
+                    
+                    //TIME INTERVAL
+                    //start
+                    properties.setProperty(name + ".timeSTART", "DEFAULT");
+                    //end
+                    properties.setProperty(name + ".timeEND", "DEFAULT");
 
+                    //NAME
+                    gprop.setName(name);
+                    
                     //STROKE
                     gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke", "2")));
                     gprop.setStrokeSlider(gprop.getStrokeType());
@@ -2001,7 +2050,23 @@ public class JXYConfigurator extends JFrame {
     ActionListener saveTempListener = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
-            saveTemplate();
+            String fileID = saveTemplate();
+            StringTokenizer name_tokenizer = new StringTokenizer(fileID,".");
+            String filename = "";
+            if(name_tokenizer.hasMoreTokens()){
+                filename = name_tokenizer.nextToken()+SpreadsheetConstants.FILE_ENDING_DAT;
+            }else{
+                filename = fileID+SpreadsheetConstants.FILE_ENDING_DAT;
+            }
+//            System.out.println("output_sheet="+sheet.isOutputSheet());
+            if(sheet.isOutputSheet()){
+//                String[] headers_with_time = new String[headers.length+1];
+//                headers_with_time[0] = "ID";
+//                java.lang.System.arraycopy(headers, 0, headers_with_time, 1, headers.length);
+//                sheet.save(filename, headers_with_time);//String ID zurückgeben
+                sheet.saveAll(filename);
+                //daten speichern im falle eines output sheets
+            }
         }
     };
 

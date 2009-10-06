@@ -28,7 +28,7 @@ public class SpreadsheetConstants {
 
     public final static String DLG_TITLE_CUSTOMIZE = "Customize Renderer";
     public final static String DLG_TITLE_JTSCONFIGURATOR ="JTS Viewer";
-    public final static String DLG_TITLE_JXYSCONFIGURATOR ="XYPlot Viewer";
+    public final static String DLG_TITLE_JXYSCONFIGURATOR ="XYPlot FIEWER";
 
     /* DIALOG ERROR MESSAGES */
 
