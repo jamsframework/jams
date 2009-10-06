@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="build">
+<project default="doall">
 
     <taskdef resource="net/sf/antcontrib/antcontrib.properties">
         <classpath>
@@ -7,8 +7,8 @@
         </classpath>
     </taskdef>
     
-    <target name="cleanbuild" depends="clean, build"/>
-
+    <target name="doall" depends="clean, build, dostarters"/>
+    
     <target name="cleanlib">
         <delete>
             <fileset dir="../lib" includes="**/*"/>
