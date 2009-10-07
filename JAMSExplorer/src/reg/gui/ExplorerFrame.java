@@ -29,6 +29,7 @@ import jams.gui.WorkerDlg;
 import jams.gui.WorkspaceDlg;
 import jams.tools.XMLIO;
 import jams.gui.JAMSLauncher;
+import jams.io.ParameterProcessor;
 import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.ShapeFileDataStore;
@@ -46,6 +47,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -104,6 +106,8 @@ public class ExplorerFrame extends JFrame {
     private PropertyDlg propertyDlg;
 
     private WorkspaceDlg wsDlg;
+    
+    private Document modelDoc = null;
 
     private MCAT5Toolbar mcat5ToolBar = null;
     
@@ -321,6 +325,22 @@ public class ExplorerFrame extends JFrame {
         setJMenuBar(mainMenu);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(Math.min(d.width, JAMSExplorer.SCREEN_WIDTH), Math.min(d.height, JAMSExplorer.SCREEN_HEIGHT));
+
+        // init the model document
+        this.initModelDoc();
+    }
+
+    private void initModelDoc() {
+        System.out.println("initModelDoc..");
+        try {
+            JAMSWorkspace workspace = explorer.getWorkspace();
+            if (workspace != null) {
+                System.out.println("initModelDoc " + workspace.getModelFilename());
+                this.modelDoc = XMLIO.getDocument(new File(workspace.getDirectory(), workspace.getModelFilename()).getPath());
+            }
+        } catch (FileNotFoundException ex) {
+            explorer.getRuntime().handle(ex);
+        }
     }
 
     public void open(File workspaceFile) {
@@ -330,6 +350,7 @@ public class ExplorerFrame extends JFrame {
             workspace.setLibs(libs);
             explorer.getDisplayManager().removeAllDisplays();
             explorer.setWorkspace(workspace);
+            this.initModelDoc();
             this.update();
 
         } catch (InvalidWorkspaceException iwe) {
@@ -388,14 +409,8 @@ public class ExplorerFrame extends JFrame {
 
     private void launchModel() {
 
-        JAMSWorkspace ws = explorer.getWorkspace();
-        try {
-            Document modelDoc = XMLIO.getDocument(new File(ws.getDirectory(), ws.getModelFilename()).getPath());
-            JAMSLauncher launcher = new JAMSLauncher(null, explorer.getProperties(), modelDoc);
-            launcher.setVisible(true);
-        } catch (FileNotFoundException ex) {
-            explorer.getRuntime().handle(ex);
-        }
+        JAMSLauncher launcher = new JAMSLauncher(null, explorer.getProperties(), modelDoc);
+        launcher.setVisible(true);
     }
 
     private void launchWizard() {
@@ -455,6 +470,7 @@ public class ExplorerFrame extends JFrame {
 
                         // and now activate the new model
                         ws.setModelFile(modelFileName);
+                        this.initModelDoc();
                         this.update();
                         launchModel();
 
@@ -463,15 +479,31 @@ public class ExplorerFrame extends JFrame {
                 } // dataDecision = station
 
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_SPATIAL)) {
+
+                    //additional shape file?
                     String shapeFileName = (String) wizardSettings.get(BaseDataPanel.KEY_SHAPE_FILENAME);
-                    System.out.println("shapeFile found: " + shapeFileName);
-                    File theShapeFile = new File(shapeFileName);
+                    if (!JAMSTools.isEmptyString(shapeFileName)) {
+                        File theShapeFile = new File(shapeFileName);
 
-                    String fileName = theShapeFile.getName();
-                    String id = JAMSTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
-                    ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, id, theShapeFile.toURI().toString(), fileName, null);
-                    ws.addDataStore(addShapeStore);
+                        String fileName = theShapeFile.getName();
+                        String id = JAMSTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
+                        ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, id, theShapeFile.toURI().toString(), fileName, null);
+                        ws.addDataStore(addShapeStore);
+                    }
 
+                    // put interval to model
+                    Properties properties = new Properties();
+                    Set<String> wizardKeys = ExplorerWizard.KEY_MODEL_MAPPING.keySet();
+                    for (String wizardKey : wizardKeys) {
+                        String value = (String) wizardSettings.get(wizardKey);
+                        String[] modelKeys = ExplorerWizard.KEY_MODEL_MAPPING.get(wizardKey);
+                        for (String modelKey : modelKeys) {
+                            properties.put(modelKey, value);
+                        }
+                    }
+                    ParameterProcessor.loadParams(modelDoc, properties);
+
+                    update();
                     JAMSSpreadSheet spreadSheet = explorer.getDisplayManager().getSpreadSheet();
                     if (spreadSheet != null) {
                         spreadSheet.updateGUI();
