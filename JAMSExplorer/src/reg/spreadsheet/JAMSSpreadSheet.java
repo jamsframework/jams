@@ -37,17 +37,12 @@ import java.awt.dnd.DnDConstants;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.StringTokenizer;
-//import reg.DataTransfer;
 import reg.DataTransfer;
 import reg.JAMSExplorer;
 import reg.dsproc.DataMatrix;
 import reg.gui.StatisticDialogPanel;
 import reg.viewer.Viewer;
-//import reg.viewer.Viewer;
-//import reg.viewer.Viewer;
 
-//import jams.components.*;
-//import org.unijena.jams.model;
 /*
  *
  * @author Robert Riedel
