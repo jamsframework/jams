@@ -80,7 +80,7 @@ public class ParameterProcessor {
                 attribute = attributeHash.get(attributeName);
                 key = componentName + "." + attribute.getAttribute("name");
                 value = params.getProperty(key);
-                //System.out.println("loadParams " + key + "-->>" + value);
+
                 if (value != null) {
                     attribute.setAttribute("value", value);
                 }
