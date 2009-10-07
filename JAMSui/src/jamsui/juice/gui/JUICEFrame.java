@@ -53,7 +53,7 @@ import org.w3c.dom.Node;
  */
 public class JUICEFrame extends JFrame {
 
-    private static final int TREE_PANE_WIDTH = 250,  RT_MANAGER_HEIGHT = 600;
+    private static final int TREE_PANE_WIDTH = 250, RT_MANAGER_HEIGHT = 600;
 
     private static final int DIVIDER_WIDTH = 8;
 
@@ -65,9 +65,9 @@ public class JUICEFrame extends JFrame {
 
     private JDesktopPane modelPanel = new JDesktopPane();
 
-    private JMenu windowMenu,  modelMenu;
+    private JMenu windowMenu, modelMenu;
 
-    private JMenuItem pasteModelParameterItem,  copyModelParameterItem,  searchModelItem,  OptimizationWizardItem;
+    private JMenuItem pasteModelParameterItem, copyModelParameterItem, searchModelItem, OptimizationWizardItem;
 
     private JLabel statusLabel;
 
@@ -83,7 +83,7 @@ public class JUICEFrame extends JFrame {
 
     private String modelPath;
 
-    private Action editPrefsAction,  reloadLibsAction,  newModelAction,  loadPrefsAction,  savePrefsAction,  loadModelAction,  saveModelAction,  saveAsModelAction,  exitAction,  aboutAction,  searchAction,  copyModelGUIAction,  pasteModelGUIAction,  OptimizationWizardGUIAction,  loadModelParamAction,  saveModelParamAction,  runModelAction,  runModelFromLauncherAction,  infoLogAction,  errorLogAction,  onlineAction;
+    private Action editPrefsAction, reloadLibsAction, newModelAction, loadPrefsAction, savePrefsAction, loadModelAction, saveModelAction, saveAsModelAction, exitAction, aboutAction, searchAction, copyModelGUIAction, pasteModelGUIAction, OptimizationWizardGUIAction, loadModelParamAction, saveModelParamAction, runModelAction, runModelFromLauncherAction, infoLogAction, errorLogAction, onlineAction;
 
     public JUICEFrame() {
         init();
@@ -158,6 +158,7 @@ public class JUICEFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
+                jfc.setSelectedFile(new File(""));
                 int result = jfc.showOpenDialog(JUICEFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -178,6 +179,7 @@ public class JUICEFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
+                jfc.setSelectedFile(new File(""));
                 int result = jfc.showSaveDialog(JUICEFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -197,6 +199,7 @@ public class JUICEFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfc.setFileFilter(JAMSFileFilter.getModelFilter());
+                jfc.setSelectedFile(new File(""));
                 int result = jfc.showOpenDialog(JUICEFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -283,6 +286,7 @@ public class JUICEFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 jfc.setFileFilter(JAMSFileFilter.getParameterFilter());
+                jfc.setSelectedFile(new File(""));
                 int result = jfc.showOpenDialog(JUICEFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -298,6 +302,7 @@ public class JUICEFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfc.setFileFilter(JAMSFileFilter.getParameterFilter());
+                jfc.setSelectedFile(new File(""));
                 int result = jfc.showSaveDialog(JUICEFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -656,7 +661,7 @@ public class JUICEFrame extends JFrame {
         int width = Math.min((int) (d.width * 0.95), JUICE.SCREEN_WIDTH);
 
         setSize(width, height);
-        leftSplitPane.setDividerLocation((int) (height*0.6));
+        leftSplitPane.setDividerLocation((int) (height * 0.6));
 
         this.libTreePanel.requestFocus();
     }
@@ -694,6 +699,7 @@ public class JUICEFrame extends JFrame {
 
     private void saveModelAs(ModelView view) {
         jfc.setFileFilter(JAMSFileFilter.getModelFilter());
+        jfc.setSelectedFile(new File(""));
         int result = jfc.showSaveDialog(JUICEFrame.this);
 
         if (result == JFileChooser.APPROVE_OPTION) {

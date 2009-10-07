@@ -174,6 +174,7 @@ public class JAMSFrame extends JAMSLauncher {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
+                jfc.setSelectedFile(new File(""));
                 //jfc.setSelectedFile(new File(getProperties().getDefaultFilename()));
                 int result = jfc.showOpenDialog(JAMSFrame.this);
 
@@ -193,6 +194,7 @@ public class JAMSFrame extends JAMSLauncher {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
+                jfc.setSelectedFile(new File(""));
                 //jfc.setSelectedFile(new File(getProperties().getDefaultFilename()));
                 int result = jfc.showSaveDialog(JAMSFrame.this);
 
@@ -212,6 +214,7 @@ public class JAMSFrame extends JAMSLauncher {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfc.setFileFilter(JAMSFileFilter.getModelFilter());
+                jfc.setSelectedFile(new File(""));
                 if (jfc.showOpenDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
 
                     modelFilename = jfc.getSelectedFile().getAbsolutePath();
@@ -235,6 +238,7 @@ public class JAMSFrame extends JAMSLauncher {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfc.setFileFilter(JAMSFileFilter.getModelFilter());
+                jfc.setSelectedFile(new File(""));
                 if (jfc.showSaveDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
                     modelFilename = jfc.getSelectedFile().getAbsolutePath();
                     saveModel();
@@ -272,8 +276,8 @@ public class JAMSFrame extends JAMSLauncher {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                File file = null;
                 jfc.setFileFilter(JAMSFileFilter.getParameterFilter());
+                jfc.setSelectedFile(new File(""));
                 int result = jfc.showOpenDialog(JAMSFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -289,6 +293,7 @@ public class JAMSFrame extends JAMSLauncher {
             public void actionPerformed(ActionEvent e) {
 
                 jfc.setFileFilter(JAMSFileFilter.getParameterFilter());
+                jfc.setSelectedFile(new File(""));
                 int result = jfc.showSaveDialog(JAMSFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
