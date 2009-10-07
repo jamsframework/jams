@@ -8,6 +8,7 @@ package reg.wizard.tlug;
 import java.io.FileOutputStream;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import org.h2.util.StringUtils;
 import org.netbeans.spi.wizard.WizardException;
 import org.netbeans.spi.wizard.WizardPanelProvider;
@@ -27,11 +28,16 @@ public abstract class DataStepPanelProvider  extends WizardPanelProvider {
     @Override
     protected Object finish (Map settings) throws WizardException {
 
-        System.out.println("DataStepPanelProvider.finish");
         String propertyFileName = (String) settings.get(DataDecisionPanel.KEY_CONFIG_FILENAME);
         if (!StringUtils.isNullOrEmpty(propertyFileName)) {
             Properties properties = new Properties();
-            properties.putAll(settings);
+
+            Set keys = settings.keySet();
+            for (Object key : keys) {
+                properties.put(key, settings.get(key));
+            }
+            //properties.putAll(settings); // does not work for float !!??
+
             try {
                 System.out.println("storing properties to  " + propertyFileName);
                 properties.store(new FileOutputStream(propertyFileName), "wizard configuration");
