@@ -69,14 +69,18 @@ public class ParameterProcessor {
      */
     static public Document loadParams(Document model, Properties params) {
 
+        Element attribute;
+        String key, value;
+        HashMap<String, Element> attributeHash;
+
         HashMap<String, HashMap<String, Element>> componentHash = getAttributeHash(model);
-
         for (String componentName : componentHash.keySet()) {
-            HashMap<String, Element> attributeHash = componentHash.get(componentName);
-
+            attributeHash = componentHash.get(componentName);
             for (String attributeName : attributeHash.keySet()) {
-                Element attribute = attributeHash.get(attributeName);
-                String value = params.getProperty(componentName + "." + attribute.getAttribute("name"));
+                attribute = attributeHash.get(attributeName);
+                key = componentName + "." + attribute.getAttribute("name");
+                value = params.getProperty(key);
+                //System.out.println("loadParams " + key + "-->>" + value);
                 if (value != null) {
                     attribute.setAttribute("value", value);
                 }
