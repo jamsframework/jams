@@ -31,6 +31,7 @@ import jams.tools.XMLIO;
 import jams.gui.JAMSLauncher;
 import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.JAMSWorkspace;
+import jams.workspace.stores.ShapeFileDataStore;
 import reg.JAMSExplorer;
 import java.io.FileNotFoundException;
 import java.awt.BorderLayout;
@@ -66,9 +67,11 @@ import javax.swing.WindowConstants;
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.Wizard;
 import org.w3c.dom.Document;
+import reg.spreadsheet.JAMSSpreadSheet;
 import reg.spreadsheet.STPConfigurator;
 import reg.viewer.Viewer;
 import reg.wizard.tlug.ExplorerWizard;
+import reg.wizard.tlug.panels.BaseDataPanel;
 import reg.wizard.tlug.panels.DataDecisionPanel;
 import reg.wizard.tlug.panels.StationParamsPanel;
 
@@ -457,7 +460,22 @@ public class ExplorerFrame extends JFrame {
 
                     } // model file found
 
-                }
+                } // dataDecision = station
+
+                if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_SPATIAL)) {
+                    String shapeFileName = (String) wizardSettings.get(BaseDataPanel.KEY_SHAPE_FILENAME);
+                    System.out.println("shapeFile found: " + shapeFileName);
+                    File theShapeFile = new File(shapeFileName);
+
+                    String id = theShapeFile.getName();
+                    ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, id, theShapeFile.toURI().toString(), id, null);
+                    ws.addDataStore(addShapeStore);
+
+                    JAMSSpreadSheet spreadSheet = explorer.getDisplayManager().getSpreadSheet();
+                    if (spreadSheet != null) {
+                        spreadSheet.updateGUI();
+                    }
+                } // dataDecision = spatial
 
             }
 
