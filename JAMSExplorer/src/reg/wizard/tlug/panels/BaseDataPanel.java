@@ -11,10 +11,11 @@
 package reg.wizard.tlug.panels;
 
 import jams.data.JAMSTimeInterval;
-import jams.gui.input.InputComponent;
-import jams.gui.input.TimeintervalInput;
 import jams.JAMSFileFilter;
+import jams.gui.input.InputComponent;
 import jams.gui.input.InputComponentFactory;
+import jams.gui.input.TimeintervalInput;
+import jams.tools.JAMSTools;
 import java.io.File;
 import java.util.Map;
 import javax.swing.JFileChooser;
@@ -58,15 +59,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
         initComponents();
         setupComponents();
-
-        jRadioButtonPrim.putClientProperty(KEY_DATA_ORIGIN, VALUE_PRIM);
-        jRadioButtonSeku.putClientProperty(KEY_DATA_ORIGIN, VALUE_SEK);
-
-        r_region = "Niederschlag"; // default
-
-        jRadioButtonTag.putClientProperty(KEY_AGGR, VALUE_TAG);
-        jRadioButtonMonat.putClientProperty(KEY_AGGR, VALUE_MON);
-        jRadioButtonJahr.putClientProperty(KEY_AGGR, VALUE_JAHR);
 
         initFromWizardData();
         checkProblems();
@@ -297,6 +289,19 @@ public class BaseDataPanel extends javax.swing.JPanel {
         buttonGroup2.add(jRadioButtonMonat);
         buttonGroup2.add(jRadioButtonJahr);
 
+        jRadioButtonPrim.putClientProperty(KEY_DATA_ORIGIN, VALUE_PRIM);
+        jRadioButtonSeku.putClientProperty(KEY_DATA_ORIGIN, VALUE_SEK);
+
+        jRadioButtonTag.putClientProperty(KEY_AGGR, VALUE_TAG);
+        jRadioButtonMonat.putClientProperty(KEY_AGGR, VALUE_MON);
+        jRadioButtonJahr.putClientProperty(KEY_AGGR, VALUE_JAHR);
+
+        // defaults
+        r_region = "Niederschlag";
+        r_dataOrigin = VALUE_PRIM;
+        r_aggreg = VALUE_TAG;
+        r_interval = "1999-01-01 7:30 2010-12-31 7:30 6 1";
+
     }
 
     private void primSekSelected(java.awt.event.ActionEvent evt) {
@@ -315,32 +320,31 @@ public class BaseDataPanel extends javax.swing.JPanel {
     }
 
     private void checkProblems() {
-        if (StringUtils.isNullOrEmpty(r_shapeFileName)) {
-            controller.setProblem("Bitte Shape-File auswählen.");
+
+        if (JAMSTools.isEmptyString(r_shapeFileName))
+            r_shapeFileName = "";
+        wizardData.put(KEY_SHAPE_FILENAME, r_shapeFileName);
+        if (StringUtils.isNullOrEmpty(r_dataOrigin)) {
+            controller.setProblem("Bitte Datenherkunft auswählen.");
         } else {
-            wizardData.put(KEY_SHAPE_FILENAME, r_shapeFileName);
-            if (StringUtils.isNullOrEmpty(r_dataOrigin)) {
-                controller.setProblem("Bitte Datenherkunft auswählen.");
+            wizardData.put(KEY_DATA_ORIGIN, r_dataOrigin);
+            if (StringUtils.isNullOrEmpty(r_region)) {
+                controller.setProblem("Bitte Regionalisierung festlegen.");
             } else {
-                wizardData.put(KEY_DATA_ORIGIN, r_dataOrigin);
-                if (StringUtils.isNullOrEmpty(r_region)) {
-                    controller.setProblem("Bitte Regionalisierung festlegen.");
+                wizardData.put(KEY_REGIONALIZATION, r_region);
+
+                int errorCode = jIntervall.getErrorCode();
+                if (errorCode>0) {
+                    controller.setProblem("Bitte Zeitintervall auswählen.");
+
                 } else {
-                    wizardData.put(KEY_REGIONALIZATION, r_region);
-
-                    int errorCode = jIntervall.getErrorCode();
-                    if (errorCode>0) {
-                        controller.setProblem("Bitte Zeitintervall auswählen.");
-
+                    r_interval = jIntervall.getValue();
+                    wizardData.put(KEY_INTERVAL, r_interval);
+                    if (StringUtils.isNullOrEmpty(r_aggreg)) {
+                        controller.setProblem("Bitte Aggregation bestimmen.");
                     } else {
-                        r_interval = jIntervall.getValue();
-                        wizardData.put(KEY_INTERVAL, r_interval);
-                        if (StringUtils.isNullOrEmpty(r_aggreg)) {
-                            controller.setProblem("Bitte Aggregation bestimmen.");
-                        } else {
-                            wizardData.put(KEY_AGGR, r_aggreg);
-                            controller.setProblem(null);
-                        }
+                        wizardData.put(KEY_AGGR, r_aggreg);
+                        controller.setProblem(null);
                     }
                 }
             }
@@ -361,33 +365,38 @@ public class BaseDataPanel extends javax.swing.JPanel {
         String dataOrigin = (String) wizardData.get(KEY_DATA_ORIGIN);
         if (!StringUtils.isNullOrEmpty(dataOrigin)) {
             r_dataOrigin = dataOrigin;
-            if (dataOrigin.equals(VALUE_PRIM))
-                jRadioButtonPrim.setSelected(true);
-            if (dataOrigin.equals(VALUE_SEK))
-                jRadioButtonSeku.setSelected(true);
         }
+        if (r_dataOrigin != null && r_dataOrigin.equals(VALUE_PRIM))
+            jRadioButtonPrim.setSelected(true);
+        if (r_dataOrigin != null && r_dataOrigin.equals(VALUE_SEK))
+            jRadioButtonSeku.setSelected(true);
+
         String regionalizationData = (String) wizardData.get(KEY_REGIONALIZATION);
         if (!StringUtils.isNullOrEmpty(regionalizationData)) {
             r_region = regionalizationData;
-            jRegCombo.setSelectedItem(regionalizationData);
+        }
+        if (!StringUtils.isNullOrEmpty(r_region)) {
+            jRegCombo.setSelectedItem(r_region);
         }
 
         String interval = (String) wizardData.get(KEY_INTERVAL);
         if (!StringUtils.isNullOrEmpty(interval)) {
             r_interval = interval;
-            ((TimeintervalInput)jIntervall).setValue(interval);
-        } else {
-            ((TimeintervalInput)jIntervall).setValue("1999-01-01 7:30 2010-12-31 7:30 6 1"); //default
+        }
+        if (!StringUtils.isNullOrEmpty(r_interval)) {
+            ((TimeintervalInput)jIntervall).setValue(r_interval);
         }
 
         String aggregation = (String) wizardData.get(KEY_AGGR);
         if (!StringUtils.isNullOrEmpty(aggregation)) {
             r_aggreg = aggregation;
-            if (aggregation.equals(VALUE_TAG))
+        }
+        if (!StringUtils.isNullOrEmpty(r_aggreg)) {
+            if (r_aggreg.equals(VALUE_TAG))
                 jRadioButtonTag.setSelected(true);
-            if (aggregation.equals(VALUE_MON))
+            if (r_aggreg.equals(VALUE_MON))
                 jRadioButtonMonat.setSelected(true);
-            if (aggregation.equals(VALUE_JAHR))
+            if (r_aggreg.equals(VALUE_JAHR))
                 jRadioButtonJahr.setSelected(true);
         }
     }

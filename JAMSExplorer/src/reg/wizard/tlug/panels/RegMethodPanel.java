@@ -35,16 +35,16 @@ public class RegMethodPanel extends javax.swing.JPanel {
     public static final String KEY_SCHWELLENWERT = "threshold";
 
     // all field contents
-    private String r_regVerfahren = "IDW";  //default
-    private String r_numberstations = null;
-    private String r_gewichtung = null;
-    private String r_umkreis = null;
-    private String r_schwellenwert = null;
+    private String r_regVerfahren;
+    private String r_numberstations;
+    private String r_gewichtung;
+    private String r_umkreis;
+    private String r_schwellenwert;
 
     /** Creates new form CatHairLengthPanel */
     public RegMethodPanel(WizardController controller, Map wizardData) {
         initComponents();
-
+        setupComponents();
         this.controller = controller;
         this.wizardData = wizardData;
 
@@ -258,7 +258,8 @@ public class RegMethodPanel extends javax.swing.JPanel {
                         if (r_schwellenwert == null || Integer.parseInt(r_schwellenwert) == 0) {
                             controller.setProblem("Bitte Schwellenwert definieren.");
                         } else {
-                            wizardData.put(KEY_SCHWELLENWERT, r_schwellenwert);
+                            float f = Float.parseFloat(r_schwellenwert) / 100;
+                            wizardData.put(KEY_SCHWELLENWERT, Float.toString(f));
                             controller.setProblem(null);
                         }
                     }
@@ -266,6 +267,16 @@ public class RegMethodPanel extends javax.swing.JPanel {
             }
         }
         return;
+    }
+
+    private void setupComponents() {
+
+        // defaults
+        r_regVerfahren = "IDW";
+        r_numberstations = "5";
+        r_gewichtung = "2";
+        r_umkreis = "10";
+        r_schwellenwert = "75";
     }
 
     /**
@@ -278,34 +289,50 @@ public class RegMethodPanel extends javax.swing.JPanel {
             r_regVerfahren = regVerfahren;
             jComboRegVerfahren.setSelectedItem(r_regVerfahren);
         }
+        if (!StringUtils.isNullOrEmpty(r_regVerfahren)) {
+            jComboRegVerfahren.setSelectedItem(r_regVerfahren);
+        }
 
         String station = (String) wizardData.get(KEY_STATION);
         if (!StringUtils.isNullOrEmpty(station)) {
             r_numberstations = station;
+        }
+        if (!StringUtils.isNullOrEmpty(r_numberstations)) {
             jNumberStations.setText(r_numberstations);
         }
 
         String umkreis = (String) wizardData.get(KEY_UMKREIS);
         if (!StringUtils.isNullOrEmpty(umkreis)) {
             r_umkreis = umkreis;
+        }
+        if (!StringUtils.isNullOrEmpty(r_umkreis)) {
             jUmkreis.setText(r_umkreis);
         }
 
         String gewichtung = (String) wizardData.get(KEY_GEWICHTUNG);
         if (!StringUtils.isNullOrEmpty(gewichtung)) {
             r_gewichtung = gewichtung;
+        }
+        if (!StringUtils.isNullOrEmpty(r_gewichtung)) {
             jGewichtung.setText(r_gewichtung);
         }
 
         if (wizardData.containsKey(KEY_SCHWELLENWERT)) {
             String sSchwellenwert = (String) wizardData.get(KEY_SCHWELLENWERT);
             if (!StringUtils.isNullOrEmpty(sSchwellenwert)) {
+                int i = Math.round(Float.parseFloat(sSchwellenwert) * 100);
+                sSchwellenwert = Integer.toString(i);
                 int schwellenwert = Integer.parseInt(sSchwellenwert);
                 if (schwellenwert >= 0) {
                     r_schwellenwert = sSchwellenwert;
-                    jSliderSchwellenwert.setValue(schwellenwert);
-                    jSchwellenwert.setText(sSchwellenwert);
                 }
+            }
+        }
+        if (!StringUtils.isNullOrEmpty(r_schwellenwert)) {
+                int schwellenwert = Integer.parseInt(r_schwellenwert);
+            if (schwellenwert >= 0) {
+                jSliderSchwellenwert.setValue(schwellenwert);
+                jSchwellenwert.setText(r_schwellenwert);
             }
         }
 
