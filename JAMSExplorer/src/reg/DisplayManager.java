@@ -55,6 +55,8 @@ public class DisplayManager implements Observer {
 
     private JAMSExplorer explorer;
 
+    private JAMSSpreadSheet spreadSheet = null;
+
     public DisplayManager(JAMSExplorer explorer) {
         this.explorer = explorer;
         treePanel = new TreePanel(explorer);
@@ -118,7 +120,7 @@ public class DisplayManager implements Observer {
 
                 if (store instanceof TSDataStore) {
 
-                    JAMSSpreadSheet spreadSheet = new JAMSSpreadSheet(explorer);
+                    spreadSheet = new JAMSSpreadSheet(explorer);
                     spreadSheet.init();
                     spreadSheet.setID(dsID);
                     dataPanels.put(dsID, spreadSheet);
@@ -188,4 +190,12 @@ public class DisplayManager implements Observer {
 
         return tsPanel;
     }
+
+    /**
+     * @return the spreadSheet
+     */
+    public JAMSSpreadSheet getSpreadSheet() {
+        return spreadSheet;
+    }
+
 }
