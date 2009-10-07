@@ -262,7 +262,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
             returnVal = chooser.showOpenDialog(thisPanel);
             File file = chooser.getSelectedFile();
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                fileName = file.getPath() + File.separator + file.getName();
+                fileName = file.getPath();
                 jFileName.setText(fileName);
             }
 
