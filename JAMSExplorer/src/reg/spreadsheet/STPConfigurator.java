@@ -703,15 +703,15 @@ public class STPConfigurator extends JFrame {
                     } catch (Exception e) {
                     }
 
-                    try{
+                    try {
                         String typetest = (String) properties.getProperty("template_type");
-                        if(typetest.compareTo("TIME") == 0){
+                        if (typetest.compareTo("TIME") == 0) {
                             result = true;
                         } else {
                             result = false;
                         }
 
-                    } catch(NullPointerException npe){
+                    } catch (NullPointerException npe) {
                         result = false;
                     }
 
@@ -825,11 +825,10 @@ public class STPConfigurator extends JFrame {
             properties.load(fin);
             fin.close();
             String typetest = properties.getProperty("template_type");
-            if(typetest.compareTo("TIME") == 0){
+            if (typetest.compareTo("TIME") == 0) {
                 id[0] = (String) properties.getProperty("store");
                 id[1] = (String) properties.getProperty("output");
-            }else{
-
+            } else {
             }
 
         } catch (Exception e) {
@@ -1523,6 +1522,7 @@ public class STPConfigurator extends JFrame {
 
         templateChooser.setCurrentDirectory(dir);
         templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
+        templateChooser.setSelectedFile(new File(""));
         return templateChooser;
     }
 

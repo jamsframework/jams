@@ -122,7 +122,6 @@ public class JAMSSpreadSheet extends JPanel {
     private JAMSExplorer explorer;
 
     /* Messages */
-
     final String ERR_MSG_CTS = "No Time Series Loaded";
 
     public static final DataFlavor FLAVOR = DataFlavor.stringFlavor;
@@ -189,7 +188,7 @@ public class JAMSSpreadSheet extends JPanel {
                 int cols[] = myTable.getSelectedColumns();
                 TableModel model = myTable.getModel();
 
-                StringBuffer t = new StringBuffer(rows.length*cols.length*9);
+                StringBuffer t = new StringBuffer(rows.length * cols.length * 9);
                 //first header
                 for (int i = 0; i < cols.length; i++) {
                     t.append(model.getColumnName(cols[i]) + "\t");
@@ -722,6 +721,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         templateChooser.setCurrentDirectory(explorerDir);
         templateChooser.setFileFilter(JAMSFileFilter.getTtpFilter());
+        templateChooser.setSelectedFile(new File(""));
         return templateChooser;
     }
 
@@ -734,6 +734,7 @@ public class JAMSSpreadSheet extends JPanel {
             datChooser.setCurrentDirectory(explorerDir);
         }
         datChooser.setFileFilter(JAMSFileFilter.getDatFilter());
+        datChooser.setSelectedFile(new File(""));
         return datChooser;
     }
 
@@ -742,6 +743,7 @@ public class JAMSSpreadSheet extends JPanel {
             epsFileChooser = new JFileChooser();
             epsFileChooser.setFileFilter(JAMSFileFilter.getEpsFilter());
         }
+        epsFileChooser.setSelectedFile(new File(""));
         return epsFileChooser;
     }
     ActionListener closeTabAction = new ActionListener() {
@@ -1031,7 +1033,7 @@ public class JAMSSpreadSheet extends JPanel {
 
             if (useTemplateButton.isSelected()) {
 
-            if (isOutputSheet()) {
+                if (isOutputSheet()) {
 
                     String fileID = getID();
                     StringTokenizer name_tokenizer = new StringTokenizer(fileID, ".");
@@ -1097,7 +1099,6 @@ public class JAMSSpreadSheet extends JPanel {
                 openCXYS();
             }
         }
-        
     };
 
     ActionListener stpAction = new ActionListener() {
@@ -1167,8 +1168,7 @@ public class JAMSSpreadSheet extends JPanel {
         }
     };
 
-
-    public boolean timeRuns(){
+    public boolean timeRuns() {
         return timeRuns;
     }
 
