@@ -467,8 +467,9 @@ public class ExplorerFrame extends JFrame {
                     System.out.println("shapeFile found: " + shapeFileName);
                     File theShapeFile = new File(shapeFileName);
 
-                    String id = theShapeFile.getName();
-                    ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, id, theShapeFile.toURI().toString(), id, null);
+                    String fileName = theShapeFile.getName();
+                    String id = JAMSTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
+                    ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, id, theShapeFile.toURI().toString(), fileName, null);
                     ws.addDataStore(addShapeStore);
 
                     JAMSSpreadSheet spreadSheet = explorer.getDisplayManager().getSpreadSheet();
