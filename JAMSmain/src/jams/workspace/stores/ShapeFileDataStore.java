@@ -23,6 +23,7 @@
 package jams.workspace.stores;
 
 import jams.tools.JAMSTools;
+import jams.tools.XMLIO;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.JAMSWorkspace;
 import java.io.File;
@@ -58,44 +59,110 @@ public class ShapeFileDataStore extends GeoDataStore {
      */
     private File shapeFile;
 
+    /**
+     * constructor with xml-document
+     * 
+     * @param ws
+     * @param id
+     * @param doc
+     * @throws URISyntaxException
+     */
     public ShapeFileDataStore(JAMSWorkspace ws, String id, Document doc) throws URISyntaxException {
         super(ws);
-        this.id = id;
+
         // source can have uri or filename
+        String wkUri = null;
+        String wkFileName = null;
+        String wkKeyColumn = null;
         Element sourceElement = (Element) doc.getElementsByTagName("source").item(0);
         if (sourceElement != null) {
-            String uriString = getNodeValue(sourceElement, "uri");
-            if (!JAMSTools.isEmptyString(uriString)) {
-                this.uri = new URI(uriString);
-                this.shapeFile = new File(this.uri);
-            }
-            if (this.shapeFile == null || !this.shapeFile.exists()) {
-                String i_filename = getNodeValue(sourceElement, "filename");
-                if (!JAMSTools.isEmptyString(i_filename)) {
-                    this.shapeFile = new File(ws.getLocalInputDirectory(), i_filename);
-                }
-            }
+            wkUri = getNodeValue(sourceElement, "uri");
+            wkFileName = getNodeValue(sourceElement, "filename");
+        }
+        Element keyElement = (Element) doc.getElementsByTagName("key").item(0);
+        if (keyElement != null) {
+            wkKeyColumn = keyElement.getTextContent();
         }
 
+        init(id, wkUri, wkFileName, wkKeyColumn);
+    }
+
+    /**
+     * alternative Constructor with uri or filename
+     * @param ws
+     * @param id
+     * @param uriString
+     * @param fileName (alternative to uri)
+     * @param keyColumn
+     * @throws URISyntaxException
+     */
+    public ShapeFileDataStore(JAMSWorkspace ws, String id, String uriString, String fileName, String keyColumn) throws URISyntaxException {
+        super(ws);
+        init(id, uriString, fileName, keyColumn);
+    }
+
+    /**
+     * init the shapeFileDataStore
+     *
+     * @param id
+     * @param uriString
+     * @param fileName
+     * @param keyColumn
+     * @throws URISyntaxException
+     */
+    private void init(String id, String uriString, String fileName, String keyColumn) throws URISyntaxException {
+        this.id = id;
+        if (!JAMSTools.isEmptyString(uriString)) {
+                this.uri = new URI(uriString);
+                this.shapeFile = new File(this.uri);
+        }
+        if (this.shapeFile == null || !this.shapeFile.exists()) {
+            if (!JAMSTools.isEmptyString(fileName)) {
+                this.shapeFile = new File(ws.getLocalInputDirectory(), fileName);
+            }
+        }
         if (shapeFile == null) {
             this.shapeFile = new File(ws.getLocalInputDirectory(), id + ".shp");
         }
-
         if (this.shapeFile.exists()) {
             ws.getRuntime().println("Trying to use shape file from " + shapeFile.toString() + " ..");
             this.uri = this.shapeFile.toURI();
             this.fileName = this.shapeFile.getName();
-            Element keyElement = (Element) doc.getElementsByTagName("key").item(0);
-            if (keyElement != null) {
-                this.keyColumn = keyElement.getTextContent();
+            if (keyColumn != null) {
+                this.keyColumn = keyColumn;
             }
         } else {
             ws.getRuntime().println("No shape file found for shape datastore \"" + id + "\" ..");
         }
-
-        // to be cont'd, reader implemented as jams.workspace.DataReader
-        // in components project (Geotools dependencies outside JAMS!!)
     }
+
+    public Document getDocument() throws Exception {
+
+        String xmlString = "<shapefiledatastore>";
+        xmlString += "<source>";
+        xmlString += "<uri>";
+        String uriString = this.uri.toASCIIString();
+        if (!JAMSTools.isEmptyString(uriString)) {
+            xmlString += uriString;
+        }
+        xmlString += "</uri>";
+        xmlString += "<filename>";
+        if (!JAMSTools.isEmptyString(this.fileName)) {
+            xmlString += this.fileName;
+        }
+        xmlString += "</filename>";
+        xmlString += "</source>";
+
+        xmlString += "<key>";
+        if (!JAMSTools.isEmptyString(this.keyColumn)) {
+            xmlString += this.keyColumn;
+        }
+        xmlString += "</key>";
+
+        xmlString += "</shapefiledatastore>";
+        return XMLIO.getDocumentFromString(xmlString);
+    }
+
 
     @Override
     public boolean hasNext() {
