@@ -23,7 +23,6 @@
 package jams.tools;
 
 import jams.model.Component;
-import jams.model.Context;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -95,6 +94,31 @@ public class JAMSTools {
         }
         return result;
     }
+
+    /**
+     * get one special part of token
+     *
+     * @param theToken
+     * @param thePart   (int)
+     * @param delimiter
+     * @return string
+     */
+    public static String getPartOfToken (String theToken, int thePart, String delimiter) {
+        String result = null;
+        StringTokenizer tokenizer = new StringTokenizer(theToken, delimiter);
+        int i = 0;
+        while (tokenizer.hasMoreTokens()) {
+            result = tokenizer.nextToken();
+            i++;
+            if (i == thePart)
+                return result;
+            else
+                result = null;
+        }
+        return result;
+    }
+
+
 
     /**
      * Reads a file and returns its content as string
