@@ -31,7 +31,6 @@ import javax.swing.*;
 import jams.JAMS;
 import jams.tools.JAMSTools;
 import jams.JAMSVersion;
-import jams.gui.tools.GUIHelper;
 
 /**
  *
@@ -65,18 +64,16 @@ public class AboutDlg extends JDialog {
             URL textURL = ClassLoader.getSystemResource("resources/text/readme.txt");
             if (textURL != null) {
                 gplText = JAMSTools.streamToString(textURL.openStream());
+                versionText = JAMSVersion.getInstance().getVersionDateString();
+                contactText = JAMSVersion.getInstance().getContactString();
             }
-            versionText = JAMSVersion.getInstance().getVersionDateString();
-            contactText = JAMSVersion.getInstance().getContactString();
         } catch (IOException ioe) {
         }
 
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(Color.white);
-//        contentPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         contentPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        java.awt.Dimension d = new Dimension(x + 10, y + 280);
-        contentPanel.setPreferredSize(d);
+        contentPanel.setPreferredSize(new Dimension(x + 10, y + 260));
 
         getContentPane().add(contentPanel);
 
@@ -92,78 +89,28 @@ public class AboutDlg extends JDialog {
         contentPanel.add(gfxPanel);
 
         /*
-         * text areas
+         * version text
          */
-        JTextField versionTextField = new JTextField();
-        versionTextField.setEditable(false);
-        versionTextField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
-        versionTextField.setBackground(Color.white);
-        versionTextField.setBorder(null);
-        //int versionTextHeight = 16;
-        versionTextField.setPreferredSize(new Dimension(x - 160, 16));
-        versionTextField.setText(versionText);
-        versionTextField.setCaretPosition(0);
+        String text = JAMS.resources.getString("Version") + "\t" + versionText +
+                "\n" + JAMS.resources.getString("Contact") + "\t" + contactText;
 
-        JTextField contactTextField = new JTextField();
-        contactTextField.setEditable(false);
-        contactTextField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
-        contactTextField.setBackground(Color.white);
-        contactTextField.setBorder(null);
-        //int versionTextHeight = 16;
-        contactTextField.setPreferredSize(new Dimension(x - 160, 16));
-        contactTextField.setText(contactText);
-        contactTextField.setCaretPosition(0);
+        JTextArea versionTextArea = new JTextArea();
+        versionTextArea.setEditable(false);
+        versionTextArea.setFont(new Font(Font.SANS_SERIF, 0, 11));
+        versionTextArea.setColumns(20);
+        versionTextArea.setRows(2);
+        versionTextArea.setText(text);
+        versionTextArea.setCaretPosition(0);
+        versionTextArea.setPreferredSize(new Dimension(x, 30));
 
-        JPanel textPanel = new JPanel();
-        textPanel.setBackground(Color.white);
-        GridBagLayout gbl = new GridBagLayout();
-        textPanel.setLayout(gbl);
-        textPanel.getInsets().set(0, 0, 0, 0);
-
-        JLabel vLabel = new JLabel(JAMS.resources.getString("Version"));
-        vLabel.setVerticalTextPosition(JLabel.BOTTOM);
-        vLabel.setHorizontalAlignment(JLabel.RIGHT);
-        GUIHelper.addGBComponent(textPanel, gbl, vLabel, 0, 0, 1, 1, 1, 1);
-        GUIHelper.addGBComponent(textPanel, gbl, versionTextField, 1, 0, 1, 1, 1, 1);
-
-        JLabel cLabel = new JLabel(JAMS.resources.getString("Contact"));
-        cLabel.setVerticalTextPosition(JLabel.BOTTOM);
-        cLabel.setHorizontalAlignment(JLabel.RIGHT);
-        GUIHelper.addGBComponent(textPanel, gbl, cLabel, 0, 1, 1, 1, 1, 1);
-        GUIHelper.addGBComponent(textPanel, gbl, contactTextField, 1, 1, 1, 1, 1, 1);
-
-        contentPanel.add(textPanel);
-
-//        JPanel versionPanel = new JPanel();
-//        versionPanel.setBackground(Color.white);
-//        versionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-//        //versionPanel.setBorder(BorderFactory.createEtchedBorder());
-//        versionPanel.setPreferredSize(new java.awt.Dimension(x + 1, 22));
-//        versionPanel.getInsets().set(0, 0, 0, 0);
-//        JLabel vLabel = new JLabel(JAMS.resources.getString("Version"));
-//        vLabel.setVerticalTextPosition(JLabel.BOTTOM);
-//        versionPanel.add(vLabel);
-//        versionPanel.add(versionTextField);
-//        contentPanel.add(versionPanel);
-//
-//        JPanel contactPanel = new JPanel();
-//        contactPanel.setBackground(Color.white);
-//        //contactPanel.setBorder(BorderFactory.createEtchedBorder());
-//        contactPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-//        contactPanel.setPreferredSize(new java.awt.Dimension(x + 1, 22));
-//        contactPanel.getInsets().set(0, 0, 0, 0);
-//        JLabel cLabel = new JLabel(JAMS.resources.getString("Contact"));
-//        cLabel.setVerticalTextPosition(JLabel.BOTTOM);
-//        contactPanel.add(cLabel);
-//        contactPanel.add(contactTextField);
-//        contentPanel.add(contactPanel);
+        contentPanel.add(versionTextArea);
 
         /*
          * license text
          */
         JTextArea gplTextArea = new JTextArea();
         gplTextArea.setEditable(false);
-        gplTextArea.setFont(new Font("Arial", 0, 10));
+        gplTextArea.setFont(new Font(Font.SANS_SERIF, 0, 10));
         gplTextArea.setColumns(20);
         gplTextArea.setRows(5);
         gplTextArea.setText(gplText);

@@ -7,7 +7,7 @@
         </classpath>
     </taskdef>
     
-    <target name="doall" depends="clean, build, dostarters"/>
+    <target name="doall" depends="clean, build, dostarters, doJ2K"/>
     
     <target name="cleanlib">
         <delete>
@@ -52,6 +52,12 @@
         <property name="config" value="JAMS_Launcher"/>
         <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="jar"/>
     </target>
+
+    <target name="doJ2K">
+        <ant antfile="../../nbprojects/J2K/build.xml" inheritall="false" target="jar"/>
+        <echo>Created J2K</echo>
+    </target>
+
 
     <target name="dostarters" depends="juicestarter, remotestarter, jamsstarter" />
 
