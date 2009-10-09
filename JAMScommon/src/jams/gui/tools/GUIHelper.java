@@ -223,17 +223,31 @@ public class GUIHelper {
 
     /**
      * Create a new JFileChooser and support disabling of zipped folders 
+     * @param useShellFolder If true, the native file chooser dialog will be displayed,
+     * a JAVA version else
+     * @return new JFileChooser
+     */
+    public static JFileChooser getJFileChooser(boolean useShellFolder) {
+        if (useShellFolder) {
+            return new JFileChooser();
+        } else {
+            return new JFileChooser() {
+
+                @Override
+                public void updateUI() {
+                    putClientProperty("FileChooser.useShellFolder", Boolean.FALSE);
+                    super.updateUI();
+                }
+            };
+        }
+    }
+
+    /**
+     * Create a new JFileChooser
      * @return new JFileChooser
      */
     public static JFileChooser getJFileChooser() {
-        return new JFileChooser() {
-
-            @Override
-            public void updateUI() {
-                //putClientProperty("FileChooser.useShellFolder", Boolean.FALSE);
-                super.updateUI();
-            }
-        };
+        return getJFileChooser(true);
     }
 
     /**
