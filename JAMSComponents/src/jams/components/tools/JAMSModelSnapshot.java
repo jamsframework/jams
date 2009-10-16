@@ -31,14 +31,7 @@ public class JAMSModelSnapshot extends JAMSComponent{
             description = "Description"
             )
             public JAMSBoolean loadSnapshot;
-      
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "Workspace directory name"
-            )
-            public JAMSString dirName;
-    
+              
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
@@ -72,8 +65,8 @@ public class JAMSModelSnapshot extends JAMSComponent{
             StandardRuntime runtime = (StandardRuntime)this.getModel().getRuntime();
             
             String fileName = null;
-            if (dirName != null && snapshotFile != null)
-                fileName = JAMSTools.CreateAbsoluteFileName(dirName.getValue() , snapshotFile.getValue());
+            if (snapshotFile != null)
+                fileName = JAMSTools.CreateAbsoluteFileName(getModel().getWorkspaceDirectory().getPath() , snapshotFile.getValue());
             
             if (takeSnapshot != null && takeSnapshot.getValue()){                  
                 runtime.sendInfoMsg("Taking Snapshot" + " (" + this.getInstanceName() + ")");
@@ -89,7 +82,7 @@ public class JAMSModelSnapshot extends JAMSComponent{
                     System.out.println("Entity does not contain any snapshot-data," + e.toString());
                 }
                 runtime.sendInfoMsg("Restoring Snapshot" + " (" + this.getInstanceName() + ")");
-                this.getModel().setModelState(snapshot);
+                this.getModel().setModelState(snapshot);                
             }
         }else{
             this.getModel().getRuntime().println("Snapshoting not supported by runtime!");                        
