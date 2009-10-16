@@ -31,6 +31,6 @@ import java.io.Serializable;
 public interface JAMSData extends Serializable {
 
     public void setValue(String value);
-
+    
     public String toString();
 }
