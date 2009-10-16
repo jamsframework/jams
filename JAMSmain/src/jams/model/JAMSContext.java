@@ -42,6 +42,8 @@ import jams.dataaccess.CalendarAccessor;
 import jams.io.DataTracer.AbstractTracer;
 import jams.runtime.JAMSRuntime;
 import jams.workspace.stores.Filter;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 @JAMSComponentDescription (title = "JAMS Context",
                            author = "Sven Kralisch",
@@ -751,6 +753,7 @@ public class JAMSContext extends JAMSComponent implements Context {
         public void reset() {
             index = 0;
         }
+                
     }
 
     class RunEnumerator implements ComponentEnumerator {
@@ -792,6 +795,7 @@ public class JAMSContext extends JAMSComponent implements Context {
             index = 0;
             updateComponentData(index);
         }
+                
     }
 
     public Component getComponent(String name) {
@@ -823,111 +827,30 @@ public class JAMSContext extends JAMSComponent implements Context {
         return false;
     }
 
-//    public int componentAllreadyProcessed(Component position, Component component) {
-//        if (this.getInstanceName().equals(position.getInstanceName())) {
-//            return 0;
-//        }
-//        if (this == component) {
-//            return 1;
-//        }
-//        for (int j = 0; j < this.components.size(); j++) {
-//            Component c = this.components.get(j);
-//            if (c == position) {
-//                return 0;
-//            }
-//            if (c == component) {
-//                return 1;
-//            }
-//            if (c instanceof Context) {
-//                Context context = (Context) c;
-//                int result = context.componentAllreadyProcessed(position, component);
-//                if (result == 0 || result == 1) {
-//                    return result;
-//                }
-//            }
-//        }
-//        return 2;
-//    }
-
-    /*
-     * looks if component object contains valid data
-     * used when making a model snapshot
-     */
-//    public int containsValidData(Component position, Object componentObj) {
-//        /* three steps:
-//         * 1. get name of attribute to componentObj in this context
-//         *    <context> attribName specifies attribute fully
-//         * 2. get name of components which use this attribute in write or read-write mode
-//         * 3. look one of these components has allready been executed
-//         *
-//         */
-//
-//        //search for attribname
-//        Iterator<Entry<String, JAMSData>> iter = this.attribs.entrySet().iterator();
-//        String attribName = null;
-//        while (iter.hasNext()) {
-//            Entry<String, JAMSData> e = iter.next();
-//            if ((Object) e.getValue() == componentObj) {
-//                attribName = e.getKey();
-//                break;
-//            }
-//        }
-//
-//        //search in accessSpecs for components which use this attrib
-//        Component component = null;
-//        if (attribName != null) {
-//            for (int i = 0; i < this.attributeAccessList.size(); i++) {
-//                if (this.attributeAccessList.get(i).attributeName.compareTo(attribName) == 0) {
-//                    //do they write this attrib?
-//                    if (this.attributeAccessList.get(i).accessType != DataAccessor.READ_ACCESS) {
-//                        component = this.attributeAccessList.get(i).component;
-//                        //has component been executed
-//                        if (componentAllreadyProcessed(position, component) == 1) {
-//                            return 1;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        //look if there is an child context which uses this componentObj
-//        for (int j = 0; j < components.size(); j++) {
-//            Component c = components.get(j);
-//            if (c.getInstanceName().equals(position.getInstanceName())) {
-//                return 0;
-//            }
-//            if (c instanceof Context) {
-//                if (((Context) components.get(j)).containsValidData(position, componentObj) == 1) {
-//                    return 1;
-//                }
-//            }
-//        }
-//        return 2;
-//    }
-
-    /*
-     * trace entity data, but trace data only, if data source component has already been executed,
-     * which means that data source component is executed before currentComponent
-     * used when making a model snapshot
-     */
-//    public void updateEntityData(Component currentComponent) {
-//        //if this context has not been executed at all, exit
-//        if (this.getModel().componentAllreadyProcessed(currentComponent, this) != 1) {
-//            return;
-//            //if this context is finished ..
-//        }
-//        if (!componentInContext(currentComponent)) {
-//            return;
-//        }
-//        for (int i = 0; i < dataAccessors.length; i++) {
-//            //get pointer to component data
-//            Object componentObj = dataAccessors[i].getComponentObject();
-//            //look if component data is already up to date
-//            if (containsValidData(currentComponent, componentObj) == 1) {
-//                dataAccessors[i].write();
-//            }
-//        }
-//    }
-
+    /*public void debug(String name){
+        if (getInstanceName().equals("J2K")){
+            try{
+            BufferedWriter writer = null;
+            writer = new BufferedWriter(new FileWriter(name));
+            //HashMap<String,DataAccessor> map = this.dataAccessors;
+            DataAccessor[] map = this.dataAccessors;
+            //Iterator<String> iter = map.keySet().iterator();
+            for (int i=0;i<map.length;i++){                
+                writer.write("?" + ":\t" + map[i].getComponentObject() + "\n");
+            }
+            while (iter.hasNext()){
+                String t = iter.next();
+                writer.write(t + ":\t" + map.get(t).getComponentObject() + "\n");
+                
+            }
+            //writer.write(((JAMSEntity)(getEntities().getCurrent())).getStringValue());
+            writer.close();
+            }catch(Exception e){
+                
+            }
+        }
+    }*/
+    
     public void updateEntityData() {
         //write entity data after execution
         for (int i = 0; i < dataAccessors.length; i++) {
@@ -962,16 +885,9 @@ public class JAMSContext extends JAMSComponent implements Context {
     public Attribute.EntityCollection getEntities() {
         return entities;
     }
-
+        
     @Override
     public void setEntities(Attribute.EntityCollection entities) {
         this.entities = entities;
     }
-//    public JAMSEntity getCurrentEntity() {
-//        return currentEntity;
-//    }
-//
-//    public void setCurrentEntity(JAMSEntity currentEntity) {
-//        this.currentEntity = currentEntity;
-//    }
 }

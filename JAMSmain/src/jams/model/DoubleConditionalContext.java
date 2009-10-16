@@ -84,6 +84,6 @@ public class DoubleConditionalContext extends JAMSContext {
         @Override
         public void reset() {
             next = true;
-        }
+        }        
     }
 }

@@ -36,5 +36,4 @@ public interface ComponentEnumerator extends Serializable{
     boolean hasNext();
     Component next();
     void reset();
-    
 }

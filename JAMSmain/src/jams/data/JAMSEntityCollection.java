@@ -69,7 +69,7 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
             public void reset() {
                 index = 0;
                 JAMSEntityCollection.this.current = entityArray[index];
-            }
+            }                        
         };
     }
 

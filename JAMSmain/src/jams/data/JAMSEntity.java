@@ -25,6 +25,7 @@ package jams.data;
 import java.util.*;
 import com.vividsolutions.jts.geom.Geometry;
 import jams.JAMS;
+import jams.data.Attribute.FloatArray;
 
 /**
  *
@@ -181,8 +182,10 @@ public class JAMSEntity implements Attribute.Entity {
         }
     }
 
+   
+    
     @Override
-    public void setValue(HashMap<String, Object> values) {
+    public void setValue(HashMap<String, Object> values) {        
         this.values = values;
     }
 

@@ -82,6 +82,6 @@ public class BooleanConditionalContext extends JAMSContext {
         @Override
         public void reset() {
             next = true;
-        }
+        }               
     }
 }

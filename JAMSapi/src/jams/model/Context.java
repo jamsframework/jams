@@ -108,4 +108,5 @@ public interface Context extends Component {
 
     void updateComponentData(int index);
 
+    //void debug(String name);
 }
