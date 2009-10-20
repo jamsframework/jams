@@ -1,7 +1,7 @@
 #JAMS-Konfigurationsdatei
-#Thu Oct 01 14:15:15 CEST 2009
+#Tue Oct 20 17:15:51 CEST 2009
 infolog=
-libs=..\\..\\bin
+libs=..\\..\\bin;D\:\\jams\\lib
 guiconfig=1
 excludes=.cache;.svn;.xls
 model=
@@ -16,7 +16,6 @@ forcelocale=
 windowheight=768
 verbose=0
 debug=1
-server=
 guiconfigheight=600
 windowwidth=1024
 workspace=workspaceDir
