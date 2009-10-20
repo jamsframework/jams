@@ -769,6 +769,7 @@ public class GraphProperties {
     public void setDataSTART(double d_start){
         data_range_start = (double) d_start;
         String s = ""+d_start;
+        s.format("3.3f", s);
 //        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 //        nf.setMaximumFractionDigits(4);
 //        s = nf.format(data_range_start);
@@ -778,6 +779,7 @@ public class GraphProperties {
     public void setDataEND(double d_end){
         data_range_end =  (double)d_end;
         String s = ""+d_end;
+        s.format("3.3f", s);
 //        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 //        nf.setMaximumFractionDigits(4);
 //        s = nf.format(data_range_end);

@@ -707,7 +707,7 @@ public class JAMSSpreadSheet extends JPanel {
         File explorerDir;
 
         if (!isOutputSheet()) {
-            explorerDir = new File(explorer.getWorkspace().getDirectory().toString() + "/explorer");
+            explorerDir = new File(explorer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME);
         } else {
             explorerDir = new File(explorer.getWorkspace().getDirectory().toString() + "/output/current");
         }
@@ -953,6 +953,7 @@ public class JAMSSpreadSheet extends JPanel {
     private void openSTP() {
         STPConfigurator stp = new STPConfigurator(explorer, this);
     }
+
     ActionListener plotAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -984,6 +985,7 @@ public class JAMSSpreadSheet extends JPanel {
                             ee.printStackTrace();
                             try {
                                 JFileChooser chooser = getTemplateChooser();
+                                if (isOutputSheet()) chooser.setCurrentDirectory(outputDSDir);
                                 int returnVal = chooser.showOpenDialog(parent_frame);
                                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                                     ttpFile = chooser.getSelectedFile();
@@ -1006,6 +1008,7 @@ public class JAMSSpreadSheet extends JPanel {
 
                         try {
                             JFileChooser chooser = getTemplateChooser();
+                            if (isOutputSheet()) chooser.setCurrentDirectory(outputDSDir);
                             int returnVal = chooser.showOpenDialog(parent_frame);
                             if (returnVal == JFileChooser.APPROVE_OPTION) {
                                 ttpFile = chooser.getSelectedFile();
@@ -1058,6 +1061,7 @@ public class JAMSSpreadSheet extends JPanel {
                             ee.printStackTrace();
                             try {
                                 JFileChooser chooser = getTemplateChooser();
+                                if (isOutputSheet()) chooser.setCurrentDirectory(outputDSDir);
                                 int returnVal = chooser.showOpenDialog(parent_frame);
                                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                                     ttpFile = chooser.getSelectedFile();

@@ -211,16 +211,51 @@ public class JXYConfigurator extends JFrame {
             tempLoaded = false;
         }
 
-        try {
-            writeSortedData(columns[0]);
-        } catch (java.lang.ArrayIndexOutOfBoundsException aiofb) {
-            writeSortedData(0);
+        System.out.println("graphCount "+graphCount);
+        if ((isDataTemplate(templateFile) && table.getColumnCount() > 1) || !tempLoaded){
+
+            try {
+                writeSortedData(columns[0]);
+            } catch (java.lang.ArrayIndexOutOfBoundsException aiofb) {
+                writeSortedData(0);
+            }
+
+            createPanel();
+
+            pack();
+            setVisible(true);
+        }else{
+
+            GUIHelper.showErrorDlg(sheet, SpreadsheetConstants.JXY_ERR_NODATATEMPLATE, "Error");
+        }
+    }
+
+    private boolean isDataTemplate(File templateFile){
+
+        Properties properties = new Properties();
+        boolean result = false;
+
+        try{
+            FileInputStream fin = new FileInputStream(templateFile);
+            properties.load(fin);
+            fin.close();
+        }catch(Exception ex){
+            result = false;
+        }
+        try{
+            String typetest = (String) properties.getProperty("template_type");
+            if (typetest.compareTo("DATA") == 0) {
+                result = true;
+            } else {
+                result = false;
+            }
+
+        } catch (NullPointerException npe) {
+            result = false;
         }
 
-        createPanel();
 
-        pack();
-        setVisible(true);
+        return result;
     }
 
     public void createPanel() {
@@ -394,7 +429,8 @@ public class JXYConfigurator extends JFrame {
             int color_cnt;
 
             public void run() {
-               
+
+                
                 for (int k = 0; k < graphCount; k++) {
                   
                     
@@ -474,8 +510,8 @@ public class JXYConfigurator extends JFrame {
                     addPropGroup(propVector.get(k));
 
                     prop.setColorLabelColor();
-
                 }
+                
             }
         };
 

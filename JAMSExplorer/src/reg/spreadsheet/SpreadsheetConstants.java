@@ -36,6 +36,8 @@ public class SpreadsheetConstants {
                     "Use the 'Save Template' Option in the Time Plot Configurator!";
     public final static String SPREADSHEET_ERR_TSMISSING = "Time Series missing!";
 
+    public final static String JXY_ERR_NODATATEMPLATE = "No Template for Dataplot. Use at least 2 Columns";
+
     /* GUI ELEMENT COLORS */
 
 //    public final static Color GUI_COLOR_CLOSETAB = Color.DARK_GRAY;
