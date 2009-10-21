@@ -42,7 +42,6 @@ public interface Model extends Context {
 
     void setDate(String date);
 
-    @SuppressWarnings (value = "unchecked")
     void setModelState(Snapshot inData, boolean saveIterator);
 
     void setName(String name);
