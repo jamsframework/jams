@@ -7,7 +7,9 @@
         </classpath>
     </taskdef>
     
-    <target name="doall" depends="clean, build, dostarters, doJ2K"/>
+    <target name="doall" depends="build, dostarters, doJ2K"/>
+
+    <target name="doallwithclean" depends="cleanall, build, dostarters, doJ2K"/>
     
     <target name="cleanlib">
         <delete>
@@ -29,8 +31,10 @@
             <param  name="buildxml" value="../nbprojects/jams-starter/build.xml"/>
         </antcall>
     </target>
+    
+    <target name="cleanall" depends="clean, cleanlib" />
 
-    <target name="clean" depends="cleanlib" description="Clean all NetBeans projects and delete libs in this directory">
+    <target name="clean" description="Clean all NetBeans projects and delete libs in this directory">
         <foreach target="cleanproject" param="buildxml">
             <path>
                 <fileset dir="../nbprojects">
