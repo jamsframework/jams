@@ -35,4 +35,7 @@ public interface EntityEnumerator extends Serializable{
     Attribute.Entity next();
 
     void reset();
+    
+    byte[] getState();
+    void setState(byte[] state);
 }

@@ -29,6 +29,12 @@ import jams.dataaccess.DataAccessor;
 import jams.io.DataTracer.DataTracer;
 import jams.io.DataTracer.AbstractTracer;
 import jams.workspace.stores.Filter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Calendar;
 
 /**
  *
@@ -49,10 +55,10 @@ public class JAMSTemporalContext extends JAMSContext {
     public Attribute.Calendar current;
     private Attribute.Calendar lastValue;
 
-    public JAMSTemporalContext(){     
+    public JAMSTemporalContext() {
         super();
     }
-    
+
     @Override
     protected DataTracer createDataTracer(OutputDataStore store) {
         return new AbstractTracer(this, store, Attribute.Calendar.class) {
@@ -128,6 +134,13 @@ public class JAMSTemporalContext extends JAMSContext {
         return current.toString();
     }
 
+    public static class IteratorState implements Serializable {
+
+            byte subState[];
+            Attribute.Calendar current;
+            Attribute.Calendar lastValue;
+        };
+        
     class RunEnumerator implements ComponentEnumerator {
 
         ComponentEnumerator ce = getChildrenEnumerator();
@@ -149,9 +162,9 @@ public class JAMSTemporalContext extends JAMSContext {
                 }
                 current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
                 ce.reset();
-                //write component data back to entity, otherwise a potential snapshop cannot
-                //save data
-                //updateEntityData();
+            //write component data back to entity, otherwise a potential snapshop cannot
+            //save data
+            //updateEntityData();
             }
             return ce.next();
         }
@@ -160,6 +173,66 @@ public class JAMSTemporalContext extends JAMSContext {
         public void reset() {
             current.setValue(timeInterval.getStart().getValue());
             ce.reset();
-        }              
+        }
+        
+        @Override
+        public byte[] getState() {
+            IteratorState state = new IteratorState();
+            state.subState = ce.getState();
+
+            state.current = current.getValue();
+            state.lastValue = lastValue.getValue();
+
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            byte[] result = null;
+            try {
+                ObjectOutputStream objOut = new ObjectOutputStream(outStream);
+                objOut.writeObject(state);
+
+                result = outStream.toByteArray();
+
+                objOut.close();
+                outStream.close();
+            } catch (Exception e) {
+                getModel().getRuntime().println("could not save model state, because:" + e);
+            }
+
+            return result;
+        }
+
+        @Override
+        public void setState(byte[] state) {
+            ce = getChildrenEnumerator();
+            
+            ByteArrayInputStream inStream = new ByteArrayInputStream(state);
+            try {
+                ObjectInputStream objIn = new ObjectInputStream(inStream);
+                inStream.close();
+
+                IteratorState myState = (IteratorState) objIn.readObject();
+
+                objIn.close();
+
+                ce.setState(myState.subState);
+                
+                current.setValue(myState.current);
+                lastValue.setValue(myState.lastValue);
+                
+            } catch (Exception e) {
+            }
+        }       
+    }
+    @Override
+    public byte[] getIteratorState(){
+        if (this.runEnumerator != null)
+            return this.runEnumerator.getState();
+        return null;
+    }
+    @Override
+    public void setIteratorState(byte[]state){
+        if (state == null)
+            this.runEnumerator = null;
+        else
+            this.runEnumerator.setState(state);
     }
 }

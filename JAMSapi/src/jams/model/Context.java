@@ -101,12 +101,12 @@ public interface Context extends Component {
     void setEntities(Attribute.EntityCollection entities);
 
     void setupDataTracer();
-
-    boolean componentInContext(Component component);
-
+    
     void updateEntityData();
 
     void updateComponentData(int index);
 
+    byte[] getIteratorState();
+    void setIteratorState(byte[]state);
     //void debug(String name);
 }

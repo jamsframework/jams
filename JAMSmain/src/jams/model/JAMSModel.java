@@ -221,6 +221,7 @@ public class JAMSModel extends JAMSContext implements Model {
         ContextSnapshotData data = new ContextSnapshotData();
         data.entities = currentContext.getEntities();
         data.dataAccessors = currentContext.getDataAccessorMap();
+        data.iteratorState = currentContext.getIteratorState();
         collection.put(currentContext.getInstanceName(), data);
 
         for (int i = 0; i < currentContext.getComponents().size(); i++) {
@@ -231,134 +232,128 @@ public class JAMSModel extends JAMSContext implements Model {
         }
     }
 
-    private void restoreEntityCollections(Context currentContext, HashMap<String, ContextSnapshotData> collection) {
+    private void restoreEntityCollections(Context currentContext, HashMap<String, ContextSnapshotData> collection, boolean restoreIterator) {
         ContextSnapshotData data = collection.get(currentContext.getInstanceName());
-        //resore entity data
-        if (data != null) {
-            ArrayList<jams.data.Attribute.Entity> list = currentContext.getEntities().getEntities();            
-            for (int i=0;i<list.size();i++){                
-                HashMap<String,Object> map = list.get(i).getValue();
-                
-                jams.data.Attribute.Entity e = data.entities.getEntities().get(i);                
-                Iterator<String> iter = e.getValue().keySet().iterator();
-                while(iter.hasNext()){
-                    String name = iter.next();
-                    Object obj_src = e.getValue().get(name);
-                    Object obj     = map.get(name);
-                    
-                    if (obj_src instanceof JAMSBoolean) {
-                        ((JAMSBoolean) obj).setValue(((JAMSBoolean) obj_src).getValue());
-                    }else if (obj_src instanceof JAMSBooleanArray) {
-                        ((JAMSBooleanArray) obj).setValue(((JAMSBooleanArray) obj_src).getValue());
-                    }
-                    else if (obj_src instanceof JAMSCalendar) {
-                        ((JAMSCalendar) obj).setValue(((JAMSCalendar) obj_src).getValue());
-                    }
-                    else if (obj_src instanceof JAMSDouble) {
-                        ((JAMSDouble) obj).setValue(((JAMSDouble) obj_src).getValue());
-                    }
-                    else if (obj_src instanceof JAMSDoubleArray) {
-                        ((JAMSDoubleArray) obj).setValue(((JAMSDoubleArray) obj_src).getValue());
-                    //these both are skipped, because entities are not replaced
-                    //but there are cases in which they have to be updated, this is kind of complicated, because
-                    //a) we have to update only entity attributes
-                    //b) if the entity contains other entities this is a recursive process
-                    //c) to prevent infinite loops, we have to determine which entities have been allready updated
-                    /*if (obj instanceof JAMSEntity)
-                        ((JAMSEntity)obj).setValue(((JAMSEntity)data.dataAccessors.get(name).getComponentObject()).getValue());
-                    if (obj instanceof JAMSEntityCollection)
-                        ((JAMSEntityCollection)obj).setValue(((JAMSEntityCollection)data.dataAccessors.get(name).getComponentObject()).getValue());*/
-                    }
-                    else if (obj_src instanceof JAMSFloat) {
-                        ((JAMSFloat) obj).setValue(((JAMSFloat) obj_src).getValue());
-                    }
-                    else if (obj_src instanceof FloatArray) {
-                        ((FloatArray) obj).setValue(((FloatArray) obj_src).getValue());
-                    }
-                    else if (obj_src instanceof JAMSGeometry) {
-                        ((JAMSGeometry) obj).setValue(((JAMSGeometry) obj_src).getValue());
-                    }
-                    else if (obj_src instanceof JAMSInteger) {
-                        ((JAMSInteger) obj).setValue(((JAMSInteger) obj_src).getValue());
-                    }
-                    else if (obj_src instanceof JAMSIntegerArray) {
-                        ((JAMSIntegerArray) obj).setValue(((JAMSIntegerArray) obj_src).getValue());
-                    }
-                    else if (obj_src instanceof JAMSLong) {
-                        ((JAMSLong) obj).setValue(((JAMSLong) obj_src).getValue());
-                    }
-                    else if (obj_src instanceof JAMSLongArray) {
-                        ((JAMSLongArray) obj).setValue(((JAMSLongArray) obj_src).getValue());
-                    }
-                    else if (obj_src instanceof JAMSString) {
-                        ((JAMSString) obj).setValue(((JAMSString) obj_src).getValue());
-                    }
-                    else if (obj_src instanceof JAMSStringArray) {
-                        ((JAMSStringArray) obj).setValue(((JAMSStringArray) obj_src).getValue());
-                    }
-                    else if (obj_src instanceof JAMSObject) {
-                        ((JAMSObject) obj).setValue(((JAMSObject) obj_src).getValue());
-                    }                        
-                    else if (obj_src instanceof JAMSTimeInterval) {
-                        ((JAMSTimeInterval) obj).setValue(((JAMSTimeInterval) obj_src).getValue());
-                    }            
-                }                
-            }
-        }
+
         for (int i = 0; i < currentContext.getComponents().size(); i++) {
             Component c = (Component) currentContext.getComponents().get(i);
             if (c instanceof Context) {
-                restoreEntityCollections((Context) c, collection);
+                restoreEntityCollections((Context) c, collection, restoreIterator);
             }
         }
-        //resore component data
-        if (data != null){
-            HashMap<String, DataAccessor> map = currentContext.getDataAccessorMap();
-            Iterator<String> iter = map.keySet().iterator();
-            while(iter.hasNext()){
+
+        //resore entity data
+        if (data == null) {
+            return;
+        }
+        ArrayList<jams.data.Attribute.Entity> list = currentContext.getEntities().getEntities();
+        for (int i = 0; i < list.size(); i++) {
+            HashMap<String, Object> map = list.get(i).getValue();
+
+            jams.data.Attribute.Entity e = data.entities.getEntities().get(i);
+            Iterator<String> iter = e.getValue().keySet().iterator();
+            while (iter.hasNext()) {
                 String name = iter.next();
-                DataAccessor da = map.get(name);
-                if (da == null)
-                    continue;
-                JAMSData obj = da.getComponentObject();
-                if (obj instanceof JAMSBoolean)
-                    ((JAMSBoolean)obj).setValue(((JAMSBoolean)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSBooleanArray)
-                    ((JAMSBooleanArray)obj).setValue(((JAMSBooleanArray)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSCalendar)
-                    ((JAMSCalendar)obj).setValue(((JAMSCalendar)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSDouble)
-                    ((JAMSDouble)obj).setValue(((JAMSDouble)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSDoubleArray)
-                    ((JAMSDoubleArray)obj).setValue(((JAMSDoubleArray)data.dataAccessors.get(name).getComponentObject()).getValue());
-                /*if (obj instanceof JAMSEntity)
-                    ((JAMSEntity)obj).setValue(((JAMSEntity)data.dataAccessors.get(name).getComponentObject()).getValue());
+                Object obj_src = e.getValue().get(name);
+                Object obj = map.get(name);
+
+                if (obj_src instanceof JAMSBoolean) {
+                    ((JAMSBoolean) obj).setValue(((JAMSBoolean) obj_src).getValue());
+                } else if (obj_src instanceof JAMSBooleanArray) {
+                    ((JAMSBooleanArray) obj).setValue(((JAMSBooleanArray) obj_src).getValue());
+                } else if (obj_src instanceof JAMSCalendar) {
+                    ((JAMSCalendar) obj).setValue(((JAMSCalendar) obj_src).getValue());
+                } else if (obj_src instanceof JAMSDouble) {
+                    ((JAMSDouble) obj).setValue(((JAMSDouble) obj_src).getValue());
+                } else if (obj_src instanceof JAMSDoubleArray) {
+                    ((JAMSDoubleArray) obj).setValue(((JAMSDoubleArray) obj_src).getValue());
+                //these both are skipped, because entities are not replaced
+                //but there are cases in which they have to be updated, this is kind of complicated, because
+                //a) we have to update only entity attributes
+                //b) if the entity contains other entities this is a recursive process
+                //c) to prevent infinite loops, we have to determine which entities have been allready updated
+                    /*if (obj instanceof JAMSEntity)
+                ((JAMSEntity)obj).setValue(((JAMSEntity)data.dataAccessors.get(name).getComponentObject()).getValue());
                 if (obj instanceof JAMSEntityCollection)
-                    ((JAMSEntityCollection)obj).setValue(((JAMSEntityCollection)data.dataAccessors.get(name).getComponentObject()).getValue());*/
-                if (obj instanceof JAMSFloat)
-                    ((JAMSFloat)obj).setValue(((JAMSFloat)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof FloatArray)
-                    ((FloatArray)obj).setValue(((FloatArray)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSGeometry)
-                    ((JAMSGeometry)obj).setValue(((JAMSGeometry)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSInteger)
-                    ((JAMSInteger)obj).setValue(((JAMSInteger)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSIntegerArray)
-                    ((JAMSIntegerArray)obj).setValue(((JAMSIntegerArray)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSLong)
-                    ((JAMSLong)obj).setValue(((JAMSLong)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSLongArray)
-                    ((JAMSLongArray)obj).setValue(((JAMSLongArray)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSObject)
-                    ((JAMSObject)obj).setValue(((JAMSObject)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSString)
-                    ((JAMSString)obj).setValue(((JAMSString)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSStringArray)
-                    ((JAMSStringArray)obj).setValue(((JAMSStringArray)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSTimeInterval)
-                    ((JAMSTimeInterval)obj).setValue(((JAMSTimeInterval)data.dataAccessors.get(name).getComponentObject()).getValue());
+                ((JAMSEntityCollection)obj).setValue(((JAMSEntityCollection)data.dataAccessors.get(name).getComponentObject()).getValue());*/
+                } else if (obj_src instanceof JAMSFloat) {
+                    ((JAMSFloat) obj).setValue(((JAMSFloat) obj_src).getValue());
+                } else if (obj_src instanceof FloatArray) {
+                    ((FloatArray) obj).setValue(((FloatArray) obj_src).getValue());
+                } else if (obj_src instanceof JAMSGeometry) {
+                    ((JAMSGeometry) obj).setValue(((JAMSGeometry) obj_src).getValue());
+                } else if (obj_src instanceof JAMSInteger) {
+                    ((JAMSInteger) obj).setValue(((JAMSInteger) obj_src).getValue());
+                } else if (obj_src instanceof JAMSIntegerArray) {
+                    ((JAMSIntegerArray) obj).setValue(((JAMSIntegerArray) obj_src).getValue());
+                } else if (obj_src instanceof JAMSLong) {
+                    ((JAMSLong) obj).setValue(((JAMSLong) obj_src).getValue());
+                } else if (obj_src instanceof JAMSLongArray) {
+                    ((JAMSLongArray) obj).setValue(((JAMSLongArray) obj_src).getValue());
+                } else if (obj_src instanceof JAMSString) {
+                    ((JAMSString) obj).setValue(((JAMSString) obj_src).getValue());
+                } else if (obj_src instanceof JAMSStringArray) {
+                    ((JAMSStringArray) obj).setValue(((JAMSStringArray) obj_src).getValue());
+                } else if (obj_src instanceof JAMSObject) {
+                    ((JAMSObject) obj).setValue(((JAMSObject) obj_src).getValue());
+                } else if (obj_src instanceof JAMSTimeInterval) {
+                    ((JAMSTimeInterval) obj).setValue(((JAMSTimeInterval) obj_src).getValue());
+                }
             }
         }
+
+
+        //restore component data
+        HashMap<String, DataAccessor> map = currentContext.getDataAccessorMap();
+        Iterator<String> iter = map.keySet().iterator();
+        while (iter.hasNext()) {
+            String name = iter.next();
+            DataAccessor da = map.get(name);
+            if (da == null) {
+                continue;
+            }
+            JAMSData obj = da.getComponentObject();
+            if (obj instanceof JAMSBoolean) {
+                ((JAMSBoolean) obj).setValue(((JAMSBoolean) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof JAMSBooleanArray) {
+                ((JAMSBooleanArray) obj).setValue(((JAMSBooleanArray) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof JAMSCalendar) {
+                ((JAMSCalendar) obj).setValue(((JAMSCalendar) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof JAMSDouble) {
+                ((JAMSDouble) obj).setValue(((JAMSDouble) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof JAMSDoubleArray) {
+                ((JAMSDoubleArray) obj).setValue(((JAMSDoubleArray) data.dataAccessors.get(name).getComponentObject()).getValue());
+            /*if (obj instanceof JAMSEntity)
+            ((JAMSEntity)obj).setValue(((JAMSEntity)data.dataAccessors.get(name).getComponentObject()).getValue());
+            if (obj instanceof JAMSEntityCollection)
+            ((JAMSEntityCollection)obj).setValue(((JAMSEntityCollection)data.dataAccessors.get(name).getComponentObject()).getValue());*/
+            }else if (obj instanceof JAMSFloat) {
+                ((JAMSFloat) obj).setValue(((JAMSFloat) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof FloatArray) {
+                ((FloatArray) obj).setValue(((FloatArray) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof JAMSGeometry) {
+                ((JAMSGeometry) obj).setValue(((JAMSGeometry) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof JAMSInteger) {
+                ((JAMSInteger) obj).setValue(((JAMSInteger) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof JAMSIntegerArray) {
+                ((JAMSIntegerArray) obj).setValue(((JAMSIntegerArray) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof JAMSLong) {
+                ((JAMSLong) obj).setValue(((JAMSLong) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof JAMSLongArray) {
+                ((JAMSLongArray) obj).setValue(((JAMSLongArray) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof JAMSObject) {
+                ((JAMSObject) obj).setValue(((JAMSObject) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof JAMSString) {
+                ((JAMSString) obj).setValue(((JAMSString) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof JAMSStringArray) {
+                ((JAMSStringArray) obj).setValue(((JAMSStringArray) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }else if (obj instanceof JAMSTimeInterval) {
+                ((JAMSTimeInterval) obj).setValue(((JAMSTimeInterval) data.dataAccessors.get(name).getComponentObject()).getValue());
+            }
+        }
+        //restore iterators
+        if (restoreIterator)
+            currentContext.setIteratorState(data.iteratorState);
     }
 
     //this is still something todo
@@ -380,28 +375,38 @@ public class JAMSModel extends JAMSContext implements Model {
         HashMap<String, ContextSnapshotData> contextStates = new HashMap<String, ContextSnapshotData>();
         collectEntityCollections(this.getModel(), position, contextStates);
 
+        JAMSSnapshot snapshot = null;
         try {
             objOut = new ObjectOutputStream(outStream);
             objOut.writeObject(contextStates);
+            
+            snapshot = new JAMSSnapshot(holdInMemory, outStream.toByteArray(), fileName);
+            
+            objOut.close();
+            outStream.close();
         } catch (IOException e) {
             this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_save_model_state_because,") + e.toString());
         }
-
-        return new JAMSSnapshot(holdInMemory, outStream.toByteArray(), fileName);
+                                
+        return snapshot;
     }
 
-    @SuppressWarnings ("unchecked")
     public void setModelState(Snapshot inData) {
+        setModelState(inData,false);
+    }
+    @SuppressWarnings ("unchecked")
+    public void setModelState(Snapshot inData, boolean restoreIterator) {
         HashMap<String, ContextSnapshotData> contextStates = null;
         try {
-            ObjectInputStream objIn = new ObjectInputStream(new ByteArrayInputStream(inData.getData()));
+            ByteArrayInputStream inStream = new ByteArrayInputStream(inData.getData());
+            ObjectInputStream objIn = new ObjectInputStream(inStream);            
             contextStates = (HashMap<String, ContextSnapshotData>) objIn.readObject();
-
+            inStream.close();
             objIn.close();
         } catch (Exception e) {
             this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_deserialize_jamsentity_collection,_because") + e.toString());
         }
-        restoreEntityCollections(this.getModel(), contextStates);
+        restoreEntityCollections(this.getModel(), contextStates, restoreIterator);
         restoreEntityEnumerators(this.getModel());
     }
 }

@@ -42,5 +42,6 @@ public class SnapshotTools {
     public static class ContextSnapshotData implements Serializable{
         public EntityCollection entities;
         public HashMap<String, DataAccessor> dataAccessors;
+        public byte[] iteratorState;
     }        
 }

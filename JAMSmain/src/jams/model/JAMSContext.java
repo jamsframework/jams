@@ -41,9 +41,12 @@ import jams.dataaccess.*;
 import jams.dataaccess.CalendarAccessor;
 import jams.io.DataTracer.AbstractTracer;
 import jams.runtime.JAMSRuntime;
+import jams.tools.SnapshotTools.ContextSnapshotData;
 import jams.workspace.stores.Filter;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 @JAMSComponentDescription (title = "JAMS Context",
                            author = "Sven Kralisch",
@@ -753,9 +756,32 @@ public class JAMSContext extends JAMSComponent implements Context {
         public void reset() {
             index = 0;
         }
-                
+         
+        @Override
+        public byte[] getState() {
+            byte[] state = new byte[4];
+            
+            state[0] = (byte)((index & 0x000000ff)>>0);
+            state[1] = (byte)((index & 0x0000ff00)>>8);
+            state[2] = (byte)((index & 0x00ff0000)>>16);
+            state[3] = (byte)((index & 0xff000000)>>24);
+            
+            return state;
+        }
+        
+        @Override
+        public void setState(byte[] state) {
+            compArray = getCompArray();
+            index = (state[0]<<0) | (state[1]<<8) | (state[2]<<16) | (state[3]<<24);            
+        }
     }
 
+    public static class IteratorState implements Serializable{
+            byte subState1[];
+            byte subState2[];
+            int state;
+        };
+        
     class RunEnumerator implements ComponentEnumerator {
 
         ComponentEnumerator ce = getChildrenEnumerator();
@@ -795,9 +821,67 @@ public class JAMSContext extends JAMSComponent implements Context {
             index = 0;
             updateComponentData(index);
         }
-                
+                         
+        @Override
+        public byte[] getState() {  
+            IteratorState state = new IteratorState();
+            state.subState1 = ce.getState();
+            state.subState2 = ee.getState();
+                                                
+            state.state = index;
+                            
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            byte[] result = null;
+            try{
+                ObjectOutputStream objOut = new ObjectOutputStream(outStream);
+                objOut.writeObject(state);
+            
+                result = outStream.toByteArray();
+            
+                objOut.close();
+                outStream.close();
+            }catch(Exception e){
+                getModel().getRuntime().println("could not save model state, because:" + e);
+            }
+            
+            return result;
+        }
+        
+        @Override
+        public void setState(byte[] state) {
+            
+            ce = getChildrenEnumerator();            
+            ee = getEntities().getEntityEnumerator();
+                                    
+            ByteArrayInputStream inStream = new ByteArrayInputStream(state);
+            try{
+                ObjectInputStream objIn = new ObjectInputStream(inStream);
+                inStream.close();
+            
+                IteratorState myState = (IteratorState) objIn.readObject();
+
+                objIn.close();
+            
+                ce.setState(myState.subState1);
+                ee.setState(myState.subState2);
+                        
+                index = myState.state;
+            }catch(Exception e){}            
+        }
     }
 
+    public byte[] getIteratorState(){
+        if (this.runEnumerator != null)
+            return this.runEnumerator.getState();
+        return null;
+    }
+    public void setIteratorState(byte[]state){
+        if (state == null)
+            this.runEnumerator = null;
+        else
+            this.runEnumerator.setState(state);
+    }
+    
     public Component getComponent(String name) {
         for (int i = 0; i < components.size(); i++) {
             if (components.get(i).getInstanceName().equals(name)) {
@@ -812,21 +896,7 @@ public class JAMSContext extends JAMSComponent implements Context {
         }
         return null;
     }
-
-    public boolean componentInContext(Component component) {
-        for (int i = 0; i < components.size(); i++) {
-            if (components.get(i).getInstanceName().equals(component.getInstanceName())) {
-                return true;
-            }
-            if (components.get(i) instanceof Context) {
-                if (((Context) components.get(i)).componentInContext(component)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
+    
     /*public void debug(String name){
         if (getInstanceName().equals("J2K")){
             try{
@@ -889,5 +959,5 @@ public class JAMSContext extends JAMSComponent implements Context {
     @Override
     public void setEntities(Attribute.EntityCollection entities) {
         this.entities = entities;
-    }
+    }        
 }
