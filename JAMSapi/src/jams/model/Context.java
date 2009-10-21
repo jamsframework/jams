@@ -107,6 +107,7 @@ public interface Context extends Component {
     void updateComponentData(int index);
 
     byte[] getIteratorState();
+
     void setIteratorState(byte[]state);
-    //void debug(String name);
+
 }

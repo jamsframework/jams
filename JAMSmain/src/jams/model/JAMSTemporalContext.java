@@ -34,7 +34,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Calendar;
 
 /**
  *
@@ -162,9 +161,6 @@ public class JAMSTemporalContext extends JAMSContext {
                 }
                 current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
                 ce.reset();
-            //write component data back to entity, otherwise a potential snapshop cannot
-            //save data
-            //updateEntityData();
             }
             return ce.next();
         }

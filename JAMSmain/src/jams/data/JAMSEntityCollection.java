@@ -22,7 +22,6 @@
  */
 package jams.data;
 
-import jams.data.Attribute.Entity;
 import java.util.*;
 
 /**

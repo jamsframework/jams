@@ -23,15 +23,9 @@
 package jams.tools;
 
 import jams.data.Attribute.EntityCollection;
-import jams.data.JAMSData;
 import jams.dataaccess.DataAccessor;
-import jams.model.AttributeAccess;
-import jams.model.Component;
-import jams.model.Context;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 /**
  *

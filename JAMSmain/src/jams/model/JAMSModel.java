@@ -53,7 +53,6 @@ import jams.data.JAMSStringArray;
 import jams.data.JAMSTimeInterval;
 import jams.dataaccess.DataAccessor;
 import jams.runtime.JAMSRuntime;
-import jams.tools.SnapshotTools;
 import jams.tools.SnapshotTools.ContextSnapshotData;
 import jams.workspace.InvalidWorkspaceException;
 import java.lang.reflect.Field;

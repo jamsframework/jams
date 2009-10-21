@@ -75,7 +75,6 @@ import org.w3c.dom.NodeList;
 public class ModelView {
 
     private static final int TREE_PANE_WIDTH = 250;
-    private static final int DIVIDER_WIDTH = 8;
     private JInternalFrame frame;
     private File savePath;
     private Document initialDoc;
@@ -92,7 +91,6 @@ public class ModelView {
     private ModelProperties modelProperties = new ModelProperties();
     private WorkerDlg loadModelDlg;
     private Runnable modelLoading;
-    private static boolean firstFrame = true;
     private static int viewCounter = 0;
     public static ViewList viewList = new ViewList();
     private JAMSRuntime runtime;
