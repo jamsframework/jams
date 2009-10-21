@@ -84,6 +84,15 @@ public class DoubleConditionalContext extends JAMSContext {
         @Override
         public void reset() {
             next = true;
-        }        
+        }     
+        //todo
+        @Override
+        public void setState(byte[]state) {
+            
+        }               
+        @Override
+        public byte[] getState() {
+            return null;
+        }     
     }
 }
