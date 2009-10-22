@@ -24,6 +24,7 @@ package reg.gui;
 
 import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
+import jams.tools.JAMSTools;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -73,12 +74,12 @@ public class TimeSpaceDSPanel extends DSPanel {
     private static final Dimension ACTION_BUTTON_DIM = new Dimension(150, 25), LIST_DIMENSION = new Dimension(150, 250);
 
     private TimeSpaceProcessor proc;
-    
+
     private GridBagLayout mainLayout;
 
     private JList timeList, entityList, monthList, yearList;
 
-    private JTextField timeField;       
+    private JTextField timeField;
 
     private JPanel aggregationPanel;
 
@@ -182,19 +183,21 @@ public class TimeSpaceDSPanel extends DSPanel {
         JScrollPane timeListScroll = new JScrollPane(timeList);
         timeListScroll.setPreferredSize(LIST_DIMENSION);
         timeList.addListSelectionListener(new ListSelectionListener() {
-            
+
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     if (timeList.getSelectedValues().length == 1) {
                         timePoint.setEnabled(true);
                         timeMean.setEnabled(false);
-                        if (entityList.getSelectedValues().length > 0)
+                        if (entityList.getSelectedValues().length > 0) {
                             crossProduct.setEnabled(true);
+                        }
                     } else if (timeList.getSelectedValues().length > 1) {
                         timePoint.setEnabled(false);
                         timeMean.setEnabled(true);
-                        if (entityList.getSelectedValues().length > 0)
+                        if (entityList.getSelectedValues().length > 0) {
                             crossProduct.setEnabled(true);
+                        }
                     } else {
                         timePoint.setEnabled(false);
                         timeMean.setEnabled(false);
@@ -214,16 +217,18 @@ public class TimeSpaceDSPanel extends DSPanel {
                     if (entityList.getSelectedValues().length == 1) {
                         spacePoint.setEnabled(true);
                         spaceMean.setEnabled(false);
-                        if (timeList.getSelectedValues().length > 0)
+                        if (timeList.getSelectedValues().length > 0) {
                             crossProduct.setEnabled(true);
+                        }
                     } else if (entityList.getSelectedValues().length > 1) {
                         spacePoint.setEnabled(false);
                         spaceMean.setEnabled(true);
-                        if (timeList.getSelectedValues().length > 0)
+                        if (timeList.getSelectedValues().length > 0) {
                             crossProduct.setEnabled(true);
+                        }
                     } else {
                         spacePoint.setEnabled(false);
-                        spaceMean.setEnabled(false);                        
+                        spaceMean.setEnabled(false);
                         crossProduct.setEnabled(false);
                     }
                 }
@@ -272,7 +277,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         JScrollPane aggregationScroll = new JScrollPane(aggregationPanel);
         aggregationScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width + 100, LIST_DIMENSION.height));
 
-        GUIHelper.addGBComponent(this, mainLayout, aggregationScroll, 0, 20, 1, 1, 0, 0);        
+        GUIHelper.addGBComponent(this, mainLayout, aggregationScroll, 0, 20, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, new JLabel("Time Steps:"), 10, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, timeListScroll, 10, 20, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, new JLabel("Entitiy IDs:"), 20, 10, 1, 1, 0, 0);
@@ -288,9 +293,10 @@ public class TimeSpaceDSPanel extends DSPanel {
             button.setPreferredSize(ACTION_BUTTON_DIM);
             buttonPanelA.add(button);
         }
-                
-        buttonPanelA.add(new JButton(crossProduct){
-            {setPreferredSize(ACTION_BUTTON_DIM);}
+
+        buttonPanelA.add(new JButton(crossProduct) {
+
+            setPreferredSize(ACTION_BUTTON_DIM);
         });
 
         JPanel filterPanel = new JPanel();
@@ -338,7 +344,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         JPanel buttonPanelB = new JPanel();
         buttonPanelB.setPreferredSize(LIST_DIMENSION);
 
-        for (int i = 4; i < actions.length-1; i++) {
+        for (int i = 4; i < actions.length - 1; i++) {
             Action a = actions[i];
             button = new JButton(a);
             button.setPreferredSize(ACTION_BUTTON_DIM);
@@ -358,7 +364,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         GUIHelper.addGBComponent(this, mainLayout, buttonPanelB, 80, 20, 1, 1, 0, 0);
 
     }
-    
+
     public static void main(String[] args) throws Exception {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -399,7 +405,7 @@ public class TimeSpaceDSPanel extends DSPanel {
     public TimeSpaceProcessor getProc() {
         return proc;
     }
-        
+
     private void createDB() {
         workerDlg.setInderminate(false);
         workerDlg.setTask(new CancelableSwingWorker() {
@@ -434,7 +440,7 @@ public class TimeSpaceDSPanel extends DSPanel {
             }
 
             this.setTsProc(new TimeSpaceProcessor(dsdb));
-                        
+
         } catch (SQLException ex) {
         } catch (IOException ex) {
         }
@@ -450,13 +456,13 @@ public class TimeSpaceDSPanel extends DSPanel {
 
         createDB();
     }
-            
+
     private void setTsProc(TimeSpaceProcessor tsproc) throws SQLException, IOException {
         this.proc = tsproc;
 
         timeList.setModel(new AbstractListModel() {
 
-            JAMSCalendar[] dates = ((TimeSpaceProcessor)getProc()).getTimeSteps();
+            JAMSCalendar[] dates = ((TimeSpaceProcessor) getProc()).getTimeSteps();
 
             public int getSize() {
                 return dates.length;
@@ -469,7 +475,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
         entityList.setModel(new AbstractListModel() {
 
-            Long[] ids = ((TimeSpaceProcessor)getProc()).getEntityIDs();
+            Long[] ids = ((TimeSpaceProcessor) getProc()).getEntityIDs();
 
             public int getSize() {
                 return ids.length;
@@ -482,7 +488,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
         yearList.setModel(new AbstractListModel() {
 
-            int[] years = ((TimeSpaceProcessor)getProc()).getYears();
+            int[] years = ((TimeSpaceProcessor) getProc()).getYears();
 
             public int getSize() {
                 return years.length;
@@ -633,7 +639,7 @@ public class TimeSpaceDSPanel extends DSPanel {
             public void update(Observable o, Object arg) {
                 workerDlg.setProgress(Integer.parseInt(arg.toString()));
             }
-        });        
+        });
     }
 
     private boolean setCheckBox(String theLabel) {
@@ -646,7 +652,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         }
         return false;
     }
-    
+
     private void clearPanel() {
         timeList.setEnabled(false);
         entityList.setEnabled(false);
@@ -711,9 +717,9 @@ public class TimeSpaceDSPanel extends DSPanel {
                     int month = (Integer) monthList.getSelectedValue();
 
                     workerDlg.setInderminate(true);
-                    
+
                     m = getProc().getMonthlyMean(month);
-                    
+
                 } catch (SQLException ex) {
                     System.out.println(ex);
                     ex.printStackTrace();
@@ -759,7 +765,7 @@ public class TimeSpaceDSPanel extends DSPanel {
                     }
                     m = proc.getYearlyMean(year);
                     workerDlg.setInderminate(true);
-                    
+
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 } catch (IOException ex) {
@@ -822,7 +828,7 @@ public class TimeSpaceDSPanel extends DSPanel {
                         m = tsproc.getTemporalAvg();
                     } else {
                         m = tsproc.getTemporalMean(dates);
-                    }                                                          
+                    }
                 } catch (SQLException ex) {
                     System.out.println(ex);
                     ex.printStackTrace();
@@ -846,10 +852,11 @@ public class TimeSpaceDSPanel extends DSPanel {
         workerDlg.execute();
     }
 
-    private void showSpatEntity() {               
-        if (entityList.getSelectedValues().length == 0)                
+    private void showSpatEntity() {
+        if (entityList.getSelectedValues().length == 0) {
             return;
-                
+        }
+
         workerDlg.setInderminate(false);
         workerDlg.setProgress(0);
         workerDlg.setTask(new CancelableSwingWorker() {
@@ -857,8 +864,8 @@ public class TimeSpaceDSPanel extends DSPanel {
             DataMatrix m = null;
 
             public Object doInBackground() {
-                try {                                                            
-                        TimeSpaceProcessor tsproc = getProc();
+                try {
+                    TimeSpaceProcessor tsproc = getProc();
                     // check if number of selected ids is equal to all ids
                     // if so, we better derive temp avg from monthly means
                     Object[] objects = entityList.getSelectedValues();
@@ -884,9 +891,11 @@ public class TimeSpaceDSPanel extends DSPanel {
 
                     } else {
                         m = tsproc.getSpatialSum(ids);
-                    }                                                              
+                    }
                 } catch (SQLException ex) {
+                    ex.printStackTrace();
                 } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
                 return null;
             }
@@ -919,8 +928,8 @@ public class TimeSpaceDSPanel extends DSPanel {
 
             public Object doInBackground() {
                 try {
-                    String filter = timeField.getText();                   
-                    m = getProc().getTemporalMean(filter);                    
+                    String filter = timeField.getText();
+                    m = getProc().getTemporalMean(filter);
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 } catch (IOException ex) {
@@ -940,7 +949,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         workerDlg.execute();
     }
 
-    private void showCrossProduct() {        
+    private void showCrossProduct() {
         workerDlg.setInderminate(false);
         workerDlg.setProgress(0);
         workerDlg.setTask(new CancelableSwingWorker() {
@@ -948,21 +957,21 @@ public class TimeSpaceDSPanel extends DSPanel {
             DataMatrix m;
 
             public Object doInBackground() {
-                try {                                        
+                try {
                     Object[] objects2 = timeList.getSelectedValues();
 
                     String[] ids2 = new String[objects2.length];
-                    for (int c=0;c<ids2.length;c++){
+                    for (int c = 0; c < ids2.length; c++) {
                         ids2[c] = ((JAMSCalendar) objects2[c]).toString();
                     }
-                    
+
                     Object[] objects3 = entityList.getSelectedValues();
 
                     long[] ids3 = new long[objects3.length];
-                    for (int c=0;c<ids3.length;c++){
+                    for (int c = 0; c < ids3.length; c++) {
                         ids3[c] = (Long) objects3[c];
-                    }                                        
-                    m = getProc().getCrossProduct(ids3, ids2);                    
+                    }
+                    m = getProc().getCrossProduct(ids3, ids2);
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 } catch (IOException ex) {
@@ -981,7 +990,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         });
         workerDlg.execute();
     }
-    
+
     private void toggleFreeTempMeanButton() {
         String filter = timeField.getText();
         if (!filter.contains("%") && !filter.contains("?")) {
@@ -998,7 +1007,7 @@ public class TimeSpaceDSPanel extends DSPanel {
             ex.printStackTrace();
         }
     }
-    
+
     public void createProc(File file) {
 
         workerDlg.setTitle(workerDlg.getTitle() + " [" + file.getName() + "]");

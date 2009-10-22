@@ -7,18 +7,11 @@
         </classpath>
     </taskdef>
     
-    <target name="doall" depends="build, dostarters, doJ2K"/>
+    <target name="doall" depends="buildproj, dostarters, doJ2K"/>
 
-    <target name="doallwithclean" depends="cleanall, build, dostarters, doJ2K"/>
+    <target name="doallwithclean" depends="clean, buildproj, dostarters, doJ2K"/>
     
-    <target name="cleanlib">
-        <delete>
-            <fileset dir="../lib" includes="**/*"/>
-            <fileset dir="../lib/lib" includes="**/*"/>
-        </delete>
-    </target>
-
-    <target name="build" description="Build all NetBeans projects in this directory">
+    <target name="buildproj" description="Build all NetBeans projects in this directory">
         <foreach target="buildproject" param="buildxml">
             <path>
                 <fileset dir="../nbprojects">
@@ -32,9 +25,9 @@
         </antcall>
     </target>
     
-    <target name="cleanall" depends="clean, cleanlib" />
+    <target name="clean" depends="cleanproj, cleanlib" />
 
-    <target name="clean" description="Clean all NetBeans projects and delete libs in this directory">
+    <target name="cleanproj" description="Clean all NetBeans projects and delete libs in this directory">
         <foreach target="cleanproject" param="buildxml">
             <path>
                 <fileset dir="../nbprojects">
@@ -42,6 +35,13 @@
                 </fileset>
             </path>
         </foreach>
+    </target>
+
+    <target name="cleanlib">
+        <delete>
+            <fileset dir="../lib" includes="**/*"/>
+            <fileset dir="../lib/lib" includes="**/*"/>
+        </delete>
     </target>
 
     <target name="buildproject" description="Build a single NetBeans project">

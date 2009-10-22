@@ -527,15 +527,15 @@ public class TimeSpaceProcessor extends Processor{
     }
     
     public boolean isYearlyMeanExisiting() throws SQLException {
-        return isTableExisting(TABLE_NAME_YEARAVG);
+        return false;//isTableExisting(TABLE_NAME_YEARAVG);
     }
 
     public boolean isMonthlyMeanExisiting() throws SQLException {
-        return isTableExisting(TABLE_NAME_MONTHAVG);
+        return false;//isTableExisting(TABLE_NAME_MONTHAVG);
     }
 
     public boolean isSpatSumExisiting() throws SQLException {
-        return isTableExisting(TABLE_NAME_SPATSUM);
+        return false;//isTableExisting(TABLE_NAME_SPATSUM);
     }
 
     public synchronized void deleteCache() throws SQLException {

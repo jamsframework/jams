@@ -186,5 +186,17 @@ public class JAMSSimpleParaSampler extends JAMSContext {
             value.setValue(lowerBound.getValue());
             ce.reset();
         }
+
+        // TODO
+        @Override
+        public void setState(byte[]state) {
+
+        }
+
+        // TODO
+        @Override
+        public byte[] getState() {
+            return null;
+        }               
     }
 }

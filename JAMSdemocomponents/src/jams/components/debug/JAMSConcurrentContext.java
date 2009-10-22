@@ -147,5 +147,17 @@ public class JAMSConcurrentContext extends JAMSContext {
             index = 0;
             updateComponentData(index);
         }
+
+        // TODO
+        @Override
+        public void setState(byte[]state) {
+
+        }
+
+        // TODO
+        @Override
+        public byte[] getState() {
+            return null;
+        }               
     }
 }
