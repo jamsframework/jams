@@ -490,6 +490,8 @@ public class ExplorerFrame extends JFrame {
 
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_SPATIAL)) {
 
+                    Properties properties = new Properties();
+
                     //additional shape file?
                     String shapeFileName = (String) wizardSettings.get(BaseDataPanel.KEY_SHAPE_FILENAME);
                     if (!JAMSTools.isEmptyString(shapeFileName)) {
@@ -499,10 +501,14 @@ public class ExplorerFrame extends JFrame {
                         String id = JAMSTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
                         ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, id, theShapeFile.toURI().toString(), fileName, null);
                         ws.addDataStore(addShapeStore);
+
+                        // put shape to model
+                        properties.put("EntityReader.shapeFileName", shapeFileName);
+                        properties.put("EntityReader.idName", id);
                     }
 
+
                     // put interval to model
-                    Properties properties = new Properties();
                     Set<String> wizardKeys = ExplorerWizard.KEY_MODEL_MAPPING.keySet();
                     for (String wizardKey : wizardKeys) {
                         String value = (String) wizardSettings.get(wizardKey);
@@ -511,6 +517,7 @@ public class ExplorerFrame extends JFrame {
                             properties.put(modelKey, value);
                         }
                     }
+
                     ParameterProcessor.loadParams(modelDoc, properties);
 
                     update();
