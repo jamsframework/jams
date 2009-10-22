@@ -33,8 +33,6 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
 import jams.JAMS;
-import jams.SystemProperties;
-import jams.tools.JAMSTools;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSRuntime;
 import jams.tools.XMLIO;
@@ -52,8 +50,6 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Properties;
 
 public class JAMSWorkspace implements Workspace {
@@ -319,6 +315,22 @@ public class JAMSWorkspace implements Workspace {
         }
 
         return store;
+    }
+
+    /**
+     *
+     * @return A shape input datastore
+     */
+    public ShapeFileDataStore getFirstShapeInputDataStore() {
+
+        InputDataStore store = null;
+        Set<String> ids = getInputDataStoreIDs();
+        for (String id : ids) {
+            store = getInputDataStore(id);
+            if (store instanceof ShapeFileDataStore)
+                return (ShapeFileDataStore) store;
+        }
+        return null;
     }
 
     /**
