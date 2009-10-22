@@ -46,6 +46,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -165,7 +166,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-        launchWizardAction = new AbstractAction("Start new Regionalization...") {
+        launchWizardAction = new AbstractAction("Start Wizard...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -416,12 +417,21 @@ public class ExplorerFrame extends JFrame {
     private void launchWizard() {
 
         JAMSWorkspace ws = explorer.getWorkspace();
+        Wizard explorerWizard = new ExplorerWizard().createWizard();
+
+        // init data -> get shape from workspace
+        Map initialData = new HashMap<String, String>();
+        ShapeFileDataStore shapeDataStore = ws.getFirstShapeInputDataStore();
+        if (shapeDataStore != null) {
+            String shapeFileName = (new File(shapeDataStore.getUri()).getPath());
+            System.out.println("init wizard with shape " + shapeFileName);
+            initialData.put(BaseDataPanel.KEY_SHAPE_FILENAME, shapeFileName);
+        }
 
         try {
 
-            Wizard explorerWizard = new ExplorerWizard().createWizard();
             Map wizardSettings = (Map) WizardDisplayer.showWizard(explorerWizard,
-                    new Rectangle(20, 20, 850, 530));
+                    new Rectangle(20, 20, 850, 530), null, initialData);
             if (wizardSettings != null) {
                 Set keys = wizardSettings.keySet();
                 System.out.println("settings coming from wizard:");
