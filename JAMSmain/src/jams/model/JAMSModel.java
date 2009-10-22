@@ -393,6 +393,7 @@ public class JAMSModel extends JAMSContext implements Model {
     public void setModelState(Snapshot inData) {
         setModelState(inData,false);
     }
+
     @SuppressWarnings ("unchecked")
     public void setModelState(Snapshot inData, boolean restoreIterator) {
         HashMap<String, ContextSnapshotData> contextStates = null;

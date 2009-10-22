@@ -41,7 +41,6 @@ import jams.dataaccess.*;
 import jams.dataaccess.CalendarAccessor;
 import jams.io.DataTracer.AbstractTracer;
 import jams.runtime.JAMSRuntime;
-import jams.tools.SnapshotTools.ContextSnapshotData;
 import jams.workspace.stores.Filter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -57,7 +56,6 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     private Attribute.EntityCollection entities;
 
-//    private JAMSEntity currentEntity;
     protected ArrayList<Component> components = new ArrayList<Component>();
 
     protected ComponentEnumerator runEnumerator = null;
@@ -83,11 +81,8 @@ public class JAMSContext extends JAMSComponent implements Context {
      */
     public JAMSContext() {
 
-        //create an entity collection with one entity
-//            setCurrentEntity((JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class));
         ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
-//            list.add(getCurrentEntity());
-        list.add((JAMSEntity) JAMSDataFactory.createEntity());
+        list.add(JAMSDataFactory.createEntity());
         setEntities(JAMSDataFactory.createEntityCollection());
         getEntities().setEntities(list);
         attributeMap = new HashMap<String, JAMSData>();
@@ -392,7 +387,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                         }
                         output("\n");
                     }
-                    flush();
+//                    flush();
                 }
             };
         } else {
@@ -444,12 +439,15 @@ public class JAMSContext extends JAMSComponent implements Context {
                         }
                         output("\n");
                     }
-                    flush();
+//                    flush();
                 }
             };
         }
     }
 
+    /**
+     * Set up the output data tracers defined for this context
+     */
     public void setupDataTracer() {
 
         // get the output stores if existing
