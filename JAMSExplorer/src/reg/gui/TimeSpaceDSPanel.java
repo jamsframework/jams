@@ -296,7 +296,9 @@ public class TimeSpaceDSPanel extends DSPanel {
 
         buttonPanelA.add(new JButton(crossProduct) {
 
-            setPreferredSize(ACTION_BUTTON_DIM);
+            {
+                setPreferredSize(ACTION_BUTTON_DIM);
+            }
         });
 
         JPanel filterPanel = new JPanel();
