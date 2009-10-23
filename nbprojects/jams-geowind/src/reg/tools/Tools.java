@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package reg.tools;
 
 import java.util.Enumeration;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Vector;
 import reg.viewer.Constants;
@@ -24,14 +24,18 @@ public class Tools {
      */
     public static Vector<String> getPropertyGroup(String thePropertyFile, String thePropertyGroupName) {
         Vector<String> properties = new Vector<String>();
-        ResourceBundle resources = java.util.ResourceBundle.getBundle(thePropertyFile);
+        try {
+            ResourceBundle resources = java.util.ResourceBundle.getBundle(thePropertyFile);
 
-        Enumeration<String> keys = resources.getKeys();
-        while (keys != null && keys.hasMoreElements()) {
-            String key = keys.nextElement();
-            if (key.startsWith(thePropertyGroupName)) {
-                properties.add(resources.getString(key));
+            Enumeration<String> keys = resources.getKeys();
+            while (keys != null && keys.hasMoreElements()) {
+                String key = keys.nextElement();
+                if (key.startsWith(thePropertyGroupName)) {
+                    properties.add(resources.getString(key));
+                }
             }
+        } catch (MissingResourceException mre) {
+            System.out.println("No resource file found!");
         }
         return properties;
     }
