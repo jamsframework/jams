@@ -885,9 +885,9 @@ public class TimeSpaceDSPanel extends DSPanel {
                         }
                         workerDlg.setInderminate(true);
 
-                        if (!tsproc.isSpatSumExisiting()) {
-                            return null;
-                        }
+//                        if (!tsproc.isSpatSumExisiting()) {
+//                            return null;
+//                        }
 
                         m = tsproc.getSpatialSum();
 

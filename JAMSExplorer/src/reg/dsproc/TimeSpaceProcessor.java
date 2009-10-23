@@ -366,9 +366,9 @@ public class TimeSpaceProcessor extends Processor{
 
         DataMatrix result = null;
 
-        if (!isSpatSumExisiting()) {
-            return result;
-        }
+//        if (!isSpatSumExisiting()) {
+//            return result;
+//        }
 
         String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
         int attribCount = attributeIDs.length;
