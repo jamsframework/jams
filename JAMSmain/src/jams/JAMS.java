@@ -54,7 +54,7 @@ public class JAMS {
     /**
      * Resource bundle containing all string literals for some localization
      */
-    public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
+    public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
 
     /**
      * The standard font
