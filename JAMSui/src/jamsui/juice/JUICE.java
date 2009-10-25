@@ -45,7 +45,7 @@ import javax.swing.SwingWorker;
  */
 public class JUICE {
 
-    public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/JUICEBundle");
+    public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/i18n/JUICEBundle");
 
     public static final String APP_TITLE = "JUICE";
 
@@ -107,8 +107,8 @@ public class JUICE {
             String forcedLocale = getJamsProperties().getProperty("forcelocale");
             if (!JAMSTools.isEmptyString(forcedLocale)) {
                 Locale.setDefault(new Locale(forcedLocale));
-                resources = java.util.ResourceBundle.getBundle("resources/JUICEBundle");
-                JAMS.resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
+                resources = java.util.ResourceBundle.getBundle("resources/i18n/JUICEBundle");
+                JAMS.resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
             }
 
             int splashTimeout = Integer.parseInt(getJamsProperties().getProperty("splashtimeout", "1000"));

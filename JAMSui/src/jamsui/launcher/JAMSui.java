@@ -33,7 +33,6 @@ import jams.io.*;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jams.SystemProperties;
-import jamsui.launcher.JAMSFrame;
 import java.util.Locale;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -99,7 +98,7 @@ public class JAMSui {
         String forcedLocale = properties.getProperty("forcelocale");
         if (!JAMSTools.isEmptyString(forcedLocale)) {
             Locale.setDefault(new Locale(forcedLocale));
-            JAMS.resources = java.util.ResourceBundle.getBundle("resources/JAMSBundle");
+            JAMS.resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
         }
 
         splashTimeout = Integer.parseInt(properties.getProperty("splashtimeout", "1000"));
