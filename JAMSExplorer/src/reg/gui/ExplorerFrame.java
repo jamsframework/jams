@@ -255,10 +255,17 @@ public class ExplorerFrame extends JFrame {
         toolBar.add(reloadWSButton);
 
         JButton wsEditButton = new JButton(editWSAction);
+        JButton stpButton = new JButton(openSTPAction);
+
         wsEditButton.setText("");
         wsEditButton.setToolTipText((String) editWSAction.getValue(Action.NAME));
         wsEditButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
-        toolBar.add(wsEditButton);                
+        toolBar.add(wsEditButton);
+
+        stpButton.setText("");
+        stpButton.setToolTipText((String) openSTPAction.getValue(Action.NAME));
+        stpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/stp.png")));
+        toolBar.add(stpButton);
 
         if (explorer.isTlugized()) {
             JButton launchModelButton = new JButton(launchModelAction);

@@ -592,7 +592,7 @@ public class JAMSSpreadSheet extends JPanel {
         String[] headers;
 
         this.outputDSDir = file.getParentFile();
-        System.out.println("load() outputDSDir:" + outputDSDir.toString());
+//        System.out.println("load() outputDSDir:" + outputDSDir.toString());
 
         ArrayList<String> headerList = new ArrayList<String>();
 //        ArrayList<Double> rowList = new ArrayList<Double>();
@@ -1354,7 +1354,7 @@ public class JAMSSpreadSheet extends JPanel {
         GUIHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 6, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 7, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 8, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
+//        GUIHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 10, 1, 1, 0, 0);
 //        GUIHelper.addGBComponent(controlpanel, gbl, loadbutton, 0, 11, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, statButton, 0, 12, 1, 1, 0, 0);

@@ -24,14 +24,15 @@ package reg.tree;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.*;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 import javax.swing.tree.TreePath;
-import jams.workspace.JAMSWorkspace;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
@@ -65,8 +66,20 @@ public class DSTree extends JAMSTree {
                 displayDSData();
             }
         });
+
+        JMenuItem deleteItem = new JMenuItem("Delete");
+        deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+        deleteItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                deleteDSFile();
+            }
+        });
+
         popup = new JPopupMenu();
         popup.add(detailItem);
+        popup.add(deleteItem);
 
         addMouseListener(new MouseAdapter() {
 
@@ -135,6 +148,10 @@ public class DSTree extends JAMSTree {
 
     private void displayDSData() {
         explorer.getDisplayManager().displayDS((DSTreeNode) getLastSelectedPathComponent());
+    }
+
+    private void deleteDSFile(){
+        explorer.getDisplayManager().deleteDS((DSTreeNode) getLastSelectedPathComponent());
     }
 
     private void showPopup(MouseEvent evt) {

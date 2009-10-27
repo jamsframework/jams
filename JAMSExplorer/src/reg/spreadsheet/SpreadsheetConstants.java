@@ -52,6 +52,8 @@ public class SpreadsheetConstants {
 
     /* FONTS */
 
+    /* STRINGS */
+
 
     /* DEFAULT ST PLOT PROPERTIES */
 

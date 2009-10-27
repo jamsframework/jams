@@ -29,13 +29,16 @@ import java.io.IOException;
 import reg.spreadsheet.JAMSSpreadSheet;
 import jams.workspace.stores.StandardInputDataStore;
 import jams.workspace.stores.TSDataStore;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.StringTokenizer;
 import javax.swing.JPanel;
 import reg.gui.InputDSInfoPanel;
 import reg.gui.TSPanel;
 import reg.gui.TreePanel;
+import reg.spreadsheet.SpreadsheetConstants;
 import reg.tree.DSTreeNode;
 import reg.tree.FileObject;
 
@@ -162,6 +165,71 @@ public class DisplayManager implements Observer {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+                break;
+        }
+    }
+
+    public void deleteDS(DSTreeNode node) {
+
+        String dsID;
+        File ttpFile;
+        File datFile;
+
+        if (node == null) {
+            return;
+        }
+        switch (node.getType()) {
+
+            case DSTreeNode.INPUT_DS:
+
+//                dsID = node.toString();
+//                InputDataStore store = explorer.getWorkspace().getInputDataStore(dsID);
+//
+//                if (dataPanels.containsKey(dsID)) {
+//                    dataPanels.remove(dsID);
+//                }
+//
+//                ttpFile = explorer.getWorkspace().getInputDirectory();
+//
+//                if(ttpFile.exists()){
+//                    ttpFile.delete();
+//                }
+
+                break;
+
+            case DSTreeNode.OUTPUT_DS:
+
+                FileObject fo = (FileObject) node.getUserObject();
+
+                dsID = fo.getFile().getName() + " " + fo.getFile().getParentFile().getName();
+
+                if (dataPanels.containsKey(dsID)) {
+                    removeDisplay(dsID);
+                    dataPanels.remove(dsID);
+                }
+
+                datFile = fo.getFile();
+
+                String fileID = fo.getFile().getName();
+                StringTokenizer name_tokenizer = new StringTokenizer(fileID, ".");
+                String filename = "";
+                if (name_tokenizer.hasMoreTokens()) {
+                    filename = name_tokenizer.nextToken() + SpreadsheetConstants.FILE_ENDING_TTP;
+                } else {
+                    filename = fileID + SpreadsheetConstants.FILE_ENDING_TTP;
+                }
+
+                ttpFile = new File(fo.getFile().getParent(), filename);
+
+                if(ttpFile.exists()){
+                    ttpFile.delete();
+                }
+                if(datFile.exists()){
+                    datFile.delete();
+                }
+
+                explorer.getExplorerFrame().update();
+
                 break;
         }
     }
