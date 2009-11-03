@@ -650,7 +650,7 @@ public class GraphProperties {
     public void setColorLabelColor(){
         if(linesVisible) colorlabel.setBackground(getSeriesPaint());
         else colorlabel.setBackground(getSeriesFillPaint());
-  
+
     }
     
     public void setSColorLabelColor(){

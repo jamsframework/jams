@@ -613,7 +613,7 @@ public class JXYConfigurator extends JFrame {
 
     public int[] setPossibleDataIntervals() {
 
-        System.out.println("set possible data intervals");
+        
         double possible_start, possible_end;
 
         int[] range = new int[2];
@@ -628,10 +628,7 @@ public class JXYConfigurator extends JFrame {
 
                 double start = x_prop.readDataSTART();
                 double end = x_prop.readDataEND();
-                
-                System.out.println("read data start: "+start);
-                System.out.println("read data end: "+end);
-                
+                                             
                 int i = 0;
                 int x_col = x_prop.getSelectedColumn();
                 boolean out_of_boundaries = (start < sorted_Row[0].col[x_col]) || (start > sorted_Row[sorted_Row.length - 1].col[x_col]);
@@ -712,8 +709,6 @@ public class JXYConfigurator extends JFrame {
 
             double start = x_prop.readDataSTART();
             double end = x_prop.readDataEND();
-            System.out.println("read data start: "+start);
-            System.out.println("read data end: "+end);
             int i = 0;
             int x_col = x_prop.getSelectedColumn();
             boolean out_of_boundaries = (start < sorted_Row[0].col[x_col]) || (start > sorted_Row[sorted_Row.length - 1].col[x_col]);
@@ -1058,7 +1053,7 @@ public class JXYConfigurator extends JFrame {
                 propVector.get(i).getDataChoice().setEnabled(true);
                 propVector.get(i).getDataChoiceSTART().setEnabled(false);
                 propVector.get(i).getDataChoiceEND().setEnabled(false);
-                propVector.get(i).getColorChoice().setEnabled(true);
+                propVector.get(i).getColorChoice().setEnabled(false);
                 propVector.get(i).getPosChoice().setEnabled(true);
                 propVector.get(i).getAddButton().setEnabled(true);
                 propVector.get(i).getRemButton().setEnabled(true);
@@ -1469,7 +1464,7 @@ public class JXYConfigurator extends JFrame {
 
         JLabel nameLabel = new JLabel("Name");
         JLabel posLabel = new JLabel("Position");
-        JLabel typeLabel = new JLabel("Colour / Position");
+        JLabel typeLabel = new JLabel("Position");
         JLabel colorLabel = new JLabel("Type/Colour");
         JLabel dataLabel = new JLabel("Data / Legend Entry");
         JLabel timeLabel = new JLabel("Data Range");
@@ -1530,13 +1525,16 @@ public class JXYConfigurator extends JFrame {
         JLabel space4 = new JLabel(" ");
         JLabel space5 = new JLabel("   ");
         JLabel space6 = new JLabel("   ");
+        JLabel space7 = new JLabel("   ");
         JLabel lf = prop.getLegendLabel();
 
         group6.addComponent(space5);
 
         group1.addComponent(prop.getDataChoice()).addComponent(lf).addGap(20);
         group2.addComponent(prop.getDataChoiceSTART()).addComponent(prop.getDataChoiceEND());
-        group3.addComponent(prop.getColorChoice()).addComponent(prop.getPosChoice());
+//        group3.addComponent(prop.getColorChoice()).addComponent(prop.getPosChoice());
+        group3.addComponent(space5).addComponent(prop.getPosChoice());
+//        group3.addComponent(space7);
         group4.addComponent(prop.getCustomizeButton()).addComponent(prop.getMaxButton());
 
         group9.addComponent(space3);
@@ -1547,7 +1545,7 @@ public class JXYConfigurator extends JFrame {
         group14.addComponent(prop.getUpButton());
         group15.addComponent(prop.getDownButton());
 
-        vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING).addComponent(prop.getDataChoice()).addComponent(prop.getDataChoiceSTART()).addComponent(space5).addComponent(prop.getColorChoice()).addComponent(space5).addComponent(prop.getCustomizeButton()).addComponent(prop.getIsXAxisButton()).addComponent(prop.getColorLabel()));
+        vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING).addComponent(prop.getDataChoice()).addComponent(prop.getDataChoiceSTART()).addComponent(space5).addComponent(space5).addComponent(space5).addComponent(prop.getCustomizeButton()).addComponent(prop.getIsXAxisButton()).addComponent(prop.getColorLabel()));
         vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING).addComponent(lf).addComponent(prop.getDataChoiceEND()).addComponent(prop.getMaxButton()).addComponent(prop.getPosChoice()).addComponent(space3).addComponent(space4).addComponent(prop.getRemButton()).addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
         vGroup.addGroup(gLayout.createParallelGroup().addGap(20));
 
