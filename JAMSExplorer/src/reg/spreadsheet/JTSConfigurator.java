@@ -515,6 +515,7 @@ public class JTSConfigurator extends JFrame {
                     prop.setStrokeSlider(SpreadsheetConstants.JTS_DEFAULT_STROKE);
                     prop.setShape(SpreadsheetConstants.JTS_DEFAULT_SHAPE, SpreadsheetConstants.JTS_DEFAULT_SHAPE_SIZE);
                     prop.setShapeSlider(SpreadsheetConstants.JTS_DEFAULT_SHAPE_SIZE);
+                    prop.setShapeBox(SpreadsheetConstants.JTS_DEFAULT_SHAPE);
 
 
 

@@ -211,9 +211,8 @@ public class JXYConfigurator extends JFrame {
             tempLoaded = false;
         }
 
-        System.out.println("graphCount "+graphCount);
         if ((isDataTemplate(templateFile) && table.getColumnCount() > 1) || !tempLoaded){
-
+            
             try {
                 writeSortedData(columns[0]);
             } catch (java.lang.ArrayIndexOutOfBoundsException aiofb) {
@@ -479,6 +478,12 @@ public class JXYConfigurator extends JFrame {
                     prop.setSeriesOutlinePaint(colorTable.get(colors[2]));
                     prop.setLinesVisible(false);
                     prop.setLinesVisBox(false);
+
+                    prop.setStroke(SpreadsheetConstants.JXYS_DEFAULT_STROKE);
+                    prop.setStrokeSlider(SpreadsheetConstants.JXYS_DEFAULT_STROKE);
+                    prop.setShape(SpreadsheetConstants.JXYS_DEFAULT_SHAPE, SpreadsheetConstants.JTS_DEFAULT_SHAPE_SIZE);
+                    prop.setShapeSlider(SpreadsheetConstants.JXYS_DEFAULT_SHAPE_SIZE);
+                    prop.setShapeBox(SpreadsheetConstants.JXYS_DEFAULT_SHAPE);
 //                    prop.setName(table.getColumnName(k + 1));
 //                    prop.setLegendName(table.getColumnName(k + 1));
 
@@ -602,15 +607,20 @@ public class JXYConfigurator extends JFrame {
         this.d_end_changed = state;
     }
 
+    private void setXDataIntervals(){
+
+    }
+
     public int[] setPossibleDataIntervals() {
 
-
+        System.out.println("set possible data intervals");
         double possible_start, possible_end;
 
         int[] range = new int[2];
         GraphProperties x_prop = propVector.get(x_series_index);
 
         if (!d_start_changed || !d_end_changed) {
+           
             if (!d_start_changed) {
                 range[0] = this.range[0];
 
@@ -618,7 +628,10 @@ public class JXYConfigurator extends JFrame {
 
                 double start = x_prop.readDataSTART();
                 double end = x_prop.readDataEND();
-
+                
+                System.out.println("read data start: "+start);
+                System.out.println("read data end: "+end);
+                
                 int i = 0;
                 int x_col = x_prop.getSelectedColumn();
                 boolean out_of_boundaries = (start < sorted_Row[0].col[x_col]) || (start > sorted_Row[sorted_Row.length - 1].col[x_col]);
@@ -699,7 +712,8 @@ public class JXYConfigurator extends JFrame {
 
             double start = x_prop.readDataSTART();
             double end = x_prop.readDataEND();
-
+            System.out.println("read data start: "+start);
+            System.out.println("read data end: "+end);
             int i = 0;
             int x_col = x_prop.getSelectedColumn();
             boolean out_of_boundaries = (start < sorted_Row[0].col[x_col]) || (start > sorted_Row[sorted_Row.length - 1].col[x_col]);
@@ -721,15 +735,6 @@ public class JXYConfigurator extends JFrame {
                     start = sorted_Row[i + 1].col[x_col];
                     range[0] = i + 1;
                 }
-            //            if(start - sorted_Row[i].col[x_col] < sorted_Row[i+1].col[x_col] - start){
-            //                start = sorted_Row[i].col[x_col];
-            //                range[0] = i;
-            //            }
-            //            else{
-            //                start = sorted_Row[i+1].col[x_col];
-            //                range[0] = i+1;
-            //            }
-
 
             } else {
                 if (start < sorted_Row[0].col[x_col]) {
@@ -773,6 +778,7 @@ public class JXYConfigurator extends JFrame {
             this.row_end = end;
         }
         this.range = range;
+        System.out.println("possible data intervals are: "+range[0]+" and "+range[1]);
         return range;
     }
 
@@ -1870,7 +1876,8 @@ public class JXYConfigurator extends JFrame {
 
             load_prop = false;
             GraphProperties gprop = new GraphProperties(this);
- 
+
+
             if (i == x_series_index) {
                 gprop.setIsXSeries(true);
                 gprop.getIsXAxisButton().setSelected(true);
@@ -1880,22 +1887,25 @@ public class JXYConfigurator extends JFrame {
                 if(data_start_string.compareTo("DEFAULT") != 0){
                       //start
                       data_start = new Double(properties.getProperty("dataSTART"));
+                      this.dStartChanged(true);
                       //end
                       data_end = new Double(properties.getProperty("dataEND"));
+                      this.dEndChanged(true);
                 }
                 else{
                     this.setPossibleDataIntervals();
                 }
                 
             } else {
+
                 gprop.setIsXSeries(false);
             }
+            gprop.setXSeries(x_series_index);
+
 
             if (nameTokenizer.hasMoreTokens()) {
 
                 name = nameTokenizer.nextToken();
-
-
                 for (int k = 0; k < table.getColumnCount(); k++) {
                     if (table.getColumnName(k).compareTo(name) == 0) { //stringcompare?
 
@@ -2005,33 +2015,22 @@ public class JXYConfigurator extends JFrame {
         }
 
         xChanged(propVector.get(x_series_index));
-//        setMaxDataIntervals(propVector.get(x_series_index));
 
-        //range = setDataIntervals();
-        
-        //int[] range = new int[2];
-        //x_series_index
-        
-        //setDataIntervals///////////////////
-        this.row_start = sorted_Row[0].col[x_series_index];
-        this.row_end = sorted_Row[sorted_Row.length - 1].col[x_series_index];
-        range[0] = 0;
-        range[1] = sorted_Row.length - 1;
 
-        dStartChanged(false);
-        dEndChanged(false);
-        ////////////////////////////////////
-         
-        
         for (int c = 0; c < no_of_props; c++) {
 
-            propVector.get(c).setXIntervals(range);
-                    if (c == x_series_index) {
-                        propVector.get(c).setDataSTART(data_start);
-                        propVector.get(c).setDataEND(data_end);
-                    }
-            propVector.get(c).applyXYProperties();
+            if (c == x_series_index) {
+                this.resortData(propVector.get(c).getSelectedColumn());
+                propVector.get(c).setDataSTART(data_start);
+                propVector.get(c).setDataEND(data_end);
+            }
+        }
+        range = setPossibleDataIntervals();
+        for (int c = 0; c < no_of_props; c++) {
             
+            propVector.get(c).setXIntervals(range);
+            propVector.get(c).applyXYProperties();
+
 //            propVector.get(c).setXIntervals(range);
         }
 

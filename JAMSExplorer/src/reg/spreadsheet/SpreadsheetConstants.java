@@ -62,7 +62,10 @@ public class SpreadsheetConstants {
     public final static int JTS_DEFAULT_STROKE = 2;
     public final static int JTS_DEFAULT_SHAPE_SIZE = 3;
     public final static int JTS_DEFAULT_SHAPE = 1;
+
     /* DEFAULT JXYS PLOT PROPERTIES */
 
-
+    public final static int JXYS_DEFAULT_STROKE = 2;
+    public final static int JXYS_DEFAULT_SHAPE_SIZE = 3;
+    public final static int JXYS_DEFAULT_SHAPE = 5;
 }

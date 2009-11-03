@@ -209,6 +209,7 @@ public class DisplayManager implements Observer {
                 }
 
                 datFile = fo.getFile();
+                System.out.println("dat file:"+fo.getFile().getAbsolutePath());
 
                 String fileID = fo.getFile().getName();
                 StringTokenizer name_tokenizer = new StringTokenizer(fileID, ".");
@@ -226,6 +227,7 @@ public class DisplayManager implements Observer {
                 }
                 if(datFile.exists()){
                     datFile.delete();
+                }else{
                 }
 
                 explorer.getExplorerFrame().update();

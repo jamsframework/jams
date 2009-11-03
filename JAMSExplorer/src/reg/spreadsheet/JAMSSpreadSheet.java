@@ -684,6 +684,9 @@ public class JAMSSpreadSheet extends JPanel {
                     }
                 }
             }
+
+            in.close();
+
             headers = new String[file_columns];
             headers = headerList.toArray(headers);
 

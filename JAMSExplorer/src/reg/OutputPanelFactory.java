@@ -49,7 +49,7 @@ public class OutputPanelFactory {
         }
 
         if (line.startsWith("@context")) {
-            return new OutputDSPanel(explorer, file);
+            return new OutputDSPanel(explorer, file, id);
         }
 
         if (line.startsWith(SpreadsheetConstants.LOAD_HEADERS)) {

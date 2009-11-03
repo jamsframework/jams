@@ -268,6 +268,7 @@ public class GraphProperties {
         datachoice_max.addActionListener(max_listener);
         
         datachoice_START = new JTextField();
+        datachoice_START.setHorizontalAlignment(JTextField.RIGHT);
         datachoice_START.setPreferredSize(new Dimension(40,14));
         datachoice_START.addMouseListener(dataSTARTListener);
         
@@ -275,6 +276,7 @@ public class GraphProperties {
 
         datachoice_END = new JTextField();
         datachoice_END.setPreferredSize(new Dimension(40,14));
+        datachoice_END.setHorizontalAlignment(JTextField.RIGHT);
         datachoice_END.addMouseListener(dataENDListener);
         
         datachoice_END.getDocument().addDocumentListener(d_end_listener);
@@ -768,8 +770,14 @@ public class GraphProperties {
     
     public void setDataSTART(double d_start){
         data_range_start = (double) d_start;
-        String s = ""+d_start;
-        s.format("3.3f", s);
+        String f_string;
+        if(d_start > 100){
+            f_string = "%3.0f";
+        } else {
+            f_string = "%3.2f";
+        }
+
+        String s = String.format(Locale.US, f_string, data_range_start);
 //        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 //        nf.setMaximumFractionDigits(4);
 //        s = nf.format(data_range_start);
@@ -778,8 +786,14 @@ public class GraphProperties {
     
     public void setDataEND(double d_end){
         data_range_end =  (double)d_end;
-        String s = ""+d_end;
-        s.format("3.3f", s);
+        String f_string;
+        if(d_end > 100){
+            f_string = "%3.0f";
+        } else {
+            f_string = "%3.2f";
+        }
+        
+        String s = String.format(Locale.US, f_string, data_range_end);
 //        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 //        nf.setMaximumFractionDigits(4);
 //        s = nf.format(data_range_end);
@@ -840,7 +854,12 @@ public class GraphProperties {
         d_start = new Double(text);
         return d_start;
     }
-    
+
+    public double readDataEND(){
+        double d_end = new Double(datachoice_END.getText());
+        return d_end;
+    }
+
     public double getDataSTART(){
         
         return data_range_start;
@@ -853,10 +872,7 @@ public class GraphProperties {
     
     
     
-    public double readDataEND(){
-        double d_end = new Double(datachoice_END.getText());
-        return d_end;
-    }
+    
 
     public boolean axisInverted(){
         return invBox.isSelected();
@@ -1104,7 +1120,7 @@ public class GraphProperties {
 //            case 4: setSeriesShape(new java.awt.Rectangle()); break;
             default: setSeriesShape(new java.awt.Rectangle()); break;         
         }
-       
+
     }
     
     public int getStrokeType(){
@@ -1736,7 +1752,8 @@ public class GraphProperties {
             setVisible(false);
         }
         
-        
+
+
         private void handleGUI(){
             if(getRendererType() == 0){ //line and shape
                  
