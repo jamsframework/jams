@@ -73,6 +73,7 @@ import gw.util.WorldWindUtils;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.util.Arrays;
+import java.util.Map.Entry;
 import javax.swing.JFileChooser;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import reg.DataTransfer;
@@ -93,6 +94,7 @@ public class FancyPanel extends JPanel implements GeoWindView {
     private java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gw/resources/language"); // NOI18N
 
     public static final String TITLE = "TLUG - Regionalisierung";
+
     public static final boolean enableNext = true;
 
     /**
@@ -104,6 +106,7 @@ public class FancyPanel extends JPanel implements GeoWindView {
      * unused standard layers
      */
     private Vector<String> unusedStandardLayers = new Vector<String>();
+
     /**
      * additional application layers
      */
@@ -122,7 +125,7 @@ public class FancyPanel extends JPanel implements GeoWindView {
     }
 
     public void flyToWorkLayer() {
-        SimpleFeatureLayer workLayer = (SimpleFeatureLayer)getWorkLayer();
+        SimpleFeatureLayer workLayer = (SimpleFeatureLayer) getWorkLayer();
         if (workLayer != null) {
             System.out.println("fly to layer " + workLayer.getName());
             WorldWindUtils.flyTo(workLayer.getSector(), ww);
@@ -148,7 +151,6 @@ public class FancyPanel extends JPanel implements GeoWindView {
     public void setWorkLayerName(String workLayerName) {
         this.workLayerName = workLayerName;
     }
-
 
     public Vector<File> getApplicationLayers() {
         return applicationLayers;
@@ -199,8 +201,10 @@ public class FancyPanel extends JPanel implements GeoWindView {
                 Vector<Double> wrappedValues = new Vector<Double>(max);
                 if (idData != null) {
                     Collection<Double> idValues = idData.values();
-                    wrappedValues = getResortedValues(idValues, dtIds, dtColumnValues);
+                    wrappedValues = getResortedValues(idData, dtIds, dtColumnValues);
+                    System.out.println(wrappedValues);
                 } else {
+                    System.out.println("Couldn't corretly match the values, using default ordering!");
                     // no Ids -> take the values as it is (but wrapped)
                     for (double value : dtColumnValues) {
                         wrappedValues.add(new Double(value));
@@ -229,32 +233,40 @@ public class FancyPanel extends JPanel implements GeoWindView {
      * @param inputValues - fitting to inputIds
      * @return vector with sorted values
      */
-    private Vector<Double> getResortedValues(Collection<Double> idValues, double[] inputIds, double[] inputValues) {
+    private Vector<Double> getResortedValues(Map<Integer, Double> idData, double[] inputIds, double[] inputValues) {
 
-        Vector<Double> wrappedValues = new Vector<Double>(inputValues.length);
-
-        // convert to Vector<Double> for better searching
-        Vector<Double> dtIdList = new Vector<Double>(inputValues.length);
-        for (double dtId : inputIds) {
-            dtIdList.add(new Double(dtId));
+        // create reversed map of idData
+        Map<Double, Integer> idPosition = new HashMap<Double, Integer>();
+        Iterator<Entry<Integer, Double>> iter = idData.entrySet().iterator();
+        while (iter.hasNext()) {
+            Entry<Integer, Double> e = iter.next();
+            idPosition.put(e.getValue(), e.getKey());
         }
+        
 
-        int i;
+        double[] sortedValues = new double[inputIds.length];
         int success = 0;
         int failure = 0;
-        for (Double idValue : idValues) {
-            i = dtIdList.indexOf(idValue);
-            //System.out.println("vergleiche mit " + idValue + ", Ergebnis: " + i);
-            if (i > -1) {
-                wrappedValues.add(new Double(inputValues[i]));
-                success++;
-            } else {
-                wrappedValues.add(null);
+
+        for (int i = 0; i < inputIds.length; i++) {
+
+            if (!idPosition.containsKey(inputIds[i])) {
                 failure++;
+                continue;
             }
+
+            success++;
+            int index = idPosition.get(inputIds[i]);
+            sortedValues[index] = inputValues[i];
         }
+
         System.out.println("filled values according to ids. success=" + success + ", failure=" + failure);
-        return wrappedValues;
+
+        Vector<Double> result = new Vector<Double>();
+        for (double d : sortedValues) {
+            result.add(d);
+        }
+        return result;
     }
 
     private Component getTop(JPanel c) {
@@ -267,7 +279,6 @@ public class FancyPanel extends JPanel implements GeoWindView {
         }
         return null;
     }
-
 //    
     PropertyChangeListener updater = new PropertyChangeListener() {
 
@@ -314,6 +325,7 @@ public class FancyPanel extends JPanel implements GeoWindView {
         }
     };
 //
+
     Action exitAction = new AbstractAction() {
 
         {
@@ -328,29 +340,39 @@ public class FancyPanel extends JPanel implements GeoWindView {
         }
     };
 //
+
     WorldWindowGLJPanel ww;
+
     SlidingSupport ss = new SlidingSupport(true);
+
     LayerControl lc;
+
     ViewControl vc;
 //    OutputControl con = new OutputControl();
+
     ConsoleControl console = new ConsoleControl();
 //    
+
     CardLayout al = new CardLayout();
+
     JXCollapsiblePane data1 = new JXCollapsiblePane(JXCollapsiblePane.Orientation.VERTICAL);
+
     JPanel data = new JPanel(al);
 //    
+
     static Color blueish = new Color(174, 209, 255);
 //
+
     Addon activeAddon;
 //    JFrame full = new JFrame();
-    JPanel center = new JPanel(new BorderLayout());
-    JToggleButton upButton = new JToggleButton();
 
+    JPanel center = new JPanel(new BorderLayout());
+
+    JToggleButton upButton = new JToggleButton();
 
 //    public void dispose() {
 //        full.dispose();
 //    }
-
     /** Creates new form P */
     /**
      * constructor with some initial data
@@ -385,7 +407,7 @@ public class FancyPanel extends JPanel implements GeoWindView {
             }
 
             @Override
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings ("unchecked")
             public void drop(DropTargetDropEvent evt) {
                 try {
                     Transferable tr = evt.getTransferable();
@@ -554,7 +576,7 @@ public class FancyPanel extends JPanel implements GeoWindView {
 
 
 
-   
+        
 
         resizeLabel.addMouseListener(
                 new MouseAdapter() {
@@ -744,13 +766,12 @@ public class FancyPanel extends JPanel implements GeoWindView {
         return null;
     }
 
-/**
- * add the layer with work shape file
- * @param workShapeFile
- */
+    /**
+     * add the layer with work shape file
+     * @param workShapeFile
+     */
     public void addWorkShape(File workShapeFile)
-        throws Exception
-    {
+            throws Exception {
         if (workShapeFile != null) {
             SimpleFeatureLayer layer = LayerFactory.fromShapefile(workShapeFile, ww);
             addLayer(layer);
@@ -760,14 +781,12 @@ public class FancyPanel extends JPanel implements GeoWindView {
         }
     }
 
-
-
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings ("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
