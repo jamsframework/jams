@@ -248,7 +248,6 @@ public class TimeSpaceProcessor extends Processor{
         long position;
         DataMatrix aggregate;
         int count = 1, percent = 0;
-        ;
 
         if (rs.next()) {
             position = rs.getLong("POSITION");
@@ -308,9 +307,6 @@ public class TimeSpaceProcessor extends Processor{
             ArrayList<double[]> a = new ArrayList<double[]>();
             for (int i = 0; i < ids.length; i++) {
                 idPosition[i] = m.getIDPosition(String.valueOf(ids[i]));
-                if (idPosition[i] == -1) {
-                    return null;
-                }
                 a.add(m.getRow(idPosition[i]));
             }
             data.add(getSum(a));
@@ -403,21 +399,22 @@ public class TimeSpaceProcessor extends Processor{
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getTemporalAvg() throws SQLException, IOException {
+    public synchronized DataMatrix getTemporalMean() throws SQLException, IOException {
 
-        DataMatrix aggregate = getMonthlyMean(1);
-        if (aggregate == null) {
-            return null;
-        }
-        for (int i = 2; i <= 12; i++) {
-            DataMatrix monthlyData = getMonthlyMean(i);
-            if (monthlyData == null) {
-                return null;
-            }
-            aggregate = aggregate.plus(monthlyData);
-        }
-        aggregate = aggregate.times(1d / 12);
-        return aggregate;
+//        DataMatrix aggregate = getMonthlyMean(1);
+//        if (aggregate == null) { passiert auch, wenn nicht alle monate vorhanden
+//            return null;
+//        }
+//        for (int i = 2; i <= 12; i++) {
+//            DataMatrix monthlyData = getMonthlyMean(i);
+//            if (monthlyData == null) {
+//                return null;
+//            }
+//            aggregate = aggregate.plus(monthlyData);
+//        }
+//        aggregate = aggregate.times(1d / 12); BULLSHIT!!!
+//        return aggregate;
+        return null;
     }
 
     /**
@@ -457,6 +454,10 @@ public class TimeSpaceProcessor extends Processor{
             }
             data.add(rowdata);
             ids.add(rs.getLong(2));
+        }
+
+        if (data.isEmpty()) {
+            return null;
         }
 
         // create a DataMatrix object from the results
@@ -527,15 +528,15 @@ public class TimeSpaceProcessor extends Processor{
     }
     
     public boolean isYearlyMeanExisiting() throws SQLException {
-        return false;//isTableExisting(TABLE_NAME_YEARAVG);
+        return isTableExisting(TABLE_NAME_YEARAVG);
     }
 
     public boolean isMonthlyMeanExisiting() throws SQLException {
-        return false;//isTableExisting(TABLE_NAME_MONTHAVG);
+        return isTableExisting(TABLE_NAME_MONTHAVG);
     }
 
     public boolean isSpatSumExisiting() throws SQLException {
-        return false;//isTableExisting(TABLE_NAME_SPATSUM);
+        return isTableExisting(TABLE_NAME_SPATSUM);
     }
 
     public synchronized void deleteCache() throws SQLException {
@@ -914,7 +915,7 @@ public class TimeSpaceProcessor extends Processor{
             case 2:
                 // get overall temporal mean values
                 // (based on longterm monthly mean values)
-                m = tsproc.getTemporalAvg();
+                m = tsproc.getTemporalMean();
                 break;
             case 3:
                 // calc/get overall spatial mean values

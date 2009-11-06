@@ -563,7 +563,7 @@ public class TimeSpaceDSPanel extends DSPanel {
             AttribRadioButton button1, button2, button3;
             button1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_NONE);
             button2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_WEIGHT);
-            button3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_AREA);
+            button3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_REL_WEIGHT);
             button1.setSelected(true);
 
             ItemListener attribRadioButtonListener = new ItemListener() {
@@ -816,7 +816,10 @@ public class TimeSpaceDSPanel extends DSPanel {
 
                     // check if number of selected ids is equal to all ids
                     // if so, we better derive temp avg from monthly means
-                    if (dates.length == timeList.getModel().getSize()) {
+                    if (false && dates.length == timeList.getModel().getSize()) {
+
+                        tsproc.deleteCache();
+
                         // check if cache tables are available
                         if (!tsproc.isMonthlyMeanExisiting()) {
                             tsproc.calcMonthlyMean();
@@ -827,7 +830,7 @@ public class TimeSpaceDSPanel extends DSPanel {
                             return null;
                         }
 
-                        m = tsproc.getTemporalAvg();
+                        m = tsproc.getTemporalMean();
                     } else {
                         m = tsproc.getTemporalMean(dates);
                     }
@@ -879,15 +882,18 @@ public class TimeSpaceDSPanel extends DSPanel {
                     }
 
                     if (ids.length == entityList.getModel().getSize()) {
+
+                        tsproc.deleteCache();
+
                         // check if cache tables are available
                         if (!tsproc.isSpatSumExisiting()) {
                             tsproc.calcSpatialSum();
                         }
                         workerDlg.setInderminate(true);
 
-//                        if (!tsproc.isSpatSumExisiting()) {
-//                            return null;
-//                        }
+                        if (!tsproc.isSpatSumExisiting()) {
+                            return null;
+                        }
 
                         m = tsproc.getSpatialSum();
 

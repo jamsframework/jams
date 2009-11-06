@@ -770,7 +770,7 @@ public class DataStoreProcessor {
 
         public static final int AGGREGATION_NONE = 1;
         public static final int AGGREGATION_WEIGHT = 2;
-        public static final int AGGREGATION_AREA = 3;
+        public static final int AGGREGATION_REL_WEIGHT = 3;
 
         private String type;
 
@@ -778,7 +778,7 @@ public class DataStoreProcessor {
 
         private boolean selected;
 
-        private int aggregationWeight = 1;
+        private int aggregationWeight = AGGREGATION_NONE;
 
         public AttributeData(String type, String name) {
             this.type = type;

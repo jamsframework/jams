@@ -544,7 +544,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
             AttribRadioButton button1, button2, button3;
             button1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_NONE);
             button2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_WEIGHT);
-            button3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_AREA);
+            button3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_REL_WEIGHT);
             button1.setSelected(true);
 
             ItemListener attribRadioButtonListener = new ItemListener() {

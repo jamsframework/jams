@@ -60,11 +60,7 @@ public abstract class DSPanel extends JPanel {
             return;
         }
 
-        postProcess(m, timeSeries);
-
-        if (false) {
-            return;
-        }
+        //postProcess(m, timeSeries);
 
         if (m.getAttributeIDs() == null) {
             m.setAttributeIDs(dsdb.getSelectedDoubleAttribs());
@@ -133,7 +129,7 @@ public abstract class DSPanel extends JPanel {
 
                 for (int i = 0; i < data.length; i++) {
                     switch (attrib.getAggregationWeight()) {
-                        case DataStoreProcessor.AttributeData.AGGREGATION_AREA:
+                        case DataStoreProcessor.AttributeData.AGGREGATION_REL_WEIGHT:
                             if (timeSeries) {
                                 data[i][j] /= area;
                             } else {

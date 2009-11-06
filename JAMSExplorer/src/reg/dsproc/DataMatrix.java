@@ -1,11 +1,15 @@
 package reg.dsproc;
 
 import Jama.Matrix;
+import java.util.HashMap;
 
 public class DataMatrix extends Matrix {
 
     private Object[] ids;
+
     private String[] attributeIDs;
+
+    private HashMap<String, Integer> idPositions;
 
     public DataMatrix(double[][] data, Object[] ids, String[] attributeIDs) {
         super(data);
@@ -74,31 +78,43 @@ public class DataMatrix extends Matrix {
     }
 
     public int getIDPosition(String id) {
-        int i = 0;
-        boolean found = false;
-        for (Object o : ids) {
-            if (o.toString().equals(id)) {
-                found = true;
-                break;
+
+        if (idPositions == null) {
+            int i = 0;
+            idPositions = new HashMap<String, Integer>();
+            for (Object o : ids) {
+                idPositions.put(o.toString(), i);
+                i++;
             }
-            i++;
         }
-        if (found) {
-            return i;
-        } else {
-            return -1;
-        }
+
+        return idPositions.get(id);
+
+//        int i = 0;
+//        boolean found = false;
+//        for (Object o : ids) {
+//            if (o.toString().equals(id)) {
+//                found = true;
+//                break;
+//            }
+//            i++;
+//        }
+//        if (found) {
+//            return i;
+//        } else {
+//            return -1;
+//        }
     }
 
     public double[] getRow(int position) {
         return getArray()[position];
     }
-    
+
     public double[] getCol(int position) {
         double array[][] = this.getArray();
         int n = array.length;
         double[] column = new double[n];
-        for (int i=0;i<n;i++){
+        for (int i = 0; i < n; i++) {
             column[i] = array[i][position];
         }
         return column;
