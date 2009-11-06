@@ -1,3 +1,5 @@
 @echo off
 
-ant
+call ant
+
+pause

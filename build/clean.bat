@@ -1,3 +1,5 @@
 @echo off
 
-ant clean
+call ant clean
+
+pause
