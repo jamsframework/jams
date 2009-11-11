@@ -78,9 +78,8 @@ public abstract class Processor {
         }
     }
 
-    protected double[][] calcWeights(ArrayList<double[]> values, int weightAttribIndex) {
+    protected double[][] calcWeights(double a[][], int weightAttribIndex) {
 
-        double a[][] = values.toArray(new double[values.get(0).length][values.size()]);
         double result[][] = new double[a.length][a[0].length];
         double relWeights[] = null;
         int i = -1;
@@ -94,7 +93,7 @@ public abstract class Processor {
                     case DataStoreProcessor.AttributeData.AGGREGATION_WEIGHT:
 
                         for (int j = 0; j < a.length; j++) {
-                            result[j][i] = a[j][weightAttribIndex];
+                            result[j][i] = 1d/a.length;
                         }
 
                         break;
@@ -139,12 +138,12 @@ public abstract class Processor {
         return result;
     }
 
-    protected synchronized double[] getSum(ArrayList<double[]> a, double[][] weights) {
+    protected synchronized double[] getSum(double[][] a, double[][] weights) {
 
-        double[] result = arrayMulti(a.get(0), weights[0]);
+        double[] result = arrayMulti(a[0], weights[0]);
         double[] b;
-        for (int i = 1; i < a.size(); i++) {
-            b = arrayMulti(a.get(i), weights[i]);
+        for (int i = 1; i < a.length; i++) {
+            b = arrayMulti(a[i], weights[i]);
             for (int c = 0; c < result.length; c++) {
                 result[c] += b[c];
             }

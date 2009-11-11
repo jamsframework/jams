@@ -531,7 +531,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         label = new JLabel("1");
         label.setHorizontalAlignment(SwingConstants.CENTER);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 5, 1, 1, 0, 0);
-        label = new JLabel("w");
+        label = new JLabel("1/n");
         label.setHorizontalAlignment(SwingConstants.CENTER);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 11, 5, 1, 1, 0, 0);
         label = new JLabel("w/W");

@@ -308,11 +308,11 @@ public class TimeSpaceProcessor extends Processor{
             DataMatrix m = dsdb.getData(rs.getLong("POSITION"));
             
             // create an ArrayList and add all lines whose id is listed in ids
-            ArrayList<double[]> a = new ArrayList<double[]>();
+            double[][] a = new double[ids.length][];
             for (int i = 0; i < ids.length; i++) {
                 // store the line postitions within the matrix for further use
                 idPosition[i] = m.getIDPosition(String.valueOf(ids[i]));
-                a.add(m.getRow(idPosition[i]));
+                a[i] = m.getRow(idPosition[i]);
             }
             weights = calcWeights(a, weightAttribIndex);
             data.add(getSum(a, weights));
@@ -332,9 +332,9 @@ public class TimeSpaceProcessor extends Processor{
             }
 
             DataMatrix m = dsdb.getData(rs.getLong("POSITION"));
-            ArrayList<double[]> a = new ArrayList<double[]>();
+            double[][] a = new double[ids.length][];
             for (int i = 0; i < ids.length; i++) {
-                a.add(m.getRow(idPosition[i]));
+                a[i] = m.getRow(idPosition[i]);
             }
             data.add(getSum(a, weights));
             timeStamps.add(rs.getTimestamp(timeID).toString());
