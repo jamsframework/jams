@@ -27,7 +27,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
-import jams.data.JAMSEntity;
 import jams.data.JAMSEntityCollection;
 import jams.data.JAMSString;
 import jams.model.JAMSComponent;
@@ -35,11 +34,12 @@ import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.AttributeType;
-import org.geotools.feature.Feature;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.AreaFunction;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.AttributeDescriptor;
 
 /**
  *
@@ -85,14 +85,15 @@ public class ShapeEntityReader extends JAMSComponent {
         URL shapeUrl = (new java.io.File(getModel().getWorkspaceDirectory().getPath() + "/" + shapeFileName.getValue()).toURI().toURL());
         ShapefileDataStore store = new ShapefileDataStore(shapeUrl);
 
-        Iterator featureIterator = store.getFeatureSource(store.getTypeNames()[0]).getFeatures().iterator();
+        FeatureIterator<SimpleFeature> featureIterator = store.getFeatureSource().getFeatures().features();
 
-        AttributeType[] types = store.getFeatureSource(store.getTypeNames()[0]).getSchema().getAttributeTypes();
+        List<AttributeDescriptor> atts = store.getFeatureSource().getSchema().getAttributeDescriptors();
+
         int idAttributeIndex = -1;
 
-        for (int i = 0; i < types.length; i++) {
-            if (types[i].getName().equals(idName.getValue()) &&
-                    ((types[i].getType() == Long.class) || (types[i].getType() == Integer.class))) {
+        for (int i = 0; i < atts.size(); i++) {
+            if (atts.get(i).getName().toString().equals(idName.getValue()) &&
+                    ((atts.get(i).getType().getBinding() == Long.class) || (atts.get(i).getType().getBinding() == Integer.class))) {
                 idAttributeIndex = i;
             }
         }
@@ -100,14 +101,14 @@ public class ShapeEntityReader extends JAMSComponent {
         ArrayList<Attribute.Entity> entityList = new ArrayList<Attribute.Entity>();
 
         while (featureIterator.hasNext()) {
-            Feature f = (Feature) featureIterator.next();
+            SimpleFeature f = featureIterator.next();
 
             Attribute.Entity e = JAMSDataFactory.createEntity();
 
-            for (int i = 0; i < types.length; i++) {
-                e.setObject(types[i].getName(), JAMSDataFactory.createInstance(f.getAttribute(i)));
+            for (int i = 0; i < atts.size(); i++) {
+                e.setObject(atts.get(i).getName().toString(), JAMSDataFactory.createInstance(f.getAttribute(i)));
             }
-            Geometry geom = f.getDefaultGeometry();
+            Geometry geom = (Geometry) f.getDefaultGeometry();
             AreaFunction af = new AreaFunction();
             e.setDouble(areaAttribute.getValue(), af.getArea(geom));
 
@@ -125,8 +126,6 @@ public class ShapeEntityReader extends JAMSComponent {
                     getModel().getRuntime().sendErrorMsg("Could not parse " + f.getAttribute(idAttributeIndex) + " as long value!");
                 }
             }
-
-//            System.out.println(e.getValue());
             entityList.add((Attribute.Entity) e);
         }
 

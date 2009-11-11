@@ -1,8 +1,28 @@
+/*
+ * MapLegend.java
+ *
+ * This file is part of JAMS
+ * Copyright (C) 2005 FSU Jena
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ *
+ */
+
 package jams.components.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.io.ByteArrayInputStream;
@@ -13,12 +33,13 @@ import java.util.TreeMap;
 
 import javax.swing.JPanel;
 
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
-import org.geotools.styling.StyleFactoryFinder;
 
 /**
+ * Handles variable coloring of map features used in MapCreator class by means of SLD
  *
  * @author C. Schwartze
  */
@@ -32,6 +53,7 @@ public class MapLegend extends JPanel {
             this.paramname = param;
         }
 
+        @Override
         public void paintComponent(Graphics g) {
             g.setFont(new Font("SansSerif", Font.BOLD, 14));
             g.drawString("Legend", 10, 20);
@@ -86,7 +108,8 @@ public class MapLegend extends JPanel {
         }
         sld += "</FeatureTypeStyle></UserStyle>";
         ByteArrayInputStream stringInput = new ByteArrayInputStream(sld.getBytes());
-        SLDParser parse = new SLDParser(StyleFactoryFinder.createStyleFactory(), stringInput);
+        StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory(null);
+        SLDParser parse = new SLDParser(styleFactory, stringInput);
         return parse.readXML()[0];
     }
 
@@ -180,13 +203,5 @@ public class MapLegend extends JPanel {
             g.drawRect(9, 30 + (20 * i) - 1, 35, 15);
             g.drawString("<= " + (m.get(m.keySet().toArray()[i])).toString(), 55, 42 + (20 * i));
         }
-    }
-
-    public MapLegend(Set<Double> li, int numOfRanges, String rangeColor, String param) throws Exception {
-        this.setLayout(new BorderLayout());
-        this.setPreferredSize(new Dimension(130, 300));
-        this.m = coloring(li, numOfRanges, rangeColor);
-        JPanel legend = new ColorLegend(param);
-        this.add(legend, BorderLayout.CENTER);
     }
 }
