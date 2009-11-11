@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package reg.dsproc;
 
 import java.sql.Connection;
@@ -19,16 +18,17 @@ import java.util.Observer;
  * @author Christian Fischer
  */
 public abstract class Processor {
+
     protected DataStoreProcessor dsdb;
 
     protected Connection conn;
 
     protected ArrayList<DataStoreProcessor.ContextData> contexts;
-    
+
     protected ProcessingProgressObservable processingProgressObservable = new ProcessingProgressObservable();
 
     protected boolean abortOperation = false;
-    
+
     /**
      * @return the h2ds
      */
@@ -50,7 +50,7 @@ public abstract class Processor {
             this.abortOperation = false;
         }
     }
-    
+
     public static void output(ResultSet rs) throws SQLException {
         ResultSetMetaData rsmd = rs.getMetaData();
         int numberOfColumns = rsmd.getColumnCount();
@@ -67,7 +67,7 @@ public abstract class Processor {
             System.out.println();
         }
     }
-    
+
     protected synchronized boolean isTableExisting(String tableName) throws SQLException {
         String q = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME='" + tableName + "'";
         ResultSet rs = customSelectQuery(q);
@@ -77,13 +77,74 @@ public abstract class Processor {
             return false;
         }
     }
-    
-    protected synchronized double[] getSum(ArrayList<double[]> a) {
 
-        double[] result = a.get(0);
+    protected double[][] calcWeights(ArrayList<double[]> values, int weightAttribIndex) {
+
+        double a[][] = values.toArray(new double[values.get(0).length][values.size()]);
+        double result[][] = new double[a.length][a[0].length];
+        double relWeights[] = null;
+        int i = -1;
+
+        for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
+
+            if (attrib.isSelected()) {
+
+                i++;
+                switch (attrib.getAggregationType()) {
+                    case DataStoreProcessor.AttributeData.AGGREGATION_WEIGHT:
+
+                        for (int j = 0; j < a.length; j++) {
+                            result[j][i] = a[j][weightAttribIndex];
+                        }
+
+                        break;
+
+                    case DataStoreProcessor.AttributeData.AGGREGATION_REL_WEIGHT:
+
+                        // if the relative weights have not been calculated yet
+                        // do so now
+                        if (relWeights == null) {
+                            relWeights = new double[a.length];
+                            double sum = 0;
+                            for (int j = 0; j < a.length; j++) {
+                                sum += a[j][weightAttribIndex];
+                            }
+                            for (int j = 0; j < a.length; j++) {
+                                relWeights[j] = a[j][weightAttribIndex] / sum;
+                            }
+                        }
+
+                        for (int j = 0; j < a.length; j++) {
+                            result[j][i] = relWeights[j];
+                        }
+
+                        break;
+
+                    default:
+                        for (int j = 0; j < a.length; j++) {
+                            result[j][i] = 1;
+                        }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static double[] arrayMulti(double[] a, double[] b) {
+        double[] result = new double[a.length];
+        for (int i = 0; i < a.length; i++) {
+            result[i] = a[i] * b[i];
+        }
+        return result;
+    }
+
+    protected synchronized double[] getSum(ArrayList<double[]> a, double[][] weights) {
+
+        double[] result = arrayMulti(a.get(0), weights[0]);
         double[] b;
         for (int i = 1; i < a.size(); i++) {
-            b = a.get(i);
+            b = arrayMulti(a.get(i), weights[i]);
             for (int c = 0; c < result.length; c++) {
                 result[c] += b[c];
             }
@@ -94,7 +155,7 @@ public abstract class Processor {
 
         return result;
     }
-    
+
     protected synchronized double[] getAvg(ArrayList<double[]> a) {
 
         double[] result = a.get(0);
@@ -102,12 +163,12 @@ public abstract class Processor {
         for (int i = 1; i < a.size(); i++) {
             b = a.get(i);
             for (int c = 0; c < result.length; c++) {
-                result[c] += b[c]/a.size();
+                result[c] += b[c] / a.size();
             }
         }
         return result;
     }
-    
+
     /**
      * Send a custom query to the database
      * @param query The query string
@@ -119,7 +180,7 @@ public abstract class Processor {
         boolean result = stmt.execute(query);
         return result;
     }
-    
+
     /**
      * Send a custom select-query to the database
      * @param query The query string
@@ -131,7 +192,7 @@ public abstract class Processor {
         ResultSet rs = stmt.executeQuery(query);
         return rs;
     }
-    
+
     protected class ProcessingProgressObservable extends Observable {
 
         private int progress;

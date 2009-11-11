@@ -531,10 +531,10 @@ public class TimeSpaceDSPanel extends DSPanel {
         label = new JLabel("1");
         label.setHorizontalAlignment(SwingConstants.CENTER);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 5, 1, 1, 0, 0);
-        label = new JLabel("a/A");
+        label = new JLabel("w");
         label.setHorizontalAlignment(SwingConstants.CENTER);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 11, 5, 1, 1, 0, 0);
-        label = new JLabel("l->mm");
+        label = new JLabel("w/W");
         label.setHorizontalAlignment(SwingConstants.LEFT);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 12, 5, 1, 1, 0, 0);
 
@@ -573,7 +573,7 @@ public class TimeSpaceDSPanel extends DSPanel {
                         return;
                     }
                     AttribRadioButton thisButton = (AttribRadioButton) e.getSource();
-                    thisButton.attrib.setAggregationWeight(thisButton.aggregationType);
+                    thisButton.attrib.setAggregationType(thisButton.aggregationType);
                     setCheckBox(thisButton.attrib.getName());
 
                 }
@@ -875,13 +875,30 @@ public class TimeSpaceDSPanel extends DSPanel {
                     // if so, we better derive temp avg from monthly means
                     Object[] objects = entityList.getSelectedValues();
 
+                    // get the position of the weight attribute, if existing
+                    int weightAttribIndex = -1;
+                    if (attribCombo.getSelectedIndex() != 0) {
+                        weightAttribIndex = 0;
+                        String weightAttribName = attribCombo.getSelectedItem().toString();
+                        for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
+                            if (attrib.getName().equals(weightAttribName)) {
+                                break;
+                            }
+                            if (attrib.isSelected()) {
+                                System.out.println(attrib.getName());
+                                weightAttribIndex++;
+                            }
+                        }
+                    }
+
+
                     long[] ids = new long[objects.length];
                     int c = 0;
                     for (Object o : objects) {
                         ids[c++] = (Long) o;
                     }
 
-                    if (ids.length == entityList.getModel().getSize()) {
+                    if (false && ids.length == entityList.getModel().getSize()) {
 
                         tsproc.deleteCache();
 
@@ -898,7 +915,7 @@ public class TimeSpaceDSPanel extends DSPanel {
                         m = tsproc.getSpatialSum();
 
                     } else {
-                        m = tsproc.getSpatialSum(ids);
+                        m = tsproc.getSpatialSum(ids, weightAttribIndex);
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();

@@ -87,7 +87,7 @@ public abstract class DSPanel extends JPanel {
                 continue;
             }
 
-            if (attrib.getAggregationWeight() != DataStoreProcessor.AttributeData.AGGREGATION_NONE) {
+            if (attrib.getAggregationType() != DataStoreProcessor.AttributeData.AGGREGATION_NONE) {
 
                 if (attribCombo.getSelectedIndex() == 0) {
                     GUIHelper.showInfoDlg(parent, "No area attribute has been chosen! Skipping weighted aggregation for attribute \"" +
@@ -128,7 +128,7 @@ public abstract class DSPanel extends JPanel {
                 }
 
                 for (int i = 0; i < data.length; i++) {
-                    switch (attrib.getAggregationWeight()) {
+                    switch (attrib.getAggregationType()) {
                         case DataStoreProcessor.AttributeData.AGGREGATION_REL_WEIGHT:
                             if (timeSeries) {
                                 data[i][j] /= area;

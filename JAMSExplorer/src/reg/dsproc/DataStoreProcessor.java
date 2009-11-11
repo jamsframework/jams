@@ -778,7 +778,7 @@ public class DataStoreProcessor {
 
         private boolean selected;
 
-        private int aggregationWeight = AGGREGATION_NONE;
+        private int aggregationType = AGGREGATION_NONE;
 
         public AttributeData(String type, String name) {
             this.type = type;
@@ -804,13 +804,13 @@ public class DataStoreProcessor {
             }
         }
 
-        public int getAggregationWeight() {
-            return aggregationWeight;
+        public int getAggregationType() {
+            return aggregationType;
         }
 
-        public void setAggregationWeight(int aggregationWeight) {
+        public void setAggregationType(int aggregationWeight) {
             synchronized (DataStoreProcessor.this) {
-                this.aggregationWeight = aggregationWeight;
+                this.aggregationType = aggregationWeight;
             }
         }
     }

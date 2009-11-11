@@ -289,13 +289,14 @@ public class TimeSpaceProcessor extends Processor{
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getSpatialSum(long[] ids) throws SQLException, IOException {
+    public synchronized DataMatrix getSpatialSum(long[] ids, int weightAttribIndex) throws SQLException, IOException {
 
         String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
         int attribCount = attributeIDs.length;
         int[] idPosition = new int[ids.length];
         ArrayList<double[]> data = new ArrayList<double[]>();
         ArrayList<String> timeStamps = new ArrayList<String>();
+        double[][] weights;
 
         // reset filter and get the data
         resetTimeFilter();
@@ -303,13 +304,18 @@ public class TimeSpaceProcessor extends Processor{
 
         // get first dataset to obtain id positions
         if (rs.next()) {
+            // get the whole matrix (one line per spatial entity)
             DataMatrix m = dsdb.getData(rs.getLong("POSITION"));
+            
+            // create an ArrayList and add all lines whose id is listed in ids
             ArrayList<double[]> a = new ArrayList<double[]>();
             for (int i = 0; i < ids.length; i++) {
+                // store the line postitions within the matrix for further use
                 idPosition[i] = m.getIDPosition(String.valueOf(ids[i]));
                 a.add(m.getRow(idPosition[i]));
             }
-            data.add(getSum(a));
+            weights = calcWeights(a, weightAttribIndex);
+            data.add(getSum(a, weights));
             timeStamps.add(rs.getTimestamp(timeID).toString());
         } else {
             return null;
@@ -330,7 +336,7 @@ public class TimeSpaceProcessor extends Processor{
             for (int i = 0; i < ids.length; i++) {
                 a.add(m.getRow(idPosition[i]));
             }
-            data.add(getSum(a));
+            data.add(getSum(a, weights));
             timeStamps.add(rs.getTimestamp(timeID).toString());
 
             // update the observer
@@ -362,9 +368,9 @@ public class TimeSpaceProcessor extends Processor{
 
         DataMatrix result = null;
 
-//        if (!isSpatSumExisiting()) {
-//            return result;
-//        }
+        if (!isSpatSumExisiting()) {
+            return result;
+        }
 
         String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
         int attribCount = attributeIDs.length;
@@ -926,7 +932,7 @@ public class TimeSpaceProcessor extends Processor{
                 // get spatial mean values for selected entities
                 //long[] ids = {1, 3, 5, 7, 9};
                 long[] ids = {1};
-                m = tsproc.getSpatialSum(ids);
+                m = tsproc.getSpatialSum(ids, 0);
                 break;
             case 5:
                 // get values for a specific date

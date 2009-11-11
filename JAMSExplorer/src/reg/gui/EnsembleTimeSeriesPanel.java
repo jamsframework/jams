@@ -554,7 +554,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
                         return;
                     }
                     AttribRadioButton thisButton = (AttribRadioButton) e.getSource();
-                    thisButton.attrib.setAggregationWeight(thisButton.aggregationType);
+                    thisButton.attrib.setAggregationType(thisButton.aggregationType);
                     setCheckBox(thisButton.attrib.getName());
 
                 }
