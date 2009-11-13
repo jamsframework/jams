@@ -661,20 +661,8 @@ public class DataStoreProcessor {
         return new DataMatrix(data, ids, null);
     }
 
-    private synchronized int getSelectedDoubleCount() {
-        // get number of selected attributes
-        int numSelected = 0;
-        for (AttributeData a : getAttributes()) {
-            if (a.isSelected() && a.getType().equals("JAMSDouble")) {
-                numSelected++;
-            }
-        }
-        return numSelected;
-    }
-
     public synchronized String[] getSelectedDoubleAttribs() {
         // get number of selected attributes
-        int numSelected = 0;
         ArrayList<String> attribs = new ArrayList<String>();
         for (AttributeData a : getAttributes()) {
             if (a.isSelected() && a.getType().equals("JAMSDouble")) {
@@ -817,10 +805,7 @@ public class DataStoreProcessor {
 
     private class ImportProgressObservable extends Observable {
 
-        private int progress;
-
         private void setProgress(int progress) {
-            this.progress = progress;
             this.setChanged();
             this.notifyObservers(progress);
         }

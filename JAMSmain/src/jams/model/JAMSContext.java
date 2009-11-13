@@ -493,8 +493,6 @@ public class JAMSContext extends JAMSComponent implements Context {
     @Override
     public void init() {
 
-        attributeMap = new HashMap<String, JAMSData>();
-
         runEnumerator = null;
 
         if (!doRun) {
