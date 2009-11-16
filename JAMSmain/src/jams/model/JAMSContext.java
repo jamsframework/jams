@@ -874,8 +874,12 @@ public class JAMSContext extends JAMSComponent implements Context {
     public void setIteratorState(byte[]state){
         if (state == null)
             this.runEnumerator = null;
-        else
+        else{
+            if (this.runEnumerator == null)        
+                this.runEnumerator = getRunEnumerator();
+                
             this.runEnumerator.setState(state);
+        }
     }
     
     public Component getComponent(String name) {

@@ -51,6 +51,11 @@ public class JAMSSnapshot implements Snapshot {
                 }
             }
         }
+        public JAMSSnapshot(String fileName){
+            this.inMemory = false;            
+            this.fileName = fileName;            
+            this.data     = null;
+        }
         public byte[] getData(){
             if (!inMemory){
                 try{

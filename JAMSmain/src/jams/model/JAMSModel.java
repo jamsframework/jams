@@ -214,7 +214,7 @@ public class JAMSModel extends JAMSContext implements Model {
         this.nullFields = nullFields;
     }
     
-    private void collectEntityCollections(Context currentContext, Component position, HashMap<String, ContextSnapshotData> collection) {        
+    private void collectEntityCollections(Context currentContext, HashMap<String, ContextSnapshotData> collection) {        
         //currentContext.debug("C:\\Arbeit\\TIMELOOP_pre.dat" + counter1++);
         
         ContextSnapshotData data = new ContextSnapshotData();
@@ -226,7 +226,7 @@ public class JAMSModel extends JAMSContext implements Model {
         for (int i = 0; i < currentContext.getComponents().size(); i++) {
             Component c = (Component) currentContext.getComponents().get(i);
             if (c instanceof Context) {
-                collectEntityCollections((Context) c, position, collection);
+                collectEntityCollections((Context) c, collection);
             }
         }
     }
@@ -255,7 +255,12 @@ public class JAMSModel extends JAMSContext implements Model {
                 String name = iter.next();
                 Object obj_src = e.getValue().get(name);
                 Object obj = map.get(name);
-
+                    
+                if (obj == null){
+                    System.out.println("object:" + name + " value:" + obj_src + " in context:" + currentContext.getInstanceName() + " does not exist");
+                    map.put(name, obj_src);
+                    continue;                    
+                }
                 if (obj_src instanceof JAMSBoolean) {
                     ((JAMSBoolean) obj).setValue(((JAMSBoolean) obj_src).getValue());
                 } else if (obj_src instanceof JAMSBooleanArray) {
@@ -309,6 +314,7 @@ public class JAMSModel extends JAMSContext implements Model {
             String name = iter.next();
             DataAccessor da = map.get(name);
             if (da == null) {
+                System.out.println("object:" + name + " in context:" + currentContext.getInstanceName() + " does not exist");
                 continue;
             }
             JAMSData obj = da.getComponentObject();
@@ -367,12 +373,12 @@ public class JAMSModel extends JAMSContext implements Model {
         //currentContext.debug("C:\\Arbeit\\TIMELOOP_post.dat" + counter2++);
     }
 
-    public Snapshot getModelState(boolean holdInMemory, String fileName, Component position) {
+    public Snapshot getModelState(boolean holdInMemory, String fileName) {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         ObjectOutputStream objOut = null;
 
         HashMap<String, ContextSnapshotData> contextStates = new HashMap<String, ContextSnapshotData>();
-        collectEntityCollections(this.getModel(), position, contextStates);
+        collectEntityCollections(this.getModel(), contextStates);
 
         JAMSSnapshot snapshot = null;
         try {
