@@ -42,7 +42,7 @@ public interface Model extends Context {
 
     String getDate();
 
-    Snapshot getModelState(boolean holdInMemory, String fileName, Component position);
+    Snapshot getModelState(boolean holdInMemory, String fileName);
 
     String getName();
 
