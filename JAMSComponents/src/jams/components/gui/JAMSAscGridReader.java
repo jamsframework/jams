@@ -212,4 +212,10 @@ public class JAMSAscGridReader {
 	
 	return result;
     }
+    
+    public double GetX11Corner(){   return this.x11corner;  }
+    public double GetY11Corner(){   return this.y11corner;  }
+    public int GetNumberOfColums(){   return this.ncols;  }
+    public int GetNumberOfRows(){   return this.nrows;  }
+    public double GetCellSize() {return this.cellsize;}
 }

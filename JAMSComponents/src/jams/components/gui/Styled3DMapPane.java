@@ -9,7 +9,6 @@
 
 package jams.components.gui;
 
-import jams.components.io.JAMSAscGridReader;
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.applet.Applet;
