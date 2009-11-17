@@ -502,7 +502,7 @@ public class ShapefileLayerProperties extends javax.swing.JPanel {
             @Override
             public void mouseClicked(MouseEvent arg0) {
                 int column = header.columnAtPoint(arg0.getPoint());
-                System.out.println("geklickt auf Spalte " + column);
+                // System.out.println("geklickt auf Spalte " + column);
                 getTableModel().setHighlightedColumn(column);
                 table.repaint();
                 //ds.setPrimaryAttr(column);
@@ -511,7 +511,7 @@ public class ShapefileLayerProperties extends javax.swing.JPanel {
                 Map<Integer, Double> data = getTableModel().getDataForColumn(column);
                 try {
                     if (data != null) {
-                        System.out.println("Daten gefunden..");
+                        //System.out.println("Daten gefunden..");
                         ds.setColorRampValues(data);
                         ds.setDrawStyled(false);
                         ds.redraw();
