@@ -169,33 +169,33 @@ public class GenericDataWriter implements Serializable{
         }
     }
 
-    public void writeData(int prec) throws RuntimeException {
-
-        String s = "";
-
-        if (data.size() != header.size()) {
-            throw new RuntimeException(JAMS.resources.getString("Wrong_number_of_output_columns!"));
-        } else {
-            Iterator<Object> i = data.iterator();
-            //date first
-            if (i.hasNext()) {
-                s = i.next().toString();
-            }
-            while (i.hasNext()) {
-                double val = ((JAMSDouble) i.next()).getValue();
-                String dStr = String.format(Locale.US, "%." + prec + "f", val);
-                s += "\t" + dStr;
-            //s += "\t"+i.next().toString();
-            }
-            try {
-                writer.write(s);
-                writer.newLine();
-            } catch (IOException ioe) {
-                JAMSTools.handle(ioe);
-            }
-            data.clear();
-        }
-    }
+//    public void writeData(int prec) throws RuntimeException {
+//
+//        String s = "";
+//
+//        if (data.size() != header.size()) {
+//            throw new RuntimeException(JAMS.resources.getString("Wrong_number_of_output_columns!"));
+//        } else {
+//            Iterator<Object> i = data.iterator();
+//            //date first
+//            if (i.hasNext()) {
+//                s = i.next().toString();
+//            }
+//            while (i.hasNext()) {
+//                double val = ((JAMSDouble) i.next()).getValue();
+//                String dStr = String.format(Locale.US, "%." + prec + "f", val);
+//                s += "\t" + dStr;
+//            //s += "\t"+i.next().toString();
+//            }
+//            try {
+//                writer.write(s);
+//                writer.newLine();
+//            } catch (IOException ioe) {
+//                JAMSTools.handle(ioe);
+//            }
+//            data.clear();
+//        }
+//    }
 
     public void close() {
         try {
