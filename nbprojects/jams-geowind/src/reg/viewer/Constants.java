@@ -20,7 +20,7 @@ public class Constants {
     public static final String PROP_KEY_WORK_SHAPE = "datareg.layer.workshape.src";
 
     /**
-     * the property key for basis shape file
+     * the property key for application layers
      */
     public static final String PROP_KEY_APPLICATION_LAYERS = "datareg.layer.src";
 
