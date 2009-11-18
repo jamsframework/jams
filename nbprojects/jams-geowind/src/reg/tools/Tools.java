@@ -8,7 +8,6 @@ import java.util.Enumeration;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Vector;
-import reg.viewer.Constants;
 
 /**
  *
