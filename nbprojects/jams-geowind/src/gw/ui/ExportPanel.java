@@ -16,6 +16,9 @@ import jams.tools.JAMSTools;
 import java.io.File;
 import java.util.Vector;
 import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileFilter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import reg.shape.ShapeFactory;
@@ -49,9 +52,11 @@ public class ExportPanel extends javax.swing.JDialog {
      */
     private void initComponents() {
 
-        i_columnList = new java.awt.List();
-        //li_columnList = new ListInput(true);
-        //li_columnList.setPreferredSize(new Dimension(100,100));
+        li_columnList = new JList();
+        li_columnList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        li_columnList.setAutoscrolls(true);
+
+        li_columns_scrollPane = new JScrollPane(li_columnList);
 
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -69,9 +74,7 @@ public class ExportPanel extends javax.swing.JDialog {
         setIconImage(null);
         setName("exportDialog"); // NOI18N
 
-        i_columnList.setMultipleMode(true);
-        i_columnList.setFocusTraversalKeysEnabled(true);
-        //li_columnList.setEnabled(true);
+        li_columnList.setEnabled(true);
 
         jLabel1.setText(bundle.getString("L_COLS")); // NOI18N
 
@@ -134,7 +137,7 @@ public class ExportPanel extends javax.swing.JDialog {
                                         .addComponent(i_filename, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(29, 29, 29)
                                         .addComponent(fileChooseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addComponent(i_columnList, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(li_columns_scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(35, 35, 35))))))
         );
         layout.setVerticalGroup(
@@ -146,7 +149,7 @@ public class ExportPanel extends javax.swing.JDialog {
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(22, 22, 22)
-                        .addComponent(i_columnList, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(li_columns_scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -177,7 +180,7 @@ public class ExportPanel extends javax.swing.JDialog {
         out_Message.setVisible(false);
 
 
-        String[] selCols = i_columnList.getSelectedItems();
+        Object[] selCols = li_columnList.getSelectedValues();
         if (selCols == null || selCols.length == 0) {
             out_Message.setVisible(true);
             out_Message.setText(java.util.ResourceBundle.getBundle("gw/resources/language").getString("L_SELECT_FIELDS"));
@@ -188,13 +191,6 @@ public class ExportPanel extends javax.swing.JDialog {
 /*
         Vector<String> vSelCols = li_columnList.getListData();
 */
-
-        if (selCols == null || selCols.length == 0) {
-            out_Message.setVisible(true);
-            out_Message.setText(java.util.ResourceBundle.getBundle("gw/resources/language").getString("L_SELECT_FIELDS"));
-            System.out.println("Bitte Felder für den Export auswählen !");
-            return;
-        }
 
 
         String fileName = i_filename.getText();
@@ -211,8 +207,8 @@ public class ExportPanel extends javax.swing.JDialog {
 
         // selCols -> vSelCols
         Vector<String> vSelCols = new Vector<String>(selCols.length);
-        for (String selCol : selCols) {
-            vSelCols.add(selCol);
+        for (Object selCol : selCols) {
+            vSelCols.add((String)selCol);
         }
 
  try {
@@ -257,11 +253,9 @@ public class ExportPanel extends javax.swing.JDialog {
         String[] columnNames = this.shapefileLayerProperties.getTableModel().getColumnNames();
         Vector<String> listData = new Vector<String>();
         for (String columnName : columnNames) {
-            i_columnList.add(columnName);
             listData.add(columnName);
         }
-        //li_columnList.setListData(listData);
-
+        li_columnList.setListData(listData);
 
         // init fileChooser
         fileChooser.setDialogTitle(java.util.ResourceBundle.getBundle("gw/resources/language").getString("L_SAVE_FILE"));
@@ -315,8 +309,8 @@ public class ExportPanel extends javax.swing.JDialog {
     private java.awt.Button cancelButton;
     private java.awt.Button exportButton;
     private javax.swing.JButton fileChooseButton;
-    private java.awt.List i_columnList;
-    //private ListInput li_columnList;
+    private JList li_columnList;
+    private JScrollPane li_columns_scrollPane;
     private java.awt.TextField i_filename;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
