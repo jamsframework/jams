@@ -205,7 +205,7 @@ public class LayerControl extends javax.swing.JPanel {
                     Layer layer = (Layer) tree.getSelectedLayer();
                     removeLayerAction.setEnabled(layer != null);
                     if (layer != null) {
-                        removeLayerAction.putValue(Action.NAME, "Remove '" + layer.getName() + "'");
+                        removeLayerAction.putValue(Action.NAME, java.util.ResourceBundle.getBundle("gw/resources/language").getString("L_Remove") + " '" + layer.getName() + "'");
                     } else {
                         removeLayerAction.putValue(Action.NAME, java.util.ResourceBundle.getBundle("gw/resources/language").getString("L_Remove"));
                     }
