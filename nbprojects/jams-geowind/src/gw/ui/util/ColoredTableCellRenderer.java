@@ -37,7 +37,7 @@ public class ColoredTableCellRenderer extends DefaultTableCellRenderer {
         if (column == tm.getHighlightedColumn()) {
             bg = tm.getColorForRowAndColumn(row, column);
         } else {
-            bg = tm.getColorsForColumn(column).getB();
+            //bg = tm.getColorsForColumn(column).getB();   // all columns get max-colour?
         }
       
         Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), hsb);
