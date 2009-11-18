@@ -297,6 +297,7 @@ public class Viewer {
     }
 
     private Vector<File> getApplicationLayers() {
+        System.out.println("add some application layers coming from properties..");
         Vector<File> applicationLayers = new Vector<File>();
         Vector<String> applicationLayerNames = Tools.getPropertyGroup(Constants.RESOURCE_FILE, Constants.PROP_KEY_APPLICATION_LAYERS);
         for (String applicationLayerName : applicationLayerNames) {
@@ -304,6 +305,7 @@ public class Viewer {
             if (layerFile == null || !layerFile.exists()) {
                 System.out.println("layerFile " + applicationLayerName + " nicht gefunden.");
             } else {
+                System.out.println("add layerFile " + applicationLayerName);
                 applicationLayers.add(layerFile);
             }
         }
