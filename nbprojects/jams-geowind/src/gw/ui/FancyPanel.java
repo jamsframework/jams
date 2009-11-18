@@ -200,7 +200,6 @@ public class FancyPanel extends JPanel implements GeoWindView {
                 double[] dtColumnValues = dtValues[i];
                 Vector<Double> wrappedValues = new Vector<Double>(max);
                 if (idData != null) {
-                    Collection<Double> idValues = idData.values();
                     wrappedValues = getResortedValues(idData, dtIds, dtColumnValues);
                     System.out.println(wrappedValues);
                 } else {
