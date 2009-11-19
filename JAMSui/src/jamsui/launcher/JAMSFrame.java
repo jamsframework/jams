@@ -31,6 +31,7 @@ import jams.JAMSFileFilter;
 import jams.io.ParameterProcessor;
 import jams.tools.XMLIO;
 import jams.io.XMLProcessor;
+import jamsui.juice.JUICE;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -545,7 +546,7 @@ public class JAMSFrame extends JAMSLauncher {
         if (getModelDocument() != null) {
             String modelDocString = XMLIO.getStringFromDocument(getModelDocument());
             if (!getInitialModelDocString().equals(modelDocString)) {
-                int result = GUIHelper.showYesNoCancelDlg(this, JAMS.resources.getString("Save_modifications_in_") + modelFilename + JAMS.resources.getString("?"), JAMS.resources.getString("JAMS_Launcher:_unsaved_modifications"));
+                int result = GUIHelper.showYesNoCancelDlg(this, JAMS.resources.getString("Save_modifications_in_") + modelFilename + JAMS.resources.getString("_?"), JAMS.resources.getString("JAMS_Launcher:_unsaved_modifications"));
                 if (result == JOptionPane.CANCEL_OPTION) {
                     return false;
                 } else if (result == JOptionPane.OK_OPTION) {

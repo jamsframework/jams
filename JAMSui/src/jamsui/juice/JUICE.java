@@ -45,8 +45,6 @@ import javax.swing.SwingWorker;
  */
 public class JUICE {
 
-    public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/i18n/JUICEBundle");
-
     public static final String APP_TITLE = "JUICE";
 
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
@@ -107,7 +105,6 @@ public class JUICE {
             String forcedLocale = getJamsProperties().getProperty("forcelocale");
             if (!JAMSTools.isEmptyString(forcedLocale)) {
                 Locale.setDefault(new Locale(forcedLocale));
-                resources = java.util.ResourceBundle.getBundle("resources/i18n/JUICEBundle");
                 JAMS.resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
             }
 
@@ -141,14 +138,14 @@ public class JUICE {
             for (StackTraceElement ste : st) {
                 s += "        at " + ste.toString() + "\n";
             }
-            System.out.println(JUICE.resources.getString("JUICE_Error"));
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("An_error_occured_during_JUICE_execution") + t.toString() + "\n" + s, JUICE.resources.getString("JUICE_Error"));
+            System.out.println(JAMS.resources.getString("JUICE_Error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("An_error_occured_during_JUICE_execution") + t.toString() + "\n" + s, JAMS.resources.getString("JUICE_Error"));
         }
     }
 
     public static void updateLibs() {
         if (loadLibsDlg == null) {
-            loadLibsDlg = new WorkerDlg(juiceFrame, JUICE.resources.getString("Loading_Libraries"));
+            loadLibsDlg = new WorkerDlg(juiceFrame, JAMS.resources.getString("Loading_Libraries"));
         }
         try {
             loadLibsDlg.setTask(new SwingWorker() {

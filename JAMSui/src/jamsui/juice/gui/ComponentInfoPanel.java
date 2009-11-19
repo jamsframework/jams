@@ -33,7 +33,7 @@ import javax.swing.text.SimpleAttributeSet;
 import jams.gui.tools.GUIHelper;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
-import jamsui.juice.JUICE;
+import jams.JAMS;
 
 /**
  *
@@ -41,7 +41,7 @@ import jamsui.juice.JUICE;
  */
 public class ComponentInfoPanel extends JPanel {
     
-    private static final String DEFAULT_STRING = JUICE.resources.getString("[none]");
+    private static final String DEFAULT_STRING = JAMS.resources.getString("[none]");
     private static final int TEXTAREA_WIDTH = 295;
     private static final int GRIDBAG_MAX_Y = 3;
     
@@ -51,20 +51,20 @@ public class ComponentInfoPanel extends JPanel {
     private JPanel contentPanel;
     private GridBagLayout mainLayout;
     private Vector<JPanel> varPanels = new Vector<JPanel>();
-    private JLabel varLabel = new JLabel(JUICE.resources.getString("Variables:"));
+    private JLabel varLabel = new JLabel(JAMS.resources.getString("Variables:"));
     
     public ComponentInfoPanel() {
         
-        setBorder(BorderFactory.createTitledBorder(JUICE.resources.getString("Component_Details")));
+        setBorder(BorderFactory.createTitledBorder(JAMS.resources.getString("Component_Details")));
         
         contentPanel = new JPanel();
         mainLayout = new GridBagLayout();
         contentPanel.setLayout(mainLayout);
         
-        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Type:")), 0, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Author:")), 0, 1, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Date:")), 0, 2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JUICE.resources.getString("Description:")), 0, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Type:")), 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Author:")), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Date:")), 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Description:")), 0, 3, 1, 1, 0, 0);
         
         GUIHelper.addGBComponent(contentPanel, mainLayout, getTextField("type", ""), 1, 0, 1, 1, 1.0, 1.0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, getTextField("author", ""), 1, 1, 1, 1, 1.0, 1.0);
@@ -130,11 +130,11 @@ public class ComponentInfoPanel extends JPanel {
                 GridBagLayout fieldLayout = new GridBagLayout();
                 fieldPanel.setLayout(fieldLayout);
                 
-                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JUICE.resources.getString("Type:")), 0, 0, 1, 1, 0, 0);
-                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JUICE.resources.getString("Access:")), 0, 1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Type:")), 0, 0, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Access:")), 0, 1, 1, 1, 0, 0);
                 //GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Update:"), 0, 2, 1, 1, 0, 0);
-                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JUICE.resources.getString("Description:")), 0, 3, 1, 1, 0, 0);
-                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JUICE.resources.getString("Unit:")), 0, 4, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Description:")), 0, 3, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Unit:")), 0, 4, 1, 1, 0, 0);
                 
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", field.getType().getName()), 1, 0, 1, 1, 1.0, 1.0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.access().toString()), 1, 1, 1, 1, 1.0, 1.0);

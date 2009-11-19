@@ -60,6 +60,7 @@ import jamsui.juice.ComponentDescriptor;
 import jamsui.juice.ComponentDescriptor.ComponentAttribute;
 import jamsui.juice.ContextAttribute;
 import jams.gui.input.InputComponentFactory;
+import jams.JAMS;
 
 /**
  *
@@ -115,11 +116,11 @@ public class ComponentAttributePanel extends JPanel {
         this.add(detailPanel);
         this.add(listPanel);
 
-        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JUICE.resources.getString("Component:")), 0, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JUICE.resources.getString("Local_name:")), 0, 10, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JUICE.resources.getString("Link:")), 0, 15, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.resources.getString("Component:")), 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.resources.getString("Local_name:")), 0, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.resources.getString("Link:")), 0, 15, 1, 1, 0, 0);
         GUIHelper.addGBComponent(infoPanel, infoLayout, new JPanel(), 0, 17, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JUICE.resources.getString("Value:")), 0, 20, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.resources.getString("Value:")), 0, 20, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
         compNameText = new JTextField();
         compNameText.setEditable(false);
@@ -168,7 +169,7 @@ public class ComponentAttributePanel extends JPanel {
         customAttributeText.setBorder(BorderFactory.createEtchedBorder());
 
         //customContextPanel.add(contextCombo);
-        customContextPanel.add(new JLabel(JUICE.resources.getString("Custom_Attribute:")));
+        customContextPanel.add(new JLabel(JAMS.resources.getString("Custom_Attribute:")));
         customContextPanel.add(customAttributeText);
         listPanel.add(customContextPanel, BorderLayout.SOUTH);
 

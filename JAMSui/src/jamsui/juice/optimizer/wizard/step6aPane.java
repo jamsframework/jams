@@ -7,8 +7,6 @@ package jamsui.juice.optimizer.wizard;
 
 import jams.tools.JAMSTools;
 import jams.tools.XMLIO;
-import jams.model.JAMSContext;
-import jamsui.juice.*;
 import jams.model.JAMSModel;
 import jams.model.JAMSVarDescription;
 import jams.runtime.StandardRuntime;
@@ -41,6 +39,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import jams.JAMS;
 
 /**
  *
@@ -55,8 +54,8 @@ public class step6aPane extends stepPane {
     JAMSModel model = null;
     JTree modelTree = new JTree();  
     
-    JCheckBox outputModeEntityWriter = new JCheckBox(JUICE.resources.getString("output_by_entitywriter_component"));
-    JCheckBox outputModeStandardized = new JCheckBox(JUICE.resources.getString("output_by_standardized_output_environment"));
+    JCheckBox outputModeEntityWriter = new JCheckBox(JAMS.resources.getString("output_by_entitywriter_component"));
+    JCheckBox outputModeStandardized = new JCheckBox(JAMS.resources.getString("output_by_standardized_output_environment"));
     
     boolean removeNotUsedComponents = true;
     boolean removeGUIComponents = true;
@@ -255,7 +254,7 @@ public class step6aPane extends stepPane {
         infoLog = "";
 	//1. schritt
         //parameter relevante componenten verschieben                
-        infoLog += JUICE.resources.getString("create_transitive_hull_of_dependency_graph") + "\n";
+        infoLog += JAMS.resources.getString("create_transitive_hull_of_dependency_graph") + "\n";
         Hashtable<String,HashSet<String>> dependencyGraph = jams.model.metaoptimizer.metaModelOptimizer.getDependencyGraph(doc.getDocumentElement(),model);
         Hashtable<String,HashSet<String>> transitiveClosureOfDependencyGraph = 
                 jams.model.metaoptimizer.metaModelOptimizer.TransitiveClosure(dependencyGraph);
@@ -264,7 +263,7 @@ public class step6aPane extends stepPane {
         Node root = (Node)doc.getDocumentElement();
         
         if (removeGUIComponents){
-            infoLog = JUICE.resources.getString("removing_GUI_components")+ ":\n";
+            infoLog = JAMS.resources.getString("removing_GUI_components")+ ":\n";
             ArrayList<String> removedGUIComponents = jams.model.metaoptimizer.metaModelOptimizer.RemoveGUIComponents(root);
             for (int i=0;i<removedGUIComponents.size();i++){
                 infoLog += "    ***" + removedGUIComponents.get(i) + "\n";
@@ -284,13 +283,13 @@ public class step6aPane extends stepPane {
                     jams.model.metaoptimizer.metaModelOptimizer.GetRelevantComponentsList(transitiveClosureOfDependencyGraph,
                     effWritingComponents));
             
-            infoLog += JUICE.resources.getString("removing_components_without_relevant_influence")+":\n";
+            infoLog += JAMS.resources.getString("removing_components_without_relevant_influence")+":\n";
             for (int i=0;i<removedUnusedComponents.size();i++){
                 infoLog += "    ***" + removedUnusedComponents.get(i) + "\n";
             }
         }
                 
-        infoLog += JUICE.resources.getString("add_optimization_context") + "\n";                                                                              
+        infoLog += JAMS.resources.getString("add_optimization_context") + "\n";                                                                              
         //optimierer bauen
         Element optimizerContext = doc.createElement("contextcomponent");
         optimizerContext.setAttribute("class", desc.optimizerClassName);
@@ -306,11 +305,11 @@ public class step6aPane extends stepPane {
         addParameters(desc.parameters,root);
         addEfficiencies(desc.efficiencies,root);
                                       
-        infoLog += JUICE.resources.getString("find_a_position_to_place_optimizer") + "\n";
+        infoLog += JAMS.resources.getString("find_a_position_to_place_optimizer") + "\n";
         //find place for optimization context
         Node firstComponent = Tools.getFirstComponent(root);
         if (firstComponent == null){
-            return JUICE.resources.getString("Error_model_file_does_not_contain_any_components");
+            return JAMS.resources.getString("Error_model_file_does_not_contain_any_components");
         }
         //collect all following siblings of firstComponent and add them to contextOptimizer
         Node currentNode = firstComponent;
@@ -321,7 +320,7 @@ public class step6aPane extends stepPane {
         }
         
         if (firstComponent.getParentNode() == null){
-            return JUICE.resources.getString("Error_model_file_does_not_contain_a_model_context");
+            return JAMS.resources.getString("Error_model_file_does_not_contain_a_model_context");
         }
         Node modelContext = firstComponent.getParentNode();
         for (int i=0;i<followingNodes.size();i++){
@@ -357,12 +356,12 @@ public class step6aPane extends stepPane {
     public JPanel build(){                
         panel.setLayout(new BorderLayout());
         panel.setBorder(null);
-        panel.add(new JLabel(JUICE.resources.getString("step6a_desc")), BorderLayout.NORTH); 
+        panel.add(new JLabel(JAMS.resources.getString("step6a_desc")), BorderLayout.NORTH); 
         
         /*
         JPanel outputOptions = new JPanel();        
         outputOptions.setBorder(BorderFactory.createLineBorder(Color.black));
-        outputOptions.add(new JLabel(JUICE.resources.getString("output_mode")));
+        outputOptions.add(new JLabel(JAMS.resources.getString("output_mode")));
         
         JPanel subOutputOptions = new JPanel(new BorderLayout());        
         subOutputOptions.add(outputModeEntityWriter,BorderLayout.NORTH);
@@ -411,7 +410,7 @@ public class step6aPane extends stepPane {
         //collect output attributes
         TreePath selections[] = modelTree.getSelectionPaths();
         if (selections == null){
-            return JUICE.resources.getString("error_no_parameter");    
+            return JAMS.resources.getString("error_no_parameter");    
         }        
         selectedOutputAttributes.clear();
         for (int i=0;i<selections.length;i++){
@@ -475,7 +474,7 @@ public class step6aPane extends stepPane {
             try{
                 XMLIO.writeXmlFile(outputDoc, Tools.getWorkspacePath(doc) + File.separator + "output" + File.separator + "optimization_wizard_" + context + ".xml");
             }catch(Exception e){
-                return JUICE.resources.getString("Error_cant_write_xml_file_because_") + e.toString();
+                return JAMS.resources.getString("Error_cant_write_xml_file_because_") + e.toString();
             }            
         }        
         return null;

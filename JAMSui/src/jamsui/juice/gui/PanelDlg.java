@@ -30,7 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
-import jamsui.juice.JUICE;
+import jams.JAMS;
 
 /**
  *
@@ -55,7 +55,7 @@ public abstract class PanelDlg extends JDialog {
         setLayout(new BorderLayout());
         getContentPane().add(panel, BorderLayout.CENTER);
 
-        JButton okButton = new JButton(JUICE.resources.getString("OK"));
+        JButton okButton = new JButton(JAMS.resources.getString("OK"));
         okButton.addActionListener(new ActionListener() {
 
             @Override
@@ -63,7 +63,7 @@ public abstract class PanelDlg extends JDialog {
                 processOK();
             }
         });
-        JButton cancelButton = new JButton(JUICE.resources.getString("Cancel"));
+        JButton cancelButton = new JButton(JAMS.resources.getString("Cancel"));
         cancelButton.addActionListener(new ActionListener() {
 
             @Override

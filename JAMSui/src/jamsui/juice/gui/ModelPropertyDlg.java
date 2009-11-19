@@ -52,7 +52,7 @@ import jamsui.juice.ModelProperties.ModelProperty;
 import jamsui.juice.ComponentDescriptor;
 import jamsui.juice.ComponentDescriptor.ComponentAttribute;
 import jamsui.juice.ContextAttribute;
-import jamsui.juice.JUICE;
+import jams.JAMS;
 
 /**
  *
@@ -80,7 +80,7 @@ public class ModelPropertyDlg extends JDialog {
     private void init() {
 
         setModal(true);
-        this.setTitle(JUICE.resources.getString("Model_property_editor"));
+        this.setTitle(JAMS.resources.getString("Model_property_editor"));
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         this.setLayout(new BorderLayout());
@@ -89,16 +89,16 @@ public class ModelPropertyDlg extends JDialog {
         contentPanel.setLayout(gbl);
 
         GUIHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Group:")), 0, 1, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Component:")), 0, 2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Variable/Attribute:")), 0, 3, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Name:")), 0, 4, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Description:")), 0, 5, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Lower_Boundary:")), 0, 6, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Upper_Boundary:")), 0, 7, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Length:")), 0, 8, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Help_URL:")), 0, 9, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JUICE.resources.getString("Help_Text:")), 0, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Group:")), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Component:")), 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Variable/Attribute:")), 0, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Name:")), 0, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Description:")), 0, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Lower_Boundary:")), 0, 6, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Upper_Boundary:")), 0, 7, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Length:")), 0, 8, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Help_URL:")), 0, 9, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Help_Text:")), 0, 10, 1, 1, 0, 0);
 
         groupCombo = new JComboBox();
         GUIHelper.addGBComponent(contentPanel, gbl, groupCombo, 1, 1, 1, 1, 0, 0);
@@ -139,7 +139,7 @@ public class ModelPropertyDlg extends JDialog {
         textScroll.setPreferredSize(TEXT_AREA_DIM);
         GUIHelper.addGBComponent(contentPanel, gbl, textScroll, 1, 10, 2, 1, 0, 0);
 
-        JButton okButton = new JButton(JUICE.resources.getString("OK"));
+        JButton okButton = new JButton(JAMS.resources.getString("OK"));
         ActionListener okListener = new ActionListener() {
 
             @Override
@@ -151,7 +151,7 @@ public class ModelPropertyDlg extends JDialog {
         okButton.addActionListener(okListener);
         getRootPane().setDefaultButton(okButton);
 
-        JButton cancelButton = new JButton(JUICE.resources.getString("Cancel"));
+        JButton cancelButton = new JButton(JAMS.resources.getString("Cancel"));
         ActionListener cancelListener = new ActionListener() {
 
             @Override
@@ -193,7 +193,7 @@ public class ModelPropertyDlg extends JDialog {
 
         Collections.sort(varNames);
 
-        varNames.add(0, JUICE.resources.getString("[enable_component]"));
+        varNames.add(0, JAMS.resources.getString("[enable_component]"));
 
         String[] varNameArray = varNames.toArray(new String[varNames.size()]);
         varCombo.setModel(new DefaultComboBoxModel(varNameArray));

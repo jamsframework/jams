@@ -147,7 +147,7 @@ public class ModelView {
             }
         };
         // create worker dialog for model setup
-        loadModelDlg = new WorkerDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Model_Setup"));
+        loadModelDlg = new WorkerDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Model_Setup"));
 
         // create the internal frame
         frame = new JInternalFrame();
@@ -207,19 +207,19 @@ public class ModelView {
 
         modelGUIRunButton = new JButton(JUICE.getJuiceFrame().getRunModelFromLauncherAction());
         modelGUIRunButton.setText("");
-        modelGUIRunButton.setToolTipText(JUICE.resources.getString("Run_model_from_JAMS_Launcher"));
+        modelGUIRunButton.setToolTipText(JAMS.resources.getString("Run_model_from_JAMS_Launcher"));
         modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
         toolBar.add(modelGUIRunButton);
 
         JButton copyGUIButton = new JButton(JUICE.getJuiceFrame().getCopyModelGUIAction());
         copyGUIButton.setText("");
-        copyGUIButton.setToolTipText(JUICE.resources.getString("Copy_Model_GUI"));
+        copyGUIButton.setToolTipText(JAMS.resources.getString("Copy_Model_GUI"));
         copyGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Copy.png")));
         toolBar.add(copyGUIButton);
 
         JButton pasteGUIButton = new JButton(JUICE.getJuiceFrame().getPasteModelGUIAction());
         pasteGUIButton.setText("");
-        pasteGUIButton.setToolTipText(JUICE.resources.getString("Paste_Model_GUI"));
+        pasteGUIButton.setToolTipText(JAMS.resources.getString("Paste_Model_GUI"));
         pasteGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Paste.png")));
         toolBar.add(pasteGUIButton);
 
@@ -232,8 +232,8 @@ public class ModelView {
 
         JTabbedPane tabPane = new JTabbedPane();
         //tabPane.addTab("Model configuration", new JScrollPane(modelEditPanel));
-        tabPane.addTab(JUICE.resources.getString("Component_configuration"), new JScrollPane(compEditPanel));
-        tabPane.addTab(JUICE.resources.getString("GUI_Builder"), new JScrollPane(launcherPanel));
+        tabPane.addTab(JAMS.resources.getString("Component_configuration"), new JScrollPane(compEditPanel));
+        tabPane.addTab(JAMS.resources.getString("GUI_Builder"), new JScrollPane(launcherPanel));
 
         modelSplitPane.setLeftComponent(modelTreePanel);
         modelSplitPane.setRightComponent(tabPane);
@@ -317,7 +317,7 @@ public class ModelView {
 
     public static String getNextViewName() {
         viewCounter++;
-        return JUICE.resources.getString("Model") + viewCounter;
+        return JAMS.resources.getString("Model") + viewCounter;
     }
 
     public boolean save() {
@@ -380,7 +380,7 @@ public class ModelView {
             componentDescriptors = new HashMap<String, ComponentDescriptor>();
             this.setTree(new ModelTree(this, doc));
         } catch (Exception ex) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + paramsFile.getName() + JUICE.resources.getString("_could_not_be_loaded."), JUICE.resources.getString("File_open_error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("File_") + paramsFile.getName() + JAMS.resources.getString("_could_not_be_loaded."), JAMS.resources.getString("File_open_error"));
         }
     }
 
@@ -393,7 +393,7 @@ public class ModelView {
             ParameterProcessor.saveParams(getModelDoc(), paramsFile,
                     JUICE.getJamsProperties().getProperty("username"), path);
         } catch (Exception ex) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + paramsFile.getName() + JUICE.resources.getString("_could_not_be_saved."), JUICE.resources.getString("File_saving_error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("File_") + paramsFile.getName() + JAMS.resources.getString("_could_not_be_saved."), JAMS.resources.getString("File_saving_error"));
         }
     }
 
@@ -434,7 +434,7 @@ public class ModelView {
         String oldXMLString = XMLIO.getStringFromDocument(initialDoc);
 
         if (newXMLString.compareTo(oldXMLString) != 0) {
-            int result = GUIHelper.showYesNoCancelDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Save_modifications_in_") + this.getFrame().getTitle() + JUICE.resources.getString("_?"), JUICE.resources.getString("Unsaved_modifications"));
+            int result = GUIHelper.showYesNoCancelDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Save_modifications_in_") + this.getFrame().getTitle() + JAMS.resources.getString("_?"), JAMS.resources.getString("Unsaved_modifications"));
             if (result == JOptionPane.OK_OPTION) {
                 JUICE.getJuiceFrame().saveModel(this);
                 closeView();
@@ -520,9 +520,9 @@ public class ModelView {
         property.component = getComponentDescriptor(propertyElement.getAttribute("component"));
 
         if (property.component == null) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Component_") + propertyElement.getAttribute("component") +
-                    JUICE.resources.getString("_does_not_exist,_but_is_referred_in_list_of_model_parameters!") +
-                    JUICE.resources.getString("Will_be_removed_when_model_is_saved!"), JUICE.resources.getString("Model_loading_error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Component_") + propertyElement.getAttribute("component") +
+                    JAMS.resources.getString("_does_not_exist,_but_is_referred_in_list_of_model_parameters!") +
+                    JAMS.resources.getString("Will_be_removed_when_model_is_saved!"), JAMS.resources.getString("Model_loading_error"));
             return null;
         }
 
@@ -543,9 +543,9 @@ public class ModelView {
         //check wether the referred parameter is existing or not
         if ((property.attribute == null) && (property.var == null) &&
                 !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Attribute_") + attributeName +
-                    JUICE.resources.getString("_does_not_exist_in_component_") + property.component.getName() +
-                    JUICE.resources.getString("._Removing_visual_editor!"), JUICE.resources.getString("Model_loading_error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Attribute_") + attributeName +
+                    JAMS.resources.getString("_does_not_exist_in_component_") + property.component.getName() +
+                    JAMS.resources.getString("._Removing_visual_editor!"), JAMS.resources.getString("Model_loading_error"));
             return null;
         }
 
@@ -608,7 +608,7 @@ public class ModelView {
             String newModelFilename = XMLProcessor.modelDocConverter(fileName);
             if (!newModelFilename.equalsIgnoreCase(fileName)) {
                 GUIHelper.showInfoDlg(JUICE.getJuiceFrame(),
-                        JUICE.resources.getString("The_model_definition_in_") + fileName + JUICE.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JUICE.resources.getString("_while_your_original_file_was_left_untouched."), JUICE.resources.getString("Info"));
+                        JAMS.resources.getString("The_model_definition_in_") + fileName + JAMS.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JAMS.resources.getString("_while_your_original_file_was_left_untouched."), JAMS.resources.getString("Info"));
             }
             fileName = newModelFilename;
 
@@ -618,9 +618,9 @@ public class ModelView {
             this.setInitialState();
 
         } catch (FileNotFoundException fnfe) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("File_") + fileName + JUICE.resources.getString("_could_not_be_loaded."), JUICE.resources.getString("File_open_error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("File_") + fileName + JAMS.resources.getString("_could_not_be_loaded."), JAMS.resources.getString("File_open_error"));
         } catch (Exception e) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Unknown_error_during_Model_loading"), JUICE.resources.getString("Model_loading_error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Unknown_error_during_Model_loading"), JAMS.resources.getString("Model_loading_error"));
             e.printStackTrace();
         }
     }

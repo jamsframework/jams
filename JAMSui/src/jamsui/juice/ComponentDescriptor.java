@@ -36,6 +36,7 @@ import javax.swing.WindowConstants;
 import jamsui.juice.gui.ComponentInfoPanel;
 import jamsui.juice.gui.ModelView;
 import jamsui.juice.gui.tree.*;
+import jams.JAMS;
 
 /**
  *
@@ -54,7 +55,7 @@ public class ComponentDescriptor {
 
     public ComponentDescriptor(String instanceName, Class clazz, JAMSTree tree) {
         if (clazz == null) {
-            GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Could_not_find_class_for_component_") + instanceName + "_!", JUICE.resources.getString("Error!"));
+            GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Could_not_find_class_for_component_") + instanceName + "_!", JAMS.resources.getString("Error!"));
         }
         this.clazz = clazz;
         this.tree = tree;
@@ -142,8 +143,8 @@ public class ComponentDescriptor {
         // info wenn attribut mit gleichem namen schon existent und dann zum repo adden!!!
         if (ma != null) {
 
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Context_attribute_") + name + JUICE.resources.getString("_does_already_exist._") +
-                        JUICE.resources.getString("Please_remove_or_chose_a_different_name!"), JUICE.resources.getString("Error_adding_context_attribute"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Context_attribute_") + name + JAMS.resources.getString("_does_already_exist._") +
+                        JAMS.resources.getString("Please_remove_or_chose_a_different_name!"), JAMS.resources.getString("Error_adding_context_attribute"));
             return null;
 
         } else {
@@ -173,7 +174,7 @@ public class ComponentDescriptor {
     public void outputUnsetAttributes() {
         for (ComponentAttribute ad : getComponentAttributes().values()) {
             if (ad.getAttribute() == null && ad.getContext() == null && ad.getValue() == null) {
-                System.out.println(JUICE.resources.getString("Attribute_") + ad.name + " (" + ad.type + JUICE.resources.getString(")_not_set_in_component_") + getName());
+                System.out.println(JAMS.resources.getString("Attribute_") + ad.name + " (" + ad.type + JAMS.resources.getString(")_not_set_in_component_") + getName());
             }
         }
     }

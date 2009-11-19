@@ -36,6 +36,7 @@ import jams.gui.tools.GUIHelper;
 import jamsui.juice.JUICE;
 import jamsui.juice.gui.tree.JAMSNode;
 import jamsui.juice.gui.tree.JAMSTree;
+import jams.JAMS;
 
 /**
  *
@@ -62,7 +63,7 @@ public class TreeSearchDlg extends JDialog {
             }
         });
         
-        searchButton = new JButton(JUICE.resources.getString("Search"));
+        searchButton = new JButton(JAMS.resources.getString("Search"));
         searchButton.setMargin(new Insets(4, 4, 4, 4));
         searchButton.setPreferredSize(new Dimension(60, 20));
         searchButton.addActionListener(new ActionListener() {
@@ -104,7 +105,7 @@ public class TreeSearchDlg extends JDialog {
 
         nodeEnum = rootNode.depthFirstEnumeration();
 
-        GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Could_not_find_further_occurrences_of_") + "\"" + searchString + "\".", JUICE.resources.getString("Info"));
+        GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Could_not_find_further_occurrences_of_") + "\"" + searchString + "\".", JAMS.resources.getString("Info"));
 
     }
 }

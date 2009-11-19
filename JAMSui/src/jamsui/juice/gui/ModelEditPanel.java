@@ -38,7 +38,6 @@ import jams.gui.input.InputComponent;
 import jams.gui.input.ValueChangeListener;
 import java.awt.GridBagConstraints;
 import javax.swing.BorderFactory;
-import jamsui.juice.JUICE;
 import jams.gui.input.InputComponentFactory;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -46,6 +45,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import reg.JAMSExplorer;
+import jams.JAMS;
 
 /**
  *
@@ -87,11 +87,11 @@ public class ModelEditPanel extends JPanel {
         mainLayout = new GridBagLayout();
         componentPanel.setLayout(mainLayout);
 
-        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Workspace:")), 1, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Author:")), 1, 1, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Help_Base_URL:")), 1, 5, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Date:")), 1, 3, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JUICE.resources.getString("Description:")), 1, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.resources.getString("Workspace:")), 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.resources.getString("Author:")), 1, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.resources.getString("Help_Base_URL:")), 1, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.resources.getString("Date:")), 1, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.resources.getString("Description:")), 1, 4, 1, 1, 0, 0);
 
         workspace = InputComponentFactory.createInputComponent(JAMSDirName.class);
         workspace.setLength(TEXTFIELD_WIDTH);
@@ -112,7 +112,7 @@ public class ModelEditPanel extends JPanel {
         scroll.setBorder(BorderFactory.createEtchedBorder());
         scroll.setPreferredSize(new Dimension(TEXTAREA_WIDTH, TEXTAREA_HEIGHT));
 
-        explorerAction = new AbstractAction(jams.JAMS.resources.getString("JEDI")) {
+        explorerAction = new AbstractAction(JAMS.resources.getString("JEDI")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {

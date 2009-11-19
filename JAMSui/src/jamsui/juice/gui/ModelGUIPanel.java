@@ -50,6 +50,7 @@ import jamsui.juice.ModelProperties.Group;
 import jamsui.juice.ModelProperties.ModelElement;
 import jamsui.juice.ModelProperties.ModelProperty;
 import jams.gui.input.InputComponentFactory;
+import jams.JAMS;
 
 /**
  *
@@ -95,7 +96,7 @@ public class ModelGUIPanel extends JPanel {
         }
         titledBorderFont = new Font(titledBorderFont.getName(), Font.BOLD, fontSize);
 
-        JButton addPropertyButton = new JButton(JUICE.resources.getString("Add_Property"));
+        JButton addPropertyButton = new JButton(JAMS.resources.getString("Add_Property"));
         addPropertyButton.setPreferredSize(BUTTON_DIMENSION);
         addPropertyButton.addActionListener(new ActionListener() {
 
@@ -105,7 +106,7 @@ public class ModelGUIPanel extends JPanel {
             }
         });
 
-        JButton addSubgroupButton = new JButton(JUICE.resources.getString("Add_Subgroup"));
+        JButton addSubgroupButton = new JButton(JAMS.resources.getString("Add_Subgroup"));
         addSubgroupButton.setPreferredSize(BUTTON_DIMENSION);
         addSubgroupButton.addActionListener(new ActionListener() {
 
@@ -115,7 +116,7 @@ public class ModelGUIPanel extends JPanel {
             }
         });
 
-        JButton addGroupButton = new JButton(JUICE.resources.getString("Add_Group"));
+        JButton addGroupButton = new JButton(JAMS.resources.getString("Add_Group"));
         addGroupButton.setPreferredSize(BUTTON_DIMENSION);
         addGroupButton.addActionListener(new ActionListener() {
 
@@ -125,7 +126,7 @@ public class ModelGUIPanel extends JPanel {
             }
         });
 
-        JButton moveupGroupButton = new JButton(JUICE.resources.getString("Group_up"));
+        JButton moveupGroupButton = new JButton(JAMS.resources.getString("Group_up"));
         moveupGroupButton.setPreferredSize(BUTTON_DIMENSION);
         moveupGroupButton.addActionListener(new ActionListener() {
 
@@ -135,7 +136,7 @@ public class ModelGUIPanel extends JPanel {
             }
         });
 
-        JButton movedownGroupButton = new JButton(JUICE.resources.getString("Group_down"));
+        JButton movedownGroupButton = new JButton(JAMS.resources.getString("Group_down"));
         movedownGroupButton.setPreferredSize(BUTTON_DIMENSION);
         movedownGroupButton.addActionListener(new ActionListener() {
 
@@ -145,7 +146,7 @@ public class ModelGUIPanel extends JPanel {
             }
         });
 
-        JButton editGroupButton = new JButton(JUICE.resources.getString("Edit_Group"));
+        JButton editGroupButton = new JButton(JAMS.resources.getString("Edit_Group"));
         editGroupButton.setPreferredSize(BUTTON_DIMENSION);
         editGroupButton.addActionListener(new ActionListener() {
 
@@ -155,7 +156,7 @@ public class ModelGUIPanel extends JPanel {
             }
         });
 
-        JButton delGroupButton = new JButton(JUICE.resources.getString("Remove_Group"));
+        JButton delGroupButton = new JButton(JAMS.resources.getString("Remove_Group"));
         delGroupButton.setPreferredSize(BUTTON_DIMENSION);
         delGroupButton.addActionListener(new ActionListener() {
 
@@ -232,7 +233,7 @@ public class ModelGUIPanel extends JPanel {
         // query new name
 
         String groupName = group.getName();
-        String newGroupName = JOptionPane.showInputDialog(this, JUICE.resources.getString("Group_name:"), groupName);
+        String newGroupName = JOptionPane.showInputDialog(this, JAMS.resources.getString("Group_name:"), groupName);
         if ((newGroupName == null) || newGroupName.equals("") || newGroupName.equals(groupName)) {
             return;
         }
@@ -240,7 +241,7 @@ public class ModelGUIPanel extends JPanel {
         //  try to set group's name
 
         if (!view.getModelProperties().setGroupName(group, newGroupName)) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Group_name_already_in_use!"), JUICE.resources.getString("Error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Group_name_already_in_use!"), JAMS.resources.getString("Error"));
             return;
         }
 
@@ -254,7 +255,7 @@ public class ModelGUIPanel extends JPanel {
 
         // get name
 
-        String groupName = JOptionPane.showInputDialog(this, JUICE.resources.getString("Group_name:"));
+        String groupName = JOptionPane.showInputDialog(this, JAMS.resources.getString("Group_name:"));
 
         if ((groupName == null) || groupName.equals("")) {
             return;
@@ -263,7 +264,7 @@ public class ModelGUIPanel extends JPanel {
         // add group
 
         if (!view.getModelProperties().addGroup(groupName)) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Group_name_already_in_use!"), JUICE.resources.getString("Error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Group_name_already_in_use!"), JAMS.resources.getString("Error"));
             return;
         }
 
@@ -293,7 +294,7 @@ public class ModelGUIPanel extends JPanel {
             return;
         }
 
-        if (GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Really_delete_this_Group_and_all_of_its_properties?"), JUICE.resources.getString("Delete_Group")) != JOptionPane.YES_OPTION) {
+        if (GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Really_delete_this_Group_and_all_of_its_properties?"), JAMS.resources.getString("Delete_Group")) != JOptionPane.YES_OPTION) {
             return;
         }
 
@@ -455,7 +456,7 @@ public class ModelGUIPanel extends JPanel {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder());
 
         ElementButton downButton = new ElementButton(property);
-        downButton.setToolTipText(JUICE.resources.getString("Move_down"));
+        downButton.setToolTipText(JAMS.resources.getString("Move_down"));
         downButton.setIcon(DOWN_ICON);
         downButton.addActionListener(new ActionListener() {
 
@@ -468,7 +469,7 @@ public class ModelGUIPanel extends JPanel {
         buttonPanel.add(downButton);
 
         ElementButton upButton = new ElementButton(property);
-        upButton.setToolTipText(JUICE.resources.getString("Move_up"));
+        upButton.setToolTipText(JAMS.resources.getString("Move_up"));
         upButton.setIcon(UP_ICON);
         upButton.addActionListener(new ActionListener() {
 
@@ -481,7 +482,7 @@ public class ModelGUIPanel extends JPanel {
         buttonPanel.add(upButton);
 
         ElementButton delButton = new ElementButton(property);
-        delButton.setToolTipText(JUICE.resources.getString("Delete"));
+        delButton.setToolTipText(JAMS.resources.getString("Delete"));
         delButton.setText("-");
         delButton.addActionListener(new ActionListener() {
 
@@ -494,7 +495,7 @@ public class ModelGUIPanel extends JPanel {
         buttonPanel.add(delButton);
 
         ElementButton editButton = new ElementButton(property);
-        editButton.setToolTipText(JUICE.resources.getString("Edit"));
+        editButton.setToolTipText(JAMS.resources.getString("Edit"));
         editButton.setText("...");
         editButton.addActionListener(new ActionListener() {
 
@@ -516,7 +517,7 @@ public class ModelGUIPanel extends JPanel {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder());
 
         ElementButton downButton = new ElementButton(subgroup);
-        downButton.setToolTipText(JUICE.resources.getString("Move_down"));
+        downButton.setToolTipText(JAMS.resources.getString("Move_down"));
         downButton.setIcon(DOWN_ICON);
         downButton.addActionListener(new ActionListener() {
 
@@ -529,7 +530,7 @@ public class ModelGUIPanel extends JPanel {
         buttonPanel.add(downButton);
 
         ElementButton upButton = new ElementButton(subgroup);
-        upButton.setToolTipText(JUICE.resources.getString("Move_up"));
+        upButton.setToolTipText(JAMS.resources.getString("Move_up"));
         upButton.setIcon(UP_ICON);
         upButton.addActionListener(new ActionListener() {
 
@@ -542,7 +543,7 @@ public class ModelGUIPanel extends JPanel {
         buttonPanel.add(upButton);
 
         ElementButton delButton = new ElementButton(subgroup);
-        delButton.setToolTipText(JUICE.resources.getString("Delete"));
+        delButton.setToolTipText(JAMS.resources.getString("Delete"));
         delButton.setText("-");
         delButton.addActionListener(new ActionListener() {
 
@@ -555,7 +556,7 @@ public class ModelGUIPanel extends JPanel {
         buttonPanel.add(delButton);
 
         ElementButton editButton = new ElementButton(subgroup);
-        editButton.setToolTipText(JUICE.resources.getString("Edit"));
+        editButton.setToolTipText(JAMS.resources.getString("Edit"));
         editButton.setText("...");
         editButton.addActionListener(new ActionListener() {
 
@@ -608,12 +609,12 @@ public class ModelGUIPanel extends JPanel {
         if (element instanceof Group) {
             Vector test = ((Group) element).getProperties();
             if (test.size() > 0) {
-                GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Subgroup_needs_to_be_empty."), JUICE.resources.getString("Deletion_not_possible"));
+                GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Subgroup_needs_to_be_empty."), JAMS.resources.getString("Deletion_not_possible"));
                 return;
             }
         }
 
-        int result = GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(), JUICE.resources.getString("Really_delete_this_property?"), JUICE.resources.getString("Delete_property"));
+        int result = GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Really_delete_this_property?"), JAMS.resources.getString("Delete_property"));
         if (result != JOptionPane.YES_OPTION) {
             return;
         }

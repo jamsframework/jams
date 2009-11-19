@@ -5,21 +5,13 @@
 
 package jamsui.juice.optimizer.wizard;
 
-import jamsui.juice.optimizer.wizard.OptimizationWizard.Efficiency;
-import jamsui.juice.optimizer.wizard.OptimizationWizard.Parameter;
-import jamsui.juice.optimizer.wizard.step6Pane.AttributeDescription;
 import jamsui.juice.optimizer.wizard.step6Pane.OptimizerDescription;
-import jamsui.juice.*;
 import jams.model.JAMSModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,11 +19,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
-import jamsui.juice.optimizer.wizard.OptimizationWizard.AttributeWrapper;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import jams.JAMS;
 
 /**
  *
@@ -95,7 +84,7 @@ public class step7Pane extends stepPane {
     public JPanel build(){
         panel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        /*JButton chooseModelFile = new JButton(JUICE.resources.getString("Save"));        
+        /*JButton chooseModelFile = new JButton(JAMS.resources.getString("Save"));        
         JPanel saveModelFilePanel = new JPanel(new GridBagLayout());    
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;    c.gridy = 0;    c.fill = GridBagConstraints.NONE;
@@ -104,12 +93,12 @@ public class step7Pane extends stepPane {
         saveModelFilePanel.add(chooseModelFile,c);*/
                 
         /*JPanel modelFilePanel = new JPanel(new BorderLayout());
-        modelFilePanel.add(new JLabel(JUICE.resources.getString("output_file_path")), BorderLayout.NORTH);
+        modelFilePanel.add(new JLabel(JAMS.resources.getString("output_file_path")), BorderLayout.NORTH);
         modelFilePanel.add(saveModelFilePanel,BorderLayout.CENTER);
 
         c.gridx = 0;    c.gridy = 0;    c.fill = GridBagConstraints.NONE;
         panel.add(modelFilePanel,c);   */
-        this.panel.add(new JLabel(JUICE.resources.getString("successfully_finished")));
+        this.panel.add(new JLabel(JAMS.resources.getString("successfully_finished")));
         
         JPanel infoPanel = new JPanel(new BorderLayout());
         infoPanel.add(new JLabel("infoLog"),BorderLayout.NORTH);
@@ -124,7 +113,7 @@ public class step7Pane extends stepPane {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fc = new JFileChooser();
-                fc.setDialogTitle(JUICE.resources.getString("Choose_a_model_file"));
+                fc.setDialogTitle(JAMS.resources.getString("Choose_a_model_file"));
                 fc.setFileFilter(new FileFilter() {
                     @Override
                     public boolean accept(File f) {

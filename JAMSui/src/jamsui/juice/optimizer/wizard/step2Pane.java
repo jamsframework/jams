@@ -7,27 +7,20 @@ package jamsui.juice.optimizer.wizard;
 
 import jams.JAMSProperties;
 import jams.tools.JAMSTools;
-import jams.model.JAMSContext;
 import jamsui.juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
 import jamsui.juice.optimizer.wizard.OptimizationWizard.Parameter;
-import jamsui.juice.*;
 import jams.model.JAMSModel;
 import jams.model.JAMSVarDescription;
 import jams.model.JAMSVarDescription.AccessType;
 import jams.runtime.StandardRuntime;
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Image;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,6 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import jams.JAMS;
 
 /**
  *
@@ -240,10 +234,10 @@ public class step2Pane extends stepPane {
     public String init(){
         rt = new StandardRuntime();
         if (this.loadedModel == null){
-            return JUICE.resources.getString("error_no_model_loaded");            
+            return JAMS.resources.getString("error_no_model_loaded");            
         }
         if (this.properties == null){
-            return JUICE.resources.getString("error_no_property_file");            
+            return JAMS.resources.getString("error_no_property_file");            
         }
         //copy doc, because loadModel will alter document sometimes
         
@@ -285,7 +279,7 @@ public class step2Pane extends stepPane {
     public String finish(){
         TreePath selections[] = modelTree.getSelectionPaths();
         if (selections == null){
-            return JUICE.resources.getString("error_no_parameter");    
+            return JAMS.resources.getString("error_no_parameter");    
         }        
         selectedParameters.clear();
         for (int i=0;i<selections.length;i++){
@@ -300,7 +294,7 @@ public class step2Pane extends stepPane {
             }
         }
         if (selectedParameters.size()==0){          
-            return JUICE.resources.getString("error_no_parameter");    
+            return JAMS.resources.getString("error_no_parameter");    
         }
         return null;
     }
@@ -314,7 +308,7 @@ public class step2Pane extends stepPane {
     public JPanel build(){                
         panel.setLayout(new BorderLayout());
         panel.setBorder(null);
-        panel.add(new JLabel(JUICE.resources.getString("step1_desc")), BorderLayout.NORTH);               
+        panel.add(new JLabel(JAMS.resources.getString("step1_desc")), BorderLayout.NORTH);               
         
         JScrollPane treeScroller = new JScrollPane(modelTree);        
         treeScroller.setVisible(true);

@@ -8,8 +8,8 @@ package jamsui.juice.optimizer.wizard;
 import jams.tools.XMLIO;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import jamsui.juice.*;
 import org.w3c.dom.Document;
+import jams.JAMS;
 
 /**
  *
@@ -21,7 +21,7 @@ public class step8Pane extends stepPane{
     
     @Override
     public JPanel build(){
-        this.panel.add(new JLabel(JUICE.resources.getString("successfully_finished")));
+        this.panel.add(new JLabel(JAMS.resources.getString("successfully_finished")));
         return panel;
     }
           

@@ -5,7 +5,6 @@
 package jamsui.juice.optimizer.wizard;
 
 import jams.JAMSProperties;
-import jams.model.JAMSComponent;
 import jamsui.juice.*;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -21,6 +20,7 @@ import jamsui.juice.gui.JUICEFrame;
 import jamsui.juice.gui.ModelView;
 import jamsui.juice.gui.tree.ModelTree;
 import org.w3c.dom.Document;
+import jams.JAMS;
 
 /**
  *
@@ -119,7 +119,7 @@ public class OptimizationWizard {
     
     
     public void runWizard(Document modelDoc,JAMSProperties properties,JUICEFrame frame) {
-        final JDialog wizardDlg = new JDialog(JUICE.getJuiceFrame(), JUICE.resources.getString("Optimization_Wizard"));
+        final JDialog wizardDlg = new JDialog(JUICE.getJuiceFrame(), JAMS.resources.getString("Optimization_Wizard"));
         
         final JTabbedPane stepPane = new JTabbedPane();
         stepPane.setEnabled(false);
@@ -139,20 +139,20 @@ public class OptimizationWizard {
         steps[7] = new step8Pane();
         
         //stepPane.addTab("Step 1", null, steps[0].build(), "load model file");
-        stepPane.addTab(JUICE.resources.getString("Step_1"), null, steps[0].build(), JUICE.resources.getString("select_parameter"));
-        stepPane.addTab(JUICE.resources.getString("Step_2"), null, steps[1].build(), JUICE.resources.getString("specify_feasible_area"));
-        stepPane.addTab(JUICE.resources.getString("Step_3"), null, steps[2].build(), JUICE.resources.getString("select_efficiencies"));
-        stepPane.addTab(JUICE.resources.getString("Step_4"), null, steps[3].build(), JUICE.resources.getString("specify_modes"));
-        stepPane.addTab(JUICE.resources.getString("Step_5"), null, steps[4].build(), JUICE.resources.getString("optimizer_selection"));
-        stepPane.addTab(JUICE.resources.getString("Step_6"), null, steps[5].build(), JUICE.resources.getString("specify_output_data"));
-        stepPane.addTab(JUICE.resources.getString("Step_7"), null, steps[6].build(), JUICE.resources.getString("output_path"));
-        //stepPane.addTab("Step 7", null, steps[6].build(), JUICE.resources.getString("finish"));
+        stepPane.addTab(JAMS.resources.getString("Step_1"), null, steps[0].build(), JAMS.resources.getString("select_parameter"));
+        stepPane.addTab(JAMS.resources.getString("Step_2"), null, steps[1].build(), JAMS.resources.getString("specify_feasible_area"));
+        stepPane.addTab(JAMS.resources.getString("Step_3"), null, steps[2].build(), JAMS.resources.getString("select_efficiencies"));
+        stepPane.addTab(JAMS.resources.getString("Step_4"), null, steps[3].build(), JAMS.resources.getString("specify_modes"));
+        stepPane.addTab(JAMS.resources.getString("Step_5"), null, steps[4].build(), JAMS.resources.getString("optimizer_selection"));
+        stepPane.addTab(JAMS.resources.getString("Step_6"), null, steps[5].build(), JAMS.resources.getString("specify_output_data"));
+        stepPane.addTab(JAMS.resources.getString("Step_7"), null, steps[6].build(), JAMS.resources.getString("output_path"));
+        //stepPane.addTab("Step 7", null, steps[6].build(), JAMS.resources.getString("finish"));
         
         wizardDlg.setLayout(new BorderLayout());
         wizardDlg.add(stepPane, BorderLayout.CENTER);
 
-        final JButton nextStep = new JButton(JUICE.resources.getString("next"));
-        final JButton back = new JButton(JUICE.resources.getString("back"));
+        final JButton nextStep = new JButton(JAMS.resources.getString("next"));
+        final JButton back = new JButton(JAMS.resources.getString("back"));
         
         ((step2Pane)steps[0]).loadedModel = myData.modelDoc;
         ((step2Pane)steps[0]).properties = myData.properties;
@@ -238,7 +238,7 @@ public class OptimizationWizard {
         });
 
 
-        JButton exit = new JButton(JUICE.resources.getString("Exit"));
+        JButton exit = new JButton(JAMS.resources.getString("Exit"));
         exit.addActionListener(new ActionListener() {
 
             @Override
