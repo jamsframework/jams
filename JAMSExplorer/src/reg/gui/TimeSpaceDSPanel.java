@@ -432,7 +432,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         });
 
         try {
-            if (!dsdb.existsH2DB()) {
+            if (!dsdb.existsH2DB() || dsdb.isDBObsolete()) {
                 workerDlg.execute();
             }
 

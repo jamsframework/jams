@@ -205,6 +205,12 @@ public class DataStoreProcessor {
         }
     }
 
+    public boolean isDBObsolete() {
+
+
+        return true;
+    }
+
     public boolean existsH2DBFiles() {
         String prefix = dsFile.toString().substring(0, dsFile.toString().lastIndexOf("."));
         File dataFile = new File(prefix + ".data.db");
