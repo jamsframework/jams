@@ -81,9 +81,7 @@ import org.geotools.feature.FeatureCollections;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.filter.text.cql2.CQL;
-import org.geotools.gui.swing.JMapPane;
 import org.geotools.map.DefaultMapContext;
-import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
@@ -100,6 +98,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import jams.components.io.ShapeTool;
 import jams.data.JAMSBoolean;
+import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -178,14 +177,12 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
     private SimpleFeature selectedF = null;
     private CoordinateReferenceSystem crs;
     private DefaultMapContext topmap;
-    private DefaultMapLayer selection = null;
     private Envelope fullExtent;
+    private DefaultMapLayer selection = null;
     private String[] otherLayers;
     private int div_hor;
-    private Style selectStyle;
 
     private Styled3DMapPane mp;        
-    private JSplitPane p, splitPane;
     private JAMSAscGridReader asg;
     
     static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory(null);
@@ -242,10 +239,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
         //mp.setMapArea(mc[0].asCollectionDataStore().getCollection().getBounds());        
         mp.setHeightMap(asg);
         info.setText("3D Map Pane ... calculating normals");        
-        p.setDividerLocation(0.80);
-        splitPane.setDividerLocation(0.70);
-        
-        
+                
         otherLayers = new String[]{shapeFileName1.getValue(), shapeFileName2.getValue(), shapeFileName3.getValue()};
 
         /* Reading additional shapefiles */
@@ -769,6 +763,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
             JSlider js = new JSlider();
             js.setMinimum(-20);
             js.setMaximum(10);
+            js.setPreferredSize(new Dimension(125,25));
             js.addChangeListener(new ChangeListener() {
 
                 public void stateChanged(ChangeEvent e) {
@@ -783,21 +778,16 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
             sliderPanel.add(js);
             
             // create panel to display info and slider
-            JPanel miscPanel = new JPanel();
-            miscPanel.setLayout(new BorderLayout());
-            miscPanel.add(sliderPanel, BorderLayout.NORTH);
-            miscPanel.add(info, BorderLayout.CENTER);
+            JSplitPane miscPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+            miscPanel.setDividerLocation(0.4);
+
+            miscPanel.setBottomComponent(info);
+            miscPanel.setTopComponent(sliderPanel);
             
             treeView = new JScrollPane(tree);
-            
-             // create split pane to display tree and misc panel
-            p = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-            p.setTopComponent(treeView);
-            p.setBottomComponent(miscPanel);
-
-            
+                                   
             legendPane.setTopComponent(treeView);
-            legendPane.setBottomComponent(info);
+            legendPane.setBottomComponent(miscPanel);
             this.setLayout(new BorderLayout());
 
             waitPanel = new JPanel();
@@ -809,13 +799,11 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
             label.setFont(new Font("Dialog", Font.BOLD, 14));
             waitPanel.add(label);
             mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-            this.add(waitPanel);
+            this.add(waitPanel);   
             
-            splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-            splitPane.setRightComponent(p);
-            splitPane.setLeftComponent(mp);
-            //this.add(jtb, BorderLayout.NORTH);
-            this.add(splitPane);
+            /*js.setMaximumSize(new Dimension(125,25));
+            js.setMinimumSize(new Dimension(125,25));*/
+            
         }
 
         /* Uses new GeoAPI Filter and CQL */
