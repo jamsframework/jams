@@ -131,7 +131,7 @@ public class DisplayManager implements Observer {
                     explorer.getExplorerFrame().getTPane().setSelectedComponent(spreadSheet);
                     try {
                         spreadSheet.loadTSDS((TSDataStore) store, explorer.getWorkspace().getInputDirectory());
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         GUIHelper.showErrorDlg(explorer.getExplorerFrame(), "An error occured while trying to read from datastore \"" + store.getID() + "\"", "Error");
                         e.printStackTrace();
                     }

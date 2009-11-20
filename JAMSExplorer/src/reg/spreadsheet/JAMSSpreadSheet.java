@@ -869,7 +869,12 @@ public class JAMSSpreadSheet extends JPanel {
 
             DataValue[] rowData = ds.getData();
 
+            if (rowData == null) {
+                break;
+            }
+
             JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+
             try {
                 timeval.setValue(rowData[0].getString(), "dd.MM.yyyy HH:mm");
             } catch (ParseException pe) {
@@ -1171,6 +1176,7 @@ public class JAMSSpreadSheet extends JPanel {
                 viewer.addData(dataTransfer);
             } catch (Exception ex) {
                 GUIHelper.showErrorDlg(JAMSSpreadSheet.this, "Error while trying to display map!", "Error!");
+                ex.printStackTrace();
             }
         }
     };
@@ -1362,7 +1368,7 @@ public class JAMSSpreadSheet extends JPanel {
 //        GUIHelper.addGBComponent(controlpanel, gbl, loadbutton, 0, 11, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, statButton, 0, 12, 1, 1, 0, 0);
 
-        if (explorer.isTlugized()) {
+        if (true || explorer.isTlugized()) {
 
             // populate shape-combobox
             String defaultShapeName = null;

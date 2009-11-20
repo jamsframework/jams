@@ -107,15 +107,15 @@ public class ExplorerFrame extends JFrame {
     private PropertyDlg propertyDlg;
 
     private WorkspaceDlg wsDlg;
-    
+
     private Document modelDoc = null;
 
     private MCAT5Toolbar mcat5ToolBar = null;
-    
+
     public ExplorerFrame(JAMSExplorer explorer) {
         this.explorer = explorer;
         mcat5ToolBar = new MCAT5Toolbar(this);
-        init();        
+        init();
     }
 
     private void init() {
@@ -211,7 +211,7 @@ public class ExplorerFrame extends JFrame {
         propertyDlg = new PropertyDlg(this, explorer.getProperties());
 
         openWSDlg = new WorkerDlg(this, "Opening Workspace");
-                
+
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(JAMSExplorer.APP_TITLE);
 
@@ -340,11 +340,9 @@ public class ExplorerFrame extends JFrame {
     }
 
     private void initModelDoc() {
-        System.out.println("initModelDoc..");
         try {
             JAMSWorkspace workspace = explorer.getWorkspace();
             if (workspace != null) {
-                System.out.println("initModelDoc " + workspace.getModelFilename());
                 this.modelDoc = XMLIO.getDocument(new File(workspace.getDirectory(), workspace.getModelFilename()).getPath());
             }
         } catch (FileNotFoundException ex) {
@@ -355,11 +353,13 @@ public class ExplorerFrame extends JFrame {
     public void open(File workspaceFile) {
         try {
             String[] libs = JAMSTools.toArray(explorer.getProperties().getProperty("libs", ""), ";");
-            JAMSWorkspace workspace = new JAMSWorkspace(workspaceFile, explorer.getRuntime(), true);
+            JAMSWorkspace workspace = new JAMSWorkspace(workspaceFile, explorer.getRuntime(), false);
             workspace.setLibs(libs);
             explorer.getDisplayManager().removeAllDisplays();
             explorer.setWorkspace(workspace);
-            this.initModelDoc();
+            if (explorer.isTlugized()) {
+                this.initModelDoc();
+            }
             this.update();
 
         } catch (InvalidWorkspaceException iwe) {
@@ -478,7 +478,7 @@ public class ExplorerFrame extends JFrame {
                         if (outputFiles == null || outputFiles.length == 0) {
                             System.out.println("no output files found in " + outputSourceDir);
                         } else {
-                            for (File outputFile: outputFiles) {
+                            for (File outputFile : outputFiles) {
                                 String outputFileName = outputFile.getAbsolutePath();
                                 System.out.println("outputFile file found: " + outputFileName);
                                 copyCommand = "cmd /c copy \"" + outputFileName + "\" \"" + outputTargetDir + "\" /Y";
@@ -586,9 +586,7 @@ public class ExplorerFrame extends JFrame {
 
     private void exit() {
 
-        if (explorer.isTlugized()) {
-            Viewer.destroy();
-        }
+        Viewer.destroy();
 
         for (Window window : explorer.getChildWindows()) {
             window.dispose();
