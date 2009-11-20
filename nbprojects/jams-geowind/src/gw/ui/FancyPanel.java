@@ -91,9 +91,9 @@ public class FancyPanel extends JPanel implements GeoWindView {
     /**
      * the language definitions
      */
-    private java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gw/resources/language"); // NOI18N
+    private static java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gw/resources/language"); // NOI18N
 
-    public static final String TITLE = "TLUG - Regionalisierung";
+    public static final String TITLE = bundle.getString("L_PROJECTNAME");
 
     public static final boolean enableNext = true;
 
@@ -201,14 +201,12 @@ public class FancyPanel extends JPanel implements GeoWindView {
                 Vector<Double> wrappedValues = new Vector<Double>(max);
                 if (idData != null) {
                     wrappedValues = getResortedValues(idData, dtIds, dtColumnValues);
-                    System.out.println(wrappedValues);
                 } else {
                     System.out.println("Couldn't corretly match the values, using default ordering!");
                     // no Ids -> take the values as it is (but wrapped)
                     for (double value : dtColumnValues) {
                         wrappedValues.add(new Double(value));
                     }
-                    System.out.println("filled values without ids");
                 }
 
                 // add the column
@@ -258,8 +256,6 @@ public class FancyPanel extends JPanel implements GeoWindView {
             int index = idPosition.get(inputIds[i]);
             sortedValues[index] = inputValues[i];
         }
-
-        System.out.println("filled values according to ids. success=" + success + ", failure=" + failure);
 
         Vector<Double> result = new Vector<Double>();
         for (double d : sortedValues) {
