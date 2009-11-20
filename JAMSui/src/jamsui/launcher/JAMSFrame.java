@@ -597,9 +597,14 @@ public class JAMSFrame extends JAMSLauncher {
         String workspacePath = varNode.getAttribute("value");
 
         try {
+            File workspaceFile = new File(workspacePath);
+            if (!workspaceFile.exists()) {
+                GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+                return;
+            }
             JAMSExplorer explorer = new JAMSExplorer(null, false, false);
             explorer.getExplorerFrame().setVisible(true);
-            explorer.getExplorerFrame().open(new File(workspacePath));
+            explorer.getExplorerFrame().open(workspaceFile);
         } catch (NoClassDefFoundError ncdfe) {
             GUIHelper.showInfoDlg(this, JAMS.resources.getString("ExplorerDisabled"), JAMS.resources.getString("Info"));
             explorerAction.setEnabled(false);

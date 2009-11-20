@@ -211,9 +211,14 @@ public class ModelEditPanel extends JPanel {
 
     private void openExplorer() {
         try {
+            File workspaceFile = new File(view.getWorkspace());
+            if (!workspaceFile.exists()) {
+                GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+                return;
+            }
             JAMSExplorer explorer = new JAMSExplorer(null, false, false);
             explorer.getExplorerFrame().setVisible(true);
-            explorer.getExplorerFrame().open(new File(view.getWorkspace()));
+            explorer.getExplorerFrame().open(workspaceFile);
         } catch (NoClassDefFoundError ncdfe) {
             GUIHelper.showInfoDlg(this, jams.JAMS.resources.getString("ExplorerDisabled"), jams.JAMS.resources.getString("Info"));
             explorerAction.setEnabled(false);
