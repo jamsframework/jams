@@ -203,7 +203,7 @@ public class JAMSSpreadSheet extends JPanel {
                                 t.append(((Double) model.getValueAt(rows[j], cols[i])).doubleValue());
                             }
                         } catch (Throwable ta) {
-                            t.append(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("0.0"));
+                            t.append("0.0");
                         }
                     }
                     if (j != rows.length - 1) {
@@ -632,7 +632,7 @@ public class JAMSSpreadSheet extends JPanel {
 //                                System.out.print("time: "+actual_string+"\t");
                                 try {
                                     //JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second)
-                                    timeval.setValue(actual_string, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YYYY-MM-DD_HH:MM"));
+                                    timeval.setValue(actual_string, "yyyy-MM-dd hh:mm");
 
                                 } catch (ParseException pe) {
                                     GUIHelper.showErrorDlg(this, SpreadsheetConstants.SPREADSHEET_ERR_TSMISSING, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));

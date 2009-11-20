@@ -1396,9 +1396,9 @@ public class JTSConfigurator extends JFrame {
         
         //Input / Output Sheet
         if(sheet.isOutputSheet()){
-            output = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TRUE");
+            output = "true";
         }else{
-            output = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FALSE");
+            output = "false";
         }
         
         properties.setProperty("output", output);
