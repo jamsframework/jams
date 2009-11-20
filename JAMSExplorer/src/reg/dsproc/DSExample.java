@@ -43,7 +43,7 @@ public class DSExample {
         dsdb.addImportProgressObserver(new Observer() {
 
             public void update(Observable o, Object arg) {
-                System.out.println("Import progress: " + arg);
+                System.out.println(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("IMPORT_PROGRESS:_") + arg);
             }
         });
 

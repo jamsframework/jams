@@ -139,17 +139,17 @@ public class DataStatistic {
      */
     public HashMap<String, Double> getResult() {
         HashMap<String, Double> result = new HashMap<String, Double>();
-        result.put("Minimum", getMin());
-        result.put("Maximum", getMax());
-        result.put("Mittelwert", getMean());
-        result.put("unteres Quartil (Q.25)", getQuartil1());
-        result.put("mittleres Quartil (Median)", getMedian());
-        result.put("oberes Quartil (Q.75)", getQuartil3());
-        result.put("Spannweite", getSpannweite());
-        result.put("Varianz", getVarianz());
-        result.put("Standardabweichung", getDeviation());
-        result.put("Schiefe (Skewness)", getSkew());
-        result.put("Wölbung (Kurtosis)", getKurt());
+        result.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINIMUM"), getMin());
+        result.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAXIMUM"), getMax());
+        result.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MITTELWERT"), getMean());
+        result.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("UNTERES_QUARTIL_(Q.25)"), getQuartil1());
+        result.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MITTLERES_QUARTIL_(MEDIAN)"), getMedian());
+        result.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBERES_QUARTIL_(Q.75)"), getQuartil3());
+        result.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SPANNWEITE"), getSpannweite());
+        result.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("VARIANZ"), getVarianz());
+        result.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STANDARDABWEICHUNG"), getDeviation());
+        result.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SCHIEFE_(SKEWNESS)"), getSkew());
+        result.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("WÖLBUNG_(KURTOSIS)"), getKurt());
 
         return result;
     }
@@ -158,13 +158,13 @@ public class DataStatistic {
     public String toString() {
         String newLine = "\n";
         String retString = "========================";
-        retString += "Statistik von " + name + ":" + newLine;
-        retString += "Minimum    :" + getMin() + newLine;
-        retString += "Maximum    :" + getMax() + newLine;
-        retString += "Mittel     :" + getMean() + newLine;
-        retString += "Medianwert :" + getMedian() + newLine;
-        retString += "Spannweite :" + getSpannweite() + newLine;
-        retString += "Varianz    :" + getVarianz() + newLine;
+        retString += java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STATISTIK_VON_") + name + ":" + newLine;
+        retString += java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINIMUM____:") + getMin() + newLine;
+        retString += java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAXIMUM____:") + getMax() + newLine;
+        retString += java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MITTEL_____:") + getMean() + newLine;
+        retString += java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEDIANWERT_:") + getMedian() + newLine;
+        retString += java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SPANNWEITE_:") + getSpannweite() + newLine;
+        retString += java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("VARIANZ____:") + getVarianz() + newLine;
 
         return retString;
     }
