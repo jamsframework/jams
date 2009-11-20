@@ -184,9 +184,10 @@ public class TSDataStore extends TableDataStore {
 
             this.dsd = getDSDFromDumpFile();
 
-            if (ws.getRuntime().getState() != JAMSRuntime.STATE_RUN) {
-                return;
-            }
+//            @TODO: Check if this is needed
+//            if (ws.getRuntime().getState() != JAMSRuntime.STATE_RUN) {
+//                return;
+//            }
         }
 
         currentDate.add(timeUnit, -1 * timeUnitCount);

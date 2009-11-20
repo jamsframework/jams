@@ -56,7 +56,7 @@ public class JAMSWorkspace implements Workspace {
 
     private static final String CONFIG_FILE_NAME = "config.txt", CONFIG_FILE_COMMENT = "JAMS workspace configuration", CONTEXT_ATTRIBUTE_NAME = "context";
 
-    private static final String INPUT_DIR_NAME = "input", OUTPUT_DIR_NAME = "output", TEMP_DIR_NAME = "tmp", DUMP_DIR_NAME = "dump", LOCAL_INDIR_NAME = "local";
+    private static final String INPUT_DIR_NAME = "input", OUTPUT_DIR_NAME = "output", TEMP_DIR_NAME = "tmp", DUMP_DIR_NAME = "dump", LOCAL_INDIR_NAME = "local", EXPLORER_DIR_NAME = "explorer";
 
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
 
@@ -68,7 +68,7 @@ public class JAMSWorkspace implements Workspace {
 
     private transient ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
-    private transient File directory, inputDirectory, outputDirectory = null, outputDataDirectory, localInputDirectory, localDumpDirectory, tmpDirectory;
+    private transient File directory, inputDirectory, outputDirectory = null, outputDataDirectory, localInputDirectory, localDumpDirectory, tmpDirectory, explorerDirectory;
 
     private Properties properties = new Properties();
 
@@ -154,9 +154,11 @@ public class JAMSWorkspace implements Workspace {
         File tmpDir = new File(directory, TEMP_DIR_NAME);
         File localInDir = new File(inDir, LOCAL_INDIR_NAME);
         File localDumpDir = new File(localInDir, DUMP_DIR_NAME);
+        File explorerDir = new File(directory, EXPLORER_DIR_NAME);
+
+        File[] allDirs = {inDir, outDir, localInDir, localDumpDir, explorerDir};
 
         if (readonly) {
-            File[] allDirs = {inDir, outDir, localInDir, localDumpDir};
             for (File dir : allDirs) {
                 if (!dir.exists()) {
                     throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
@@ -164,40 +166,35 @@ public class JAMSWorkspace implements Workspace {
                             dir.toString() + JAMS.resources.getString("_)"));
                 }
             }
-            this.inputDirectory = inDir;
-            this.outputDirectory = outDir;
-            this.localInputDirectory = localInDir;
-            this.localDumpDirectory = localDumpDir;
-            this.tmpDirectory = tmpDir;
 
         } else {
 
             try {
 
-                inDir.mkdirs();
-                outDir.mkdirs();
-                tmpDir.mkdirs();
-                localInDir.mkdirs();
-                localDumpDir.mkdirs();
-
-                this.inputDirectory = inDir;
-                this.outputDirectory = outDir;
-                this.localInputDirectory = localInDir;
-                this.localDumpDirectory = localDumpDir;
-                this.tmpDirectory = tmpDir;
-
-                if (this.isPersistent()) {
-                    Calendar cal = Calendar.getInstance();
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
-                    this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + sdf.format(cal.getTime()));
-                } else {
-                    this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + "current");
+                // make sure all dirs are existing
+                for (File dir : allDirs) {
+                    dir.mkdirs();
                 }
 
             } catch (SecurityException se) {
                 throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
                         directory.toString() + JAMS.resources.getString("_is_not_a_valid_workspace!"));
             }
+        }
+
+        this.inputDirectory = inDir;
+        this.outputDirectory = outDir;
+        this.localInputDirectory = localInDir;
+        this.localDumpDirectory = localDumpDir;
+        this.tmpDirectory = tmpDir;
+        this.explorerDirectory = explorerDir;
+
+        if (this.isPersistent()) {
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
+            this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + sdf.format(cal.getTime()));
+        } else {
+            this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + "current");
         }
     }
 
@@ -271,7 +268,7 @@ public class JAMSWorkspace implements Workspace {
     public void addDataStore(InputDataStore theStore) throws Exception {
 
         // @todo: works only for ShapeFileDataStore. If it is needed for other types, implement getDocument() there
-        ShapeFileDataStore theShapeFileDataStore = (ShapeFileDataStore)theStore;
+        ShapeFileDataStore theShapeFileDataStore = (ShapeFileDataStore) theStore;
         inputDataStores.put(theShapeFileDataStore.getID(), theShapeFileDataStore.getDocument());
     }
 
@@ -327,8 +324,9 @@ public class JAMSWorkspace implements Workspace {
         Set<String> ids = getInputDataStoreIDs();
         for (String id : ids) {
             store = getInputDataStore(id);
-            if (store instanceof ShapeFileDataStore)
+            if (store instanceof ShapeFileDataStore) {
                 return (ShapeFileDataStore) store;
+            }
         }
         return null;
     }
@@ -661,7 +659,6 @@ public class JAMSWorkspace implements Workspace {
     public File getTempDirectory() {
         return tmpDirectory;
     }
-
 //    public static void main(String[] args) throws IOException {
 //
 //        JAMSRuntime runtime = new StandardRuntime();
