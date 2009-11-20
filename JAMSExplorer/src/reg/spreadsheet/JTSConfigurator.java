@@ -103,36 +103,36 @@ public class JTSConfigurator extends JFrame {
     private Vector<double[]> arrayVector;
     private Vector<JAMSCalendar> timeVector;
 
-    private JLabel edTitle = new JLabel("Plot Title: ");
-    private JLabel edLeft = new JLabel("Left axis title: ");
-    private JLabel edXAxis = new JLabel("X axis title");
-    private JLabel edRight = new JLabel("Right axis title: ");
-    private JLabel rLeftLabel = new JLabel("Renderer left");
-    private JLabel rRightLabel = new JLabel("Renderer right");
-    private JLabel invLeftLabel = new JLabel("Invert left axis");
-    private JLabel invRightLabel = new JLabel("Invert right axis");
-    private JLabel timeFormatLabel = new JLabel("Time format");
+    private JLabel edTitle = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT_TITLE:_"));
+    private JLabel edLeft = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE:_"));
+    private JLabel edXAxis = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("X_AXIS_TITLE"));
+    private JLabel edRight = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT_AXIS_TITLE:_"));
+    private JLabel rLeftLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RENDERER_LEFT"));
+    private JLabel rRightLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RENDERER_RIGHT"));
+    private JLabel invLeftLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_LEFT_AXIS"));
+    private JLabel invRightLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_RIGHT_AXIS"));
+    private JLabel timeFormatLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_FORMAT"));
     private JTextField edTitleField = new JTextField(14);
     private JTextField edLeftField = new JTextField(14);
     private JTextField edRightField = new JTextField(14);
     private JTextField edXAxisField = new JTextField(14);
 
-    private String[] types = {"Line and Shape", "Bar", "Area", "Step", "StepArea", "Difference"};
+    private String[] types = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LINE_AND_SHAPE"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BAR"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AREA"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STEP"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STEPAREA"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE")};
 
     private JComboBox rLeftBox = new JComboBox(types);
     private JComboBox rRightBox = new JComboBox(types);
-    private JCheckBox invLeftBox = new JCheckBox("Invert left Axis");
-    private JCheckBox invRightBox = new JCheckBox("Invert right Axis");
-    private JCheckBox timeFormat_yy = new JCheckBox("yy");
-    private JCheckBox timeFormat_mm = new JCheckBox("mm");
-    private JCheckBox timeFormat_dd = new JCheckBox("dd");
-    private JCheckBox timeFormat_hm = new JCheckBox("hh:mm");
+    private JCheckBox invLeftBox = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_LEFT_AXIS"));
+    private JCheckBox invRightBox = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_RIGHT_AXIS"));
+    private JCheckBox timeFormat_yy = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YY"));
+    private JCheckBox timeFormat_mm = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MM"));
+    private JCheckBox timeFormat_dd = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DD"));
+    private JCheckBox timeFormat_hm = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("HH:MM"));
 
-    private JButton applyButton = new JButton("PLOT");
-    private JButton addButton = new JButton("Add Graph");
-    private JButton saveButton = new JButton("EPS export");
-    private JButton saveTempButton = new JButton("Save Template");
-    private JButton loadTempButton = new JButton("Load Template");
+    private JButton applyButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT"));
+    private JButton addButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD_GRAPH"));
+    private JButton saveButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EPS_EXPORT"));
+    private JButton saveTempButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SAVE_TEMPLATE"));
+    private JButton loadTempButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LOAD_TEMPLATE"));
     
 //    private final String INFO_MSG_SAVETEMP = "Please choose a template filename:";
     
@@ -234,7 +234,7 @@ public class JTSConfigurator extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         explorer.registerChild(this);
 
-        setTitle("JTS Viewer");
+        setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("JTS_VIEWER"));
         
         this.workspace = explorer.getWorkspace();
         
@@ -318,26 +318,26 @@ public class JTSConfigurator extends JFrame {
 //        System.out.println("CREATE PANEL TemplateFile = "+templateFile.toString());
         colour_cnt = 0;
         /* create ColorMap */
-        colorTable.put("yellow", Color.yellow);
-        colorTable.put("orange", Color.orange);
-        colorTable.put("red", Color.red);
-        colorTable.put("pink", Color.pink);
-        colorTable.put("magenta", Color.magenta);
-        colorTable.put("cyan", Color.cyan);
-        colorTable.put("blue", Color.blue);
-        colorTable.put("green", Color.green);
-        colorTable.put("gray", Color.gray);
-        colorTable.put("lightgray", Color.lightGray);
-        colorTable.put("black", Color.black);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"), Color.yellow);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"), Color.orange);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"), Color.red);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK"), Color.pink);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"), Color.magenta);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"), Color.cyan);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"), Color.blue);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"), Color.green);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"), Color.gray);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"), Color.lightGray);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"), Color.black);
 
-        JLabel nameLabel = new JLabel("Name");
-        JLabel posLabel = new JLabel("Position");
-        JLabel typeLabel = new JLabel("Renderer");
-        JLabel colorLabel = new JLabel("Colour");
-        JLabel dataLabel = new JLabel("Select Data / Legend Entry");
-        JLabel timeLabel = new JLabel("Time Interval");
+        JLabel nameLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NAME"));
+        JLabel posLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION"));
+        JLabel typeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RENDERER"));
+        JLabel colorLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOUR"));
+        JLabel dataLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SELECT_DATA_/_LEGEND_ENTRY"));
+        JLabel timeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_INTERVAL"));
         JLabel emptyTimeLabel = new JLabel("    ");
-        JLabel legendLabel = new JLabel("Legend Entry");
+        JLabel legendLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEGEND_ENTRY"));
 
         nameLabel.setBackground(Color.DARK_GRAY);
         posLabel.setBackground(Color.DARK_GRAY);
@@ -389,15 +389,15 @@ public class JTSConfigurator extends JFrame {
         edTitleField.setSize(40, 10);
         edTitleField.addActionListener(plotbuttonclick);
         //edLeftField.setColumns(20);
-        edLeftField.setText("Left Axis Title");
+        edLeftField.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE"));
         edLeftField.addActionListener(plotbuttonclick);
         edLeftField.setSize(40, 10);
         //edRightField.setColumns(20);
-        edRightField.setText("Right Axis Title");
+        edRightField.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT_AXIS_TITLE"));
         edRightField.addActionListener(plotbuttonclick);
         edRightField.setSize(40, 10);
 
-        edXAxisField.setText("Time");
+        edXAxisField.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME"));
         edXAxisField.addActionListener(plotbuttonclick);
         applyButton.addActionListener(plotbuttonclick);
 
@@ -422,7 +422,7 @@ public class JTSConfigurator extends JFrame {
                 else{ 
 //                    loadOutputTemplate(templateFile);
                     loadTemplate(templateFile);
-                    System.out.println("load OUTPUT TEMPLATE");
+                    System.out.println(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LOAD_OUTPUT_TEMPLATE"));
                 }
             } catch (Exception fnfe) {
 //                System.out.println("ERROR");
@@ -547,7 +547,7 @@ public class JTSConfigurator extends JFrame {
             }
         };
 
-        WorkerDlg dlg = new WorkerDlg(parent, "Preparing Data...");
+        WorkerDlg dlg = new WorkerDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PREPARING_DATA..."));
 //        Point parentloc = parent.getLocation();
 //        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
 //        dlg.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2,
@@ -564,57 +564,57 @@ public class JTSConfigurator extends JFrame {
 
         switch (scheme) {
             case 0:
-                colors[0] = "red";
-                colors[1] = "red";
-                colors[2] = "gray";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY");
                 break;
 
             case 1:
-                colors[0] = "blue";
-                colors[1] = "blue";
-                colors[2] = "black";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
                 break;
 
             case 2:
-                colors[0] = "green";
-                colors[1] = "green";
-                colors[2] = "gray";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY");
                 break;
 
             case 3:
-                colors[0] = "black";
-                colors[1] = "black";
-                colors[2] = "yellow";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW");
                 break;
 
             case 4:
-                colors[0] = "orange";
-                colors[1] = "orange";
-                colors[2] = "cyan";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN");
                 break;
 
             case 5:
-                colors[0] = "cyan";
-                colors[1] = "cyan";
-                colors[2] = "black";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
                 break;
 
             case 6:
-                colors[0] = "magenta";
-                colors[1] = "yellow";
-                colors[2] = "magenta";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA");
                 break;
 
             case 7:
-                colors[0] = "lightgray";
-                colors[1] = "orange";
-                colors[2] = "lightgray";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY");
                 break;
 
             default:
-                colors[0] = "red";
-                colors[1] = "blue";
-                colors[2] = "red";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
                 break;
         }
         return colors;
@@ -858,7 +858,7 @@ public class JTSConfigurator extends JFrame {
 
 
 
-                    if (prop.getPosChoice().getSelectedItem() == "left") {
+                    if (prop.getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT")) {
                         l++;
                         //prop.setRendererType(rLeft);
 
@@ -960,7 +960,7 @@ public class JTSConfigurator extends JFrame {
 //                       else prop.applySTPProperties(arrayVector, timeVector);
 
                     }
-                    if (prop.getPosChoice().getSelectedItem() == "right") {
+                    if (prop.getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")) {
                         r++;
                         //prop.setRendererType(rRight);
                         switch (rRight) {
@@ -1096,10 +1096,10 @@ public class JTSConfigurator extends JFrame {
     public void handleRenderer() {
         int r = 0, l = 0;
         for (int i = 0; i < propVector.size(); i++) {
-            if (propVector.get(i).getPosChoice().getSelectedItem() == "left") {
+            if (propVector.get(i).getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT")) {
                 l++;
             }
-            if (propVector.get(i).getPosChoice().getSelectedItem() == "right") {
+            if (propVector.get(i).getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")) {
                 r++;
             }
         }
@@ -1113,11 +1113,11 @@ public class JTSConfigurator extends JFrame {
         }
 
         if ((l == 2) && rLeftBox.getItemCount() == 5) {
-            rLeftBox.addItem("Difference");
+            rLeftBox.addItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE"));
         }
 
         if ((r == 2) && rRightBox.getItemCount() == 5) {
-            rRightBox.addItem("Difference");
+            rRightBox.addItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE"));
         }
     }
 
@@ -1186,14 +1186,14 @@ public class JTSConfigurator extends JFrame {
 
         graphpanel.removeAll();
 
-        JLabel nameLabel = new JLabel("Name");
-        JLabel posLabel = new JLabel("Position");
-        JLabel typeLabel = new JLabel("Colour / Position");
-        JLabel colorLabel = new JLabel("Type/Colour");
-        JLabel dataLabel = new JLabel("Data / Legend Entry");
-        JLabel timeLabel = new JLabel("Time Interval");
+        JLabel nameLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NAME"));
+        JLabel posLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION"));
+        JLabel typeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOUR_/_POSITION"));
+        JLabel colorLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TYPE/COLOUR"));
+        JLabel dataLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_/_LEGEND_ENTRY"));
+        JLabel timeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_INTERVAL"));
         JLabel emptyTimeLabel = new JLabel("    ");
-        JLabel legendLabel = new JLabel("Legend Entry: ");
+        JLabel legendLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEGEND_ENTRY:_"));
 
         gLayout = new GroupLayout(graphpanel);
         graphpanel.setLayout(gLayout);
@@ -1396,9 +1396,9 @@ public class JTSConfigurator extends JFrame {
         
         //Input / Output Sheet
         if(sheet.isOutputSheet()){
-            output = "true";
+            output = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TRUE");
         }else{
-            output = "false";
+            output = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FALSE");
         }
         
         properties.setProperty("output", output);
@@ -1529,8 +1529,8 @@ public class JTSConfigurator extends JFrame {
                             fout.close();
                             dont_save = false;
                         }else{
-                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
-                            int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
+                            String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_")+file+java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
+                            int result = GUIHelper.showYesNoDlg(this, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
                             if(result==0){ //overwrite
                                 filename = file.getName();
                                 FileOutputStream fout = new FileOutputStream(file);
@@ -1549,8 +1549,8 @@ public class JTSConfigurator extends JFrame {
                             fout.close();
                             dont_save = false;
                         }else{
-                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
-                            int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
+                            String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_")+file+java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
+                            int result = GUIHelper.showYesNoDlg(this, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
                             if(result==0){ //overwrite
                                 filename = file.getName();
                                 FileOutputStream fout = new FileOutputStream(file);
@@ -2067,8 +2067,8 @@ public class JTSConfigurator extends JFrame {
             
             
         }catch(FileNotFoundException fnfex){
-            final String ERROR_NODAT_MSG ="File not found: "+file.getName()+"!";
-            GUIHelper.showErrorDlg(this, ERROR_NODAT_MSG, "DAT file not found!");
+            final String ERROR_NODAT_MSG =java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_NOT_FOUND:_")+file.getName()+"!";
+            GUIHelper.showErrorDlg(this, ERROR_NODAT_MSG, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DAT_FILE_NOT_FOUND!"));
         }catch(Exception eee){
             eee.printStackTrace();
         }
@@ -2143,7 +2143,7 @@ public class JTSConfigurator extends JFrame {
                             jts.saveAsEPS(file);
                         }
                     };
-                    WorkerDlg dlg = new WorkerDlg(parent, "EPS Export");
+                    WorkerDlg dlg = new WorkerDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EPS_EXPORT"));
                     dlg.setTask(r);
                     dlg.execute();
                 }
@@ -2166,7 +2166,7 @@ public class JTSConfigurator extends JFrame {
 //            System.out.println("output_sheet="+sheet.isOutputSheet());
             if(sheet.isOutputSheet()){
                 String[] headers_with_time = new String[headers.length+1];
-                headers_with_time[0] = "ID";
+                headers_with_time[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ID");
                 java.lang.System.arraycopy(headers, 0, headers_with_time, 1, headers.length);
 //                sheet.save(filename, headers_with_time);//String ID zurückgeben
                 sheet.saveAll(filename);
@@ -2263,7 +2263,7 @@ public class JTSConfigurator extends JFrame {
         JLabel side_label;
 
         public AddGraphDlg() {
-            super(JTSConfigurator.this, "Add Graph", true);
+            super(JTSConfigurator.this, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD_GRAPH"), true);
 //            URL url = this.getClass().getResource("resources/JAMSicon16.png");
 //            ImageIcon icon = new ImageIcon(url);
 //            setIconImage(icon.getImage());
@@ -2276,7 +2276,7 @@ public class JTSConfigurator extends JFrame {
             setLayout(new FlowLayout());
 
             max = propVector.size();
-            String[] posArray = {"left", "right"};
+            String[] posArray = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")};
             if (max > 0) {
                 posSpinner = new JSpinner(new SpinnerNumberModel(max, 1, max, 1));
             } else {
@@ -2284,9 +2284,9 @@ public class JTSConfigurator extends JFrame {
             }
             sideChoice = new JComboBox(posArray);
             sideChoice.setSelectedIndex(0);
-            JButton okButton = new JButton("OK");
-            pos_label = new JLabel("position after: ");
-            side_label = new JLabel("side: ");
+            JButton okButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OK"));
+            pos_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION_AFTER:_"));
+            side_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIDE:_"));
 
             add(side_label);
             add(sideChoice);
@@ -2300,9 +2300,9 @@ public class JTSConfigurator extends JFrame {
 
         String getSide() {
             if (side_index == 0) {
-                side = "left";
+                side = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT");
             } else {
-                side = "right";
+                side = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT");
             }
 
             return side;

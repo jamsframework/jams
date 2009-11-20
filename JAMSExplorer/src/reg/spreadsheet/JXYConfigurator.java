@@ -97,31 +97,31 @@ public class JXYConfigurator extends JFrame {
 
     private boolean output_ttp = false;
 
-    private JButton saveTempButton = new JButton("Save Template");
-    private JButton loadTempButton = new JButton("Load Template");
-    private JLabel edTitle = new JLabel("Plot Title: ");
-    private JLabel edLeft = new JLabel("Left axis title: ");
-    private JLabel edXAxis = new JLabel("X axis title");
-    private JLabel edRight = new JLabel("Right axis title: ");
-    private JLabel rLeftLabel = new JLabel("Renderer left");
-    private JLabel rRightLabel = new JLabel("Renderer right");
-    private JLabel invLeftLabel = new JLabel("Invert left axis");
-    private JLabel invRightLabel = new JLabel("Invert right axis");
+    private JButton saveTempButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SAVE_TEMPLATE"));
+    private JButton loadTempButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LOAD_TEMPLATE"));
+    private JLabel edTitle = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT_TITLE:_"));
+    private JLabel edLeft = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE:_"));
+    private JLabel edXAxis = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("X_AXIS_TITLE"));
+    private JLabel edRight = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT_AXIS_TITLE:_"));
+    private JLabel rLeftLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RENDERER_LEFT"));
+    private JLabel rRightLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RENDERER_RIGHT"));
+    private JLabel invLeftLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_LEFT_AXIS"));
+    private JLabel invRightLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_RIGHT_AXIS"));
     private JTextField edTitleField = new JTextField(14);
     private JTextField edLeftField = new JTextField(14);
     private JTextField edRightField = new JTextField(14);
     private JTextField edXAxisField = new JTextField(14);
     //private String[] types = {"Line","Bar","Area","Line and Base","Dot","Step","StepArea","Difference"};
 
-    private String[] types = {"Line and Shape", "Bar", "Area", "Step", "StepArea", "Difference"};
+    private String[] types = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LINE_AND_SHAPE"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BAR"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AREA"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STEP"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STEPAREA"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE")};
     private JComboBox rLeftBox = new JComboBox(types);
     private JComboBox rRightBox = new JComboBox(types);
-    private JCheckBox invLeftBox = new JCheckBox("Invert left Axis");
-    private JCheckBox invRightBox = new JCheckBox("Invert right Axis");
+    private JCheckBox invLeftBox = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_LEFT_AXIS"));
+    private JCheckBox invRightBox = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_RIGHT_AXIS"));
     private ButtonGroup isXAxisGroup = new ButtonGroup();
-    private JButton applyButton = new JButton("PLOT");
-    private JButton addButton = new JButton("Add Graph");
-    private JButton saveButton = new JButton("EPS export");
+    private JButton applyButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT"));
+    private JButton addButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD_GRAPH"));
+    private JButton saveButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EPS_EXPORT"));
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
     private JAMSXYPlot jxys = new JAMSXYPlot();
     public XYRow[] sorted_Row;
@@ -225,7 +225,7 @@ public class JXYConfigurator extends JFrame {
             setVisible(true);
         }else{
 
-            GUIHelper.showErrorDlg(sheet, SpreadsheetConstants.JXY_ERR_NODATATEMPLATE, "Error");
+            GUIHelper.showErrorDlg(sheet, SpreadsheetConstants.JXY_ERR_NODATATEMPLATE, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
         }
     }
 
@@ -262,26 +262,26 @@ public class JXYConfigurator extends JFrame {
         thisDlg = this;
         colour_cnt = 0;
         /* create ColorMap */
-        colorTable.put("yellow", Color.yellow);
-        colorTable.put("orange", Color.orange);
-        colorTable.put("red", Color.red);
-        colorTable.put("pink", Color.pink);
-        colorTable.put("magenta", Color.magenta);
-        colorTable.put("cyan", Color.cyan);
-        colorTable.put("blue", Color.blue);
-        colorTable.put("green", Color.green);
-        colorTable.put("gray", Color.gray);
-        colorTable.put("lightgray", Color.lightGray);
-        colorTable.put("black", Color.black);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"), Color.yellow);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"), Color.orange);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"), Color.red);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK"), Color.pink);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"), Color.magenta);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"), Color.cyan);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"), Color.blue);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"), Color.green);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"), Color.gray);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"), Color.lightGray);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"), Color.black);
 
-        JLabel nameLabel = new JLabel("Name");
-        JLabel posLabel = new JLabel("Position");
-        JLabel typeLabel = new JLabel("Renderer");
-        JLabel colorLabel = new JLabel("Colour");
-        JLabel dataLabel = new JLabel("Select Data / Legend Entry");
-        JLabel timeLabel = new JLabel("Data Range");
+        JLabel nameLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NAME"));
+        JLabel posLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION"));
+        JLabel typeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RENDERER"));
+        JLabel colorLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOUR"));
+        JLabel dataLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SELECT_DATA_/_LEGEND_ENTRY"));
+        JLabel timeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_RANGE"));
         JLabel emptyTimeLabel = new JLabel("    ");
-        JLabel legendLabel = new JLabel("Legend Entry");
+        JLabel legendLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEGEND_ENTRY"));
 
         nameLabel.setBackground(Color.DARK_GRAY);
         posLabel.setBackground(Color.DARK_GRAY);
@@ -330,15 +330,15 @@ public class JXYConfigurator extends JFrame {
         edTitleField.setSize(40, 10);
         edTitleField.addActionListener(plotbuttonclick);
         //edLeftField.setColumns(20);
-        edLeftField.setText("Left Axis Title");
+        edLeftField.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE"));
         edLeftField.addActionListener(plotbuttonclick);
         edLeftField.setSize(40, 10);
         //edRightField.setColumns(20);
-        edRightField.setText("Right Axis Title");
+        edRightField.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT_AXIS_TITLE"));
         edRightField.addActionListener(plotbuttonclick);
         edRightField.setSize(40, 10);
 
-        edXAxisField.setText("x axis title");
+        edXAxisField.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("X_AXIS_TITLE"));
         edXAxisField.addActionListener(plotbuttonclick);
         applyButton.addActionListener(plotbuttonclick);
 
@@ -369,7 +369,7 @@ public class JXYConfigurator extends JFrame {
                 else{
 //                    loadOutputTemplate(templateFile);
                     loadTemplate(templateFile);
-                    System.out.println("load OUTPUT TEMPLATE");
+                    System.out.println(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LOAD_OUTPUT_TEMPLATE"));
                 }
             } catch (Exception fnfe) {
 //                System.out.println("ERROR");
@@ -520,7 +520,7 @@ public class JXYConfigurator extends JFrame {
             }
         };
 
-        WorkerDlg dlg = new WorkerDlg(parent, "Preparing Data...");
+        WorkerDlg dlg = new WorkerDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PREPARING_DATA..."));
 //        Point parentloc = parent.getLocation();
 //        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
         
@@ -783,57 +783,57 @@ public class JXYConfigurator extends JFrame {
 
         switch (scheme) {
             case 0:
-                colors[0] = "red";
-                colors[1] = "red";
-                colors[2] = "gray";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY");
                 break;
 
             case 1:
-                colors[0] = "blue";
-                colors[1] = "blue";
-                colors[2] = "black";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
                 break;
 
             case 2:
-                colors[0] = "green";
-                colors[1] = "green";
-                colors[2] = "gray";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY");
                 break;
 
             case 3:
-                colors[0] = "black";
-                colors[1] = "black";
-                colors[2] = "yellow";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW");
                 break;
 
             case 4:
-                colors[0] = "orange";
-                colors[1] = "orange";
-                colors[2] = "cyan";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN");
                 break;
 
             case 5:
-                colors[0] = "cyan";
-                colors[1] = "cyan";
-                colors[2] = "black";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
                 break;
 
             case 6:
-                colors[0] = "magenta";
-                colors[1] = "yellow";
-                colors[2] = "magenta";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA");
                 break;
 
             case 7:
-                colors[0] = "lightgray";
-                colors[1] = "orange";
-                colors[2] = "lightgray";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY");
                 break;
 
             default:
-                colors[0] = "red";
-                colors[1] = "blue";
-                colors[2] = "red";
+                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
+                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE");
+                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
                 break;
         }
         return colors;
@@ -1154,7 +1154,7 @@ public class JXYConfigurator extends JFrame {
 
 //                    prop.setLegendName(prop.getLegendName());
 
-                    if (prop.getPosChoice().getSelectedItem() == "left") {
+                    if (prop.getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT")) {
                         if (!propVector.get(i).isXSeries()) {
                             l++;
                             //prop.setRendererType(rLeft);
@@ -1257,7 +1257,7 @@ public class JXYConfigurator extends JFrame {
                         }
 
                     }
-                    if (prop.getPosChoice().getSelectedItem() == "right") {
+                    if (prop.getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")) {
                         if (!propVector.get(i).isXSeries()) {
                             r++;
                         }
@@ -1378,7 +1378,7 @@ public class JXYConfigurator extends JFrame {
             }
         };
 
-        WorkerDlg dlg = new WorkerDlg(parent, "Creating Plot...");
+        WorkerDlg dlg = new WorkerDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CREATING_PLOT..."));
 //        Point parentloc = parent.getLocation();
 //        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
 //        dlg.setLocationByPlatform(true);
@@ -1394,14 +1394,14 @@ public class JXYConfigurator extends JFrame {
         int r = 0, l = 0, c = 0;
         for (int i = 0; i < propVector.size(); i++) {
 
-            if (propVector.get(i).getPosChoice().getSelectedItem() == "left") {
+            if (propVector.get(i).getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT")) {
                 if (!propVector.get(i).isXSeries()) {
                     l++;
                 } else {
                     c++;
                 }
             }
-            if (propVector.get(i).getPosChoice().getSelectedItem() == "right") {
+            if (propVector.get(i).getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")) {
                 if (!propVector.get(i).isXSeries()) {
                     r++;
                 } else {
@@ -1419,11 +1419,11 @@ public class JXYConfigurator extends JFrame {
         }
 
         if ((l == 2) && rLeftBox.getItemCount() == 5) {
-            rLeftBox.addItem("Difference");
+            rLeftBox.addItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE"));
         }
 
         if ((r == 2) && rRightBox.getItemCount() == 5) {
-            rRightBox.addItem("Difference");
+            rRightBox.addItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE"));
         }
     }
 
@@ -1462,14 +1462,14 @@ public class JXYConfigurator extends JFrame {
 
         graphpanel.removeAll();
 
-        JLabel nameLabel = new JLabel("Name");
-        JLabel posLabel = new JLabel("Position");
-        JLabel typeLabel = new JLabel("Position");
-        JLabel colorLabel = new JLabel("Type/Colour");
-        JLabel dataLabel = new JLabel("Data / Legend Entry");
-        JLabel timeLabel = new JLabel("Data Range");
+        JLabel nameLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NAME"));
+        JLabel posLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION"));
+        JLabel typeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION"));
+        JLabel colorLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TYPE/COLOUR"));
+        JLabel dataLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_/_LEGEND_ENTRY"));
+        JLabel timeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_RANGE"));
         JLabel emptyTimeLabel = new JLabel("    ");
-        JLabel legendLabel = new JLabel("Legend Entry: ");
+        JLabel legendLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEGEND_ENTRY:_"));
 
         gLayout = new GroupLayout(graphpanel);
         graphpanel.setLayout(gLayout);
@@ -1773,8 +1773,8 @@ public class JXYConfigurator extends JFrame {
                             fout.close();
                             dont_save = false;
                         }else{
-                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
-                            int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
+                            String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_")+file+java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
+                            int result = GUIHelper.showYesNoDlg(this, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
                             if(result==0){ //overwrite
                                 filename = file.getName();
                                 FileOutputStream fout = new FileOutputStream(file);
@@ -1793,8 +1793,8 @@ public class JXYConfigurator extends JFrame {
                             fout.close();
                             dont_save = false;
                         }else{
-                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
-                            int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
+                            String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_")+file+java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
+                            int result = GUIHelper.showYesNoDlg(this, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
                             if(result==0){ //overwrite
                                 filename = file.getName();
                                 FileOutputStream fout = new FileOutputStream(file);
@@ -2064,7 +2064,7 @@ public class JXYConfigurator extends JFrame {
     }
 
     private void editProperties() {
-        JDialog propDlg = new JDialog(parent, "Properties");
+        JDialog propDlg = new JDialog(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PROPERTIES"));
         int ct = headers.length;
 
         JLabel[] labels = new JLabel[ct];
@@ -2256,7 +2256,7 @@ public class JXYConfigurator extends JFrame {
         JLabel side_label;
 
         public AddGraphDlg() {
-            super(thisDlg, "Add Graph", true);
+            super(thisDlg, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD_GRAPH"), true);
 //            URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
 //            ImageIcon icon = new ImageIcon(url);
 //            setIconImage(icon.getImage());
@@ -2269,13 +2269,13 @@ public class JXYConfigurator extends JFrame {
             setLayout(new FlowLayout());
 
             max = propVector.size();
-            String[] posArray = {"left", "right"};
+            String[] posArray = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")};
             posSpinner = new JSpinner(new SpinnerNumberModel(max, 0, max, 1));
             sideChoice = new JComboBox(posArray);
             sideChoice.setSelectedIndex(0);
-            okButton = new JButton("OK");
-            pos_label = new JLabel("position after: ");
-            side_label = new JLabel("side: ");
+            okButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OK"));
+            pos_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION_AFTER:_"));
+            side_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIDE:_"));
 
             add(side_label);
             add(sideChoice);
@@ -2288,9 +2288,9 @@ public class JXYConfigurator extends JFrame {
 
         String getSide() {
             if (side_index == 0) {
-                side = "left";
+                side = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT");
             } else {
-                side = "right";
+                side = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT");
             }
 
             return side;

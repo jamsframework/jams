@@ -91,7 +91,7 @@ public class BufferedFileReader extends Reader {
 	this.lock = in;
     
 	if (sz <= 0)
-	    throw new IllegalArgumentException(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BUFFER_SIZE_<=_0"));
+	    throw new IllegalArgumentException("Buffer size <= 0");
 
     cb = new char[sz];
 	nextChar = nChars = 0;
@@ -110,7 +110,7 @@ public class BufferedFileReader extends Reader {
     /** Checks to make sure that the stream has not been closed */
     private void ensureOpen() throws IOException {
 	if (in == null)
-	    throw new IOException(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STREAM_CLOSED"));
+	    throw new IOException("Stream closed");
     }
 
     /**
@@ -409,7 +409,7 @@ public class BufferedFileReader extends Reader {
      */
     public long skip(long n) throws IOException {
 	if (n < 0L) {
-	    throw new IllegalArgumentException(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SKIP_VALUE_IS_NEGATIVE"));
+	    throw new IllegalArgumentException("skip value is negative");
 	}
 	synchronized (lock) {
 	    ensureOpen();
@@ -497,7 +497,7 @@ public class BufferedFileReader extends Reader {
      */
     public void mark(int readAheadLimit) throws IOException {
 	if (readAheadLimit < 0) {
-	    throw new IllegalArgumentException(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("READ-AHEAD_LIMIT_<_0"));
+	    throw new IllegalArgumentException("Read-ahead limit < 0");
 	}
 	synchronized (lock) {
 	    ensureOpen();
@@ -518,8 +518,8 @@ public class BufferedFileReader extends Reader {
 	    ensureOpen();
 	    if (markedChar < 0)
 		throw new IOException((markedChar == INVALIDATED)
-				      ? java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MARK_INVALID")
-				      : java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STREAM_NOT_MARKED"));
+				      ? "Mark invalid"
+				      : "Stream not marked");
 	    nextChar = markedChar;
 	    skipLF = markedSkipLF;
 	}

@@ -140,9 +140,9 @@ public class GraphProperties {
     double[] x_dataIntervals;
     double[] y_data;
     
-    private String[] colors = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
-    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Step","StepArea","Difference"};
-    private String[] positions = {"left","right"}; 
+    private String[] colors = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK")};
+    private String[] types = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LINE"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BAR"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AREA"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LINE_AND_BASE"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOT"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STEP"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STEPAREA"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE")};
+    private String[] positions = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")};
     
     JPanel graphpanel = new JPanel();
     JPanel datapanel = new JPanel();
@@ -183,8 +183,8 @@ public class GraphProperties {
         this.thisProp = this;
         
         this.table = ctsconf.table;
-        this.position = "left";
-        this.name = "Graph Name";
+        this.position = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT");
+        this.name = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAPH_NAME");
 //      thithis.name);
         
         this.selectedColumn = 0;
@@ -206,18 +206,18 @@ public class GraphProperties {
         timechoice_END.setPreferredSize(new Dimension(40,14));
         timechoice_END.addActionListener(timeListener);
         
-        colorTable.put("yellow", Color.yellow);
-        colorTable.put("orange", Color.orange);
-        colorTable.put("red", Color.red);
-        colorTable.put("pink", Color.pink);
-        colorTable.put("magenta", Color.magenta);
-        colorTable.put("cyan", Color.cyan);
-        colorTable.put("blue", Color.blue);
-        colorTable.put("green", Color.green);
-        colorTable.put("gray", Color.gray);
-        colorTable.put("lightgray", Color.lightGray);
-        colorTable.put("black", Color.black);
-        colorTable.put("white", Color.WHITE);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"), Color.yellow);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"), Color.orange);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"), Color.red);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK"), Color.pink);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"), Color.magenta);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"), Color.cyan);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"), Color.blue);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"), Color.green);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"), Color.gray);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"), Color.lightGray);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"), Color.black);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("WHITE"), Color.WHITE);
         
 //        for(int i=0;i<columnCount;i++){ 
 //               
@@ -245,8 +245,8 @@ public class GraphProperties {
         
         this.table = cxyconf.table;
         //this.color = "red";
-        this.position = "left";
-        this.name = "Graph Name";
+        this.position = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT");
+        this.name = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAPH_NAME");
         this.legendName = this.name;
         
         this.rowSelection = null;
@@ -262,7 +262,7 @@ public class GraphProperties {
         datachoice_panel = new JPanel();
         datachoice_panel.setLayout(new FlowLayout());
         datachoice_panel.setSize(20,50);
-        datachoice_max = new JButton("max");
+        datachoice_max = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAX"));
         //datachoice_max.setPreferredSize(new Dimension(5,10));
         
         datachoice_max.addActionListener(max_listener);
@@ -309,8 +309,8 @@ public class GraphProperties {
         
         //this.table = stpconf.table;
         //this.color = "red";
-        this.position = "left";
-        this.name = "Graph Name";
+        this.position = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT");
+        this.name = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAPH_NAME");
         this.legendName = this.name;
         
         this.selectedColumn = 0;
@@ -332,18 +332,18 @@ public class GraphProperties {
         timechoice_END.setPreferredSize(new Dimension(40,14));
         timechoice_END.addActionListener(timeListener);
         
-        colorTable.put("yellow", Color.yellow);
-        colorTable.put("orange", Color.orange);
-        colorTable.put("red", Color.red);
-        colorTable.put("pink", Color.pink);
-        colorTable.put("magenta", Color.magenta);
-        colorTable.put("cyan", Color.cyan);
-        colorTable.put("blue", Color.blue);
-        colorTable.put("green", Color.green);
-        colorTable.put("gray", Color.gray);
-        colorTable.put("lightgray", Color.lightGray);
-        colorTable.put("black", Color.black);
-        colorTable.put("white", Color.WHITE);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"), Color.yellow);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"), Color.orange);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"), Color.red);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK"), Color.pink);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"), Color.magenta);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"), Color.cyan);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"), Color.blue);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"), Color.green);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"), Color.gray);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"), Color.lightGray);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"), Color.black);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("WHITE"), Color.WHITE);
         
         
         
@@ -361,8 +361,8 @@ public class GraphProperties {
         this.thisProp = this;
         
         this.table = sheet.table;
-        this.position = "left";
-        this.name = "Graph Name";
+        this.position = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT");
+        this.name = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAPH_NAME");
         this.legendName = this.name;
         
         this.selectedColumn = 0;
@@ -384,18 +384,18 @@ public class GraphProperties {
         timechoice_END.setPreferredSize(new Dimension(40,14));
         timechoice_END.addActionListener(timeListener);
         
-        colorTable.put("yellow", Color.yellow);
-        colorTable.put("orange", Color.orange);
-        colorTable.put("red", Color.red);
-        colorTable.put("pink", Color.pink);
-        colorTable.put("magenta", Color.magenta);
-        colorTable.put("cyan", Color.cyan);
-        colorTable.put("blue", Color.blue);
-        colorTable.put("green", Color.green);
-        colorTable.put("gray", Color.gray);
-        colorTable.put("lightgray", Color.lightGray);
-        colorTable.put("black", Color.black);
-        colorTable.put("white", Color.WHITE);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"), Color.yellow);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"), Color.orange);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"), Color.red);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK"), Color.pink);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"), Color.magenta);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"), Color.cyan);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"), Color.blue);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"), Color.green);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"), Color.gray);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"), Color.lightGray);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"), Color.black);
+        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("WHITE"), Color.WHITE);
         
         createPanel();   
     }
@@ -411,7 +411,7 @@ public class GraphProperties {
         plotButton = new JButton();
         upButton = new JButton();
         downButton = new JButton();
-        customizeButton = new JButton("customize");
+        customizeButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUSTOMIZE"));
         
         upButton.setIcon(up_icon);
         downButton.setIcon(down_icon);
@@ -419,14 +419,14 @@ public class GraphProperties {
         addButton.setIcon(add_icon);
         remButton.setIcon(rem_icon);
         
-        plotButton.setToolTipText("plot graph");
-        upButton.setToolTipText("move up");
-        downButton.setToolTipText("move down");
-        addButton.setToolTipText("add graph");
-        remButton.setToolTipText("remove button");
+        plotButton.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT_GRAPH"));
+        upButton.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MOVE_UP"));
+        downButton.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MOVE_DOWN"));
+        addButton.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD_GRAPH"));
+        remButton.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REMOVE_BUTTON"));
         
-        invBox = new JCheckBox("invert axis");
-        isXAxis = new JRadioButton("set X");
+        invBox = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_AXIS"));
+        isXAxis = new JRadioButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SET_X"));
         isXAxis.addActionListener(isXListener);
         
         addButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -465,14 +465,14 @@ public class GraphProperties {
         poschoice.addActionListener(rendererListener);
         //poschoice.addActionListener(okListener);
        
-        JButton okButton = new JButton("OK");
-        JButton cancelButton = new JButton("CANCEL");
+        JButton okButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OK"));
+        JButton cancelButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CANCEL"));
         //JButton propButton = new JButton("...");
 
         //JLabel namelabel = new JLabel();
-        JLabel setNameLabel =   new JLabel("        Name:");
-        JLabel setColumnLabel = new JLabel("  Set Column:");
-        JLabel setLegendLabel = new JLabel("Legend Entry:");
+        JLabel setNameLabel =   new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("________NAME:"));
+        JLabel setColumnLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("__SET_COLUMN:"));
+        JLabel setLegendLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEGEND_ENTRY:"));
         nameLabel = new JLabel();
 
         String[] column = new String[columnCount];
@@ -1343,12 +1343,12 @@ public class GraphProperties {
             //CustomizeRendererDlg cr_dlg = new CustomizeRendererDlg();
             
             
-            if(getPosition() == "left"){
+            if(getPosition() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT")){
                 if(plotType == 0) setRendererType(ctsconf.getRendererLeft());
                 if(plotType == 1) setRendererType(cxyconf.getRendererLeft());
                 
             }
-            if(getPosition() == "right"){
+            if(getPosition() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")){
                 if(plotType == 0) setRendererType(ctsconf.getRendererRight());
                 if(plotType == 1) setRendererType(cxyconf.getRendererRight());
             }
@@ -1477,10 +1477,10 @@ public class GraphProperties {
         JButton apply_button;
         JButton cancel_button;
         
-        final String[] SHAPES = {"Square", "Circle", "Triangle up", "Triangle down", "Diamond", "Cross diagonal", "Cross regular"};//, "Square", "Star"};
-        final String[] COLORS = {"custom","red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
-        final String[] SHAPE_COLORS = {"custom","white","red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
-        final String[] RENDERER = {"Line and Shape","Bar","Area","Step","StepArea","Difference"};
+        final String[] SHAPES = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SQUARE"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CIRCLE"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TRIANGLE_UP"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TRIANGLE_DOWN"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIAMOND"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CROSS_DIAGONAL"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CROSS_REGULAR")};//, "Square", "Star"};
+        final String[] COLORS = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUSTOM"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK")};
+        final String[] SHAPE_COLORS = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUSTOM"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("WHITE"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK")};
+        final String[] RENDERER = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LINE_AND_SHAPE"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BAR"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AREA"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STEP"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STEPAREA"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE")};
         
         final int MIN = 0;
         final int MAX = 12;
@@ -1584,56 +1584,56 @@ public class GraphProperties {
             setLayout(brl);
             optionspanel.setLayout(option_gbl);
             
-            ok_button = new JButton("Set Properties");
-            cancel_button = new JButton("Cancel");
+            ok_button = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SET_PROPERTIES"));
+            cancel_button = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CANCEL"));
             
             ok_button.addActionListener(ok);
             cancel_button.addActionListener(cancel);
             
-            apply_button = new JButton("apply");
+            apply_button = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("APPLY"));
             apply_button.addActionListener(apply);
             
 //            renderer_label = new JLabel("Renderer Type:");
 //            renderer_box = new JComboBox(RENDERER);
 //            renderer_box.setSelectedIndex()
-            stroke_label = new JLabel("Stroke:");
+            stroke_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STROKE:"));
             nameLabel = new JLabel(getName());
             nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD));
 //            stroke_box = new JComboBox(STROKES);
 //            stroke_box.setSelectedIndex(2);
             
-            shape_label = new JLabel("Shape:");
+            shape_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SHAPE:"));
             shape_box = new JComboBox(SHAPES);
             shape_box.setSelectedIndex(0);
 
-            paint_label = new JLabel("Color:");
+            paint_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOR:"));
             paint_box = new JComboBox(COLORS);
             paint_box.setSelectedIndex(1);
             
-            outline_stroke_label = new JLabel("Outline Stroke:");
+            outline_stroke_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTLINE_STROKE:"));
 //            outline_stroke_box = new JComboBox(STROKES);
 //            outline_stroke_box.setSelectedIndex(2);
             
-            outline_paint_label = new JLabel("Outline Color:");
+            outline_paint_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTLINE_COLOR:"));
             outline_paint_box = new JComboBox(SHAPE_COLORS);
             outline_paint_box.setSelectedIndex(3);
             
-            fill_label = new JLabel("Color:");
+            fill_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOR:"));
             fill_box = new JComboBox(SHAPE_COLORS);
             fill_box.setSelectedIndex(2);
             
-            setLegendLabel = new JLabel("Legend name:");
+            setLegendLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEGEND_NAME:"));
             setLegendField = new JTextField();
 
-            shape_size_label = new JLabel("Size");
+            shape_size_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIZE"));
 //            shape_size_box = new JComboBox(SIZES);
 //            shape_size_box.setSelectedIndex(2);
             //shape_size_box.setEnabled(false);
             //paint_box.setSelectedIndex()
-            lines_visible_label = new JLabel("Lines");
+            lines_visible_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LINES"));
             lines_vis_box = new JCheckBox();
             lines_vis_box.setSelected(true);
-            shapes_visible_label = new JLabel("Shapes");
+            shapes_visible_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SHAPES"));
             shapes_vis_box = new JCheckBox();
             shapes_vis_box.setSelected(true);
             
@@ -1665,9 +1665,9 @@ public class GraphProperties {
 //            fill_button = new ColorButton(shape_fill);
 //            outline_button = new ColorButton(outline_color);
             
-            stroke_button = new JButton("color");
-            fill_button = new JButton("color");
-            outline_button = new JButton("color");
+            stroke_button = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOR"));
+            fill_button = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOR"));
+            outline_button = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOR"));
             
             stroke_button.setBackground(line_color);
             fill_button.setBackground(shape_fill);
@@ -1683,8 +1683,8 @@ public class GraphProperties {
             //name
 
             //optionpanel
-            GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Line"),    0, 0, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Symbol"),    4, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LINE")),    0, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SYMBOL")),    4, 0, 1, 1, 0, 0);
 
                 //lines
             GUIHelper.addGBComponent(optionspanel, option_gbl, stroke_label, 0, 1, 1, 1, 0, 0);
@@ -1873,7 +1873,7 @@ public class GraphProperties {
         
         ActionListener stroke_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Color new_line_color = JColorChooser.showDialog(thiscrd, "Choose Line Color", line_color);
+                Color new_line_color = JColorChooser.showDialog(thiscrd, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CHOOSE_LINE_COLOR"), line_color);
                 if(new_line_color != null){
                     line_color = new_line_color;
                 }
@@ -1885,7 +1885,7 @@ public class GraphProperties {
         
         ActionListener fill_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Color new_shape_fill = JColorChooser.showDialog(thiscrd, "Choose Shape Color", shape_fill);
+                Color new_shape_fill = JColorChooser.showDialog(thiscrd, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CHOOSE_SHAPE_COLOR"), shape_fill);
                 if(new_shape_fill != null){
                     shape_fill = new_shape_fill;
                 }
@@ -1895,7 +1895,7 @@ public class GraphProperties {
         
         ActionListener outline_button_listener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                Color new_outline_color = JColorChooser.showDialog(thiscrd, "Choose Outline Color", outline_color);
+                Color new_outline_color = JColorChooser.showDialog(thiscrd, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CHOOSE_OUTLINE_COLOR"), outline_color);
                 if(new_outline_color != null){
                     outline_color = new_outline_color;
                 }
