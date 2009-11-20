@@ -48,10 +48,10 @@ public class RegionalSensitivityAnalyser2 {
             plot.setRenderer(i, renderer[i]);
         }               
         plot.setDomainAxis(new NumberAxis(data.name));
-        plot.setRangeAxis(new NumberAxis("Likelihood"));
+        plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIKELIHOOD")));
 
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle("Regional Sensitivity Analysis II");
+        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS_II"));
         chartPanel = new ChartPanel(chart, true);
         updateData();        
     }

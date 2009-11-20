@@ -39,10 +39,10 @@ public class ParetoOutputUncertainty {
         this.eff = eff;
         
         plot1.setDomainAxis(new NumberAxis(sim.name));
-        plot1.setRangeAxis(new NumberAxis("time"));
+        plot1.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
 
         JFreeChart chart1 = new JFreeChart(plot1);
-        chart1.setTitle("Pareto Output Uncertainty");        
+        chart1.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARETO_OUTPUT_UNCERTAINTY"));
         //chart1.removeLegend();
         chartPanel1 = new ChartPanel(chart1, true);
         
@@ -137,11 +137,11 @@ public class ParetoOutputUncertainty {
         
         double minMaxOptimalTS[][] = getMinMaxParetoTS(sim,eff);
                         
-        XYSeries minTSDataset = new XYSeries("Minimal value in dataset");
-        XYSeries maxTSDataset = new XYSeries("Maximal value in dataset");
+        XYSeries minTSDataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINIMAL_VALUE_IN_DATASET"));
+        XYSeries maxTSDataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAXIMAL_VALUE_IN_DATASET"));
         
-        XYSeries minTSDataset_pareto = new XYSeries("Minimal value in pareto set");
-        XYSeries maxTSDataset_pareto = new XYSeries("Maximal value in pareto set");
+        XYSeries minTSDataset_pareto = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINIMAL_VALUE_IN_PARETO_SET"));
+        XYSeries maxTSDataset_pareto = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAXIMAL_VALUE_IN_PARETO_SET"));
                 
         XYSeries observation = new XYSeries(obs.name);
     

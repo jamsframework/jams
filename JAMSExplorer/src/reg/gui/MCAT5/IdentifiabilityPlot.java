@@ -38,11 +38,11 @@ public class IdentifiabilityPlot {
         this.eff = eff;
                 
         plot.setDomainAxis(new NumberAxis(data.name));
-        plot.setRangeAxis(new NumberAxis("cumulative distribution"));
+        plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUMULATIVE_DISTRIBUTION")));
 
         JFreeChart chart = new JFreeChart(plot);
         chart.removeLegend();
-        chart.setTitle("Identifyablity Plot");        
+        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("IDENTIFYABLITY_PLOT"));
         chartPanel = new ChartPanel(chart, true);        
         
         XYLineAndShapeRenderer gradient_renderer = new XYLineAndShapeRenderer();
@@ -68,7 +68,7 @@ public class IdentifiabilityPlot {
 
     public void updateData() {                        
         XYSeries dataset_box[] = new XYSeries[BOX_COUNT];
-        XYSeries dataset = new XYSeries("cumulative distribution");
+        XYSeries dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUMULATIVE_DISTRIBUTION"));
         for (int i = 0; i < BOX_COUNT; i++) {
             dataset_box[i] = new XYSeries("");
         }

@@ -35,11 +35,11 @@ public class BestPredictionPlot {
         this.eff = eff;
         this.obs = obs;
                 
-        plot1.setDomainAxis(new NumberAxis("Output"));
+        plot1.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT")));
         plot1.setRangeAxis(new NumberAxis(""));
 
         JFreeChart chart1 = new JFreeChart(plot1);
-        chart1.setTitle("Best Prediction Plot");        
+        chart1.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BEST_PREDICTION_PLOT"));
         chartPanel1 = new ChartPanel(chart1, true);
                         
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(); 
@@ -90,7 +90,7 @@ public class BestPredictionPlot {
                     bestTSDataset[i].add(j,this.sim.set[j].set[argmin]);
             }
         }
-        bestTSDataset[eff.length] = new XYSeries("observed");
+        bestTSDataset[eff.length] = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSERVED"));
         for (int j=0;j<time_length;j++){            
             bestTSDataset[eff.length].add(j,obs.set[j]);
         }                      

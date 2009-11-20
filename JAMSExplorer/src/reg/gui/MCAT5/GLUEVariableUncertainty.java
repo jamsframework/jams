@@ -57,8 +57,8 @@ public class GLUEVariableUncertainty {
 
         JFreeChart chart1 = new JFreeChart(plot1);
         JFreeChart chart2 = new JFreeChart(plot2);
-        chart1.setTitle("Cumulative Density Plot");
-        chart2.setTitle("Density Plot");
+        chart1.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUMULATIVE_DENSITY_PLOT"));
+        chart2.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DENSITY_PLOT"));
                 
         chart2.removeLegend();
         chartPanel1 = new ChartPanel(chart1, true);
@@ -81,9 +81,9 @@ public class GLUEVariableUncertainty {
     }
     
     public void updateData() {                        
-        XYSeries dataset1 = new XYSeries("Cumulative Density");
-        XYSeries dataset2 = new XYSeries("no description");
-        XYSeries dataset3 = new XYSeries("0.95 confidence interval");
+        XYSeries dataset1 = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUMULATIVE_DENSITY"));
+        XYSeries dataset2 = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_DESCRIPTION"));
+        XYSeries dataset3 = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("0.95_CONFIDENCE_INTERVAL"));
         
         double bin_sum[] = new double[GROUPS];
         int bin_count[] = new int[GROUPS];

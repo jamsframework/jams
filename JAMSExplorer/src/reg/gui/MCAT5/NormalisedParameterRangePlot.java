@@ -35,11 +35,11 @@ public class NormalisedParameterRangePlot {
         renderer1.setPaint(Color.BLACK);                                                               
         plot1.setRenderer(0, renderer1);
         
-        plot1.setDomainAxis(new NumberAxis("Parameter"));
-        plot1.setRangeAxis(new NumberAxis("Normalised Range"));
+        plot1.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER")));
+        plot1.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NORMALISED_RANGE")));
 
         JFreeChart chart1 = new JFreeChart(plot1);
-        chart1.setTitle("Normalised Parameter Range Plot");        
+        chart1.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NORMALISED_PARAMETER_RANGE_PLOT"));
         chart1.removeLegend();
         chartPanel1 = new ChartPanel(chart1, true);
                         
@@ -87,8 +87,8 @@ public class NormalisedParameterRangePlot {
     public void updateData() {
         double minMaxparetoOptimal[][] = getMinMaxParetoTS(this.param,this.eff);
                                                                  
-        XYSeries minTSDataset_pareto = new XYSeries("minimal pareto optimal value");
-        XYSeries maxTSDataset_pareto = new XYSeries("maximal pareto optimal value");
+        XYSeries minTSDataset_pareto = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINIMAL_PARETO_OPTIMAL_VALUE"));
+        XYSeries maxTSDataset_pareto = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAXIMAL_PARETO_OPTIMAL_VALUE"));
                             
         for (int i=0;i<this.param.length;i++){            
             minTSDataset_pareto.add(i,minMaxparetoOptimal[0][i]);

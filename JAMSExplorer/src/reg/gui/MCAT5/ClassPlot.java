@@ -47,11 +47,11 @@ public class ClassPlot {
         renderer.setSeriesVisibleInLegend(0, true);
         renderer.setSeriesVisibleInLegend(GROUPS-1, true);
         plot.setRenderer(renderer);
-        plot.setDomainAxis(new NumberAxis("Time"));
-        plot.setRangeAxis(new NumberAxis("Output"));
+        plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
+        plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT")));
 
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle("Class Plot");
+        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLASS_PLOT"));
         chartPanel = new ChartPanel(chart, true);
 
         updateData();
@@ -79,9 +79,9 @@ public class ClassPlot {
         for (int i=0;i<GROUPS;i++){   
             XYSeries dataset = new XYSeries("");
             if (i == 0)
-                dataset = new XYSeries("High Likelihood");
+                dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("HIGH_LIKELIHOOD"));
             if (i == GROUPS-1)
-                dataset = new XYSeries("Low Likelihood");
+                dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LOW_LIKELIHOOD"));
             int index = (int)((sorted_data.length / (double)GROUPS)*i);
             for (int j=0;j<sorted_data[0].length;j++){
                 dataset.add(j,sorted_data[index][j]);                

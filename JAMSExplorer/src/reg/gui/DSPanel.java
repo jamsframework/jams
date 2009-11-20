@@ -90,7 +90,7 @@ public abstract class DSPanel extends JPanel {
             if (attrib.getAggregationType() != DataStoreProcessor.AttributeData.AGGREGATION_NONE) {
 
                 if (attribCombo.getSelectedIndex() == 0) {
-                    GUIHelper.showInfoDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_AREA_ATTRIBUTE_HAS_BEEN_CHOSEN!_SKIPPING_WEIGHTED_AGGREGATION_FOR_ATTRIBUTE_\"") +
+                    GUIHelper.showInfoDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_AREA_ATTRIBUTE_HAS_BEEN_CHOSEN!_SKIPPING_WEIGHTED_AGGREGATION_FOR_ATTRIBUTE_") +
                             attrib.getName() + "\".", java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"));
                     continue;
                 }

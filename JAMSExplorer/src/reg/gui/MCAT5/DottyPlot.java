@@ -45,7 +45,7 @@ public class DottyPlot{
             plot.setRangeAxis(new NumberAxis(eff.name));
             //setup chart
             JFreeChart chart = new JFreeChart(plot);
-            chart.setTitle("Dotty Plot");
+            chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"));
             chartPanel = new ChartPanel(chart, true);
                                                                         
             updateData();
@@ -64,7 +64,7 @@ public class DottyPlot{
         }
         
         public void updateData(){     
-            XYSeries dataset = new XYSeries("data point");
+            XYSeries dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_POINT"));
             
             for (int i=0;i<data.parent.numberOfRuns;i++){                
                 dataset.add(data.set[i],eff.set[i]);            

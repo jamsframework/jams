@@ -73,7 +73,7 @@ public class DYNIA {
         this.timeserie_param = param;
 
         plot.setRangeAxis(new NumberAxis(timeserie_param.name));        
-        plot.setDomainAxis(new NumberAxis("time"));
+        plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
         plot.setRangeAxis(1,new NumberAxis(observation.name));
         plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
 
@@ -83,7 +83,7 @@ public class DYNIA {
         plot.setRenderer(0, renderer);
         
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle("DYNIA");
+        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DYNIA"));
         
         chartPanel = new ChartPanel(chart, true);
         chartPanel.setLayout(new BorderLayout());
@@ -92,7 +92,7 @@ public class DYNIA {
         
         winsize_box.setText("10");
         
-        text.add(new JLabel("Window Size"));
+        text.add(new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("WINDOW_SIZE")));
         text.add(winsize_box);
         
         chartPanel.add(text, BorderLayout.SOUTH);        

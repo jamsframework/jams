@@ -62,14 +62,14 @@ public class APosterioriPlot{
             plot.setRangeAxis(new NumberAxis(eff.name));
                                 
             JFreeChart chart = new JFreeChart(plot);
-            chart.setTitle("A Posterio Parameter Distribution");            
+            chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("A_POSTERIO_PARAMETER_DISTRIBUTION"));
             chartPanel = new ChartPanel(chart, true);
                                               
             updateData();
         }
         
         public void updateData(){ 
-            XYSeries dataset = new XYSeries("mean of efficiency");
+            XYSeries dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN_OF_EFFICIENCY"));
             
             double boxes[] = new double[BOX_COUNT];
             double boxes_count[] = new double[BOX_COUNT];
