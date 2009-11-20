@@ -23,7 +23,7 @@
             </else>
         </if>
         <if>
-            <equals arg1="${application.title}" arg2="jams-geowind"/>
+            <equals arg1="${application.title}" arg2="jams-geowind_"/>
             <then>
             </then>
             <else>
