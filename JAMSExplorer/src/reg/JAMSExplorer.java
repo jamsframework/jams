@@ -47,7 +47,7 @@ import reg.viewer.Viewer;
  */
 public class JAMSExplorer {
 
-    public static final String APP_TITLE = "Data Explorer";
+    public static final String APP_TITLE = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_EXPLORER");
 
     public static final String APP_VERSION = "V0.2";
 
