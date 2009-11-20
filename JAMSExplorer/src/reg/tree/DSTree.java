@@ -44,7 +44,7 @@ import reg.JAMSExplorer;
  */
 public class DSTree extends JAMSTree {
 
-    private static final String ROOT_NAME = "Datenspeicher", INPUT_NAME = "Eingabedaten", OUTPUT_NAME = "Ausgabedaten";
+    private static final String ROOT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATENSPEICHER"), INPUT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EINGABEDATEN"), OUTPUT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AUSGABEDATEN");
 
     private JPopupMenu popup;
 
@@ -58,7 +58,7 @@ public class DSTree extends JAMSTree {
         this.explorer = explorer;
         setEditable(false);
 
-        JMenuItem detailItem = new JMenuItem("Zeige Daten");
+        JMenuItem detailItem = new JMenuItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ZEIGE_DATEN"));
         //detailItem.setAccelerator(KeyStroke.getKeyStroke('D'));
         detailItem.addActionListener(new ActionListener() {
 
@@ -67,7 +67,7 @@ public class DSTree extends JAMSTree {
             }
         });
 
-        JMenuItem deleteItem = new JMenuItem("Delete");
+        JMenuItem deleteItem = new JMenuItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DELETE"));
         deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
         deleteItem.addActionListener(new ActionListener() {
 
