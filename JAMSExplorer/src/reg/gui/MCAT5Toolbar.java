@@ -72,7 +72,7 @@ public class MCAT5Toolbar extends JToolBar {
 
         @Override
         public String toString() {
-            return name + " timesteps:" + timeLength;
+            return name + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_TIMESTEPS:") + timeLength;
         }
     };
 
@@ -97,7 +97,7 @@ public class MCAT5Toolbar extends JToolBar {
 
         @Override
         public String toString() {
-            return name + " timesteps:" + timeLength;
+            return name + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_TIMESTEPS:") + timeLength;
         }
     };
 
@@ -148,7 +148,7 @@ public class MCAT5Toolbar extends JToolBar {
 
         public MonteCarloData() {
             numberOfRuns = -1;
-            name = "default";
+            name = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DEFAULT");
             observations = new Vector<ObservationDataSet>();
             simulations = new Vector<SimulationDataSet>();
             ts_simulations = new Vector<SimulationTimeSeriesDataSet>();
@@ -160,12 +160,12 @@ public class MCAT5Toolbar extends JToolBar {
             p.timeLength = p.set.length;
             for (int i = 0; i < ts_simulations.size(); i++) {
                 if (ts_simulations.get(i).timeLength != p.timeLength) {
-                    return "There are timeseries with different length, observation was not added";
+                    return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_OBSERVATION_WAS_NOT_ADDED");
                 }
             }
             for (int i = 0; i < observations.size(); i++) {
                 if (observations.get(i).timeLength != p.timeLength) {
-                    return "There are timeseries with different length, observation was not added";
+                    return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_OBSERVATION_WAS_NOT_ADDED");
                 }
             }
             observations.add(p);
@@ -181,7 +181,7 @@ public class MCAT5Toolbar extends JToolBar {
                 this.numberOfRuns = p.set.length;
             }
             if (p.set.length != this.numberOfRuns) {
-                return "There are series with different length, simulated data set was not added";
+                return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THERE_ARE_SERIES_WITH_DIFFERENT_LENGTH,_SIMULATED_DATA_SET_WAS_NOT_ADDED");
             }
             p.parent = this;
             simulations.add(p);
@@ -201,17 +201,17 @@ public class MCAT5Toolbar extends JToolBar {
             }
             for (int i = 0; i < ts_simulations.size(); i++) {
                 if (ts_simulations.get(i).timeLength != p.timeLength) {
-                    return "There are timeseries with different length, simulation time series were not added";
+                    return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_SIMULATION_TIME_SERIES_WERE_NOT_ADDED");
                 }
             }
             for (int i = 0; i < observations.size(); i++) {
                 if (observations.get(i).timeLength != p.timeLength) {
-                    return "There are timeseries with different length, simulation time series were not added";
+                    return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_SIMULATION_TIME_SERIES_WERE_NOT_ADDED");
                 }
             }
             for (int i = 0; i < p.timeLength; i++) {
                 if (p.set[i].set.length != numberOfRuns) {
-                    return "There are timeseries with different length, simulation time series were not added";
+                    return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_SIMULATION_TIME_SERIES_WERE_NOT_ADDED");
                 }
                 p.set[i].parent = this;
             }
@@ -229,7 +229,7 @@ public class MCAT5Toolbar extends JToolBar {
                 this.numberOfRuns = p.set.length;
             }
             if (p.set.length != numberOfRuns) {
-                return "Number of parameter sets does not fit number of monto carlo runs";
+                return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NUMBER_OF_PARAMETER_SETS_DOES_NOT_FIT_NUMBER_OF_MONTO_CARLO_RUNS");
             }
             p.parent = this;
             parameters.add(p);
@@ -245,7 +245,7 @@ public class MCAT5Toolbar extends JToolBar {
                 this.numberOfRuns = p.set.length;
             }
             if (p.set.length != numberOfRuns) {
-                return "number of model runs does not match";
+                return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NUMBER_OF_MODEL_RUNS_DOES_NOT_MATCH");
             }
             p.parent = this;
             efficiencies.add(p);
@@ -258,7 +258,7 @@ public class MCAT5Toolbar extends JToolBar {
 
         @Override
         public String toString() {
-            return "Monte Carlo Simulation";
+            return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONTE_CARLO_SIMULATION");
         }
     }
     JButton dottyPlotObjFct = new JButton(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")));
@@ -280,19 +280,19 @@ public class MCAT5Toolbar extends JToolBar {
     public MCAT5Toolbar(Window param_owner) {
         super();
         this.owner = param_owner;
-        dottyPlotObjFct.setToolTipText("Create Dotty Plot");
-        aPosterioParameterDistribution.setToolTipText("Create A Posteriori Distribution Plot");
-        identifiabilityPlot.setToolTipText("Identifiability Plot");
-        DYNIA.setToolTipText("DYNIA");
-        RegionalSensitivityAnalysis.setToolTipText("Regional Sensitivity Analysis");
-        RegionalSensitivityAnalysis2.setToolTipText("Regional Sensitivity Analysis II");
-        ClassPlot.setToolTipText("Class Plot");
-        GLUEVariableUncertainity.setToolTipText("GLUE Variable Uncertainity");
-        GLUEOutputUncertainity.setToolTipText("GLUE Output Uncertainity");
-        ParetoOutputUncertainity.setToolTipText("Pareto Output Uncertainity");
-        MultiObjectivePlots.setToolTipText("Multi Objective Plot");
-        NormalizedParameterRangePlot.setToolTipText("Normalized Parameter Range Plot");
-        BestPredictionPlot.setToolTipText("Best Prediction Plot");
+        dottyPlotObjFct.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CREATE_DOTTY_PLOT"));
+        aPosterioParameterDistribution.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CREATE_A_POSTERIORI_DISTRIBUTION_PLOT"));
+        identifiabilityPlot.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("IDENTIFIABILITY_PLOT"));
+        DYNIA.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DYNIA"));
+        RegionalSensitivityAnalysis.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS"));
+        RegionalSensitivityAnalysis2.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS_II"));
+        ClassPlot.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLASS_PLOT"));
+        GLUEVariableUncertainity.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GLUE_VARIABLE_UNCERTAINITY"));
+        GLUEOutputUncertainity.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GLUE_OUTPUT_UNCERTAINITY"));
+        ParetoOutputUncertainity.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARETO_OUTPUT_UNCERTAINITY"));
+        MultiObjectivePlots.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MULTI_OBJECTIVE_PLOT"));
+        NormalizedParameterRangePlot.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NORMALIZED_PARAMETER_RANGE_PLOT"));
+        BestPredictionPlot.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BEST_PREDICTION_PLOT"));
 
         dottyPlotObjFct.addActionListener(new ActionListener() {
 

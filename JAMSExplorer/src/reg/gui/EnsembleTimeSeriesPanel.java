@@ -85,49 +85,49 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
     private GridBagLayout aggregationLayout;   
         
     private Action[] actions = {
-        new AbstractAction("Time Step") {
+        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_STEP")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showTimeStep();
             }
         },
-        new AbstractAction("Temp. Mean") {
+        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TEMP._MEAN")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showTempMean();
             }
         },
-        new AbstractAction("Model Run") {
+        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MODEL_RUN")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showModelRun();
             }
         },
-        new AbstractAction("Ensemble Mean") {
+        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ENSEMBLE_MEAN")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showModelRun();
             }
         },
-        new AbstractAction("Monthly Mean") {
+        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONTHLY_MEAN")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showMonthlyMean();
             }
         },
-        new AbstractAction("Yearly Mean") {
+        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YEARLY_MEAN")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showYearlyMean();
             }
         },
-        new AbstractAction("Crossproduct") {
+        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CROSSPRODUCT")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -137,7 +137,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
     private Action timePoint = actions[0], timeMean = actions[1], modelRun = actions[2], modelRunMean = actions[3], monthMean = actions[4], yearMean = actions[5], crossProduct = actions[6];
 
-    private Action cacheReset = new AbstractAction("Reset Caches") {
+    private Action cacheReset = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RESET_CACHES")) {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -145,7 +145,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         }
     };
 
-    private Action indexReset = new AbstractAction("Reload Index") {
+    private Action indexReset = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RELOAD_INDEX")) {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -153,11 +153,11 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         }
     };
 
-    private Action freeTempMean = new AbstractAction("Temp. Mean (filter)") {
+    private Action freeTempMean = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TEMP._MEAN_(FILTER)")) {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(parent, "action unsupported!");
+            JOptionPane.showMessageDialog(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ACTION_UNSUPPORTED!"));
         }
     };
 
@@ -264,7 +264,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
             }
         });
 
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Attribute/Aggregation:"), 0, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ATTRIBUTE/AGGREGATION:")), 0, 10, 1, 1, 0, 0);
 
         aggregationLayout = new GridBagLayout();
         aggregationPanel = new JPanel();
@@ -273,9 +273,9 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         aggregationScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width + 100, LIST_DIMENSION.height));
 
         GUIHelper.addGBComponent(this, mainLayout, aggregationScroll, 0, 20, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Time Steps:"), 10, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_STEPS:")), 10, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, timeListScroll, 10, 20, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Model Runs:"), 20, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MODEL_RUNS:")), 20, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, modelRunListScroll, 20, 20, 1, 1, 0, 0);
 
         JPanel buttonPanelA = new JPanel();
@@ -297,10 +297,10 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         filterPanel.setPreferredSize(new Dimension(LIST_DIMENSION.width, LIST_DIMENSION.height - 150));
         filterPanel.setBorder(BorderFactory.createEtchedBorder());
 
-        filterPanel.add(new JLabel("Time Filter:"));
+        filterPanel.add(new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_FILTER:")));
         timeField = new JTextField();
         timeField.setEnabled(false);
-        timeField.setToolTipText("Date expression in SQL syntax, e.g. \"1992-11-%\" for all November values in 1992");
+        timeField.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATE_EXPRESSION_IN_SQL_SYNTAX,_E.G._1992-11-%_FOR_ALL_NOVEMBER_VALUES_IN_1992"));
         timeField.setPreferredSize(new Dimension(ACTION_BUTTON_DIM.width - 20, timeField.getPreferredSize().height));
         timeField.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -331,9 +331,9 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
         GUIHelper.addGBComponent(this, mainLayout, buttonPanelA, 40, 20, 1, 1, 0, 0);
 
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Months:"), 60, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONTHS:")), 60, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, monthListScroll, 60, 20, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Years:"), 70, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YEARS:")), 70, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, yearListScroll, 70, 20, 1, 1, 0, 0);
 
         JPanel buttonPanelB = new JPanel();
@@ -397,11 +397,11 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
             if (!dsdb.existsH2DB()) {
                 clearPanel();
-                System.out.println("Creation canceled");
+                System.out.println(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CREATION_CANCELED"));
             }
 
             if (!dsdb.isEnsembleTimeSeriesDatastore()){
-                System.out.println("Wrong datastore!");                
+                System.out.println(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("WRONG_DATASTORE!"));
             }
             setEnsembleTsProc(new EnsembleTimeSeriesProcessor(dsdb));
             
@@ -500,13 +500,13 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         // defining their aggregation weight
         JLabel label;
 
-        label = new JLabel("Area attribute");
+        label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AREA_ATTRIBUTE"));
         label.setHorizontalAlignment(SwingConstants.LEFT);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 5, 0, 1, 1, 0, 0);
         
         ArrayList<DataStoreProcessor.AttributeData> attribs = getProc().getDataStoreProcessor().getAttributes();
 
-        label = new JLabel("Aggregation weight");
+        label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AGGREGATION_WEIGHT"));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 3, 3, 1, 0, 0);
         label = new JLabel("1");
@@ -532,7 +532,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
                     AttribCheckBox thisCheck = (AttribCheckBox) e.getSource();
                     if (!thisCheck.isSelected() && attribCombo.getSelectedItem().toString().equals(thisCheck.getText())) {
                         attribCombo.setSelectedIndex(0);
-                        GUIHelper.showInfoDlg(parent, "Area attribute has been reset!", "Info");
+                        GUIHelper.showInfoDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AREA_ATTRIBUTE_HAS_BEEN_RESET!"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"));
                     }
                     thisCheck.attrib.setSelected(thisCheck.isSelected());
                 }
@@ -577,7 +577,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         }
 
         String[] attribNames = new String[attribs.size() + 1];
-        attribNames[0] = "[choose]";
+        attribNames[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("[CHOOSE]");
         i = 1;
         for (DataStoreProcessor.AttributeData attrib : attribs) {
             attribNames[i++] = attrib.getName();
@@ -594,7 +594,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         });
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCombo, 10, 0, 5, 1, 0, 0);
 
-        GroupCheckBox allOnOffCheck = new GroupCheckBox("All on/off", allChecks);
+        GroupCheckBox allOnOffCheck = new GroupCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ALL_ON/OFF"), allChecks);
         allOnOffCheck.setSelected(DataStoreProcessor.AttributeData.SELECTION_DEFAULT);
 
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, allOnOffCheck, 5, 3, 1, 1, 0, 0);

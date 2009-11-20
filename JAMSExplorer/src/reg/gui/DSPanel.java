@@ -49,7 +49,7 @@ public abstract class DSPanel extends JPanel {
 
     public void setParent(Frame parent) {
         this.parent = parent;
-        workerDlg = new CancelableWorkerDlg(parent, "Processing data");
+        workerDlg = new CancelableWorkerDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PROCESSING_DATA"));
         workerDlg.setProgress(0);
         workerDlg.setProgressMax(100);
     }
@@ -90,8 +90,8 @@ public abstract class DSPanel extends JPanel {
             if (attrib.getAggregationType() != DataStoreProcessor.AttributeData.AGGREGATION_NONE) {
 
                 if (attribCombo.getSelectedIndex() == 0) {
-                    GUIHelper.showInfoDlg(parent, "No area attribute has been chosen! Skipping weighted aggregation for attribute \"" +
-                            attrib.getName() + "\".", "Info");
+                    GUIHelper.showInfoDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_AREA_ATTRIBUTE_HAS_BEEN_CHOSEN!_SKIPPING_WEIGHTED_AGGREGATION_FOR_ATTRIBUTE_\"") +
+                            attrib.getName() + "\".", java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"));
                     continue;
                 }
 

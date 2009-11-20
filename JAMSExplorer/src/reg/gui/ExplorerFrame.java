@@ -126,7 +126,7 @@ public class ExplorerFrame extends JFrame {
 
         createListener();
 
-        exitAction = new AbstractAction("Close") {
+        exitAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLOSE")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -134,7 +134,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-        openWSAction = new AbstractAction("Open Workspace...") {
+        openWSAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OPEN_WORKSPACE...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -142,7 +142,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-        editWSAction = new AbstractAction("Edit Workspace...") {
+        editWSAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EDIT_WORKSPACE...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -150,7 +150,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-        sensitivityAnalysisAction = new AbstractAction("MCAT5...") {
+        sensitivityAnalysisAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MCAT5...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -158,7 +158,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-        launchModelAction = new AbstractAction("Start Model") {
+        launchModelAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("START_MODEL")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -166,7 +166,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-        launchWizardAction = new AbstractAction("Start Wizard...") {
+        launchWizardAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("START_WIZARD...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -176,7 +176,7 @@ public class ExplorerFrame extends JFrame {
         };
 
 
-        editPrefsAction = new AbstractAction("Edit Preferences...") {
+        editPrefsAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EDIT_PREFERENCES...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -189,7 +189,7 @@ public class ExplorerFrame extends JFrame {
         };
 
 
-        openSTPAction = new AbstractAction("Stacked Time Plot") {
+        openSTPAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STACKED_TIME_PLOT")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -198,7 +198,7 @@ public class ExplorerFrame extends JFrame {
         };
 
 
-        reloadWSAction = new AbstractAction("Reload Workspace") {
+        reloadWSAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RELOAD_WORKSPACE")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -210,7 +210,7 @@ public class ExplorerFrame extends JFrame {
 
         propertyDlg = new PropertyDlg(this, explorer.getProperties());
 
-        openWSDlg = new WorkerDlg(this, "Opening Workspace");
+        openWSDlg = new WorkerDlg(this, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OPENING_WORKSPACE"));
 
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(JAMSExplorer.APP_TITLE);
@@ -306,11 +306,11 @@ public class ExplorerFrame extends JFrame {
 
         JMenuBar mainMenu = new JMenuBar();
 
-        JMenu fileMenu = new JMenu("File");
+        JMenu fileMenu = new JMenu(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE"));
         mainMenu.add(fileMenu);
-        JMenu prefsMenu = new JMenu("Preferences");
+        JMenu prefsMenu = new JMenu(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PREFERENCES"));
         mainMenu.add(prefsMenu);
-        JMenu plotMenu = new JMenu("Plot");
+        JMenu plotMenu = new JMenu(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT"));
         mainMenu.add(plotMenu);
 
         JMenuItem openWSItem = new JMenuItem(openWSAction);

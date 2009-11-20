@@ -41,20 +41,20 @@ public class InputInfoPanelTS extends InputInfoPanelSimple {
     public InputInfoPanelTS() {
         super(6);
 
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Name:"), 1, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Typ:"), 1, 1, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Beginn:"), 1, 2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Ende:"), 1, 3, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Schrittweite:"), 1, 4, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Lückenwert:"), 1, 5, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel("Kommentar:"), 1, 6, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NAME:")), 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TYP:")), 1, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BEGINN:")), 1, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ENDE:")), 1, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SCHRITTWEITE:")), 1, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LÜCKENWERT:")), 1, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("KOMMENTAR:")), 1, 6, 1, 1, 0, 0);
 
-        indexMap.put(JAMSCalendar.YEAR, "Jahr(e)");
-        indexMap.put(JAMSCalendar.MONTH, "Monat(e)");
-        indexMap.put(JAMSCalendar.DAY_OF_YEAR, "Tag(e)");
-        indexMap.put(JAMSCalendar.HOUR_OF_DAY, "Stunde(n)");
-        indexMap.put(JAMSCalendar.MINUTE, "Minute(n)");
-        indexMap.put(JAMSCalendar.SECOND, "Sekunde(n)");
+        indexMap.put(JAMSCalendar.YEAR, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("JAHR(E)"));
+        indexMap.put(JAMSCalendar.MONTH, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONAT(E)"));
+        indexMap.put(JAMSCalendar.DAY_OF_YEAR, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TAG(E)"));
+        indexMap.put(JAMSCalendar.HOUR_OF_DAY, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STUNDE(N)"));
+        indexMap.put(JAMSCalendar.MINUTE, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINUTE(N)"));
+        indexMap.put(JAMSCalendar.SECOND, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SEKUNDE(N)"));
 
     }
 

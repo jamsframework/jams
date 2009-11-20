@@ -121,7 +121,7 @@ public class StatisticDialogPanel extends javax.swing.JDialog {
         Object[][] statisticResult = null;
         HashMap<String, Double> oneResult = null;
         String[] header = new String[numberOfFields + 1];
-        header[0] = "Kennziffer";
+        header[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("KENNZIFFER");
 
         String fieldName;
         double[] colData;

@@ -110,12 +110,12 @@ public abstract class DataRequestDlg extends JDialog{
                 }                
                 if (this.request.request.type == OBSERVATED_TIMESERIE){                    
                     if (m != 1 || tableData[0].length == 0){
-                        request.info.setText("only one column allowed for observation data");
+                        request.info.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ONLY_ONE_COLUMN_ALLOWED_FOR_OBSERVATION_DATA"));
                         return false;
                     }
                                         
                     MCAT5Toolbar.ObservationDataSet obs = new MCAT5Toolbar.ObservationDataSet();
-                    obs.name = "obsdata: " + header[0];
+                    obs.name = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSDATA:_") + header[0];
                     obs.set = new double[n];
                     for (int i=0;i<n;i++){
                         obs.set[i] = tableData[i][0];
@@ -130,14 +130,14 @@ public abstract class DataRequestDlg extends JDialog{
                     }
                 }else if (this.request.request.type == ENSEMBLE_EFFICIENCY){
                     if (m != 1 || tableData[0].length == 0){
-                        request.info.setText("only one column allowed for efficiency data");
+                        request.info.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ONLY_ONE_COLUMN_ALLOWED_FOR_EFFICIENCY_DATA"));
                         return false;
                     }
                     double effSet[] = new double[n];
                     for (int i=0;i<n;i++){
                         effSet[i] = tableData[i][0];
                     }
-                    MCAT5Toolbar.EfficiencyDataSet eff = new MCAT5Toolbar.EfficiencyDataSet("effdata:" + header[0],effSet,null,null,true);                    
+                    MCAT5Toolbar.EfficiencyDataSet eff = new MCAT5Toolbar.EfficiencyDataSet(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EFFDATA:") + header[0],effSet,null,null,true);
                     String result = request.target.addEfficiencyDataSet(eff);
                     if (result != null)
                         request.info.setText(result);
@@ -147,17 +147,17 @@ public abstract class DataRequestDlg extends JDialog{
                     }
                 }else if (this.request.request.type == SIMULATATED_TIMESERIE){
                     if (m == 0 || tableData[0].length == 0){
-                        request.info.setText("at least one column and row is needed");
+                        request.info.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AT_LEAST_ONE_COLUMN_AND_ROW_IS_NEEDED"));
                         return false;
                     }
                     MCAT5Toolbar.SimulationTimeSeriesDataSet ensemble = new MCAT5Toolbar.SimulationTimeSeriesDataSet();         
-                    ensemble.name = "simdata";
+                    ensemble.name = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMDATA");
                     ensemble.timeLength = n;
                     ensemble.set = new MCAT5Toolbar.SimulationDataSet[n];
                     
                     for (int i=0;i<n;i++){
                         ensemble.set[i] = new MCAT5Toolbar.SimulationDataSet();
-                        ensemble.set[i].name = "data" + i;
+                        ensemble.set[i].name = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA") + i;
                         ensemble.set[i].set = new double[m];
                         for (int j=0;j<m;j++){              
                             ensemble.set[i].set[j] = tableData[i][j];
@@ -174,11 +174,11 @@ public abstract class DataRequestDlg extends JDialog{
                     }
                 }else if (this.request.request.type == ENSEMBLE_PARAMETER){
                     if (m != 1 || tableData[0].length == 0){
-                        request.info.setText("exactly one column and at least a row is needed");
+                        request.info.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EXACTLY_ONE_COLUMN_AND_AT_LEAST_A_ROW_IS_NEEDED"));
                         return false;
                     }
                     MCAT5Toolbar.ParameterSet parameterSet = new MCAT5Toolbar.ParameterSet();         
-                    parameterSet.name = "paramSet:" + header[0];
+                    parameterSet.name = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMSET:") + header[0];
                     parameterSet.set = new double[n];
                     
                     for (int i=0;i<n;i++){
@@ -195,11 +195,11 @@ public abstract class DataRequestDlg extends JDialog{
                     }
                 }else if (this.request.request.type == ENSEMBLE_SIMULATION_VARIABLE){
                     if (m != 1 || tableData[0].length == 0){
-                        request.info.setText("exactly one column and at least a row is needed");
+                        request.info.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EXACTLY_ONE_COLUMN_AND_AT_LEAST_A_ROW_IS_NEEDED"));
                         return false;
                     }
                     MCAT5Toolbar.SimulationDataSet simDataSet = new MCAT5Toolbar.SimulationDataSet();         
-                    simDataSet.name = "simDataSet:" + header[0];
+                    simDataSet.name = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMDATASET:") + header[0];
                     simDataSet.set = new double[n];
                     
                     for (int i=0;i<n;i++){
@@ -244,7 +244,7 @@ public abstract class DataRequestDlg extends JDialog{
     
     class DialogRow{
         JButton    sign = new JButton("");
-        JTextArea  desc  = new JTextArea("description");
+        JTextArea  desc  = new JTextArea(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DESCRIPTION"));
         JTextArea  info  = new JTextArea("              ");
         JButton     del  = new JButton("");
         
@@ -356,15 +356,15 @@ public abstract class DataRequestDlg extends JDialog{
             new DataHandler(this);      
             
             if (this.request.type == OBSERVATED_TIMESERIE)
-                desc.setText("observed timeserie");
+                desc.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSERVED_TIMESERIE"));
             if (this.request.type == SIMULATATED_TIMESERIE)
-                desc.setText("simulated timeserie");
+                desc.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"));
             if (this.request.type == ENSEMBLE_EFFICIENCY)
-                desc.setText("efficiency data serie");
+                desc.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EFFICIENCY_DATA_SERIE"));
             if (this.request.type == ENSEMBLE_PARAMETER)
-                desc.setText("parameter sets");
+                desc.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER_SETS"));
             if (this.request.type == ENSEMBLE_SIMULATION_VARIABLE)
-                desc.setText("ensemble simulated variable");
+                desc.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ENSEMBLE_SIMULATED_VARIABLE"));
         }
         
         void setAccepted(boolean state){
@@ -416,12 +416,12 @@ public abstract class DataRequestDlg extends JDialog{
         super(parent);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         
-        this.setTitle("Data Request");
+        this.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_REQUEST"));
         
         JPanel dialogPanel = new JPanel(new BorderLayout());
         
-        JTextArea descarea = new JTextArea("This dialog lists all data required to perfom the requested operation. Load the data you want to use into" +
-                " the spreadsheet of JAMSExplorer and Drag and Drop it to this dialog!\n\n");        
+        JTextArea descarea = new JTextArea(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THIS_DIALOG_LISTS_ALL_DATA_REQUIRED_TO_PERFOM_THE_REQUESTED_OPERATION._LOAD_THE_DATA_YOU_WANT_TO_USE_INTO") +
+                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_THE_SPREADSHEET_OF_JAMSEXPLORER_AND_DRAG_AND_DROP_IT_TO_THIS_DIALOG!"));
         descarea.setEnabled(false);
         descarea.setBackground(dialogPanel.getBackground());
         descarea.setForeground(new Color(0,0,0));
@@ -450,7 +450,7 @@ public abstract class DataRequestDlg extends JDialog{
         c.insets = new Insets(0,0,0,0);
         c.ipadx = 0;
         c.weightx = 1.0;
-        subrow.add(new JButton("description") {
+        subrow.add(new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DESCRIPTION")) {
 
             {
                 setMinimumSize(new Dimension(150, 20));
@@ -463,7 +463,7 @@ public abstract class DataRequestDlg extends JDialog{
         c.gridx = 1;
         c.weightx = 1.0;
 
-        subrow.add(new JButton("drag&drop place") {
+        subrow.add(new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DRAG&DROP_PLACE")) {
             {
                 setMinimumSize(new Dimension(130, 20));
                 setPreferredSize(new Dimension(130, 20));
@@ -475,7 +475,7 @@ public abstract class DataRequestDlg extends JDialog{
         c.weightx = 1.0;
         c.gridx = 2;
         
-        subrow.add(new JButton("ok?") {
+        subrow.add(new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OK?")) {
             {
                 setMinimumSize(new Dimension(55, 20));
                 setPreferredSize(new Dimension(55, 20));
@@ -486,7 +486,7 @@ public abstract class DataRequestDlg extends JDialog{
 
         c.gridx = 3;
 
-        subrow.add(new JButton("del") {
+        subrow.add(new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DEL")) {
             {
                 setMinimumSize(new Dimension(55, 20));
                 setPreferredSize(new Dimension(55, 20));
@@ -513,7 +513,7 @@ public abstract class DataRequestDlg extends JDialog{
         downUnderPanel.setLayout(new BorderLayout());
         downUnderPanel.setMinimumSize(new Dimension(100,100));
         downUnderPanel.add(Box.createRigidArea(new Dimension(20,20)),BorderLayout.NORTH);
-        downUnderPanel.add(new JButton("OK"){{                    
+        downUnderPanel.add(new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OK")){{
             this.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){   
                     for (int i=0;i<dataRows.size();i++)

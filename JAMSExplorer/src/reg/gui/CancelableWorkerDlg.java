@@ -41,7 +41,7 @@ public class CancelableWorkerDlg extends WorkerDlg {
     public CancelableWorkerDlg(Frame owner, String title) {
         super(owner, title);
 
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CANCEL"));
         cancelButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
