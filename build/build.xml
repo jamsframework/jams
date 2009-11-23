@@ -62,6 +62,10 @@
         <echo>Created J2K</echo>
     </target>
 
+    <target name="doThornthwaite">
+        <ant antfile="../../nbprojects/Thornthwaite/build.xml" inheritall="false" target="jar"/>
+        <echo>Created Thornthwaite</echo>
+    </target>
 
     <target name="dostarters" depends="juicestarter, remotestarter, jamsstarter" />
 
