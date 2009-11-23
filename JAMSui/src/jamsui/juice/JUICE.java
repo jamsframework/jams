@@ -101,12 +101,7 @@ public class JUICE {
                 }
             }
 
-            // check if a different locale is forced by the config
-            String forcedLocale = getJamsProperties().getProperty("forcelocale");
-            if (!JAMSTools.isEmptyString(forcedLocale)) {
-                Locale.setDefault(new Locale(forcedLocale));
-                JAMS.resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
-            }
+            JAMSTools.configureLocale(getJamsProperties());
 
             int splashTimeout = Integer.parseInt(getJamsProperties().getProperty("splashtimeout", "1000"));
 

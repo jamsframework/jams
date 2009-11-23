@@ -22,6 +22,8 @@
  */
 package jams.tools;
 
+import jams.JAMS;
+import jams.SystemProperties;
 import jams.model.Component;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +36,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -103,22 +106,21 @@ public class JAMSTools {
      * @param delimiter
      * @return string
      */
-    public static String getPartOfToken (String theToken, int thePart, String delimiter) {
+    public static String getPartOfToken(String theToken, int thePart, String delimiter) {
         String result = null;
         StringTokenizer tokenizer = new StringTokenizer(theToken, delimiter);
         int i = 0;
         while (tokenizer.hasMoreTokens()) {
             result = tokenizer.nextToken();
             i++;
-            if (i == thePart)
+            if (i == thePart) {
                 return result;
-            else
+            } else {
                 result = null;
+            }
         }
         return result;
     }
-
-
 
     /**
      * Reads a file and returns its content as string
@@ -280,15 +282,18 @@ public class JAMSTools {
      * @param dirName the full directory name
      * @throws IOException
      */
-    public static File assertDirectory (String dirName)
+    public static File assertDirectory(String dirName)
             throws IOException {
         File dir = new File(dirName);
-        if (dir.isDirectory() && dir.exists()) return dir;
+        if (dir.isDirectory() && dir.exists()) {
+            return dir;
+        }
         dir.mkdirs();
-        if (!(dir.isDirectory() && dir.exists())) throw new IOException("Could not create directory '" + dirName + "' !");
+        if (!(dir.isDirectory() && dir.exists())) {
+            throw new IOException("Could not create directory '" + dirName + "' !");
+        }
         return dir;
     }
-
 
     /**
      * get array of files
@@ -298,18 +303,22 @@ public class JAMSTools {
      * @return filearray
      * @throws IOException
      */
-    public static File[] getFiles (String directoryName, String fileExtension) throws IOException {
+    public static File[] getFiles(String directoryName, String fileExtension) throws IOException {
         //check for existing of the requested directory
         File directory = assertDirectory(directoryName);
-        if (!directory.isDirectory()) throw new IOException("Can't load filelist because directory '" + directoryName + "' not found.");
+        if (!directory.isDirectory()) {
+            throw new IOException("Can't load filelist because directory '" + directoryName + "' not found.");
+        }
         //write all files within the given directory in the File-Array
         String ext = null;
-        if (fileExtension != null)
+        if (fileExtension != null) {
             ext = fileExtension.toLowerCase();
+        }
         final String fileExtensionLower = ext;
         File[] fileArray;
         fileArray = directory.listFiles(new FilenameFilter() {
-            public boolean accept (File dir, String name) {
+
+            public boolean accept(File dir, String name) {
                 String nameLower = name.toLowerCase();
                 if (fileExtensionLower == null || nameLower.endsWith("." + fileExtensionLower)) {
                     return true;
@@ -334,7 +343,8 @@ public class JAMSTools {
             }
         }
         Arrays.sort(fileArray, new Comparator<File>() {
-            public int compare (File o1, File o2) {
+
+            public int compare(File o1, File o2) {
                 String fileName1 = o1.getName();
                 String fileName2 = o1.getName();
                 return fileName1.compareToIgnoreCase(fileName2);
@@ -360,6 +370,26 @@ public class JAMSTools {
         t.printStackTrace();
         if (!proceed) {
             System.exit(-1);
+        }
+    }
+
+    /**
+     * Sets the static field JAMS.resources to a language specific resource bundle
+     * @param properties JAMSProperty object containing the language information
+     */
+    public static void configureLocale(SystemProperties properties) {
+        // check if a different locale is forced by the config
+        String forcedLocale = properties.getProperty("forcelocale");
+        if (!JAMSTools.isEmptyString(forcedLocale)) {
+
+            if (forcedLocale.contains("_")) {
+                StringTokenizer tok = new StringTokenizer(forcedLocale, "_");
+                Locale.setDefault(new Locale(tok.nextToken(), tok.nextToken()));
+            } else {
+                Locale.setDefault(new Locale(forcedLocale));
+            }
+
+            JAMS.resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
         }
     }
 }
