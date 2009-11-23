@@ -7,7 +7,7 @@
         </classpath>
     </taskdef>
     
-    <target name="doall" depends="buildproj, dostarters, doJ2K"/>
+    <target name="doall" depends="buildproj, dostarters, doJ2K, doThornthwaite"/>
 
     <target name="doallwithclean" depends="clean, buildproj, dostarters, doJ2K"/>
     
