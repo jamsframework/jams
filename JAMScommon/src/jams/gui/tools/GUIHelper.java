@@ -229,7 +229,13 @@ public class GUIHelper {
      */
     public static JFileChooser getJFileChooser(boolean useShellFolder) {
         if (useShellFolder) {
-            return new JFileChooser();
+            try {
+                return new JFileChooser();
+            } catch (Throwable t) {
+                // catch possible exceptions in sun.swing.WindowsPlacesBar that
+                // occur while using strange windows themes (missing icons!)
+                return getJFileChooser(false);
+            }
         } else {
             return new JFileChooser() {
 
