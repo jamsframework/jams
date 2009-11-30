@@ -9,7 +9,7 @@
     
     <target name="doall" depends="buildproj, dostarters, doJ2K, doThornthwaite"/>
 
-    <target name="doallwithclean" depends="clean, buildproj, dostarters, doJ2K"/>
+    <target name="doallwithclean" depends="clean, doall"/>
     
     <target name="buildproj" description="Build all top level JAMS projects">
         <foreach target="buildproject" param="buildxml">
