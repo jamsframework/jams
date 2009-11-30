@@ -592,19 +592,19 @@ public class ShapefileLayerProperties extends javax.swing.JPanel {
         labelMinMax = new javax.swing.JLabel();
         elevationSlider = new javax.swing.JSlider();
         selectCheck = new javax.swing.JCheckBox();
-        jSeparator2 = new javax.swing.JSeparator();
-        jSeparator3 = new javax.swing.JSeparator();
         jSeparator4 = new javax.swing.JSeparator();
         idColumn = new javax.swing.JComboBox();
         jLabel4 = new javax.swing.JLabel();
         buttonExport = new javax.swing.JButton();
+        jSeparator5 = new javax.swing.JSeparator();
+        jSeparator6 = new javax.swing.JSeparator();
 
         setLayout(null);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("gw/resources/language"); // NOI18N
         jLabel2.setText(bundle.getString("L_Opacity")); // NOI18N
         add(jLabel2);
-        jLabel2.setBounds(450, 0, 120, 16);
+        jLabel2.setBounds(450, 0, 120, 14);
 
         opacitySlider.setMajorTickSpacing(25);
         opacitySlider.setMinorTickSpacing(5);
@@ -612,16 +612,16 @@ public class ShapefileLayerProperties extends javax.swing.JPanel {
         opacitySlider.setPaintTicks(true);
         opacitySlider.setPaintTrack(false);
         add(opacitySlider);
-        opacitySlider.setBounds(450, 20, 110, 48);
+        opacitySlider.setBounds(450, 20, 110, 47);
 
         jLabel1.setText("Styled Layer Descriptor:");
         add(jLabel1);
-        jLabel1.setBounds(0, 0, 137, 16);
+        jLabel1.setBounds(0, 0, 116, 14);
 
         sldField.setEditable(false);
         sldField.setText("<NONE>");
         add(sldField);
-        sldField.setBounds(0, 20, 130, 22);
+        sldField.setBounds(0, 20, 130, 20);
 
         jLabel3.setText(bundle.getString("L_Border_Color")); // NOI18N
         add(jLabel3);
@@ -643,25 +643,25 @@ public class ShapefileLayerProperties extends javax.swing.JPanel {
 
         labelCheck.setText(bundle.getString("L_Show_Labels")); // NOI18N
         add(labelCheck);
-        labelCheck.setBounds(150, 20, 95, 25);
+        labelCheck.setBounds(150, 20, 85, 23);
 
         surfaceCheck.setSelected(true);
         surfaceCheck.setText(bundle.getString("L_Bond_to_Surface")); // NOI18N
         add(surfaceCheck);
-        surfaceCheck.setBounds(290, 0, 111, 20);
+        surfaceCheck.setBounds(300, 10, 103, 20);
 
         actualElevationLabel.setText(bundle.getString("L_Elevation")); // NOI18N
         add(actualElevationLabel);
-        actualElevationLabel.setBounds(340, 30, 55, 16);
+        actualElevationLabel.setBounds(350, 40, 48, 14);
 
         elevationText.setText("0");
         elevationText.setEnabled(false);
         add(elevationText);
-        elevationText.setBounds(340, 50, 80, 22);
+        elevationText.setBounds(350, 60, 80, 20);
 
         labelMinMax.setText(bundle.getString("L_Min_Max"));
         add(labelMinMax);
-        labelMinMax.setBounds(340, 80, 100, 16);
+        labelMinMax.setBounds(350, 90, 100, 14);
 
         elevationSlider.setMajorTickSpacing(2000);
         elevationSlider.setMaximum(20000);
@@ -669,44 +669,44 @@ public class ShapefileLayerProperties extends javax.swing.JPanel {
         elevationSlider.setPaintTicks(true);
         elevationSlider.setEnabled(false);
         add(elevationSlider);
-        elevationSlider.setBounds(290, 20, 32, 80);
+        elevationSlider.setBounds(300, 30, 33, 80);
 
         selectCheck.setText(bundle.getString("L_Feature_Selection")); // NOI18N
         add(selectCheck);
-        selectCheck.setBounds(150, 0, 121, 20);
-
-        jSeparator2.setBackground(new java.awt.Color(208, 208, 191));
-        jSeparator2.setForeground(new java.awt.Color(236, 233, 216));
-        jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
-        jSeparator2.setEnabled(false);
-        add(jSeparator2);
-        jSeparator2.setBounds(280, 20, 10, 80);
-
-        jSeparator3.setBackground(new java.awt.Color(208, 208, 191));
-        jSeparator3.setForeground(new java.awt.Color(236, 233, 216));
-        jSeparator3.setOrientation(javax.swing.SwingConstants.VERTICAL);
-        jSeparator3.setEnabled(false);
-        add(jSeparator3);
-        jSeparator3.setBounds(440, 20, 10, 80);
+        selectCheck.setBounds(150, 0, 109, 20);
 
         jSeparator4.setBackground(new java.awt.Color(208, 208, 191));
         jSeparator4.setForeground(new java.awt.Color(236, 233, 216));
         jSeparator4.setOrientation(javax.swing.SwingConstants.VERTICAL);
         jSeparator4.setEnabled(false);
         add(jSeparator4);
-        jSeparator4.setBounds(140, 20, 10, 70);
+        jSeparator4.setBounds(440, 10, 10, 110);
 
         add(idColumn);
-        idColumn.setBounds(170, 60, 110, 24);
+        idColumn.setBounds(170, 50, 110, 20);
 
         jLabel4.setText(bundle.getString("L_ID")); // NOI18N
         add(jLabel4);
-        jLabel4.setBounds(150, 60, 20, 20);
+        jLabel4.setBounds(150, 50, 20, 20);
 
-        buttonExport.setBackground(new java.awt.Color(170, 210, 175));
+        buttonExport.setBackground(null);
         buttonExport.setText(bundle.getString("L_Export")); // NOI18N
         add(buttonExport);
-        buttonExport.setBounds(470, 80, 100, 25);
+        buttonExport.setBounds(0, 100, 100, 23);
+
+        jSeparator5.setBackground(new java.awt.Color(208, 208, 191));
+        jSeparator5.setForeground(new java.awt.Color(236, 233, 216));
+        jSeparator5.setOrientation(javax.swing.SwingConstants.VERTICAL);
+        jSeparator5.setEnabled(false);
+        add(jSeparator5);
+        jSeparator5.setBounds(140, 10, 10, 110);
+
+        jSeparator6.setBackground(new java.awt.Color(208, 208, 191));
+        jSeparator6.setForeground(new java.awt.Color(236, 233, 216));
+        jSeparator6.setOrientation(javax.swing.SwingConstants.VERTICAL);
+        jSeparator6.setEnabled(false);
+        add(jSeparator6);
+        jSeparator6.setBounds(290, 10, 10, 110);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -720,9 +720,9 @@ public class ShapefileLayerProperties extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JSeparator jSeparator5;
+    private javax.swing.JSeparator jSeparator6;
     private javax.swing.JCheckBox labelCheck;
     private javax.swing.JLabel labelMinMax;
     private javax.swing.JSlider opacitySlider;

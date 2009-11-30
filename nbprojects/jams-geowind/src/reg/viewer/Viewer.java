@@ -9,6 +9,8 @@ import gw.ui.layerproperies.ShapefileLayerProperties;
 import gw.ui.util.OvalBorder;
 import jams.tools.JAMSTools;
 import java.awt.Toolkit;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.net.URI;
 import java.util.ResourceBundle;
@@ -36,14 +38,17 @@ public class Viewer {
      * the singleton instance
      */
     private static Viewer theInstance;
+
     /**
      * the main panel
      */
     private FancyPanel mainPanel;
+
     /**
      * the overall frame
      */
     private final JFrame frame = new JFrame();
+
     private boolean initialized = false;
 
     /**
@@ -72,6 +77,8 @@ public class Viewer {
         if (theInstance != null) {
             theInstance.initialized = false;
             theInstance.frame.dispose();
+            // make sure a new instance is created next time!
+            theInstance = null;
         }
     }
 
@@ -224,6 +231,40 @@ public class Viewer {
             frame.setTitle(FancyPanel.TITLE);
 //            frame.setUndecorated(true);
             frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+            frame.addWindowListener(new WindowListener() {
+
+                @Override
+                public void windowActivated(WindowEvent e) {
+                }
+
+                @Override
+                public void windowClosed(WindowEvent e) {
+                }
+
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    // call destroy of window is closed
+                    destroy();
+                }
+
+                @Override
+                public void windowDeactivated(WindowEvent e) {
+                }
+
+                @Override
+                public void windowDeiconified(WindowEvent e) {
+                }
+
+                @Override
+                public void windowIconified(WindowEvent e) {
+                }
+
+                @Override
+                public void windowOpened(WindowEvent e) {
+                }
+            });
+
 
             mainPanel = new FancyPanel(frame, getUnusedLayers(), getApplicationLayers());
             BottomPanel bp = new BottomPanel();

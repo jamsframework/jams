@@ -11,12 +11,16 @@
 
     <target name="doallwithclean" depends="clean, buildproj, dostarters, doJ2K"/>
     
-    <target name="buildproj" description="Build all NetBeans projects in this directory">
+    <target name="buildproj" description="Build all top level JAMS projects">
         <foreach target="buildproject" param="buildxml">
             <path>
                 <fileset dir="../nbprojects">
                     <include name="**/build.xml"/>
                     <exclude name="**/jams-starter/build.xml"/>
+                    <exclude name="**/jams-common/build.xml"/>
+                    <exclude name="**/jams-explorer/build.xml"/>
+                    <exclude name="**/jams-geowind/build.xml"/>
+                    <exclude name="**/jams-geowind/build.xml"/>
                 </fileset>
             </path>
         </foreach>

@@ -14,19 +14,27 @@
     <target name="-post-jar">
         <!--copy file="${dist.jar}" tofile="${bin.dir}/${application.title}-${main.majorversion}.${main.minorversion}.jar"/-->
         <if>
-            <equals arg1="${application.title}" arg2="jams-api"/>
+            <or>
+                <equals arg1="${application.title}" arg2="jams-common"/>
+                <equals arg1="${application.title}" arg2="jams-explorer"/>
+                <equals arg1="${application.title}" arg2="jams-geowind"/>
+                <equals arg1="${application.title}" arg2="jams-remote"/>
+                <equals arg1="${application.title}" arg2="jams-ui"/>
+            </or>
             <then>
-                <copy file="${dist.jar}" tofile="${bin.dir}/${application.title}${api.postfix}.jar"/>
+                <!--echo>not copying anything</echo-->
             </then>
             <else>
-                <copy file="${dist.jar}" tofile="${bin.dir}/${application.title}${main.postfix}.jar"/>
-            </else>
-        </if>
-        <if>
-            <equals arg1="${application.title}" arg2="jams-geowind_"/>
-            <then>
-            </then>
-            <else>
+                <!--echo>copying jar and libs to ${bin.dir}/lib</echo-->
+                <if>
+                    <equals arg1="${application.title}" arg2="jams-api"/>
+                    <then>
+                        <copy file="${dist.jar}" tofile="${bin.dir}/${application.title}${api.postfix}.jar"/>
+                    </then>
+                    <else>
+                        <copy file="${dist.jar}" tofile="${bin.dir}/${application.title}${main.postfix}.jar"/>
+                    </else>
+                </if>
                 <copy todir="${bin.dir}/lib">
                     <fileset dir="dist/lib">
                         <!--exclude name="**/jams-*.jar"/-->

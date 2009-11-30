@@ -31,7 +31,9 @@ public class ExportPanel extends javax.swing.JDialog {
 
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
+
     private ShapefileLayerProperties shapefileLayerProperties;
+
     private JFileChooser fileChooser = new JFileChooser();
 
     /** Creates new form ExportPanel */
@@ -82,6 +84,7 @@ public class ExportPanel extends javax.swing.JDialog {
 
         exportButton.setLabel(bundle.getString("L_EXPORT")); // NOI18N
         exportButton.addActionListener(new java.awt.event.ActionListener() {
+
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportButtonActionPerformed(evt);
             }
@@ -97,6 +100,7 @@ public class ExportPanel extends javax.swing.JDialog {
 
         fileChooseButton.setText(bundle.getString("L_SELECT")); // NOI18N
         fileChooseButton.addActionListener(new java.awt.event.ActionListener() {
+
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fileChooseButtonActionPerformed(evt);
             }
@@ -108,64 +112,9 @@ public class ExportPanel extends javax.swing.JDialog {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(70, 70, 70)
-                .addComponent(exportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(74, 74, 74)
-                .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
-                .addGap(97, 97, 97))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(63, 63, 63)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(out_Message)
-                        .addContainerGap())
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel3)
-                            .addContainerGap())
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(messageText, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                .addContainerGap())
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(58, 58, 58)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(i_filename, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(29, 29, 29)
-                                        .addComponent(fileChooseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addComponent(li_columns_scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(35, 35, 35))))))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup().addGap(70, 70, 70).addComponent(exportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE).addGap(74, 74, 74).addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE).addGap(97, 97, 97)).addGroup(layout.createSequentialGroup().addGap(63, 63, 63).addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup().addComponent(out_Message).addContainerGap()).addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup().addComponent(jLabel3).addContainerGap()).addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup().addComponent(messageText, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE).addContainerGap()).addGroup(layout.createSequentialGroup().addComponent(jLabel1).addGap(58, 58, 58).addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup().addComponent(i_filename, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE).addGap(29, 29, 29).addComponent(fileChooseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)).addComponent(li_columns_scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)).addGap(35, 35, 35)))))));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(36, 36, 36)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addComponent(li_columns_scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(25, 25, 25)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(27, 27, 27)
-                        .addComponent(out_Message)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                        .addComponent(messageText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(i_filename, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fileChooseButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(exportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(34, 34, 34))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup().addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup().addGap(36, 36, 36).addComponent(jLabel1)).addGroup(layout.createSequentialGroup().addGap(22, 22, 22).addComponent(li_columns_scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))).addGap(25, 25, 25).addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup().addComponent(jLabel3).addGap(27, 27, 27).addComponent(out_Message).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE).addComponent(messageText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)).addComponent(i_filename, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addComponent(fileChooseButton)).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING).addComponent(exportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE).addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)).addGap(34, 34, 34)));
 
         messageText.getAccessibleContext().setAccessibleName("errorText");
 
@@ -188,9 +137,9 @@ public class ExportPanel extends javax.swing.JDialog {
             return;
         }
 
-/*
+        /*
         Vector<String> vSelCols = li_columnList.getListData();
-*/
+         */
 
 
         String fileName = i_filename.getText();
@@ -208,10 +157,10 @@ public class ExportPanel extends javax.swing.JDialog {
         // selCols -> vSelCols
         Vector<String> vSelCols = new Vector<String>(selCols.length);
         for (Object selCol : selCols) {
-            vSelCols.add((String)selCol);
+            vSelCols.add((String) selCol);
         }
 
- try {
+        try {
             // export the table
             ProxyTableModel tableModel = this.shapefileLayerProperties.getTableModel();
             CoordinateReferenceSystem crs = this.shapefileLayerProperties.getLayer().getCRS();
@@ -226,7 +175,7 @@ public class ExportPanel extends javax.swing.JDialog {
             System.out.println("Fehler aufgetreten: " + e.getMessage());
             return;
         }
-}
+    }
 
     private void fileChooseButtonActionPerformed(java.awt.event.ActionEvent evt) {
 
@@ -307,15 +256,26 @@ public class ExportPanel extends javax.swing.JDialog {
     }
     // Variables declaration
     private java.awt.Button cancelButton;
+
     private java.awt.Button exportButton;
+
     private javax.swing.JButton fileChooseButton;
+
     private JList li_columnList;
+
     private JScrollPane li_columns_scrollPane;
+
     private java.awt.TextField i_filename;
+
     private javax.swing.JLabel jLabel1;
+
     private javax.swing.JLabel jLabel3;
+
     private java.awt.Label messageText;
+
     private javax.swing.JLabel out_Message;
     // End of variables declaration
+
     private int returnStatus = RET_CANCEL;
+
 }
