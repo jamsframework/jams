@@ -50,10 +50,10 @@ public class GraphProperties {
     JFrame parent;
     
     URL url1 = this.getClass().getResource("/reg/resources/images/arrowup.png");
-    ImageIcon up_icon = new ImageIcon(new ImageIcon(url1).getImage().getScaledInstance(10, 10, Image.SCALE_SMOOTH));
+    ImageIcon up_icon = new ImageIcon(new ImageIcon(url1).getImage().getScaledInstance(10, 9, Image.SCALE_DEFAULT));
     
     URL url2 = this.getClass().getResource("/reg/resources/images/arrowdown.png");
-    ImageIcon down_icon = new ImageIcon(new ImageIcon(url2).getImage().getScaledInstance(10, 10, Image.SCALE_SMOOTH));
+    ImageIcon down_icon = new ImageIcon(new ImageIcon(url2).getImage().getScaledInstance(10, 9, Image.SCALE_DEFAULT));
     
     URL url3 = this.getClass().getResource("/reg/resources/images/correct.png");
     ImageIcon plot_icon = new ImageIcon(url3);
@@ -62,7 +62,7 @@ public class GraphProperties {
     ImageIcon add_icon = new ImageIcon(url4);
     
     URL url5 = this.getClass().getResource("/reg/resources/images/remove.png");
-    ImageIcon rem_icon = new ImageIcon(new ImageIcon(url5).getImage().getScaledInstance(10, 10, Image.SCALE_SMOOTH));
+    ImageIcon rem_icon = new ImageIcon(new ImageIcon(url5).getImage().getScaledInstance(10, 9, Image.SCALE_DEFAULT));
     //ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/root.png
     
     GraphProperties thisProp;

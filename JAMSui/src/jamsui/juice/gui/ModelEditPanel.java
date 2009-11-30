@@ -46,6 +46,8 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import reg.JAMSExplorer;
 import jams.JAMS;
+import java.awt.Image;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -112,7 +114,7 @@ public class ModelEditPanel extends JPanel {
         scroll.setBorder(BorderFactory.createEtchedBorder());
         scroll.setPreferredSize(new Dimension(TEXTAREA_WIDTH, TEXTAREA_HEIGHT));
 
-        explorerAction = new AbstractAction(JAMS.resources.getString("JEDI")) {
+        explorerAction = new AbstractAction() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -120,11 +122,15 @@ public class ModelEditPanel extends JPanel {
             }
         };
         explorerButton = new JButton(explorerAction);
+//    private static ImageIcon DOWN_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowdown.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
+        explorerButton.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/images/Layers.png")).getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH)));
+        explorerButton.setText("");
+        explorerButton.setToolTipText(JAMS.resources.getString("JEDI"));
         explorerAction.setEnabled(true);
 
         GUIHelper.addGBComponent(componentPanel, mainLayout, workspace.getComponent(), 2, 0, 1, 1, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, explorerButton, 3, 0, 1, 1, 1.0, 1.0,
+        GUIHelper.addGBComponent(componentPanel, mainLayout, explorerButton, 3, 0, 1, 4, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);
         GUIHelper.addGBComponent(componentPanel, mainLayout, author.getComponent(), 2, 1, 1, 1, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);
