@@ -144,9 +144,9 @@ public class J2KTSDataStore extends TSDataStore {
 
         while (tok1.hasMoreTokens()) {
 
-            String attributeName = tok2.nextToken().toUpperCase();
+            String attributeName = tok2.nextToken();
             ArrayList<Object> values = new ArrayList<Object>();
-            if (attributeName.equals("X") || attributeName.equals("Y") || attributeName.equals("ELEVATION")) {
+            if (attributeName.equals("x") || attributeName.equals("y") || attributeName.equals("elevation")) {
                 def.addAttribute(attributeName, Double.class);
                 while (tok2.hasMoreTokens()) {
                     values.add(Double.parseDouble(tok2.nextToken()));
