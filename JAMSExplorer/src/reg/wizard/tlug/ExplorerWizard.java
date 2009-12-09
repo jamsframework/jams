@@ -32,37 +32,17 @@ public class ExplorerWizard extends WizardBranchController {
     private static Map<String, String[]> createMapping () {
         Map<String, String[]> resultMap = new HashMap<String, String[]>();
 
-        resultMap.put(BaseDataPanel.KEY_INTERVAL, new String[] {"J2K.timeInterval"});
+        resultMap.put(BaseDataPanel.KEY_INTERVAL, new String[] {"Interpolation.timeInterval"});
         resultMap.put(RegMethodPanel.KEY_SCHWELLENWERT,
-                new String[] {  "AhumRegionaliser.rsqThreshold",
-                                "TmeanRegionaliser.rsqThreshold",
-                                "SunhRegionaliser.rsqThreshold",
-                                "TminRegionaliser.rsqThreshold",
-                                "TmaxRegionaliser.rsqThreshold",
-                                "WindRegionaliser.rsqThreshold",
-                                "PrecipRegionaliser_1.rsqThreshold",
-                                "PrecipRegionaliser.rsqThreshold"
+                new String[] {  "Regionaliser.rsqThreshold"
                              }
         );
         resultMap.put(RegMethodPanel.KEY_GEWICHTUNG,
-                new String[] {  "tmaxWeights.pidw",
-                                "precipWeights.pidw",
-                                "sunhWeights.pidw",
-                                "windWeights.pidw",
-                                "tmeanWeights.pidw",
-                                "tminWeights.pidw",
-                                "ahumWeights.pidw"
+                new String[] {  "Weights.pidw"
                              }
         );
         resultMap.put(RegMethodPanel.KEY_STATION,
-                new String[] {  "AhumRegionaliser.nidw",
-                                "TmeanRegionaliser.nidw",
-                                "SunhRegionaliser.nidw",
-                                "TminRegionaliser.nidw",
-                                "TmaxRegionaliser.nidw",
-                                "WindRegionaliser.nidw",
-                                "PrecipRegionaliser_1.nidw",
-                                "PrecipRegionaliser.nidw"
+                new String[] {  "Regionaliser.nidw"
                              }
         );
 
