@@ -46,6 +46,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -343,8 +344,26 @@ public class ExplorerFrame extends JFrame {
         try {
             JAMSWorkspace workspace = explorer.getWorkspace();
             if (workspace != null) {
-                this.modelDoc = XMLIO.getDocument(new File(workspace.getDirectory(), workspace.getModelFilename()).getPath());
+                String directoryName = workspace.getDirectory().getPath();
+                String completeFileName = directoryName + File.separator + workspace.getModelFilename();
+                System.out.println("initModelDoc: try to get document from file " + completeFileName);
+/*
+                try {
+                    File[] dirFiles = JAMSTools.getFiles(directoryName, null);
+                    for (File dirFile : dirFiles) {
+                        System.out.println("found file " + dirFile.getName());
+                    }
+                } catch (Exception e) {
+                }
+*/
+                File modelFile = new File(completeFileName);
+                if (modelFile == null || !modelFile.exists()) {
+                    System.out.println("Datei nicht gefunden !!");
+                } else {
+                    this.modelDoc = XMLIO.getDocument(completeFileName);
+                }
             }
+
         } catch (FileNotFoundException ex) {
             explorer.getRuntime().handle(ex);
         }
@@ -446,101 +465,133 @@ public class ExplorerFrame extends JFrame {
                 for (Object key : keys) {
                     System.out.println(key + "=" + wizardSettings.get(key));
                 }
+                String workSpaceDir = ws.getDirectory().getCanonicalPath();
 
                 // station data -> copy the wished files
                 String dataDecision = (String) wizardSettings.get(DataDecisionPanel.KEY_DATA);
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_STATION)) {
                     String computation = (String) wizardSettings.get(StationParamsPanel.KEY_COMPUTATION);
                     // look into directory &computation and get model + output files
-                    String workSpaceDir = ws.getDirectory().getCanonicalPath();
                     String sourceDir = workSpaceDir +
                             File.separator + "variants" +
                             File.separator + computation;
                     System.out.println("sourceDir: " + sourceDir);
 
                     // copy model file
-                    String modelSourceDir = sourceDir + File.separator + "workspace";
-                    File[] modelFiles = JAMSTools.getFiles(modelSourceDir, null);
-                    if (modelFiles == null || modelFiles.length == 0) {
-                        System.out.println("no model files found ind " + modelSourceDir);
-                    } else {
-                        File modelFile = modelFiles[0];
-                        String completeModelFileName = modelFile.getAbsolutePath();
-                        String modelFileName = modelFile.getName();
-                        System.out.println("model file found: " + completeModelFileName);
-                        String copyCommand = "cmd /c copy \"" + completeModelFileName + "\" \"" + workSpaceDir + "\" /Y";
-                        Runtime.getRuntime().exec(copyCommand);
-
-                        // copy output files
-                        String outputSourceDir = sourceDir + File.separator + "output";
-                        String outputTargetDir = workSpaceDir + File.separator + "output";
-                        File[] outputFiles = JAMSTools.getFiles(outputSourceDir, "xml");
-                        if (outputFiles == null || outputFiles.length == 0) {
-                            System.out.println("no output files found in " + outputSourceDir);
-                        } else {
-                            for (File outputFile : outputFiles) {
-                                String outputFileName = outputFile.getAbsolutePath();
-                                System.out.println("outputFile file found: " + outputFileName);
-                                copyCommand = "cmd /c copy \"" + outputFileName + "\" \"" + outputTargetDir + "\" /Y";
-                                Runtime.getRuntime().exec(copyCommand);
-                            }
-                        }
-
-                        // and now activate the new model
+                    String modelFileName = this.copyModelFiles(sourceDir);
+                    if (!JAMSTools.isEmptyString(modelFileName)) {
+                        // activate the new model
                         ws.setModelFile(modelFileName);
                         this.initModelDoc();
                         this.update();
-                        launchModel();
-
-                    } // model file found
+                    }
 
                 } // dataDecision = station
 
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_SPATIAL)) {
 
-                    Properties properties = new Properties();
 
-                    //additional shape file?
-                    String shapeFileName = (String) wizardSettings.get(BaseDataPanel.KEY_SHAPE_FILENAME);
-                    if (!JAMSTools.isEmptyString(shapeFileName)) {
-                        File theShapeFile = new File(shapeFileName);
+                    String sourceDir = workSpaceDir +
+                            File.separator + "variants" +
+                            File.separator + "regionalizer";
+                    System.out.println("sourceDir: " + sourceDir);
 
-                        String fileName = theShapeFile.getName();
-                        String id = JAMSTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
-                        ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, id, theShapeFile.toURI().toString(), fileName, null);
-                        ws.addDataStore(addShapeStore);
+                    // copy model file
+                    String modelFileName = this.copyModelFiles(sourceDir);
+                    if (!JAMSTools.isEmptyString(modelFileName)) {
 
-                        // put shape to model
-                        properties.put("EntityReader.shapeFileName", shapeFileName);
-                        properties.put("EntityReader.idName", id);
-                    }
+                        // activate the new model
+                        ws.setModelFile(modelFileName);
+                        this.initModelDoc();
+                        this.update();
+
+                        Properties properties = new Properties();
+
+                        //additional shape file?
+                        String shapeFileName = (String) wizardSettings.get(BaseDataPanel.KEY_SHAPE_FILENAME);
+                        if (!JAMSTools.isEmptyString(shapeFileName)) {
+                            File theShapeFile = new File(shapeFileName);
+
+                            String fileName = theShapeFile.getName();
+                            String id = JAMSTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
+                            ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, id, theShapeFile.toURI().toString(), fileName, null);
+                            ws.addDataStore(addShapeStore);
+
+                            // put shape to model
+                            properties.put("EntityReader.shapeFileName", shapeFileName);
+                            properties.put("EntityReader.idName", id);
+                        }
 
 
-                    // put interval to model
-                    Set<String> wizardKeys = ExplorerWizard.KEY_MODEL_MAPPING.keySet();
-                    for (String wizardKey : wizardKeys) {
-                        String value = (String) wizardSettings.get(wizardKey);
-                        String[] modelKeys = ExplorerWizard.KEY_MODEL_MAPPING.get(wizardKey);
-                        for (String modelKey : modelKeys) {
-                            properties.put(modelKey, value);
+                        // put parameter to model
+                        Set<String> wizardKeys = ExplorerWizard.KEY_MODEL_MAPPING.keySet();
+                        for (String wizardKey : wizardKeys) {
+                            String value = (String) wizardSettings.get(wizardKey);
+                            String[] modelKeys = ExplorerWizard.KEY_MODEL_MAPPING.get(wizardKey);
+                            for (String modelKey : modelKeys) {
+                                properties.put(modelKey, value);
+                            }
+                        }
+
+                        ParameterProcessor.loadParams(modelDoc, properties);
+
+                        update();
+                        JAMSSpreadSheet spreadSheet = explorer.getDisplayManager().getSpreadSheet();
+                        if (spreadSheet != null) {
+                            spreadSheet.updateGUI();
                         }
                     }
-
-                    ParameterProcessor.loadParams(modelDoc, properties);
-
-                    update();
-                    JAMSSpreadSheet spreadSheet = explorer.getDisplayManager().getSpreadSheet();
-                    if (spreadSheet != null) {
-                        spreadSheet.updateGUI();
-                    }
                 } // dataDecision = spatial
-
             }
-
 
         } catch (Exception ex) {
             explorer.getRuntime().handle(ex);
         }
+    }
+
+
+/**
+ * copy model and related files to workspace
+ * @param sourceDir
+ * @return name of model file or null
+ * @throws IOException
+ */
+    private String copyModelFiles(String sourceDir)
+            throws IOException {
+        String modelSourceDir = sourceDir + File.separator + "workspace";
+        File[] modelFiles = JAMSTools.getFiles(modelSourceDir, null);
+        if (modelFiles == null || modelFiles.length == 0) {
+            System.out.println("no model files found ind " + modelSourceDir);
+        } else {
+            File modelFile = modelFiles[0];
+
+            String workSpaceDir = explorer.getWorkspace().getDirectory().getCanonicalPath();
+
+            String completeModelFileName = modelFile.getAbsolutePath();
+            String modelFileName = modelFile.getName();
+            System.out.println("model file found: " + completeModelFileName);
+            String copyCommand = "cmd /c copy \"" + completeModelFileName + "\" \"" + workSpaceDir + "\" /Y";
+            Runtime.getRuntime().exec(copyCommand);
+            System.out.println("model file copied to " + workSpaceDir);
+
+            // copy output files
+            String outputSourceDir = sourceDir + File.separator + "output";
+            String outputTargetDir = workSpaceDir + File.separator + "output";
+            File[] outputFiles = JAMSTools.getFiles(outputSourceDir, "xml");
+            if (outputFiles == null || outputFiles.length == 0) {
+                System.out.println("no output files found in " + outputSourceDir);
+            } else {
+                for (File outputFile : outputFiles) {
+                    String outputFileName = outputFile.getAbsolutePath();
+                    System.out.println("outputFile file found: " + outputFileName);
+                    copyCommand = "cmd /c copy \"" + outputFileName + "\" \"" + outputTargetDir + "\" /Y";
+                    Runtime.getRuntime().exec(copyCommand);
+                }
+            }
+            return modelFileName;
+        }
+        return null;
+
     }
 
     private void createListener() {
