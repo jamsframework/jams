@@ -15,6 +15,7 @@ import jams.JAMSFileFilter;
 import jams.gui.input.InputComponent;
 import jams.gui.input.InputComponentFactory;
 import jams.gui.input.TimeintervalInput;
+import jams.gui.input.ValueChangeListener;
 import jams.tools.JAMSTools;
 import java.io.File;
 import java.util.Map;
@@ -87,7 +88,18 @@ public class BaseDataPanel extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jIntervall = InputComponentFactory.createInputComponent(JAMSTimeInterval.class, true);
-        
+
+        jIntervall.addValueChangeListener(new ValueChangeListener() {
+            @Override
+            public void valueChanged() {
+                try {
+                    checkProblems();
+                } catch (Exception e) {
+                    // do nothing
+                }
+            }
+        });
+
         jFileLabel.setText("Shape-File");
 
         jFileName.addActionListener(new java.awt.event.ActionListener() {
@@ -339,6 +351,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
                 } else {
                     r_interval = jIntervall.getValue();
+                    System.out.println("r_interval:" + r_interval);
                     wizardData.put(KEY_INTERVAL, r_interval);
                     if (StringUtils.isNullOrEmpty(r_aggreg)) {
                         controller.setProblem("Bitte Aggregation bestimmen.");
