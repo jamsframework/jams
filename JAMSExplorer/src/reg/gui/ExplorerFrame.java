@@ -569,10 +569,9 @@ public class ExplorerFrame extends JFrame {
 
             String completeModelFileName = modelFile.getAbsolutePath();
             String modelFileName = modelFile.getName();
-            System.out.println("model file found: " + completeModelFileName);
-            String copyCommand = "cmd /c copy \"" + completeModelFileName + "\" \"" + workSpaceDir + "\" /Y";
-            Runtime.getRuntime().exec(copyCommand);
-            System.out.println("model file copied to " + workSpaceDir);
+            String targetFileName = workSpaceDir + File.separator + modelFileName;
+            JAMSTools.copyFile(completeModelFileName, targetFileName);
+
 
             // copy output files
             String outputSourceDir = sourceDir + File.separator + "output";
@@ -583,9 +582,9 @@ public class ExplorerFrame extends JFrame {
             } else {
                 for (File outputFile : outputFiles) {
                     String outputFileName = outputFile.getAbsolutePath();
+                    targetFileName = outputTargetDir + File.separator + outputFile.getName();
                     System.out.println("outputFile file found: " + outputFileName);
-                    copyCommand = "cmd /c copy \"" + outputFileName + "\" \"" + outputTargetDir + "\" /Y";
-                    Runtime.getRuntime().exec(copyCommand);
+                    JAMSTools.copyFile(outputFileName, targetFileName);
                 }
             }
             return modelFileName;
