@@ -854,7 +854,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         // read table headers from attribute "NAME"
         // @TODO: flexible handling of header attribute
-        ArrayList<Object> names = store.getDataSetDefinition().getAttributeValues("NAME");
+        ArrayList<Object> names = store.getDataSetDefinition().getAttributeValues("name");
         colNumber = store.getDataSetDefinition().getColumnCount();
         headers = new String[colNumber + 1];
         headers[0] = "";

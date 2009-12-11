@@ -37,6 +37,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;
@@ -396,33 +397,49 @@ public class JAMSTools {
         }
     }
 
-  public static void copyFile(String srFile, String dtFile){
-    try{
-      File f1 = new File(srFile);
-      File f2 = new File(dtFile);
-      InputStream in = new FileInputStream(f1);
+//    public static void copyFile(String srFile, String dtFile) {
+//        try {
+//            File f1 = new File(srFile);
+//            File f2 = new File(dtFile);
+//            InputStream in = new FileInputStream(f1);
+//
+//            //For Append the file.
+////      OutputStream out = new FileOutputStream(f2,true);
+//
+//            //For Overwrite the file.
+//            OutputStream out = new FileOutputStream(f2);
+//
+//            byte[] buf = new byte[1024];
+//            int len;
+//            while ((len = in.read(buf)) > 0) {
+//                out.write(buf, 0, len);
+//            }
+//            in.close();
+//            out.close();
+//            System.out.println("File copied.");
+//        } catch (FileNotFoundException ex) {
+//            System.out.println(ex.getMessage() + " in the specified directory.");
+//            System.exit(0);
+//        } catch (IOException e) {
+//            System.out.println(e.getMessage());
+//        }
+//    }
 
-      //For Append the file.
-//      OutputStream out = new FileOutputStream(f2,true);
+    public static void copyFile(String inFile, String outFile) throws IOException {
 
-      //For Overwrite the file.
-      OutputStream out = new FileOutputStream(f2);
-
-      byte[] buf = new byte[1024];
-      int len;
-      while ((len = in.read(buf)) > 0){
-        out.write(buf, 0, len);
-      }
-      in.close();
-      out.close();
-      System.out.println("File copied.");
+        FileChannel inChannel = new FileInputStream(new File(inFile)).getChannel();
+        FileChannel outChannel = new FileOutputStream(new File(outFile)).getChannel();
+        try {
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+        } catch (IOException e) {
+            throw e;
+        } finally {
+            if (inChannel != null) {
+                inChannel.close();
+            }
+            if (outChannel != null) {
+                outChannel.close();
+            }
+        }
     }
-    catch(FileNotFoundException ex){
-      System.out.println(ex.getMessage() + " in the specified directory.");
-      System.exit(0);
-    }
-    catch(IOException e){
-      System.out.println(e.getMessage());
-    }
-  }
 }

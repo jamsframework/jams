@@ -337,7 +337,9 @@ public class ExplorerFrame extends JFrame {
         setSize(Math.min(d.width, JAMSExplorer.SCREEN_WIDTH), Math.min(d.height, JAMSExplorer.SCREEN_HEIGHT));
 
         // init the model document
-        this.initModelDoc();
+        if (explorer.isTlugized()) {
+            this.initModelDoc();
+        }
     }
 
     private void initModelDoc() {
@@ -347,15 +349,15 @@ public class ExplorerFrame extends JFrame {
                 String directoryName = workspace.getDirectory().getPath();
                 String completeFileName = directoryName + File.separator + workspace.getModelFilename();
                 System.out.println("initModelDoc: try to get document from file " + completeFileName);
-/*
+                /*
                 try {
-                    File[] dirFiles = JAMSTools.getFiles(directoryName, null);
-                    for (File dirFile : dirFiles) {
-                        System.out.println("found file " + dirFile.getName());
-                    }
+                File[] dirFiles = JAMSTools.getFiles(directoryName, null);
+                for (File dirFile : dirFiles) {
+                System.out.println("found file " + dirFile.getName());
+                }
                 } catch (Exception e) {
                 }
-*/
+                 */
                 File modelFile = new File(completeFileName);
                 if (modelFile == null || !modelFile.exists()) {
                     System.out.println("Datei nicht gefunden !!");
@@ -472,9 +474,9 @@ public class ExplorerFrame extends JFrame {
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_STATION)) {
                     String computation = (String) wizardSettings.get(StationParamsPanel.KEY_COMPUTATION);
                     // look into directory &computation and get model + output files
-                    String sourceDir = workSpaceDir +
-                            File.separator + "variants" +
-                            File.separator + computation;
+                    String sourceDir = workSpaceDir
+                            + File.separator + "variants"
+                            + File.separator + computation;
                     System.out.println("sourceDir: " + sourceDir);
 
                     // copy model file
@@ -491,9 +493,9 @@ public class ExplorerFrame extends JFrame {
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_SPATIAL)) {
 
 
-                    String sourceDir = workSpaceDir +
-                            File.separator + "variants" +
-                            File.separator + "regionalizer";
+                    String sourceDir = workSpaceDir
+                            + File.separator + "variants"
+                            + File.separator + "regionalizer";
                     System.out.println("sourceDir: " + sourceDir);
 
                     // copy model file
@@ -549,13 +551,12 @@ public class ExplorerFrame extends JFrame {
         }
     }
 
-
-/**
- * copy model and related files to workspace
- * @param sourceDir
- * @return name of model file or null
- * @throws IOException
- */
+    /**
+     * copy model and related files to workspace
+     * @param sourceDir
+     * @return name of model file or null
+     * @throws IOException
+     */
     private String copyModelFiles(String sourceDir)
             throws IOException {
         String modelSourceDir = sourceDir + File.separator + "workspace";
