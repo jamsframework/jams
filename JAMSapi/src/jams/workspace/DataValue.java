@@ -24,12 +24,13 @@ package jams.workspace;
 
 import com.vividsolutions.jts.geom.Geometry;
 import jams.data.Attribute;
+import java.io.Serializable;
 
 /**
  *
  * @author Sven Kralisch
  */
-public interface DataValue {
+public interface DataValue extends Serializable{
 
     public double getDouble();
 
