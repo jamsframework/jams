@@ -1,7 +1,7 @@
 main.majorversion=2
 main.minorversion=9
-main.revision=03
+main.revision=04
 api.majorversion=1
 api.minorversion=0
-date=20091202
+date=20091211
 contact=sven.kralisch@uni-jena.de

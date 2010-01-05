@@ -554,7 +554,7 @@ public class DataStoreProcessor {
     
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
 
-        DataStoreProcessor dsdb = new DataStoreProcessor(new File("C:/Arbeit/ModelData/JAMS-Gehlberg/output/output_gehlberg_e2_gutmann/TimeLoop.dat"));
+        DataStoreProcessor dsdb = new DataStoreProcessor(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_1.dat"));
 //        DataStoreProcessor dsdb = new DataStoreProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/TimeLoop.dat");
         dsdb.addImportProgressObserver(new Observer() {
 
@@ -564,7 +564,7 @@ public class DataStoreProcessor {
         });
 
         dsdb.createDB();
-        //dsdb.createIndex();
+        dsdb.createIndex();
 
 //        DataMatrix m = dsdb.getData(7323914);
 ////        DataMatrix m = dsdb.getData(836);
