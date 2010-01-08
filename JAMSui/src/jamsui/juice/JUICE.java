@@ -46,27 +46,16 @@ import javax.swing.SwingWorker;
 public class JUICE {
 
     public static final String APP_TITLE = "JUICE";
-
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
-
     public static final int SCREEN_WIDTH = 1200;
-
     public static final int SCREEN_HEIGHT = 850;
-
     private static JUICEFrame juiceFrame;
-
     private static JAMSProperties jamsProperties = JAMSProperties.createProperties();
-
     private static File baseDir = null;
-
     private static ArrayList<ModelView> modelViews = new ArrayList<ModelView>();
-
     private static ClassLoader loader;
-
     private static JAMSCmdLine cmdLine;
-
     private static LibTree libTree;
-
     private static WorkerDlg loadLibsDlg;
 
     public static void main(String args[]) {
