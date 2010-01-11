@@ -97,9 +97,11 @@ public class JAMSExplorer {
 
         properties = JAMSProperties.createProperties();
         String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
+        System.out.println("property file " + defaultFile);
         File file = new File(defaultFile);
         if (file.exists()) {
             try {
+                System.out.println("loading properties ..");
                 properties.load(defaultFile);
             } catch (IOException ioe) {
                 ioe.printStackTrace();
