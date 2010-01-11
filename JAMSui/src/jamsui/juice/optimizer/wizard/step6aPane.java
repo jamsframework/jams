@@ -40,6 +40,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.JAMS;
+import jams.io.XMLProcessor;
 
 /**
  *
@@ -307,7 +308,7 @@ public class step6aPane extends stepPane {
                                       
         infoLog += JAMS.resources.getString("find_a_position_to_place_optimizer") + "\n";
         //find place for optimization context
-        Node firstComponent = Tools.getFirstComponent(root);
+        Node firstComponent = XMLProcessor.getFirstComponent(root);
         if (firstComponent == null){
             return JAMS.resources.getString("Error_model_file_does_not_contain_any_components");
         }
@@ -335,7 +336,7 @@ public class step6aPane extends stepPane {
         
         //show model graph
         modelTree.setRootVisible(true);
-        root = Tools.getModelNode(this.doc.getDocumentElement());
+        root = XMLProcessor.getModelNode(this.doc.getDocumentElement());
         Element rootElement = (Element)root;
         DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode(new ComponentWrapper(rootElement.getAttribute("name")
                 ,rootElement.getAttribute("name"),true)));
@@ -472,7 +473,7 @@ public class step6aPane extends stepPane {
             }
                         
             try{
-                XMLIO.writeXmlFile(outputDoc, Tools.getWorkspacePath(doc) + File.separator + "output" + File.separator + "optimization_wizard_" + context + ".xml");
+                XMLIO.writeXmlFile(outputDoc, XMLProcessor.getWorkspacePath(doc) + File.separator + "output" + File.separator + "optimization_wizard_" + context + ".xml");
             }catch(Exception e){
                 return JAMS.resources.getString("Error_cant_write_xml_file_because_") + e.toString();
             }            
