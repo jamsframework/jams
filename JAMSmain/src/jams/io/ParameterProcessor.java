@@ -79,10 +79,12 @@ public class ParameterProcessor {
             for (String attributeName : attributeHash.keySet()) {
                 attribute = attributeHash.get(attributeName);
                 key = componentName + "." + attribute.getAttribute("name");
+                //System.out.println("attKey:" + key);
                 value = params.getProperty(key);
 
                 if (value != null) {
                     attribute.setAttribute("value", value);
+                    //System.out.println("    -> new value:" + value);
                 }
             }
         }
