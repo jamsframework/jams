@@ -24,6 +24,10 @@
 package jams.io;
 
 import java.io.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  *
@@ -80,7 +84,83 @@ public class XMLProcessor {
         
         return outFileName;
     }
-    
-//        String msg = "The model definition in \"" + inFileName + "\" has been adapted in order to meet modifications of the JAMS model DTD.\nThe new definition has been stored in \"" + outFileName + "\" while your original file was left untouched.";
+
+        public static Node getModelNode(Node root){
+        if (root.getNodeName().equals("model")){
+            return root;
+        }
+        NodeList childs = root.getChildNodes();
+        for (int i=0;i<childs.getLength();i++){
+            Node model = getModelNode(childs.item(i));
+            if (model != null)
+                return model;
+        }
+        return null;
+    }
+
+    public static String getWorkspacePath(Document model){
+        Element root = model.getDocumentElement();
+        Element modelElem = (Element)XMLProcessor.getModelNode(root);
+        //modelNode.g
+
+        NodeList childs = modelElem.getChildNodes();
+        for (int i=0;i<childs.getLength();i++){
+            Node node = childs.item(i);
+            if (node.getNodeName().equals("var")){
+                if ( ((Element)node).getAttribute("name").equals("workspaceDirectory") ){
+                    return ((Element)node).getAttribute("value");
+                }
+            }
+        }
+        return null;
+    }
+
+    public static boolean setWorkspacePath(Document model, String theWorkSpacePath){
+        Element root = model.getDocumentElement();
+        Element modelElem = (Element)XMLProcessor.getModelNode(root);
+        //modelNode.g
+
+        NodeList childs = modelElem.getChildNodes();
+        for (int i=0;i<childs.getLength();i++){
+            Node node = childs.item(i);
+            if (node.getNodeName().equals("var")){
+                if ( ((Element)node).getAttribute("name").equals("workspaceDirectory") ){
+                    ((Element)node).setAttribute("value", theWorkSpacePath);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    static public Node getFirstComponent(Node root){
+        NodeList childs = root.getChildNodes();
+        for (int i=0;i<childs.getLength();i++){
+            if ( childs.item(i).getNodeName().equals("component") || childs.item(i).getNodeName().equals("contextcomponent") ){
+                return childs.item(i);
+            }
+            Node result = getFirstComponent(childs.item(i));
+            if (result != null)
+                return result;
+        }
+        return null;
+    }
+    static public Node findComponentNode(Node context, String name){
+        NodeList childs = context.getChildNodes();
+        for (int i=0;i<childs.getLength();i++){
+            Node node = childs.item(i);
+            String node_name = node.getNodeName();
+            if (node_name.equals("component") || node_name.equals("contextcomponent") || node_name.equals("model")){
+                if (((Element)node).getAttribute("name").equals(name)){
+                    return node;
+                }
+            }
+            Node result = findComponentNode(node,name);
+            if (result != null)
+                return result;
+        }
+        return null;
+    }
+
     
 }
