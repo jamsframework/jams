@@ -558,7 +558,6 @@ public class ExplorerFrame extends JFrame {
         JAMSWorkspace workspace = explorer.getWorkspace();
         try {
             String directoryName = workspace.getDirectory().getCanonicalPath();
-            System.out.println("setWorkSpace2Model " + directoryName);
             XMLProcessor.setWorkspacePath(modelDoc, directoryName);
         } catch (Exception e) {
             explorer.getRuntime().handle(e);
