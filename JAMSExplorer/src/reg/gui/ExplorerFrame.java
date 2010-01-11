@@ -30,6 +30,7 @@ import jams.gui.WorkspaceDlg;
 import jams.tools.XMLIO;
 import jams.gui.JAMSLauncher;
 import jams.io.ParameterProcessor;
+import jams.io.XMLProcessor;
 import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.ShapeFileDataStore;
@@ -486,6 +487,7 @@ public class ExplorerFrame extends JFrame {
                         ws.setModelFile(modelFileName);
                         this.initModelDoc();
                         this.update();
+                        setWorkSpace2Model();
                     }
 
                 } // dataDecision = station
@@ -536,6 +538,7 @@ public class ExplorerFrame extends JFrame {
                         }
 
                         ParameterProcessor.loadParams(modelDoc, properties);
+                        setWorkSpace2Model();
 
                         update();
                         JAMSSpreadSheet spreadSheet = explorer.getDisplayManager().getSpreadSheet();
@@ -548,6 +551,18 @@ public class ExplorerFrame extends JFrame {
 
         } catch (Exception ex) {
             explorer.getRuntime().handle(ex);
+        }
+    }
+
+    private void setWorkSpace2Model() {
+        JAMSWorkspace workspace = explorer.getWorkspace();
+        try {
+            String directoryName = workspace.getDirectory().getCanonicalPath();
+            System.out.println("setWorkSpace2Model " + directoryName);
+            XMLProcessor.setWorkspacePath(modelDoc, directoryName);
+        } catch (Exception e) {
+            explorer.getRuntime().handle(e);
+
         }
     }
 
