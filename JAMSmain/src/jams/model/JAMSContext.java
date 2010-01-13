@@ -50,8 +50,8 @@ import java.io.ObjectOutputStream;
 @JAMSComponentDescription (title = "JAMS Context",
                            author = "Sven Kralisch",
                            date = "27. Juni 2005",
-                           description = "This component represents a JAMS context which is the top level " +
-"component of every component hierarchie in JAMS")
+                           description = "This component represents a JAMS "
++ "context which is the top level component of every component hierarchie in JAMS")
 public class JAMSContext extends JAMSComponent implements Context {
 
     private Attribute.EntityCollection entities;
@@ -198,7 +198,6 @@ public class JAMSContext extends JAMSComponent implements Context {
 //        }
 //        return attributes;
 //    }
-
     /**
      * Sets the model for this context. Additionally an observer of the runtimes
      * runstate is created in order to stop iteration on runstate changes
@@ -541,8 +540,8 @@ public class JAMSContext extends JAMSComponent implements Context {
                     Class clazz = attribute.getClass();
                     getDataObject(entityArray, clazz, attributeName, DataAccessor.READ_ACCESS, null);
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {
-                    getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Can't_trace_attribute_") + attributeName +
-                            JAMS.resources.getString("_in_context_") + this.getInstanceName() + JAMS.resources.getString("_(not_found)!"));
+                    getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Can't_trace_attribute_") + attributeName
+                            + JAMS.resources.getString("_in_context_") + this.getInstanceName() + JAMS.resources.getString("_(not_found)!"));
                     // will do nothing here since this will be handled at
                     // the DataTracer's init method below..
                 } catch (Exception e) {
@@ -752,32 +751,36 @@ public class JAMSContext extends JAMSComponent implements Context {
         public void reset() {
             index = 0;
         }
-         
+
         @Override
         public byte[] getState() {
             byte[] state = new byte[4];
-            
-            state[0] = (byte)((index & 0x000000ff)>>0);
-            state[1] = (byte)((index & 0x0000ff00)>>8);
-            state[2] = (byte)((index & 0x00ff0000)>>16);
-            state[3] = (byte)((index & 0xff000000)>>24);
-            
+
+            state[0] = (byte) ((index & 0x000000ff) >> 0);
+            state[1] = (byte) ((index & 0x0000ff00) >> 8);
+            state[2] = (byte) ((index & 0x00ff0000) >> 16);
+            state[3] = (byte) ((index & 0xff000000) >> 24);
+
             return state;
         }
-        
+
         @Override
         public void setState(byte[] state) {
             compArray = getCompArray();
-            index = (state[0]<<0) | (state[1]<<8) | (state[2]<<16) | (state[3]<<24);            
+            index = (state[0] << 0) | (state[1] << 8) | (state[2] << 16) | (state[3] << 24);
         }
     }
 
-    public static class IteratorState implements Serializable{
-            byte subState1[];
-            byte subState2[];
-            int state;
-        };
-        
+    public static class IteratorState implements Serializable {
+
+        byte subState1[];
+
+        byte subState2[];
+
+        int state;
+
+    };
+
     class RunEnumerator implements ComponentEnumerator {
 
         ComponentEnumerator ce = getChildrenEnumerator();
@@ -799,7 +802,6 @@ public class JAMSContext extends JAMSComponent implements Context {
             // entity and start with the new Component list again
             if (!ce.hasNext() && ee.hasNext()) {
                 updateEntityData();
-//                setCurrentEntity(ee.next());
                 ee.next();
 
                 index++;
@@ -817,71 +819,75 @@ public class JAMSContext extends JAMSComponent implements Context {
             index = 0;
             updateComponentData(index);
         }
-                         
+
         @Override
-        public byte[] getState() {  
+        public byte[] getState() {
             IteratorState state = new IteratorState();
             state.subState1 = ce.getState();
             state.subState2 = ee.getState();
-                                                
+
             state.state = index;
-                            
+
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             byte[] result = null;
-            try{
+            try {
                 ObjectOutputStream objOut = new ObjectOutputStream(outStream);
                 objOut.writeObject(state);
-            
+
                 result = outStream.toByteArray();
-            
+
                 objOut.close();
                 outStream.close();
-            }catch(Exception e){
+            } catch (Exception e) {
                 getModel().getRuntime().println("could not save model state, because:" + e);
             }
-            
+
             return result;
         }
-        
+
         @Override
         public void setState(byte[] state) {
-            
-            ce = getChildrenEnumerator();            
+
+            ce = getChildrenEnumerator();
             ee = getEntities().getEntityEnumerator();
-                                    
+
             ByteArrayInputStream inStream = new ByteArrayInputStream(state);
-            try{
+            try {
                 ObjectInputStream objIn = new ObjectInputStream(inStream);
                 inStream.close();
-            
+
                 IteratorState myState = (IteratorState) objIn.readObject();
 
                 objIn.close();
-            
+
                 ce.setState(myState.subState1);
                 ee.setState(myState.subState2);
-                        
+
                 index = myState.state;
-            }catch(Exception e){}            
+            } catch (Exception e) {
+            }
         }
     }
 
-    public byte[] getIteratorState(){
-        if (this.runEnumerator != null)
+    public byte[] getIteratorState() {
+        if (this.runEnumerator != null) {
             return this.runEnumerator.getState();
+        }
         return null;
     }
-    public void setIteratorState(byte[]state){
-        if (state == null)
+
+    public void setIteratorState(byte[] state) {
+        if (state == null) {
             this.runEnumerator = null;
-        else{
-            if (this.runEnumerator == null)        
+        } else {
+            if (this.runEnumerator == null) {
                 this.runEnumerator = getRunEnumerator();
-                
+            }
+
             this.runEnumerator.setState(state);
         }
     }
-    
+
     public Component getComponent(String name) {
         for (int i = 0; i < components.size(); i++) {
             if (components.get(i).getInstanceName().equals(name)) {
@@ -896,31 +902,11 @@ public class JAMSContext extends JAMSComponent implements Context {
         }
         return null;
     }
-    
-    /*public void debug(String name){
-        if (getInstanceName().equals("J2K")){
-            try{
-            BufferedWriter writer = null;
-            writer = new BufferedWriter(new FileWriter(name));
-            //HashMap<String,DataAccessor> map = this.dataAccessors;
-            DataAccessor[] map = this.dataAccessors;
-            //Iterator<String> iter = map.keySet().iterator();
-            for (int i=0;i<map.length;i++){                
-                writer.write("?" + ":\t" + map[i].getComponentObject() + "\n");
-            }
-            while (iter.hasNext()){
-                String t = iter.next();
-                writer.write(t + ":\t" + map.get(t).getComponentObject() + "\n");
-                
-            }
-            //writer.write(((JAMSEntity)(getEntities().getCurrent())).getStringValue());
-            writer.close();
-            }catch(Exception e){
-                
-            }
-        }
-    }*/
-    
+
+    /**
+     * Update the attributes of the current entity of this context with the
+     * output attributes of the accessing components
+     */
     public void updateEntityData() {
         //write entity data after execution
         for (int i = 0; i < dataAccessors.length; i++) {
@@ -928,6 +914,11 @@ public class JAMSContext extends JAMSComponent implements Context {
         }
     }
 
+    /**
+     * Update components' input attribute values with the attribute values from
+     * the index-th entity of this context
+     * @param index The index of the entity to use
+     */
     public void updateComponentData(int index) {
         for (int i = 0; i < dataAccessors.length; i++) {
             dataAccessors[i].setIndex(index);
@@ -955,9 +946,9 @@ public class JAMSContext extends JAMSComponent implements Context {
     public Attribute.EntityCollection getEntities() {
         return entities;
     }
-        
+
     @Override
     public void setEntities(Attribute.EntityCollection entities) {
         this.entities = entities;
-    }        
+    }
 }

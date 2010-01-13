@@ -43,6 +43,7 @@ public class TaskExecutor {
     }
 
     public void setMaxConcurrentThreads(int n) {
+        n = Math.max(1, n);
         tpe = new ThreadPoolExecutor(n, n, Long.MAX_VALUE,
                 TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
     }
@@ -65,7 +66,9 @@ public class TaskExecutor {
         }
 
         TaskExecutor executor = new TaskExecutor(2);
+        long t = System.currentTimeMillis();
         executor.start(tasks);
+        System.out.println("\nRuntime: " + (System.currentTimeMillis()-t));
         executor.shutdown();
     }
 }
