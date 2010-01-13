@@ -30,17 +30,17 @@ import jams.model.Component;
  */
 public class RunnableComponent implements Runnable {
 
-    private Component component;
+    int id;
 
-    public RunnableComponent(Component component) {
-        this.component = component;
+    public RunnableComponent(int id) {
+        this.id = id;
     }
 
     public void run() {
-        try {
-            component.run();
-        } catch (Exception e) {
-            component.getModel().getRuntime().handle(e, component.getInstanceName());
+        double d = Math.random() * 1000000;
+        while (d > 0) {
+            d--;
         }
+        System.out.print(this.id + " ");
     }
 }

@@ -1,5 +1,5 @@
 /*
- * JAMSConcurrentContext.java
+ * ConcurrentContext.java
  * Created on 12. Januar 2010, 22:55
  *
  * This file is a JAMS component
@@ -22,14 +22,16 @@
  */
 package jams.model;
 
+import jams.io.DataTracer.DataTracer;
+
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-@JAMSComponentDescription (title = "JAMSConcurrentContext",
+@JAMSComponentDescription (title = "ConcurrentContext",
                            author = "Sven Kralisch",
                            description = "A context that executes its child components concurrently")
-public class JAMSConcurrentContext extends JAMSContext {
+public class ConcurrentContext extends JAMSContext {
 
     /*
      *  Component run stages
@@ -38,7 +40,37 @@ public class JAMSConcurrentContext extends JAMSContext {
     @Override
     public void run() {
 
+        //super.run();
         //TODO
+
+
+        for (DataTracer dataTracer : dataTracers) {
+            dataTracer.startMark();
+        }
+
+        //initEntityData();
+
+        if (runEnumerator == null) {
+            runEnumerator = getRunEnumerator();
+        }
+
+        runEnumerator.reset();
+        while (runEnumerator.hasNext() && doRun) {
+            Component comp = runEnumerator.next();
+            //comp.updateRun();
+            try {
+                comp.run();
+            } catch (Exception e) {
+                getModel().getRuntime().handle(e, comp.getInstanceName());
+            }
+        }
+
+        updateEntityData();
+
+        for (DataTracer dataTracer : dataTracers) {
+            dataTracer.trace();
+            dataTracer.endMark();
+        }
 
     }
 

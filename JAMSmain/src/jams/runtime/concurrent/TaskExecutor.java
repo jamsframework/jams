@@ -39,7 +39,7 @@ public class TaskExecutor {
     }
 
     public TaskExecutor(int maxConcurrentThreads) {
-        setMaxConcurrentThreads(maxConcurrentThreads);        
+        setMaxConcurrentThreads(maxConcurrentThreads);
     }
 
     public void setMaxConcurrentThreads(int n) {
@@ -62,13 +62,14 @@ public class TaskExecutor {
         int max = 1000;
         Runnable[] tasks = new RunnableComponent[max];
         for (int i = 0; i < max; i++) {
-            tasks[i] = new RunnableComponent(new Task(i));
+            tasks[i] = new RunnableComponent(i);
         }
 
         TaskExecutor executor = new TaskExecutor(2);
         long t = System.currentTimeMillis();
         executor.start(tasks);
-        System.out.println("\nRuntime: " + (System.currentTimeMillis()-t));
+        System.out.println("\nRuntime: " + (System.currentTimeMillis() - t));
         executor.shutdown();
     }
+
 }
