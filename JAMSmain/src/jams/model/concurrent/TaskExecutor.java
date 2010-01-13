@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.runtime.concurrent;
+package jams.model.concurrent;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -34,11 +34,12 @@ public class TaskExecutor {
 
     private ThreadPoolExecutor tpe;
 
-    public TaskExecutor() {
-        this(1);
-    }
+    private Runnable[] tasks;
 
-    public TaskExecutor(int maxConcurrentThreads) {
+    private TaskGroup taskGroup;
+
+    public TaskExecutor(int maxConcurrentThreads, Runnable[] tasks) {
+        this.tasks = tasks;
         setMaxConcurrentThreads(maxConcurrentThreads);
     }
 
@@ -46,30 +47,14 @@ public class TaskExecutor {
         n = Math.max(1, n);
         tpe = new ThreadPoolExecutor(n, n, Long.MAX_VALUE,
                 TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+        taskGroup = new TaskGroup(tasks, tpe);
     }
 
-    public void start(Runnable[] tasks) {
-        TaskGroup taskGroup = new TaskGroup(tasks, tpe);
+    public void start() {
         taskGroup.run();
     }
 
     public void shutdown() {
         tpe.shutdown();
     }
-
-    public static void main(String[] args) {
-
-        int max = 1000;
-        Runnable[] tasks = new RunnableComponent[max];
-        for (int i = 0; i < max; i++) {
-            tasks[i] = new RunnableComponent(i);
-        }
-
-        TaskExecutor executor = new TaskExecutor(2);
-        long t = System.currentTimeMillis();
-        executor.start(tasks);
-        System.out.println("\nRuntime: " + (System.currentTimeMillis() - t));
-        executor.shutdown();
-    }
-
 }

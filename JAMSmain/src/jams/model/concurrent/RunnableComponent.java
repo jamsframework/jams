@@ -1,6 +1,6 @@
 /*
  * RunnableComponent.java
- * Created on 14. April 2008, 08:37
+ * Created on 13. Januar 2010, 23:26
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -20,27 +20,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.runtime.concurrent;
+package jams.model.concurrent;
 
 import jams.model.Component;
 
 /**
  *
- * @author Sven Kralisch
+ * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class RunnableComponent implements Runnable {
+class RunnableComponent implements Runnable {
 
-    int id;
+    Component comp;
 
-    public RunnableComponent(int id) {
-        this.id = id;
+    public RunnableComponent(Component comp) {
+        this.comp = comp;
     }
 
     public void run() {
-        double d = Math.random() * 1000000;
-        while (d > 0) {
-            d--;
+        try {
+            comp.run();
+        } catch (Exception e) {
+            comp.getModel().getRuntime().handle(e, comp.getInstanceName());
         }
-        System.out.print(this.id + " ");
     }
 }

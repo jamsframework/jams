@@ -20,9 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.model;
+package jams.model.concurrent;
 
 import jams.io.DataTracer.DataTracer;
+import jams.model.Component;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSContext;
+import jams.model.concurrent.TaskExecutor;
+import java.util.ArrayList;
 
 /**
  *
@@ -33,45 +38,40 @@ import jams.io.DataTracer.DataTracer;
                            description = "A context that executes its child components concurrently")
 public class ConcurrentContext extends JAMSContext {
 
+    private TaskExecutor executor;
+
     /*
      *  Component run stages
      */
-
     @Override
     public void run() {
 
-        //super.run();
-        //TODO
-
-
-        for (DataTracer dataTracer : dataTracers) {
-            dataTracer.startMark();
-        }
-
-        //initEntityData();
-
-        if (runEnumerator == null) {
-            runEnumerator = getRunEnumerator();
-        }
-
-        runEnumerator.reset();
-        while (runEnumerator.hasNext() && doRun) {
-            Component comp = runEnumerator.next();
-            //comp.updateRun();
-            try {
-                comp.run();
-            } catch (Exception e) {
-                getModel().getRuntime().handle(e, comp.getInstanceName());
+        if (executor == null) {
+            if (runEnumerator == null) {
+                runEnumerator = getRunEnumerator();
             }
+
+            ArrayList<Runnable> runnableList = new ArrayList<Runnable>();
+            runEnumerator.reset();
+            while (runEnumerator.hasNext() && doRun) {
+                Component comp = runEnumerator.next();
+                runnableList.add(new RunnableComponent(comp));
+            }
+            Runnable[] tasks = runnableList.toArray(new Runnable[runnableList.size()]);
+            executor = new TaskExecutor(1, tasks);
         }
 
+//        for (DataTracer dataTracer : dataTracers) {
+//            dataTracer.startMark();
+//        }
+
+        executor.start();
+        
         updateEntityData();
 
         for (DataTracer dataTracer : dataTracers) {
             dataTracer.trace();
             dataTracer.endMark();
         }
-
     }
-
 }
