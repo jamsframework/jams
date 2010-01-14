@@ -22,23 +22,35 @@
  */
 package jams.model.concurrent;
 
-import jams.io.DataTracer.DataTracer;
+import jams.data.Attribute;
 import jams.model.Component;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSContext;
-import jams.model.concurrent.TaskExecutor;
+import jams.model.JAMSVarDescription;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-@JAMSComponentDescription (title = "ConcurrentContext",
-                           author = "Sven Kralisch",
-                           description = "A context that executes its child components concurrently")
+@JAMSComponentDescription(title = "ConcurrentContext",
+author = "Sven Kralisch",
+description = "A context that executes its child components concurrently")
 public class ConcurrentContext extends JAMSContext {
 
-    private TaskExecutor executor;
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    description = "List of spatial entities",
+    defaultValue = "1")
+    public Attribute.Integer numberOfThreads;
+    private ExecutorService executor;
+    private Runnable[] tasks;
+    private ArrayList<Runnable> runnableList;
+    private Future[] futures;
+//    private ArrayList<Callable<Object>> runnableList;
 
     /*
      *  Component run stages
@@ -46,32 +58,56 @@ public class ConcurrentContext extends JAMSContext {
     @Override
     public void run() {
 
+        if (numberOfThreads.getValue() == 0) {
+            super.run();
+            return;
+        }
+
         if (executor == null) {
             if (runEnumerator == null) {
                 runEnumerator = getRunEnumerator();
             }
 
-            ArrayList<Runnable> runnableList = new ArrayList<Runnable>();
+            runnableList = new ArrayList<Runnable>();
+//            runnableList = new ArrayList<Callable<Object>>();
+
             runEnumerator.reset();
             while (runEnumerator.hasNext() && doRun) {
                 Component comp = runEnumerator.next();
+//                runnableList.add(Executors.callable(new RunnableComponent(comp)));
                 runnableList.add(new RunnableComponent(comp));
             }
-            Runnable[] tasks = runnableList.toArray(new Runnable[runnableList.size()]);
-            executor = new TaskExecutor(1, tasks);
+            tasks = runnableList.toArray(new Runnable[runnableList.size()]);
+            futures = new Future[tasks.length];
+            executor = Executors.newFixedThreadPool(numberOfThreads.getValue());
         }
 
-//        for (DataTracer dataTracer : dataTracers) {
-//            dataTracer.startMark();
+        try {
+
+            for (int i = 0; i < tasks.length; i++) {
+                //submit task and store future object
+                futures[i] = executor.submit(tasks[i]);
+            }
+            for (int i = 0; i < tasks.length; i++) {
+                //call future's get method (blocking) in order to wait for task to continue
+                futures[i].get();
+            }
+        } catch (ExecutionException ee) {
+            ee.printStackTrace();
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
+
+//        for (Runnable r : tasks) {
+//            executor.submit(r);
+//        }
+//        try {
+//            executor.invokeAll(runnableList);
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(ConcurrentContext.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
-        executor.start();
-        
         updateEntityData();
 
-        for (DataTracer dataTracer : dataTracers) {
-            dataTracer.trace();
-            dataTracer.endMark();
-        }
     }
 }
