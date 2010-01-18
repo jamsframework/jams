@@ -22,6 +22,7 @@
  */
 package reg.dsproc;
 
+import jams.io.BufferedFileReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;

@@ -22,12 +22,12 @@
  */
 package reg;
 
+import jams.io.BufferedFileReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.swing.JPanel;
-import reg.dsproc.BufferedFileReader;
 import reg.gui.OutputDSPanel;
 import reg.gui.SimpleOutputPanel;
 import reg.spreadsheet.JAMSSpreadSheet;
