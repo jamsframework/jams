@@ -1,5 +1,5 @@
 /*
- * PGSQLConnector.java
+ * JdbcSQLConnector.java
  * Created on 30. November 2007, 16:16
  *
  * This file is part of JAMS
@@ -33,33 +33,48 @@ import java.sql.Statement;
  *
  * @author Sven Kralisch
  */
-public class PGSQLConnector {
+public class JdbcSQLConnector {
 
-    private String hostname,  database,  username,  passwd;
+    private String hostname,  database,  username,  passwd, driver;
     private Connection con;
 
-    public PGSQLConnector(String hostname, String database, String username, String passwd) {
+    public JdbcSQLConnector(String hostname, String database, String username, String passwd, String driver) {
         this.hostname = hostname;
         this.database = database;
         this.username = username;
         this.passwd = passwd;
+        this.driver = driver;
 
         try {
-            Class.forName("org.postgresql.Driver");
+            if (driver.equalsIgnoreCase("jdbc:postgresql"))
+                Class.forName("org.postgresql.Driver");
+            if (driver.equalsIgnoreCase("jdbc:mysql"))
+                Class.forName("org.gjt.mm.mysql.Driver");
+                
         } catch (ClassNotFoundException cnfe) {
             cnfe.printStackTrace();
         }
     }
 
     public void connect() throws SQLException {
-        this.con = DriverManager.getConnection("jdbc:postgresql://" + hostname + "/" + database, username, passwd);
+        //this.con = DriverManager.getConnection("jdbc:postgresql://" + hostname + "/" + database, username, passwd);
+        this.con = DriverManager.getConnection(driver + "://" + hostname + "/" + database, username, passwd);
     }
 
+    public int execUpdate(String sqlQuery) throws SQLException {
+        if (con == null) {
+            return -1;
+        } else {
+            Statement stmt = con.createStatement();            
+            return stmt.executeUpdate(sqlQuery);            
+        }
+    }
+    
     public ResultSet execQuery(String sqlQuery) throws SQLException {
         if (con == null) {
             return null;
         } else {
-            Statement stmt = con.createStatement();
+            Statement stmt = con.createStatement();            
             ResultSet rs = stmt.executeQuery(sqlQuery);
             return rs;
         }

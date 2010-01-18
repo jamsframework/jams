@@ -30,16 +30,18 @@ import jams.workspace.datatypes.CalendarValue;
 import jams.JAMS;
 import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
-import jams.runtime.JAMSRuntime;
+import jams.io.BufferedFileReader;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.LongValue;
 import jams.workspace.datatypes.ObjectValue;
 import jams.workspace.datatypes.StringValue;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -56,18 +58,21 @@ public class TSDataStore extends TableDataStore {
 
     protected String timeFormat;
 
-    private BufferedReader dumpFileReader;
+    File file = null;
+    private BufferedFileReader dumpFileReader;
 
     private static final int DOUBLE = 0;
 
     private static final int LONG = 1;
 
     private static final int STRING = 2;
+    
+    private static final int TIMESTAMP = 3;
 
-    private static final int OBJECT = 3;
+    private static final int OBJECT = 4;
 
     private int[] type;
-
+        
     public TSDataStore(JAMSWorkspace ws) {
         super(ws);
         startDate = JAMSDataFactory.createCalendar();
@@ -120,7 +125,7 @@ public class TSDataStore extends TableDataStore {
                 // check interval size for all columns
                 for (int i = 0; i < dataIOArray.length; i++) {
 
-                    //get the timestamps of the first two rows
+                    //get the timestamps of the first two rows (in seconds)
                     long timeStamp1 = dataIOArray[i].getData()[0].getData()[0].getLong();
                     long timeStamp2 = dataIOArray[i].getData()[1].getData()[0].getLong();
 
@@ -180,7 +185,8 @@ public class TSDataStore extends TableDataStore {
                 throw new IOException("Dump file " + file.getPath() + " not found!");
             }
 
-            this.dumpFileReader = new BufferedReader(new FileReader(file));
+            //this.dumpFileReader = new BufferedReader(new FileReader(file));
+            this.dumpFileReader = new BufferedFileReader(new FileInputStream(file));
 
             this.dsd = getDSDFromDumpFile();
 
@@ -235,7 +241,9 @@ public class TSDataStore extends TableDataStore {
                 type[i] = DOUBLE;
             } else if (clazz.equals(String.class)) {
                 type[i] = STRING;
-            } else {
+            } else if (clazz.equals(Timestamp.class)){
+                type[i] = TIMESTAMP;
+            } else{
                 type[i] = OBJECT;
             }
             i++;
@@ -283,9 +291,13 @@ public class TSDataStore extends TableDataStore {
             Attribute.Calendar cal = JAMSDataFactory.createCalendar();
             cal.setValue(valueString);
             o = cal;
+        } else if (clazz.equals(Timestamp.class)) {
+            Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+            cal.setTimeInMillis(new Long(valueString)*1000);
+            o = cal;
         } else if (clazz.equals(String.class)) {
             o = new String(valueString);
-        } else {
+        } else{
             o = new Object();
         }
 
@@ -363,6 +375,11 @@ public class TSDataStore extends TableDataStore {
                         case STRING:
                             value = new StringValue(valueString);
                             break;
+                        case TIMESTAMP:
+                            Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+                            cal.setTimeInMillis(new Long(valueString));
+                            value = new CalendarValue(cal);
+                            break;
                         default:
                             value = new ObjectValue(valueString);
                     }
@@ -397,6 +414,66 @@ public class TSDataStore extends TableDataStore {
 
     public String getTimeFormat() {
         return timeFormat;
+    }
+    @Override
+    public void getState(java.io.ObjectOutputStream stream) throws IOException{           
+       super.getState(stream);
+       stream.writeObject(calendar);
+       stream.writeObject(currentDate);
+       stream.writeObject(startDate);
+       stream.writeObject(endDate);
+       stream.writeObject(stopDate);
+       stream.writeObject(type);
+       stream.writeObject(timeFormat);
+       stream.writeInt(timeUnit);
+       stream.writeInt(timeUnitCount);
+       
+       //serialize reader
+       if (file==null){
+           stream.writeObject(null);           
+       }else{
+           stream.writeObject(file.getAbsolutePath());
+           stream.writeLong(dumpFileReader.getPosition());
+       }
+    }
+    
+    @Override
+    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
+        super.setState(stream);
+        calendar = (CalendarValue)stream.readObject();
+        currentDate = (jams.data.Attribute.Calendar)stream.readObject();
+        startDate = (jams.data.Attribute.Calendar)stream.readObject();
+        endDate = (jams.data.Attribute.Calendar)stream.readObject();
+        stopDate = (jams.data.Attribute.Calendar)stream.readObject();
+        type = (int[])stream.readObject();
+        timeFormat = (String)stream.readObject();
+        timeUnit = (int)stream.readInt();
+        timeUnitCount = (int)stream.readInt();        
+        
+        //deserialize reader
+        if (this.dumpFileReader != null){
+           try{
+               this.dumpFileReader.close();    
+               dumpFileReader = null;
+           }catch(Exception e){}
+        }
+        
+        String fileName = (String)stream.readObject();
+        if (fileName == null){            
+            file = null;
+            return;
+        }
+                    
+        file = new File(fileName);
+                   
+        this.dumpFileReader = new BufferedFileReader(new FileInputStream(file));
+        long offset = stream.readLong();
+        
+        this.dumpFileReader.setPosition(offset);       
+    }
+    
+    public Set<DataReader> getDataIOs(){
+        return this.dataIOSet;
     }
 }
 

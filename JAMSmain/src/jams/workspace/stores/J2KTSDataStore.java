@@ -24,15 +24,15 @@ package jams.workspace.stores;
 
 import jams.JAMS;
 import jams.data.JAMSCalendar;
+import jams.io.BufferedFileReader;
 import jams.runtime.JAMSRuntime;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.DefaultDataSetDefinition;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.StringValue;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -48,7 +48,9 @@ public class J2KTSDataStore extends TSDataStore {
 
     private String cache = null;
     private int columnCount = 0;
-    private BufferedReader j2kTSFileReader;
+    //private RandomAccessFile j2kTSFileReader;
+    private BufferedFileReader j2kTSFileReader;
+    private File sourceFile;
     private boolean parseDate = false;
 
     public J2KTSDataStore(JAMSWorkspace ws, String id, Document doc) throws IOException {
@@ -79,7 +81,7 @@ public class J2KTSDataStore extends TSDataStore {
         }
 
         // set sourceFile to the default
-        File sourceFile = null;
+        sourceFile = null;
         if (sourceElement != null) {
             String sourceFileName = sourceElement.getAttribute("value");
             if (sourceFileName != null) {
@@ -88,9 +90,9 @@ public class J2KTSDataStore extends TSDataStore {
         } else {
             sourceFile = new File(ws.getLocalInputDirectory(), id + ".dat");
         }
-
-        this.j2kTSFileReader = new BufferedReader(new FileReader(sourceFile));
-
+        
+        //this.j2kTSFileReader = new RandomAccessFile(sourceFile,"r");
+        this.j2kTSFileReader = new BufferedFileReader(new FileInputStream(sourceFile));
         readJ2KFile();
 
         this.columnCount = this.getDataSetDefinition().getColumnCount();
@@ -267,4 +269,34 @@ public class J2KTSDataStore extends TSDataStore {
             ws.getRuntime().handle(ioe);
         }
     }
+    
+    @Override
+    public void getState(java.io.ObjectOutputStream stream) throws IOException{           
+       super.getState(stream);
+       stream.writeObject(this.cache);
+       stream.writeBoolean(this.parseDate);
+       stream.writeInt(this.columnCount);
+       //serialize reader
+       stream.writeObject(this.sourceFile.getAbsolutePath());
+       stream.writeLong(this.j2kTSFileReader.getPosition());
+    }
+    
+    @Override
+    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
+       super.setState(stream);
+       this.cache = (String)stream.readObject();
+       this.parseDate = stream.readBoolean();
+       this.columnCount = stream.readInt();
+       
+       this.sourceFile = new File((String)stream.readObject());
+       if (j2kTSFileReader != null){
+           try{
+               j2kTSFileReader.close();
+           }catch(Exception e){}
+       }
+       this.j2kTSFileReader = new BufferedFileReader(new FileInputStream(sourceFile));
+       long offset = stream.readLong();
+       j2kTSFileReader.setPosition(offset);
+    }
+            
 }

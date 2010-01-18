@@ -31,7 +31,7 @@ import jams.dataaccess.DataAccessor;
 public interface DataTracer {
 
     public DataAccessor[] getAccessorObjects();
-    public void updateDateAccessors();
+    public void updateDataAccessors();
     public void trace();
 
     public void startMark();

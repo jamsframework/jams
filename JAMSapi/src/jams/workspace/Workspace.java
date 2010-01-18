@@ -29,6 +29,7 @@ import jams.workspace.stores.OutputDataStore;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -262,4 +263,8 @@ public interface Workspace extends Serializable {
      */
     void setTitle(String title);
 
+    /**
+     * returnes a list of all input data stores which has been created
+     */
+    ArrayList<InputDataStore> getRegisteredInputDataStores();
 }

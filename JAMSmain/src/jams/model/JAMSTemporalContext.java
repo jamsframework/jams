@@ -75,12 +75,11 @@ public class JAMSTemporalContext extends JAMSContext {
                 }
 
                 output(current);
-                output("\t");
+                
                 for (DataAccessor dataAccessor : getAccessorObjects()) {
-                    output(dataAccessor.getComponentObject());
-                    output("\t");
+                    output(dataAccessor.getComponentObject());                
                 }
-                output("\n");
+                this.nextRow();
             }
         };
     }

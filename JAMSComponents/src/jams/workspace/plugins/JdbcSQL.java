@@ -1,5 +1,5 @@
 /*
- * RBISPgSQL.java
+ * JdbcSQL.java
  * Created on 31. Januar 2008, 16:18
  *
  * This file is part of JAMS
@@ -22,6 +22,8 @@
  */
 package jams.workspace.plugins;
 
+import jams.data.Attribute;
+import jams.data.JAMSDataFactory;
 import jams.workspace.DataReader;
 import jams.workspace.DataValue;
 import java.sql.ResultSet;
@@ -29,30 +31,39 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import jams.workspace.DefaultDataSet;
+import jams.workspace.datatypes.CalendarValue;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.LongValue;
 import jams.workspace.datatypes.ObjectValue;
 import jams.workspace.datatypes.StringValue;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  *
  * @author Sven Kralisch
  */
-public class RBISPgSQL implements DataReader {
+public class JdbcSQL implements DataReader {
 
     private static final int DOUBLE = 0;
     private static final int LONG = 1;
     private static final int STRING = 2;
-    private static final int OBJECT = 3;
-    private String user,  password,  host,  db,  query;
+    private static final int TIMESTAMP = 3;
+    private static final int OBJECT = 4;
+    
+    private String user,  password,  host,  db,  query, driver;
     private ResultSet rs;
     private ResultSetMetaData rsmd;
-    private PGSQLConnector pgsql;
+    private JdbcSQLConnector pgsql;
     private int numberOfColumns = -1;
     private int[] type;
     private boolean inited = false,  cleanedup = false;
     private DefaultDataSet[] currentData = null;
             
+    private int offset = 0;
+    
     public void setUser(String user) {
         this.user = user;
     }
@@ -72,6 +83,10 @@ public class RBISPgSQL implements DataReader {
     public void setDb(String db) {
         this.db = db;
     }
+    
+    public void setDriver(String driver){
+        this.driver = driver;
+    }
 
     @Override
     public DefaultDataSet[] getData() {
@@ -90,7 +105,19 @@ public class RBISPgSQL implements DataReader {
         return 0;
     }
 
-
+    private boolean skip(long count) {
+        try{
+            for (int i=0;i<count;i++)
+                if (!rs.next()){
+                    offset++;
+                    return false;
+                }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return true;            
+    }
+    
     private DefaultDataSet[] getDBRows(long count) {
         
         ArrayList<DefaultDataSet> data = new ArrayList<DefaultDataSet>();
@@ -102,6 +129,7 @@ public class RBISPgSQL implements DataReader {
             int i = 0;
             while ((i < count) && rs.next()) {
                 i++;
+                offset++;
                 dataSet = new DefaultDataSet(numberOfColumns);
 
                 for (int j = 0; j < numberOfColumns; j++) {
@@ -119,6 +147,25 @@ public class RBISPgSQL implements DataReader {
                             value = new StringValue(rs.getString(j + 1));
                             dataSet.setData(j, value);
                             break;
+                        case TIMESTAMP:
+                            Attribute.Calendar cal = JAMSDataFactory.createCalendar();                            
+                            //does not work .. hours are not represented well
+                            GregorianCalendar greg = new GregorianCalendar();
+                            greg.setTimeZone(TimeZone.getTimeZone("GMT"));
+                            cal.setTimeInMillis(rs.getDate(j+1,greg).getTime());
+                                  
+                            String date = rs.getString(j+1);
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+                            try{
+                                long millis = format.parse(date+" +0000").getTime();
+                                cal.setTimeInMillis(millis);
+                            }catch(Exception e){
+                                throw new SQLException(e.toString());
+                            }
+                            
+                            value = new CalendarValue(cal);
+                            dataSet.setData(j, value);
+                            break;
                         default:
                             value = new ObjectValue(rs.getObject(j + 1));
                             dataSet.setData(j, value);
@@ -128,7 +175,7 @@ public class RBISPgSQL implements DataReader {
             }
 
         } catch (SQLException sqlex) {
-            System.out.println("RBISPgSQL: " + sqlex);
+            System.out.println("jdbcSQL: " + sqlex);
         }
 
         return data.toArray(new DefaultDataSet[data.size()]);
@@ -136,7 +183,8 @@ public class RBISPgSQL implements DataReader {
 
     @Override
     public int init() {
-
+        offset = 0;
+        
         if (inited) {
             return 0;
         } else {
@@ -162,8 +210,12 @@ public class RBISPgSQL implements DataReader {
         if (query == null) {
             return -1;
         }
+        
+        if (driver == null) {
+            driver = "jdbc:postgresql";
+        }
 
-        pgsql = new PGSQLConnector(host, db, user, password);
+        pgsql = new JdbcSQLConnector(host, db, user, password, driver);
 
         try {
 
@@ -174,14 +226,19 @@ public class RBISPgSQL implements DataReader {
             numberOfColumns = rsmd.getColumnCount();
             type = new int[numberOfColumns];
             for (int i = 0; i < numberOfColumns; i++) {
-                if (rsmd.getColumnTypeName(i + 1).startsWith("int")) {
+                if (rsmd.getColumnTypeName(i + 1).startsWith("int") || rsmd.getColumnTypeName(i + 1).startsWith("INT") || 
+                    rsmd.getColumnTypeName(i + 1).startsWith("integer") || rsmd.getColumnTypeName(i + 1).startsWith("INTEGER")  ) {
                     type[i] = LONG;
-                } else if (rsmd.getColumnTypeName(i + 1).startsWith("float")) {
+                } else if (rsmd.getColumnTypeName(i + 1).startsWith("float") || rsmd.getColumnTypeName(i + 1).startsWith("FLOAT") ) {
                     type[i] = DOUBLE;
-                } else if (rsmd.getColumnTypeName(i + 1).startsWith("numeric")) {
+                } else if (rsmd.getColumnTypeName(i + 1).startsWith("double") || rsmd.getColumnTypeName(i + 1).startsWith("DOUBLE") ) {
                     type[i] = DOUBLE;
-                } else if (rsmd.getColumnTypeName(i + 1).startsWith("varchar")) {
+                } else if (rsmd.getColumnTypeName(i + 1).startsWith("numeric") || rsmd.getColumnTypeName(i + 1).startsWith("NUMERIC") ) {
+                    type[i] = DOUBLE;
+                } else if (rsmd.getColumnTypeName(i + 1).startsWith("varchar") || rsmd.getColumnTypeName(i + 1).startsWith("VARCHAR")) {
                     type[i] = STRING;
+                } else if (rsmd.getColumnTypeName(i + 1).startsWith("datetime") || rsmd.getColumnTypeName(i + 1).startsWith("DATETIME")) {
+                    type[i] = TIMESTAMP;
                 } else {
                     type[i] = OBJECT;
                 }
@@ -189,7 +246,7 @@ public class RBISPgSQL implements DataReader {
             cleanedup = false;
 
         } catch (SQLException sqlex) {
-            System.err.println("RBISPgSQL: " + sqlex);
+            System.err.println("jdbcSQL: " + sqlex);
             return -1;
         }
         return 0;
@@ -209,7 +266,7 @@ public class RBISPgSQL implements DataReader {
             pgsql.close();
             inited = false;
         } catch (SQLException sqlex) {
-            System.out.println("RBISPgSQL: " + sqlex);
+            System.out.println("jdbcSQL: " + sqlex);
             return -1;
         }
         
@@ -219,5 +276,18 @@ public class RBISPgSQL implements DataReader {
     @Override
     public int numberOfColumns() {
         return numberOfColumns;
+    }
+    
+    public void getState(java.io.ObjectOutputStream stream) throws IOException{
+        stream.writeInt(this.offset);
+        
+    }
+    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
+        if (inited)
+            cleanup();
+        this.init();
+        
+        int oldOffset = stream.readInt();
+        this.skip(oldOffset);        
     }
 }

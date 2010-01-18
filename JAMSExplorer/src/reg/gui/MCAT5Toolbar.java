@@ -343,7 +343,6 @@ public class MCAT5Toolbar extends JToolBar {
 
         identifiabilityPlot.addActionListener(
                 new ActionListener() {
-
                     @Override
                     public void actionPerformed(ActionEvent evt) {
                         DataRequestDlg.DataRequest req[] = new DataRequestDlg.DataRequest[2];
@@ -354,12 +353,11 @@ public class MCAT5Toolbar extends JToolBar {
 
                             public void dataCollectAction() {
                                 JDialog plotWindow = new JDialog(this);
-                                plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                                plotWindow.add((new IdentifiabilityPlot(this.mcData.parameters.get(0), this.mcData.efficiencies.get(0)).getPanel()),BorderLayout.CENTER);
+                                plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);                                
                                 plotWindow.setLayout(new BorderLayout());
+                                plotWindow.add((new IdentifiabilityPlot(this.mcData.parameters.get(0), this.mcData.efficiencies.get(0)).getPanel()),BorderLayout.CENTER);
                                 plotWindow.setVisible(true);
-                                plotWindow.setSize(800, 400);
-
+                                plotWindow.setSize(800, 400);                                
                             }
                         };
                     }
@@ -380,8 +378,8 @@ public class MCAT5Toolbar extends JToolBar {
                             public void dataCollectAction() {
                                 JDialog plotWindow = new JDialog(this);
                                 plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                                plotWindow.add((new DYNIA(this.mcData.ts_simulations.get(0), this.mcData.parameters.get(0), this.mcData.observations.get(0)).getPanel()),BorderLayout.CENTER);
                                 plotWindow.setLayout(new BorderLayout());
+                                plotWindow.add((new DYNIA(this.mcData.ts_simulations.get(0), this.mcData.parameters.get(0), this.mcData.observations.get(0)).getPanel()),BorderLayout.CENTER);                                
                                 plotWindow.setVisible(true);
                                 plotWindow.setSize(800, 400);
 
@@ -404,8 +402,8 @@ public class MCAT5Toolbar extends JToolBar {
                             public void dataCollectAction() {
                                 JDialog plotWindow = new JDialog(this);
                                 plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                                plotWindow.add((new RegionalSensitivityAnalyser(this.mcData.parameters.get(0), this.mcData.efficiencies.get(0)).getPanel()),BorderLayout.CENTER);
                                 plotWindow.setLayout(new BorderLayout());
+                                plotWindow.add((new RegionalSensitivityAnalyser(this.mcData.parameters.get(0), this.mcData.efficiencies.get(0)).getPanel()),BorderLayout.CENTER);                                
                                 plotWindow.setVisible(true);
                                 plotWindow.setSize(800, 400);
 
@@ -432,8 +430,8 @@ public class MCAT5Toolbar extends JToolBar {
                                 for (int i = 0; i < effSet.length; i++) {
                                     effSet[i] = this.mcData.efficiencies.get(i);
                                 }
-                                plotWindow.add((new RegionalSensitivityAnalyser2(this.mcData.parameters.get(0), effSet).getPanel()),BorderLayout.CENTER);
                                 plotWindow.setLayout(new BorderLayout());
+                                plotWindow.add((new RegionalSensitivityAnalyser2(this.mcData.parameters.get(0), effSet).getPanel()),BorderLayout.CENTER);                                
                                 plotWindow.setVisible(true);
                                 plotWindow.setSize(800, 400);
 

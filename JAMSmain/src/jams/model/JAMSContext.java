@@ -376,15 +376,14 @@ public class JAMSContext extends JAMSComponent implements Context {
                     for (int j = 0; j < entities.length; j++) {
 
                         output(entities[j].getId());
-                        output("\t");
-
+                        
                         for (int i = 0; i < dataAccessors.length; i++) {
                             dataAccessors[i].setIndex(j);
                             dataAccessors[i].read();
                             output(dataAccessors[i].getComponentObject());
-                            output("\t");
+                            
                         }
-                        output("\n");
+                        nextRow();
                     }
 //                    flush();
                 }
@@ -428,15 +427,13 @@ public class JAMSContext extends JAMSComponent implements Context {
                         }
 
                         output(entities[j].getId());
-                        output("\t");
 
                         for (int i = 0; i < dataAccessors.length; i++) {
                             dataAccessors[i].setIndex(j);
                             dataAccessors[i].read();
                             output(dataAccessors[i].getComponentObject());
-                            output("\t");
                         }
-                        output("\n");
+                        nextRow();
                     }
 //                    flush();
                 }
@@ -560,7 +557,7 @@ public class JAMSContext extends JAMSComponent implements Context {
         if (this.dataTracers != null) {
             for (int i = 0; i < this.dataTracers.length; i++) {
                 if (this.dataTracers[i] != null) {
-                    this.dataTracers[i].updateDateAccessors();
+                    this.dataTracers[i].updateDataAccessors();
                 }
             }
         }
@@ -756,11 +753,15 @@ public class JAMSContext extends JAMSComponent implements Context {
         public byte[] getState() {
             byte[] state = new byte[4];
 
-            state[0] = (byte) ((index & 0x000000ff) >> 0);
-            state[1] = (byte) ((index & 0x0000ff00) >> 8);
-            state[2] = (byte) ((index & 0x00ff0000) >> 16);
-            state[3] = (byte) ((index & 0xff000000) >> 24);
-
+            for (int i=0;i<4;i++)
+                state[i] = (byte)((index << 8*i) & 0x000000ff);
+            
+            /*
+            state[0] = (byte)((index & 0x000000ff)>>0);
+            state[1] = (byte)((index & 0x0000ff00)>>8);
+            state[2] = (byte)((index & 0x00ff0000)>>16);
+            state[3] = (byte)((index & 0xff000000)>>24);*/
+            
             return state;
         }
 

@@ -23,38 +23,18 @@
 package jams.model;
 
 import jams.JAMS;
-import jams.data.Attribute.FloatArray;
-import jams.data.JAMSBoolean;
-import jams.data.JAMSBooleanArray;
-import jams.data.JAMSCalendar;
-import jams.data.JAMSData;
 import jams.tools.JAMSTools;
 import jams.data.JAMSDirName;
-import jams.data.JAMSDouble;
-import jams.data.JAMSDoubleArray;
+import jams.data.SnapshotData;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.OutputDataStore;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
-import jams.data.JAMSFloat;
-import jams.data.JAMSGeometry;
-import jams.data.JAMSInteger;
-import jams.data.JAMSIntegerArray;
-import jams.data.JAMSLong;
-import jams.data.JAMSLongArray;
-import jams.data.JAMSObject;
-import jams.data.JAMSString;
-import jams.data.JAMSStringArray;
-import jams.data.JAMSTimeInterval;
-import jams.dataaccess.DataAccessor;
 import jams.runtime.JAMSRuntime;
-import jams.tools.SnapshotTools.ContextSnapshotData;
+import jams.tools.SnapshotTools.JAMSSnapshotData;
 import jams.workspace.InvalidWorkspaceException;
+import jams.workspace.stores.InputDataStore;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -213,184 +193,40 @@ public class JAMSModel extends JAMSContext implements Model {
     public void setNullFields(HashMap<Component, ArrayList<Field>> nullFields) {
         this.nullFields = nullFields;
     }
-    
-    private void collectEntityCollections(Context currentContext, HashMap<String, ContextSnapshotData> collection) {        
-        //currentContext.debug("C:\\Arbeit\\TIMELOOP_pre.dat" + counter1++);
         
-        ContextSnapshotData data = new ContextSnapshotData();
-        data.entities = currentContext.getEntities();
-        data.dataAccessors = currentContext.getDataAccessorMap();
-        data.iteratorState = currentContext.getIteratorState();
-        collection.put(currentContext.getInstanceName(), data);
-
-        for (int i = 0; i < currentContext.getComponents().size(); i++) {
-            Component c = (Component) currentContext.getComponents().get(i);
-            if (c instanceof Context) {
-                collectEntityCollections((Context) c, collection);
-            }
+    
+           
+    //serialization and deserialization of all registered input data stores
+    public void serializeInputDataStores(SnapshotData snapshot) throws IOException{
+        Iterator<InputDataStore> iter = this.workspace.getRegisteredInputDataStores().iterator();
+        while(iter.hasNext()){                        
+            snapshot.addDataStoreState(iter.next());                       
         }
     }
-
-    private void restoreEntityCollections(Context currentContext, HashMap<String, ContextSnapshotData> collection, boolean restoreIterator) {
-        ContextSnapshotData data = collection.get(currentContext.getInstanceName());
-
-        for (int i = 0; i < currentContext.getComponents().size(); i++) {
-            Component c = (Component) currentContext.getComponents().get(i);
-            if (c instanceof Context) {
-                restoreEntityCollections((Context) c, collection, restoreIterator);
-            }
+    
+    public void deserializeInputDataStores(SnapshotData snapshot) throws Exception, IOException, ClassNotFoundException{                                                        
+        Iterator<InputDataStore> iter = this.workspace.getRegisteredInputDataStores().iterator();        
+        while(iter.hasNext()){                        
+            snapshot.getDataStoreState(iter.next());                            
         }
-
-        //resore entity data
-        if (data == null) {
-            return;
-        }
-        ArrayList<jams.data.Attribute.Entity> list = currentContext.getEntities().getEntities();
-        for (int i = 0; i < list.size(); i++) {
-            HashMap<String, Object> map = list.get(i).getValue();
-
-            jams.data.Attribute.Entity e = data.entities.getEntities().get(i);
-            Iterator<String> iter = e.getValue().keySet().iterator();
-            while (iter.hasNext()) {
-                String name = iter.next();
-                Object obj_src = e.getValue().get(name);
-                Object obj = map.get(name);
-                    
-                if (obj == null){
-                    System.out.println("object:" + name + " value:" + obj_src + " in context:" + currentContext.getInstanceName() + " does not exist");
-                    map.put(name, obj_src);
-                    continue;                    
-                }
-                if (obj_src instanceof JAMSBoolean) {
-                    ((JAMSBoolean) obj).setValue(((JAMSBoolean) obj_src).getValue());
-                } else if (obj_src instanceof JAMSBooleanArray) {
-                    ((JAMSBooleanArray) obj).setValue(((JAMSBooleanArray) obj_src).getValue());
-                } else if (obj_src instanceof JAMSCalendar) {
-                    ((JAMSCalendar) obj).setValue(((JAMSCalendar) obj_src).getValue());
-                } else if (obj_src instanceof JAMSDouble) {
-                    ((JAMSDouble) obj).setValue(((JAMSDouble) obj_src).getValue());
-                } else if (obj_src instanceof JAMSDoubleArray) {
-                    ((JAMSDoubleArray) obj).setValue(((JAMSDoubleArray) obj_src).getValue());
-                //these both are skipped, because entities are not replaced
-                //but there are cases in which they have to be updated, this is kind of complicated, because
-                //a) we have to update only entity attributes
-                //b) if the entity contains other entities this is a recursive process
-                //c) to prevent infinite loops, we have to determine which entities have been allready updated
-                    /*if (obj instanceof JAMSEntity)
-                ((JAMSEntity)obj).setValue(((JAMSEntity)data.dataAccessors.get(name).getComponentObject()).getValue());
-                if (obj instanceof JAMSEntityCollection)
-                ((JAMSEntityCollection)obj).setValue(((JAMSEntityCollection)data.dataAccessors.get(name).getComponentObject()).getValue());*/
-                } else if (obj_src instanceof JAMSFloat) {
-                    ((JAMSFloat) obj).setValue(((JAMSFloat) obj_src).getValue());
-                } else if (obj_src instanceof FloatArray) {
-                    ((FloatArray) obj).setValue(((FloatArray) obj_src).getValue());
-                } else if (obj_src instanceof JAMSGeometry) {
-                    ((JAMSGeometry) obj).setValue(((JAMSGeometry) obj_src).getValue());
-                } else if (obj_src instanceof JAMSInteger) {
-                    ((JAMSInteger) obj).setValue(((JAMSInteger) obj_src).getValue());
-                } else if (obj_src instanceof JAMSIntegerArray) {
-                    ((JAMSIntegerArray) obj).setValue(((JAMSIntegerArray) obj_src).getValue());
-                } else if (obj_src instanceof JAMSLong) {
-                    ((JAMSLong) obj).setValue(((JAMSLong) obj_src).getValue());
-                } else if (obj_src instanceof JAMSLongArray) {
-                    ((JAMSLongArray) obj).setValue(((JAMSLongArray) obj_src).getValue());
-                } else if (obj_src instanceof JAMSString) {
-                    ((JAMSString) obj).setValue(((JAMSString) obj_src).getValue());
-                } else if (obj_src instanceof JAMSStringArray) {
-                    ((JAMSStringArray) obj).setValue(((JAMSStringArray) obj_src).getValue());
-                } else if (obj_src instanceof JAMSObject) {
-                    ((JAMSObject) obj).setValue(((JAMSObject) obj_src).getValue());
-                } else if (obj_src instanceof JAMSTimeInterval) {
-                    ((JAMSTimeInterval) obj).setValue(((JAMSTimeInterval) obj_src).getValue());
-                }
-            }
-        }
-
-
-        //restore component data
-        HashMap<String, DataAccessor> map = currentContext.getDataAccessorMap();
-        Iterator<String> iter = map.keySet().iterator();
-        while (iter.hasNext()) {
-            String name = iter.next();
-            DataAccessor da = map.get(name);
-            if (da == null) {
-                System.out.println("object:" + name + " in context:" + currentContext.getInstanceName() + " does not exist");
-                continue;
-            }
-            JAMSData obj = da.getComponentObject();
-            if (obj instanceof JAMSBoolean) {
-                ((JAMSBoolean) obj).setValue(((JAMSBoolean) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof JAMSBooleanArray) {
-                ((JAMSBooleanArray) obj).setValue(((JAMSBooleanArray) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof JAMSCalendar) {
-                ((JAMSCalendar) obj).setValue(((JAMSCalendar) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof JAMSDouble) {
-                ((JAMSDouble) obj).setValue(((JAMSDouble) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof JAMSDoubleArray) {
-                ((JAMSDoubleArray) obj).setValue(((JAMSDoubleArray) data.dataAccessors.get(name).getComponentObject()).getValue());
-            /*if (obj instanceof JAMSEntity)
-            ((JAMSEntity)obj).setValue(((JAMSEntity)data.dataAccessors.get(name).getComponentObject()).getValue());
-            if (obj instanceof JAMSEntityCollection)
-            ((JAMSEntityCollection)obj).setValue(((JAMSEntityCollection)data.dataAccessors.get(name).getComponentObject()).getValue());*/
-            }else if (obj instanceof JAMSFloat) {
-                ((JAMSFloat) obj).setValue(((JAMSFloat) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof FloatArray) {
-                ((FloatArray) obj).setValue(((FloatArray) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof JAMSGeometry) {
-                ((JAMSGeometry) obj).setValue(((JAMSGeometry) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof JAMSInteger) {
-                ((JAMSInteger) obj).setValue(((JAMSInteger) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof JAMSIntegerArray) {
-                ((JAMSIntegerArray) obj).setValue(((JAMSIntegerArray) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof JAMSLong) {
-                ((JAMSLong) obj).setValue(((JAMSLong) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof JAMSLongArray) {
-                ((JAMSLongArray) obj).setValue(((JAMSLongArray) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof JAMSObject) {
-                ((JAMSObject) obj).setValue(((JAMSObject) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof JAMSString) {
-                ((JAMSString) obj).setValue(((JAMSString) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof JAMSStringArray) {
-                ((JAMSStringArray) obj).setValue(((JAMSStringArray) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }else if (obj instanceof JAMSTimeInterval) {
-                ((JAMSTimeInterval) obj).setValue(((JAMSTimeInterval) data.dataAccessors.get(name).getComponentObject()).getValue());
-            }
-        }
-        //restore iterators
-        if (restoreIterator)
-            currentContext.setIteratorState(data.iteratorState);
     }
-
-    //this is still something todo
-    private void restoreEntityEnumerators(Context currentContext) {                
-        //TODO: currentContext.reinitEnumerators();        
-        for (int i = 0; i < currentContext.getComponents().size(); i++) {
-            Component c = (Component) currentContext.getComponents().get(i);
-            if (c instanceof Context) {
-                restoreEntityEnumerators((Context) c);
-            }
-        }    
-        //currentContext.debug("C:\\Arbeit\\TIMELOOP_post.dat" + counter2++);
-    }
-
+    
     public Snapshot getModelState(boolean holdInMemory, String fileName) {
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        ObjectOutputStream objOut = null;
-
-        HashMap<String, ContextSnapshotData> contextStates = new HashMap<String, ContextSnapshotData>();
-        collectEntityCollections(this.getModel(), contextStates);
-
+        /*
+        1. collect all attributes of this model and save them as context state
+        2. collect all states of input data stores
+        3. convert collected data to JAMSSnapshot
+        */
         JAMSSnapshot snapshot = null;
-        try {
-            objOut = new ObjectOutputStream(outStream);
-            objOut.writeObject(contextStates);
-            
-            snapshot = new JAMSSnapshot(holdInMemory, outStream.toByteArray(), fileName);
-            
-            objOut.close();
-            outStream.close();
-        } catch (IOException e) {
+        JAMSSnapshotData snapshotData = new JAMSSnapshotData();                
+                 
+        try{           
+            snapshotData.addContextState(this.getModel());        
+            serializeInputDataStores(snapshotData);                        
+            snapshot = new JAMSSnapshot(holdInMemory, snapshotData, fileName);                        
+        }catch(Exception e){
             this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_save_model_state_because,") + e.toString());
+            e.printStackTrace();
         }
                                 
         return snapshot;
@@ -400,19 +236,18 @@ public class JAMSModel extends JAMSContext implements Model {
         setModelState(inData,false);
     }
 
+    
     @SuppressWarnings ("unchecked")
     public void setModelState(Snapshot inData, boolean restoreIterator) {
-        HashMap<String, ContextSnapshotData> contextStates = null;
-        try {
-            ByteArrayInputStream inStream = new ByteArrayInputStream(inData.getData());
-            ObjectInputStream objIn = new ObjectInputStream(inStream);            
-            contextStates = (HashMap<String, ContextSnapshotData>) objIn.readObject();
-            inStream.close();
-            objIn.close();
-        } catch (Exception e) {
+        SnapshotData snapshotData = inData.getData();
+                                
+        //resote input data stores
+        try{//restore all attributes            
+            snapshotData.getContextState(this.getModel(), restoreIterator);
+            deserializeInputDataStores(snapshotData);
+        }catch (Exception e){
             this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_deserialize_jamsentity_collection,_because") + e.toString());
+            e.printStackTrace();
         }
-        restoreEntityCollections(this.getModel(), contextStates, restoreIterator);
-        restoreEntityEnumerators(this.getModel());
     }
 }

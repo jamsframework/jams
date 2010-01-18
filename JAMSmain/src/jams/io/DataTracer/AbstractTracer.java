@@ -64,7 +64,7 @@ public abstract class AbstractTracer implements DataTracer {
     }
 
     @Override
-    public void updateDateAccessors(){
+    public void updateDataAccessors(){
         HashMap<String, DataAccessor> dataObjectHash = context.getDataAccessorMap();
         ArrayList<DataAccessor> accessorObjectList = new ArrayList<DataAccessor>();
         this.attributeNames = new ArrayList<String>();
@@ -93,7 +93,7 @@ public abstract class AbstractTracer implements DataTracer {
     }
     
     private void init() {
-        updateDateAccessors();
+        updateDataAccessors();
         //if (this.accessorObjects.length > 0) {
             createHeader();
         //}
@@ -152,7 +152,15 @@ public abstract class AbstractTracer implements DataTracer {
 
     protected void output(Object o) {
         try {
-            store.write(o);
+            store.writeCell(o);
+        } catch (IOException ioe) {
+            System.out.print(ioe);
+        }
+    }
+    
+    protected void nextRow() {
+        try {
+            store.nextRow();
         } catch (IOException ioe) {
             System.out.print(ioe);
         }

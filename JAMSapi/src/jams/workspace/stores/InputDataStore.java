@@ -24,6 +24,7 @@ package jams.workspace.stores;
 
 import jams.workspace.DataSet;
 import jams.workspace.DataSetDefinition;
+import java.io.IOException;
 
 /**
  *
@@ -50,7 +51,9 @@ public interface InputDataStore extends DataStore {
 
     public DataSetDefinition getDataSetDefinition();
     
-    public String getMissingDataValue();
+    public String getMissingDataValue();  
     
+    public void getState(java.io.ObjectOutputStream stream) throws IOException;
+    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException; 
 }
 

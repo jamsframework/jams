@@ -22,11 +22,14 @@
  */
 package jams.workspace;
 
+import java.io.IOException;
+import java.io.Serializable;
+
 /**
  *
  * @author Sven Kralisch
  */
-public interface DataReader {
+public interface DataReader extends Serializable{
 
     public int init();
 
@@ -38,5 +41,8 @@ public interface DataReader {
     
     public DataSet[] getData();
 
-    public int numberOfColumns();
+    public int numberOfColumns();        
+    
+    public void getState(java.io.ObjectOutputStream stream) throws IOException;
+    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException; 
 }

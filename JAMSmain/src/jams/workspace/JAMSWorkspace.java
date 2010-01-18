@@ -46,11 +46,14 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class JAMSWorkspace implements Workspace {
 
@@ -74,6 +77,8 @@ public class JAMSWorkspace implements Workspace {
 
     private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
 
+    private ArrayList<InputDataStore> registeredStores = null;
+    
     public JAMSWorkspace(File directory, JAMSRuntime runtime) throws InvalidWorkspaceException {
         this(directory, runtime, false);
     }
@@ -85,7 +90,8 @@ public class JAMSWorkspace implements Workspace {
             this.classLoader = runtime.getClassLoader();
         }
         this.directory = directory;
-
+        this.registeredStores = new ArrayList<InputDataStore>();
+        
         this.loadConfig();
         this.checkValidity(readonly);
         this.createDataStores();
@@ -310,8 +316,12 @@ public class JAMSWorkspace implements Workspace {
             getRuntime().handle(use);
             return null;
         }
-
+        registeredStores.add(store);
         return store;
+    }
+    
+    public ArrayList<InputDataStore> getRegisteredInputDataStores(){
+        return registeredStores;
     }
 
     /**
@@ -348,7 +358,50 @@ public class JAMSWorkspace implements Workspace {
         int i = 0;
         for (String storeID : stores) {
             Document doc = outputDataStores.get(storeID);
-            OutputDataStore store = new DefaultOutputDataStore(this, doc, storeID);
+            
+            Element elem = (Element)doc.getElementsByTagName("plugin").item(0);            
+            String className = "";
+            if (elem != null){
+                className = elem.getAttribute("type");
+            }
+            OutputDataStore store = null;
+            if (className.equals("jams.workspace.plugins.DatabaseOutputDataStore")){                
+                try {
+                    ClassLoader loader = getClassLoader();
+                    Class<?> clazz = loader.loadClass(className);
+                    OutputDataStore io = (OutputDataStore) clazz.newInstance();
+                                                            
+                    Method method = clazz.getMethod("setWorkspace", JAMSWorkspace.class);
+                    method.invoke(io, this);
+                    method = clazz.getMethod("setDoc", Document.class);
+                    method.invoke(io, doc);
+                    method = clazz.getMethod("setID", String.class);
+                    method.invoke(io, storeID);
+                        
+                    NodeList parameterNodes = elem.getElementsByTagName("parameter");
+                    for (int j = 0; j < parameterNodes.getLength(); j++) {
+                        Element parameterNode = (Element) parameterNodes.item(j);
+
+                        String attributeName = parameterNode.getAttribute("id");
+                        String attributeValue = "";
+                        if (parameterNode.hasAttribute("value")) {
+                            attributeValue = parameterNode.getAttribute("value");
+                        }else{
+                            attributeValue = null;
+                        }
+                        String methodName = "set" + attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1);
+
+                        method = clazz.getMethod(methodName, String.class);
+                        method.invoke(io, attributeValue);                                                
+                    }
+                    store = io;
+                } catch (Exception ie) {
+                    getRuntime().handle(ie);
+                    return null;
+                }                
+            }else
+                store = new DefaultOutputDataStore(this, doc, storeID);
+            
             currentStores.add(store);
             result[i] = store;
             i++;

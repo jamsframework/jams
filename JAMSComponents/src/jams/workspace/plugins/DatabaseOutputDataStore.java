@@ -20,24 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.workspace.stores;
+package jams.workspace.plugins;
 
-import jams.io.SerializableBufferedWriter;
+import jams.workspace.stores.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import jams.workspace.JAMSWorkspace;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import jams.model.Context;
+import jams.workspace.plugins.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class DefaultOutputDataStore implements OutputDataStore {
+public class DatabaseOutputDataStore implements OutputDataStore {
 
     private static final String TRACE_STRING = "attribute";
     private static final String FILTER_STRING = "filter";
@@ -47,17 +49,51 @@ public class DefaultOutputDataStore implements OutputDataStore {
     private String id;
     private String[] attributes;
     private DefaultFilter[] filters;
-    private SerializableBufferedWriter writer;
-    private JAMSWorkspace ws;
-    private int columnsPerLine;
-    private int columnCounter;
-    private boolean firstRow;
     
-    public DefaultOutputDataStore(JAMSWorkspace ws, Document doc, String id) {
-
-        this.id = id;
+    private JAMSWorkspace ws;
+    
+    private String user,  password,  host,  db,  driver;
+    private String genericSqlStatement;
+    private boolean cleanedup = false;
+    
+    private boolean dataStarted;
+    
+    private JdbcSQLConnector pgsql;
+    ArrayList<String> lineArray = new ArrayList<String>(20); 
+    
+    public void setUser(String user){
+        this.user = user;
+    }
+    
+    public void setHost(String host){
+        this.host = host;
+    }
+    
+    public void setPassword(String pw){
+        this.password = pw;
+    }
+    
+    public void setDb(String db){
+        this.db = db;
+    }
+    
+    public void setQuery(String query){
+        this.genericSqlStatement = query;
+    }
+    
+    public void setDriver(String driver){
+        this.driver = driver;
+    }
+    
+    public void setID(String id) {
+        this.id = id;        
+    }
+            
+    public void setWorkspace(JAMSWorkspace ws){
         this.ws = ws;
-
+    }
+    
+    public void setDoc(Document doc){
         Element root = doc.getDocumentElement();
 
         NodeList traceNodes = root.getElementsByTagName(TRACE_STRING);
@@ -76,10 +112,8 @@ public class DefaultOutputDataStore implements OutputDataStore {
             filters[i] = new DefaultFilter(filterElement.getAttribute(CONTEXT_STRING),
                     filterElement.getAttribute(EXPRESSION_STRING));
         }
-        firstRow = true;
-        columnsPerLine = 0;
     }
-
+    
     public String getID() {
         return id;
     }
@@ -88,47 +122,87 @@ public class DefaultOutputDataStore implements OutputDataStore {
         return attributes;
     }
 
-    public void open() throws IOException {
-        File outputDirectory = ws.getOutputDataDirectory();
-        outputDirectory.mkdirs();
-
-        File outputFile = new File(outputDirectory.getPath() + File.separator + id + JAMSWorkspace.OUTPUT_FILE_ENDING);
-        writer = new SerializableBufferedWriter(new FileWriter(outputFile));
-    }
-
-    public void write(Object o) throws IOException {                
-        writer.write(o.toString());
-    }
-    
-    public void writeCell(Object o) throws IOException {        
-        columnCounter++;
-        writer.write(o.toString());
-    }
-    
-    public void nextRow() throws IOException {
-        if (firstRow){
-            columnsPerLine = columnCounter;
-            firstRow = false;
-        }else{
-            if (columnsPerLine < columnCounter){
-                System.err.println("DefaultOutputDataStore:row not complete, one or more attributes are missing");                
-            }
-            if (columnsPerLine > columnCounter){
-                System.err.println("DefaultOutputDataStore:too many attributes in row");
-            }
+    public void open() throws IOException {   
+        if (host == null){
+            throw new IOException("unknown host");
         }
-            
-        writer.write("\n");
+        if (db == null){
+            throw new IOException("unknown database");
+        }
+        if (user == null){
+            throw new IOException("unknown user");
+        }
+        if (password == null){
+            throw new IOException("unknown password");
+        }
+        if (driver == null){
+            throw new IOException("unknown driver");
+        }
+        if (this.genericSqlStatement == null){
+            throw new IOException("unknown sql query");
+        }
+        
+        pgsql = new JdbcSQLConnector(host, db, user, password, driver);
+         try {
+            dataStarted = false;
+            pgsql.connect();            
+         } catch (SQLException sqlex) {
+            System.err.println("DatabaseOutputDataStore: " + sqlex);  
+            sqlex.printStackTrace();
+            throw new IOException(sqlex.toString());            
+        }
+    }
+    
+    public void write(Object o) throws IOException {
+    }
+    
+    public void writeCell(Object o) {
+        if (o.toString().contains("@start")){
+            dataStarted = true;
+        }else if (dataStarted){
+            lineArray.add(o.toString());                                    
+        }        
+    }
+    
+    public void nextRow() throws IOException {        
+        String sqlStatement = genericSqlStatement;
+        for (int i=1;i<=this.lineArray.size();i++){                    
+            sqlStatement = sqlStatement.replace("#" + i, "\"" + lineArray.get(i) + "\"");
+        }
+        try{
+            if (!sqlStatement.contains("#"))
+                pgsql.execUpdate(sqlStatement);
+            else
+                System.err.println("DatabaseOutputDataStore: skip line, because not all attributes are known");  
+        }catch(SQLException sqlex){
+            System.err.println("DatabaseOutputDataStore: " + sqlex);  
+            sqlex.printStackTrace();
+        }
+        lineArray.clear();
     }
     
     public void flush() throws IOException {
-        writer.flush();
+        
     }    
 
     public void close() throws IOException {
-        if (writer != null) {
-            writer.close();
+        if (cleanedup) {
+            return;
+        } else {
+            cleanedup = true;
         }
+
+        try {    
+            if (pgsql != null)
+                pgsql.close();
+            pgsql = null;            
+        } catch (SQLException sqlex) {
+            System.out.println("DatabaseOutputDataStore: " + sqlex);
+            sqlex.printStackTrace();
+            return;
+        }
+        
+        return;
     }
 
     public DefaultFilter[] getFilters() {

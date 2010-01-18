@@ -30,6 +30,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import jams.workspace.DataReader;
+import java.io.IOException;
+import java.util.Iterator;
 
 /**
  *
@@ -182,4 +184,45 @@ public class TableDataStore extends StandardInputDataStore {
             io.cleanup();
         }
     }
+    
+    public void getState(java.io.ObjectOutputStream stream) throws IOException{
+        stream.writeInt(this.accessMode);
+        stream.writeInt(this.bufferSize);        
+        stream.writeObject(this.description);
+        stream.writeObject(this.id);
+        stream.writeObject(this.missingDataValue);
+        stream.writeObject(this.positionArray);
+
+        //workspace serialisieren??!
+        
+        stream.writeInt(currentPosition);
+        stream.writeInt(maxPosition);
+        //stream.writeObject(dataIOArray);     
+        //überarbeiten .. 
+        if (dataIO!=null){
+            Iterator<String> iter = dataIO.keySet().iterator();
+            while(iter.hasNext()){                                
+                dataIO.get(iter.next()).getState(stream);
+            }            
+        }
+    }
+    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
+        this.accessMode = stream.readInt();
+        this.bufferSize = stream.readInt();
+        this.description = (String)stream.readObject();
+        this.id = (String)stream.readObject();
+        this.missingDataValue = (String)stream.readObject();
+        this.positionArray = (int[])stream.readObject();       
+        //workspace deserialisieren??!
+        currentPosition = stream.readInt();
+        maxPosition = stream.readInt();
+        
+        
+        if (dataIO!=null){
+            Iterator<String> iter = dataIO.keySet().iterator();
+            while(iter.hasNext()){                                
+                dataIO.get(iter.next()).setState(stream);
+            }            
+        }
+    }        
 }

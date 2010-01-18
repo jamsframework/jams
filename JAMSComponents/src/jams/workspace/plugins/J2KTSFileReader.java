@@ -24,10 +24,9 @@ package jams.workspace.plugins;
 
 import jams.workspace.DataReader;
 import jams.workspace.DefaultDataSet;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 /**
  *
@@ -36,15 +35,15 @@ import java.io.IOException;
     public class J2KTSFileReader implements DataReader {
 
     private String dataFileName;
-    private BufferedReader reader;
-
+    private RandomAccessFile reader;
+    
     @Override
     public int init() {
         int result;
         File file = new File(dataFileName);
         if (file.exists()) {
-            try {
-                this.reader = new BufferedReader(new FileReader(file));
+            try {                
+                this.reader = new RandomAccessFile(file,"r");
                 readMetaData();
                 result = 0;
             } catch (IOException ioe) {
@@ -98,4 +97,22 @@ import java.io.IOException;
     public void setDataFileName(String dataFileName) {
         this.dataFileName = dataFileName;
     }
+    
+    public void getState(java.io.ObjectOutputStream stream) throws IOException{
+        stream.writeObject(this.dataFileName);
+        stream.writeLong(this.reader.getFilePointer());
+    }
+    
+    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
+        this.dataFileName = (String)stream.readObject();
+        if (this.reader!=null){
+            try{
+                this.reader.close();
+            }catch(Exception e){}
+        }
+        init();
+        this.reader.seek(stream.readLong());
+        
+    }
+    
 }

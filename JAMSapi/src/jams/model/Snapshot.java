@@ -23,6 +23,8 @@
 
 package jams.model;
 
+import jams.data.SnapshotData;
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -31,6 +33,6 @@ import java.io.Serializable;
  */
 public interface Snapshot extends Serializable {
 
-    byte[] getData();
+    SnapshotData getData();
 
 }
