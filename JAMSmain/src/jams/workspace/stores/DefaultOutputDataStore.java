@@ -78,6 +78,7 @@ public class DefaultOutputDataStore implements OutputDataStore {
         }
         firstRow = true;
         columnsPerLine = 0;
+        columnCounter = 0;
     }
 
     public String getID() {
@@ -102,7 +103,7 @@ public class DefaultOutputDataStore implements OutputDataStore {
     
     public void writeCell(Object o) throws IOException {        
         columnCounter++;
-        writer.write(o.toString());
+        writer.write(o.toString() + "\t");
     }
     
     public void nextRow() throws IOException {
@@ -110,14 +111,14 @@ public class DefaultOutputDataStore implements OutputDataStore {
             columnsPerLine = columnCounter;
             firstRow = false;
         }else{
-            if (columnsPerLine < columnCounter){
+            if (columnsPerLine > columnCounter){
                 System.err.println("DefaultOutputDataStore:row not complete, one or more attributes are missing");                
             }
-            if (columnsPerLine > columnCounter){
+            if (columnsPerLine < columnCounter){
                 System.err.println("DefaultOutputDataStore:too many attributes in row");
             }
         }
-            
+        columnCounter = 0;
         writer.write("\n");
     }
     

@@ -122,34 +122,42 @@ public abstract class AbstractTracer implements DataTracer {
         }
         this.parents = parentList.toArray(new Context[parentList.size()]);
 
-        output("@context\n");
-        output(this.context.getClass().getName() + "\t" + this.context.getInstanceName() + "\t" + context.getNumberOfIterations() + "\n");
+        write("@context\n");
+        write(this.context.getClass().getName() + "\t" + this.context.getInstanceName() + "\t" + context.getNumberOfIterations() + "\n");
 
-        output("@ancestors\n");
+        write("@ancestors\n");
         for (Context p : this.parents) {
-            output(p.getClass().getName() + "\t" + p.getInstanceName() + "\t" + p.getNumberOfIterations() + "\n");
+            write(p.getClass().getName() + "\t" + p.getInstanceName() + "\t" + p.getNumberOfIterations() + "\n");
         }
 
-        output("@filters\n");
+        write("@filters\n");
         for (Filter filter : store.getFilters()) {
-            output(filter.getContextName() + "\t" + filter.getExpression() + "\n");
+            write(filter.getContextName() + "\t" + filter.getExpression() + "\n");
         }
 
-        output("@attributes\n");
-        output("ID\t");
+        write("@attributes\n");
+        write("ID\t");
         for (String attributeName : this.attributeNames) {
-            output(attributeName + "\t");
+            write(attributeName + "\t");
         }
 
-        output("\n@types\n");
-        output(idClazz.getSimpleName() + "\t");
+        write("\n@types\n");
+        write(idClazz.getSimpleName() + "\t");
         for (DataAccessor accessorObject : this.accessorObjects) {
-            output(accessorObject.getComponentObject().getClass().getSimpleName() + "\t");
+            write(accessorObject.getComponentObject().getClass().getSimpleName() + "\t");
         }
 
-        output("\n@data\n");
+        write("\n@data\n");
     }
 
+    private void write(Object o){
+        try {
+            store.write(o);
+        } catch (IOException ioe) {
+            System.out.print(ioe);
+        }
+    }
+    
     protected void output(Object o) {
         try {
             store.writeCell(o);
@@ -197,9 +205,9 @@ public abstract class AbstractTracer implements DataTracer {
     @Override
     public void startMark() {
         for (Context parent : parents) {
-            output(parent.getInstanceName() + "\t" + parent.getTraceMark() + "\n");
+            write(parent.getInstanceName() + "\t" + parent.getTraceMark() + "\n");
         }
-        output("@start\n");
+        write("@start\n");
     }
 
     /**
@@ -208,7 +216,7 @@ public abstract class AbstractTracer implements DataTracer {
      */
     @Override
     public void endMark() {
-        output("@end\n");
+        write("@end\n");
     }
 
     /**
