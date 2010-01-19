@@ -25,30 +25,6 @@ public class ExplorerWizard extends WizardBranchController {
         super( new InitialStep() );
     }
 
-    /**
-     * mapping of  wizardKey -> key(s) used in model
-     **/
-    public static final Map<String,String[]> KEY_MODEL_MAPPING = createMapping();
-    private static Map<String, String[]> createMapping () {
-        Map<String, String[]> resultMap = new HashMap<String, String[]>();
-
-        resultMap.put(BaseDataPanel.KEY_INTERVAL, new String[] {"Interpolation.timeInterval"});
-        resultMap.put(RegMethodPanel.KEY_SCHWELLENWERT,
-                new String[] {  "Regionaliser.rsqThreshold"
-                             }
-        );
-        resultMap.put(RegMethodPanel.KEY_GEWICHTUNG,
-                new String[] {  "Weights.pidw"
-                             }
-        );
-        resultMap.put(RegMethodPanel.KEY_STATION,
-                new String[] {  "Regionaliser.nidw"
-                             }
-        );
-
-        return Collections.unmodifiableMap(resultMap);
-    }
-
     @Override
     protected WizardPanelProvider getPanelProviderForStep(String step, Map collectedData) {
         //There's only one branch point, so we don't need to test the

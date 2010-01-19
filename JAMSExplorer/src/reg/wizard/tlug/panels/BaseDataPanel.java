@@ -19,6 +19,7 @@ import jams.gui.input.ValueChangeListener;
 import jams.tools.JAMSTools;
 import java.io.File;
 import java.util.Map;
+import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.JRadioButton;
 import org.h2.util.StringUtils;
@@ -36,6 +37,8 @@ public class BaseDataPanel extends javax.swing.JPanel {
     public static final String KEY_SHAPE_FILENAME = "shapeFileName";
     public static final String KEY_DATA_ORIGIN = "dataOrigin";
     public static final String KEY_REGIONALIZATION = "regionalizationData";
+    public static final Vector<String> regData_Display = new Vector<String>();
+    public static final Vector<String> regData_Key = new Vector<String>();
     public static final String KEY_INTERVAL = "interval";
     public static final String KEY_AGGR = "aggregation";
     public static final String VALUE_PRIM = "prim";
@@ -50,6 +53,24 @@ public class BaseDataPanel extends javax.swing.JPanel {
     private String r_region = null;
     private String r_interval = null;
     private String r_aggreg = null;
+
+    static {
+        regData_Display.add("Niederschlag");
+        regData_Display.add("Temp Min");
+        regData_Display.add("Temp Max");
+        regData_Display.add("Temp Mittel");
+        regData_Display.add("Feuchtigkeit");
+        regData_Display.add("Wind");
+        regData_Display.add("Sonnenscheindauer");
+
+        regData_Key.add("rain");
+        regData_Key.add("tmin");
+        regData_Key.add("tmax");
+        regData_Key.add("tmean");
+        regData_Key.add("rhum");
+        regData_Key.add("wind");
+        regData_Key.add("sunh");
+    }
 
     /** Creates new form  */
     public BaseDataPanel(WizardController controller, Map wizardData) {
@@ -122,7 +143,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
         jRegLabel.setText("Regionalisierung von");
 
-        jRegCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Niederschlag", "Tmin", "Tmax", "Tmean", "Feuchtigkeit" }));
+        jRegCombo.setModel(new javax.swing.DefaultComboBoxModel(regData_Display));
         jRegCombo.addFocusListener(new java.awt.event.FocusListener() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jRegComboFocusLost(evt);
@@ -237,7 +258,9 @@ public class BaseDataPanel extends javax.swing.JPanel {
     }
 
     private void jRegComboFocusLost(java.awt.event.FocusEvent evt) {
-        r_region = (String) jRegCombo.getSelectedItem();
+        int selIndex = jRegCombo.getSelectedIndex();
+        System.out.println("jRegCombo. " + jRegCombo.getSelectedItem() + ", selIndex=" + selIndex + ", -> " + regData_Key.elementAt(selIndex));
+        r_region = regData_Key.elementAt(selIndex);
         checkProblems();
 
 }
@@ -309,7 +332,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
         jRadioButtonJahr.putClientProperty(KEY_AGGR, VALUE_JAHR);
 
         // defaults
-        r_region = "Niederschlag";
+        r_region = regData_Key.elementAt(0);
         r_dataOrigin = VALUE_PRIM;
         r_aggreg = VALUE_TAG;
         r_interval = "1999-01-01 7:30 2010-12-31 7:30 6 1";
@@ -389,7 +412,11 @@ public class BaseDataPanel extends javax.swing.JPanel {
             r_region = regionalizationData;
         }
         if (!StringUtils.isNullOrEmpty(r_region)) {
-            jRegCombo.setSelectedItem(r_region);
+            int theIndex = regData_Key.indexOf(r_region);
+            if (theIndex < 0)
+                System.out.println("Wert " + r_region + " nicht in regData_Key gefunden. System falsch initialisiert.");
+            else
+                jRegCombo.setSelectedIndex(theIndex);
         }
 
         String interval = (String) wizardData.get(KEY_INTERVAL);
