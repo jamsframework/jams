@@ -208,7 +208,8 @@ public class DataStoreProcessor {
 
     public boolean isDBObsolete() {
 
-
+        //@TODO
+        //needs to be reimplemented to recognise changes in dat files
         return true;
     }
 
