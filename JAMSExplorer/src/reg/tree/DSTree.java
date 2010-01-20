@@ -114,8 +114,7 @@ public class DSTree extends JAMSTree {
     private DSTreeNode createInputNode() {
         DSTreeNode inputRoot = new DSTreeNode(INPUT_NAME, DSTreeNode.INPUT_ROOT);
         Set<String> inIDs = explorer.getWorkspace().getInputDataStoreIDs();
-        List<String> inIDList = new ArrayList<String>(inIDs);
-        Collections.sort(inIDList);
+        List<String> inIDList = explorer.getWorkspace().getSortedInputDataStoreIDs();
         for (String id : inIDList) {
             DSTreeNode dsNode = new DSTreeNode(id, DSTreeNode.INPUT_DS);
             inputRoot.add(dsNode);
