@@ -37,8 +37,10 @@ public class BaseDataPanel extends javax.swing.JPanel {
     public static final String KEY_SHAPE_FILENAME = "shapeFileName";
     public static final String KEY_DATA_ORIGIN = "dataOrigin";
     public static final String KEY_REGIONALIZATION = "regionalizationData";
-    public static final Vector<String> regData_Display = new Vector<String>();
-    public static final Vector<String> regData_Key = new Vector<String>();
+    public static final String KEY_REGDATA_KEYS = "regDataKeys";
+    public static final String KEY_REGDATA_DISPS = "regDataDisps";
+    private Vector<String> regData_Display = new Vector<String>();
+    private Vector<String> regData_Key = new Vector<String>();
     public static final String KEY_INTERVAL = "interval";
     public static final String KEY_AGGR = "aggregation";
     public static final String VALUE_PRIM = "prim";
@@ -54,23 +56,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
     private String r_interval = null;
     private String r_aggreg = null;
 
-    static {
-        regData_Display.add("Niederschlag");
-        regData_Display.add("Temp Min");
-        regData_Display.add("Temp Max");
-        regData_Display.add("Temp Mittel");
-        regData_Display.add("Feuchtigkeit");
-        regData_Display.add("Wind");
-        regData_Display.add("Sonnenscheindauer");
-
-        regData_Key.add("rain");
-        regData_Key.add("tmin");
-        regData_Key.add("tmax");
-        regData_Key.add("tmean");
-        regData_Key.add("rhum");
-        regData_Key.add("wind");
-        regData_Key.add("sunh");
-    }
 
     /** Creates new form  */
     public BaseDataPanel(WizardController controller, Map wizardData) {
@@ -123,11 +108,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
         jFileLabel.setText("Shape-File");
 
-        jFileName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jFileNameActionPerformed(evt);
-            }
-        });
         jFileName.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jFileNameFocusLost(evt);
@@ -143,7 +123,8 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
         jRegLabel.setText("Regionalisierung von");
 
-        jRegCombo.setModel(new javax.swing.DefaultComboBoxModel(regData_Display));
+        // will be done later in initFromWizardData
+        //jRegCombo.setModel(new javax.swing.DefaultComboBoxModel(regData_Display));
         jRegCombo.addFocusListener(new java.awt.event.FocusListener() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jRegComboFocusLost(evt);
@@ -269,9 +250,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
         aggregationSelected(evt);
 }
 
-    private void jFileNameActionPerformed(java.awt.event.ActionEvent evt) {
-    }
-
     private void jRadioButtonPrimActionPerformed(java.awt.event.ActionEvent evt) {
         primSekSelected(evt);
     }
@@ -332,7 +310,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
         jRadioButtonJahr.putClientProperty(KEY_AGGR, VALUE_JAHR);
 
         // defaults
-        r_region = regData_Key.elementAt(0);
         r_dataOrigin = VALUE_PRIM;
         r_aggreg = VALUE_TAG;
         r_interval = "1999-01-01 7:30 2010-12-31 7:30 6 1";
@@ -407,9 +384,14 @@ public class BaseDataPanel extends javax.swing.JPanel {
         if (r_dataOrigin != null && r_dataOrigin.equals(VALUE_SEK))
             jRadioButtonSeku.setSelected(true);
 
+        regData_Key = (Vector<String>) wizardData.get(KEY_REGDATA_KEYS);
+        regData_Display = (Vector<String>) wizardData.get(KEY_REGDATA_DISPS);
+        jRegCombo.setModel(new javax.swing.DefaultComboBoxModel(regData_Display));
         String regionalizationData = (String) wizardData.get(KEY_REGIONALIZATION);
         if (!StringUtils.isNullOrEmpty(regionalizationData)) {
             r_region = regionalizationData;
+        } else {
+            r_region = regData_Key.elementAt(0);
         }
         if (!StringUtils.isNullOrEmpty(r_region)) {
             int theIndex = regData_Key.indexOf(r_region);

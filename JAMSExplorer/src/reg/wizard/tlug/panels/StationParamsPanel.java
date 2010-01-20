@@ -11,7 +11,11 @@
 
 package reg.wizard.tlug.panels;
 
+import jams.JAMSFileFilter;
+import jams.tools.JAMSTools;
+import java.io.File;
 import java.util.Map;
+import javax.swing.JFileChooser;
 import javax.swing.JRadioButton;
 import org.h2.util.StringUtils;
 import org.netbeans.spi.wizard.WizardController;
@@ -25,6 +29,7 @@ public class StationParamsPanel extends javax.swing.JPanel {
     private final WizardController controller;
     private final Map wizardData;
 
+    public static final String KEY_SHAPE_FILENAME = "shapeFileName";
     public static final String KEY_COMPUTATION = "computation";
     public static final String VALUE_EVAPOR = "evaporation";
     public static final String VALUE_RADIATION = "radiation";
@@ -33,8 +38,10 @@ public class StationParamsPanel extends javax.swing.JPanel {
     public static final String VALUE_ALL = "all";
 
     // all field contents
+    private String r_shapeFileName = null;
     private String r_computation = null;
 
+    private StationParamsPanel thisPanel;
 
     /** Creates new form  */
     public StationParamsPanel(WizardController controller, Map wizardData) {
@@ -43,19 +50,20 @@ public class StationParamsPanel extends javax.swing.JPanel {
         this.wizardData = wizardData;
 
         initComponents();
+        thisPanel = this;
 
         // group buttons
         buttonGroup1.add(jRadioEvapor);
         buttonGroup1.add(jRadioRadiation);
         buttonGroup1.add(jRadioPrecipCorr);
         buttonGroup1.add(jRadioHumidity);
-        buttonGroup1.add(jRadioAlles);
+        // buttonGroup1.add(jRadioAlles); // not wishes anymore
 
         jRadioEvapor.putClientProperty(KEY_COMPUTATION, VALUE_EVAPOR);
         jRadioRadiation.putClientProperty(KEY_COMPUTATION, VALUE_RADIATION);
         jRadioPrecipCorr.putClientProperty(KEY_COMPUTATION, VALUE_PRECIPCORR);
         jRadioHumidity.putClientProperty(KEY_COMPUTATION, VALUE_AHUM);
-        jRadioAlles.putClientProperty(KEY_COMPUTATION, VALUE_ALL);
+        //jRadioAlles.putClientProperty(KEY_COMPUTATION, VALUE_ALL);
 
         initFromWizardData();
         checkProblems();
@@ -76,7 +84,9 @@ public class StationParamsPanel extends javax.swing.JPanel {
         jRadioRadiation = new javax.swing.JRadioButton();
         jRadioHumidity = new javax.swing.JRadioButton();
         jRadioPrecipCorr = new javax.swing.JRadioButton();
-        jRadioAlles = new javax.swing.JRadioButton();
+        jLabel1 = new javax.swing.JLabel();
+        jFileName = new javax.swing.JTextField();
+        jFileButton = new javax.swing.JButton();
 
         jRadioEvapor.setText("Verdunstung");
         jRadioEvapor.addActionListener(new java.awt.event.ActionListener() {
@@ -106,10 +116,18 @@ public class StationParamsPanel extends javax.swing.JPanel {
             }
         });
 
-        jRadioAlles.setText("Alles berechnen");
-        jRadioAlles.addActionListener(new java.awt.event.ActionListener() {
+        jLabel1.setText("Shape-File");
+
+        jFileName.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jFileNameFocusLost(evt);
+            }
+        });
+
+        jFileButton.setText("Auswahl");
+        jFileButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioAllesActionPerformed(evt);
+                jFileButtonActionPerformed(evt);
             }
         });
 
@@ -120,17 +138,27 @@ public class StationParamsPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRadioAlles)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jFileName, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(jFileButton))
                     .addComponent(jRadioHumidity)
                     .addComponent(jRadioRadiation)
                     .addComponent(jRadioEvapor)
                     .addComponent(jRadioPrecipCorr))
-                .addContainerGap(201, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(41, 41, 41)
+                .addGap(16, 16, 16)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jFileButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jRadioHumidity)
                 .addGap(18, 18, 18)
                 .addComponent(jRadioRadiation)
@@ -138,9 +166,7 @@ public class StationParamsPanel extends javax.swing.JPanel {
                 .addComponent(jRadioEvapor)
                 .addGap(18, 18, 18)
                 .addComponent(jRadioPrecipCorr)
-                .addGap(18, 18, 18)
-                .addComponent(jRadioAlles)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(96, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -160,9 +186,33 @@ public class StationParamsPanel extends javax.swing.JPanel {
         computationSelected(evt);
     }//GEN-LAST:event_jRadioPrecipCorrActionPerformed
 
-    private void jRadioAllesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioAllesActionPerformed
-        computationSelected(evt);
-    }//GEN-LAST:event_jRadioAllesActionPerformed
+    private void jFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileButtonActionPerformed
+        // TODO add your handling code here:
+        String fileName = null;
+        int returnVal = -1;
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileFilter(JAMSFileFilter.getShapeFilter());
+        try {
+            returnVal = chooser.showOpenDialog(thisPanel);
+            File file = chooser.getSelectedFile();
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                fileName = file.getPath();
+                jFileName.setText(fileName);
+            }
+
+        } catch (Exception fnfexc) {
+            fileName = null;
+        }
+        r_shapeFileName = fileName;
+        checkProblems();
+
+    }//GEN-LAST:event_jFileButtonActionPerformed
+
+    private void jFileNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jFileNameFocusLost
+        // TODO add your handling code here:
+        r_shapeFileName = jFileName.getText();
+        checkProblems();
+    }//GEN-LAST:event_jFileNameFocusLost
 
     private void computationSelected(java.awt.event.ActionEvent evt) {
 
@@ -177,6 +227,12 @@ public class StationParamsPanel extends javax.swing.JPanel {
      */
     private void initFromWizardData() {
 
+        String shapeFileName = (String) wizardData.get(KEY_SHAPE_FILENAME);
+        if (!StringUtils.isNullOrEmpty(shapeFileName)) {
+            r_shapeFileName = shapeFileName;
+            jFileName.setText(r_shapeFileName);
+        }
+
         String computation = (String) wizardData.get(KEY_COMPUTATION);
         if (!StringUtils.isNullOrEmpty(computation)) {
             r_computation = computation;
@@ -188,14 +244,17 @@ public class StationParamsPanel extends javax.swing.JPanel {
                 jRadioHumidity.setSelected(true);
             if (computation.equals(VALUE_PRECIPCORR))
                 jRadioPrecipCorr.setSelected(true);
-            if (computation.equals(VALUE_ALL))
-                jRadioAlles.setSelected(true);
+//            if (computation.equals(VALUE_ALL))
+//                jRadioAlles.setSelected(true);
         }
     }
 
     private void checkProblems() {
 
         controller.setProblem(null);
+        if (JAMSTools.isEmptyString(r_shapeFileName))
+            r_shapeFileName = "";
+        wizardData.put(KEY_SHAPE_FILENAME, r_shapeFileName);
         if (StringUtils.isNullOrEmpty(r_computation)) {
             controller.setProblem("Bitte Berechnungsart auswählen.");
         } else {
@@ -206,7 +265,9 @@ public class StationParamsPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JRadioButton jRadioAlles;
+    private javax.swing.JButton jFileButton;
+    private javax.swing.JTextField jFileName;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JRadioButton jRadioEvapor;
     private javax.swing.JRadioButton jRadioHumidity;
     private javax.swing.JRadioButton jRadioPrecipCorr;

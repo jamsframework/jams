@@ -23,20 +23,32 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jRadioAlles" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="jFileName" min="-2" pref="123" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                      <Component id="jFileButton" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <Component id="jRadioHumidity" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="jRadioRadiation" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="jRadioEvapor" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="jRadioPrecipCorr" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="201" max="32767" attributes="0"/>
+              <EmptySpace pref="45" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jFileName" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jFileButton" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jRadioHumidity" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jRadioRadiation" min="-2" max="-2" attributes="0"/>
@@ -44,9 +56,7 @@
               <Component id="jRadioEvapor" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jRadioPrecipCorr" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="jRadioAlles" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="62" max="32767" attributes="0"/>
+              <EmptySpace pref="96" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -84,12 +94,22 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioPrecipCorrActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JRadioButton" name="jRadioAlles">
+    <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Alles berechnen"/>
+        <Property name="text" type="java.lang.String" value="Shape-File"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jFileName">
+      <Events>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jFileNameFocusLost"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="jFileButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Auswahl"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioAllesActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jFileButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
