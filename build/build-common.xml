@@ -35,15 +35,23 @@
                         <copy file="${dist.jar}" tofile="${bin.dir}/${application.title}${main.postfix}.jar"/>
                     </else>
                 </if>
-                <copy todir="${bin.dir}/lib">
-                    <fileset dir="dist/lib">
-                        <!--exclude name="**/jams-*.jar"/-->
-                    </fileset>
-                </copy>
+                <if>
+                    <equals arg1="${application.title}" arg2="jams-starter"/>
+                    <then>
+                        <!--echo>not copying anything</echo-->
+                    </then>
+                    <else>
+                        <copy todir="${bin.dir}/lib">
+                            <fileset dir="dist/lib">
+                                <!--exclude name="**/jams-*.jar"/-->
+                            </fileset>
+                        </copy>                      
+                    </else>
+                </if>
             </else>
         </if>
     </target>
-    
+
     <target name="-post-clean">
         <delete>
             <fileset dir="${bin.dir}" includes="**/${application.title}*"/>
