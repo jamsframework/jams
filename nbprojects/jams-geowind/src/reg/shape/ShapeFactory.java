@@ -7,7 +7,9 @@ package reg.shape;
 import gw.ui.util.ProxyTableModel;
 import java.io.File;
 import java.io.Serializable;
+import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import org.geotools.data.DataStoreFactorySpi;
@@ -23,6 +25,8 @@ import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -159,5 +163,17 @@ public class ShapeFactory {
             transaction.close();
         }
         return;
+    }
+
+    public static Vector<String> getAttributeNames(URI shapeUri) throws Exception {
+        Vector<String> names = new Vector<String>();
+        ShapefileDataStore shapefile = new ShapefileDataStore(shapeUri.toURL());
+
+        SimpleFeatureType featureType = shapefile.getSchema();
+        List<AttributeDescriptor> attributeDescriptors = featureType.getAttributeDescriptors();
+        for (AttributeDescriptor ad : attributeDescriptors) {
+            names.add(ad.getLocalName());
+        }
+        return names;
     }
 }
