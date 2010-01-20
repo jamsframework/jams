@@ -31,8 +31,11 @@ import jams.tools.XMLIO;
 import jams.gui.JAMSLauncher;
 import jams.io.ParameterProcessor;
 import jams.io.XMLProcessor;
+import jams.runtime.JAMSRuntime;
+import jams.runtime.StandardRuntime;
 import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.JAMSWorkspace;
+import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.ShapeFileDataStore;
 import reg.JAMSExplorer;
 import java.io.FileNotFoundException;
@@ -48,9 +51,11 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -87,31 +92,19 @@ import reg.wizard.tlug.panels.StationParamsPanel;
 public class ExplorerFrame extends JFrame {
 
     private static final int INOUT_PANE_WIDTH = 250, INOUT_PANE_HEIGHT = 450;
-
     private static final int DIVIDER_WIDTH = 6;
-
     private JFileChooser jfc = GUIHelper.getJFileChooser();
-
     private WorkerDlg openWSDlg;
-
     private Action openWSAction, openSTPAction, exitAction, editWSAction,
             sensitivityAnalysisAction, launchModelAction, editPrefsAction,
             reloadWSAction, launchWizardAction;
-
     private JLabel statusLabel;
-
     private JSplitPane mainSplitPane;
-
     private JTabbedPane tPane;
-
     private JAMSExplorer explorer;
-
     private PropertyDlg propertyDlg;
-
     private WorkspaceDlg wsDlg;
-
     private Document modelDoc = null;
-
     private MCAT5Toolbar mcat5ToolBar = null;
 
     public ExplorerFrame(JAMSExplorer explorer) {
@@ -172,9 +165,10 @@ public class ExplorerFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                launchWizard();
-                launchModel();
-                update();
+                if (launchWizard()) {
+                    runModel();
+                    update();
+                }
             }
         };
 
@@ -435,7 +429,7 @@ public class ExplorerFrame extends JFrame {
             } else {
                 launchModelAction.setEnabled(false);
             }
-        System.out.println("explorerFrame-> getTreePanel().update");
+            System.out.println("explorerFrame-> getTreePanel().update");
             explorer.getDisplayManager().getTreePanel().update();
             mainSplitPane.setDividerLocation(INOUT_PANE_WIDTH);
         }
@@ -447,8 +441,16 @@ public class ExplorerFrame extends JFrame {
         launcher.setVisible(true);
     }
 
-    private void launchWizard() {
+    private void runModel() {
+        JAMSRuntime runtime = new StandardRuntime();
+        runtime.loadModel(modelDoc, explorer.getProperties());
+        runtime.runModel();
 
+    }
+
+    private boolean launchWizard() {
+
+        boolean result = false;
         JAMSWorkspace ws = explorer.getWorkspace();
 
         Wizard explorerWizard = new ExplorerWizard().createWizard();
@@ -461,11 +463,27 @@ public class ExplorerFrame extends JFrame {
             initialData.put(BaseDataPanel.KEY_SHAPE_FILENAME, shapeFileName);
         }
 
+        // get input datastores
+        Vector<String> dsNames = new Vector<String>();
+        Vector<String> dsDispNames = new Vector<String>();
+        List<String> dsIds = ws.getSortedInputDataStoreIDs();
+        for (String dsId : dsIds) {
+            InputDataStore dataStore = ws.getInputDataStore(dsId);
+            String simpleClassName = dataStore.getClass().getSimpleName();
+            if (simpleClassName.equalsIgnoreCase(InputDataStore.TYPE_J2KTSDATASTORE)) {
+                dsNames.add(dsId);
+                dsDispNames.add(dataStore.getDisplayName());
+            }
+        }
+        initialData.put(BaseDataPanel.KEY_REGDATA_KEYS, dsNames);
+        initialData.put(BaseDataPanel.KEY_REGDATA_DISPS, dsDispNames);
+
         try {
 
             Map wizardSettings = (Map) WizardDisplayer.showWizard(explorerWizard,
                     new Rectangle(20, 20, 850, 530), null, initialData);
             if (wizardSettings != null) {
+                result = true;
 
                 Set keys = wizardSettings.keySet();
                 System.out.println("settings coming from wizard:");
@@ -479,9 +497,7 @@ public class ExplorerFrame extends JFrame {
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_STATION)) {
                     String computation = (String) wizardSettings.get(StationParamsPanel.KEY_COMPUTATION);
                     // look into directory &computation and get model + output files
-                    String sourceDir = workSpaceDir
-                            + File.separator + "variants"
-                            + File.separator + computation;
+                    String sourceDir = workSpaceDir + File.separator + "variants" + File.separator + computation;
                     System.out.println("sourceDir: " + sourceDir);
 
                     // copy model file
@@ -499,9 +515,7 @@ public class ExplorerFrame extends JFrame {
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_SPATIAL)) {
 
 
-                    String sourceDir = workSpaceDir
-                            + File.separator + "variants"
-                            + File.separator + "regionalizer";
+                    String sourceDir = workSpaceDir + File.separator + "variants" + File.separator + "regionalizer";
                     System.out.println("sourceDir: " + sourceDir);
 
                     // copy model file
@@ -544,8 +558,10 @@ public class ExplorerFrame extends JFrame {
             } // wizard settings
 
         } catch (Exception ex) {
+            result = false;
             explorer.getRuntime().handle(ex);
         }
+        return result;
     }
 
     private void setWorkSpace2Model() {
@@ -558,7 +574,6 @@ public class ExplorerFrame extends JFrame {
 
         }
     }
-
 
     private void createListener() {
         this.addWindowListener(new WindowListener() {
