@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -78,6 +79,13 @@ public class J2KTSDataStore extends TSDataStore {
             timeFormat = timeFormatElement.getAttribute("value");
         } else {
             timeFormat = JAMSCalendar.DATE_TIME_FORMAT;
+        }
+
+        Node displaynameNode = doc.getDocumentElement().getElementsByTagName("displayname").item(0);
+        if (displaynameNode != null) {
+            this.displayName = displaynameNode.getTextContent();
+        } else {
+            this.displayName = id;
         }
 
         // set sourceFile to the default

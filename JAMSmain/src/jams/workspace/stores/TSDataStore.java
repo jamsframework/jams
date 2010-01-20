@@ -38,7 +38,6 @@ import jams.workspace.datatypes.StringValue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Set;

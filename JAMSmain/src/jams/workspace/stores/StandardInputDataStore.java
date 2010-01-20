@@ -48,7 +48,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
 
     protected int bufferSize = 0;
 
-    protected String id, description = "", missingDataValue = "";
+    protected String id, description = "", missingDataValue = "", displayName="";
 
     protected int accessMode = InputDataStore.LIVE_MODE;
 
@@ -63,6 +63,12 @@ public abstract class StandardInputDataStore implements InputDataStore {
         Node descriptionNode = doc.getDocumentElement().getElementsByTagName("description").item(0);
         if (descriptionNode != null) {
             this.description = descriptionNode.getTextContent();
+        }
+        Node displaynameNode = doc.getDocumentElement().getElementsByTagName("displayname").item(0);
+        if (displaynameNode != null) {
+            this.displayName = displaynameNode.getTextContent();
+        } else {
+            this.displayName = id;
         }
 
         Element parameterElement = (Element) doc.getDocumentElement().getElementsByTagName("parameter").item(0);
@@ -252,6 +258,10 @@ public abstract class StandardInputDataStore implements InputDataStore {
 
     public String getID() {
         return id;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getDescription() {
