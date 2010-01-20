@@ -133,7 +133,7 @@ public class ProxyTableModel extends AbstractTableModel implements TableModelLis
     public ColorPair getColorsForColumn(int col) {
         //int modelIndex = getModelIndexForTableColumn(col);
         //int colorIndex = modelIndex % tableColors.length;
-        int colorIndex = 0; // fake, because here is some inconsistency between models, columns and colours
+        int colorIndex = 0; // hb: fake, because here is some inconsistency between models, columns and colours
         return tableColors[colorIndex];
     }
 
