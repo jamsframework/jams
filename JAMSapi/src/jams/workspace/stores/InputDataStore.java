@@ -43,6 +43,8 @@ public interface InputDataStore extends DataStore {
 
     public String getDescription();
 
+    public String getDisplayName();
+
     public boolean hasNext();
 
     public DataSet getNext();
