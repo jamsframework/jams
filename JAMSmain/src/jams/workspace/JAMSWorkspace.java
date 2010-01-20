@@ -51,6 +51,8 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -251,6 +253,11 @@ public class JAMSWorkspace implements Workspace {
         return this.inputDataStores.keySet();
     }
 
+    public List<String> getSortedInputDataStoreIDs() {
+        List<String> inIDList = new ArrayList<String>(this.inputDataStores.keySet());
+        Collections.sort(inIDList);
+        return inIDList;
+    }
     /**
      *
      * @return A set of the names of all output datastores
