@@ -385,10 +385,14 @@ public class BufferedFileReader extends Reader {
 
     public long getPosition() {   
         try{
-            if (skipLF)
-                return (this.inChannel.position() - nChars + nextChar) +1; 
-            else
-                return (this.inChannel.position() - nChars + nextChar); 
+            if (skipLF){
+                if (nextChar >= nChars)
+                    fill();                    
+                    
+                if (nextChar < nChars && cb[nextChar] == '\n')
+                    return (this.inChannel.position() - nChars + nextChar) +1; 
+            }
+            return (this.inChannel.position() - nChars + nextChar); 
         }catch(IOException e){
             return 0;
         }
