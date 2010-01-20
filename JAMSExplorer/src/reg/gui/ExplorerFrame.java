@@ -22,6 +22,7 @@
  */
 package reg.gui;
 
+import gw.ui.util.Tools;
 import jams.tools.JAMSTools;
 import jams.gui.tools.GUIHelper;
 import jams.gui.PropertyDlg;
@@ -76,6 +77,7 @@ import javax.swing.WindowConstants;
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.Wizard;
 import org.w3c.dom.Document;
+import reg.shape.ShapeFactory;
 import reg.spreadsheet.JAMSSpreadSheet;
 import reg.spreadsheet.STPConfigurator;
 import reg.viewer.Viewer;
@@ -444,6 +446,7 @@ public class ExplorerFrame extends JFrame {
     private void runModel() {
         JAMSRuntime runtime = new StandardRuntime();
         runtime.loadModel(modelDoc, explorer.getProperties());
+        runtime.setDebugLevel(3);
         runtime.runModel();
 
     }
@@ -535,13 +538,20 @@ public class ExplorerFrame extends JFrame {
                             File theShapeFile = new File(shapeFileName);
 
                             String fileName = theShapeFile.getName();
-                            String id = JAMSTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
-                            ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, id, theShapeFile.toURI().toString(), fileName, null);
+                            String storeId = JAMSTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
+
+                            // try to get id
+                            Vector<String> attributeNames = ShapeFactory.getAttributeNames(theShapeFile.toURI());
+                            String[] aNames = new String[attributeNames.size()];
+                            attributeNames.toArray(aNames);
+                            String idColumn = Tools.geFittingIdName(aNames);
+                            System.out.println("idColumn found:" + idColumn);
+                            ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, storeId, theShapeFile.toURI().toString(), fileName, idColumn);
                             ws.addDataStore(addShapeStore);
 
                             // put shape to model
                             properties.put("EntityReader.shapeFileName", shapeFileName);
-                            properties.put("EntityReader.idName", id);
+                            properties.put("EntityReader.idName", idColumn);
                         }
 
 
