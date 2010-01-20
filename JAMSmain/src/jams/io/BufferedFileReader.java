@@ -378,23 +378,28 @@ public class BufferedFileReader extends Reader {
         String s = readLine(false);
         if (s == null) {
             return null;
-        }
-        position += s.length() + newLineCharsNumber;
+        }        
+        position += s.length() + newLineCharsNumber;        
         return s;
     }
 
     public long getPosition() {   
         try{
-            return this.inChannel.position();
+            if (skipLF)
+                return (this.inChannel.position() - nChars + nextChar) +1; 
+            else
+                return (this.inChannel.position() - nChars + nextChar); 
         }catch(IOException e){
             return 0;
         }
+        
     }
 
     public void setPosition(long position) throws IOException {
+        skipLF = false;
         this.position = position;
-        inChannel.position(position);
-        fill();
+        inChannel.position(position);        
+        fill();        
     }
 
     public void setNewLineCharsNumber(int newLineCharsNumber) {
