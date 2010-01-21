@@ -32,6 +32,7 @@ import jams.data.JAMSString;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +83,15 @@ public class ShapeEntityReader extends JAMSComponent {
     @Override
     public void init() throws Exception {
 
-        URL shapeUrl = (new java.io.File(getModel().getWorkspaceDirectory().getPath() + "/" + shapeFileName.getValue()).toURI().toURL());
+        System.out.println("shape-file name " + shapeFileName);
+        System.out.println("shape-file id " + idName);
+        String workSpaceDirectory = getModel().getWorkspaceDirectory().getPath();
+        String fileName = shapeFileName.getValue();
+        if (!fileName.startsWith(workSpaceDirectory)) {
+            fileName = workSpaceDirectory + File.separator + fileName;
+        }
+        URL shapeUrl = (new java.io.File(fileName).toURI().toURL());
+        System.out.println("try to get shape-file from " + shapeUrl.toString());
         ShapefileDataStore store = new ShapefileDataStore(shapeUrl);
 
         FeatureIterator<SimpleFeature> featureIterator = store.getFeatureSource().getFeatures().features();
