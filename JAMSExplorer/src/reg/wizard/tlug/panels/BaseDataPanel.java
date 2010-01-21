@@ -240,7 +240,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
     private void jRegComboFocusLost(java.awt.event.FocusEvent evt) {
         int selIndex = jRegCombo.getSelectedIndex();
-        System.out.println("jRegCombo. " + jRegCombo.getSelectedItem() + ", selIndex=" + selIndex + ", -> " + regData_Key.elementAt(selIndex));
+        //System.out.println("jRegCombo. " + jRegCombo.getSelectedItem() + ", selIndex=" + selIndex + ", -> " + regData_Key.elementAt(selIndex));
         r_region = regData_Key.elementAt(selIndex);
         checkProblems();
 
@@ -351,7 +351,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
                 } else {
                     r_interval = jIntervall.getValue();
-                    System.out.println("r_interval:" + r_interval);
+                    //System.out.println("r_interval:" + r_interval);
                     wizardData.put(KEY_INTERVAL, r_interval);
                     if (StringUtils.isNullOrEmpty(r_aggreg)) {
                         controller.setProblem("Bitte Aggregation bestimmen.");
