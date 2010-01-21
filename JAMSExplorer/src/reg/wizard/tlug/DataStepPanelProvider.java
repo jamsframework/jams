@@ -33,8 +33,13 @@ public abstract class DataStepPanelProvider  extends WizardPanelProvider {
             Properties properties = new Properties();
 
             Set keys = settings.keySet();
+            Object value;
+            String theType;
             for (Object key : keys) {
-                properties.put(key, settings.get(key));
+                value = settings.get(key);
+                theType = value.getClass().getSimpleName();
+                if (theType.equals("String"))
+                    properties.put(key, settings.get(key));
             }
             //properties.putAll(settings); // does not work for float !!??
 
