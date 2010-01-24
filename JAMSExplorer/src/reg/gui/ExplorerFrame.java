@@ -408,7 +408,6 @@ public class ExplorerFrame extends JFrame {
     }
 
     public void update() {
-        System.out.println("explorerFrame-> update");
         JAMSWorkspace workspace = explorer.getWorkspace();
 
         if (workspace == null) {
@@ -431,7 +430,6 @@ public class ExplorerFrame extends JFrame {
             } else {
                 launchModelAction.setEnabled(false);
             }
-            System.out.println("explorerFrame-> getTreePanel().update");
             explorer.getDisplayManager().getTreePanel().update();
             mainSplitPane.setDividerLocation(INOUT_PANE_WIDTH);
         }

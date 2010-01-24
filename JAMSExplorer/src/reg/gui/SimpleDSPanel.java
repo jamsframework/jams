@@ -324,7 +324,6 @@ public class SimpleDSPanel extends DSPanel {
 
             if (!dsdb.existsH2DB()) {
                 clearPanel();
-                System.out.println("Creation canceled");
             }
 
             this.setProc(new SimpleSerieProcessor(dsdb));
@@ -605,10 +604,8 @@ public class SimpleDSPanel extends DSPanel {
                     m = getProc().getMonthlyMean(month);
 
                 } catch (SQLException ex) {
-                    System.out.println(ex);
                     ex.printStackTrace();
                 } catch (IOException ex) {
-                    System.out.println(ex);
                     ex.printStackTrace();
                 }
                 return null;

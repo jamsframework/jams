@@ -522,8 +522,6 @@ public class JAMSFrame extends JAMSLauncher {
             return true;
         }
 
-        System.out.println(modelFilename);
-
         // check for invalid parameter values
         if (!verifyInputs(false)) {
             int result = GUIHelper.showYesNoDlg(this, JAMS.resources.getString("Found_invalid_parameter_values_which_won't_be_saved._Proceed_anyway?"), JAMS.resources.getString("Invalid_parameter_values"));

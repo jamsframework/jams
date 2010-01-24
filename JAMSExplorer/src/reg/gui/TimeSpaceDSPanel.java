@@ -438,7 +438,6 @@ public class TimeSpaceDSPanel extends DSPanel {
 
             if (!dsdb.existsH2DB()) {
                 clearPanel();
-                System.out.println("Creation canceled");
             }
 
             this.setTsProc(new TimeSpaceProcessor(dsdb));
@@ -723,10 +722,8 @@ public class TimeSpaceDSPanel extends DSPanel {
                     m = getProc().getMonthlyMean(month);
 
                 } catch (SQLException ex) {
-                    System.out.println(ex);
                     ex.printStackTrace();
                 } catch (IOException ex) {
-                    System.out.println(ex);
                     ex.printStackTrace();
                 }
                 return null;
@@ -835,10 +832,8 @@ public class TimeSpaceDSPanel extends DSPanel {
                         m = tsproc.getTemporalMean(dates);
                     }
                 } catch (SQLException ex) {
-                    System.out.println(ex);
                     ex.printStackTrace();
                 } catch (IOException ex) {
-                    System.out.println(ex);
                     ex.printStackTrace();
                 }
                 return null;
@@ -885,7 +880,6 @@ public class TimeSpaceDSPanel extends DSPanel {
                                 break;
                             }
                             if (attrib.isSelected()) {
-                                System.out.println(attrib.getName());
                                 weightAttribIndex++;
                             }
                         }
