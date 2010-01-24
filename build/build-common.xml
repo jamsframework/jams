@@ -13,18 +13,15 @@
 
     <target name="-post-jar">
         <!--copy file="${dist.jar}" tofile="${bin.dir}/${application.title}-${main.majorversion}.${main.minorversion}.jar"/-->
+        <!--echo>=======>${application.title}</echo-->
         <if>
             <or>
-                <equals arg1="${application.title}" arg2="jams-common"/>
-                <equals arg1="${application.title}" arg2="jams-explorer"/>
-                <equals arg1="${application.title}" arg2="jams-geowind"/>
-                <equals arg1="${application.title}" arg2="jams-remote"/>
-                <equals arg1="${application.title}" arg2="jams-ui"/>
+                <!--equals arg1="${application.title}" arg2="jams-api"/-->
+                <equals arg1="${application.title}" arg2="jams-components"/>
+                <equals arg1="${application.title}" arg2="jams-main"/>
+                <equals arg1="${application.title}" arg2="jams-starter"/>
             </or>
             <then>
-                <!--echo>not copying anything</echo-->
-            </then>
-            <else>
                 <!--echo>copying jar and libs to ${bin.dir}/lib</echo-->
                 <if>
                     <equals arg1="${application.title}" arg2="jams-api"/>
@@ -35,21 +32,24 @@
                         <copy file="${dist.jar}" tofile="${bin.dir}/${application.title}${main.postfix}.jar"/>
                     </else>
                 </if>
-                <if>
-                    <equals arg1="${application.title}" arg2="jams-starter"/>
-                    <then>
-                        <!--echo>not copying anything</echo-->
-                    </then>
-                    <else>
-                        <copy todir="${bin.dir}/lib">
-                            <fileset dir="dist/lib">
-                                <!--exclude name="**/jams-*.jar"/-->
-                            </fileset>
-                        </copy>                      
-                    </else>
-                </if>
+            </then>
+        </if>
+        <if>
+            <or>
+                <equals arg1="${application.title}" arg2="jams-starter"/>
+            </or>
+            <then>
+                <copy file="dist/lib/jams-remote.jar" tofile="${bin.dir}/lib/jams-remote.jar"/>
+            </then>
+            <else>
+                <copy todir="${bin.dir}/lib">
+                    <fileset dir="dist/lib">
+                        <!--exclude name="**/*jams-components.jar"/-->
+                    </fileset>
+                </copy>
             </else>
         </if>
+
     </target>
 
     <target name="-post-clean">

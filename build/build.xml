@@ -6,12 +6,39 @@
             <pathelement location="./antlib/ant-contrib-1.0b3.jar"/>
         </classpath>
     </taskdef>
-    
+
     <target name="doall" depends="buildproj, dostarters, doJ2K, doThornthwaite"/>
 
+    <target name="clean" depends="cleanproj, cleanlib" />
+
     <target name="doallwithclean" depends="clean, doall"/>
-    
-    <target name="buildproj" description="Build all top level JAMS projects">
+
+    <target name="buildproj">
+        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="jar">
+            <property name="no.dependencies" value="false"/>
+        </ant>
+    </target>
+
+    <target name="run">
+        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="run">
+            <property name="no.dependencies" value="false"/>
+        </ant>
+    </target>
+
+    <target name="cleanproj">
+        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="clean">
+            <property name="no.dependencies" value="false"/>
+        </ant>
+    </target>
+
+    <target name="cleanlib">
+        <delete>
+            <fileset dir="../lib" includes="**/*"/>
+            <fileset dir="../lib/lib" includes="**/*"/>
+        </delete>
+    </target>
+
+    <!--target name="buildproj" description="Build all top level JAMS projects">
         <foreach target="buildproject" param="buildxml">
             <path>
                 <fileset dir="../nbprojects">
@@ -28,8 +55,7 @@
             <param  name="buildxml" value="../nbprojects/jams-starter/build.xml"/>
         </antcall>
     </target>
-    
-    <target name="clean" depends="cleanproj, cleanlib" />
+
 
     <target name="cleanproj" description="Clean all NetBeans projects and delete libs in this directory">
         <foreach target="cleanproject" param="buildxml">
@@ -41,25 +67,13 @@
         </foreach>
     </target>
 
-    <target name="cleanlib">
-        <delete>
-            <fileset dir="../lib" includes="**/*"/>
-            <fileset dir="../lib/lib" includes="**/*"/>
-        </delete>
-    </target>
-
     <target name="buildproject" description="Build a single NetBeans project">
         <ant antfile="${buildxml}" inheritall="false" target="jar"/>
     </target>
 
     <target name="cleanproject" description="Build a single NetBeans project">
         <ant antfile="${buildxml}" inheritall="false" target="clean"/>
-    </target>
-
-    <target name="buildstarter" description="Build a single NetBeans project">
-        <property name="config" value="JAMS_Launcher"/>
-        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="jar"/>
-    </target>
+    </target-->
 
     <target name="doJ2K">
         <ant antfile="../../nbprojects/J2K/build.xml" inheritall="false" target="jar"/>
