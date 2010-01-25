@@ -318,7 +318,6 @@ public class JAMSContext extends JAMSComponent implements Context {
                      * value introducing a model memory :/ -- better use null instead..
                      */
                     JAMSData componentObject = null;//(JAMSData) accessSpec.component.getImplementingClass().getDeclaredField(accessSpec.varName).get(accessSpec.component);
-                    //JAMSData componentObject = (JAMSData) accessSpec.component.getImplementingClass().getDeclaredField(accessSpec.varName).get(accessSpec.component);
 
                     //get the data object belonging to the attribute
                     dataObject = getDataObject(entityArray, clazz, accessSpec.getAttributeName(), accessSpec.getAccessType(), componentObject);
