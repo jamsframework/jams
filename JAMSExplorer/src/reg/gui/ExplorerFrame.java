@@ -38,6 +38,7 @@ import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.ShapeFileDataStore;
+import java.net.URISyntaxException;
 import reg.JAMSExplorer;
 import java.io.FileNotFoundException;
 import java.awt.BorderLayout;
@@ -492,77 +493,48 @@ public class ExplorerFrame extends JFrame {
                     System.out.println(key + "=" + wizardSettings.get(key));
                 }
                 String workSpaceDir = ws.getDirectory().getCanonicalPath();
+                String modelFileName = null;
 
-                // station data -> copy the wished files
                 String dataDecision = (String) wizardSettings.get(DataDecisionPanel.KEY_DATA);
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_STATION)) {
                     String computation = (String) wizardSettings.get(StationParamsPanel.KEY_COMPUTATION);
                     // look into directory &computation and get model + output files
                     String sourceDir = workSpaceDir + File.separator + "variants" + File.separator + computation;
-                    System.out.println("sourceDir: " + sourceDir);
-
-                    // copy model file
-                    String modelFileName = WizardFactory.copyModelFiles(sourceDir, workSpaceDir);
-                    if (!JAMSTools.isEmptyString(modelFileName)) {
-                        // activate the new model
-                        ws.setModelFile(modelFileName);
-                        this.initModelDoc();
-                        this.update();
-                        setWorkSpace2Model();
-                    }
-
+                    modelFileName = WizardFactory.copyModelFiles(sourceDir, workSpaceDir);
                 } // dataDecision = station
 
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_SPATIAL)) {
 
-
                     String sourceDir = workSpaceDir + File.separator + "variants" + File.separator + "regionalizer";
-                    System.out.println("sourceDir: " + sourceDir);
-
-                    // copy model file
-                    String modelFileName = WizardFactory.copyModelFiles(sourceDir, workSpaceDir);
-                    if (!JAMSTools.isEmptyString(modelFileName)) {
-
-                        // activate the new model
-                        ws.setModelFile(modelFileName);
-                        this.initModelDoc();
-                        this.update();
-
-                        Properties properties = WizardFactory.getModelPropertiesFromWizardResult(wizardSettings);
-
-                        //additional shape file?
-                        String shapeFileName = (String) wizardSettings.get(BaseDataPanel.KEY_SHAPE_FILENAME);
-                        if (!JAMSTools.isEmptyString(shapeFileName)) {
-                            File theShapeFile = new File(shapeFileName);
-
-                            String fileName = theShapeFile.getName();
-                            String storeId = JAMSTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
-
-                            // try to get id
-                            Vector<String> attributeNames = ShapeFactory.getAttributeNames(theShapeFile.toURI());
-                            String[] aNames = new String[attributeNames.size()];
-                            attributeNames.toArray(aNames);
-                            String idColumn = Tools.geFittingIdName(aNames);
-                            System.out.println("idColumn found:" + idColumn);
-                            ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, storeId, theShapeFile.toURI().toString(), fileName, idColumn);
-                            ws.addDataStore(addShapeStore);
-
-                            // put shape to model
-                            properties.put("EntityReader.shapeFileName", shapeFileName);
-                            properties.put("EntityReader.idName", idColumn);
-                        }
-
-
-                        ParameterProcessor.loadParams(modelDoc, properties);
-                        setWorkSpace2Model();
-
-                        update();
-                        JAMSSpreadSheet spreadSheet = explorer.getDisplayManager().getSpreadSheet();
-                        if (spreadSheet != null) {
-                            spreadSheet.updateGUI();
-                        }
-                    }
+                    modelFileName = WizardFactory.copyModelFiles(sourceDir, workSpaceDir);
                 } // dataDecision = spatial
+
+
+                // new model -> update workspace with it
+                if (!JAMSTools.isEmptyString(modelFileName)) {
+
+                    // activate the new model
+                    ws.setModelFile(modelFileName);
+                    this.initModelDoc();
+                    setWorkSpace2Model();
+
+                }
+                Properties properties = WizardFactory.getModelPropertiesFromWizardResult(wizardSettings);
+                if (properties != null && properties.size() > 0) {
+                    ParameterProcessor.loadParams(modelDoc, properties);
+                }
+                //additional shape file?
+                String shapeFileName = (String) wizardSettings.get(BaseDataPanel.KEY_SHAPE_FILENAME);
+                if (!JAMSTools.isEmptyString(shapeFileName)) {
+                    updateWithShapeFile(shapeFileName, ws);
+                }
+                update();
+                JAMSSpreadSheet spreadSheet = explorer.getDisplayManager().getSpreadSheet();
+                if (spreadSheet != null) {
+                    spreadSheet.updateGUI();
+                }
+
+
             } // wizard settings
 
         } catch (Exception ex) {
@@ -636,5 +608,30 @@ public class ExplorerFrame extends JFrame {
         this.dispose();
 
         explorer.exit();
+    }
+
+    private void updateWithShapeFile(String shapeFileName, JAMSWorkspace ws) throws Exception, URISyntaxException {
+        Properties properties = new Properties();
+        File theShapeFile = new File(shapeFileName);
+        String fileName = theShapeFile.getName();
+        String storeId = JAMSTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
+        // try to get id
+        String idColumn = ParameterProcessor.getAttributeValue(modelDoc, "EntityReader.idName");
+        if (!JAMSTools.isEmptyString(idColumn)) {
+            System.out.println("EntityReader.idName in model: " + idColumn);
+        } else {
+            // get fitting id-column from attributes of shape
+            Vector<String> attributeNames = ShapeFactory.getAttributeNames(theShapeFile.toURI());
+            String[] aNames = new String[attributeNames.size()];
+            attributeNames.toArray(aNames);
+            idColumn = Tools.geFittingIdName(aNames);
+            System.out.println("idColumn from shape:" + idColumn);
+            properties.put("EntityReader.idName", idColumn);
+        }
+        // put shape to model
+        ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, storeId, theShapeFile.toURI().toString(), fileName, idColumn);
+        ws.addDataStore(addShapeStore);
+        properties.put("EntityReader.shapeFileName", shapeFileName);
+        ParameterProcessor.loadParams(modelDoc, properties);
     }
 }
