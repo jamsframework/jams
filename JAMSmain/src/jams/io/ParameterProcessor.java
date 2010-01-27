@@ -79,16 +79,42 @@ public class ParameterProcessor {
             for (String attributeName : attributeHash.keySet()) {
                 attribute = attributeHash.get(attributeName);
                 key = componentName + "." + attribute.getAttribute("name");
-                //System.out.println("attKey:" + key);
+                //System.out.println("loadParams. attKey:" + key);
                 value = params.getProperty(key);
 
                 if (value != null) {
                     attribute.setAttribute("value", value);
-                    //System.out.println("    -> new value:" + value);
+                     //System.out.println("loadParams. attKey:" + key + " -> new value:" + value);
                 }
             }
         }
         return model;
+    }
+
+    /**
+     * get value of certain attribute
+     * @param model
+     * @param theAttributeName (<context>.<attribute>)
+     * @return attribute "value" or null
+     */
+    public static String getAttributeValue(Document model, String theAttributeName) {
+
+        Element attribute;
+        String key;
+        HashMap<String, Element> attributeHash;
+
+        HashMap<String, HashMap<String, Element>> componentHash = getAttributeHash(model);
+        for (String componentName : componentHash.keySet()) {
+            attributeHash = componentHash.get(componentName);
+            for (String attributeName : attributeHash.keySet()) {
+                attribute = attributeHash.get(attributeName);
+                key = componentName + "." + attribute.getAttribute("name");
+                if (key.equals(theAttributeName)) {
+                    return attribute.getAttribute("value");
+                }
+            }
+        }
+        return null;
     }
 
     /**
