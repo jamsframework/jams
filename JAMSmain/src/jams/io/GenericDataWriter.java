@@ -25,7 +25,6 @@ package jams.io;
 
 import java.io.*;
 import java.util.*;
-import jams.data.*;
 import jams.runtime.RuntimeException;
 import jams.JAMS;
 import jams.tools.JAMSTools;
