@@ -36,4 +36,5 @@ public @interface JAMSComponentDescription {
     String author();
     String date() default "";
     String description();
+    String version() default "";
 }

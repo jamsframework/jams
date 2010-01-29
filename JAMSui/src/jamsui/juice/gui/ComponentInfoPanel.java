@@ -135,12 +135,14 @@ public class ComponentInfoPanel extends JPanel {
                 //GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Update:"), 0, 2, 1, 1, 0, 0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Description:")), 0, 3, 1, 1, 0, 0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Unit:")), 0, 4, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Default:")), 0, 5, 1, 1, 0, 0);
                 
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", field.getType().getName()), 1, 0, 1, 1, 1.0, 1.0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.access().toString()), 1, 1, 1, 1, 1.0, 1.0);
                 //GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.update().toString()), 1, 2, 1, 1, 1.0, 1.0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextPane("", jvd.description(), 70), 1, 3, 1, 1, 1.0, 1.0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.unit()), 1, 4, 1, 1, 1.0, 1.0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.defaultValue().equals(JAMSVarDescription.NULL_VALUE)? "" : jvd.defaultValue()), 1, 5, 1, 1, 1.0, 1.0);
                 
 //                this.getParent().validate();
             }
