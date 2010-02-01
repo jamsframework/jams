@@ -51,23 +51,14 @@ import javax.swing.WindowConstants;
 public class CalendarInput extends JPanel implements InputComponent {
 
     private JTextField dateText, timeText;
-
     private JPanel datePanel, timePanel;
-
     private ValueChangeListener l;
-
     private JCalendarButton dateButton;
-
     private JTimeButton timeButton;
-
     private String oldDateString;
-
     private static DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
-
     private static DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
-
     private static DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
-
     private Color oldColor;
 
     public CalendarInput() {
@@ -254,7 +245,6 @@ public class CalendarInput extends JPanel implements InputComponent {
         Date d = calendar.getTime();
 
         TimeZone oldZone = timeFormat.getTimeZone();
-
         timeFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
 
         String dateString = dateFormat.format(d);
@@ -401,5 +391,4 @@ public class CalendarInput extends JPanel implements InputComponent {
         text = "<html>" + text + "</html>";
         getComponent().setToolTipText(text);
     }
-
 }
