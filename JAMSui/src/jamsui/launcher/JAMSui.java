@@ -43,11 +43,8 @@ import org.xml.sax.SAXException;
 public class JAMSui {
 
     private static File baseDir = new File(System.getProperty("user.dir"));
-
     public static final String APP_TITLE = "JAMS";
-
     protected int splashTimeout;
-
     protected SystemProperties properties;
 
     /**
@@ -126,7 +123,7 @@ public class JAMSui {
 
             } else {
 
-                // if no GUI is disabled and a model file provided, then run
+                // if GUI is disabled and a model file provided, then run
                 // the model directly
 
                 String info = "";
@@ -158,6 +155,15 @@ public class JAMSui {
                     Document modelDoc = XMLIO.getDocumentFromString(xmlString);
                     runtime = new StandardRuntime();
                     runtime.loadModel(modelDoc, properties);
+
+                    // if workspace has not been provided, check if the document has been
+                    // read from file and try to use parent directory instead
+                    if (JAMSTools.isEmptyString(runtime.getModel().getWorkspacePath())
+                            && !JAMSTools.isEmptyString(modelFileName)) {
+                        String dir = new File(modelFileName).getParent();
+                        runtime.getModel().setWorkspaceDirectory(dir);
+                        runtime.sendInfoMsg(JAMS.resources.getString("no_workspace_defined_use_loadpath") + dir);
+                    }
 
                     if (!info.equals("")) {
                         runtime.println(info);

@@ -78,13 +78,13 @@ public class ModelView {
     private JInternalFrame frame;
     private File savePath;
     private Document initialDoc;
-    private JButton modelRunButton,  modelGUIRunButton;
+    private JButton modelRunButton, modelGUIRunButton;
     private ModelTree tree;
     private ComponentPanel compEditPanel;
     //private HashMap<ComponentDescriptor, DataRepository> dataRepositories = new HashMap<ComponentDescriptor, DataRepository>();
     private ModelGUIPanel launcherPanel;
     private ModelEditPanel modelEditPanel;
-    private String author = "",  date = "",  description = "",  helpBaseUrl = "",  workspace = "";
+    private String author = "", date = "", description = "", helpBaseUrl = "", workspace = "";
     private HashMap<String, ComponentDescriptor> componentDescriptors = new HashMap<String, ComponentDescriptor>();
     private TreePanel modelTreePanel;
     private JDesktopPane parentPanel;
@@ -137,6 +137,16 @@ public class ModelView {
                     Document modelDoc = getModelDoc();
                     if (modelDoc != null) {
                         runtime.loadModel(modelDoc, JUICE.getJamsProperties());
+
+                        // if workspace has not been provided, check if the document has been
+                        // read from file and try to use parent directory instead
+                        if (JAMSTools.isEmptyString(runtime.getModel().getWorkspacePath())
+                                && (getSavePath() != null)) {
+                            String dir = getSavePath().getParent();
+                            runtime.getModel().setWorkspaceDirectory(dir);
+                            runtime.sendInfoMsg(JAMS.resources.getString("no_workspace_defined_use_loadpath") + dir);
+                        }
+
                     } else {
                         runtime = null;
                     }
@@ -520,9 +530,9 @@ public class ModelView {
         property.component = getComponentDescriptor(propertyElement.getAttribute("component"));
 
         if (property.component == null) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Component_") + propertyElement.getAttribute("component") +
-                    JAMS.resources.getString("_does_not_exist,_but_is_referred_in_list_of_model_parameters!") +
-                    JAMS.resources.getString("Will_be_removed_when_model_is_saved!"), JAMS.resources.getString("Model_loading_error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Component_") + propertyElement.getAttribute("component")
+                    + JAMS.resources.getString("_does_not_exist,_but_is_referred_in_list_of_model_parameters!")
+                    + JAMS.resources.getString("Will_be_removed_when_model_is_saved!"), JAMS.resources.getString("Model_loading_error"));
             return null;
         }
 
@@ -541,11 +551,11 @@ public class ModelView {
         }
          */
         //check wether the referred parameter is existing or not
-        if ((property.attribute == null) && (property.var == null) &&
-                !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Attribute_") + attributeName +
-                    JAMS.resources.getString("_does_not_exist_in_component_") + property.component.getName() +
-                    JAMS.resources.getString("._Removing_visual_editor!"), JAMS.resources.getString("Model_loading_error"));
+        if ((property.attribute == null) && (property.var == null)
+                && !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Attribute_") + attributeName
+                    + JAMS.resources.getString("_does_not_exist_in_component_") + property.component.getName()
+                    + JAMS.resources.getString("._Removing_visual_editor!"), JAMS.resources.getString("Model_loading_error"));
             return null;
         }
 
