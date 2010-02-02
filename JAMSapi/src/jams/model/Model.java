@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.model;
 
 import jams.runtime.JAMSRuntime;
@@ -56,6 +55,8 @@ public interface Model extends Context {
 
     File getWorkspaceDirectory();
 
+    String getWorkspacePath();
+
     void setAuthor(String author);
 
     void setDate(String date);
@@ -71,5 +72,4 @@ public interface Model extends Context {
     void setWorkspaceDirectory(String workspaceDirectory);
 
     void initWorkspace() throws InvalidWorkspaceException;
-
 }
