@@ -31,6 +31,7 @@ import jams.JAMS;
 import jams.tools.JAMSTools;
 import jams.data.*;
 import jams.runtime.JAMSRuntime;
+import java.io.File;
 import java.util.ArrayList;
 
 /**

@@ -38,26 +38,24 @@ import jams.workspace.stores.InputDataStore;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author S. Kralisch
  */
-@JAMSComponentDescription (title = "JAMS model",
-                           author = "Sven Kralisch",
-                           date = "26. September 2005",
-                           description = "This component represents a JAMS model which is a special type of context component")
+@JAMSComponentDescription(title = "JAMS model",
+author = "Sven Kralisch",
+date = "26. September 2005",
+description = "This component represents a JAMS model which is a special type of context component")
 public class JAMSModel extends JAMSContext implements Model {
 
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ)
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
     public JAMSDirName workspaceDirectory = new JAMSDirName();
-
     private JAMSRuntime runtime;
-
     private String name, author, date;
-
     public JAMSWorkspace workspace;
-
     transient private HashMap<Component, ArrayList<Field>> nullFields;
 
     public JAMSModel(JAMSRuntime runtime) {
@@ -140,8 +138,8 @@ public class JAMSModel extends JAMSContext implements Model {
             this.initWorkspace();
             this.workspace.checkValidity(false);
         } catch (InvalidWorkspaceException e) {
-            getRuntime().sendHalt("Error during model setup: \"" +
-                    this.workspace.getDirectory().getAbsolutePath() + "\" is not a valid datastore, because: " + e.toString());
+            getRuntime().sendHalt("Error during model setup: \""
+                    + this.workspace.getDirectory().getAbsolutePath() + "\" is not a valid datastore, because: " + e.toString());
             return false;
         }
         // reanimate data tracers
@@ -158,6 +156,7 @@ public class JAMSModel extends JAMSContext implements Model {
         String workspaceDir = workspaceDirectory.getValue();
         if (JAMSTools.isEmptyString(workspaceDir)) {
             this.workspace = null;
+            getRuntime().sendInfoMsg(JAMS.resources.getString("no_workspace_defined"));
         } else {
             this.workspace = new JAMSWorkspace(new File(workspaceDir), getRuntime());
         }
@@ -168,15 +167,15 @@ public class JAMSModel extends JAMSContext implements Model {
     }
 
     public File getWorkspaceDirectory() {
-        return workspace.getDirectory();
+        if (workspace == null) {
+            return null;
+        } else {
+            return workspace.getDirectory();
+        }
     }
 
-    private File getOutputDataDirectory() {
-        return workspace.getOutputDataDirectory();
-    }
-
-    private File getInputDirectory() {
-        return workspace.getInputDirectory();
+    public String getWorkspacePath() {
+        return workspaceDirectory.getValue();
     }
 
     public OutputDataStore[] getOutputDataStores(String contextName) {
@@ -193,59 +192,56 @@ public class JAMSModel extends JAMSContext implements Model {
     public void setNullFields(HashMap<Component, ArrayList<Field>> nullFields) {
         this.nullFields = nullFields;
     }
-        
-    
-           
+
     //serialization and deserialization of all registered input data stores
-    public void serializeInputDataStores(SnapshotData snapshot) throws IOException{
+    public void serializeInputDataStores(SnapshotData snapshot) throws IOException {
         Iterator<InputDataStore> iter = this.workspace.getRegisteredInputDataStores().iterator();
-        while(iter.hasNext()){                        
-            snapshot.addDataStoreState(iter.next());                       
+        while (iter.hasNext()) {
+            snapshot.addDataStoreState(iter.next());
         }
     }
-    
-    public void deserializeInputDataStores(SnapshotData snapshot) throws Exception, IOException, ClassNotFoundException{                                                        
-        Iterator<InputDataStore> iter = this.workspace.getRegisteredInputDataStores().iterator();        
-        while(iter.hasNext()){                        
-            snapshot.getDataStoreState(iter.next());                            
+
+    public void deserializeInputDataStores(SnapshotData snapshot) throws Exception, IOException, ClassNotFoundException {
+        Iterator<InputDataStore> iter = this.workspace.getRegisteredInputDataStores().iterator();
+        while (iter.hasNext()) {
+            snapshot.getDataStoreState(iter.next());
         }
     }
-    
+
     public Snapshot getModelState(boolean holdInMemory, String fileName) {
         /*
         1. collect all attributes of this model and save them as context state
         2. collect all states of input data stores
         3. convert collected data to JAMSSnapshot
-        */
+         */
         JAMSSnapshot snapshot = null;
-        JAMSSnapshotData snapshotData = new JAMSSnapshotData();                
-                 
-        try{           
-            snapshotData.addContextState(this.getModel());        
-            serializeInputDataStores(snapshotData);                        
-            snapshot = new JAMSSnapshot(holdInMemory, snapshotData, fileName);                        
-        }catch(Exception e){
+        JAMSSnapshotData snapshotData = new JAMSSnapshotData();
+
+        try {
+            snapshotData.addContextState(this.getModel());
+            serializeInputDataStores(snapshotData);
+            snapshot = new JAMSSnapshot(holdInMemory, snapshotData, fileName);
+        } catch (Exception e) {
             this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_save_model_state_because,") + e.toString());
             e.printStackTrace();
         }
-                                
+
         return snapshot;
     }
 
     public void setModelState(Snapshot inData) {
-        setModelState(inData,false);
+        setModelState(inData, false);
     }
 
-    
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     public void setModelState(Snapshot inData, boolean restoreIterator) {
         SnapshotData snapshotData = inData.getData();
-                                
+
         //resote input data stores
-        try{//restore all attributes            
+        try {//restore all attributes
             snapshotData.getContextState(this.getModel(), restoreIterator);
             deserializeInputDataStores(snapshotData);
-        }catch (Exception e){
+        } catch (Exception e) {
             this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_deserialize_jamsentity_collection,_because") + e.toString());
             e.printStackTrace();
         }

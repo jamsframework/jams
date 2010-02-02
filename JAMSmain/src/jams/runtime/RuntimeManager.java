@@ -38,7 +38,6 @@ import java.util.Observer;
 public class RuntimeManager extends Observable {
 
     private HashMap<JAMSRuntime, RuntimeInfo> runtimeInstances = new HashMap<JAMSRuntime, RuntimeInfo>();
-
     private static RuntimeManager instance;
 
     private RuntimeManager() {
@@ -106,9 +105,7 @@ public class RuntimeManager extends Observable {
     public class RuntimeInfo {
 
         private Calendar startTime, endTime;
-
         private JAMSRuntime runtime;
-
         private String stringRepresentation = null;
 
         public RuntimeInfo(Calendar startTime, JAMSRuntime runtime) {
@@ -124,7 +121,11 @@ public class RuntimeManager extends Observable {
                 SimpleDateFormat sdf = new SimpleDateFormat();
                 result += "start=" + sdf.format(startTime.getTime()) + ", ";
                 if (runtime != null) {
-                    result += "workspace=" + runtime.getModel().getWorkspaceDirectory().getAbsolutePath();
+                    if (runtime.getModel().getWorkspace() != null) {
+                        result += "workspace=" + runtime.getModel().getWorkspaceDirectory().getAbsolutePath();
+                    } else {
+                        result += "workspace=null";
+                    }
                 }
                 result += "]";
                 stringRepresentation = result;
