@@ -58,7 +58,9 @@ import jams.io.ParameterProcessor;
 import jams.runtime.StandardRuntime;
 import jams.runtime.JAMSRuntime;
 import jams.gui.input.InputComponentFactory;
+import jams.tools.JAMSTools;
 import java.awt.Frame;
+import java.io.File;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -91,6 +93,8 @@ public class JAMSLauncher extends JFrame {
 
     protected String initialModelDocString = "";
 
+    private File loadPath;
+
     private JAMSRuntime runtime;
 
     private Runnable modelLoading;
@@ -111,6 +115,11 @@ public class JAMSLauncher extends JFrame {
     public JAMSLauncher(Frame parent, SystemProperties properties, Document modelDocument) {
         this(parent, properties);
         loadModelDefinition(modelDocument);
+    }
+
+    public JAMSLauncher(Frame parent, SystemProperties properties, Document modelDocument, File loadPath) {
+        this(parent, properties, modelDocument);
+        this.loadPath = loadPath;
     }
 
     protected void loadModelDefinition(Document modelDocument) {
@@ -156,6 +165,15 @@ public class JAMSLauncher extends JFrame {
 
                 // load the model
                 runtime.loadModel(modelDocCopy, getProperties());
+
+                // if workspace has not been provided, check if the document has been
+                // read from file and try to use parent directory instead
+                if (JAMSTools.isEmptyString(runtime.getModel().getWorkspacePath())
+                        && (loadPath != null)) {
+                    String dir = loadPath.getParent();
+                    runtime.getModel().setWorkspaceDirectory(dir);
+                    runtime.sendInfoMsg(JAMS.resources.getString("no_workspace_defined_use_loadpath") + dir);
+                }
             }
         };
 
@@ -435,7 +453,7 @@ public class JAMSLauncher extends JFrame {
             } else {
                 prefix = "jams.data.Attribute$";
             }
-            
+
             if (!typeName.startsWith(prefix)) {
                 typeName = prefix + typeName;
             }
