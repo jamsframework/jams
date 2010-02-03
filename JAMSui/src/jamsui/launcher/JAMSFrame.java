@@ -31,7 +31,6 @@ import jams.JAMSFileFilter;
 import jams.io.ParameterProcessor;
 import jams.tools.XMLIO;
 import jams.io.XMLProcessor;
-import jamsui.juice.JUICE;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -85,6 +84,7 @@ public class JAMSFrame extends JAMSLauncher {
         //super(properties, modelFilename, cmdLineArgs);
         this(parent, properties);
         loadModelDefinition(modelFilename, JAMSTools.toArray(cmdLineArgs, ";"));
+        loadPath = new File(modelFilename);
     }
 
     protected void loadModelDefinition(String fileName, String[] args) {
@@ -206,7 +206,11 @@ public class JAMSFrame extends JAMSLauncher {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfc.setFileFilter(JAMSFileFilter.getModelFilter());
-                jfc.setSelectedFile(new File(""));
+                if (!JAMSTools.isEmptyString(modelFilename)) {
+                    jfc.setSelectedFile(new File(modelFilename));
+                } else {
+                    jfc.setSelectedFile(new File(""));
+                }
                 if (jfc.showOpenDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
 
                     loadModelDefinition(jfc.getSelectedFile().getAbsolutePath(), null);
@@ -229,7 +233,11 @@ public class JAMSFrame extends JAMSLauncher {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfc.setFileFilter(JAMSFileFilter.getModelFilter());
-                jfc.setSelectedFile(new File(""));
+                if (!JAMSTools.isEmptyString(modelFilename)) {
+                    jfc.setSelectedFile(new File(modelFilename));
+                } else {
+                    jfc.setSelectedFile(new File(""));
+                }
                 if (jfc.showSaveDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
                     modelFilename = jfc.getSelectedFile().getAbsolutePath();
                     saveModel();

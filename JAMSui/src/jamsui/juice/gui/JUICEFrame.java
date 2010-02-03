@@ -54,35 +54,20 @@ import org.w3c.dom.Node;
 public class JUICEFrame extends JFrame {
 
     private static final int TREE_PANE_WIDTH = 250, RT_MANAGER_HEIGHT = 600;
-
     private static final int DIVIDER_WIDTH = 8;
-
     private PropertyDlg propertyDlg;
-
     private JFileChooser jfc = GUIHelper.getJFileChooser();
-
     private TreePanel libTreePanel;
-
     private JDesktopPane modelPanel = new JDesktopPane();
-
     private JMenu windowMenu, modelMenu;
-
     private JMenuItem pasteModelParameterItem, copyModelParameterItem, searchModelItem, OptimizationWizardItem;
-
     private JLabel statusLabel;
-
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Info_Log"));
-
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Error_Log"));
-
     private Node modelProperties;
-
     private WorkerDlg loadModelDlg;
-
     private SearchDlg searchDlg;
-
     private String modelPath;
-
     private Action editPrefsAction, reloadLibsAction, newModelAction, loadPrefsAction, savePrefsAction, loadModelAction, saveModelAction, saveAsModelAction, exitAction, aboutAction, searchAction, copyModelGUIAction, pasteModelGUIAction, OptimizationWizardGUIAction, loadModelParamAction, saveModelParamAction, runModelAction, runModelFromLauncherAction, infoLogAction, errorLogAction, onlineAction;
 
     public JUICEFrame() {
@@ -198,13 +183,7 @@ public class JUICEFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                jfc.setFileFilter(JAMSFileFilter.getModelFilter());
-                jfc.setSelectedFile(new File(""));
-                int result = jfc.showOpenDialog(JUICEFrame.this);
-
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    JUICEFrame.this.loadModel(jfc.getSelectedFile().getAbsolutePath());
-                }
+                loadModel(getCurrentView());
             }
         };
 
@@ -699,7 +678,11 @@ public class JUICEFrame extends JFrame {
 
     private void saveModelAs(ModelView view) {
         jfc.setFileFilter(JAMSFileFilter.getModelFilter());
-        jfc.setSelectedFile(new File(""));
+        if (view.getSavePath() != null) {
+            jfc.setSelectedFile(view.getSavePath());
+        } else {
+            jfc.setSelectedFile(new File(""));
+        }
         int result = jfc.showSaveDialog(JUICEFrame.this);
 
         if (result == JFileChooser.APPROVE_OPTION) {
@@ -720,6 +703,21 @@ public class JUICEFrame extends JFrame {
             }
         } else {
             saveModelAs(view);
+        }
+    }
+
+    public void loadModel(ModelView view) {
+
+        jfc.setFileFilter(JAMSFileFilter.getModelFilter());
+        if ((view != null) && (view.getSavePath() != null)) {
+            jfc.setSelectedFile(getCurrentView().getSavePath());
+        } else {
+            jfc.setSelectedFile(new File(""));
+        }
+        int result = jfc.showOpenDialog(JUICEFrame.this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            JUICEFrame.this.loadModel(jfc.getSelectedFile().getAbsolutePath());
         }
     }
 

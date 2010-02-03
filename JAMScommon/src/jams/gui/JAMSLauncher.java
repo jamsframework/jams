@@ -93,7 +93,7 @@ public class JAMSLauncher extends JFrame {
 
     protected String initialModelDocString = "";
 
-    private File loadPath;
+    protected File loadPath;
 
     private JAMSRuntime runtime;
 
