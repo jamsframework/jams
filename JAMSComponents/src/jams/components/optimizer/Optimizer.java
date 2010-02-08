@@ -14,7 +14,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import jams.data.*;
 import jams.dataaccess.DataAccessor;
-import jams.io.DataTracer.*;
+import jams.io.datatracer.*;
 import jams.model.Component;
 import jams.model.JAMSContext;
 import jams.model.JAMSVarDescription;
