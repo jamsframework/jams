@@ -35,14 +35,16 @@ public class JAMSProperties extends Observable implements SystemProperties {
     private Properties properties = new Properties();
     private String defaultFilename = "";
     private HashMap<String, JAMSProperty> propertyMap = new HashMap<String, JAMSProperty>();
+    private static JAMSProperties theProperties;
 
     /**
      * Creates a new JAMSProperties object
      * @param properties A java.util.Properties object containing the properties
      */
     public JAMSProperties(Properties properties) {
-        if (properties != null )
+        if (properties != null) {
             this.properties = properties;
+        }
     }
 
     /**
@@ -152,26 +154,29 @@ public class JAMSProperties extends Observable implements SystemProperties {
      * @return The JAMSProperties object
      */
     public static JAMSProperties createProperties() {
-        Properties p = new Properties();
-        p.setProperty("model", "");
-        p.setProperty("libs", ".");
-        p.setProperty("debug", "1");
-        p.setProperty("verbose", "0");
-        p.setProperty("infolog", "");
-        p.setProperty("errorlog", "");
-        p.setProperty("errordlg", "1");
-        p.setProperty("windowenable", "1");
-        p.setProperty("windowwidth", "900");
-        p.setProperty("windowheight", "600");
-        p.setProperty("guiconfig", "1");
-        p.setProperty("guiconfigwidth", "600");
-        p.setProperty("guiconfigheight", "600");
-        p.setProperty("splashtimeout", "1000");
 
-        JAMSProperties jp = new JAMSProperties(p);
-        jp.setDefaultFilename(System.getProperty("user.dir") + File.separator + JAMS.DEFAULT_PARAMETER_FILENAME);
+        if (theProperties == null) {
+            Properties p = new Properties();
+            p.setProperty("model", "");
+            p.setProperty("libs", ".");
+            p.setProperty("debug", "1");
+            p.setProperty("verbose", "0");
+            p.setProperty("infolog", "");
+            p.setProperty("errorlog", "");
+            p.setProperty("errordlg", "1");
+            p.setProperty("windowenable", "1");
+            p.setProperty("windowwidth", "900");
+            p.setProperty("windowheight", "600");
+            p.setProperty("guiconfig", "1");
+            p.setProperty("guiconfigwidth", "600");
+            p.setProperty("guiconfigheight", "600");
+            p.setProperty("splashtimeout", "1000");
 
-        return jp;
+            theProperties = new JAMSProperties(p);
+            theProperties.setDefaultFilename(System.getProperty("user.dir") + File.separator + JAMS.DEFAULT_PARAMETER_FILENAME);
+        }
+
+        return theProperties;
     }
 
     /**
