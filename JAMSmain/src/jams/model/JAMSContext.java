@@ -27,7 +27,7 @@ package jams.model;
  *
  * @author S. Kralisch
  */
-import jams.io.DataTracer.DataTracer;
+import jams.io.datatracer.DataTracer;
 import jams.workspace.stores.OutputDataStore;
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -39,7 +39,7 @@ import jams.tools.JAMSTools;
 import jams.data.*;
 import jams.dataaccess.*;
 import jams.dataaccess.CalendarAccessor;
-import jams.io.DataTracer.AbstractTracer;
+import jams.io.datatracer.AbstractTracer;
 import jams.runtime.JAMSRuntime;
 import jams.workspace.stores.Filter;
 import java.io.ByteArrayInputStream;
