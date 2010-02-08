@@ -95,19 +95,31 @@ import reg.wizard.tlug.panels.StationParamsPanel;
 public class ExplorerFrame extends JFrame {
 
     private static final int INOUT_PANE_WIDTH = 250, INOUT_PANE_HEIGHT = 450;
+
     private static final int DIVIDER_WIDTH = 6;
+
     private JFileChooser jfc = GUIHelper.getJFileChooser();
+
     private WorkerDlg openWSDlg;
+
     private Action openWSAction, openSTPAction, exitAction, editWSAction,
             sensitivityAnalysisAction, launchModelAction, editPrefsAction,
             reloadWSAction, launchWizardAction;
+
     private JLabel statusLabel;
+
     private JSplitPane mainSplitPane;
+
     private JTabbedPane tPane;
+
     private JAMSExplorer explorer;
+
     private PropertyDlg propertyDlg;
+
     private WorkspaceDlg wsDlg;
+
     private Document modelDoc = null;
+
     private MCAT5Toolbar mcat5ToolBar = null;
 
     public ExplorerFrame(JAMSExplorer explorer) {
@@ -328,15 +340,14 @@ public class ExplorerFrame extends JFrame {
         JMenuItem editWSItem = new JMenuItem(editWSAction);
         prefsMenu.add(editWSItem);
 
-        JMenuItem editPrefsItem = new JMenuItem(editPrefsAction);
-        prefsMenu.add(editPrefsItem);
-
         setJMenuBar(mainMenu);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(Math.min(d.width, JAMSExplorer.SCREEN_WIDTH), Math.min(d.height, JAMSExplorer.SCREEN_HEIGHT));
 
         // init the model document
         if (explorer.isTlugized()) {
+            JMenuItem editPrefsItem = new JMenuItem(editPrefsAction);
+            prefsMenu.add(editPrefsItem);
             this.initModelDoc();
         }
     }

@@ -32,8 +32,6 @@ import jams.io.ParameterProcessor;
 import jams.tools.XMLIO;
 import jams.io.XMLProcessor;
 import jamsui.juice.JUICE;
-import jamsui.juice.gui.JUICEFrame;
-import jamsui.juice.gui.tree.LibTree;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -263,6 +261,10 @@ public class JAMSFrame extends JAMSLauncher {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (!closeModel()) {
+                    return;
+                }
+                JAMSFrame.this.dispose();
                 if (JUICE.getJuiceFrame() == null) {
                     JUICE.createJUICEFrame(0);
                 }
@@ -430,13 +432,13 @@ public class JAMSFrame extends JAMSLauncher {
         runModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         modelMenu.add(runModelItem);
 
-        JMenuItem editModelItem = new JMenuItem(editModelAction);
-        editModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
-        modelMenu.add(editModelItem);
-
         JMenuItem explorerItem = new JMenuItem(explorerAction);
-        explorerItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, ActionEvent.CTRL_MASK));
+        explorerItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
         modelMenu.add(explorerItem);
+
+        JMenuItem editModelItem = new JMenuItem(editModelAction);
+        editModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, ActionEvent.CTRL_MASK));
+        modelMenu.add(editModelItem);
 
         modelMenu.add(new JSeparator());
 

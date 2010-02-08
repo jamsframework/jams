@@ -127,7 +127,7 @@ public class WorkspaceDlg extends JDialog {
 
     public void setVisible(JAMSWorkspace ws) {
         this.ws = ws;
-        this.setTitle("Workspace properties" + " [" + ws.getDirectory().getPath() + "]");
+        this.setTitle("Workspace Properties" + " [" + ws.getDirectory().getPath() + "]");
         this.titleInput.setValue(ws.getTitle());
         this.descriptionInput.setText(ws.getDescription());
         this.persistenceInput.setValue(Boolean.toString(ws.isPersistent()));
