@@ -46,16 +46,27 @@ import javax.swing.SwingWorker;
 public class JUICE {
 
     public static final String APP_TITLE = "JUICE";
+
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
+
     public static final int SCREEN_WIDTH = 1200;
+
     public static final int SCREEN_HEIGHT = 850;
+
     private static JUICEFrame juiceFrame;
+
     private static JAMSProperties jamsProperties = JAMSProperties.createProperties();
+
     private static File baseDir = null;
+
     private static ArrayList<ModelView> modelViews = new ArrayList<ModelView>();
+
     private static ClassLoader loader;
+
     private static JAMSCmdLine cmdLine;
+
     private static LibTree libTree;
+
     private static WorkerDlg loadLibsDlg;
 
     public static void main(String args[]) {
@@ -94,25 +105,11 @@ public class JUICE {
 
             int splashTimeout = Integer.parseInt(getJamsProperties().getProperty("splashtimeout", "1000"));
 
-            juiceFrame = new JUICEFrame();
-
-            JAMSSplash splash = new JAMSSplash();
-            splash.show(juiceFrame, splashTimeout);
-
-            libTree = new LibTree();
-            JUICE.updateLibs();
-            juiceFrame.setLibTree(libTree);
+            createJUICEFrame(splashTimeout);
 
             if (cmdLine.getModelFileName() != null) {
                 juiceFrame.loadModel(cmdLine.getModelFileName());
             }
-
-            getJamsProperties().addObserver(JAMSProperties.LIBS_IDENTIFIER, new Observer() {
-
-                public void update(Observable obs, Object obj) {
-                    JUICE.updateLibs();
-                }
-            });
 
         } catch (Throwable t) {
 
@@ -125,6 +122,24 @@ public class JUICE {
             System.out.println(JAMS.resources.getString("JUICE_Error"));
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("An_error_occured_during_JUICE_execution") + t.toString() + "\n" + s, JAMS.resources.getString("JUICE_Error"));
         }
+    }
+
+    public static void createJUICEFrame(int splashTimeout) {
+        juiceFrame = new JUICEFrame();
+
+        JAMSSplash splash = new JAMSSplash();
+        splash.show(juiceFrame, splashTimeout);
+
+        libTree = new LibTree();
+        JUICE.updateLibs();
+        juiceFrame.setLibTree(libTree);
+
+        getJamsProperties().addObserver(JAMSProperties.LIBS_IDENTIFIER, new Observer() {
+
+            public void update(Observable obs, Object obj) {
+                JUICE.updateLibs();
+            }
+        });
     }
 
     public static void updateLibs() {

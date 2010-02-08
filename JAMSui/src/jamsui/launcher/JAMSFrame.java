@@ -31,6 +31,9 @@ import jams.JAMSFileFilter;
 import jams.io.ParameterProcessor;
 import jams.tools.XMLIO;
 import jams.io.XMLProcessor;
+import jamsui.juice.JUICE;
+import jamsui.juice.gui.JUICEFrame;
+import jamsui.juice.gui.tree.LibTree;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -62,19 +65,28 @@ import reg.JAMSExplorer;
 public class JAMSFrame extends JAMSLauncher {
 
     private JMenuBar mainMenu;
+
     private JMenu logsMenu, modelMenu;
+
     private JMenuItem saveItem, saveAsItem;
+
     private JFileChooser jfc;
+
     private JDialog rtManagerDlg;
+
     private PropertyDlg propertyDlg;
+
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Info_Log"));
+
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Error_Log"));
+
     private String modelFilename;
+
     private Action editPrefsAction, loadPrefsAction, savePrefsAction,
             loadModelAction, saveModelAction, saveAsModelAction, exitAction,
             aboutAction, loadModelParamAction, saveModelParamAction,
             rtManagerAction, infoLogAction, errorLogAction, onlineAction,
-            explorerAction;
+            explorerAction, editModelAction;
 
     public JAMSFrame(Frame parent, SystemProperties properties) {
         super(parent, properties);
@@ -137,6 +149,7 @@ public class JAMSFrame extends JAMSLauncher {
         saveModelAction.setEnabled(true);
         saveAsModelAction.setEnabled(true);
         modelMenu.setEnabled(true);
+        editModelAction.setEnabled(true);
         getRunModelAction().setEnabled(true);
 
         //GUIHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
@@ -245,6 +258,18 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
         saveAsModelAction.setEnabled(false);
+
+        editModelAction = new AbstractAction(JAMS.resources.getString("Edit_Model...")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (JUICE.getJuiceFrame() == null) {
+                    JUICE.createJUICEFrame(0);
+                }
+                JUICE.getJuiceFrame().loadModel(JAMSFrame.this.modelFilename);
+            }
+        };
+        editModelAction.setEnabled(false);
 
         exitAction = new AbstractAction(JAMS.resources.getString("Exit")) {
 
@@ -404,6 +429,10 @@ public class JAMSFrame extends JAMSLauncher {
         JMenuItem runModelItem = new JMenuItem(getRunModelAction());
         runModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         modelMenu.add(runModelItem);
+
+        JMenuItem editModelItem = new JMenuItem(editModelAction);
+        editModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+        modelMenu.add(editModelItem);
 
         JMenuItem explorerItem = new JMenuItem(explorerAction);
         explorerItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, ActionEvent.CTRL_MASK));
