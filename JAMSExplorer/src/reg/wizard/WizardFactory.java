@@ -130,9 +130,11 @@ public class WizardFactory {
         Set<String> wizardKeys = KEY_MODEL_MAPPING.keySet();
         for (String wizardKey : wizardKeys) {
             String value = (String) wizardSettings.get(wizardKey);
-            String[] modelKeys = KEY_MODEL_MAPPING.get(wizardKey);
-            for (String modelKey : modelKeys) {
-                properties.put(modelKey, value);
+            if (value != null) {
+                String[] modelKeys = KEY_MODEL_MAPPING.get(wizardKey);
+                for (String modelKey : modelKeys) {
+                    properties.put(modelKey, value);
+                }
             }
         }
         return properties;
