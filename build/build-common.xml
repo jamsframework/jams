@@ -53,13 +53,16 @@
     </target>
 
     <target name="-post-jar">
-        <available file="${bin.dir}/lib" type="dir">
-            <copy todir="${bin.dir}/lib">
-                <fileset dir="dist/lib">
-                    <exclude name="**/*jams-components*.jar"/>
-                </fileset>
-            </copy>
-        </available>
+        <if>
+            <available file="${bin.dir}/lib" type="dir"/>
+            <then>
+                <copy todir="${bin.dir}/lib">
+                    <fileset dir="dist/lib">
+                        <exclude name="**/*jams-components*.jar"/>
+                    </fileset>
+                </copy>
+            </then>
+        </if>
         <if>
             <equals arg1="${application.title}" arg2="jams-starter"/>
             <then>
