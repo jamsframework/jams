@@ -38,15 +38,6 @@ public @interface JAMSVarDescription {
     
     public static final String NULL_VALUE = "%NULL%";
 
-    public static final String MD_DATAEND = "dataend";
-    public static final String MD_DATASETATTRIBS = "@datasetattribs";
-    public static final String MD_DATASTART = "datastart";
-    public static final String MD_DATAVAL = "@dataval";
-    public static final String MD_DATAVALUEATTRIBS = "@datavalueattribs";
-    public static final String MD_MISSINGDATAVAL = "missingdataval";
-    public static final String MD_STATATTRIBVAL = "@statattribval";
-    public static final String MD_TEMP_RES = "tres";
-
     AccessType access();                        // type of access
 
     String description() default "";            // description of purpose
