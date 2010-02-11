@@ -379,62 +379,6 @@ is divided into following sections:
         <propertyfile file="${built-jar.properties}">
             <entry key="${basedir}" value=""/>
         </propertyfile>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-jar.properties}"/>
-            <param location="${project.jams-api}" name="call.subproject"/>
-            <param location="${project.jams-api}/build.xml" name="call.script"/>
-            <param name="call.target" value="jar"/>
-            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-jar.properties}"/>
-            <param location="${project.jams-common}" name="call.subproject"/>
-            <param location="${project.jams-common}/build.xml" name="call.script"/>
-            <param name="call.target" value="jar"/>
-            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-jar.properties}"/>
-            <param location="${project.jams-components}" name="call.subproject"/>
-            <param location="${project.jams-components}/build.xml" name="call.script"/>
-            <param name="call.target" value="jar"/>
-            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-jar.properties}"/>
-            <param location="${project.jams-explorer}" name="call.subproject"/>
-            <param location="${project.jams-explorer}/build.xml" name="call.script"/>
-            <param name="call.target" value="jar"/>
-            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-jar.properties}"/>
-            <param location="${project.jams-geowind}" name="call.subproject"/>
-            <param location="${project.jams-geowind}/build.xml" name="call.script"/>
-            <param name="call.target" value="jar"/>
-            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-jar.properties}"/>
-            <param location="${project.jams-main}" name="call.subproject"/>
-            <param location="${project.jams-main}/build.xml" name="call.script"/>
-            <param name="call.target" value="jar"/>
-            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-jar.properties}"/>
-            <param location="${project.jams-remote}" name="call.subproject"/>
-            <param location="${project.jams-remote}/build.xml" name="call.script"/>
-            <param name="call.target" value="jar"/>
-            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-jar.properties}"/>
-            <param location="${project.jams-ui}" name="call.subproject"/>
-            <param location="${project.jams-ui}/build.xml" name="call.script"/>
-            <param name="call.target" value="jar"/>
-            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
-        </antcall>
     </target>
     <target depends="init,-check-automatic-build,-clean-after-automatic-build" name="-verify-automatic-build"/>
     <target depends="init" name="-check-automatic-build">
@@ -821,62 +765,6 @@ is divided into following sections:
         <propertyfile file="${built-clean.properties}">
             <entry key="${basedir}" value=""/>
         </propertyfile>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-clean.properties}"/>
-            <param location="${project.jams-api}" name="call.subproject"/>
-            <param location="${project.jams-api}/build.xml" name="call.script"/>
-            <param name="call.target" value="clean"/>
-            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-clean.properties}"/>
-            <param location="${project.jams-common}" name="call.subproject"/>
-            <param location="${project.jams-common}/build.xml" name="call.script"/>
-            <param name="call.target" value="clean"/>
-            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-clean.properties}"/>
-            <param location="${project.jams-components}" name="call.subproject"/>
-            <param location="${project.jams-components}/build.xml" name="call.script"/>
-            <param name="call.target" value="clean"/>
-            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-clean.properties}"/>
-            <param location="${project.jams-explorer}" name="call.subproject"/>
-            <param location="${project.jams-explorer}/build.xml" name="call.script"/>
-            <param name="call.target" value="clean"/>
-            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-clean.properties}"/>
-            <param location="${project.jams-geowind}" name="call.subproject"/>
-            <param location="${project.jams-geowind}/build.xml" name="call.script"/>
-            <param name="call.target" value="clean"/>
-            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-clean.properties}"/>
-            <param location="${project.jams-main}" name="call.subproject"/>
-            <param location="${project.jams-main}/build.xml" name="call.script"/>
-            <param name="call.target" value="clean"/>
-            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-clean.properties}"/>
-            <param location="${project.jams-remote}" name="call.subproject"/>
-            <param location="${project.jams-remote}/build.xml" name="call.script"/>
-            <param name="call.target" value="clean"/>
-            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
-        </antcall>
-        <antcall target="-maybe-call-dep">
-            <param name="call.built.properties" value="${built-clean.properties}"/>
-            <param location="${project.jams-ui}" name="call.subproject"/>
-            <param location="${project.jams-ui}/build.xml" name="call.script"/>
-            <param name="call.target" value="clean"/>
-            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
-        </antcall>
     </target>
     <target depends="init" name="-do-clean">
         <delete dir="${build.dir}"/>
