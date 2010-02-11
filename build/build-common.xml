@@ -11,7 +11,7 @@
         </classpath>
     </taskdef>
 
-    <target name="-post-jar">
+    <target name="-post-jar_">
         <!--copy file="${dist.jar}" tofile="${bin.dir}/${application.title}-${main.majorversion}.${main.minorversion}.jar"/-->
         <!--echo>=======>${application.title}</echo-->
         <if>
@@ -50,6 +50,22 @@
             </else>
         </if>
 
+    </target>
+
+    <target name="-post-jar">
+        <copy todir="${bin.dir}/lib">
+            <fileset dir="dist/lib">
+                <exclude name="**/*jams-components*.jar"/>
+            </fileset>
+        </copy>
+        <if>
+            <equals arg1="${application.title}" arg2="jams-starter"/>
+            <then>
+                <copy file="dist/lib/jams-components.jar" todir="${bin.dir}"/>
+                <copy file="dist/lib/jams-main.jar" todir="${bin.dir}"/>
+                <copy file="${dist.jar}" todir="${bin.dir}"/>
+            </then>
+        </if>
     </target>
 
     <target name="-post-clean">
