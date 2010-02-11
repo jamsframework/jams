@@ -54,7 +54,7 @@
 
     <target name="-post-jar">
         <if>
-            <available file="${bin.dir}/lib" type="dir"/>
+            <available file="dist/lib" type="dir"/>
             <then>
                 <copy todir="${bin.dir}/lib">
                     <fileset dir="dist/lib">
