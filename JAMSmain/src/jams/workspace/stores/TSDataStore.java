@@ -49,6 +49,9 @@ import java.util.StringTokenizer;
  */
 public class TSDataStore extends TableDataStore {
 
+    public static final String NEWLINE = "\n";
+    public static final String SEPARATOR = "\t";
+
     protected CalendarValue calendar;
 
     protected Attribute.Calendar currentDate, startDate, endDate, stopDate;
@@ -214,7 +217,7 @@ public class TSDataStore extends TableDataStore {
             return null;
         }
 
-        StringTokenizer tok = new StringTokenizer(str, "\t");
+        StringTokenizer tok = new StringTokenizer(str, SEPARATOR);
         ArrayList<Class> dataTypes = new ArrayList<Class>();
         // drop the first token ("#$TYPE$")
         tok.nextToken();
@@ -253,7 +256,7 @@ public class TSDataStore extends TableDataStore {
                 break;
             }
 
-            tok = new StringTokenizer(str, "\t");
+            tok = new StringTokenizer(str, SEPARATOR);
 
             String attributeName = tok.nextToken().substring(1);
             String className = tok.nextToken();
@@ -350,7 +353,7 @@ public class TSDataStore extends TableDataStore {
             try {
 
                 String str = dumpFileReader.readLine();
-                StringTokenizer tok = new StringTokenizer(str, "\t");
+                StringTokenizer tok = new StringTokenizer(str, SEPARATOR);
 
                 int length = tok.countTokens();
 
