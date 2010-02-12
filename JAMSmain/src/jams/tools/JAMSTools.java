@@ -48,7 +48,8 @@ import java.util.Vector;
  */
 public class JAMSTools {
 
-    public static final String SUFFIX_XML = "xml";
+    public final static String DATE_TIME_FORMAT_PATTERN_DE = "dd.MM.yyyy HH:mm";
+    public final static String DATE_FORMAT_PATTERN_DE = "dd.MM.yyyy";
 
     /**
      * 
@@ -94,21 +95,21 @@ public class JAMSTools {
                 }
             }
         });
-        if (fileExtension == null) {
-            // remove directories
-            Vector<File> files = new Vector<File>();
-            for (int i = 0; i < fileArray.length; i++) {
-                File file = fileArray[i];
-                if (!file.isDirectory()) {
-                    files.add(file);
-                }
-            }
-            fileArray = new File[files.size()];
-            for (int i = 0; i < files.size(); i++) {
-                File file = files.elementAt(i);
-                fileArray[i] = file;
+
+        // remove directories
+        Vector<File> files = new Vector<File>();
+        for (int i = 0; i < fileArray.length; i++) {
+            File file = fileArray[i];
+            if (!file.isDirectory()) {
+                files.add(file);
             }
         }
+        fileArray = new File[files.size()];
+        for (int i = 0; i < files.size(); i++) {
+            File file = files.elementAt(i);
+            fileArray[i] = file;
+        }
+
         Arrays.sort(fileArray, new Comparator<File>() {
 
             public int compare(File o1, File o2) {
@@ -136,10 +137,11 @@ public class JAMSTools {
      * @param delimiter
      * @return result array
      */
-    public static String[] toArray (String str, String delimiter) {
+    public static String[] toArray(String str, String delimiter) {
 
-        if (str == null)
+        if (str == null) {
             return null;
+        }
 
         int delimLen = delimiter.length();
         Vector resultV = new Vector();
@@ -442,7 +444,6 @@ public class JAMSTools {
 //            System.out.println(e.getMessage());
 //        }
 //    }
-
     public static void copyFile(String inFile, String outFile) throws IOException {
 
         FileChannel inChannel = new FileInputStream(new File(inFile)).getChannel();
@@ -470,5 +471,4 @@ public class JAMSTools {
             theFile.delete();
         }
     }
-
 }

@@ -12,6 +12,7 @@ import jams.data.JAMSDataFactory;
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.JAMSFileFilter;
+import jams.tools.JAMSTools;
 import jams.workspace.DataSet;
 import jams.workspace.DataValue;
 import jams.workspace.JAMSWorkspace;
@@ -883,7 +884,7 @@ public class STPConfigurator extends JFrame {
 //                                System.out.print("time: "+actual_string+"\t");
                                 try {
                                     //JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second)
-                                    timeval.setValue(actual_string, JAMSCalendar.DATE_TIME_FORMAT_PATTERN_DE);
+                                    timeval.setValue(actual_string, JAMSTools.DATE_TIME_FORMAT_PATTERN_DE);
 
                                 } catch (ParseException pe) {
                                     pe.printStackTrace();

@@ -64,6 +64,8 @@ public class JAMSWorkspace implements Workspace {
 
     public static final String INPUT_DIR_NAME = "input", OUTPUT_DIR_NAME = "output", TEMP_DIR_NAME = "tmp", DUMP_DIR_NAME = "dump", LOCAL_INDIR_NAME = "local", EXPLORER_DIR_NAME = "explorer";
 
+    public static final String SUFFIX_XML = "xml";
+
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
 
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
@@ -502,7 +504,7 @@ public class JAMSWorkspace implements Workspace {
      */
     public void updateDataStores() {
 
-        File[] inChildren = JAMSTools.getFiles(inputDirectory, JAMSTools.SUFFIX_XML);
+        File[] inChildren = JAMSTools.getFiles(inputDirectory, SUFFIX_XML);
         for (File child : inChildren) {
             try {
 
@@ -518,7 +520,7 @@ public class JAMSWorkspace implements Workspace {
             }
         }
 
-        File[] outChildren = JAMSTools.getFiles(outputDirectory, JAMSTools.SUFFIX_XML);
+        File[] outChildren = JAMSTools.getFiles(outputDirectory, SUFFIX_XML);
         for (File child : outChildren) {
             try {
 

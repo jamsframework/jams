@@ -34,14 +34,14 @@ import java.util.*;
 public class JAMSCalendar extends GregorianCalendar implements Attribute.Calendar {
 
     public final static String DATE_TIME_FORMAT_PATTERN = "yyyy-MM-dd HH:mm";
-    public final static String DATE_TIME_FORMAT_PATTERN_DE = "dd.MM.yyyy HH:mm";
-    public final static String DATE_FORMAT_PATTERN_DE = "dd.MM.yyyy";
-
-    public static DateFormat DATE_TIME_FORMAT = new SimpleDateFormat(DATE_TIME_FORMAT_PATTERN);
-    public final static DateFormat DATE_FORMAT_DE = new SimpleDateFormat(DATE_FORMAT_PATTERN_DE);
-    public final static DateFormat DATE_TIME_FORMAT_DE = new SimpleDateFormat(DATE_TIME_FORMAT_PATTERN_DE);
-
     public final static TimeZone STANDARD_TIME_ZONE = new SimpleTimeZone(0, "GMT");
+
+//    public final static String DATE_TIME_FORMAT_PATTERN_DE = "dd.MM.yyyy HH:mm";
+//    public final static String DATE_FORMAT_PATTERN_DE = "dd.MM.yyyy";
+
+//    public final static DateFormat DATE_TIME_FORMAT = new SimpleDateFormat(DATE_TIME_FORMAT_PATTERN);
+//    public final static DateFormat DATE_FORMAT_DE = new SimpleDateFormat(DATE_FORMAT_PATTERN_DE);
+//    public final static DateFormat DATE_TIME_FORMAT_DE = new SimpleDateFormat(DATE_TIME_FORMAT_PATTERN_DE);
 
 
     private DateFormat dateFormat;

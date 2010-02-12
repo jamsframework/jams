@@ -25,7 +25,10 @@ package jams.io;
 
 import java.io.Serializable;
 import jams.data.*;
+import jams.tools.JAMSTools;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 /**
  *
@@ -34,6 +37,7 @@ import java.text.ParseException;
 public class JAMSTableDataArray implements Serializable {
 
     private JAMSCalendar time;
+
     private String[] values;
 
     public JAMSTableDataArray(JAMSCalendar time, String[] values) {
@@ -54,11 +58,11 @@ public class JAMSTableDataArray implements Serializable {
             String dateString = parts[0];   // date
             String timeString = parts[1];   // maybe we have time?
             int dataReadIndex = 2;
-            String dateFormat = JAMSCalendar.DATE_FORMAT_PATTERN_DE;
+            String dateFormat = JAMSTools.DATE_FORMAT_PATTERN_DE;
             if (timeString.indexOf(":") > -1) {     // yes we have a time.
                 dateString += " " + timeString;
                 valueNumber = parts.length - 2;
-                dateFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN_DE;
+                dateFormat = JAMSTools.DATE_TIME_FORMAT_PATTERN_DE;
             } else {                                // no time, but data
                 dataReadIndex = 1;
             }
@@ -73,6 +77,36 @@ public class JAMSTableDataArray implements Serializable {
                 dataReadIndex++;
             }
             this.setValues(theValues);
+        }
+    }
+
+    public JAMSTableDataArray(String dataLine, boolean parseTime) throws ParseException {
+
+        StringTokenizer tok = new StringTokenizer(dataLine);
+        int n = tok.countTokens();
+
+        if (n > 1) {
+
+            String dateString = tok.nextToken();
+            String[] data;
+            int i;
+
+            String s = tok.nextToken();
+            if (s.contains(":")) {
+                data = new String[n - 1];
+                data[0] = dateString + " " + s;
+                i = 1;
+            } else {
+                data = new String[n];
+                data[0] = dateString;
+                data[1] = s;
+                i = 2;
+            }
+
+            while (tok.hasMoreTokens()) {
+                data[i++] = tok.nextToken();
+            }
+            this.setValues(data);
         }
     }
 

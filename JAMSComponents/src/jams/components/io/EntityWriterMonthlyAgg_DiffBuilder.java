@@ -148,7 +148,7 @@ title="Entity file writer (spatial+monthly)",
     
     private String[] dateVals;
     private String timeFormat = "%1$td.%1$tm.%1$tY";
-    private DateFormat dateFormat = new SimpleDateFormat(JAMSCalendar.DATE_FORMAT_PATTERN_DE);
+    private DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
     private DateFormat dateMonthFormat = new SimpleDateFormat("ddd");
     
     private int tcounter;

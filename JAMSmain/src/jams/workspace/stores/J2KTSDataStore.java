@@ -27,6 +27,7 @@ import jams.data.JAMSCalendar;
 import jams.io.BufferedFileReader;
 import jams.io.JAMSTableDataArray;
 import jams.runtime.JAMSRuntime;
+import jams.tools.JAMSTools;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.DefaultDataSetDefinition;
 import jams.workspace.JAMSWorkspace;
@@ -49,18 +50,30 @@ import org.w3c.dom.Node;
 public class J2KTSDataStore extends TSDataStore {
 
     public static final String TAGNAME_DATAEND = "dataEnd";
+
     public static final String TAGNAME_DATASETATTRIBS = "@dataSetAttribs";
+
     public static final String TAGNAME_DATASTART = "dataStart";
+
     public static final String TAGNAME_DATAVAL = "@dataVal";
+
     public static final String TAGNAME_DATAVALUEATTRIBS = "@dataValueAttribs";
+
     public static final String TAGNAME_MISSINGDATAVAL = "missingDataVal";
+
     public static final String TAGNAME_STATATTRIBVAL = "@statAttribVal";
+
     public static final String TAGNAME_TEMP_RES = "tres";
+
     private String cache = null;
+
     private int columnCount = 0;
     //private RandomAccessFile j2kTSFileReader;
+
     private BufferedFileReader j2kTSFileReader;
+
     private File sourceFile;
+
     private boolean parseDate = false;
 
     public J2KTSDataStore(JAMSWorkspace ws, String id, Document doc) throws IOException {
@@ -197,10 +210,10 @@ public class J2KTSDataStore extends TSDataStore {
             if (key.equalsIgnoreCase(TAGNAME_MISSINGDATAVAL)) {
                 missingDataValue = tok2.nextToken();
             } else if (key.equalsIgnoreCase(TAGNAME_DATASTART) || key.equalsIgnoreCase(TAGNAME_DATAEND)) {
-                String dateFormat = JAMSCalendar.DATE_FORMAT_PATTERN_DE;
+                String dateFormat = JAMSTools.DATE_FORMAT_PATTERN_DE;
                 String dateString = tok2.nextToken();
                 if (tok2.hasMoreTokens()) {
-                    dateFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN_DE;
+                    dateFormat = JAMSTools.DATE_TIME_FORMAT_PATTERN_DE;
                     dateString += " " + tok2.nextToken();
                 }
                 try {
@@ -256,19 +269,15 @@ public class J2KTSDataStore extends TSDataStore {
 
         try {
             DefaultDataSet result = new DefaultDataSet(columnCount + 1);
-            JAMSTableDataArray jamstda = new JAMSTableDataArray(cache);
-            JAMSCalendar cal = jamstda.getTime();
-            System.out.println("cal:" + cal);
-            System.out.println("cal:" + cal);
-            if (cal != null) {
-                result.setData(0, new StringValue(cal.toString(JAMSCalendar.DATE_TIME_FORMAT_DE)));
-            }
-            int i = 1; double d;
-            for (String value : jamstda.getValues()) {
-                d = Double.parseDouble(value);
+            JAMSTableDataArray jamstda = new JAMSTableDataArray(cache, false);
+            String[] values = jamstda.getValues();
+            result.setData(0, new StringValue(values[0]));
+
+            for (int i = 1; i < values.length; i++) {
+                double d = Double.parseDouble(values[i]);
                 result.setData(i, new DoubleValue(d));
-                i++;
             }
+
             cache = null;
             return result;
 
@@ -280,6 +289,35 @@ public class J2KTSDataStore extends TSDataStore {
         return null;
     }
 
+//    @Override
+//    public DefaultDataSet getNext() {
+//        if (!hasNext()) {
+//            return null;
+//        }
+//
+//        try {
+//            DefaultDataSet result = new DefaultDataSet(columnCount + 1);
+//            JAMSTableDataArray jamstda = new JAMSTableDataArray(cache);
+//            JAMSCalendar cal = jamstda.getTime();
+//            if (cal != null) {
+//                result.setData(0, new StringValue(cal.toString(JAMSCalendar.DATE_TIME_FORMAT_DE)));
+//            }
+//            int i = 1; double d;
+//            for (String value : jamstda.getValues()) {
+//                d = Double.parseDouble(value);
+//                result.setData(i, new DoubleValue(d));
+//                i++;
+//            }
+//            cache = null;
+//            return result;
+//
+//        } catch (ParseException e) {
+//            ws.getRuntime().handle(e);
+//        }
+//
+//        cache = null;
+//        return null;
+//    }
     @Override
     public void close() {
         try {
