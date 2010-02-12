@@ -31,7 +31,10 @@
             </then>
         </if>
         <if>
-            <equals arg1="${application.title}" arg2="jams-starter"/>
+            <and>
+                <equals arg1="${application.title}" arg2="jams-starter"/>
+                <available file="dist/lib/jams-remote.jar" type="file"/>
+            </and>
             <then>
                 <copy file="dist/lib/jams-remote.jar" todir="${bin.dir}/lib"/>
             </then>
