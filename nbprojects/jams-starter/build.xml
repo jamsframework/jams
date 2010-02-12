@@ -16,7 +16,7 @@
         <foreach target="buildproject" param="buildxml">
             <path>
                 <fileset dir="..">
-                    <include name="**/build.xml"/>
+                    <include name="**/*build.xml"/>
                     <exclude name="**/jams-starter/build.xml"/>
                 </fileset>
             </path>
@@ -24,8 +24,22 @@
     </target>
 
     <target name="buildproject" description="Build a single NetBeans project">
-        <echo>${buildxml}</echo>
+        <echo>WILL JAR ${buildxml}</echo>
         <ant antfile="${buildxml}" inheritall="false" target="jar"/>
+    </target>
+
+    <target name="-post-clean">
+        <foreach target="cleanproject" param="dir">
+            <path>
+                <dirset dir=".." includes="*" excludes="jams-starter"/>
+            </path>
+        </foreach>
+    </target>
+
+    <target name="cleanproject" description="Build a single NetBeans project">
+        <echo>WILL CLEAN ${dir}</echo>
+        <delete dir="${dir}/dist" />
+        <delete dir="${dir}/build" />
     </target>
 
     <!--
