@@ -25,6 +25,7 @@ package jams.workspace.stores;
 import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.io.BufferedFileReader;
+import jams.io.JAMSTableDataArray;
 import jams.runtime.JAMSRuntime;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.DefaultDataSetDefinition;
@@ -55,7 +56,6 @@ public class J2KTSDataStore extends TSDataStore {
     public static final String TAGNAME_MISSINGDATAVAL = "missingDataVal";
     public static final String TAGNAME_STATATTRIBVAL = "@statAttribVal";
     public static final String TAGNAME_TEMP_RES = "tres";
-
     private String cache = null;
     private int columnCount = 0;
     //private RandomAccessFile j2kTSFileReader;
@@ -75,7 +75,7 @@ public class J2KTSDataStore extends TSDataStore {
         if (timeFormatElement != null) {
             timeFormat = timeFormatElement.getAttribute("value");
         } else {
-            timeFormat = JAMSCalendar.DATE_TIME_FORMAT;
+            timeFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
         }
 
         if (parseTimeElement != null) {
@@ -87,7 +87,7 @@ public class J2KTSDataStore extends TSDataStore {
         if (timeFormatElement != null) {
             timeFormat = timeFormatElement.getAttribute("value");
         } else {
-            timeFormat = JAMSCalendar.DATE_TIME_FORMAT;
+            timeFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
         }
 
         Node displaynameNode = doc.getDocumentElement().getElementsByTagName("displayname").item(0);
@@ -149,9 +149,9 @@ public class J2KTSDataStore extends TSDataStore {
 
         // create a DefaultDataSetDefinition object
 
-        StringTokenizer tok1 = new StringTokenizer(statAttribVal.toString(),NEWLINE);
+        StringTokenizer tok1 = new StringTokenizer(statAttribVal.toString(), NEWLINE);
         tok1.nextToken();
-        StringTokenizer tok2 = new StringTokenizer(tok1.nextToken(),SEPARATOR);
+        StringTokenizer tok2 = new StringTokenizer(tok1.nextToken(), SEPARATOR);
 
         int attributeCount = tok2.countTokens() - 1;
         ArrayList<Class> dataTypes = new ArrayList<Class>();
@@ -188,7 +188,7 @@ public class J2KTSDataStore extends TSDataStore {
         def.setAttributeValues(parameterString, parameterName);
 
         // process dataSetAttribs
-        tok1 = new StringTokenizer(dataSetAttribs.toString(),NEWLINE);
+        tok1 = new StringTokenizer(dataSetAttribs.toString(), NEWLINE);
         tok1.nextToken(); // skip the "@"-tag
 
         while (tok1.hasMoreTokens()) {
@@ -197,17 +197,19 @@ public class J2KTSDataStore extends TSDataStore {
             if (key.equalsIgnoreCase(TAGNAME_MISSINGDATAVAL)) {
                 missingDataValue = tok2.nextToken();
             } else if (key.equalsIgnoreCase(TAGNAME_DATASTART) || key.equalsIgnoreCase(TAGNAME_DATAEND)) {
-                String dateFormat = "dd.MM.yyyy";
+                String dateFormat = JAMSCalendar.DATE_FORMAT_PATTERN_DE;
                 String dateString = tok2.nextToken();
                 if (tok2.hasMoreTokens()) {
-                    dateFormat += " HH:mm";
+                    dateFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN_DE;
                     dateString += " " + tok2.nextToken();
                 }
                 try {
-                    if (key.equalsIgnoreCase(TAGNAME_DATASTART))
+                    if (key.equalsIgnoreCase(TAGNAME_DATASTART)) {
                         startDate.setValue(dateString, dateFormat);
-                    if (key.equalsIgnoreCase(TAGNAME_DATAEND))
+                    }
+                    if (key.equalsIgnoreCase(TAGNAME_DATAEND)) {
                         endDate.setValue(dateString, dateFormat);
+                    }
 
                 } catch (ParseException pe) {
                     ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Could_not_parse_date_\"") + dateString + JAMS.resources.getString("\"_-_date_kept_unchanged!"));
@@ -248,35 +250,34 @@ public class J2KTSDataStore extends TSDataStore {
 
     @Override
     public DefaultDataSet getNext() {
-
         if (!hasNext()) {
             return null;
         }
 
-        DefaultDataSet result = new DefaultDataSet(columnCount + 1);
-        StringTokenizer tok = new StringTokenizer(cache,SEPARATOR);
-
-        String dateTimeString = tok.nextToken() + " " + tok.nextToken();
-        /*if (parseDate) {
         try {
-        currentDate.setValue(dateTimeString, "dd.MM.yyyy HH:mm");
-        result.setData(0, new CalendarValue(currentDate));
-        } catch (ParseException pe) {
-        ws.getRuntime().sendErrorMsg("Could not parse date \"" + dateTimeString + "\" - date kept unchanged!");
-        }
-        } else {*/
-        result.setData(0, new StringValue(dateTimeString));
-//        }
+            DefaultDataSet result = new DefaultDataSet(columnCount + 1);
+            JAMSTableDataArray jamstda = new JAMSTableDataArray(cache);
+            JAMSCalendar cal = jamstda.getTime();
+            System.out.println("cal:" + cal);
+            System.out.println("cal:" + cal);
+            if (cal != null) {
+                result.setData(0, new StringValue(cal.toString(JAMSCalendar.DATE_TIME_FORMAT_DE)));
+            }
+            int i = 1; double d;
+            for (String value : jamstda.getValues()) {
+                d = Double.parseDouble(value);
+                result.setData(i, new DoubleValue(d));
+                i++;
+            }
+            cache = null;
+            return result;
 
-        int i = 1;
-        while (tok.hasMoreTokens()) {
-            double d = Double.parseDouble(tok.nextToken());
-            result.setData(i, new DoubleValue(d));
-            i++;
+        } catch (ParseException e) {
+            ws.getRuntime().handle(e);
         }
 
         cache = null;
-        return result;
+        return null;
     }
 
     @Override
@@ -289,32 +290,32 @@ public class J2KTSDataStore extends TSDataStore {
     }
 
     @Override
-    public void getState(java.io.ObjectOutputStream stream) throws IOException{
-       super.getState(stream);
-       stream.writeObject(this.cache);
-       stream.writeBoolean(this.parseDate);
-       stream.writeInt(this.columnCount);
-       //serialize reader
-       stream.writeObject(this.sourceFile.getAbsolutePath());
-       stream.writeLong(this.j2kTSFileReader.getPosition());
+    public void getState(java.io.ObjectOutputStream stream) throws IOException {
+        super.getState(stream);
+        stream.writeObject(this.cache);
+        stream.writeBoolean(this.parseDate);
+        stream.writeInt(this.columnCount);
+        //serialize reader
+        stream.writeObject(this.sourceFile.getAbsolutePath());
+        stream.writeLong(this.j2kTSFileReader.getPosition());
     }
 
     @Override
-    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
-       super.setState(stream);
-       this.cache = (String)stream.readObject();
-       this.parseDate = stream.readBoolean();
-       this.columnCount = stream.readInt();
+    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        super.setState(stream);
+        this.cache = (String) stream.readObject();
+        this.parseDate = stream.readBoolean();
+        this.columnCount = stream.readInt();
 
-       this.sourceFile = new File((String)stream.readObject());
-       if (j2kTSFileReader != null){
-           try{
-               j2kTSFileReader.close();
-           }catch(Exception e){}
-       }
-       this.j2kTSFileReader = new BufferedFileReader(new FileInputStream(sourceFile));
-       long offset = stream.readLong();
-       j2kTSFileReader.setPosition(offset);
+        this.sourceFile = new File((String) stream.readObject());
+        if (j2kTSFileReader != null) {
+            try {
+                j2kTSFileReader.close();
+            } catch (Exception e) {
+            }
+        }
+        this.j2kTSFileReader = new BufferedFileReader(new FileInputStream(sourceFile));
+        long offset = stream.readLong();
+        j2kTSFileReader.setPosition(offset);
     }
-
 }
