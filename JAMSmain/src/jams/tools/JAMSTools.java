@@ -48,6 +48,8 @@ import java.util.Vector;
  */
 public class JAMSTools {
 
+    public static final String SUFFIX_XML = "xml";
+
     /**
      * 
      * @param dirName
@@ -66,6 +68,59 @@ public class JAMSTools {
     }
 
     /**
+     * get array of files
+     *
+     * @param directory
+     * @param fileExtension
+     * @return filearray
+     * @throws IOException
+     */
+    public static File[] getFiles(File directory, String fileExtension) {
+        //write all files within the given directory in the File-Array
+        String ext = null;
+        if (fileExtension != null) {
+            ext = fileExtension.toLowerCase();
+        }
+        final String fileExtensionLower = ext;
+        File[] fileArray;
+        fileArray = directory.listFiles(new FilenameFilter() {
+
+            public boolean accept(File dir, String name) {
+                String nameLower = name.toLowerCase();
+                if (fileExtensionLower == null || nameLower.endsWith("." + fileExtensionLower)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+        if (fileExtension == null) {
+            // remove directories
+            Vector<File> files = new Vector<File>();
+            for (int i = 0; i < fileArray.length; i++) {
+                File file = fileArray[i];
+                if (!file.isDirectory()) {
+                    files.add(file);
+                }
+            }
+            fileArray = new File[files.size()];
+            for (int i = 0; i < files.size(); i++) {
+                File file = files.elementAt(i);
+                fileArray[i] = file;
+            }
+        }
+        Arrays.sort(fileArray, new Comparator<File>() {
+
+            public int compare(File o1, File o2) {
+                String fileName1 = o1.getName();
+                String fileName2 = o1.getName();
+                return fileName1.compareToIgnoreCase(fileName2);
+            }
+        });
+        return fileArray;
+    }
+
+    /**
      * Splits a string into tokens and fills a string array with them
      * @param str The string to be splitted
      * @return A string array with the tokens 
@@ -75,28 +130,34 @@ public class JAMSTools {
     }
 
     /**
-     * Splits a string into tokens and fills a string array with them
-     * @param str The string to be splitted
-     * @param delim A delimiter defining where to split
-     * @return A string array with the tokens 
+     * converts a string into array
+     *
+     * @param str
+     * @param delimiter
+     * @return result array
      */
-    public static String[] toArray(String str, String delim) {
+    public static String[] toArray (String str, String delimiter) {
 
-        if (str == null) {
+        if (str == null)
             return null;
-        }
-        StringTokenizer tok;
 
-        if (delim == null) {
-            tok = new StringTokenizer(str);
-        } else {
-            tok = new StringTokenizer(str, delim);
+        int delimLen = delimiter.length();
+        Vector resultV = new Vector();
+        String rest = str;
+        String foundPart;
+        int i = rest.indexOf(delimiter);
+        while (i > -1) {
+            foundPart = rest.substring(0, i);
+            resultV.add(foundPart);
+            rest = rest.substring(i + delimLen);
+            //BPS.log().debug(i + ", foundPart: " + foundPart + ", rest: " + rest);
+            i = rest.indexOf(delimiter);
         }
-        String[] result = new String[tok.countTokens()];
-        int i = 0;
-        while (tok.hasMoreTokens()) {
-            result[i++] = tok.nextToken();
-        }
+        resultV.add(rest);
+
+        String[] result = new String[resultV.size()];
+        resultV.toArray(result);
+
         return result;
     }
 
@@ -311,48 +372,7 @@ public class JAMSTools {
         if (!directory.isDirectory()) {
             throw new IOException("Can't load filelist because directory '" + directoryName + "' not found.");
         }
-        //write all files within the given directory in the File-Array
-        String ext = null;
-        if (fileExtension != null) {
-            ext = fileExtension.toLowerCase();
-        }
-        final String fileExtensionLower = ext;
-        File[] fileArray;
-        fileArray = directory.listFiles(new FilenameFilter() {
-
-            public boolean accept(File dir, String name) {
-                String nameLower = name.toLowerCase();
-                if (fileExtensionLower == null || nameLower.endsWith("." + fileExtensionLower)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-        if (fileExtension == null) {
-            // remove directories
-            Vector<File> files = new Vector<File>();
-            for (int i = 0; i < fileArray.length; i++) {
-                File file = fileArray[i];
-                if (!file.isDirectory()) {
-                    files.add(file);
-                }
-            }
-            fileArray = new File[files.size()];
-            for (int i = 0; i < files.size(); i++) {
-                File file = files.elementAt(i);
-                fileArray[i] = file;
-            }
-        }
-        Arrays.sort(fileArray, new Comparator<File>() {
-
-            public int compare(File o1, File o2) {
-                String fileName1 = o1.getName();
-                String fileName2 = o1.getName();
-                return fileName1.compareToIgnoreCase(fileName2);
-            }
-        });
-        return fileArray;
+        return getFiles(directory, fileExtension);
     }
 
     /**
