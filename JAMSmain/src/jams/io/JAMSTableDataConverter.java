@@ -65,15 +65,19 @@ public class JAMSTableDataConverter {
     public static JAMSCalendar parseTime(String timeString) {
         
         //Array keeping values for year, month, day, hour, minute
-        String[] timeArray = new String[5];
+        int maxTimeElements = 5;
+        String[] timeArray = new String[maxTimeElements];
         timeArray[0] = "0";
         timeArray[1] = "1";
         timeArray[2] = "1";
-        timeArray[3] = "0";
-        timeArray[4] = "0";
+        timeArray[3] = "00";
+        timeArray[4] = "00";
         
         StringTokenizer st = new StringTokenizer(timeString, ".-/ :");
         int n = st.countTokens();
+        if (n > maxTimeElements) {
+            n = maxTimeElements;
+        }
         
         for (int i = 0; i < n; i++) {
             timeArray[i] = st.nextToken();
