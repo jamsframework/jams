@@ -38,19 +38,15 @@ public class Viewer {
      * the singleton instance
      */
     private static Viewer theInstance;
-
     /**
      * the main panel
      */
     private FancyPanel mainPanel;
-
     /**
      * the overall frame
      */
     private final JFrame frame = new JFrame();
-
     private boolean initialized = false;
-
     /**
      * zwischenspeicher
      */
@@ -168,10 +164,7 @@ public class Viewer {
                             System.out.println("fly to work layer.");
                             mainPanel.flyToWorkLayer();
                         }
-
-
                     }
-
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -278,7 +271,10 @@ public class Viewer {
             pane.add(mainPanel, StackLayout.TOP);
 
             frame.getContentPane().add(pane);
-            frame.setSize(921, 691);
+
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            //frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setSize((int) (screenSize.width * .8), (int) (screenSize.height * .8));
 
             // Get the size of the screen
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -291,7 +287,6 @@ public class Viewer {
             frame.setLocation(x, y);
             frame.setVisible(false);
             initialized = true;
-            System.out.println("Viewer initialized.");
         }
     }
 
