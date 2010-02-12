@@ -23,6 +23,7 @@
 package reg.wizard;
 
 import jams.tools.JAMSTools;
+import jams.workspace.JAMSWorkspace;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -71,7 +72,7 @@ public class WizardFactory {
     public static String copyModelFiles(String sourceDir, String targetDir)
             throws IOException {
 
-        String outputTargetDir = targetDir + File.separator + "output";
+        String outputTargetDir = targetDir + File.separator + JAMSWorkspace.OUTPUT_DIR_NAME;
         deleteModelFiles(targetDir);
         deleteModelFiles(outputTargetDir);
 
@@ -90,8 +91,8 @@ public class WizardFactory {
 
 
             // copy output files
-            String outputSourceDir = sourceDir + File.separator + "output";
-            File[] outputFiles = JAMSTools.getFiles(outputSourceDir, "xml");
+            String outputSourceDir = sourceDir + File.separator + JAMSWorkspace.OUTPUT_DIR_NAME;
+            File[] outputFiles = JAMSTools.getFiles(outputSourceDir, JAMSTools.SUFFIX_XML);
             if (outputFiles == null || outputFiles.length == 0) {
                 System.out.println("no output files found in " + outputSourceDir);
             } else {
@@ -108,6 +109,30 @@ public class WizardFactory {
 
     }
 
+    public static String copyInputFile(String sourceDir, String targetDir)
+            throws IOException {
+
+        String inputTargetDirName = targetDir + File.separator + JAMSWorkspace.INPUT_DIR_NAME;
+        String inputSourceDirName = sourceDir + File.separator + JAMSWorkspace.INPUT_DIR_NAME;
+        File inputSourceDir = new File(inputSourceDirName);
+        if (inputSourceDir != null && inputSourceDir.exists() && inputSourceDir.isDirectory()) {
+            File[] inputFiles = JAMSTools.getFiles(inputSourceDirName, JAMSTools.SUFFIX_XML);
+            if (inputFiles == null || inputFiles.length == 0) {
+                System.out.println("no inputFile found in " + inputSourceDirName);
+            } else {
+                File inputFile = inputFiles[0];
+
+
+                String completeInputFileName = inputFile.getAbsolutePath();
+                String inputFileName = inputFile.getName();
+                String targetFileName = inputTargetDirName + File.separator + inputFileName;
+                JAMSTools.copyFile(completeInputFileName, targetFileName);
+                return inputFileName;
+            }
+        }
+        return null;
+    }
+
     /**
      * delete all xml files of directory
      * @param theDirectoryName
@@ -115,7 +140,7 @@ public class WizardFactory {
      */
     public static void deleteModelFiles(String theDirectoryName)
             throws IOException {
-        File[] modelFiles = JAMSTools.getFiles(theDirectoryName, "xml");
+        File[] modelFiles = JAMSTools.getFiles(theDirectoryName, JAMSTools.SUFFIX_XML);
         JAMSTools.deleteFiles(modelFiles);
     }
 
