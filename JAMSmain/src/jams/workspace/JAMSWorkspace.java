@@ -35,6 +35,7 @@ import java.util.StringTokenizer;
 import jams.JAMS;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSRuntime;
+import jams.tools.JAMSTools;
 import jams.tools.XMLIO;
 import org.w3c.dom.Document;
 import jams.workspace.stores.DataStore;
@@ -61,7 +62,7 @@ public class JAMSWorkspace implements Workspace {
 
     private static final String CONFIG_FILE_NAME = "config.txt", CONFIG_FILE_COMMENT = "JAMS workspace configuration", CONTEXT_ATTRIBUTE_NAME = "context";
 
-    private static final String INPUT_DIR_NAME = "input", OUTPUT_DIR_NAME = "output", TEMP_DIR_NAME = "tmp", DUMP_DIR_NAME = "dump", LOCAL_INDIR_NAME = "local", EXPLORER_DIR_NAME = "explorer";
+    public static final String INPUT_DIR_NAME = "input", OUTPUT_DIR_NAME = "output", TEMP_DIR_NAME = "tmp", DUMP_DIR_NAME = "dump", LOCAL_INDIR_NAME = "local", EXPLORER_DIR_NAME = "explorer";
 
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
 
@@ -96,7 +97,7 @@ public class JAMSWorkspace implements Workspace {
         
         this.loadConfig();
         this.checkValidity(readonly);
-        this.createDataStores();
+        this.updateDataStores();
     }
 
     /**
@@ -496,53 +497,44 @@ public class JAMSWorkspace implements Workspace {
         properties.setProperty("defaultmodel", path);
     }
 
-    private void createDataStores() {
+    /**
+     * create all non-existing datastores according to input- and output-dir
+     */
+    public void updateDataStores() {
 
-        FileFilter filter = new FileFilter() {
-
-            @Override
-            public boolean accept(File pathname) {
-                if (pathname.getPath().endsWith(".xml")) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-
-        File[] inChildren = inputDirectory.listFiles(filter);
+        File[] inChildren = JAMSTools.getFiles(inputDirectory, JAMSTools.SUFFIX_XML);
         for (File child : inChildren) {
             try {
 
                 String storeID = getStoreID(child);
-                Document doc = XMLIO.getDocument(child.getAbsolutePath());
-                inputDataStores.put(storeID, doc);
-                this.getRuntime().println(JAMS.resources.getString("Added_input_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
+                if (!inputDataStores.containsKey(storeID)) {
+                    Document doc = XMLIO.getDocument(child.getAbsolutePath());
+                    inputDataStores.put(storeID, doc);
+                    this.getRuntime().println(JAMS.resources.getString("Added_input_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
+                }
 
             } catch (FileNotFoundException fnfe) {
                 this.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.resources.getString("!"));
             }
         }
 
-        File[] outChildren = outputDirectory.listFiles(filter);
+        File[] outChildren = JAMSTools.getFiles(outputDirectory, JAMSTools.SUFFIX_XML);
         for (File child : outChildren) {
             try {
 
-                Document doc = XMLIO.getDocument(child.getAbsolutePath());
-
                 String storeID = getStoreID(child);
-                String contextName = getContextName(doc);
-
-                outputDataStores.put(storeID, doc);
-
-                ArrayList<String> stores = contextStores.get(contextName);
-                if (stores == null) {
-                    stores = new ArrayList<String>();
-                    contextStores.put(contextName, stores);
+                if (!outputDataStores.containsKey(storeID)) {
+                    Document doc = XMLIO.getDocument(child.getAbsolutePath());
+                    outputDataStores.put(storeID, doc);
+                    String contextName = getContextName(doc);
+                    ArrayList<String> stores = contextStores.get(contextName);
+                    if (stores == null) {
+                        stores = new ArrayList<String>();
+                        contextStores.put(contextName, stores);
+                    }
+                    stores.add(storeID);
+                    this.getRuntime().println(JAMS.resources.getString("Added_output_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
                 }
-                stores.add(storeID);
-
-                this.getRuntime().println(JAMS.resources.getString("Added_output_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
 
             } catch (FileNotFoundException fnfe) {
                 this.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.resources.getString("!"));
