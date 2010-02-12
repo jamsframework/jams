@@ -883,7 +883,7 @@ public class STPConfigurator extends JFrame {
 //                                System.out.print("time: "+actual_string+"\t");
                                 try {
                                     //JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second)
-                                    timeval.setValue(actual_string, "yyyy-MM-dd hh:mm");
+                                    timeval.setValue(actual_string, JAMSCalendar.DATE_TIME_FORMAT_PATTERN_DE);
 
                                 } catch (ParseException pe) {
                                     pe.printStackTrace();
