@@ -44,6 +44,8 @@ import org.w3c.dom.*;
  */
 
 public class XMLIO {
+    public static final String ENCODING = "ISO-8859-1";
+    public static final String LOGICAL_YES_STRING = "yes";
     
     /**
      * Reads a XML document from a file and returns it
@@ -97,7 +99,7 @@ public class XMLIO {
         try {
             
             DocumentBuilder builder = factory.newDocumentBuilder();
-            InputStream source = new ByteArrayInputStream(docString.getBytes("ISO-8859-1"));
+            InputStream source = new ByteArrayInputStream(docString.getBytes(ENCODING));
             document = builder.parse(source);
             
         } catch (ParserConfigurationException pce) {
@@ -223,9 +225,9 @@ public class XMLIO {
         Transformer transformer = factory.newTransformer();
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 //        transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "4");
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-        transformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
+        transformer.setOutputProperty(OutputKeys.INDENT,LOGICAL_YES_STRING);
+        transformer.setOutputProperty(OutputKeys.STANDALONE,LOGICAL_YES_STRING);
+        transformer.setOutputProperty(OutputKeys.ENCODING,ENCODING);
         
         return transformer;
     }
