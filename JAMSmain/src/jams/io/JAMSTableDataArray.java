@@ -25,42 +25,104 @@ package jams.io;
 
 import java.io.Serializable;
 import jams.data.*;
+import java.text.ParseException;
+
 /**
  *
  * @author S. Kralisch
  */
 public class JAMSTableDataArray implements Serializable {
-    
+
     private JAMSCalendar time;
     private String[] values;
-    
+
     public JAMSTableDataArray(JAMSCalendar time, String[] values) {
         this.time = time;
         this.setValues(values);
     }
-    
+
+    /**
+     * constructor with dataLine
+     * @param dataLine (e.g.  01.11.1990	6.391	6.525	6.003)
+     * @throws ParseException
+     */
+    public JAMSTableDataArray(String dataLine) throws ParseException {
+
+        String[] parts = dataLine.split("\\s+"); // split with whitespaces
+        int valueNumber = parts.length - 1;
+        if (parts.length > 1) {
+            String dateString = parts[0];   // date
+            String timeString = parts[1];   // maybe we have time?
+            int dataReadIndex = 2;
+            String dateFormat = JAMSCalendar.DATE_FORMAT_PATTERN_DE;
+            if (timeString.indexOf(":") > -1) {     // yes we have a time.
+                dateString += " " + timeString;
+                valueNumber = parts.length - 2;
+                dateFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN_DE;
+            } else {                                // no time, but data
+                dataReadIndex = 1;
+            }
+
+            JAMSCalendar cal = JAMSDataFactory.createCalendar();
+            cal.setValue(dateString, dateFormat);
+            this.setTime(cal);
+
+            String[] theValues = new String[valueNumber];
+            for (int i = 0; i < valueNumber; i++) {
+                theValues[i] = parts[dataReadIndex];
+                dataReadIndex++;
+            }
+            this.setValues(theValues);
+        }
+    }
+
     public JAMSTableDataArray(JAMSCalendar time) {
         this.time = time;
     }
-        
+
     public JAMSCalendar getTime() {
         return time;
     }
-    
+
     public void setTime(JAMSCalendar time) {
         this.time = time;
     }
-    
+
     public String[] getValues() {
         return values;
     }
-    
+
     public void setValues(String[] values) {
         this.values = values;
     }
-    
+
     public int getLength() {
         return values.length;
+    }
+
+    @Override
+    public String toString() {
+        String result = "";
+        if (time == null) {
+            result += "no time\n";
+        } else {
+            result += "time  : " + time.toString() + "\n";
+        }
+        if (values == null) {
+            result += "no values\n";
+        } else {
+            result += "values: ";
+            boolean firstValue = true;
+            for (String value : values) {
+                if (firstValue) {
+                    firstValue = false;
+                } else {
+                    result += ",";
+                }
+                result += "<" + value + ">";
+            }
+        }
+        return result;
     }
 }
 
