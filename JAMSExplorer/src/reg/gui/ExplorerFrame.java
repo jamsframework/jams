@@ -52,29 +52,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.Vector;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import javax.swing.WindowConstants;
+import java.util.*;
+import javax.swing.*;
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.Wizard;
 import org.w3c.dom.Document;
@@ -84,9 +63,7 @@ import reg.spreadsheet.STPConfigurator;
 import reg.viewer.Viewer;
 import reg.wizard.WizardFactory;
 import reg.wizard.tlug.ExplorerWizard;
-import reg.wizard.tlug.panels.BaseDataPanel;
-import reg.wizard.tlug.panels.DataDecisionPanel;
-import reg.wizard.tlug.panels.StationParamsPanel;
+import reg.wizard.tlug.panels.*;
 
 /**
  *
@@ -182,6 +159,7 @@ public class ExplorerFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (launchWizard()) {
                     runModel();
+                    explorer.getWorkspace().updateDataStores();
                     update();
                 }
             }
@@ -499,10 +477,6 @@ public class ExplorerFrame extends JFrame {
                 result = true;
 
                 Set keys = wizardSettings.keySet();
-                System.out.println("settings coming from wizard:");
-                for (Object key : keys) {
-                    System.out.println(key + "=" + wizardSettings.get(key));
-                }
                 String workSpaceDir = ws.getDirectory().getCanonicalPath();
                 String modelFileName = null;
 
@@ -512,6 +486,9 @@ public class ExplorerFrame extends JFrame {
                     // look into directory &computation and get model + output files
                     String sourceDir = workSpaceDir + File.separator + "variants" + File.separator + computation;
                     modelFileName = WizardFactory.copyModelFiles(sourceDir, workSpaceDir);
+
+                    // add some input store?
+                    WizardFactory.copyInputFile(sourceDir, workSpaceDir);
                 } // dataDecision = station
 
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_SPATIAL)) {
@@ -539,6 +516,7 @@ public class ExplorerFrame extends JFrame {
                 if (!JAMSTools.isEmptyString(shapeFileName)) {
                     updateWithShapeFile(shapeFileName, ws);
                 }
+
                 update();
                 JAMSSpreadSheet spreadSheet = explorer.getDisplayManager().getSpreadSheet();
                 if (spreadSheet != null) {
