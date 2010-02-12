@@ -47,6 +47,15 @@ import org.w3c.dom.Node;
  */
 public class J2KTSDataStore extends TSDataStore {
 
+    public static final String TAGNAME_DATAEND = "dataEnd";
+    public static final String TAGNAME_DATASETATTRIBS = "@dataSetAttribs";
+    public static final String TAGNAME_DATASTART = "dataStart";
+    public static final String TAGNAME_DATAVAL = "@dataVal";
+    public static final String TAGNAME_DATAVALUEATTRIBS = "@dataValueAttribs";
+    public static final String TAGNAME_MISSINGDATAVAL = "missingDataVal";
+    public static final String TAGNAME_STATATTRIBVAL = "@statAttribVal";
+    public static final String TAGNAME_TEMP_RES = "tres";
+
     private String cache = null;
     private int columnCount = 0;
     //private RandomAccessFile j2kTSFileReader;
@@ -98,7 +107,7 @@ public class J2KTSDataStore extends TSDataStore {
         } else {
             sourceFile = new File(ws.getLocalInputDirectory(), id + ".dat");
         }
-        
+
         //this.j2kTSFileReader = new RandomAccessFile(sourceFile,"r");
         this.j2kTSFileReader = new BufferedFileReader(new FileInputStream(sourceFile));
         readJ2KFile();
@@ -113,37 +122,36 @@ public class J2KTSDataStore extends TSDataStore {
     private void readJ2KFile() throws IOException {
 
         // read header information from the J2K time series file
-
         String line = j2kTSFileReader.readLine();
         //skip comment lines
         while (line.charAt(0) == '#') {
-            this.description += line.substring(1) + "\n";
+            this.description += line.substring(1) + NEWLINE;
             line = j2kTSFileReader.readLine();
         }
 
         StringBuffer dataValueAttribs = new StringBuffer();
-        while (!line.startsWith("@dataSetAttribs")) {
-            dataValueAttribs.append(line + "\n");
+        while (!line.startsWith(TAGNAME_DATASETATTRIBS)) {
+            dataValueAttribs.append(line + NEWLINE);
             line = j2kTSFileReader.readLine();
         }
 
         StringBuffer dataSetAttribs = new StringBuffer();
-        while (!line.startsWith("@statAttribVal")) {
-            dataSetAttribs.append(line + "\n");
+        while (!line.startsWith(TAGNAME_STATATTRIBVAL)) {
+            dataSetAttribs.append(line + NEWLINE);
             line = j2kTSFileReader.readLine();
         }
 
         StringBuffer statAttribVal = new StringBuffer();
-        while (!line.startsWith("@dataVal")) {
-            statAttribVal.append(line + "\n");
+        while (!line.startsWith(TAGNAME_DATAVAL)) {
+            statAttribVal.append(line + NEWLINE);
             line = j2kTSFileReader.readLine();
         }
 
         // create a DefaultDataSetDefinition object
 
-        StringTokenizer tok1 = new StringTokenizer(statAttribVal.toString(), "\n");
+        StringTokenizer tok1 = new StringTokenizer(statAttribVal.toString(),NEWLINE);
         tok1.nextToken();
-        StringTokenizer tok2 = new StringTokenizer(tok1.nextToken(), "\t");
+        StringTokenizer tok2 = new StringTokenizer(tok1.nextToken(),SEPARATOR);
 
         int attributeCount = tok2.countTokens() - 1;
         ArrayList<Class> dataTypes = new ArrayList<Class>();
@@ -180,29 +188,31 @@ public class J2KTSDataStore extends TSDataStore {
         def.setAttributeValues(parameterString, parameterName);
 
         // process dataSetAttribs
-        tok1 = new StringTokenizer(dataSetAttribs.toString(), "\n");
+        tok1 = new StringTokenizer(dataSetAttribs.toString(),NEWLINE);
         tok1.nextToken(); // skip the "@"-tag
 
         while (tok1.hasMoreTokens()) {
             tok2 = new StringTokenizer(tok1.nextToken());
             String key = tok2.nextToken();
-            if (key.equals("missingDataVal")) {
+            if (key.equalsIgnoreCase(TAGNAME_MISSINGDATAVAL)) {
                 missingDataValue = tok2.nextToken();
-            } else if (key.equals("dataStart")) {
-                String startString = tok2.nextToken() + " " + tok2.nextToken();
-                try {
-                    startDate.setValue(startString, "dd.MM.yyyy HH:mm");
-                } catch (ParseException pe) {
-                    ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Could_not_parse_date_\"") + startString + JAMS.resources.getString("\"_-_date_kept_unchanged!"));
+            } else if (key.equalsIgnoreCase(TAGNAME_DATASTART) || key.equalsIgnoreCase(TAGNAME_DATAEND)) {
+                String dateFormat = "dd.MM.yyyy";
+                String dateString = tok2.nextToken();
+                if (tok2.hasMoreTokens()) {
+                    dateFormat += " HH:mm";
+                    dateString += " " + tok2.nextToken();
                 }
-            } else if (key.equals("dataEnd")) {
-                String endString = tok2.nextToken() + " " + tok2.nextToken();
                 try {
-                    endDate.setValue(endString, "dd.MM.yyyy HH:mm");
+                    if (key.equalsIgnoreCase(TAGNAME_DATASTART))
+                        startDate.setValue(dateString, dateFormat);
+                    if (key.equalsIgnoreCase(TAGNAME_DATAEND))
+                        endDate.setValue(dateString, dateFormat);
+
                 } catch (ParseException pe) {
-                    ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Could_not_parse_date_\"") + endString + JAMS.resources.getString("\"_-_date_kept_unchanged!"));
+                    ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Could_not_parse_date_\"") + dateString + JAMS.resources.getString("\"_-_date_kept_unchanged!"));
                 }
-            } else if (key.equals("tres")) {
+            } else if (key.equalsIgnoreCase(TAGNAME_TEMP_RES)) {
                 String tres = tok2.nextToken();
                 if (tres.equals("d")) {
                     timeUnit = JAMSCalendar.DAY_OF_YEAR;
@@ -244,7 +254,7 @@ public class J2KTSDataStore extends TSDataStore {
         }
 
         DefaultDataSet result = new DefaultDataSet(columnCount + 1);
-        StringTokenizer tok = new StringTokenizer(cache, "\t");
+        StringTokenizer tok = new StringTokenizer(cache,SEPARATOR);
 
         String dateTimeString = tok.nextToken() + " " + tok.nextToken();
         /*if (parseDate) {
@@ -277,9 +287,9 @@ public class J2KTSDataStore extends TSDataStore {
             ws.getRuntime().handle(ioe);
         }
     }
-    
+
     @Override
-    public void getState(java.io.ObjectOutputStream stream) throws IOException{           
+    public void getState(java.io.ObjectOutputStream stream) throws IOException{
        super.getState(stream);
        stream.writeObject(this.cache);
        stream.writeBoolean(this.parseDate);
@@ -288,14 +298,14 @@ public class J2KTSDataStore extends TSDataStore {
        stream.writeObject(this.sourceFile.getAbsolutePath());
        stream.writeLong(this.j2kTSFileReader.getPosition());
     }
-    
+
     @Override
     public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
        super.setState(stream);
        this.cache = (String)stream.readObject();
        this.parseDate = stream.readBoolean();
        this.columnCount = stream.readInt();
-       
+
        this.sourceFile = new File((String)stream.readObject());
        if (j2kTSFileReader != null){
            try{
@@ -306,5 +316,5 @@ public class J2KTSDataStore extends TSDataStore {
        long offset = stream.readLong();
        j2kTSFileReader.setPosition(offset);
     }
-            
+
 }
