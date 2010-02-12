@@ -876,7 +876,7 @@ public class JAMSSpreadSheet extends JPanel {
             JAMSCalendar timeval = JAMSDataFactory.createCalendar();
 
             try {
-                timeval.setValue(rowData[0].getString(), "dd.MM.yyyy HH:mm");
+                timeval.setValue(rowData[0].getString(), JAMSCalendar.DATE_TIME_FORMAT_PATTERN_DE);
             } catch (ParseException pe) {
                 pe.printStackTrace();
             }
