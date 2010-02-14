@@ -36,6 +36,7 @@ import java.util.Observer;
 import java.util.StringTokenizer;
 import jams.tools.JAMSTools;
 import jams.runtime.JAMSLog;
+import jams.tools.StringTools;
 
 /**
  *
@@ -81,10 +82,10 @@ public class Client {
             }
         } catch (UnknownHostException ex) {
             getErrorLog().print(ex.getMessage() + "\n");
-            getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()) + "\n");
+            getErrorLog().print(StringTools.getStackTraceString(ex.getStackTrace()) + "\n");
         } catch (IOException ex) {
             getErrorLog().print(ex.getMessage() + "\n");
-            getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()) + "\n");
+            getErrorLog().print(StringTools.getStackTraceString(ex.getStackTrace()) + "\n");
         }
     }
     
@@ -179,7 +180,7 @@ public class Client {
     }
     
     public void pushDir(String remotePath, String localPath, String excludes) throws IOException {
-        pushDir(remotePath, localPath, JAMSTools.toArray(excludes, ";"));
+        pushDir(remotePath, localPath, StringTools.toArray(excludes, ";"));
     }
     
     public void pushDir(String remotePath, String localPath) throws IOException {
@@ -223,7 +224,7 @@ public class Client {
     }
     
     public void getDir(String remotePath, String localPath, String excludes) throws IOException {
-        getDir(remotePath, localPath, JAMSTools.toArray(excludes, ";"));
+        getDir(remotePath, localPath, StringTools.toArray(excludes, ";"));
     }
     
     public void getDir(String remotePath, String localPath) throws IOException {

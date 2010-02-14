@@ -57,13 +57,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import jams.JAMSProperties;
 import jams.SystemProperties;
-import jams.tools.JAMSTools;
 import jams.gui.tools.GUIHelper;
 import jams.gui.LogViewDlg;
-import jams.tools.XMLIO;
+import jams.tools.XMLTools;
 import jamsui.launcher.JAMSFrame;
 import jams.gui.input.InputComponent;
 import jams.gui.input.ListInput;
+import jams.tools.StringTools;
 import org.w3c.dom.Element;
 
 /**
@@ -187,7 +187,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         String server = getProperties().getProperty(JAMSProperties.SERVER_IDENTIFIER);
         if (server != null) {
             Vector<String> listData = new Vector<String>();
-            for (String str : JAMSTools.toArray(server, ";")) {
+            for (String str : StringTools.toArray(server, ";")) {
                 listData.add(str);
             }
             serverList.setListData(listData);
@@ -409,7 +409,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
 
         int port = Server.STANDARD_PORT;
         String host = "";
-        String[] serverData = JAMSTools.toArray(address, ":");
+        String[] serverData = StringTools.toArray(address, ":");
         try {
             host = serverData[0];
             if (serverData.length > 1) {
@@ -474,7 +474,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             updateLogsButton.setEnabled(false);
             getRunModelAction().setEnabled(false);
         } catch (IOException ex) {
-            client.getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()));
+            client.getErrorLog().print(StringTools.getStackTraceString(ex.getStackTrace()));
         }
     }
 
@@ -483,13 +483,13 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             conClientLabel.setText("" + client.getRunCount());
             maxClientLabel.setText("" + client.getMaxRunCount());
             String address = client.getServerAddress();
-            String[] parts = JAMSTools.toArray(address, ":");
+            String[] parts = StringTools.toArray(address, ":");
             addressLabel.setText(parts[0]);
             socketLabel.setText(parts[1]);
             baseDir = client.getBaseDir();
             baseDirLabel.setText(baseDir);
         } catch (IOException ex) {
-            client.getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()));
+            client.getErrorLog().print(StringTools.getStackTraceString(ex.getStackTrace()));
         }
     }
 
@@ -563,7 +563,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             String remoteWorkspacePath = new File(localWorkspace).toURI().getPath().replaceAll(":", "");
             client.pushDir(remoteWorkspacePath, localWorkspace, ".cache;.svn");
         } catch (Exception ex) {
-            client.getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()));
+            client.getErrorLog().print(StringTools.getStackTraceString(ex.getStackTrace()));
             client.getInfoLog().print("Failed uploading workspace!\n");
         }
 
@@ -584,7 +584,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             }
             client.getDir(remoteWorkspacePath, localWorkspace, excludes.getText());
         } catch (Exception ex) {
-            client.getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()));
+            client.getErrorLog().print(StringTools.getStackTraceString(ex.getStackTrace()));
             client.getInfoLog().print("Failed downloading workspace!\n");
         }
     }
@@ -600,7 +600,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             String remoteWorkspacePath = new File(localWorkspace).toURI().getPath().replaceAll(":", "");
             client.cleanDir(remoteWorkspacePath);
         } catch (Exception ex) {
-            client.getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()));
+            client.getErrorLog().print(StringTools.getStackTraceString(ex.getStackTrace()));
             client.getInfoLog().print("Failed cleaning workspace!\n");
         }
     }
@@ -614,7 +614,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         try {
             client.cleanDir(".");
         } catch (Exception ex) {
-            client.getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()));
+            client.getErrorLog().print(StringTools.getStackTraceString(ex.getStackTrace()));
             client.getInfoLog().print("Failed cleaning account!\n");
         }
     }
@@ -625,12 +625,12 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         try {
             client.createDir(SERVER_LIB_DIR);
         } catch (IOException ex) {
-            client.getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()));
+            client.getErrorLog().print(StringTools.getStackTraceString(ex.getStackTrace()));
             client.getInfoLog().print("Failed creating server lib dir\n");
         }
 
         //copy necessary libs to the server
-        String[] libs = JAMSTools.toArray(getProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER), ";");
+        String[] libs = StringTools.toArray(getProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER), ";");
         for (String lib : libs) {
             File libFile = new File(lib);
             if (libFile.isDirectory()) {
@@ -638,7 +638,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
                     client.pushDir(SERVER_LIB_DIR, libFile.getAbsolutePath(), ".cache;.svn");
                     client.getInfoLog().print("Uploaded lib dir " + lib + "\n");
                 } catch (IOException ex) {
-                    client.getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()));
+                    client.getErrorLog().print(StringTools.getStackTraceString(ex.getStackTrace()));
                     client.getInfoLog().print("Failed uploading lib dir " + lib + "\n");
                 }
             } else if (libFile.exists()) {
@@ -646,7 +646,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
                     client.pushFile(SERVER_LIB_DIR + "/" + libFile.getName(), libFile.getAbsolutePath());
                     client.getInfoLog().print("Uploaded lib file " + lib + "\n");
                 } catch (IOException ex) {
-                    client.getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()));
+                    client.getErrorLog().print(StringTools.getStackTraceString(ex.getStackTrace()));
                     client.getInfoLog().print("Failed uploading lib file " + lib + "\n");
                 }
             }
@@ -674,7 +674,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             getErrorDlg().setVisible(true);
 
         } catch (Exception ex) {
-            client.getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()));
+            client.getErrorLog().print(StringTools.getStackTraceString(ex.getStackTrace()));
             client.getInfoLog().print("Failed getting model logs!\n");
         }
     }
@@ -707,12 +707,12 @@ public class JAMSRemoteLauncher extends JAMSFrame {
 
         // create a copy of the model document
         //Document modelDocCopy = (Document) getModelDocument().cloneNode(true);
-        //String modelDocString = XMLIO.getStringFromDocument(modelDocCopy).replace("\\", "/");
+        //String modelDocString = XMLTools.getStringFromDocument(modelDocCopy).replace("\\", "/");
 
         //create local model file
         String localModelFilename = new File(localWorkspace + "/" + MODEL_FILE_NAME).getAbsolutePath();
         try {
-            XMLIO.writeXmlFile(getModelDocument(), localModelFilename);
+            XMLTools.writeXmlFile(getModelDocument(), localModelFilename);
         } catch (IOException ex) {
             client.getErrorLog().print("Model definition file " + localModelFilename + " could not be written!\n");
             getRunModelAction().setEnabled(true);
@@ -744,7 +744,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             client.getInfoLog().print("Remote execution finished\n");
 
         } catch (IOException ex) {
-            client.getErrorLog().print(JAMSTools.getStackTraceString(ex.getStackTrace()));
+            client.getErrorLog().print(StringTools.getStackTraceString(ex.getStackTrace()));
             client.getInfoLog().print("Remote execution failed\n");
         }
         getRunModelAction().setEnabled(true);

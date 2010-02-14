@@ -38,11 +38,11 @@ import java.net.SocketException;
 import java.util.Observable;
 import java.util.Observer;
 import jams.JAMSProperties;
-import jams.tools.JAMSTools;
-import jams.tools.XMLIO;
+import jams.tools.XMLTools;
 import jams.io.XMLProcessor;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
+import jams.tools.FileTools;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -204,9 +204,9 @@ public class ServerChild {
             modelFilename = newModelFilename;
         }
         
-        String modelDocString = JAMSTools.fileToString(modelFilename);
+        String modelDocString = FileTools.fileToString(modelFilename);
         
-        String[] args = null;//JAMSTools.toArray(cmdLineParameterValues, ";");
+        String[] args = null;//StringTools.toArray(cmdLineParameterValues, ";");
         if (args != null) {
             for (int i = 0; i < args.length; i++) {
                 modelDocString = modelDocString.replaceAll("%"+i, args[i]);
@@ -217,7 +217,7 @@ public class ServerChild {
         Document modelDoc = null;
         
         try {
-            modelDoc = XMLIO.getDocumentFromString(modelDocString);
+            modelDoc = XMLTools.getDocumentFromString(modelDocString);
         } catch (SAXException se) {
             se.printStackTrace();
             return;
