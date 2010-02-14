@@ -27,8 +27,6 @@ import java.io.Serializable;
 import jams.data.*;
 import jams.tools.JAMSTools;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 /**
  *
@@ -78,40 +76,6 @@ public class JAMSTableDataArray implements Serializable {
             }
             this.setValues(theValues);
         }
-    }
-
-    public JAMSTableDataArray(String dataLine, boolean parseTime) throws ParseException {
-
-        StringTokenizer tok = new StringTokenizer(dataLine);
-        int n = tok.countTokens();
-
-        if (n > 1) {
-
-            String dateString = tok.nextToken();
-            String[] data;
-            int i;
-
-            String s = tok.nextToken();
-            if (s.contains(":")) {
-                data = new String[n - 1];
-                data[0] = dateString + " " + s;
-                i = 1;
-            } else {
-                data = new String[n];
-                data[0] = dateString;
-                data[1] = s;
-                i = 2;
-            }
-
-            while (tok.hasMoreTokens()) {
-                data[i++] = tok.nextToken();
-            }
-            this.setValues(data);
-        }
-    }
-
-    public JAMSTableDataArray(JAMSCalendar time) {
-        this.time = time;
     }
 
     public JAMSCalendar getTime() {
