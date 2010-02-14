@@ -22,8 +22,8 @@
  */
 package reg.wizard;
 
+import jams.tools.FileTools;
 import jams.tools.JAMSTools;
-import jams.workspace.JAMSWorkspace;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -72,12 +72,12 @@ public class WizardFactory {
     public static String copyModelFiles(String sourceDir, String targetDir)
             throws IOException {
 
-        String outputTargetDir = targetDir + File.separator + JAMSWorkspace.OUTPUT_DIR_NAME;
+        String outputTargetDir = targetDir + File.separator + "output";
         deleteModelFiles(targetDir);
         deleteModelFiles(outputTargetDir);
 
         String modelSourceDir = sourceDir + File.separator + "workspace";
-        File[] modelFiles = JAMSTools.getFiles(modelSourceDir, null);
+        File[] modelFiles = FileTools.getFiles(modelSourceDir, null);
         if (modelFiles == null || modelFiles.length == 0) {
             System.out.println("no model files found ind " + modelSourceDir);
         } else {
@@ -87,12 +87,12 @@ public class WizardFactory {
             String completeModelFileName = modelFile.getAbsolutePath();
             String modelFileName = modelFile.getName();
             String targetFileName = targetDir + File.separator + modelFileName;
-            JAMSTools.copyFile(completeModelFileName, targetFileName);
+            FileTools.copyFile(completeModelFileName, targetFileName);
 
 
             // copy output files
-            String outputSourceDir = sourceDir + File.separator + JAMSWorkspace.OUTPUT_DIR_NAME;
-            File[] outputFiles = JAMSTools.getFiles(outputSourceDir, JAMSTools.SUFFIX_XML);
+            String outputSourceDir = sourceDir + File.separator + "output";
+            File[] outputFiles = FileTools.getFiles(outputSourceDir, "xml");
             if (outputFiles == null || outputFiles.length == 0) {
                 System.out.println("no output files found in " + outputSourceDir);
             } else {
@@ -100,37 +100,13 @@ public class WizardFactory {
                     String outputFileName = outputFile.getAbsolutePath();
                     targetFileName = outputTargetDir + File.separator + outputFile.getName();
                     System.out.println("outputFile file found: " + outputFileName);
-                    JAMSTools.copyFile(outputFileName, targetFileName);
+                    FileTools.copyFile(outputFileName, targetFileName);
                 }
             }
             return modelFileName;
         }
         return null;
 
-    }
-
-    public static String copyInputFile(String sourceDir, String targetDir)
-            throws IOException {
-
-        String inputTargetDirName = targetDir + File.separator + JAMSWorkspace.INPUT_DIR_NAME;
-        String inputSourceDirName = sourceDir + File.separator + JAMSWorkspace.INPUT_DIR_NAME;
-        File inputSourceDir = new File(inputSourceDirName);
-        if (inputSourceDir != null && inputSourceDir.exists() && inputSourceDir.isDirectory()) {
-            File[] inputFiles = JAMSTools.getFiles(inputSourceDirName, JAMSTools.SUFFIX_XML);
-            if (inputFiles == null || inputFiles.length == 0) {
-                System.out.println("no inputFile found in " + inputSourceDirName);
-            } else {
-                File inputFile = inputFiles[0];
-
-
-                String completeInputFileName = inputFile.getAbsolutePath();
-                String inputFileName = inputFile.getName();
-                String targetFileName = inputTargetDirName + File.separator + inputFileName;
-                JAMSTools.copyFile(completeInputFileName, targetFileName);
-                return inputFileName;
-            }
-        }
-        return null;
     }
 
     /**
@@ -140,8 +116,8 @@ public class WizardFactory {
      */
     public static void deleteModelFiles(String theDirectoryName)
             throws IOException {
-        File[] modelFiles = JAMSTools.getFiles(theDirectoryName, JAMSTools.SUFFIX_XML);
-        JAMSTools.deleteFiles(modelFiles);
+        File[] modelFiles = FileTools.getFiles(theDirectoryName, "xml");
+        FileTools.deleteFiles(modelFiles);
     }
 
     /**

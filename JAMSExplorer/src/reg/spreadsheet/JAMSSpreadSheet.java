@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import jams.data.*;
 
 import jams.gui.tools.GUIHelper;
+import jams.tools.StringTools;
 import jams.workspace.DataValue;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.datatypes.DoubleValue;
@@ -1136,7 +1137,7 @@ public class JAMSSpreadSheet extends JPanel {
         public void actionPerformed(ActionEvent e) {
 
             String selectedShape = (String) shapeSelector.getSelectedItem();
-            if (JAMSTools.isEmptyString(selectedShape)) {
+            if (StringTools.isEmptyString(selectedShape)) {
                 System.out.println("no shape selected.");
                 return;  // errorMessage?
             }

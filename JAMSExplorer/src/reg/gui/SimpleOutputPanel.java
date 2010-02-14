@@ -23,7 +23,7 @@
 
 package reg.gui;
 
-import jams.tools.JAMSTools;
+import jams.tools.FileTools;
 import java.io.File;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -38,7 +38,7 @@ public class SimpleOutputPanel extends JPanel {
 
     public SimpleOutputPanel(File file) {
 
-        String text = JAMSTools.fileToString(file.getAbsolutePath());
+        String text = FileTools.fileToString(file.getAbsolutePath());
         textArea = new JTextArea(text);
         textArea.setEditable(false);
         this.add(textArea);
