@@ -5,7 +5,7 @@
 
 package jamsui.juice.optimizer.wizard;
 
-import jams.tools.XMLIO;
+import jams.tools.XMLTools;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.w3c.dom.Document;
@@ -32,7 +32,7 @@ public class step8Pane extends stepPane{
     
     public String init(){
         try{
-            XMLIO.writeXmlFile(doc, this.outputFilePath);
+            XMLTools.writeXmlFile(doc, this.outputFilePath);
         }catch(Exception e){
             return e.toString();
         }   

@@ -44,13 +44,13 @@ import javax.swing.tree.TreeSelectionModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import jams.tools.JAMSTools;
 import jams.JAMSVersion;
 import jams.data.JAMSDataFactory;
 import jams.gui.HelpComponent;
 import jams.gui.tools.GUIHelper;
 import jams.io.ParameterProcessor;
 import jams.model.JAMSContext;
+import jams.tools.StringTools;
 import javax.swing.JFrame;
 import jamsui.juice.ComponentDescriptor;
 import jamsui.juice.ComponentDescriptor.ComponentAttribute;
@@ -715,7 +715,7 @@ public class ModelTree extends JAMSTree {
             } else {
                 // if it is an array, tokenize the attribute string (semicolon-separated)
                 // and do the above for every token
-                String[] values = JAMSTools.toArray(attribute);
+                String[] values = StringTools.toArray(attribute);
                 for (String value : values) {
                     cd.addContextAttribute(attribute, type, value);
 //                    cd.getDataRepository().addAttribute(new ContextAttribute(attribute, type, cd));

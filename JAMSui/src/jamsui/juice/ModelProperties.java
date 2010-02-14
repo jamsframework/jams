@@ -25,8 +25,8 @@ package jamsui.juice;
 import java.util.Vector;
 import java.util.ArrayList;
 import java.util.HashMap;
-import jams.tools.JAMSTools;
 import jams.gui.HelpComponent;
+import jams.tools.StringTools;
 
 /**
  *
@@ -126,7 +126,7 @@ public class ModelProperties {
      */
     public Group getGroup(String groupName) {
         if (groupName.indexOf(ModelProperties.groupSeparator) > 0) {
-            String[] groupNames = JAMSTools.toArray(groupName, ModelProperties.groupSeparator);
+            String[] groupNames = StringTools.toArray(groupName, ModelProperties.groupSeparator);
             return getGroup(groupNames[0], groupNames[1]);
         } else {
             return groups.get(groupName);
@@ -141,7 +141,7 @@ public class ModelProperties {
      */
     public Group getGroup(String groupName, String subgroupName) {
         Group group = getGroup(groupName);
-        if (JAMSTools.isEmptyString(subgroupName)) {
+        if (StringTools.isEmptyString(subgroupName)) {
             return group;
         }
         for (Object modelElement : group.propertyList) {

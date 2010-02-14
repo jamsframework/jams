@@ -6,7 +6,7 @@
 package jamsui.juice.optimizer.wizard;
 
 import jams.tools.JAMSTools;
-import jams.tools.XMLIO;
+import jams.tools.XMLTools;
 import jams.model.JAMSModel;
 import jams.model.JAMSVarDescription;
 import jams.runtime.StandardRuntime;
@@ -456,7 +456,7 @@ public class step6aPane extends stepPane {
         while(iter.hasNext()){
             String context = iter.next();
             
-            Document outputDoc = XMLIO.createDocument();
+            Document outputDoc = XMLTools.createDocument();
             Element root = outputDoc.createElement("outputdatastore"); 
             root.setAttribute("context", context);
             outputDoc.appendChild(root);
@@ -473,7 +473,7 @@ public class step6aPane extends stepPane {
             }
                         
             try{
-                XMLIO.writeXmlFile(outputDoc, XMLProcessor.getWorkspacePath(doc) + File.separator + "output" + File.separator + "optimization_wizard_" + context + ".xml");
+                XMLTools.writeXmlFile(outputDoc, XMLProcessor.getWorkspacePath(doc) + File.separator + "output" + File.separator + "optimization_wizard_" + context + ".xml");
             }catch(Exception e){
                 return JAMS.resources.getString("Error_cant_write_xml_file_because_") + e.toString();
             }            

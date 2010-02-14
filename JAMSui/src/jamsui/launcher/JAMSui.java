@@ -23,7 +23,7 @@
 package jamsui.launcher;
 
 import jamsui.cmdline.*;
-import jams.tools.XMLIO;
+import jams.tools.XMLTools;
 import jams.tools.JAMSTools;
 import java.io.*;
 import javax.swing.UIManager;
@@ -33,6 +33,8 @@ import jams.io.*;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jams.SystemProperties;
+import jams.tools.FileTools;
+import jams.tools.StringTools;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -142,8 +144,8 @@ public class JAMSui {
                     modelFileName = newModelFilename;
                 }
 
-                String xmlString = JAMSTools.fileToString(modelFileName);
-                String[] args = JAMSTools.toArray(cmdLineParameterValues, ";");
+                String xmlString = FileTools.fileToString(modelFileName);
+                String[] args = StringTools.toArray(cmdLineParameterValues, ";");
                 if (args != null) {
                     for (int i = 0; i < args.length; i++) {
                         xmlString = xmlString.replaceAll("%" + i, args[i]);
@@ -152,14 +154,14 @@ public class JAMSui {
 
                 JAMSRuntime runtime = null;
                 try {
-                    Document modelDoc = XMLIO.getDocumentFromString(xmlString);
+                    Document modelDoc = XMLTools.getDocumentFromString(xmlString);
                     runtime = new StandardRuntime();
                     runtime.loadModel(modelDoc, properties);
 
                     // if workspace has not been provided, check if the document has been
                     // read from file and try to use parent directory instead
-                    if (JAMSTools.isEmptyString(runtime.getModel().getWorkspacePath())
-                            && !JAMSTools.isEmptyString(modelFileName)) {
+                    if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
+                            && !StringTools.isEmptyString(modelFileName)) {
                         String dir = new File(modelFileName).getParent();
                         runtime.getModel().setWorkspaceDirectory(dir);
                         runtime.sendInfoMsg(JAMS.resources.getString("no_workspace_defined_use_loadpath") + dir);

@@ -52,10 +52,11 @@ import jams.gui.JAMSLauncher;
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.io.ParameterProcessor;
-import jams.tools.XMLIO;
+import jams.tools.XMLTools;
 import jams.io.XMLProcessor;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
+import jams.tools.StringTools;
 import jamsui.juice.*;
 import jamsui.juice.ComponentDescriptor;
 import jamsui.juice.ModelProperties.Group;
@@ -140,7 +141,7 @@ public class ModelView {
 
                         // if workspace has not been provided, check if the document has been
                         // read from file and try to use parent directory instead
-                        if (JAMSTools.isEmptyString(runtime.getModel().getWorkspacePath())
+                        if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
                                 && (getSavePath() != null)) {
                             String dir = getSavePath().getParent();
                             runtime.getModel().setWorkspaceDirectory(dir);
@@ -337,7 +338,7 @@ public class ModelView {
         Document doc = getModelDoc();
 
         try {
-            result = XMLIO.writeXmlFile(doc, savePath);
+            result = XMLTools.writeXmlFile(doc, savePath);
         } catch (IOException ioe) {
             return false;
         }
@@ -419,7 +420,7 @@ public class ModelView {
             return name;
         }
 
-        String[] sArray = JAMSTools.toArray(name, "_");
+        String[] sArray = StringTools.toArray(name, "_");
         if (sArray.length > 1) {
             String suffix = "_" + sArray[sArray.length - 1];
             name = name.substring(0, name.length() - suffix.length());
@@ -440,8 +441,8 @@ public class ModelView {
 
         boolean returnValue = false;
 
-        String newXMLString = XMLIO.getStringFromDocument(getModelDoc());
-        String oldXMLString = XMLIO.getStringFromDocument(initialDoc);
+        String newXMLString = XMLTools.getStringFromDocument(getModelDoc());
+        String oldXMLString = XMLTools.getStringFromDocument(initialDoc);
 
         if (newXMLString.compareTo(oldXMLString) != 0) {
             int result = GUIHelper.showYesNoCancelDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Save_modifications_in_") + this.getFrame().getTitle() + JAMS.resources.getString("_?"), JAMS.resources.getString("Unsaved_modifications"));
@@ -623,7 +624,7 @@ public class ModelView {
             fileName = newModelFilename;
 
             this.setSavePath(new File(fileName));
-            this.setTree(new ModelTree(this, XMLIO.getDocument(fileName)));
+            this.setTree(new ModelTree(this, XMLTools.getDocument(fileName)));
 
             this.setInitialState();
 

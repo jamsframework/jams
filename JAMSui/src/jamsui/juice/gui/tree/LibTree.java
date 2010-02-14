@@ -36,7 +36,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import jams.tools.JAMSTools;
 import jams.gui.tools.GUIHelper;
 import jams.model.JAMSComponent;
 import jams.model.JAMSContext;
@@ -44,6 +43,7 @@ import javax.swing.KeyStroke;
 import jamsui.juice.ComponentDescriptor;
 import jamsui.juice.JUICE;
 import jams.JAMS;
+import jams.tools.StringTools;
 
 /**
  *
@@ -121,7 +121,7 @@ public class LibTree extends JAMSTree {
 
     public void update(String libFileNames) {
 
-        libsArray = JAMSTools.toArray(libFileNames, ";");
+        libsArray = StringTools.toArray(libFileNames, ";");
         this.setModel(null);
 
         contextCount = 0;

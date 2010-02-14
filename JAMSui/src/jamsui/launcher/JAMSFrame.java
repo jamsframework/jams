@@ -29,8 +29,10 @@ import jams.tools.JAMSTools;
 import jams.gui.tools.GUIHelper;
 import jams.JAMSFileFilter;
 import jams.io.ParameterProcessor;
-import jams.tools.XMLIO;
+import jams.tools.XMLTools;
 import jams.io.XMLProcessor;
+import jams.tools.FileTools;
+import jams.tools.StringTools;
 import jamsui.juice.JUICE;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -93,7 +95,7 @@ public class JAMSFrame extends JAMSLauncher {
     public JAMSFrame(Frame parent, SystemProperties properties, String modelFilename, String cmdLineArgs) {
         //super(properties, modelFilename, cmdLineArgs);
         this(parent, properties);
-        loadModelDefinition(modelFilename, JAMSTools.toArray(cmdLineArgs, ";"));
+        loadModelDefinition(modelFilename, StringTools.toArray(cmdLineArgs, ";"));
         loadPath = new File(modelFilename);
     }
 
@@ -122,7 +124,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
 
             // create string from input model definition file and replace "%x" occurences by cmd line data
-            String xmlString = JAMSTools.fileToString(fileName);
+            String xmlString = FileTools.fileToString(fileName);
             if (args != null) {
                 for (int i = 0; i < args.length; i++) {
                     xmlString = xmlString.replaceAll("%" + i, args[i]);
@@ -130,8 +132,8 @@ public class JAMSFrame extends JAMSLauncher {
             }
 
             // finally, create the model document from the string
-            this.modelDocument = XMLIO.getDocumentFromString(xmlString);
-            this.initialModelDocString = XMLIO.getStringFromDocument(this.modelDocument);
+            this.modelDocument = XMLTools.getDocumentFromString(xmlString);
+            this.initialModelDocString = XMLTools.getStringFromDocument(this.modelDocument);
 
         } catch (IOException ioe) {
             GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("The_specified_model_configuration_file_") + fileName + JAMS.resources.getString("_could_not_be_found!"), JAMS.resources.getString("Error"));
@@ -217,7 +219,7 @@ public class JAMSFrame extends JAMSLauncher {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfc.setFileFilter(JAMSFileFilter.getModelFilter());
-                if (!JAMSTools.isEmptyString(modelFilename)) {
+                if (!StringTools.isEmptyString(modelFilename)) {
                     jfc.setSelectedFile(new File(modelFilename));
                 } else {
                     jfc.setSelectedFile(new File(""));
@@ -244,7 +246,7 @@ public class JAMSFrame extends JAMSLauncher {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfc.setFileFilter(JAMSFileFilter.getModelFilter());
-                if (!JAMSTools.isEmptyString(modelFilename)) {
+                if (!StringTools.isEmptyString(modelFilename)) {
                     jfc.setSelectedFile(new File(modelFilename));
                 } else {
                     jfc.setSelectedFile(new File(""));
@@ -573,7 +575,7 @@ public class JAMSFrame extends JAMSLauncher {
         updateProperties();
 
         if (getModelDocument() != null) {
-            String modelDocString = XMLIO.getStringFromDocument(getModelDocument());
+            String modelDocString = XMLTools.getStringFromDocument(getModelDocument());
             if (!getInitialModelDocString().equals(modelDocString)) {
                 int result = GUIHelper.showYesNoCancelDlg(this, JAMS.resources.getString("Save_modifications_in_") + modelFilename + JAMS.resources.getString("_?"), JAMS.resources.getString("JAMS_Launcher:_unsaved_modifications"));
                 if (result == JOptionPane.CANCEL_OPTION) {
@@ -592,8 +594,8 @@ public class JAMSFrame extends JAMSLauncher {
         updateProperties();
 
         try {
-            XMLIO.writeXmlFile(getModelDocument(), modelFilename);
-            this.initialModelDocString = XMLIO.getStringFromDocument(this.modelDocument);
+            XMLTools.writeXmlFile(getModelDocument(), modelFilename);
+            this.initialModelDocString = XMLTools.getStringFromDocument(this.modelDocument);
             fillAttributes(getModelDocument());
         } catch (IOException ioe) {
             GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Error_saving_configuration_to_") + modelFilename, JAMS.resources.getString("Error"));
