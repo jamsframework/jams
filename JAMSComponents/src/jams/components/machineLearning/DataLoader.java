@@ -11,9 +11,9 @@ package jams.components.machineLearning;
 
 import jams.model.*;
 import jams.data.*;
+import jams.tools.FileTools;
 import java.util.*;
 import java.io.*;
-import jams.JAMS;
 import jams.tools.JAMSTools;
 /**
  *
@@ -92,7 +92,7 @@ public class DataLoader extends JAMSComponent {
         }
         
         try {
-            reader = new BufferedReader(new FileReader(JAMSTools.CreateAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),
+            reader = new BufferedReader(new FileReader(FileTools.createAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),
                     datafile.getValue())));
         } catch (IOException ioe) {
             this.getModel().getRuntime().sendHalt("could not open datafile " + datafile.getValue() + "; wrong path?");

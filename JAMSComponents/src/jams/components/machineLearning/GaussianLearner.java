@@ -15,8 +15,8 @@ import jams.model.*;
 import java.io.*;
 import Jama.*;
 import Jama.Matrix;
-import jams.tools.JAMSTools;
 import jams.components.machineLearning.kernels.*;
+import jams.tools.FileTools;
 
 public class GaussianLearner extends Learner  {
     @JAMSVarDescription(
@@ -300,7 +300,7 @@ public class GaussianLearner extends Learner  {
 	if (!this.doOptimization.getValue() && this.parameterFile != null && param_theta == null) {
 	    BufferedReader reader;
 	    try {
-		reader = new BufferedReader(new FileReader(JAMSTools.CreateAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),
+		reader = new BufferedReader(new FileReader(FileTools.createAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),
                         this.parameterFile.getValue())));
 		for (int i=0;i<theta.length;i++) {
 		    logtheta[i] = (new Double(reader.readLine()).doubleValue());	
@@ -627,7 +627,7 @@ public class GaussianLearner extends Learner  {
 	
 	BufferedWriter writer = null;
 	try {
-	    writer = new BufferedWriter(new FileWriter(JAMSTools.CreateAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),
+	    writer = new BufferedWriter(new FileWriter(FileTools.createAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),
                     this.resultFile.getValue()),true));	    
 	}
 	catch (Exception e) {
@@ -957,7 +957,7 @@ public class GaussianLearner extends Learner  {
             //save parameters
             BufferedWriter writer;
 	    try {
-		writer = new BufferedWriter(new FileWriter(JAMSTools.CreateAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),this.parameterFile.getValue())));
+		writer = new BufferedWriter(new FileWriter(FileTools.createAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),this.parameterFile.getValue())));
                 this.meantheta = this.kernel.MM.GetParameters();
 		for (int i=0;i<theta.length;i++) {
                     writer.write(Double.toString(this.logtheta[i]) + "\n");		    

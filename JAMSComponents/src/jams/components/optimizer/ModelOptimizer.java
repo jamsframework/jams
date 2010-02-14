@@ -16,7 +16,7 @@ import jams.SystemProperties;
 import jams.data.*;
 import jams.model.*;
 import jams.runtime.StandardRuntime;
-import jams.tools.XMLIO;
+import jams.tools.XMLTools;
 import org.w3c.dom.*;
 
 /**
@@ -729,7 +729,7 @@ public class ModelOptimizer extends JAMSComponent{
         
                
         try{
-            XMLIO.writeXmlFile(doc, getModel().getWorkspaceDirectory().getPath() + this.resultingModelFile.getValue());
+            XMLTools.writeXmlFile(doc, getModel().getWorkspaceDirectory().getPath() + this.resultingModelFile.getValue());
         }catch(Exception e){
             System.out.println(e.toString());
         }                                     

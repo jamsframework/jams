@@ -5,13 +5,12 @@
 
 package jams.components.tools;
 
-import jams.tools.JAMSTools;
 import jams.model.*;
 import jams.data.JAMSBoolean;
 import jams.data.JAMSEntity;
-import jams.data.JAMSInteger;
 import jams.data.JAMSString;
 import jams.runtime.StandardRuntime;
+import jams.tools.FileTools;
 
 /**
  *
@@ -73,7 +72,7 @@ public class JAMSModelSnapshot extends JAMSComponent{
             
             String fileName = null;
             if (snapshotFile != null)
-                fileName = JAMSTools.CreateAbsoluteFileName(getModel().getWorkspaceDirectory().getPath() , snapshotFile.getValue());
+                fileName = FileTools.createAbsoluteFileName(getModel().getWorkspaceDirectory().getPath() , snapshotFile.getValue());
             
             if (takeSnapshot != null && takeSnapshot.getValue()){                  
                 runtime.sendInfoMsg("Taking Snapshot" + " (" + this.getInstanceName() + ")");

@@ -14,10 +14,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import jams.JAMS;
 import jams.tools.JAMSTools;
 import jams.data.JAMSDataFactory;
 import jams.model.JAMSComponentDescription;
+import jams.tools.FileTools;
 @JAMSComponentDescription(
         title="GutmanMethod",
         author="Christian Fischer",
@@ -243,7 +243,7 @@ public class GutmannMethod extends Optimizer {
         BufferedWriter writer_mean = null;
         BufferedWriter writer_var = null;
         try {
-            writer_mean = new BufferedWriter(new FileWriter(JAMSTools.CreateAbsoluteFileName(this.getModel().getWorkspaceDirectory().getPath(), GPmeanFile)));
+            writer_mean = new BufferedWriter(new FileWriter(FileTools.createAbsoluteFileName(this.getModel().getWorkspaceDirectory().getPath(), GPmeanFile)));
             //writer_var = new BufferedWriter(new FileWriter(this.dirName + "/" + GPvarFile));
         } catch (IOException ioe) {
             JAMSTools.handle(ioe);

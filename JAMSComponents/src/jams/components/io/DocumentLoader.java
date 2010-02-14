@@ -15,7 +15,8 @@ import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 import org.xml.sax.SAXException;
 import jams.JAMS;
-import jams.tools.XMLIO;
+import jams.tools.FileTools;
+import jams.tools.XMLTools;
 
 /**
  *
@@ -45,7 +46,7 @@ public class DocumentLoader extends JAMSComponent{
     public String init_withResponse(){
         try{
             String info = "";
-            String modelFilename = JAMSTools.CreateAbsoluteFileName(workspaceDir.toString(),modelFile.toString());
+            String modelFilename = FileTools.createAbsoluteFileName(workspaceDir.toString(),modelFile.toString());
             //check if file exists
             File file = new File(modelFilename);
             if (!file.exists()) {                
@@ -59,7 +60,7 @@ public class DocumentLoader extends JAMSComponent{
                 modelFilename = newModelFilename;
             }
 
-            String xmlString = JAMSTools.fileToString(modelFilename);
+            String xmlString = FileTools.fileToString(modelFilename);
             String[] args = null;
             if (args != null) {
                 for (int i = 0; i < args.length; i++) {
@@ -68,7 +69,7 @@ public class DocumentLoader extends JAMSComponent{
             }
 
             try {
-                modelDoc.setValue(XMLIO.getDocumentFromString(xmlString));
+                modelDoc.setValue(XMLTools.getDocumentFromString(xmlString));
                
             } catch (IOException ioe) {                
                 return JAMS.resources.getString("The_model_definition_file_") + modelFilename + JAMS.resources.getString("_could_not_be_loaded,_because:_") + ioe.toString();

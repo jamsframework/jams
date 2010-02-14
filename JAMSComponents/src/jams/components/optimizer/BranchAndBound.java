@@ -14,8 +14,8 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Vector;
-import jams.tools.JAMSTools;
 import jams.model.JAMSComponentDescription;
+import jams.tools.FileTools;
 
 @JAMSComponentDescription(
         title="Branch and Bound Optimizer",
@@ -40,7 +40,7 @@ public class BranchAndBound extends Optimizer{
         if (SampleDumpFileName != null){
             try {            
                 String fileName = SampleDumpFileName.getValue();            
-                writer = new SerializableBufferedWriter(new FileWriter(JAMSTools.CreateAbsoluteFileName(this.dirName.getValue(),fileName)));
+                writer = new SerializableBufferedWriter(new FileWriter(FileTools.createAbsoluteFileName(this.dirName.getValue(),fileName)));
             } catch (IOException ioe) {
                 JAMS.handle(ioe);
             }
@@ -331,7 +331,7 @@ public class BranchAndBound extends Optimizer{
         try{
             String fileName = param_fileName;
                      
-            BufferedWriter writer = new BufferedWriter(new FileWriter(JAMSTools.CreateAbsoluteFileName(this.getModel().getWorkspaceDirectory().getPath(),"/info/" + fileName)));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(FileTools.createAbsoluteFileName(this.getModel().getWorkspaceDirectory().getPath(),"/info/" + fileName)));
             for (int i=0;i<cubes.size();i++){
                 writer.write(cubes.get(i).compactDescriptionString());
             }
