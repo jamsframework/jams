@@ -12,7 +12,7 @@
 package reg.wizard.tlug.panels;
 
 import jams.JAMSFileFilter;
-import jams.tools.JAMSTools;
+import jams.tools.StringTools;
 import java.io.File;
 import java.util.Map;
 import javax.swing.JFileChooser;
@@ -252,7 +252,7 @@ public class StationParamsPanel extends javax.swing.JPanel {
     private void checkProblems() {
 
         controller.setProblem(null);
-        if (JAMSTools.isEmptyString(r_shapeFileName))
+        if (StringTools.isEmptyString(r_shapeFileName))
             r_shapeFileName = "";
         wizardData.put(KEY_SHAPE_FILENAME, r_shapeFileName);
         if (StringUtils.isNullOrEmpty(r_computation)) {

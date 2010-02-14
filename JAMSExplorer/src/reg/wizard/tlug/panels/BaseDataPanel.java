@@ -16,7 +16,7 @@ import jams.gui.input.InputComponent;
 import jams.gui.input.InputComponentFactory;
 import jams.gui.input.TimeintervalInput;
 import jams.gui.input.ValueChangeListener;
-import jams.tools.JAMSTools;
+import jams.tools.StringTools;
 import java.io.File;
 import java.util.Map;
 import java.util.Vector;
@@ -333,7 +333,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
     private void checkProblems() {
 
-        if (JAMSTools.isEmptyString(r_shapeFileName))
+        if (StringTools.isEmptyString(r_shapeFileName))
             r_shapeFileName = "";
         wizardData.put(KEY_SHAPE_FILENAME, r_shapeFileName);
         if (StringUtils.isNullOrEmpty(r_dataOrigin)) {
