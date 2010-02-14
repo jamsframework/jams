@@ -32,10 +32,10 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.Color;
-import jams.tools.JAMSTools;
 import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
+import jams.tools.StringTools;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
@@ -130,7 +130,7 @@ public class CalendarInput extends JPanel implements InputComponent {
                 String dateString = getDateText().getText();
                 Date date = null;
                 try {
-                    if (!JAMSTools.isEmptyString(dateString)) {
+                    if (!StringTools.isEmptyString(dateString)) {
                         date = dateFormat.parse(dateString);
                     }
                 } catch (Exception e) {
@@ -171,7 +171,7 @@ public class CalendarInput extends JPanel implements InputComponent {
                 String timeString = getTimeText().getText();
                 Date time = null;
                 try {
-                    if (!JAMSTools.isEmptyString(timeString)) {
+                    if (!StringTools.isEmptyString(timeString)) {
                         time = timeFormat.parse(timeString);
                     }
                 } catch (Exception e) {
@@ -233,7 +233,7 @@ public class CalendarInput extends JPanel implements InputComponent {
     public void setValue(String value) {
 
         JAMSCalendar cal = JAMSDataFactory.createCalendar();
-        if (!JAMSTools.isEmptyString(value)) {
+        if (!StringTools.isEmptyString(value)) {
             cal.setValue(value);
         }
 
@@ -280,7 +280,7 @@ public class CalendarInput extends JPanel implements InputComponent {
     public boolean verify() {
 
         try {
-            if (JAMSTools.isEmptyString(this.getValue())) {
+            if (StringTools.isEmptyString(this.getValue())) {
                 return false;
             }
         } catch (Exception e) {

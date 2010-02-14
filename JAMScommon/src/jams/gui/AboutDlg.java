@@ -29,8 +29,8 @@ import java.io.*;
 import java.net.URL;
 import javax.swing.*;
 import jams.JAMS;
-import jams.tools.JAMSTools;
 import jams.JAMSVersion;
+import jams.tools.FileTools;
 
 /**
  *
@@ -63,7 +63,7 @@ public class AboutDlg extends JDialog {
         try {
             URL textURL = ClassLoader.getSystemResource("resources/text/readme.txt");
             if (textURL != null) {
-                gplText = JAMSTools.streamToString(textURL.openStream());
+                gplText = FileTools.streamToString(textURL.openStream());
                 versionText = JAMSVersion.getInstance().getVersionDateString();
                 contactText = JAMSVersion.getInstance().getContactString();
             }

@@ -37,8 +37,8 @@ import javax.swing.JTextPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import jams.tools.JAMSTools;
 import jams.JAMS;
+import jams.tools.StringTools;
 
 /**
  *
@@ -135,7 +135,7 @@ public class HelpDlg extends JDialog {
         }
         if (this.helpComponent.hasHelpURL()) {
             String url = this.baseUrl;
-            if (!JAMSTools.isEmptyString(url)) {
+            if (!StringTools.isEmptyString(url)) {
                 url += "/";
             }
             url += this.helpComponent.getHelpURL();

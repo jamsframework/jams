@@ -33,8 +33,8 @@ import jams.*;
 import jams.gui.input.BooleanInput;
 import jams.gui.input.FileInput;
 import jams.gui.input.TextInput;
-import jams.tools.JAMSTools;
 import jams.gui.input.FileListInput;
+import jams.tools.StringTools;
 
 /**
  *
@@ -227,7 +227,7 @@ public class PropertyDlg extends JDialog {
 
         this.properties = properties;
 
-        String[] libs = JAMSTools.toArray(properties.getProperty("libs"), ";");
+        String[] libs = StringTools.toArray(properties.getProperty("libs"), ";");
         Vector<String> v = new Vector<String>();
         for (int i = 0; i < libs.length; i++) {
             v.add(libs[i]);

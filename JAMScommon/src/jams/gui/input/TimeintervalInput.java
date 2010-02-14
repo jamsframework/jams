@@ -42,8 +42,8 @@ import jams.data.JAMSCalendar;
 import jams.data.JAMSTimeInterval;
 import java.awt.Color;
 import jams.JAMS;
-import jams.tools.JAMSTools;
 import jams.data.Attribute;
+import jams.tools.StringTools;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
@@ -161,7 +161,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         //1996-11-01 7:30 2000-10-31 7:30 6 1
 
         JAMSTimeInterval ti = new JAMSTimeInterval();
-        if (!JAMSTools.isEmptyString(value)) {
+        if (!StringTools.isEmptyString(value)) {
             ti.setValue(value);
         }
 

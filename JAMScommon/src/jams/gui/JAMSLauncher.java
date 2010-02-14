@@ -58,7 +58,7 @@ import jams.io.ParameterProcessor;
 import jams.runtime.StandardRuntime;
 import jams.runtime.JAMSRuntime;
 import jams.gui.input.InputComponentFactory;
-import jams.tools.JAMSTools;
+import jams.tools.StringTools;
 import java.awt.Frame;
 import java.io.File;
 import org.w3c.dom.DOMException;
@@ -168,7 +168,7 @@ public class JAMSLauncher extends JFrame {
 
                 // if workspace has not been provided, check if the document has been
                 // read from file and try to use parent directory instead
-                if (JAMSTools.isEmptyString(runtime.getModel().getWorkspacePath())
+                if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
                         && (loadPath != null)) {
                     String dir = loadPath.getParent();
                     runtime.getModel().setWorkspaceDirectory(dir);

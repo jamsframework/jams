@@ -22,9 +22,9 @@
  */
 package jams.gui;
 
+import jams.tools.StringTools;
 import java.awt.Image;
 import javax.swing.ImageIcon;
-import jams.tools.JAMSTools;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -93,14 +93,14 @@ public class HelpComponent {
     }
 
     public boolean hasHelpText() {
-        if (JAMSTools.isEmptyString(helpText)) {
+        if (StringTools.isEmptyString(helpText)) {
             return false;
         }
         return true;
     }
 
     public boolean hasHelpURL() {
-        if (JAMSTools.isEmptyString(helpURL)) {
+        if (StringTools.isEmptyString(helpURL)) {
             return false;
         }
         return true;
