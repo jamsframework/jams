@@ -12,7 +12,7 @@ package gw.ui;
 
 import gw.ui.layerproperies.ShapefileLayerProperties;
 import gw.ui.util.ProxyTableModel;
-import jams.tools.JAMSTools;
+import jams.tools.StringTools;
 import java.io.File;
 import java.util.Vector;
 import javax.swing.JFileChooser;
@@ -143,7 +143,7 @@ public class ExportPanel extends javax.swing.JDialog {
 
 
         String fileName = i_filename.getText();
-        if (JAMSTools.isEmptyString(fileName)) {
+        if (StringTools.isEmptyString(fileName)) {
             out_Message.setVisible(true);
             out_Message.setText(java.util.ResourceBundle.getBundle("gw/resources/language").getString("L_INPUT_FILE"));
             System.out.println("Bitte Datei angeben !");

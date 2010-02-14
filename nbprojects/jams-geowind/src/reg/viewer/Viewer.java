@@ -7,7 +7,7 @@ import gw.ui.BottomPanel;
 import gw.ui.IdColumnDialog;
 import gw.ui.layerproperies.ShapefileLayerProperties;
 import gw.ui.util.OvalBorder;
-import jams.tools.JAMSTools;
+import jams.tools.StringTools;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -94,7 +94,7 @@ public class Viewer {
         ShapefileLayerProperties layerProperties = null;
         // get working shape file from data transfer
         String layerName = theDataTransfer.getParentName();
-        if (!JAMSTools.isEmptyString(layerName)) {
+        if (!StringTools.isEmptyString(layerName)) {
             layerProperties = this.mainPanel.getShapeLayer(layerName);
             if (layerProperties == null) {
                 System.out.println("kein Layer " + layerName + " im Modell gefunden.");
