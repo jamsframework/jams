@@ -23,17 +23,17 @@
 package reg.gui;
 
 import gw.ui.util.Tools;
-import jams.tools.JAMSTools;
 import jams.gui.tools.GUIHelper;
 import jams.gui.PropertyDlg;
 import jams.gui.WorkerDlg;
 import jams.gui.WorkspaceDlg;
-import jams.tools.XMLIO;
 import jams.gui.JAMSLauncher;
 import jams.io.ParameterProcessor;
 import jams.io.XMLProcessor;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
+import jams.tools.StringTools;
+import jams.tools.XMLTools;
 import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.InputDataStore;
@@ -52,8 +52,29 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.*;
-import javax.swing.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.Vector;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.WindowConstants;
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.Wizard;
 import org.w3c.dom.Document;
@@ -63,7 +84,9 @@ import reg.spreadsheet.STPConfigurator;
 import reg.viewer.Viewer;
 import reg.wizard.WizardFactory;
 import reg.wizard.tlug.ExplorerWizard;
-import reg.wizard.tlug.panels.*;
+import reg.wizard.tlug.panels.BaseDataPanel;
+import reg.wizard.tlug.panels.DataDecisionPanel;
+import reg.wizard.tlug.panels.StationParamsPanel;
 
 /**
  *
@@ -159,7 +182,6 @@ public class ExplorerFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (launchWizard()) {
                     runModel();
-                    explorer.getWorkspace().updateDataStores();
                     update();
                 }
             }
@@ -350,7 +372,7 @@ public class ExplorerFrame extends JFrame {
                 if (modelFile == null || !modelFile.exists()) {
                     System.out.println("Datei nicht gefunden !!");
                 } else {
-                    this.modelDoc = XMLIO.getDocument(completeFileName);
+                    this.modelDoc = XMLTools.getDocument(completeFileName);
                 }
             }
 
@@ -361,7 +383,7 @@ public class ExplorerFrame extends JFrame {
 
     public void open(File workspaceFile) {
         try {
-            String[] libs = JAMSTools.toArray(explorer.getProperties().getProperty("libs", ""), ";");
+            String[] libs = StringTools.toArray(explorer.getProperties().getProperty("libs", ""), ";");
             JAMSWorkspace workspace = new JAMSWorkspace(workspaceFile, explorer.getRuntime(), false);
             workspace.setLibs(libs);
             explorer.getDisplayManager().removeAllDisplays();
@@ -477,6 +499,10 @@ public class ExplorerFrame extends JFrame {
                 result = true;
 
                 Set keys = wizardSettings.keySet();
+                System.out.println("settings coming from wizard:");
+                for (Object key : keys) {
+                    System.out.println(key + "=" + wizardSettings.get(key));
+                }
                 String workSpaceDir = ws.getDirectory().getCanonicalPath();
                 String modelFileName = null;
 
@@ -486,9 +512,6 @@ public class ExplorerFrame extends JFrame {
                     // look into directory &computation and get model + output files
                     String sourceDir = workSpaceDir + File.separator + "variants" + File.separator + computation;
                     modelFileName = WizardFactory.copyModelFiles(sourceDir, workSpaceDir);
-
-                    // add some input store?
-                    WizardFactory.copyInputFile(sourceDir, workSpaceDir);
                 } // dataDecision = station
 
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_SPATIAL)) {
@@ -499,7 +522,7 @@ public class ExplorerFrame extends JFrame {
 
 
                 // new model -> update workspace with it
-                if (!JAMSTools.isEmptyString(modelFileName)) {
+                if (!StringTools.isEmptyString(modelFileName)) {
 
                     // activate the new model
                     ws.setModelFile(modelFileName);
@@ -513,10 +536,9 @@ public class ExplorerFrame extends JFrame {
                 }
                 //additional shape file?
                 String shapeFileName = (String) wizardSettings.get(BaseDataPanel.KEY_SHAPE_FILENAME);
-                if (!JAMSTools.isEmptyString(shapeFileName)) {
+                if (!StringTools.isEmptyString(shapeFileName)) {
                     updateWithShapeFile(shapeFileName, ws);
                 }
-
                 update();
                 JAMSSpreadSheet spreadSheet = explorer.getDisplayManager().getSpreadSheet();
                 if (spreadSheet != null) {
@@ -603,10 +625,10 @@ public class ExplorerFrame extends JFrame {
         Properties properties = new Properties();
         File theShapeFile = new File(shapeFileName);
         String fileName = theShapeFile.getName();
-        String storeId = JAMSTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
+        String storeId = StringTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
         // try to get id
         String idColumn = ParameterProcessor.getAttributeValue(modelDoc, "EntityReader.idName");
-        if (!JAMSTools.isEmptyString(idColumn)) {
+        if (!StringTools.isEmptyString(idColumn)) {
             System.out.println("EntityReader.idName in model: " + idColumn);
         } else {
             // get fitting id-column from attributes of shape
