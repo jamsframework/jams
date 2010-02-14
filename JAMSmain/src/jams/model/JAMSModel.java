@@ -23,7 +23,6 @@
 package jams.model;
 
 import jams.JAMS;
-import jams.tools.JAMSTools;
 import jams.data.JAMSDirName;
 import jams.data.SnapshotData;
 import jams.workspace.JAMSWorkspace;
@@ -33,13 +32,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import jams.runtime.JAMSRuntime;
 import jams.tools.SnapshotTools.JAMSSnapshotData;
+import jams.tools.StringTools;
 import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.stores.InputDataStore;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -154,7 +152,7 @@ public class JAMSModel extends JAMSContext implements Model {
 
     public void initWorkspace() throws InvalidWorkspaceException {
         String workspaceDir = workspaceDirectory.getValue();
-        if (JAMSTools.isEmptyString(workspaceDir)) {
+        if (StringTools.isEmptyString(workspaceDir)) {
             this.workspace = null;
             getRuntime().sendInfoMsg(JAMS.resources.getString("no_workspace_defined"));
         } else {

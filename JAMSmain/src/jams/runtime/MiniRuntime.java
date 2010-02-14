@@ -29,11 +29,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import jams.JAMS;
 import jams.SystemProperties;
-import jams.tools.JAMSTools;
 import jams.data.JAMSData;
 import jams.model.Component;
 import jams.model.GUIComponent;
 import jams.model.JAMSModel;
+import jams.tools.StringTools;
 import org.w3c.dom.Document;
 
 /**
@@ -126,7 +126,7 @@ public class MiniRuntime implements JAMSRuntime {
 
         message += t.toString();
         if (getDebugLevel() > JAMS.STANDARD) {
-            message += "\n" + JAMSTools.getStackTraceString(t.getStackTrace());
+            message += "\n" + StringTools.getStackTraceString(t.getStackTrace());
         }
         sendErrorMsg(message);
         if (!proceed) {

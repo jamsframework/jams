@@ -25,22 +25,12 @@ package jams.tools;
 import jams.JAMS;
 import jams.SystemProperties;
 import jams.model.Component;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.nio.channels.FileChannel;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Locale;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 /**
  *
@@ -49,212 +39,8 @@ import java.util.Vector;
 public class JAMSTools {
 
     public final static String DATE_TIME_FORMAT_PATTERN_DE = "dd.MM.yyyy HH:mm";
+
     public final static String DATE_FORMAT_PATTERN_DE = "dd.MM.yyyy";
-
-    /**
-     * 
-     * @param dirName
-     * @param fileName
-     * @return
-     */
-    public static String CreateAbsoluteFileName(String dirName, String fileName) {
-        //if relative path is provided, make absolute path!
-        if (dirName.isEmpty()) {
-            dirName = System.getProperty("user.dir");
-        }
-        //in case directory is not terminated with slash, add slash
-        dirName += File.separator;
-
-        return dirName + fileName;
-    }
-
-    /**
-     * get array of files
-     *
-     * @param directory
-     * @param fileExtension
-     * @return filearray
-     * @throws IOException
-     */
-    public static File[] getFiles(File directory, String fileExtension) {
-        //write all files within the given directory in the File-Array
-        String ext = null;
-        if (fileExtension != null) {
-            ext = fileExtension.toLowerCase();
-        }
-        final String fileExtensionLower = ext;
-        File[] fileArray;
-        fileArray = directory.listFiles(new FilenameFilter() {
-
-            public boolean accept(File dir, String name) {
-                String nameLower = name.toLowerCase();
-                if (fileExtensionLower == null || nameLower.endsWith("." + fileExtensionLower)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-
-        // remove directories
-        Vector<File> files = new Vector<File>();
-        for (int i = 0; i < fileArray.length; i++) {
-            File file = fileArray[i];
-            if (!file.isDirectory()) {
-                files.add(file);
-            }
-        }
-        fileArray = new File[files.size()];
-        for (int i = 0; i < files.size(); i++) {
-            File file = files.elementAt(i);
-            fileArray[i] = file;
-        }
-
-        Arrays.sort(fileArray, new Comparator<File>() {
-
-            public int compare(File o1, File o2) {
-                String fileName1 = o1.getName();
-                String fileName2 = o1.getName();
-                return fileName1.compareToIgnoreCase(fileName2);
-            }
-        });
-        return fileArray;
-    }
-
-    /**
-     * Splits a string into tokens and fills a string array with them
-     * @param str The string to be splitted
-     * @return A string array with the tokens 
-     */
-    public static String[] toArray(String str) {
-        return toArray(str, null);
-    }
-
-    /**
-     * converts a string into array
-     *
-     * @param str
-     * @param delimiter
-     * @return result array
-     */
-    public static String[] toArray(String str, String delimiter) {
-
-        if (str == null) {
-            return null;
-        }
-
-        int delimLen = delimiter.length();
-        Vector resultV = new Vector();
-        String rest = str;
-        String foundPart;
-        int i = rest.indexOf(delimiter);
-        while (i > -1) {
-            foundPart = rest.substring(0, i);
-            resultV.add(foundPart);
-            rest = rest.substring(i + delimLen);
-            //BPS.log().debug(i + ", foundPart: " + foundPart + ", rest: " + rest);
-            i = rest.indexOf(delimiter);
-        }
-        resultV.add(rest);
-
-        String[] result = new String[resultV.size()];
-        resultV.toArray(result);
-
-        return result;
-    }
-
-    /**
-     * get one special part of token
-     *
-     * @param theToken
-     * @param thePart   (int)
-     * @param delimiter
-     * @return string
-     */
-    public static String getPartOfToken(String theToken, int thePart, String delimiter) {
-        String result = null;
-        StringTokenizer tokenizer = new StringTokenizer(theToken, delimiter);
-        int i = 0;
-        while (tokenizer.hasMoreTokens()) {
-            result = tokenizer.nextToken();
-            i++;
-            if (i == thePart) {
-                return result;
-            } else {
-                result = null;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Reads a file and returns its content as string
-     * @param fileName The name of the file
-     * @return The file content
-     */
-    public static String fileToString(String fileName) {
-
-        String result = "";
-
-        try {
-            FileInputStream in = new FileInputStream(fileName);
-            result = streamToString(in);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    }
-
-    /**
-     * Reads from a stream and returns its content as string
-     * @param in The stream
-     * @return The stream content
-     */
-    public static String streamToString(InputStream in) {
-        String content = "";
-
-        try {
-            byte[] buffer = new byte[in.available()];
-            in.read(buffer);
-            content = new String(buffer);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
-        return content;
-    }
-
-    /**
-     * Creates a string representation of a stack trace
-     * @param stea The stack trace
-     * @return The stack trace string
-     */
-    public static String getStackTraceString(StackTraceElement[] stea) {
-        String result = "";
-
-        for (StackTraceElement ste : stea) {
-            result += "        at " + ste.toString() + "\n";
-        }
-        return result;
-    }
-
-    /**
-     * Checks if a string is empty (i.e. if its null, has length 0 or contains only whitespaces
-     * @param theString The string to be checked
-     * @return True, if theString is empty, false otherwise
-     */
-    public static boolean isEmptyString(String theString) {
-        if (theString == null) {
-            return true;
-        }
-        theString = theString.trim();
-        if (theString.length() == 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     /**
      * Looks for a field with a given name in a class and all its superclasses
@@ -342,42 +128,6 @@ public class JAMSTools {
     }
 
     /**
-     * Asserts that the given directory is existing
-     *
-     * @param dirName the full directory name
-     * @throws IOException
-     */
-    public static File assertDirectory(String dirName)
-            throws IOException {
-        File dir = new File(dirName);
-        if (dir.isDirectory() && dir.exists()) {
-            return dir;
-        }
-        dir.mkdirs();
-        if (!(dir.isDirectory() && dir.exists())) {
-            throw new IOException("Could not create directory '" + dirName + "' !");
-        }
-        return dir;
-    }
-
-    /**
-     * get array of files
-     *
-     * @param directoryName
-     * @param fileExtension
-     * @return filearray
-     * @throws IOException
-     */
-    public static File[] getFiles(String directoryName, String fileExtension) throws IOException {
-        //check for existing of the requested directory
-        File directory = assertDirectory(directoryName);
-        if (!directory.isDirectory()) {
-            throw new IOException("Can't load filelist because directory '" + directoryName + "' not found.");
-        }
-        return getFiles(directory, fileExtension);
-    }
-
-    /**
      * Exception handling method
      * @param t Throwable to be handled
      */
@@ -404,7 +154,7 @@ public class JAMSTools {
     public static void configureLocale(SystemProperties properties) {
         // check if a different locale is forced by the config
         String forcedLocale = properties.getProperty("forcelocale");
-        if (!JAMSTools.isEmptyString(forcedLocale)) {
+        if (!StringTools.isEmptyString(forcedLocale)) {
 
             if (forcedLocale.contains("_")) {
                 StringTokenizer tok = new StringTokenizer(forcedLocale, "_");
@@ -415,6 +165,17 @@ public class JAMSTools {
 
             JAMS.resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
         }
+    }
+
+    /**
+     *
+     * @param dirName
+     * @param fileName
+     * @return
+     * @deprecated Only existing for compatibility reasons. Use {@link jams.tools.FileTools#createAbsoluteFileName FileTools.createAbsoluteFileName(dirName, fileName)} instead!
+     */
+    @Deprecated public static String CreateAbsoluteFileName(String dirName, String fileName) {
+        return FileTools.createAbsoluteFileName(dirName, fileName);
     }
 
 //    public static void copyFile(String srFile, String dtFile) {
@@ -444,31 +205,5 @@ public class JAMSTools {
 //            System.out.println(e.getMessage());
 //        }
 //    }
-    public static void copyFile(String inFile, String outFile) throws IOException {
 
-        FileChannel inChannel = new FileInputStream(new File(inFile)).getChannel();
-        FileChannel outChannel = new FileOutputStream(new File(outFile)).getChannel();
-        try {
-            inChannel.transferTo(0, inChannel.size(), outChannel);
-        } catch (IOException e) {
-            throw e;
-        } finally {
-            if (inChannel != null) {
-                inChannel.close();
-            }
-            if (outChannel != null) {
-                outChannel.close();
-            }
-        }
-    }
-
-    /**
-     * delete all given files
-     * @param theFiles
-     */
-    public static void deleteFiles(File[] theFiles) {
-        for (File theFile : theFiles) {
-            theFile.delete();
-        }
-    }
 }

@@ -26,7 +26,7 @@ package jams.io;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import jams.tools.XMLIO;
+import jams.tools.XMLTools;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -52,7 +52,7 @@ public class ModelConfig {
     
     public void readConfig(String fileName) {
         try {
-            readConfig(XMLIO.getDocument(fileName));
+            readConfig(XMLTools.getDocument(fileName));
         } catch (FileNotFoundException fnfe) {}
     }
     

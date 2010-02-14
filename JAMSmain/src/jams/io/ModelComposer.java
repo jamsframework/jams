@@ -22,7 +22,7 @@
  */
 package jams.io;
 
-import jams.tools.XMLIO;
+import jams.tools.XMLTools;
 import java.util.HashMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -136,15 +136,15 @@ public class ModelComposer {
 
     public static void main(String[] args) throws Exception {
 
-        Document plugin = XMLIO.getDocument("D:/jamsapplication/j2k_gehlberg_snow_plugin.jam");
-        Document template = XMLIO.getDocument("D:/jamsapplication/j2k_gehlberg_template.jam");
+        Document plugin = XMLTools.getDocument("D:/jamsapplication/j2k_gehlberg_snow_plugin.jam");
+        Document template = XMLTools.getDocument("D:/jamsapplication/j2k_gehlberg_template.jam");
         ModelComposer comp = new ModelComposer(template);
 
         Document result = comp.loadPlugin(plugin);
 
-        XMLIO.writeXmlFile(result, "D:/jamsapplication/j2k_gehlberg_result.jam");
+        XMLTools.writeXmlFile(result, "D:/jamsapplication/j2k_gehlberg_result.jam");
 
-    //System.out.println(XMLIO.getStringFromDocument(result));
+    //System.out.println(XMLTools.getStringFromDocument(result));
 
     }
 }

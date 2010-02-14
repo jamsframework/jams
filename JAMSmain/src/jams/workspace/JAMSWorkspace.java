@@ -35,8 +35,9 @@ import java.util.StringTokenizer;
 import jams.JAMS;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSRuntime;
+import jams.tools.FileTools;
 import jams.tools.JAMSTools;
-import jams.tools.XMLIO;
+import jams.tools.XMLTools;
 import org.w3c.dom.Document;
 import jams.workspace.stores.DataStore;
 import jams.workspace.stores.DefaultOutputDataStore;
@@ -504,13 +505,13 @@ public class JAMSWorkspace implements Workspace {
      */
     public void updateDataStores() {
 
-        File[] inChildren = JAMSTools.getFiles(inputDirectory, SUFFIX_XML);
+        File[] inChildren = FileTools.getFiles(inputDirectory, SUFFIX_XML);
         for (File child : inChildren) {
             try {
 
                 String storeID = getStoreID(child);
                 if (!inputDataStores.containsKey(storeID)) {
-                    Document doc = XMLIO.getDocument(child.getAbsolutePath());
+                    Document doc = XMLTools.getDocument(child.getAbsolutePath());
                     inputDataStores.put(storeID, doc);
                     this.getRuntime().println(JAMS.resources.getString("Added_input_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
                 }
@@ -520,13 +521,13 @@ public class JAMSWorkspace implements Workspace {
             }
         }
 
-        File[] outChildren = JAMSTools.getFiles(outputDirectory, SUFFIX_XML);
+        File[] outChildren = FileTools.getFiles(outputDirectory, SUFFIX_XML);
         for (File child : outChildren) {
             try {
 
                 String storeID = getStoreID(child);
                 if (!outputDataStores.containsKey(storeID)) {
-                    Document doc = XMLIO.getDocument(child.getAbsolutePath());
+                    Document doc = XMLTools.getDocument(child.getAbsolutePath());
                     outputDataStores.put(storeID, doc);
                     String contextName = getContextName(doc);
                     ArrayList<String> stores = contextStores.get(contextName);
@@ -734,7 +735,7 @@ public class JAMSWorkspace implements Workspace {
 //
 //        SystemProperties properties = JAMSProperties.createProperties();
 //        properties.load("D:/jamsapplication/nsk.jap");
-//        String[] libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
+//        String[] libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
 //
 //
 //        JAMSWorkspace ws;

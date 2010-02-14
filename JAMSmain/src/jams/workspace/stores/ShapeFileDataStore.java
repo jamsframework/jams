@@ -22,8 +22,8 @@
  */
 package jams.workspace.stores;
 
-import jams.tools.JAMSTools;
-import jams.tools.XMLIO;
+import jams.tools.StringTools;
+import jams.tools.XMLTools;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.JAMSWorkspace;
 import java.io.File;
@@ -112,12 +112,12 @@ public class ShapeFileDataStore extends GeoDataStore {
      */
     private void init(String id, String uriString, String fileName, String keyColumn) throws URISyntaxException {
         this.id = id;
-        if (!JAMSTools.isEmptyString(uriString)) {
+        if (!StringTools.isEmptyString(uriString)) {
                 this.uri = new URI(uriString);
                 this.shapeFile = new File(this.uri);
         }
         if (this.shapeFile == null || !this.shapeFile.exists()) {
-            if (!JAMSTools.isEmptyString(fileName)) {
+            if (!StringTools.isEmptyString(fileName)) {
                 this.shapeFile = new File(ws.getLocalInputDirectory(), fileName);
             }
         }
@@ -142,25 +142,25 @@ public class ShapeFileDataStore extends GeoDataStore {
         xmlString += "<source>";
         xmlString += "<uri>";
         String uriString = this.uri.toASCIIString();
-        if (!JAMSTools.isEmptyString(uriString)) {
+        if (!StringTools.isEmptyString(uriString)) {
             xmlString += uriString;
         }
         xmlString += "</uri>";
         xmlString += "<filename>";
-        if (!JAMSTools.isEmptyString(this.fileName)) {
+        if (!StringTools.isEmptyString(this.fileName)) {
             xmlString += this.fileName;
         }
         xmlString += "</filename>";
         xmlString += "</source>";
 
         xmlString += "<key>";
-        if (!JAMSTools.isEmptyString(this.keyColumn)) {
+        if (!StringTools.isEmptyString(this.keyColumn)) {
             xmlString += this.keyColumn;
         }
         xmlString += "</key>";
 
         xmlString += "</shapefiledatastore>";
-        return XMLIO.getDocumentFromString(xmlString);
+        return XMLTools.getDocumentFromString(xmlString);
     }
 
 

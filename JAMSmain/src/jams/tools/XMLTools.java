@@ -1,5 +1,5 @@
 /*
- * XMLIO.java
+ * XMLTools.java
  *
  * Created on 10. Juni 2005, 07:47
  *
@@ -43,7 +43,7 @@ import org.w3c.dom.*;
  * @author S. Kralisch
  */
 
-public class XMLIO {
+public class XMLTools {
     public static final String ENCODING = "ISO-8859-1";
     public static final String LOGICAL_YES_STRING = "yes";
     

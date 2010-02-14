@@ -58,6 +58,7 @@ import jams.io.ModelLoader;
 import jams.io.ParameterProcessor;
 import jams.model.GUIComponent;
 import jams.model.JAMSModel;
+import jams.tools.StringTools;
 import jams.workspace.InvalidWorkspaceException;
 import org.w3c.dom.Document;
 
@@ -170,7 +171,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
 
         // get libraries specified in properties
-        libs = JAMSTools.toArray(properties.getProperty("libs", ""), ";");
+        libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
 
         // load the libraries and create the class loader
         classLoader = JAMSClassLoader.createClassLoader(libs, this);
@@ -448,7 +449,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         message += t.toString();
         if (getDebugLevel() > JAMS.STANDARD) {
-            message += "\n" + JAMSTools.getStackTraceString(t.getStackTrace());
+            message += "\n" + StringTools.getStackTraceString(t.getStackTrace());
         }
         sendErrorMsg(message);
         if (!proceed) {

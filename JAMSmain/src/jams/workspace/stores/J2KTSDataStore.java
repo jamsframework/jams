@@ -28,6 +28,7 @@ import jams.io.BufferedFileReader;
 import jams.io.JAMSTableDataArray;
 import jams.runtime.JAMSRuntime;
 import jams.tools.JAMSTools;
+import jams.tools.StringTools;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.DefaultDataSetDefinition;
 import jams.workspace.JAMSWorkspace;
@@ -269,8 +270,7 @@ public class J2KTSDataStore extends TSDataStore {
 
         try {
             DefaultDataSet result = new DefaultDataSet(columnCount + 1);
-            JAMSTableDataArray jamstda = new JAMSTableDataArray(cache, false);
-            String[] values = jamstda.getValues();
+            String[] values = StringTools.parseTSRow(cache);
             result.setData(0, new StringValue(values[0]));
 
             for (int i = 1; i < values.length; i++) {
