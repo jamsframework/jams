@@ -505,6 +505,11 @@ public class JAMSWorkspace implements Workspace {
      */
     public void updateDataStores() {
 
+        // remove all datastores from registry
+        inputDataStores.clear();
+        outputDataStores.clear();
+
+        //add input datastores
         File[] inChildren = FileTools.getFiles(inputDirectory, SUFFIX_XML);
         for (File child : inChildren) {
             try {
@@ -521,6 +526,7 @@ public class JAMSWorkspace implements Workspace {
             }
         }
 
+        //add output datastores
         File[] outChildren = FileTools.getFiles(outputDirectory, SUFFIX_XML);
         for (File child : outChildren) {
             try {

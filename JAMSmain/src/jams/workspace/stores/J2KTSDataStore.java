@@ -77,6 +77,8 @@ public class J2KTSDataStore extends TSDataStore {
 
     private boolean parseDate = false;
 
+    private String charsetName;
+
     public J2KTSDataStore(JAMSWorkspace ws, String id, Document doc) throws IOException {
 
         super(ws);
@@ -85,11 +87,18 @@ public class J2KTSDataStore extends TSDataStore {
         Element sourceElement = (Element) doc.getElementsByTagName("source").item(0);
         Element timeFormatElement = (Element) doc.getElementsByTagName("dumptimeformat").item(0);
         Element parseTimeElement = (Element) doc.getElementsByTagName("parsetime").item(0);
+        Element charsetElement = (Element) doc.getElementsByTagName("charset").item(0);
 
         if (timeFormatElement != null) {
             timeFormat = timeFormatElement.getAttribute("value");
         } else {
             timeFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
+        }
+
+        if (charsetElement != null) {
+            charsetName = charsetElement.getAttribute("value");
+        } else {
+            timeFormat = BufferedFileReader.CHARSET_NAME_ISO_8859_1;
         }
 
         if (parseTimeElement != null) {
@@ -123,7 +132,7 @@ public class J2KTSDataStore extends TSDataStore {
         }
 
         //this.j2kTSFileReader = new RandomAccessFile(sourceFile,"r");
-        this.j2kTSFileReader = new BufferedFileReader(new FileInputStream(sourceFile));
+        this.j2kTSFileReader = new BufferedFileReader(new FileInputStream(sourceFile), charsetName);
         readJ2KFile();
 
         this.columnCount = this.getDataSetDefinition().getColumnCount();

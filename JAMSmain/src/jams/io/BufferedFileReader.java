@@ -103,7 +103,7 @@ public class BufferedFileReader extends Reader {
         try {
             in = new InputStreamReader(is, charsetName);
         } catch (UnsupportedEncodingException ex) {
-            System.err.println("Charset " + charsetName + " could not be found, using default charset!");
+            System.err.println("Charset \"" + charsetName + "\" could not be found, using default charset!");
             in = new InputStreamReader(is);
         }
         if (lock == null) {

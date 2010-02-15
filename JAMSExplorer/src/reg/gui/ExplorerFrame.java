@@ -428,6 +428,7 @@ public class ExplorerFrame extends JFrame {
             launchWizardAction.setEnabled(false);
             reloadWSAction.setEnabled(false);
         } else {
+            workspace.updateDataStores();
             jfc.setSelectedFile(workspace.getDirectory());
             setTitle(JAMSExplorer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
 //            updateMainPanel(new JPanel());
