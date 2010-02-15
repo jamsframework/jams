@@ -83,6 +83,10 @@ public class BufferedFileReader extends Reader {
 
     private int newLineCharsNumber = 1;
 
+    public static final String 
+            CHARSET_NAME_ISO_8859_1 = "ISO-8859-1",
+            CHARSET_NAME_UTF_8 = "UTF-8";
+
     /**
      * Creates a buffering character-input stream that uses an input buffer of
      * the specified size.
@@ -90,13 +94,16 @@ public class BufferedFileReader extends Reader {
      * @param  is   A FileInputStream
      * @param  sz   Input-buffer size
      * @param encoding The FieleInputStream's encoding
+     * @param  charsetName The name of the FileInputStream's
+     * {@link java.nio.charset.Charset </code>charset<code>}
      * @exception  IllegalArgumentException  If sz is <= 0
      */
-    public BufferedFileReader(FileInputStream is, int sz, String encoding) {
+    public BufferedFileReader(FileInputStream is, int sz, String charsetName) {
         inChannel = is.getChannel();
         try {
-            in = new InputStreamReader(is, encoding);
+            in = new InputStreamReader(is, charsetName);
         } catch (UnsupportedEncodingException ex) {
+            System.err.println("Charset " + charsetName + " could not be found, using default charset!");
             in = new InputStreamReader(is);
         }
         if (lock == null) {
@@ -119,7 +126,7 @@ public class BufferedFileReader extends Reader {
      * @param  is   A FileInputStream with default encoding "ISO-8859-1"
      */
     public BufferedFileReader(FileInputStream is) {
-        this(is, defaultCharBufferSize, "ISO-8859-1");
+        this(is, defaultCharBufferSize, CHARSET_NAME_ISO_8859_1);
     }
 
     /**
