@@ -98,7 +98,7 @@ public class J2KTSDataStore extends TSDataStore {
         if (charsetElement != null) {
             charsetName = charsetElement.getAttribute("value");
         } else {
-            timeFormat = BufferedFileReader.CHARSET_NAME_ISO_8859_1;
+            charsetName = BufferedFileReader.CHARSET_NAME_ISO_8859_1;
         }
 
         if (parseTimeElement != null) {
