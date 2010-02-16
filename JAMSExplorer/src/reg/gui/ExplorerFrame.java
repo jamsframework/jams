@@ -500,10 +500,6 @@ public class ExplorerFrame extends JFrame {
                 result = true;
 
                 Set keys = wizardSettings.keySet();
-                System.out.println("settings coming from wizard:");
-                for (Object key : keys) {
-                    System.out.println(key + "=" + wizardSettings.get(key));
-                }
                 String workSpaceDir = ws.getDirectory().getCanonicalPath();
                 String modelFileName = null;
 
@@ -513,6 +509,9 @@ public class ExplorerFrame extends JFrame {
                     // look into directory &computation and get model + output files
                     String sourceDir = workSpaceDir + File.separator + "variants" + File.separator + computation;
                     modelFileName = WizardFactory.copyModelFiles(sourceDir, workSpaceDir);
+
+                    // add some input store?
+                    WizardFactory.copyInputFile(sourceDir, workSpaceDir);
                 } // dataDecision = station
 
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_SPATIAL)) {

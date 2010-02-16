@@ -24,6 +24,7 @@ package reg.wizard;
 
 import jams.tools.FileTools;
 import jams.tools.JAMSTools;
+import jams.workspace.JAMSWorkspace;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -107,6 +108,29 @@ public class WizardFactory {
         }
         return null;
 
+    }
+
+    public static String copyInputFile(String sourceDir, String targetDir)
+            throws IOException {
+
+        String inputTargetDirName = targetDir + File.separator + JAMSWorkspace.INPUT_DIR_NAME;
+        String inputSourceDirName = sourceDir + File.separator + JAMSWorkspace.INPUT_DIR_NAME;
+        File inputSourceDir = new File(inputSourceDirName);
+        if (inputSourceDir != null && inputSourceDir.exists() && inputSourceDir.isDirectory()) {
+            File[] inputFiles = FileTools.getFiles(inputSourceDirName, JAMSWorkspace.SUFFIX_XML);
+            if (inputFiles == null || inputFiles.length == 0) {
+                System.out.println("no inputFile found in " + inputSourceDirName);
+            } else {
+                File inputFile = inputFiles[0];
+
+                String completeInputFileName = inputFile.getAbsolutePath();
+                String inputFileName = inputFile.getName();
+                String targetFileName = inputTargetDirName + File.separator + inputFileName;
+                FileTools.copyFile(completeInputFileName, targetFileName);
+                return inputFileName;
+            }
+        }
+        return null;
     }
 
     /**
