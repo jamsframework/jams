@@ -36,7 +36,7 @@ import jams.JAMS;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSRuntime;
 import jams.tools.FileTools;
-import jams.tools.JAMSTools;
+import jams.tools.StringTools;
 import jams.tools.XMLTools;
 import org.w3c.dom.Document;
 import jams.workspace.stores.DataStore;
@@ -400,7 +400,7 @@ public class JAMSWorkspace implements Workspace {
                         }else{
                             attributeValue = null;
                         }
-                        String methodName = "set" + attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1);
+                        String methodName = StringTools.getSetterName(attributeName);
 
                         method = clazz.getMethod(methodName, String.class);
                         method.invoke(io, attributeValue);                                                

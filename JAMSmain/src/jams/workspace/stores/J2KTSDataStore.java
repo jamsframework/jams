@@ -25,10 +25,10 @@ package jams.workspace.stores;
 import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.io.BufferedFileReader;
-import jams.io.JAMSTableDataArray;
 import jams.runtime.JAMSRuntime;
 import jams.tools.JAMSTools;
 import jams.tools.StringTools;
+import jams.workspace.DataSetDefinition;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.DefaultDataSetDefinition;
 import jams.workspace.JAMSWorkspace;
@@ -39,6 +39,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -107,12 +108,6 @@ public class J2KTSDataStore extends TSDataStore {
             parseDate = false;
         }
 
-        if (timeFormatElement != null) {
-            timeFormat = timeFormatElement.getAttribute("value");
-        } else {
-            timeFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
-        }
-
         Node displaynameNode = doc.getDocumentElement().getElementsByTagName("displayname").item(0);
         if (displaynameNode != null) {
             this.displayName = displaynameNode.getTextContent();
@@ -170,7 +165,7 @@ public class J2KTSDataStore extends TSDataStore {
             line = j2kTSFileReader.readLine();
         }
 
-        // create a DefaultDataSetDefinition object
+        // create a DataSetDefinition object
 
         StringTokenizer tok1 = new StringTokenizer(statAttribVal.toString(), NEWLINE);
         tok1.nextToken();
@@ -181,13 +176,13 @@ public class J2KTSDataStore extends TSDataStore {
         for (int i = 0; i < attributeCount; i++) {
             dataTypes.add(Double.class);
         }
-        DefaultDataSetDefinition def = new DefaultDataSetDefinition(dataTypes);
+        DataSetDefinition def = new DefaultDataSetDefinition(dataTypes);
 
         while (tok1.hasMoreTokens()) {
 
-            String attributeName = tok2.nextToken();
+            String attributeName = tok2.nextToken().toUpperCase(StringTools.STANDARD_LOCALE);
             ArrayList<Object> values = new ArrayList<Object>();
-            if (attributeName.equals("x") || attributeName.equals("y") || attributeName.equals("elevation")) {
+            if (attributeName.equals("X") || attributeName.equals("Y") || attributeName.equals("ELEVATION")) {
                 def.addAttribute(attributeName, Double.class);
                 while (tok2.hasMoreTokens()) {
                     values.add(Double.parseDouble(tok2.nextToken()));

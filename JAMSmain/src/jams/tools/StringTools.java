@@ -20,10 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.tools;
 
 import java.text.ParseException;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -32,7 +32,9 @@ import java.util.Vector;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 public class StringTools {
-    
+
+    public static final Locale STANDARD_LOCALE = Locale.US;
+
     public static String[] parseTSRow(String row) throws ParseException {
 
         StringTokenizer tok = new StringTokenizer(row);
@@ -68,7 +70,7 @@ public class StringTools {
 
         }
     }
-    
+
     /**
      * Checks if a string is empty (i.e. if its null, has length 0 or contains only whitespaces
      * @param theString The string to be checked
@@ -164,5 +166,13 @@ public class StringTools {
             }
         }
         return result;
+    }
+
+    public static String getGetterName(String attribName) {
+        return "set" + attribName.substring(0, 1).toUpperCase(STANDARD_LOCALE) + attribName.substring(1);
+    }
+
+    public static String getSetterName(String attribName) {
+        return "set" + attribName.substring(0, 1).toUpperCase(STANDARD_LOCALE) + attribName.substring(1);
     }
 }

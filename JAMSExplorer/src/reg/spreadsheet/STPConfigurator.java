@@ -884,7 +884,7 @@ public class STPConfigurator extends JFrame {
 //                                System.out.print("time: "+actual_string+"\t");
                                 try {
                                     //JAMSCalendar(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second)
-                                    timeval.setValue(actual_string, JAMSTools.DATE_TIME_FORMAT_PATTERN_DE);
+                                    timeval.setValue(actual_string, JAMSTools.DATE_TIME_FORMAT_PATTERN);
 
                                 } catch (ParseException pe) {
                                     pe.printStackTrace();

@@ -33,6 +33,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.workspace.DataReader;
 import jams.JAMS;
+import jams.tools.StringTools;
 
 /**
  *
@@ -44,7 +45,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
 
     protected JAMSWorkspace ws;
 
-    protected DefaultDataSetDefinition dsd;
+    protected DataSetDefinition dsd;
 
     protected int bufferSize = 0;
 
@@ -210,7 +211,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
                         String varID = parameterNode.getAttribute("varid");
                         attributeValue = varMap.get(varID);
                     }
-                    String methodName = "set" + attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1);
+                    String methodName = StringTools.getSetterName(attributeName);
 
                     Method method = clazz.getMethod(methodName, String.class);
 
@@ -268,7 +269,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
         return description;
     }
 
-    public DefaultDataSetDefinition getDataSetDefinition() {
+    public DataSetDefinition getDataSetDefinition() {
         return this.dsd;
     }
 

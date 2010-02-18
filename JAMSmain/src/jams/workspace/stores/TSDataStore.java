@@ -204,7 +204,7 @@ public class TSDataStore extends TableDataStore {
         bufferSize = oldBufferSize;
     }
 
-    private DefaultDataSetDefinition getDSDFromDumpFile() throws IOException {
+    private DataSetDefinition getDSDFromDumpFile() throws IOException {
 
         String str;
         while ((str = dumpFileReader.readLine()) != null) {
@@ -232,7 +232,7 @@ public class TSDataStore extends TableDataStore {
             }
         }
 
-        DefaultDataSetDefinition def = new DefaultDataSetDefinition(dataTypes);
+        DataSetDefinition def = new DefaultDataSetDefinition(dataTypes);
 
         type = new int[dataTypes.size()];
         int i = 0;

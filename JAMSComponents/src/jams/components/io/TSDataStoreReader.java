@@ -26,9 +26,9 @@ import jams.JAMS;
 import jams.components.efficiencies.Regression;
 import jams.data.*;
 import jams.model.*;
+import jams.workspace.DataSetDefinition;
 import jams.workspace.DataValue;
 import jams.workspace.DefaultDataSet;
-import jams.workspace.DefaultDataSetDefinition;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.util.ArrayList;
@@ -143,10 +143,10 @@ public class TSDataStoreReader extends JAMSComponent {
         }
 
         // extract some meta information
-        DefaultDataSetDefinition dsDef = store.getDataSetDefinition();
-        xCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("x")));
-        yCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("y")));
-        elevation.setValue(listToDoubleArray(dsDef.getAttributeValues("elevation")));
+        DataSetDefinition dsDef = store.getDataSetDefinition();
+        xCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("X")));
+        yCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("Y")));
+        elevation.setValue(listToDoubleArray(dsDef.getAttributeValues("ELEVATION")));
         elevationArray = elevation.getValue();
         dataSetName.setValue(id.getValue());
 

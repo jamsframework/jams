@@ -24,6 +24,7 @@ package jams.tools;
 
 import jams.JAMS;
 import jams.SystemProperties;
+import jams.data.JAMSCalendar;
 import jams.model.Component;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -39,6 +40,8 @@ import java.util.StringTokenizer;
 public class JAMSTools {
 
     public final static String DATE_TIME_FORMAT_PATTERN_DE = "dd.MM.yyyy HH:mm";
+
+    public final static String DATE_TIME_FORMAT_PATTERN = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
 
     public final static String DATE_FORMAT_PATTERN_DE = "dd.MM.yyyy";
 
@@ -74,7 +77,7 @@ public class JAMSTools {
     public static void setAttribute(Component component, String attribName, Object value) throws SecurityException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, IllegalArgumentException {
         Class<?> componentClazz = component.getClass();
         Class<?> attribClazz = value.getClass();
-        String methodName = "set" + Character.toUpperCase(attribName.charAt(0)) + attribName.substring(1);
+        String methodName = StringTools.getSetterName(attribName);
         Method m = componentClazz.getDeclaredMethod(methodName, attribClazz);
         // if we got here, the setter is existing
         m.invoke(component, value);
@@ -121,7 +124,7 @@ public class JAMSTools {
      */
     public static Object getAttribute(Component component, String attribName) throws IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Class<?> componentClazz = component.getClass();
-        String methodName = "get" + Character.toUpperCase(attribName.charAt(0)) + attribName.substring(1);
+        String methodName = StringTools.getGetterName(attribName);
         Method m = componentClazz.getDeclaredMethod(methodName);
         Object data = m.invoke(component);
         return data;
