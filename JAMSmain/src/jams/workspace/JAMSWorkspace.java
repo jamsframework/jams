@@ -100,7 +100,7 @@ public class JAMSWorkspace implements Workspace {
         
         this.loadConfig();
         this.checkValidity(readonly);
-        this.updateDataStores();
+        this.createDataStores();
     }
 
     /**
@@ -500,14 +500,18 @@ public class JAMSWorkspace implements Workspace {
         properties.setProperty("defaultmodel", path);
     }
 
-    /**
-     * create all non-existing datastores according to input- and output-dir
-     */
-    public void updateDataStores() {
+    private void createDataStores() {
 
         // remove all datastores from registry
         inputDataStores.clear();
         outputDataStores.clear();
+        this.updateDataStores();
+    }
+
+    /**
+     * create all non-existing datastores according to input- and output-dir
+     */
+    public void updateDataStores() {
 
         //add input datastores
         File[] inChildren = FileTools.getFiles(inputDirectory, SUFFIX_XML);
