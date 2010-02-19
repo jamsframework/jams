@@ -32,6 +32,8 @@ import java.util.Set;
  */
 public interface DataSetDefinition {
 
+    public static final String TYPE_ID = "#_TYPE_";
+
     void addAttribute(String attributeName, Class type);
 
     Object getAttributeValue(String attributeName, int column);
