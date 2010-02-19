@@ -103,7 +103,9 @@ public class StringTools {
     }
 
     /**
-     * Splits a string into tokens and fills a string array with them
+     * Splits a string into tokens and fills a string array with them.
+     * Whitespaces will be used as delimiters, while subsequent whitespaces
+     * will be regarded as one.
      * @param str The string to be splitted
      * @return A string array with the tokens
      */
@@ -112,36 +114,24 @@ public class StringTools {
     }
 
     /**
-     * converts a string into array
-     *
-     * @param str
-     * @param delimiter
-     * @return result array
+     * Splits a string into tokens using {@link String#split}. If delim is null,
+     * whitespaces will be used as delimiters, while subsequent whitespaces
+     * will be regarded as one.
+     * @param str The string to be splitted
+     * @param delim A delimiter defining where to split
+     * @return A string array with the tokens
      */
-    public static String[] toArray(String str, String delimiter) {
+    public static String[] toArray(String str, String delim) {
 
         if (str == null) {
             return null;
         }
 
-        int delimLen = delimiter.length();
-        Vector resultV = new Vector();
-        String rest = str;
-        String foundPart;
-        int i = rest.indexOf(delimiter);
-        while (i > -1) {
-            foundPart = rest.substring(0, i);
-            resultV.add(foundPart);
-            rest = rest.substring(i + delimLen);
-            //BPS.log().debug(i + ", foundPart: " + foundPart + ", rest: " + rest);
-            i = rest.indexOf(delimiter);
+        if (delim == null) {
+            delim = "[\\s]+";
         }
-        resultV.add(rest);
 
-        String[] result = new String[resultV.size()];
-        resultV.toArray(result);
-
-        return result;
+        return str.split(delim);
     }
 
     /**
