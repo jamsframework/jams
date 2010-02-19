@@ -36,7 +36,10 @@ import jams.data.JAMSDataFactory;
  */
 public class TSDumpProcessor {
 
-    public static final String COMMENT_TAG = "@comments", METADATA_TAG = "@metadata", DATA_TAG = "@data", END_TAG = "@end";
+    public static final String COMMENT_TAG = "@comments";
+    public static final String METADATA_TAG = "@metadata";
+    public static final String DATA_TAG = "@data";
+    public static final String END_TAG = "@end";
 
     public String toASCIIString(TSDataStore store) throws IOException {
         StringTarget target = new StringTarget();

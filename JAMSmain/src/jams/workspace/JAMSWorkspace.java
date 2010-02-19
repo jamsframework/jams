@@ -724,6 +724,7 @@ public class JAMSWorkspace implements Workspace {
     public File getTempDirectory() {
         return tmpDirectory;
     }
+
 //    public static void main(String[] args) throws IOException {
 //
 //        JAMSRuntime runtime = new StandardRuntime();

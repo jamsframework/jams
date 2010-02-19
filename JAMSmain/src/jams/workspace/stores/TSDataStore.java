@@ -208,7 +208,7 @@ public class TSDataStore extends TableDataStore {
 
         String str;
         while ((str = dumpFileReader.readLine()) != null) {
-            if (str.startsWith("#$TYPE$")) {
+            if (str.startsWith(DataSetDefinition.TYPE_ID)) {
                 break;
             }
         }
@@ -219,7 +219,7 @@ public class TSDataStore extends TableDataStore {
 
         StringTokenizer tok = new StringTokenizer(str, SEPARATOR);
         ArrayList<Class> dataTypes = new ArrayList<Class>();
-        // drop the first token ("#$TYPE$")
+        // drop the first token (TYPE_ID)
         tok.nextToken();
 
         while (tok.hasMoreTokens()) {
