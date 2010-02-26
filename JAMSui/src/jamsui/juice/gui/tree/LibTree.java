@@ -227,7 +227,7 @@ public class LibTree extends JAMSTree {
                 if (clazz.getPackage() != null) {
                     newPackage = clazz.getPackage().getName();
                 } else {
-                    newPackage = "Default";
+                    newPackage = "default package";
                 }
                 
                 if (!newPackage.equals(oldPackage)) {
