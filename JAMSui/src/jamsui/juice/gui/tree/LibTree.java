@@ -52,11 +52,8 @@ import jams.tools.StringTools;
 public class LibTree extends JAMSTree {
 
     private static final String ROOT_NAME = JAMS.resources.getString("Model_Components");
-
     private JPopupMenu popup;
-
     private String[] libsArray;
-
     private int contextCount, componentCount;
 
     public LibTree() {
@@ -204,8 +201,8 @@ public class LibTree extends JAMSTree {
 
                     } catch (ClassNotFoundException cnfe) {
 
-                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Error_while_loading_archive_") + jarName + "\"" + JAMS.resources.getString("_(class_") + classString +
-                                JAMS.resources.getString("_could_not_be_found)!"), JAMS.resources.getString("Error_while_loading_archive"));
+                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Error_while_loading_archive_") + jarName + "\"" + JAMS.resources.getString("_(class_") + classString
+                                + JAMS.resources.getString("_could_not_be_found)!"), JAMS.resources.getString("Error_while_loading_archive"));
 
                     } catch (NoClassDefFoundError ncdfe) {
                         // loading classes can cause a lot of NoClassDefFoundError
@@ -214,16 +211,25 @@ public class LibTree extends JAMSTree {
                         // other exception like e.g. java.lang.SecurityException
                         // won't be handled since they hopefully don't occur
                         // while loading JARs containing JAMS components
-                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Error_while_loading_archive_") + jarName + "\"" + JAMS.resources.getString("_(class_") + classString +
-                                JAMS.resources.getString("_could_not_be_loaded)!") + "\n" + e.getMessage(), JAMS.resources.getString("Error_while_loading_archive"));
+                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Error_while_loading_archive_") + jarName + "\"" + JAMS.resources.getString("_(class_") + classString
+                                + JAMS.resources.getString("_could_not_be_loaded)!") + "\n" + e.getMessage(), JAMS.resources.getString("Error_while_loading_archive"));
                     }
                 }
             }
 
-            String oldPackage = "", newPackage;
+            String oldPackage = "", newPackage = "";
             JAMSNode packageNode = null;
             for (Class clazz : components) {
-                newPackage = clazz.getPackage().getName();
+                if (clazz.getSimpleName().equals("LPJ_Interception")) {
+                    System.out.println("");
+                }
+
+                if (clazz.getPackage() != null) {
+                    newPackage = clazz.getPackage().getName();
+                } else {
+                    newPackage = "Default";
+                }
+                
                 if (!newPackage.equals(oldPackage)) {
                     packageNode = new JAMSNode(newPackage, JAMSNode.PACKAGE_NODE);
                     oldPackage = newPackage;
@@ -250,8 +256,8 @@ public class LibTree extends JAMSTree {
 
                     } catch (NoClassDefFoundError ncdfe) {
 
-                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Missing_class_while_loading_component_") + clazzFullName +
-                                JAMS.resources.getString("_in_archive_") + jarName + "\"!", JAMS.resources.getString("Error_while_loading_archive"));
+                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Missing_class_while_loading_component_") + clazzFullName
+                                + JAMS.resources.getString("_in_archive_") + jarName + "\"!", JAMS.resources.getString("Error_while_loading_archive"));
 
                     }
                 }
