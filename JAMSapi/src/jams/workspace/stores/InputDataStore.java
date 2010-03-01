@@ -32,9 +32,8 @@ import java.io.IOException;
  */
 public interface InputDataStore extends DataStore {
 
-    public static final int LIVE_MODE = 2;
-    public static final int USE_CACHE_MODE = 1;
-    public static final int BUILD_CACHE_MODE = 0;
+    public static final int LIVE_MODE = 0;
+    public static final int CACHE_MODE = 1;
 
     public static final String TYPE_TABLEDATASTORE = "tabledatastore";
     public static final String TYPE_TSDATASTORE = "tsdatastore";
