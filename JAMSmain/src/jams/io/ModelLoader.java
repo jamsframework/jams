@@ -30,8 +30,9 @@ import java.lang.reflect.*;
 import jams.JAMS;
 import jams.tools.JAMSTools;
 import jams.data.*;
+import jams.data.JAMSString;
 import jams.runtime.JAMSRuntime;
-import java.io.File;
+import jams.tools.StringTools;
 import java.util.ArrayList;
 
 /**
@@ -88,6 +89,8 @@ public class ModelLoader {
         jamsModel.setName(root.getAttribute("name"));
         jamsModel.setAuthor(root.getAttribute("author"));
         jamsModel.setDate(root.getAttribute("date"));
+
+        componentRepository.put(jamsModel.getName(), jamsModel);
 
         /*Element workspaceElement = (Element) root.getElementsByTagName("workspace").item(0);
         jamsModel.setWorkspaceDirectory(workspaceElement.getAttribute("value"));*/
@@ -309,11 +312,18 @@ public class ModelLoader {
                         } else if (element.hasAttribute("attribute")) {
 
                             // obtain providing context
-                            Component context = this.componentRepository.get(element.getAttribute("context"));
+                            String contextName = element.getAttribute("context");
+                            Component context;
+
+                            if (StringTools.isEmptyString(contextName)) {
+                                context = jamsModel;
+                            } else {
+                                context = this.componentRepository.get(contextName);
+                            }
 
                             if (context == null) {
-                                // throw new ModelSpecificationException("Component " + componentName + ": Component \"" + element.getAttribute("context") + "\" not available!");
-                                context = jamsModel;
+                                throw new ModelSpecificationException(JAMS.resources.getString("Component_") + "\"" + componentName + JAMS.resources.getString("_context_") + element.getAttribute("context") + JAMS.resources.getString("_does_not_exist!"));
+                                // context = jamsModel;
                             }
 
                             // check if providing context supplies specified variable
