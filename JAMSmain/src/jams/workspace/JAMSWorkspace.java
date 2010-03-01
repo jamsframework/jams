@@ -593,7 +593,7 @@ public class JAMSWorkspace implements Workspace {
      */
     public void inputDataStoreToFile(InputDataStore store) throws IOException {
 
-        if ((store == null) || (store.getAccessMode() == InputDataStore.USE_CACHE_MODE)) {
+        if ((store == null) || (store.getAccessMode() == InputDataStore.CACHE_MODE)) {
             return;
         }
 

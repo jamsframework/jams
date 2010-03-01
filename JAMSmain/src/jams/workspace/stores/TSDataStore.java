@@ -117,7 +117,7 @@ public class TSDataStore extends TableDataStore {
             bufferSize = 2;
         }
 
-        if (this.accessMode != InputDataStore.USE_CACHE_MODE) {
+        if (this.accessMode != InputDataStore.CACHE_MODE) {
 
             // check validity of the data, e.g. unique start dates
 
@@ -313,7 +313,7 @@ public class TSDataStore extends TableDataStore {
             return false;
         }
 
-        if (this.accessMode != InputDataStore.USE_CACHE_MODE) {
+        if (this.accessMode != InputDataStore.CACHE_MODE) {
 
             return super.hasNext();
 
@@ -334,7 +334,7 @@ public class TSDataStore extends TableDataStore {
         currentDate.add(timeUnit, timeUnitCount);
         DefaultDataSet result;
 
-        if (this.accessMode != InputDataStore.USE_CACHE_MODE) {
+        if (this.accessMode != InputDataStore.CACHE_MODE) {
 
             result = new DefaultDataSet(positionArray.length + 1);
             result.setData(0, calendar);

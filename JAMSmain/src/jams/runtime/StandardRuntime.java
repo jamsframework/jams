@@ -447,7 +447,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             message += JAMS.resources.getString("Exception_occured_in_component_") + cName + "!\n";
         }
 
-        message += t.toString();
+         message += t.toString();
         if (getDebugLevel() > JAMS.STANDARD) {
             message += "\n" + StringTools.getStackTraceString(t.getStackTrace());
         }

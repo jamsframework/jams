@@ -84,7 +84,7 @@ public abstract class StandardInputDataStore implements InputDataStore {
             this.accessMode = Integer.parseInt(accessmodeElement.getAttribute("value"));
         }
 
-        if (this.accessMode != InputDataStore.USE_CACHE_MODE) {
+        if (this.accessMode != InputDataStore.CACHE_MODE) {
             this.dataIO = createDataIO(doc);
             this.dsd = createDataSetDefinitionFromDocument(doc);
         }
