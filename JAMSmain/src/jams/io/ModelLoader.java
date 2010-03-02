@@ -30,7 +30,6 @@ import java.lang.reflect.*;
 import jams.JAMS;
 import jams.tools.JAMSTools;
 import jams.data.*;
-import jams.data.JAMSString;
 import jams.runtime.JAMSRuntime;
 import jams.tools.StringTools;
 import java.util.ArrayList;
@@ -42,17 +41,11 @@ import java.util.ArrayList;
 public class ModelLoader {
 
     private HashMap<String, Component> componentRepository = new HashMap<String, Component>();
-
     private HashMap<String, String> constants = new HashMap<String, String>();
-
     private ClassLoader loader;
-
     private JAMSModel jamsModel;
-
     transient private HashMap<Component, ArrayList<Field>> nullFields = new HashMap<Component, ArrayList<Field>>();
-
     private HashMap<String, Integer> idMap = new HashMap<String, Integer>();
-
     private int maxID = 0;
 
     public ModelLoader(String[] globvars, JAMSRuntime rt) {
@@ -190,14 +183,14 @@ public class ModelLoader {
         // check if a component with that name is already existing
         Component existingComponent = this.componentRepository.get(componentName);
         if (existingComponent != null) {
-            throw new ModelSpecificationException(JAMS.resources.getString("Component_with_name_") + componentName +
-                    JAMS.resources.getString("_is_already_exisiting_(") + existingComponent.getClass() +
-                    JAMS.resources.getString(")._Please_make_sure_component_names_are_unique!_Stopping_model_loading!"));
+            throw new ModelSpecificationException(JAMS.resources.getString("Component_with_name_") + componentName
+                    + JAMS.resources.getString("_is_already_exisiting_(") + existingComponent.getClass()
+                    + JAMS.resources.getString(")._Please_make_sure_component_names_are_unique!_Stopping_model_loading!"));
         }
 
         jamsModel.getRuntime().println(/*JAMS.resources.getString("Adding:_") + */
-                componentName + " [classID=" + String.format("%03d", getID(componentClassName)) +
-                ", className=" + componentClassName + "]", JAMS.STANDARD);
+                componentName + " [classID=" + String.format("%03d", getID(componentClassName))
+                + ", className=" + componentClassName + "]", JAMS.STANDARD);
 
         component = null;
         try {
@@ -311,19 +304,22 @@ public class ModelLoader {
 
                         } else if (element.hasAttribute("attribute")) {
 
-                            // obtain providing context
+                            // obtain providing context name
                             String contextName = element.getAttribute("context");
-                            Component context;
 
+                            // obtain providing context
+                            Component context;
                             if (StringTools.isEmptyString(contextName)) {
+                                // use model as default context if no context is specified
                                 context = jamsModel;
                             } else {
+                                // get the context from the component repository
                                 context = this.componentRepository.get(contextName);
                             }
 
+                            // if specified context does not exist, throw exception
                             if (context == null) {
                                 throw new ModelSpecificationException(JAMS.resources.getString("Component_") + "\"" + componentName + JAMS.resources.getString("_context_") + element.getAttribute("context") + JAMS.resources.getString("_does_not_exist!"));
-                                // context = jamsModel;
                             }
 
                             // check if providing context supplies specified variable
