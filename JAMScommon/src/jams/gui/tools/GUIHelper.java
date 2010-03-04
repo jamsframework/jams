@@ -31,6 +31,7 @@ import javax.swing.JOptionPane;
 import jams.JAMS;
 import java.lang.reflect.Method;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileSystemView;
 
 /**
  *
@@ -238,6 +239,12 @@ public class GUIHelper {
             }
         } else {
             return new JFileChooser() {
+
+                @Override
+                protected void setup(FileSystemView view) {
+                    putClientProperty("FileChooser.useShellFolder", Boolean.FALSE);
+                    super.setup(view);
+                }
 
                 @Override
                 public void updateUI() {
