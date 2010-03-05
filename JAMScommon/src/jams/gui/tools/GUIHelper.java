@@ -29,9 +29,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.JOptionPane;
 import jams.JAMS;
+import java.io.File;
 import java.lang.reflect.Method;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileSystemView;
+import sun.awt.shell.ShellFolder;
 
 /**
  *
@@ -238,7 +240,7 @@ public class GUIHelper {
                 return getJFileChooser(false);
             }
         } else {
-            return new JFileChooser() {
+            return new JFileChooser(new File("."), new RestrictedFileSystemView()) {
 
                 @Override
                 protected void setup(FileSystemView view) {
@@ -246,11 +248,6 @@ public class GUIHelper {
                     super.setup(view);
                 }
 
-                @Override
-                public void updateUI() {
-                    putClientProperty("FileChooser.useShellFolder", Boolean.FALSE);
-                    super.updateUI();
-                }
             };
         }
     }
