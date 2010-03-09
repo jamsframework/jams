@@ -173,7 +173,7 @@ public class STPConfigurator extends JFrame {
 
 //        dataset = getAccessibleIDs();
         dataset = createHashMap(getAccessibleTemplates());
-        System.out.println("dataset.length = " + dataset.length);
+        
         if (dataset.length <= 2) {
             this.numberOfPlots = dataset.length;
         }
@@ -1272,11 +1272,11 @@ public class STPConfigurator extends JFrame {
                 XYStepAreaRenderer sar_L = new XYStepAreaRenderer();
 
                 GraphProperties prop;
-                //2 Renderer einfÃƒÆ’Ã‚Â¼gen. Typ aus rLeftBox bzw rRightBox holen!
+                //2 Renderer einfÃƒÂ¼gen. Typ aus rLeftBox bzw rRightBox holen!
                 //Switch/Case Anweisung in den Configurator packen
                 //
 
-                /////////////// In dieser Schleife Eigenschaften ÃƒÆ’Ã‚Â¼bernehmen!! /////////////
+                /////////////// In dieser Schleife Eigenschaften ÃƒÂ¼bernehmen!! /////////////
                 for (int i = 0; i < propVector.size(); i++) {
 
                     prop = propVector.get(i);
@@ -1284,7 +1284,7 @@ public class STPConfigurator extends JFrame {
 //                prop.setLegendName((String)prop.setColumn.getSelectedItem());
 //                prop.setName((String)prop.setColumn.getSelectedItem());
 
-                    if (prop.getPosition() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT")) {
+                    if (prop.getPosition().compareTo("left") == 0) {
                         l++;
                         //prop.setRendererType(rLeft);
 
@@ -1383,7 +1383,7 @@ public class STPConfigurator extends JFrame {
                         }
 
                     }
-                    if (prop.getPosition()== java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")) {
+                    if (prop.getPosition().compareTo("right") == 0) {
                         r++;
                         //prop.setRendererType(rRight);
                         switch (rRight) {
@@ -1469,16 +1469,11 @@ public class STPConfigurator extends JFrame {
                                 rendererRight = lsr_R;
                                 break;
                         }
-
-//                        prop.setLegendName(prop.setLegend.getText());
-//                        prop.setColorLabelColor();
-//                        prop.applySTPProperties(arrayVector, timeVector);
-
                     }
                 }
 
                 ////////////////////////////////////////////////////////////////////////////
-                //Renderer direkt ÃƒÆ’Ã‚Â¼bernehmen! //
+                //Renderer direkt ÃƒÂ¼bernehmen! //
 
                 if (l > 0) {
                     jts[index].plotLeft(rendererLeft, tLeft, xAxisTitle, invLeft);
@@ -1488,6 +1483,7 @@ public class STPConfigurator extends JFrame {
                 }
                 if (r == 0 && l == 0) {
                     jts[index].plotEmpty();
+                    System.out.println("plot empty");
                 }
 
                 jts[index].setTitle(title);

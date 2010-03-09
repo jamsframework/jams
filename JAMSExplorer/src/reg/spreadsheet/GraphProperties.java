@@ -330,7 +330,7 @@ public class GraphProperties {
     public void applySTPProperties(Vector<double[]> rowVector, Vector<JAMSCalendar> timeVector){
         JAMSCalendar time;
         double value;
-
+        
         ts = new TimeSeries(getLegendName(), Second.class);
         
         double row[] = new double[columnCount];
@@ -342,6 +342,7 @@ public class GraphProperties {
 //            if(!setColumn.getSelectedItem().equals("---")){
             value = row[selectedColumn];//table.getValueAt(i, selectedColumn);
             ts.add(new Second(new Date(time.getTimeInMillis())), value);
+            
 //            }
         }
         
