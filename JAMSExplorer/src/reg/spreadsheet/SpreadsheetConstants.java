@@ -21,22 +21,22 @@ public class SpreadsheetConstants {
 
     /* DIALOG INFO MESSAGES */
 
-    public final static String INFO_MSG_SAVETEMP = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLEASE_CHOOSE_A_TEMPLATE_FILENAME:");
-    public final static String INFO_MSG_SAVEDAT = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLEASE_CHOOSE_A_FILENAME:");
+    public final static String INFO_MSG_SAVETEMP = "Please choose a template filename:";
+    public final static String INFO_MSG_SAVEDAT = "Please choose a filename:";
 
     /* DIALOG TITLES */
 
-    public final static String DLG_TITLE_CUSTOMIZE = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUSTOMIZE_RENDERER");
-    public final static String DLG_TITLE_JTSCONFIGURATOR =java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("JTS_VIEWER");
-    public final static String DLG_TITLE_JXYSCONFIGURATOR =java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("XYPLOT_VIEWER");
+    public final static String DLG_TITLE_CUSTOMIZE = "Customize Renderer";
+    public final static String DLG_TITLE_JTSCONFIGURATOR ="JTS Viewer";
+    public final static String DLG_TITLE_JXYSCONFIGURATOR ="XYPlot Viewer";
 
     /* DIALOG ERROR MESSAGES */
 
-    public final static String STP_ERR_NOTEMPFOUND = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_TEMPLATE_FILES_FOUND_IN_THE_WORKSPACE_DIRECTORY!_") +
-                    java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("USE_THE_'SAVE_TEMPLATE'_OPTION_IN_THE_TIME_PLOT_CONFIGURATOR!");
-    public final static String SPREADSHEET_ERR_TSMISSING = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_SERIES_MISSING!");
+    public final static String STP_ERR_NOTEMPFOUND = "No template files found in the workspace directory! " +
+                    "Use the 'Save Template' Option in the Time Plot Configurator!";
+    public final static String SPREADSHEET_ERR_TSMISSING = "Time Series missing!";
 
-    public final static String JXY_ERR_NODATATEMPLATE = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_TEMPLATE_FOR_DATAPLOT._USE_AT_LEAST_2_COLUMNS");
+    public final static String JXY_ERR_NODATATEMPLATE = "No Template for Dataplot. Use at least 2 Columns";
 
     /* GUI ELEMENT COLORS */
 
@@ -48,7 +48,7 @@ public class SpreadsheetConstants {
     public final static String FILE_EXPLORER_DIR_NAME = "/explorer";
 
     /* STP TITLE */
-    public final static String STP_TITLE = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STACKEDTIMEPLOT_CONFIGURATOR");
+    public final static String STP_TITLE = "StackedTimePlot Configurator";
 
     /* FONTS */
 
@@ -59,13 +59,13 @@ public class SpreadsheetConstants {
 
     /* DEFAULT JTS PLOT PROPERTIES */
 
-    public final static int JTS_DEFAULT_STROKE = 2;
+    public final static int JTS_DEFAULT_STROKE = 1;
     public final static int JTS_DEFAULT_SHAPE_SIZE = 3;
     public final static int JTS_DEFAULT_SHAPE = 1;
 
     /* DEFAULT JXYS PLOT PROPERTIES */
 
-    public final static int JXYS_DEFAULT_STROKE = 2;
-    public final static int JXYS_DEFAULT_SHAPE_SIZE = 3;
+    public final static int JXYS_DEFAULT_STROKE = 0;
+    public final static int JXYS_DEFAULT_SHAPE_SIZE = 1;
     public final static int JXYS_DEFAULT_SHAPE = 5;
 }

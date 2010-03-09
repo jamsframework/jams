@@ -55,10 +55,8 @@ public class JAMSSpreadSheet extends JPanel {
     File dtpFile;
 
     private final String title = "";
-
     private JPanel panel = new JPanel();
-
-    private String panelname = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SPREADSHEET");
+    private String panelname = "spreadsheet";
 
     private JFrame parent_frame;
 
@@ -875,7 +873,6 @@ public class JAMSSpreadSheet extends JPanel {
             }
 
             JAMSCalendar timeval = JAMSDataFactory.createCalendar();
-
             try {
                 String timeString = rowData[0].getString();
                 String timePattern = JAMSTools.DATE_TIME_FORMAT_PATTERN_DE;
@@ -1182,7 +1179,6 @@ public class JAMSSpreadSheet extends JPanel {
                 viewer.addData(dataTransfer);
             } catch (Exception ex) {
                 GUIHelper.showErrorDlg(JAMSSpreadSheet.this, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR_WHILE_TRYING_TO_DISPLAY_MAP!"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR!"));
-                ex.printStackTrace();
             }
         }
     };
@@ -1374,7 +1370,7 @@ public class JAMSSpreadSheet extends JPanel {
 //        GUIHelper.addGBComponent(controlpanel, gbl, loadbutton, 0, 11, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, statButton, 0, 12, 1, 1, 0, 0);
 
-        if (true || explorer.isTlugized()) {
+        if (explorer.isTlugized()) {
 
             // populate shape-combobox
             String defaultShapeName = null;

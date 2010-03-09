@@ -69,7 +69,7 @@ public class JTSConfigurator extends JFrame {
     Group group14;
     Group group15;
 
-    private Vector<ActionListener> addAction = new Vector<ActionListener>();
+//    private Vector<ActionListener> addAction = new Vector<ActionListener>();
     private JTSConfigurator thisJTS = this;
 
     private JFrame parent;
@@ -103,41 +103,42 @@ public class JTSConfigurator extends JFrame {
     private Vector<double[]> arrayVector;
     private Vector<JAMSCalendar> timeVector;
 
-    private JLabel edTitle = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT_TITLE:_"));
-    private JLabel edLeft = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE:_"));
-    private JLabel edXAxis = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("X_AXIS_TITLE"));
-    private JLabel edRight = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT_AXIS_TITLE:_"));
-    private JLabel rLeftLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RENDERER_LEFT"));
-    private JLabel rRightLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RENDERER_RIGHT"));
-    private JLabel invLeftLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_LEFT_AXIS"));
-    private JLabel invRightLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_RIGHT_AXIS"));
-    private JLabel timeFormatLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_FORMAT"));
+    private JLabel edTitle = new JLabel("Plot Title: ");
+    private JLabel edLeft = new JLabel("Left axis title: ");
+    private JLabel edXAxis = new JLabel("X axis title");
+    private JLabel edRight = new JLabel("Right axis title: ");
+    private JLabel rLeftLabel = new JLabel("Renderer left");
+    private JLabel rRightLabel = new JLabel("Renderer right");
+    private JLabel invLeftLabel = new JLabel("Invert left axis");
+    private JLabel invRightLabel = new JLabel("Invert right axis");
+    private JLabel timeFormatLabel = new JLabel("Time format");
     private JTextField edTitleField = new JTextField(14);
     private JTextField edLeftField = new JTextField(14);
     private JTextField edRightField = new JTextField(14);
     private JTextField edXAxisField = new JTextField(14);
 
-    private String[] types = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LINE_AND_SHAPE"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BAR"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AREA"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STEP"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STEPAREA"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE")};
+    private String[] types = {"Line and Shape", "Bar", "Area", "Step", "StepArea", "Difference"};
 
     private JComboBox rLeftBox = new JComboBox(types);
     private JComboBox rRightBox = new JComboBox(types);
-    private JCheckBox invLeftBox = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_LEFT_AXIS"));
-    private JCheckBox invRightBox = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_RIGHT_AXIS"));
-    private JCheckBox timeFormat_yy = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YY"));
-    private JCheckBox timeFormat_mm = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MM"));
-    private JCheckBox timeFormat_dd = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DD"));
-    private JCheckBox timeFormat_hm = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("HH:MM"));
+    private JCheckBox invLeftBox = new JCheckBox("Invert left Axis");
+    private JCheckBox invRightBox = new JCheckBox("Invert right Axis");
+    private JCheckBox timeFormat_yy = new JCheckBox("yy");
+    private JCheckBox timeFormat_mm = new JCheckBox("mm");
+    private JCheckBox timeFormat_dd = new JCheckBox("dd");
+    private JCheckBox timeFormat_hm = new JCheckBox("hh:mm");
 
-    private JButton applyButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT"));
-    private JButton addButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD_GRAPH"));
-    private JButton saveButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EPS_EXPORT"));
-    private JButton saveTempButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SAVE_TEMPLATE"));
-    private JButton loadTempButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LOAD_TEMPLATE"));
+    private JButton applyButton = new JButton("PLOT");
+    private JButton addButton = new JButton("Add Graph");
+    private JButton saveButton = new JButton("EPS export");
+    private JButton saveTempButton = new JButton("Save Template");
+    private JButton loadTempButton = new JButton("Load Template");
     
 //    private final String INFO_MSG_SAVETEMP = "Please choose a template filename:";
     
 
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
+    private Vector<PropertyPanel> panelVector = new Vector<PropertyPanel>();
 
     private JAMSTimePlot jts = new JAMSTimePlot();
 
@@ -208,6 +209,21 @@ public class JTSConfigurator extends JFrame {
         this.rows = table.getSelectedRows();
         this.columns = table.getSelectedColumns();
         this.graphCount = columns.length;
+        /* If time column is selected
+         */
+        try{
+
+            if(columns[0]==0){
+                    graphCount -= 1;
+                    int[] arraycopy = new int[graphCount];
+                    java.lang.System.arraycopy(columns, 1, arraycopy, 0, graphCount);
+                    columns = arraycopy;
+            }
+
+         }catch(ArrayIndexOutOfBoundsException arrex){
+         
+         }
+
         this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
 
 //        this.legendEntries = new String[graphCount];
@@ -234,7 +250,7 @@ public class JTSConfigurator extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         explorer.registerChild(this);
 
-        setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("JTS_VIEWER"));
+        setTitle("JTS Viewer");
         
         this.workspace = explorer.getWorkspace();
         
@@ -267,41 +283,21 @@ public class JTSConfigurator extends JFrame {
             this.rows = table.getSelectedRows();
             this.columns = table.getSelectedColumns();
             this.graphCount = columns.length;
+             /* If time column is selected
+                */
+//            if(columns[0]==0){
+//                graphCount -= 1;
+//                int[] arraycopy = new int[graphCount];
+//                java.lang.System.arraycopy(columns, 1, arraycopy, 0, graphCount);
+//                columns = arraycopy;
+//            }
+
             this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
 
             for(int k=0;k<graphCount;k++){
                 headers[k] = table.getColumnName(columns[k]);
             }
-//        if(output_type.compareTo("true") == 0){
-////                System.out.println("OUTPUT FILE");
-////                this.templateFile = templateFile;
-//                    String fileID = templateFile.getName();
-//                    File templateDir = templateFile.getParentFile();
-//                    StringTokenizer name_tokenizer = new StringTokenizer(fileID,".");
-//                    String filename = "";
-//                    if(name_tokenizer.hasMoreTokens()){
-//                        filename = name_tokenizer.nextToken()+SpreadsheetConstants.FILE_ENDING_TTP;
-//                    }else{
-//                        filename = fileID+SpreadsheetConstants.FILE_ENDING_DAT;
-//                    }
-//
-//                    File ttpdatfile = new File(templateDir, filename);
-//
-////                System.out.println("ttpdatFile:"+ttpdatfile.getPath());
-//                output_ttp = true;
-//
-//
-////            this.templateFile = templateFile;
-//
-//
-//
-////                arrayVector; = new Vector<double[]>();
-////                timeVector; = new Vector<JAMSCalendar>();
-//
-//                 loadOutputTTPData(ttpdatfile);
-//
-//
-//        }
+//       
         
         setPreferredSize(new Dimension(1024, 768));
 
@@ -318,26 +314,26 @@ public class JTSConfigurator extends JFrame {
 //        System.out.println("CREATE PANEL TemplateFile = "+templateFile.toString());
         colour_cnt = 0;
         /* create ColorMap */
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"), Color.yellow);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"), Color.orange);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"), Color.red);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK"), Color.pink);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"), Color.magenta);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"), Color.cyan);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"), Color.blue);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"), Color.green);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"), Color.gray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"), Color.lightGray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"), Color.black);
+        colorTable.put("yellow", Color.yellow);
+        colorTable.put("orange", Color.orange);
+        colorTable.put("red", Color.red);
+        colorTable.put("pink", Color.pink);
+        colorTable.put("magenta", Color.magenta);
+        colorTable.put("cyan", Color.cyan);
+        colorTable.put("blue", Color.blue);
+        colorTable.put("green", Color.green);
+        colorTable.put("gray", Color.gray);
+        colorTable.put("lightgray", Color.lightGray);
+        colorTable.put("black", Color.black);
 
-        JLabel nameLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NAME"));
-        JLabel posLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION"));
-        JLabel typeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RENDERER"));
-        JLabel colorLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOUR"));
-        JLabel dataLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SELECT_DATA_/_LEGEND_ENTRY"));
-        JLabel timeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_INTERVAL"));
+        JLabel nameLabel = new JLabel("Name");
+        JLabel posLabel = new JLabel("Position");
+        JLabel typeLabel = new JLabel("Renderer");
+        JLabel colorLabel = new JLabel("Colour");
+        JLabel dataLabel = new JLabel("Select Data / Legend Entry");
+        JLabel timeLabel = new JLabel("Time Interval");
         JLabel emptyTimeLabel = new JLabel("    ");
-        JLabel legendLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEGEND_ENTRY"));
+        JLabel legendLabel = new JLabel("Legend Entry");
 
         nameLabel.setBackground(Color.DARK_GRAY);
         posLabel.setBackground(Color.DARK_GRAY);
@@ -389,15 +385,15 @@ public class JTSConfigurator extends JFrame {
         edTitleField.setSize(40, 10);
         edTitleField.addActionListener(plotbuttonclick);
         //edLeftField.setColumns(20);
-        edLeftField.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE"));
+        edLeftField.setText("Left Axis Title");
         edLeftField.addActionListener(plotbuttonclick);
         edLeftField.setSize(40, 10);
         //edRightField.setColumns(20);
-        edRightField.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT_AXIS_TITLE"));
+        edRightField.setText("Right Axis Title");
         edRightField.addActionListener(plotbuttonclick);
         edRightField.setSize(40, 10);
 
-        edXAxisField.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME"));
+        edXAxisField.setText("Time");
         edXAxisField.addActionListener(plotbuttonclick);
         applyButton.addActionListener(plotbuttonclick);
 
@@ -410,7 +406,9 @@ public class JTSConfigurator extends JFrame {
         optionpanel.add(applyButton);
 
         rLeftBox.setSelectedIndex(0);
+        rLeftBox.addActionListener(rendererColorListener);
         rRightBox.setSelectedIndex(0);
+        rRightBox.addActionListener(rendererColorListener);
 
         ////////////////////////// RUN GRAPH ///////////
 //        System.out.println("RUN GRAPH TemplateFile = "+templateFile.toString());
@@ -422,7 +420,7 @@ public class JTSConfigurator extends JFrame {
                 else{ 
 //                    loadOutputTemplate(templateFile);
                     loadTemplate(templateFile);
-                    System.out.println(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LOAD_OUTPUT_TEMPLATE"));
+                    
                 }
             } catch (Exception fnfe) {
 //                System.out.println("ERROR");
@@ -451,7 +449,7 @@ public class JTSConfigurator extends JFrame {
         optPanel.add(optionpanel);
 
         graphScPane = new JScrollPane(graphPanel);
-        graphScPane.setPreferredSize(new Dimension(512, 300));
+        graphScPane.setSize(new Dimension(512, 300));
         graphScPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         jts.getPanel().add(savePanel, BorderLayout.EAST);
 
@@ -481,79 +479,53 @@ public class JTSConfigurator extends JFrame {
     
     private void initGraphLoad() {
 
-        Runnable r = new Runnable() {
+//        Runnable r = new Runnable() {
 
             String[] colors;
 
             int color_cnt;
 
-            public void run() {
+//            public void run() {
 
                 for (int k = 0; k < graphCount; k++) {
 
-                    GraphProperties prop = new GraphProperties(thisJTS);
-                    //propVector.add(new GraphProperties(parent,table));
+                        GraphProperties prop = new GraphProperties(thisJTS);
 
-                    prop.setIndex(k);
+                        prop.setIndex(k);
 
-                    prop.setSelectedColumn(columns[k]);
-                    prop.setSelectedRows(rows);
-                    prop.setTimeSTART(rows[0]);
-                    prop.setTimeEND(rows[rows.length - 1]);
+                        prop.setSelectedColumn(columns[k]);
 
-                    if (k < 9) {
-                        color_cnt = k;
-                    } else {
-                        color_cnt = 0;
-                    }
-                    colors = getColorScheme(color_cnt);
-                    prop.setSeriesPaint(colorTable.get(colors[0]));
-                    prop.setSeriesFillPaint(colorTable.get(colors[1]));
-                    prop.setSeriesOutlinePaint(colorTable.get(colors[2]));
+                        prop.setSelectedRows(rows);
+                        prop.setTimeSTART(rows[0]);
+                        prop.setTimeEND(rows[rows.length - 1]);
 
-                    prop.setStroke(SpreadsheetConstants.JTS_DEFAULT_STROKE);
-                    prop.setStrokeSlider(SpreadsheetConstants.JTS_DEFAULT_STROKE);
-                    prop.setShape(SpreadsheetConstants.JTS_DEFAULT_SHAPE, SpreadsheetConstants.JTS_DEFAULT_SHAPE_SIZE);
-                    prop.setShapeSlider(SpreadsheetConstants.JTS_DEFAULT_SHAPE_SIZE);
-                    prop.setShapeBox(SpreadsheetConstants.JTS_DEFAULT_SHAPE);
+                        if (k < 9) {
+                            color_cnt = k;
+                        } else {
+                            color_cnt = 0;
+                        }
+                        colors = getColorScheme(color_cnt);
+                        prop.setSeriesPaint(colorTable.get(colors[0]));
+                        prop.setSeriesFillPaint(colorTable.get(colors[1]));
+                        prop.setSeriesOutlinePaint(colorTable.get(colors[2]));
 
+                        prop.setShapesVisible(true);
+                        prop.setLinesVisible(true);
 
+                        prop.setStroke(SpreadsheetConstants.JTS_DEFAULT_STROKE);
+                        prop.setShape(SpreadsheetConstants.JTS_DEFAULT_SHAPE, SpreadsheetConstants.JTS_DEFAULT_SHAPE_SIZE);
 
+                        String s =table.getColumnName(columns[k]);
+                        prop.setLegendName(s);
+                        prop.setName(s);
+                       
+                        PropertyPanel ppanel = new PropertyPanel(thisJTS, prop);
 
+                        addPropGroup(ppanel);
 
-//            colour_cnt = k;
-
-//            prop.setColor((String) colorchoice.getSelectedItem());
-//            prop.setPosition((String) poschoice.getSelectedItem());
-//            prop.setRendererType(typechoice.getSelectedIndex());
-//            prop.setName(table.getColumnName(k+1));
-                    String s =table.getColumnName(columns[k]);
-                    prop.setLegendName(s);
-                    prop.setLegendField(s);
-
-                    //prop.getPlotButton().addActionListener(plotbuttonclick);
-
-//            prop.applyTSProperties();
-                    prop.setColorLabelColor();
-                    prop.setSColorLabelColor();
-                    addPropGroup(prop);
-
-                    propVector.add(k, prop);
-
-
-                //graphpanel.add(propVector.get(k-1).getGraphPanel());
-
+                        propVector.add(k, prop);
+                        panelVector.add(k, ppanel);
                 }
-            }
-        };
-
-        WorkerDlg dlg = new WorkerDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PREPARING_DATA..."));
-//        Point parentloc = parent.getLocation();
-//        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
-//        dlg.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2,
-//                Toolkit.getDefaultToolkit().getScreenSize().height / 2);
-        dlg.setTask(r);
-        dlg.execute();
 
         finishGroupUI();
     }
@@ -564,57 +536,57 @@ public class JTSConfigurator extends JFrame {
 
         switch (scheme) {
             case 0:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY");
+                colors[0] = "red";
+                colors[1] = "red";
+                colors[2] = "gray";
                 break;
 
             case 1:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
+                colors[0] = "blue";
+                colors[1] = "blue";
+                colors[2] = "black";
                 break;
 
             case 2:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY");
+                colors[0] = "green";
+                colors[1] = "green";
+                colors[2] = "gray";
                 break;
 
             case 3:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW");
+                colors[0] = "black";
+                colors[1] = "black";
+                colors[2] = "yellow";
                 break;
 
             case 4:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN");
+                colors[0] = "orange";
+                colors[1] = "orange";
+                colors[2] = "cyan";
                 break;
 
             case 5:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
+                colors[0] = "cyan";
+                colors[1] = "cyan";
+                colors[2] = "black";
                 break;
 
             case 6:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA");
+                colors[0] = "magenta";
+                colors[1] = "yellow";
+                colors[2] = "magenta";
                 break;
 
             case 7:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY");
+                colors[0] = "lightgray";
+                colors[1] = "orange";
+                colors[2] = "lightgray";
                 break;
 
             default:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
+                colors[0] = "red";
+                colors[1] = "blue";
+                colors[2] = "red";
                 break;
         }
         return colors;
@@ -629,33 +601,38 @@ public class JTSConfigurator extends JFrame {
 
             int i = propVector.indexOf(prop);
             int t_s, t_e;
-            GraphProperties newProp = new GraphProperties(this);
-
-            newProp.setLegendField(newProp.getName());
-
-
-            //colour_cnt++;
-
-
-
+            GraphProperties newProp = new GraphProperties(this); //????REFERENZFEHLER???
 
             newProp.setPosition(dlg.getSide());
-            i = dlg.getPosition();
+            int pos = dlg.getPosition();
             dlg.dispose();
 
             newProp.setSeriesPaint(Color.BLACK);
             newProp.setSeriesFillPaint(Color.BLACK);
             newProp.setSeriesOutlinePaint(Color.BLACK);
-            newProp.setColorLabelColor();
-            //newProp.setColor(colour_cnt % 11);
 
-            if (i >= 0) {
-                t_s = prop.getTimeChoiceSTART().getSelectedIndex();
-                t_e = prop.getTimeChoiceEND().getSelectedIndex();
-                newProp.getTimeChoiceSTART().setSelectedIndex(t_s);
-                newProp.getTimeChoiceEND().setSelectedIndex(t_e);
+            newProp.setSelectedColumn(prop.getSelectedColumn());
+            newProp.setLegendName(prop.getLegendName());
+
+            newProp.setLinesVisible(prop.getLinesVisible());
+            newProp.setShapesVisible(prop.getShapesVisible());
+
+            newProp.setStroke(prop.getStrokeType());
+            newProp.setShape(prop.getShapeType(), prop.getSizeType());
+            newProp.setOutlineStroke(prop.getOutlineType());
+//            newProp.setColorLabelColor();
+
+            if (pos >= 0) {
+                t_s = prop.getTimeSTART();
+                t_e = prop.getTimeEND();
+                newProp.setTimeSTART(t_s);
+                newProp.setTimeEND(t_e);
             }
-            propVector.add(i, newProp);
+
+            PropertyPanel newPanel = new PropertyPanel(this, newProp);
+
+            propVector.add(pos, newProp);
+            panelVector.add(pos, newPanel);
 
             graphCount = propVector.size();
             initGroupUI();
@@ -666,28 +643,26 @@ public class JTSConfigurator extends JFrame {
 
                 newProp = propVector.get(k);
                 newProp.setIndex(k);
-                //prop.getPlotButton().addActionListener(plotbuttonclick);
+                newPanel = panelVector.get(k);
 
-                addPropGroup(newProp);
-
-
-
-            //graphpanel.add(propVector.get(k-1).getGraphPanel());
+                addPropGroup(newPanel);
 
             }
             finishGroupUI();
-            //mainpanel.repaint();
-            //frame.updateUI();
-            //pack();
+
             repaint();
         }
     }
 
     public void removeGraph(GraphProperties prop) {
 
+        int i = propVector.indexOf(prop);
+
         if (graphCount > 1) {
             GraphProperties newProp;
-            propVector.remove(propVector.indexOf(prop));
+            PropertyPanel newPanel;
+            propVector.remove(i);
+            panelVector.remove(i);
             graphCount = propVector.size();
 
             handleRenderer();
@@ -696,20 +671,13 @@ public class JTSConfigurator extends JFrame {
 
             for (int k = 0; k < graphCount; k++) {
 
-                newProp = propVector.get(k);
-                //newProp.setIndex(k);
-                //prop.getPlotButton().addActionListener(plotbuttonclick);
+//                newProp = propVector.get(k);
+                newPanel = panelVector.get(k);
 
-                addPropGroup(newProp);
-
-
-
-            //graphpanel.add(propVector.get(k-1).getGraphPanel());
-
+                addPropGroup(newPanel);
             }
             finishGroupUI();
-            //mainpanel.updateUI();
-//        pack();
+
             repaint();
         }
     }
@@ -717,27 +685,22 @@ public class JTSConfigurator extends JFrame {
     public void upGraph(GraphProperties prop) {
 
         int i = propVector.indexOf(prop);
-        //GraphProperties prop = propVector.get(i);
+        PropertyPanel ppanel = panelVector.get(i);
 
         if (i - 1 >= 0 && i - 1 < graphCount) {
             propVector.remove(prop);
+            panelVector.remove(i);
             propVector.add(i - 1, prop);
-
+            panelVector.add(i - 1, ppanel);
 
             initGroupUI();
 
             for (int k = 0; k < graphCount; k++) {
 
-                prop = propVector.get(k);
-                //prop.setIndex(k);
-                //prop.getPlotButton().addActionListener(plotbuttonclick);
+                ppanel = panelVector.get(k);
 
-                addPropGroup(prop);
-
-
-
-            //graphpanel.add(propVector.get(k-1).getGraphPanel());
-
+                addPropGroup(ppanel);
+  
             }
             finishGroupUI();
 
@@ -752,11 +715,14 @@ public class JTSConfigurator extends JFrame {
 
         if (i + 1 < propVector.size()) {
             GraphProperties newProp = propVector.get(i + 1);
+            PropertyPanel newPanel = panelVector.get(i + 1);
 
             if (i + 1 >= 0 && i + 1 < graphCount) {
 
                 propVector.remove(i + 1);
+                panelVector.remove(i + 1);
                 propVector.add(i, newProp);
+                panelVector.add(i, newPanel);
 
                 graphCount = propVector.size();
 
@@ -766,27 +732,25 @@ public class JTSConfigurator extends JFrame {
 
                     newProp = propVector.get(k);
                     newProp.setIndex(k);
-                    //prop.getPlotButton().addActionListener(plotbuttonclick);
 
-                    addPropGroup(newProp);
+                    addPropGroup(newPanel);
 
                 }
                 finishGroupUI();
-
-
                 repaint();
             }
         }
     }
 
     private void updatePropVector() {
-        
+
         if(!output_ttp){
             for (int i = 0; i < propVector.size(); i++) {
                 propVector.get(i).applyTSProperties();
             }
         }else{
             for (int i = 0; i < propVector.size(); i++) {
+
                 propVector.get(i).applySTPProperties(arrayVector, timeVector);
             }
         }
@@ -856,9 +820,7 @@ public class JTSConfigurator extends JFrame {
 
                    prop = propVector.get(i);
 
-
-
-                    if (prop.getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT")) {
+                    if (prop.getPosition().compareTo("left") == 0) {
                         l++;
                         //prop.setRendererType(rLeft);
 
@@ -871,8 +833,8 @@ public class JTSConfigurator extends JFrame {
                                 lsr_L.setSeriesShape(i - r, prop.getSeriesShape());
                                 lsr_L.setSeriesShapesVisible(i - r, prop.getShapesVisible());
                                 lsr_L.setSeriesLinesVisible(i - r, prop.getLinesVisible());
-                                //lsr_L.setDrawOutlines(prop.getOutlineVisible());
-                                lsr_L.setUseOutlinePaint(true);
+                                lsr_L.setDrawOutlines(prop.getOutlineVisible());
+                                lsr_L.setUseOutlinePaint(prop.getOutlineVisible());
                                 lsr_L.setSeriesFillPaint(i - r, prop.getSeriesFillPaint());
                                 lsr_L.setUseFillPaint(true);
                                 lsr_L.setSeriesOutlineStroke(i - r, prop.getSeriesOutlineStroke());
@@ -960,7 +922,7 @@ public class JTSConfigurator extends JFrame {
 //                       else prop.applySTPProperties(arrayVector, timeVector);
 
                     }
-                    if (prop.getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")) {
+                    if (prop.getPosition().compareTo("right") == 0) {
                         r++;
                         //prop.setRendererType(rRight);
                         switch (rRight) {
@@ -970,8 +932,8 @@ public class JTSConfigurator extends JFrame {
                                 lsr_R.setSeriesShape(i - l, prop.getSeriesShape());
                                 lsr_R.setSeriesShapesVisible(i - l, prop.getShapesVisible());
                                 lsr_R.setSeriesLinesVisible(i - l, prop.getLinesVisible());
-                                //lsr_R.setDrawOutlines(prop.getOutlineVisible());
-                                lsr_R.setUseOutlinePaint(true);
+                                lsr_R.setDrawOutlines(prop.getOutlineVisible());
+                                lsr_R.setUseOutlinePaint(prop.getOutlineVisible());
                                 lsr_R.setSeriesFillPaint(i - l, prop.getSeriesFillPaint());
                                 lsr_R.setUseFillPaint(true);
                                 lsr_R.setSeriesOutlineStroke(i - l, prop.getSeriesOutlineStroke());
@@ -1047,7 +1009,7 @@ public class JTSConfigurator extends JFrame {
                                 break;
                         }
 
-                        prop.setColorLabelColor();
+//                        prop.setColorLabelColor();
 
 //                        if(!output_ttp) prop.applyTSProperties();
 //                        else prop.applySTPProperties(arrayVector, timeVector);
@@ -1063,7 +1025,7 @@ public class JTSConfigurator extends JFrame {
                 ////////////////////////////////////////////////////////////////////////////
                 //Renderer direkt ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼bernehmen! //
                 jts.setPropVector(propVector);
-
+try{
                 if (l > 0) {
                     jts.plotLeft(rendererLeft, edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
                 }
@@ -1077,29 +1039,26 @@ public class JTSConfigurator extends JFrame {
                 jts.setTitle(edTitleField.getText());
                 jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
                         timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
-
-//            }
-//        };
-
-//        WorkerDlg dlg = new WorkerDlg(parent, "Creating Plot...");
-////        Point parentloc = parent.getLocation();
-////        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
-////        dlg.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2,
-////                Toolkit.getDefaultToolkit().getScreenSize().height / 2);
-//        dlg.setTask(r);
-//        dlg.execute();
-        
+}catch(Exception ex){
+    System.out.println("PECH GEHABT!");
+}
         repaint();
         
+    }
+
+    public void updateGUI(){
+        //Property Panels update!
+
+        repaint();
     }
 
     public void handleRenderer() {
         int r = 0, l = 0;
         for (int i = 0; i < propVector.size(); i++) {
-            if (propVector.get(i).getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT")) {
+            if (propVector.get(i).getPosition().compareTo("left") == 0) {
                 l++;
             }
-            if (propVector.get(i).getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")) {
+            if (propVector.get(i).getPosition().compareTo("right") == 0) {
                 r++;
             }
         }
@@ -1113,11 +1072,11 @@ public class JTSConfigurator extends JFrame {
         }
 
         if ((l == 2) && rLeftBox.getItemCount() == 5) {
-            rLeftBox.addItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE"));
+            rLeftBox.addItem("Difference");
         }
 
         if ((r == 2) && rRightBox.getItemCount() == 5) {
-            rRightBox.addItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE"));
+            rRightBox.addItem("Difference");
         }
     }
 
@@ -1186,14 +1145,14 @@ public class JTSConfigurator extends JFrame {
 
         graphpanel.removeAll();
 
-        JLabel nameLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NAME"));
-        JLabel posLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION"));
-        JLabel typeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOUR_/_POSITION"));
-        JLabel colorLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TYPE/COLOUR"));
-        JLabel dataLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_/_LEGEND_ENTRY"));
-        JLabel timeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_INTERVAL"));
+        JLabel nameLabel = new JLabel("Name");
+        JLabel posLabel = new JLabel("Position");
+        JLabel typeLabel = new JLabel("Colour / Position");
+        JLabel colorLabel = new JLabel("Type/Colour");
+        JLabel dataLabel = new JLabel("Data / Legend Entry");
+        JLabel timeLabel = new JLabel("Time Interval");
         JLabel emptyTimeLabel = new JLabel("    ");
-        JLabel legendLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEGEND_ENTRY:_"));
+        JLabel legendLabel = new JLabel("Legend Entry: ");
 
         gLayout = new GroupLayout(graphpanel);
         graphpanel.setLayout(gLayout);
@@ -1240,31 +1199,31 @@ public class JTSConfigurator extends JFrame {
 
     }
 
-    private void addPropGroup(GraphProperties prop) {
+    private void addPropGroup(PropertyPanel ppanel) {
         JLabel space1 = new JLabel(" ");
         JLabel space2 = new JLabel(" ");
         JLabel space3 = new JLabel(" ");
         JLabel space4 = new JLabel(" ");
         JLabel space5 = new JLabel("   ");
         JLabel space6 = new JLabel("   ");
-        JLabel lf = prop.getLegendLabel();
+        JLabel lf = ppanel.getLegendLabel();
 
         group6.addComponent(space5).addComponent(space6);
 
-        group1.addComponent(prop.getDataChoice()).addComponent(lf).addGap(20);
-        group2.addComponent(prop.getTimeChoiceSTART()).addComponent(prop.getTimeChoiceEND());
-        group3.addComponent(prop.getCustomizeButton()).addComponent(prop.getPosChoice());
+        group1.addComponent(ppanel.getDataChoice()).addComponent(lf).addGap(20);
+        group2.addComponent(ppanel.getTimeChoiceSTART()).addComponent(ppanel.getTimeChoiceEND());
+        group3.addComponent(ppanel.getCustomizeButton()).addComponent(ppanel.getPosChoice());
 
         group9.addComponent(space3);
 
         group11.addComponent(space4);
 
-        group13.addComponent(prop.getColorLabel()).addComponent(prop.getRemButton());
-        group14.addComponent(prop.getSColorLabel()).addComponent(prop.getUpButton());
-        group15.addComponent(prop.getDownButton());
+        group13.addComponent(ppanel.getColorLabel()).addComponent(ppanel.getRemButton());
+        group14.addComponent(ppanel.getSColorLabel()).addComponent(ppanel.getUpButton());
+        group15.addComponent(ppanel.getDownButton());
 
-        vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING).addComponent(prop.getDataChoice()).addComponent(prop.getTimeChoiceSTART()).addComponent(space5).addComponent(prop.getCustomizeButton()).addGap(10).addComponent(prop.getColorLabel()).addComponent(prop.getSColorLabel()));
-        vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING).addComponent(lf).addComponent(prop.getTimeChoiceEND()).addComponent(space6).addComponent(prop.getPosChoice()).addComponent(space3).addComponent(space4).addComponent(prop.getRemButton()).addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
+        vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING).addComponent(ppanel.getDataChoice()).addComponent(ppanel.getTimeChoiceSTART()).addComponent(space5).addComponent(ppanel.getCustomizeButton()).addGap(10).addComponent(ppanel.getColorLabel()).addComponent(ppanel.getSColorLabel()));
+        vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING).addComponent(lf).addComponent(ppanel.getTimeChoiceEND()).addComponent(space6).addComponent(ppanel.getPosChoice()).addComponent(space3).addComponent(space4).addComponent(ppanel.getRemButton()).addComponent(ppanel.getUpButton()).addComponent(ppanel.getDownButton()));
         vGroup.addGroup(gLayout.createParallelGroup().addGap(20));
 
 //            vGroup.addGroup(gLayout.createParallelGroup(Alignment.BASELINE)
@@ -1453,9 +1412,9 @@ public class JTSConfigurator extends JFrame {
             properties.setProperty(name + ".position", gprop.getPosition());
             //TIME INTERVAL
             //start
-            properties.setProperty(name + ".timeSTART", gprop.getTimeChoiceSTART().getSelectedItem().toString());
+            properties.setProperty(name + ".timeSTART", gprop.getTimeIntervals()[gprop.getTimeSTART()]);
             //end
-            properties.setProperty(name + ".timeEND", gprop.getTimeChoiceEND().getSelectedItem().toString());
+            properties.setProperty(name + ".timeEND", gprop.getTimeIntervals()[gprop.getTimeEND()]);
             //STROKE
             stroke_type = "" + gprop.getStrokeType();
             properties.setProperty(name + ".linestroke", stroke_type);
@@ -1515,11 +1474,7 @@ public class JTSConfigurator extends JFrame {
                     inputString+= ".ttp";
 
                     if(sheet.isOutputSheet()){
-//                        System.out.println("outputSheetAtSave="+sheet.isOutputSheet());
-//                        System.out.println("directory"+workspace.getOutputDataDirectory().toString());
-//                        File file = new File(workspace.getOutputDataDirectory(), inputString);
-//                        File file = new File(workspace.getDirectory().toString()+"/output/current", inputString);
-
+//                       
                         File file = new File(sheet.getOutputDSDir(), inputString);
 
                         if(!file.exists()){
@@ -1529,8 +1484,8 @@ public class JTSConfigurator extends JFrame {
                             fout.close();
                             dont_save = false;
                         }else{
-                            String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_")+file+java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
-                            int result = GUIHelper.showYesNoDlg(this, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
+                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
+                            int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
                             if(result==0){ //overwrite
                                 filename = file.getName();
                                 FileOutputStream fout = new FileOutputStream(file);
@@ -1549,8 +1504,8 @@ public class JTSConfigurator extends JFrame {
                             fout.close();
                             dont_save = false;
                         }else{
-                            String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_")+file+java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
-                            int result = GUIHelper.showYesNoDlg(this, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
+                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
+                            int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
                             if(result==0){ //overwrite
                                 filename = file.getName();
                                 FileOutputStream fout = new FileOutputStream(file);
@@ -1646,7 +1601,7 @@ public class JTSConfigurator extends JFrame {
                             break;
                         }
 
-                        read = gprop.getTimeChoiceSTART().getItemAt(tc).toString();
+                        read = gprop.getTimeIntervals()[tc].toString();
 
                         if (!readStart) {
                             //start
@@ -1672,7 +1627,7 @@ public class JTSConfigurator extends JFrame {
 
                     //STROKE
                     gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke", "2")));
-                    gprop.setStrokeSlider(gprop.getStrokeType());
+//                    gprop.setStrokeSlider(gprop.getStrokeType());
 
                     //STROKE COLOR
                     stroke_color = properties.getProperty(name + ".linecolor", "255,0,0");
@@ -1686,18 +1641,18 @@ public class JTSConfigurator extends JFrame {
                     //LINES VISIBLE
                     boolean lv = new Boolean(properties.getProperty(name + ".linesvisible"));
                     gprop.setLinesVisible(lv);
-                    gprop.setLinesVisBox(lv);
+//                    gprop.setLinesVisBox(lv);
                     //SHAPES VISIBLE
                     boolean sv = new Boolean(properties.getProperty(name + ".shapesvisible"));
                     gprop.setShapesVisible(sv);
-                    gprop.setShapesVisBox(sv);
+//                    gprop.setShapesVisBox(sv);
 
                     //SHAPE TYPE AND SIZE
                     int stype = new Integer(properties.getProperty(name + ".shapetype", "0"));
                     int ssize = new Integer(properties.getProperty(name + ".shapesize"));
                     gprop.setShape(stype, ssize);
-                    gprop.setShapeBox(stype);
-                    gprop.setShapeSlider(ssize);
+//                    gprop.setShapeBox(stype);
+//                    gprop.setShapeSlider(ssize);
 
                     //SHAPE COLOR
                     shape_color = properties.getProperty(name + ".shapecolor", "255,0,0");
@@ -1711,7 +1666,7 @@ public class JTSConfigurator extends JFrame {
                     //OUTLINE STROKE
                     int os = new Integer(properties.getProperty(name + ".outlinestroke"));
                     gprop.setOutlineStroke(os);
-                    gprop.setOutlineSlider(os);
+//                    gprop.setOutlineSlider(os);
 
                     //OUTLINE COLOR
                     outline_color = properties.getProperty(name + ".outlinecolor", "255,0,0");
@@ -1722,8 +1677,10 @@ public class JTSConfigurator extends JFrame {
                             new Integer(outTokenizer.nextToken()),
                             new Integer(outTokenizer.nextToken())));
 
-                    gprop.setColorLabelColor();
+//                    gprop.setColorLabelColor();
+                    PropertyPanel ppanel = new PropertyPanel(this, gprop);
                     propVector.add(gprop);
+                    panelVector.add(ppanel);
                     //addPropGroup(gprop);
                 }
             }
@@ -1809,7 +1766,7 @@ public class JTSConfigurator extends JFrame {
                 if (load_prop) {
                     //Legend Name
                     gprop.setLegendName(properties.getProperty(name + ".legendname", "legend name"));
-                    gprop.setLegendField(properties.getProperty(name + ".legendname", "legend name"));
+//                    gprop.setLegendField(properties.getProperty(name + ".legendname", "legend name"));
                     //POSITION left/right
                     gprop.setPosition(properties.getProperty(name + ".position"));
                     //INTERVAL
@@ -1826,7 +1783,7 @@ public class JTSConfigurator extends JFrame {
                                 break;
                             }
 
-                            read = gprop.getTimeChoiceSTART().getItemAt(tc).toString();
+                            read = gprop.getTimeIntervals()[tc].toString();
 
                             if (!readStart) {
                                 //start
@@ -1859,7 +1816,7 @@ public class JTSConfigurator extends JFrame {
 
                     //STROKE
                     gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke", "2")));
-                    gprop.setStrokeSlider(gprop.getStrokeType());
+//                    gprop.setStrokeSlider(gprop.getStrokeType());
 
                     //STROKE COLOR
                     stroke_color = properties.getProperty(name + ".linecolor", "255,0,0");
@@ -1873,18 +1830,18 @@ public class JTSConfigurator extends JFrame {
                     //LINES VISIBLE
                     boolean lv = new Boolean(properties.getProperty(name + ".linesvisible"));
                     gprop.setLinesVisible(lv);
-                    gprop.setLinesVisBox(lv);
+//                    gprop.setLinesVisBox(lv);
                     //SHAPES VISIBLE
                     boolean sv = new Boolean(properties.getProperty(name + ".shapesvisible"));
                     gprop.setShapesVisible(sv);
-                    gprop.setShapesVisBox(sv);
+//                    gprop.setShapesVisBox(sv);
 
                     //SHAPE TYPE AND SIZE
                     int stype = new Integer(properties.getProperty(name + ".shapetype", "0"));
                     int ssize = new Integer(properties.getProperty(name + ".shapesize"));
                     gprop.setShape(stype, ssize);
-                    gprop.setShapeBox(stype);
-                    gprop.setShapeSlider(ssize);
+//                    gprop.setShapeBox(stype);
+//                    gprop.setShapeSlider(ssize);
 
                     //SHAPE COLOR
                     shape_color = properties.getProperty(name + ".shapecolor", "255,0,0");
@@ -1898,7 +1855,7 @@ public class JTSConfigurator extends JFrame {
                     //OUTLINE STROKE
                     int os = new Integer(properties.getProperty(name + ".outlinestroke"));
                     gprop.setOutlineStroke(os);
-                    gprop.setOutlineSlider(os);
+//                    gprop.setOutlineSlider(os);
 
                     //OUTLINE COLOR
                     outline_color = properties.getProperty(name + ".outlinecolor", "255,0,0");
@@ -1910,11 +1867,12 @@ public class JTSConfigurator extends JFrame {
                             new Integer(outTokenizer.nextToken())));
 
 
+                    PropertyPanel ppanel = new PropertyPanel(this, gprop);
 
-
-                    gprop.setColorLabelColor();
+//                    gprop.setColorLabelColor();
                     propVector.add(gprop);
-                    addPropGroup(gprop);
+                    panelVector.add(ppanel);
+                    addPropGroup(ppanel);
                 }
 
 
@@ -2060,15 +2018,10 @@ public class JTSConfigurator extends JFrame {
 //            headers[0] = "";
             graphCount = file_columns-1;
             this.rows_cnt = arrayVector.size();
-            //in.close();
-//            System.out.println("TimeVectorSize:"+timeVector.size());
-//            System.out.println("ArrayVectorSize:"+arrayVector.size());
-//            System.out.println("TemplateFile = "+templateFile.toString());
-            
-            
+           
         }catch(FileNotFoundException fnfex){
-            final String ERROR_NODAT_MSG =java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_NOT_FOUND:_")+file.getName()+"!";
-            GUIHelper.showErrorDlg(this, ERROR_NODAT_MSG, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DAT_FILE_NOT_FOUND!"));
+            final String ERROR_NODAT_MSG ="File not found: "+file.getName()+"!";
+            GUIHelper.showErrorDlg(this, ERROR_NODAT_MSG, "DAT file not found!");
         }catch(Exception eee){
             eee.printStackTrace();
         }
@@ -2079,6 +2032,16 @@ public class JTSConfigurator extends JFrame {
 
         public void actionPerformed(ActionEvent te) {
             ctsplot.getChart().setTitle(edTitleField.getText());
+        }
+    };
+
+    ActionListener rendererColorListener = new ActionListener() {
+
+        public void actionPerformed(ActionEvent te) {
+            for(int i=0;i<panelVector.size();i++){
+                panelVector.get(i).setColorLabelColor();
+
+            }
         }
     };
 
@@ -2143,7 +2106,7 @@ public class JTSConfigurator extends JFrame {
                             jts.saveAsEPS(file);
                         }
                     };
-                    WorkerDlg dlg = new WorkerDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EPS_EXPORT"));
+                    WorkerDlg dlg = new WorkerDlg(parent, "EPS Export");
                     dlg.setTask(r);
                     dlg.execute();
                 }
@@ -2166,7 +2129,7 @@ public class JTSConfigurator extends JFrame {
 //            System.out.println("output_sheet="+sheet.isOutputSheet());
             if(sheet.isOutputSheet()){
                 String[] headers_with_time = new String[headers.length+1];
-                headers_with_time[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ID");
+                headers_with_time[0] = "ID";
                 java.lang.System.arraycopy(headers, 0, headers_with_time, 1, headers.length);
 //                sheet.save(filename, headers_with_time);//String ID zurückgeben
                 sheet.saveAll(filename);
@@ -2263,7 +2226,7 @@ public class JTSConfigurator extends JFrame {
         JLabel side_label;
 
         public AddGraphDlg() {
-            super(JTSConfigurator.this, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD_GRAPH"), true);
+            super(JTSConfigurator.this, "Add Graph", true);
 //            URL url = this.getClass().getResource("resources/JAMSicon16.png");
 //            ImageIcon icon = new ImageIcon(url);
 //            setIconImage(icon.getImage());
@@ -2276,7 +2239,7 @@ public class JTSConfigurator extends JFrame {
             setLayout(new FlowLayout());
 
             max = propVector.size();
-            String[] posArray = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")};
+            String[] posArray = {"left", "right"};
             if (max > 0) {
                 posSpinner = new JSpinner(new SpinnerNumberModel(max, 1, max, 1));
             } else {
@@ -2284,9 +2247,9 @@ public class JTSConfigurator extends JFrame {
             }
             sideChoice = new JComboBox(posArray);
             sideChoice.setSelectedIndex(0);
-            JButton okButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OK"));
-            pos_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION_AFTER:_"));
-            side_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIDE:_"));
+            JButton okButton = new JButton("OK");
+            pos_label = new JLabel("position after: ");
+            side_label = new JLabel("side: ");
 
             add(side_label);
             add(sideChoice);
@@ -2300,9 +2263,9 @@ public class JTSConfigurator extends JFrame {
 
         String getSide() {
             if (side_index == 0) {
-                side = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT");
+                side = "left";
             } else {
-                side = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT");
+                side = "right";
             }
 
             return side;

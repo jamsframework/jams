@@ -67,7 +67,7 @@ public class JXYConfigurator extends JFrame {
     Group group13;
     Group group14;
     Group group15;
-    //private Vector<ActionListener> addAction = new Vector<ActionListener>();    
+ 
 
     private JFrame parent;
     private JFrame thisDlg;
@@ -78,7 +78,7 @@ public class JXYConfigurator extends JFrame {
     private JPanel optionpanel;
     private JPanel graphpanel;
     private JPanel southpanel;
-    //private Vector<JPanel> datapanels = new Vector<JPanel>();
+
     private JPanel edTitlePanel;
     private JPanel edLeftAxisPanel;
     private JPanel edRightAxisPanel;
@@ -93,47 +93,41 @@ public class JXYConfigurator extends JFrame {
     private JPanel savePanel;
     private String[] headers;
     private File templateFile;
-    //private static JFileChooser templateChooser;
+
 
     private boolean output_ttp = false;
 
-    private JButton saveTempButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SAVE_TEMPLATE"));
-    private JButton loadTempButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LOAD_TEMPLATE"));
-    private JLabel edTitle = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT_TITLE:_"));
-    private JLabel edLeft = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE:_"));
-    private JLabel edXAxis = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("X_AXIS_TITLE"));
-    private JLabel edRight = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT_AXIS_TITLE:_"));
-    private JLabel rLeftLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RENDERER_LEFT"));
-    private JLabel rRightLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RENDERER_RIGHT"));
-    private JLabel invLeftLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_LEFT_AXIS"));
-    private JLabel invRightLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_RIGHT_AXIS"));
+    private JButton saveTempButton = new JButton("Save Template");
+    private JButton loadTempButton = new JButton("Load Template");
+    private JLabel edTitle = new JLabel("Plot Title: ");
+    private JLabel edLeft = new JLabel("Left axis title: ");
+    private JLabel edXAxis = new JLabel("X axis title");
+    private JLabel edRight = new JLabel("Right axis title: ");
+    private JLabel rLeftLabel = new JLabel("Renderer left");
+    private JLabel rRightLabel = new JLabel("Renderer right");
+    private JLabel invLeftLabel = new JLabel("Invert left axis");
+    private JLabel invRightLabel = new JLabel("Invert right axis");
     private JTextField edTitleField = new JTextField(14);
     private JTextField edLeftField = new JTextField(14);
     private JTextField edRightField = new JTextField(14);
     private JTextField edXAxisField = new JTextField(14);
-    //private String[] types = {"Line","Bar","Area","Line and Base","Dot","Step","StepArea","Difference"};
 
-    private String[] types = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LINE_AND_SHAPE"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BAR"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AREA"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STEP"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STEPAREA"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE")};
+    private String[] types = {"Line and Shape", "Bar", "Area", "Step", "StepArea", "Difference"};
     private JComboBox rLeftBox = new JComboBox(types);
     private JComboBox rRightBox = new JComboBox(types);
-    private JCheckBox invLeftBox = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_LEFT_AXIS"));
-    private JCheckBox invRightBox = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INVERT_RIGHT_AXIS"));
+    private JCheckBox invLeftBox = new JCheckBox("Invert left Axis");
+    private JCheckBox invRightBox = new JCheckBox("Invert right Axis");
     private ButtonGroup isXAxisGroup = new ButtonGroup();
-    private JButton applyButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT"));
-    private JButton addButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD_GRAPH"));
-    private JButton saveButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EPS_EXPORT"));
+    private JButton applyButton = new JButton("PLOT");
+    private JButton addButton = new JButton("Add Graph");
+    private JButton saveButton = new JButton("EPS export");
+
     private Vector<GraphProperties> propVector = new Vector<GraphProperties>();
+    private Vector<PropertyPanel> panelVector = new Vector<PropertyPanel>();
+
     private JAMSXYPlot jxys = new JAMSXYPlot();
     public XYRow[] sorted_Row;
     private boolean tempLoaded = true;
-//    private String[] headers;
-//    //private String[] colors = {"yellow","orange","red","pink","magenta","cyan","blue","green","gray","lightgray","black"};
-    //private String[] colors = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
-//    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Difference","Step","StepArea"};
-//    private String[] positions = {"left","right"};
-    /* test*/
-//    private Color[] colors_ = {Color.RED, Color.BLUE};
-//    private String[] legendEntries;
 
     private int x_series_index;
 
@@ -159,11 +153,6 @@ public class JXYConfigurator extends JFrame {
     /*buttons*/
 
     int graphCount = 0;
-//    Vector<JCheckBox> activate = new Vector<JCheckBox>();
-//    Vector<JComboBox> datachoice = new Vector<JComboBox>();
-//    Vector<JComboBox> poschoice = new Vector<JComboBox>();
-//    Vector<JComboBox> typechoice = new Vector<JComboBox>();
-//    Vector<JComboBox> colorchoice = new Vector<JComboBox>();
 
     JCheckBox[] activate;
 
@@ -204,6 +193,10 @@ public class JXYConfigurator extends JFrame {
         this.graphCount = columns.length;
         this.headers = new String[graphCount];/* hier aufpassen bei reselection xxx reselecton -> neue instanz */
 
+        for(int k=0;k<graphCount;k++){
+            headers[k] = table.getColumnName(columns[k]);
+        }
+
         d_start_changed = false;
         d_end_changed = false;
 
@@ -223,9 +216,11 @@ public class JXYConfigurator extends JFrame {
 
             pack();
             setVisible(true);
+
+
         }else{
 
-            GUIHelper.showErrorDlg(sheet, SpreadsheetConstants.JXY_ERR_NODATATEMPLATE, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
+            GUIHelper.showErrorDlg(sheet, SpreadsheetConstants.JXY_ERR_NODATATEMPLATE, "Error");
         }
     }
 
@@ -262,26 +257,26 @@ public class JXYConfigurator extends JFrame {
         thisDlg = this;
         colour_cnt = 0;
         /* create ColorMap */
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"), Color.yellow);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"), Color.orange);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"), Color.red);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK"), Color.pink);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"), Color.magenta);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"), Color.cyan);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"), Color.blue);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"), Color.green);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"), Color.gray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"), Color.lightGray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"), Color.black);
+        colorTable.put("yellow", Color.yellow);
+        colorTable.put("orange", Color.orange);
+        colorTable.put("red", Color.red);
+        colorTable.put("pink", Color.pink);
+        colorTable.put("magenta", Color.magenta);
+        colorTable.put("cyan", Color.cyan);
+        colorTable.put("blue", Color.blue);
+        colorTable.put("green", Color.green);
+        colorTable.put("gray", Color.gray);
+        colorTable.put("lightgray", Color.lightGray);
+        colorTable.put("black", Color.black);
 
-        JLabel nameLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NAME"));
-        JLabel posLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION"));
-        JLabel typeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RENDERER"));
-        JLabel colorLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOUR"));
-        JLabel dataLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SELECT_DATA_/_LEGEND_ENTRY"));
-        JLabel timeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_RANGE"));
+        JLabel nameLabel = new JLabel("Name");
+        JLabel posLabel = new JLabel("Position");
+        JLabel typeLabel = new JLabel("Renderer");
+        JLabel colorLabel = new JLabel("Colour");
+        JLabel dataLabel = new JLabel("Select Data / Legend Entry");
+        JLabel timeLabel = new JLabel("Data Range");
         JLabel emptyTimeLabel = new JLabel("    ");
-        JLabel legendLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEGEND_ENTRY"));
+        JLabel legendLabel = new JLabel("Legend Entry");
 
         nameLabel.setBackground(Color.DARK_GRAY);
         posLabel.setBackground(Color.DARK_GRAY);
@@ -306,12 +301,11 @@ public class JXYConfigurator extends JFrame {
         plotpanel.setLayout(new BorderLayout());
 
         setLayout(new BorderLayout());
-        //frame.setSize(640,80);
 
         graphScPane = new JScrollPane();
 
         optionpanel = new JPanel();
-        //optionpanel.setLayout(new FlowLayout());
+
         graphpanel = new JPanel();
 
         initGroupUI();
@@ -330,24 +324,17 @@ public class JXYConfigurator extends JFrame {
         edTitleField.setSize(40, 10);
         edTitleField.addActionListener(plotbuttonclick);
         //edLeftField.setColumns(20);
-        edLeftField.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE"));
+        edLeftField.setText("Left Axis Title");
         edLeftField.addActionListener(plotbuttonclick);
         edLeftField.setSize(40, 10);
         //edRightField.setColumns(20);
-        edRightField.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT_AXIS_TITLE"));
+        edRightField.setText("Right Axis Title");
         edRightField.addActionListener(plotbuttonclick);
         edRightField.setSize(40, 10);
 
-        edXAxisField.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("X_AXIS_TITLE"));
+        edXAxisField.setText("x axis title");
         edXAxisField.addActionListener(plotbuttonclick);
         applyButton.addActionListener(plotbuttonclick);
-
-//        edTitlePanel.add(edTitle);
-//        edTitlePanel.add(edTitleField);
-//        edLeftAxisPanel.add(edLeft);
-//        edLeftAxisPanel.add(edLeftField);
-//        edRightAxisPanel.add(edRight);
-//        edRightAxisPanel.add(edRightField);
 
         optionpanel.add(edTitle);
         optionpanel.add(edTitleField);
@@ -358,7 +345,9 @@ public class JXYConfigurator extends JFrame {
         optionpanel.add(applyButton);
 
         rLeftBox.setSelectedIndex(0);
+        rLeftBox.addActionListener(rendererColorListener);
         rRightBox.setSelectedIndex(0);
+        rRightBox.addActionListener(rendererColorListener);
 
         ////////////////////////// GRAPH AUSFÜHREN ///////////
         if ((templateFile != null) && (templateFile.exists())) {
@@ -369,7 +358,7 @@ public class JXYConfigurator extends JFrame {
                 else{
 //                    loadOutputTemplate(templateFile);
                     loadTemplate(templateFile);
-                    System.out.println(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LOAD_OUTPUT_TEMPLATE"));
+                    
                 }
             } catch (Exception fnfe) {
 //                System.out.println("ERROR");
@@ -397,7 +386,7 @@ public class JXYConfigurator extends JFrame {
         optPanel.add(optionpanel);
 
         graphScPane = new JScrollPane(graphPanel);
-        graphScPane.setPreferredSize(new Dimension(512, 300));
+        graphScPane.setSize(new Dimension(512, 300));
         graphScPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         //savePanel.add(saveButton);
@@ -419,7 +408,7 @@ public class JXYConfigurator extends JFrame {
 
     private void initGraphLoad() {
 
-        Runnable r = new Runnable() {
+        
 
             GraphProperties prop;
 
@@ -427,7 +416,7 @@ public class JXYConfigurator extends JFrame {
 
             int color_cnt;
 
-            public void run() {
+           
 
                 
                 for (int k = 0; k < graphCount; k++) {
@@ -443,29 +432,14 @@ public class JXYConfigurator extends JFrame {
 
                     if (k == 0) { //initial x axis
                         
-                        prop.getIsXAxisButton().setSelected(true);
                         prop.setIsXSeries(true);
-                        prop.getDataChoice().setEnabled(false);
-                        prop.getDataChoiceSTART().setEnabled(true);
-                        prop.getDataChoiceEND().setEnabled(true);
-                        prop.getColorChoice().setEnabled(false);
-                        prop.getPosChoice().setEnabled(false);
-                        prop.getLegendLabel().setEnabled(false);
-                        prop.getCustomizeButton().setEnabled(false);
-
-                        prop.getAddButton().setEnabled(false);
-                        prop.getRemButton().setEnabled(false);
-                        prop.getUpButton().setEnabled(false);
-                        prop.getDownButton().setEnabled(false);
                     } else {
-                        prop.getMaxButton().setEnabled(false);
-                        prop.getDataChoiceSTART().setEnabled(false);
-                        prop.getDataChoiceEND().setEnabled(false);
+                        prop.setIsXSeries(false);
                     }
-                    prop.getAddButton().setEnabled(true);
-                    prop.getRemButton().setEnabled(true);
-                    prop.getUpButton().setEnabled(true);
-                    prop.getDownButton().setEnabled(true);
+//                    prop.getAddButton().setEnabled(true);
+//                    prop.getRemButton().setEnabled(true);
+//                    prop.getUpButton().setEnabled(true);
+//                    prop.getDownButton().setEnabled(true);
 
                     if (k < 9) {
                         color_cnt = k;
@@ -477,23 +451,26 @@ public class JXYConfigurator extends JFrame {
                     prop.setSeriesFillPaint(colorTable.get(colors[1]));
                     prop.setSeriesOutlinePaint(colorTable.get(colors[2]));
                     prop.setLinesVisible(false);
-                    prop.setLinesVisBox(false);
+                    prop.setShapesVisible(true);
+//                    prop.setLinesVisBox(false);
 
                     prop.setStroke(SpreadsheetConstants.JXYS_DEFAULT_STROKE);
-                    prop.setStrokeSlider(SpreadsheetConstants.JXYS_DEFAULT_STROKE);
+//                    prop.setStrokeSlider(SpreadsheetConstants.JXYS_DEFAULT_STROKE);
                     prop.setShape(SpreadsheetConstants.JXYS_DEFAULT_SHAPE, SpreadsheetConstants.JTS_DEFAULT_SHAPE_SIZE);
-                    prop.setShapeSlider(SpreadsheetConstants.JXYS_DEFAULT_SHAPE_SIZE);
-                    prop.setShapeBox(SpreadsheetConstants.JXYS_DEFAULT_SHAPE);
+//                    prop.setShapeSlider(SpreadsheetConstants.JXYS_DEFAULT_SHAPE_SIZE);
+//                    prop.setShapeBox(SpreadsheetConstants.JXYS_DEFAULT_SHAPE);
 //                    prop.setName(table.getColumnName(k + 1));
 //                    prop.setLegendName(table.getColumnName(k + 1));
 
                     String s =table.getColumnName(columns[k]);
                     prop.setLegendName(s);
                     prop.setName(s);
-                    prop.setLegendField(s);
+//                    prop.setLegendField(s);
 
                     propVector.add(k, prop);
 
+//                    PropertyPanel ppanel = new PropertyPanel(thisJXY, prop);
+                   
                 }
 
                 //initial data intervals
@@ -510,24 +487,22 @@ public class JXYConfigurator extends JFrame {
                         prop.setDataEND(row_end);
                     }
 
+                    PropertyPanel ppanel = new PropertyPanel(thisJXY, prop);
+                    panelVector.add(ppanel);
 
-                    prop.applyXYProperties();
-                    addPropGroup(propVector.get(k));
-
-                    prop.setColorLabelColor();
-                }
-                
+                    if(panelVector.size() > 0){
+                    setXGUI(prop,ppanel);
             }
-        };
+                    addPropGroup(panelVector.get(k));
 
-        WorkerDlg dlg = new WorkerDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PREPARING_DATA..."));
-//        Point parentloc = parent.getLocation();
-//        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
+                }  
+            
         
-        dlg.setTask(r);
-        dlg.execute();
+
+       
 
         finishGroupUI();
+
     }
 
     private void writeSortedData(int x_col) {
@@ -577,11 +552,16 @@ public class JXYConfigurator extends JFrame {
 
         this.row_start = sorted_Row[0].col[x_column];
         this.row_end = sorted_Row[sorted_Row.length - 1].col[x_column];
+        
+        
+
         range[0] = 0;
         range[1] = sorted_Row.length - 1;
 
-        dStartChanged(false);
-        dEndChanged(false);
+
+
+        dStartChanged(true);
+        dEndChanged(true);
 
         return range;
     }
@@ -597,6 +577,7 @@ public class JXYConfigurator extends JFrame {
         x_prop.setDataEND(this.row_end);
         dStartChanged(false);
         dEndChanged(false);
+
     }
 
     public void dStartChanged(boolean state) {
@@ -625,9 +606,9 @@ public class JXYConfigurator extends JFrame {
                 range[0] = this.range[0];
 
             } else {
-
-                double start = x_prop.readDataSTART();
-                double end = x_prop.readDataEND();
+//READ DATA START!!!!
+                double start = x_prop.getDataSTART();
+                double end = x_prop.getDataEND();
                                              
                 int i = 0;
                 int x_col = x_prop.getSelectedColumn();
@@ -669,8 +650,9 @@ public class JXYConfigurator extends JFrame {
                 range[1] = this.range[1];
 
             } else {
-                double start = x_prop.readDataSTART();
-                double end = x_prop.readDataEND();
+//READ DATA START!!!!
+                double start = x_prop.getDataSTART();
+                double end = x_prop.getDataEND();
 
                 int i = 0;
                 int x_col = x_prop.getSelectedColumn();
@@ -706,9 +688,9 @@ public class JXYConfigurator extends JFrame {
         } else {
 
 
-
-            double start = x_prop.readDataSTART();
-            double end = x_prop.readDataEND();
+//READ DATA START!!!!
+            double start = x_prop.getDataSTART();
+            double end = x_prop.getDataEND();
             int i = 0;
             int x_col = x_prop.getSelectedColumn();
             boolean out_of_boundaries = (start < sorted_Row[0].col[x_col]) || (start > sorted_Row[sorted_Row.length - 1].col[x_col]);
@@ -773,7 +755,7 @@ public class JXYConfigurator extends JFrame {
             this.row_end = end;
         }
         this.range = range;
-        System.out.println("possible data intervals are: "+range[0]+" and "+range[1]);
+        
         return range;
     }
 
@@ -783,57 +765,57 @@ public class JXYConfigurator extends JFrame {
 
         switch (scheme) {
             case 0:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY");
+                colors[0] = "red";
+                colors[1] = "red";
+                colors[2] = "gray";
                 break;
 
             case 1:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
+                colors[0] = "blue";
+                colors[1] = "blue";
+                colors[2] = "black";
                 break;
 
             case 2:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY");
+                colors[0] = "green";
+                colors[1] = "green";
+                colors[2] = "gray";
                 break;
 
             case 3:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW");
+                colors[0] = "black";
+                colors[1] = "black";
+                colors[2] = "yellow";
                 break;
 
             case 4:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN");
+                colors[0] = "orange";
+                colors[1] = "orange";
+                colors[2] = "cyan";
                 break;
 
             case 5:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK");
+                colors[0] = "cyan";
+                colors[1] = "cyan";
+                colors[2] = "black";
                 break;
 
             case 6:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA");
+                colors[0] = "magenta";
+                colors[1] = "yellow";
+                colors[2] = "magenta";
                 break;
 
             case 7:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY");
+                colors[0] = "lightgray";
+                colors[1] = "orange";
+                colors[2] = "lightgray";
                 break;
 
             default:
-                colors[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
-                colors[1] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE");
-                colors[2] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED");
+                colors[0] = "red";
+                colors[1] = "blue";
+                colors[2] = "red";
                 break;
         }
         return colors;
@@ -849,32 +831,42 @@ public class JXYConfigurator extends JFrame {
             int i = propVector.indexOf(prop);
             double d_start, d_end;
             GraphProperties newProp = new GraphProperties(this);
+            
             colour_cnt++;
 
-
-
-
             newProp.setPosition(dlg.getSide());
-            i = dlg.getPosition();
+            int pos = dlg.getPosition();
             dlg.dispose();
-            newProp.getDataChoice().setSelectedIndex(1);
+//            newProp.getDataChoice().setSelectedIndex(1);
 
 
-            newProp.setSeriesPaint(Color.RED);
-            newProp.setSeriesFillPaint(Color.RED);
-            newProp.setSeriesOutlinePaint(Color.RED);
-            newProp.setColorLabelColor();
+             newProp.setSeriesPaint(Color.BLACK);
+            newProp.setSeriesFillPaint(Color.BLACK);
+            newProp.setSeriesOutlinePaint(Color.BLACK);
 
-            if (i > 0) {
+            newProp.setSelectedColumn(prop.getSelectedColumn());
+            newProp.setLegendName(prop.getLegendName());
+
+            newProp.setLinesVisible(prop.getLinesVisible());
+            newProp.setShapesVisible(prop.getShapesVisible());
+
+            newProp.setStroke(prop.getStrokeType());
+            newProp.setShape(prop.getShapeType(), prop.getSizeType());
+            newProp.setOutlineStroke(prop.getOutlineType());
+//            newProp.setColorLabelColor();
+
+            if (pos >= 0) {
                 d_start = prop.getDataSTART();
                 d_end = prop.getDataEND();
                 newProp.setDataSTART(d_start);
                 newProp.setDataEND(d_end);
-                newProp.getDataChoiceSTART().setEnabled(false);
-                newProp.getDataChoiceEND().setEnabled(false);
-                newProp.getMaxButton().setEnabled(false);
+//                newProp.getDataChoiceSTART().setEnabled(false);
+//                newProp.getDataChoiceEND().setEnabled(false);
+//                newProp.getMaxButton().setEnabled(false);
             }
-            propVector.add(i, newProp);
+            PropertyPanel newPPanel = new PropertyPanel(thisJXY, newProp);
+            propVector.add(pos, newProp);
+            panelVector.add(pos, newPPanel);
 
             graphCount = propVector.size();
             initGroupUI();
@@ -885,59 +877,57 @@ public class JXYConfigurator extends JFrame {
 
                 newProp = propVector.get(k);
                 newProp.setIndex(k);
-                //prop.getPlotButton().addActionListener(plotbuttonclick);
+                newPPanel = panelVector.get(k);
+
+
                 if (newProp.isXSeries()) {
                     x_series_index = k;
                 }
-                addPropGroup(newProp);
-
-
-
-            //graphpanel.add(propVector.get(k-1).getGraphPanel());
+                addPropGroup(newPPanel);
 
             }
             xChanged(propVector.get(x_series_index));
             setMaxDataIntervals(propVector.get(x_series_index));
 
             finishGroupUI();
-            //mainpanel.repaint();
-            //frame.updateUI();
-            //pack();
+ 
             repaint();
+
         }
     }
 
     public void removeGraph(GraphProperties prop) {
 
+        int i = propVector.indexOf(prop);
+//        PropertyPanel ppanel = panelVector.get(i);
+
         if (graphCount > 1) {
             GraphProperties newProp;
-            propVector.remove(propVector.indexOf(prop));
+            PropertyPanel newPPanel;
+            propVector.remove(i);
+            panelVector.remove(i);
             graphCount = propVector.size();
+
+            handleRenderer();
 
             initGroupUI();
 
             for (int k = 0; k < graphCount; k++) {
 
                 newProp = propVector.get(k);
-//            prop.setIndex(k);
-                //prop.getPlotButton().addActionListener(plotbuttonclick);
+                newPPanel = panelVector.get(k);
 
                 if (newProp.isXSeries()) {
                     x_series_index = k;
                 }
-                addPropGroup(newProp);
-
-
-
-            //graphpanel.add(propVector.get(k-1).getGraphPanel());
+                addPropGroup(newPPanel);
 
             }
             xChanged(propVector.get(x_series_index));
             setMaxDataIntervals(propVector.get(x_series_index));
 
             finishGroupUI();
-            //mainpanel.updateUI();
-//        pack();
+
             repaint();
         }
     }
@@ -945,16 +935,17 @@ public class JXYConfigurator extends JFrame {
     public void upGraph(GraphProperties prop) {
 
         int i = propVector.indexOf(prop);
-
+        PropertyPanel ppanel = panelVector.get(i);
 
         boolean xChanged = false;
         GraphProperties newProp;
-        //GraphProperties xProp = propVector.get(x_series_index);
-
+        PropertyPanel newPPanel;
 
         if (i - 1 >= 0 && i - 1 < graphCount) {
             propVector.remove(prop);
+            panelVector.remove(i);
             propVector.add(i - 1, prop);
+            panelVector.add(i - 1, ppanel);
 
             handleRenderer();
             initGroupUI();
@@ -962,17 +953,17 @@ public class JXYConfigurator extends JFrame {
             for (int k = 0; k < graphCount; k++) {
 
                 newProp = propVector.get(k);
-                //prop.setIndex(k);
+                newPPanel = panelVector.get(k);
+
                 if (newProp.isXSeries()) {
                     x_series_index = k;
                     xChanged = true;
                 }
 
 
-                addPropGroup(newProp);
+                addPropGroup(newPPanel);
             }
 
-            //xChanged(propVector.get(x_series_index));
             finishGroupUI();
             repaint();
         }
@@ -981,15 +972,19 @@ public class JXYConfigurator extends JFrame {
     public void downGraph(GraphProperties prop) {
 
         int i = propVector.indexOf(prop);
+        PropertyPanel ppanel = panelVector.get(i);
 
         boolean xChanged = false;
         if (i < propVector.size()) {
             GraphProperties newProp;
+            PropertyPanel newPPanel;
 
             if (i + 1 >= 0 && i + 1 < graphCount) {
 
                 propVector.remove(prop);
+                panelVector.remove(i);
                 propVector.add(i + 1, prop);
+                panelVector.add(i+1, ppanel);
 
                 graphCount = propVector.size();
                 handleRenderer();
@@ -998,17 +993,16 @@ public class JXYConfigurator extends JFrame {
                 for (int k = 0; k < graphCount; k++) {
 
                     newProp = propVector.get(k);
-                    //newProp.setIndex(k);
+                    newPPanel = panelVector.get(k);
+
                     if (prop.isXSeries()) {
                         x_series_index = k;
                         xChanged = true;
                     }
-                    //prop.getPlotButton().addActionListener(plotbuttonclick);
 
-                    addPropGroup(newProp);
+                    addPropGroup(newPPanel);
                 }
 
-                //xChanged(propVector.get(x_series_index));
                 finishGroupUI();
                 repaint();
             }
@@ -1017,9 +1011,6 @@ public class JXYConfigurator extends JFrame {
 
     private void updatePropVector() {
 
-//        if(tempLoaded){
-//            writeSortedData(columns[0]);
-//        }
         for (int i = 0; i < propVector.size(); i++) {
             propVector.get(i).applyXYProperties();
         }
@@ -1036,88 +1027,89 @@ public class JXYConfigurator extends JFrame {
     public void xChanged(GraphProperties prop) {
 
         int index = propVector.indexOf(prop);
-        //x_series_col = columns[index];
+
         x_series_index = index;
 
         dStartChanged(true);
         dEndChanged(true);
 
-        //resortData(propVector.get(x_series_index).getSelectedColumn());
-
         for (int i = 0; i < propVector.size(); i++) {
+
+        prop.setXChanged(true);
+        prop.setIsXSeries(true);
+//        prop.getIsXAxisButton().setEnabled(true);
+        //propVector.get(index).setXSeries(propVector.get(x_series_index).getSelectedColumn());
+        prop.setXSeries(prop.getSelectedColumn());
+
             if (i != index) {
 //                propVector.get(i).setXSeries(columns[x_series_index]);
                 propVector.get(i).setXSeries(propVector.get(x_series_index).getSelectedColumn());
                 propVector.get(i).setXChanged(true);
                 propVector.get(i).setIsXSeries(false);
-                propVector.get(i).getDataChoice().setEnabled(true);
-                propVector.get(i).getDataChoiceSTART().setEnabled(false);
-                propVector.get(i).getDataChoiceEND().setEnabled(false);
-                propVector.get(i).getColorChoice().setEnabled(false);
-                propVector.get(i).getPosChoice().setEnabled(true);
-                propVector.get(i).getAddButton().setEnabled(true);
-                propVector.get(i).getRemButton().setEnabled(true);
-                propVector.get(i).getUpButton().setEnabled(true);
-                propVector.get(i).getDownButton().setEnabled(true);
-                propVector.get(i).getLegendLabel().setEnabled(true);
-                propVector.get(i).getCustomizeButton().setEnabled(true);
-                propVector.get(i).getMaxButton().setEnabled(false);
-            //propVector.get(i).applyXYProperties();
+
+            }else{
+                prop.setPosition("left");
             }
 
+            if(panelVector.size() > 0){
+                setXGUI(propVector.get(i),panelVector.get(i));
+            }
+        
         }
-        prop.setXChanged(true);
-        prop.setIsXSeries(true);
-        prop.getIsXAxisButton().setEnabled(true);
-        //propVector.get(index).setXSeries(propVector.get(x_series_index).getSelectedColumn());
-        prop.setXSeries(prop.getSelectedColumn());
-        prop.getDataChoice().setEnabled(false);
-        prop.getDataChoiceSTART().setEnabled(true);
-        prop.getDataChoiceEND().setEnabled(true);
-        prop.getColorChoice().setEnabled(false);
-        prop.getPosChoice().setEnabled(false);
-        prop.getAddButton().setEnabled(false);
-        prop.getRemButton().setEnabled(false);
-        prop.getUpButton().setEnabled(false);
-        prop.getDownButton().setEnabled(false);
-        prop.getLegendLabel().setEnabled(false);
-        prop.getCustomizeButton().setEnabled(false);
-        prop.getMaxButton().setEnabled(true);
-    //prop.applyXYProperties();
+
+
+        
     }
 
-//    public void setENDIntervals(double end){
-//        for(int i=0; i<propVector.size(); i++){
-//            if(propVector.get(i).isXAxis.isEnabled()) propVector.get(i).setDataEND(end);
-//            
-//        }
-//    }
-//    public void plotGraph(GraphProperties prop){
-//       
-//            //propVector.get(i).applyProperties();
-////            if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
-////                jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
-////            }
-////            if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
-////                jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
-////            }
-//            if(prop.getPosChoice().getSelectedItem() == "left"){
-//                jxys.plotLeft(rLeftBox.getSelectedIndex(), edLeftField.getText(), edXAxisField.getText(), invLeftBox.isSelected());
-//            }
-//            if(prop.getPosChoice().getSelectedItem() == "right"){
-//                jxys.plotRight(rRightBox.getSelectedIndex(), edRightField.getText(), edXAxisField.getText(), invRightBox.isSelected());
-//            }
-//    }    
+    public void setXGUI(GraphProperties prop, PropertyPanel panel){
+
+        if(prop.isXSeries()){
+            panel.isXAxis.setSelected(true);
+            panel.setDataSTART(prop.getDataSTART());
+            panel.setDataEND(prop.getDataEND());
+
+            panel.customizeButton.setEnabled(false);
+            panel.poschoice.setEnabled(false);
+
+            panel.datachoice_START.setEnabled(true);
+            panel.datachoice_END.setEnabled(true);
+            panel.datachoice_max.setEnabled(true);
+
+            panel.remButton.setEnabled(false);
+
+            panel.poschoice.setSelectedItem(prop.getPosition());
+            
+
+        }else{
+            panel.isXAxis.setSelected(false);
+
+            panel.customizeButton.setEnabled(true);
+            panel.poschoice.setEnabled(true);
+
+            panel.datachoice_START.setEnabled(false);
+            panel.datachoice_END.setEnabled(false);
+            panel.datachoice_max.setEnabled(false);
+
+            panel.remButton.setEnabled(true);
+        }
+
+    }
+
+
     public void plotAllGraphs() {
         updatePropVector();
 
-        Runnable r = new Runnable() {
+//        Runnable r = new Runnable() {
 
-            public void run() {
+//            public void run() {
 
                 int l = 0;
                 int r = 0;
-                int corr = 0;
+                int x_pos = 0;
+                boolean x_passed = false;
+
+                int index_l = 0;
+                int index_r = 0;
 
                 int rLeft = rLeftBox.getSelectedIndex();
                 int rRight = rRightBox.getSelectedIndex();
@@ -1140,49 +1132,53 @@ public class JXYConfigurator extends JFrame {
                 XYStepAreaRenderer sar_L = new XYStepAreaRenderer();
 
                 GraphProperties prop;
-                //2 Renderer einfügen. Typ aus rLeftBox bzw rRightBox holen!
-                //Switch/Case Anweisung in den Configurator packen
-                //
-
-
-
 
                 /////////////// In dieser Schleife Eigenschaften übernehmen!! /////////////
                 for (int i = 0; i < propVector.size(); i++) {
 
                     prop = propVector.get(i);
 
-//                    prop.setLegendName(prop.getLegendName());
+                    if(!x_passed) x_pos++;
 
-                    if (prop.getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT")) {
+                    if (prop.getPosition().compareTo("left") == 0) {
                         if (!propVector.get(i).isXSeries()) {
                             l++;
-                            //prop.setRendererType(rLeft);
+
+                            
+
+                            if((i < x_pos)){
+                                index_l = i-r;
+                            } else {
+                                index_l = i-r-1;
+                            }
+
+                           
 
                             switch (rLeft) {
 
                                 case 0:
-                                    lsr_L.setSeriesPaint(i - r - corr, prop.getSeriesPaint());
-                                    //lsr_L.setSeriesPaint(i-r, Color.black);
-                                    lsr_L.setSeriesStroke(i - r - corr, prop.getSeriesStroke());
-                                    lsr_L.setSeriesShape(i - r - corr, prop.getSeriesShape());
-                                    lsr_L.setSeriesShapesVisible(i - r - corr, prop.getShapesVisible());
-                                    lsr_L.setSeriesLinesVisible(i - r - corr, prop.getLinesVisible());
-                                    //lsr_L.setDrawOutlines(prop.getOutlineVisible());
+                                    lsr_L.setSeriesPaint(index_l, prop.getSeriesPaint());
+
+                                    lsr_L.setSeriesStroke(index_l, prop.getSeriesStroke());
+                                    lsr_L.setSeriesShape(index_l, prop.getSeriesShape());
+                                    lsr_L.setSeriesShapesVisible(index_l, prop.getShapesVisible());
+                                    lsr_L.setSeriesLinesVisible(index_l, prop.getLinesVisible());
+                                    lsr_L.setDrawOutlines(prop.getOutlineVisible());
                                     lsr_L.setUseOutlinePaint(true);
-                                    lsr_L.setSeriesFillPaint(i - r - corr, prop.getSeriesFillPaint());
+                                    lsr_L.setSeriesFillPaint(index_l, prop.getSeriesFillPaint());
                                     lsr_L.setUseFillPaint(true);
-                                    lsr_L.setSeriesOutlineStroke(i - r - corr, prop.getSeriesOutlineStroke());
-                                    lsr_L.setSeriesOutlinePaint(i - r - corr, prop.getSeriesOutlinePaint());
+                                    lsr_L.setSeriesOutlineStroke(index_l, prop.getSeriesOutlineStroke());
+                                    lsr_L.setSeriesOutlinePaint(index_l, prop.getSeriesOutlinePaint());
+                                    
                                     rendererLeft = lsr_L;
                                     break;
 
                                 case 1:
-                                    brr_L.setSeriesPaint(i - r - corr, prop.getSeriesPaint());
-                                    brr_L.setSeriesStroke(i - r - corr, prop.getSeriesStroke());
+                                    brr_L.setSeriesPaint(index_l, prop.getSeriesPaint());
+                                    brr_L.setSeriesStroke(index_l, prop.getSeriesStroke());
 
-                                    brr_L.setSeriesOutlineStroke(i - r - corr, prop.getSeriesOutlineStroke());
-                                    brr_L.setSeriesOutlinePaint(i - r - corr, prop.getSeriesOutlinePaint());
+                                    brr_L.setSeriesOutlineStroke(index_l, prop.getSeriesOutlineStroke());
+                                    brr_L.setSeriesOutlinePaint(index_l, prop.getSeriesOutlinePaint());
 
 
                                     rendererLeft = brr_L;
@@ -1190,34 +1186,32 @@ public class JXYConfigurator extends JFrame {
                                     break;
 
                                 case 2:
-                                    ar_L.setSeriesPaint(i - r - corr, prop.getSeriesPaint());
-                                    ar_L.setSeriesStroke(i - r - corr, prop.getSeriesStroke());
-                                    ar_L.setSeriesShape(i - r - corr, prop.getSeriesShape());
-                                    ar_L.setSeriesOutlineStroke(i - r - corr, prop.getSeriesOutlineStroke());
-                                    ar_L.setSeriesOutlinePaint(i - r - corr, prop.getSeriesOutlinePaint());
+                                    ar_L.setSeriesPaint(index_l, prop.getSeriesPaint());
+                                    ar_L.setSeriesStroke(index_l, prop.getSeriesStroke());
+                                    ar_L.setSeriesShape(index_l, prop.getSeriesShape());
+                                    ar_L.setSeriesOutlineStroke(index_l, prop.getSeriesOutlineStroke());
+                                    ar_L.setSeriesOutlinePaint(index_l, prop.getSeriesOutlinePaint());
                                     ar_L.setOutline(prop.getOutlineVisible());
-                                    //ar_L.setSeriesOu
+                                   
 
                                     rendererLeft = ar_L;
 
                                     break;
 
                                 case 3:
-                                    str_L.setSeriesPaint(i - r - corr, prop.getSeriesPaint());
-                                    str_L.setSeriesStroke(i - r - corr, prop.getSeriesStroke());
-                                    str_L.setSeriesShape(i - r - corr, prop.getSeriesShape());
-//                            str_L.setSeriesOutlineStroke(i-r, prop.getSeriesOutlineStroke());
-//                            str_L.setSeriesOutlinePaint(i-r, prop.getSeriesOutlinePaint());
+                                    str_L.setSeriesPaint(index_l, prop.getSeriesPaint());
+                                    str_L.setSeriesStroke(index_l, prop.getSeriesStroke());
+                                    str_L.setSeriesShape(index_l, prop.getSeriesShape());
 
                                     rendererLeft = str_L;
                                     break;
 
                                 case 4:
-                                    sar_L.setSeriesPaint(i - r - corr, prop.getSeriesPaint());
-                                    sar_L.setSeriesStroke(i - r - corr, prop.getSeriesStroke());
-                                    sar_L.setSeriesShape(i - r - corr, prop.getSeriesShape());
-                                    sar_L.setSeriesOutlineStroke(i - r - corr, prop.getSeriesOutlineStroke());
-                                    sar_L.setSeriesOutlinePaint(i - r - corr, prop.getSeriesOutlinePaint());
+                                    sar_L.setSeriesPaint(index_l, prop.getSeriesPaint());
+                                    sar_L.setSeriesStroke(index_l, prop.getSeriesStroke());
+                                    sar_L.setSeriesShape(index_l, prop.getSeriesShape());
+                                    sar_L.setSeriesOutlineStroke(index_l, prop.getSeriesOutlineStroke());
+                                    sar_L.setSeriesOutlinePaint(index_l, prop.getSeriesOutlinePaint());
                                     sar_L.setOutline(prop.getOutlineVisible());
 
                                     rendererLeft = sar_L;
@@ -1225,142 +1219,136 @@ public class JXYConfigurator extends JFrame {
                                     break;
 
                                 case 5:
-                                    dfr_L.setSeriesPaint(i - r - corr, prop.getSeriesPaint());
-                                    dfr_L.setSeriesStroke(i - r - corr, prop.getSeriesStroke());
-                                    dfr_L.setSeriesShape(i - r - corr, prop.getSeriesShape());
-                                    dfr_L.setSeriesOutlineStroke(i - r - corr, prop.getSeriesOutlineStroke());
-                                    dfr_L.setSeriesOutlinePaint(i - r - corr, prop.getSeriesOutlinePaint());
+                                    dfr_L.setSeriesPaint(index_l, prop.getSeriesPaint());
+                                    dfr_L.setSeriesStroke(index_l, prop.getSeriesStroke());
+                                    dfr_L.setSeriesShape(index_l, prop.getSeriesShape());
+                                    dfr_L.setSeriesOutlineStroke(index_l, prop.getSeriesOutlineStroke());
+                                    dfr_L.setSeriesOutlinePaint(index_l, prop.getSeriesOutlinePaint());
                                     dfr_L.setShapesVisible(prop.getShapesVisible());
 
-
-//                            dfr_L.setNegativePaint(prop.getNegativePaint());
-//                            dfr_L.setPositivePaint(prop.getNegativePaint());
-
                                     rendererLeft = dfr_L;
-
                                     break;
 
                                 default:
-                                    lsr_L.setSeriesPaint(i - r - corr, prop.getSeriesPaint());
-                                    lsr_L.setSeriesStroke(i - r - corr, prop.getSeriesStroke());
-                                    lsr_L.setSeriesShape(i - r - corr, prop.getSeriesShape());
-                                    lsr_L.setSeriesShapesVisible(i - r - corr, prop.getShapesVisible());
-                                    lsr_L.setSeriesLinesVisible(i - r - corr, prop.getLinesVisible());
-                                    lsr_L.setSeriesOutlineStroke(i - r - corr, prop.getSeriesOutlineStroke());
-                                    lsr_L.setSeriesOutlinePaint(i - r - corr, prop.getSeriesOutlinePaint());
+                                    lsr_L.setSeriesPaint(index_l, prop.getSeriesPaint());
+                                    lsr_L.setSeriesStroke(index_l, prop.getSeriesStroke());
+                                    lsr_L.setSeriesShape(index_l, prop.getSeriesShape());
+                                    lsr_L.setSeriesShapesVisible(index_l, prop.getShapesVisible());
+                                    lsr_L.setSeriesLinesVisible(index_l, prop.getLinesVisible());
+                                    lsr_L.setSeriesOutlineStroke(index_l, prop.getSeriesOutlineStroke());
+                                    lsr_L.setSeriesOutlinePaint(index_l, prop.getSeriesOutlinePaint());
 
                                     rendererLeft = lsr_L;
                                     break;
                             }
                         } else {
-                            corr++;
+                           // x_pos++;
+                            x_passed = true;
+//                            l--;
                         }
 
                     }
-                    if (prop.getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")) {
+                    if (prop.getPosition().compareTo("right") == 0) {
                         if (!propVector.get(i).isXSeries()) {
                             r++;
-                        }
-                        //prop.setRendererType(rRight);
+
+                            if((i < x_pos)){
+                                index_r = i-l;
+                            } else {
+                                index_r = i-l-1;
+                            }
+                           
+
                         switch (rRight) {
                             case 0:
-                                lsr_R.setSeriesPaint(i - l - corr, prop.getSeriesPaint());
-                                lsr_R.setSeriesStroke(i - l - corr, prop.getSeriesStroke());
-                                lsr_R.setSeriesShape(i - l - corr, prop.getSeriesShape());
-                                lsr_R.setSeriesShapesVisible(i - l - corr, prop.getShapesVisible());
-                                lsr_R.setSeriesLinesVisible(i - l - corr, prop.getLinesVisible());
-                                //lsr_R.setDrawOutlines(prop.getOutlineVisible());
+                                lsr_R.setSeriesPaint(index_r, prop.getSeriesPaint());
+                                lsr_R.setSeriesStroke(index_r, prop.getSeriesStroke());
+                                lsr_R.setSeriesShape(index_r, prop.getSeriesShape());
+                                lsr_R.setSeriesShapesVisible(index_r, prop.getShapesVisible());
+                                lsr_R.setSeriesLinesVisible(index_r, prop.getLinesVisible());
+                                lsr_R.setDrawOutlines(prop.getOutlineVisible());
                                 lsr_R.setUseOutlinePaint(true);
-                                lsr_R.setSeriesFillPaint(i - r - corr, prop.getSeriesFillPaint());
+                                lsr_R.setSeriesFillPaint(index_r, prop.getSeriesFillPaint());
                                 lsr_R.setUseFillPaint(true);
-                                lsr_R.setSeriesOutlineStroke(i - l - corr, prop.getSeriesOutlineStroke());
-                                lsr_R.setSeriesOutlinePaint(i - l - corr, prop.getSeriesOutlinePaint());
+                                lsr_R.setSeriesOutlineStroke(index_r, prop.getSeriesOutlineStroke());
+                                lsr_R.setSeriesOutlinePaint(index_r, prop.getSeriesOutlinePaint());
 
                                 rendererRight = lsr_R;
                                 break;
 
                             case 1:
-                                brr_R.setSeriesPaint(i - l - corr, prop.getSeriesPaint());
-                                brr_R.setSeriesStroke(i - l - corr, prop.getSeriesStroke());
-                                brr_R.setSeriesOutlineStroke(i - l - corr, prop.getSeriesOutlineStroke());
-                                brr_R.setSeriesOutlinePaint(i - l - corr, prop.getSeriesOutlinePaint());
+                                brr_R.setSeriesPaint(index_r, prop.getSeriesPaint());
+                                brr_R.setSeriesStroke(index_r, prop.getSeriesStroke());
+                                brr_R.setSeriesOutlineStroke(index_r, prop.getSeriesOutlineStroke());
+                                brr_R.setSeriesOutlinePaint(index_r, prop.getSeriesOutlinePaint());
 
                                 rendererRight = brr_R;
                                 //set Margin
                                 break;
 
                             case 2:
-                                ar_R.setSeriesPaint(i - l - corr, prop.getSeriesPaint());
-                                ar_R.setSeriesStroke(i - l - corr, prop.getSeriesStroke());
-                                ar_R.setSeriesShape(i - l - corr, prop.getSeriesShape());
-                                ar_R.setSeriesOutlineStroke(i - l - corr, prop.getSeriesOutlineStroke());
-                                ar_R.setSeriesOutlinePaint(i - l - corr, prop.getSeriesOutlinePaint());
+                                ar_R.setSeriesPaint(index_r, prop.getSeriesPaint());
+                                ar_R.setSeriesStroke(index_r, prop.getSeriesStroke());
+                                ar_R.setSeriesShape(index_r, prop.getSeriesShape());
+                                ar_R.setSeriesOutlineStroke(index_r, prop.getSeriesOutlineStroke());
+                                ar_R.setSeriesOutlinePaint(index_r, prop.getSeriesOutlinePaint());
 
                                 rendererRight = ar_R;
 
                                 break;
 
                             case 3:
-                                str_R.setSeriesPaint(i - l - corr, prop.getSeriesPaint());
-                                str_R.setSeriesStroke(i - l - corr, prop.getSeriesStroke());
-                                str_R.setSeriesShape(i - l - corr, prop.getSeriesShape());
-                                str_R.setSeriesOutlineStroke(i - l - corr, prop.getSeriesOutlineStroke());
-                                str_R.setSeriesOutlinePaint(i - l - corr, prop.getSeriesOutlinePaint());
+                                str_R.setSeriesPaint(index_r, prop.getSeriesPaint());
+                                str_R.setSeriesStroke(index_r, prop.getSeriesStroke());
+                                str_R.setSeriesShape(index_r, prop.getSeriesShape());
+                                str_R.setSeriesOutlineStroke(index_r, prop.getSeriesOutlineStroke());
+                                str_R.setSeriesOutlinePaint(index_r, prop.getSeriesOutlinePaint());
 
                                 rendererRight = str_R;
 
                                 break;
 
                             case 4:
-                                sar_R.setSeriesPaint(i - l - corr, prop.getSeriesPaint());
-                                sar_R.setSeriesStroke(i - l - corr, prop.getSeriesStroke());
-                                sar_R.setSeriesShape(i - l - corr, prop.getSeriesShape());
-                                sar_R.setSeriesOutlineStroke(i - l - corr, prop.getSeriesOutlineStroke());
-                                sar_R.setSeriesOutlinePaint(i - l - corr, prop.getSeriesOutlinePaint());
+                                sar_R.setSeriesPaint(index_r, prop.getSeriesPaint());
+                                sar_R.setSeriesStroke(index_r, prop.getSeriesStroke());
+                                sar_R.setSeriesShape(index_r, prop.getSeriesShape());
+                                sar_R.setSeriesOutlineStroke(index_r, prop.getSeriesOutlineStroke());
+                                sar_R.setSeriesOutlinePaint(index_r, prop.getSeriesOutlinePaint());
 
                                 rendererRight = sar_R;
 
                                 break;
 
                             case 5:
-                                dfr_R.setSeriesPaint(i - l - corr, prop.getSeriesPaint());
-                                dfr_R.setSeriesStroke(i - l - corr, prop.getSeriesStroke());
-                                dfr_R.setSeriesShape(i - l - corr, prop.getSeriesShape());
-                                dfr_R.setSeriesOutlineStroke(i - l - corr, prop.getSeriesOutlineStroke());
-                                dfr_R.setSeriesOutlinePaint(i - l - corr, prop.getSeriesOutlinePaint());
+                                dfr_R.setSeriesPaint(index_r, prop.getSeriesPaint());
+                                dfr_R.setSeriesStroke(index_r, prop.getSeriesStroke());
+                                dfr_R.setSeriesShape(index_r, prop.getSeriesShape());
+                                dfr_R.setSeriesOutlineStroke(index_r, prop.getSeriesOutlineStroke());
+                                dfr_R.setSeriesOutlinePaint(index_r, prop.getSeriesOutlinePaint());
                                 dfr_R.setShapesVisible(prop.getShapesVisible());
-                                rendererRight = dfr_R;
 
+                                rendererRight = dfr_R;
                                 break;
 
                             default:
-                                lsr_R.setSeriesPaint(i - l - corr, prop.getSeriesPaint());
-                                lsr_R.setSeriesStroke(i - l - corr, prop.getSeriesStroke());
-                                lsr_R.setSeriesShape(i - l - corr, prop.getSeriesShape());
-                                lsr_R.setSeriesShapesVisible(i - l - corr, prop.getShapesVisible());
-                                lsr_R.setSeriesLinesVisible(i - l - corr, prop.getLinesVisible());
-                                lsr_R.setSeriesOutlineStroke(i - l - corr, prop.getSeriesOutlineStroke());
-                                lsr_R.setSeriesOutlinePaint(i - l - corr, prop.getSeriesOutlinePaint());
+                                lsr_R.setSeriesPaint(index_r, prop.getSeriesPaint());
+                                lsr_R.setSeriesStroke(index_r, prop.getSeriesStroke());
+                                lsr_R.setSeriesShape(index_r, prop.getSeriesShape());
+                                lsr_R.setSeriesShapesVisible(index_r, prop.getShapesVisible());
+                                lsr_R.setSeriesLinesVisible(index_r, prop.getLinesVisible());
+                                lsr_R.setSeriesOutlineStroke(index_r, prop.getSeriesOutlineStroke());
+                                lsr_R.setSeriesOutlinePaint(index_r, prop.getSeriesOutlinePaint());
 
                                 rendererRight = lsr_R;
                                 break;
                         }
+                        }
 
-//                        prop.setLegendName(prop.setLegend.getText());
-                        prop.setColorLabelColor();
-//                        prop.applyXYProperties();
+
+//                        prop.setColorLabelColor();
+
                     }
                 }
-
-//            for(int i=0; i<propVector.size(); i++){
-//                if(propVector.get(i).getPosChoice().getSelectedItem() == "left"){
-//                    if(!propVector.get(i).isXSeries()) l++;
-//                    
-//                }
-//                if(propVector.get(i).getPosChoice().getSelectedItem() == "right"){
-//                    if(!propVector.get(i).isXSeries()) r++;
-//                }
-//            }
 
                 jxys.setPropVector(propVector);
 
@@ -1375,15 +1363,13 @@ public class JXYConfigurator extends JFrame {
                 }
 
                 jxys.setTitle(edTitleField.getText());
-            }
-        };
+//            }
+//        };
 
-        WorkerDlg dlg = new WorkerDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CREATING_PLOT..."));
-//        Point parentloc = parent.getLocation();
-//        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
-//        dlg.setLocationByPlatform(true);
-        dlg.setTask(r);
-        dlg.execute();
+//        WorkerDlg dlg = new WorkerDlg(parent, "Creating Plot...");
+//
+//        dlg.setTask(r);
+//        dlg.execute();
 
         repaint();
     ///////////Runnable end /////////////////////
@@ -1394,14 +1380,14 @@ public class JXYConfigurator extends JFrame {
         int r = 0, l = 0, c = 0;
         for (int i = 0; i < propVector.size(); i++) {
 
-            if (propVector.get(i).getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT")) {
+            if (propVector.get(i).getPosition().compareTo("left") == 0) {
                 if (!propVector.get(i).isXSeries()) {
                     l++;
                 } else {
                     c++;
                 }
             }
-            if (propVector.get(i).getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")) {
+            if (propVector.get(i).getPosition().compareTo("right") == 0) {
                 if (!propVector.get(i).isXSeries()) {
                     r++;
                 } else {
@@ -1419,11 +1405,11 @@ public class JXYConfigurator extends JFrame {
         }
 
         if ((l == 2) && rLeftBox.getItemCount() == 5) {
-            rLeftBox.addItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE"));
+            rLeftBox.addItem("Difference");
         }
 
         if ((r == 2) && rRightBox.getItemCount() == 5) {
-            rRightBox.addItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIFFERENCE"));
+            rRightBox.addItem("Difference");
         }
     }
 
@@ -1462,14 +1448,11 @@ public class JXYConfigurator extends JFrame {
 
         graphpanel.removeAll();
 
-        JLabel nameLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NAME"));
-        JLabel posLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION"));
-        JLabel typeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION"));
-        JLabel colorLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TYPE/COLOUR"));
-        JLabel dataLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_/_LEGEND_ENTRY"));
-        JLabel timeLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_RANGE"));
-        JLabel emptyTimeLabel = new JLabel("    ");
-        JLabel legendLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEGEND_ENTRY:_"));
+        JLabel typeLabel = new JLabel("Position");
+
+        JLabel dataLabel = new JLabel("Data / Legend Entry");
+        JLabel timeLabel = new JLabel("Data Range");
+
 
         gLayout = new GroupLayout(graphpanel);
         graphpanel.setLayout(gLayout);
@@ -1499,65 +1482,43 @@ public class JXYConfigurator extends JFrame {
         group1.addComponent(dataLabel);
         group2.addComponent(timeLabel);
         group3.addComponent(typeLabel);
-        //group4.addComponent(colorLabel);
-
-//        group9.addComponent();
-//        group10.addComponent(emptyTimeLabel);
-//        group11.addComponent(emptyTimeLabel);
-//        group12.addComponent(emptyTimeLabel);
-//        group13.addComponent(emptyTimeLabel);
-//        group14.addComponent(emptyTimeLabel);
-//        group15.addComponent(emptyTimeLabel);
 
         vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING).addComponent(dataLabel).addComponent(timeLabel).addComponent(typeLabel));
 
-//        vGroup.addGroup(gLayout.createParallelGroup(Alignment.BASELINE)
-//        .addComponent(dataLabel).addComponent(timeLabel).addComponent(typeLabel));
-
     }
 
-    private void addPropGroup(GraphProperties prop) {
+    private void addPropGroup(PropertyPanel ppanel) {
 
-        isXAxisGroup.add(prop.getIsXAxisButton());
-        JLabel space1 = new JLabel(" ");
-        JLabel space2 = new JLabel(" ");
+        isXAxisGroup.add(ppanel.getIsXAxisButton());
+
         JLabel space3 = new JLabel(" ");
         JLabel space4 = new JLabel(" ");
         JLabel space5 = new JLabel("   ");
-        JLabel space6 = new JLabel("   ");
-        JLabel space7 = new JLabel("   ");
-        JLabel lf = prop.getLegendLabel();
+ 
+        JLabel lf = ppanel.getLegendLabel();
 
         group6.addComponent(space5);
 
-        group1.addComponent(prop.getDataChoice()).addComponent(lf).addGap(20);
-        group2.addComponent(prop.getDataChoiceSTART()).addComponent(prop.getDataChoiceEND());
-//        group3.addComponent(prop.getColorChoice()).addComponent(prop.getPosChoice());
-        group3.addComponent(space5).addComponent(prop.getPosChoice());
-//        group3.addComponent(space7);
-        group4.addComponent(prop.getCustomizeButton()).addComponent(prop.getMaxButton());
+        group1.addComponent(ppanel.getDataChoice()).addComponent(lf).addGap(20);
+        group2.addComponent(ppanel.getDataChoiceSTART()).addComponent(ppanel.getDataChoiceEND());
+
+        group3.addComponent(ppanel.getMaxButton()).addComponent(ppanel.getPosChoice());
+
+        group4.addComponent(ppanel.getCustomizeButton()).addComponent(space5);
 
         group9.addComponent(space3);
-        group10.addComponent(prop.getIsXAxisButton());
+        group10.addComponent(ppanel.getIsXAxisButton());
         group11.addComponent(space4);
 
-        group13.addComponent(prop.getColorLabel()).addComponent(prop.getRemButton());
-        group14.addComponent(prop.getUpButton());
-        group15.addComponent(prop.getDownButton());
+        group13.addComponent(ppanel.getColorLabel()).addComponent(ppanel.getRemButton());
+        group14.addComponent(ppanel.getUpButton());
+        group15.addComponent(ppanel.getDownButton());
 
-        vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING).addComponent(prop.getDataChoice()).addComponent(prop.getDataChoiceSTART()).addComponent(space5).addComponent(space5).addComponent(space5).addComponent(prop.getCustomizeButton()).addComponent(prop.getIsXAxisButton()).addComponent(prop.getColorLabel()));
-        vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING).addComponent(lf).addComponent(prop.getDataChoiceEND()).addComponent(prop.getMaxButton()).addComponent(prop.getPosChoice()).addComponent(space3).addComponent(space4).addComponent(prop.getRemButton()).addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
+        vGroup.addGroup(gLayout.createParallelGroup(Alignment.LEADING).addComponent(ppanel.getDataChoice()).addComponent(ppanel.getDataChoiceSTART()).addComponent(space5).addComponent(ppanel.getMaxButton()).addComponent(space5).addComponent(ppanel.getCustomizeButton()).addComponent(ppanel.getIsXAxisButton()).addComponent(ppanel.getColorLabel()));
+        vGroup.addGroup(gLayout.createParallelGroup(Alignment.TRAILING).addComponent(lf).addComponent(ppanel.getDataChoiceEND()).addComponent(space5).addComponent(ppanel.getPosChoice()).addComponent(space3).addComponent(space4).addComponent(ppanel.getRemButton()).addComponent(ppanel.getUpButton()).addComponent(ppanel.getDownButton()));
         vGroup.addGroup(gLayout.createParallelGroup().addGap(20));
 
-//            vGroup.addGroup(gLayout.createParallelGroup(Alignment.BASELINE)
-//            .addComponent(prop.getNameLabel()).addComponent(prop.getPosChoice())
-//            .addComponent(prop.getTypeChoice()).addComponent(prop.getColorChoice())
-//            .addComponent(prop.getDataChoice()).addComponent(prop.getLegendField())
-//            .addComponent(prop.getTimeChoiceSTART()).addComponent(prop.getTimeChoiceEND())
-//            .addComponent(space1).addComponent(prop.getPlotButton())
-//            .addComponent(space2).addComponent(prop.getAddButton())
-//            .addComponent(prop.getRemButton())
-//            .addComponent(prop.getUpButton()).addComponent(prop.getDownButton()));
+
     }
 
     private void finishGroupUI() {
@@ -1567,10 +1528,6 @@ public class JXYConfigurator extends JFrame {
         hGroup.addGroup(group6);
         hGroup.addGroup(group3);
         hGroup.addGroup(group4);
-//        hGroup.addGroup(group5);
-//        hGroup.addGroup(group6);
-//        hGroup.addGroup(group7);
-//        hGroup.addGroup(group8);
 
         hGroup.addGroup(group9);
         hGroup.addGroup(group10);
@@ -1582,7 +1539,6 @@ public class JXYConfigurator extends JFrame {
 
         gLayout.setHorizontalGroup(hGroup);
         gLayout.setVerticalGroup(vGroup);
-
 
     }
 
@@ -1605,7 +1561,7 @@ public class JXYConfigurator extends JFrame {
         
         String store = "";
         try{
-//            store = sheet.getStore().getID();
+
             store = sheet.getID();
         } catch (NullPointerException npe){
             store = "DEFAULT";
@@ -1627,6 +1583,7 @@ public class JXYConfigurator extends JFrame {
 
         String outline_type;
         String outline_color;
+        //String outline_vis;
 
         Color linecolor_load;
         Color fillcolor_load;
@@ -1727,6 +1684,8 @@ public class JXYConfigurator extends JFrame {
             //OUTLINE STROKE
             outline_type = "" + gprop.getOutlineType();
             properties.setProperty(name + ".outlinestroke", outline_type);
+            //outline_vis = "" + gprop.getOutlineVisible();
+            //properties.setProperty(name + ".outlinevis", outline_vis);
             //OUTLINE COLOR
             outcolor_load = gprop.getSeriesOutlinePaint();
             outline_color = "" + outcolor_load.getRed() + "," + outcolor_load.getGreen() + "," + outcolor_load.getBlue();
@@ -1759,11 +1718,7 @@ public class JXYConfigurator extends JFrame {
                  
 
                     if(sheet.isOutputSheet()){
-//                        System.out.println("outputSheetAtSave="+sheet.isOutputSheet());
-//                        System.out.println("directory"+workspace.getOutputDataDirectory().toString());
-//                        File file = new File(workspace.getOutputDataDirectory(), inputString);
-//                        File file = new File(workspace.getDirectory().toString()+"/output/current", inputString);
-
+//                       
                         File file = new File(sheet.getOutputDSDir(), inputString);
 
                         if(!file.exists()){
@@ -1773,8 +1728,8 @@ public class JXYConfigurator extends JFrame {
                             fout.close();
                             dont_save = false;
                         }else{
-                            String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_")+file+java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
-                            int result = GUIHelper.showYesNoDlg(this, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
+                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
+                            int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
                             if(result==0){ //overwrite
                                 filename = file.getName();
                                 FileOutputStream fout = new FileOutputStream(file);
@@ -1793,8 +1748,8 @@ public class JXYConfigurator extends JFrame {
                             fout.close();
                             dont_save = false;
                         }else{
-                            String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_")+file+java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
-                            int result = GUIHelper.showYesNoDlg(this, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
+                            String fileexists = "The File "+file+" already exists.\n Overwrite?";
+                            int result = GUIHelper.showYesNoDlg(this, fileexists, "File already exists");
                             if(result==0){ //overwrite
                                 filename = file.getName();
                                 FileOutputStream fout = new FileOutputStream(file);
@@ -1878,7 +1833,7 @@ public class JXYConfigurator extends JFrame {
 
             if (i == x_series_index) {
                 gprop.setIsXSeries(true);
-                gprop.getIsXAxisButton().setSelected(true);
+//                gprop.getIsXAxisButton().setSelected(true);
 
                 String data_start_string = (String) properties.getProperty("dataSTART");
                 //DATA INTERVAL
@@ -1916,12 +1871,8 @@ public class JXYConfigurator extends JFrame {
                 if (load_prop) {
                     //Legend Name
                     gprop.setLegendName(properties.getProperty(name + ".legendname", "legend name"));
-                    gprop.setLegendField(properties.getProperty(name + ".legendname", "legend name"));
-//                    //DATA INTERVAL
-//                      //start
-//                      gprop.setDataSTART(new Double(properties.getProperty(name + ".dataSTART")));
-//                      //end
-//                      gprop.setDataEND(new Double(properties.getProperty(name + ".dataEND")));
+//                    gprop.setLegendField(properties.getProperty(name + ".legendname", "legend name"));
+
                     //POSITION left/right
                     gprop.setPosition(properties.getProperty(name + ".position"));
                     
@@ -1931,7 +1882,7 @@ public class JXYConfigurator extends JFrame {
                     
                     //STROKE
                     gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke", "2")));
-                    gprop.setStrokeSlider(gprop.getStrokeType());
+//                    gprop.setStrokeSlider(gprop.getStrokeType());
 
                     //STROKE COLOR
                     stroke_color = properties.getProperty(name + ".linecolor", "255,0,0");
@@ -1945,18 +1896,18 @@ public class JXYConfigurator extends JFrame {
                     //LINES VISIBLE
                     boolean lv = new Boolean(properties.getProperty(name + ".linesvisible"));
                     gprop.setLinesVisible(lv);
-                    gprop.setLinesVisBox(lv);
+//                    gprop.setLinesVisBox(lv);
                     //SHAPES VISIBLE
                     boolean sv = new Boolean(properties.getProperty(name + ".shapesvisible"));
                     gprop.setShapesVisible(sv);
-                    gprop.setShapesVisBox(sv);
+//                    gprop.setShapesVisBox(sv);
 
                     //SHAPE TYPE AND SIZE
                     int stype = new Integer(properties.getProperty(name + ".shapetype", "0"));
                     int ssize = new Integer(properties.getProperty(name + ".shapesize"));
                     gprop.setShape(stype, ssize);
-                    gprop.setShapeBox(stype);
-                    gprop.setShapeSlider(ssize);
+//                    gprop.setShapeBox(stype);
+//                    gprop.setShapeSlider(ssize);
 
                     //SHAPE COLOR
                     shape_color = properties.getProperty(name + ".shapecolor", "255,0,0");
@@ -1970,7 +1921,7 @@ public class JXYConfigurator extends JFrame {
                     //OUTLINE STROKE
                     int os = new Integer(properties.getProperty(name + ".outlinestroke"));
                     gprop.setOutlineStroke(os);
-                    gprop.setOutlineSlider(os);
+//                    gprop.setOutlineSlider(os);
 
                     //OUTLINE COLOR
                     outline_color = properties.getProperty(name + ".outlinecolor", "255,0,0");
@@ -1981,12 +1932,16 @@ public class JXYConfigurator extends JFrame {
                             new Integer(outTokenizer.nextToken()),
                             new Integer(outTokenizer.nextToken())));
 
-//                gprop.applyXYProperties();
+//                  gprop.applyXYProperties();
 
 
-                    gprop.setColorLabelColor();
+//                  gprop.setColorLabelColor();
                     propVector.add(gprop);
-                    addPropGroup(gprop);
+
+//                    PropertyPanel ppanel = new PropertyPanel(this.thisJXY,gprop);
+//                    panelVector.add(ppanel);
+//
+//                    addPropGroup(ppanel);
                 }
 
 
@@ -2004,16 +1959,10 @@ public class JXYConfigurator extends JFrame {
                 invLeftBox.setSelected(new Boolean(properties.getProperty("inv_left")));
                 invRightBox.setSelected(new Boolean(properties.getProperty("inv_right")));
 
-
-
-
-
-
             }
         }
 
         xChanged(propVector.get(x_series_index));
-
 
         for (int c = 0; c < no_of_props; c++) {
 
@@ -2024,47 +1973,33 @@ public class JXYConfigurator extends JFrame {
             }
         }
         range = setPossibleDataIntervals();
-        for (int c = 0; c < no_of_props; c++) {
+        for (int c = 0; c < propVector.size(); c++) {
             
             propVector.get(c).setXIntervals(range);
             propVector.get(c).applyXYProperties();
+            PropertyPanel ppanel = new PropertyPanel(this.thisJXY, propVector.get(c));
+                    panelVector.add(ppanel);
+                     if(panelVector.size() > 0){
+                    setXGUI(propVector.get(c),ppanel);
+                     }
 
-//            propVector.get(c).setXIntervals(range);
+                    addPropGroup(ppanel);
+
         }
 
-//        Runnable r = new Runnable() {
-//
-//            public void run() {
-//                for (int j = 0; j < propVector.size(); j++) {
-//
-//                    propVector.get(j).applyXYProperties();
-//
-//                }
-//            }
-//        };
 
-//        WorkerDlg dlg = new WorkerDlg(parent, "Preparing Data...");
-////        Point parentloc = parent.getLocation();
-////        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
-////        dlg.setLocationByPlatform(true);
-//        dlg.setTask(r);
-//        dlg.execute();
 
         finishGroupUI();
 
         jxys.setPropVector(propVector);
-//        jts.createPlot();
-//        handleRenderer();
-
 
     /////////////////////////////////////
-//        plotAllGraphs();
 
 
     }
 
     private void editProperties() {
-        JDialog propDlg = new JDialog(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PROPERTIES"));
+        JDialog propDlg = new JDialog(parent, "Properties");
         int ct = headers.length;
 
         JLabel[] labels = new JLabel[ct];
@@ -2140,6 +2075,16 @@ public class JXYConfigurator extends JFrame {
 
         public void actionPerformed(ActionEvent te) {
             ctsplot.getChart().setTitle(edTitleField.getText());
+        }
+    };
+
+    ActionListener rendererColorListener = new ActionListener() {
+
+        public void actionPerformed(ActionEvent te) {
+            for(int i=0;i<panelVector.size();i++){
+                panelVector.get(i).setColorLabelColor();
+
+            }
         }
     };
 
@@ -2256,7 +2201,7 @@ public class JXYConfigurator extends JFrame {
         JLabel side_label;
 
         public AddGraphDlg() {
-            super(thisDlg, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD_GRAPH"), true);
+            super(thisDlg, "Add Graph", true);
 //            URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
 //            ImageIcon icon = new ImageIcon(url);
 //            setIconImage(icon.getImage());
@@ -2269,13 +2214,13 @@ public class JXYConfigurator extends JFrame {
             setLayout(new FlowLayout());
 
             max = propVector.size();
-            String[] posArray = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")};
+            String[] posArray = {"left", "right"};
             posSpinner = new JSpinner(new SpinnerNumberModel(max, 0, max, 1));
             sideChoice = new JComboBox(posArray);
             sideChoice.setSelectedIndex(0);
-            okButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OK"));
-            pos_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("POSITION_AFTER:_"));
-            side_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIDE:_"));
+            okButton = new JButton("OK");
+            pos_label = new JLabel("position after: ");
+            side_label = new JLabel("side: ");
 
             add(side_label);
             add(sideChoice);
@@ -2288,9 +2233,9 @@ public class JXYConfigurator extends JFrame {
 
         String getSide() {
             if (side_index == 0) {
-                side = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT");
+                side = "left";
             } else {
-                side = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT");
+                side = "right";
             }
 
             return side;

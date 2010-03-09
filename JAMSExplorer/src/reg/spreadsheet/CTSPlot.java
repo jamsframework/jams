@@ -91,34 +91,34 @@ public class CTSPlot {
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
     
     public CTSPlot() {
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"), Color.yellow);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"), Color.orange);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"), Color.red);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK"), Color.pink);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"), Color.magenta);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"), Color.cyan);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"), Color.blue);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"), Color.green);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"), Color.gray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"), Color.lightGray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"), Color.black);
+        colorTable.put("yellow", Color.yellow);
+        colorTable.put("orange", Color.orange);
+        colorTable.put("red", Color.red);
+        colorTable.put("pink", Color.pink);
+        colorTable.put("magenta", Color.magenta);
+        colorTable.put("cyan", Color.cyan);
+        colorTable.put("blue", Color.blue);
+        colorTable.put("green", Color.green);
+        colorTable.put("gray", Color.gray);
+        colorTable.put("lightgray", Color.lightGray);
+        colorTable.put("black", Color.black);
         
         setDefaultValues();
         
     }
     
     public void setDefaultValues(){
-            String plotTitle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TITLE");
-            String[] titleLeft = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TITLE_LEFT")};
-            String[] varTitleLeft = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("VAR_TITLE_LEFT")};
-            String[] titleRight = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TITLE_RIGHT")};
-            String[] colorLeft = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW")};
-            String[] colorRight = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"),java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK")};
+            String plotTitle = "Title";
+            String[] titleLeft = {"Title left"};
+            String[] varTitleLeft = {"Var Title left"};
+            String[] titleRight = {"Title right"};
+            String[] colorLeft = {"red","pink","magenta","orange","yellow"};
+            String[] colorRight = {"cyan","blue","green","gray","black"};
             int typeLeft = 0;
             int typeRight = 1;
-            String xAxisTitle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("X_AXIS_TITLE");
-            String leftAxisTitle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE");
-            String rightAxisTitle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT_AXIS_TITLE");
+            String xAxisTitle = "x axis title";
+            String leftAxisTitle = "left axis title";
+            String rightAxisTitle = "right axis title";
             boolean rightAxisInverted = false;
             String dateFormat = "dd/MM/yyyy"; //"dd-MM-yyyy"
             //public JAMSCalendar time;

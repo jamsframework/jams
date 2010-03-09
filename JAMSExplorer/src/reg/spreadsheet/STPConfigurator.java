@@ -181,7 +181,7 @@ public class STPConfigurator extends JFrame {
 
 //            String error_msg = "No template files found in the workspace directory! " +
 //                    "Use the 'Save Template' Option in the Time Plot Configurator!";
-            GUIHelper.showErrorDlg(this, SpreadsheetConstants.STP_ERR_NOTEMPFOUND, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
+            GUIHelper.showErrorDlg(this, SpreadsheetConstants.STP_ERR_NOTEMPFOUND, "Error");
 
             // CLOSE!!!
         }
@@ -231,7 +231,7 @@ public class STPConfigurator extends JFrame {
 
 //            String error_msg = "No template files found in the workspace directory! " +
 //                    "Use the 'Save Template' Option in the JTS Configurator!";
-            GUIHelper.showErrorDlg(this, SpreadsheetConstants.STP_ERR_NOTEMPFOUND, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
+            GUIHelper.showErrorDlg(this, SpreadsheetConstants.STP_ERR_NOTEMPFOUND, "Error");
 
             // CLOSE!!!
         }
@@ -1120,7 +1120,7 @@ public class STPConfigurator extends JFrame {
                             break;
                         }
 
-                        read = gprop.getTimeChoiceSTART().getItemAt(tc).toString();
+                        read = gprop.getTimeIntervals()[tc];
 
                         if (!readStart) {
                             //start
@@ -1146,7 +1146,7 @@ public class STPConfigurator extends JFrame {
 
                     //STROKE
                     gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke", "2")));
-                    gprop.setStrokeSlider(gprop.getStrokeType());
+//                    gprop.setStrokeSlider(gprop.getStrokeType());
 
                     //STROKE COLOR
                     stroke_color = properties.getProperty(name + ".linecolor", "255,0,0");
@@ -1160,18 +1160,18 @@ public class STPConfigurator extends JFrame {
                     //LINES VISIBLE
                     boolean lv = new Boolean(properties.getProperty(name + ".linesvisible"));
                     gprop.setLinesVisible(lv);
-                    gprop.setLinesVisBox(lv);
+//                    gprop.setLinesVisBox(lv);
                     //SHAPES VISIBLE
                     boolean sv = new Boolean(properties.getProperty(name + ".shapesvisible"));
                     gprop.setShapesVisible(sv);
-                    gprop.setShapesVisBox(sv);
+//                    gprop.setShapesVisBox(sv);
 
                     //SHAPE TYPE AND SIZE
                     int stype = new Integer(properties.getProperty(name + ".shapetype", "0"));
                     int ssize = new Integer(properties.getProperty(name + ".shapesize"));
                     gprop.setShape(stype, ssize);
-                    gprop.setShapeBox(stype);
-                    gprop.setShapeSlider(ssize);
+//                    gprop.setShapeBox(stype);
+//                    gprop.setShapeSlider(ssize);
 
                     //SHAPE COLOR
                     shape_color = properties.getProperty(name + ".shapecolor", "255,0,0");
@@ -1185,7 +1185,7 @@ public class STPConfigurator extends JFrame {
                     //OUTLINE STROKE
                     int os = new Integer(properties.getProperty(name + ".outlinestroke"));
                     gprop.setOutlineStroke(os);
-                    gprop.setOutlineSlider(os);
+//                    gprop.setOutlineSlider(os);
 
                     //OUTLINE COLOR
                     outline_color = properties.getProperty(name + ".outlinecolor", "255,0,0");
@@ -1196,7 +1196,7 @@ public class STPConfigurator extends JFrame {
                             new Integer(outTokenizer.nextToken()),
                             new Integer(outTokenizer.nextToken())));
 
-                    gprop.setColorLabelColor();
+//                    gprop.setColorLabelColor();
                     propVector.add(gprop);
                     //addPropGroup(gprop);
                 }
@@ -1284,7 +1284,7 @@ public class STPConfigurator extends JFrame {
 //                prop.setLegendName((String)prop.setColumn.getSelectedItem());
 //                prop.setName((String)prop.setColumn.getSelectedItem());
 
-                    if (prop.getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT")) {
+                    if (prop.getPosition() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT")) {
                         l++;
                         //prop.setRendererType(rLeft);
 
@@ -1383,7 +1383,7 @@ public class STPConfigurator extends JFrame {
                         }
 
                     }
-                    if (prop.getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")) {
+                    if (prop.getPosition()== java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")) {
                         r++;
                         //prop.setRendererType(rRight);
                         switch (rRight) {
@@ -1470,8 +1470,8 @@ public class STPConfigurator extends JFrame {
                                 break;
                         }
 
-                        prop.setLegendName(prop.setLegend.getText());
-                        prop.setColorLabelColor();
+//                        prop.setLegendName(prop.setLegend.getText());
+//                        prop.setColorLabelColor();
 //                        prop.applySTPProperties(arrayVector, timeVector);
 
                     }

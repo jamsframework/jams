@@ -94,17 +94,17 @@ public class JAMSTimePlot {
     
     public JAMSTimePlot() {
         
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"), Color.yellow);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"), Color.orange);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"), Color.red);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK"), Color.pink);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"), Color.magenta);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"), Color.cyan);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"), Color.blue);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"), Color.green);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"), Color.gray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"), Color.lightGray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"), Color.black);
+        colorTable.put("yellow", Color.yellow);
+        colorTable.put("orange", Color.orange);
+        colorTable.put("red", Color.red);
+        colorTable.put("pink", Color.pink);
+        colorTable.put("magenta", Color.magenta);
+        colorTable.put("cyan", Color.cyan);
+        colorTable.put("blue", Color.blue);
+        colorTable.put("green", Color.green);
+        colorTable.put("gray", Color.gray);
+        colorTable.put("lightgray", Color.lightGray);
+        colorTable.put("black", Color.black);
         
         setDefaultValues();
         
@@ -114,17 +114,17 @@ public class JAMSTimePlot {
         
         this.propVector = propVector;
         
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"), Color.yellow);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"), Color.orange);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"), Color.red);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK"), Color.pink);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"), Color.magenta);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"), Color.cyan);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"), Color.blue);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"), Color.green);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"), Color.gray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"), Color.lightGray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"), Color.black);
+        colorTable.put("yellow", Color.yellow);
+        colorTable.put("orange", Color.orange);
+        colorTable.put("red", Color.red);
+        colorTable.put("pink", Color.pink);
+        colorTable.put("magenta", Color.magenta);
+        colorTable.put("cyan", Color.cyan);
+        colorTable.put("blue", Color.blue);
+        colorTable.put("green", Color.green);
+        colorTable.put("gray", Color.gray);
+        colorTable.put("lightgray", Color.lightGray);
+        colorTable.put("black", Color.black);
         
         setDefaultValues();
         
@@ -140,9 +140,9 @@ public class JAMSTimePlot {
     
     public void setDefaultValues(){
 
-            String xAxisTitle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("X_AXIS_TITLE");
-            String leftAxisTitle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE");
-            String rightAxisTitle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT_AXIS_TITLE");
+            String xAxisTitle = "x axis title";
+            String leftAxisTitle = "left axis title";
+            String rightAxisTitle = "right axis title";
 
             String title = "CTSPlot ver. 1.00";
     }
@@ -263,9 +263,9 @@ public class JAMSTimePlot {
     public void createPlot() {
 
         chart = ChartFactory.createTimeSeriesChart(
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CHART_TITLE"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CHART_XAXISTITLE"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CHART_LEFTAXISTITLE"),
+                "title",
+                "xAxisTitle",
+                "leftAxisTitle",
                 dataLeft,
                 true,
                 false,
@@ -317,7 +317,7 @@ public class JAMSTimePlot {
         for(int k=0; k<c; k++){ 
             
             GraphProperties prop = propVector.get(k);
-            if(propVector.get(k).getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT")){
+            if(propVector.get(k).getPosition().compareTo("left") == 0){
                 plot_count++;
                 //GraphProperties prop = propVector.get(k);
                 dataLeft.addSeries(prop.getTS());
@@ -378,7 +378,7 @@ public class JAMSTimePlot {
         //ValueAxis xAxis = plot.getDomainAxis();
         
         axisLEFT.setInverted(false);
-        axisLEFT.setLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE"));
+        axisLEFT.setLabel("Left axis title");
         
         leftRenderer = getRenderer(0);
         
@@ -423,8 +423,8 @@ public class JAMSTimePlot {
         for(int k=0; k<c; k++){
 
             GraphProperties prop = propVector.get(k);
-            if(propVector.get(k).getPosChoice().getSelectedItem() == java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")){
-                plot_count++;
+            if(propVector.get(k).getPosition().compareTo("right") == 0){
+               plot_count++;
                 //GraphProperties prop = propVector.get(k);
                 dataRight.addSeries(prop.getTS());
                 dataLeft.removeSeries(prop.getTS());
