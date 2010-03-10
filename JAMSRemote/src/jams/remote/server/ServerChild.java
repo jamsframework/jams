@@ -252,7 +252,11 @@ public class ServerChild {
             Runnable runnable = new Runnable() {
                 public void run() {
                     Server.setRuns(Server.getRuns() + 1);
-                    runtime.runModel();
+                    try {
+                        runtime.runModel();
+                    } catch (Exception ex) {
+                        runtime.handle(ex);
+                    }
                     Server.setRuns(Server.getRuns() - 1);
                     infoStream.close();
                     errorStream.close();
