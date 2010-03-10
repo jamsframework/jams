@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Set;
+import org.w3c.dom.Document;
 
 /**
  *
@@ -64,6 +65,11 @@ public interface Workspace extends Serializable {
      * Closes the workspace, i.e. closes all datastores
      */
     void close();
+
+    /**
+     * Initializes the workspace, i.e. loads config, creates directories etc.
+     */
+    void init() throws InvalidWorkspaceException;
 
     /**
      * Creates a string dump of an input datastore
@@ -267,4 +273,14 @@ public interface Workspace extends Serializable {
      * returnes a list of all input data stores which has been created
      */
     ArrayList<InputDataStore> getRegisteredInputDataStores();
+
+    /**
+     * defines a new input datastore
+     */
+    void registerInputDataStore(String id, Document doc);
+
+    /**
+     * defines a new output datastore
+     */
+    void registerOutputDataStore(String id, Document doc);
 }

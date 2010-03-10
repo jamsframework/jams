@@ -70,6 +70,4 @@ public interface Model extends Context {
     void setWorkspacePath(String workspaceDirectory);
 
     String getWorkspacePath();
-
-    void initWorkspace() throws InvalidWorkspaceException;
 }
