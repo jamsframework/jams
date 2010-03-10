@@ -26,10 +26,10 @@ package jams.model.metaoptimizer;
 import jams.tools.JAMSTools;
 import jams.model.Component;
 import jams.model.Context;
-import jams.model.JAMSModel;
 import jams.model.JAMSSpatialContext;
 import jams.model.JAMSVarDescription;
 import jams.model.JAMSVarDescription.AccessType;
+import jams.model.Model;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.lang.reflect.Field;
@@ -145,7 +145,7 @@ public class metaModelOptimizer {
         return mergedCDGs;  
     }
                     
-    static public Set<String> CollectAttributeWritingComponents(Node root,JAMSModel model,String attribute,String context){        
+    static public Set<String> CollectAttributeWritingComponents(Node root,Model model,String attribute,String context){        
         Hashtable<String,String> contextEntityAttributes = new Hashtable<String,String>();
         Hashtable<String,AttributeReadWriteSet> result = getAttributeReadWriteSet(root,model,model.getName(),contextEntityAttributes);
         
@@ -272,7 +272,7 @@ public class metaModelOptimizer {
         }        
     }
     
-    static public Hashtable<String, HashSet<String>> getDependencyGraph(Node root,JAMSModel model) {
+    static public Hashtable<String, HashSet<String>> getDependencyGraph(Node root,Model model) {
         Hashtable<String, HashSet<String>> edges = new Hashtable<String, HashSet<String>>();
         Hashtable<String,String> contextEntityAttributes = new Hashtable<String,String>();
         //for each independed context, get read/write access components

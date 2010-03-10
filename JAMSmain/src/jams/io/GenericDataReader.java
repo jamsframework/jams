@@ -175,7 +175,7 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
     
     public JAMSTableDataArray getNext() {
         
-        JAMSCalendar time;
+        Attribute.Calendar time;
         
         update();
         active = false;

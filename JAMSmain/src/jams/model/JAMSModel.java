@@ -23,6 +23,8 @@
 package jams.model;
 
 import jams.JAMS;
+import jams.data.Attribute;
+import jams.data.JAMSDataFactory;
 import jams.data.JAMSDirName;
 import jams.data.SnapshotData;
 import jams.workspace.JAMSWorkspace;
@@ -50,7 +52,7 @@ description = "This component represents a JAMS model which is a special type of
 public class JAMSModel extends JAMSContext implements Model {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
-    public JAMSDirName workspaceDirectory = new JAMSDirName();
+    public Attribute.DirName workspaceDirectory = JAMSDataFactory.createDirName();
     private JAMSRuntime runtime;
     private String name, author, date;
     public JAMSWorkspace workspace;
@@ -130,7 +132,7 @@ public class JAMSModel extends JAMSContext implements Model {
     }
 
     private boolean moveWorkspaceDirectory(String workspaceDirectory) {
-        setWorkspaceDirectory(workspaceDirectory);
+        setWorkspacePath(workspaceDirectory);
         // create output dir
         try {
             this.initWorkspace();
@@ -146,8 +148,9 @@ public class JAMSModel extends JAMSContext implements Model {
         return true;
     }
 
-    public void setWorkspaceDirectory(String workspaceDirectory) {
-        this.workspaceDirectory.setValue(workspaceDirectory);
+    public void setWorkspacePath(String workspacePath) {
+        this.workspaceDirectory.setValue(workspacePath);
+//        this.workspace = new JAMSWorkspace(new File(workspaceDir), getRuntime());
     }
 
     public void initWorkspace() throws InvalidWorkspaceException {
@@ -157,6 +160,7 @@ public class JAMSModel extends JAMSContext implements Model {
             getRuntime().sendInfoMsg(JAMS.resources.getString("no_workspace_defined"));
         } else {
             this.workspace = new JAMSWorkspace(new File(workspaceDir), getRuntime());
+            workspace.init();
         }
     }
 

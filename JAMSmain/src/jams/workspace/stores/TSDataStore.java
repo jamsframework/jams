@@ -134,7 +134,7 @@ public class TSDataStore extends TableDataStore {
                     //compare the two time stamps
                     Attribute.Calendar cal1 = JAMSDataFactory.createCalendar();
                     cal1.setTimeInMillis(timeStamp1 * 1000);
-                    JAMSCalendar cal2 = JAMSDataFactory.createCalendar();
+                    Attribute.Calendar cal2 = JAMSDataFactory.createCalendar();
                     cal2.setTimeInMillis(timeStamp2 * 1000);
 
                     cal1.add(timeUnit, timeUnitCount);
@@ -162,7 +162,7 @@ public class TSDataStore extends TableDataStore {
                     long timeStamp2 = dataIOArray[i].getData()[0].getData()[0].getLong();
 
                     //compare the two time stamps
-                    JAMSCalendar cal = JAMSDataFactory.createCalendar();
+                    Attribute.Calendar cal = JAMSDataFactory.createCalendar();
                     cal.setTimeInMillis(timeStamp2 * 1000);
 
                     if (cal.compareTo(startDate, timeUnit) != 0) {

@@ -23,6 +23,7 @@
 package jams.workspace.stores;
 
 import jams.JAMS;
+import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import jams.io.BufferedFileReader;
 import jams.runtime.JAMSRuntime;
@@ -39,7 +40,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.StringTokenizer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -304,7 +304,7 @@ public class J2KTSDataStore extends TSDataStore {
 //            JAMSTableDataArray jamstda = new JAMSTableDataArray(cache);
 //            JAMSCalendar cal = jamstda.getTime();
 //            if (cal != null) {
-//                result.setData(0, new StringValue(cal.toString(JAMSCalendar.DATE_TIME_FORMAT_DE)));
+//                result.setData(0, new StringValue(cal.toString(Attribute.Calendar.DATE_TIME_FORMAT_DE)));
 //            }
 //            int i = 1; double d;
 //            for (String value : jamstda.getValues()) {

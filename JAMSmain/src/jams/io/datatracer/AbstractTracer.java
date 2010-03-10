@@ -104,7 +104,8 @@ public abstract class AbstractTracer implements DataTracer {
         try {
             store.open();
         } catch (IOException ioe) {
-            context.getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Error_creating_data_output_directory!"));
+            context.getModel().getRuntime().sendErrorMsg("Datastore \"" + store.getID() + "\": " + JAMS.resources.getString("Error_creating_data_output_directory!"));
+            context.getModel().getRuntime().handle(ioe, true);
             return;
         }
 
@@ -154,7 +155,7 @@ public abstract class AbstractTracer implements DataTracer {
         try {
             store.write(o);
         } catch (IOException ioe) {
-            System.out.print(ioe);
+            context.getModel().getRuntime().handle(ioe, true);
         }
     }
     
@@ -162,7 +163,7 @@ public abstract class AbstractTracer implements DataTracer {
         try {
             store.writeCell(o);
         } catch (IOException ioe) {
-            System.out.print(ioe);
+            context.getModel().getRuntime().handle(ioe, true);
         }
     }
     
@@ -170,7 +171,7 @@ public abstract class AbstractTracer implements DataTracer {
         try {
             store.nextRow();
         } catch (IOException ioe) {
-            System.out.print(ioe);
+            context.getModel().getRuntime().handle(ioe, true);
         }
     }
     
@@ -178,6 +179,7 @@ public abstract class AbstractTracer implements DataTracer {
         try {
             store.flush();
         } catch (IOException ioe) {
+            context.getModel().getRuntime().handle(ioe, true);
         }
     }    
 

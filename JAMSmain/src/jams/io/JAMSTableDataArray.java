@@ -34,11 +34,11 @@ import java.text.ParseException;
  */
 public class JAMSTableDataArray implements Serializable {
 
-    private JAMSCalendar time;
+    private Attribute.Calendar time;
 
     private String[] values;
 
-    public JAMSTableDataArray(JAMSCalendar time, String[] values) {
+    public JAMSTableDataArray(Attribute.Calendar time, String[] values) {
         this.time = time;
         this.setValues(values);
     }
@@ -65,7 +65,7 @@ public class JAMSTableDataArray implements Serializable {
                 dataReadIndex = 1;
             }
 
-            JAMSCalendar cal = JAMSDataFactory.createCalendar();
+            Attribute.Calendar cal = JAMSDataFactory.createCalendar();
             cal.setValue(dateString, dateFormat);
             this.setTime(cal);
 
@@ -78,11 +78,11 @@ public class JAMSTableDataArray implements Serializable {
         }
     }
 
-    public JAMSCalendar getTime() {
+    public Attribute.Calendar getTime() {
         return time;
     }
 
-    public void setTime(JAMSCalendar time) {
+    public void setTime(Attribute.Calendar time) {
         this.time = time;
     }
 

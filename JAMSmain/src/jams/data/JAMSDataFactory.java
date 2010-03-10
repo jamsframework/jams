@@ -118,91 +118,91 @@ public class JAMSDataFactory {
         return result;
     }
 
-    public static JAMSDouble createDouble() {
+    public static Attribute.Double createDouble() {
         return new JAMSDouble();
     }
 
-    public static JAMSDoubleArray createDoubleArray() {
+    public static Attribute.DoubleArray createDoubleArray() {
         return new JAMSDoubleArray();
     }
 
-    public static JAMSFloat createFloat() {
+    public static Attribute.Float createFloat() {
         return new JAMSFloat();
     }
 
-    public static JAMSFloatArray createFloatArray() {
+    public static Attribute.FloatArray createFloatArray() {
         return new JAMSFloatArray();
     }
 
-    public static JAMSLong createLong() {
+    public static Attribute.Long createLong() {
         return new JAMSLong();
     }
 
-    public static JAMSLongArray createLongArray() {
+    public static Attribute.LongArray createLongArray() {
         return new JAMSLongArray();
     }
 
-    public static JAMSInteger createInteger() {
+    public static Attribute.Integer createInteger() {
         return new JAMSInteger();
     }
 
-    public static JAMSIntegerArray createIntegerArray() {
+    public static Attribute.IntegerArray createIntegerArray() {
         return new JAMSIntegerArray();
     }
 
-    public static JAMSString createString() {
+    public static Attribute.String createString() {
         return new JAMSString();
     }
 
-    public static JAMSStringArray createStringArray() {
+    public static Attribute.StringArray createStringArray() {
         return new JAMSStringArray();
     }
 
-    public static JAMSBoolean createBoolean() {
+    public static Attribute.Boolean createBoolean() {
         return new JAMSBoolean();
     }
 
-    public static JAMSBooleanArray createBooleanArray() {
+    public static Attribute.BooleanArray createBooleanArray() {
         return new JAMSBooleanArray();
     }
 
-    public static JAMSCalendar createCalendar() {
+    public static Attribute.Calendar createCalendar() {
         return new JAMSCalendar();
     }
 
-    public static JAMSDirName createDirName() {
+    public static Attribute.DirName createDirName() {
         return new JAMSDirName();
     }
 
-    public static JAMSDocument createJAMSDocument() {
+    public static Attribute.Document createJAMSDocument() {
         return new JAMSDocument();
     }
 
-    public static JAMSFileName createFileName() {
+    public static Attribute.FileName createFileName() {
         return new JAMSFileName();
     }
 
-    public static JAMSGeometry createGeometry() {
+    public static Attribute.Geometry createGeometry() {
         return new JAMSGeometry();
     }
 
-    public static JAMSTimeInterval createTimeInterval() {
+    public static Attribute.TimeInterval createTimeInterval() {
         return new JAMSTimeInterval();
     }
 
-    public static JAMSEntity createEntity() {
+    public static Attribute.Entity createEntity() {
         return new JAMSEntity();
     }
 
-    public static JAMSDocument createDocument() {
+    public static Attribute.Document createDocument() {
         return new JAMSDocument();
     }
 
-    public static JAMSEntityCollection createEntityCollection() {
+    public static Attribute.EntityCollection createEntityCollection() {
         return new JAMSEntityCollection();
     }
 
-    public static JAMSObject createObject() {
+    public static Attribute.Object createObject() {
         return new JAMSObject();
     }
 

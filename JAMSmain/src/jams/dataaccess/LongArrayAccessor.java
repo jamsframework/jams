@@ -31,9 +31,9 @@ import jams.JAMS;
  */
 public class LongArrayAccessor implements DataAccessor {
 
-    JAMSLongArray componentObject;
+    Attribute.LongArray componentObject;
 
-    JAMSLongArray[] entityObject;
+    Attribute.LongArray[] entityObject;
 
     int index;
 
@@ -65,7 +65,7 @@ public class LongArrayAccessor implements DataAccessor {
 
     @Override
     public void initEntityData() {
-        for (JAMSLongArray array : entityObject) {
+        for (Attribute.LongArray array : entityObject) {
             if (componentObject.getValue() != null) {
                 array.setValue((long[]) componentObject.getValue().clone());
             }

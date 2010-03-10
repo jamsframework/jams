@@ -32,9 +32,9 @@ import java.util.ArrayList;
  */
 public class EntityCollectionAccessor implements DataAccessor {
 
-    JAMSEntityCollection componentObject;
+    Attribute.EntityCollection componentObject;
 
-    JAMSEntityCollection[] entityObject;
+    Attribute.EntityCollection[] entityObject;
 
     int index;
 
@@ -66,7 +66,7 @@ public class EntityCollectionAccessor implements DataAccessor {
 
     @Override
     public void initEntityData() {
-        for (JAMSEntityCollection v : entityObject) {
+        for (Attribute.EntityCollection v : entityObject) {
             v.setValue(componentObject.getValue());
         }
     }

@@ -22,12 +22,12 @@
  */
 package jams.workspace;
 
+import jams.data.Attribute;
 import jams.workspace.stores.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 
 /**
@@ -82,7 +82,7 @@ public class TSDumpProcessor {
         target.append("#STEPSIZE: " + store.getTimeUnitCount() + "\n");
         target.append("#MISSINGDATAVALUE: " + store.getMissingDataValue() + "\n");
 
-        JAMSCalendar creationDate = JAMSDataFactory.createCalendar();
+        Attribute.Calendar creationDate = JAMSDataFactory.createCalendar();
         target.append("#DATE: " + creationDate + "\n");
         target.append("#DESCRIPTION:\n");
         String description = store.getDescription();

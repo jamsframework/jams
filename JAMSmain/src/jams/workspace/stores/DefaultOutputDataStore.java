@@ -52,7 +52,8 @@ public class DefaultOutputDataStore implements OutputDataStore {
     private int columnsPerLine;
     private int columnCounter;
     private boolean firstRow;
-    
+    private File outputFile;
+
     public DefaultOutputDataStore(JAMSWorkspace ws, Document doc, String id) {
 
         this.id = id;
@@ -79,6 +80,12 @@ public class DefaultOutputDataStore implements OutputDataStore {
         firstRow = true;
         columnsPerLine = 0;
         columnCounter = 0;
+
+        File outputDirectory = ws.getOutputDataDirectory();
+        outputDirectory.mkdirs();
+
+        outputFile = new File(outputDirectory.getPath() + File.separator + id + JAMSWorkspace.OUTPUT_FILE_ENDING);
+
     }
 
     public String getID() {
@@ -90,41 +97,37 @@ public class DefaultOutputDataStore implements OutputDataStore {
     }
 
     public void open() throws IOException {
-        File outputDirectory = ws.getOutputDataDirectory();
-        outputDirectory.mkdirs();
-
-        File outputFile = new File(outputDirectory.getPath() + File.separator + id + JAMSWorkspace.OUTPUT_FILE_ENDING);
         writer = new SerializableBufferedWriter(new FileWriter(outputFile));
     }
 
-    public void write(Object o) throws IOException {                
+    public void write(Object o) throws IOException {
         writer.write(o.toString());
     }
-    
-    public void writeCell(Object o) throws IOException {        
+
+    public void writeCell(Object o) throws IOException {
         columnCounter++;
         writer.write(o.toString() + "\t");
     }
-    
+
     public void nextRow() throws IOException {
-        if (firstRow){
+        if (firstRow) {
             columnsPerLine = columnCounter;
             firstRow = false;
-        }else{
-            if (columnsPerLine > columnCounter){
-                System.err.println("DefaultOutputDataStore:row not complete, one or more attributes are missing");                
+        } else {
+            if (columnsPerLine > columnCounter) {
+                System.err.println("DefaultOutputDataStore:row not complete, one or more attributes are missing");
             }
-            if (columnsPerLine < columnCounter){
+            if (columnsPerLine < columnCounter) {
                 System.err.println("DefaultOutputDataStore:too many attributes in row");
             }
         }
         columnCounter = 0;
         writer.write("\n");
     }
-    
+
     public void flush() throws IOException {
         writer.flush();
-    }    
+    }
 
     public void close() throws IOException {
         if (writer != null) {
@@ -136,9 +139,17 @@ public class DefaultOutputDataStore implements OutputDataStore {
         return filters;
     }
 
+    public boolean isValid() {
+        if (outputFile.canWrite()) {
+            return true;
+        } else {
+            return true;
+        }
+    }
+
     public class DefaultFilter implements Filter {
 
-        private String contextName,  expression;
+        private String contextName, expression;
         private Pattern pattern = null;
         private Context context = null;
 

@@ -51,13 +51,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import jams.JAMS;
 import jams.SystemProperties;
-import jams.tools.JAMSTools;
 import jams.data.JAMSData;
 import jams.data.JAMSEntityCollection;
 import jams.io.ModelLoader;
 import jams.io.ParameterProcessor;
 import jams.model.GUIComponent;
 import jams.model.JAMSModel;
+import jams.model.Model;
 import jams.tools.StringTools;
 import jams.workspace.InvalidWorkspaceException;
 import org.w3c.dom.Document;
@@ -83,7 +83,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     private JFrame frame;
 
-    private JAMSModel model;
+    private Model model;
 
     transient private PrintStream infoStream, errorStream;
 
@@ -230,7 +230,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     }
 
     @Override
-    public void runModel() {
+    public void runModel() throws Exception {
 
         //check if runstate is on "run"
         if (this.getState() != JAMSRuntime.STATE_RUN) {
@@ -623,7 +623,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     }
 
     @Override
-    public JAMSModel getModel() {
+    public Model getModel() {
         return this.model;
     }
 

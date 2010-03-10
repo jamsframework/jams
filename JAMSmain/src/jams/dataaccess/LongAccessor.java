@@ -31,9 +31,9 @@ import jams.JAMS;
  */
 public class LongAccessor implements DataAccessor {
 
-    JAMSLong componentObject;
+    Attribute.Long componentObject;
 
-    JAMSLong[] entityObject;
+    Attribute.Long[] entityObject;
 
     int index;
 
@@ -65,7 +65,7 @@ public class LongAccessor implements DataAccessor {
 
     @Override
     public void initEntityData() {
-        for (JAMSLong v : entityObject) {
+        for (Attribute.Long v : entityObject) {
             v.setValue(componentObject.getValue());
         }
     }

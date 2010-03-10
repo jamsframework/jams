@@ -1,5 +1,5 @@
 /*
- * JAMSCalendar.java
+ * Attribute.Calendar.java
  * Created on 31. Juli 2005, 20:38
  *
  * This file is part of JAMS
@@ -100,20 +100,20 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
 
     @Override
     public void removeUnsignificantComponents(int accuracy) {
-        if (accuracy < JAMSCalendar.SECOND) {
-            this.set(JAMSCalendar.SECOND, 0);
+        if (accuracy < SECOND) {
+            this.set(SECOND, 0);
         }
-        if (accuracy < JAMSCalendar.MINUTE) {
-            this.set(JAMSCalendar.MINUTE, 0);
+        if (accuracy < MINUTE) {
+            this.set(MINUTE, 0);
         }
-        if (accuracy < JAMSCalendar.HOUR_OF_DAY) {
-            this.set(JAMSCalendar.HOUR_OF_DAY, 0);
+        if (accuracy < HOUR_OF_DAY) {
+            this.set(HOUR_OF_DAY, 0);
         }
-        if (accuracy < JAMSCalendar.DAY_OF_MONTH) {
-            this.set(JAMSCalendar.DAY_OF_MONTH, 1);
+        if (accuracy < DAY_OF_MONTH) {
+            this.set(DAY_OF_MONTH, 1);
         }
-        if (accuracy < JAMSCalendar.MONTH) {
-            this.set(JAMSCalendar.MONTH, 0);
+        if (accuracy < MONTH) {
+            this.set(MONTH, 0);
         }
     }
 

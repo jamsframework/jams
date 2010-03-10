@@ -62,34 +62,24 @@ import org.w3c.dom.NodeList;
 public class JAMSWorkspace implements Workspace {
 
     private static final String CONFIG_FILE_NAME = "config.txt", CONFIG_FILE_COMMENT = "JAMS workspace configuration", CONTEXT_ATTRIBUTE_NAME = "context";
-
     public static final String INPUT_DIR_NAME = "input", OUTPUT_DIR_NAME = "output", TEMP_DIR_NAME = "tmp", DUMP_DIR_NAME = "dump", LOCAL_INDIR_NAME = "local", EXPLORER_DIR_NAME = "explorer";
-
     public static final String SUFFIX_XML = "xml";
-
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
-
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
-
     private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
-
     private JAMSRuntime runtime;
-
     private transient ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-
     private transient File directory, inputDirectory, outputDirectory = null, outputDataDirectory, localInputDirectory, localDumpDirectory, tmpDirectory, explorerDirectory;
-
     private Properties properties = new Properties();
-
     private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
-
     private ArrayList<InputDataStore> registeredStores = null;
-    
-    public JAMSWorkspace(File directory, JAMSRuntime runtime) throws InvalidWorkspaceException {
+    private boolean readonly;
+
+    public JAMSWorkspace(File directory, JAMSRuntime runtime) {
         this(directory, runtime, false);
     }
 
-    public JAMSWorkspace(File directory, JAMSRuntime runtime, boolean readonly) throws InvalidWorkspaceException {
+    public JAMSWorkspace(File directory, JAMSRuntime runtime, boolean readonly) {
 
         this.runtime = runtime;
         if (runtime.getClassLoader() != null) {
@@ -97,7 +87,10 @@ public class JAMSWorkspace implements Workspace {
         }
         this.directory = directory;
         this.registeredStores = new ArrayList<InputDataStore>();
-        
+        this.readonly = readonly;
+    }
+
+    public void init() throws InvalidWorkspaceException {
         this.loadConfig();
         this.checkValidity(readonly);
         this.createDataStores();
@@ -151,14 +144,14 @@ public class JAMSWorkspace implements Workspace {
     public void checkValidity(boolean readonly) throws InvalidWorkspaceException {
 
         if (!directory.isDirectory()) {
-            throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
-                    directory.toString() + JAMS.resources.getString("_is_not_a_directory"));
+            throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_")
+                    + directory.toString() + JAMS.resources.getString("_is_not_a_directory"));
         }
 
         File configFile = new File(directory, "config.txt");
         if (!configFile.exists()) {
-            throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
-                    directory.toString() + JAMS.resources.getString("_does_not_contain_config_file"));
+            throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_")
+                    + directory.toString() + JAMS.resources.getString("_does_not_contain_config_file"));
         }
 
         File inDir = new File(directory, INPUT_DIR_NAME);
@@ -173,9 +166,9 @@ public class JAMSWorkspace implements Workspace {
         if (readonly) {
             for (File dir : allDirs) {
                 if (!dir.exists()) {
-                    throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
-                            directory.toString() + JAMS.resources.getString("_does_not_contain_needed_directory_") +
-                            dir.toString() + JAMS.resources.getString("_)"));
+                    throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_")
+                            + directory.toString() + JAMS.resources.getString("_does_not_contain_needed_directory_")
+                            + dir.toString() + JAMS.resources.getString("_)"));
                 }
             }
 
@@ -189,8 +182,8 @@ public class JAMSWorkspace implements Workspace {
                 }
 
             } catch (SecurityException se) {
-                throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_") +
-                        directory.toString() + JAMS.resources.getString("_is_not_a_valid_workspace!"));
+                throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_")
+                        + directory.toString() + JAMS.resources.getString("_is_not_a_valid_workspace!"));
             }
         }
 
@@ -262,6 +255,7 @@ public class JAMSWorkspace implements Workspace {
         Collections.sort(inIDList);
         return inIDList;
     }
+
     /**
      *
      * @return A set of the names of all output datastores
@@ -330,8 +324,8 @@ public class JAMSWorkspace implements Workspace {
         registeredStores.add(store);
         return store;
     }
-    
-    public ArrayList<InputDataStore> getRegisteredInputDataStores(){
+
+    public ArrayList<InputDataStore> getRegisteredInputDataStores() {
         return registeredStores;
     }
 
@@ -365,30 +359,30 @@ public class JAMSWorkspace implements Workspace {
             return new OutputDataStore[0];
         }
 
-        OutputDataStore[] result = new OutputDataStore[stores.size()];
-        int i = 0;
+        ArrayList<OutputDataStore> result = new ArrayList<OutputDataStore>();
+
         for (String storeID : stores) {
             Document doc = outputDataStores.get(storeID);
-            
-            Element elem = (Element)doc.getElementsByTagName("plugin").item(0);            
+
+            Element elem = (Element) doc.getElementsByTagName("plugin").item(0);
             String className = "";
-            if (elem != null){
+            if (elem != null) {
                 className = elem.getAttribute("type");
             }
             OutputDataStore store = null;
-            if (className.equals("jams.workspace.plugins.DatabaseOutputDataStore")){                
+            if (!StringTools.isEmptyString(className)) {
                 try {
                     ClassLoader loader = getClassLoader();
                     Class<?> clazz = loader.loadClass(className);
                     OutputDataStore io = (OutputDataStore) clazz.newInstance();
-                                                            
+
                     Method method = clazz.getMethod("setWorkspace", JAMSWorkspace.class);
                     method.invoke(io, this);
                     method = clazz.getMethod("setDoc", Document.class);
                     method.invoke(io, doc);
                     method = clazz.getMethod("setID", String.class);
                     method.invoke(io, storeID);
-                        
+
                     NodeList parameterNodes = elem.getElementsByTagName("parameter");
                     for (int j = 0; j < parameterNodes.getLength(); j++) {
                         Element parameterNode = (Element) parameterNodes.item(j);
@@ -397,28 +391,31 @@ public class JAMSWorkspace implements Workspace {
                         String attributeValue = "";
                         if (parameterNode.hasAttribute("value")) {
                             attributeValue = parameterNode.getAttribute("value");
-                        }else{
+                        } else {
                             attributeValue = null;
                         }
                         String methodName = StringTools.getSetterName(attributeName);
 
                         method = clazz.getMethod(methodName, String.class);
-                        method.invoke(io, attributeValue);                                                
+                        method.invoke(io, attributeValue);
                     }
                     store = io;
                 } catch (Exception ie) {
                     getRuntime().handle(ie);
                     return null;
-                }                
-            }else
+                }
+            } else {
                 store = new DefaultOutputDataStore(this, doc, storeID);
-            
-            currentStores.add(store);
-            result[i] = store;
-            i++;
+            }
+
+            if (store.isValid()) {
+                currentStores.add(store);
+                result.add(store);
+            }
+
         }
 
-        return result;
+        return result.toArray(new OutputDataStore[result.size()]);
     }
 
     /**
@@ -513,7 +510,7 @@ public class JAMSWorkspace implements Workspace {
      */
     public void updateDataStores() {
 
-        //add input datastores
+        //add input datastores from file system
         File[] inChildren = FileTools.getFiles(inputDirectory, SUFFIX_XML);
         for (File child : inChildren) {
             try {
@@ -530,7 +527,7 @@ public class JAMSWorkspace implements Workspace {
             }
         }
 
-        //add output datastores
+        //add output datastores from file system
         File[] outChildren = FileTools.getFiles(outputDirectory, SUFFIX_XML);
         for (File child : outChildren) {
             try {
@@ -724,7 +721,6 @@ public class JAMSWorkspace implements Workspace {
     public File getTempDirectory() {
         return tmpDirectory;
     }
-
 //    public static void main(String[] args) throws IOException {
 //
 //        JAMSRuntime runtime = new StandardRuntime();

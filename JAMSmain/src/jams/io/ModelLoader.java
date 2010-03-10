@@ -32,7 +32,11 @@ import jams.tools.JAMSTools;
 import jams.data.*;
 import jams.runtime.JAMSRuntime;
 import jams.tools.StringTools;
+import jams.tools.XMLTools;
 import java.util.ArrayList;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  *
@@ -43,7 +47,7 @@ public class ModelLoader {
     private HashMap<String, Component> componentRepository = new HashMap<String, Component>();
     private HashMap<String, String> constants = new HashMap<String, String>();
     private ClassLoader loader;
-    private JAMSModel jamsModel;
+    private Model jamsModel;
     transient private HashMap<Component, ArrayList<Field>> nullFields = new HashMap<Component, ArrayList<Field>>();
     private HashMap<String, Integer> idMap = new HashMap<String, Integer>();
     private int maxID = 0;
@@ -71,7 +75,7 @@ public class ModelLoader {
      * @param modelDoc The XML document describing the model
      * @return The loaded model
      */
-    public JAMSModel loadModel(Document modelDoc) {
+    public Model loadModel(Document modelDoc) {
 
         Element root, element;
         Node node;
@@ -92,9 +96,10 @@ public class ModelLoader {
         NodeList childs = root.getChildNodes();
 
         // first check all childs for globvar nodes!
-        for (int index = 0; index < childs.getLength(); index++) {
+        for (int i = 0; i < childs.getLength(); i++) {
 
-            node = childs.item(index);
+            node = childs.item(i);
+
             if (node.getNodeName().equals("globvar")) {
                 element = (Element) node;
                 if (!constants.containsKey(element.getAttribute("name"))) {
@@ -110,14 +115,37 @@ public class ModelLoader {
             if (node.getNodeName().equals("var")) {
                 element = (Element) node;
                 if (element.getAttribute("name").equals("workspaceDirectory")) {
-                    jamsModel.setWorkspaceDirectory(element.getAttribute("value"));
+                    jamsModel.setWorkspacePath(element.getAttribute("value"));
+                }
+            }
+
+            if (node.getNodeName().equals("datastores")) {
+
+                element = (Element) node;
+                NodeList outputDSNodes = element.getElementsByTagName("outputdatastore");
+
+                for (int j = 0; j < outputDSNodes.getLength(); j++) {
+                    Node outputDSNode = outputDSNodes.item(j);
+                    String outputDSName = ((Element) outputDSNode).getAttribute("name");
+
+                    try {
+                        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                        DocumentBuilder builder = factory.newDocumentBuilder();
+                        Document document = builder.newDocument();
+                        Node clone = document.importNode(outputDSNode, true);
+                        document.appendChild(clone);
+//                        System.out.println(XMLTools.getStringFromDocument(document));
+
+                    } catch (ParserConfigurationException pce) {
+                        jamsModel.getRuntime().handle(pce);
+                    }
                 }
             }
         }
 
         jamsModel.getRuntime().println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
         jamsModel.getRuntime().println(JAMS.resources.getString("model_____:_") + jamsModel.getName(), JAMS.STANDARD);
-        jamsModel.getRuntime().println(JAMS.resources.getString("workspace_:_") + jamsModel.workspaceDirectory.getValue(), JAMS.STANDARD);
+        jamsModel.getRuntime().println(JAMS.resources.getString("workspace_:_") + jamsModel.getWorkspacePath(), JAMS.STANDARD);
         jamsModel.getRuntime().println(JAMS.resources.getString("author____:_") + jamsModel.getAuthor(), JAMS.STANDARD);
         jamsModel.getRuntime().println(JAMS.resources.getString("date______:_") + jamsModel.getDate(), JAMS.STANDARD);
         jamsModel.getRuntime().println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);

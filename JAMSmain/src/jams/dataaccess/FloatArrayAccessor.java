@@ -31,9 +31,9 @@ import jams.JAMS;
  */
 public class FloatArrayAccessor implements DataAccessor {
 
-    JAMSFloatArray componentObject;
+    Attribute.FloatArray componentObject;
 
-    JAMSFloatArray[] entityObject;
+    Attribute.FloatArray[] entityObject;
 
     int index;
 
@@ -65,7 +65,7 @@ public class FloatArrayAccessor implements DataAccessor {
 
     @Override
     public void initEntityData() {
-        for (JAMSFloatArray array : entityObject) {
+        for (Attribute.FloatArray array : entityObject) {
             if (componentObject.getValue() != null) {
                 array.setValue((float[]) componentObject.getValue().clone());
             }

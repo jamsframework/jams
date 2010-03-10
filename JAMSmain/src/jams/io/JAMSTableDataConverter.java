@@ -62,7 +62,7 @@ public class JAMSTableDataConverter {
         return d;
     }
     
-    public static JAMSCalendar parseTime(String timeString) {
+    public static Attribute.Calendar parseTime(String timeString) {
         
         //Array keeping values for year, month, day, hour, minute
         int maxTimeElements = 5;
@@ -83,7 +83,7 @@ public class JAMSTableDataConverter {
             timeArray[i] = st.nextToken();
         }
         
-        JAMSCalendar cal = JAMSDataFactory.createCalendar();
+        Attribute.Calendar cal = JAMSDataFactory.createCalendar();
         cal.setValue(timeArray[0]+"-"+timeArray[1]+"-"+timeArray[2]+" "+timeArray[3]+":"+timeArray[4]);
         return cal;
     }
