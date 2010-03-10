@@ -97,7 +97,7 @@ public interface JAMSRuntime extends Serializable {
 
     public JFrame getFrame();
 
-    public void runModel();
+    public void runModel() throws Exception;
 
     public void loadModel(Document modelDocument, SystemProperties properties);
 

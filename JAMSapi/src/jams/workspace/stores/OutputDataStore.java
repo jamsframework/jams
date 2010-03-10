@@ -40,6 +40,10 @@ public interface OutputDataStore extends DataStore {
     void open() throws IOException;
 
     void write(Object o) throws IOException;
+
     void writeCell(Object o) throws IOException;
+
     void nextRow() throws IOException;
+
+    boolean isValid();
 }

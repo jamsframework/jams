@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.data;
 
 import java.text.DateFormat;
@@ -127,27 +126,16 @@ public interface Attribute {
     public interface Calendar extends JAMSData {
 
 //        public final static int YEAR = java.util.Calendar.YEAR;
-//
 //        public final static int MONTH = java.util.Calendar.MONTH;
-//
 //        public final static int WEEK_OF_YEAR = java.util.Calendar.WEEK_OF_YEAR;
-//
 //        public final static int WEEK_OF_MONTH = java.util.Calendar.WEEK_OF_MONTH;
-//
 //        public final static int DAY_OF_YEAR = java.util.Calendar.DAY_OF_YEAR;
-//
 //        public final static int DAY_OF_MONTH = java.util.Calendar.DAY_OF_MONTH;
-//
 //        public final static int DAY_OF_WEEK = java.util.Calendar.DAY_OF_WEEK;
-//
 //        public final static int HOUR_OF_DAY = java.util.Calendar.HOUR_OF_DAY;
-//
 //        public final static int MINUTE = java.util.Calendar.MINUTE;
-//
 //        public final static int DST_OFFSET = java.util.Calendar.DST_OFFSET;
-//
 //        public final static int SECOND = java.util.Calendar.SECOND;
-//
 //        public final static int ZONE_OFFSET = java.util.Calendar.ZONE_OFFSET;
 
         public Attribute.Calendar getValue();
@@ -189,6 +177,8 @@ public interface Attribute {
         public void add(int field, int amount);
 
         public void setTimeInMillis(long millis);
+
+        public void set(int year, int month, int day, int hour, int minute, int second);
     }
 
     public interface FileName extends Attribute.String {

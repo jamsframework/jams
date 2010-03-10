@@ -55,8 +55,6 @@ public interface Model extends Context {
 
     File getWorkspaceDirectory();
 
-    String getWorkspacePath();
-
     void setAuthor(String author);
 
     void setDate(String date);
@@ -69,7 +67,9 @@ public interface Model extends Context {
 
     void setNullFields(HashMap<Component, ArrayList<Field>> nullFields);
 
-    void setWorkspaceDirectory(String workspaceDirectory);
+    void setWorkspacePath(String workspaceDirectory);
+
+    String getWorkspacePath();
 
     void initWorkspace() throws InvalidWorkspaceException;
 }

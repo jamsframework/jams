@@ -32,10 +32,28 @@ import java.io.Serializable;
 public interface Component extends Serializable {
 
     /**
+     * Method to be executed at model's init stage
+     * @throws java.lang.Exception
+     */
+    void init() throws Exception;
+
+    /**
+     * Method to be executed at model's run stage
+     * @throws java.lang.Exception
+     */
+    void run() throws Exception;
+
+    /**
      * Method to be executed at model's cleanup stage
      * @throws java.lang.Exception
      */
     void cleanup() throws Exception;
+
+    /**
+     * Gets the JAMS model that this component belongs to
+     * @return The model
+     */
+    Model getModel();
 
     /**
      * Gets the parent context of this component
@@ -51,22 +69,10 @@ public interface Component extends Serializable {
     String getInstanceName();
 
     /**
-     * Gets the JAMS model that this component belongs to
-     * @return The model
+     * Sets the JAMS model that this component belongs to
+     * @param model The model
      */
-    Model getModel();
-
-    /**
-     * Method to be executed at model's init stage
-     * @throws java.lang.Exception
-     */
-    void init() throws Exception;
-
-    /**
-     * Method to be executed at model's run stage
-     * @throws java.lang.Exception
-     */
-    void run() throws Exception;
+    void setModel(Model model);
 
     /**
      * Sets the context that this component is child of
@@ -79,11 +85,5 @@ public interface Component extends Serializable {
      * @param instanceName The component's instance name
      */
     void setInstanceName(String instanceName);
-
-    /**
-     * Sets the JAMS model that this component belongs to
-     * @param model The model
-     */
-    void setModel(Model model);
 
 }
