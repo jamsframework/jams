@@ -24,14 +24,14 @@ public class GaussianLearner extends Learner  {
             update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSEntity trainData;
+            public Attribute.Entity trainData;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSEntity optimizationData;
+            public Attribute.Entity optimizationData;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
@@ -45,28 +45,28 @@ public class GaussianLearner extends Learner  {
             update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger kernelMethod;
+            public Attribute.Integer kernelMethod;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger MeanMethod;
+            public Attribute.Integer MeanMethod;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger PerformanceMeasure;
+            public Attribute.Integer PerformanceMeasure;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSDoubleArray param_theta;
+            public Attribute.DoubleArray param_theta;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
@@ -80,14 +80,14 @@ public class GaussianLearner extends Learner  {
             update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSString resultFile = null;
+            public Attribute.String resultFile = null;
                    
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSBoolean doOptimization;
+            public Attribute.Boolean doOptimization;
     
     Matrix CovarianzMatrix;
     LUDecomposition Solver;

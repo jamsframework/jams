@@ -24,7 +24,6 @@
 package jams.components.io;
 
 import java.util.Locale;
-import java.util.Calendar;
 import jams.JAMS;
 import jams.data.*;
 import jams.model.*;
@@ -81,7 +80,7 @@ title="Entity file writer (spatial+monthly)",
             update = JAMSVarDescription.UpdateType.RUN,
             description = "time"
             )
-            public JAMSCalendar time;
+            public Attribute.Calendar time;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -214,14 +213,14 @@ title="Entity file writer (spatial+monthly)",
         tcounter = 0;
         
         
-        int oldMonth = time.get(time.MONTH);
+        int oldMonth = time.get(JAMSCalendar.MONTH);
     }
     
     public void run() throws JAMSEntity.NoSuchAttributeException {
         
         if (!time.after(aggTimeInterval.getEnd()) && !time.before(aggTimeInterval.getStart())) {
             
-            int newMonth=time.get(time.MONTH);  //hier wird überprüft, ob ein Monatswechsel stattgefunden hat
+            int newMonth=time.get(JAMSCalendar.MONTH);  //hier wird überprüft, ob ein Monatswechsel stattgefunden hat
             if(newMonth != oldMonth){           //wenn das der Fall ist, dann werden im Folgenden die Werte der valueMatrix zur aggMatrix aggregiert
                 
                 //Einfügen: Lesen von Monat und Jahr für Header!
@@ -263,7 +262,7 @@ title="Entity file writer (spatial+monthly)",
             
             //no weight
             if(daycounter == 0){
-                int d = time.getActualMaximum(time.DATE);
+                int d = time.getActualMaximum(JAMSCalendar.DATE);
                 monthValueMatrix = new double[d][nEnts];
             }
             if(this.weight.getValue().equals("none")){
@@ -295,7 +294,7 @@ title="Entity file writer (spatial+monthly)",
                 
             }
             daycounter++;
-            oldMonth = time.get(time.MONTH);    //hier wird der Monat der gerade verarbeiteten Zeitschritts gespeichert
+            oldMonth = time.get(JAMSCalendar.MONTH);    //hier wird der Monat der gerade verarbeiteten Zeitschritts gespeichert
         }
     }
     

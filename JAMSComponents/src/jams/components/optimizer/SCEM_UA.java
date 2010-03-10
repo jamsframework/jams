@@ -267,7 +267,7 @@ title="Title",
         }
     }
     
-    private boolean IsSampleValid(JAMSDouble [] sample) {
+    private boolean IsSampleValid(Attribute.Double [] sample) {
         int paras = this.parameterNames.length;
         boolean criticalPara = false;
         double criticalParaValue = 0;
@@ -426,7 +426,7 @@ title="Title",
 /*	if ( sqrtCoV.isSPD() == false)
             getModel().getRuntime().sendInfoMsg("Covarianzmatrix NICHT Cholesky - Zerlegbar. Das ist sehr schlecht und sollte nicht passieren!!");*/
         //Step 4b, compute new candidate point
-        JAMSDouble tmpArray[] = new JAMSDouble[N];
+        Attribute.Double tmpArray[] = new Attribute.Double[N];
         
         int critical_counter = 0;
         

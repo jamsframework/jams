@@ -76,7 +76,7 @@ public abstract class Optimizer extends JAMSContext {
             description = "optimization mode, 1 - minimization, 2 - maximization, 3 - max |f(x)|, 4 - min |f(x)|",
             defaultValue = "1"
             )
-            public JAMSInteger mode;
+            public Attribute.Integer mode;
           
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
@@ -84,7 +84,7 @@ public abstract class Optimizer extends JAMSContext {
             description = "maximum numer of function evaluations",
             defaultValue = "1000"
             )
-            public JAMSInteger maxn;
+            public Attribute.Integer maxn;
         
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,

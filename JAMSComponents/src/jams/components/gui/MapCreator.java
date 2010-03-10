@@ -125,11 +125,11 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Color shading the ranges")
     public JAMSStringArray rangeColor;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Name of shapefile to add as a layer to the map")
-    public JAMSString shapeFileName1;
+    public Attribute.String shapeFileName1;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Name of shapefile to add as a layer to the map")
-    public JAMSString shapeFileName2;
+    public Attribute.String shapeFileName2;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Name of shapefile to add as a layer to the map")
-    public JAMSString shapeFileName3;
+    public Attribute.String shapeFileName3;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Colors for extra shapefiles")
     public JAMSStringArray shapeColors;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.RUN, description = "Original shape file name")

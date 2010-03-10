@@ -10,6 +10,7 @@
 
 package jams.components.machineLearning;
 
+import jams.data.Attribute;
 import java.util.*;
 import jams.data.JAMSEntity;
 import jams.model.JAMSComponent;
@@ -24,7 +25,7 @@ public class Learner extends JAMSComponent{
             update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSEntity trainData;
+            public Attribute.Entity trainData;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,

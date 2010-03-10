@@ -46,14 +46,14 @@ public class NNLearner extends Learner {
             update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSDouble learningrate;
+            public Attribute.Double learningrate;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSDouble momentum;
+            public Attribute.Double momentum;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
@@ -67,7 +67,7 @@ public class NNLearner extends Learner {
             update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger epochen;
+            public Attribute.Integer epochen;
                             
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,

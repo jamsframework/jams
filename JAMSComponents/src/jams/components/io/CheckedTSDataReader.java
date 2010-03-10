@@ -237,8 +237,8 @@ public class CheckedTSDataReader extends JAMSComponent {
         
         timeUnit = timeInterval.getTimeUnit();
         
-        JAMSCalendar startTime = parseTime(start);
-        JAMSCalendar endTime = parseTime(end);
+        Attribute.Calendar startTime = parseTime(start);
+        Attribute.Calendar endTime = parseTime(end);
         
         //these are the stations with fixed attribute sets --> must be extended
         dataSetName.setValue(dataName);
@@ -277,7 +277,7 @@ public class CheckedTSDataReader extends JAMSComponent {
         
     }
         
-    private static JAMSCalendar parseTime(String timeString) {
+    private static Attribute.Calendar parseTime(String timeString) {
         
         //Array keeping values for year, month, day, hour, minute
         String[] timeArray = new String[5];
@@ -294,7 +294,7 @@ public class CheckedTSDataReader extends JAMSComponent {
             timeArray[i] = st.nextToken();
         }
         
-        JAMSCalendar cal = JAMSDataFactory.createCalendar();
+        Attribute.Calendar cal = JAMSDataFactory.createCalendar();
         cal.setValue(timeArray[2]+"-"+timeArray[1]+"-"+timeArray[0]+" "+timeArray[3]+":"+timeArray[4]);
         return cal;
     }

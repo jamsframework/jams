@@ -25,8 +25,6 @@ import jams.io.JAMSTableDataArray;
 import jams.model.*;
 
 
-import jams.workspace.datatypes.StringValue;
-import java.text.ParseException;
 
 //import jams.components.*;
 //import org.unijena.jams.model;
@@ -39,7 +37,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "Column Name Array")
-    public JAMSStringArray headers;
+    public Attribute.StringArray headers;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
     description = "Current time")
@@ -226,7 +224,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         String[] types;
 
         Vector<double[]> arrayVector = new Vector<double[]>();
-        Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
+        Vector<Attribute.Calendar> timeVector = new Vector<Attribute.Calendar>();
 
         boolean headerSet = false;
         int line = 0;
@@ -360,7 +358,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
 
                                         //timeVector
                                         if (col == timeIndex && timeRuns) {
-                                            JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+                                            Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
                                             timeval.setValue(datarow.nextToken());
                                             timeVector.add(timeval);
                                         } //rowArray
@@ -520,7 +518,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         String[] headers = null;
 
         Vector<double[]> arrayVector = new Vector<double[]>();
-        Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
+        Vector<Attribute.Calendar> timeVector = new Vector<Attribute.Calendar>();
 
         boolean headerSet = false;
         int line = 0;
@@ -590,7 +588,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
                         } else {
 
                             if (k == 0) {
-                                JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+                                Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
                                 timeval.setValue(itemtext);
                                 timeVector.add(timeval);
 
@@ -753,7 +751,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
 
         public void actionPerformed(ActionEvent e) {
 
-//             if(table.getValueAt(0, 0).getImplementingClass() == JAMSCalendar.class){
+//             if(table.getValueAt(0, 0).getImplementingClass() == Attribute.Calendar.class){
 //                openCTS();
 
 
@@ -777,7 +775,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
 
             try {
                 Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getClass();
-                if (test == JAMSCalendar.class) {
+                if (test == Attribute.Calendar.class) {
                     table.setColumnSelectionInterval(1, table.getColumnCount() - 1);
 
                 }
@@ -791,7 +789,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
                 }
             }
 //             Class test = table.getValueAt(0, table.getSelectedColumns()[0]).getImplementingClass();
-//             if(test == org.unijena.jams.data.JAMSCalendar.class){
+//             if(test == org.unijena.jams.data.Attribute.Calendar.class){
 //                 
 //             } else {
 //                openCXYS();

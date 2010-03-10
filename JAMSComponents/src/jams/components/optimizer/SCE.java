@@ -438,14 +438,14 @@ title="Title",
     }
     
     private boolean IsSampleValid(double[] sample) {
-        JAMSDouble conv_sample[] = new JAMSDouble[sample.length];
+        Attribute.Double conv_sample[] = new Attribute.Double[sample.length];
         for (int i = 0;i<sample.length;i++) {
             conv_sample[i] = JAMSDataFactory.createDouble();
             conv_sample[i].setValue(sample[i]);
         }
         return IsSampleValid(conv_sample);
     }
-    private boolean IsSampleValid(JAMSDouble [] sample) {
+    private boolean IsSampleValid(Attribute.Double [] sample) {
         int paras = this.parameterNames.length;
         boolean criticalPara = false;
         double criticalParaValue = 0;

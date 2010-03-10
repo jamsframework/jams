@@ -30,10 +30,8 @@ import jams.workspace.JAMSWorkspace;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import jams.model.Context;
-import jams.workspace.plugins.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 /**
  *
@@ -49,51 +47,47 @@ public class DatabaseOutputDataStore implements OutputDataStore {
     private String id;
     private String[] attributes;
     private DefaultFilter[] filters;
-    
     private JAMSWorkspace ws;
-    
-    private String user,  password,  host,  db,  driver;
+    private String user, password, host, db, driver;
     private String genericSqlStatement;
     private boolean cleanedup = false;
-    
     private boolean dataStarted;
-    
     private JdbcSQLConnector pgsql;
-    ArrayList<String> lineArray = new ArrayList<String>(20); 
-    
-    public void setUser(String user){
+    ArrayList<String> lineArray = new ArrayList<String>(20);
+
+    public void setUser(String user) {
         this.user = user;
     }
-    
-    public void setHost(String host){
+
+    public void setHost(String host) {
         this.host = host;
     }
-    
-    public void setPassword(String pw){
+
+    public void setPassword(String pw) {
         this.password = pw;
     }
-    
-    public void setDb(String db){
+
+    public void setDb(String db) {
         this.db = db;
     }
-    
-    public void setQuery(String query){
+
+    public void setQuery(String query) {
         this.genericSqlStatement = query;
     }
-    
-    public void setDriver(String driver){
+
+    public void setDriver(String driver) {
         this.driver = driver;
     }
-    
+
     public void setID(String id) {
-        this.id = id;        
+        this.id = id;
     }
-            
-    public void setWorkspace(JAMSWorkspace ws){
+
+    public void setWorkspace(JAMSWorkspace ws) {
         this.ws = ws;
     }
-    
-    public void setDoc(Document doc){
+
+    public void setDoc(Document doc) {
         Element root = doc.getDocumentElement();
 
         NodeList traceNodes = root.getElementsByTagName(TRACE_STRING);
@@ -113,7 +107,7 @@ public class DatabaseOutputDataStore implements OutputDataStore {
                     filterElement.getAttribute(EXPRESSION_STRING));
         }
     }
-    
+
     public String getID() {
         return id;
     }
@@ -122,68 +116,68 @@ public class DatabaseOutputDataStore implements OutputDataStore {
         return attributes;
     }
 
-    public void open() throws IOException {   
-        if (host == null){
+    public void open() throws IOException {
+        if (host == null) {
             throw new IOException("unknown host");
         }
-        if (db == null){
+        if (db == null) {
             throw new IOException("unknown database");
         }
-        if (user == null){
+        if (user == null) {
             throw new IOException("unknown user");
         }
-        if (password == null){
+        if (password == null) {
             throw new IOException("unknown password");
         }
-        if (driver == null){
+        if (driver == null) {
             throw new IOException("unknown driver");
         }
-        if (this.genericSqlStatement == null){
+        if (this.genericSqlStatement == null) {
             throw new IOException("unknown sql query");
         }
-        
+
         pgsql = new JdbcSQLConnector(host, db, user, password, driver);
-         try {
+        try {
             dataStarted = false;
-            pgsql.connect();            
-         } catch (SQLException sqlex) {
-            System.err.println("DatabaseOutputDataStore: " + sqlex);  
+            pgsql.connect();
+        } catch (SQLException sqlex) {
+            System.err.println("DatabaseOutputDataStore: " + sqlex);
             sqlex.printStackTrace();
-            throw new IOException(sqlex.toString());            
+            throw new IOException(sqlex.toString());
         }
     }
-    
+
     public void write(Object o) throws IOException {
     }
-    
+
     public void writeCell(Object o) {
-        if (o.toString().contains("@start")){
+        if (o.toString().contains("@start")) {
             dataStarted = true;
-        }else if (dataStarted){
-            lineArray.add(o.toString());                                    
-        }        
+        } else if (dataStarted) {
+            lineArray.add(o.toString());
+        }
     }
-    
-    public void nextRow() throws IOException {        
+
+    public void nextRow() throws IOException {
         String sqlStatement = genericSqlStatement;
-        for (int i=1;i<=this.lineArray.size();i++){                    
+        for (int i = 1; i <= this.lineArray.size(); i++) {
             sqlStatement = sqlStatement.replace("#" + i, "\"" + lineArray.get(i) + "\"");
         }
-        try{
-            if (!sqlStatement.contains("#"))
+        try {
+            if (!sqlStatement.contains("#")) {
                 pgsql.execUpdate(sqlStatement);
-            else
-                System.err.println("DatabaseOutputDataStore: skip line, because not all attributes are known");  
-        }catch(SQLException sqlex){
-            System.err.println("DatabaseOutputDataStore: " + sqlex);  
+            } else {
+                System.err.println("DatabaseOutputDataStore: skip line, because not all attributes are known");
+            }
+        } catch (SQLException sqlex) {
+            System.err.println("DatabaseOutputDataStore: " + sqlex);
             sqlex.printStackTrace();
         }
         lineArray.clear();
     }
-    
+
     public void flush() throws IOException {
-        
-    }    
+    }
 
     public void close() throws IOException {
         if (cleanedup) {
@@ -192,16 +186,17 @@ public class DatabaseOutputDataStore implements OutputDataStore {
             cleanedup = true;
         }
 
-        try {    
-            if (pgsql != null)
+        try {
+            if (pgsql != null) {
                 pgsql.close();
-            pgsql = null;            
+            }
+            pgsql = null;
         } catch (SQLException sqlex) {
             System.out.println("DatabaseOutputDataStore: " + sqlex);
             sqlex.printStackTrace();
             return;
         }
-        
+
         return;
     }
 
@@ -209,9 +204,14 @@ public class DatabaseOutputDataStore implements OutputDataStore {
         return filters;
     }
 
+    public boolean isValid() {
+        //@todo: christian bitte überprüfen!
+        return true;
+    }
+
     public class DefaultFilter implements Filter {
 
-        private String contextName,  expression;
+        private String contextName, expression;
         private Pattern pattern = null;
         private Context context = null;
 
