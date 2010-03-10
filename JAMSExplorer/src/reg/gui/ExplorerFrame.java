@@ -385,6 +385,7 @@ public class ExplorerFrame extends JFrame {
         try {
             String[] libs = StringTools.toArray(explorer.getProperties().getProperty("libs", ""), ";");
             JAMSWorkspace workspace = new JAMSWorkspace(workspaceFile, explorer.getRuntime(), false);
+            workspace.init();
             workspace.setLibs(libs);
             explorer.getDisplayManager().removeAllDisplays();
             explorer.setWorkspace(workspace);
@@ -458,7 +459,11 @@ public class ExplorerFrame extends JFrame {
         JAMSRuntime runtime = new StandardRuntime();
         runtime.loadModel(modelDoc, explorer.getProperties());
         runtime.setDebugLevel(3);
-        runtime.runModel();
+        try {
+            runtime.runModel();
+        } catch (Exception ex) {
+            runtime.handle(ex);
+        }
 
     }
 

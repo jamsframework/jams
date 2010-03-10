@@ -22,6 +22,7 @@
  */
 package reg.gui;
 
+import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
 import java.awt.Dimension;
@@ -62,7 +63,6 @@ import javax.swing.event.ListSelectionListener;
 import reg.dsproc.DataMatrix;
 import reg.dsproc.DataStoreProcessor;
 import reg.dsproc.EnsembleTimeSeriesProcessor;
-import reg.spreadsheet.JAMSSpreadSheet;
 
 /**
  *
@@ -440,7 +440,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
         timeList.setModel(new AbstractListModel() {
 
-            JAMSCalendar[] dates = ((EnsembleTimeSeriesProcessor)getProc()).getTimeSteps();
+            Attribute.Calendar[] dates = ((EnsembleTimeSeriesProcessor)getProc()).getTimeSteps();
 
             public int getSize() {
                 return dates.length;

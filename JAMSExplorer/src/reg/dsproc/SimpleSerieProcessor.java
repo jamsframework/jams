@@ -22,12 +22,12 @@
  */
 package reg.dsproc;
 
+import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -213,8 +213,8 @@ public class SimpleSerieProcessor extends Processor {
         
         DataMatrix rs = dsdb.getData(dsdb.getStartPosition());
         
-        JAMSCalendar minDate = JAMSDataFactory.createCalendar();
-        JAMSCalendar maxDate = JAMSDataFactory.createCalendar();
+        Attribute.Calendar minDate = JAMSDataFactory.createCalendar();
+        Attribute.Calendar maxDate = JAMSDataFactory.createCalendar();
         minDate.setValue(rs.getIds()[0].toString());
         maxDate.setValue(rs.getIds()[rs.getIds().length-1].toString());
                 
