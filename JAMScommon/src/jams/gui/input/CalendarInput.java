@@ -232,7 +232,7 @@ public class CalendarInput extends JPanel implements InputComponent {
 
     public void setValue(String value) {
 
-        JAMSCalendar cal = JAMSDataFactory.createCalendar();
+        Attribute.Calendar cal = JAMSDataFactory.createCalendar();
         if (!StringTools.isEmptyString(value)) {
             cal.setValue(value);
         }

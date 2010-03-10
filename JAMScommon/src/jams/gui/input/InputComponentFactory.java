@@ -23,10 +23,10 @@
 
 package jams.gui.input;
 
+import jams.data.Attribute;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import jams.data.JAMSBoolean;
-import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 import jams.data.JAMSDirName;
 import jams.data.JAMSDouble;
@@ -73,21 +73,21 @@ public class InputComponentFactory {
             type = JAMSDataFactory.getImplementingClass(type);
         }
 
-        if (JAMSFileName.class.isAssignableFrom(type)) {
+        if (Attribute.FileName.class.isAssignableFrom(type)) {
             ic = new FileInput(false);
-        } else if (JAMSDirName.class.isAssignableFrom(type)) {
+        } else if (Attribute.DirName.class.isAssignableFrom(type)) {
             ic = new FileInput(true);
-        } else if (JAMSCalendar.class.isAssignableFrom(type)) {
+        } else if (Attribute.Calendar.class.isAssignableFrom(type)) {
             ic = new CalendarInput();
-        } else if (JAMSTimeInterval.class.isAssignableFrom(type)) {
+        } else if (Attribute.TimeInterval.class.isAssignableFrom(type)) {
             ic = new TimeintervalInput(extEdit);
-        } else if (JAMSBoolean.class.isAssignableFrom(type)) {
+        } else if (Attribute.Boolean.class.isAssignableFrom(type)) {
             ic = new BooleanInput();
-        } else if ((JAMSInteger.class.isAssignableFrom(type)) || (JAMSLong.class.isAssignableFrom(type))) {
+        } else if ((Attribute.Integer.class.isAssignableFrom(type)) || (Attribute.Long.class.isAssignableFrom(type))) {
             ic = new IntegerInput();
             ic.getComponent().setPreferredSize(new Dimension(NUMBERINPUT_WIDTH, JCOMP_HEIGHT));
             ic.getComponent().setBorder(BorderFactory.createEtchedBorder());
-        } else if ((JAMSFloat.class.isAssignableFrom(type)) || (JAMSDouble.class.isAssignableFrom(type))) {
+        } else if ((Attribute.Float.class.isAssignableFrom(type)) || (Attribute.Double.class.isAssignableFrom(type))) {
             ic = new FloatInput();
             ic.getComponent().setPreferredSize(new Dimension(NUMBERINPUT_WIDTH, JCOMP_HEIGHT));
             ic.getComponent().setBorder(BorderFactory.createEtchedBorder());

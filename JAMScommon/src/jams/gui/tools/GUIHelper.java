@@ -33,7 +33,6 @@ import java.io.File;
 import java.lang.reflect.Method;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileSystemView;
-import sun.awt.shell.ShellFolder;
 
 /**
  *
