@@ -134,7 +134,10 @@ public class ModelLoader {
                         Document document = builder.newDocument();
                         Node clone = document.importNode(outputDSNode, true);
                         document.appendChild(clone);
-//                        System.out.println(XMLTools.getStringFromDocument(document));
+
+                        if (jamsModel.getWorkspace() != null) {
+                            jamsModel.getWorkspace().registerOutputDataStore(outputDSName, document);
+                        }
 
                     } catch (ParserConfigurationException pce) {
                         jamsModel.getRuntime().handle(pce);

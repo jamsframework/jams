@@ -239,7 +239,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         // prepare the model's workspace
         try {
-            model.initWorkspace();
+            model.getWorkspace().init();
         } catch (InvalidWorkspaceException iwe) {
             this.sendHalt(iwe.getMessage());
             return;

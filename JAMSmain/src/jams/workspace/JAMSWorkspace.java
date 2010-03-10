@@ -66,6 +66,8 @@ public class JAMSWorkspace implements Workspace {
     public static final String SUFFIX_XML = "xml";
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
+    private HashMap<String, Document> registeredInputDataStores = new HashMap<String, Document>();
+    private HashMap<String, Document> registeredOutputDataStores = new HashMap<String, Document>();
     private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
     private JAMSRuntime runtime;
     private transient ClassLoader classLoader = ClassLoader.getSystemClassLoader();
@@ -93,7 +95,7 @@ public class JAMSWorkspace implements Workspace {
     public void init() throws InvalidWorkspaceException {
         this.loadConfig();
         this.checkValidity(readonly);
-        this.createDataStores();
+        this.updateDataStores();
     }
 
     /**
@@ -281,6 +283,31 @@ public class JAMSWorkspace implements Workspace {
         // @todo: works only for ShapeFileDataStore. If it is needed for other types, implement getDocument() there
         ShapeFileDataStore theShapeFileDataStore = (ShapeFileDataStore) theStore;
         inputDataStores.put(theShapeFileDataStore.getID(), theShapeFileDataStore.getDocument());
+    }
+
+    public void registerInputDataStore(String id, Document doc) {
+
+        if (StringTools.isEmptyString(id)) {
+            return;
+        }
+
+        if (doc == null) {
+            registeredInputDataStores.remove(id);
+        } else {
+            registeredInputDataStores.put(id, doc);
+        }
+    }
+
+    public void registerOutputDataStore(String id, Document doc) {
+        if (StringTools.isEmptyString(id)) {
+            return;
+        }
+
+        if (doc == null) {
+            registeredOutputDataStores.remove(id);
+        } else {
+            registeredOutputDataStores.put(id, doc);
+        }
     }
 
     /**
@@ -497,18 +524,17 @@ public class JAMSWorkspace implements Workspace {
         properties.setProperty("defaultmodel", path);
     }
 
-    private void createDataStores() {
-
-        // remove all datastores from registry
-        inputDataStores.clear();
-        outputDataStores.clear();
-        this.updateDataStores();
-    }
-
     /**
      * create all non-existing datastores according to input- and output-dir
      */
     public void updateDataStores() {
+
+        //clear old map and add pre-registered input datastores
+        inputDataStores.clear();
+        for (String storeID : registeredInputDataStores.keySet()) {
+            inputDataStores.put(storeID, registeredInputDataStores.get(storeID));
+            this.getRuntime().println(JAMS.resources.getString("Added_input_store_") + storeID + JAMS.resources.getString("_from_") + "XML", JAMS.VERBOSE);
+        }
 
         //add input datastores from file system
         File[] inChildren = FileTools.getFiles(inputDirectory, SUFFIX_XML);
@@ -527,6 +553,13 @@ public class JAMSWorkspace implements Workspace {
             }
         }
 
+        //clear old map and add pre-registered output datastores
+        outputDataStores.clear();
+        for (String storeID : registeredOutputDataStores.keySet()) {
+            outputDataStores.put(storeID, registeredOutputDataStores.get(storeID));
+            this.getRuntime().println(JAMS.resources.getString("Added_output_store_") + storeID + JAMS.resources.getString("_from_") + "XML", JAMS.VERBOSE);
+        }
+
         //add output datastores from file system
         File[] outChildren = FileTools.getFiles(outputDirectory, SUFFIX_XML);
         for (File child : outChildren) {
@@ -536,19 +569,22 @@ public class JAMSWorkspace implements Workspace {
                 if (!outputDataStores.containsKey(storeID)) {
                     Document doc = XMLTools.getDocument(child.getAbsolutePath());
                     outputDataStores.put(storeID, doc);
-                    String contextName = getContextName(doc);
-                    ArrayList<String> stores = contextStores.get(contextName);
-                    if (stores == null) {
-                        stores = new ArrayList<String>();
-                        contextStores.put(contextName, stores);
-                    }
-                    stores.add(storeID);
                     this.getRuntime().println(JAMS.resources.getString("Added_output_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
                 }
 
             } catch (FileNotFoundException fnfe) {
                 this.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.resources.getString("!"));
             }
+        }
+        for (String storeID : outputDataStores.keySet()) {
+            Document doc = outputDataStores.get(storeID);
+            String contextName = getContextName(doc);
+            ArrayList<String> stores = contextStores.get(contextName);
+            if (stores == null) {
+                stores = new ArrayList<String>();
+                contextStores.put(contextName, stores);
+            }
+            stores.add(storeID);
         }
     }
 

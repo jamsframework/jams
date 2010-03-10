@@ -25,7 +25,6 @@ package jams.model;
 import jams.JAMS;
 import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
-import jams.data.JAMSDirName;
 import jams.data.SnapshotData;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.OutputDataStore;
@@ -135,7 +134,7 @@ public class JAMSModel extends JAMSContext implements Model {
         setWorkspacePath(workspaceDirectory);
         // create output dir
         try {
-            this.initWorkspace();
+            this.workspace.init();
             this.workspace.checkValidity(false);
         } catch (InvalidWorkspaceException e) {
             getRuntime().sendHalt("Error during model setup: \""
@@ -150,17 +149,11 @@ public class JAMSModel extends JAMSContext implements Model {
 
     public void setWorkspacePath(String workspacePath) {
         this.workspaceDirectory.setValue(workspacePath);
-//        this.workspace = new JAMSWorkspace(new File(workspaceDir), getRuntime());
-    }
-
-    public void initWorkspace() throws InvalidWorkspaceException {
-        String workspaceDir = workspaceDirectory.getValue();
-        if (StringTools.isEmptyString(workspaceDir)) {
+        if (StringTools.isEmptyString(workspacePath)) {
             this.workspace = null;
             getRuntime().sendInfoMsg(JAMS.resources.getString("no_workspace_defined"));
         } else {
-            this.workspace = new JAMSWorkspace(new File(workspaceDir), getRuntime());
-            workspace.init();
+            this.workspace = new JAMSWorkspace(new File(workspacePath), getRuntime());
         }
     }
 
