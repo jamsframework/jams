@@ -30,6 +30,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.JAMS;
+import jams.model.Model;
 
 /**
  *
@@ -38,7 +39,7 @@ import jams.JAMS;
 public class step2Pane extends stepPane {        
     Document loadedModel = null;
     JAMSProperties properties = null;
-    JAMSModel model;
+    Model model;
     StandardRuntime rt = null;
     JTree modelTree = new JTree();    
     ArrayList<Parameter> selectedParameters = new ArrayList<Parameter>();
@@ -268,7 +269,7 @@ public class step2Pane extends stepPane {
         return null;
     }
 
-    public JAMSModel getModel(){
+    public Model getModel(){
         return this.model;
     }
     public StandardRuntime getRuntime(){

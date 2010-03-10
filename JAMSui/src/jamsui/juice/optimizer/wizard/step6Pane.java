@@ -7,7 +7,6 @@ package jamsui.juice.optimizer.wizard;
 
 import jamsui.juice.optimizer.wizard.OptimizationWizard.Efficiency;
 import jamsui.juice.optimizer.wizard.OptimizationWizard.Parameter;
-import jams.data.JAMSBoolean;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -24,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import jams.JAMS;
+import jams.data.Attribute;
 
 /**
  *
@@ -78,7 +78,7 @@ public class step6Pane extends stepPane{
             
     ArrayList<Parameter> param_info = null;
     ArrayList<Efficiency> eff_info = null;
-    final JAMSBoolean isMultiObjective = jams.data.JAMSDataFactory.createBoolean();        
+    final Attribute.Boolean isMultiObjective = jams.data.JAMSDataFactory.createBoolean();
     final JComboBox optimizer = new JComboBox(possibleOptimizer);
     final JPanel optimizerPanelWrapper = new JPanel();
     

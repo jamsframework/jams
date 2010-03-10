@@ -163,7 +163,7 @@ public class JAMSui {
                     if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
                             && !StringTools.isEmptyString(modelFileName)) {
                         String dir = new File(modelFileName).getParent();
-                        runtime.getModel().setWorkspaceDirectory(dir);
+                        runtime.getModel().setWorkspacePath(dir);
                         runtime.sendInfoMsg(JAMS.resources.getString("no_workspace_defined_use_loadpath") + dir);
                     }
 

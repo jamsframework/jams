@@ -32,6 +32,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
@@ -144,7 +146,7 @@ public class ModelView {
                         if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
                                 && (getSavePath() != null)) {
                             String dir = getSavePath().getParent();
-                            runtime.getModel().setWorkspaceDirectory(dir);
+                            runtime.getModel().setWorkspacePath(dir);
                             runtime.sendInfoMsg(JAMS.resources.getString("no_workspace_defined_use_loadpath") + dir);
                         }
 
@@ -307,9 +309,12 @@ public class ModelView {
 
             @Override
             public void run() {
-
-                // start the model
-                runtime.runModel();
+                try {
+                    // start the model
+                    runtime.runModel();
+                } catch (Exception ex) {
+                    runtime.handle(ex);
+                }
 
                 JUICE.getJuiceFrame().getInfoDlg().appendText("\n\n");
                 JUICE.getJuiceFrame().getErrorDlg().appendText("\n\n");

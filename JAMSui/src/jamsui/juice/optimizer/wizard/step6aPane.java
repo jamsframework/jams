@@ -7,7 +7,6 @@ package jamsui.juice.optimizer.wizard;
 
 import jams.tools.JAMSTools;
 import jams.tools.XMLTools;
-import jams.model.JAMSModel;
 import jams.model.JAMSVarDescription;
 import jams.runtime.StandardRuntime;
 import java.awt.BorderLayout;
@@ -41,6 +40,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.JAMS;
 import jams.io.XMLProcessor;
+import jams.model.Model;
 
 /**
  *
@@ -52,7 +52,7 @@ public class step6aPane extends stepPane {
     
     JDialog parent = null;                
     Document doc = null;        
-    JAMSModel model = null;
+    Model model = null;
     JTree modelTree = new JTree();  
     
     JCheckBox outputModeEntityWriter = new JCheckBox(JAMS.resources.getString("output_by_entitywriter_component"));
@@ -391,7 +391,7 @@ public class step6aPane extends stepPane {
     public void setOptimizerDescription(OptimizerDescription desc){
         this.desc = desc;
     }
-    public void setModel(Document doc,JAMSModel model){
+    public void setModel(Document doc,Model model){
         this.doc = doc;
         this.model = model;        
     }

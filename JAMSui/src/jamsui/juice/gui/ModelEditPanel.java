@@ -22,7 +22,6 @@
  */
 package jamsui.juice.gui;
 
-import jams.data.JAMSCalendar;
 import jams.data.JAMSDirName;
 import jams.data.JAMSString;
 import java.awt.Dimension;
@@ -46,6 +45,7 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import reg.JAMSExplorer;
 import jams.JAMS;
+import jams.data.Attribute;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 
@@ -95,16 +95,16 @@ public class ModelEditPanel extends JPanel {
         GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.resources.getString("Date:")), 1, 3, 1, 1, 0, 0);
         GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.resources.getString("Description:")), 1, 4, 1, 1, 0, 0);
 
-        workspace = InputComponentFactory.createInputComponent(JAMSDirName.class);
+        workspace = InputComponentFactory.createInputComponent(Attribute.DirName.class);
         workspace.setLength(TEXTFIELD_WIDTH);
 
-        author = InputComponentFactory.createInputComponent(JAMSString.class);
+        author = InputComponentFactory.createInputComponent(Attribute.String.class);
         author.setLength(TEXTFIELD_WIDTH);
 
-        date = InputComponentFactory.createInputComponent(JAMSCalendar.class);
+        date = InputComponentFactory.createInputComponent(Attribute.Calendar.class);
         date.setLength(TEXTFIELD_WIDTH);
 
-        helpBaseURL = InputComponentFactory.createInputComponent(JAMSString.class);
+        helpBaseURL = InputComponentFactory.createInputComponent(Attribute.String.class);
         helpBaseURL.setLength(TEXTFIELD_WIDTH);
 
         description = new JTextPane();

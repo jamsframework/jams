@@ -6,7 +6,6 @@
 package jamsui.juice.optimizer.wizard;
 
 import jamsui.juice.optimizer.wizard.step6Pane.OptimizerDescription;
-import jams.model.JAMSModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,6 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import org.w3c.dom.Document;
 import jams.JAMS;
+import jams.model.Model;
 
 /**
  *
@@ -33,7 +33,7 @@ public class step7Pane extends stepPane {
     JTextArea infoLogField = new JTextArea();
             
     Document doc = null;        
-    JAMSModel model = null;
+    Model model = null;
     
     
     boolean removeNotUsedComponents = true;
@@ -51,7 +51,7 @@ public class step7Pane extends stepPane {
     }
     
     
-    public void setModel(Document doc,JAMSModel model){
+    public void setModel(Document doc,Model model){
         this.doc = doc;
         this.model = model;        
     }

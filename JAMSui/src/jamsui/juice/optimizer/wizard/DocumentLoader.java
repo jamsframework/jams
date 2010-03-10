@@ -14,6 +14,7 @@ import jams.data.JAMSString;
 import jams.model.JAMSVarDescription;
 import org.xml.sax.SAXException;
 import jams.JAMS;
+import jams.data.Attribute;
 import jams.tools.FileTools;
 
 /**
@@ -26,20 +27,20 @@ public class DocumentLoader {
             update = JAMSVarDescription.UpdateType.INIT,
             description = "Description"
             )
-            public JAMSString modelFile;
+            public Attribute.String modelFile;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "Description"
             )
-            public JAMSString workspaceDir;
+            public Attribute.String workspaceDir;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE, 
             update = JAMSVarDescription.UpdateType.RUN, 
             description = "Collection of hru objects")
-    public JAMSDocument modelDoc;
+    public Attribute.Document modelDoc;
     
     public String init_withResponse(){
         try{
