@@ -12,6 +12,7 @@ import jams.data.JAMSDataFactory;
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.JAMSFileFilter;
+import jams.data.Attribute;
 import jams.tools.JAMSTools;
 import jams.workspace.DataSet;
 import jams.workspace.DataValue;
@@ -114,7 +115,7 @@ public class STPConfigurator extends JFrame {
 
     Vector<GraphProperties> propVector; //for one plot!!!
 
-    Vector<JAMSCalendar> timeVector;
+    Vector<Attribute.Calendar> timeVector;
 
 //    static String DATASET_01 = "tmax";
 //    static String DATASET_02 = "tmean";
@@ -844,7 +845,7 @@ public class STPConfigurator extends JFrame {
     private void loadOutputTTPData(File file) {
 
         arrayVector = new Vector<double[]>();
-        timeVector = new Vector<JAMSCalendar>();
+        timeVector = new Vector<Attribute.Calendar>();
         StringTokenizer st = new StringTokenizer("\t");
 
         ArrayList<String> headerList = new ArrayList<String>();
@@ -875,7 +876,7 @@ public class STPConfigurator extends JFrame {
 
                 if (b_data) {
                     int i = 0;
-                    JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+                    Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
                     rowBuffer = new double[file_columns];
                     while (st.hasMoreTokens()) {
                         actual_string = st.nextToken();
@@ -951,7 +952,7 @@ public class STPConfigurator extends JFrame {
     private void loadInputDSData(String datasetID) {
 
         arrayVector = new Vector<double[]>();
-        timeVector = new Vector<JAMSCalendar>();
+        timeVector = new Vector<Attribute.Calendar>();
 
         double rowBuffer[];
         this.store = getInputDataStore(datasetID);
@@ -971,7 +972,7 @@ public class STPConfigurator extends JFrame {
 
             DataValue[] rowData = ds.getData();
 
-            JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+            Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
             try {
                 timeval.setValue(rowData[0].getString(), "dd.MM.yyyy HH:mm");
             } catch (ParseException pe) {

@@ -13,24 +13,17 @@ package reg.spreadsheet;
  *
  * @author p4riro
  */
+import jams.data.Attribute;
 import java.awt.*;
-import java.awt.event.*;
-import java.net.URL;
-import javax.swing.*;
 import javax.swing.JTable;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import javax.swing.event.*;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import java.lang.Math.*;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 
-import java.text.*;
 
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
@@ -38,7 +31,6 @@ import org.jfree.data.xy.*;
 import org.jfree.util.ShapeUtilities.*;
 
 import jams.data.JAMSCalendar;
-import jams.gui.tools.GUIHelper;
 import java.util.Vector;
 
 
@@ -327,8 +319,8 @@ public class GraphProperties {
 //        cr_dlg.updateColors();
     }
     
-    public void applySTPProperties(Vector<double[]> rowVector, Vector<JAMSCalendar> timeVector){
-        JAMSCalendar time;
+    public void applySTPProperties(Vector<double[]> rowVector, Vector<Attribute.Calendar> timeVector){
+        Attribute.Calendar time;
         double value;
         
         ts = new TimeSeries(getLegendName(), Second.class);
