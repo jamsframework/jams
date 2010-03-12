@@ -586,7 +586,7 @@ public class JAMSSpreadSheet extends JPanel {
     public void load(File file) {
 
         Vector<double[]> arrayVector = new Vector<double[]>();
-        Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
+        Vector<Attribute.Calendar> timeVector = new Vector<Attribute.Calendar>();
         StringTokenizer st = new StringTokenizer("\t");
         String[] headers;
 
@@ -622,7 +622,7 @@ public class JAMSSpreadSheet extends JPanel {
 
                 if (b_data) {
                     int i = 0;
-                    JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+                    Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
                     rowBuffer = new double[file_columns - 1];
                     while (st.hasMoreTokens()) {
                         actual_string = st.nextToken();
@@ -768,7 +768,7 @@ public class JAMSSpreadSheet extends JPanel {
 //        dtpFile = new File(inputDSDir, store.getID() + ".dtp");
 
         Vector<double[]> arrayVector = new Vector<double[]>();
-        Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
+        Vector<Attribute.Calendar> timeVector = new Vector<Attribute.Calendar>();
 
         this.outputDSDir = outputDSDir;
 
@@ -788,7 +788,7 @@ public class JAMSSpreadSheet extends JPanel {
         for (Object id : ids) {
 
             if (timeSeries) {
-                JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+                Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
                 timeval.setValue(id.toString());
                 timeVector.add(timeval);
                 rowBuffer = m.getRow(pos);
@@ -848,7 +848,7 @@ public class JAMSSpreadSheet extends JPanel {
 //        dtpFile = new File(regionalizer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, store.getID() + ".dtp");
 
         Vector<double[]> arrayVector = new Vector<double[]>();
-        Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
+        Vector<Attribute.Calendar> timeVector = new Vector<Attribute.Calendar>();
 
 
         // read table headers from attribute "NAME"
@@ -872,7 +872,7 @@ public class JAMSSpreadSheet extends JPanel {
                 break;
             }
 
-            JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+            Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
             try {
                 String timeString = rowData[0].getString();
                 String timePattern = JAMSTools.DATE_TIME_FORMAT_PATTERN_DE;

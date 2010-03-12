@@ -126,7 +126,6 @@ public class JAMSXYPlot {
             String xAxisTitle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("X_AXIS_TITLE");
             String leftAxisTitle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE");
             String rightAxisTitle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT_AXIS_TITLE");
-
             String title = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("XYPLOT_ALPHA");
     }
     public ChartPanel getChartPanel(){

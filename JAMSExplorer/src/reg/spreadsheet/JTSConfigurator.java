@@ -8,6 +8,7 @@
  */
 package reg.spreadsheet;
 
+import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 import java.util.HashMap;
@@ -101,7 +102,7 @@ public class JTSConfigurator extends JFrame {
     private boolean output_ttp = false;
     private int rows_cnt;
     private Vector<double[]> arrayVector;
-    private Vector<JAMSCalendar> timeVector;
+    private Vector<Attribute.Calendar> timeVector;
 
     private JLabel edTitle = new JLabel("Plot Title: ");
     private JLabel edLeft = new JLabel("Left axis title: ");
@@ -1928,7 +1929,7 @@ try{
     private void loadOutputTTPData(File file){
         
         arrayVector = new Vector<double[]>();
-        timeVector = new Vector<JAMSCalendar>();
+        timeVector = new Vector<Attribute.Calendar>();
         StringTokenizer st = new StringTokenizer("\t");
         
         ArrayList<String> headerList = new ArrayList<String>();
@@ -1962,7 +1963,7 @@ try{
                 
                 if(b_data){
                     int i = 0;
-                    JAMSCalendar timeval = JAMSDataFactory.createCalendar();
+                    Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
                     rowBuffer = new double[file_columns];
                     while(st.hasMoreTokens()){
                         actual_string = st.nextToken();
