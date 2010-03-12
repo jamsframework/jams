@@ -131,8 +131,15 @@ public class PropertyPanel {
     STPConfigurator stpconf;
 
     private String[] colors = {"red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
-    private String[] types = {"Line","Bar","Area","Line and Base","Dot","Step","StepArea","Difference"};
-    private String[] positions = {"left","right"};
+    private String[] types = {
+       java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LINE"),
+       java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BAR"),
+       java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LINE_AND_SHAPE"),
+       "Area","Line and Base","Dot","Step","StepArea","Difference"};
+    private String[] positions = {
+        java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT"),
+        java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT")
+    };
 
     JPanel graphpanel = new JPanel();
     JPanel datapanel = new JPanel();
@@ -269,15 +276,15 @@ public class PropertyPanel {
 
         
 
-        JPanel legendPanel = new JPanel();
-        legendPanel.setLayout(new FlowLayout());
+//        JPanel legendPanel = new JPanel();
+//        legendPanel.setLayout(new FlowLayout());
 
         addButton = new JButton();
         remButton = new JButton();
         plotButton = new JButton();
         upButton = new JButton();
         downButton = new JButton();
-        customizeButton = new JButton("customize");
+        customizeButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUSTOMIZE"));
 
         upButton.setIcon(up_icon);
         downButton.setIcon(down_icon);
@@ -285,14 +292,14 @@ public class PropertyPanel {
         addButton.setIcon(add_icon);
         remButton.setIcon(rem_icon);
 
-        plotButton.setToolTipText("plot graph");
-        upButton.setToolTipText("move up");
-        downButton.setToolTipText("move down");
-        addButton.setToolTipText("add graph");
-        remButton.setToolTipText("remove button");
+        plotButton.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT_GRAPH"));
+        upButton.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MOVE_UP"));
+        downButton.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MOVE_DOWN"));
+        addButton.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD_GRAPH"));
+        remButton.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REMOVE_BUTTON"));
 
-        invBox = new JCheckBox("invert axis");
-        isXAxis = new JRadioButton("set X");
+//        invBox = new JCheckBox("invert axis");
+        isXAxis = new JRadioButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SET_X"));
         isXAxis.addActionListener(isXListener);
 
         addButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -303,8 +310,6 @@ public class PropertyPanel {
         upButton.addActionListener(upListener);
         downButton.addActionListener(downListener);
         customizeButton.addActionListener(customize_listener);
-
-
 
 //        remButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         remButton.setPreferredSize(new Dimension(20,14));
@@ -331,14 +336,14 @@ public class PropertyPanel {
         poschoice.addActionListener(rendererListener);
         //poschoice.addActionListener(okListener);
 
-        JButton okButton = new JButton("OK");
-        JButton cancelButton = new JButton("CANCEL");
+        JButton okButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OK"));
+        JButton cancelButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CANCEL"));
         //JButton propButton = new JButton("...");
 
         //JLabel namelabel = new JLabel();
-        JLabel setNameLabel =   new JLabel("        Name:");
-        JLabel setColumnLabel = new JLabel("  Set Column:");
-        JLabel setLegendLabel = new JLabel("Legend Entry:");
+//        JLabel setNameLabel =   new JLabel("        Name:");
+//        JLabel setColumnLabel = new JLabel("  Set Column:");
+//        JLabel setLegendLabel = new JLabel("Legend Entry:");
         nameLabel = new JLabel();
 
 //        String[] column = new String[columnCount];
@@ -386,8 +391,8 @@ public class PropertyPanel {
 
         //namePanel.add(setNameLabel);
         //namePanel.add(setName);
-        legendPanel.add(setLegendLabel);
-        legendPanel.add(setLegend);
+//        legendPanel.add(setLegendLabel);
+//        legendPanel.add(setLegend);
 
         this.datapanel.setLayout(new FlowLayout());
         this.graphpanel.setLayout(new FlowLayout());
@@ -1063,7 +1068,14 @@ public class PropertyPanel {
         JButton apply_button;
         JButton cancel_button;
 
-        final String[] SHAPES = {"Square", "Circle", "Triangle up", "Triangle down", "Diamond", "Cross diagonal", "Cross regular"};//, "Square", "Star"};
+        final String[] SHAPES = {
+            java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SQUARE"),
+            java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CIRCLE"),
+            java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TRIANGLE_UP"),
+            java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TRIANGLE_DOWN"),
+            java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DIAMOND"),
+            java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CROSS_DIAGONAL"),
+            java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CROSS_REGULAR")};//, "Square", "Star"};
         final String[] COLORS = {"custom","red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
         final String[] SHAPE_COLORS = {"custom","white","red","blue","green","black","magenta","cyan","yellow","gray","orange","lightgray","pink"};
         final String[] RENDERER = {"Line and Shape","Bar","Area","Step","StepArea","Difference"};
@@ -1076,7 +1088,7 @@ public class PropertyPanel {
         final int OUTLINE = 1;
 
         public CustomizeRendererDlg(String series_name){
-            super(parent, "Customize Renderer", true);
+            super(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUSTOMIZE_RENDERER"), true);
 
             Point parentloc = parent.getLocation();
             setLocation(parentloc.x + 50, parentloc.y + 50);
@@ -1170,55 +1182,55 @@ public class PropertyPanel {
             setLayout(brl);
             optionspanel.setLayout(option_gbl);
 
-            ok_button = new JButton("Close");
+            ok_button = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLOSE"));
 //            cancel_button = new JButton("Cancel");
 
             ok_button.addActionListener(ok);
 //            cancel_button.addActionListener(cancel);
 
-            apply_button = new JButton("apply");
+            apply_button = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("APPLY"));
             apply_button.addActionListener(apply);
 
-            paint_label = new JLabel("Color:");
+            paint_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOR:"));
 //            renderer_label = new JLabel("Renderer Type:");
 //            renderer_box = new JComboBox(RENDERER);
 //            renderer_box.setSelectedIndex()
-            stroke_label = new JLabel("Stroke:");
+            stroke_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STROKE:"));
             nameLabel = new JLabel(prop.getName());
             nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD));
 //            stroke_box = new JComboBox(STROKES);
 //            stroke_box.setSelectedIndex(2);
 
-            shape_label = new JLabel("Shape:");
+            shape_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SHAPE:"));
             shape_box = new JComboBox(SHAPES);
             shape_box.setSelectedIndex(prop.getShapeType());
             shape_box.addActionListener(shape_listener2);
             shape_box.addMouseListener(shape_listener);
 
-            outline_stroke_label = new JLabel("Outline Stroke:");
+            outline_stroke_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTLINE_STROKE:"));
 //            outline_stroke_box = new JComboBox(STROKES);
 //            outline_stroke_box.setSelectedIndex(2);
 
-            outline_paint_label = new JLabel("Outline Color:");
+            outline_paint_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTLINE_COLOR:"));
             outline_paint_box = new JComboBox(SHAPE_COLORS);
             outline_paint_box.setSelectedIndex(prop.getShapeType());
 
-            fill_label = new JLabel("Color:");
+            fill_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOR:"));
             fill_box = new JComboBox(SHAPE_COLORS);
             fill_box.setSelectedIndex(2);
 
-            setLegendLabel = new JLabel("Legend name:");
+            setLegendLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEGEND_NAME:"));
             setLegendField = new JTextField();
 
-            shape_size_label = new JLabel("Size");
+            shape_size_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIZE"));
 //            shape_size_box = new JComboBox(SIZES);
 //            shape_size_box.setSelectedIndex(2);
             //shape_size_box.setEnabled(false);
             //paint_box.setSelectedIndex()
-            lines_visible_label = new JLabel("Lines");
+            lines_visible_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LINES"));
             lines_vis_box = new JCheckBox();
             lines_vis_box.setSelected(prop.getLinesVisible());
-            shapes_visible_label = new JLabel("Shapes");
+            shapes_visible_label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SHAPES"));
             shapes_vis_box = new JCheckBox();
             shapes_vis_box.setSelected(prop.getLinesVisible());
 
@@ -1250,9 +1262,9 @@ public class PropertyPanel {
 //            fill_button = new ColorButton(shape_fill);
 //            outline_button = new ColorButton(outline_color);
 
-            stroke_button = new JButton("color");
-            fill_button = new JButton("color");
-            outline_button = new JButton("color");
+            stroke_button = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOR"));
+            fill_button = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOR"));
+            outline_button = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("COLOR"));
 
             stroke_button.setBackground(line_color);
             fill_button.setBackground(shape_fill);
@@ -1279,8 +1291,8 @@ public class PropertyPanel {
             //name
 
             //optionpanel
-            GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Line"),    0, 0, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel("Symbol"),    4, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LINE")),    0, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionspanel, option_gbl, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SYMBOL")),    4, 0, 1, 1, 0, 0);
 
                 //lines
             GUIHelper.addGBComponent(optionspanel, option_gbl, stroke_label, 0, 1, 1, 1, 0, 0);
