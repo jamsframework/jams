@@ -21,22 +21,22 @@ public class SpreadsheetConstants {
 
     /* DIALOG INFO MESSAGES */
 
-    public final static String INFO_MSG_SAVETEMP = "Please choose a template filename:";
-    public final static String INFO_MSG_SAVEDAT = "Please choose a filename:";
+    public final static String INFO_MSG_SAVETEMP = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLEASE_CHOOSE_A_TEMPLATE_FILENAME");
+    public final static String INFO_MSG_SAVEDAT =  java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLEASE_CHOOSE_A_FILENAME");
 
     /* DIALOG TITLES */
 
-    public final static String DLG_TITLE_CUSTOMIZE = "Customize Renderer";
+    public final static String DLG_TITLE_CUSTOMIZE = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUSTOMIZE_RENDERER");
     public final static String DLG_TITLE_JTSCONFIGURATOR ="JTS Viewer";
     public final static String DLG_TITLE_JXYSCONFIGURATOR ="XYPlot Viewer";
 
     /* DIALOG ERROR MESSAGES */
 
-    public final static String STP_ERR_NOTEMPFOUND = "No template files found in the workspace directory! " +
-                    "Use the 'Save Template' Option in the Time Plot Configurator!";
-    public final static String SPREADSHEET_ERR_TSMISSING = "Time Series missing!";
+    public final static String STP_ERR_NOTEMPFOUND = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_TEMPLATE_FILES_FOUND_IN_THE_WORKSPACE_DIRECTORY!_") +
+                    java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("USE_THE_'SAVE_TEMPLATE'_OPTION_IN_THE_TIME_PLOT_CONFIGURATOR!");
+    public final static String SPREADSHEET_ERR_TSMISSING = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_SERIES_MISSING!");
 
-    public final static String JXY_ERR_NODATATEMPLATE = "No Template for Dataplot. Use at least 2 Columns";
+    public final static String JXY_ERR_NODATATEMPLATE = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_TEMPLATE_FOR_DATAPLOT._USE_AT_LEAST_2_COLUMNS");
 
     /* GUI ELEMENT COLORS */
 

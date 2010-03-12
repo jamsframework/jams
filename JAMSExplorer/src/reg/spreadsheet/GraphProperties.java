@@ -13,17 +13,24 @@ package reg.spreadsheet;
  *
  * @author p4riro
  */
-import jams.data.Attribute;
 import java.awt.*;
+import java.awt.event.*;
+import java.net.URL;
+import javax.swing.*;
 import javax.swing.JTable;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import javax.swing.event.*;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import java.lang.Math.*;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
+import java.text.*;
 
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
@@ -31,6 +38,7 @@ import org.jfree.data.xy.*;
 import org.jfree.util.ShapeUtilities.*;
 
 import jams.data.JAMSCalendar;
+import jams.gui.tools.GUIHelper;
 import java.util.Vector;
 
 
@@ -46,7 +54,10 @@ public class GraphProperties {
     String legendName;
     int color;
     String name;
-    String position; // left/right
+    //String position; // left/right
+
+    int position;
+
     int type; //renderer index
     int[] d_range = new int[2];
     
@@ -119,7 +130,7 @@ public class GraphProperties {
         this.ctsconf = ctsconf;
         
         this.table = ctsconf.table;
-        this.position = "left";
+        this.position = 0;
         this.name = "Graph Name";
 
         this.selectedColumn = 0;
@@ -158,7 +169,7 @@ public class GraphProperties {
 
         this.table = cxyconf.table;
         //this.color = "red";
-        this.position = "left";
+        this.position = 0;
         this.name = "Graph Name";
         this.legendName = this.name;
         
@@ -180,7 +191,7 @@ public class GraphProperties {
 
         this.stpconf = stpconf;
 
-        this.position = "left";
+        this.position = 0;
         this.name = "Graph Name";
         this.legendName = this.name;
         
@@ -218,7 +229,7 @@ public class GraphProperties {
         this.plotType = 0;
         
         this.table = sheet.table;
-        this.position = "left";
+        this.position = 0;
         this.name = "Graph Name";
         this.legendName = this.name;
         
@@ -319,8 +330,8 @@ public class GraphProperties {
 //        cr_dlg.updateColors();
     }
     
-    public void applySTPProperties(Vector<double[]> rowVector, Vector<Attribute.Calendar> timeVector){
-        Attribute.Calendar time;
+    public void applySTPProperties(Vector<double[]> rowVector, Vector<JAMSCalendar> timeVector){
+        JAMSCalendar time;
         double value;
         
         ts = new TimeSeries(getLegendName(), Second.class);
@@ -419,7 +430,7 @@ public class GraphProperties {
 
     }
     
-    public void setPosition(String position){
+    public void setPosition(int position){
         this.position = position;
     }
     
@@ -467,7 +478,7 @@ public class GraphProperties {
         return this.rowSelection;
     }
     
-    public String getPosition(){
+    public int getPosition(){
         return this.position;
     }
     

@@ -12,7 +12,6 @@ import jams.data.JAMSDataFactory;
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.JAMSFileFilter;
-import jams.data.Attribute;
 import jams.tools.JAMSTools;
 import jams.workspace.DataSet;
 import jams.workspace.DataValue;
@@ -115,7 +114,7 @@ public class STPConfigurator extends JFrame {
 
     Vector<GraphProperties> propVector; //for one plot!!!
 
-    Vector<Attribute.Calendar> timeVector;
+    Vector<JAMSCalendar> timeVector;
 
 //    static String DATASET_01 = "tmax";
 //    static String DATASET_02 = "tmean";
@@ -182,6 +181,8 @@ public class STPConfigurator extends JFrame {
 
 //            String error_msg = "No template files found in the workspace directory! " +
 //                    "Use the 'Save Template' Option in the Time Plot Configurator!";
+//            System.out.println(SpreadsheetConstants.STP_ERR_NOTEMPFOUND);
+
             GUIHelper.showErrorDlg(this, SpreadsheetConstants.STP_ERR_NOTEMPFOUND, "Error");
 
             // CLOSE!!!
@@ -845,7 +846,7 @@ public class STPConfigurator extends JFrame {
     private void loadOutputTTPData(File file) {
 
         arrayVector = new Vector<double[]>();
-        timeVector = new Vector<Attribute.Calendar>();
+        timeVector = new Vector<JAMSCalendar>();
         StringTokenizer st = new StringTokenizer("\t");
 
         ArrayList<String> headerList = new ArrayList<String>();
@@ -876,7 +877,7 @@ public class STPConfigurator extends JFrame {
 
                 if (b_data) {
                     int i = 0;
-                    Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
+                    JAMSCalendar timeval = JAMSDataFactory.createCalendar();
                     rowBuffer = new double[file_columns];
                     while (st.hasMoreTokens()) {
                         actual_string = st.nextToken();
@@ -952,7 +953,7 @@ public class STPConfigurator extends JFrame {
     private void loadInputDSData(String datasetID) {
 
         arrayVector = new Vector<double[]>();
-        timeVector = new Vector<Attribute.Calendar>();
+        timeVector = new Vector<JAMSCalendar>();
 
         double rowBuffer[];
         this.store = getInputDataStore(datasetID);
@@ -972,7 +973,7 @@ public class STPConfigurator extends JFrame {
 
             DataValue[] rowData = ds.getData();
 
-            Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
+            JAMSCalendar timeval = JAMSDataFactory.createCalendar();
             try {
                 timeval.setValue(rowData[0].getString(), "dd.MM.yyyy HH:mm");
             } catch (ParseException pe) {
@@ -1109,7 +1110,8 @@ public class STPConfigurator extends JFrame {
                     //Legend Name
                     gprop.setLegendName(properties.getProperty(name + ".legendname", "legend name"));
                     //POSITION left/right
-                    gprop.setPosition(properties.getProperty(name + ".position"));
+                    int pos = new Integer(properties.getProperty(name + ".position"));
+                    gprop.setPosition(pos);
                     //INTERVAL
                     String timeSTART = properties.getProperty(name + ".timeSTART");
                     String timeEND = properties.getProperty(name + ".timeEND");
@@ -1285,7 +1287,7 @@ public class STPConfigurator extends JFrame {
 //                prop.setLegendName((String)prop.setColumn.getSelectedItem());
 //                prop.setName((String)prop.setColumn.getSelectedItem());
 
-                    if (prop.getPosition().compareTo("left") == 0) {
+                    if (prop.getPosition() == 0) {
                         l++;
                         //prop.setRendererType(rLeft);
 
@@ -1384,7 +1386,7 @@ public class STPConfigurator extends JFrame {
                         }
 
                     }
-                    if (prop.getPosition().compareTo("right") == 0) {
+                    if (prop.getPosition() == 1) {
                         r++;
                         //prop.setRendererType(rRight);
                         switch (rRight) {

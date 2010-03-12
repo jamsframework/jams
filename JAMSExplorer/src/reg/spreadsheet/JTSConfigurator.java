@@ -8,7 +8,6 @@
  */
 package reg.spreadsheet;
 
-import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 import java.util.HashMap;
@@ -102,7 +101,7 @@ public class JTSConfigurator extends JFrame {
     private boolean output_ttp = false;
     private int rows_cnt;
     private Vector<double[]> arrayVector;
-    private Vector<Attribute.Calendar> timeVector;
+    private Vector<JAMSCalendar> timeVector;
 
     private JLabel edTitle = new JLabel("Plot Title: ");
     private JLabel edLeft = new JLabel("Left axis title: ");
@@ -110,8 +109,8 @@ public class JTSConfigurator extends JFrame {
     private JLabel edRight = new JLabel("Right axis title: ");
     private JLabel rLeftLabel = new JLabel("Renderer left");
     private JLabel rRightLabel = new JLabel("Renderer right");
-    private JLabel invLeftLabel = new JLabel("Invert left axis");
-    private JLabel invRightLabel = new JLabel("Invert right axis");
+//    private JLabel invLeftLabel = new JLabel("Invert left axis");
+//    private JLabel invRightLabel = new JLabel("Invert right axis");
     private JLabel timeFormatLabel = new JLabel("Time format");
     private JTextField edTitleField = new JTextField(14);
     private JTextField edLeftField = new JTextField(14);
@@ -821,7 +820,7 @@ public class JTSConfigurator extends JFrame {
 
                    prop = propVector.get(i);
 
-                    if (prop.getPosition().compareTo("left") == 0) {
+                    if (prop.getPosition() == 0) {
                         l++;
                         //prop.setRendererType(rLeft);
 
@@ -923,7 +922,7 @@ public class JTSConfigurator extends JFrame {
 //                       else prop.applySTPProperties(arrayVector, timeVector);
 
                     }
-                    if (prop.getPosition().compareTo("right") == 0) {
+                    if (prop.getPosition() == 1) {
                         r++;
                         //prop.setRendererType(rRight);
                         switch (rRight) {
@@ -1041,7 +1040,7 @@ try{
                 jts.setDateFormat(timeFormat_yy.isSelected(), timeFormat_mm.isSelected(),
                         timeFormat_dd.isSelected(), timeFormat_hm.isSelected());
 }catch(Exception ex){
-    System.out.println("PECH GEHABT!");
+    
 }
         repaint();
         
@@ -1056,10 +1055,10 @@ try{
     public void handleRenderer() {
         int r = 0, l = 0;
         for (int i = 0; i < propVector.size(); i++) {
-            if (propVector.get(i).getPosition().compareTo("left") == 0) {
+            if (propVector.get(i).getPosition() == 0) {
                 l++;
             }
-            if (propVector.get(i).getPosition().compareTo("right") == 0) {
+            if (propVector.get(i).getPosition() == 1) {
                 r++;
             }
         }
@@ -1146,14 +1145,14 @@ try{
 
         graphpanel.removeAll();
 
-        JLabel nameLabel = new JLabel("Name");
-        JLabel posLabel = new JLabel("Position");
+//        JLabel nameLabel = new JLabel("Name");
+//        JLabel posLabel = new JLabel("Position");
         JLabel typeLabel = new JLabel("Colour / Position");
-        JLabel colorLabel = new JLabel("Type/Colour");
+//        JLabel colorLabel = new JLabel("Type/Colour");
         JLabel dataLabel = new JLabel("Data / Legend Entry");
         JLabel timeLabel = new JLabel("Time Interval");
-        JLabel emptyTimeLabel = new JLabel("    ");
-        JLabel legendLabel = new JLabel("Legend Entry: ");
+//        JLabel emptyTimeLabel = new JLabel("    ");
+//        JLabel legendLabel = new JLabel("Legend Entry: ");
 
         gLayout = new GroupLayout(graphpanel);
         graphpanel.setLayout(gLayout);
@@ -1410,7 +1409,7 @@ try{
             //Legend Name
             properties.setProperty(name + ".legendname", gprop.getLegendName());
             //POSITION left/right
-            properties.setProperty(name + ".position", gprop.getPosition());
+            properties.setProperty(name + ".position", ""+gprop.getPosition());
             //TIME INTERVAL
             //start
             properties.setProperty(name + ".timeSTART", gprop.getTimeIntervals()[gprop.getTimeSTART()]);
@@ -1469,6 +1468,7 @@ try{
 
             boolean dont_save = true;
             while(dont_save){
+                
                 inputString = GUIHelper.showInputDlg(this, SpreadsheetConstants.INFO_MSG_SAVETEMP, storename);
                 if(!(inputString == null)){
                     
@@ -1590,7 +1590,8 @@ try{
                     //Legend Name
                     gprop.setLegendName(properties.getProperty(name + ".legendname", "legend name"));
                     //POSITION left/right
-                    gprop.setPosition(properties.getProperty(name + ".position"));
+                    int pos = new Integer(properties.getProperty(name + ".position"));
+                    gprop.setPosition(pos);
                     //INTERVAL
                     String timeSTART = properties.getProperty(name + ".timeSTART");
                     String timeEND = properties.getProperty(name + ".timeEND");
@@ -1769,7 +1770,8 @@ try{
                     gprop.setLegendName(properties.getProperty(name + ".legendname", "legend name"));
 //                    gprop.setLegendField(properties.getProperty(name + ".legendname", "legend name"));
                     //POSITION left/right
-                    gprop.setPosition(properties.getProperty(name + ".position"));
+                    int pos = new Integer(properties.getProperty(name + ".position"));
+                    gprop.setPosition(pos);
                     //INTERVAL
                     String timeSTART = properties.getProperty(name + ".timeSTART");
                     String timeEND = properties.getProperty(name + ".timeEND");
@@ -1926,7 +1928,7 @@ try{
     private void loadOutputTTPData(File file){
         
         arrayVector = new Vector<double[]>();
-        timeVector = new Vector<Attribute.Calendar>();
+        timeVector = new Vector<JAMSCalendar>();
         StringTokenizer st = new StringTokenizer("\t");
         
         ArrayList<String> headerList = new ArrayList<String>();
@@ -1960,7 +1962,7 @@ try{
                 
                 if(b_data){
                     int i = 0;
-                    Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
+                    JAMSCalendar timeval = JAMSDataFactory.createCalendar();
                     rowBuffer = new double[file_columns];
                     while(st.hasMoreTokens()){
                         actual_string = st.nextToken();
@@ -2262,14 +2264,16 @@ try{
             pack();
         }
 
-        String getSide() {
-            if (side_index == 0) {
-                side = "left";
-            } else {
-                side = "right";
-            }
+        int getSide() {
+//            if (side_index == 0) {
+//                side = "left";
+//            } else {
+//                side = "right";
+//            }
 
-            return side;
+            return side_index;
+
+//            return side;
         }
 
         int getPosition() {

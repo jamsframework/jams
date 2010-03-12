@@ -26,7 +26,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
 
     /* JAMS works with double[]-Arrays as row data of input/output data */
     private Vector<double[]> arrayVector = new Vector<double[]>();
-    private Vector<Attribute.Calendar> timeVector = new Vector<Attribute.Calendar>();
+    private Vector<JAMSCalendar> timeVector = new Vector<JAMSCalendar>();
     private int rows=0;
     private int columns=0;
     private String[] colnames;
@@ -248,7 +248,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
         
     }
     
-    public Vector<Attribute.Calendar> getTimeVector(){
+    public Vector<JAMSCalendar> getTimeVector(){
         if(timeRuns == true){
             return this.timeVector;
         }
@@ -257,7 +257,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
         }
     }
     
-    public void setTimeVector(Vector<Attribute.Calendar> timeVector){
+    public void setTimeVector(Vector<JAMSCalendar> timeVector){
        
         this.timeVector = timeVector; //casten?
         timeRuns = true;

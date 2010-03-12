@@ -89,7 +89,7 @@ public class PropertyPanel {
     String legendName;
     int color;
     String name;
-    String position; // left/right
+    int position; // left/right
     int type; //renderer index
     int[] d_range = new int[2];
 
@@ -463,7 +463,8 @@ public class PropertyPanel {
 //                    isXAxis.setVisible(false);
 //                }
                 
-            
+
+
             this.setPosition(prop.getPosition());
             this.setColorLabelColor();
             this.setSColorLabelColor();
@@ -495,14 +496,14 @@ public class PropertyPanel {
 
     public void setColorLabelColor(){
         if(prop.getPlotType() == 1){
-            if(prop.getShapesVisible() && ((cxyconf.getRendererLeft() == 0)&&(prop.getPosition().compareTo("left") == 0))||((cxyconf.getRendererRight() == 0)&&(prop.getPosition().compareTo("right") == 0))){
+            if(prop.getShapesVisible() && ((cxyconf.getRendererLeft() == 0)&&(prop.getPosition() == 0))||((cxyconf.getRendererRight() == 0)&&(prop.getPosition() == 1))){
 
                 colorlabel.setBackground(prop.getSeriesFillPaint());
             }
             else colorlabel.setBackground(prop.getSeriesPaint());
         }
         if(prop.getPlotType() == 0){
-            if(prop.getShapesVisible() && ((ctsconf.getRendererLeft() == 0)&&(prop.getPosition().compareTo("left") == 0))||((ctsconf.getRendererRight() == 0)&&(prop.getPosition().compareTo("right") == 0))){
+            if(prop.getShapesVisible() && ((ctsconf.getRendererLeft() == 0)&&(prop.getPosition() == 0))||((ctsconf.getRendererRight() == 0)&&(prop.getPosition() == 1))){
 
                 colorlabel.setBackground(prop.getSeriesFillPaint());
             }
@@ -542,7 +543,7 @@ public class PropertyPanel {
         cr_dlg.setLegendField(s);
     }
 
-    public void setPosition(String position){
+    public void setPosition(int position){
         this.position = position;
         poschoice.setSelectedItem(position);
 //        if(position.equals("left")) poschoice.setSelectedIndex(0);
@@ -772,12 +773,12 @@ public class PropertyPanel {
 
             if(plotType == 0){
                 
-                prop.setPosition((String)poschoice.getSelectedItem());
+                prop.setPosition(poschoice.getSelectedIndex());
                 ctsconf.handleRenderer();
 
             }
             if(plotType == 1){
-                prop.setPosition((String)poschoice.getSelectedItem());
+                prop.setPosition(poschoice.getSelectedIndex());
                 cxyconf.handleRenderer();
             
             }
@@ -1075,7 +1076,7 @@ public class PropertyPanel {
         final int OUTLINE = 1;
 
         public CustomizeRendererDlg(String series_name){
-            super(parent, SpreadsheetConstants.DLG_TITLE_CUSTOMIZE, true);
+            super(parent, "Customize Renderer", true);
 
             Point parentloc = parent.getLocation();
             setLocation(parentloc.x + 50, parentloc.y + 50);

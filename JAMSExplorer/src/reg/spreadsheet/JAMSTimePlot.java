@@ -317,7 +317,7 @@ public class JAMSTimePlot {
         for(int k=0; k<c; k++){ 
             
             GraphProperties prop = propVector.get(k);
-            if(propVector.get(k).getPosition().compareTo("left") == 0){
+            if(propVector.get(k).getPosition() == 0){
                 plot_count++;
                 //GraphProperties prop = propVector.get(k);
                 dataLeft.addSeries(prop.getTS());
@@ -423,7 +423,7 @@ public class JAMSTimePlot {
         for(int k=0; k<c; k++){
 
             GraphProperties prop = propVector.get(k);
-            if(propVector.get(k).getPosition().compareTo("right") == 0){
+            if(propVector.get(k).getPosition() == 1){
                plot_count++;
                 //GraphProperties prop = propVector.get(k);
                 dataRight.addSeries(prop.getTS());

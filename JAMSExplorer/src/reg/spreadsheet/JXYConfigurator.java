@@ -1048,7 +1048,7 @@ public class JXYConfigurator extends JFrame {
                 propVector.get(i).setIsXSeries(false);
 
             }else{
-                prop.setPosition("left");
+                prop.setPosition(0);
             }
 
             if(panelVector.size() > 0){
@@ -1140,7 +1140,7 @@ public class JXYConfigurator extends JFrame {
 
                     if(!x_passed) x_pos++;
 
-                    if (prop.getPosition().compareTo("left") == 0) {
+                    if (prop.getPosition() == 0) {
                         if (!propVector.get(i).isXSeries()) {
                             l++;
 
@@ -1248,7 +1248,7 @@ public class JXYConfigurator extends JFrame {
                         }
 
                     }
-                    if (prop.getPosition().compareTo("right") == 0) {
+                    if (prop.getPosition() == 1) {
                         if (!propVector.get(i).isXSeries()) {
                             r++;
 
@@ -1380,14 +1380,14 @@ public class JXYConfigurator extends JFrame {
         int r = 0, l = 0, c = 0;
         for (int i = 0; i < propVector.size(); i++) {
 
-            if (propVector.get(i).getPosition().compareTo("left") == 0) {
+            if (propVector.get(i).getPosition() == 0) {
                 if (!propVector.get(i).isXSeries()) {
                     l++;
                 } else {
                     c++;
                 }
             }
-            if (propVector.get(i).getPosition().compareTo("right") == 0) {
+            if (propVector.get(i).getPosition() == 1) {
                 if (!propVector.get(i).isXSeries()) {
                     r++;
                 } else {
@@ -1654,7 +1654,7 @@ public class JXYConfigurator extends JFrame {
 //            //end
 //            properties.setProperty(name + ".dataEND", ""+gprop.getDataEND());
             //POSITION left/right
-            properties.setProperty(name + ".position", gprop.getPosition());
+            properties.setProperty(name + ".position", ""+gprop.getPosition());
             //STROKE
             stroke_type = "" + gprop.getStrokeType();
             properties.setProperty(name + ".linestroke", stroke_type);
@@ -1874,7 +1874,8 @@ public class JXYConfigurator extends JFrame {
 //                    gprop.setLegendField(properties.getProperty(name + ".legendname", "legend name"));
 
                     //POSITION left/right
-                    gprop.setPosition(properties.getProperty(name + ".position"));
+                    int pos = new Integer(properties.getProperty(name + ".position"));
+                    gprop.setPosition(pos);
                     
                     
                     //NAME
@@ -2231,14 +2232,14 @@ public class JXYConfigurator extends JFrame {
             pack();
         }
 
-        String getSide() {
-            if (side_index == 0) {
-                side = "left";
-            } else {
-                side = "right";
-            }
+        int getSide() {
+//            if (side_index == 0) {
+//                side = "left";
+//            } else {
+//                side = "right";
+//            }
 
-            return side;
+            return side_index;
         }
 
         int getPosition() {
