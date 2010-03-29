@@ -1157,6 +1157,7 @@ public class JAMSSpreadSheet extends JPanel {
 
             int[] columns = table.getSelectedColumns();
             if (columns.length == 0) {
+                System.out.println("no columns selected.");
                 return;
             }
             String[] headers = getSelectedColumnNames();
@@ -1173,6 +1174,7 @@ public class JAMSSpreadSheet extends JPanel {
             dataTransfer.setTargetKeyName(keyColumn);
 
             // get the Geowind viewer and pass the DataTransfer object
+            System.out.println("start viewer.");
             Viewer viewer = Viewer.getViewer();
 
             try {

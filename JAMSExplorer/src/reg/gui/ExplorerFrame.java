@@ -541,6 +541,7 @@ public class ExplorerFrame extends JFrame {
                 }
                 //additional shape file?
                 String shapeFileName = (String) wizardSettings.get(BaseDataPanel.KEY_SHAPE_FILENAME);
+                System.out.println("shape coming from wizard : " + shapeFileName);
                 if (!StringTools.isEmptyString(shapeFileName)) {
                     updateWithShapeFile(shapeFileName, ws);
                 }
@@ -646,7 +647,7 @@ public class ExplorerFrame extends JFrame {
         }
         // put shape to model
         ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, storeId, theShapeFile.toURI().toString(), fileName, idColumn);
-        ws.addDataStore(addShapeStore);
+        ws.registerInputDataStore(storeId, addShapeStore.getDocument());
         properties.put("EntityReader.shapeFileName", shapeFileName);
         ParameterProcessor.loadParams(modelDoc, properties);
     }
