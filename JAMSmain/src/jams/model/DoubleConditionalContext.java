@@ -46,10 +46,10 @@ public class DoubleConditionalContext extends JAMSContext {
         return new RunEnumerator();
     }
 
-    @Override
-    public ComponentEnumerator getChildrenEnumerator() {
-        return new RunEnumerator();
-    }
+//    @Override
+//    public ComponentEnumerator getChildrenEnumerator() {
+//        return new RunEnumerator();
+//    }
 
     @Override
     public long getNumberOfIterations() {
