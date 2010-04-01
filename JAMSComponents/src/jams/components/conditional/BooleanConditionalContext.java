@@ -20,10 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-package jams.model;
+package jams.components.conditional;
 
-import jams.model.*;
 import jams.data.JAMSBoolean;
+import jams.model.Component;
+import jams.model.ComponentEnumerator;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSContext;
+import jams.model.JAMSVarDescription;
 
 /**
  *
@@ -43,11 +47,6 @@ public class BooleanConditionalContext extends JAMSContext {
     public ComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
     }
-    
-//    @Override
-//    public ComponentEnumerator getChildrenEnumerator() {
-//        return new RunEnumerator();
-//    }
     
     @Override
     public long getNumberOfIterations() {
