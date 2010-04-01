@@ -187,9 +187,9 @@ public class ModelTree extends JAMSTree {
             JAMSNode node = (JAMSNode) path.getLastPathComponent();
 
             int result = GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(),
-                    JAMS.resources.getString("Really_delete_component_") +
-                    node.getUserObject().toString() +
-                    JAMS.resources.getString("Really_delete_component_2"), JAMS.resources.getString("Deleting_component"));
+                    JAMS.resources.getString("Really_delete_component_")
+                    + node.getUserObject().toString()
+                    + JAMS.resources.getString("Really_delete_component_2"), JAMS.resources.getString("Deleting_component"));
             if (result == JOptionPane.YES_OPTION) {
                 ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
                 view.unRegisterComponentDescriptor(cd);
@@ -575,9 +575,16 @@ public class ModelTree extends JAMSTree {
         view.setDate(docRoot.getAttribute("date"));
         view.setHelpBaseUrl(docRoot.getAttribute("helpbaseurl"));
 
+        //handle the description node
         Node descriptionNode = docRoot.getElementsByTagName("description").item(0);
         if (descriptionNode != null) {
             view.setDescription(descriptionNode.getTextContent().trim());
+        }
+
+        //handle the datastores node
+        Element dataStoreNode = (Element) docRoot.getElementsByTagName("datastores").item(0);
+        if (dataStoreNode != null) {
+            view.setDatastores(dataStoreNode);
         }
 
         //create the tree's root node
@@ -598,9 +605,9 @@ public class ModelTree extends JAMSTree {
                 try {
                     rootNode.add(getSubTree(element));
                 } catch (ModelLoadException mle) {
-                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Could_not_load_component_") +
-                            mle.getComponentName() + "\" (" + mle.getClassName() + "). " +
-                            JAMS.resources.getString("Please_fix_the_model_definition_file!"), JAMS.resources.getString("Error_loading_model"));
+                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Could_not_load_component_")
+                            + mle.getComponentName() + "\" (" + mle.getClassName() + "). "
+                            + JAMS.resources.getString("Please_fix_the_model_definition_file!"), JAMS.resources.getString("Error_loading_model"));
                     this.view.getFrame().dispose();
                     return null;
                 }
@@ -616,11 +623,11 @@ public class ModelTree extends JAMSTree {
         }
         view.getModelEditPanel().updatePanel();
 
-
         //handle the launcher node
-
         Element launcherNode = (Element) docRoot.getElementsByTagName("launcher").item(0);
-        view.setModelParameters(launcherNode);
+        if (launcherNode != null) {
+            view.setModelParameters(launcherNode);
+        }
 
         return rootNode;
     }
@@ -738,8 +745,8 @@ public class ModelTree extends JAMSTree {
 
             ComponentDescriptor context = view.getComponentDescriptor(contextName);
             if (context == null) {
-                GUIHelper.showErrorDlg(this.view.getFrame(), JAMS.resources.getString("Error_while_loading_component_") + cd.getName() +
-                        JAMS.resources.getString("_context_") + contextName + JAMS.resources.getString("_does_not_exist!"), JAMS.resources.getString("Model_loading_error"));
+                GUIHelper.showErrorDlg(this.view.getFrame(), JAMS.resources.getString("Error_while_loading_component_") + cd.getName()
+                        + JAMS.resources.getString("_context_") + contextName + JAMS.resources.getString("_does_not_exist!"), JAMS.resources.getString("Model_loading_error"));
                 return;
             }
             String name = e.getAttribute("name");
@@ -748,16 +755,16 @@ public class ModelTree extends JAMSTree {
             try {
                 ComponentDescriptor.ComponentAttribute ca = cd.getComponentAttributes().get(name);
                 ca.linkToAttribute(context, attribute);
-            //cd.linkComponentAttribute(name, view.getComponentDescriptor(context), attribute);
+                //cd.linkComponentAttribute(name, view.getComponentDescriptor(context), attribute);
 /*            } 
-            try {
-            if (cd.getComponentAttributes().get(name).accessType != ComponentAttribute.READ_ACCESS) {
-            Class attributeType = cd.getComponentAttributes().get(name).type;
-            context.getDataRepository().addAttribute(new ContextAttribute(attribute, attributeType, context));
-            }*/
+                try {
+                if (cd.getComponentAttributes().get(name).accessType != ComponentAttribute.READ_ACCESS) {
+                Class attributeType = cd.getComponentAttributes().get(name).type;
+                context.getDataRepository().addAttribute(new ContextAttribute(attribute, attributeType, context));
+                }*/
             } catch (NullPointerException ex) {
-                GUIHelper.showErrorDlg(this.view.getFrame(), JAMS.resources.getString("Error_while_loading_component_") + cd.getName() +
-                        JAMS.resources.getString("_component_attribute_") + name + JAMS.resources.getString("_does_not_exist!"), JAMS.resources.getString("Model_loading_error"));
+                GUIHelper.showErrorDlg(this.view.getFrame(), JAMS.resources.getString("Error_while_loading_component_") + cd.getName()
+                        + JAMS.resources.getString("_component_attribute_") + name + JAMS.resources.getString("_does_not_exist!"), JAMS.resources.getString("Model_loading_error"));
                 return;
             }
 
@@ -766,8 +773,8 @@ public class ModelTree extends JAMSTree {
             try {
                 cd.getComponentAttributes().get(e.getAttribute("name")).setValue(e.getAttribute("value"));
             } catch (NullPointerException ex) {
-                GUIHelper.showErrorDlg(this.view.getFrame(), JAMS.resources.getString("Error_while_loading_component_") + cd.getName() +
-                        JAMS.resources.getString("_component_attribute_") + e.getAttribute("name") + JAMS.resources.getString("_does_not_exist!"), JAMS.resources.getString("Model_loading_error"));
+                GUIHelper.showErrorDlg(this.view.getFrame(), JAMS.resources.getString("Error_while_loading_component_") + cd.getName()
+                        + JAMS.resources.getString("_component_attribute_") + e.getAttribute("name") + JAMS.resources.getString("_does_not_exist!"), JAMS.resources.getString("Model_loading_error"));
                 return;
             }
 
@@ -798,7 +805,7 @@ public class ModelTree extends JAMSTree {
 
     class ModelLoadException extends Exception {
 
-        private String className,  componentName;
+        private String className, componentName;
 
         public ModelLoadException(String className, String componentName) {
             super();

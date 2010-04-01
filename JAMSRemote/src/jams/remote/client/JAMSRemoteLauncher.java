@@ -730,7 +730,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
             return;
         }
 
-        String debug = getProperties().getProperty("debug");
+        String debug = getProperties().getProperty(SystemProperties.DEBUG_IDENTIFIER);
 
         client.getInfoLog().print("Starting remote execution\n");
 

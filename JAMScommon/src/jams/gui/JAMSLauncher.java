@@ -208,8 +208,8 @@ public class JAMSLauncher extends JFrame {
 
         this.setLocationByPlatform(true);
         this.setLayout(new BorderLayout());
-        int width = Integer.parseInt(getProperties().getProperty("guiconfigwidth", "600"));
-        int height = Integer.parseInt(getProperties().getProperty("guiconfigheight", "400"));
+        int width = Integer.parseInt(getProperties().getProperty(SystemProperties.GUICONFIGWIDTH_IDENTIFIER, "600"));
+        int height = Integer.parseInt(getProperties().getProperty(SystemProperties.GUICONFIGHEIGHT_IDENTIFIER, "400"));
         this.setPreferredSize(new Dimension(width, height));
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());

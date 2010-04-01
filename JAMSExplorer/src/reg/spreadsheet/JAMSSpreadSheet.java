@@ -1372,7 +1372,7 @@ public class JAMSSpreadSheet extends JPanel {
 //        GUIHelper.addGBComponent(controlpanel, gbl, loadbutton, 0, 11, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, statButton, 0, 12, 1, 1, 0, 0);
 
-        if (explorer.isTlugized()) {
+        if (true || explorer.isTlugized()) {
 
             // populate shape-combobox
             String defaultShapeName = null;

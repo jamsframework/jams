@@ -102,11 +102,9 @@ public class JUICE {
                 }
             }
 
-            JAMSTools.configureLocale(getJamsProperties());
+            JAMSTools.configureLocaleEncoding(getJamsProperties());
 
-            int splashTimeout = Integer.parseInt(getJamsProperties().getProperty("splashtimeout", "1000"));
-
-            createJUICEFrame(splashTimeout);
+            createJUICEFrame();
 
             if (cmdLine.getModelFileName() != null) {
                 juiceFrame.loadModel(cmdLine.getModelFileName());
@@ -125,11 +123,10 @@ public class JUICE {
         }
     }
 
-    public static void createJUICEFrame(int splashTimeout) {
+    public static void createJUICEFrame() {
         juiceFrame = new JUICEFrame();
 
-        JAMSSplash splash = new JAMSSplash();
-        splash.show(juiceFrame, splashTimeout);
+        juiceFrame.setVisible(true);
 
         libTree = new LibTree();
         JUICE.updateLibs();

@@ -37,6 +37,7 @@ import jamsui.juice.gui.ComponentInfoPanel;
 import jamsui.juice.gui.ModelView;
 import jamsui.juice.gui.tree.*;
 import jams.JAMS;
+import jams.model.Context;
 
 /**
  *
@@ -44,6 +45,7 @@ import jams.JAMS;
  */
 public class ComponentDescriptor {
 
+    public static final int COMPONENT_TYPE = 0, CONTEXT_TYPE = 1;
     private String instanceName;
     private Class<?> clazz;
     private JAMSTree tree;
@@ -52,12 +54,20 @@ public class ComponentDescriptor {
     private HashMap<String, ContextAttribute> contextAttributes = new HashMap<String, ContextAttribute>();
     private AttributeRepository dataRepository;
     private static HashMap<Class, JDialog> compViewDlgs = new HashMap<Class, JDialog>();
+    private int type;
 
     public ComponentDescriptor(String instanceName, Class clazz, JAMSTree tree) {
         if (clazz == null) {
             GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Could_not_find_class_for_component_") + instanceName + "_!", JAMS.resources.getString("Error!"));
         }
         this.clazz = clazz;
+
+        if (Context.class.isAssignableFrom(clazz)) {
+            this.type = CONTEXT_TYPE;
+        } else {
+            this.type = COMPONENT_TYPE;
+        }
+
         this.tree = tree;
 
         try {
@@ -257,6 +267,13 @@ public class ComponentDescriptor {
 
     public ComponentAttribute createComponentAttribute(String name, Class type, int accessType) {
         return new ComponentAttribute(name, type, accessType);
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType() {
+        return type;
     }
 
     public class ComponentAttribute {

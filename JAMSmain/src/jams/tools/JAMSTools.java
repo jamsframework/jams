@@ -151,12 +151,13 @@ public class JAMSTools {
     }
 
     /**
-     * Sets the static field JAMS.resources to a language specific resource bundle
+     * Sets the static fields JAMS.resources to a language specific resource bundle
+     * and JAMS.charset to charset defined in a JAMS property file
      * @param properties JAMSProperty object containing the language information
      */
-    public static void configureLocale(SystemProperties properties) {
+    public static void configureLocaleEncoding(SystemProperties properties) {
         // check if a different locale is forced by the config
-        String forcedLocale = properties.getProperty("forcelocale");
+        String forcedLocale = properties.getProperty(SystemProperties.LOCALE_IDENTIFIER);
         if (!StringTools.isEmptyString(forcedLocale)) {
 
             if (forcedLocale.contains("_")) {
@@ -167,6 +168,11 @@ public class JAMSTools {
             }
 
             JAMS.resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
+        }
+
+        String charset = properties.getProperty(SystemProperties.CHARSET_IDENTIFIER);
+        if (!StringTools.isEmptyString(charset)) {
+            JAMS.charset = charset;
         }
     }
 

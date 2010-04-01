@@ -95,4 +95,14 @@ public class AttributeRepository {
         }
         return null;
     }
+
+    public ArrayList<ContextAttribute> getAttributes() {
+
+        ArrayList<ContextAttribute> result = new ArrayList<ContextAttribute>();
+
+        for (ArrayList<ContextAttribute> caList : attributesByType.values()) {
+            result.addAll(caList);
+        }
+        return result;
+    }
 }

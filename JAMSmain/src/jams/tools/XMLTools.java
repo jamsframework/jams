@@ -24,6 +24,7 @@
 
 package jams.tools;
 
+import jams.JAMS;
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 import java.io.*;
@@ -44,9 +45,7 @@ import org.w3c.dom.*;
  */
 
 public class XMLTools {
-    public static final String ENCODING = "ISO-8859-1";
-    public static final String LOGICAL_YES_STRING = "yes";
-    
+
     /**
      * Reads a XML document from a file and returns it
      * @param fileName The name of the file containing the document
@@ -99,7 +98,7 @@ public class XMLTools {
         try {
             
             DocumentBuilder builder = factory.newDocumentBuilder();
-            InputStream source = new ByteArrayInputStream(docString.getBytes(ENCODING));
+            InputStream source = new ByteArrayInputStream(docString.getBytes(JAMS.charset));
             document = builder.parse(source);
             
         } catch (ParserConfigurationException pce) {
@@ -221,13 +220,13 @@ public class XMLTools {
     private static Transformer getTransformer() throws TransformerConfigurationException {
         
         TransformerFactory factory = TransformerFactory.newInstance();
-//        factory.setAttribute("indent-number", new Integer(4));
+        factory.setAttribute("indent-number", new Integer(4));
         Transformer transformer = factory.newTransformer();
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 //        transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "4");
-        transformer.setOutputProperty(OutputKeys.INDENT,LOGICAL_YES_STRING);
-        transformer.setOutputProperty(OutputKeys.STANDALONE,LOGICAL_YES_STRING);
-        transformer.setOutputProperty(OutputKeys.ENCODING,ENCODING);
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, JAMS.charset);
         
         return transformer;
     }

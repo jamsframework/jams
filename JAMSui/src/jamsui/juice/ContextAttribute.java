@@ -1,5 +1,5 @@
 /*
- * ModelAttribute.java
+ * ContextAttribute.java
  * Created on 4. März 2007, 18:58
  *
  * This file is part of JAMS
@@ -94,5 +94,4 @@ public class ContextAttribute {
     public String toString() {
         return name;
     }
-        
 }

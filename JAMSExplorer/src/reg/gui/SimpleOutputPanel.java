@@ -20,11 +20,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package reg.gui;
 
 import jams.tools.FileTools;
 import java.io.File;
+import java.io.IOException;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
@@ -38,11 +38,16 @@ public class SimpleOutputPanel extends JPanel {
 
     public SimpleOutputPanel(File file) {
 
-        String text = FileTools.fileToString(file.getAbsolutePath());
+        String text;
+        try {
+            text = FileTools.fileToString(file.getAbsolutePath());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            text = "";
+        }
         textArea = new JTextArea(text);
         textArea.setEditable(false);
         this.add(textArea);
-        
+
     }
-    
 }

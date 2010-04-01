@@ -38,14 +38,12 @@ public class JAMSRemote extends JAMSui {
     
     @Override
     protected void startGUI() {
-        JAMSSplash splash = new JAMSSplash();
-        splash.show(new JAMSRemoteLauncher(properties), splashTimeout);
+        new JAMSRemoteLauncher(properties).setVisible(true);
     }
 
     @Override
     protected void startGUI(String modelFileName, String cmdLineParameterValues) {
-        JAMSSplash splash = new JAMSSplash();
-        splash.show(new JAMSRemoteLauncher(modelFileName, properties, cmdLineParameterValues), splashTimeout);
+        new JAMSRemoteLauncher(modelFileName, properties, cmdLineParameterValues).setVisible(true);
     }
 
     public static void main(String[] args) {

@@ -67,8 +67,30 @@ public class JUICEFrame extends JFrame {
     private Node modelProperties;
     private WorkerDlg loadModelDlg;
     private SearchDlg searchDlg;
+    private OutputDSDlg outputDSDlg;
     private String modelPath;
-    private Action editPrefsAction, reloadLibsAction, newModelAction, loadPrefsAction, savePrefsAction, loadModelAction, saveModelAction, saveAsModelAction, exitAction, aboutAction, searchAction, copyModelGUIAction, pasteModelGUIAction, OptimizationWizardGUIAction, loadModelParamAction, saveModelParamAction, runModelAction, runModelFromLauncherAction, infoLogAction, errorLogAction, onlineAction;
+    private Action editPrefsAction;
+    private Action reloadLibsAction;
+    private Action newModelAction;
+    private Action loadPrefsAction;
+    private Action savePrefsAction;
+    private Action loadModelAction;
+    private Action saveModelAction;
+    private Action saveAsModelAction;
+    private Action exitAction;
+    private Action aboutAction;
+    private Action searchAction;
+    private Action copyModelGUIAction;
+    private Action pasteModelGUIAction;
+    private Action OptimizationWizardGUIAction;
+    private Action loadModelParamAction;
+    private Action saveModelParamAction;
+    private Action runModelAction;
+    private Action runModelFromLauncherAction;
+    private Action infoLogAction;
+    private Action errorLogAction;
+    private Action onlineAction;
+    private Action outputDSAction;
 
     public JUICEFrame() {
         init();
@@ -225,6 +247,9 @@ public class JUICEFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (searchDlg == null) {
+                    searchDlg = new SearchDlg(JUICEFrame.this);
+                }
                 searchDlg.setVisible(true);
             }
         };
@@ -334,11 +359,21 @@ public class JUICEFrame extends JFrame {
             }
         };
 
+        outputDSAction = new AbstractAction(JAMS.resources.getString("Model_output")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (outputDSDlg == null) {
+                    outputDSDlg = new OutputDSDlg(JUICEFrame.this);
+                }
+                outputDSDlg.setVisible(true);
+            }
+        };
+
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(JUICE.APP_TITLE);
 
         loadModelDlg = new WorkerDlg(this, JAMS.resources.getString("Loading_Model"));
-        searchDlg = new SearchDlg(this);
 
         propertyDlg = new PropertyDlg(this, JUICE.getJamsProperties());
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -409,6 +444,12 @@ public class JUICEFrame extends JFrame {
         searchButton.setToolTipText(JAMS.resources.getString("Find..."));
         searchButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Search.png")));
         toolBar.add(searchButton);
+
+        JButton outputDSButton = new JButton(outputDSAction);
+        outputDSButton.setText("");
+        outputDSButton.setToolTipText(JAMS.resources.getString("Model_output"));
+        outputDSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/DataOutput.png")));
+        toolBar.add(outputDSButton);
 
         JButton prefsButton = new JButton(editPrefsAction);
         prefsButton.setText("");

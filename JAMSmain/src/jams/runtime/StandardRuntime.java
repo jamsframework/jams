@@ -110,10 +110,10 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         long start = System.currentTimeMillis();
 
         // set the debug (i.e. output verbosity) level
-        this.setDebugLevel(Integer.parseInt(properties.getProperty("debug", "1")));
+        this.setDebugLevel(Integer.parseInt(properties.getProperty(SystemProperties.DEBUG_IDENTIFIER, "1")));
 
         // add log observers for output to system.out if needed
-        int verbose = Integer.parseInt(properties.getProperty("verbose", "1"));
+        int verbose = Integer.parseInt(properties.getProperty(SystemProperties.VERBOSITY_IDENTIFIER, "1"));
         if (verbose != 0) {
 
             // add info and error log output
@@ -133,7 +133,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             });
         }
 
-        int errorDlg = Integer.parseInt(properties.getProperty("errordlg", "0"));
+        int errorDlg = Integer.parseInt(properties.getProperty(SystemProperties.ERRORDLG_IDENTIFIER, "0"));
         if (errorDlg != 0) {
 
             // add error log output via JDialog
@@ -155,23 +155,25 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
 
         try {
-            if ((properties.getProperty("infolog") != null) && (!properties.getProperty("infolog").equals(""))) {
-                infoStream = new PrintStream(properties.getProperty("infolog"));
+            String infoLog = properties.getProperty(SystemProperties.INFOLOG_IDENTIFIER);
+            if (!StringTools.isEmptyString(infoLog)) {
+                infoStream = new PrintStream(infoLog);
             }
         } catch (FileNotFoundException fnfe) {
             this.handle(fnfe);
         }
 
         try {
-            if ((properties.getProperty("errorlog") != null) && (!properties.getProperty("errorlog").equals(""))) {
-                errorStream = new PrintStream(properties.getProperty("errorlog"));
+            String errorLog = properties.getProperty(SystemProperties.ERRORLOG_IDENTIFIER);
+            if (!StringTools.isEmptyString(errorLog)) {
+                errorStream = new PrintStream(errorLog);
             }
         } catch (FileNotFoundException fnfe) {
             this.handle(fnfe);
         }
 
         // get libraries specified in properties
-        libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
+        libs = StringTools.toArray(properties.getProperty(SystemProperties.LIBS_IDENTIFIER, ""), ";");
 
         // load the libraries and create the class loader
         classLoader = JAMSClassLoader.createClassLoader(libs, this);
@@ -209,11 +211,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 //        }
 
         // create GUI if needed
-        int wEnable = Integer.parseInt(properties.getProperty("windowenable", "1"));
+        int wEnable = Integer.parseInt(properties.getProperty(SystemProperties.WINDOWENABLE_IDENTIFIER, "1"));
         if (wEnable != 0) {
-            int width = Integer.parseInt(properties.getProperty("windowwidth", "600"));
-            int height = Integer.parseInt(properties.getProperty("windowheight", "400"));
-            int ontop = Integer.parseInt(properties.getProperty("windowontop", "0"));
+            int width = Integer.parseInt(properties.getProperty(SystemProperties.WINDOWWIDTH_IDENTIFIER, "600"));
+            int height = Integer.parseInt(properties.getProperty(SystemProperties.WINDOWHEIGHT_IDENTIFIER, "400"));
+            int ontop = Integer.parseInt(properties.getProperty(SystemProperties.WINDOWONTOP_IDENTIFIER, "0"));
             this.initGUI(model.getName(), (ontop == 1 ? true : false), width, height);
             this.guiEnabled = true;
         }

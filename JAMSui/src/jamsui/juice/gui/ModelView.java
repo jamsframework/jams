@@ -32,8 +32,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
@@ -48,6 +46,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import jams.JAMS;
+import jams.SystemProperties;
 import jams.tools.JAMSTools;
 import jams.gui.HelpComponent;
 import jams.gui.JAMSLauncher;
@@ -89,6 +88,7 @@ public class ModelView {
     private ModelEditPanel modelEditPanel;
     private String author = "", date = "", description = "", helpBaseUrl = "", workspace = "";
     private HashMap<String, ComponentDescriptor> componentDescriptors = new HashMap<String, ComponentDescriptor>();
+    private HashMap<String, OutputDSDescriptor> outputDataStores = new HashMap<String, OutputDSDescriptor>();
     private TreePanel modelTreePanel;
     private JDesktopPane parentPanel;
     private ModelProperties modelProperties = new ModelProperties();
@@ -407,7 +407,7 @@ public class ModelView {
                 path = getSavePath().getAbsolutePath();
             }
             ParameterProcessor.saveParams(getModelDoc(), paramsFile,
-                    JUICE.getJamsProperties().getProperty("username"), path);
+                    JUICE.getJamsProperties().getProperty(SystemProperties.USERNAME_IDENTIFIER), path);
         } catch (Exception ex) {
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("File_") + paramsFile.getName() + JAMS.resources.getString("_could_not_be_saved."), JAMS.resources.getString("File_saving_error"));
         }
@@ -486,43 +486,47 @@ public class ModelView {
         }
     }
 
+    public void setDatastores(Element dataStoresNode) {
+
+        //hier outputdsdescriptor objekte erzeugen!
+
+    }
+
     public void setModelParameters(Element launcherNode) {
         Node node;
 
-        if (launcherNode != null) {
-            getModelProperties().removeAll();
-            NodeList groupNodes = launcherNode.getElementsByTagName("group");
-            for (int gindex = 0; gindex < groupNodes.getLength(); gindex++) {
-                node = groupNodes.item(gindex);
-                Element groupElement = (Element) node;
-                String groupName = groupElement.getAttribute("name");
-                getModelProperties().addGroup(groupName);
-                Group group = getModelProperties().getGroup(groupName);
+        getModelProperties().removeAll();
+        NodeList groupNodes = launcherNode.getElementsByTagName("group");
+        for (int gindex = 0; gindex < groupNodes.getLength(); gindex++) {
+            node = groupNodes.item(gindex);
+            Element groupElement = (Element) node;
+            String groupName = groupElement.getAttribute("name");
+            getModelProperties().addGroup(groupName);
+            Group group = getModelProperties().getGroup(groupName);
 
-                // @todo subgroups and properties recursive
-                NodeList groupChildNodes = groupElement.getChildNodes();
-                for (int pindex = 0; pindex < groupChildNodes.getLength(); pindex++) {
-                    node = groupChildNodes.item(pindex);
-                    if (node.getNodeName().equalsIgnoreCase("property")) {
-                        Element propertyElement = (Element) node;
+            // @todo subgroups and properties recursive
+            NodeList groupChildNodes = groupElement.getChildNodes();
+            for (int pindex = 0; pindex < groupChildNodes.getLength(); pindex++) {
+                node = groupChildNodes.item(pindex);
+                if (node.getNodeName().equalsIgnoreCase("property")) {
+                    Element propertyElement = (Element) node;
+                    ModelProperty property = getPropertyFromElement(propertyElement);
+                    if (property != null) {
+                        getModelProperties().addProperty(group, property);
+                    }
+                }
+                if (node.getNodeName().equalsIgnoreCase("subgroup")) {
+                    Element subgroupElement = (Element) node;
+                    String subgroupName = subgroupElement.getAttribute("name");
+                    Group subgroup = getModelProperties().createSubgroup(group, subgroupName);
+                    setHelpComponent(subgroupElement, subgroup);
+
+                    NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
+                    for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
+                        Element propertyElement = (Element) propertyNodes.item(kindex);
                         ModelProperty property = getPropertyFromElement(propertyElement);
                         if (property != null) {
-                            getModelProperties().addProperty(group, property);
-                        }
-                    }
-                    if (node.getNodeName().equalsIgnoreCase("subgroup")) {
-                        Element subgroupElement = (Element) node;
-                        String subgroupName = subgroupElement.getAttribute("name");
-                        Group subgroup = getModelProperties().createSubgroup(group, subgroupName);
-                        setHelpComponent(subgroupElement, subgroup);
-
-                        NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
-                        for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
-                            Element propertyElement = (Element) propertyNodes.item(kindex);
-                            ModelProperty property = getPropertyFromElement(propertyElement);
-                            if (property != null) {
-                                getModelProperties().addProperty(subgroup, property);
-                            }
+                            getModelProperties().addProperty(subgroup, property);
                         }
                     }
                 }

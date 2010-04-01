@@ -57,6 +57,11 @@ public class JAMS {
     public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
 
     /**
+     * Default character encoding
+     */
+    public static String charset = "ISO-8859-1";
+
+    /**
      * The standard font
      */
     public static final Font STANDARD_FONT = new java.awt.Font(Font.MONOSPACED, Font.PLAIN, 11);

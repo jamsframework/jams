@@ -20,12 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.tools;
 
+import jams.JAMS;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +41,7 @@ import java.util.Vector;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 public class FileTools {
-    
+
     public static void copyFile(String inFile, String outFile) throws IOException {
 
         FileChannel inChannel = new FileInputStream(new File(inFile)).getChannel();
@@ -157,41 +159,42 @@ public class FileTools {
         return dir;
     }
 
+    public static void stringToFile(String fileName, String string) throws IOException {
+
+        String newString = new String(string.getBytes(JAMS.charset));
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+        writer.write(string);
+        writer.close();
+    }
+
     /**
      * Reads a file and returns its content as string
      * @param fileName The name of the file
      * @return The file content
      */
-    public static String fileToString(String fileName) {
+    public static String fileToString(String fileName) throws IOException {
 
         String result = "";
 
-        try {
-            FileInputStream in = new FileInputStream(fileName);
-            result = streamToString(in);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        FileInputStream in = new FileInputStream(fileName);
+        result = streamToString(in);
 
         return result;
     }
-
 
     /**
      * Reads from a stream and returns its content as string
      * @param in The stream
      * @return The stream content
      */
-    public static String streamToString(InputStream in) {
+    public static String streamToString(InputStream in) throws IOException {
         String content = "";
 
-        try {
-            byte[] buffer = new byte[in.available()];
-            in.read(buffer);
-            content = new String(buffer);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
+        byte[] buffer = new byte[in.available()];
+        in.read(buffer);
+
+        content = new String(buffer, JAMS.charset);
 
         return content;
     }

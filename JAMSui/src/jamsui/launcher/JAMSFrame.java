@@ -268,7 +268,7 @@ public class JAMSFrame extends JAMSLauncher {
                 }
                 JAMSFrame.this.dispose();
                 if (JUICE.getJuiceFrame() == null) {
-                    JUICE.createJUICEFrame(0);
+                    JUICE.createJUICEFrame();
                 }
                 JUICE.getJuiceFrame().loadModel(JAMSFrame.this.modelFilename);
             }
@@ -525,7 +525,7 @@ public class JAMSFrame extends JAMSLauncher {
     public void saveParams(File paramsFile) {
         try {
             ParameterProcessor.saveParams(getModelDocument(), paramsFile,
-                    getProperties().getProperty("username"), modelFilename);
+                    getProperties().getProperty(SystemProperties.USERNAME_IDENTIFIER), modelFilename);
         } catch (Exception ex) {
             GUIHelper.showErrorDlg(this, JAMS.resources.getString("File_") + paramsFile.getName() + JAMS.resources.getString("_could_not_be_saved."), JAMS.resources.getString("File_saving_error"));
         }

@@ -304,7 +304,7 @@ public class ComponentPanel extends JPanel {
         tabPane.add(JAMS.resources.getString("Context_attributes"), attributePanel);
         tabPane.setEnabledAt(1, false);
 
-        attributeConfigPanel = new ComponentAttributePanel(view);
+        attributeConfigPanel = new ComponentAttributePanel();
         configLabel = new JLabel(MODEL_CONFIG_STRING);
         configLabel.setFont(labelFont);
 

@@ -23,6 +23,7 @@
 package reg.gui;
 
 import gw.ui.util.Tools;
+import jams.SystemProperties;
 import jams.gui.tools.GUIHelper;
 import jams.gui.PropertyDlg;
 import jams.gui.WorkerDlg;
@@ -383,7 +384,7 @@ public class ExplorerFrame extends JFrame {
 
     public void open(File workspaceFile) {
         try {
-            String[] libs = StringTools.toArray(explorer.getProperties().getProperty("libs", ""), ";");
+            String[] libs = StringTools.toArray(explorer.getProperties().getProperty(SystemProperties.LIBS_IDENTIFIER, ""), ";");
             JAMSWorkspace workspace = new JAMSWorkspace(workspaceFile, explorer.getRuntime(), false);
             workspace.init();
             workspace.setLibs(libs);

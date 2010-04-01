@@ -31,39 +31,29 @@ import java.util.Observer;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 public interface SystemProperties {
-    /**
-     * Identifier for libraries value
-     */
+
     String LIBS_IDENTIFIER = "libs";
-
-    /**
-     * Identifier for model value
-     */
+    String DEBUG_IDENTIFIER = "debug";
+    String VERBOSITY_IDENTIFIER = "verbose";
+    String INFOLOG_IDENTIFIER = "infolog";
+    String ERRORLOG_IDENTIFIER = "errorlog";
+    String ERRORDLG_IDENTIFIER = "errordlg";
+    String WINDOWENABLE_IDENTIFIER = "windowenable";
+    String WINDOWWIDTH_IDENTIFIER = "windowwidth";
+    String WINDOWHEIGHT_IDENTIFIER = "windowheight";
+    String GUICONFIG_IDENTIFIER = "guiconfig";
+    String GUICONFIGWIDTH_IDENTIFIER = "guiconfigwidth";
+    String GUICONFIGHEIGHT_IDENTIFIER = "guiconfigheight";
+    String CHARSET_IDENTIFIER = "charset";
+    String LOCALE_IDENTIFIER = "forcelocale";
+    String WINDOWONTOP_IDENTIFIER = "windowontop";
+    String USERNAME_IDENTIFIER = "username";
+    String HELPBASEURL_IDENTIFIER = "helpbaseurl";
     String MODEL_IDENTIFIER = "model";
-
-    /**
-     * Identifier for server account value
-     */
     String SERVER_ACCOUNT_IDENTIFIER = "serveraccount";
-
-    /**
-     * Identifier for excludes value
-     */
     String SERVER_EXCLUDES_IDENTIFIER = "excludes";
-
-    /**
-     * Identifier for server value
-     */
     String SERVER_IDENTIFIER = "server";
-
-    /**
-     * Identifier for server password value
-     */
     String SERVER_PASSWORD_IDENTIFIER = "serverpassword";
-
-    /**
-     * Identifier for workspace value
-     */
     String WORKSPACE_IDENTIFIER = "workspace";
 
     /**

@@ -22,6 +22,8 @@
  */
 package jams.io;
 
+import jams.JAMS;
+import jams.tools.FileTools;
 import java.io.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -34,15 +36,35 @@ import org.w3c.dom.NodeList;
  */
 public class XMLProcessor {
 
-    static String[] regex = {"jamsvar class=\".*\" name", "compoundcomponent", "jamsvar", "providervar", "spatattrib", "provider=", "org\\.unijena\\.jams\\.gui", "org\\.unijena\\.jamscomponents", "org\\.unijena\\.jams\\.", "jams\\.model\\.cc\\."};
-    static String[] replace = {"jamsvar name", "contextcomponent", "var", "cvar", "attribute", "context=", "jams.components.gui", "jams.components", "jams.", "jams.model."};
-    /*    static String[] regex = {"jamsvar class=\".*\" "};
-    static String[] replace = {"jamsvar "};
-     */
-
-    /** Creates a new instance of XMLProcessor */
-    public XMLProcessor() {
-    }
+    static String[] regex = {
+        "jamsvar class=\".*\" name",
+        "compoundcomponent",
+        "jamsvar",
+        "providervar",
+        "spatattrib",
+        "provider=",
+        "org\\.unijena\\.jams\\.gui",
+        "org\\.unijena\\.jamscomponents",
+        "org\\.unijena\\.jams\\.",
+        "jams\\.model\\.cc\\.",
+        "jams\\.model\\.BooleanConditionalContext",
+        "jams\\.model\\.DoubleConditionalContext"
+    };
+    
+    static String[] replace = {
+        "jamsvar name",
+        "contextcomponent",
+        "var",
+        "cvar",
+        "attribute",
+        "context=",
+        "jams.components.gui",
+        "jams.components", 
+        "jams.",
+        "jams.model.",
+        "jams\\.components\\.conditional\\.BooleanConditionalContext",
+        "jams\\.components\\.conditional\\.DoubleConditionalContext"
+    };
 
     public static String modelDocConverter(String inFileName) {
 
@@ -50,30 +72,22 @@ public class XMLProcessor {
 
         try {
 
-            BufferedReader reader = new BufferedReader(new FileReader(inFileName));
-
-            String s, newDoc = "", oldDoc;
-
-            while ((s = reader.readLine()) != null) {
-                newDoc += s + "\n";
-            }
-            newDoc = newDoc.substring(0, newDoc.length() - 1);
-            oldDoc = newDoc;
+            String oldDoc = FileTools.fileToString(inFileName);
+            String newDoc = oldDoc;
 
             for (int i = 0; i < regex.length; i++) {
                 newDoc = newDoc.replaceAll(regex[i], replace[i]);
             }
 
             if (!newDoc.contentEquals(oldDoc)) {
+
                 File f = new File(inFileName);
-                String fName = "_" + f.getCanonicalFile().getName();
+                String fName = "$_" + f.getCanonicalFile().getName();
                 String pName = f.getParent();
 
                 outFileName = pName + File.separator + fName;
 
-                BufferedWriter writer = new BufferedWriter(new FileWriter(outFileName));
-                writer.write(newDoc);
-                writer.close();
+                FileTools.stringToFile(outFileName, newDoc);
             }
 
 

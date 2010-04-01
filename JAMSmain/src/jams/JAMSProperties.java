@@ -157,20 +157,20 @@ public class JAMSProperties extends Observable implements SystemProperties {
 
         if (theProperties == null) {
             Properties p = new Properties();
-            p.setProperty("model", "");
-            p.setProperty("libs", ".");
-            p.setProperty("debug", "1");
-            p.setProperty("verbose", "0");
-            p.setProperty("infolog", "");
-            p.setProperty("errorlog", "");
-            p.setProperty("errordlg", "1");
-            p.setProperty("windowenable", "1");
-            p.setProperty("windowwidth", "900");
-            p.setProperty("windowheight", "600");
-            p.setProperty("guiconfig", "1");
-            p.setProperty("guiconfigwidth", "600");
-            p.setProperty("guiconfigheight", "600");
-            p.setProperty("splashtimeout", "1000");
+            p.setProperty(MODEL_IDENTIFIER, "");
+            p.setProperty(LIBS_IDENTIFIER, ".");
+            p.setProperty(DEBUG_IDENTIFIER, "1");
+            p.setProperty(VERBOSITY_IDENTIFIER, "0");
+            p.setProperty(INFOLOG_IDENTIFIER, "");
+            p.setProperty(ERRORLOG_IDENTIFIER, "");
+            p.setProperty(ERRORDLG_IDENTIFIER, "1");
+            p.setProperty(WINDOWENABLE_IDENTIFIER, "1");
+            p.setProperty(WINDOWWIDTH_IDENTIFIER, "900");
+            p.setProperty(WINDOWHEIGHT_IDENTIFIER, "600");
+            p.setProperty(GUICONFIG_IDENTIFIER, "1");
+            p.setProperty(GUICONFIGWIDTH_IDENTIFIER, "600");
+            p.setProperty(GUICONFIGHEIGHT_IDENTIFIER, "600");
+            p.setProperty(CHARSET_IDENTIFIER, "");
 
             theProperties = new JAMSProperties(p);
             theProperties.setDefaultFilename(System.getProperty("user.dir") + File.separator + JAMS.DEFAULT_PARAMETER_FILENAME);

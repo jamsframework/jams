@@ -96,10 +96,11 @@ public class J2KTSDataStore extends TSDataStore {
             timeFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
         }
 
+        // check if an charset is defined. if not, use JAMS default
         if (charsetElement != null) {
             charsetName = charsetElement.getAttribute("value");
         } else {
-            charsetName = BufferedFileReader.CHARSET_NAME_ISO_8859_1;
+            charsetName = JAMS.charset;
         }
 
         if (parseTimeElement != null) {

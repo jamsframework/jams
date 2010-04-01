@@ -46,7 +46,6 @@ public class JAMSui {
 
     private static File baseDir = new File(System.getProperty("user.dir"));
     public static final String APP_TITLE = "JAMS";
-    protected int splashTimeout;
     protected SystemProperties properties;
 
     /**
@@ -92,11 +91,9 @@ public class JAMSui {
             }
         }
 
-        JAMSTools.configureLocale(properties);
+        JAMSTools.configureLocaleEncoding(properties);
 
-        splashTimeout = Integer.parseInt(properties.getProperty("splashtimeout", "1000"));
-
-        int guiConfig = Integer.parseInt(properties.getProperty("guiconfig", "0"));
+        int guiConfig = Integer.parseInt(properties.getProperty(SystemProperties.GUICONFIG_IDENTIFIER, "0"));
         String modelFileName = cmdLine.getModelFileName();
 
         // check if there is a model file provided
@@ -144,16 +141,17 @@ public class JAMSui {
                     modelFileName = newModelFilename;
                 }
 
-                String xmlString = FileTools.fileToString(modelFileName);
-                String[] args = StringTools.toArray(cmdLineParameterValues, ";");
-                if (args != null) {
-                    for (int i = 0; i < args.length; i++) {
-                        xmlString = xmlString.replaceAll("%" + i, args[i]);
-                    }
-                }
-
                 JAMSRuntime runtime = null;
                 try {
+
+                    String xmlString = FileTools.fileToString(modelFileName);
+                    String[] args = StringTools.toArray(cmdLineParameterValues, ";");
+                    if (args != null) {
+                        for (int i = 0; i < args.length; i++) {
+                            xmlString = xmlString.replaceAll("%" + i, args[i]);
+                        }
+                    }
+
                     Document modelDoc = XMLTools.getDocumentFromString(xmlString);
                     runtime = new StandardRuntime();
                     runtime.loadModel(modelDoc, properties);
@@ -188,13 +186,11 @@ public class JAMSui {
     }
 
     protected void startGUI() {
-        JAMSSplash splash = new JAMSSplash();
-        splash.show(new JAMSFrame(null, properties), splashTimeout);
+        new JAMSFrame(null, properties).setVisible(true);
     }
 
     protected void startGUI(String modelFileName, String cmdLineParameterValues) {
-        JAMSSplash splash = new JAMSSplash();
-        splash.show(new JAMSFrame(null, properties, modelFileName, cmdLineParameterValues), splashTimeout);
+        new JAMSFrame(null, properties, modelFileName, cmdLineParameterValues).setVisible(true);
     }
 
     /**

@@ -9,6 +9,7 @@
  */
 package jams.io;
 
+import jams.JAMS;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -83,10 +84,6 @@ public class BufferedFileReader extends Reader {
 
     private int newLineCharsNumber = 1;
 
-    public static final String 
-            CHARSET_NAME_ISO_8859_1 = "ISO-8859-1",
-            CHARSET_NAME_UTF_8 = "UTF-8";
-
     /**
      * Creates a buffering character-input stream that uses an input buffer of
      * the specified size.
@@ -126,7 +123,7 @@ public class BufferedFileReader extends Reader {
      * @param  is   A FileInputStream with default encoding "ISO-8859-1"
      */
     public BufferedFileReader(FileInputStream is) {
-        this(is, defaultCharBufferSize, CHARSET_NAME_ISO_8859_1);
+        this(is, defaultCharBufferSize, JAMS.charset);
     }
 
     /**

@@ -47,7 +47,7 @@ public class PropertyDlg extends JDialog {
     private BooleanInput verboseCheck,  windowEnable,  windowOnTop,  errorDlg;
     private JSpinner debugSpinner;
     private FileInput infoFile,  errorFile;
-    private TextInput windowHeight,  windowWidth, helpBaseURL, userName, forceLocale;
+    private TextInput windowHeight,  windowWidth, helpBaseURL, userName, forceLocale, charset;
     private SystemProperties properties;
     public static final int APPROVE_OPTION = 1;
     public static final int CANCEL_OPTION = 0;
@@ -134,6 +134,12 @@ public class PropertyDlg extends JDialog {
         forceLocale = new TextInput();
         forceLocale.getComponent().setPreferredSize(new Dimension(40, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, forceLocale, 1, y, 1, 1, 1, 1);
+
+        y++;
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Character_Set:")), 0, y, 1, 1, 0, 0);
+        charset = new TextInput();
+        charset.getComponent().setPreferredSize(new Dimension(100, JCOMP_HEIGHT));
+        GUIHelper.addGBComponent(contentPanel, gbl, charset, 1, y, 1, 1, 1, 1);
 
         y++;
         GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Model_window_width:")), 0, y, 1, 1, 0, 0);
@@ -227,34 +233,35 @@ public class PropertyDlg extends JDialog {
 
         this.properties = properties;
 
-        String[] libs = StringTools.toArray(properties.getProperty("libs"), ";");
+        String[] libs = StringTools.toArray(properties.getProperty(SystemProperties.LIBS_IDENTIFIER), ";");
         Vector<String> v = new Vector<String>();
         for (int i = 0; i < libs.length; i++) {
             v.add(libs[i]);
         }
         list.setListData(v);
 
-        verboseCheck.setValue(properties.getProperty("verbose"));
+        verboseCheck.setValue(properties.getProperty(SystemProperties.VERBOSITY_IDENTIFIER));
 
         Integer debugLevel = 1;
         try {
-            debugLevel = Integer.parseInt(properties.getProperty("debug"));
+            debugLevel = Integer.parseInt(properties.getProperty(SystemProperties.DEBUG_IDENTIFIER));
         } catch (NumberFormatException e) {
         }
         debugSpinner.setValue(debugLevel);
 
-        errorFile.setFile(properties.getProperty("errorlog"));
-        infoFile.setFile(properties.getProperty("infolog"));
+        errorFile.setFile(properties.getProperty(SystemProperties.ERRORLOG_IDENTIFIER));
+        infoFile.setFile(properties.getProperty(SystemProperties.INFOLOG_IDENTIFIER));
 
-        windowEnable.setValue(properties.getProperty("windowenable"));
-        errorDlg.setValue(properties.getProperty("errordlg"));
-        windowOnTop.setValue(properties.getProperty("windowontop"));
-        forceLocale.setValue(properties.getProperty("forcelocale"));
+        windowEnable.setValue(properties.getProperty(SystemProperties.WINDOWENABLE_IDENTIFIER));
+        errorDlg.setValue(properties.getProperty(SystemProperties.ERRORDLG_IDENTIFIER));
+        windowOnTop.setValue(properties.getProperty(SystemProperties.WINDOWONTOP_IDENTIFIER));
+        forceLocale.setValue(properties.getProperty(SystemProperties.LOCALE_IDENTIFIER));
+        charset.setValue(properties.getProperty(SystemProperties.CHARSET_IDENTIFIER));
 
-        windowHeight.setValue(properties.getProperty("windowheight"));
-        windowWidth.setValue(properties.getProperty("windowwidth"));
-        userName.setValue(properties.getProperty("username"));
-        helpBaseURL.setValue(properties.getProperty("helpbaseurl"));
+        windowHeight.setValue(properties.getProperty(SystemProperties.WINDOWHEIGHT_IDENTIFIER));
+        windowWidth.setValue(properties.getProperty(SystemProperties.WINDOWWIDTH_IDENTIFIER));
+        userName.setValue(properties.getProperty(SystemProperties.USERNAME_IDENTIFIER));
+        helpBaseURL.setValue(properties.getProperty(SystemProperties.HELPBASEURL_IDENTIFIER));
     }
 
     public void validateProperties() {
@@ -268,19 +275,20 @@ public class PropertyDlg extends JDialog {
         for (int i = 1; i < v.size(); i++) {
             libs += ";" + v.get(i);
         }
-        properties.setProperty("libs", libs);
-        properties.setProperty("debug", debugSpinner.getValue().toString());
-        properties.setProperty("verbose", verboseCheck.getValue());
-        properties.setProperty("errorlog", errorFile.getFileName());
-        properties.setProperty("infolog", infoFile.getFileName());
-        properties.setProperty("windowenable", windowEnable.getValue());
-        properties.setProperty("errordlg", errorDlg.getValue());
-        properties.setProperty("windowontop", windowOnTop.getValue());
-        properties.setProperty("forcelocale", forceLocale.getValue());
-        properties.setProperty("windowheight", windowHeight.getValue());
-        properties.setProperty("windowwidth", windowWidth.getValue());
-        properties.setProperty("username", userName.getValue());
-        properties.setProperty("helpbaseurl", helpBaseURL.getValue());
+        properties.setProperty(SystemProperties.LIBS_IDENTIFIER, libs);
+        properties.setProperty(SystemProperties.DEBUG_IDENTIFIER, debugSpinner.getValue().toString());
+        properties.setProperty(SystemProperties.VERBOSITY_IDENTIFIER, verboseCheck.getValue());
+        properties.setProperty(SystemProperties.ERRORLOG_IDENTIFIER, errorFile.getFileName());
+        properties.setProperty(SystemProperties.INFOLOG_IDENTIFIER, infoFile.getFileName());
+        properties.setProperty(SystemProperties.WINDOWENABLE_IDENTIFIER, windowEnable.getValue());
+        properties.setProperty(SystemProperties.ERRORDLG_IDENTIFIER, errorDlg.getValue());
+        properties.setProperty(SystemProperties.WINDOWONTOP_IDENTIFIER, windowOnTop.getValue());
+        properties.setProperty(SystemProperties.LOCALE_IDENTIFIER, forceLocale.getValue());
+        properties.setProperty(SystemProperties.CHARSET_IDENTIFIER, charset.getValue());
+        properties.setProperty(SystemProperties.WINDOWHEIGHT_IDENTIFIER, windowHeight.getValue());
+        properties.setProperty(SystemProperties.WINDOWWIDTH_IDENTIFIER, windowWidth.getValue());
+        properties.setProperty(SystemProperties.USERNAME_IDENTIFIER, userName.getValue());
+        properties.setProperty(SystemProperties.HELPBASEURL_IDENTIFIER, helpBaseURL.getValue());
     }
 
     public SystemProperties getProperties() {

@@ -176,13 +176,13 @@ public class SearchDlg extends JDialog {
             }
         });
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(findButton);
-        buttonPanel.add(resetButton);
-        buttonPanel.add(closeButton);
-        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-        this.pack();
-        getRootPane().setDefaultButton(findButton);
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.add(findButton);
+            buttonPanel.add(resetButton);
+            buttonPanel.add(closeButton);
+            getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+            this.pack();
+            getRootPane().setDefaultButton(findButton);
     }
 
     private void reset() {

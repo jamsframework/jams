@@ -74,10 +74,9 @@ public class ComponentAttributePanel extends JPanel {
             DETAILPANEL_DIMENSION = new Dimension(460, 245);
     private JComboBox contextCombo;
     private InputComponent valueInput;
-    private GridBagLayout connectionLayout,  infoLayout;
+    private GridBagLayout infoLayout;
     private JTextField localNameText,  compNameText,  linkText,  customAttributeText;
     private JPanel listPanel,  infoPanel,  valuePanel;
-    private ModelView view;
     private Class type;
     private JList attributeList;
     private JToggleButton linkButton,  setButton;
@@ -90,12 +89,9 @@ public class ComponentAttributePanel extends JPanel {
     private ListSelectionListener attributeListListener;
     private boolean adjusting = false;
 
-    public ComponentAttributePanel(ModelView view) {
+    public ComponentAttributePanel() {
 
-        this.view = view;
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-
-        connectionLayout = new GridBagLayout();
 
         listPanel = new JPanel();
         listPanel.setLayout(new BorderLayout());
