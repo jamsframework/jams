@@ -75,6 +75,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.Wizard;
@@ -93,35 +94,35 @@ import reg.wizard.tlug.panels.StationParamsPanel;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class ExplorerFrame extends JFrame {
+public class ExplorerFrame extends JFrame implements IExplorerFrame{
 
-    private static final int INOUT_PANE_WIDTH = 250, INOUT_PANE_HEIGHT = 450;
+    protected static final int INOUT_PANE_WIDTH = 250, INOUT_PANE_HEIGHT = 450;
 
-    private static final int DIVIDER_WIDTH = 6;
+    protected static final int DIVIDER_WIDTH = 6;
 
-    private JFileChooser jfc = GUIHelper.getJFileChooser();
+    protected JFileChooser jfc = GUIHelper.getJFileChooser();
 
-    private WorkerDlg openWSDlg;
+    protected WorkerDlg openWSDlg;
 
-    private Action openWSAction, openSTPAction, exitAction, editWSAction,
+    protected Action openWSAction, openSTPAction, exitAction, editWSAction,
             sensitivityAnalysisAction, launchModelAction, editPrefsAction,
             reloadWSAction, launchWizardAction;
 
-    private JLabel statusLabel;
+    protected JLabel statusLabel;
 
-    private JSplitPane mainSplitPane;
+    protected JSplitPane mainSplitPane;
 
-    private JTabbedPane tPane;
+    protected JTabbedPane tPane;
 
-    private JAMSExplorer explorer;
+    protected JAMSExplorer explorer;
 
-    private PropertyDlg propertyDlg;
+    protected PropertyDlg propertyDlg;
 
-    private WorkspaceDlg wsDlg;
+    protected WorkspaceDlg wsDlg;
 
-    private Document modelDoc = null;
+    protected Document modelDoc = null;
 
-    private MCAT5Toolbar mcat5ToolBar = null;
+    protected MCAT5Toolbar mcat5ToolBar = null;
 
     public ExplorerFrame(JAMSExplorer explorer) {
         this.explorer = explorer;
@@ -129,7 +130,7 @@ public class ExplorerFrame extends JFrame {
         init();
     }
 
-    private void init() {
+    protected void init() {
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -353,7 +354,7 @@ public class ExplorerFrame extends JFrame {
         }
     }
 
-    private void initModelDoc() {
+    protected void initModelDoc() {
         try {
             JAMSWorkspace workspace = explorer.getWorkspace();
             if (workspace != null) {
@@ -400,7 +401,7 @@ public class ExplorerFrame extends JFrame {
         }
     }
 
-    private void open() {
+    protected void open() {
 
         int result = jfc.showOpenDialog(this);
 
@@ -450,25 +451,35 @@ public class ExplorerFrame extends JFrame {
         }
     }
 
-    private void launchModel() {
+    protected void launchModel() {
 
         JAMSLauncher launcher = new JAMSLauncher(null, explorer.getProperties(), modelDoc);
         launcher.setVisible(true);
     }
 
-    private void runModel() {
-        JAMSRuntime runtime = new StandardRuntime();
-        runtime.loadModel(modelDoc, explorer.getProperties());
-        runtime.setDebugLevel(3);
-        try {
-            runtime.runModel();
-        } catch (Exception ex) {
-            runtime.handle(ex);
-        }
+    /**
+     * runs the model in background
+     */
+    protected void runModel() {
 
+        SwingWorker worker = new SwingWorker<Object, Void>() {
+
+            public Object doInBackground() {
+                JAMSRuntime runtime = new StandardRuntime();
+                try {
+                    runtime.loadModel(modelDoc, explorer.getProperties());
+                    runtime.setDebugLevel(3);
+                    runtime.runModel();
+                } catch (Throwable t) {
+                    runtime.handle(t);
+                }
+                return null;
+            }
+        };
+        worker.execute();
     }
 
-    private boolean launchWizard() {
+    protected boolean launchWizard() {
 
         boolean result = false;
         JAMSWorkspace ws = explorer.getWorkspace();
@@ -562,7 +573,7 @@ public class ExplorerFrame extends JFrame {
         return result;
     }
 
-    private void setWorkSpace2Model() {
+    protected void setWorkSpace2Model() {
         JAMSWorkspace workspace = explorer.getWorkspace();
         try {
             String directoryName = workspace.getDirectory().getCanonicalPath();
@@ -573,7 +584,7 @@ public class ExplorerFrame extends JFrame {
         }
     }
 
-    private void createListener() {
+    protected void createListener() {
         this.addWindowListener(new WindowListener() {
 
             @Override
@@ -614,7 +625,7 @@ public class ExplorerFrame extends JFrame {
         return tPane;
     }
 
-    private void exit() {
+    protected void exit() {
 
         Viewer.destroy();
 
@@ -628,7 +639,7 @@ public class ExplorerFrame extends JFrame {
         explorer.exit();
     }
 
-    private void updateWithShapeFile(String shapeFileName, JAMSWorkspace ws) throws Exception, URISyntaxException {
+    protected void updateWithShapeFile(String shapeFileName, JAMSWorkspace ws) throws Exception, URISyntaxException {
         Properties properties = new Properties();
         File theShapeFile = new File(shapeFileName);
         String fileName = theShapeFile.getName();
