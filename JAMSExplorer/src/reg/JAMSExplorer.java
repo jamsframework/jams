@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.UIManager;
+import reg.gui.IExplorerFrame;
 import reg.viewer.Viewer;
 
 /**
@@ -53,19 +54,19 @@ public class JAMSExplorer {
 
     public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 750;
 
-    private ExplorerFrame explorerFrame;
+    protected IExplorerFrame explorerFrame;
 
-    private JAMSRuntime runtime;
+    protected JAMSRuntime runtime;
 
-    private SystemProperties properties;
+    protected SystemProperties properties;
 
-    private DisplayManager displayManager;
+    protected DisplayManager displayManager;
 
-    private JAMSWorkspace workspace;
+    protected JAMSWorkspace workspace;
 
-    private ArrayList<Window> childWindows = new ArrayList<Window>();
+    protected ArrayList<Window> childWindows = new ArrayList<Window>();
 
-    private boolean standAlone, tlugized;
+    protected boolean standAlone, tlugized;
 
     public JAMSExplorer(JAMSRuntime runtime) {
         this(runtime, true, true);
@@ -82,7 +83,7 @@ public class JAMSExplorer {
             this.runtime.addErrorLogObserver(new Observer() {
 
                 public void update(Observable o, Object arg) {
-                    GUIHelper.showErrorDlg(explorerFrame, arg.toString(), JAMS.resources.getString("Error"));
+                    GUIHelper.showErrorDlg((ExplorerFrame)explorerFrame, arg.toString(), JAMS.resources.getString("Error"));
                 }
             });
             this.runtime.addInfoLogObserver(new Observer() {
@@ -148,7 +149,7 @@ public class JAMSExplorer {
      * @return the regFrame
      */
     public ExplorerFrame getExplorerFrame() {
-        return explorerFrame;
+        return (ExplorerFrame)explorerFrame;
     }
 
     /**
