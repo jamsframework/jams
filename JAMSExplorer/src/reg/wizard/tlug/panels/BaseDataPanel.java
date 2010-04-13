@@ -21,7 +21,6 @@ import java.io.File;
 import java.util.Map;
 import java.util.Vector;
 import javax.swing.JFileChooser;
-import javax.swing.JRadioButton;
 import org.h2.util.StringUtils;
 import org.netbeans.spi.wizard.WizardController;
 
@@ -35,26 +34,17 @@ public class BaseDataPanel extends javax.swing.JPanel {
     private final Map wizardData;
     private BaseDataPanel thisPanel;
     public static final String KEY_SHAPE_FILENAME = "shapeFileName";
-    public static final String KEY_DATA_ORIGIN = "dataOrigin";
     public static final String KEY_REGIONALIZATION = "regionalizationData";
     public static final String KEY_REGDATA_KEYS = "regDataKeys";
     public static final String KEY_REGDATA_DISPS = "regDataDisps";
     private Vector<String> regData_Display = new Vector<String>();
     private Vector<String> regData_Key = new Vector<String>();
     public static final String KEY_INTERVAL = "interval";
-    public static final String KEY_AGGR = "aggregation";
-    public static final String VALUE_PRIM = "prim";
-    public static final String VALUE_SEK = "sek";
-    public static final String VALUE_TAG = "dd";
-    public static final String VALUE_MON = "mm";
-    public static final String VALUE_JAHR = "yy";
 
     // all field contents
     private String r_shapeFileName = null;
-    private String r_dataOrigin = null;
     private String r_region = null;
     private String r_interval = null;
-    private String r_aggreg = null;
 
 
     /** Creates new form  */
@@ -85,13 +75,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
         jFileButton = new javax.swing.JButton();
         jRegLabel = new javax.swing.JLabel();
         jRegCombo = new javax.swing.JComboBox();
-        jRadioButtonPrim = new javax.swing.JRadioButton();
-        jRadioButtonSeku = new javax.swing.JRadioButton();
-        jLabel1 = new javax.swing.JLabel();
-        jRadioButtonTag = new javax.swing.JRadioButton();
-        jRadioButtonMonat = new javax.swing.JRadioButton();
-        jRadioButtonJahr = new javax.swing.JRadioButton();
-        jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jIntervall = InputComponentFactory.createInputComponent(JAMSTimeInterval.class, false);
 
@@ -133,46 +116,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
             }
         });
 
-/*
-        jRadioButtonPrim.setText("gemessen");
-        jRadioButtonPrim.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonPrimActionPerformed(evt);
-            }
-        });
-
-        jRadioButtonSeku.setText("abgeleitet");
-        jRadioButtonSeku.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonSekuActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setText("Aggregierung");
-
-        jRadioButtonTag.setText("Tag");
-        jRadioButtonTag.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonTagActionPerformed(evt);
-            }
-        });
-
-        jRadioButtonMonat.setText("Monat");
-        jRadioButtonMonat.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonMonatActionPerformed(evt);
-            }
-        });
-
-        jRadioButtonJahr.setText("Jahr");
-        jRadioButtonJahr.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonJahrActionPerformed(evt);
-            }
-        });
-
-        jLabel2.setText("Datenherkunft");
-*/
         jLabel3.setText("Zeitintervall");
 
 
@@ -190,17 +133,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
                     .addComponent(jLabel3))
                 .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-
-//                    .addGroup(layout.createSequentialGroup()
-//                        .addComponent(jRadioButtonTag)
-//                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-//                        .addComponent(jRadioButtonMonat)
-//                        .addGap(18, 18, 18)
-//                        .addComponent(jRadioButtonJahr))
-//                    .addGroup(layout.createSequentialGroup()
-//                        .addComponent(jRadioButtonPrim)
-//                        .addGap(18, 18, 18)
-//                        .addComponent(jRadioButtonSeku))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jFileName, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -218,11 +150,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
                     .addComponent(jFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jFileButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-//                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-//                    .addComponent(jRadioButtonPrim)
-//                    .addComponent(jRadioButtonSeku)
-//                    .addComponent(jLabel2))
-//                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jRegLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jRegCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -231,11 +158,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
                     .addComponent(jLabel3)
                     .addComponent(jIntervall.getComponent(), 100, 150, 250))
                 .addGap(18, 18, 18)
-//                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-//                    .addComponent(jLabel1)
-//                    .addComponent(jRadioButtonTag)
-//                    .addComponent(jRadioButtonMonat)
-//                    .addComponent(jRadioButtonJahr))
  .addContainerGap(50, Short.MAX_VALUE))
         );
     }
@@ -248,17 +170,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
 }
 
-    private void jRadioButtonMonatActionPerformed(java.awt.event.ActionEvent evt) {
-        aggregationSelected(evt);
-}
-
-    private void jRadioButtonPrimActionPerformed(java.awt.event.ActionEvent evt) {
-        primSekSelected(evt);
-    }
-
-    private void jRadioButtonSekuActionPerformed(java.awt.event.ActionEvent evt) {
-        primSekSelected(evt);
-    }
 
     private void jFileButtonActionPerformed(java.awt.event.ActionEvent evt) {
         String fileName = null;
@@ -278,14 +189,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
         }
         r_shapeFileName = fileName;
         checkProblems();
-    }
-
-    private void jRadioButtonJahrActionPerformed(java.awt.event.ActionEvent evt) {
-        aggregationSelected(evt);
-    }
-
-    private void jRadioButtonTagActionPerformed(java.awt.event.ActionEvent evt) {
-        aggregationSelected(evt);
     }
 
 
@@ -318,20 +221,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
     }
 
-    private void primSekSelected(java.awt.event.ActionEvent evt) {
-
-        Object val = ((JRadioButton) evt.getSource()).getClientProperty(KEY_DATA_ORIGIN);
-        r_dataOrigin = (String) val;
-        checkProblems();
-    }
-
-    private void aggregationSelected(java.awt.event.ActionEvent evt) {
-
-        Object val = ((JRadioButton) evt.getSource()).getClientProperty(KEY_AGGR);
-        r_aggreg = (String) val;
-        checkProblems();
-
-    }
 
     private void checkProblems() {
 
@@ -371,14 +260,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
             r_shapeFileName = shapeFileName;
             jFileName.setText(r_shapeFileName);
         }
-        String dataOrigin = (String) wizardData.get(KEY_DATA_ORIGIN);
-        if (!StringUtils.isNullOrEmpty(dataOrigin)) {
-            r_dataOrigin = dataOrigin;
-        }
-        if (r_dataOrigin != null && r_dataOrigin.equals(VALUE_PRIM))
-            jRadioButtonPrim.setSelected(true);
-        if (r_dataOrigin != null && r_dataOrigin.equals(VALUE_SEK))
-            jRadioButtonSeku.setSelected(true);
 
         regData_Key = (Vector<String>) wizardData.get(KEY_REGDATA_KEYS);
         regData_Display = (Vector<String>) wizardData.get(KEY_REGDATA_DISPS);
@@ -404,19 +285,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
         if (!StringUtils.isNullOrEmpty(r_interval)) {
             ((TimeintervalInput)jIntervall).setValue(r_interval);
         }
-
-        String aggregation = (String) wizardData.get(KEY_AGGR);
-        if (!StringUtils.isNullOrEmpty(aggregation)) {
-            r_aggreg = aggregation;
-        }
-        if (!StringUtils.isNullOrEmpty(r_aggreg)) {
-            if (r_aggreg.equals(VALUE_TAG))
-                jRadioButtonTag.setSelected(true);
-            if (r_aggreg.equals(VALUE_MON))
-                jRadioButtonMonat.setSelected(true);
-            if (r_aggreg.equals(VALUE_JAHR))
-                jRadioButtonJahr.setSelected(true);
-        }
     }
 
 
@@ -427,14 +295,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jFileLabel;
     private javax.swing.JTextField jFileName;
     private InputComponent jIntervall;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JRadioButton jRadioButtonJahr;
-    private javax.swing.JRadioButton jRadioButtonMonat;
-    private javax.swing.JRadioButton jRadioButtonPrim;
-    private javax.swing.JRadioButton jRadioButtonSeku;
-    private javax.swing.JRadioButton jRadioButtonTag;
     private javax.swing.JComboBox jRegCombo;
     private javax.swing.JLabel jRegLabel;
     // End of variables declaration
