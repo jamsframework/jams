@@ -1158,6 +1158,7 @@ public class JAMSSpreadSheet extends JPanel {
             int[] columns = table.getSelectedColumns();
             if (columns.length == 0) {
                 System.out.println("no columns selected.");
+                GUIHelper.showErrorDlg(null, ERR_MSG_CTS, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
                 return;
             }
             String[] headers = getSelectedColumnNames();
@@ -1372,19 +1373,17 @@ public class JAMSSpreadSheet extends JPanel {
 //        GUIHelper.addGBComponent(controlpanel, gbl, loadbutton, 0, 11, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, statButton, 0, 12, 1, 1, 0, 0);
 
-        if (true || explorer.isTlugized()) {
+        // populate shape-combobox, if shape file is in input stores
+        String defaultShapeName = null;
 
-            // populate shape-combobox
-            String defaultShapeName = null;
+        String[] shapeStoreIDs = this.explorer.getWorkspace().
+                getDataStoreIDs(InputDataStore.TYPE_SHAPEFILEDATASTORE);
 
-            String[] shapeStoreIDs = this.explorer.getWorkspace().
-                    getDataStoreIDs(InputDataStore.TYPE_SHAPEFILEDATASTORE);
-
-            String[] shapeNames = shapeStoreIDs;
-
-            if (shapeNames != null && shapeNames.length > 0) {
-                defaultShapeName = shapeNames[0];
-            }
+        String[] shapeNames = shapeStoreIDs;
+        if (shapeNames != null && shapeNames.length > 0) {
+            defaultShapeName = shapeNames[0];
+        }
+        if (defaultShapeName != null) {
             DefaultComboBoxModel shapeSelectorModel = new DefaultComboBoxModel(shapeNames);
             shapeSelectorModel.setSelectedItem(defaultShapeName);
             shapeSelector.setModel(shapeSelectorModel);
