@@ -12,7 +12,6 @@
 package reg.wizard.tlug.panels;
 
 import java.util.Map;
-import javax.swing.JComboBox;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import org.h2.util.StringUtils;
@@ -62,25 +61,15 @@ public class RegMethodPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jComboRegVerfahren = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jNumberStations = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jUmkreis = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jGewichtung = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jSliderSchwellenwert = new javax.swing.JSlider();
         jSchwellenwert = new javax.swing.JTextField();
-
-        jComboRegVerfahren.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "IDW" }));
-        jComboRegVerfahren.setToolTipText("IDW .. Inverse distance weighting");
-        jComboRegVerfahren.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jComboRegVerfahrenItemStateChanged(evt);
-            }
-        });
+        jLabel3 = new javax.swing.JLabel();
 
         jLabel1.setText("Regionalisierungsverfahren");
 
@@ -89,14 +78,6 @@ public class RegMethodPanel extends javax.swing.JPanel {
         jNumberStations.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jNumberStationsFocusLost(evt);
-            }
-        });
-
-        jLabel3.setText("Umkreis");
-
-        jUmkreis.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jUmkreisFocusLost(evt);
             }
         });
 
@@ -127,6 +108,8 @@ public class RegMethodPanel extends javax.swing.JPanel {
             }
         });
 
+        jLabel3.setText("IDW");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -134,28 +117,25 @@ public class RegMethodPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jComboRegVerfahren, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel4)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5))
-                        .addGap(66, 66, 66)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-                                .addComponent(jSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jGewichtung)
-                                .addComponent(jUmkreis)
-                                .addComponent(jNumberStations, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)))))
-                .addContainerGap(162, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jLabel1)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel3))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(70, 70, 70)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jNumberStations, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jGewichtung, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)))))
+                        .addGap(18, 18, 18)
+                        .addComponent(jSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(162, 162, 162))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -163,34 +143,23 @@ public class RegMethodPanel extends javax.swing.JPanel {
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jComboRegVerfahren, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel3))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jNumberStations, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jUmkreis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jGewichtung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(70, Short.MAX_VALUE))
+                    .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(118, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jComboRegVerfahrenItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboRegVerfahrenItemStateChanged
-        r_regVerfahren = (String) ((JComboBox) evt.getSource()).getSelectedItem();
-        checkProblems();
-
-    }//GEN-LAST:event_jComboRegVerfahrenItemStateChanged
 
     private void jSliderSchwellenwertMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSliderSchwellenwertMouseReleased
         int schwellenwert = ((JSlider) evt.getSource()).getValue();
@@ -207,12 +176,6 @@ public class RegMethodPanel extends javax.swing.JPanel {
 
 
     }//GEN-LAST:event_jNumberStationsFocusLost
-
-    private void jUmkreisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jUmkreisFocusLost
-        r_umkreis = ((JTextField) evt.getSource()).getText();
-        checkProblems();
-
-    }//GEN-LAST:event_jUmkreisFocusLost
 
     private void jGewichtungFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jGewichtungFocusLost
         r_gewichtung = ((JTextField) evt.getSource()).getText();
@@ -287,10 +250,6 @@ public class RegMethodPanel extends javax.swing.JPanel {
         String regVerfahren = (String) wizardData.get(KEY_REG);
         if (!StringUtils.isNullOrEmpty(regVerfahren)) {
             r_regVerfahren = regVerfahren;
-            jComboRegVerfahren.setSelectedItem(r_regVerfahren);
-        }
-        if (!StringUtils.isNullOrEmpty(r_regVerfahren)) {
-            jComboRegVerfahren.setSelectedItem(r_regVerfahren);
         }
 
         String station = (String) wizardData.get(KEY_STATION);
@@ -304,9 +263,6 @@ public class RegMethodPanel extends javax.swing.JPanel {
         String umkreis = (String) wizardData.get(KEY_UMKREIS);
         if (!StringUtils.isNullOrEmpty(umkreis)) {
             r_umkreis = umkreis;
-        }
-        if (!StringUtils.isNullOrEmpty(r_umkreis)) {
-            jUmkreis.setText(r_umkreis);
         }
 
         String gewichtung = (String) wizardData.get(KEY_GEWICHTUNG);
@@ -340,7 +296,6 @@ public class RegMethodPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox jComboRegVerfahren;
     private javax.swing.JTextField jGewichtung;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -350,7 +305,6 @@ public class RegMethodPanel extends javax.swing.JPanel {
     private javax.swing.JTextField jNumberStations;
     private javax.swing.JTextField jSchwellenwert;
     private javax.swing.JSlider jSliderSchwellenwert;
-    private javax.swing.JTextField jUmkreis;
     // End of variables declaration//GEN-END:variables
 
 }

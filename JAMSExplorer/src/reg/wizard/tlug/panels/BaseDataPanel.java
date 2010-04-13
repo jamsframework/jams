@@ -78,8 +78,8 @@ public class BaseDataPanel extends javax.swing.JPanel {
      */
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
-        buttonGroup2 = new javax.swing.ButtonGroup();
+        //buttonGroup1 = new javax.swing.ButtonGroup();
+        //buttonGroup2 = new javax.swing.ButtonGroup();
         jFileLabel = new javax.swing.JLabel();
         jFileName = new javax.swing.JTextField();
         jFileButton = new javax.swing.JButton();
@@ -93,7 +93,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
         jRadioButtonJahr = new javax.swing.JRadioButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jIntervall = InputComponentFactory.createInputComponent(JAMSTimeInterval.class, true);
+        jIntervall = InputComponentFactory.createInputComponent(JAMSTimeInterval.class, false);
 
         jIntervall.addValueChangeListener(new ValueChangeListener() {
             @Override
@@ -133,6 +133,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
             }
         });
 
+/*
         jRadioButtonPrim.setText("gemessen");
         jRadioButtonPrim.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -171,7 +172,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
         });
 
         jLabel2.setText("Datenherkunft");
-
+*/
         jLabel3.setText("Zeitintervall");
 
 
@@ -184,27 +185,28 @@ public class BaseDataPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jFileLabel)
                     .addComponent(jRegLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+//                    .addComponent(jLabel2)
+//                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jRadioButtonTag)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jRadioButtonMonat)
-                        .addGap(18, 18, 18)
-                        .addComponent(jRadioButtonJahr))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jRadioButtonPrim)
-                        .addGap(18, 18, 18)
-                        .addComponent(jRadioButtonSeku))
+
+//                    .addGroup(layout.createSequentialGroup()
+//                        .addComponent(jRadioButtonTag)
+//                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+//                        .addComponent(jRadioButtonMonat)
+//                        .addGap(18, 18, 18)
+//                        .addComponent(jRadioButtonJahr))
+//                    .addGroup(layout.createSequentialGroup()
+//                        .addComponent(jRadioButtonPrim)
+//                        .addGap(18, 18, 18)
+//                        .addComponent(jRadioButtonSeku))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jFileName, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jFileButton))
                     .addComponent(jRegCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jIntervall.getComponent(), 400, 500, 600))
+                    .addComponent(jIntervall.getComponent(), 300, 300, 400))
                 .addContainerGap(50, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -216,11 +218,11 @@ public class BaseDataPanel extends javax.swing.JPanel {
                     .addComponent(jFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jFileButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButtonPrim)
-                    .addComponent(jRadioButtonSeku)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+//                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+//                    .addComponent(jRadioButtonPrim)
+//                    .addComponent(jRadioButtonSeku)
+//                    .addComponent(jLabel2))
+//                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jRegLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jRegCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -229,12 +231,12 @@ public class BaseDataPanel extends javax.swing.JPanel {
                     .addComponent(jLabel3)
                     .addComponent(jIntervall.getComponent(), 100, 150, 250))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jRadioButtonTag)
-                    .addComponent(jRadioButtonMonat)
-                    .addComponent(jRadioButtonJahr))
-                .addContainerGap(50, Short.MAX_VALUE))
+//                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+//                    .addComponent(jLabel1)
+//                    .addComponent(jRadioButtonTag)
+//                    .addComponent(jRadioButtonMonat)
+//                    .addComponent(jRadioButtonJahr))
+ .addContainerGap(50, Short.MAX_VALUE))
         );
     }
 
@@ -295,23 +297,23 @@ public class BaseDataPanel extends javax.swing.JPanel {
     private void setupComponents() {
 
         // group buttons
-        buttonGroup1.add(jRadioButtonPrim);
-        buttonGroup1.add(jRadioButtonSeku);
+        //buttonGroup1.add(jRadioButtonPrim);
+        //buttonGroup1.add(jRadioButtonSeku);
 
-        buttonGroup2.add(jRadioButtonTag);
-        buttonGroup2.add(jRadioButtonMonat);
-        buttonGroup2.add(jRadioButtonJahr);
+        //buttonGroup2.add(jRadioButtonTag);
+        //buttonGroup2.add(jRadioButtonMonat);
+        //buttonGroup2.add(jRadioButtonJahr);
 
-        jRadioButtonPrim.putClientProperty(KEY_DATA_ORIGIN, VALUE_PRIM);
-        jRadioButtonSeku.putClientProperty(KEY_DATA_ORIGIN, VALUE_SEK);
+        //jRadioButtonPrim.putClientProperty(KEY_DATA_ORIGIN, VALUE_PRIM);
+        //jRadioButtonSeku.putClientProperty(KEY_DATA_ORIGIN, VALUE_SEK);
 
-        jRadioButtonTag.putClientProperty(KEY_AGGR, VALUE_TAG);
-        jRadioButtonMonat.putClientProperty(KEY_AGGR, VALUE_MON);
-        jRadioButtonJahr.putClientProperty(KEY_AGGR, VALUE_JAHR);
+        //jRadioButtonTag.putClientProperty(KEY_AGGR, VALUE_TAG);
+        //jRadioButtonMonat.putClientProperty(KEY_AGGR, VALUE_MON);
+        //jRadioButtonJahr.putClientProperty(KEY_AGGR, VALUE_JAHR);
 
         // defaults
-        r_dataOrigin = VALUE_PRIM;
-        r_aggreg = VALUE_TAG;
+        //r_dataOrigin = VALUE_PRIM;
+        //r_aggreg = VALUE_TAG;
         r_interval = "1999-01-01 7:30 2010-12-31 7:30 6 1";
 
     }
@@ -333,13 +335,12 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
     private void checkProblems() {
 
-        if (StringTools.isEmptyString(r_shapeFileName))
+        if (StringTools.isEmptyString(r_shapeFileName)) {
             r_shapeFileName = "";
-        wizardData.put(KEY_SHAPE_FILENAME, r_shapeFileName);
-        if (StringUtils.isNullOrEmpty(r_dataOrigin)) {
-            controller.setProblem("Bitte Datenherkunft auswählen.");
+            controller.setProblem("Bitte Shape-File auswählen.");
         } else {
-            wizardData.put(KEY_DATA_ORIGIN, r_dataOrigin);
+            wizardData.put(KEY_SHAPE_FILENAME, r_shapeFileName);
+            //wizardData.put(KEY_DATA_ORIGIN, r_dataOrigin);
             if (StringUtils.isNullOrEmpty(r_region)) {
                 controller.setProblem("Bitte Regionalisierung festlegen.");
             } else {
@@ -353,12 +354,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
                     r_interval = jIntervall.getValue();
                     //System.out.println("r_interval:" + r_interval);
                     wizardData.put(KEY_INTERVAL, r_interval);
-                    if (StringUtils.isNullOrEmpty(r_aggreg)) {
-                        controller.setProblem("Bitte Aggregation bestimmen.");
-                    } else {
-                        wizardData.put(KEY_AGGR, r_aggreg);
-                        controller.setProblem(null);
-                    }
+                    controller.setProblem(null);
                 }
             }
         }
@@ -425,8 +421,8 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
 
     // Variables declaration
-    private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.ButtonGroup buttonGroup2;
+    //private javax.swing.ButtonGroup buttonGroup1;
+    //private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JButton jFileButton;
     private javax.swing.JLabel jFileLabel;
     private javax.swing.JTextField jFileName;
