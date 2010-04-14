@@ -64,6 +64,7 @@ import jamsui.juice.ModelProperties.Group;
 import jamsui.juice.ModelProperties.ModelElement;
 import jamsui.juice.ModelProperties.ModelProperty;
 import jamsui.juice.gui.tree.ModelTree;
+import java.util.ArrayList;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -489,7 +490,23 @@ public class ModelView {
     public void setDatastores(Element dataStoresNode) {
 
         //hier outputdsdescriptor objekte erzeugen!
+        String name = dataStoresNode.getAttribute("name");
+        ComponentDescriptor context = getComponentDescriptor(dataStoresNode.getAttribute("context"));
+        OutputDSDescriptor od = new OutputDSDescriptor(context);
+        od.setName(name);
 
+        // fill the contextAttributes
+        ArrayList<ContextAttribute> contextAttributes = od.getContextAttributes();
+        NodeList attributeNodes = dataStoresNode.getElementsByTagName("attribute");
+        for (int i = 0; i < attributeNodes.getLength(); i++) {
+
+            Element attributeElement = (Element) attributeNodes.item(i);
+            String attributeName = attributeElement.getAttribute("id");
+            //context.getDataRepository().getAttributeByTypeName(null, name)
+        }
+
+        // fill the filters
+        ArrayList<String> filters = od.getFilters();
     }
 
     public void setModelParameters(Element launcherNode) {
