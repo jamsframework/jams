@@ -12,7 +12,9 @@
 package reg.wizard.tlug.panels;
 
 import jams.JAMSFileFilter;
+import java.io.File;
 import java.util.Map;
+import javax.swing.JFileChooser;
 import org.h2.util.StringUtils;
 import org.netbeans.spi.wizard.WizardController;
 
@@ -24,10 +26,12 @@ public class AddCompsPanel extends javax.swing.JPanel {
 
     private final WizardController controller;
     private final Map wizardData;
+    private AddCompsPanel thisPanel;
 
     /** Creates new form CatHairLengthPanel */
     public AddCompsPanel(WizardController controller, Map wizardData) {
         initComponents();
+        thisPanel = this;
 
         this.controller = controller;
         this.wizardData = wizardData;
@@ -49,12 +53,20 @@ public class AddCompsPanel extends javax.swing.JPanel {
 
         jLabel1 = new javax.swing.JLabel();
         jConfigFile = new javax.swing.JTextField();
+        jFileButton = new javax.swing.JButton();
 
         jLabel1.setText("Konfiguration speichern unter");
 
         jConfigFile.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jConfigFileFocusLost(evt);
+            }
+        });
+
+        jFileButton.setText("Auswahl");
+        jFileButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jFileButtonActionPerformed(evt);
             }
         });
 
@@ -67,15 +79,18 @@ public class AddCompsPanel extends javax.swing.JPanel {
                 .addComponent(jLabel1)
                 .addGap(26, 26, 26)
                 .addComponent(jConfigFile, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(175, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jFileButton)
+                .addContainerGap(74, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(158, Short.MAX_VALUE)
+                .addContainerGap(155, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jConfigFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jConfigFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jFileButton))
                 .addGap(120, 120, 120))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -90,9 +105,31 @@ public class AddCompsPanel extends javax.swing.JPanel {
 
     }//GEN-LAST:event_jConfigFileFocusLost
 
+    private void jFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileButtonActionPerformed
+        // TODO add your handling code here:
+        String fileName = null;
+        int returnVal = -1;
+        JFileChooser chooser = new JFileChooser();
+        File currentDir = new File(".");
+        chooser.setCurrentDirectory(currentDir);
+        chooser.setFileFilter(JAMSFileFilter.getPropertyFilter());
+        try {
+            returnVal = chooser.showOpenDialog(thisPanel);
+            File file = chooser.getSelectedFile();
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                fileName = file.getPath();
+                jConfigFile.setText(fileName);
+            }
+
+        } catch (Exception fnfexc) {
+            fileName = null;
+        }
+    }//GEN-LAST:event_jFileButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField jConfigFile;
+    private javax.swing.JButton jFileButton;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 

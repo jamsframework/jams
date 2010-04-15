@@ -70,6 +70,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
         jSliderSchwellenwert = new javax.swing.JSlider();
         jSchwellenwert = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
 
         jLabel1.setText("Regionalisierungsverfahren");
 
@@ -91,6 +92,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
 
         jLabel5.setText("Schwellenwert r2");
 
+        jSliderSchwellenwert.setMaximum(99);
         jSliderSchwellenwert.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jSliderSchwellenwertMouseReleased(evt);
@@ -110,6 +112,8 @@ public class RegMethodPanel extends javax.swing.JPanel {
 
         jLabel3.setText("IDW");
 
+        jLabel6.setText("0,");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -122,10 +126,6 @@ public class RegMethodPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel3))
-                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addGap(70, 70, 70)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -133,9 +133,15 @@ public class RegMethodPanel extends javax.swing.JPanel {
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(jNumberStations, javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jGewichtung, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)))))
+                        .addGap(9, 9, 9)
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(jSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(162, 162, 162))
+                        .addComponent(jLabel3)))
+                .addGap(201, 201, 201))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -154,7 +160,9 @@ public class RegMethodPanel extends javax.swing.JPanel {
                     .addComponent(jGewichtung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel6))
                     .addComponent(jLabel5)
                     .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(118, Short.MAX_VALUE))
@@ -191,7 +199,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
         try {
             int sInt = Integer.parseInt(s);
             if (sInt> 100)
-                throw new NumberFormatException("Wert ist zu groß.");
+                throw new NumberFormatException("Wert ist zu groÃŸ.");
             r_schwellenwert = s;
             // System.out.println("jSchwellenwertFocusLost. r_schwellenwert:" + r_schwellenwert);
             jSliderSchwellenwert.setValue(sInt);
@@ -203,7 +211,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
 
     private void checkProblems() {
         if (StringUtils.isNullOrEmpty(r_regVerfahren)) {
-            controller.setProblem("Bitte Regionalisierungsverfahren auswählen.");
+            controller.setProblem("Bitte Regionalisierungsverfahren auswÃ¤hlen.");
         } else {
             wizardData.put(KEY_REG, r_regVerfahren);
             if (StringUtils.isNullOrEmpty(r_numberstations)) {
@@ -215,7 +223,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
                 } else {
                     wizardData.put(KEY_UMKREIS, r_umkreis);
                     if (StringUtils.isNullOrEmpty(r_gewichtung)) {
-                        controller.setProblem("Bitte Gewichtung auswählen.");
+                        controller.setProblem("Bitte Gewichtung auswÃ¤hlen.");
                     } else {
                         wizardData.put(KEY_GEWICHTUNG, r_gewichtung);
                         if (r_schwellenwert == null || Integer.parseInt(r_schwellenwert) == 0) {
@@ -233,6 +241,11 @@ public class RegMethodPanel extends javax.swing.JPanel {
     }
 
     private void setupComponents() {
+
+        // special labelText
+        String sup2 = "\u00B2";
+        String labelText5 = "Schwellenwert r" + sup2;
+        jLabel5.setText(labelText5);
 
         // defaults
         r_regVerfahren = "IDW";
@@ -302,6 +315,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JTextField jNumberStations;
     private javax.swing.JTextField jSchwellenwert;
     private javax.swing.JSlider jSliderSchwellenwert;
