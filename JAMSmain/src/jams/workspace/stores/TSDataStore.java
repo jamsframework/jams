@@ -29,6 +29,7 @@ import org.w3c.dom.Element;
 import jams.workspace.datatypes.CalendarValue;
 import jams.JAMS;
 import jams.data.Attribute;
+import jams.data.Attribute.Calendar;
 import jams.data.JAMSDataFactory;
 import jams.io.BufferedFileReader;
 import jams.workspace.datatypes.DoubleValue;
@@ -61,7 +62,7 @@ public class TSDataStore extends TableDataStore {
     protected String timeFormat;
 
     File file = null;
-    private BufferedFileReader dumpFileReader;
+    transient private BufferedFileReader dumpFileReader;
 
     private static final int DOUBLE = 0;
 
@@ -182,7 +183,7 @@ public class TSDataStore extends TableDataStore {
 
         } else {
 
-            File file = new File(ws.getLocalDumpDirectory(), id + ".dump");
+            file = new File(ws.getLocalDumpDirectory(), id + ".dump");
             if (!file.exists()) {
                 throw new IOException("Dump file " + file.getPath() + " not found!");
             }
@@ -417,41 +418,76 @@ public class TSDataStore extends TableDataStore {
     public String getTimeFormat() {
         return timeFormat;
     }
-    @Override
-    public void getState(java.io.ObjectOutputStream stream) throws IOException{           
-       super.getState(stream);
-       stream.writeObject(calendar);
-       stream.writeObject(currentDate);
-       stream.writeObject(startDate);
-       stream.writeObject(endDate);
-       stream.writeObject(stopDate);
-       stream.writeObject(type);
-       stream.writeObject(timeFormat);
-       stream.writeInt(timeUnit);
-       stream.writeInt(timeUnitCount);
-       
-       //serialize reader
-       if (file==null){
-           stream.writeObject(null);           
-       }else{
-           stream.writeObject(file.getAbsolutePath());
-           stream.writeLong(dumpFileReader.getPosition());
-       }
+    
+    static public class TSDataStoreState extends TableDataStoreState{
+        protected CalendarValue calendar;
+        protected Calendar currentDate;
+        protected Calendar startDate;
+        protected Calendar endDate;
+        protected Calendar stopDate;
+        protected int[] type;
+        protected String timeFormat;
+        protected int timeUnit;
+        protected int timeUnitCount;
+        protected String fileName;
+        protected long position;
+        
+        TSDataStoreState(){}
+        public void fill(TSDataStoreState state){
+            super.fill(state);
+            state.calendar = this.calendar;
+            state.currentDate = this.currentDate;
+            state.startDate = this.startDate;
+            state.endDate = this.endDate;
+            state.stopDate = this.stopDate;
+            state.type = this.type;
+            state.timeFormat = this.timeFormat;
+            state.timeUnit = this.timeUnit;
+            state.timeUnitCount = this.timeUnitCount;            
+            state.fileName = this.fileName;
+            state.position = this.position;           
+        }
+        
+        TSDataStoreState(TableDataStoreState state){
+            state.fill(this);
+        }
     }
     
     @Override
-    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
-        super.setState(stream);
-        calendar = (CalendarValue)stream.readObject();
-        currentDate = (jams.data.Attribute.Calendar)stream.readObject();
-        startDate = (jams.data.Attribute.Calendar)stream.readObject();
-        endDate = (jams.data.Attribute.Calendar)stream.readObject();
-        stopDate = (jams.data.Attribute.Calendar)stream.readObject();
-        type = (int[])stream.readObject();
-        timeFormat = (String)stream.readObject();
-        timeUnit = (int)stream.readInt();
-        timeUnitCount = (int)stream.readInt();        
+    public DataStoreState getState() {
+        TSDataStoreState state = new TSDataStoreState((TableDataStoreState) super.getState());
+        state.calendar = this.calendar;
+        state.currentDate = this.currentDate;
+        state.startDate = this.startDate;
+        state.endDate = this.endDate;
+        state.stopDate = this.stopDate;
+        state.type = this.type;
+        state.timeFormat = this.timeFormat;
+        state.timeUnit = this.timeUnit;
+        state.timeUnitCount = this.timeUnitCount;
+        if (file != null) {
+            state.fileName = file.getAbsolutePath();
+            state.position = dumpFileReader.getPosition();
+        }
+        return state;
+    }
+    
+    @Override
+    public void setState(DataStoreState state) throws IOException{
+        TSDataStoreState tsDataStore = (TSDataStoreState)state;
+        super.setState(tsDataStore);
         
+        calendar = tsDataStore.calendar;
+        currentDate = tsDataStore.currentDate;
+        startDate = tsDataStore.startDate;
+        endDate = tsDataStore.endDate;
+        stopDate = tsDataStore.stopDate;
+        type = tsDataStore.type;
+        timeFormat = tsDataStore.timeFormat;
+        timeUnit = tsDataStore.timeUnit;
+        timeUnitCount = tsDataStore.timeUnitCount;
+        
+        String fileName = (String)tsDataStore.fileName;
         //deserialize reader
         if (this.dumpFileReader != null){
            try{
@@ -459,19 +495,12 @@ public class TSDataStore extends TableDataStore {
                dumpFileReader = null;
            }catch(Exception e){}
         }
-        
-        String fileName = (String)stream.readObject();
-        if (fileName == null){            
-            file = null;
-            return;
-        }
-                    
-        file = new File(fileName);
-                   
-        this.dumpFileReader = new BufferedFileReader(new FileInputStream(file));
-        long offset = stream.readLong();
-        
-        this.dumpFileReader.setPosition(offset);       
+                
+        if (fileName != null){            
+            file = new File(fileName);                   
+            this.dumpFileReader = new BufferedFileReader(new FileInputStream(file));                
+            this.dumpFileReader.setPosition(tsDataStore.position);                
+        }            
     }
     
     public Set<DataReader> getDataIOs(){

@@ -33,6 +33,7 @@ import jams.data.JAMSData;
 import jams.model.Component;
 import jams.model.GUIComponent;
 import jams.model.JAMSModel;
+import jams.model.SmallModelState;
 import jams.tools.StringTools;
 import org.w3c.dom.Document;
 
@@ -138,6 +139,15 @@ public class MiniRuntime implements JAMSRuntime {
         return new HashMap<String, JAMSData>();
     }
 
+    @Override
+    public void pause() {
+        sendHalt("pause is not supported by mini runtime!");
+    }
+    @Override
+    public void resume(SmallModelState state) {
+        sendHalt("resume is not supported by mini runtime!");
+    }
+    
     @Override
     public void sendHalt() {
         System.exit(0);

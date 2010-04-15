@@ -42,10 +42,6 @@ import jams.dataaccess.CalendarAccessor;
 import jams.io.datatracer.AbstractTracer;
 import jams.runtime.JAMSRuntime;
 import jams.workspace.stores.Filter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 @JAMSComponentDescription (title = "JAMS Context",
                            author = "Sven Kralisch",
@@ -72,9 +68,10 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     private HashMap<String, JAMSData> attributeMap;
 
-    transient protected DataTracer[] dataTracers;
+    protected DataTracer[] dataTracers;
 
     protected boolean doRun = true;
+    protected boolean isPaused = false;
 
     /**
      * Creates a new context
@@ -204,16 +201,18 @@ public class JAMSContext extends JAMSComponent implements Context {
      * @param model The model object
      */
     @Override
-    public void setModel(Model model) {
-        super.setModel(model);
+    public void setModel(Model model) {        
+        super.setModel(model);        
         JAMSRuntime rt = getModel().getRuntime();
+        
         rt.addStateObserver(new Observer() {
 
             @Override
             public void update(Observable obs, Object obj) {
                 if (getModel().getRuntime().getState() != JAMSRuntime.STATE_RUN) {
                     JAMSContext.this.doRun = false;
-                }
+                }else
+                    JAMSContext.this.doRun = true;
             }
         });
     }
@@ -639,13 +638,10 @@ public class JAMSContext extends JAMSComponent implements Context {
     }
 
     protected void initEntityData() {
-
         //in case the components want to write access the objects, trace the entity objects attributes
         for (int i = 0; i < dataAccessors.length; i++) {
             if (dataAccessors[i].getAccessType() == DataAccessor.WRITE_ACCESS) {
-
                 dataAccessors[i].initEntityData();
-
             }
         }
     }
@@ -681,7 +677,48 @@ public class JAMSContext extends JAMSComponent implements Context {
             dataTracer.endMark();
         }
     }
+    
+    @Override
+    public void resume() {
+        for (int i=0;i<this.getCompArray().length;i++)
+            try{
+                this.getCompArray()[i].restore();
+            }catch (Exception e) {
+                getModel().getRuntime().handle(e, this.getCompArray()[i].getInstanceName());
+            }
+        
+        if (runEnumerator == null) {
+            runEnumerator = getRunEnumerator();
+        }
+        if (runEnumerator.hasPrevious()) {
+            Component comp = runEnumerator.previous();
+            try {
+                if (comp instanceof JAMSContext)
+                    ((Context)comp).resume();
+            } catch (Exception e) {
+                getModel().getRuntime().handle(e, comp.getInstanceName());
+            }
+            runEnumerator.next();
+        }        
+        while (runEnumerator.hasNext() && doRun) {
+            Component comp = runEnumerator.next();
+            try {
+                comp.run();
+            } catch (Exception e) {
+                getModel().getRuntime().handle(e, comp.getInstanceName());
+            }
+        }
 
+        updateEntityData();
+
+        if (!this.isPaused)
+            for (DataTracer dataTracer : dataTracers) {            
+                dataTracer.trace();
+                if (!isPaused)
+                    dataTracer.endMark();
+            }
+    }
+    
     @Override
     public void cleanup() {
 
@@ -702,7 +739,6 @@ public class JAMSContext extends JAMSComponent implements Context {
 
         ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
         list.add((JAMSEntity) JAMSDataFactory.createEntity());
-
     }
 
     public HashMap<String, DataAccessor> getDataAccessorMap() {
@@ -726,7 +762,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     public void setAccessSpecs(ArrayList<AttributeAccess> accessSpecs) {
         this.attributeAccessList = accessSpecs;
     }
-
+        
     class ChildrenEnumerator implements ComponentEnumerator {
 
         Component[] compArray = getCompArray();
@@ -737,50 +773,24 @@ public class JAMSContext extends JAMSComponent implements Context {
         public boolean hasNext() {
             return (index < compArray.length);
         }
-
+        public boolean hasPrevious() {
+            return (index > 0);
+        }       
         @Override
         public Component next() {
             return compArray[index++];
+        }
+        @Override
+        public Component previous() {
+            return compArray[--index];
         }
 
         @Override
         public void reset() {
             index = 0;
-        }
-
-        @Override
-        public byte[] getState() {
-            byte[] state = new byte[4];
-
-            for (int i=0;i<4;i++)
-                state[i] = (byte)((index << 8*i) & 0x000000ff);
-            
-            /*
-            state[0] = (byte)((index & 0x000000ff)>>0);
-            state[1] = (byte)((index & 0x0000ff00)>>8);
-            state[2] = (byte)((index & 0x00ff0000)>>16);
-            state[3] = (byte)((index & 0xff000000)>>24);*/
-            
-            return state;
-        }
-
-        @Override
-        public void setState(byte[] state) {
-            compArray = getCompArray();
-            index = (state[0] << 0) | (state[1] << 8) | (state[2] << 16) | (state[3] << 24);
-        }
+        }             
     }
-
-    public static class IteratorState implements Serializable {
-
-        byte subState1[];
-
-        byte subState2[];
-
-        int state;
-
-    };
-
+    
     class RunEnumerator implements ComponentEnumerator {
 
         ComponentEnumerator ce = getChildrenEnumerator();
@@ -794,6 +804,12 @@ public class JAMSContext extends JAMSComponent implements Context {
             boolean nextComp = ce.hasNext();
             boolean nextEntity = ee.hasNext();
             return (nextEntity || nextComp);
+        }
+        @Override
+        public boolean hasPrevious() {
+            boolean prevComp = ce.hasPrevious();
+            boolean prevEntity = ee.hasPrevious();
+            return (prevComp || prevEntity);
         }
 
         @Override
@@ -820,74 +836,22 @@ public class JAMSContext extends JAMSComponent implements Context {
             updateComponentData(index);
         }
 
-        @Override
-        public byte[] getState() {
-            IteratorState state = new IteratorState();
-            state.subState1 = ce.getState();
-            state.subState2 = ee.getState();
-
-            state.state = index;
-
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            byte[] result = null;
-            try {
-                ObjectOutputStream objOut = new ObjectOutputStream(outStream);
-                objOut.writeObject(state);
-
-                result = outStream.toByteArray();
-
-                objOut.close();
-                outStream.close();
-            } catch (Exception e) {
-                getModel().getRuntime().println("could not save model state, because:" + e);
+        public Component previous(){
+            if (ce.hasPrevious())
+                return ce.previous();
+            else if (ee.hasPrevious()){
+                ee.previous();
+                index--;
+                updateComponentData(index);
+                while(ce.hasNext())
+                    ce.next();
+                return ce.previous();
             }
-
-            return result;
+            return null;
         }
-
-        @Override
-        public void setState(byte[] state) {
-
-            ce = getChildrenEnumerator();
-            ee = getEntities().getEntityEnumerator();
-
-            ByteArrayInputStream inStream = new ByteArrayInputStream(state);
-            try {
-                ObjectInputStream objIn = new ObjectInputStream(inStream);
-                inStream.close();
-
-                IteratorState myState = (IteratorState) objIn.readObject();
-
-                objIn.close();
-
-                ce.setState(myState.subState1);
-                ee.setState(myState.subState2);
-
-                index = myState.state;
-            } catch (Exception e) {
-            }
-        }
+                       
     }
-
-    public byte[] getIteratorState() {
-        if (this.runEnumerator != null) {
-            return this.runEnumerator.getState();
-        }
-        return null;
-    }
-
-    public void setIteratorState(byte[] state) {
-        if (state == null) {
-            this.runEnumerator = null;
-        } else {
-            if (this.runEnumerator == null) {
-                this.runEnumerator = getRunEnumerator();
-            }
-
-            this.runEnumerator.setState(state);
-        }
-    }
-
+    
     public Component getComponent(String name) {
         for (int i = 0; i < components.size(); i++) {
             if (components.get(i).getInstanceName().equals(name)) {

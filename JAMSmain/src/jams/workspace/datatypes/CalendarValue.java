@@ -40,11 +40,13 @@ public class CalendarValue implements DataValue {
     }
 
     public double getDouble() {
-        return (double) value.getTimeInMillis();
+        // div by 1000, because other components expect a timestamp based on seconds
+        return (double) value.getTimeInMillis()/1000;
     }
 
     public long getLong() {
-        return  value.getTimeInMillis();
+        // div by 1000, because other components expect a timestamp based on seconds
+        return  value.getTimeInMillis()/1000;
     }
 
     public String getString() {

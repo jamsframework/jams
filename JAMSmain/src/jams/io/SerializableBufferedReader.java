@@ -23,11 +23,12 @@
 
 package jams.io;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.Reader;
 import jams.JAMS;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.RandomAccessFile;
 
 /**
  *
@@ -35,10 +36,10 @@ import jams.JAMS;
  */
 public class SerializableBufferedReader implements Serializable {
 
-    transient private BufferedReader reader = null;
+    transient private RandomAccessFile reader = null;
 
-    public SerializableBufferedReader(Reader s) {
-        reader = new BufferedReader(s);
+    public SerializableBufferedReader(File s) throws FileNotFoundException {
+        reader = new RandomAccessFile(s,"r");        
     }
 
     public void close() throws IOException {
@@ -48,9 +49,12 @@ public class SerializableBufferedReader implements Serializable {
     }
     
     public void read(char[] cbuf, int off, int len) throws IOException {
-        if (reader != null) {
-            reader.read(cbuf, off, len);
+        byte[] array = new byte[cbuf.length];
+        if (reader != null) {            
+            reader.read(array, off, len);
         }
+        for (int i=0;i<cbuf.length;i++)
+            cbuf[i] = (char)array[i];
     }
 
     public int read() throws IOException {

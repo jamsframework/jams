@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
 import jams.JAMS;
+import jams.model.SmallModelState;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSRuntime;
 import jams.tools.FileTools;
@@ -54,6 +55,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import org.w3c.dom.Element;
@@ -71,13 +73,12 @@ public class JAMSWorkspace implements Workspace {
     private HashMap<String, ArrayList<String>> contextStores = new HashMap<String, ArrayList<String>>();
     private JAMSRuntime runtime;
     private transient ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-    private transient File directory, inputDirectory, outputDirectory = null, outputDataDirectory, localInputDirectory, localDumpDirectory, tmpDirectory, explorerDirectory;
+    private File directory, inputDirectory, outputDirectory = null, outputDataDirectory, localInputDirectory, localDumpDirectory, tmpDirectory, explorerDirectory;
     private Properties properties = new Properties();
     private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
-    private ArrayList<InputDataStore> registeredStores = null;
     private boolean readonly;
-
-    public JAMSWorkspace(File directory, JAMSRuntime runtime) {
+    
+    public JAMSWorkspace(File directory, JAMSRuntime runtime){
         this(directory, runtime, false);
     }
 
@@ -88,7 +89,7 @@ public class JAMSWorkspace implements Workspace {
             this.classLoader = runtime.getClassLoader();
         }
         this.directory = directory;
-        this.registeredStores = new ArrayList<InputDataStore>();
+        this.currentStores = new ArrayList<DataStore>();
         this.readonly = readonly;
     }
 
@@ -137,6 +138,26 @@ public class JAMSWorkspace implements Workspace {
         }
     }
 
+    /*restores all datastores from a saved execution state*/
+    public void restore(SmallModelState state){
+        Iterator<DataStore> iter = this.getRegisteredDataStores().iterator();
+        while(iter.hasNext()){
+            try{
+                state.recoverDataStoreState(iter.next());
+            }catch(IOException e){
+                this.getRuntime().sendHalt(JAMS.resources.getString("error_occured_while_restoring_model_state") + ":" + e.toString());
+                e.printStackTrace();
+            }
+        }
+    }
+    /*restores all datastores from a saved execution state*/
+    public void saveState(SmallModelState state){
+        Iterator<DataStore> iter = this.getRegisteredDataStores().iterator();
+        while(iter.hasNext()){
+            state.saveDataStoreState(iter.next());
+        }
+    } 
+    
     /**
      * Checks if this workspace is valid
      * @param readonly If readonly is false, the workspace can be fixed (e.g.
@@ -348,12 +369,12 @@ public class JAMSWorkspace implements Workspace {
             getRuntime().handle(use);
             return null;
         }
-        registeredStores.add(store);
+        currentStores.add(store);
         return store;
     }
-
-    public ArrayList<InputDataStore> getRegisteredInputDataStores() {
-        return registeredStores;
+    
+    public ArrayList<DataStore> getRegisteredDataStores(){
+        return currentStores;
     }
 
     /**
@@ -373,6 +394,15 @@ public class JAMSWorkspace implements Workspace {
         return null;
     }
 
+    private DataStore getDataStoreByID(String storeID) {
+        for (int j = 0; j < currentStores.size(); j++) {
+            if (currentStores.get(j).getID().equals(storeID)) {
+                return currentStores.get(j);
+            }
+        }
+        return null;
+    }
+    
     /**
      *
      * @param contextName The instance name of a context component
@@ -389,6 +419,11 @@ public class JAMSWorkspace implements Workspace {
         ArrayList<OutputDataStore> result = new ArrayList<OutputDataStore>();
 
         for (String storeID : stores) {
+            OutputDataStore listedStore = (OutputDataStore)getDataStoreByID(storeID);
+            if (listedStore!=null){
+                result.add(listedStore);                
+                continue;
+            }
             Document doc = outputDataStores.get(storeID);
 
             Element elem = (Element) doc.getElementsByTagName("plugin").item(0);
@@ -399,7 +434,7 @@ public class JAMSWorkspace implements Workspace {
             OutputDataStore store = null;
             if (!StringTools.isEmptyString(className)) {
                 try {
-                    ClassLoader loader = getClassLoader();
+                    ClassLoader loader = this.runtime.getClassLoader();
                     Class<?> clazz = loader.loadClass(className);
                     OutputDataStore io = (OutputDataStore) clazz.newInstance();
 
@@ -434,23 +469,20 @@ public class JAMSWorkspace implements Workspace {
             } else {
                 store = new DefaultOutputDataStore(this, doc, storeID);
             }
-
             if (store.isValid()) {
                 currentStores.add(store);
                 result.add(store);
-            }
-
-        }
-
+            }         
+        }        
         return result.toArray(new OutputDataStore[result.size()]);
     }
-
+    
     /**
      * Closes the workspace, i.e. closes all datastores
      */
     public void close() {
         for (DataStore store : currentStores) {
-            try {
+            try {                
                 store.close();
             } catch (IOException ioe) {
                 runtime.handle(ioe);

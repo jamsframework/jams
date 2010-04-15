@@ -38,6 +38,7 @@ import jams.workspace.datatypes.StringValue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -49,7 +50,7 @@ import org.w3c.dom.Node;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class J2KTSDataStore extends TSDataStore {
+public class J2KTSDataStore extends TSDataStore{
 
     public static final String TAGNAME_DATAEND = "dataEnd";
 
@@ -72,7 +73,7 @@ public class J2KTSDataStore extends TSDataStore {
     private int columnCount = 0;
     //private RandomAccessFile j2kTSFileReader;
 
-    private BufferedFileReader j2kTSFileReader;
+    transient private BufferedFileReader j2kTSFileReader;
 
     private File sourceFile;
 
@@ -332,25 +333,49 @@ public class J2KTSDataStore extends TSDataStore {
         }
     }
 
-    @Override
-    public void getState(java.io.ObjectOutputStream stream) throws IOException {
-        super.getState(stream);
-        stream.writeObject(this.cache);
-        stream.writeBoolean(this.parseDate);
-        stream.writeInt(this.columnCount);
-        //serialize reader
-        stream.writeObject(this.sourceFile.getAbsolutePath());
-        stream.writeLong(this.j2kTSFileReader.getPosition());
+    static public class J2KTSDataStoreState extends TSDataStoreState{
+        String cache;
+        boolean parseDate;
+        int columnCount;
+        String sourceFilePath;
+        long tsPosition;
+        
+        protected void fill(J2KTSDataStoreState state){
+            state.cache = cache;
+            state.parseDate = parseDate;
+            state.columnCount = columnCount;
+            state.sourceFilePath = sourceFilePath;
+            state.tsPosition= tsPosition;
+        }
+        
+        public J2KTSDataStoreState(TSDataStoreState store){
+            store.fill(J2KTSDataStoreState.this);            
+        }
     }
-
+    
     @Override
-    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        super.setState(stream);
-        this.cache = (String) stream.readObject();
-        this.parseDate = stream.readBoolean();
-        this.columnCount = stream.readInt();
-
-        this.sourceFile = new File((String) stream.readObject());
+    public DataStoreState getState(){
+        TSDataStoreState superState = ((TSDataStoreState)super.getState());
+        
+        J2KTSDataStoreState state = new J2KTSDataStoreState(superState);        
+        state.cache = cache;
+        state.parseDate = this.parseDate;
+        state.columnCount = this.columnCount;
+        state.sourceFilePath = this.sourceFile.getPath();
+        state.tsPosition = this.j2kTSFileReader.getPosition();        
+        
+        return state;
+    }
+        
+    @Override
+    public void setState(DataStoreState state) throws IOException {
+        J2KTSDataStoreState j2kState = (J2KTSDataStoreState)state;
+        super.setState(j2kState);
+        this.cache = j2kState.cache;
+        this.parseDate = j2kState.parseDate;
+        this.columnCount = j2kState.columnCount;
+        
+        this.sourceFile = new File((String) j2kState.sourceFilePath);
         if (j2kTSFileReader != null) {
             try {
                 j2kTSFileReader.close();
@@ -358,7 +383,7 @@ public class J2KTSDataStore extends TSDataStore {
             }
         }
         this.j2kTSFileReader = new BufferedFileReader(new FileInputStream(sourceFile));
-        long offset = stream.readLong();
+        long offset = j2kState.tsPosition;
         j2kTSFileReader.setPosition(offset);
     }
 }

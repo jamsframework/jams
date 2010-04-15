@@ -30,7 +30,7 @@ import java.util.*;
  *
  * @author S. Kralisch
  */
-public class JAMSProperties extends Observable implements SystemProperties {
+public class JAMSProperties extends Observable implements SystemProperties, Serializable {
 
     private Properties properties = new Properties();
     private String defaultFilename = "";

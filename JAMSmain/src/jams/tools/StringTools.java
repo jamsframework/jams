@@ -157,6 +157,9 @@ public class StringTools {
         return result;
     }
 
+    public static String translate(String name){
+        return jams.JAMS.resources.getString(name);
+    }
     public static String getGetterName(String attribName) {
         return "set" + attribName.substring(0, 1).toUpperCase(STANDARD_LOCALE) + attribName.substring(1);
     }

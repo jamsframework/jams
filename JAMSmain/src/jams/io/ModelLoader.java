@@ -46,7 +46,7 @@ public class ModelLoader {
 
     private HashMap<String, Component> componentRepository = new HashMap<String, Component>();
     private HashMap<String, String> constants = new HashMap<String, String>();
-    private ClassLoader loader;
+    transient private ClassLoader loader;
     private Model jamsModel;
     transient private HashMap<Component, ArrayList<Field>> nullFields = new HashMap<Component, ArrayList<Field>>();
     private HashMap<String, Integer> idMap = new HashMap<String, Integer>();

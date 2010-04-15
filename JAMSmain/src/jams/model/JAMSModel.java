@@ -29,16 +29,12 @@ import jams.data.SnapshotData;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.OutputDataStore;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import jams.runtime.JAMSRuntime;
-import jams.tools.SnapshotTools.JAMSSnapshotData;
 import jams.tools.StringTools;
 import jams.workspace.InvalidWorkspaceException;
-import jams.workspace.stores.InputDataStore;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  *
@@ -130,7 +126,7 @@ public class JAMSModel extends JAMSContext implements Model {
         setupDataTracer();
     }
 
-    private boolean moveWorkspaceDirectory(String workspaceDirectory) {
+    public boolean moveWorkspaceDirectory(String workspaceDirectory) {
         setWorkspacePath(workspaceDirectory);
         // create output dir
         try {
@@ -186,59 +182,5 @@ public class JAMSModel extends JAMSContext implements Model {
 
     public void setNullFields(HashMap<Component, ArrayList<Field>> nullFields) {
         this.nullFields = nullFields;
-    }
-
-    //serialization and deserialization of all registered input data stores
-    public void serializeInputDataStores(SnapshotData snapshot) throws IOException {
-        Iterator<InputDataStore> iter = this.workspace.getRegisteredInputDataStores().iterator();
-        while (iter.hasNext()) {
-            snapshot.addDataStoreState(iter.next());
-        }
-    }
-
-    public void deserializeInputDataStores(SnapshotData snapshot) throws Exception, IOException, ClassNotFoundException {
-        Iterator<InputDataStore> iter = this.workspace.getRegisteredInputDataStores().iterator();
-        while (iter.hasNext()) {
-            snapshot.getDataStoreState(iter.next());
-        }
-    }
-
-    public Snapshot getModelState(boolean holdInMemory, String fileName) {
-        /*
-        1. collect all attributes of this model and save them as context state
-        2. collect all states of input data stores
-        3. convert collected data to JAMSSnapshot
-         */
-        JAMSSnapshot snapshot = null;
-        JAMSSnapshotData snapshotData = new JAMSSnapshotData();
-
-        try {
-            snapshotData.addContextState(this.getModel());
-            serializeInputDataStores(snapshotData);
-            snapshot = new JAMSSnapshot(holdInMemory, snapshotData, fileName);
-        } catch (Exception e) {
-            this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_save_model_state_because,") + e.toString());
-            e.printStackTrace();
-        }
-
-        return snapshot;
-    }
-
-    public void setModelState(Snapshot inData) {
-        setModelState(inData, false);
-    }
-
-    @SuppressWarnings("unchecked")
-    public void setModelState(Snapshot inData, boolean restoreIterator) {
-        SnapshotData snapshotData = inData.getData();
-
-        //resote input data stores
-        try {//restore all attributes
-            snapshotData.getContextState(this.getModel(), restoreIterator);
-            deserializeInputDataStores(snapshotData);
-        } catch (Exception e) {
-            this.getRuntime().sendErrorMsg(JAMS.resources.getString("Unable_to_deserialize_jamsentity_collection,_because") + e.toString());
-            e.printStackTrace();
-        }
-    }
+    }                 
 }

@@ -23,12 +23,13 @@
 package jams.io.datatracer;
 
 import jams.dataaccess.DataAccessor;
+import java.io.Serializable;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public interface DataTracer {
+public interface DataTracer extends Serializable{
 
     public DataAccessor[] getAccessorObjects();
     public void updateDataAccessors();

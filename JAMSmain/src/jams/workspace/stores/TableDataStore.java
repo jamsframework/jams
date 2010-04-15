@@ -30,7 +30,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import jams.workspace.DataReader;
+import jams.workspace.DataReader.DataReaderState;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -185,43 +187,68 @@ public class TableDataStore extends StandardInputDataStore {
         }
     }
     
-    public void getState(java.io.ObjectOutputStream stream) throws IOException{
-        stream.writeInt(this.accessMode);
-        stream.writeInt(this.bufferSize);        
-        stream.writeObject(this.description);
-        stream.writeObject(this.id);
-        stream.writeObject(this.missingDataValue);
-        stream.writeObject(this.positionArray);
-
-        //workspace serialisieren??!
+    static public class TableDataStoreState extends DataStoreState{
+        protected int accessMode;
+        protected int bufferSize;
+        protected String description;
+        protected String id;
+        protected String missingDataValue;
+        protected int[] positionArray;
+        protected int currentPosition;
+        protected int maxPosition;
         
-        stream.writeInt(currentPosition);
-        stream.writeInt(maxPosition);
-        //stream.writeObject(dataIOArray);     
-        //überarbeiten .. 
+        protected HashMap<String,DataReaderState> readerStates;
+        
+        protected void fill(TableDataStoreState state){
+            state.accessMode = this.accessMode;
+            state.bufferSize = this.bufferSize;
+            state.description = this.description;
+            state.id = this.id;
+            state.missingDataValue = this.missingDataValue;
+            state.positionArray = this.positionArray;
+            state.currentPosition = this.currentPosition;
+            state.maxPosition = this.maxPosition;
+            state.readerStates = readerStates;
+        }
+    }    
+    
+    public DataStoreState getState(){
+        TableDataStoreState state = new TableDataStoreState();
+        state.accessMode = this.accessMode;
+        state.bufferSize = this.bufferSize;
+        state.description = this.description;
+        state.id = this.id;
+        state.missingDataValue = this.missingDataValue;
+        state.positionArray = this.positionArray;
+        state.currentPosition = this.currentPosition;
+        state.maxPosition = this.maxPosition;
+                
         if (dataIO!=null){
             Iterator<String> iter = dataIO.keySet().iterator();
-            while(iter.hasNext()){                                
-                dataIO.get(iter.next()).getState(stream);
+            while(iter.hasNext()){  
+                String key = iter.next();
+                state.readerStates.put(key,dataIO.get(key).getState());                
             }            
         }
+        return state;
     }
-    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
-        this.accessMode = stream.readInt();
-        this.bufferSize = stream.readInt();
-        this.description = (String)stream.readObject();
-        this.id = (String)stream.readObject();
-        this.missingDataValue = (String)stream.readObject();
-        this.positionArray = (int[])stream.readObject();       
+    public void setState(DataStoreState state) throws IOException{
+        TableDataStoreState tableState = (TableDataStoreState)state;
+        this.accessMode = tableState.accessMode;
+        this.bufferSize = tableState.bufferSize;
+        this.description = tableState.description;
+        this.id = tableState.id;
+        this.missingDataValue = tableState.missingDataValue;
+        this.positionArray = tableState.positionArray;
         //workspace deserialisieren??!
-        currentPosition = stream.readInt();
-        maxPosition = stream.readInt();
-        
-        
-        if (dataIO!=null){
+        currentPosition = tableState.currentPosition;
+        maxPosition = tableState.maxPosition;
+                
+        if (dataIO!=null){            
             Iterator<String> iter = dataIO.keySet().iterator();
-            while(iter.hasNext()){                                
-                dataIO.get(iter.next()).setState(stream);
+            while(iter.hasNext()){   
+                String key = iter.next();
+                dataIO.get(key).setState(tableState.readerStates.get(key));
             }            
         }
     }        

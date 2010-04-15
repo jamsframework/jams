@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
 
@@ -51,9 +52,9 @@ import java.nio.channels.FileChannel;
  * @author	Mark Reinhold
  * @since	JDK1.1
  */
-public class BufferedFileReader extends Reader {
+public class BufferedFileReader extends Reader implements Serializable{
 
-    private Reader in;
+    transient private Reader in;
 
     private char cb[];
 
@@ -80,7 +81,7 @@ public class BufferedFileReader extends Reader {
 
     private long position = 0;
 
-    private FileChannel inChannel;
+    transient private FileChannel inChannel;
 
     private int newLineCharsNumber = 1;
 
@@ -466,6 +467,7 @@ public class BufferedFileReader extends Reader {
      * @exception  IllegalArgumentException  If <code>n</code> is negative.
      * @exception  IOException  If an I/O error occurs
      */
+    @Override
     public long skip(long n) throws IOException {
         if (n < 0L) {
             throw new IllegalArgumentException("skip value is negative");
@@ -507,6 +509,7 @@ public class BufferedFileReader extends Reader {
      *
      * @exception  IOException  If an I/O error occurs
      */
+    @Override
     public boolean ready() throws IOException {
         synchronized (lock) {
             ensureOpen();
@@ -536,6 +539,7 @@ public class BufferedFileReader extends Reader {
     /**
      * Tells whether this stream supports the mark() operation, which it does.
      */
+    @Override
     public boolean markSupported() {
         return true;
     }
@@ -574,6 +578,7 @@ public class BufferedFileReader extends Reader {
      * @exception  IOException  If the stream has never been marked,
      *                          or if the mark has been invalidated
      */
+    @Override
     public void reset() throws IOException {
         synchronized (lock) {
             ensureOpen();

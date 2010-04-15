@@ -22,16 +22,16 @@
  */
 package jams.workspace.stores;
 
-import jams.io.SerializableBufferedWriter;
+import jams.io.BufferedFileWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import jams.workspace.JAMSWorkspace;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import jams.model.Context;
+import java.io.FileOutputStream;
 
 /**
  *
@@ -47,13 +47,14 @@ public class DefaultOutputDataStore implements OutputDataStore {
     private String id;
     private String[] attributes;
     private DefaultFilter[] filters;
-    private SerializableBufferedWriter writer;
+    transient private BufferedFileWriter writer;
     private JAMSWorkspace ws;
     private int columnsPerLine;
     private int columnCounter;
     private boolean firstRow;
     private File outputFile;
-
+    private String fileName;
+    
     public DefaultOutputDataStore(JAMSWorkspace ws, Document doc, String id) {
 
         this.id = id;
@@ -96,8 +97,12 @@ public class DefaultOutputDataStore implements OutputDataStore {
         return attributes;
     }
 
-    public void open() throws IOException {
-        writer = new SerializableBufferedWriter(new FileWriter(outputFile));
+    public void open(boolean append) throws IOException {
+        File outputDirectory = ws.getOutputDataDirectory();
+        outputDirectory.mkdirs();
+
+        outputFile = new File(outputDirectory.getPath() + File.separator + id + JAMSWorkspace.OUTPUT_FILE_ENDING);
+        writer = new BufferedFileWriter(new FileOutputStream(outputFile,append));
     }
 
     public void write(Object o) throws IOException {
@@ -134,7 +139,29 @@ public class DefaultOutputDataStore implements OutputDataStore {
             writer.close();
         }
     }
-
+        
+    static public class DefaultOutputDataStoreState extends DataStoreState{
+        long position;
+        String fileName;
+    }
+    
+    public DataStoreState getState(){
+        DefaultOutputDataStoreState state = new DefaultOutputDataStoreState();
+        state.position = writer.getPosition();
+        state.fileName = this.fileName;
+        return state;
+    }
+            
+    public void setState(DataStoreState state) throws IOException{
+        DefaultOutputDataStoreState outputState = (DefaultOutputDataStoreState)state;        
+         
+        if (this.writer!=null)
+            writer.close();
+        this.open(true);                
+        writer.setPosition(outputState.position);                
+        
+    }
+                    
     public DefaultFilter[] getFilters() {
         return filters;
     }

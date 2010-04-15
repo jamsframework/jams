@@ -34,12 +34,13 @@ import org.w3c.dom.NodeList;
 import jams.workspace.DataReader;
 import jams.JAMS;
 import jams.tools.StringTools;
+import java.io.Serializable;
 
 /**
  *
  * @author Sven Kralisch
  */
-public abstract class StandardInputDataStore implements InputDataStore {
+public abstract class StandardInputDataStore implements InputDataStore, Serializable {
 
     protected HashMap<String, DataReader> dataIO = new HashMap<String, DataReader>();
 

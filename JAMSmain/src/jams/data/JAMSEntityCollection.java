@@ -43,7 +43,7 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     public Attribute.Entity[] getEntityArray() {
         return this.entityArray;
     }
-
+       
     @Override
     public EntityEnumerator getEntityEnumerator() {
         return new EntityEnumerator() {
@@ -56,10 +56,21 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
             public boolean hasNext() {
                 return (index + 1 < entityArray.length);
             }
+            @Override
+            public boolean hasPrevious() {
+                return index > 0;
+            }
 
             @Override
             public Attribute.Entity next() {
                 index++;
+                JAMSEntityCollection.this.current = entityArray[index];
+                return entityArray[index];
+            }
+            
+            @Override
+            public Attribute.Entity previous() {
+                index--;
                 JAMSEntityCollection.this.current = entityArray[index];
                 return entityArray[index];
             }
@@ -68,25 +79,7 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
             public void reset() {
                 index = 0;
                 JAMSEntityCollection.this.current = entityArray[index];
-            }
-            
-            @Override
-            public byte[] getState() {
-                byte[] state = new byte[4];
-
-                state[0] = (byte) ((index & 0x000000ff) >> 0);
-                state[1] = (byte) ((index & 0x0000ff00) >> 8);
-                state[2] = (byte) ((index & 0x00ff0000) >> 16);
-                state[3] = (byte) ((index & 0xff000000) >> 24);
-
-                return state;
-            }
-
-            @Override
-            public void setState(byte[] state) {
-                entityArray = getEntityArray();
-                index = (state[0] << 0) | (state[1] << 8) | (state[2] << 16) | (state[3] << 24);
-            }
+            }                                                
         };
     }
 

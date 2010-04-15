@@ -27,12 +27,13 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 import jams.JAMS;
+import java.io.Serializable;
 
 /**
  *
  * @author Sven Kralisch
  */
-public class DefaultDataSetDefinition implements DataSetDefinition {
+public class DefaultDataSetDefinition implements DataSetDefinition, Serializable {
 
     private int columnCount;
 

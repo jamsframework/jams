@@ -29,11 +29,8 @@ import jams.dataaccess.DataAccessor;
 import jams.io.datatracer.DataTracer;
 import jams.io.datatracer.AbstractTracer;
 import jams.workspace.stores.Filter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  *
@@ -131,14 +128,7 @@ public class JAMSTemporalContext extends JAMSContext {
     public String getTraceMark() {
         return current.toString();
     }
-
-    public static class IteratorState implements Serializable {
-
-            byte subState[];
-            Attribute.Calendar current;
-            Attribute.Calendar lastValue;
-        };
-        
+                    
     class RunEnumerator implements ComponentEnumerator {
 
         ComponentEnumerator ce = getChildrenEnumerator();
@@ -148,6 +138,12 @@ public class JAMSTemporalContext extends JAMSContext {
             boolean nextTime = current.before(lastValue);
             boolean nextComp = ce.hasNext();
             return (nextTime || nextComp);
+        }
+        @Override
+        public boolean hasPrevious() {
+            boolean prevTime = current.after(timeInterval.getStart());
+            boolean prevComp = ce.hasPrevious();
+            return (prevTime || prevComp);
         }
 
         @Override
@@ -170,64 +166,17 @@ public class JAMSTemporalContext extends JAMSContext {
             ce.reset();
         }
         
-        @Override
-        public byte[] getState() {
-            IteratorState state = new IteratorState();
-            state.subState = ce.getState();
-
-            state.current = current.getValue();
-            state.lastValue = lastValue.getValue();
-
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            byte[] result = null;
-            try {
-                ObjectOutputStream objOut = new ObjectOutputStream(outStream);
-                objOut.writeObject(state);
-
-                result = outStream.toByteArray();
-
-                objOut.close();
-                outStream.close();
-            } catch (Exception e) {
-                getModel().getRuntime().println("could not save model state, because:" + e);
+        public Component previous(){
+            if (ce.hasPrevious())
+                return ce.previous();
+            else{
+                current.add(timeInterval.getTimeUnit(), -timeInterval.getTimeUnitCount());
+                while(ce.hasNext())
+                    ce.next();
+                return ce.previous();
             }
-
-            return result;
         }
-
-        @Override
-        public void setState(byte[] state) {
-            ce = getChildrenEnumerator();
-            
-            ByteArrayInputStream inStream = new ByteArrayInputStream(state);
-            try {
-                ObjectInputStream objIn = new ObjectInputStream(inStream);
-                inStream.close();
-
-                IteratorState myState = (IteratorState) objIn.readObject();
-
-                objIn.close();
-
-                ce.setState(myState.subState);
-                
-                current.setValue(myState.current);
-                lastValue.setValue(myState.lastValue);
-                
-            } catch (Exception e) {
-            }
-        }       
-    }
-    @Override
-    public byte[] getIteratorState(){
-        if (this.runEnumerator != null)
-            return this.runEnumerator.getState();
-        return null;
-    }
-    @Override
-    public void setIteratorState(byte[]state){
-        if (state == null)
-            this.runEnumerator = null;
-        else
-            this.runEnumerator.setState(state);
-    }
+        
+                  
+    }    
 }

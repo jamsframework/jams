@@ -81,7 +81,7 @@ public class SnapshotTools {
         public void addContextState(Context currentContext) {
             //currentContext.debug("C:\\Arbeit\\TIMELOOP_pre.dat" + counter1++);
 
-            ContextSnapshotData data = new ContextSnapshotData();
+            /*ContextSnapshotData data = new ContextSnapshotData();
             data.entities = currentContext.getEntities();
             data.dataAccessors = currentContext.getDataAccessorMap();
             data.iteratorState = currentContext.getIteratorState();
@@ -92,28 +92,28 @@ public class SnapshotTools {
                 if (c instanceof Context) {
                     addContextState((Context) c);
                 }
-            }
+            }*/
         }
 
         public void addDataStoreState(InputDataStore store) throws IOException {
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            /*ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             ObjectOutputStream objStream = new ObjectOutputStream(outStream);
             store.getState(objStream);
             objStream.flush();
             outStream.flush();
             dataStoreStates.put(store.getID(), outStream.toByteArray());
             objStream.close();
-            outStream.close();
+            outStream.close();*/
         }
 
         public void getDataStoreState(InputDataStore store) throws IOException, ClassNotFoundException, Exception {
-            if (!dataStoreStates.containsKey(store.getID())) {
+            /*if (!dataStoreStates.containsKey(store.getID())) {
                 throw new Exception("unknown input data store:" + store.getID());
             }
             ByteArrayInputStream inStream = new ByteArrayInputStream(dataStoreStates.get(store.getID()));
             ObjectInputStream objStream = new ObjectInputStream(inStream);
             store.setState(objStream);
-            inStream.close();
+            inStream.close();*/
         }
 
         public void getContextState(Context currentContext, boolean restoreIterator) throws Exception {            
@@ -246,9 +246,9 @@ public class SnapshotTools {
                 }
             }
             //restore iterators
-            if (restoreIterator) {
+/*            if (restoreIterator) {
                 currentContext.setIteratorState(data.iteratorState);
-            }
+            }*/
         }
     }
 }
