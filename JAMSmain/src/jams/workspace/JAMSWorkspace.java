@@ -320,6 +320,7 @@ public class JAMSWorkspace implements Workspace {
     }
 
     public void registerOutputDataStore(String id, Document doc) {
+
         if (StringTools.isEmptyString(id)) {
             return;
         }
