@@ -58,6 +58,7 @@ import jams.io.ParameterProcessor;
 import jams.runtime.StandardRuntime;
 import jams.runtime.JAMSRuntime;
 import jams.gui.input.InputComponentFactory;
+import jams.model.SmallModelState;
 import jams.tools.StringTools;
 import java.awt.Frame;
 import java.io.File;
@@ -88,7 +89,7 @@ public class JAMSLauncher extends JFrame {
     private SystemProperties properties;
 
     private JButton runButton;
-
+    
     private HelpDlg helpDlg;
 
     protected String initialModelDocString = "";
@@ -176,7 +177,7 @@ public class JAMSLauncher extends JFrame {
                 }
             }
         };
-
+                
         runModelAction = new AbstractAction(JAMS.resources.getString("Run_Model")) {
 
             @Override
@@ -548,6 +549,36 @@ public class JAMSLauncher extends JFrame {
         t.start();
     }
 
+    protected void resumeModel(final SmallModelState state) {
+
+        // first load the model via the modelLoading runnable
+        loadModelDlg.setTask(modelLoading);
+        loadModelDlg.execute();
+
+        // check if runtime has been created successfully
+        if (runtime == null) {
+            return;
+        }
+
+        // start the model
+        Thread t = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    runtime.resume(state);
+                } catch (Exception e) {
+                    runtime.handle(e);
+                }
+
+                //dump the runtime and clean up
+                runtime = null;
+                Runtime.getRuntime().gc();
+            }
+        };
+        t.start();
+    }
+    
     protected SystemProperties getProperties() {
         return properties;
     }
