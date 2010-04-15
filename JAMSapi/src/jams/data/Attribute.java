@@ -22,6 +22,7 @@
  */
 package jams.data;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import java.util.HashMap;
  *
  * @author S. Kralisch
  */
-public interface Attribute {
+public interface Attribute extends Serializable{
 
     public interface Boolean extends JAMSData {
 

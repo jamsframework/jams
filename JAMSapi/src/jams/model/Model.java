@@ -40,9 +40,7 @@ public interface Model extends Context {
     String getAuthor();
 
     String getDate();
-
-    Snapshot getModelState(boolean holdInMemory, String fileName);
-
+    
     String getName();
 
     HashMap<Component, ArrayList<Field>> getNullFields();
@@ -58,11 +56,7 @@ public interface Model extends Context {
     void setAuthor(String author);
 
     void setDate(String date);
-
-    void setModelState(Snapshot inData);
-
-    void setModelState(Snapshot inData, boolean saveIterator);
-
+    
     void setName(String name);
 
     void setNullFields(HashMap<Component, ArrayList<Field>> nullFields);

@@ -37,7 +37,7 @@ public interface OutputDataStore extends DataStore {
 
     Filter[] getFilters();
 
-    void open() throws IOException;
+    void open(boolean append) throws IOException;
 
     void write(Object o) throws IOException;
 

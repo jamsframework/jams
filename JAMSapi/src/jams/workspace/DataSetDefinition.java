@@ -23,6 +23,7 @@
 
 package jams.workspace;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -30,7 +31,7 @@ import java.util.Set;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public interface DataSetDefinition {
+public interface DataSetDefinition extends Serializable {
 
     public static final String TYPE_ID = "#_TYPE_";
 

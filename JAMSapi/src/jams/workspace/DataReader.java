@@ -31,6 +31,10 @@ import java.io.Serializable;
  */
 public interface DataReader extends Serializable{
 
+    public static interface DataReaderState{
+        
+    }
+    
     public int init();
 
     public int cleanup();
@@ -43,6 +47,6 @@ public interface DataReader extends Serializable{
 
     public int numberOfColumns();        
     
-    public void getState(java.io.ObjectOutputStream stream) throws IOException;
-    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException; 
+    public DataReaderState getState();
+    public void setState(DataReaderState state) throws IOException; 
 }

@@ -28,14 +28,12 @@ import java.io.Serializable;
  *
  * @author S. Kralisch
  */
-public interface EntityEnumerator extends Serializable{
-
+public interface EntityEnumerator extends Serializable{            
     boolean hasNext();
-
-    Attribute.Entity next();
-
-    void reset();
+    boolean hasPrevious();
     
-    byte[] getState();
-    void setState(byte[] state);
+    Attribute.Entity next();
+    Attribute.Entity previous();
+
+    void reset();        
 }

@@ -22,11 +22,17 @@
  */
 package jams.workspace;
 
+import java.io.IOException;
+
 /**
  *
  * @author Sven Kralisch
  */
 public interface DataWriter {
+    
+    public static interface DataWriterState{
+        
+    }
     
     public int init();
 
@@ -34,4 +40,6 @@ public interface DataWriter {
 
     public int writeData(DataSet[] data);
     
+    public DataWriterState getState();
+    public void setState(DataWriterState state) throws IOException; 
 }

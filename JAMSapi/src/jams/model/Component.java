@@ -75,6 +75,12 @@ public interface Component extends Serializable {
     void setModel(Model model);
 
     /**
+     * in the first run after restoring the model from a saved state this method
+     * excecuted
+     * @throws java.lang.Exception
+     */
+    void restore() throws Exception;
+    /**
      * Sets the context that this component is child of
      * @param context The parent context
      */

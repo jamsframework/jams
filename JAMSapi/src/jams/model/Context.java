@@ -124,9 +124,6 @@ public interface Context extends Component {
     void updateEntityData();
 
     void updateComponentData(int index);
-
-    byte[] getIteratorState();
-
-    void setIteratorState(byte[]state);
-
+    
+    void resume();    
 }

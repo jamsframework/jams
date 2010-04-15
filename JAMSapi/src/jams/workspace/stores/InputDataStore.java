@@ -52,9 +52,6 @@ public interface InputDataStore extends DataStore {
 
     public DataSetDefinition getDataSetDefinition();
     
-    public String getMissingDataValue();  
-    
-    public void getState(java.io.ObjectOutputStream stream) throws IOException;
-    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException; 
+    public String getMissingDataValue();          
 }
 

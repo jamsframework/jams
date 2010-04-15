@@ -23,7 +23,9 @@
 
 package jams.workspace;
 
+import jams.model.SmallModelState;
 import jams.runtime.JAMSRuntime;
+import jams.workspace.stores.DataStore;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.OutputDataStore;
 import java.io.File;
@@ -272,7 +274,7 @@ public interface Workspace extends Serializable {
     /**
      * returnes a list of all input data stores which has been created
      */
-    ArrayList<InputDataStore> getRegisteredInputDataStores();
+    ArrayList<DataStore> getRegisteredDataStores();
 
     /**
      * defines a new input datastore
@@ -283,4 +285,10 @@ public interface Workspace extends Serializable {
      * defines a new output datastore
      */
     void registerOutputDataStore(String id, Document doc);
+    
+    /*restores the workspace after deserialization*/
+    public void restore(SmallModelState state);
+    
+    //returns current state of all datastores
+    public void saveState(SmallModelState state);
 }

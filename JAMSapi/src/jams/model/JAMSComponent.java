@@ -52,6 +52,12 @@ package jams.model;
      * @throws java.lang.Exception
      */
     public void run() throws Exception {}
+    
+    /**
+     * Method to be executed when model is restored from a saved state
+     * @throws java.lang.Exception
+     */
+    public void restore() throws Exception {}
 
     /**
      * Method to be executed at model's cleanup stage

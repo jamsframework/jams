@@ -34,12 +34,8 @@ import java.io.Serializable;
 public interface ComponentEnumerator extends Serializable{
     
     boolean hasNext();
-
+    boolean hasPrevious();
     Component next();
-
-    void reset();
-    
-    byte[] getState();
-
-    void setState(byte[] state);
+    Component previous();
+    void reset();        
 }
