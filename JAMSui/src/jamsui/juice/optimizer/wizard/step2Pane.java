@@ -7,9 +7,6 @@ package jamsui.juice.optimizer.wizard;
 
 import jams.JAMSProperties;
 import jams.tools.JAMSTools;
-import jamsui.juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
-import jamsui.juice.optimizer.wizard.OptimizationWizard.Parameter;
-import jams.model.JAMSModel;
 import jams.model.JAMSVarDescription;
 import jams.model.JAMSVarDescription.AccessType;
 import jams.runtime.StandardRuntime;
@@ -24,13 +21,15 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.xml.parsers.DocumentBuilderFactory;
-import jamsui.juice.optimizer.wizard.OptimizationWizard.AttributeWrapper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.JAMS;
 import jams.model.Model;
+import jamsui.juice.optimizer.wizard.Tools.AttributeWrapper;
+import jamsui.juice.optimizer.wizard.Tools.ComponentWrapper;
+import jamsui.juice.optimizer.wizard.Tools.Parameter;
 
 /**
  *
@@ -198,20 +197,7 @@ public class step2Pane extends stepPane {
                 buildModelTree((JAMSContext)comp,childNode,model);
         }*/
     }
-    
-    private Node getModelNode(Node root){
-        if (root.getNodeName().equals("model")){
-            return root;
-        }
-        NodeList childs = root.getChildNodes();
-        for (int i=0;i<childs.getLength();i++){
-            Node model = getModelNode(childs.item(i));
-            if (model != null)
-                return model;
-        }
-        return null;
-    }
-    
+            
     public Document getDocument(){
         return this.loadedModel;
         
@@ -259,7 +245,7 @@ public class step2Pane extends stepPane {
         selectedParameters.clear();
         model = rt.getModel();
         modelTree.setRootVisible(true);
-        Node root = getModelNode(loadedModel);
+        Node root = jamsui.juice.optimizer.wizard.Tools.getModelNode(loadedModel);
         Element rootElement = (Element)root;
         DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode(new ComponentWrapper(rootElement.getAttribute("name")
                 ,rootElement.getAttribute("name"),true)));

@@ -24,10 +24,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import jamsui.juice.optimizer.wizard.OptimizationWizard.AttributeWrapper;
-import jamsui.juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
-import jamsui.juice.optimizer.wizard.OptimizationWizard.Efficiency;
-import jamsui.juice.optimizer.wizard.OptimizationWizard.Parameter;
 import jamsui.juice.optimizer.wizard.step6Pane.AttributeDescription;
 import jamsui.juice.optimizer.wizard.step6Pane.OptimizerDescription;
 import java.io.File;
@@ -41,6 +37,10 @@ import org.w3c.dom.NodeList;
 import jams.JAMS;
 import jams.io.XMLProcessor;
 import jams.model.Model;
+import jamsui.juice.optimizer.wizard.Tools.AttributeWrapper;
+import jamsui.juice.optimizer.wizard.Tools.ComponentWrapper;
+import jamsui.juice.optimizer.wizard.Tools.Efficiency;
+import jamsui.juice.optimizer.wizard.Tools.Parameter;
 
 /**
  *
@@ -150,102 +150,7 @@ public class step6aPane extends stepPane {
         this.parent = parent;
     }
              
-    void replaceAttribute(Node root,AttributeWrapper attribute,String newAttributeName,String newAttributeContext){
-        NodeList childs = root.getChildNodes();
-        ArrayList<Node> nodesToRemove = new ArrayList<Node>();
-        
-        for (int i=0;i<childs.getLength();i++){
-            Node node = childs.item(i);
-            if (node.getNodeName().equals("model") || node.getNodeName().equals("contextcomponent")){
-                replaceAttribute(node, attribute, newAttributeName, newAttributeContext);                
-            }
-            if (node.getNodeName().equals("component")){
-                replaceAttribute(node, attribute, newAttributeName, newAttributeContext);
-            }
-            
-            //something like that 
-            //(a)<var name="pidw" value="2.0"/>
-            //(b)<var attribute="x" context="HRUInit" name="entityX"/>
-            if (node.getNodeName().equals("var")){
-                Element varNode = (Element)node;
-                //case (b)
-                if (attribute.attributeName != null){
-                    String node_attr = varNode.getAttribute("attribute");
-                    String node_context = varNode.getAttribute("context");
-                    if (node_attr == null)
-                        continue;
-                    if (node_context == null)
-                        node_context = ((Element)root.getParentNode()).getAttribute("name");
-                    if (node_attr.equals(attribute.attributeName) && node_context.equals(attribute.contextName)){                        
-                        varNode.setAttribute("attribute", newAttributeName);
-                        varNode.setAttribute("context", newAttributeContext);
-                    }
-                //case (a)
-                }else{
-                    String node_attr = varNode.getAttribute("name");                                        
-                    String node_component = ((Element)varNode.getParentNode()).getAttribute("name");
-                    if (node_component == null)
-                        continue;
-                    if (node_attr.equals(attribute.variableName) && node_component.equals(attribute.componentName)){
-                        jams.model.metaoptimizer.metaModelOptimizer.RemoveProperty((Node)this.doc.getDocumentElement(), attribute.variableName, attribute.componentName);
-                        varNode.setAttribute("attribute", newAttributeName);
-                        varNode.setAttribute("context", newAttributeContext);
-                        varNode.setAttribute("value", null);
-                    }
-                }
-            }
-            if (node.getNodeName().equals("attribute")){
-                Element varNode = (Element)node;
-                if (attribute.attributeName != null){
-                    String node_attr = varNode.getAttribute("name");
-                    String node_context = ((Element)root).getAttribute("name");
-                                            
-                    if (node_attr.equals(attribute.attributeName) && node_context.equals(attribute.contextName)){
-                        //remove broken links
-                        jams.model.metaoptimizer.metaModelOptimizer.RemoveProperty(this.doc.getDocumentElement(), attribute.attributeName, attribute.contextName);
-                        nodesToRemove.add(node);
-                    }
-                }                
-            }
-        }
-        for (int i=0;i<nodesToRemove.size();i++){
-            root.removeChild(nodesToRemove.get(i));
-        }
-    }
-                        
-    private void addAttribute(Element parent,String name,String value,String context,boolean isValue){
-        Element newElement = parent.getOwnerDocument().createElement("var");
-        newElement.setAttribute("name", name);
-        if (isValue)
-            newElement.setAttribute("value", value);
-        else
-            newElement.setAttribute("attribute", value);
-        if (context != null)
-            newElement.setAttribute("context", context);
-        
-        if (parent.getFirstChild() != null)
-            parent.insertBefore(newElement, parent.getFirstChild());       
-        else
-            parent.appendChild(newElement);
-    }
     
-    private void addParameters(ArrayList<Parameter> list,Node root){
-        for (int i=0;i<list.size();i++){            
-            if (list.get(i).attributeName != null)
-                this.replaceAttribute(root, list.get(i), list.get(i).attributeName, optimizerContextName);
-            else
-                this.replaceAttribute(root, list.get(i), list.get(i).variableName, optimizerContextName);
-        }
-    }
-    private void addEfficiencies(ArrayList<Efficiency> list,Node root){
-        for (int i=0;i<list.size();i++){            
-            if (list.get(i).attributeName != null)
-                this.replaceAttribute(root, list.get(i), list.get(i).attributeName, optimizerContextName);
-            else
-                this.replaceAttribute(root, list.get(i), list.get(i).variableName, optimizerContextName);
-        }
-        
-    }
     
     @Override
     public String init(){   
@@ -300,11 +205,11 @@ public class step6aPane extends stepPane {
         Iterator<AttributeDescription> iter = desc.attributes.iterator();
         while(iter.hasNext()){
             AttributeDescription attr = iter.next();            
-            addAttribute(optimizerContext,attr.name,attr.value,attr.context,!attr.isAttribute);
+            jamsui.juice.optimizer.wizard.Tools.addAttribute(optimizerContext,attr.name,attr.value,attr.context,!attr.isAttribute);
         }
                                
-        addParameters(desc.parameters,root);
-        addEfficiencies(desc.efficiencies,root);
+        jamsui.juice.optimizer.wizard.Tools.addParameters(desc.parameters,root,this.optimizerContextName);
+        jamsui.juice.optimizer.wizard.Tools.addEfficiencies(desc.efficiencies,root,this.optimizerContextName);
                                       
         infoLog += JAMS.resources.getString("find_a_position_to_place_optimizer") + "\n";
         //find place for optimization context

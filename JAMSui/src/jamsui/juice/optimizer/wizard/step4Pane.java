@@ -6,8 +6,6 @@
 package jamsui.juice.optimizer.wizard;
 
 import jams.tools.JAMSTools;
-import jamsui.juice.optimizer.wizard.OptimizationWizard.ComponentWrapper;
-import jamsui.juice.optimizer.wizard.OptimizationWizard.Efficiency;
 import jams.model.JAMSVarDescription;
 import jams.model.JAMSVarDescription.AccessType;
 import jams.runtime.StandardRuntime;
@@ -21,12 +19,14 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import jamsui.juice.optimizer.wizard.OptimizationWizard.AttributeWrapper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.JAMS;
+import jamsui.juice.optimizer.wizard.Tools.AttributeWrapper;
+import jamsui.juice.optimizer.wizard.Tools.ComponentWrapper;
+import jamsui.juice.optimizer.wizard.Tools.Efficiency;
 
 /**
  *

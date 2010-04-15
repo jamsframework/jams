@@ -5,8 +5,6 @@
 
 package jamsui.juice.optimizer.wizard;
 
-import jamsui.juice.optimizer.wizard.OptimizationWizard.Efficiency;
-import jamsui.juice.optimizer.wizard.OptimizationWizard.Parameter;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -24,6 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import jams.JAMS;
 import jams.data.Attribute;
+import jamsui.juice.optimizer.wizard.Tools.Efficiency;
+import jamsui.juice.optimizer.wizard.Tools.Parameter;
 
 /**
  *

@@ -31,6 +31,8 @@ import jams.JAMSFileFilter;
 import jams.io.ParameterProcessor;
 import jams.tools.XMLTools;
 import jams.io.XMLProcessor;
+import jams.model.JAMSFullModelState;
+import jams.model.Model;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
 import jamsui.juice.JUICE;
@@ -84,9 +86,9 @@ public class JAMSFrame extends JAMSLauncher {
 
     private Action editPrefsAction, loadPrefsAction, savePrefsAction,
             loadModelAction, saveModelAction, saveAsModelAction, exitAction,
-            aboutAction, loadModelParamAction, saveModelParamAction,
-            rtManagerAction, infoLogAction, errorLogAction, onlineAction,
-            explorerAction, editModelAction;
+            aboutAction, loadModelParamAction, saveModelParamAction, 
+            loadModelExecutionStateAction, rtManagerAction, infoLogAction, 
+            errorLogAction, onlineAction, explorerAction, editModelAction;
 
     public JAMSFrame(Frame parent, SystemProperties properties) {
         super(parent, properties);
@@ -214,6 +216,41 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
+        loadModelExecutionStateAction = new AbstractAction(JAMS.resources.getString("Resume_Model_Execution")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {                                
+                jfc.setFileFilter(JAMSFileFilter.getSerFilter());                
+                jfc.setSelectedFile(new File(""));
+                int result = jfc.showOpenDialog(JAMSFrame.this);
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    try{
+                    final JAMSFullModelState state = new JAMSFullModelState(jfc.getSelectedFile());
+                    Thread t = new Thread() {
+
+                        public void run() {
+                            Model model = state.getModel(); 
+                            try{
+                                model.getRuntime().resume(state.getSmallModelState());
+                            }catch(Exception e){
+                                JAMSTools.handle(e);
+                            }
+                            // collect some garbage ;)
+                            Runtime.getRuntime().gc();
+                        }
+                    };
+                    t.start();
+                    modelMenu.setEnabled(true);
+                    }catch(IOException ioe){
+                        GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Could_not_resume_model_execution_because") + ioe, JAMS.resources.getString("Resume_error"));
+                    }catch(ClassNotFoundException cnfe){
+                        GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Could_not_resume_model_execution_because") + cnfe, JAMS.resources.getString("Resume_error"));
+                    }
+                }
+            }
+        };
+        
         loadModelAction = new AbstractAction(JAMS.resources.getString("Open_Model...")) {
 
             @Override
@@ -423,8 +460,11 @@ public class JAMSFrame extends JAMSLauncher {
 
         JMenuItem saveOptionsItem = new JMenuItem(savePrefsAction);
         editMenu.add(saveOptionsItem);
+        
+        JMenuItem loadModelExecutionStateItem = new JMenuItem(loadModelExecutionStateAction);
+        editMenu.add(loadModelExecutionStateItem);        
         getMainMenu().add(editMenu);
-
+        
         // model menu
         modelMenu = new JMenu(JAMS.resources.getString("Model"));
         modelMenu.setEnabled(false);

@@ -76,6 +76,7 @@ public class DocumentLoader {
                 return JAMS.resources.getString("The_model_definition_file_") + modelFilename + JAMS.resources.getString("_contained_errors!");
             }                        
         }catch(Exception e){
+            e.printStackTrace();
             return JAMS.resources.getString("Cant_load_model_file,_because_") + e.toString();
         } 
         return null;

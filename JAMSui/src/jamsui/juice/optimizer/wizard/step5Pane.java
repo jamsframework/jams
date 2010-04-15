@@ -5,7 +5,6 @@
 
 package jamsui.juice.optimizer.wizard;
 
-import jamsui.juice.optimizer.wizard.OptimizationWizard.Efficiency;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -18,6 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import jams.JAMS;
+import jamsui.juice.optimizer.wizard.Tools.Efficiency;
 
 /**
  *
