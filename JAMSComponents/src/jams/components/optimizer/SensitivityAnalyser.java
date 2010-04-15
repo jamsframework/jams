@@ -22,7 +22,7 @@ import jams.components.machineLearning.GaussianLearner;
  *
  * @author Christian Fischer
  */
-public class SensitivityAnalyser extends Optimizer{
+public class SensitivityAnalyser extends SOOptimizer{
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
@@ -82,8 +82,8 @@ public class SensitivityAnalyser extends Optimizer{
         GP.MeanMethod.setValue(0);
         GP.PerformanceMeasure = JAMSDataFactory.createInteger();
         GP.PerformanceMeasure.setValue(2);
-        GP.doOptimization = JAMSDataFactory.createBoolean();
-        GP.doOptimization.setValue(true);          
+        GP.mode = JAMSDataFactory.createInteger();
+        GP.mode.setValue(GaussianLearner.MODE_OPTIMIZE);             
         GP.setModel(this.getModel());
         GP.kernelMethod = JAMSDataFactory.createInteger();
         GP.kernelMethod.setValue(2);
@@ -112,7 +112,7 @@ public class SensitivityAnalyser extends Optimizer{
         GP.trainData.setObject("data",data);
         GP.trainData.setObject("predict",predict);
         
-        GP.optimizationData = JAMSDataFactory.createEntity();
+        GP.optimizationData = (JAMSEntity)JAMSDataFactory.createEntity();
         GP.optimizationData.setObject("data",data);
         GP.optimizationData.setObject("predict",predict);
                         

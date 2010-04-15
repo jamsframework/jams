@@ -5,8 +5,8 @@
 
 package jams.components.optimizer;
 
-import jams.components.optimizer.Optimizer.Sample;
-import java.util.Arrays;
+import jams.JAMS;
+import jams.components.optimizer.MOOptimizer.SampleMO;
 import jams.io.SerializableBufferedWriter;
 import jams.model.JAMSComponentDescription;
 
@@ -16,37 +16,33 @@ import jams.model.JAMSComponentDescription;
         author="Christian Fischer",
         description="Performs a random search"
         )
-public class RandomSampler extends Optimizer{           
+public class RandomSampler extends MOOptimizer{           
     SerializableBufferedWriter writer = null;
             
-    public Sample[] initialSimplex = null;
+    public SampleMO[] initialSimplex = null;
            
     @SuppressWarnings("unchecked")    
+    @Override
     public void init(){
         super.init();
-    }
-                
+    }   
+    @Override
     public void run(){
         if (enable!=null)
             if (!enable.getValue()){
                 singleRun();
                 return;
             }
-        boolean stop = false;
-    
         //first draw random points        
-        Sample simplex[] = new Sample[this.maxn.getValue()];
-        
+        SampleMO simplex[] = new SampleMO[this.maxn.getValue()];        
         for (int i=0;i<this.maxn.getValue();i++){
             if (i==0&&x0!=null)
                 simplex[i] = this.getSample(x0);
             else
                 simplex[i] = this.getSample(this.RandomSampler());
-        }
-        
+        }        
         getModel().getRuntime().println("*********************************************************");
-        getModel().getRuntime().println("Maximum number of iterations reached, finished optimization");
-        getModel().getRuntime().println("*********************************************************");
-                                                      
+        getModel().getRuntime().println(JAMS.resources.getString("Maximum_number_of_iterations_reached_finished_optimization"));
+        getModel().getRuntime().println("*********************************************************");                                                      
     }        
 }

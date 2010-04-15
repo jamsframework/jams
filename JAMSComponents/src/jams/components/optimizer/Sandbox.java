@@ -28,7 +28,7 @@ import jams.model.JAMSVarDescription;
         author="Christian Fischer",
         description="under construction!!"
         )
-public class Sandbox extends Optimizer{
+public class Sandbox extends SOOptimizer{
     /*
      *  Component variables
      */    
@@ -165,7 +165,7 @@ public class Sandbox extends Optimizer{
     
     public class SandBoxEffFunction extends AbstractFunction{                       
         public double f(double x[]){
-            final int neighbours = n+7;
+            /*final int neighbours = n+7;
             //find next points            
             DoubleIndex nearest[] = new DoubleIndex[neighbours];
                   
@@ -174,7 +174,7 @@ public class Sandbox extends Optimizer{
             }
             
             for (int i=0;i<sampleList.size();i++){
-                double dist = norm(x,sampleList.get(i).x);
+                double dist = norm(x,.get(i).x);
                 DoubleIndex cmp = new DoubleIndex(0,-1);
                                 
                 for (int j=0;j<neighbours;j++){
@@ -232,7 +232,7 @@ public class Sandbox extends Optimizer{
                 normFct += 1.0/Math.pow(nearest[i].value,localFactor);
             }
             
-            return fctValue / normFct;
+            return fctValue / normFct;*/return 0;
         }
     }
     
@@ -261,8 +261,8 @@ public class Sandbox extends Optimizer{
                 localFactor = 2.0;
             if (counter % 3 == 2)
                 localFactor = 0.5;
-            double next[] = FindMostProbablePoint().x;
-            Sample test = this.getSample(next);            
+            double next[] = FindMostProbablePoint().getParameter();
+            SampleSO test = this.getSample(next);            
             best = Math.min(test.fx, best);
             System.out.println("BestValue:" + best + "\nk:" + sampleList.size() + "\nMyPoint:" + test.fx);
             counter++;

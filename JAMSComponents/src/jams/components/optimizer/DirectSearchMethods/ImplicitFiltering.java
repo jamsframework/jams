@@ -13,10 +13,10 @@ import java.util.Vector;
 import Jama.*;
 import jams.components.optimizer.DirectSearchMethods.PatternSearch;
 import jams.components.optimizer.LinearConstraintDirectPatternSearch;
-import jams.components.optimizer.Optimizer;
-import jams.components.optimizer.Optimizer.AbstractFunction;
-import jams.components.optimizer.Optimizer.Sample;
-import jams.components.optimizer.Optimizer.SampleComperator;
+import jams.components.optimizer.SOOptimizer;
+import jams.components.optimizer.SOOptimizer.AbstractFunction;
+import jams.components.optimizer.SOOptimizer.SampleSO;
+import jams.components.optimizer.SOOptimizer.SampleSOComperator;
 import java.util.Random;
 
 /**
@@ -26,7 +26,7 @@ import java.util.Random;
 @SuppressWarnings("unchecked")
 public class ImplicitFiltering extends PatternSearch{
         
-    public Sample step(Optimizer context,Sample[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]){
+    public SampleSO step(SOOptimizer context,SampleSO[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]){
         //1 compare worst
         //2 compare best
         //3 zuf^llige richtung
@@ -36,7 +36,7 @@ public class ImplicitFiltering extends PatternSearch{
             Generator = new Random();
         }
         //sort simplex        
-        java.util.Arrays.sort(Simplex,new SampleComperator(false));
+        java.util.Arrays.sort(Simplex,new SampleSOComperator(false));
         
         int ns = 0;
         int n = Simplex[0].x.length;
@@ -75,7 +75,7 @@ public class ImplicitFiltering extends PatternSearch{
                 for (int t=0;t<n;t++){
                     x_test[t] = Simplex[0].x[t] + d_test[t];
                 }                
-                Sample Sample_test = context.getSample(x_test);
+                SampleSO Sample_test = context.getSample(x_test);
                 if (method != 2){
                     if (Sample_test.fx < Simplex[0].fx){
                         return Sample_test;
@@ -113,7 +113,7 @@ public class ImplicitFiltering extends PatternSearch{
         return context.getSample(x);
     }
 
-    public Sample search(Optimizer context,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb){
+    public SampleSO search(SOOptimizer context,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb){
         return null;
     }
 }

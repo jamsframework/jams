@@ -69,14 +69,17 @@ public class PollingSQL implements DataReader {
     private ResultSetMetaData rsmd;
     private JdbcSQLConnector pgsql;
     private int numberOfColumns = -1;
-    private int[] type;
-    private boolean inited = false,  cleanedup = false;
+    private int[] type;    
     private DefaultDataSet[] currentData = null;
-            
+    private boolean isClosed;
+    private final boolean alwaysReconnect = false;
+    
     private String lastDate;
     int offset = 0;
     
-    
+    public void PollingSQL(){
+        isClosed=true;
+    }
     public void setUser(String user) {
         this.user = user;
     }
@@ -136,6 +139,8 @@ public class PollingSQL implements DataReader {
     }
 
     public Attribute.Calendar getLastDate(){
+        establishConnection();
+        
         try{
             ResultSet rs2 = null;
             if (query.contains("WHERE")){
@@ -149,9 +154,8 @@ public class PollingSQL implements DataReader {
             if (rs2.next())
                 date = rs2.getString(1);
             
-/*            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");        
-            long millis = format.parse(date+" +0000").getTime();*/
             cal.setTimeInMillis(Long.parseLong(date)*1000); 
+            rs2.close();
             return cal;                
         } catch (Exception sqlex) {
             System.err.println("PollingSQL: " + sqlex);sqlex.printStackTrace();
@@ -227,10 +231,12 @@ public class PollingSQL implements DataReader {
     }
 
     public void query(){
-        pgsql = new JdbcSQLConnector(host, db, user, password, driver);
-
+        establishConnection();
         try {
-            pgsql.connect();
+            if (rs != null){
+                rs.close();
+                rs = null;
+            }
             if (query.contains("WHERE")){
                 rs = pgsql.execQuery(query + " AND " + dateColumnName + ">\"" + lastDate + "\" ORDER BY " + dateColumnName + " ASC");
             }else{
@@ -260,24 +266,36 @@ public class PollingSQL implements DataReader {
                 } else {
                     type[i] = OBJECT;
                 }
-            }
-            cleanedup = false;
-
+            }            
         } catch (SQLException sqlex) {
             System.err.println("PollingSQL: " + sqlex);  
             sqlex.printStackTrace();
         }
     }
     
+    void establishConnection(){
+        try{
+            if (pgsql == null){
+                pgsql = new JdbcSQLConnector(host,db,user,password,driver);
+                pgsql.connect();
+                isClosed=false;
+            }else if (this.alwaysReconnect){
+                pgsql.close();
+                pgsql = null;
+                isClosed=true;
+                establishConnection();
+            }
+        }catch(SQLException sqlex){
+            System.err.println("PollingSQL: " + sqlex);  
+            sqlex.printStackTrace();
+            isClosed=true;
+        }
+    }
+    
     @Override
     public int init() {
         offset = 0;
-        if (inited) {
-            return 0;
-        } else {
-            inited = true;
-        }
-
+        
         if (db == null) {
             return -1;
         }
@@ -307,18 +325,17 @@ public class PollingSQL implements DataReader {
     }
 
     @Override
-    public int cleanup() {
-
-        if (cleanedup) {
-            return 0;
-        } else {
-            cleanedup = true;
-        }
-
+    public int cleanup() {        
         try {
-            rs.close();
-            pgsql.close();
-            inited = false;
+            if (rs!=null){
+                rs.close();
+                rs = null;
+            }
+            if (pgsql!=null){
+                pgsql.close();
+                pgsql = null;
+                isClosed=true;
+            }           
         } catch (SQLException sqlex) {
             System.out.println("PollingSQL: " + sqlex);
             sqlex.printStackTrace();
@@ -333,16 +350,31 @@ public class PollingSQL implements DataReader {
         return numberOfColumns;
     }
     
+    public DataReaderState getState(){
+        return null;
+    }
+    
+    public void setState(DataReaderState state){
+    }
+    
      public void getState(java.io.ObjectOutputStream stream) throws IOException{
+        stream.writeBoolean(this.isClosed);
         stream.writeInt(this.offset);
         
     }
-    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
-        if (inited)
-            cleanup();
-        this.init();
-        
+    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{        
+        isClosed = stream.readBoolean();
         int oldOffset = stream.readInt();
+        if (isClosed){
+            this.cleanup();
+            return;
+        }        
+        query();
+        try{
+            Thread.sleep(1000);
+        }catch(Exception e){}
+        
+        //System.out.println(" skip: " + oldOffset + " entries!");
         this.skip(oldOffset);        
     }
 }

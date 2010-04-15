@@ -29,6 +29,11 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
 import jams.JAMS;
+import jams.data.JAMSInteger;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  *
@@ -40,28 +45,35 @@ import jams.JAMS;
         author="Sven Kralisch",
         date="17. June 2006",
         description="This visual component creates a panel with progress bar and log information")
-        public class JAMSExecInfo extends JAMSGUIComponent {
+        public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
     
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.WRITE,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "Progress bar always on top?"
+            )
+            public JAMSInteger counter;
     
     private JProgressBar jamsProgressBar;
     private JPanel progressPanel;
-    private Runnable updatePBar;
+    transient private Runnable updatePBar;
     private JScrollPane scrollPanel;
     private JTextArea logArea;
-    private int counter;
+    
     private JPanel panel;
     
     
     public JPanel getPanel() {
-        createPanel();
+        if (this.panel==null)
+            createPanel();
         return panel;
     }
     
-    public void init() {
+    @Override
+    public void init() {           
         if (panel != null) {
-            counter = 0;
-            jamsProgressBar.setMaximum((int)this.getContext().getNumberOfIterations());
-            jamsProgressBar.setValue(counter);
+            //counter.setValue(0);
+            jamsProgressBar.setMaximum((int)this.getContext().getNumberOfIterations());            
         } else {
             updatePBar = new Runnable() {
                 public void run() {}
@@ -81,11 +93,12 @@ import jams.JAMS;
         jamsProgressBar.setMinimum(0);
         jamsProgressBar.setString("Execution progress");
         jamsProgressBar.setStringPainted(true);
-        jamsProgressBar.setIndeterminate(false);
-        
+        jamsProgressBar.setIndeterminate(false);        
         updatePBar = new Runnable() {
             public void run() {
-                jamsProgressBar.setValue(++counter);
+                int c = counter.getValue();
+                jamsProgressBar.setValue(c++);
+                counter.setValue(c);
                 jamsProgressBar.setString(Math.round(jamsProgressBar.getPercentComplete()*100) + "%");
             }
         };
@@ -123,12 +136,37 @@ import jams.JAMS;
         });
     }
 
+    @Override
     public void run() {
         SwingUtilities.invokeLater(updatePBar);
     }
     
+    @Override
     public void cleanup() {
-
-    }
-   
+    }      
+    
+    @Override
+    public void restore(){
+        updatePBar = new Runnable() {
+            public void run() {
+                int c = counter.getValue();
+                jamsProgressBar.setValue(c++);
+                counter.setValue(c);
+                jamsProgressBar.setString(Math.round(jamsProgressBar.getPercentComplete()*100) + "%");
+            }            
+        };
+        this.getModel().getRuntime().addInfoLogObserver(new Observer() {
+            public void update(Observable obs, Object obj) {
+                logArea.append(obj.toString());
+                //logArea.setCaretPosition(logArea.getText().length());
+            }
+        });
+        this.getModel().getRuntime().addErrorLogObserver(new Observer() {
+            public void update(Observable obs, Object obj) {
+                logArea.append(obj.toString());
+                //logArea.setCaretPosition(logArea.getText().length());
+            }
+        });
+        run();
+    }    
 }

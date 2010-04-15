@@ -7,10 +7,10 @@ package jams.components.optimizer.DirectSearchMethods;
 
 import Jama.Matrix;
 import jams.components.optimizer.LinearConstraintDirectPatternSearch;
-import jams.components.optimizer.Optimizer;
-import jams.components.optimizer.Optimizer.AbstractFunction;
-import jams.components.optimizer.Optimizer.Sample;
-import jams.components.optimizer.Optimizer.SampleComperator;
+import jams.components.optimizer.SOOptimizer;
+import jams.components.optimizer.SOOptimizer.AbstractFunction;
+import jams.components.optimizer.SOOptimizer.SampleSO;
+import jams.components.optimizer.SOOptimizer.SampleSOComperator;
 import java.util.Random;
 import java.util.Vector;
 
@@ -20,10 +20,10 @@ import java.util.Vector;
  */
 @SuppressWarnings("unchecked")
 public class NelderMead extends PatternSearch{
-    public Sample step(Optimizer context,Sample[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]){
+    public SampleSO step(SOOptimizer context,SampleSO[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]){
 
         //sort simplex        
-        java.util.Arrays.sort(Simplex,new SampleComperator(false));
+        java.util.Arrays.sort(Simplex,new SampleSOComperator(false));
 
         int n = Simplex.length; //
 	int m = Simplex[0].x.length; //nopt
@@ -77,7 +77,7 @@ public class NelderMead extends PatternSearch{
         
         Vector<Matrix> P_i = LCDPS.UpdateDirections(Simplex[0], P, 1.0);
         
-        Sample next = super.step(context,Simplex[0],Simplex[n-1],P_i);
+        SampleSO next = super.step(context,Simplex[0],Simplex[n-1],P_i);
         if (next != null)
             return next;  
         //get random point
@@ -100,7 +100,7 @@ public class NelderMead extends PatternSearch{
         return context.getSample(x);
     }
     
-    public Sample search(Optimizer f,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb){
+    public SampleSO search(SOOptimizer f,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb){
         return null;
     }
 }

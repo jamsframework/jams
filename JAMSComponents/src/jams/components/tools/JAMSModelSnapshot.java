@@ -7,30 +7,17 @@ package jams.components.tools;
 
 import jams.model.*;
 import jams.data.JAMSBoolean;
-import jams.data.JAMSEntity;
 import jams.data.JAMSString;
 import jams.runtime.StandardRuntime;
 import jams.tools.FileTools;
+import java.io.File;
+import java.io.IOException;
 
 /**
  *
  * @author Christian Fischer
  */
-public class JAMSModelSnapshot extends JAMSComponent{
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "Description"
-            )
-            public JAMSBoolean takeSnapshot;
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "Description"
-            )
-            public JAMSBoolean loadSnapshot;
-              
+public class JAMSModelSnapshot extends JAMSComponent{                  
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
@@ -38,27 +25,7 @@ public class JAMSModelSnapshot extends JAMSComponent{
             )
             public JAMSString snapshotFile;
     
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "Description"
-            )
-            public JAMSEntity data;
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "Description"
-            )
-            public JAMSBoolean holdInMemory;
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "Description"
-            )
-            public JAMSBoolean saveIterator;
-    
+        
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
@@ -73,35 +40,18 @@ public class JAMSModelSnapshot extends JAMSComponent{
             String fileName = null;
             if (snapshotFile != null)
                 fileName = FileTools.createAbsoluteFileName(getModel().getWorkspaceDirectory().getPath() , snapshotFile.getValue());
-            
-            if (takeSnapshot != null && takeSnapshot.getValue()){                  
-                runtime.sendInfoMsg("Taking Snapshot" + " (" + this.getInstanceName() + ")");
-                Snapshot snapshot = this.getModel().getModelState(holdInMemory != null && holdInMemory.getValue(),
-                        fileName);                               
-                data.setObject("snapshot", snapshot);
-            }
-            if (loadSnapshot != null && loadSnapshot.getValue()){  
-                Snapshot snapshot = null;            
-                if (snapshotFile == null){                    
-                    try{
-                        snapshot = (Snapshot)data.getObject("snapshot");
-                    }catch(Exception e){
-                        System.out.println("Entity does not contain any snapshot-data," + e.toString());
-                    }
-                }else{
-                    snapshot = new JAMSSnapshot(fileName);
-                }
-                runtime.sendInfoMsg("Restoring Snapshot" + " (" + this.getInstanceName() + ")");
-                if (saveIterator!=null){
-                    if (saveIterator.getValue())
-                        this.getModel().setModelState(snapshot,true);
-                    else
-                        this.getModel().setModelState(snapshot,false);
-                }else
-                    this.getModel().setModelState(snapshot,false);                
-            }
+            //think about it .. after that call the model is NOT in an standardized state
+            //.. i am not sure if this fact can 
+            runtime.pause();
+            File file = new File(fileName);
+            try {
+                runtime.getFullModelState().writeToFile(file);
+            } catch (IOException e) {
+                runtime.sendErrorMsg(jams.JAMS.resources.getString("Unable_to_save_model_state_because,") + e.toString());
+                runtime.handle(e, true);
+            }           
         }else{
-            this.getModel().getRuntime().println("Snapshoting not supported by runtime!");                        
+            this.getModel().getRuntime().sendInfoMsg(jams.JAMS.resources.getString("Snapshoting_not_supported_by_runtime_"));            
         } 
     }
         

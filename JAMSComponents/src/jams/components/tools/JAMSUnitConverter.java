@@ -25,6 +25,8 @@ package jams.components.tools;
 
 import jams.data.*;
 import jams.model.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import org.jscience.physics.units.*;
 
 /**
@@ -83,4 +85,11 @@ public class JAMSUnitConverter extends JAMSComponent {
          outValue.setValue(conv.convert(inValue.getValue()));
      }
          
+     //unit, converter are not serializable so reinit, after deserialization .. 
+     private void readObject(ObjectInputStream objStream) throws IOException, ClassNotFoundException{
+         objStream.defaultReadObject();
+         in = Unit.valueOf(this.inUnit.getValue());
+         out = Unit.valueOf(this.outUnit.getValue());
+         conv = in.getConverterTo(out);
+     }
 }

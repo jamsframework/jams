@@ -27,20 +27,13 @@ import jams.components.optimizer.DirectSearchMethods.ImplicitFiltering;
 import jams.components.optimizer.DirectSearchMethods.MDS;
 import jams.components.optimizer.DirectSearchMethods.NelderMead;
 import jams.components.optimizer.DirectSearchMethods.PatternSearch;
-import jams.components.optimizer.Optimizer.AbstractFunction;
-import java.io.FileWriter;
-import java.io.IOException;
+import jams.components.optimizer.SOOptimizer.AbstractFunction;
 import java.util.Arrays;
-
 import jams.data.*;
-import jams.io.GenericDataWriter;
+import jams.JAMS;
 import jams.model.*;
 import java.util.Arrays.*;
-import java.util.Comparator;
 import java.util.StringTokenizer;
-import jams.JAMS;
-import jams.tools.JAMSTools;
-import jams.io.SerializableBufferedWriter;
 
 /**
  *
@@ -50,7 +43,7 @@ import jams.io.SerializableBufferedWriter;
 author = "Author",
 description = "Description")
 @SuppressWarnings("unchecked")
-public class SimpleSCE extends Optimizer {
+public class SimpleSCE extends SOOptimizer {
 
     /*
      *  Component variables
@@ -102,6 +95,7 @@ public class SimpleSCE extends Optimizer {
     PatternSearch SearchMethod = null;
     Matrix LinearConstraints_A = null, LinearConstraints_b = null;
 
+    @Override
     public void init() {               
         super.init();
         if (!enable.getValue())
@@ -119,7 +113,7 @@ public class SimpleSCE extends Optimizer {
                     LinearConstraints_A = new Matrix(n, m);
                 }
                 if (m != line_tok.countTokens()) {
-                    this.getModel().getRuntime().sendHalt("SimpleSCE: Linear Constraint Matrix, dimension mismatch!");
+                    stop(JAMS.resources.getString("Linear_Constraint_Matrix_dimension_mismatch"));
                 }
                 for (int j = 0; j < m; j++) {
                     String number = line_tok.nextToken();
@@ -127,7 +121,7 @@ public class SimpleSCE extends Optimizer {
                     try {
                         value = Double.parseDouble(number);
                     } catch (NumberFormatException e) {
-                        this.getModel().getRuntime().sendHalt("SimpleSCE: Can^t read Linear Constraint Matrix, because there are unparseable elements:" + e.toString());
+                        stop(JAMS.resources.getString("Cant_read_Linear_Constraint_Matrix_because_there_are_unparseable_elements") + ":" + e.toString());
                     }
                     LinearConstraints_A.set(i, j, value);
                 }
@@ -142,7 +136,7 @@ public class SimpleSCE extends Optimizer {
                 try {
                     value = Double.parseDouble(number);
                 } catch (NumberFormatException e) {
-                    this.getModel().getRuntime().sendHalt("SimpleSCE: Can^t read Linear Constraint Matrix, because there are unparseable elements:" + e.toString());
+                    stop(JAMS.resources.getString("Cant_read_Linear_Constraint_Matrix_because_there_are_unparseable_elements") + ":" + e.toString());
                 }
                 LinearConstraints_b.set(i, 0, value);
             }
@@ -150,19 +144,19 @@ public class SimpleSCE extends Optimizer {
 
         if (LinearConstraints_A != null && LinearConstraints_b != null) {
             if (LinearConstraints_A.getRowDimension() != LinearConstraints_b.getRowDimension()) {
-                this.getModel().getRuntime().sendHalt("SimpleSCE: LinearConstraintMatrixA must have the same number of rows as LinearConstraintVectorB");
+                stop(JAMS.resources.getString("LinearConstraintMatrixA_must_have_the_same_number_of_rows_as_LinearConstraintVectorB"));
             }
             if (LinearConstraints_A.getColumnDimension() != n) {
-                this.getModel().getRuntime().sendHalt("SimpleSCE: LinearConstraintMatrixA must have the same number of columns as thera are parameters");
+                stop(JAMS.resources.getString("LinearConstraintMatrixA_must_have_the_same_number_of_columns_as_there_are_parameters"));
             }
         }
     }
 
     public double Custom_rand() {
-        return this.generator.nextDouble();
+        return generator.nextDouble();
     }
        
-    public double NormalizedgeometricRange(Sample x[], double bound[]) {
+    public double NormalizedgeometricRange(SampleSO x[], double bound[]) {
         if (x.length == 0) {
             return 0;
         }
@@ -183,14 +177,10 @@ public class SimpleSCE extends Optimizer {
         return (mean);
     }
 
-    public double[] std(Sample x[]) {
-        if (x.length == 0) {
+    public double[] std(SampleSO x[]) {
+        if (x.length <= 1) {
             return null;
-        }
-        if (x.length == 1) {
-            return null;
-        }
-        
+        }                
         double mean[] = new double[n];
         double var[] = new double[n];
 
@@ -235,34 +225,25 @@ public class SimpleSCE extends Optimizer {
     }
     //s forms the simplex
     //sf function values of simplex
-    /*bl lower bound, bu upper bound 
-    public double[] cceua2(double s[][], double sf[], double bl[], double bu[]) {
+    /*bl lower bound, bu upper bound */
+    public SampleSO cceua2(SampleSO[] s, double bl[], double bu[]) {
         int nps = s.length;
-        int nopt = s[0].length;
+        int nopt = s[0].x.length;
 
         int n = nps;
         int m = nopt;
 
         double alpha = 1.0;
-        double beta = 0.5;
-
-        // Assign the best and worst points:
-        double sb[] = new double[nopt];
-        double sw[] = new double[nopt];
-        double fb = sf[0];
-        double fw = sf[n - 1];
-
-        for (int i = 0; i < nopt; i++) {
-            sb[i] = s[0][i];
-            sw[i] = s[n - 1][i];
-        }
-
+        double beta = 0.5;        
+        // Assign the best and worst points:                        
+        SampleSO sw = s[n-1];
+        
         // Compute the centroid of the simplex excluding the worst point:
         double ce[] = new double[nopt];
         for (int i = 0; i < nopt; i++) {
             ce[i] = 0;
             for (int j = 0; j < n - 1; j++) {
-                ce[i] += s[j][i];
+                ce[i] += s[j].x[i];
             }
             ce[i] /= (n - 1);
         }
@@ -270,7 +251,7 @@ public class SimpleSCE extends Optimizer {
         // Attempt a reflection point
         double snew[] = new double[nopt];
         for (int i = 0; i < nopt; i++) {
-            snew[i] = ce[i] + alpha * (ce[i] - sw[i]);
+            snew[i] = ce[i] + alpha * (ce[i] - sw.x[i]);
         }
 
         // Check if is outside the bounds:
@@ -287,33 +268,26 @@ public class SimpleSCE extends Optimizer {
         if (ibound >= 1) {
             snew = this.RandomSampler();
         }
-
-        double fnew = funct(snew);
-
+        
+        SampleSO fnew = this.getSample(snew);
+        
         // Reflection failed; now attempt a contraction point:
-        if (fnew > fw) {
+        if (fnew.fx > sw.fx) {
             for (int i = 0; i < nopt; i++) {
-                snew[i] = sw[i] + beta * (ce[i] - sw[i]);
+                snew[i] = sw.x[i] + beta * (ce[i] - s[n-1].x[i]);
             }
-            fnew = funct(snew);
+            fnew = this.getSample(snew);
         }
         // Both reflection and contraction have failed, attempt a random point;
-        if (fnew > fw) {
+        if (fnew.fx > sw.fx) {
             snew = this.RandomSampler();
-            fnew = funct(snew);
+            fnew = this.getSample(snew);
         }
-
-        double result[] = new double[nopt + 1];
-        for (int i = 0; i < nopt; i++) {
-            result[i] = snew[i];
-        }
-        result[nopt] = fnew;
-        return result;
-    }*/
-    
-    public Sample cceua(Sample[] simplex, double bl[], double bu[]) {
-        SCEFunctionEvaluator eval = new SCEFunctionEvaluator(this);
         
+        return fnew;
+    }
+    
+    public SampleSO cceua(SampleSO[] simplex, double bl[], double bu[]) {                
         //convert boundary constraints to linear constraints
         Matrix A = new Matrix(bl.length + bu.length, n);
         Matrix b = new Matrix(bl.length + bu.length, 1);
@@ -334,7 +308,7 @@ public class SimpleSCE extends Optimizer {
         return SearchMethod.step(this, simplex, A, b, lowBound, upBound);    
     }
 
-    void EvolveSubPopulation(int nspl, int nps, int npg, int nopt, Sample c[], double[] bu, double[] bl) {
+    void EvolveSubPopulation(int nspl, int nps, int npg, int nopt, SampleSO c[], double[] bu, double[] bl) {
         //Evolve sub-population igs for nspl steps:
         for (int loop = 0; loop < nspl; loop++) {
             // Select simplex by sampling the complex according to a linear
@@ -356,7 +330,7 @@ public class SimpleSCE extends Optimizer {
             Arrays.sort(lcs);
 
             // Construct the simplex:            
-            Sample s[] = new Sample[nps];
+            SampleSO s[] = new SampleSO[nps];
 
             for (int i = 0; i < nps; i++) {                
                 s[i] = c[lcs[i]].clone();   //?necessary to clone?
@@ -370,19 +344,12 @@ public class SimpleSCE extends Optimizer {
             }
 
             // Sort the complex;
-            Arrays.sort(c, new SampleComperator(false));
+            Arrays.sort(c, new SampleSOComperator(false));
         // End of Inner Loop for Competitive Evolution of Simplexes
         }
     }
-
-    public void sayThis(String wordsToSay){
-        if (this.getModel()==null){            
-            System.out.println(wordsToSay);            
-        }else
-            this.getModel().getRuntime().sendInfoMsg(wordsToSay);
-    }
-    
-    public Sample sceua(double[] x0, double[] bl, double[] bu, int maxn, int kstop, double pcento, double peps, int ngs, int iseed, int iniflg) {
+       
+    public SampleSO sceua(double[] x0, double[] bl, double[] bu, int maxn, int kstop, double pcento, double peps, int ngs, int iseed) {
         int method = 1;
                 
         SearchMethod = null;
@@ -397,7 +364,6 @@ public class SimpleSCE extends Optimizer {
         int npg = 2 * nopt + 1;
         int nps = nopt + 1;
         int nspl = npg;
-        int mings = ngs;
         int npt = npg * ngs;
 
         double bound[] = new double[nopt];
@@ -407,9 +373,9 @@ public class SimpleSCE extends Optimizer {
 
         // Create an initial population to fill array x(npt,nopt):
         generator.setSeed(iseed);        
-        Sample x[] = new Sample[npt];
+        SampleSO x[] = new SampleSO[npt];
         for (int i = 0; i < npt; i++) {
-            if (iniflg == 1 && i == 0) {
+            if (i == 0) {
                 x[i] = getSample(x0);
             } else {
                 x[i] = getSample(RandomSampler());
@@ -418,29 +384,26 @@ public class SimpleSCE extends Optimizer {
 
         int nloop = 0;        
         // Sort the population in order of increasing function values;
-        Arrays.sort(x, new SampleComperator(false));
-                
-        // Compute the standard deviation for each parameter
-        double xnstd[] = std(x);
-
+        Arrays.sort(x, new SampleSOComperator(false));
+                        
         // Computes the normalized geometric range of the parameters
         double gnrng = NormalizedgeometricRange(x, bound); //exp(mean(log((max(x)-min(x))./bound)));
 
-        sayThis("The Inital Loop: 0");
-        sayThis("Best: " + x[0].toString());
-        sayThis("Worst: " + x[npt-1].toString());
+        sayThis(JAMS.resources.getString("The_Inital_Loop_0"));
+        sayThis(JAMS.resources.getString("Best") + x[0].toString());
+        sayThis(JAMS.resources.getString("Worst") + x[npt-1].toString());
                         
         
         //Check for convergency;
         if (currentSampleCount >= maxn) {
-            sayThis("*** OPTIMIZATION SEARCH TERMINATED BECAUSE THE LIMIT");
-            sayThis("ON THE MAXIMUM NUMBER OF TRIALS" + maxn);
-            sayThis("HAS BEEN EXCEEDED.  SEARCH WAS STOPPED AT TRIAL NUMBER:" + currentSampleCount);
-            sayThis("OF THE INITIAL LOOP!");            
+            sayThis(JAMS.resources.getString("OPTIMIZATION_SEARCH_TERMINATED_BECAUSE_THE_LIMIT"));
+            sayThis(JAMS.resources.getString("ON_THE_MAXIMUM_NUMBER_OF_TRIALS") + ":" + maxn);
+            sayThis(JAMS.resources.getString("HAS_BEEN_EXCEEDED_SEARCH_WAS_STOPPED_AT_TRIAL_NUMBER") + ":" + currentSampleCount);
+            sayThis(JAMS.resources.getString("OF_THE_INITIAL_LOOP"));            
         }
 
         if (gnrng < peps) {            
-            sayThis("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");
+            sayThis(JAMS.resources.getString("THE_POPULATION_HAS_CONVERGED_TO_A_PRESPECIFIED_SMALL_PARAMETER_SPACE"));
         }
 
         // Begin evolution loops:
@@ -461,7 +424,7 @@ public class SimpleSCE extends Optimizer {
                     k2[i] = k1[i] * ngs + igs;
                 }
 
-                Sample c[] = new Sample[npg];                
+                SampleSO c[] = new SampleSO[npg];                
                 for (int i = 0; i < npg; i++) {
                     c[k1[i]] = x[k2[i]].clone();
                 }
@@ -473,24 +436,23 @@ public class SimpleSCE extends Optimizer {
                 }
             // End of Loop on Complex Evolution;
             }            
-            Arrays.sort(x, new SampleComperator(false));
+            Arrays.sort(x, new SampleSOComperator(false));
                   
-            //Compute the standard deviation for each parameter
-            xnstd = std(x);
+            //Compute the standard deviation for each parameter            
             gnrng = NormalizedgeometricRange(x, bound);
 
             // Record the best and worst points;            
-            sayThis("Evolution Loop:" + nloop + " - Trial - " + currentSampleCount);
-            sayThis("BEST:" + x[0]);
-            sayThis("WORST:" + x[x.length-1]);
+            sayThis(JAMS.resources.getString("Evolution_Loop") + ":" + nloop + JAMS.resources.getString("Trial") + " " + currentSampleCount);
+            sayThis(JAMS.resources.getString("Best") + x[0]);
+            sayThis(JAMS.resources.getString("Worst") + x[x.length-1]);
             
             // Check for convergency;
             if (currentSampleCount >= maxn) {
-                sayThis("*** OPTIMIZATION SEARCH TERMINATED BECAUSE THE LIMIT");
-                sayThis("ON THE MAXIMUM NUMBER OF TRIALS " + maxn + " HAS BEEN EXCEEDED!");                
+                sayThis(JAMS.resources.getString("OPTIMIZATION_SEARCH_TERMINATED_BECAUSE_THE_LIMIT"));
+                sayThis(JAMS.resources.getString("ON_THE_MAXIMUM_NUMBER_OF_TRIALS") + " " + maxn + JAMS.resources.getString("HAS_BEEN_EXCEEDED"));
             }
             if (gnrng < peps) {
-                sayThis("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");                
+                sayThis(JAMS.resources.getString("THE_POPULATION_HAS_CONVERGED_TO_A_PRESPECIFIED_SMALL_PARAMETER_SPACE"));
             }
 
             for (int i = 0; i < kstop - 1; i++) {
@@ -507,22 +469,22 @@ public class SimpleSCE extends Optimizer {
                 criter_change /= criter_mean;
 
                 if (criter_change < pcento) {
-                    sayThis("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY");
-                    sayThis("LESS THAN THE THRESHOLD " + pcento + "%");
-                    sayThis("CONVERGENCY HAS ACHIEVED BASED ON OBJECTIVE FUNCTION CRITERIA!!!");                   
+                    sayThis(JAMS.resources.getString("THE_BEST_POINT_HAS_IMPROVED_IN_LAST") + " " + kstop + " " +  JAMS.resources.getString("LOOPS_BY"));
+                    sayThis(JAMS.resources.getString("LESS_THAN_THE_THRESHOLD") + " " + pcento + "%");
+                    sayThis(JAMS.resources.getString("CONVERGENCY_HAS_ACHIEVED_BASED_ON_OBJECTIVE_FUNCTION_CRITERIA"));                   
                 }
             }
         }
-        sayThis("SEARCH WAS STOPPED AT TRIAL NUMBER: " + currentSampleCount);
-        sayThis("NORMALIZED GEOMETRIC RANGE = " + gnrng);
-        sayThis("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY " + criter_change + "%");
+        sayThis(JAMS.resources.getString("SEARCH_WAS_STOPPED_AT_TRIAL_NUMBER") + " " + currentSampleCount);
+        sayThis(JAMS.resources.getString("NORMALIZED_GEOMETRIC_RANGE") + " " + gnrng);
+        sayThis(JAMS.resources.getString("THE BEST POINT HAS IMPROVED IN LAST ") + kstop + " "+JAMS.resources.getString("LOOPS_BY") + " "+ criter_change + "%");
                 
         return x[0];
     }
 
+    @Override
     public void run() {
         int iseed = 10;
-        int iniflg = 0;
         
         if (runEnumerator == null) {
             runEnumerator = getChildrenEnumerator();
@@ -535,44 +497,32 @@ public class SimpleSCE extends Optimizer {
         if (x0 == null){
             x0 = RandomSampler(); 
         }
-        
-        int iNumberOfComplexes = NumberOfComplexes.getValue();        
-        double pcento = this.pcento.getValue();
-        double peps = this.peps.getValue();
-        int kstop = this.kstop.getValue();
-        int maxn = this.maxn.getValue();
-        
-        if (iNumberOfComplexes <= 0) {
-            this.getModel().getRuntime().sendInfoMsg("NumberOfComplexes: value not specified or out of bounds, set to default value: 2");
-            iNumberOfComplexes = 2;
-        }
-                                   
-        if (pcento <= 0) {
-            this.getModel().getRuntime().sendInfoMsg("pcento: value not specified or out of bounds, set to default value: 0.1");
-            pcento = 0.1;
-        }
-                        
-        if (peps <= 0) {
-            this.getModel().getRuntime().sendInfoMsg("pcento: value not specified or out of bounds, set to default value: 0.00001");
-            peps = 0.00001;
-        }
-                        
-        if (kstop <= 0) {
-            this.getModel().getRuntime().sendInfoMsg("kstop: value not specified or out of bounds, set to default value: 10");
-            kstop = 10;
-        }
-                        
-        if (maxn <= 0) {
-            this.getModel().getRuntime().sendInfoMsg("kstop: value not specified or out of bounds, set to default value: 10000");
-            maxn = 10000;
-        }
-        
-        sceua(x0, this.lowBound, this.upBound, maxn, kstop, pcento, peps, iNumberOfComplexes, iseed, iniflg);    
+                                
+        if (NumberOfComplexes.getValue() <= 0) {
+            sayThis("NumberOfComplexes_value_not_specified");
+            NumberOfComplexes.setValue(2);
+        }                                   
+        if (pcento.getValue() <= 0) {
+            sayThis("pcento_value_not_specified");
+            pcento.setValue(0.1);
+        }                        
+        if (peps.getValue() <= 0) {
+            sayThis("peps_value_not_specified");
+            peps.setValue(0.00001);
+        }                        
+        if (kstop.getValue() <= 0) {
+            sayThis("kstop_value_not_specified");
+            peps.setValue(10);
+        }                        
+        if (maxn.getValue() <= 0) {
+            sayThis("maxn_value_not_specified");
+            peps.setValue(10000);
+        }        
+        sceua(x0, this.lowBound, this.upBound, maxn.getValue(), kstop.getValue(), pcento.getValue(), peps.getValue(), NumberOfComplexes.getValue(), iseed);    
     }
 
-    public Sample offlineRun(double[] start, double lowBound[], double upBound[], int NumberOfComplexes, int MaximizeEff, int maxn, int kstop, double pcento, double peps, Optimizer.AbstractFunction destFunction) {
+    public SampleSO offlineRun(double[] start, double lowBound[], double upBound[], int NumberOfComplexes, int MaximizeEff, int maxn, int kstop, double pcento, double peps, SOOptimizer.AbstractFunction destFunction) {
         int iseed = 10;
-        int iniflg = 0;
         this.lowBound = lowBound;
         this.upBound = upBound;
         this.N = lowBound.length;
@@ -586,6 +536,6 @@ public class SimpleSCE extends Optimizer {
         }
         this.GoalFunction = destFunction;
 
-        return sceua(x0, lowBound, upBound, maxn, kstop, pcento, peps, NumberOfComplexes, iseed, iniflg);
+        return sceua(x0, lowBound, upBound, maxn, kstop, pcento, peps, NumberOfComplexes, iseed);
     }   
 }

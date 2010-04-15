@@ -16,13 +16,14 @@ import java.util.Stack;
 import java.util.Vector;
 import jams.model.JAMSComponentDescription;
 import jams.tools.FileTools;
+import jams.JAMS;
 
 @JAMSComponentDescription(
         title="Branch and Bound Optimizer",
         author="Christian Fischer",
         description="Performs a branch and bound optimization. Advantage: It can be shown, that this method will find the global optimum. Disadvantage: This method usally requires many function evaluations. So it should only be used, if model execution is very fast"
         )
-public class BranchAndBound extends Optimizer{
+public class BranchAndBound extends SOOptimizer{
                     
     @SuppressWarnings("unchecked")
     public BranchAndBound() {
@@ -34,7 +35,7 @@ public class BranchAndBound extends Optimizer{
             return; 
         
         if (x0 != null){
-            this.getModel().getRuntime().sendInfoMsg("start values not supported by branch and bound optimizer!\nstart value is ignored");
+            this.getModel().getRuntime().sendInfoMsg(JAMS.resources.getString("start_value_not_supported_by_branch_and_bound"));
         }
 /*             
         if (SampleDumpFileName != null){
@@ -48,24 +49,24 @@ public class BranchAndBound extends Optimizer{
     }
            
     public class HyperCube{
-        protected Sample a;
-        protected Sample b;
-        protected Sample midPoint;
+        protected SampleSO a;
+        protected SampleSO b;
+        protected SampleSO midPoint;
         protected double L;
         
-        protected ArrayList<Sample> InCubeSamples;
+        protected ArrayList<SampleSO> InCubeSamples;
         
         public double goodOneFactor;
         protected HyperCube parent;
         
         protected double highestLowBound;
         
-        HyperCube(Sample a,Sample b,Sample midPoint,HyperCube parent){
+        HyperCube(SampleSO a,SampleSO b,SampleSO midPoint,HyperCube parent){
             this.a = a;
             this.b = b;
             this.midPoint = midPoint;
             this.parent = parent;            
-            this.InCubeSamples = new ArrayList<Sample>();
+            this.InCubeSamples = new ArrayList<SampleSO>();
             InCubeSamples.add(a);
             InCubeSamples.add(b);
             InCubeSamples.add(midPoint);
@@ -81,7 +82,7 @@ public class BranchAndBound extends Optimizer{
             goodOneFactor = ( (midPoint.fx - a.fx) + (midPoint.fx - b.fx));                        
         }
         
-        public void AddCubeSample(Sample x){           
+        public void AddCubeSample(SampleSO x){           
             this.InCubeSamples.add(x);
         }
         
@@ -194,7 +195,7 @@ public class BranchAndBound extends Optimizer{
         return sum;//Math.sqrt(sum);
     }
     
-    int getMin(Vector<Sample> Q){
+    int getMin(Vector<SampleSO> Q){
         double min = Double.MAX_VALUE;
         int index = 0;
         for (int i=0;i<Q.size();i++){
@@ -207,14 +208,14 @@ public class BranchAndBound extends Optimizer{
     }
     double test=0;
     @SuppressWarnings("unchecked")
-    public double ApproxL(Sample a,Sample b,HyperCube myCube){
+    public double ApproxL(SampleSO a,SampleSO b,HyperCube myCube){
         super.lowBound = a.x;
         super.upBound  = b.x;
                 
-        ArrayList<Sample> list = myCube.InCubeSamples;        
+        ArrayList<SampleSO> list = myCube.InCubeSamples;        
         if (myCube.parent != null){
             for (int i=0;i<myCube.parent.InCubeSamples.size();i++){
-                Sample x = myCube.parent.InCubeSamples.get(i);
+                SampleSO x = myCube.parent.InCubeSamples.get(i);
                 if (VectorLessEq(a.x,x.x) && VectorLessEq(x.x,b.x) && !list.contains(x)){
                     boolean contains = false;
                     for (int j=0;j<list.size();j++){
@@ -229,7 +230,7 @@ public class BranchAndBound extends Optimizer{
             }
         }
         while(list.size() < 3*n+1){
-            Sample rnd_point = getSample(RandomSampler());            
+            SampleSO rnd_point = getSample(RandomSampler());            
             if (rnd_point.fx<a.fx&&rnd_point.fx<b.fx){
                 test = a.fx-rnd_point.fx + b.fx-rnd_point.fx;
             }
@@ -238,8 +239,8 @@ public class BranchAndBound extends Optimizer{
         /*double L = 0;
         for (int i=0;i<list.size();i++){
             for (int j=0;j<i;j++){
-                Sample x = list.get(i);
-                Sample y = list.get(j);
+                SampleSO x = list.get(i);
+                SampleSO y = list.get(j);
                 if (VectorNorm(VectorSub(x.x,y.x)) > 0.000000001)
                     L = Math.max(L,Math.abs(x.fx-y.fx)/VectorNorm(VectorSub(x.x,y.x)));                
             }
@@ -262,7 +263,7 @@ public class BranchAndBound extends Optimizer{
             L[i] = dL;
         }*/
         /*for (int t=0;t<3*n*n+1;t++){
-            Vector<Sample> tmp_list = new Vector<Sample>();
+            Vector<SampleSO> tmp_list = new Vector<SampleSO>();
             
             boolean usedList[] = new boolean[list.size()];
             for (int u=0;u<n+1;u++){
@@ -284,7 +285,7 @@ public class BranchAndBound extends Optimizer{
             Matrix V = new Matrix(tmp_list.size(),n+1);
             Matrix y = new Matrix(tmp_list.size(),1);
             for (int i=0;i<tmp_list.size();i++){                        
-                Sample r = tmp_list.get(i);
+                SampleSO r = tmp_list.get(i);
                 for (int j=0;j<n;j++){
                     V.set(i,j,r.x[j]);
                 }
@@ -346,7 +347,7 @@ public class BranchAndBound extends Optimizer{
             singleRun();
             return;
         }
-        Vector<Sample> Q = new Vector<Sample>();
+        Vector<SampleSO> Q = new Vector<SampleSO>();
         Vector<HyperCube> cubes = new Vector<HyperCube>();
                 
         int xCount = 0;
@@ -356,23 +357,23 @@ public class BranchAndBound extends Optimizer{
         int k=1;                                
 
         getModel().getRuntime().sendInfoMsg("***************************");
-        getModel().getRuntime().sendInfoMsg("****start optimization ****");
+        getModel().getRuntime().sendInfoMsg(JAMS.resources.getString("_start_optimization_"));
         getModel().getRuntime().sendInfoMsg("***************************");
                         
-        Sample a = getSample(super.lowBound);
-        Sample b = getSample(super.upBound);
+        SampleSO a = getSample(super.lowBound);
+        SampleSO b = getSample(super.upBound);
                 
         //add upperleft und lowerright corner of cube
         Q.add(a);        
         Q.add(b);        
         //midpoint xr
         double xR_tmp[] = VectorMul(VectorAdd(lowBound,upBound),0.5);
-        Sample xR = getSample(xR_tmp);
+        SampleSO xR = getSample(xR_tmp);
         Q.add(xR);
         
         //gamma holds minimum of samples
         int IndexWithMinimum = getMin(Q);
-        Sample v = Q.get(IndexWithMinimum);
+        SampleSO v = Q.get(IndexWithMinimum);
         gamma = v.fx;
         
         //calculate a lower approximation my        
@@ -396,7 +397,7 @@ public class BranchAndBound extends Optimizer{
             
             //System.out.println("Processing next cube:\nR:" + R.toString() + "\nMinimum:" + gamma + "\nk:" + k + "\nSampleCount:" + currentSampleCount);            
             
-            //SaveCubes(cubes,"cubedump" + xCount + ".dat");
+            SaveCubes(cubes,"cubedump" + xCount + ".dat");
             if (this.maxn != null){
                 if ( this.sampleList.size() >= this.maxn.getValue() ){                    
                     break;
@@ -414,10 +415,10 @@ public class BranchAndBound extends Optimizer{
                     sel_j = i;
                 }
             }
-            Sample a1 = a;
+            SampleSO a1 = a;
             double b1_tmp[] = new double[n];
             double a2_tmp[] = new double[n];                        
-            Sample b2 = b;                  
+            SampleSO b2 = b;                  
             
             for (int i=0;i<n;i++){
                 if (i == sel_j){
@@ -429,14 +430,14 @@ public class BranchAndBound extends Optimizer{
                     a2_tmp[i] = a.x[i];
                 }
             }
-            Sample b1 = getSample(b1_tmp);
-            Sample a2 = getSample(a2_tmp);
+            SampleSO b1 = getSample(b1_tmp);
+            SampleSO a2 = getSample(a2_tmp);
             
             double xR1_tmp[] = VectorMul(VectorAdd(a1.x,b1.x),0.5);   
             double xR2_tmp[] = VectorMul(VectorAdd(a2.x,b2.x),0.5);   
             
-            Sample xR1 = getSample(xR1_tmp);
-            Sample xR2 = getSample(xR2_tmp);
+            SampleSO xR1 = getSample(xR1_tmp);
+            SampleSO xR2 = getSample(xR2_tmp);
 
             //approx L
             HyperCube R1 = new HyperCube(a1,b1,xR1,R);   

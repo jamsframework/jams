@@ -28,7 +28,7 @@ import jams.model.JAMSVarDescription;
         author="Christian Fischer",
         description="under construction!!"
         )
-public class MatlabConnector extends Optimizer{
+public class MatlabConnector extends SOOptimizer{
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,

@@ -19,27 +19,15 @@ import jams.components.machineLearning.kernels.*;
 import jams.tools.FileTools;
 
 public class GaussianLearner extends Learner  {
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "TimeSerie of Temp Data"
-            )
-            public Attribute.Entity trainData;
+    
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public Attribute.Entity optimizationData;
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "TimeSerie of Temp Data"
-            )
-            public JAMSEntity validationData;
-    
+            public JAMSEntity optimizationData;
+        
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
@@ -81,13 +69,22 @@ public class GaussianLearner extends Learner  {
             description = "TimeSerie of Temp Data"
             )
             public Attribute.String resultFile = null;
-                   
+                          
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "TimeSerie of Temp Data"
+            description = "component mode",
+            defaultValue="0"
             )
-            public Attribute.Boolean doOptimization;
+            public Attribute.Integer mode;
+    
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "file containing model",
+            defaultValue=""
+            )
+            public JAMSString modelDataFile;
     
     Matrix CovarianzMatrix;
     LUDecomposition Solver;
@@ -114,6 +111,11 @@ public class GaussianLearner extends Learner  {
     static final double limit = 20;
     static double gaussianDistribution[];
 
+    
+    public static final int MODE_TRAIN = 0;
+    public static final int MODE_APPLYMODEL = 1;
+    public static final int MODE_OPTIMIZE = 2;
+    
     public double getMarginalLikelihood() {
 	double n = this.TrainLength;
 	double term1 = -0.5*Observations.transpose().times(this.alpha).get(0,0);		
@@ -122,10 +124,13 @@ public class GaussianLearner extends Learner  {
         
         //todo .. how to determine term2 without solver .. only by using inverse cov matrix?
         
-	if (fastSolver == null)
+	if (fastSolver != null)
             L = fastSolver.getL();
-        else
+        else if (Solver != null)
             L = Solver.getL();
+        else{
+            L = CovarianzMatrix.lu().getL();
+        }
 	
 	for (int i=0;i<L.getColumnDimension();i++) {
 	    term2 += 2.0 * Math.log(L.get(i,i));
@@ -297,7 +302,7 @@ public class GaussianLearner extends Learner  {
 	invCovarianzMatrix = null;
         
 	//read params from file
-	if (!this.doOptimization.getValue() && this.parameterFile != null && param_theta == null) {
+	if ((this.mode.getValue() & MODE_OPTIMIZE)==0 && this.parameterFile != null && param_theta == null) {
 	    BufferedReader reader;
 	    try {
 		reader = new BufferedReader(new FileReader(FileTools.createAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),
@@ -380,7 +385,7 @@ public class GaussianLearner extends Learner  {
 	}	
     }
 
-    public double GetMean(double x[]) {
+    public double getMean(double x[]) {
         
         Matrix kstar = new Matrix(1,TrainLength);
         for (int i=0;i<TrainLength;i++) {	    
@@ -398,8 +403,16 @@ public class GaussianLearner extends Learner  {
         
         return result[0];
     }
-            
-    public double GetVariance(double x[]) {
+        
+    public double[] getVariance(double x[][]){
+        double predicted_variance[] = new double[x.length];
+        for (int i=0;i<x.length;i++){
+            predicted_variance[i] = this.getVariance(x[i]);
+        }
+        return predicted_variance;
+    }
+    
+    public double getVariance(double x[]) {
         
         Matrix kstar = new Matrix(1,TrainLength);
         Matrix kstarT = new Matrix(TrainLength,1);
@@ -424,12 +437,12 @@ public class GaussianLearner extends Learner  {
             RMinus1r = this.invCovarianzMatrix.times(kstarT);                        
             RMinus1Eins = this.invCovarianzMatrix.times(oneT);            
         }
-        else if (fastSolver == null){
-            RMinus1r = Solver.solve(kstarT);                    
-            RMinus1Eins = Solver.solve(oneT);            
-        }else{
+        else if (fastSolver != null){
             RMinus1r = fastSolver.solve(kstarT);                    
-            RMinus1Eins = fastSolver.solve(oneT);
+            RMinus1Eins = fastSolver.solve(oneT);            
+        }else{
+            RMinus1r = Solver.solve(kstarT);                    
+            RMinus1Eins = Solver.solve(oneT);
         }
             
         rRMinus1r = (kstar.times(RMinus1r));
@@ -501,10 +514,10 @@ public class GaussianLearner extends Learner  {
     }
     
     //probability for value of f(x) < y
-    public double GetProbabilityForXLessY(double x[],double target){
-        double mean = GetMean(x);
+    public double getProbabilityForXLessY(double x[],double target){
+        double mean = getMean(x);
         //variancecontrol, because probability decreases very fast at edges of distrubtion
-        double variance = GetVariance(x);
+        double variance = getVariance(x);
         
         if (variance < 0.00001)
             return -1000;
@@ -516,10 +529,10 @@ public class GaussianLearner extends Learner  {
         return CumulativeNormalDistributionFunction(target);
     }
     
-    public double GetExpectedImprovement(double x[],double fmin){
-        double mean = GetMean(x);
+    public double getExpectedImprovement(double x[],double fmin){
+        double mean = getMean(x);
         //variancecontrol, because probability decreases very fast at edges of distrubtion
-        double variance = GetVariance(x);
+        double variance = getVariance(x);
         
         if (variance < 0.00001)
             return -1000;
@@ -530,7 +543,7 @@ public class GaussianLearner extends Learner  {
         return variance*(CumulativeNormalDistributionFunction(u)*u + NormalDensityFunction(u));
     }
     
-    public double GetMarginalLikelihoodWithAdditionalSample(double x[],double value){
+    public double getMarginalLikelihoodWithAdditionalSample(double x[],double value){
         if (invCovarianzMatrix == null)
             invCovarianzMatrix = this.CovarianzMatrix.inverse(); 
                         
@@ -561,6 +574,24 @@ public class GaussianLearner extends Learner  {
 	double term3 = -n/2.0 * Math.log(2*Math.PI);
 	return (term1 + term2 + term3);        
     }
+    
+    public double[] Predict(boolean writeOutput) {	
+	double x[][] = null;	
+	try {
+	    x = (double[][])validationData.getObject("data");	    
+	}catch(Exception e) {
+            this.getModel().getRuntime().sendInfoMsg("there are no datasets for validation!" + e.toString());
+            return null;	    
+	}
+        double result[] = Predict(x);
+        
+        if (!writeOutput)
+            return result;
+        
+        this.writePrediction(result, this.getCorrectValues(), this.getVariance(x));
+	                                        
+	return result;
+    }  
     
     public double Predict(double[] x){
         Matrix kstar = new Matrix(1,TrainLength);                
@@ -594,55 +625,29 @@ public class GaussianLearner extends Learner  {
         return this.kernel.MM.ReTransform(x,prediction);                
     }
     
-    public double[] Predict(boolean writeOutput) {	
-	double x[][] = null;
-	double correctValue[] = null;
-	try {
-	    x = (double[][])validationData.getObject("data");
-	    correctValue = (double[])validationData.getObject("predict");
-	}catch(Exception e) {
-            this.getModel().getRuntime().sendInfoMsg("there are no datasets for validation!" + e.toString());
-            return null;	    
-	}
-	
-	int m = x.length;
-	Matrix kstar = new Matrix(m,TrainLength);
-	
-	for (int j=0;j<m;j++) {
-	    for (int i=0;i<TrainLength;i++) {	    
-		//calculate covariance for xi,x
-		double varianz = this.kernel.kernel(normalize(data[i]),normalize(x[j]),i,-1);
-		kstar.set(j,i,varianz);
-	    }
-	}
-	Matrix prediction = (kstar.times(alpha));
-				
-	double result[] = this.kernel.MM.ReTransform(x,prediction);
-        double predicted_variance[] = new double[m];
-        for (int i=0;i<m;i++){
-            predicted_variance[i] = this.GetVariance(x[i]);
-        }
-	if (!writeOutput)
-	    return result;
-	
-	BufferedWriter writer = null;
+    public void writePrediction(double prediction[], double correctValue[], double variance[]){
+        BufferedWriter writer = null;
 	try {
 	    writer = new BufferedWriter(new FileWriter(FileTools.createAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),
                     this.resultFile.getValue()),true));	    
 	}
 	catch (Exception e) {
             this.getModel().getRuntime().sendHalt("could not open result-file, because:" + e.toString() + "\nresults won't be saved!");
-            return null;	    
+            return;	    
 	}
 	    
-	for (int i=0;i<x.length;i++) {			    
+	for (int i=0;i<prediction.length;i++) {			    
 	    try {
-		writer.write(new String(correctValue[i] + "\t" + result[i] + "\t"+ predicted_variance[i] + "\n"));		    
+                if (correctValue != null)
+                    writer.write(correctValue[i] + "\t");	
+                if (variance != null)
+                    writer.write(variance[i] + "\t");	
+                writer.write(prediction[i]+"\n");		
 		writer.flush();
 	    }
 	    catch(Exception e) {
                 this.getModel().getRuntime().sendHalt("could not write to result-file, because:" + e.toString());
-                return null;
+                return;
 	    }
 	}
 	try {
@@ -650,11 +655,64 @@ public class GaussianLearner extends Learner  {
 	}
 	catch(Exception e) {
 	    this.getModel().getRuntime().sendHalt("Error occured while closing result file" + e.toString());
+            return;
+	}
+    }
+    
+    public double[] getCorrectValues(){
+        double correctValue[] = null;
+        try{
+            correctValue = (double[])validationData.getObject("predict");
+        }catch(Exception e) {
             return null;
 	}
-	return result;
-    }  
-                    
+        return correctValue;        
+    }
+            
+    
+    
+    public void deserializeModel() throws IOException, ClassNotFoundException{
+        String file = this.getModel().getWorkspacePath() + "/" + this.modelDataFile.getValue();
+        ObjectInputStream objOut = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));        
+        this.min = (double[])objOut.readObject();
+        this.max = (double[])objOut.readObject();
+        this.base = (double[])objOut.readObject();
+        this.data = (double[][])objOut.readObject();
+        this.alpha = (Jama.Matrix)objOut.readObject();
+        this.Observations = (Jama.Matrix)objOut.readObject();
+        TrainLength = data.length;
+        //create dummy kernel
+        this.kernel    = (jams.components.machineLearning.kernels.Kernel)objOut.readObject();        
+        this.kernel.MM = (jams.components.machineLearning.kernels.MeanModell)objOut.readObject();        
+        Object objSolver = objOut.readObject();
+        if (objSolver instanceof CholeskyDecomposition)
+            fastSolver = (CholeskyDecomposition)objSolver;
+        else
+            Solver = (LUDecomposition)objSolver;
+        this.invCovarianzMatrix = null;
+        objOut.close();      
+    }
+    
+    //write model        
+    public void serializeModel() throws IOException{
+        String file = this.getModel().getWorkspacePath() + "/" + this.modelDataFile.getValue();
+        ObjectOutputStream objOut = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));                
+        objOut.writeObject(this.min);
+        objOut.writeObject(this.max);
+        objOut.writeObject(this.base);
+        objOut.writeObject(this.data);
+        objOut.writeObject(this.alpha);
+        objOut.writeObject(this.Observations);
+        objOut.writeObject(this.kernel);
+        objOut.writeObject(this.kernel.MM);       
+        if (this.fastSolver != null){
+            objOut.writeObject(fastSolver);
+        }else
+            objOut.writeObject(Solver);                
+        objOut.flush();
+        objOut.close();                
+    }
+                        
     public void optInit() {
 	super.trainData = this.optimizationData;
 	super.validationData = this.validationData;
@@ -932,10 +990,20 @@ public class GaussianLearner extends Learner  {
     }
     
     public void run() {
+        if ((mode.getValue() & MODE_APPLYMODEL)!=0){        
+            try{
+                this.deserializeModel();
+                double x[]=this.Predict(false);                
+                this.writePrediction(x, null, null);                
+            }catch(Exception e){
+                this.getModel().getRuntime().sendInfoMsg("Could not apply model, because: " + e.toString());	        
+            }
+            return;
+        }
 	trainInit();
         setKernels();
         
-	if (doOptimization.getValue()) {
+	if ( (mode.getValue() & MODE_OPTIMIZE) != 0) {
             optInit();
             double x[] = new double[kernel.getParameterCount()];
 	    for (int i=0;i<x.length;i++){
@@ -986,5 +1054,14 @@ public class GaussianLearner extends Learner  {
         }
         System.out.println("TrainPerformance:" + performance);
 	Predict(true);
+        if (this.modelDataFile!=null){
+            if (!this.modelDataFile.getValue().equals("")){
+                try{
+                    this.serializeModel();
+                }catch(Exception e){
+                    this.getModel().getRuntime().sendInfoMsg("Could not serialize model to given file:" + e.toString());	        
+                }
+            }
+        }
     }    
 }

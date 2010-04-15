@@ -22,7 +22,6 @@ import jams.data.JAMSEntityCollection;
 import jams.model.Component;
 import jams.model.JAMSContext;
 import jams.model.JAMSVarDescription;
-import jams.model.Snapshot;
 
 /**
  *
@@ -96,7 +95,7 @@ public class HRUReducer extends JAMSContext{
     
     
 } 
-    Snapshot mySnapShot = null;
+//    Snapshot mySnapShot = null;
             
     public double singleRun(){
         if (runEnumerator == null) {
@@ -136,11 +135,11 @@ public class HRUReducer extends JAMSContext{
         return result;                
     }
     
-    void restore(){
+/*    void restore(){
         if (mySnapShot != null){
-            this.getModel().setModelState(mySnapShot);
+            this.getModel().setModelState(mySnapShot,false);
         }
-    }
+    }*/
             
     Attribute.Entity[] copyEntityArray(Attribute.Entity[] src){
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -519,7 +518,7 @@ public class HRUReducer extends JAMSContext{
     //wont have 
     public void init(){ 
         try{
-            mySnapShot = (Snapshot)this.snapshot.getObject("snapshot");
+//            mySnapShot = (Snapshot)this.snapshot.getObject("snapshot");
         }catch(Exception e){
             System.out.println("Could not find snapshot attribute: " + e.toString());
         }
@@ -537,7 +536,7 @@ public class HRUReducer extends JAMSContext{
         //erster durchlauf!
         maximumValue = singleRun();
         Attribute.Entity ea_ref[] = copyEntityArray(this.hrus.getEntityArray());
-        restore();
+        //restore();
                 
         bestAcceptableValue = maximumValue;
                         
@@ -547,7 +546,7 @@ public class HRUReducer extends JAMSContext{
             Attribute.Entity[] ea = hrus.getEntityArray();
             hrus.setEntities(reduce(nextTestPoint,ea_ref,ea));   
             value = singleRun();
-            restore();
+            //restore();
             
             this.getModel().getRuntime().println("Try reduction of " + (1.0-nextTestPoint) + " percent of all HRUs: get " + (1.0 - value/maximumValue) + " loss!");
             if (1.0 - value/maximumValue < maximumAcceptableLoss){

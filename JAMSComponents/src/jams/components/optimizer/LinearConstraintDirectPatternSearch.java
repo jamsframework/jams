@@ -6,7 +6,7 @@
 package jams.components.optimizer;
 import Jama.LUDecomposition;
 import Jama.Matrix;
-import jams.components.optimizer.Optimizer.*;
+import jams.components.optimizer.SOOptimizer.*;
 import java.util.Vector;
 
 /**
@@ -37,7 +37,7 @@ public class LinearConstraintDirectPatternSearch {
         return true;
     }
     
-    public Vector<Matrix> UpdateDirections(Sample x,Matrix P,double delta){                        
+    public Vector<Matrix> UpdateDirections(SampleSO x,Matrix P,double delta){                        
         Vector<Matrix> P_k = new Vector<Matrix>();        
         Matrix mx = new Matrix(x.x,x.x.length);
         //1. check if p_k direction can be used
@@ -134,8 +134,8 @@ public class LinearConstraintDirectPatternSearch {
         return P_k;
     }
     
-    public void search(Sample Iterate){
-        Sample nextIterate = Iterate;
+    public void search(SampleSO Iterate){
+        SampleSO nextIterate = Iterate;
         boolean successSearch = false;
         
     }

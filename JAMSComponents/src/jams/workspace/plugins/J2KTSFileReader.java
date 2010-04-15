@@ -22,11 +22,12 @@
  */
 package jams.workspace.plugins;
 
+import jams.io.BufferedFileReader;
 import jams.workspace.DataReader;
 import jams.workspace.DefaultDataSet;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
 /**
  *
@@ -35,7 +36,7 @@ import java.io.RandomAccessFile;
     public class J2KTSFileReader implements DataReader {
 
     private String dataFileName;
-    private RandomAccessFile reader;
+    transient private BufferedFileReader reader;
     
     @Override
     public int init() {
@@ -43,7 +44,7 @@ import java.io.RandomAccessFile;
         File file = new File(dataFileName);
         if (file.exists()) {
             try {                
-                this.reader = new RandomAccessFile(file,"r");
+                this.reader = new BufferedFileReader(new FileInputStream(file));
                 readMetaData();
                 result = 0;
             } catch (IOException ioe) {
@@ -98,21 +99,27 @@ import java.io.RandomAccessFile;
         this.dataFileName = dataFileName;
     }
     
-    public void getState(java.io.ObjectOutputStream stream) throws IOException{
-        stream.writeObject(this.dataFileName);
-        stream.writeLong(this.reader.getFilePointer());
+    public static class J2KTSFileReaderState implements DataReaderState{
+        String fileName;
+        long position;
+    }
+    public J2KTSFileReaderState getState(){
+        J2KTSFileReaderState state = new J2KTSFileReaderState();
+        state.fileName = this.dataFileName;
+        state.position = this.reader.getPosition();      
+        return state;
     }
     
-    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
-        this.dataFileName = (String)stream.readObject();
+    public void setState(DataReaderState state) throws IOException{
+        J2KTSFileReaderState J2KTSstate = (J2KTSFileReaderState)state;
+        this.dataFileName = J2KTSstate.fileName;
         if (this.reader!=null){
             try{
                 this.reader.close();
             }catch(Exception e){}
         }
         init();
-        this.reader.seek(stream.readLong());
-        
+        this.reader.setPosition(J2KTSstate.position);        
     }
     
 }

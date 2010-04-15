@@ -58,30 +58,55 @@ public class JdbcSQLConnector {
 
     public void connect() throws SQLException {
         //this.con = DriverManager.getConnection("jdbc:postgresql://" + hostname + "/" + database, username, passwd);
-        this.con = DriverManager.getConnection(driver + "://" + hostname + "/" + database, username, passwd);
+        this.con = DriverManager.getConnection(driver + "://" + hostname + "/" + database + "?autoReconnect=true", username, passwd);        
     }
 
     public int execUpdate(String sqlQuery) throws SQLException {
         if (con == null) {
-            return -1;
-        } else {
-            Statement stmt = con.createStatement();            
-            return stmt.executeUpdate(sqlQuery);            
+            connect();
         }
+        int trialCount=0;
+        while (!con.isValid(10) && trialCount++<4){
+            System.err.println("lost connection to database, attempt " + trialCount + " of 4 to reconnect");
+            connect();
+        }
+                    
+        Statement stmt = con.createStatement();            
+        return stmt.executeUpdate(sqlQuery);            
+        
     }
     
     public ResultSet execQuery(String sqlQuery) throws SQLException {
-        if (con == null) {
-            return null;
-        } else {
-            Statement stmt = con.createStatement();            
-            ResultSet rs = stmt.executeQuery(sqlQuery);
-            return rs;
+        if (con == null) 
+            connect();
+                                                            
+        int trialCount=0;
+        while (true){ 
+            try{
+                Statement stmt = con.createStatement();
+                return stmt.executeQuery(sqlQuery);                    
+            }catch(SQLException sqlex){
+                trialCount++;
+                if (trialCount > 4){
+                    throw sqlex;
+                }
+                connect();
+                System.err.println("lost connection to database, attempt " + trialCount + " of 4 to reconnect");
+                try{
+                    Thread.sleep(1000);
+                }catch(Exception e){
+                }                
+            }         
         }
     }
 
+    public boolean isValid() throws SQLException {
+        return this.con.isValid(10);
+    }
+    
     public void close() throws SQLException {
         this.con.close();
+        con = null;
     }
 
 }

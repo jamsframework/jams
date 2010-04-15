@@ -36,6 +36,7 @@ import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.LongValue;
 import jams.workspace.datatypes.ObjectValue;
 import jams.workspace.datatypes.StringValue;
+import jams.workspace.stores.DataStoreState;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
@@ -59,10 +60,14 @@ public class JdbcSQL implements DataReader {
     private JdbcSQLConnector pgsql;
     private int numberOfColumns = -1;
     private int[] type;
-    private boolean inited = false,  cleanedup = false;
+    private final boolean alwaysReconnect = false;
     private DefaultDataSet[] currentData = null;
-            
+    private boolean isClosed;
     private int offset = 0;
+    
+    public void JdbcSQL(){
+        isClosed = true;        
+    }
     
     public void setUser(String user) {
         this.user = user;
@@ -181,45 +186,31 @@ public class JdbcSQL implements DataReader {
         return data.toArray(new DefaultDataSet[data.size()]);
     }
 
-    @Override
-    public int init() {
-        offset = 0;
-        
-        if (inited) {
-            return 0;
-        } else {
-            inited = true;
+    void establishConnection(){
+        try{
+            if (pgsql == null){
+                pgsql = new JdbcSQLConnector(host,db,user,password,driver);
+                pgsql.connect();
+                isClosed = false;    
+            }else if (this.alwaysReconnect){
+                pgsql.close();
+                pgsql = null;
+                isClosed=true;
+                establishConnection();
+            }
+        }catch(SQLException sqlex){
+            System.err.println("jdbcSQL: " + sqlex);  
+            sqlex.printStackTrace();
+            isClosed = true;   
         }
-
-        if (db == null) {
-            return -1;
-        }
-
-        if (user == null) {
-            return -1;
-        }
-
-        if (password == null) {
-            return -1;
-        }
-
-        if (host == null) {
-            return -1;
-        }
-
-        if (query == null) {
-            return -1;
-        }
-        
-        if (driver == null) {
-            driver = "jdbc:postgresql";
-        }
-
-        pgsql = new JdbcSQLConnector(host, db, user, password, driver);
-
-        try {
-
-            pgsql.connect();
+    }
+    
+    public void query(){
+        establishConnection();
+        try {                 
+            if (rs != null)
+                rs.close();
+            
             rs = pgsql.execQuery(query);
             rs.setFetchSize(0);
             rsmd = rs.getMetaData();
@@ -243,28 +234,56 @@ public class JdbcSQL implements DataReader {
                     type[i] = OBJECT;
                 }
             }
-            cleanedup = false;
-
         } catch (SQLException sqlex) {
-            System.err.println("jdbcSQL: " + sqlex);
+            System.err.println("jdbcSQL: " + sqlex);            
+        }
+        return;
+    }
+    
+    @Override
+    public int init() {
+        offset = 0;
+               
+        if (db == null) {
             return -1;
         }
-        return 0;
+
+        if (user == null) {
+            return -1;
+        }
+
+        if (password == null) {
+            return -1;
+        }
+
+        if (host == null) {
+            return -1;
+        }
+
+        if (query == null) {
+            return -1;
+        }
+        
+        if (driver == null) {
+            driver = "jdbc:postgresql";
+        }
+     
+        query();
+        return 1;
     }
 
     @Override
-    public int cleanup() {
-
-        if (cleanedup) {
-            return 0;
-        } else {
-            cleanedup = true;
-        }
-
+    public int cleanup() {      
         try {
-            rs.close();
-            pgsql.close();
-            inited = false;
+            if (rs != null){
+                rs.close();
+                rs = null;
+            }
+            if (pgsql != null){
+                pgsql.close();
+                pgsql = null;
+                isClosed = true;    
+            }            
         } catch (SQLException sqlex) {
             System.out.println("jdbcSQL: " + sqlex);
             return -1;
@@ -278,16 +297,27 @@ public class JdbcSQL implements DataReader {
         return numberOfColumns;
     }
     
-    public void getState(java.io.ObjectOutputStream stream) throws IOException{
-        stream.writeInt(this.offset);
+    public void setState(DataReaderState state){
         
     }
-    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
-        if (inited)
-            cleanup();
-        this.init();
-        
+    public DataReaderState getState(){
+        return null;
+    }
+    public void getState(java.io.ObjectOutputStream stream) throws IOException{
+        stream.writeBoolean(isClosed);
+        stream.writeInt(this.offset);       
+    }
+    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{       
+        isClosed = stream.readBoolean();
         int oldOffset = stream.readInt();
+        if (isClosed){
+            this.cleanup();
+            return;
+        }
+        query();        
+        try{
+            Thread.sleep(1000);
+        }catch(Exception e){}        
         this.skip(oldOffset);        
     }
 }

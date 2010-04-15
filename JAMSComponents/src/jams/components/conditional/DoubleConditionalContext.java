@@ -71,6 +71,11 @@ public class DoubleConditionalContext extends JAMSContext {
         }
 
         @Override
+        public boolean hasPrevious() {
+            return !hasNext();
+        }
+        
+        @Override
         public Component next() {
             // if condition is true return first component, else second component
             if (value1.getValue() == value2.getValue()) {
@@ -79,22 +84,15 @@ public class DoubleConditionalContext extends JAMSContext {
                 return compArray[1];
             }
         }
+        
+        @Override
+        public Component previous() {
+            return next();
+        }
 
         @Override
         public void reset() {
             next = true;
-        }     
-
-        // TODO
-        @Override
-        public void setState(byte[]state) {
-
-        }
-
-        // TODO
-        @Override
-        public byte[] getState() {
-            return null;
-        }
+        }           
     }
 }

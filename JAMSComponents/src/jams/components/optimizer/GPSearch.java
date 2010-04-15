@@ -16,7 +16,6 @@ import java.util.Vector;
 import jams.JAMS;
 import jams.tools.JAMSTools;
 import jams.data.*;
-import jams.io.GenericDataWriter;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import jams.components.machineLearning.GaussianLearner;
@@ -28,7 +27,7 @@ import java.util.Arrays;
         author="Christian Fischer",
         description="under construction!!"
         )
-public class GPSearch extends Optimizer {
+public class GPSearch extends SOOptimizer {
     /*
      *  Component variables
      */            
@@ -67,16 +66,14 @@ public class GPSearch extends Optimizer {
                 
         public double f(double x[]){
             if (method == 1)
-                return GP.GetProbabilityForXLessY(x,target);
+                return GP.getProbabilityForXLessY(x,target);
             else if (method == 2)
-                return GP.GetExpectedImprovement(x,target);
+                return GP.getExpectedImprovement(x,target);
             else
-                return GP.GetMarginalLikelihoodWithAdditionalSample(x,target);
+                return GP.getMarginalLikelihoodWithAdditionalSample(x,target);
         }
     }
-                                    
-    GenericDataWriter writer;
-            
+                                                   
     @SuppressWarnings("unchecked")
     Vector<double[]> TrainData = new Vector<double[]>();
     
@@ -86,9 +83,8 @@ public class GPSearch extends Optimizer {
     final int initalSampleSize = 25;
     double maxValue = Double.NEGATIVE_INFINITY, minValue = Double.POSITIVE_INFINITY;
     double [] minPosition = null;
-    
-    int iterationCounter = 0;
-    
+        
+    @Override
     public void init() {
         super.init();      
         if (!enable.getValue())
@@ -110,6 +106,7 @@ public class GPSearch extends Optimizer {
             value = new double[d];
         }
         
+        @Override
         public String toString() {
             String r = new String();
             for (int i=0;i<value.length;i++){
@@ -132,8 +129,8 @@ public class GPSearch extends Optimizer {
             GP.MeanMethod.setValue(0);
             GP.PerformanceMeasure = JAMSDataFactory.createInteger();
             GP.PerformanceMeasure.setValue(PerformanceMeasure);
-            GP.doOptimization = JAMSDataFactory.createBoolean();
-            GP.doOptimization.setValue(true);                          
+            GP.mode = JAMSDataFactory.createInteger();
+            GP.mode.setValue(GaussianLearner.MODE_OPTIMIZE);                          
             GP.setModel(this.getModel());
             GP.kernelMethod = JAMSDataFactory.createInteger();
             GP.kernelMethod.setValue(8);
@@ -162,7 +159,7 @@ public class GPSearch extends Optimizer {
             GP.trainData.setObject("data",data);
             GP.trainData.setObject("predict",predict);
         
-            GP.optimizationData = JAMSDataFactory.createEntity();
+            GP.optimizationData = (JAMSEntity)JAMSDataFactory.createEntity();
             GP.optimizationData.setObject("data",data);
             GP.optimizationData.setObject("predict",predict);
                         
@@ -196,7 +193,7 @@ public class GPSearch extends Optimizer {
                 }
                 writer.write(value + "\n");
                 }catch(Exception e){
-                    System.out.println("Fehler" + e.toString());
+                    System.out.println(JAMS.resources.getString("Error") + " " + e.toString());
                 }
         }
         try{
@@ -209,7 +206,7 @@ public class GPSearch extends Optimizer {
     
     public void WriteGPData(GaussianLearner GP,String GPmeanFile,String GPvarFile){
         if (this.n != 2){
-            System.out.println("Skip rasterized output, because dim != 2");
+            System.out.println((JAMS.resources.getString("Skip_rasterized_output")));
             return;
         }
         
@@ -226,20 +223,20 @@ public class GPSearch extends Optimizer {
                 double x[] = new double[2];
                 x[0] = 0.0 + (double)i / 50.0;
                 x[1] = 0.0 + (double)j / 50.0;
-                double mean = GP.GetMean(x);
-                double variance = GP.GetVariance(x);
+                double mean = GP.getMean(x);
+                double variance = GP.getVariance(x);
                 try{
                     writer_mean.write( mean + "\t");
                     writer_var.write( variance + "\t");
                 }catch(Exception e){
-                    System.out.println("Fehler" + e.toString());
+                    System.out.println(JAMS.resources.getString("Error") + " " + e.toString());
                 }           
             }
             try{
                     writer_mean.write("\n");
                     writer_var.write("\n");
                 }catch(Exception e){
-                    System.out.println("Fehler" + e.toString());
+                    System.out.println(JAMS.resources.getString("Error") + " " + e.toString());
                 }
         }
         try{
@@ -253,7 +250,7 @@ public class GPSearch extends Optimizer {
     
      public void WriteGPProb(GaussianLearner GP,String GPprobFile,double target,int method){
         if (this.n != 2){
-            System.out.println("Skip rasterized output, because dim != 2");
+            System.out.println(JAMS.resources.getString("Skip_rasterized_output"));
             return;
         }
         
@@ -273,18 +270,18 @@ public class GPSearch extends Optimizer {
                 double x[] = new double[2];
                 x[0] = 0.0 + (double)i / 50.0;
                 x[1] = 0.0 + (double)j / 50.0;
-                double mean = GP.GetMean(x);
+                double mean = GP.getMean(x);
                 double optprob = function.f(x);
                 try{
                     writer_prob.write( optprob + "\t");
                 }catch(Exception e){
-                    System.out.println("Fehler" + e.toString());
+                    System.out.println(JAMS.resources.getString("Error") + " " + e.toString());
                 }           
             }
             try{
                     writer_prob.write("\n");
                 }catch(Exception e){
-                    System.out.println("Fehler" + e.toString());
+                    System.out.println(JAMS.resources.getString("Error") + " " + e.toString());
                 }
         }
         try{
@@ -314,7 +311,7 @@ public class GPSearch extends Optimizer {
             function.target = target;
             function.method = method;
             
-            Sample solution = sce.offlineRun(startpoint,normedLowBound,normedUpBound,3,Optimizer.MODE_MAXIMIZATION,10000,12,0.05,0.0001,function);            
+            SampleSO solution = sce.offlineRun(startpoint,normedLowBound,normedUpBound,3,Optimizer.MODE_MAXIMIZATION,10000,12,0.05,0.0001,function);            
             
             best = solution.x;       
         }else{
@@ -419,7 +416,7 @@ public class GPSearch extends Optimizer {
         Vector<double[]> bestPoints = new Vector<double[]>();
         bestPoints.add(FindMostProbablePoint(minPosition,GP,minValue,2));
         
-        System.out.println("Expected Improvement:" + GP.GetExpectedImprovement(bestPoints.get(0),minValue));
+        System.out.println(JAMS.resources.getString("Expected_Improvement") + GP.getExpectedImprovement(bestPoints.get(0),minValue));
         if (writeGPData != null && writeGPData.getValue() == true){
             WriteGPProb(GP,"\\info\\gp_eimpr_" + iterationCounter + ".dat",minValue,2);
         }
@@ -456,6 +453,7 @@ public class GPSearch extends Optimizer {
         return cluster(bestPoints);
     }
     
+    @Override
     public void run() { 
         if (!enable.getValue()){
             singleRun();
@@ -507,9 +505,9 @@ public class GPSearch extends Optimizer {
                 for (int j=0;j<n;j++){
                     System.out.println(nextSample[j] + " ");                    
                 }
-                System.out.println("value:" + value);
+                System.out.println(JAMS.resources.getString("value") + ":" + value);
             }                        
-            System.out.println("Evaluations:" + this.currentSampleCount + "\nMinimum:" + minValue);
+            System.out.println(JAMS.resources.getString("Evaluations") + ":" + this.currentSampleCount + "\n" + JAMS.resources.getString("Minimum") + ":" + minValue);
             if (currentSampleCount > this.maxn.getValue())
                 return;
             iterationCounter++;

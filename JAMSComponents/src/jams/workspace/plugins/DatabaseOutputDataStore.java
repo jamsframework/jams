@@ -116,7 +116,7 @@ public class DatabaseOutputDataStore implements OutputDataStore {
         return attributes;
     }
 
-    public void open() throws IOException {
+    public void open(boolean append) throws IOException {
         if (host == null) {
             throw new IOException("unknown host");
         }
@@ -145,9 +145,13 @@ public class DatabaseOutputDataStore implements OutputDataStore {
             sqlex.printStackTrace();
             throw new IOException(sqlex.toString());
         }
+        dataStarted = false;        
     }
 
     public void write(Object o) throws IOException {
+        if (o.toString().contains("@start")){
+            dataStarted = true;
+        }
     }
 
     public void writeCell(Object o) {
@@ -161,7 +165,7 @@ public class DatabaseOutputDataStore implements OutputDataStore {
     public void nextRow() throws IOException {
         String sqlStatement = genericSqlStatement;
         for (int i = 1; i <= this.lineArray.size(); i++) {
-            sqlStatement = sqlStatement.replace("#" + i, "\"" + lineArray.get(i) + "\"");
+            sqlStatement = sqlStatement.replace("#" + i, "\"" + lineArray.get(i-1) + "\"");
         }
         try {
             if (!sqlStatement.contains("#")) {
@@ -179,13 +183,7 @@ public class DatabaseOutputDataStore implements OutputDataStore {
     public void flush() throws IOException {
     }
 
-    public void close() throws IOException {
-        if (cleanedup) {
-            return;
-        } else {
-            cleanedup = true;
-        }
-
+    public void close() throws IOException {        
         try {
             if (pgsql != null) {
                 pgsql.close();
@@ -203,10 +201,22 @@ public class DatabaseOutputDataStore implements OutputDataStore {
     public DefaultFilter[] getFilters() {
         return filters;
     }
-
+//todo
+    public void setState(DataStoreState state){
+        
+    }
+    
+    //todo
+    public DataStoreState getState(){
+        return null;
+    }
+    
     public boolean isValid() {
-        //@todo: christian bitte überprüfen!
-        return true;
+        try{
+            return pgsql.isValid();
+        }catch (SQLException e){
+            return false;
+        }        
     }
 
     public class DefaultFilter implements Filter {

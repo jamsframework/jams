@@ -18,23 +18,25 @@ import jams.tools.JAMSTools;
 import jams.data.JAMSDataFactory;
 import jams.model.JAMSComponentDescription;
 import jams.tools.FileTools;
+import jams.JAMS;
+import jams.data.JAMSInteger;
 @JAMSComponentDescription(
         title="GutmanMethod",
         author="Christian Fischer",
         description="under construction!!"
         )
-public class GutmannMethod extends Optimizer {
+public class GutmannMethod extends SOOptimizer {
                
     int initalSampleSize = 10;
-    Sample minValue = new Sample(null,Double.POSITIVE_INFINITY);
-    Sample maxValue = new Sample(null,Double.NEGATIVE_INFINITY);
-    ArrayList<Sample> best10 = new ArrayList<Sample>();
+    SampleSO minValue = new SampleSO(null,Double.POSITIVE_INFINITY);
+    SampleSO maxValue = new SampleSO(null,Double.NEGATIVE_INFINITY);
+    ArrayList<SampleSO> best10 = new ArrayList<SampleSO>();
     
     public double evaluate(int N,int M,Matrix coefficient,double[]x){
         double sn = 0;
         
         for (int i=0;i<N;i++){            
-            sn += coefficient.get(i, 0)*kernel(Transform(sampleList.get(i).x),x);
+            sn += coefficient.get(i, 0)*kernel(Transform(getFromSampleList(i).getParameter()),x);
         }
         sn += coefficient.get(N+M-1, 0);
         for (int j=0;j<M-1;j++){
@@ -87,10 +89,10 @@ public class GutmannMethod extends Optimizer {
             Matrix b = new Matrix(N+1+M,1);
             
             for (int i=0;i<N;i++){
-                double transformedSample_i[] = Transform(sampleList.get(i).x);
+                double transformedSample_i[] = Transform(getFromSampleList(i).getParameter());
                 b.set(i, 0, 0.0);
                 for (int j=i;j<N;j++){
-                    double transformedSample_j[] = Transform(sampleList.get(j).x);
+                    double transformedSample_j[] = Transform(getFromSampleList(j).getParameter());
                     //set big Phi
                     double phi_ij = kernel(transformedSample_i,transformedSample_j);
                     A.set(i, j, phi_ij);
@@ -126,7 +128,7 @@ public class GutmannMethod extends Optimizer {
             try{
                 mu = A.solve(b);
             }catch(Exception e){
-                System.out.print("cant solve interpolation system, because: singular matrix");
+                System.out.print(JAMS.resources.getString("cant_solve_interpolation_system"));
                 return Double.POSITIVE_INFINITY;
             }
             double m0factor = -1;
@@ -140,18 +142,19 @@ public class GutmannMethod extends Optimizer {
             double value = mu.get(N, 0)*(sn - fstar)*(sn - fstar)*m0factor;
             //this is not possible
             if (value < 0){
-                System.out.println("error, integral of 2nd order is less than zero");
+                System.out.println(JAMS.resources.getString("error_integral_of_2nd_order_is_less_than_zero"));
                 value = -value; //better possibilities??
             }
             return value;
         }
     }
                                                                 
+    @Override
     public void init() {
         super.init();   
         if (!this.enable.getValue())
             return;
-        this.generator.setSeed(1);
+        generator.setSeed(1);
     }
                                        
     double kernel(double x[],double y[]){
@@ -175,10 +178,10 @@ public class GutmannMethod extends Optimizer {
         Matrix b = new Matrix(N+M,1);
         
         for(int i=0;i<N;i++){
-            double transformedSample_i[] = Transform(sampleList.get(i).x);
+            double transformedSample_i[] = Transform(getFromSampleList(i).getParameter());
                         
             for (int j=i;j<N;j++){
-                double transformedSample_j[] = Transform(sampleList.get(j).x);
+                double transformedSample_j[] = Transform(getFromSampleList(j).getParameter());
                 double phi_ij = kernel(transformedSample_i,transformedSample_j);
                 A.set(i, j, phi_ij);
                 A.set(j, i, phi_ij);                                
@@ -191,7 +194,7 @@ public class GutmannMethod extends Optimizer {
             A.set(i,N+M-1,1.0);
             A.set(N+M-1,i,1.0);
             
-            b.set(i, 0, sampleList.get(i).fx);            
+            b.set(i, 0, getFromSampleList(i).fx);            
         }
         for (int i=0;i<M;i++){
             for (int j=0;j<M;j++){
@@ -212,7 +215,7 @@ public class GutmannMethod extends Optimizer {
                 for (int j=i+1;j<sampleList.size();j++){
                     double d = 0;
                     for (int k=0;k<n;k++){
-                        d += (sampleList.get(i).x[k]-sampleList.get(j).x[k])*(sampleList.get(i).x[k]-sampleList.get(j).x[k]);
+                        d += (getFromSampleList(i).getParameter()[k]-getFromSampleList(j).getParameter()[k])*(getFromSampleList(i).getParameter()[k]-getFromSampleList(j).getParameter()[k]);
                     }
                     if (d <= 0.000000000001){
                         sampleList.remove(j);
@@ -225,7 +228,7 @@ public class GutmannMethod extends Optimizer {
                     }
                 }
             }
-            System.out.println("remove index:" + min_d_index);
+            System.out.println(JAMS.resources.getString("remove_index") + ":" + min_d_index);
             sampleList.remove(min_d_index);
             return CreateInterpolant();
         }
@@ -236,12 +239,11 @@ public class GutmannMethod extends Optimizer {
             
     public void WriteData(String GPmeanFile){
         if (this.n != 2){
-            System.out.println("Skip rasterized output, because dim != 2");
+            System.out.println(JAMS.resources.getString("Skip_rasterized_output"));
             return;
         }
         Matrix coeff = CreateInterpolant();
-        BufferedWriter writer_mean = null;
-        BufferedWriter writer_var = null;
+        BufferedWriter writer_mean = null;        
         try {
             writer_mean = new BufferedWriter(new FileWriter(FileTools.createAbsoluteFileName(this.getModel().getWorkspaceDirectory().getPath(), GPmeanFile)));
             //writer_var = new BufferedWriter(new FileWriter(this.dirName + "/" + GPvarFile));
@@ -257,14 +259,14 @@ public class GutmannMethod extends Optimizer {
                 try{
                     writer_mean.write( guess + "\t");                    
                 }catch(Exception e){
-                    System.out.println("Fehler" + e.toString());
+                    System.out.println(JAMS.resources.getString("Error") + e.toString());
                 }           
             }
             try{
                     writer_mean.write("\n");
                     //writer_var.write("\n");
                 }catch(Exception e){
-                    System.out.println("Fehler" + e.toString());
+                    System.out.println(JAMS.resources.getString("Error") + e.toString());
                 }
         }
         try{
@@ -330,12 +332,12 @@ public class GutmannMethod extends Optimizer {
             
         Bumpiness function = new Bumpiness(N,coefficents,target);
                         
-        Sample solution = sce.offlineRun(null,normedLowBound,normedUpBound,3,Optimizer.MODE_MINIMIZATION,10000,12,0.05,0.0001,function);            
+        SampleSO solution = sce.offlineRun(null,normedLowBound,normedUpBound,3,Optimizer.MODE_MINIMIZATION,10000,12,0.05,0.0001,function);            
             
         return solution.x;
     }
     
-    public Sample FindInterpolatedMinimum(int N,Matrix coefficents){
+    public SampleSO FindInterpolatedMinimum(int N,Matrix coefficents){
         SimpleSCE sce = new SimpleSCE();
         double[] normedLowBound = new double[n];
         double[] normedUpBound = new double[n];
@@ -346,14 +348,14 @@ public class GutmannMethod extends Optimizer {
         
         interpolator function = new interpolator(N,n+1,coefficents);
                         
-        Sample solution = sce.offlineRun(null,normedLowBound,normedUpBound,4,Optimizer.MODE_MINIMIZATION,10000,5,0.025,0.0001,function);            
+        SampleSO solution = sce.offlineRun(null,normedLowBound,normedUpBound,4,Optimizer.MODE_MINIMIZATION,10000,5,0.025,0.0001,function);            
             
         return solution;
     }
             
     public void initalPhase(){                
         for (int i=0;i<n*initalSampleSize;i++){                        
-            Sample s = null;
+            SampleSO s = null;
             if (i==0 && x0 != null){
                 s = this.getSample(x0);
             }else
@@ -388,29 +390,28 @@ public class GutmannMethod extends Optimizer {
         return nx;
     }
             
+    @Override
     public void run() { 
         if (!enable.getValue()){
             singleRun();
             return;
         }
         initalPhase();
-                        
-        int iterationCounter = 0;
+                                
         int cycleLength = 5;
         while(iterationCounter < this.maxn.getValue()){  
-            iterationCounter++;
-            
+                        
             Matrix coefficient = this.CreateInterpolant();
       
             int k = sampleList.size() % cycleLength;
             int n_snake = sampleList.size() - k - 1;
             
             
-            Sample myMin = this.FindInterpolatedMinimum(sampleList.size(), coefficient);
+            SampleSO myMin = this.FindInterpolatedMinimum(sampleList.size(), coefficient);
 
             boolean toNear = false;
             for (int i=0;i<this.sampleList.size();i++){
-                double y[] = Transform(this.sampleList.get(i).x);
+                double y[] = Transform(this.getFromSampleList(i).getParameter());
                 double r = 0;
                 for (int j=0;j<n;j++){                    
                     r += (myMin.x[j] - y[j])*(myMin.x[j] - y[j]);
@@ -421,15 +422,15 @@ public class GutmannMethod extends Optimizer {
                 }                    
             }
             
-            //double target = this.minValue.fx - (double)(k*k)*(sampleList.get((int)sigma(iterationCounter,n_snake,cycleLength)).fx-this.minValue.fx);
-            double target = (double)(k*k)*(sampleList.get((int)sigma(sampleList.size()-1,n_snake,cycleLength)-1).fx-this.minValue.fx);
+            //double target = this.minValue.fx - (double)(k*k)*(getFromSampleList(((int)sigma(iterationCounter,n_snake,cycleLength)).fx-this.minValue.fx);
+            double target = (double)(k*k)*(getFromSampleList((int)sigma(sampleList.size()-1,n_snake,cycleLength)-1).fx-this.minValue.fx);
             double next[] = null;
             if (toNear){
-                System.out.println("use target point!");
+                System.out.println(JAMS.resources.getString("use_target_point"));
                 next = this.FindMostProbablePoint(this.sampleList.size(), coefficient, target);
             }
             else{
-                System.out.println("use minimum!");
+                System.out.println(JAMS.resources.getString("use_minimum"));
                 next = myMin.x;
             }
             toNear = false;
@@ -438,22 +439,22 @@ public class GutmannMethod extends Optimizer {
             do{
                 minDist = Double.POSITIVE_INFINITY;
                 for (int j=0;j<sampleList.size();j++){                
-                    double y[] = Transform(this.sampleList.get(j).x);
+                    double y[] = Transform(this.getFromSampleList(j).getParameter());
                     double dist = 0;
                     for (int i=0;i<next.length;i++){                
                         dist += (y[i]-next[i])*(y[i]-next[i]);
                     }
                     minDist = Math.min(dist, minDist);                    
-                    //sample randomly
+                    //SampleSO randomly
                     if (minDist < 0.000000001){
-                        System.out.println("distance between next point and a allready sampled point is too small");
+                        System.out.println(JAMS.resources.getString("distance_between_next_point_and_a_allready_sampled_point_is_too_small"));
                         next = Transform(this.RandomSampler());                    
                         break;
                     }
                 }                    
             }while (minDist < 0.000000001);
             
-            Sample s = this.getSample(ReTransform(next));
+            SampleSO s = this.getSample(ReTransform(next));
             
             if (minValue.fx > s.fx){
                 minValue = s;
@@ -471,12 +472,12 @@ public class GutmannMethod extends Optimizer {
                 mode.setValue(NelderMead.MODE_MINIMIZATION);
                 neldermeadOptimizer.n = n;
                 neldermeadOptimizer.upBound = upBound;
-                Sample initialSimplex[] = new Sample[n+1];
+                SampleSO initialSimplex[] = new SampleSO[n+1];
                 for (int i=0;i<n+1;i++){
                     if (i==0)
                         initialSimplex[i] = best10.get(best10.size()-1);
                     else{
-                        initialSimplex[i] = sampleList.get(generator.nextInt(sampleList.size()));
+                        initialSimplex[i] = getFromSampleList(generator.nextInt(sampleList.size()));
                     }
                 }
                 neldermeadOptimizer.initialSimplex = initialSimplex;
@@ -485,17 +486,17 @@ public class GutmannMethod extends Optimizer {
                 this.sampleList.addAll(neldermeadOptimizer.sampleList);
                 iterationCounter += neldermeadOptimizer.sampleList.size();
                 for (int i=0;i<sampleList.size();i++){
-                    if (sampleList.get(i).fx < minValue.fx){
-                        minValue = sampleList.get(i);
+                    if (getFromSampleList(i).fx < minValue.fx){
+                        minValue = getFromSampleList(i);
                         best10.add(minValue);
                     }
-                    if (sampleList.get(i).fx > maxValue.fx)
-                        maxValue = sampleList.get(i);
+                    if (getFromSampleList(i).fx > maxValue.fx)
+                        maxValue = getFromSampleList(i);
                 }
             }
             if (maxValue.fx < s.fx)
                 maxValue = s;
-            System.out.println("minimum:" + minValue);
+            System.out.println(JAMS.resources.getString("minimum") + minValue);
                         
 //            WriteData("output\\datafile"+iterationCounter+".dat");
         }

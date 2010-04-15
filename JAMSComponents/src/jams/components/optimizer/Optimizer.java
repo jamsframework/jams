@@ -8,7 +8,6 @@
  */
 package jams.components.optimizer;
 
-import java.util.Comparator;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -18,22 +17,21 @@ import jams.io.datatracer.*;
 import jams.model.Component;
 import jams.model.JAMSContext;
 import jams.model.JAMSVarDescription;
-import jams.model.Snapshot;
+import jams.JAMS;
 import jams.workspace.stores.Filter;
 import jams.workspace.stores.OutputDataStore;
+import java.io.Serializable;
 import java.util.regex.Matcher;
 
 /**
  *
  * @author Christian Fischer
  */
-public abstract class Optimizer extends JAMSContext {   
+public abstract class Optimizer extends JAMSContext {
     static final public int MODE_MINIMIZATION = 1;
-    static final public int MODE_MAXIMIZATION = 2;    
+    static final public int MODE_MAXIMIZATION = 2;
     static final public int MODE_ABSMAXIMIZATION = 3;
     static final public int MODE_ABSMINIMIZATION = 4;
-
-    public Vector<Sample> sampleList = new Vector<Sample>();
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
@@ -41,43 +39,21 @@ public abstract class Optimizer extends JAMSContext {
             description = "List of parameter identifiers to be sampled"
             )
             public JAMSDouble[] parameterIDs;
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "List of parameter identifiers to be sampled"
             )
             public JAMSString startValue;
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter value bounaries corresponding to parameter identifiers"
             )
             public JAMSString boundaries;
-           
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "objective function name"
-            )
-            public JAMSString effMethodName;
-            
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "the prediction series"
-            )
-            public JAMSDouble effValue;
-        
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "optimization mode, 1 - minimization, 2 - maximization, 3 - max |f(x)|, 4 - min |f(x)|",
-            defaultValue = "1"
-            )
-            public Attribute.Integer mode;
-          
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
@@ -85,7 +61,7 @@ public abstract class Optimizer extends JAMSContext {
             defaultValue = "1000"
             )
             public Attribute.Integer maxn;
-        
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
@@ -93,116 +69,102 @@ public abstract class Optimizer extends JAMSContext {
             defaultValue = "true"
             )
             public JAMSBoolean enable;
-                
-    @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
-            description = "if you dont want to execute the jams model completly in every iteration, you can specify a JAMS - Snapshot which is loaded before execution"
-            )
-            public JAMSEntity snapshot;
-    /*************************
-     * first some very useful nested classes     
-     *************************/ 
-    public static abstract class AbstractFunction {
-        public abstract double f(double x[]);
-    }
+           
+    Vector<Sample> sampleList = new Vector<Sample>();
     
     //class for representing samples
-    public class Sample {
-        public double[] x;
-        public double fx;
-        
+    public class Sample implements Serializable {
+        private double[] x;
+        protected double[] fx;
+
         public Sample(){}
-        public Sample(double[] x, double fx) {
+
+        public Sample(double[] x, double fx[]) {
             this.fx = fx;
             if(x == null)
                 return;
             this.x = new double[x.length];
             for (int i = 0; i < x.length; i++) {
                 this.x[i] = x[i];
-            }                        
-            sampleList.add(this);            
+            }
+            sampleList.add(this);
         }
 
-        public Sample clone(){
-            Sample cpy = new Sample();
-            cpy.x = new double[x.length];            
-            for (int i=0;i<x.length;i++)
-                cpy.x[i] = x[i];
-            cpy.fx = fx;
-            return cpy;
+        public double[] getParameter(){
+            return x;
         }
         
+        @Override
+        public Sample clone(){
+            Sample cpy = new Sample();
+            cpy.x = new double[x.length];
+            cpy.fx = new double[fx.length];
+            for (int i=0;i<x.length;i++)
+                cpy.x[i] = x[i];
+            for (int i=0;i<fx.length;i++)
+                cpy.fx[i] = fx[i];
+
+            return cpy;
+        }
+
+        @Override
         public String toString() {
             String s = "";
             for (int i = 0; i < x.length; i++) {
                 s += x[i] + "\t";
             }
-            return (s += fx);
+            for (int i = 0; i < fx.length; i++) {
+                s += fx[i] + "\t";
+            }
+            return s;
         }
     }
-    //compare samples
-    static public class SampleComperator implements Comparator {
-
-        private int order = 1;
-
-        public SampleComperator(boolean decreasing_order) {
-            order = decreasing_order ? -1 : 1;
-        }
-
-        public int compare(Object d1, Object d2) {
-            if (((Sample) d1).fx < ((Sample) d2).fx) {
-                return -1 * order;
-            } else if (((Sample) d1).fx == ((Sample) d2).fx) {
-                return 0 * order;
-            } else {
-                return 1 * order;
-            }
-        }
-    }        
     protected JAMSDouble[] parameters;
     protected String[] parameterNames;
     protected double[] lowBound;
-    protected double[] upBound;    
+    protected double[] upBound;
     protected String dirName;
-    
     //number of parameters!!
     public int n;
-    //optimization mode
-    
     //number of drawn samples
     protected int currentSampleCount;
-    
-    static protected Random generator = new Random();
-    protected AbstractFunction GoalFunction = null;
-        
+    static protected Random generator;
+
     protected int iterationCounter = 0;
-    
     protected double x0[] = null;
-    
+
     public Optimizer() {
     }
-                    
-    public void init() {   
-        super.init();        
+
+    protected void sayThis(String wordsToSay){
+        if (this.getModel()==null){
+            System.out.println(wordsToSay);
+        }else
+            this.getModel().getRuntime().sendInfoMsg(wordsToSay);
+    }
+
+    protected void stop(String wordsToSay){
+        if (this.getModel()==null){
+            System.err.println(wordsToSay);
+            System.exit(0);
+        }else
+            this.getModel().getRuntime().sendHalt(wordsToSay);
+    }
+
+    @Override
+    public void init() {
+        super.init();
         if (!enable.getValue())
-            return;            
-        
-        if (this.parameterIDs == null)
-            getModel().getRuntime().sendHalt("parameterIDs not specified!");
-        if (this.boundaries == null)
-            getModel().getRuntime().sendHalt("boundaries not specified!");
-        if (this.effMethodName == null)
-            getModel().getRuntime().sendHalt("effMethod not specified!");
-        if (this.effValue == null)
-            getModel().getRuntime().sendHalt("effValue not specified!");
-        if (this.mode == null)
-            getModel().getRuntime().sendHalt("mode not specified!");
-        
+            return;
+        generator = new Random(System.nanoTime());
         currentSampleCount = 0;
-        
+        if (this.parameterIDs == null)
+            stop(JAMS.resources.getString("parameterIDs_not_specified"));
+        if (this.boundaries == null)
+            stop(JAMS.resources.getString("parameter_boundaries_not_specified"));
+
         n = parameterIDs.length;
-        parameters = parameterIDs;        
+        parameters = parameterIDs;
         parameterNames = new String[n];
         lowBound = new double[n];
         upBound = new double[n];
@@ -211,7 +173,7 @@ public abstract class Optimizer extends JAMSContext {
         int i = 0;
         while (tok.hasMoreTokens()) {
             if (i>=n){
-               getModel().getRuntime().sendHalt("too many boundaries!"); 
+               stop(JAMS.resources.getString("too_many_boundaries"));
                return;
             }
             String key = tok.nextToken();
@@ -222,20 +184,19 @@ public abstract class Optimizer extends JAMSContext {
                 lowBound[i] = Double.parseDouble(boundTok.nextToken());
                 upBound[i] = Double.parseDouble(boundTok.nextToken());
             }catch(NumberFormatException e){
-                getModel().getRuntime().sendHalt("illegal number format found for lower or upper bound!");
+                stop(JAMS.resources.getString("unsupported_number_format_found_for_lower_or_upper_bound"));
                 return;
             }
-
             //check if upBound is higher than lowBound
             if (upBound[i] <= lowBound[i]) {
-                getModel().getRuntime().sendHalt("Component " + this.getInstanceName() + ": upBound must be higher than lowBound!");
+                stop(JAMS.resources.getString("Component") + " " + this.getInstanceName() + ": " + JAMS.resources.getString("upBound_must_be_higher_than_lowBound"));
                 return;
             }
 
             i++;
-        }  
+        }
         dirName = this.getModel().getWorkspaceDirectory().getPath();
-        
+
         if (this.startValue!=null){
             x0 = new double[n];
             StringTokenizer tokStartValue = new StringTokenizer(startValue.getValue(),";");
@@ -244,58 +205,49 @@ public abstract class Optimizer extends JAMSContext {
                 String param = tokStartValue.nextToken();
                 try{
                     if (counter >= n){
-                        getModel().getRuntime().sendHalt("Component " + this.getInstanceName() + ": startvalue, too many parameter");
+                        counter = n+1;
                         break;
                     }
-                    x0[counter] = Double.valueOf(param).doubleValue();                                        
+                    x0[counter] = Double.valueOf(param).doubleValue();
                     counter++;
                 }catch(NumberFormatException e){
-                    getModel().getRuntime().sendHalt("Component " + this.getInstanceName() + ": unparseable number: " + param);
+                    stop(JAMS.resources.getString("Component") + " " + this.getInstanceName() + ": " + JAMS.resources.getString("unparseable_number") + param);
                 }
             }
             if (counter != n){
-                getModel().getRuntime().sendHalt("Component " + this.getInstanceName() + ": startvalue, not enough parameters");
-            }                        
-        }
+                stop(JAMS.resources.getString("Component") + " " + JAMS.resources.getString("startvalue_too_many_parameter"));
+            }
+        }        
     }
 
     @Override
     public void setupDataTracer(){
         super.setupDataTracer();
         for (DataTracer dataTracer : dataTracers) {
-            dataTracer.startMark();            
+            dataTracer.startMark();
         }
     }
-    
+
     protected double[] RandomSampler() {
         double[] sample = new double[n];
-
         for (int i = 0; i < n; i++) {
             sample[i] = (lowBound[i] + generator.nextDouble() * (upBound[i] - lowBound[i]));
         }
         return sample;
     }
     
-    public Sample getSample(double[]x){
-        return new Sample(x,funct(x));
-    }
-
     String buildMark(){
-        /*double parameter_double[] = new double[parameters.length];
-        for (int i=0;i<parameter_double.length;i++)
-            parameter_double[i] = parameters[i].getValue();
-        return new Sample(parameter_double,effValue.getValue()).toString();        */
         return Integer.toString(currentSampleCount) + "\t";
     }
-    
+
     @Override
     public long getNumberOfIterations() {
-        return -1;
+        return this.maxn.getValue();
     }
-    
+
     @Override
     protected AbstractTracer createDataTracer(OutputDataStore store) {
-        return new AbstractTracer(this, store, Sample.class) {
+        return new AbstractTracer(this, store, JAMSInteger.class) {
             @Override
             public void trace() {
                 // check for filters on other contexts first
@@ -306,86 +258,64 @@ public abstract class Optimizer extends JAMSContext {
                         return;
                     }
                 }
-                
+
                 output(buildMark());
                 for (DataAccessor dataAccessor : getAccessorObjects()) {
                     output(dataAccessor.getComponentObject());
-                    output("\t");
                 }
-                output("\n");
+                nextRow();
                 flush();
             }
         };
     }
-    
+
     @Override
     public String getTraceMark() {
         return buildMark();
     }
-    
-    public double funct(double x[]) {     
-        
-        double value = 0.0;     
-        
-        if (snapshot != null) {
-            if (!this.snapshot.existsAttribute("snapshot")){
-                try {
-                    this.getModel().setModelState((Snapshot) snapshot.getObject("snapshot"));
-                } catch (Exception e) {
-                    this.getModel().getRuntime().sendHalt(e.toString());                
-                } 
-            }            
-        }        
-        if (GoalFunction == null) {
-            //RefreshDataHandles();
-            for (int j = 0; j < parameters.length; j++) {
-                try{
-                    parameters[j].setValue(x[j]);
-                }catch(Exception e){
-                    getModel().getRuntime().sendHalt("Error! Parameter No. " + j + " wasn^t found" + e.toString());
-                }
-            }            
-            singleRun();
-            
-            value = this.effValue.getValue();
-            //sometimes its a bad idea to calculate with NaN or Infty
-            double bigNumber = 10000000;
-            
-            effValue.setValue(Math.max(effValue.getValue(), -bigNumber));
-            effValue.setValue(Math.min(effValue.getValue(),  bigNumber));
-                        
-            if (Double.isNaN(effValue.getValue())) {
-                effValue.setValue(-bigNumber);
-            }            
-        } else {            
-            value = GoalFunction.f(x);
-        }
-        currentSampleCount++;
-        
-        switch(mode.getValue()){
-            case MODE_MINIMIZATION:
-                return value;
-            case MODE_MAXIMIZATION:
-                return -value;
-            case MODE_ABSMINIMIZATION:
-                return Math.abs(value);
-            case MODE_ABSMAXIMIZATION:
-                return -Math.abs(value);
-            default:
-                return 0.0;
-        }        
-    }
 
-    protected void singleRun() {
+    protected double transformByMode(double value,int mode){
+        double bigNumber = 10000000;
+        
+        value = (Math.max(value, -bigNumber));
+        value = (Math.min(value, bigNumber));
+        if (Double.isNaN(value)) {
+            value = (-bigNumber);
+        }
+        switch (mode) {
+            case MODE_MINIMIZATION:
+                return value;                
+            case MODE_MAXIMIZATION:
+                return -value;                
+            case MODE_ABSMINIMIZATION:
+                return Math.abs(value);               
+            case MODE_ABSMAXIMIZATION:
+                return -Math.abs(value);                
+            default:
+                return 0.0;                
+        }
+    }
+    
+    protected void setParameters(double x[]) {
+        for (int j = 0; j < parameters.length; j++) {
+            try {
+                parameters[j].setValue(x[j]);
+            } catch (Exception e) {
+                stop(JAMS.resources.getString("Error_Parameter_No") + " " + j + JAMS.resources.getString("wasnt_found") + " " + e.toString());
+            }
+        }
+    }
+            
+    protected void singleRun() {        
         if (runEnumerator == null) {
             runEnumerator = getChildrenEnumerator();
-        }        
+        }
         runEnumerator.reset();
         while (runEnumerator.hasNext() && doRun) {
             Component comp = runEnumerator.next();
             try {
                 comp.init();
-            } catch (Exception e) {                
+            } catch (Exception e) {
                 getModel().getRuntime().sendHalt(e.getMessage());
                 e.printStackTrace();
             }
@@ -413,16 +343,17 @@ public abstract class Optimizer extends JAMSContext {
             }
         }
         updateEntityData();
-        if (enable.getValue())  { 
+        if (enable.getValue())  {
             for (DataTracer dataTracer : dataTracers) {
                 dataTracer.trace();
             }
         }
     }
+            
     @Override
     public void cleanup(){
         if (!enable.getValue())
-            return;            
+            return;
         for (DataTracer dataTracer : dataTracers) {
             dataTracer.endMark();
             dataTracer.close();

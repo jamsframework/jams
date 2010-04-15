@@ -9,11 +9,13 @@
 
 package jams.components.machineLearning.kernels;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Christian(web)
  */
-public abstract class Kernel{
+public abstract class Kernel implements Serializable{
     int inputDim;
     int parameterCount;
     int KernelParameterCount;

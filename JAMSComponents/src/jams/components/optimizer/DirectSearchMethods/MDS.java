@@ -7,10 +7,10 @@ package jams.components.optimizer.DirectSearchMethods;
 
 import Jama.Matrix;
 import jams.components.optimizer.LinearConstraintDirectPatternSearch;
-import jams.components.optimizer.Optimizer;
-import jams.components.optimizer.Optimizer.AbstractFunction;
-import jams.components.optimizer.Optimizer.Sample;
-import jams.components.optimizer.Optimizer.SampleComperator;
+import jams.components.optimizer.SOOptimizer;
+import jams.components.optimizer.SOOptimizer.AbstractFunction;
+import jams.components.optimizer.SOOptimizer.SampleSO;
+import jams.components.optimizer.SOOptimizer.SampleSOComperator;
 import java.util.Random;
 import java.util.Vector;
 
@@ -21,12 +21,12 @@ import java.util.Vector;
 @SuppressWarnings("unchecked")
 public class MDS extends PatternSearch{
 
-    public Sample step(Optimizer context,Sample[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]){                                 
+    public SampleSO step(SOOptimizer context,SampleSO[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]){                                 
         if (Generator == null){
             Generator = new Random();
         }
         //sort simplex        
-        java.util.Arrays.sort(Simplex,new SampleComperator(false));
+        java.util.Arrays.sort(Simplex,new SampleSOComperator(false));
         
         int ns = 0;
         int n = Simplex[0].x.length;
@@ -50,9 +50,9 @@ public class MDS extends PatternSearch{
         Matrix x0 = new Matrix(Simplex[0].x,n);
         boolean successful = false;
         
-        Sample best = Simplex[0];
+        SampleSO best = Simplex[0];
         
-        Sample reflection[] = new Sample[m-1];
+        SampleSO reflection[] = new SampleSO[m-1];
         
         for (int i=0;i<m-1/*P_i.size()*/;i++){
             Matrix d = P.getMatrix(0, n-1,i,i);//P_i.get(i);
@@ -79,7 +79,7 @@ public class MDS extends PatternSearch{
             Vector<Matrix> P_i_expand = LCDPS.UpdateDirections(Simplex[0],P_expand , 1.0);
             
             boolean expansion_successful = false;
-            Sample expansion[] = new Sample[m-1];
+            SampleSO expansion[] = new SampleSO[m-1];
             
             for (int i=0;i<m-1/*P_i_expand.size()*/;i++){
                 Matrix d = P_expand.getMatrix(0, n-1,i,i);//P_i_expand.get(i);
@@ -120,7 +120,7 @@ public class MDS extends PatternSearch{
                 Matrix d = P_contract.getMatrix(0, n-1,i,i);//P_i_contract.get(i);
                 Matrix x_new = x0.plus(d);
                          
-                Sample sample_new = context.getSample(x_new.getColumnPackedCopy());
+                SampleSO sample_new = context.getSample(x_new.getColumnPackedCopy());
                 if (i+1 < Simplex.length)
                     Simplex[i+1] = sample_new;
                 if (sample_new.fx < best.fx){                   
@@ -131,7 +131,7 @@ public class MDS extends PatternSearch{
         }                
     }
 
-    public Sample search(Optimizer context,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb){
+    public SampleSO search(SOOptimizer context,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb){
         return null;
     }
 }

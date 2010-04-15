@@ -141,7 +141,7 @@ public class DataLoader extends JAMSComponent {
         Vector<Double> predict = new Vector<Double>();       
         
         boolean isExcluded = false;
-	for (int i=0;i<numOfExampl-RelevantTime;i++) {
+	for (int i=0;i<numOfExampl-RelevantTime+1;i++) {
             isExcluded = false;
             double Sample[] = new double[RelevantTime*ExamplLength];
 	    for (int j=0;j<RelevantTime;j++) {                

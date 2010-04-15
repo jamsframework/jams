@@ -67,6 +67,11 @@ public class BooleanConditionalContext extends JAMSContext {
                 return false;
             }
         }
+        
+        @Override
+        public boolean hasPrevious() {
+            return !hasNext();
+        }
 
         @Override
         public Component next() {
@@ -77,22 +82,15 @@ public class BooleanConditionalContext extends JAMSContext {
                 return compArray[1];
             }
         }
+        
+        @Override
+        public Component previous() {
+            return next();
+        }
 
         @Override
         public void reset() {
             next = true;
-        }
-
-        // TODO
-        @Override
-        public void setState(byte[]state) {
-            
-        }               
-
-        // TODO
-        @Override
-        public byte[] getState() {
-            return null;
-        }               
+        }            
     }
 }

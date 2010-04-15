@@ -65,15 +65,21 @@ public class JAMSProgress extends JAMSComponent {
             description = "Progress bar always on top?"
             )
             public JAMSBoolean ontop;
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "Progress bar always on top?"
+            )
+            public JAMSInteger counter;
     
     private JProgressBar jamsProgressBar;
     private JFrame frame;
     private JButton cancelButton;
     private Runnable updatePBar;
-    private int counter;
+    //private int counter;
     
     public void init() {
-        counter = 0;
+        counter.setValue(0);
         
         /*try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -109,11 +115,13 @@ public class JAMSProgress extends JAMSComponent {
         frame.setLocation((int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth()-frame.getWidth())/2, (int)(Toolkit.getDefaultToolkit().getScreenSize().getHeight()-frame.getHeight())/2);
         jamsProgressBar.setMinimum(0);
         jamsProgressBar.setMaximum((int)this.getContext().getNumberOfIterations());
-        jamsProgressBar.setValue(counter);
+        jamsProgressBar.setValue(counter.getValue());
         
         updatePBar = new Runnable() {
             public void run() {
-                jamsProgressBar.setValue(++counter);
+                int c = counter.getValue();                
+                jamsProgressBar.setValue(++c);
+                counter.setValue(c);
                 //jamsProgressBar.setString(title.getValue() + " @ " + Math.round(jamsProgressBar.getPercentComplete()*100) + "%");
             }
         };
@@ -132,5 +140,6 @@ public class JAMSProgress extends JAMSComponent {
     
     public void cleanup() {
         frame.dispose();
+        System.out.println("aufrufe:" + this.counter.getValue());
     }
 }

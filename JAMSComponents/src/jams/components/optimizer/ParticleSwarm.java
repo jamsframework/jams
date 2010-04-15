@@ -5,18 +5,20 @@
 
 package jams.components.optimizer;
 
+import jams.JAMS;
+import jams.components.optimizer.SOOptimizer.SampleSO;
 /**
  *
  * @author Christian Fischer
  */
-public class ParticleSwarm extends Optimizer {
+public class ParticleSwarm extends SOOptimizer {
     
     static public class Particle{
-        Sample particle;
-        Sample local_best;
+        SampleSO particle;
+        SampleSO local_best;
         double[] velocity;
         
-        Particle(Sample particle,double[] velocity){
+        Particle(SampleSO particle,double[] velocity){
             this.particle = particle;
             this.local_best = particle;
             this.velocity = velocity;
@@ -40,13 +42,15 @@ public class ParticleSwarm extends Optimizer {
         return true;
     }
          
+    @Override
     public void init(){
         super.init();
     }
+    @Override
     public void run() {  
-        System.out.println("start optimization of " + this.getInstanceName());
+        System.out.println(JAMS.resources.getString("start_optimization_of") + " " + this.getInstanceName());
         for (int i=0;i<numberOfParticles;i++){
-            Sample rndSample = null;
+            SampleSO rndSample = null;
             
             if (i==0 && x0 != null){
                 rndSample = this.getSample(x0);
@@ -100,8 +104,8 @@ public class ParticleSwarm extends Optimizer {
                     bestParticle = particles[i];
                 }
             }
-            System.out.println("current best:" + bestParticle.local_best.toString() + " after " + this.currentSampleCount);
+            System.out.println(JAMS.resources.getString("current_best")+":" + bestParticle.local_best.toString() + " " + JAMS.resources.getString("after") + " " +  this.currentSampleCount);
         }
-        System.out.println("finished optimization!");
+        System.out.println(JAMS.resources.getString("finished_optimization"));
     }
 }

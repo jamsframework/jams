@@ -47,95 +47,95 @@ title="Title",
         description="Description"
         )
         public class SCE extends JAMSContext {
-    
+
     /*
      *  Component variables
      */
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter identifiers to be sampled"
             )
             public JAMSString parameterIDs;
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter value bounaries corresponding to parameter identifiers"
             )
             public JAMSString boundaries;
-           
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "objective function name"
             )
             public JAMSString effMethodName;
-    
+
     /*@JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "objective function value"
             )
             public JAMSDouble effValue;*/
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "the prediction series"
             )
             public JAMSDoubleArray prediction;
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "the observation series"
             )
             public JAMSDoubleArray observation;
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "maximize efficiency?"
             )
             public JAMSInteger MaximizeEff;
-      
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "number of complexes"
             )
             public JAMSInteger NumberOfComplexes;
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "maximum runs"
             )
             public JAMSInteger maxn;
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "kstop"
             )
             public JAMSInteger kstop;
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "pcento"
             )
             public JAMSDouble pcento;
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "peps"
             )
             public JAMSDouble peps;
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
@@ -149,24 +149,24 @@ title="Title",
             description = "Output file name"
             )
             public JAMSString sceFileName;
-    
+
     JAMSDouble[] parameters;
     String[] parameterNames;
     double[] lowBound;
     double[] upBound;
-    
+
     int currentCount;
     Random generator = new Random();
-    
+
     GenericDataWriter writer;
-    
+
     static final int MAXIMIZATION = 1;
     static final int MINIMIZATION = 2;
-    static final int ABSMAXIMIZATION = 3;  
+    static final int ABSMAXIMIZATION = 3;
     static final int ABSMINIMIZATION = 4;
-    
-    
-//matlab zufallszahlen .. 
+
+
+//matlab zufallszahlen ..
 /*    int randcounter = 0;
     static double MatlabRand[] = {
 0.999992173630741	,0.868462211856834	,0.244394677804967	,0.541349868076551	,0.467232762587831	,0.78104081367191	,0.952955383785514	,0.321135283131681	,0.320703594163388	,0.0653071040591724	,0.616497922510141	,0.480583627932045	,0.169034653887634	,0.965427889472539	,0.946538364955475	,0.470299806664837	,0.328850615922758	,0.992301813788853	,0.616584349245105	,0.933157762481439	,0.582514025542193	,0.313227287639504	,0.411023357143171	,0.0695635052721778	,0.153833109491427	,0.47307122241383	,0.908035109242441	,0.346081037701145	,0.584000643149019	,0.298809405555394	,0.0896791695103418	,0.237801960314532	,0.73754700633583	,0.952535486292343	,0.263918115414641	,0.671765773869942	,0.367361432112456	,0.243589514048579	,0.00896261446595314	,0.634661329274374	,0.752961114399583	,0.0174497137858764	,0.277339599224431	,0.246644165016079	,0.348481425246448	,0.927314117051342	,0.368365281898698	,0.115292871424599	,0.727290033235815	,0.56358859434891	,0.233505222123817	,0.522268234995319	,0.762225566321158	,0.725093159696596	,0.640735020693734	,0.833492799584518	,0.51348261698777	,0.10234371344668	,0.090791898356188	,0.939435672452411	,0.0953469076637863	,0.495477105255927	,0.483708036357401	,0.680967058837864	,0.0133578879820918	,0.506023315017123	,0.733855492777124	,0.909267105119893	,0.0522357500401492	,0.926250924787601	,0.499292905209257	,0.615857851978325	,0.722918199711907	,0.0861825580178679	,0.470252606305411	,0.535554175048859	,0.0590200461722072	,0.949916016287131	,0.238485737814794	,0.229795453245656	,0.172182699745606	,0.874634624400472	,0.98413229872665	,0.31154469880813	,0.131752868244309	,0.370456582107794	,0.263775485690579	,0.274588001554174	,0.000542121008290966	,0.111427786346258	,0.766805121566544	,0.693678168902955	,0.648984751966309	,0.486726297757927	,0.408886417471285	,0.154018439889894	,0.587919229449667	,0.158489360547852	,0.730682727755365	,0.584605384424611
@@ -245,11 +245,11 @@ title="Title",
 ,0.978574346275336	,0.899037849576696	,0.129137835525506	,0.419601677181014	,0.245388381297415	,0.242524465658946	,0.108694329908441	,0.825602771167458	,0.905775011473231	,0.360617830585976	,0.903878658499512	,0.488613401301491	,0.1254356741558	,0.197375536522537	,0.290642334283629	,0.825712304946832	,0.746709241413842	,0.942220442435807	,0.898976018605277	,0.0899446988897141	,0.700554239424204	,0.215102002590477	,0.219357538139148	,0.742143504667163	,0.205882941002903	,0.27458943579094	,0.0246473383273218	,0.247815267298285	,0.0311974822688836	,0.33608449312676	,0.572075981447509	,0.8810201882762	,0.306304358088553	,0.0573463943122636	,0.820849206215166	,0.0126088582969312	,0.917081396522504	,0.387031353724669	,0.835962050518003	,0.0141830560817304	,0.374623565643385	,0.298267768369181	,0.986382980824627	,0.138758719497714	,0.117798598072398	,0.841037802789844	,0.322351488900535	,0.761473951284529	,0.0926992390736468	,0.996111110782303	,0.639438918158151	,0.0498974840389087	,0.627014241938952	,0.228364267958498	,0.118251578471741	,0.454279374542776	,0.0734479404396601	,0.43953496936687	,0.264230148989814	,0.916114071810671	,0.129204921950216	,0.547123217278683	,0.499912802828435	,0.0344771375108869	,0.457250145476894	,0.00319503015056021	,0.698871740465458	,0.937342002958684	,0.907043726605849	,0.683913064507727	,0.52687518136896	,0.19117326810545	,0.0491170482938723	,0.510230675111632	,0.446956601202002	,0.999596402048877	,0.216729235470635	,0.568260554954531	,0.755147120801335	,0.757659308033837	,0.979990124693136	,0.694025717533206	,0.490234580584911	,0.372595890598649	,0.21913329149556	,0.973230165882609	,0.0793979890082953	,0.442001262419858	,0.715217490547904	,0.660363638615405	,0.73167420911215	,0.248432547901027	,0.405832572563473	,0.828047074297465	,0.987177717493464	,0.495897912651253	,0.556217929607359	,0.354742910878147	,0.164103129023734	,0.0812895018985912
 ,0.232658409621873	,0.289890514821694	,0.189882608218995	,0.35699633665243	,0.0374301173898532	,0.0879829712621788	,0.729798003439697	,0.71504381099485	,0.741331390450397	,0.556679299826119	,0.108992177578151	,0.831528555989046	,0.500440507894587	,0.903616184323847	,0.0772099309029104	,0.667308685214868	,0.457072406288736	,0.0159324947818799	,0.777439799056128	,0.430702736336134	,0.820889601400536	,0.691530738813584	,0.557127239907685	,0.637521128467061	,0.817606145896766	,0.506494086937278	,0.646119154824931	,0.324635142611635	,0.142841873757002	,0.743372233930683	,0.857135672987036	,0.879255893118333	,0.653795639823096	,0.343318506769519	,0.154143275299176	,0.686027953255003	,0.071810356840403	,0.916667416652975	,0.42927168655641	,0.769235953581164	,0.548671838617265	,0.527591640375364	,0.232699788749544	,0.985349513583514	,0.769274798114446	,0.201531909500031	,0.146802967016959	,0.317466654031289	,0.66205430387615	,0.146685246446489	,0.338937026140716	,0.514598347020614	,0.854418375461557	,0.209636382390576	,0.358678838405143	,0.315237075237202	,0.189523511654475	,0.321660376769332	,0.145952362169489	,0.0213509826089027	,0.84596470782811	,0.12884446705172	,0.488957738265841	,0.912707033992143	,0.867120305945687	,0.690982029163736	,0.334964154909814	,0.742551569241356	,0.0642242394686789	,0.416792750087005	,0.0357507122847022	,0.86222136899001	,0.354548615102912	,0.898574034636176	,0.333800130213518	,0.17878849859293	,0.898295851376977	,0.658374092848214	,0.293378499938817	,0.812448471697256	,0.821463815784763	,0.342351894519456	,0.908291188491644	,0.650004979060034	,0.633683061987945	,0.311222831397887	,0.72212730428303	,0.79360308488533	,0.0870476677487826	,0.0101518537896461	,0.622206642582178	,0.427041878656969	,0.292854587683852	,0.00705520250231736	,0.57678845644779	,0.0835875180007832	,0.85541503916281	,0.96056320935514	,0.185859631833555	,0.742832226558976
     };*/
-      
-    public class SCE_Comparator implements Comparator {
+
+    static public class SCE_Comparator implements Comparator {
         private int col = 0;
         private int order = 1;
-    
+
         public SCE_Comparator(int col,boolean decreasing_order) {
             this.col = col;
             if (decreasing_order)
@@ -262,28 +262,28 @@ title="Title",
 
             double[] b1 = (double [])d1;
             double[] b2 = (double [])d2;
-        
+
             if (b1[col] < b2[col])
                 return -1*order;
             else if (b1[col] == b2[col])
                 return 0*order;
             else
                 return 1*order;
-        }        
-    } 
-    
+        }
+    }
+
     int N; //parameter dimension
     int p; //number of complexes
     int s; //population size
     int m; //complex size; floor(s/q)
     int icall=0;
-    
+
     public void init() {
         if(enable.getValue()){
 	icall = 0;
 //generalise this!!
-            
-            
+
+
 //add more checks!!!
             //retreiving parameter names
             int i;
@@ -291,7 +291,7 @@ title="Title",
             String key;
             parameters = new JAMSDouble[tok.countTokens()];
             parameterNames = new String[tok.countTokens()];
-            
+
             i = 0;
             while (tok.hasMoreTokens()) {
                 key = tok.nextToken();
@@ -299,35 +299,35 @@ title="Title",
                 parameters[i] = (JAMSDouble) getModel().getRuntime().getDataHandles().get(key);
                 i++;
             }
-            
+
             //retreiving boundaries
             tok = new StringTokenizer(boundaries.getValue(), ";");
             int n = tok.countTokens();
             lowBound = new double[n];
             upBound = new double[n];
-            
+
             //check if number of parameter ids and boundaries match
             if (n != i) {
                 getModel().getRuntime().sendHalt("Component " + this.getInstanceName() + ": Different number of parameterIDs and boundaries!");
             }
-            
+
             i = 0;
             while (tok.hasMoreTokens()) {
                 key = tok.nextToken();
                 key = key.substring(1, key.length()-1);
-                
+
                 StringTokenizer boundTok = new StringTokenizer(key, ">");
                 lowBound[i] = Double.parseDouble(boundTok.nextToken());
                 upBound[i] = Double.parseDouble(boundTok.nextToken());
-                
+
                 //check if upBound is higher than lowBound
                 if (upBound[i] <= lowBound[i]) {
                     getModel().getRuntime().sendHalt("Component " + this.getInstanceName() + ": upBound must be higher than lowBound!");
                 }
-                
+
                 i++;
             }
-            
+
             //initialising output file
             writer = new GenericDataWriter(getModel().getWorkspaceDirectory().getPath()+"/"+sceFileName.getValue());
             writer.addComment("SCE output");
@@ -338,10 +338,10 @@ title="Title",
             writer.addColumn("model runs");
             writer.writeHeader();
             writer.flush();
-            
+
         }
-        
-        
+
+
     }
     public double Custom_rand() {
 	/*randcounter++;
@@ -351,23 +351,23 @@ title="Title",
     private double[] RandomSampler(){
         int paras = this.parameterNames.length;
         double[] sample = new double[paras];
-        
+
         for(int i = 0; i < paras; i++){
             double d = Custom_rand();
             sample[i] = (lowBound[i] + d * (upBound[i]-lowBound[i]));
         }
         /*
 	int order[] = {1,2,0,3};
-	
+
         for(int i = 0; i < paras; i++){
             double d = Custom_rand();
-            
+
             sample[order[i]] = (lowBound[order[i]] + d * (upBound[order[i]]-lowBound[order[i]]));
         }*/
         return sample;
     }
-         
-    private void singleRun() {    
+
+    private void singleRun() {
 	icall++;
         runEnumerator.reset();
         while(runEnumerator.hasNext() && doRun) {
@@ -378,7 +378,7 @@ title="Title",
                 System.out.println(e.getMessage());
             }
         }
-        
+
         runEnumerator.reset();
         while(runEnumerator.hasNext() && doRun) {
             Component comp = runEnumerator.next();
@@ -388,7 +388,7 @@ title="Title",
                 System.out.println(e.getMessage());
             }
         }
-        
+
         runEnumerator.reset();
         while(runEnumerator.hasNext() && doRun) {
             Component comp = runEnumerator.next();
@@ -399,8 +399,8 @@ title="Title",
             }
         }
     }
-    
-    private void disabledRun() {        
+
+    private void disabledRun() {
         runEnumerator.reset();
         while(runEnumerator.hasNext() && doRun) {
             Component comp = runEnumerator.next();
@@ -408,10 +408,10 @@ title="Title",
             try {
                 comp.init();
             } catch (Exception e) {
-                
+
             }
         }
-                
+
         runEnumerator.reset();
         while(runEnumerator.hasNext() && doRun) {
             Component comp = runEnumerator.next();
@@ -419,10 +419,10 @@ title="Title",
             try {
                 comp.run();
             } catch (Exception e) {
-                
+
             }
         }
-        
+
         runEnumerator.reset();
         while(runEnumerator.hasNext() && doRun) {
             Component comp = runEnumerator.next();
@@ -432,11 +432,11 @@ title="Title",
                 System.out.println(comp.getInstanceName());
                 e.printStackTrace();
             } catch (Exception e) {
-                
+
             }
         }
     }
-    
+
     private boolean IsSampleValid(double[] sample) {
         Attribute.Double conv_sample[] = new Attribute.Double[sample.length];
         for (int i = 0;i<sample.length;i++) {
@@ -449,25 +449,25 @@ title="Title",
         int paras = this.parameterNames.length;
         boolean criticalPara = false;
         double criticalParaValue = 0;
-        
+
         for(int i = 0; i < paras; i++){
             if (sample[i].getValue() < lowBound[i] || sample[i].getValue() > upBound[i] )
                 return false;
         }
         return true;
     }
-                    
+
     public double funct(double x[]) {
         double value = 0;
-        
+
         for (int j=0;j<parameters.length;j++) {
             parameters[j].setValue(x[j]);
         }
-        
+
         //model run
         singleRun();
         this.currentCount++;
-        
+
         //getting rid of pairs which contain missing data values
         double[] preArr = prediction.getValue();
         double[] obsArr = observation.getValue();
@@ -483,13 +483,13 @@ title="Title",
         int dataCount = obsVector.size();
         obsArr = new double[dataCount];
         preArr = new double[dataCount];
-                
+
         //converting Vectors to arrays
         for(int i = 0; i < dataCount; i++){
             obsArr[i] = obsVector.get(i).doubleValue();
             preArr[i] = preVector.get(i).doubleValue();
         }
-        
+
         //efficiency calculation
         if(this.effMethodName.getValue().equals("e2")){
             return (-1 * NashSutcliffe.efficiency(preArr, obsArr, 2));
@@ -505,7 +505,7 @@ title="Title",
         }
         else
             return -9999;
-        
+
         /*if (MaximizeEff.getValue() == MINIMIZATION)
             return this.effValue.getValue();
         else if (MaximizeEff.getValue() == ABSMINIMIZATION)
@@ -519,7 +519,7 @@ title="Title",
     }
 
     @SuppressWarnings("unchecked")
-    public void sort(double x[][],double xf[]) {	
+    public void sort(double x[][],double xf[]) {
 	if (x.length == 0)
 	    return;
 	int n = x[0].length;
@@ -530,10 +530,10 @@ title="Title",
 	    }
 	    t[i][n] = xf[i];
 	}
-	
+
 	SCE_Comparator comparator = new SCE_Comparator(n,false);
         java.util.Arrays.sort(t,comparator);
-	
+
 	for (int i=0;i<x.length;i++) {
 	    for (int j=0;j<n;j++) {
 		x[i][j] = t[i][j];
@@ -541,50 +541,50 @@ title="Title",
 	    xf[i] = t[i][n];
 	}
     }
-    
+
     public void sort(int x[]) {
 	Arrays.sort(x);
     }
-    
-    
+
+
     public double NormalizedgeometricRange(double x[][],double bound[]) {
 	if (x.length == 0)
 	    return 0;
 	int n = x[0].length;
-	
+
 	double min[] = new double[n];
 	double max[] = new double[n];
-	
+
 	double mean = 0;
-	
+
 	for (int i=0;i<n;i++) {
 	    min[i] = Double.POSITIVE_INFINITY;
 	    max[i] = Double.NEGATIVE_INFINITY;
-	    
+
 	    for (int j=0;j<x.length;j++) {
 		if (x[j][i] < min[i])
 		    min[i] = x[j][i];
 		if (x[j][i] > max[i])
-		    max[i] = x[j][i];				
+		    max[i] = x[j][i];
 	    }
-	    
+
 	    mean += Math.log(max[i] - min[i])/bound[i];
 	}
 	mean/=n;
-	return Math.exp(mean);	
+	return Math.exp(mean);
     }
-    
+
     public double[] std(double x[][]) {
 	if (x.length == 0)
 	    return null;
 	if (x.length == 1)
 	    return null;
-	
+
 	int n = x[0].length;
-	
+
 	double mean[] = new double[n];
 	double var[] = new double[n];
-	
+
 	for (int i=0;i<n;i++) {
 	    mean[i] = 0;
 	    for (int j=0;j<x.length;j++) {
@@ -592,7 +592,7 @@ title="Title",
 	    }
 	    mean[i] /= n;
 	}
-	
+
 	for (int i=0;i<n;i++) {
 	    var[i] = 0;
 	    for (int j=0;j<x.length;j++) {
@@ -600,13 +600,13 @@ title="Title",
 	    }
 	    var[i] = Math.sqrt(var[i])/(n-1);
 	}
-	
+
 	return var;
     }
-    
+
     public int find(int lcs[],int startindex,int endindex,int value) {
 	for (int i=startindex;i<endindex;i++) {
-	    if (lcs[i] == value) 
+	    if (lcs[i] == value)
 		return i;
 	}
 	return -1;
@@ -617,24 +617,24 @@ title="Title",
     public double[] cceua( double s[][],double sf[],double bl[],double bu[]) {
 	int nps = s.length;
 	int nopt = s[0].length;
-	
+
 	int n = nps;
 	int m = nopt;
-	
+
 	double alpha = 1.0;
 	double beta = 0.5;
-	
+
 	// Assign the best and worst points:
 	double sb[] = new double[nopt];
 	double sw[] = new double[nopt];
 	double fb = sf[0];
 	double fw = sf[n-1];
-	
+
 	for (int i=0;i<nopt;i++) {
 	    sb[i] = s[0][i];
 	    sw[i] = s[n-1][i];
 	}
-	
+
 	// Compute the centroid of the simplex excluding the worst point:
 	double ce[] = new double[nopt];
 	for (int i=0;i<nopt;i++) {
@@ -650,26 +650,26 @@ title="Title",
 	for (int i=0;i<nopt;i++) {
 	    snew[i] = ce[i] + alpha*(ce[i]-sw[i]);
 	}
-	
+
 	// Check if is outside the bounds:
 	int ibound=0;
 	for (int i=0;i<nopt;i++) {
-	    if ( (snew[i]-bl[i]) < 0 ) 
+	    if ( (snew[i]-bl[i]) < 0 )
 		ibound = 1;
-	    if ( (bu[i]-snew[i]) < 0 ) 
+	    if ( (bu[i]-snew[i]) < 0 )
 		ibound = 2;
 	}
-	
+
 	if (ibound >=1) {
 	    snew = this.RandomSampler();
 	}
-	    
+
 	double fnew = funct(snew);
-	
+
 	// Reflection failed; now attempt a contraction point:
 	if (fnew > fw) {
 	    for (int i=0;i<nopt;i++) {
-		snew[i] = sw[i] + beta*(ce[i]-sw[i]);		
+		snew[i] = sw[i] + beta*(ce[i]-sw[i]);
 	    }
 	    fnew = funct(snew);
 	}
@@ -678,7 +678,7 @@ title="Title",
 	    snew = this.RandomSampler();
 	    fnew = funct(snew);
 	}
-    
+
 	double result[] = new double[nopt+1];
 	for (int i=0;i<nopt;i++) {
 	    result[i] = snew[i];
@@ -686,7 +686,7 @@ title="Title",
 	result[nopt] = fnew;
 	return result;
     }
-    
+
     public double[] sceua(double[] x0,double[] bl,double []bu,int maxn,int kstop,double pcento,double peps,int ngs,int iseed,int iniflg) {
     try {
 	int nopt = x0.length;
@@ -695,36 +695,36 @@ title="Title",
 	int nspl = npg;
 	int mings = ngs;
 	int npt = npg*ngs;
-	
+
 	double bound[] = new double[nopt];
 	for (int i=0;i<nopt;i++) {
 	    bound[i] = bu[i] - bl[i];
 	}
-	
+
 	// Create an initial population to fill array x(npt,nopt):
 	//this.generator.setSeed(iseed);
-	
+
 	double x[][] = new double[npt][nopt];
-	
+
 	for (int i=0;i<npt;i++) {
 	    x[i] = this.RandomSampler();
 	}
-	
+
 	if (iniflg==1) {
 	    x[0] = x0;
 	}
-	
-	int nloop=0;	
-	
+
+	int nloop=0;
+
 	double xf[] = new double[npt];
 	for (int i=0;i<npt;i++) {
 	    xf[i] = funct(x[i]);
 	}
 	double f0 = xf[0];
-	
+
 	// Sort the population in order of increasing function values;
 	sort(x,xf);
-	
+
 	// Record the best and worst points;
 	double bestx[] = new double[nopt];
 	double worstx[] = new double[nopt];
@@ -735,17 +735,17 @@ title="Title",
 	}
 	bestf = xf[0];
 	worstf = xf[npt-1];
-	
+
 	// Compute the standard deviation for each parameter
-	double xnstd[] = std(x);	
-	
+	double xnstd[] = std(x);
+
 	// Computes the normalized geometric range of the parameters
 	double gnrng = NormalizedgeometricRange(x,bound); //exp(mean(log((max(x)-min(x))./bound)));
-	
+
 	System.out.println("The Inital Loop: 0");
 	System.out.println("BestF: " + bestf);
 	System.out.print("BestX");
-        
+
         //writer.writeLine("The Inital Loop: 0");
 	//writer.writeLine("BestF: " + bestf);
 	//writer.writeLine("BestX");
@@ -762,7 +762,7 @@ title="Title",
 	System.out.println("");
 	System.out.println("WorstF: " + worstf);
 	System.out.print("WorstX");
-        
+
         //writer.writeLine("");
 	//writer.writeLine("WorstF: " + worstf);
 	//writer.writeLine("WorstX");
@@ -779,35 +779,35 @@ title="Title",
 	    System.out.println("ON THE MAXIMUM NUMBER OF TRIALS" + maxn);
 	    System.out.println("HAS BEEN EXCEEDED.  SEARCH WAS STOPPED AT TRIAL NUMBER:" + icall);
 	    System.out.println("OF THE INITIAL LOOP!");
-            
+
             writer.writeLine("*** OPTIMIZATION SEARCH TERMINATED BECAUSE THE LIMIT");
 	    writer.writeLine("ON THE MAXIMUM NUMBER OF TRIALS" + maxn);
 	    writer.writeLine("HAS BEEN EXCEEDED.  SEARCH WAS STOPPED AT TRIAL NUMBER:" + icall);
 	    writer.writeLine("OF THE INITIAL LOOP!");
             writer.flush();
 	}
-	
+
 	if (gnrng < peps) {
 	    writer.writeLine("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");
             System.out.println("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");
             writer.flush();
 	}
-	
+
 	// Begin evolution loops:
 	nloop = 0;
 	double criter[] =new double[kstop];
 	double criter_change=100000;
-	
+
 	while (icall<maxn && gnrng>peps && criter_change>pcento) {
 	    nloop++;
 
 	    // Loop on complexes (sub-populations);
 	    for (int igs=0;igs<ngs;igs++) {
-		
+
 		// Partition the population into complexes (sub-populations);
 		int k1[] = new int[npg];
 		int k2[] = new int[npg];
-		
+
 		for (int i=0;i<npg;i++) {
 		    k1[i] = i;
 		    k2[i] = k1[i]*ngs+igs;
@@ -816,11 +816,11 @@ title="Title",
 		double cf[] = new double[npg];
 		for (int i=0;i<npg;i++) {
 		    for (int j=0;j<nopt;j++) {
-			cx[k1[i]][j] = x[k2[i]][j];			
+			cx[k1[i]][j] = x[k2[i]][j];
 		    }
 		    cf[k1[i]] = xf[k2[i]];
 		}
-		
+
 		//Evolve sub-population igs for nspl steps:
 		for (int loop=0;loop<nspl;loop++) {
 		    // Select simplex by sampling the complex according to a linear
@@ -835,46 +835,46 @@ title="Title",
 			    int idx = find(lcs,0,k3,lpos);
 			    if (idx == -1) {
 				break;
-			    }			
+			    }
 			}
 			lcs[k3] = lpos;
 		    }
 		    sort(lcs);
-		    
+
 		    // Construct the simplex:
 		    double s[][] = new double[nps][nopt];
 		    double sf[]  = new double[nps];
 		    for (int i=0;i<nps;i++) {
 			for (int j=0;j<nopt;j++) {
-			    s[i][j] = cx[lcs[i]][j];			    
+			    s[i][j] = cx[lcs[i]][j];
 			}
 			sf[i] = cf[lcs[i]];
 		    }
-		    
+
 		    double snew[] = new double[nopt];
 		    double fnew;
-		    
+
 		    double xnew[] = cceua(s,sf,bl,bu);
-		    
+
 		    //icall aktualisieren!!!
-		    
+
 		    for (int i=0;i<nopt;i++) {
-			snew[i] = xnew[i];			
-		    }		   
+			snew[i] = xnew[i];
+		    }
 		    fnew = xnew[nopt];
-		    		    
+
 		    // Replace the worst point in Simplex with the new point:
 		    s[nps-1] = snew;
 		    sf[nps-1] = fnew;
-            
+
 		    //Replace the simplex into the complex;
 		    for (int i=0;i<nps;i++) {
 			for (int j=0;j<nopt;j++) {
-			    cx[lcs[i]][j] = s[i][j];			    
+			    cx[lcs[i]][j] = s[i][j];
 			}
 			cf[lcs[i]] = sf[i];
 		    }
-		    
+
 		    // Sort the complex;
 		    sort(cx,cf);
 		    // End of Inner Loop for Competitive Evolution of Simplexes
@@ -882,32 +882,32 @@ title="Title",
 		// Replace the complex back into the population;
 		for (int i=0;i<npg;i++) {
 		    for (int j=0;j<nopt;j++) {
-			x[k2[i]][j] = cx[k1[i]][j];					
+			x[k2[i]][j] = cx[k1[i]][j];
 		    }
 		    xf[k2[i]] = cf[k1[i]];
-		}		
+		}
 	    // End of Loop on Complex Evolution;
 	    }
 	    // Shuffled the complexes;
 	    sort(x,xf);
-	
+
 	    // Record the best and worst points;
 	    for (int i=0;i<nopt;i++) {
 	        bestx[i] = x[0][i];
-	        worstx[i] = x[nopt-1][i];	   
+	        worstx[i] = x[nopt-1][i];
 	    }
 	    bestf = xf[0];
 	    worstf = xf[npt-1];
-    
+
 	    //Compute the standard deviation for each parameter
 	    xnstd = std(x);
-	
+
 	    gnrng = NormalizedgeometricRange(x,bound);
-	
+
 	    System.out.println("Evolution Loop:" + nloop + " - Trial - " + icall);
 	    System.out.println("BESTF:" + bestf);
 	    System.out.print("BESTX:");
-            
+
             //writer.writeLine("Evolution Loop:" + nloop + " - Trial - " + icall);
 	    //writer.writeLine("BESTF:" + bestf);
 	    //writer.writeLine("BESTX:");
@@ -923,10 +923,10 @@ title="Title",
             writer.addData(this.currentCount);
             writer.writeData();
             writer.flush();
-            
+
 	    System.out.println("\nWORSTF:" + worstf);
 	    System.out.print("WORSTX:");
-            
+
             //writer.writeLine("\nWORSTF:" + worstf);
 	    //writer.writeLine("WORSTX:");
 	    for (int i = 0;i<nopt;i++) {
@@ -935,13 +935,13 @@ title="Title",
 	    }
 	    System.out.println("");
             //writer.flush();
-            
-	    
+
+
 	    // Check for convergency;
 	    if (icall >= maxn) {
 		System.out.println("*** OPTIMIZATION SEARCH TERMINATED BECAUSE THE LIMIT");
 		System.out.println("ON THE MAXIMUM NUMBER OF TRIALS " +  maxn + " HAS BEEN EXCEEDED!");
-                
+
                 writer.writeLine("*** OPTIMIZATION SEARCH TERMINATED BECAUSE THE LIMIT");
 		writer.writeLine("ON THE MAXIMUM NUMBER OF TRIALS " +  maxn + " HAS BEEN EXCEEDED!");
                 writer.flush();
@@ -951,7 +951,7 @@ title="Title",
                 writer.writeLine("THE POPULATION HAS CONVERGED TO A PRESPECIFIED SMALL PARAMETER SPACE");
                 writer.flush();
 	    }
-	    	   
+
 	    for (int i=0;i<kstop-1;i++) {
 		criter[i] = criter[i+1];
 	    }
@@ -964,12 +964,12 @@ title="Title",
 		}
 		criter_mean /= kstop;
 		criter_change /= criter_mean;
-		
+
 		if (criter_change < pcento) {
 		    System.out.println("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY");
 		    System.out.println("LESS THAN THE THRESHOLD " + pcento + "%");
 		    System.out.println("CONVERGENCY HAS ACHIEVED BASED ON OBJECTIVE FUNCTION CRITERIA!!!");
-                    
+
                     writer.writeLine("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY");
 		    writer.writeLine("LESS THAN THE THRESHOLD " + pcento + "%");
 		    writer.writeLine("CONVERGENCY HAS ACHIEVED BASED ON OBJECTIVE FUNCTION CRITERIA!!!");
@@ -980,7 +980,7 @@ title="Title",
 	System.out.println("SEARCH WAS STOPPED AT TRIAL NUMBER: " + icall);
 	System.out.println("NORMALIZED GEOMETRIC RANGE = " + gnrng);
 	System.out.println("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY " + criter_change + "%");
-        
+
         writer.writeLine("SEARCH WAS STOPPED AT TRIAL NUMBER: " + icall);
 	writer.writeLine("NORMALIZED GEOMETRIC RANGE = " + gnrng);
 	writer.writeLine("THE BEST POINT HAS IMPROVED IN LAST " + kstop + " LOOPS BY " + criter_change + "%");
@@ -995,44 +995,44 @@ title="Title",
             }
     return null;
     }
-    
-    public void run() {        
+
+    public void run() {
         if (runEnumerator == null) {
-            
+
             runEnumerator = getChildrenEnumerator();
         }
         if(!enable.getValue()){
             disabledRun();
 	    return;
 	}
-        
+
 	int maxn= this.maxn.getValue();//10000;
 	int kstop=this.kstop.getValue();//10;
 	double  pcento=this.pcento.getValue();//0.01;
 	double peps=this.peps.getValue();//0.00001;
 	int iseed=10;
 	int iniflg=0;
-	
+
         System.out.println("Pcento: " + pcento);
-        
+
 	double bestpoint[],bestx[],bestf;
-	
+
         double x0[] = RandomSampler();
-        
+
 	//double x0[] = {-1.295,2.659,1.1,0.1649};
-			
+
 	bestpoint = sceua(x0,this.lowBound,this.upBound,maxn,kstop,pcento,peps,NumberOfComplexes.getValue(),iseed,iniflg);
-	
+
 	bestx = new double[this.parameters.length];
 	for (int i=0;i<this.parameters.length;i++) {
 	    bestx[i] = bestpoint[i];
 	}
-        
+
 	bestf = bestpoint[this.parameters.length];
     }
-    
+
     public void cleanup() {
-        
+
         if (enable.getValue()) {
             writer.close();
         }

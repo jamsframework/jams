@@ -5,8 +5,9 @@
 
 package jams.components.optimizer;
 
-import jams.components.optimizer.Optimizer.Sample;
+import jams.components.optimizer.SOOptimizer.SampleSO;
 import java.util.Arrays;
+import jams.JAMS;
 import jams.io.SerializableBufferedWriter;
 import jams.model.JAMSComponentDescription;
 
@@ -16,16 +17,16 @@ import jams.model.JAMSComponentDescription;
         author="Christian Fischer",
         description="Performs a nelder mead optimization. Advantage: Derivative free optimization method. Disadvantage: only local convergence"
         )
-public class NelderMead extends Optimizer{           
+public class NelderMead extends SOOptimizer{           
     SerializableBufferedWriter writer = null;
             
-    public Sample[] initialSimplex = null;
+    public SampleSO[] initialSimplex = null;
     
-    public void sort(Sample[] array){
-        Arrays.sort(array,new SampleComperator(false));
+    public void sort(SampleSO[] array){
+        Arrays.sort(array,new SampleSOComperator(false));
     }
     
-    public double NormalizedgeometricRange(Sample x[]) {
+    public double NormalizedgeometricRange(SampleSO x[]) {
         if (x.length == 0)
             return 0;
                 
@@ -50,6 +51,7 @@ public class NelderMead extends Optimizer{
     }
     
     @SuppressWarnings("unchecked")    
+    @Override
     public void init(){
         super.init();
     }
@@ -61,6 +63,7 @@ public class NelderMead extends Optimizer{
         return true;
     }
     
+    @Override
     public void run(){
         if (enable!=null)
             if (!enable.getValue()){
@@ -70,7 +73,7 @@ public class NelderMead extends Optimizer{
         boolean stop = false;
     
         //first draw n+1 random points        
-        Sample simplex[] = new Sample[n+1];
+        SampleSO simplex[] = new SampleSO[n+1];
         if (initialSimplex != null){
             simplex = initialSimplex;
         }else{
@@ -83,27 +86,27 @@ public class NelderMead extends Optimizer{
         }
         int m = simplex.length;
         
-        double alpha = 1.0,gamma = 2.0,rho = 0.5,sigma = 0.5,epsilon = 0.01,max_restart_count = 5;;
+        double alpha = 1.0,gamma = 2.0,rho = 0.5,sigma = 0.5,epsilon = 0.01,max_restart_count = 5;
         
         int restart_counter = 0;
         int iterationcounter = 0;
         while(!stop){        
             if (iterationcounter++ > maxn.getValue()){
-                getModel().getRuntime().println("*********************************************************");
-                getModel().getRuntime().println("Maximum number of iterations reached, finished optimization");
-                getModel().getRuntime().println("Bestpoint:" + simplex[0]);
+                getModel().getRuntime().println("*********************************************************");                
+                getModel().getRuntime().println(JAMS.resources.getString("Maximum_number_of_iterations_reached_finished_optimization"));
+                getModel().getRuntime().println(JAMS.resources.getString("bestpoint") + simplex[0]);
                 getModel().getRuntime().println("*********************************************************");
                 return;
             }
             if (this.NormalizedgeometricRange(simplex)<epsilon){
                 if (max_restart_count < ++restart_counter){
-                    getModel().getRuntime().println("*********************************************************");
-                    getModel().getRuntime().println("Maximum number of restarts reached, finished optimization");
-                    getModel().getRuntime().println("Bestpoint:" + simplex[0]);
+                    getModel().getRuntime().println("*********************************************************");                    
+                    getModel().getRuntime().println(JAMS.resources.getString("Maximum_number_of_restarts_reached_finished_optimization"));
+                    getModel().getRuntime().println(JAMS.resources.getString("bestpoint") + simplex[0]);
                     getModel().getRuntime().println("*********************************************************");
                     return;
                 }
-                getModel().getRuntime().println("restart");
+                getModel().getRuntime().println(JAMS.resources.getString("restart"));
                 for (int i=1;i<m;i++){                    
                     simplex[i] = this.getSample(this.RandomSampler());
                 }
@@ -122,48 +125,48 @@ public class NelderMead extends Optimizer{
             for (int i=0;i<n;i++){
                 reflection[i] = centroid[i] + alpha*(centroid[i]-simplex[m-1].x[i]);
             }
-            Sample reflection_sample = null;
+            SampleSO reflection_SampleSO = null;
             if (this.feasible(reflection)){
-                getModel().getRuntime().println("reflection step");
-                reflection_sample = this.getSample(reflection);
+                getModel().getRuntime().println(JAMS.resources.getString("reflection_step"));
+                reflection_SampleSO = this.getSample(reflection);
             
-                if (simplex[0].fx < reflection_sample.fx && reflection_sample.fx < simplex[m-1].fx){
-                    simplex[m-1] = reflection_sample;
+                if (simplex[0].fx < reflection_SampleSO.fx && reflection_SampleSO.fx < simplex[m-1].fx){
+                    simplex[m-1] = reflection_SampleSO;
                     continue;
                 }
             }
             //expand
-            if (this.feasible(reflection) && simplex[0].fx >= reflection_sample.fx){
+            if (this.feasible(reflection) && simplex[0].fx >= reflection_SampleSO.fx){
                 double expansion[] = new double[n];
                 for (int i=0;i<n;i++){
                     expansion[i] = centroid[i] + gamma*(centroid[i]-simplex[m-1].x[i]);
                 }
-                getModel().getRuntime().println("expansion step");
+                getModel().getRuntime().println(JAMS.resources.getString("expansion_step"));
                 
-                Sample expansion_sample = this.getSample(expansion);
-                if (this.feasible(expansion) && expansion_sample.fx < reflection_sample.fx){
-                    simplex[m-1] = expansion_sample;
+                SampleSO expansion_SampleSO = this.getSample(expansion);
+                if (this.feasible(expansion) && expansion_SampleSO.fx < reflection_SampleSO.fx){
+                    simplex[m-1] = expansion_SampleSO;
                 }else{
-                    simplex[m-1] = reflection_sample;                    
+                    simplex[m-1] = reflection_SampleSO;                    
                 }                    
                 continue;                
             }
             //contraction
-            if (!this.feasible(reflection) || simplex[m-1].fx <= reflection_sample.fx){                
+            if (!this.feasible(reflection) || simplex[m-1].fx <= reflection_SampleSO.fx){                
                 double contraction[] = new double[n];
                 for (int i=0;i<n;i++){
                     contraction[i] = centroid[i] + rho*(centroid[i]-simplex[m-1].x[i]);
                 }
-                getModel().getRuntime().println("contraction step");
+                getModel().getRuntime().println(JAMS.resources.getString("contraction_step"));
                 //this should not happen .. 
-                Sample contraction_sample = null;
+                SampleSO contraction_SampleSO = null;
                 if (!this.feasible(contraction)){
-                    getModel().getRuntime().println("not feasible after contraction step");
-                    contraction_sample = this.getSample(this.RandomSampler());
+                    getModel().getRuntime().println(JAMS.resources.getString("not_feasible_after_contraction_step"));
+                    contraction_SampleSO = this.getSample(this.RandomSampler());
                 }else
-                    contraction_sample = this.getSample(contraction);
-                if (contraction_sample.fx < simplex[m-1].fx){
-                    simplex[m-1] = contraction_sample;
+                    contraction_SampleSO = this.getSample(contraction);
+                if (contraction_SampleSO.fx < simplex[m-1].fx){
+                    simplex[m-1] = contraction_SampleSO;
                     continue;
                 }
             }
@@ -173,7 +176,7 @@ public class NelderMead extends Optimizer{
                 for(int j=0;j<n;j++){
                     shrink[j] = simplex[0].x[j] + sigma*(simplex[i].x[j]-simplex[0].x[j]);
                 }
-                getModel().getRuntime().println("shrink step");
+                getModel().getRuntime().println(JAMS.resources.getString("shrink_step"));
                 simplex[i] = this.getSample(shrink);
             }                                                
         }        

@@ -8,14 +8,14 @@
  */
 
 package jams.components.machineLearning.kernels;
-import Jama.*;
 import Jama.Matrix;
+import java.io.Serializable;
 
 /**
  *
  * @author Christian(web)
  */
-public abstract class MeanModell{
+public abstract class MeanModell implements Serializable{
     int inputSize;
     int parameterCount;
     String meanModelParameterNames[];
