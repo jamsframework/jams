@@ -16,7 +16,9 @@ import jams.gui.input.InputComponent;
 import jams.gui.input.InputComponentFactory;
 import jams.gui.input.TimeintervalInput;
 import jams.gui.input.ValueChangeListener;
+import jams.gui.tools.GUIHelper;
 import jams.tools.StringTools;
+import java.awt.GridBagLayout;
 import java.io.File;
 import java.util.Map;
 import java.util.Vector;
@@ -32,20 +34,33 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
     private final WizardController controller;
     private final Map wizardData;
+
     private BaseDataPanel thisPanel;
     public static final String KEY_SHAPE_FILENAME = "shapeFileName";
+    public static final String KEY_POINT_LAT = "pointLat";
+    public static final String KEY_POINT_LON = "pointLon";
+    public static final String KEY_POINT_HEIGHT = "pointHeight";
+    public static final String KEY_GRID_FROM_LAT = "gridFromLat";
+    public static final String KEY_GRID_FROM_LON = "gridFromLon";
+    public static final String KEY_GRID_TO_LAT = "gridToLat";
+    public static final String KEY_GRID_TO_LON = "gridToLon";
     public static final String KEY_REGIONALIZATION = "regionalizationData";
     public static final String KEY_REGDATA_KEYS = "regDataKeys";
     public static final String KEY_REGDATA_DISPS = "regDataDisps";
     private Vector<String> regData_Display = new Vector<String>();
     private Vector<String> regData_Key = new Vector<String>();
     public static final String KEY_INTERVAL = "interval";
-
     // all field contents
     private String r_shapeFileName = null;
     private String r_region = null;
     private String r_interval = null;
-
+    private String r_pLat = null;
+    private String r_pLon = null;
+    private String r_pHeight = null;
+    private String r_gFLat = null;
+    private String r_gFLon = null;
+    private String r_gTLat = null;
+    private String r_gTLon = null;
 
     /** Creates new form  */
     public BaseDataPanel(WizardController controller, Map wizardData) {
@@ -68,17 +83,39 @@ public class BaseDataPanel extends javax.swing.JPanel {
      */
     private void initComponents() {
 
-        //buttonGroup1 = new javax.swing.ButtonGroup();
-        //buttonGroup2 = new javax.swing.ButtonGroup();
         jFileLabel = new javax.swing.JLabel();
         jFileName = new javax.swing.JTextField();
+
         jFileButton = new javax.swing.JButton();
         jRegLabel = new javax.swing.JLabel();
         jRegCombo = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
+        jIntervalLabel = new javax.swing.JLabel();
+
+        jPointLabel = new javax.swing.JLabel();
+        jGridLabel = new javax.swing.JLabel();
+        jGridFromLabel = new javax.swing.JLabel();
+        jGridToLabel = new javax.swing.JLabel();
+        jLatLabel = new javax.swing.JLabel();
+        jLatLabel2 = new javax.swing.JLabel();
+        jLatLabel3 = new javax.swing.JLabel();
+        jLonLabel = new javax.swing.JLabel();
+        jLonLabel2 = new javax.swing.JLabel();
+        jLonLabel3 = new javax.swing.JLabel();
+        jHeightLabel = new javax.swing.JLabel();
+
+        jPLat = new javax.swing.JTextField();
+        jPLon = new javax.swing.JTextField();
+        jPHeight = new javax.swing.JTextField();
+        jGFLat = new javax.swing.JTextField();
+        jGFLon = new javax.swing.JTextField();
+        jGTLat = new javax.swing.JTextField();
+        jGTLon = new javax.swing.JTextField();
+
+
         jIntervall = InputComponentFactory.createInputComponent(JAMSTimeInterval.class, false);
 
         jIntervall.addValueChangeListener(new ValueChangeListener() {
+
             @Override
             public void valueChanged() {
                 try {
@@ -89,9 +126,11 @@ public class BaseDataPanel extends javax.swing.JPanel {
             }
         });
 
+
         jFileLabel.setText("Shape-File");
 
         jFileName.addFocusListener(new java.awt.event.FocusAdapter() {
+
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jFileNameFocusLost(evt);
             }
@@ -99,8 +138,52 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
         jFileButton.setText("Auswahl");
         jFileButton.addActionListener(new java.awt.event.ActionListener() {
+
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jFileButtonActionPerformed(evt);
+            }
+        });
+
+        jPLat.addFocusListener(new java.awt.event.FocusAdapter() {
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                checkProblems();
+            }
+        });
+        jPLon.addFocusListener(new java.awt.event.FocusAdapter() {
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                checkProblems();
+            }
+        });
+        jPHeight.addFocusListener(new java.awt.event.FocusAdapter() {
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                checkProblems();
+            }
+        });
+        jGFLat.addFocusListener(new java.awt.event.FocusAdapter() {
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                checkProblems();
+            }
+        });
+        jGFLon.addFocusListener(new java.awt.event.FocusAdapter() {
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                checkProblems();
+            }
+        });
+        jGTLat.addFocusListener(new java.awt.event.FocusAdapter() {
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                checkProblems();
+            }
+        });
+        jGTLon.addFocusListener(new java.awt.event.FocusAdapter() {
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                checkProblems();
             }
         });
 
@@ -109,57 +192,78 @@ public class BaseDataPanel extends javax.swing.JPanel {
         // will be done later in initFromWizardData
         //jRegCombo.setModel(new javax.swing.DefaultComboBoxModel(regData_Display));
         jRegCombo.addFocusListener(new java.awt.event.FocusListener() {
+
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jRegComboFocusLost(evt);
             }
+
             public void focusGained(java.awt.event.FocusEvent evt) {
             }
         });
 
-        jLabel3.setText("Zeitintervall");
+        jIntervalLabel.setText("Zeitintervall");
 
+        jPointLabel.setText("Punkt");
+        jGridLabel.setText("Rechteck");
+        jGridFromLabel.setText("Obere linke Ecke");
+        jGridToLabel.setText("Untere rechte Ecke");
+        jLatLabel.setText("Rechtswert (Lat)");
+        jLatLabel2.setText("Rechtswert (Lat)");
+        jLatLabel3.setText("Rechtswert (Lat)");
+        jLonLabel.setText("Hochwert (Lon)");
+        jLonLabel2.setText("Hochwert (Lon)");
+        jLonLabel3.setText("Hochwert (Lon)");
+        jHeightLabel.setText("Höhe");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        GridBagLayout layout = new GridBagLayout();
         this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jFileLabel)
-                    .addComponent(jRegLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-//                    .addComponent(jLabel2)
-//                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addGap(12, 12, 12)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jFileName, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jFileButton))
-                    .addComponent(jRegCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jIntervall.getComponent(), 300, 300, 400))
-                .addContainerGap(50, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jFileLabel)
-                    .addComponent(jFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jFileButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRegLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRegCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jIntervall.getComponent(), 100, 150, 250))
-                .addGap(18, 18, 18)
- .addContainerGap(50, Short.MAX_VALUE))
-        );
+
+        //Component addGBComponent(Container cont, GridBagLayout gbl, Component c,
+        //        int x, int y, int width, int height,
+        //        double weightx, double weighty) {
+
+        int row = 1;
+        GUIHelper.addGBComponent(this, layout, jFileLabel, 1, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jFileName, 2, row, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jFileButton, 4, row, 1, 1, 0, 0);
+
+        row++;
+        GUIHelper.addGBComponent(this, layout, jPointLabel, 1, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jLatLabel, 2, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jPLat, 3, row, 1, 1, 0, 0);
+        row++;
+        GUIHelper.addGBComponent(this, layout, jLonLabel, 2, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jPLon, 3, row, 1, 1, 0, 0);
+        row++;
+        GUIHelper.addGBComponent(this, layout, jHeightLabel, 2, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jPHeight, 3, row, 1, 1, 0, 0);
+
+        row++;
+        GUIHelper.addGBComponent(this, layout, jGridLabel, 1, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jGridFromLabel, 2, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jLatLabel2, 3, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jGFLat, 4, row, 1, 1, 0, 0);
+        row++;
+        GUIHelper.addGBComponent(this, layout, jLonLabel2, 3, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jGFLon, 4, row, 1, 1, 0, 0);
+        row++;
+        GUIHelper.addGBComponent(this, layout, jGridToLabel, 2, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jLatLabel3, 3, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jGTLat, 4, row, 1, 1, 0, 0);
+        row++;
+        GUIHelper.addGBComponent(this, layout, jLonLabel3, 3, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jGTLon, 4, row, 1, 1, 0, 0);
+
+        row++;
+        row++;
+        GUIHelper.addGBComponent(this, layout, jRegLabel, 1, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jRegCombo, 2, row, 2, 1, 0, 0);
+
+        row++;
+        GUIHelper.addGBComponent(this, layout, jIntervalLabel, 1, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jIntervall.getComponent(), 2, row, 3, 3, 0, 0);
+
+
     }
 
     private void jRegComboFocusLost(java.awt.event.FocusEvent evt) {
@@ -168,8 +272,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
         r_region = regData_Key.elementAt(selIndex);
         checkProblems();
 
-}
-
+    }
 
     private void jFileButtonActionPerformed(java.awt.event.ActionEvent evt) {
         String fileName = null;
@@ -191,7 +294,6 @@ public class BaseDataPanel extends javax.swing.JPanel {
         checkProblems();
     }
 
-
     private void jFileNameFocusLost(java.awt.event.FocusEvent evt) {
         r_shapeFileName = jFileName.getText();
         checkProblems();
@@ -199,51 +301,70 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
     private void setupComponents() {
 
-        // group buttons
-        //buttonGroup1.add(jRadioButtonPrim);
-        //buttonGroup1.add(jRadioButtonSeku);
-
-        //buttonGroup2.add(jRadioButtonTag);
-        //buttonGroup2.add(jRadioButtonMonat);
-        //buttonGroup2.add(jRadioButtonJahr);
-
-        //jRadioButtonPrim.putClientProperty(KEY_DATA_ORIGIN, VALUE_PRIM);
-        //jRadioButtonSeku.putClientProperty(KEY_DATA_ORIGIN, VALUE_SEK);
-
-        //jRadioButtonTag.putClientProperty(KEY_AGGR, VALUE_TAG);
-        //jRadioButtonMonat.putClientProperty(KEY_AGGR, VALUE_MON);
-        //jRadioButtonJahr.putClientProperty(KEY_AGGR, VALUE_JAHR);
 
         // defaults
-        //r_dataOrigin = VALUE_PRIM;
-        //r_aggreg = VALUE_TAG;
         r_interval = "1999-01-01 7:30 2010-12-31 7:30 6 1";
 
     }
 
-
     private void checkProblems() {
 
+        controller.setProblem(null);
         if (StringTools.isEmptyString(r_shapeFileName)) {
             r_shapeFileName = "";
-            controller.setProblem("Bitte Shape-File auswählen.");
+        }
+        r_pLat = jPLat.getText();
+        r_pLon = jPLon.getText();
+        r_pHeight = jPHeight.getText();
+        r_gFLat = jGFLat.getText();
+        r_gFLon = jGFLon.getText();
+        r_gTLat = jGTLat.getText();
+        r_gTLon = jGTLon.getText();
+
+        if (StringTools.isEmptyString(r_shapeFileName) &&
+                StringTools.isEmptyString(r_pLat) &&
+                StringTools.isEmptyString(r_gFLat)) {
+            controller.setProblem("Bitte Shape-File oder Punkt oder Rechteck angeben.");
         } else {
-            wizardData.put(KEY_SHAPE_FILENAME, r_shapeFileName);
-            //wizardData.put(KEY_DATA_ORIGIN, r_dataOrigin);
-            if (StringUtils.isNullOrEmpty(r_region)) {
-                controller.setProblem("Bitte Regionalisierung festlegen.");
+            if (!StringTools.isEmptyString(r_pLat) &&
+                    (StringTools.isEmptyString(r_pLon) ||
+                    StringTools.isEmptyString(r_pHeight))) {
+                controller.setProblem("Bitte alle Parameter für Punkt angeben.");
             } else {
-                wizardData.put(KEY_REGIONALIZATION, r_region);
 
-                int errorCode = jIntervall.getErrorCode();
-                if (errorCode>0) {
-                    controller.setProblem("Bitte Zeitintervall auswählen.");
-
+                if (!StringTools.isEmptyString(r_gFLat) &&
+                        (StringTools.isEmptyString(r_gFLon) ||
+                        StringTools.isEmptyString(r_gTLat) ||
+                        StringTools.isEmptyString(r_gTLon))) {
+                    controller.setProblem("Bitte alle Parameter für Rechteck angeben.");
                 } else {
-                    r_interval = jIntervall.getValue();
-                    //System.out.println("r_interval:" + r_interval);
-                    wizardData.put(KEY_INTERVAL, r_interval);
-                    controller.setProblem(null);
+
+
+                    wizardData.put(KEY_SHAPE_FILENAME, r_shapeFileName);
+                    wizardData.put(KEY_POINT_LAT, r_pLat);
+                    wizardData.put(KEY_POINT_LON, r_pLon);
+                    wizardData.put(KEY_POINT_HEIGHT, r_pHeight);
+                    wizardData.put(KEY_GRID_FROM_LAT, r_gFLat);
+                    wizardData.put(KEY_GRID_FROM_LON, r_gFLon);
+                    wizardData.put(KEY_GRID_TO_LAT, r_gTLat);
+                    wizardData.put(KEY_GRID_TO_LON, r_gTLon);
+
+                    //wizardData.put(KEY_DATA_ORIGIN, r_dataOrigin);
+                    if (StringUtils.isNullOrEmpty(r_region)) {
+                        controller.setProblem("Bitte Regionalisierung festlegen.");
+                    } else {
+                        wizardData.put(KEY_REGIONALIZATION, r_region);
+
+                        int errorCode = jIntervall.getErrorCode();
+                        if (errorCode > 0) {
+                            controller.setProblem("Bitte Zeitintervall auswählen.");
+
+                        } else {
+                            r_interval = jIntervall.getValue();
+                            //System.out.println("r_interval:" + r_interval);
+                            wizardData.put(KEY_INTERVAL, r_interval);
+                        }
+                    }
                 }
             }
         }
@@ -254,11 +375,48 @@ public class BaseDataPanel extends javax.swing.JPanel {
      * init display data from wizard data
      */
     private void initFromWizardData() {
-        
+
         String shapeFileName = (String) wizardData.get(KEY_SHAPE_FILENAME);
         if (!StringUtils.isNullOrEmpty(shapeFileName)) {
             r_shapeFileName = shapeFileName;
             jFileName.setText(r_shapeFileName);
+        }
+
+        String pLat = (String) wizardData.get(KEY_POINT_LAT);
+        String pLon = (String) wizardData.get(KEY_POINT_LON);
+        String pHeight = (String) wizardData.get(KEY_POINT_HEIGHT);
+        if (!StringUtils.isNullOrEmpty(pLat)) {
+            r_pLat = pLat;
+            jPLat.setText(r_pLat);
+        }
+        if (!StringUtils.isNullOrEmpty(pLon)) {
+            r_pLon = pLon;
+            jPLon.setText(r_pLon);
+        }
+        if (!StringUtils.isNullOrEmpty(pHeight)) {
+            r_pHeight = pHeight;
+            jPHeight.setText(r_pHeight);
+        }
+
+        String gFLat = (String) wizardData.get(KEY_GRID_FROM_LAT);
+        String gFLon = (String) wizardData.get(KEY_GRID_FROM_LON);
+        String gTLat = (String) wizardData.get(KEY_GRID_TO_LAT);
+        String gTLon = (String) wizardData.get(KEY_GRID_TO_LON);
+        if (!StringUtils.isNullOrEmpty(gFLat)) {
+            r_gFLat = gFLat;
+            jGFLat.setText(r_gFLat);
+        }
+        if (!StringUtils.isNullOrEmpty(gFLon)) {
+            r_gFLon = gFLon;
+            jGFLon.setText(r_gFLon);
+        }
+        if (!StringUtils.isNullOrEmpty(gTLat)) {
+            r_gTLat = gTLat;
+            jGTLat.setText(r_gTLat);
+        }
+        if (!StringUtils.isNullOrEmpty(gTLon)) {
+            r_gTLon = gTLon;
+            jGTLon.setText(r_gTLon);
         }
 
         regData_Key = (Vector<String>) wizardData.get(KEY_REGDATA_KEYS);
@@ -272,10 +430,11 @@ public class BaseDataPanel extends javax.swing.JPanel {
         }
         if (!StringUtils.isNullOrEmpty(r_region)) {
             int theIndex = regData_Key.indexOf(r_region);
-            if (theIndex < 0)
+            if (theIndex < 0) {
                 System.out.println("Wert " + r_region + " nicht in regData_Key gefunden. System falsch initialisiert.");
-            else
+            } else {
                 jRegCombo.setSelectedIndex(theIndex);
+            }
         }
 
         String interval = (String) wizardData.get(KEY_INTERVAL);
@@ -283,19 +442,35 @@ public class BaseDataPanel extends javax.swing.JPanel {
             r_interval = interval;
         }
         if (!StringUtils.isNullOrEmpty(r_interval)) {
-            ((TimeintervalInput)jIntervall).setValue(r_interval);
+            ((TimeintervalInput) jIntervall).setValue(r_interval);
         }
     }
-
-
     // Variables declaration
     //private javax.swing.ButtonGroup buttonGroup1;
     //private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JButton jFileButton;
     private javax.swing.JLabel jFileLabel;
     private javax.swing.JTextField jFileName;
+    private javax.swing.JLabel jPointLabel;
+    private javax.swing.JLabel jGridLabel;
+    private javax.swing.JLabel jGridFromLabel;
+    private javax.swing.JLabel jGridToLabel;
+    private javax.swing.JLabel jLatLabel;
+    private javax.swing.JLabel jLatLabel2;
+    private javax.swing.JLabel jLatLabel3;
+    private javax.swing.JLabel jLonLabel;
+    private javax.swing.JLabel jLonLabel2;
+    private javax.swing.JLabel jLonLabel3;
+    private javax.swing.JLabel jHeightLabel;
+    private javax.swing.JTextField jPLat;
+    private javax.swing.JTextField jPLon;
+    private javax.swing.JTextField jPHeight;
+    private javax.swing.JTextField jGFLat;
+    private javax.swing.JTextField jGFLon;
+    private javax.swing.JTextField jGTLat;
+    private javax.swing.JTextField jGTLon;
     private InputComponent jIntervall;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jIntervalLabel;
     private javax.swing.JComboBox jRegCombo;
     private javax.swing.JLabel jRegLabel;
     // End of variables declaration
