@@ -76,7 +76,7 @@ public class RuntimeManager extends Observable {
             public void update(Observable o, Object arg) {
 
                 JAMSRuntime rt = (JAMSRuntime) o;
-                if (rt.getState() == JAMSRuntime.STATE_STOP) {
+                if (rt.getState() == JAMSRuntime.STATE_STOP || rt.getState() == JAMSRuntime.STATE_PAUSE ) {
                     removeRuntime(rt);
                 }
             }

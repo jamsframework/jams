@@ -427,6 +427,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             public void actionPerformed(ActionEvent evt) {
                 StandardRuntime.this.sendHalt();
                 stopButton.setEnabled(false);
+                saveButton.setEnabled(false);
             }
         });
         toolBar.add(stopButton);
