@@ -94,8 +94,8 @@ public class JAMSWorkspace implements Workspace {
     }
 
     public void init() throws InvalidWorkspaceException {
-        this.loadConfig();
         this.checkValidity(readonly);
+        this.loadConfig();
         this.updateDataStores();
     }
 

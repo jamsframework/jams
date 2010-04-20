@@ -35,6 +35,8 @@ import jams.model.JAMSFullModelState;
 import jams.model.Model;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
+import jams.workspace.InvalidWorkspaceException;
+import jams.workspace.JAMSWorkspace;
 import jamsui.juice.JUICE;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -67,27 +69,18 @@ import reg.JAMSExplorer;
 public class JAMSFrame extends JAMSLauncher {
 
     private JMenuBar mainMenu;
-
     private JMenu logsMenu, modelMenu;
-
     private JMenuItem saveItem, saveAsItem;
-
     private JFileChooser jfc;
-
     private JDialog rtManagerDlg;
-
     private PropertyDlg propertyDlg;
-
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Info_Log"));
-
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Error_Log"));
-
     private String modelFilename;
-
     private Action editPrefsAction, loadPrefsAction, savePrefsAction,
             loadModelAction, saveModelAction, saveAsModelAction, exitAction,
-            aboutAction, loadModelParamAction, saveModelParamAction, 
-            loadModelExecutionStateAction, rtManagerAction, infoLogAction, 
+            aboutAction, loadModelParamAction, saveModelParamAction,
+            loadModelExecutionStateAction, rtManagerAction, infoLogAction,
             errorLogAction, onlineAction, explorerAction, editModelAction;
 
     public JAMSFrame(Frame parent, SystemProperties properties) {
@@ -219,38 +212,38 @@ public class JAMSFrame extends JAMSLauncher {
         loadModelExecutionStateAction = new AbstractAction(JAMS.resources.getString("Resume_Model_Execution")) {
 
             @Override
-            public void actionPerformed(ActionEvent e) {                                
-                jfc.setFileFilter(JAMSFileFilter.getSerFilter());                
+            public void actionPerformed(ActionEvent e) {
+                jfc.setFileFilter(JAMSFileFilter.getSerFilter());
                 jfc.setSelectedFile(new File(""));
                 int result = jfc.showOpenDialog(JAMSFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    try{
-                    final JAMSFullModelState state = new JAMSFullModelState(jfc.getSelectedFile());
-                    Thread t = new Thread() {
+                    try {
+                        final JAMSFullModelState state = new JAMSFullModelState(jfc.getSelectedFile());
+                        Thread t = new Thread() {
 
-                        public void run() {
-                            Model model = state.getModel(); 
-                            try{
-                                model.getRuntime().resume(state.getSmallModelState());
-                            }catch(Exception e){
-                                JAMSTools.handle(e);
+                            public void run() {
+                                Model model = state.getModel();
+                                try {
+                                    model.getRuntime().resume(state.getSmallModelState());
+                                } catch (Exception e) {
+                                    JAMSTools.handle(e);
+                                }
+                                // collect some garbage ;)
+                                Runtime.getRuntime().gc();
                             }
-                            // collect some garbage ;)
-                            Runtime.getRuntime().gc();
-                        }
-                    };
-                    t.start();
-                    modelMenu.setEnabled(true);
-                    }catch(IOException ioe){
+                        };
+                        t.start();
+                        modelMenu.setEnabled(true);
+                    } catch (IOException ioe) {
                         GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Could_not_resume_model_execution_because") + ioe, JAMS.resources.getString("Resume_error"));
-                    }catch(ClassNotFoundException cnfe){
+                    } catch (ClassNotFoundException cnfe) {
                         GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Could_not_resume_model_execution_because") + cnfe, JAMS.resources.getString("Resume_error"));
                     }
                 }
             }
         };
-        
+
         loadModelAction = new AbstractAction(JAMS.resources.getString("Open_Model...")) {
 
             @Override
@@ -392,7 +385,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        explorerAction = new AbstractAction(JAMS.resources.getString("JEDI")) {
+        explorerAction = new AbstractAction(JAMS.resources.getString("DATA_EXPLORER")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -460,11 +453,11 @@ public class JAMSFrame extends JAMSLauncher {
 
         JMenuItem saveOptionsItem = new JMenuItem(savePrefsAction);
         editMenu.add(saveOptionsItem);
-        
+
         JMenuItem loadModelExecutionStateItem = new JMenuItem(loadModelExecutionStateAction);
-        editMenu.add(loadModelExecutionStateItem);        
+        editMenu.add(loadModelExecutionStateItem);
         getMainMenu().add(editMenu);
-        
+
         // model menu
         modelMenu = new JMenu(JAMS.resources.getString("Model"));
         modelMenu.setEnabled(false);
@@ -667,18 +660,16 @@ public class JAMSFrame extends JAMSLauncher {
         Element varNode = (Element) varList.item(0);
         String workspacePath = varNode.getAttribute("value");
 
+        File workspaceFile = new File(workspacePath);
         try {
-            File workspaceFile = new File(workspacePath);
-            if (!workspaceFile.exists()) {
-                GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
-                return;
-            }
             JAMSExplorer explorer = new JAMSExplorer(null, false, false);
-            explorer.getExplorerFrame().setVisible(true);
             explorer.getExplorerFrame().open(workspaceFile);
+            explorer.getExplorerFrame().setVisible(true);
         } catch (NoClassDefFoundError ncdfe) {
             GUIHelper.showInfoDlg(this, JAMS.resources.getString("ExplorerDisabled"), JAMS.resources.getString("Info"));
             explorerAction.setEnabled(false);
+        } catch (InvalidWorkspaceException ex) {
+            GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
         }
 
     }

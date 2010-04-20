@@ -87,6 +87,7 @@ public class JUICEFrame extends JFrame {
     private Action saveModelParamAction;
     private Action runModelAction;
     private Action runModelFromLauncherAction;
+    private Action jadeAction;
     private Action infoLogAction;
     private Action errorLogAction;
     private Action onlineAction;
@@ -370,6 +371,15 @@ public class JUICEFrame extends JFrame {
             }
         };
 
+        jadeAction = new AbstractAction(JAMS.resources.getString("DATA_EXPLORER")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ModelView view = getCurrentView();
+                view.openExplorer();
+            }
+        };
+
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(JUICE.APP_TITLE);
 
@@ -564,6 +574,11 @@ public class JUICEFrame extends JFrame {
 
         JMenuItem runModelInLauncherItem = new JMenuItem(runModelFromLauncherAction);
         modelMenu.add(runModelInLauncherItem);
+
+        JMenuItem jadeItem = new JMenuItem(jadeAction);
+        jadeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+        modelMenu.add(jadeItem);
+
 
         modelMenu.add(new JSeparator());
 
@@ -789,6 +804,10 @@ public class JUICEFrame extends JFrame {
 
     public Action getRunModelFromLauncherAction() {
         return runModelFromLauncherAction;
+    }
+
+    public Action getJADEAction() {
+        return jadeAction;
     }
 
     private class WindowItem extends JMenuItem {

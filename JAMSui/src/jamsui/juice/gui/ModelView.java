@@ -58,6 +58,7 @@ import jams.io.XMLProcessor;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import jams.tools.StringTools;
+import jams.workspace.InvalidWorkspaceException;
 import jamsui.juice.*;
 import jamsui.juice.ComponentDescriptor;
 import jamsui.juice.ModelProperties.Group;
@@ -70,6 +71,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import reg.JAMSExplorer;
 
 /**
  *
@@ -87,7 +89,7 @@ public class ModelView {
     //private HashMap<ComponentDescriptor, DataRepository> dataRepositories = new HashMap<ComponentDescriptor, DataRepository>();
     private ModelGUIPanel launcherPanel;
     private ModelEditPanel modelEditPanel;
-    private String author = "", date = "", description = "", helpBaseUrl = "", workspace = "";
+    private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "";
     private HashMap<String, ComponentDescriptor> componentDescriptors = new HashMap<String, ComponentDescriptor>();
     private HashMap<String, OutputDSDescriptor> outputDataStores = new HashMap<String, OutputDSDescriptor>();
     private TreePanel modelTreePanel;
@@ -724,12 +726,12 @@ public class ModelView {
         this.helpBaseUrl = helpBaseUrl;
     }
 
-    public String getWorkspace() {
-        return workspace;
+    public String getWorkspacePath() {
+        return workspacePath;
     }
 
-    public void setWorkspace(String workspace) {
-        this.workspace = workspace;
+    public void setWorkspacePath(String workspace) {
+        this.workspacePath = workspace;
     }
 
     public ComponentDescriptor getComponentDescriptor(String name) {
@@ -769,6 +771,19 @@ public class ModelView {
         // get help component from help node
         HelpComponent helpComponent = new HelpComponent(theElement);
         theModelElement.setHelpComponent(helpComponent);
+    }
+
+    public void openExplorer() {
+        File workspaceFile = new File(getWorkspacePath());
+        try {
+            JAMSExplorer explorer = new JAMSExplorer(null, false, false);
+            explorer.getExplorerFrame().setVisible(true);
+            explorer.getExplorerFrame().open(workspaceFile);
+        } catch (NoClassDefFoundError ncdfe) {
+            GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), jams.JAMS.resources.getString("ExplorerDisabled"), jams.JAMS.resources.getString("Info"));
+        } catch (InvalidWorkspaceException ex) {
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+        }
     }
 }    
     

@@ -358,7 +358,7 @@ public class ModelTree extends JAMSTree {
 
             element = (Element) document.createElement("var");
             element.setAttribute("name", "workspaceDirectory");
-            element.setAttribute("value", view.getWorkspace());
+            element.setAttribute("value", view.getWorkspacePath());
             rootElement.appendChild(element);
 
             rootElement.appendChild(document.createTextNode("\n"));
@@ -617,7 +617,7 @@ public class ModelTree extends JAMSTree {
             } else if (node.getNodeName().equals("var")) {
                 element = (Element) node;
                 if (element.getAttribute("name").equals("workspaceDirectory")) {
-                    view.setWorkspace(element.getAttribute("value"));
+                    view.setWorkspacePath(element.getAttribute("value"));
                 }
             }
         }

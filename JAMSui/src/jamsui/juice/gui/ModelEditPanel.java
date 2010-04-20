@@ -22,8 +22,6 @@
  */
 package jamsui.juice.gui;
 
-import jams.data.JAMSDirName;
-import jams.data.JAMSString;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
@@ -38,14 +36,10 @@ import jams.gui.input.ValueChangeListener;
 import java.awt.GridBagConstraints;
 import javax.swing.BorderFactory;
 import jams.gui.input.InputComponentFactory;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JButton;
-import reg.JAMSExplorer;
 import jams.JAMS;
 import jams.data.Attribute;
+import jamsui.juice.JUICE;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 
@@ -72,8 +66,6 @@ public class ModelEditPanel extends JPanel {
     private JTextPane description;
 
     private JButton explorerButton;
-
-    private Action explorerAction;
 
     public ModelEditPanel(ModelView view) {
         super();
@@ -114,19 +106,10 @@ public class ModelEditPanel extends JPanel {
         scroll.setBorder(BorderFactory.createEtchedBorder());
         scroll.setPreferredSize(new Dimension(TEXTAREA_WIDTH, TEXTAREA_HEIGHT));
 
-        explorerAction = new AbstractAction() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openExplorer();
-            }
-        };
-        explorerButton = new JButton(explorerAction);
-//    private static ImageIcon DOWN_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowdown.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
+        explorerButton = new JButton(JUICE.getJuiceFrame().getJADEAction());
         explorerButton.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/images/Layers.png")).getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH)));
         explorerButton.setText("");
-        explorerButton.setToolTipText(JAMS.resources.getString("JEDI"));
-        explorerAction.setEnabled(true);
+        explorerButton.setToolTipText(JAMS.resources.getString("DATA_EXPLORER"));
 
         GUIHelper.addGBComponent(componentPanel, mainLayout, workspace.getComponent(), 2, 0, 1, 1, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);
@@ -144,7 +127,7 @@ public class ModelEditPanel extends JPanel {
 
             @Override
             public void valueChanged() {
-                view.setWorkspace(workspace.getValue());
+                view.setWorkspacePath(workspace.getValue());
             }
         });
 
@@ -212,24 +195,24 @@ public class ModelEditPanel extends JPanel {
         date.setValue(view.getDate());
         helpBaseURL.setValue(view.getHelpBaseUrl());
         description.setText(view.getDescription());
-        workspace.setValue(view.getWorkspace());
+        workspace.setValue(view.getWorkspacePath());
     }
 
-    private void openExplorer() {
-        try {
-            File workspaceFile = new File(view.getWorkspace());
-            if (!workspaceFile.exists()) {
-                GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
-                return;
-            }
-            JAMSExplorer explorer = new JAMSExplorer(null, false, false);
-            explorer.getExplorerFrame().setVisible(true);
-            explorer.getExplorerFrame().open(workspaceFile);
-        } catch (NoClassDefFoundError ncdfe) {
-            GUIHelper.showInfoDlg(this, jams.JAMS.resources.getString("ExplorerDisabled"), jams.JAMS.resources.getString("Info"));
-            explorerAction.setEnabled(false);
-        }
-    }
+//    private void openExplorer() {
+//        try {
+//            File workspaceFile = new File(view.getWorkspace());
+//            if (!workspaceFile.exists()) {
+//                GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+//                return;
+//            }
+//            JAMSExplorer explorer = new JAMSExplorer(null, false, false);
+//            explorer.getExplorerFrame().setVisible(true);
+//            explorer.getExplorerFrame().open(workspaceFile);
+//        } catch (NoClassDefFoundError ncdfe) {
+//            GUIHelper.showInfoDlg(this, jams.JAMS.resources.getString("ExplorerDisabled"), jams.JAMS.resources.getString("Info"));
+//            explorerAction.setEnabled(false);
+//        }
+//    }
 
     private void updateAuthor() {
         view.setAuthor(author.getValue());
