@@ -132,6 +132,7 @@ public class ShapefileLayerProperties extends javax.swing.JPanel {
 //    DefaultListModel attrModel = new DefaultListModel();
     private final ProxyTableModel tm = new ProxyTableModel(tableColors);
     private ShapefileLayerProperties thisInstance = null;
+    private JTable theTable = null;
 
     /** Creates new form ShapefileControlPanel */
     public ShapefileLayerProperties(SimpleFeatureLayer layer, WorldWindow ww) {
@@ -435,10 +436,49 @@ public class ShapefileLayerProperties extends javax.swing.JPanel {
     public void renewTable(TableModel tableModel) {
         JTable t = new JTable();
         setup(t, tableModel, layer);
+        this.theTable = t;
         DataTable dt = new DataTable(t);
         dt.setPreferredSize(new Dimension(100, 200));
         firePropertyChange("ww_add_attr", layer, dt);
 
+    }
+
+    public void classifyColumn(int column) {
+        classifyColumn(theTable, layer, column);
+    }
+
+    private void classifyColumn(JTable table, SimpleFeatureLayer ds, int column) {
+        getTableModel().setHighlightedColumn(column);
+        table.repaint();
+        //ds.setPrimaryAttr(column);
+        ds.setAttrMinColor(getTableModel().getColorsForColumn(column).getA());
+        ds.setAttrMaxColor(getTableModel().getColorsForColumn(column).getB());
+        Map<Integer, Double> data = getTableModel().getDataForColumn(column);
+        try {
+            if (data != null) {
+                //System.out.println("Daten gefunden..");
+                ds.setColorRampValues(data);
+                ds.setDrawStyled(false);
+                ds.redraw();
+            } else {
+                System.out.println("keine Daten gefunden.");
+                ds.setDrawStyled(true);
+                ds.redraw();
+            }
+            //Remove all the old labels (if they exist)
+            if (labelLayer != null) {
+                wwpanel.getModel().getLayers().remove(labelLayer);
+            }
+            //add new labels
+            labelLayer = new SimpleFeatureAnnotationLayer(ds, getTableModel().getStringDataForColumn(column));
+            wwpanel.getModel().getLayers().add(labelLayer);
+            labelLayer.setEnabled(labelCheck.isSelected());
+            firePropertyChange("ww_classify", layer, new Integer(column));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        update();
     }
 
     public int getIdColumn() {
@@ -452,7 +492,6 @@ public class ShapefileLayerProperties extends javax.swing.JPanel {
     public SimpleFeatureLayer getLayer() {
         return this.layer;
     }
-
 
     private void setup(final JTable table, TableModel model, final SimpleFeatureLayer ds) {
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -503,38 +542,7 @@ public class ShapefileLayerProperties extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent arg0) {
                 int column = header.columnAtPoint(arg0.getPoint());
                 // System.out.println("geklickt auf Spalte " + column);
-                getTableModel().setHighlightedColumn(column);
-                table.repaint();
-                //ds.setPrimaryAttr(column);
-                ds.setAttrMinColor(getTableModel().getColorsForColumn(column).getA());
-                ds.setAttrMaxColor(getTableModel().getColorsForColumn(column).getB());
-                Map<Integer, Double> data = getTableModel().getDataForColumn(column);
-                try {
-                    if (data != null) {
-                        //System.out.println("Daten gefunden..");
-                        ds.setColorRampValues(data);
-                        ds.setDrawStyled(false);
-                        ds.redraw();
-                    } else {
-                        System.out.println("keine Daten gefunden.");
-                        ds.setDrawStyled(true);
-                        ds.redraw();
-                    }
-
-                    //Remove all the old labels (if they exist)
-                    if (labelLayer != null) {
-                        wwpanel.getModel().getLayers().remove(labelLayer);
-                    }
-
-                    //add new labels
-                    labelLayer = new SimpleFeatureAnnotationLayer(ds, getTableModel().getStringDataForColumn(column));
-                    wwpanel.getModel().getLayers().add(labelLayer);
-                    labelLayer.setEnabled(labelCheck.isSelected());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                update();
+                classifyColumn(table, ds, column);
             }
         });
 
@@ -630,13 +638,9 @@ public class ShapefileLayerProperties extends javax.swing.JPanel {
         javax.swing.GroupLayout borderColorChooserLayout = new javax.swing.GroupLayout(borderColorChooser);
         borderColorChooser.setLayout(borderColorChooserLayout);
         borderColorChooserLayout.setHorizontalGroup(
-            borderColorChooserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 18, Short.MAX_VALUE)
-        );
+                borderColorChooserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 18, Short.MAX_VALUE));
         borderColorChooserLayout.setVerticalGroup(
-            borderColorChooserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 18, Short.MAX_VALUE)
-        );
+                borderColorChooserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 18, Short.MAX_VALUE));
 
         add(borderColorChooser);
         borderColorChooser.setBounds(0, 60, 20, 20);
@@ -708,7 +712,6 @@ public class ShapefileLayerProperties extends javax.swing.JPanel {
         add(jSeparator6);
         jSeparator6.setBounds(290, 10, 10, 110);
     }// </editor-fold>//GEN-END:initComponents
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel actualElevationLabel;
     private net.java.dev.colorchooser.ColorChooser borderColorChooser;
