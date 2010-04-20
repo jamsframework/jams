@@ -161,10 +161,27 @@ public class StringTools {
         return jams.JAMS.resources.getString(name);
     }
     public static String getGetterName(String attribName) {
-        return "set" + attribName.substring(0, 1).toUpperCase(STANDARD_LOCALE) + attribName.substring(1);
+        return "get" + attribName.substring(0, 1).toUpperCase(STANDARD_LOCALE) + attribName.substring(1);
     }
 
     public static String getSetterName(String attribName) {
         return "set" + attribName.substring(0, 1).toUpperCase(STANDARD_LOCALE) + attribName.substring(1);
+    }
+
+    /**
+     * checks, whether a string could be parsed to double
+     *
+     * @param aString
+     * @return result
+     */
+    public static boolean isDouble(String aString) {
+        boolean isDouble = false;
+        try {
+            Double.parseDouble(aString);
+            isDouble = true;
+        } catch (NumberFormatException e) {
+            System.out.println("could not parse " + aString + " to double.");
+        }
+        return isDouble;
     }
 }
