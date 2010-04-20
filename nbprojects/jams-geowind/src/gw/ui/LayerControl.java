@@ -48,6 +48,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.io.File;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -298,6 +299,10 @@ public class LayerControl extends javax.swing.JPanel {
      */
     public JPanel getLayerPanel(String layerName) {
         return panels.get(layerName);
+    }
+
+    public Set<String> getPanels() {
+        return panels.keySet();
     }
 
     /** This method is called from within the constructor to

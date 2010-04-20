@@ -64,6 +64,7 @@ import gw.api.Events;
 import gw.api.GeoWindView;
 import gw.calc.DataTable;
 import gw.layers.LayerFactory;
+import gw.ui.layerproperies.AttributeTableProperties;
 import gw.ui.layerproperies.ShapefileLayerProperties;
 import gw.ui.util.Files.LayerFilter;
 import gw.ui.util.ProxyTableModel;
@@ -202,7 +203,7 @@ public class FancyPanel extends JPanel implements GeoWindView {
                 if (idData != null) {
                     wrappedValues = getResortedValues(idData, dtIds, dtColumnValues);
                 } else {
-                    System.out.println("Couldn't corretly match the values, using default ordering!");
+                    System.out.println("Couldn't correctly match the values, using default ordering!");
                     // no Ids -> take the values as it is (but wrapped)
                     for (double value : dtColumnValues) {
                         wrappedValues.add(new Double(value));
@@ -215,7 +216,11 @@ public class FancyPanel extends JPanel implements GeoWindView {
                 System.out.println("column added with class:" + tableModel.getColumnClass(0).getName());
 
                 ptm.addTableModel(tableModel);
+                int col = ptm.getColumnCount() - 1;
+                workShapeFileProperties.classifyColumn(col);
+
                 //workShapeFileProperties.renewTable(ptm);
+
                 System.out.println("addWorkShapeFileColumn. column added: " + tableModel.getColumnName(0));
             }
 
@@ -315,6 +320,16 @@ public class FancyPanel extends JPanel implements GeoWindView {
                     addData(attrFile, layer);
                 } catch (Exception ex) {
                     ex.printStackTrace();
+                }
+            } else if (pn.equals("ww_classify")) {
+                SimpleFeatureLayer layer = (SimpleFeatureLayer) evt.getOldValue();
+                String layerName = layer.getName();
+                String dataPanelName = layerName.substring(0, layerName.length()-4) + ".dbf";
+                int col = ((Integer) evt.getNewValue()).intValue();
+                System.out.println("Aufruf von ww_classify mit " + dataPanelName + "/" + col);
+                AttributeTableProperties table = (AttributeTableProperties) lc.getLayerPanel(dataPanelName);
+                if (table != null) {
+                    table.setMinMaxValue(col);
                 }
             }
         }
