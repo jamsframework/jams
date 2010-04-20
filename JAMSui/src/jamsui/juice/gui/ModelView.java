@@ -100,6 +100,7 @@ public class ModelView {
     private static int viewCounter = 0;
     public static ViewList viewList = new ViewList();
     private JAMSRuntime runtime;
+    private static JAMSExplorer theExplorer;
 //    private PanelDlg launcherPanelDlg;
 
     public ModelView(JDesktopPane parentPanel) {
@@ -730,8 +731,8 @@ public class ModelView {
         return workspacePath;
     }
 
-    public void setWorkspacePath(String workspace) {
-        this.workspacePath = workspace;
+    public void setWorkspacePath(String workspacePath) {
+        this.workspacePath = workspacePath;
     }
 
     public ComponentDescriptor getComponentDescriptor(String name) {
@@ -776,9 +777,11 @@ public class ModelView {
     public void openExplorer() {
         File workspaceFile = new File(getWorkspacePath());
         try {
-            JAMSExplorer explorer = new JAMSExplorer(null, false, false);
-            explorer.getExplorerFrame().setVisible(true);
-            explorer.getExplorerFrame().open(workspaceFile);
+            if (theExplorer == null) {
+                theExplorer = new JAMSExplorer(null, false, false);
+            }
+            theExplorer.getExplorerFrame().open(workspaceFile);
+            theExplorer.getExplorerFrame().setVisible(true);
         } catch (NoClassDefFoundError ncdfe) {
             GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), jams.JAMS.resources.getString("ExplorerDisabled"), jams.JAMS.resources.getString("Info"));
         } catch (InvalidWorkspaceException ex) {
