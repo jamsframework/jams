@@ -23,6 +23,7 @@
 package reg.gui;
 
 import gw.ui.util.Tools;
+import jams.JAMS;
 import jams.SystemProperties;
 import jams.gui.tools.GUIHelper;
 import jams.gui.PropertyDlg;
@@ -94,34 +95,22 @@ import reg.wizard.tlug.panels.StationParamsPanel;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class ExplorerFrame extends JFrame implements IExplorerFrame{
+public class ExplorerFrame extends JFrame implements IExplorerFrame {
 
     protected static final int INOUT_PANE_WIDTH = 250, INOUT_PANE_HEIGHT = 450;
-
     protected static final int DIVIDER_WIDTH = 6;
-
     protected JFileChooser jfc = GUIHelper.getJFileChooser();
-
     protected WorkerDlg openWSDlg;
-
     protected Action openWSAction, openSTPAction, exitAction, editWSAction,
             sensitivityAnalysisAction, launchModelAction, editPrefsAction,
             reloadWSAction, launchWizardAction;
-
     protected JLabel statusLabel;
-
     protected JSplitPane mainSplitPane;
-
     protected JTabbedPane tPane;
-
     protected JAMSExplorer explorer;
-
     protected PropertyDlg propertyDlg;
-
     protected WorkspaceDlg wsDlg;
-
     protected Document modelDoc = null;
-
     protected MCAT5Toolbar mcat5ToolBar = null;
 
     public ExplorerFrame(JAMSExplorer explorer) {
@@ -314,7 +303,7 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame{
         statusPanel.setBorder(BorderFactory.createEtchedBorder());
         statusPanel.setPreferredSize(new java.awt.Dimension(14, 20));
         statusLabel = new JLabel();
-        statusLabel.setText(JAMSExplorer.APP_TITLE + " " + JAMSExplorer.APP_VERSION);
+        statusLabel.setText(JAMS.resources.getString("DATA_EXPLORER"));
         statusPanel.add(statusLabel, java.awt.BorderLayout.CENTER);
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
 
@@ -383,22 +372,17 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame{
         }
     }
 
-    public void open(File workspaceFile) {
-        try {
-            String[] libs = StringTools.toArray(explorer.getProperties().getProperty(SystemProperties.LIBS_IDENTIFIER, ""), ";");
-            JAMSWorkspace workspace = new JAMSWorkspace(workspaceFile, explorer.getRuntime(), false);
-            workspace.init();
-            workspace.setLibs(libs);
-            explorer.getDisplayManager().removeAllDisplays();
-            explorer.setWorkspace(workspace);
-            if (explorer.isTlugized()) {
-                this.initModelDoc();
-            }
-            this.update();
-
-        } catch (InvalidWorkspaceException iwe) {
-            explorer.getRuntime().handle(iwe);
+    public void open(File workspaceFile) throws InvalidWorkspaceException {
+        String[] libs = StringTools.toArray(explorer.getProperties().getProperty(SystemProperties.LIBS_IDENTIFIER, ""), ";");
+        JAMSWorkspace workspace = new JAMSWorkspace(workspaceFile, explorer.getRuntime(), true);
+        workspace.init();
+        workspace.setLibs(libs);
+        explorer.getDisplayManager().removeAllDisplays();
+        explorer.setWorkspace(workspace);
+        if (explorer.isTlugized()) {
+            this.initModelDoc();
         }
+        this.update();
     }
 
     protected void open() {
@@ -410,7 +394,11 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame{
             openWSDlg.setTask(new Runnable() {
 
                 public void run() {
-                    open(jfc.getSelectedFile());
+                    try {
+                        open(jfc.getSelectedFile());
+                    } catch (InvalidWorkspaceException ex) {
+                        explorer.getRuntime().handle(ex);
+                    }
                 }
             });
             openWSDlg.execute();

@@ -22,7 +22,11 @@
  */
 package reg;
 
+import jams.workspace.InvalidWorkspaceException;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import reg.gui.ExplorerFrame;
 import jams.JAMS;
 import jams.JAMSProperties;
@@ -38,6 +42,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import reg.gui.IExplorerFrame;
 import reg.viewer.Viewer;
@@ -48,25 +53,16 @@ import reg.viewer.Viewer;
  */
 public class JAMSExplorer {
 
-    public static final String APP_TITLE = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_EXPLORER");
-
-    public static final String APP_VERSION = "V0.2";
-
+    public static final String APP_TITLE = JAMS.resources.getString("JADE");
     public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 750;
-
     protected IExplorerFrame explorerFrame;
-
     protected JAMSRuntime runtime;
-
     protected SystemProperties properties;
-
     protected DisplayManager displayManager;
-
     protected JAMSWorkspace workspace;
-
     protected ArrayList<Window> childWindows = new ArrayList<Window>();
-
-    protected boolean standAlone, tlugized;
+    protected boolean tlugized, standAlone;
+    private static JAMSExplorer explorer;
 
     public JAMSExplorer(JAMSRuntime runtime) {
         this(runtime, true, true);
@@ -83,7 +79,7 @@ public class JAMSExplorer {
             this.runtime.addErrorLogObserver(new Observer() {
 
                 public void update(Observable o, Object arg) {
-                    GUIHelper.showErrorDlg((ExplorerFrame)explorerFrame, arg.toString(), JAMS.resources.getString("Error"));
+                    GUIHelper.showErrorDlg((ExplorerFrame) explorerFrame, arg.toString(), JAMS.resources.getString("Error"));
                 }
             });
             this.runtime.addInfoLogObserver(new Observer() {
@@ -103,12 +99,12 @@ public class JAMSExplorer {
             try {
                 properties.load(defaultFile);
             } catch (IOException ioe) {
-                ioe.printStackTrace();
+                Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, null, ioe);
             }
         }
 
         displayManager = new DisplayManager(this);
-        explorerFrame = new ExplorerFrame(this);
+        explorerFrame = new ExplorerFrame(JAMSExplorer.this);
 
     }
 
@@ -119,15 +115,32 @@ public class JAMSExplorer {
         } catch (Exception evt) {
         }
 
-        // create the JAMSExplorer object
-        JAMSExplorer explorer = new JAMSExplorer(null,true,true);
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+
+                public void run() {
+                    // create the JAMSExplorer object
+                    explorer = new JAMSExplorer(null, true, true);
+                }
+            });
+        } catch (InterruptedException ex) {
+            Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         explorer.getExplorerFrame().setVisible(true);
+
         if (explorer.tlugized) {
             Viewer.getViewer();
         }
 
         if (args.length > 0) {
-            explorer.getExplorerFrame().open(new File(args[0]));
+            try {
+                explorer.getExplorerFrame().open(new File(args[0]));
+            } catch (InvalidWorkspaceException ex) {
+                Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -149,7 +162,7 @@ public class JAMSExplorer {
      * @return the regFrame
      */
     public ExplorerFrame getExplorerFrame() {
-        return (ExplorerFrame)explorerFrame;
+        return (ExplorerFrame) explorerFrame;
     }
 
     /**

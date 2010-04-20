@@ -23,6 +23,7 @@
 
 package reg.gui;
 
+import jams.workspace.InvalidWorkspaceException;
 import java.io.File;
 import javax.swing.JTabbedPane;
 
@@ -33,7 +34,7 @@ import javax.swing.JTabbedPane;
 public interface IExplorerFrame {
 
 
-    public void open(File workspaceFile);
+    public void open(File workspaceFile) throws InvalidWorkspaceException;
 
     public void reset();
 
