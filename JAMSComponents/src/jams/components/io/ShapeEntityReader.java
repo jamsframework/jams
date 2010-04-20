@@ -83,15 +83,15 @@ public class ShapeEntityReader extends JAMSComponent {
     @Override
     public void init() throws Exception {
 
-        System.out.println("shape-file name " + shapeFileName);
-        System.out.println("shape-file id " + idName);
+        System.out.println("ShapeEntityReader.init. shape-file name " + shapeFileName);
+        System.out.println("ShapeEntityReader.init. shape-file id " + idName);
         String workSpaceDirectory = getModel().getWorkspaceDirectory().getPath();
         String fileName = shapeFileName.getValue();
         if (!fileName.startsWith(workSpaceDirectory)) {
             fileName = workSpaceDirectory + File.separator + fileName;
         }
         URL shapeUrl = (new java.io.File(fileName).toURI().toURL());
-        System.out.println("try to get shape-file from " + shapeUrl.toString());
+        System.out.println("ShapeEntityReader.init. try to get shape-file from " + shapeUrl.toString());
         ShapefileDataStore store = new ShapefileDataStore(shapeUrl);
 
         FeatureIterator<SimpleFeature> featureIterator = store.getFeatureSource().getFeatures().features();
