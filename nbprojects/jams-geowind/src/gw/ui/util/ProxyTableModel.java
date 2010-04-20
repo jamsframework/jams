@@ -137,6 +137,14 @@ public class ProxyTableModel extends AbstractTableModel implements TableModelLis
         return tableColors[colorIndex];
     }
 
+    public double getMinValue(int col) {
+        return this.columnMinValue.get(col);
+    }
+
+    public double getMaxValue(int col) {
+        return this.columnMaxValue.get(col);
+    }
+
     public Color getColorForRowAndColumn(int row, int col) {
         ColorPair baseColor = getColorsForColumn(col);
         if (columnMinValue.get(col) == null || columnMaxValue.get(col) == null) {
