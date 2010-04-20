@@ -82,6 +82,7 @@ public class JAMSFrame extends JAMSLauncher {
             aboutAction, loadModelParamAction, saveModelParamAction,
             loadModelExecutionStateAction, rtManagerAction, infoLogAction,
             errorLogAction, onlineAction, explorerAction, editModelAction;
+    private static JAMSExplorer theExplorer;
 
     public JAMSFrame(Frame parent, SystemProperties properties) {
         super(parent, properties);
@@ -662,9 +663,17 @@ public class JAMSFrame extends JAMSLauncher {
 
         File workspaceFile = new File(workspacePath);
         try {
-            JAMSExplorer explorer = new JAMSExplorer(null, false, false);
-            explorer.getExplorerFrame().open(workspaceFile);
-            explorer.getExplorerFrame().setVisible(true);
+
+            if (theExplorer == null) {
+                theExplorer = new JAMSExplorer(null, false, false);
+            }
+
+            if ((theExplorer.getWorkspace() == null) || (!theExplorer.getWorkspace().getDirectory().equals(workspaceFile))) {
+                theExplorer.getExplorerFrame().open(workspaceFile);
+            }
+
+            theExplorer.getExplorerFrame().setVisible(true);
+
         } catch (NoClassDefFoundError ncdfe) {
             GUIHelper.showInfoDlg(this, JAMS.resources.getString("ExplorerDisabled"), JAMS.resources.getString("Info"));
             explorerAction.setEnabled(false);

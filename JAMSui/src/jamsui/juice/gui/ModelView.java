@@ -780,7 +780,11 @@ public class ModelView {
             if (theExplorer == null) {
                 theExplorer = new JAMSExplorer(null, false, false);
             }
-            theExplorer.getExplorerFrame().open(workspaceFile);
+
+            if ((theExplorer.getWorkspace() == null) || (!theExplorer.getWorkspace().getDirectory().equals(workspaceFile))) {
+                theExplorer.getExplorerFrame().open(workspaceFile);
+            }
+
             theExplorer.getExplorerFrame().setVisible(true);
         } catch (NoClassDefFoundError ncdfe) {
             GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), jams.JAMS.resources.getString("ExplorerDisabled"), jams.JAMS.resources.getString("Info"));
