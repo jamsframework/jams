@@ -504,7 +504,6 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
             if (wizardSettings != null) {
                 result = true;
 
-                Set keys = wizardSettings.keySet();
                 String workSpaceDir = ws.getDirectory().getCanonicalPath();
                 String modelFileName = null;
 
@@ -542,6 +541,34 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
                 //additional shape file?
                 String shapeFileName = (String) wizardSettings.get(BaseDataPanel.KEY_SHAPE_FILENAME);
                 System.out.println("shape coming from wizard : " + shapeFileName);
+                if (StringTools.isEmptyString(shapeFileName)) {
+                    String sLat;
+                    double lat, lon, lat2, lon2, height, dist;
+                    sLat = (String) wizardSettings.get(BaseDataPanel.KEY_POINT_LAT);
+                    if (!StringTools.isEmptyString(sLat)) {
+                        System.out.println("create shape from point..");
+                        lat = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_POINT_LAT));
+                        lon = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_POINT_LON));
+                        height = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_POINT_HEIGHT));
+                        shapeFileName = ShapeFactory.createShapeFromPoint(lat, lon, height, workSpaceDir);
+                        properties.put("EntityReader.idName", ShapeFactory.ID);
+                        ParameterProcessor.loadParams(modelDoc, properties);
+                    } else {
+                        sLat = (String) wizardSettings.get(BaseDataPanel.KEY_GRID_FROM_LAT);
+                        if (!StringTools.isEmptyString(sLat)) {
+                            System.out.println("create shape from grid..");
+                            lat = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_FROM_LAT));
+                            lon = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_FROM_LON));
+                            lat2 = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_TO_LAT));
+                            lon2 = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_TO_LON));
+                            dist = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_DISTANCE));
+                            shapeFileName = ShapeFactory.createShapeFromGrid(lat, lon, lat2, lon2, dist, workSpaceDir);
+                            properties.put("EntityReader.idName", ShapeFactory.ID);
+                            ParameterProcessor.loadParams(modelDoc, properties);
+                        }
+                    }
+                }
+
                 if (!StringTools.isEmptyString(shapeFileName)) {
                     updateWithShapeFile(shapeFileName, ws);
                 }
@@ -550,7 +577,6 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
                 if (spreadSheet != null) {
                     spreadSheet.updateGUI();
                 }
-
 
             } // wizard settings
 

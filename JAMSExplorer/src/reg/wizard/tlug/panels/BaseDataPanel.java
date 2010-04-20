@@ -44,6 +44,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
     public static final String KEY_GRID_FROM_LON = "gridFromLon";
     public static final String KEY_GRID_TO_LAT = "gridToLat";
     public static final String KEY_GRID_TO_LON = "gridToLon";
+    public static final String KEY_GRID_DISTANCE = "gridDistance";
     public static final String KEY_REGIONALIZATION = "regionalizationData";
     public static final String KEY_REGDATA_KEYS = "regDataKeys";
     public static final String KEY_REGDATA_DISPS = "regDataDisps";
@@ -61,6 +62,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
     private String r_gFLon = null;
     private String r_gTLat = null;
     private String r_gTLon = null;
+    private String r_gDist = null;
 
     /** Creates new form  */
     public BaseDataPanel(WizardController controller, Map wizardData) {
@@ -95,6 +97,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
         jGridLabel = new javax.swing.JLabel();
         jGridFromLabel = new javax.swing.JLabel();
         jGridToLabel = new javax.swing.JLabel();
+        jGridDistLabel = new javax.swing.JLabel();
         jLatLabel = new javax.swing.JLabel();
         jLatLabel2 = new javax.swing.JLabel();
         jLatLabel3 = new javax.swing.JLabel();
@@ -110,6 +113,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
         jGFLon = new javax.swing.JTextField();
         jGTLat = new javax.swing.JTextField();
         jGTLon = new javax.swing.JTextField();
+        jGDist = new javax.swing.JTextField();
 
 
         jIntervall = InputComponentFactory.createInputComponent(JAMSTimeInterval.class, false);
@@ -186,6 +190,12 @@ public class BaseDataPanel extends javax.swing.JPanel {
                 checkProblems();
             }
         });
+        jGDist.addFocusListener(new java.awt.event.FocusAdapter() {
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                checkProblems();
+            }
+        });
 
         jRegLabel.setText("Regionalisierung von");
 
@@ -207,6 +217,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
         jGridLabel.setText("Rechteck");
         jGridFromLabel.setText("Obere linke Ecke");
         jGridToLabel.setText("Untere rechte Ecke");
+        jGridDistLabel.setText("Schrittweite (m)");
         jLatLabel.setText("Rechtswert (Lat)");
         jLatLabel2.setText("Rechtswert (Lat)");
         jLatLabel3.setText("Rechtswert (Lat)");
@@ -253,6 +264,9 @@ public class BaseDataPanel extends javax.swing.JPanel {
         row++;
         GUIHelper.addGBComponent(this, layout, jLonLabel3, 3, row, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, layout, jGTLon, 4, row, 1, 1, 0, 0);
+        row++;
+        GUIHelper.addGBComponent(this, layout, jGridDistLabel, 2, row, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jGDist, 3, row, 1, 1, 0, 0);
 
         row++;
         row++;
@@ -320,6 +334,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
         r_gFLon = jGFLon.getText();
         r_gTLat = jGTLat.getText();
         r_gTLon = jGTLon.getText();
+        r_gDist = jGDist.getText();
 
         if (StringTools.isEmptyString(r_shapeFileName) &&
                 StringTools.isEmptyString(r_pLat) &&
@@ -335,7 +350,8 @@ public class BaseDataPanel extends javax.swing.JPanel {
                 if (!StringTools.isEmptyString(r_gFLat) &&
                         (StringTools.isEmptyString(r_gFLon) ||
                         StringTools.isEmptyString(r_gTLat) ||
-                        StringTools.isEmptyString(r_gTLon))) {
+                        StringTools.isEmptyString(r_gTLon) ||
+                        StringTools.isEmptyString(r_gDist))) {
                     controller.setProblem("Bitte alle Parameter für Rechteck angeben.");
                 } else {
 
@@ -348,6 +364,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
                     wizardData.put(KEY_GRID_FROM_LON, r_gFLon);
                     wizardData.put(KEY_GRID_TO_LAT, r_gTLat);
                     wizardData.put(KEY_GRID_TO_LON, r_gTLon);
+                    wizardData.put(KEY_GRID_DISTANCE, r_gDist);
 
                     //wizardData.put(KEY_DATA_ORIGIN, r_dataOrigin);
                     if (StringUtils.isNullOrEmpty(r_region)) {
@@ -363,6 +380,33 @@ public class BaseDataPanel extends javax.swing.JPanel {
                             r_interval = jIntervall.getValue();
                             //System.out.println("r_interval:" + r_interval);
                             wizardData.put(KEY_INTERVAL, r_interval);
+
+                            // numeric check
+                            if (!StringTools.isEmptyString(r_pLat)) {
+                                if (!StringTools.isDouble(r_pLat))
+                                    controller.setProblem(jPLat.getText() + ". Keine numerische Eingabe.");
+                                if (!StringTools.isDouble(r_pLon))
+                                    controller.setProblem(jPLon.getText() + ". Keine numerische Eingabe.");
+                                if (!StringTools.isDouble(r_pHeight))
+                                    controller.setProblem(jPHeight.getText() + ". Keine numerische Eingabe.");
+                            }
+
+                            if (!StringTools.isEmptyString(r_gFLat)) {
+                                if (!StringTools.isDouble(r_gFLat))
+                                    controller.setProblem(jGFLat.getText() + ". Keine numerische Eingabe.");
+                                if (!StringTools.isDouble(r_gFLon))
+                                    controller.setProblem(jGFLon.getText() + ". Keine numerische Eingabe.");
+                                if (!StringTools.isDouble(r_gTLat))
+                                    controller.setProblem(jGTLat.getText() + ". Keine numerische Eingabe.");
+                                if (!StringTools.isDouble(r_gTLon))
+                                    controller.setProblem(jGTLon.getText() + ". Keine numerische Eingabe.");
+                                if (!StringTools.isDouble(r_gDist))
+                                    controller.setProblem(jGDist.getText() + ". Keine numerische Eingabe.");
+                                if (Double.parseDouble(r_gTLat) > Double.parseDouble(r_gFLat))
+                                    controller.setProblem(jGTLat.getText() + ": Wert ist zu gross.");
+                                if (Double.parseDouble(r_gTLon) > Double.parseDouble(r_gFLon))
+                                    controller.setProblem(jGTLon.getText() + ": Wert ist zu gross.");
+                            }
                         }
                     }
                 }
@@ -402,6 +446,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
         String gFLon = (String) wizardData.get(KEY_GRID_FROM_LON);
         String gTLat = (String) wizardData.get(KEY_GRID_TO_LAT);
         String gTLon = (String) wizardData.get(KEY_GRID_TO_LON);
+        String gDist = (String) wizardData.get(KEY_GRID_DISTANCE);
         if (!StringUtils.isNullOrEmpty(gFLat)) {
             r_gFLat = gFLat;
             jGFLat.setText(r_gFLat);
@@ -417,6 +462,10 @@ public class BaseDataPanel extends javax.swing.JPanel {
         if (!StringUtils.isNullOrEmpty(gTLon)) {
             r_gTLon = gTLon;
             jGTLon.setText(r_gTLon);
+        }
+        if (!StringUtils.isNullOrEmpty(gDist)) {
+            r_gDist = gDist;
+            jGDist.setText(r_gDist);
         }
 
         regData_Key = (Vector<String>) wizardData.get(KEY_REGDATA_KEYS);
@@ -455,6 +504,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jGridLabel;
     private javax.swing.JLabel jGridFromLabel;
     private javax.swing.JLabel jGridToLabel;
+    private javax.swing.JLabel jGridDistLabel;
     private javax.swing.JLabel jLatLabel;
     private javax.swing.JLabel jLatLabel2;
     private javax.swing.JLabel jLatLabel3;
@@ -469,6 +519,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
     private javax.swing.JTextField jGFLon;
     private javax.swing.JTextField jGTLat;
     private javax.swing.JTextField jGTLon;
+    private javax.swing.JTextField jGDist;
     private InputComponent jIntervall;
     private javax.swing.JLabel jIntervalLabel;
     private javax.swing.JComboBox jRegCombo;
