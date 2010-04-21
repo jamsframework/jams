@@ -295,17 +295,6 @@ public class JAMSWorkspace implements Workspace {
         inputDataStores.remove(store.getID());
     }
 
-    /**
-     * adds a datastore to the list of datastores
-     * @param store
-     */
-    public void addDataStore(InputDataStore theStore) throws Exception {
-
-        // @todo: works only for ShapeFileDataStore. If it is needed for other types, implement getDocument() there
-        ShapeFileDataStore theShapeFileDataStore = (ShapeFileDataStore) theStore;
-        inputDataStores.put(theShapeFileDataStore.getID(), theShapeFileDataStore.getDocument());
-    }
-
     public void registerInputDataStore(String id, Document doc) {
 
         if (StringTools.isEmptyString(id)) {
@@ -314,8 +303,10 @@ public class JAMSWorkspace implements Workspace {
 
         if (doc == null) {
             registeredInputDataStores.remove(id);
+            inputDataStores.remove(id);
         } else {
             registeredInputDataStores.put(id, doc);
+            inputDataStores.put(id, doc);
         }
     }
 
