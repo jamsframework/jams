@@ -87,6 +87,21 @@ public class StringTools {
         }
     }
 
+    public static boolean parseToBoolean(String theString) {
+        if (isEmptyString(theString))
+            return false;
+
+        if (theString.equals("1") || 
+                theString.equalsIgnoreCase("true") || 
+                theString.equalsIgnoreCase("on") || 
+                theString.equalsIgnoreCase("yes") || 
+                theString.equalsIgnoreCase("ja"))
+            return true;
+
+        return false;
+    }
+
+
     /**
      * Creates a string representation of a stack trace
      * @param stea The stack trace
