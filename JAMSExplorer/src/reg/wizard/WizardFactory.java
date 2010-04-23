@@ -23,7 +23,6 @@
 package reg.wizard;
 
 import jams.tools.FileTools;
-import jams.tools.JAMSTools;
 import jams.workspace.JAMSWorkspace;
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +52,9 @@ public class WizardFactory {
         resultMap.put(BaseDataPanel.KEY_REGIONALIZATION, new String[]{"Interpolation.inputDataStore"});
         resultMap.put(RegMethodPanel.KEY_SCHWELLENWERT,
                 new String[]{"Regionaliser.rsqThreshold"
+                });
+        resultMap.put(RegMethodPanel.KEY_ELEVATION_CORRECTION,
+                new String[]{"Regionaliser.elevationCorrection"
                 });
         resultMap.put(RegMethodPanel.KEY_GEWICHTUNG,
                 new String[]{"Weights.pidw"
@@ -107,7 +109,6 @@ public class WizardFactory {
             return modelFileName;
         }
         return null;
-
     }
 
     public static String copyInputFile(String sourceDir, String targetDir)
@@ -134,6 +135,33 @@ public class WizardFactory {
     }
 
     /**
+     * replace a certain string in all files in targetDir, finding in sourceDir
+     * @param sourceDir
+     * @param targetDir
+     * @param findString
+     * @param replaceString
+     * @return
+     */
+    public static void replaceInOutputFiles(String sourceDir, String targetDir, String findString, String replaceString)
+            throws IOException {
+        String outputSourceDir = sourceDir + File.separator + "output";
+        String outputTargetDir = targetDir + File.separator + "output";
+        File[] outputFiles = FileTools.getFiles(outputSourceDir, "xml");
+        if (outputFiles == null || outputFiles.length == 0) {
+            System.out.println("replaceInOutputFiles. no output files found in " + outputSourceDir);
+        } else {
+            for (File outputFile : outputFiles) {
+                String targetFileName = outputTargetDir + File.separator + outputFile.getName();
+                if (FileTools.replaceWithinFile(targetFileName, findString, replaceString)) {
+                    System.out.println(targetFileName + ": " + findString + " replaced by " + replaceString);
+                } else {
+                    System.out.println(targetFileName + ": " + findString + " not found. no replacement necessary.");
+                }
+            }
+        }
+    }
+
+    /**
      * delete all xml files of directory
      * @param theDirectoryName
      * @throws IOException
@@ -151,6 +179,7 @@ public class WizardFactory {
      */
     public static Properties getModelPropertiesFromWizardResult(Map wizardSettings) {
         // put parameter to model
+        System.out.println("getting modelProperties from WizardResult.");
         Properties properties = new Properties();
         Set<String> wizardKeys = KEY_MODEL_MAPPING.keySet();
         for (String wizardKey : wizardKeys) {
@@ -159,6 +188,7 @@ public class WizardFactory {
                 String[] modelKeys = KEY_MODEL_MAPPING.get(wizardKey);
                 for (String modelKey : modelKeys) {
                     properties.put(modelKey, value);
+                    System.out.println("  " + modelKey + " -> " + value);
                 }
             }
         }

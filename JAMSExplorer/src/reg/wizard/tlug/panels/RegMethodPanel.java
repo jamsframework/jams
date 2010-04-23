@@ -11,7 +11,9 @@
 
 package reg.wizard.tlug.panels;
 
+import jams.tools.StringTools;
 import java.util.Map;
+import javax.swing.JCheckBox;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import org.h2.util.StringUtils;
@@ -32,6 +34,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
     public static final String KEY_GEWICHTUNG = "gewichtung";
     public static final String KEY_UMKREIS = "umkreis";
     public static final String KEY_SCHWELLENWERT = "threshold";
+    public static final String KEY_ELEVATION_CORRECTION = "elevationCorrection";
 
     // all field contents
     private String r_regVerfahren;
@@ -39,6 +42,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
     private String r_gewichtung;
     private String r_umkreis;
     private String r_schwellenwert;
+    private String r_elevationCorrection;
 
     /** Creates new form CatHairLengthPanel */
     public RegMethodPanel(WizardController controller, Map wizardData) {
@@ -71,6 +75,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
         jSchwellenwert = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jElevationCorrectionBox = new javax.swing.JCheckBox();
 
         jLabel1.setText("Regionalisierungsverfahren");
 
@@ -114,6 +119,18 @@ public class RegMethodPanel extends javax.swing.JPanel {
 
         jLabel6.setText("0,");
 
+        jElevationCorrectionBox.setText("Höhenkorrektur");
+        jElevationCorrectionBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jElevationCorrectionBoxActionPerformed(evt);
+            }
+        });
+        jElevationCorrectionBox.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jElevationCorrectionBoxPropertyChange(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -121,27 +138,30 @@ public class RegMethodPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(70, 70, 70)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(jNumberStations, javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jGewichtung, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)))))
+                                .addGap(166, 166, 166)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jElevationCorrectionBox)
+                                    .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(9, 9, 9)
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel4)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(70, 70, 70)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jNumberStations, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jGewichtung, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel3)))
-                .addGap(201, 201, 201))
+                .addContainerGap(201, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -158,14 +178,16 @@ public class RegMethodPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jGewichtung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(29, 29, 29)
+                .addComponent(jElevationCorrectionBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel6))
                     .addComponent(jLabel5)
                     .addComponent(jSliderSchwellenwert, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(118, Short.MAX_VALUE))
+                .addContainerGap(73, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -199,7 +221,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
         try {
             int sInt = Integer.parseInt(s);
             if (sInt> 100)
-                throw new NumberFormatException("Wert ist zu groÃŸ.");
+                throw new NumberFormatException("Wert ist zu gross.");
             r_schwellenwert = s;
             // System.out.println("jSchwellenwertFocusLost. r_schwellenwert:" + r_schwellenwert);
             jSliderSchwellenwert.setValue(sInt);
@@ -208,6 +230,23 @@ public class RegMethodPanel extends javax.swing.JPanel {
             controller.setProblem("Bitte Wert zwischen 1 .. 100 eingeben.");
         }
     }//GEN-LAST:event_jSchwellenwertFocusLost
+
+    private void jElevationCorrectionBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jElevationCorrectionBoxActionPerformed
+        // TODO add your handling code here:
+        boolean selected = ((JCheckBox) evt.getSource()).isSelected();
+        r_elevationCorrection = "0";
+        if (selected) {
+            r_elevationCorrection = "1";
+        }
+        System.out.println("jElevationCorrectionBoxActionPerformed. r_elevationCorrection:" + r_elevationCorrection);
+        initSchwellenwert();
+        checkProblems();
+
+    }//GEN-LAST:event_jElevationCorrectionBoxActionPerformed
+
+    private void jElevationCorrectionBoxPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jElevationCorrectionBoxPropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jElevationCorrectionBoxPropertyChange
 
     private void checkProblems() {
         if (StringUtils.isNullOrEmpty(r_regVerfahren)) {
@@ -226,11 +265,15 @@ public class RegMethodPanel extends javax.swing.JPanel {
                         controller.setProblem("Bitte Gewichtung auswÃ¤hlen.");
                     } else {
                         wizardData.put(KEY_GEWICHTUNG, r_gewichtung);
-                        if (r_schwellenwert == null || Integer.parseInt(r_schwellenwert) == 0) {
+                        if (r_elevationCorrection != null && r_elevationCorrection.equals("1") && (r_schwellenwert == null || Integer.parseInt(r_schwellenwert) == 0)) {
                             controller.setProblem("Bitte Schwellenwert definieren.");
                         } else {
-                            float f = Float.parseFloat(r_schwellenwert) / 100;
-                            wizardData.put(KEY_SCHWELLENWERT, Float.toString(f));
+                            wizardData.put(KEY_SCHWELLENWERT, "0");
+                            wizardData.put(KEY_ELEVATION_CORRECTION, r_elevationCorrection);
+                            if (r_elevationCorrection != null && r_elevationCorrection.equals("1")) {
+                                float f = Float.parseFloat(r_schwellenwert) / 100;
+                                wizardData.put(KEY_SCHWELLENWERT, Float.toString(f));
+                            }
                             controller.setProblem(null);
                         }
                     }
@@ -253,6 +296,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
         r_gewichtung = "2";
         r_umkreis = "10";
         r_schwellenwert = "75";
+        r_elevationCorrection = "1";
     }
 
     /**
@@ -260,6 +304,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
      */
     private void initFromWizardData() {
 
+        System.out.println("RegMethod Panel. init from wizard data..");
         String regVerfahren = (String) wizardData.get(KEY_REG);
         if (!StringUtils.isNullOrEmpty(regVerfahren)) {
             r_regVerfahren = regVerfahren;
@@ -298,17 +343,35 @@ public class RegMethodPanel extends javax.swing.JPanel {
             }
         }
         if (!StringUtils.isNullOrEmpty(r_schwellenwert)) {
-                int schwellenwert = Integer.parseInt(r_schwellenwert);
+            int schwellenwert = Integer.parseInt(r_schwellenwert);
             if (schwellenwert >= 0) {
                 jSliderSchwellenwert.setValue(schwellenwert);
                 jSchwellenwert.setText(r_schwellenwert);
             }
         }
 
+        if (wizardData.containsKey(KEY_ELEVATION_CORRECTION)) {
+            String sElevCorr = (String) wizardData.get(KEY_ELEVATION_CORRECTION);
+            if (StringTools.isEmptyString(sElevCorr)) {
+                jElevationCorrectionBox.setSelected(true); // default
+            } else {
+                r_elevationCorrection = sElevCorr;
+                initSchwellenwert();
+            }
+
+        }
+
     }
 
+    private void initSchwellenwert() {
+        boolean selected = StringTools.parseToBoolean(r_elevationCorrection);
+        jElevationCorrectionBox.setSelected(selected);
+        jSliderSchwellenwert.setEnabled(selected);
+        jSchwellenwert.setEnabled(selected);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox jElevationCorrectionBox;
     private javax.swing.JTextField jGewichtung;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

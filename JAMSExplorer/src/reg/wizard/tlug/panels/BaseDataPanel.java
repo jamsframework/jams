@@ -404,8 +404,8 @@ public class BaseDataPanel extends javax.swing.JPanel {
                                     controller.setProblem(jGDist.getText() + ". Keine numerische Eingabe.");
                                 if (Double.parseDouble(r_gTLat) > Double.parseDouble(r_gFLat))
                                     controller.setProblem(jGTLat.getText() + ": Wert ist zu gross.");
-                                if (Double.parseDouble(r_gTLon) > Double.parseDouble(r_gFLon))
-                                    controller.setProblem(jGTLon.getText() + ": Wert ist zu gross.");
+                                if (Double.parseDouble(r_gTLon) < Double.parseDouble(r_gFLon))
+                                    controller.setProblem(jGTLon.getText() + ": Wert ist zu klein.");
                             }
                         }
                     }
