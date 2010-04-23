@@ -39,7 +39,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class ShapeFactory {
 
-    public static final String ID = "id";
+    public static final String ID = "ID";
+    public static final String ELEVATION = "ELEVATION";
     public static final CoordinateReferenceSystem defaultCRS = DefaultGeographicCRS.WGS84;;
 
     /**
@@ -222,19 +223,18 @@ public class ShapeFactory {
      * create a dummy shape with one point in it
      * @param lat
      * @param lon
-     * @param height
+     * @param elevation
      * @param directoryName
      * @return complete file name, if it is successful, otherwise null
      */
-    public static String createShapeFromPoint(double lat, double lon, double height, String directoryName) {
+    public static String createShapeFromPoint(double lat, double lon, double elevation, String directoryName) {
         String fileName = directoryName + File.separator + "point.shp";
 
-        String attrNameHeight = "height";
         CoordinateReferenceSystem crs = defaultCRS;
         // create feature type
         Class theGeomClass = Point.class;
         HashMap<String, Class> attributes = new HashMap<String, Class>();
-        attributes.put(attrNameHeight, Integer.class);
+        attributes.put(ELEVATION, Double.class);
         SimpleFeatureType schema = createSimpleFeatureType(theGeomClass, attributes, crs);
 
         // create a new feature and fill it
@@ -242,12 +242,12 @@ public class ShapeFactory {
         String featureId = Long.toString(id);
         SimpleFeature theFeature = SimpleFeatureBuilder.template(schema, featureId);
 
-        Coordinate coordinate = new Coordinate(lon, lat, height);
+        Coordinate coordinate = new Coordinate(lon, lat, elevation);
         Point point = new Point(coordinate, null, -1);
         theFeature.setAttribute(theGeomClass.getSimpleName(), point);
 
         theFeature.setAttribute(ID, id);
-        theFeature.setAttribute(attrNameHeight, new Double(height));
+        theFeature.setAttribute(ELEVATION, new Double(elevation));
 
         // create feature collection
         FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection = FeatureCollections.newCollection();
@@ -276,10 +276,13 @@ public class ShapeFactory {
     public static String createShapeFromGrid(double lat1, double lon1, double lat2, double lon2, double distance, String directoryName) {
         String fileName = directoryName + File.separator + "grid.shp";
         Class theGeomClass = Polygon.class;
+        double elevation = 100; // unfortunately we don't have a real value.
+        HashMap<String, Class> attributes = new HashMap<String, Class>();
+        attributes.put(ELEVATION, Double.class);
 
         // create feature type
         CoordinateReferenceSystem crs = defaultCRS;
-        SimpleFeatureType schema = createSimpleFeatureType(theGeomClass, null, crs);
+        SimpleFeatureType schema = createSimpleFeatureType(theGeomClass, attributes, crs);
 
         Long id;
         String featureId;
@@ -296,6 +299,7 @@ public class ShapeFactory {
             theFeature.setAttribute(theGeomClass.getSimpleName(), polygon);
 
             theFeature.setAttribute(ID, id);
+            theFeature.setAttribute(ELEVATION, new Double(elevation));
             featureCollection.add(theFeature);
             i++;
         }
@@ -358,8 +362,9 @@ public class ShapeFactory {
         while (workLat > latTo) {
             nextLat = getNextLat(workLat, distance);
             workLon = lonFrom;
-            while (workLon > lonTo) {
+            while (workLon < lonTo) {
                 nextLon = getNextLon(workLon, distance);
+                //System.out.println("createPolygons: " + workLon + ", " + workLat + ", " + nextLon + ", " + nextLat);
                 polygon = createPolygon(workLon, workLat, nextLon, nextLat);
                 result.add(polygon);
 
@@ -372,26 +377,28 @@ public class ShapeFactory {
 
     /**
      * this is a dirty hack due to pressure of time
-     * but in germany it works :-)
+     * but it works :-)
      *
      * @param actLon
      * @param distance
      * @return nextLon
      */
     private static double getNextLon(double actLon, double distance) {
-       return actLon - (distance / 111120); // 1 degree = 111120 meter
+       double degreeMeters = 111120.0;
+       return actLon + (distance / degreeMeters); // 1 degree = 111120 meter
     }
 
     /**
      * this is a dirty hack due to pressure of time
-     * but in germany it works :-)
+     * but at north hemissphere it works :-)
      *
      * @param actLon
      * @param distance
      * @return nextLon
      */
     private static double getNextLat(double actLon, double distance) {
-       return actLon - (distance / 74000); // 111120 * cosinus(lon)
+       double degreeMeters = 111120.0 * Math.cos(Math.toRadians(actLon)); // 111120 * cosinus(lon)
+       return actLon - (distance / degreeMeters); // north
     }
 
 }
