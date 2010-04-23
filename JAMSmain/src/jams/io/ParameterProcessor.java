@@ -128,6 +128,7 @@ public class ParameterProcessor {
                         String value = var.getAttribute("value");
                         if (name.equals("attributeName") && value.equals(theAttributeName)) {
                             var.setAttribute("value", newAttribute);
+                            System.out.println("changed value at attributeName to " + newAttribute);
                         }
                     }
                 }
