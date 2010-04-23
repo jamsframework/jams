@@ -91,6 +91,52 @@ public class ParameterProcessor {
         return model;
     }
 
+/**
+ * set new attribute
+ * e.g.
+ * before <var attribute="dataValue" context="StationLoop" name="dataValue"/>
+ * after  <var attribute="newAttribute" context="StationLoop" name="dataValue"/>
+ * @param model
+ * @param theAttributeName
+ * @param newAttribute
+ * @return true, if attribute could be renamed
+ */
+    public static boolean renameAttribute(Document model, String theAttributeName, String newAttribute) {
+
+        boolean found = false;
+        // process the elements
+        ArrayList<Element> elementList = getElementList(model);
+        for (Element element : elementList) {
+
+            NodeList childs = element.getChildNodes();
+            for (int j = 0; j < childs.getLength(); j++) {
+                Node child = childs.item(j);
+                if (child.getNodeName().equals("var")) {
+                    Element var = (Element) child;
+                    if (var.hasAttribute("attribute")) {
+                        String attributeName = var.getAttribute("attribute");
+                        //System.out.println("attribute found: " + attributeName);
+                        if (attributeName.equals(theAttributeName)) {
+                            var.setAttribute("attribute", newAttribute);
+                            System.out.println("could rename attribute " + theAttributeName + " to " + newAttribute);
+                            found = true;
+                        }
+                    }
+                    // optional: attribute occurs in "attributeName"
+                    if (var.hasAttribute("name")) {
+                        String name = var.getAttribute("name");
+                        String value = var.getAttribute("value");
+                        if (name.equals("attributeName") && value.equals(theAttributeName)) {
+                            var.setAttribute("value", newAttribute);
+                        }
+                    }
+                }
+            }
+        }
+        return found;
+    }
+
+
     /**
      * get value of certain attribute
      * @param model
