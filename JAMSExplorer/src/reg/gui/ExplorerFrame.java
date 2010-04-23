@@ -41,6 +41,7 @@ import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.ShapeFileDataStore;
 import java.net.URISyntaxException;
+import java.util.Observable;
 import reg.JAMSExplorer;
 import java.io.FileNotFoundException;
 import java.awt.BorderLayout;
@@ -57,6 +58,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observer;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
@@ -172,8 +174,9 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (launchWizard()) {
+                    System.out.println("wizard successfully launched. run model ..");
                     runModel();
-                    update();
+                    System.out.println("model run finished.");
                 }
             }
         };
@@ -453,11 +456,12 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
         SwingWorker worker = new SwingWorker<Object, Void>() {
 
             public Object doInBackground() {
-                JAMSRuntime runtime = new StandardRuntime();
+                JAMSRuntime runtime = explorer.getRuntime();
                 try {
                     runtime.loadModel(modelDoc, explorer.getProperties());
                     runtime.setDebugLevel(3);
                     runtime.runModel();
+                    update();
                 } catch (Throwable t) {
                     runtime.handle(t);
                 }
@@ -498,7 +502,7 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
         initialData.put(BaseDataPanel.KEY_REGDATA_DISPS, dsDispNames);
 
         try {
-
+            // call the wizard and get result into wizardSettings
             Map wizardSettings = (Map) WizardDisplayer.showWizard(explorerWizard,
                     new Rectangle(20, 20, 850, 530), null, initialData);
             if (wizardSettings != null) {
@@ -508,10 +512,12 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
                 String modelFileName = null;
 
                 String dataDecision = (String) wizardSettings.get(DataDecisionPanel.KEY_DATA);
+                String computation = null;
+                String sourceDir = null;
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_STATION)) {
-                    String computation = (String) wizardSettings.get(StationParamsPanel.KEY_COMPUTATION);
+                    computation = (String) wizardSettings.get(StationParamsPanel.KEY_COMPUTATION);
                     // look into directory &computation and get model + output files
-                    String sourceDir = workSpaceDir + File.separator + "variants" + File.separator + computation;
+                    sourceDir = workSpaceDir + File.separator + "variants" + File.separator + computation;
                     modelFileName = WizardFactory.copyModelFiles(sourceDir, workSpaceDir);
 
                     // add some input store?
@@ -520,7 +526,7 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
 
                 if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_SPATIAL)) {
 
-                    String sourceDir = workSpaceDir + File.separator + "variants" + File.separator + "regionalizer";
+                    sourceDir = workSpaceDir + File.separator + "variants" + File.separator + "regionalizer";
                     modelFileName = WizardFactory.copyModelFiles(sourceDir, workSpaceDir);
                 } // dataDecision = spatial
 
@@ -537,35 +543,47 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
                 Properties properties = WizardFactory.getModelPropertiesFromWizardResult(wizardSettings);
                 if (properties != null && properties.size() > 0) {
                     ParameterProcessor.loadParams(modelDoc, properties);
+                    System.out.println("model loaded with wizard settings.");
                 }
+
+                // replace dataValue with real computation name
+                 String regionalization = (String) wizardSettings.get(BaseDataPanel.KEY_REGIONALIZATION);
+                if (!StringTools.isEmptyString(regionalization)) {
+                    System.out.println("regionalization: " + regionalization);
+                    String oldValue = "dataValue";
+                    String newValue = regionalization;
+                    if (ParameterProcessor.renameAttribute(modelDoc, oldValue, newValue))
+                        WizardFactory.replaceInOutputFiles(sourceDir, workSpaceDir, oldValue, newValue);
+                }
+
                 //additional shape file?
                 String shapeFileName = (String) wizardSettings.get(BaseDataPanel.KEY_SHAPE_FILENAME);
                 System.out.println("shape coming from wizard : " + shapeFileName);
                 if (StringTools.isEmptyString(shapeFileName)) {
-                    String sLat;
+                    String sLatP, sLatG;
                     double lat, lon, lat2, lon2, height, dist;
-                    sLat = (String) wizardSettings.get(BaseDataPanel.KEY_POINT_LAT);
-                    if (!StringTools.isEmptyString(sLat)) {
-                        System.out.println("create shape from point..");
-                        lat = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_POINT_LAT));
-                        lon = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_POINT_LON));
-                        height = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_POINT_HEIGHT));
-                        shapeFileName = ShapeFactory.createShapeFromPoint(lat, lon, height, workSpaceDir);
+                    sLatP = (String) wizardSettings.get(BaseDataPanel.KEY_POINT_LAT);
+                    sLatG = (String) wizardSettings.get(BaseDataPanel.KEY_GRID_FROM_LAT);
+                    if (!StringTools.isEmptyString(sLatP) || !StringTools.isEmptyString(sLatG)) {
+                        if (!StringTools.isEmptyString(sLatP)) {
+                            System.out.println("create shape from point..");
+                            lat = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_POINT_LAT));
+                            lon = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_POINT_LON));
+                            height = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_POINT_HEIGHT));
+                            shapeFileName = ShapeFactory.createShapeFromPoint(lat, lon, height, workSpaceDir);
+                        } else {
+                            if (!StringTools.isEmptyString(sLatG)) {
+                                System.out.println("create shape from grid..");
+                                lat = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_FROM_LAT));
+                                lon = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_FROM_LON));
+                                lat2 = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_TO_LAT));
+                                lon2 = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_TO_LON));
+                                dist = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_DISTANCE));
+                                shapeFileName = ShapeFactory.createShapeFromGrid(lat, lon, lat2, lon2, dist, workSpaceDir);
+                            }
+                        }
                         properties.put("EntityReader.idName", ShapeFactory.ID);
                         ParameterProcessor.loadParams(modelDoc, properties);
-                    } else {
-                        sLat = (String) wizardSettings.get(BaseDataPanel.KEY_GRID_FROM_LAT);
-                        if (!StringTools.isEmptyString(sLat)) {
-                            System.out.println("create shape from grid..");
-                            lat = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_FROM_LAT));
-                            lon = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_FROM_LON));
-                            lat2 = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_TO_LAT));
-                            lon2 = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_TO_LON));
-                            dist = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_DISTANCE));
-                            shapeFileName = ShapeFactory.createShapeFromGrid(lat, lon, lat2, lon2, dist, workSpaceDir);
-                            properties.put("EntityReader.idName", ShapeFactory.ID);
-                            ParameterProcessor.loadParams(modelDoc, properties);
-                        }
                     }
                 }
 
@@ -659,16 +677,16 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
         String fileName = theShapeFile.getName();
         String storeId = StringTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
         // try to get id
+        Vector<String> attributeNames = ShapeFactory.getAttributeNames(theShapeFile.toURI());
         String idColumn = ParameterProcessor.getAttributeValue(modelDoc, "EntityReader.idName");
-        if (!StringTools.isEmptyString(idColumn)) {
+        if (!StringTools.isEmptyString(idColumn) && attributeNames.contains(idColumn)) {
             System.out.println("EntityReader.idName in model: " + idColumn);
         } else {
             // get fitting id-column from attributes of shape
-            Vector<String> attributeNames = ShapeFactory.getAttributeNames(theShapeFile.toURI());
             String[] aNames = new String[attributeNames.size()];
             attributeNames.toArray(aNames);
             idColumn = Tools.geFittingIdName(aNames);
-            System.out.println("idColumn from shape:" + idColumn);
+            System.out.println("fitting idColumn from shape:" + idColumn);
             properties.put("EntityReader.idName", idColumn);
         }
         // put shape to model
