@@ -222,4 +222,27 @@ public class FileTools {
 
         return canonicalPath;
     }
+
+    /**
+     * replace string in file
+     * @param fileName
+     * @param findString
+     * @param replaceString
+     * @return true, if findString could be replaced
+     * @throws IOException
+     */
+    public static boolean replaceWithinFile(String fileName, String findString, String replaceString)
+            throws IOException {
+        String theFileString = fileToString(fileName);
+        System.out.println("content of " + fileName);
+        System.out.println(theFileString);
+        if (theFileString.indexOf(findString) > -1) {
+            theFileString = theFileString.replaceAll(findString, replaceString);
+            System.out.println("replaced content:");
+            System.out.println(theFileString);
+            stringToFile(fileName, theFileString);
+            return true;
+        }
+        return false;
+    }
 }
