@@ -51,78 +51,48 @@ import reg.viewer.Viewer;
 public class JAMSSpreadSheet extends JPanel {
 
     File ttpFile;
-
     File dtpFile;
-
     private final String title = "";
     private JPanel panel = new JPanel();
     private String panelname = "spreadsheet";
-
     private JFrame parent_frame;
-
     private boolean timeRuns = false;
-
     GridBagLayout panellayout = new GridBagLayout();
-
     GridBagConstraints grid = new GridBagConstraints();
-
     private JScrollPane scrollpane = new JScrollPane();
-
     private boolean output_sheet = false;    //private JScrollPane scrollpane2;
     /* Buttons */
-
     private String name = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DEFAULT");
-
     private JButton savebutton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SAVE_DATA"));
-
 //    private JButton loadbutton = new JButton("Import Data");
     private JButton statButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STATISTIK"));
-
     private JButton plotButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_PLOT"));
-
     private JButton dataplotButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_PLOT"));
-
     private JButton closeButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLOSE_TAB"));
-
     private JCheckBox useTemplateButton = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("USE_TEMPLATE"));
-
     private JButton stpButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STACKED_TIME_PLOT"));
-
     private JComboBox shapeSelector = new JComboBox();
 
     /* Labels */
     private JLabel headerlabel = new JLabel();
-
     private JLabel titleLabel = new JLabel(title);
-
     private JLabel calclabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CALCLABEL"));
     /* Table and TableModel */
-
     private JAMSTableModel tmodel;
-
     private JTableHeader tableHeader;
-
     private TSDataStore store;
-
     private File outputDSDir;
-
     JTable table;
     /* ComboBox */
     /* String array contains words of the ComboBox */
-
     private String[] calclist = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SUM____"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN___")};
-
     JComboBox calculations = new JComboBox(calclist);
-
     private int kindofcalc = 0;
-
     private JFileChooser epsFileChooser, templateChooser, datChooser;
-
     private JAMSExplorer explorer;
 
     /* Messages */
     final String ERR_MSG_CTS = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_TIME_SERIES_LOADED");
-
     public static final DataFlavor FLAVOR = DataFlavor.stringFlavor;
 
     public class TableDataTransferable implements Transferable {
@@ -287,7 +257,6 @@ public class JAMSSpreadSheet extends JPanel {
         }
     };
     /* Save */
-
     ActionListener saveAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -412,7 +381,6 @@ public class JAMSSpreadSheet extends JPanel {
             }
         }
     };
-
     ActionListener statisticAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -876,8 +844,9 @@ public class JAMSSpreadSheet extends JPanel {
             try {
                 String timeString = rowData[0].getString();
                 String timePattern = JAMSTools.DATE_TIME_FORMAT_PATTERN_DE;
-                if (timeString != null && timeString.length() == JAMSTools.DATE_FORMAT_PATTERN_DE.length())
+                if (timeString != null && timeString.length() == JAMSTools.DATE_FORMAT_PATTERN_DE.length()) {
                     timePattern = JAMSTools.DATE_FORMAT_PATTERN_DE;
+                }
 
                 timeval.setValue(timeString, timePattern);
             } catch (ParseException pe) {
@@ -964,7 +933,6 @@ public class JAMSSpreadSheet extends JPanel {
     private void openSTP() {
         STPConfigurator stp = new STPConfigurator(explorer, this);
     }
-
     ActionListener plotAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -996,7 +964,9 @@ public class JAMSSpreadSheet extends JPanel {
                             ee.printStackTrace();
                             try {
                                 JFileChooser chooser = getTemplateChooser();
-                                if (isOutputSheet()) chooser.setCurrentDirectory(outputDSDir);
+                                if (isOutputSheet()) {
+                                    chooser.setCurrentDirectory(outputDSDir);
+                                }
                                 int returnVal = chooser.showOpenDialog(parent_frame);
                                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                                     ttpFile = chooser.getSelectedFile();
@@ -1019,7 +989,9 @@ public class JAMSSpreadSheet extends JPanel {
 
                         try {
                             JFileChooser chooser = getTemplateChooser();
-                            if (isOutputSheet()) chooser.setCurrentDirectory(outputDSDir);
+                            if (isOutputSheet()) {
+                                chooser.setCurrentDirectory(outputDSDir);
+                            }
                             int returnVal = chooser.showOpenDialog(parent_frame);
                             if (returnVal == JFileChooser.APPROVE_OPTION) {
                                 ttpFile = chooser.getSelectedFile();
@@ -1040,7 +1012,6 @@ public class JAMSSpreadSheet extends JPanel {
             }
         }
     };
-
     ActionListener dataplotAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -1072,7 +1043,9 @@ public class JAMSSpreadSheet extends JPanel {
                             ee.printStackTrace();
                             try {
                                 JFileChooser chooser = getTemplateChooser();
-                                if (isOutputSheet()) chooser.setCurrentDirectory(outputDSDir);
+                                if (isOutputSheet()) {
+                                    chooser.setCurrentDirectory(outputDSDir);
+                                }
                                 int returnVal = chooser.showOpenDialog(parent_frame);
                                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                                     ttpFile = chooser.getSelectedFile();
@@ -1115,7 +1088,6 @@ public class JAMSSpreadSheet extends JPanel {
             }
         }
     };
-
     ActionListener stpAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -1133,7 +1105,6 @@ public class JAMSSpreadSheet extends JPanel {
 
         }
     };
-
     Action joinMapAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AUF_KARTE_ZEIGEN")) {
 
         public void actionPerformed(ActionEvent e) {
@@ -1310,6 +1281,7 @@ public class JAMSSpreadSheet extends JPanel {
     public void updateGUI() {
         table.setModel(tmodel);
         scrollpane.setViewportView(table);
+        updateShapeSelector();
         this.repaint();
     }
 
@@ -1374,19 +1346,7 @@ public class JAMSSpreadSheet extends JPanel {
         GUIHelper.addGBComponent(controlpanel, gbl, statButton, 0, 12, 1, 1, 0, 0);
 
         // populate shape-combobox, if shape file is in input stores
-        String defaultShapeName = null;
-
-        String[] shapeStoreIDs = this.explorer.getWorkspace().
-                getDataStoreIDs(InputDataStore.TYPE_SHAPEFILEDATASTORE);
-
-        String[] shapeNames = shapeStoreIDs;
-        if (shapeNames != null && shapeNames.length > 0) {
-            defaultShapeName = shapeNames[0];
-        }
-        if (defaultShapeName != null) {
-            DefaultComboBoxModel shapeSelectorModel = new DefaultComboBoxModel(shapeNames);
-            shapeSelectorModel.setSelectedItem(defaultShapeName);
-            shapeSelector.setModel(shapeSelectorModel);
+        if (updateShapeSelector()) {
             JButton joinMapButton = new JButton(joinMapAction);
             GUIHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 13, 1, 1, 0, 0);
             GUIHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 14, 1, 1, 0, 0);
@@ -1439,11 +1399,8 @@ public class JAMSSpreadSheet extends JPanel {
     private class HeaderHandler extends MouseAdapter {
 
         int button = -1;
-
         int[] selectedColumns;
-
         int col_START = 1; // is this nessesary?
-
         int col_END = 0;
 
         public void mouseClicked(MouseEvent e) {
@@ -1519,5 +1476,22 @@ public class JAMSSpreadSheet extends JPanel {
             JTableHeader h = (JTableHeader) e.getSource();
             //h.setCursor(new Cursor(-1)); //default curser
         }
+    }
+
+    /**
+     * updates the shape-selector with names of all shapes defined as inputDataStore
+     * @return true, if any shapes found
+     */
+    private boolean updateShapeSelector() {
+        String[] shapeNames = this.explorer.getWorkspace().
+                getDataStoreIDs(InputDataStore.TYPE_SHAPEFILEDATASTORE);
+        if (shapeNames != null && shapeNames.length > 0) {
+            String defaultShapeName = shapeNames[0];
+            DefaultComboBoxModel shapeSelectorModel = new DefaultComboBoxModel(shapeNames);
+            shapeSelectorModel.setSelectedItem(defaultShapeName);
+            shapeSelector.setModel(shapeSelectorModel);
+            return true;
+        }
+        return false;
     }
 }
