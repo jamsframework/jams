@@ -117,7 +117,7 @@ public class RegMethodPanel extends javax.swing.JPanel {
 
         jLabel3.setText("IDW");
 
-        jLabel6.setText("0,");
+        jLabel6.setText("0.");
 
         jElevationCorrectionBox.setText("Höhenkorrektur");
         jElevationCorrectionBox.addActionListener(new java.awt.event.ActionListener() {
