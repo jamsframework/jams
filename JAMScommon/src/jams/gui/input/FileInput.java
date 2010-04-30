@@ -23,6 +23,7 @@
 package jams.gui.input;
 
 import jams.gui.tools.GUIHelper;
+import jams.tools.StringTools;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -41,9 +42,11 @@ public class FileInput extends JPanel implements InputComponent {
     private JButton addButton;
     private JFileChooser jfc;
     private ValueChangeListener l;
+    private boolean dirsOnly;
 
     public FileInput(boolean dirsOnly) {
         this();
+        this.dirsOnly = dirsOnly;
         if (dirsOnly) {
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         }
@@ -123,6 +126,9 @@ public class FileInput extends JPanel implements InputComponent {
     }
 
     public boolean verify() {
+        if (dirsOnly && StringTools.isEmptyString(getFileName())) {
+            return true;
+        }
         File file = new File(getFileName());
         if (file.exists()) {
             return true;

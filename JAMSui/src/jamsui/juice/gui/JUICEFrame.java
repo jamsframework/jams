@@ -56,7 +56,7 @@ public class JUICEFrame extends JFrame {
     private static final int TREE_PANE_WIDTH = 250, RT_MANAGER_HEIGHT = 600;
     private static final int DIVIDER_WIDTH = 8;
     private PropertyDlg propertyDlg;
-    private JFileChooser jfc = GUIHelper.getJFileChooser();
+    private JFileChooser jfcProps, jfcParams, jfcModels;
     private TreePanel libTreePanel;
     private JDesktopPane modelPanel = new JDesktopPane();
     private JMenu windowMenu, modelMenu;
@@ -164,13 +164,11 @@ public class JUICEFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
-                jfc.setSelectedFile(new File(""));
-                int result = jfc.showOpenDialog(JUICEFrame.this);
+                jfcProps.setSelectedFile(new File(""));
+                int result = jfcProps.showOpenDialog(JUICEFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    String stringValue = jfc.getSelectedFile().getAbsolutePath();
+                    String stringValue = jfcProps.getSelectedFile().getAbsolutePath();
                     try {
                         SystemProperties properties = JUICE.getJamsProperties();
                         properties.load(stringValue);
@@ -186,12 +184,11 @@ public class JUICEFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
-                jfc.setSelectedFile(new File(""));
-                int result = jfc.showSaveDialog(JUICEFrame.this);
+                jfcProps.setSelectedFile(new File(""));
+                int result = jfcProps.showSaveDialog(JUICEFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    String stringValue = jfc.getSelectedFile().getAbsolutePath();
+                    String stringValue = jfcProps.getSelectedFile().getAbsolutePath();
                     try {
                         JAMSProperties properties = JUICE.getJamsProperties();
                         properties.save(stringValue);
@@ -289,13 +286,11 @@ public class JUICEFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                jfc.setFileFilter(JAMSFileFilter.getParameterFilter());
-                jfc.setSelectedFile(new File(""));
-                int result = jfc.showOpenDialog(JUICEFrame.this);
+                jfcParams.setSelectedFile(new File(""));
+                int result = jfcParams.showOpenDialog(JUICEFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    String path = jfc.getSelectedFile().getAbsolutePath();
+                    String path = jfcParams.getSelectedFile().getAbsolutePath();
                     File file = new File(path);
                     getCurrentView().loadParams(file);
                 }
@@ -306,12 +301,11 @@ public class JUICEFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                jfc.setFileFilter(JAMSFileFilter.getParameterFilter());
-                jfc.setSelectedFile(new File(""));
-                int result = jfc.showSaveDialog(JUICEFrame.this);
+                jfcParams.setSelectedFile(new File(""));
+                int result = jfcParams.showSaveDialog(JUICEFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    String path = jfc.getSelectedFile().getAbsolutePath();
+                    String path = jfcParams.getSelectedFile().getAbsolutePath();
                     File file = new File(path);
                     getCurrentView().saveParams(file);
                 }
@@ -386,8 +380,18 @@ public class JUICEFrame extends JFrame {
         loadModelDlg = new WorkerDlg(this, JAMS.resources.getString("Loading_Model"));
 
         propertyDlg = new PropertyDlg(this, JUICE.getJamsProperties());
-        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfc.setCurrentDirectory(JUICE.getBaseDir());
+
+        jfcModels = GUIHelper.getJFileChooser(JAMSFileFilter.getModelFilter());
+        jfcModels.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfcModels.setCurrentDirectory(JUICE.getBaseDir());
+
+        jfcParams = GUIHelper.getJFileChooser(JAMSFileFilter.getParameterFilter());
+        jfcParams.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfcParams.setCurrentDirectory(JUICE.getBaseDir());
+
+        jfcProps = GUIHelper.getJFileChooser(JAMSFileFilter.getPropertyFilter());
+        jfcProps.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfcProps.setCurrentDirectory(JUICE.getBaseDir());
 
         // use outline or live drag mode for performance or look
         if (System.getProperty("os.name").contains("Windows")) {
@@ -733,16 +737,15 @@ public class JUICEFrame extends JFrame {
     }
 
     private void saveModelAs(ModelView view) {
-        jfc.setFileFilter(JAMSFileFilter.getModelFilter());
         if (view.getSavePath() != null) {
-            jfc.setSelectedFile(view.getSavePath());
+            jfcModels.setSelectedFile(view.getSavePath());
         } else {
-            jfc.setSelectedFile(new File(""));
+            jfcModels.setSelectedFile(new File(""));
         }
-        int result = jfc.showSaveDialog(JUICEFrame.this);
+        int result = jfcModels.showSaveDialog(JUICEFrame.this);
 
         if (result == JFileChooser.APPROVE_OPTION) {
-            String path = jfc.getSelectedFile().getAbsolutePath();
+            String path = jfcModels.getSelectedFile().getAbsolutePath();
             File savePath = new File(path);
             view.setSavePath(savePath);
             saveModel(view);
@@ -763,17 +766,15 @@ public class JUICEFrame extends JFrame {
     }
 
     public void loadModel(ModelView view) {
-
-        jfc.setFileFilter(JAMSFileFilter.getModelFilter());
         if ((view != null) && (view.getSavePath() != null)) {
-            jfc.setSelectedFile(getCurrentView().getSavePath());
+            jfcModels.setSelectedFile(getCurrentView().getSavePath());
         } else {
-            jfc.setSelectedFile(new File(""));
+            jfcModels.setSelectedFile(new File(""));
         }
-        int result = jfc.showOpenDialog(JUICEFrame.this);
+        int result = jfcModels.showOpenDialog(JUICEFrame.this);
 
         if (result == JFileChooser.APPROVE_OPTION) {
-            JUICEFrame.this.loadModel(jfc.getSelectedFile().getAbsolutePath());
+            JUICEFrame.this.loadModel(jfcModels.getSelectedFile().getAbsolutePath());
         }
     }
 

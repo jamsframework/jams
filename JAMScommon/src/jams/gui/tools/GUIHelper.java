@@ -31,7 +31,9 @@ import javax.swing.JOptionPane;
 import jams.JAMS;
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 
 /**
@@ -42,9 +44,7 @@ import javax.swing.filechooser.FileSystemView;
 public class GUIHelper {
 
     public static final int NO_OPTION = JOptionPane.NO_OPTION;
-
     public static final int YES_OPTION = JOptionPane.YES_OPTION;
-
     public static final int CANCEL_OPTION = JOptionPane.CANCEL_OPTION;
 
     /**
@@ -246,9 +246,25 @@ public class GUIHelper {
                     putClientProperty("FileChooser.useShellFolder", Boolean.FALSE);
                     super.setup(view);
                 }
-
             };
         }
+    }
+
+    private static HashMap<FileFilter, JFileChooser> choosers = new HashMap<FileFilter, JFileChooser>();
+    
+    /**
+     * Create a new JFileChooser
+     * @return new JFileChooser
+     */
+    public static JFileChooser getJFileChooser(FileFilter filter) {
+        
+        JFileChooser jfc = choosers.get(filter);
+        if (jfc == null) {
+            jfc = getJFileChooser(true);
+            jfc.setFileFilter(filter);
+            choosers.put(filter, jfc);
+        }
+        return jfc;
     }
 
     /**

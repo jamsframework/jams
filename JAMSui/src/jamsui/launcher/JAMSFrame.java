@@ -71,7 +71,7 @@ public class JAMSFrame extends JAMSLauncher {
     private JMenuBar mainMenu;
     private JMenu logsMenu, modelMenu;
     private JMenuItem saveItem, saveAsItem;
-    private JFileChooser jfc;
+    private JFileChooser jfcProps, jfcSer, jfcModel, jfcParam;
     private JDialog rtManagerDlg;
     private PropertyDlg propertyDlg;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Info_Log"));
@@ -174,13 +174,12 @@ public class JAMSFrame extends JAMSLauncher {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
-                jfc.setSelectedFile(new File(""));
+                jfcProps.setSelectedFile(new File(""));
                 //jfc.setSelectedFile(new File(getProperties().getDefaultFilename()));
-                int result = jfc.showOpenDialog(JAMSFrame.this);
+                int result = jfcProps.showOpenDialog(JAMSFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    String stringValue = jfc.getSelectedFile().getAbsolutePath();
+                    String stringValue = jfcProps.getSelectedFile().getAbsolutePath();
                     try {
                         getProperties().load(stringValue);
                     } catch (IOException ioe) {
@@ -194,13 +193,12 @@ public class JAMSFrame extends JAMSLauncher {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                jfc.setFileFilter(JAMSFileFilter.getPropertyFilter());
-                jfc.setSelectedFile(new File(""));
+                jfcProps.setSelectedFile(new File(""));
                 //jfc.setSelectedFile(new File(getProperties().getDefaultFilename()));
-                int result = jfc.showSaveDialog(JAMSFrame.this);
+                int result = jfcProps.showSaveDialog(JAMSFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    String stringValue = jfc.getSelectedFile().getAbsolutePath();
+                    String stringValue = jfcProps.getSelectedFile().getAbsolutePath();
                     try {
                         getProperties().save(stringValue);
                     } catch (IOException ioe) {
@@ -214,13 +212,12 @@ public class JAMSFrame extends JAMSLauncher {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                jfc.setFileFilter(JAMSFileFilter.getSerFilter());
-                jfc.setSelectedFile(new File(""));
-                int result = jfc.showOpenDialog(JAMSFrame.this);
+                jfcSer.setSelectedFile(new File(""));
+                int result = jfcSer.showOpenDialog(JAMSFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
                     try {
-                        final JAMSFullModelState state = new JAMSFullModelState(jfc.getSelectedFile());
+                        final JAMSFullModelState state = new JAMSFullModelState(jfcSer.getSelectedFile());
                         Thread t = new Thread() {
 
                             public void run() {
@@ -249,15 +246,14 @@ public class JAMSFrame extends JAMSLauncher {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                jfc.setFileFilter(JAMSFileFilter.getModelFilter());
                 if (!StringTools.isEmptyString(modelFilename)) {
-                    jfc.setSelectedFile(new File(modelFilename));
+                    jfcModel.setSelectedFile(new File(modelFilename));
                 } else {
-                    jfc.setSelectedFile(new File(""));
+                    jfcModel.setSelectedFile(new File(""));
                 }
-                if (jfc.showOpenDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
+                if (jfcModel.showOpenDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
 
-                    loadModelDefinition(jfc.getSelectedFile().getAbsolutePath(), null);
+                    loadModelDefinition(jfcModel.getSelectedFile().getAbsolutePath(), null);
 
                 }
             }
@@ -276,14 +272,13 @@ public class JAMSFrame extends JAMSLauncher {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                jfc.setFileFilter(JAMSFileFilter.getModelFilter());
                 if (!StringTools.isEmptyString(modelFilename)) {
-                    jfc.setSelectedFile(new File(modelFilename));
+                    jfcModel.setSelectedFile(new File(modelFilename));
                 } else {
-                    jfc.setSelectedFile(new File(""));
+                    jfcModel.setSelectedFile(new File(""));
                 }
-                if (jfc.showSaveDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
-                    modelFilename = jfc.getSelectedFile().getAbsolutePath();
+                if (jfcModel.showSaveDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
+                    modelFilename = jfcModel.getSelectedFile().getAbsolutePath();
                     saveModel();
                 }
             }
@@ -335,12 +330,11 @@ public class JAMSFrame extends JAMSLauncher {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                jfc.setFileFilter(JAMSFileFilter.getParameterFilter());
-                jfc.setSelectedFile(new File(""));
-                int result = jfc.showOpenDialog(JAMSFrame.this);
+                jfcParam.setSelectedFile(new File(""));
+                int result = jfcParam.showOpenDialog(JAMSFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    String path = jfc.getSelectedFile().getAbsolutePath();
+                    String path = jfcParam.getSelectedFile().getAbsolutePath();
                     loadParams(new File(path));
                 }
             }
@@ -351,12 +345,11 @@ public class JAMSFrame extends JAMSLauncher {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                jfc.setFileFilter(JAMSFileFilter.getParameterFilter());
-                jfc.setSelectedFile(new File(""));
-                int result = jfc.showSaveDialog(JAMSFrame.this);
+                jfcParam.setSelectedFile(new File(""));
+                int result = jfcParam.showSaveDialog(JAMSFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    String path = jfc.getSelectedFile().getAbsolutePath();
+                    String path = jfcParam.getSelectedFile().getAbsolutePath();
                     saveParams(new File(path));
                 }
             }
@@ -396,9 +389,23 @@ public class JAMSFrame extends JAMSLauncher {
 
         // create additional dialogs
         this.propertyDlg = new PropertyDlg(this, getProperties());
-        jfc = GUIHelper.getJFileChooser();
-        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfc.setCurrentDirectory(JAMSui.getBaseDir());
+
+        jfcSer = GUIHelper.getJFileChooser(JAMSFileFilter.getSerFilter());
+        jfcSer.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfcSer.setCurrentDirectory(JAMSui.getBaseDir());
+
+        jfcProps = GUIHelper.getJFileChooser(JAMSFileFilter.getPropertyFilter());
+        jfcProps.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfcProps.setCurrentDirectory(JAMSui.getBaseDir());
+
+        jfcModel = GUIHelper.getJFileChooser(JAMSFileFilter.getModelFilter());
+        jfcModel.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfcModel.setCurrentDirectory(JAMSui.getBaseDir());
+
+        jfcParam = GUIHelper.getJFileChooser(JAMSFileFilter.getParameterFilter());
+        jfcParam.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfcParam.setCurrentDirectory(JAMSui.getBaseDir());
+
 
         // runtime manager dlg
         rtManagerDlg = new JDialog(this, JAMS.resources.getString("Runtime_Manager"));
