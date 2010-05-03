@@ -43,6 +43,7 @@ public class JAMSVersion {
         try {
             p.load(is);
         } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
 
         major = Integer.parseInt(p.getProperty("main.majorversion"));
