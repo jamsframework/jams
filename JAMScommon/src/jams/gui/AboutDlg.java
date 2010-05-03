@@ -59,11 +59,13 @@ public class AboutDlg extends JDialog {
         int x = img.getWidth(null);
         int y = img.getHeight(null);
 
-        String gplText = "", versionText = "", contactText = "";
+        String gplText = "", contribText = "", versionText = "", contactText = "";
         try {
             URL textURL = ClassLoader.getSystemResource("resources/text/readme.txt");
+            URL contribURL = ClassLoader.getSystemResource("resources/text/contribution.txt");
             if (textURL != null) {
                 gplText = FileTools.streamToString(textURL.openStream());
+                contribText = FileTools.streamToString(contribURL.openStream());
                 versionText = JAMSVersion.getInstance().getVersionDateString();
                 contactText = JAMSVersion.getInstance().getContactString();
             }
@@ -73,7 +75,7 @@ public class AboutDlg extends JDialog {
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(Color.white);
         contentPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        contentPanel.setPreferredSize(new Dimension(x + 10, y + 260));
+        contentPanel.setPreferredSize(new Dimension(x + 10, y + 280));
 
         getContentPane().add(contentPanel);
 
@@ -91,8 +93,8 @@ public class AboutDlg extends JDialog {
         /*
          * version text
          */
-        String text = JAMS.resources.getString("Version") + "\t" + versionText +
-                "\n" + JAMS.resources.getString("Contact") + "\t" + contactText;
+        String text = JAMS.resources.getString("Version") + "\t" + versionText
+                + "\n" + JAMS.resources.getString("Contact") + "\t" + contactText;
 
         JTextArea versionTextArea = new JTextArea();
         versionTextArea.setEditable(false);
@@ -111,19 +113,27 @@ public class AboutDlg extends JDialog {
         JTextArea gplTextArea = new JTextArea();
         gplTextArea.setEditable(false);
         gplTextArea.setFont(new Font(Font.SANS_SERIF, 0, 10));
-        gplTextArea.setColumns(20);
-        gplTextArea.setRows(5);
         gplTextArea.setText(gplText);
         gplTextArea.setCaretPosition(0);
+        JScrollPane gplScroll = new JScrollPane(gplTextArea);
 
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setPreferredSize(new Dimension(x + 1, 180));
-        scrollPane.setViewportView(gplTextArea);
-        contentPanel.add(scrollPane);
+        /*
+         * contribution text
+         */
+        JTextArea contribTextArea = new JTextArea();
+        contribTextArea.setEditable(false);
+        contribTextArea.setFont(new Font(Font.SANS_SERIF, 0, 10));
+        contribTextArea.setText(contribText);
+        contribTextArea.setCaretPosition(0);
+        JScrollPane contribScroll = new JScrollPane(contribTextArea);
 
-        /*JLabel versionTextLabel = new JLabel();
-        versionTextLabel.setFont(new java.awt.Font("Arial", 0, 10));
-        versionTextLabel.setText("Test");*/
+
+        JTabbedPane tabPane = new JTabbedPane();
+        tabPane.add("Contribution", contribScroll);
+        tabPane.add("Legal notice", gplScroll);
+        tabPane.setPreferredSize(new Dimension(x + 1, 200));
+
+        contentPanel.add(tabPane);
 
         JButton closeButton = new JButton();
         closeButton.setText(JAMS.resources.getString("OK"));
