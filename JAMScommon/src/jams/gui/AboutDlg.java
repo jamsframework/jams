@@ -144,6 +144,7 @@ public class AboutDlg extends JDialog {
                 AboutDlg.this.dispose();
             }
         });
+        closeButton.setPreferredSize(new Dimension(60, 22));
         contentPanel.add(closeButton);
 
         //this.setAlwaysOnTop(true);
