@@ -1,0 +1,23 @@
+JAMS development:
+Sven Kralisch, Christian Fischer, Christian Schwartze,
+Heiko Busch, Robert Riedel
+
+Support:
+Peter Krause & FSU/DGHM Team      
+Olaf David & USDA/ARS Team
+Lucas Arruda Ramalho (Portuguese translation)
+
+Libraries:
+GeoTools (http://www.geotools.org)
+JTS Topology Suite (http://www.vividsolutions.com/jts)
+JScience (http://jscience.org)
+GeoWind (http://geowind.javaforge.com)
+WorldWind (http://worldwind.arc.nasa.gov)
+JFreeChart (http://www.jfree.org/jfreechart)
+H2 Database (http://www.h2database.com)   
+Apache Commons (http://commons.apache.org)
+JAMA (http://math.nist.gov/javanumerics/jama)  
+JAI (http://jai.dev.java.net)
+Java3D (https://java3d.dev.java.net)
+VecMath (http://vecmath.dev.java.net)
+                                                       
