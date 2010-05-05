@@ -728,6 +728,12 @@ public class JAMSSpreadSheet extends JPanel {
         return outputDSDir;
     }
 
+    private void formatDoubleArray(double[] rowBuffer) {
+        for (int i = 0; i < rowBuffer.length; i++) {
+            rowBuffer[i] = Math.round(rowBuffer[i] * 100.) / 100.;
+        }
+    }
+
     public void loadMatrix(DataMatrix m, File outputDSDir, boolean timeSeries) {
 
 //        getTemplateChooser().setCurrentDirectory(outputDSDir);
@@ -770,6 +776,8 @@ public class JAMSSpreadSheet extends JPanel {
                 source = m.getRow(pos);
                 System.arraycopy(source, 0, rowBuffer, 1, source.length);
             }
+
+            formatDoubleArray(rowBuffer);
 
             arrayVector.add(rowBuffer);
 
@@ -858,6 +866,9 @@ public class JAMSSpreadSheet extends JPanel {
             for (i = 1; i < rowData.length; i++) {
                 rowBuffer[i - 1] = ((DoubleValue) rowData[i]).getDouble();
             }
+
+            formatDoubleArray(rowBuffer);
+
             arrayVector.add(rowBuffer);
         }
 
