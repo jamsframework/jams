@@ -493,7 +493,9 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
         for (String dsId : dsIds) {
             InputDataStore dataStore = ws.getInputDataStore(dsId);
             String simpleClassName = dataStore.getClass().getSimpleName();
-            if (simpleClassName.equalsIgnoreCase(InputDataStore.TYPE_J2KTSDATASTORE)) {
+            if (simpleClassName.equalsIgnoreCase(InputDataStore.TYPE_J2KTSDATASTORE) ||
+                simpleClassName.equalsIgnoreCase(InputDataStore.TYPE_TSDATASTORE))
+            {
                 dsNames.add(dsId);
                 dsDispNames.add(dataStore.getDisplayName());
             }
@@ -579,7 +581,8 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
                                 lat2 = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_TO_LAT));
                                 lon2 = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_TO_LON));
                                 dist = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_DISTANCE));
-                                shapeFileName = ShapeFactory.createShapeFromGrid(lat, lon, lat2, lon2, dist, workSpaceDir);
+                                boolean coordinatesAsDegree = false;
+                                shapeFileName = ShapeFactory.createShapeFromGrid(lat, lon, lat2, lon2, dist, workSpaceDir, coordinatesAsDegree);
                             }
                         }
                         properties.put("EntityReader.idName", ShapeFactory.ID);

@@ -73,7 +73,7 @@
     </Component>
     <Component class="javax.swing.JRadioButton" name="spatialButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Punktdaten regionalisieren"/>
+        <Property name="text" type="java.lang.String" value="Stationsdaten regionalisieren"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="spatialButtonActionPerformed"/>

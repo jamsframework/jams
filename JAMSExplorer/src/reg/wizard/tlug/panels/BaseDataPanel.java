@@ -317,7 +317,7 @@ public class BaseDataPanel extends javax.swing.JPanel {
 
 
         // defaults
-        r_interval = "1999-01-01 7:30 2010-12-31 7:30 6 1";
+        r_interval = "1990-01-01 7:30 2000-12-31 7:30 6 1";
 
     }
 

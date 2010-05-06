@@ -33,6 +33,7 @@ import java.util.Properties;
 import java.util.Set;
 import reg.wizard.tlug.panels.BaseDataPanel;
 import reg.wizard.tlug.panels.RegMethodPanel;
+import reg.wizard.tlug.panels.StationParamsPanel;
 
 /**
  *
@@ -49,6 +50,7 @@ public class WizardFactory {
         Map<String, String[]> resultMap = new HashMap<String, String[]>();
 
         resultMap.put(BaseDataPanel.KEY_INTERVAL, new String[]{"Interpolation.timeInterval"});
+        resultMap.put(StationParamsPanel.KEY_INTERVAL, new String[]{"J2K.timeInterval"});
         resultMap.put(BaseDataPanel.KEY_REGIONALIZATION, new String[]{"Interpolation.inputDataStore"});
         resultMap.put(RegMethodPanel.KEY_SCHWELLENWERT,
                 new String[]{"Regionaliser.rsqThreshold"

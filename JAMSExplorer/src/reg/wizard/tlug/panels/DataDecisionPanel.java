@@ -78,7 +78,7 @@ public class DataDecisionPanel extends javax.swing.JPanel {
             }
         });
 
-        spatialButton.setText("Punktdaten regionalisieren");
+        spatialButton.setText("Stationsdaten regionalisieren");
         spatialButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 spatialButtonActionPerformed(evt);
