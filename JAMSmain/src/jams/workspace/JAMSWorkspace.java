@@ -171,11 +171,11 @@ public class JAMSWorkspace implements Workspace {
                     + directory.toString() + JAMS.resources.getString("_is_not_a_directory"));
         }
 
-        File configFile = new File(directory, "config.txt");
-        if (!configFile.exists()) {
-            throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_")
-                    + directory.toString() + JAMS.resources.getString("_does_not_contain_config_file"));
-        }
+//        File configFile = new File(directory, "config.txt");
+//        if (!configFile.exists()) {
+//            throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_")
+//                    + directory.toString() + JAMS.resources.getString("_does_not_contain_config_file"));
+//        }
 
         File inDir = new File(directory, INPUT_DIR_NAME);
         File outDir = new File(directory, OUTPUT_DIR_NAME);
@@ -780,7 +780,7 @@ public class JAMSWorkspace implements Workspace {
      */
     public File getTempDirectory() {
         return tmpDirectory;
-    }
+    }   
 //    public static void main(String[] args) throws IOException {
 //
 //        JAMSRuntime runtime = new StandardRuntime();
