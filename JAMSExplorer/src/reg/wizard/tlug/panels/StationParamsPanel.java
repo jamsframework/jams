@@ -102,6 +102,8 @@ public class StationParamsPanel extends javax.swing.JPanel {
                 jRadioPrecipCorrActionPerformed(evt);
             }
         });
+        jComputationLabel = new javax.swing.JLabel();
+        jComputationLabel.setText("Berechnung von");
 
         jIntervalLabel = new javax.swing.JLabel();
         jIntervalLabel.setText("Zeitintervall");
@@ -126,13 +128,14 @@ public class StationParamsPanel extends javax.swing.JPanel {
         GridBagLayout layout = new GridBagLayout();
         this.setLayout(layout);
 
-        GUIHelper.addGBComponent(this, layout, jRadioHumidity, 1, 1, 2, 1, 0, 0);
-        GUIHelper.addGBComponent(this, layout, jRadioRadiation, 1, 2, 2, 1, 0, 0);
-        GUIHelper.addGBComponent(this, layout, jRadioEvapor, 1, 3, 2, 1, 0, 0);
-        GUIHelper.addGBComponent(this, layout, jRadioPrecipCorr, 1, 4, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jComputationLabel, 2, 1, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jRadioHumidity, 2, 2, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jRadioRadiation, 2, 3, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jRadioEvapor, 2, 4, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jRadioPrecipCorr, 2, 5, 2, 1, 0, 0);
 
-        GUIHelper.addGBComponent(this, layout, jIntervalLabel, 1, 5, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, layout, jIntervall.getComponent(), 2, 5, 3, 3, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jIntervalLabel, 1, 7, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, layout, jIntervall.getComponent(), 2, 7, 3, 3, 0, 0);
 
     }
 
@@ -215,6 +218,7 @@ public class StationParamsPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton jRadioRadiation;
     private InputComponent jIntervall;
     private javax.swing.JLabel jIntervalLabel;
+    private javax.swing.JLabel jComputationLabel;
     // End of variables declaration
 
 }
