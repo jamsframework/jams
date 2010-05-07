@@ -27,7 +27,7 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureCollections;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -41,7 +41,7 @@ public class ShapeFactory {
 
     public static final String ID = "ID";
     public static final String ELEVATION = "ELEVATION";
-    public static final CoordinateReferenceSystem defaultCRS = DefaultGeographicCRS.WGS84;;
+    public static final String defaultCRS = "EPSG:31468";
 
     /**
      * create shape
@@ -168,7 +168,7 @@ public class ShapeFactory {
             throws Exception {
 
         if (crs == null) {
-            crs = defaultCRS;
+            crs = CRS.decode(defaultCRS);
         }
 
         File newFile = new File(filename);
@@ -227,10 +227,12 @@ public class ShapeFactory {
      * @param directoryName
      * @return complete file name, if it is successful, otherwise null
      */
-    public static String createShapeFromPoint(double lat, double lon, double elevation, String directoryName) {
+    public static String createShapeFromPoint(double lat, double lon, double elevation, String directoryName)
+            throws Exception {
         String fileName = directoryName + File.separator + "point.shp";
 
-        CoordinateReferenceSystem crs = defaultCRS;
+            CoordinateReferenceSystem crs = CRS.decode(defaultCRS);
+
         // create feature type
         Class theGeomClass = Point.class;
         HashMap<String, Class> attributes = new HashMap<String, Class>();
@@ -273,15 +275,16 @@ public class ShapeFactory {
      * @param directoryName
      * @return complete file name, if it is successful, otherwise null
      */
-    public static String createShapeFromGrid(double lat1, double lon1, double lat2, double lon2, double distance, String directoryName) {
+    public static String createShapeFromGrid(double lat1, double lon1, double lat2, double lon2, double distance, String directoryName, boolean coordinatesAsDegree)
+            throws Exception {
         String fileName = directoryName + File.separator + "grid.shp";
         Class theGeomClass = Polygon.class;
-        double elevation = 100; // unfortunately we don't have a real value.
+        double elevation = 400; // unfortunately we don't have a real value.
         HashMap<String, Class> attributes = new HashMap<String, Class>();
         attributes.put(ELEVATION, Double.class);
 
         // create feature type
-        CoordinateReferenceSystem crs = defaultCRS;
+        CoordinateReferenceSystem crs = CRS.decode(defaultCRS);
         SimpleFeatureType schema = createSimpleFeatureType(theGeomClass, attributes, crs);
 
         Long id;
@@ -290,7 +293,7 @@ public class ShapeFactory {
         FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection = FeatureCollections.newCollection();
 
         int i = 1;
-        Vector<Polygon> polygons = createPolygons(lat1, lon1, lat2, lon2, distance);
+        Vector<Polygon> polygons = createPolygons(lat1, lon1, lat2, lon2, distance, coordinatesAsDegree);
         for (Polygon polygon : polygons) {
 
             id = new Long(i);
@@ -313,14 +316,14 @@ public class ShapeFactory {
         return null;
     }
 
-/**
- * creates a polygon by determined edges
- * @param workLon
- * @param workLat
- * @param nextLon
- * @param nextLat
- * @return polygon
- */
+    /**
+     * creates a polygon by determined edges
+     * @param workLon
+     * @param workLat
+     * @param nextLon
+     * @param nextLat
+     * @return polygon
+     */
     private static Polygon createPolygon(double workLon, double workLat, double nextLon, double nextLat) {
         Polygon polygon;
         LinearRing linearRing;
@@ -342,17 +345,17 @@ public class ShapeFactory {
         return polygon;
     }
 
-/**
- * create a list of polygons
- * 
- * @param latFrom
- * @param lonFrom
- * @param latTo
- * @param lonTo
- * @param distance
- * @return list of polygons
- */
-    private static Vector<Polygon> createPolygons(double latFrom, double lonFrom, double latTo, double lonTo, double distance) {
+    /**
+     * create a list of polygons
+     *
+     * @param latFrom
+     * @param lonFrom
+     * @param latTo
+     * @param lonTo
+     * @param distance
+     * @return list of polygons
+     */
+    private static Vector<Polygon> createPolygons(double latFrom, double lonFrom, double latTo, double lonTo, double distance, boolean coordinatesAsDegree) {
 
         Vector<Polygon> result = new Vector<Polygon>();
         double workLat, workLon, nextLat, nextLon;
@@ -360,10 +363,10 @@ public class ShapeFactory {
 
         workLat = latFrom;
         while (workLat > latTo) {
-            nextLat = getNextLat(workLat, distance);
+            nextLat = getNextLat(workLat, distance, coordinatesAsDegree);
             workLon = lonFrom;
             while (workLon < lonTo) {
-                nextLon = getNextLon(workLon, distance);
+                nextLon = getNextLon(workLon, distance, coordinatesAsDegree);
                 //System.out.println("createPolygons: " + workLon + ", " + workLat + ", " + nextLon + ", " + nextLat);
                 polygon = createPolygon(workLon, workLat, nextLon, nextLat);
                 result.add(polygon);
@@ -379,26 +382,38 @@ public class ShapeFactory {
      * this is a dirty hack due to pressure of time
      * but it works :-)
      *
-     * @param actLon
-     * @param distance
+     * @param actLon (in degree or in meter)
+     * @param distance (in meter)
+     * @param coordinateAsDegree
      * @return nextLon
      */
-    private static double getNextLon(double actLon, double distance) {
-       double degreeMeters = 111120.0;
-       return actLon + (distance / degreeMeters); // 1 degree = 111120 meter
+    private static double getNextLon(double actLon, double distance, boolean coordinateAsDegree) {
+        if (coordinateAsDegree) {
+            double degreeMeters = 111120.0;
+            return actLon + (distance / degreeMeters); // 1 degree = 111120 meter
+
+        } else {
+            return actLon + distance;
+        }
     }
 
     /**
      * this is a dirty hack due to pressure of time
      * but at north hemissphere it works :-)
      *
-     * @param actLon
+     * @param actLat (in degree or in meter)
+     * @param distance (in meter)
+     * @param coordinateAsDegree
      * @param distance
      * @return nextLon
      */
-    private static double getNextLat(double actLon, double distance) {
-       double degreeMeters = 111120.0 * Math.cos(Math.toRadians(actLon)); // 111120 * cosinus(lon)
-       return actLon - (distance / degreeMeters); // north
+    private static double getNextLat(double actLat, double distance, boolean coordinateAsDegree) {
+        if (coordinateAsDegree) {
+            double degreeMeters = 111120.0 * Math.cos(Math.toRadians(actLat)); // 111120 * cosinus(lon)
+            return actLat - (distance / degreeMeters); // north
+        } else {
+            return actLat - distance; // north
+        }
     }
 
 }
