@@ -212,7 +212,7 @@ public class JAMSSpreadSheet extends JPanel {
 
     public JAMSSpreadSheet(JAMSExplorer explorer) {
         this.explorer = explorer;
-        this.parent_frame = explorer.getExplorerFrame();
+        this.parent_frame = (JFrame)explorer.getExplorerFrame();
     }
 
     private void close() {
@@ -895,7 +895,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         if (table.getValueAt(0, 0).getClass().equals(JAMSCalendar.class)) {
             JTSConfigurator jts;
-            jts = new JTSConfigurator(explorer.getExplorerFrame(), this, explorer);
+            jts = new JTSConfigurator((JFrame)explorer.getExplorerFrame(), this, explorer);
         } else {
 
             GUIHelper.showErrorDlg(this, ERR_MSG_CTS, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
@@ -910,9 +910,9 @@ public class JAMSSpreadSheet extends JPanel {
         if (table.getValueAt(0, 0).getClass().equals(JAMSCalendar.class)) {
             JTSConfigurator jts;
             if (useTemplateButton.isSelected()) {
-                jts = new JTSConfigurator(explorer.getExplorerFrame(), this, templateFile, explorer);
+                jts = new JTSConfigurator((JFrame)explorer.getExplorerFrame(), this, templateFile, explorer);
             } else {
-                jts = new JTSConfigurator(explorer.getExplorerFrame(), this, null, explorer);
+                jts = new JTSConfigurator((JFrame)explorer.getExplorerFrame(), this, null, explorer);
             }
         } else {
             GUIHelper.showErrorDlg(this, ERR_MSG_CTS, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
@@ -925,9 +925,9 @@ public class JAMSSpreadSheet extends JPanel {
         JXYConfigurator jxys;
 
         try {
-            jxys = new JXYConfigurator(explorer.getExplorerFrame(), this, null, explorer);
+            jxys = new JXYConfigurator((JFrame)explorer.getExplorerFrame(), this, null, explorer);
         } catch (NullPointerException npe) {
-            jxys = new JXYConfigurator(explorer.getExplorerFrame(), this, null, explorer);
+            jxys = new JXYConfigurator((JFrame)explorer.getExplorerFrame(), this, null, explorer);
         }
     }
 
@@ -935,9 +935,9 @@ public class JAMSSpreadSheet extends JPanel {
         JXYConfigurator jxys;
 
         if (useTemplateButton.isSelected()) {
-            jxys = new JXYConfigurator(explorer.getExplorerFrame(), this, templateFile, explorer);
+            jxys = new JXYConfigurator((JFrame)explorer.getExplorerFrame(), this, templateFile, explorer);
         } else {
-            jxys = new JXYConfigurator(explorer.getExplorerFrame(), this, null, explorer);
+            jxys = new JXYConfigurator((JFrame)explorer.getExplorerFrame(), this, null, explorer);
         }
     }
 
@@ -1388,6 +1388,7 @@ public class JAMSSpreadSheet extends JPanel {
 
 
     }
+
 
     /* ************** JTable Operations *************** */
     /*

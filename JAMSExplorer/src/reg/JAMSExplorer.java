@@ -27,7 +27,6 @@ import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import reg.gui.ExplorerFrame;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jams.SystemProperties;
@@ -44,8 +43,7 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import reg.gui.IExplorerFrame;
-import reg.viewer.Viewer;
+import reg.gui.ExplorerFrame;
 
 /**
  *
@@ -55,23 +53,22 @@ public class JAMSExplorer {
 
     public static final String APP_TITLE = JAMS.resources.getString("JADE");
     public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 750;
-    protected IExplorerFrame explorerFrame;
+    protected ExplorerFrame explorerFrame;
     protected JAMSRuntime runtime;
     protected SystemProperties properties;
     protected DisplayManager displayManager;
     protected JAMSWorkspace workspace;
     protected ArrayList<Window> childWindows = new ArrayList<Window>();
-    protected boolean tlugized, standAlone;
-    private static JAMSExplorer explorer;
+    protected boolean standAlone;
+    protected static JAMSExplorer explorer;
 
     public JAMSExplorer(JAMSRuntime runtime) {
-        this(runtime, true, true);
+        this(runtime, true);
     }
 
-    public JAMSExplorer(JAMSRuntime runtime, boolean standAlone, boolean tlugized) {
+    public JAMSExplorer(JAMSRuntime runtime, boolean standAlone) {
 
         this.standAlone = standAlone;
-        this.tlugized = tlugized;
 
         if (runtime == null) {
             this.runtime = new StandardRuntime();
@@ -79,7 +76,7 @@ public class JAMSExplorer {
             this.runtime.addErrorLogObserver(new Observer() {
 
                 public void update(Observable o, Object arg) {
-                    GUIHelper.showErrorDlg((ExplorerFrame) explorerFrame, arg.toString(), JAMS.resources.getString("Error"));
+                    GUIHelper.showErrorDlg(explorerFrame, arg.toString(), JAMS.resources.getString("Error"));
                 }
             });
             this.runtime.addInfoLogObserver(new Observer() {
@@ -104,7 +101,8 @@ public class JAMSExplorer {
         }
 
         displayManager = new DisplayManager(this);
-        explorerFrame = new ExplorerFrame(JAMSExplorer.this);
+        boolean doInit = true;
+        explorerFrame = new ExplorerFrame(JAMSExplorer.this, doInit);
 
     }
 
@@ -120,7 +118,7 @@ public class JAMSExplorer {
 
                 public void run() {
                     // create the JAMSExplorer object
-                    explorer = new JAMSExplorer(null, true, true);
+                    explorer = new JAMSExplorer(null, true);
                 }
             });
         } catch (InterruptedException ex) {
@@ -130,10 +128,6 @@ public class JAMSExplorer {
         }
 
         explorer.getExplorerFrame().setVisible(true);
-
-        if (explorer.tlugized) {
-            Viewer.getViewer();
-        }
 
         if (args.length > 0) {
             try {
@@ -162,7 +156,7 @@ public class JAMSExplorer {
      * @return the regFrame
      */
     public ExplorerFrame getExplorerFrame() {
-        return (ExplorerFrame) explorerFrame;
+        return explorerFrame;
     }
 
     /**
@@ -228,12 +222,5 @@ public class JAMSExplorer {
         if (standAlone) {
             System.exit(0);
         }
-    }
-
-    /**
-     * @return the tlugized
-     */
-    public boolean isTlugized() {
-        return tlugized;
     }
 }

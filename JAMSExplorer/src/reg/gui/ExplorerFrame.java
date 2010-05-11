@@ -22,32 +22,19 @@
  */
 package reg.gui;
 
-import gw.ui.util.Tools;
 import jams.JAMS;
 import jams.SystemProperties;
 import jams.gui.tools.GUIHelper;
 import jams.gui.PropertyDlg;
 import jams.gui.WorkerDlg;
 import jams.gui.WorkspaceDlg;
-import jams.gui.JAMSLauncher;
-import jams.io.ParameterProcessor;
 import jams.io.XMLProcessor;
-import jams.runtime.JAMSRuntime;
-import jams.runtime.StandardRuntime;
 import jams.tools.StringTools;
-import jams.tools.XMLTools;
 import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.JAMSWorkspace;
-import jams.workspace.stores.InputDataStore;
-import jams.workspace.stores.ShapeFileDataStore;
-import java.net.URISyntaxException;
-import java.util.Observable;
-import reg.JAMSExplorer;
-import java.io.FileNotFoundException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -55,13 +42,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Observer;
-import java.util.Properties;
-import java.util.Set;
-import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -78,34 +58,24 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
-import org.netbeans.api.wizard.WizardDisplayer;
-import org.netbeans.spi.wizard.Wizard;
 import org.w3c.dom.Document;
-import reg.shape.ShapeFactory;
-import reg.spreadsheet.JAMSSpreadSheet;
+import reg.JAMSExplorer;
 import reg.spreadsheet.STPConfigurator;
 import reg.viewer.Viewer;
-import reg.wizard.WizardFactory;
-import reg.wizard.tlug.ExplorerWizard;
-import reg.wizard.tlug.panels.BaseDataPanel;
-import reg.wizard.tlug.panels.DataDecisionPanel;
-import reg.wizard.tlug.panels.StationParamsPanel;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class ExplorerFrame extends JFrame implements IExplorerFrame {
+public class ExplorerFrame extends JFrame {
 
     protected static final int INOUT_PANE_WIDTH = 250, INOUT_PANE_HEIGHT = 450;
     protected static final int DIVIDER_WIDTH = 6;
     protected JFileChooser jfc = GUIHelper.getJFileChooser();
     protected WorkerDlg openWSDlg;
-    protected Action openWSAction, openSTPAction, exitAction, editWSAction,
-            sensitivityAnalysisAction, launchModelAction, editPrefsAction,
-            reloadWSAction, launchWizardAction;
+    protected Action openWSAction, openSTPAction, exitAction, editWSAction, editPrefsAction,
+            sensitivityAnalysisAction, reloadWSAction;
     protected JLabel statusLabel;
     protected JSplitPane mainSplitPane;
     protected JTabbedPane tPane;
@@ -115,13 +85,15 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
     protected Document modelDoc = null;
     protected MCAT5Toolbar mcat5ToolBar = null;
 
-    public ExplorerFrame(JAMSExplorer explorer) {
+    public ExplorerFrame(JAMSExplorer explorer, boolean doInit) {
         this.explorer = explorer;
         mcat5ToolBar = new MCAT5Toolbar(this);
-        init();
+        if (doInit) {
+            init();
+        }
     }
 
-    protected void init() {
+    private void init() {
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -153,35 +125,6 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
             }
         };
 
-        sensitivityAnalysisAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MCAT5...")) {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                mcat5ToolBar.setVisible(!mcat5ToolBar.isVisible());
-            }
-        };
-
-        launchModelAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("START_MODEL")) {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                launchModel();
-            }
-        };
-
-        launchWizardAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("START_WIZARD...")) {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (launchWizard()) {
-                    System.out.println("wizard successfully launched. run model ..");
-                    runModel();
-                    System.out.println("model run finished.");
-                }
-            }
-        };
-
-
         editPrefsAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EDIT_PREFERENCES...")) {
 
             @Override
@@ -194,12 +137,21 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
             }
         };
 
+        sensitivityAnalysisAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MCAT5...")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mcat5ToolBar.setVisible(!mcat5ToolBar.isVisible());
+            }
+        };
+
+
 
         openSTPAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STACKED_TIME_PLOT")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                STPConfigurator stp = new STPConfigurator(explorer);
+                STPConfigurator stp = new STPConfigurator((JAMSExplorer)explorer);
             }
         };
 
@@ -274,19 +226,7 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
         stpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/stp.png")));
         toolBar.add(stpButton);
 
-        if (explorer.isTlugized()) {
-            JButton launchModelButton = new JButton(launchModelAction);
-            launchModelButton.setText("");
-            launchModelButton.setToolTipText((String) launchModelAction.getValue(Action.NAME));
-            launchModelButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
-            toolBar.add(launchModelButton);
-
-            JButton launchWizardButton = new JButton(launchWizardAction);
-            launchWizardButton.setText("");
-            launchWizardButton.setToolTipText((String) launchWizardAction.getValue(Action.NAME));
-            launchWizardButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
-            toolBar.add(launchWizardButton);
-        }
+        toolBar = processToolBarHook(toolBar);
 
         JButton sensitivityAnalysisButton = new JButton(sensitivityAnalysisAction);
         sensitivityAnalysisButton.setText("");
@@ -314,8 +254,16 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
 
         JMenu fileMenu = new JMenu(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE"));
         mainMenu.add(fileMenu);
+
         JMenu prefsMenu = new JMenu(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PREFERENCES"));
         mainMenu.add(prefsMenu);
+
+        JMenuItem editWSItem = new JMenuItem(editWSAction);
+        prefsMenu.add(editWSItem);
+
+        JMenuItem editPrefsItem = new JMenuItem(editPrefsAction);
+        prefsMenu.add(editPrefsItem);
+
         JMenu plotMenu = new JMenu(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT"));
         mainMenu.add(plotMenu);
 
@@ -331,49 +279,21 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
 //        stpIcon.setAccelerator()
         plotMenu.add(stpItem);
 
-        JMenuItem editWSItem = new JMenuItem(editWSAction);
-        prefsMenu.add(editWSItem);
-
         setJMenuBar(mainMenu);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(Math.min(d.width, JAMSExplorer.SCREEN_WIDTH), Math.min(d.height, JAMSExplorer.SCREEN_HEIGHT));
 
-        // init the model document
-        if (explorer.isTlugized()) {
-            JMenuItem editPrefsItem = new JMenuItem(editPrefsAction);
-            prefsMenu.add(editPrefsItem);
-            this.initModelDoc();
-        }
     }
 
-    protected void initModelDoc() {
-        try {
-            JAMSWorkspace workspace = explorer.getWorkspace();
-            if (workspace != null) {
-                String directoryName = workspace.getDirectory().getPath();
-                String completeFileName = directoryName + File.separator + workspace.getModelFilename();
-                System.out.println("initModelDoc: try to get document from file " + completeFileName);
-                /*
-                try {
-                File[] dirFiles = JAMSTools.getFiles(directoryName, null);
-                for (File dirFile : dirFiles) {
-                System.out.println("found file " + dirFile.getName());
-                }
-                } catch (Exception e) {
-                }
-                 */
-                File modelFile = new File(completeFileName);
-                if (modelFile == null || !modelFile.exists()) {
-                    System.out.println("Datei nicht gefunden !!");
-                } else {
-                    this.modelDoc = XMLTools.getDocument(completeFileName);
-                }
-            }
-
-        } catch (FileNotFoundException ex) {
-            explorer.getRuntime().handle(ex);
-        }
+    /**
+     * hook to adapt toolbar in deriving classes
+     * @param toolBar
+     * @return adapted toolbar
+     */
+    protected JToolBar processToolBarHook(JToolBar toolBar) {
+        return toolBar;
     }
+
 
     public void open(File workspaceFile) throws InvalidWorkspaceException {
         String[] libs = StringTools.toArray(explorer.getProperties().getProperty(SystemProperties.LIBS_IDENTIFIER, ""), ";");
@@ -382,9 +302,6 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
         workspace.setLibs(libs);
         explorer.getDisplayManager().removeAllDisplays();
         explorer.setWorkspace(workspace);
-        if (explorer.isTlugized()) {
-            this.initModelDoc();
-        }
         this.update();
     }
 
@@ -418,8 +335,6 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
 
         if (workspace == null) {
             editWSAction.setEnabled(false);
-            launchModelAction.setEnabled(false);
-            launchWizardAction.setEnabled(false);
             reloadWSAction.setEnabled(false);
         } else {
             workspace.updateDataStores();
@@ -428,185 +343,13 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
 //            updateMainPanel(new JPanel());
             editWSAction.setEnabled(true);
             reloadWSAction.setEnabled(true);
-            launchWizardAction.setEnabled(true);
 
-            // check if the default model is existing
-            File modelFile = new File(workspace.getDirectory(), workspace.getModelFilename());
-            if (modelFile.exists()) {
-                launchModelAction.setEnabled(true);
-            } else {
-                launchModelAction.setEnabled(false);
-            }
             explorer.getDisplayManager().getTreePanel().update();
             mainSplitPane.setDividerLocation(INOUT_PANE_WIDTH);
         }
     }
 
-    protected void launchModel() {
 
-        JAMSLauncher launcher = new JAMSLauncher(null, explorer.getProperties(), modelDoc);
-        launcher.setVisible(true);
-    }
-
-    /**
-     * runs the model in background
-     */
-    protected void runModel() {
-
-        SwingWorker worker = new SwingWorker<Object, Void>() {
-
-            public Object doInBackground() {
-                JAMSRuntime runtime = explorer.getRuntime();
-                try {
-                    runtime.loadModel(modelDoc, explorer.getProperties());
-                    runtime.setDebugLevel(3);
-                    runtime.runModel();
-                    update();
-                } catch (Throwable t) {
-                    runtime.handle(t);
-                }
-                return null;
-            }
-        };
-        worker.execute();
-    }
-
-    protected boolean launchWizard() {
-
-        boolean result = false;
-        JAMSWorkspace ws = explorer.getWorkspace();
-
-        Wizard explorerWizard = new ExplorerWizard().createWizard();
-        // init data -> get shape from workspace
-        Map initialData = new HashMap<String, String>();
-        ShapeFileDataStore shapeDataStore = ws.getFirstShapeInputDataStore();
-        if (shapeDataStore != null) {
-            String shapeFileName = (new File(shapeDataStore.getUri()).getPath());
-            System.out.println("init wizard with shape " + shapeFileName);
-            initialData.put(BaseDataPanel.KEY_SHAPE_FILENAME, shapeFileName);
-        }
-
-        // get input datastores
-        Vector<String> dsNames = new Vector<String>();
-        Vector<String> dsDispNames = new Vector<String>();
-        List<String> dsIds = ws.getSortedInputDataStoreIDs();
-        for (String dsId : dsIds) {
-            InputDataStore dataStore = ws.getInputDataStore(dsId);
-            String simpleClassName = dataStore.getClass().getSimpleName();
-            if (simpleClassName.equalsIgnoreCase(InputDataStore.TYPE_J2KTSDATASTORE) ||
-                simpleClassName.equalsIgnoreCase(InputDataStore.TYPE_TSDATASTORE))
-            {
-                dsNames.add(dsId);
-                dsDispNames.add(dataStore.getDisplayName());
-            }
-        }
-        initialData.put(BaseDataPanel.KEY_REGDATA_KEYS, dsNames);
-        initialData.put(BaseDataPanel.KEY_REGDATA_DISPS, dsDispNames);
-
-        try {
-            // call the wizard and get result into wizardSettings
-            Map wizardSettings = (Map) WizardDisplayer.showWizard(explorerWizard,
-                    new Rectangle(20, 20, 850, 530), null, initialData);
-            if (wizardSettings != null) {
-                result = true;
-
-                String workSpaceDir = ws.getDirectory().getCanonicalPath();
-                String modelFileName = null;
-
-                String dataDecision = (String) wizardSettings.get(DataDecisionPanel.KEY_DATA);
-                String computation = null;
-                String sourceDir = null;
-                if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_STATION)) {
-                    computation = (String) wizardSettings.get(StationParamsPanel.KEY_COMPUTATION);
-                    // look into directory &computation and get model + output files
-                    sourceDir = workSpaceDir + File.separator + "variants" + File.separator + computation;
-                    modelFileName = WizardFactory.copyModelFiles(sourceDir, workSpaceDir);
-
-                    // add some input store?
-                    WizardFactory.copyInputFile(sourceDir, workSpaceDir);
-                } // dataDecision = station
-
-                if (dataDecision != null && dataDecision.equals(DataDecisionPanel.VALUE_SPATIAL)) {
-
-                    sourceDir = workSpaceDir + File.separator + "variants" + File.separator + "regionalizer";
-                    modelFileName = WizardFactory.copyModelFiles(sourceDir, workSpaceDir);
-                } // dataDecision = spatial
-
-
-                // new model -> update workspace with it
-                if (!StringTools.isEmptyString(modelFileName)) {
-
-                    // activate the new model
-                    ws.setModelFile(modelFileName);
-                    this.initModelDoc();
-                    setWorkSpace2Model();
-
-                }
-                Properties properties = WizardFactory.getModelPropertiesFromWizardResult(wizardSettings);
-                if (properties != null && properties.size() > 0) {
-                    ParameterProcessor.loadParams(modelDoc, properties);
-                    System.out.println("model loaded with wizard settings.");
-                }
-
-                // replace dataValue with real computation name
-                 String regionalization = (String) wizardSettings.get(BaseDataPanel.KEY_REGIONALIZATION);
-                if (!StringTools.isEmptyString(regionalization)) {
-                    System.out.println("regionalization: " + regionalization);
-                    String oldValue = "dataValue";
-                    String newValue = regionalization;
-                    if (ParameterProcessor.renameAttribute(modelDoc, oldValue, newValue))
-                        WizardFactory.replaceInOutputFiles(sourceDir, workSpaceDir, oldValue, newValue);
-                }
-
-                //additional shape file?
-                String shapeFileName = (String) wizardSettings.get(BaseDataPanel.KEY_SHAPE_FILENAME);
-                System.out.println("shape coming from wizard : " + shapeFileName);
-                if (StringTools.isEmptyString(shapeFileName)) {
-                    String sLatP, sLatG;
-                    double lat, lon, lat2, lon2, height, dist;
-                    sLatP = (String) wizardSettings.get(BaseDataPanel.KEY_POINT_LAT);
-                    sLatG = (String) wizardSettings.get(BaseDataPanel.KEY_GRID_FROM_LAT);
-                    if (!StringTools.isEmptyString(sLatP) || !StringTools.isEmptyString(sLatG)) {
-                        if (!StringTools.isEmptyString(sLatP)) {
-                            System.out.println("create shape from point..");
-                            lat = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_POINT_LAT));
-                            lon = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_POINT_LON));
-                            height = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_POINT_HEIGHT));
-                            shapeFileName = ShapeFactory.createShapeFromPoint(lat, lon, height, workSpaceDir);
-                        } else {
-                            if (!StringTools.isEmptyString(sLatG)) {
-                                System.out.println("create shape from grid..");
-                                lat = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_FROM_LAT));
-                                lon = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_FROM_LON));
-                                lat2 = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_TO_LAT));
-                                lon2 = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_TO_LON));
-                                dist = Double.parseDouble((String) wizardSettings.get(BaseDataPanel.KEY_GRID_DISTANCE));
-                                boolean coordinatesAsDegree = false;
-                                shapeFileName = ShapeFactory.createShapeFromGrid(lat, lon, lat2, lon2, dist, workSpaceDir, coordinatesAsDegree);
-                            }
-                        }
-                        properties.put("EntityReader.idName", ShapeFactory.ID);
-                        ParameterProcessor.loadParams(modelDoc, properties);
-                    }
-                }
-
-                if (!StringTools.isEmptyString(shapeFileName)) {
-                    updateWithShapeFile(shapeFileName, ws);
-                }
-                update();
-                JAMSSpreadSheet spreadSheet = explorer.getDisplayManager().getSpreadSheet();
-                if (spreadSheet != null) {
-                    spreadSheet.updateGUI();
-                }
-
-            } // wizard settings
-
-        } catch (Exception ex) {
-            result = false;
-            explorer.getRuntime().handle(ex);
-        }
-        return result;
-    }
 
     protected void setWorkSpace2Model() {
         JAMSWorkspace workspace = explorer.getWorkspace();
@@ -664,7 +407,7 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
 
         Viewer.destroy();
 
-        for (Window window : explorer.getChildWindows()) {
+        for (Window window : ((JAMSExplorer)explorer).getChildWindows()) {
             window.dispose();
         }
 
@@ -672,30 +415,5 @@ public class ExplorerFrame extends JFrame implements IExplorerFrame {
         this.dispose();
 
         explorer.exit();
-    }
-
-    protected void updateWithShapeFile(String shapeFileName, JAMSWorkspace ws) throws Exception, URISyntaxException {
-        Properties properties = new Properties();
-        File theShapeFile = new File(shapeFileName);
-        String fileName = theShapeFile.getName();
-        String storeId = StringTools.getPartOfToken(fileName, 1, "."); // get rid of suffix;
-        // try to get id
-        Vector<String> attributeNames = ShapeFactory.getAttributeNames(theShapeFile.toURI());
-        String idColumn = ParameterProcessor.getAttributeValue(modelDoc, "EntityReader.idName");
-        if (!StringTools.isEmptyString(idColumn) && attributeNames.contains(idColumn)) {
-            System.out.println("EntityReader.idName in model: " + idColumn);
-        } else {
-            // get fitting id-column from attributes of shape
-            String[] aNames = new String[attributeNames.size()];
-            attributeNames.toArray(aNames);
-            idColumn = Tools.geFittingIdName(aNames);
-            System.out.println("fitting idColumn from shape:" + idColumn);
-            properties.put("EntityReader.idName", idColumn);
-        }
-        // put shape to model
-        ShapeFileDataStore addShapeStore = new ShapeFileDataStore(ws, storeId, theShapeFile.toURI().toString(), fileName, idColumn);
-        ws.registerInputDataStore(storeId, addShapeStore.getDocument());
-        properties.put("EntityReader.shapeFileName", shapeFileName);
-        ParameterProcessor.loadParams(modelDoc, properties);
     }
 }

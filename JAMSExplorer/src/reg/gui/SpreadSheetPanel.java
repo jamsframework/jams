@@ -23,7 +23,6 @@
 package reg.gui;
 
 import javax.swing.JPanel;
-import reg.JAMSExplorer;
 import reg.spreadsheet.JAMSSpreadSheet;
 
 /**
