@@ -40,11 +40,8 @@ import javax.swing.SwingWorker;
 public class WorkerDlg extends JDialog {
 
     private Runnable task;
-
     private SwingWorker worker;
-
     private Frame owner;
-
     private JProgressBar progressBar;
 
     public WorkerDlg(Frame owner, String title) {
