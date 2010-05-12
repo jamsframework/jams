@@ -28,7 +28,6 @@ import javax.swing.UIManager;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jams.tools.JAMSTools;
-import jams.gui.JAMSSplash;
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.runtime.JAMSClassLoader;
@@ -38,7 +37,6 @@ import jamsui.juice.gui.JUICEFrame;
 import jamsui.juice.gui.ModelView;
 import jamsui.juice.gui.tree.LibTree;
 import jamsui.cmdline.JAMSCmdLine;
-import javax.swing.SwingWorker;
 
 /**
  *
@@ -47,27 +45,16 @@ import javax.swing.SwingWorker;
 public class JUICE {
 
     public static final String APP_TITLE = "JUICE";
-
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
-
     public static final int SCREEN_WIDTH = 1200;
-
     public static final int SCREEN_HEIGHT = 850;
-
     private static JUICEFrame juiceFrame;
-
     private static JAMSProperties jamsProperties = JAMSProperties.createProperties();
-
     private static File baseDir = null;
-
     private static ArrayList<ModelView> modelViews = new ArrayList<ModelView>();
-
     private static ClassLoader loader;
-
     private static JAMSCmdLine cmdLine;
-
     private static LibTree libTree;
-
     private static WorkerDlg loadLibsDlg;
 
     public static void main(String args[]) {
@@ -145,21 +132,13 @@ public class JUICE {
             loadLibsDlg = new WorkerDlg(juiceFrame, JAMS.resources.getString("Loading_Libraries"));
         }
         try {
-            loadLibsDlg.setTask(new SwingWorker() {
+            loadLibsDlg.setTask(new Runnable() {
 
-                @Override
-                public Object doInBackground() {
+                public void run() {
                     JUICE.getJuiceFrame().getLibTreePanel().setEnabled(false);
                     JUICE.createClassLoader();
                     getLibTree().update(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER));
                     JUICE.getJuiceFrame().getLibTreePanel().setEnabled(true);
-                    return null;
-                }
-
-                @Override
-                public void done() {
-//                    getLibTree().update(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER));
-//                    JUICE.getJuiceFrame().getLibTreePanel().setEnabled(true);
                 }
             });
             loadLibsDlg.execute();
