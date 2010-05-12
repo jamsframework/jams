@@ -28,9 +28,11 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 /**
@@ -93,27 +95,50 @@ public class WorkerDlg extends JDialog {
 
     public void execute() {
 
-        Dimension ownerDim = owner.getSize();
-        Dimension thisDim = this.getSize();
+        if (owner != null) {
 
-        //center dialog window over owner
-        int x = (int) owner.getX() + ((ownerDim.width - thisDim.width) / 2);
-        int y = (int) owner.getY() + ((ownerDim.height - thisDim.height) / 2);
-        setLocation(x, y);
+            Dimension ownerDim = owner.getSize();
+            Dimension thisDim = this.getSize();
 
-        worker.addPropertyChangeListener(new PropertyChangeListener() {
+            //center dialog window over owner
+            int x = (int) owner.getX() + ((ownerDim.width - thisDim.width) / 2);
+            int y = (int) owner.getY() + ((ownerDim.height - thisDim.height) / 2);
+            setLocation(x, y);
+        }
 
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals("state") && evt.getNewValue() == SwingWorker.StateValue.DONE) {
-                    WorkerDlg.this.setVisible(false);
-                    WorkerDlg.this.dispose();
+//        worker.addPropertyChangeListener(new PropertyChangeListener() {
+//
+//            @Override
+//            public void propertyChange(PropertyChangeEvent evt) {
+//                if (evt.getPropertyName().equals("state") && evt.getNewValue() == SwingWorker.StateValue.DONE) {
+//                    WorkerDlg.this.setVisible(false);
+//                    WorkerDlg.this.dispose();
+//                }
+//            }
+//        });
+
+        new SwingWorker<Object, Void>() {
+
+            public Object doInBackground() {
+                try {
+                    WorkerDlg.this.setVisible(true);
+                } catch (Throwable t) {
+                    t.printStackTrace();
                 }
+                return WorkerDlg.this.task;
             }
-        });
+        }.execute();
 
-        worker.execute();
-        this.setVisible(true);
+        try {
+            worker.execute();
+            worker.get();
+            WorkerDlg.this.setVisible(false);
+            WorkerDlg.this.dispose();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -133,7 +158,7 @@ public class WorkerDlg extends JDialog {
                 } catch (Throwable t) {
                     JAMSTools.handle(t);
                 }
-                return null;
+                return WorkerDlg.this.task;
             }
         };
     }
