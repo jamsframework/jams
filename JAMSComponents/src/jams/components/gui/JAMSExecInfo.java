@@ -29,10 +29,7 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
 import jams.JAMS;
-import jams.data.JAMSInteger;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import jams.data.Attribute;
 import java.io.Serializable;
 
 /**
@@ -50,15 +47,16 @@ import java.io.Serializable;
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "Progress bar always on top?"
+            description = "Number of invocations of this component"
             )
-            public JAMSInteger counter;
+            public Attribute.Integer counter;
     
     private JProgressBar jamsProgressBar;
     private JPanel progressPanel;
     transient private Runnable updatePBar;
     private JScrollPane scrollPanel;
     private JTextArea logArea;
+    private int c = 0;
     
     private JPanel panel;
     
@@ -72,8 +70,7 @@ import java.io.Serializable;
     @Override
     public void init() {           
         if (panel != null) {
-            //counter.setValue(0);
-            jamsProgressBar.setMaximum((int)this.getContext().getNumberOfIterations());            
+            jamsProgressBar.setMaximum((int)this.getContext().getNumberOfIterations());
         } else {
             updatePBar = new Runnable() {
                 public void run() {}
@@ -96,7 +93,6 @@ import java.io.Serializable;
         jamsProgressBar.setIndeterminate(false);        
         updatePBar = new Runnable() {
             public void run() {
-                int c = counter.getValue();
                 jamsProgressBar.setValue(c++);
                 counter.setValue(c);
                 jamsProgressBar.setString(Math.round(jamsProgressBar.getPercentComplete()*100) + "%");
