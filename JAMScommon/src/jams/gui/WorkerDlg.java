@@ -28,11 +28,9 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.concurrent.ExecutionException;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 /**
@@ -106,39 +104,22 @@ public class WorkerDlg extends JDialog {
             setLocation(x, y);
         }
 
-//        worker.addPropertyChangeListener(new PropertyChangeListener() {
-//
-//            @Override
-//            public void propertyChange(PropertyChangeEvent evt) {
-//                if (evt.getPropertyName().equals("state") && evt.getNewValue() == SwingWorker.StateValue.DONE) {
-//                    WorkerDlg.this.setVisible(false);
-//                    WorkerDlg.this.dispose();
-//                }
-//            }
-//        });
+        worker.addPropertyChangeListener(new PropertyChangeListener() {
 
-        new SwingWorker<Object, Void>() {
-
-            public Object doInBackground() {
-                try {
-                    WorkerDlg.this.setVisible(true);
-                } catch (Throwable t) {
-                    t.printStackTrace();
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().equals("state") && evt.getNewValue() == SwingWorker.StateValue.DONE) {
+                    WorkerDlg.this.setVisible(false);
+                    WorkerDlg.this.dispose();
                 }
-                return WorkerDlg.this.task;
             }
-        }.execute();
+        });
 
-        try {
-            worker.execute();
-            worker.get();
-            WorkerDlg.this.setVisible(false);
-            WorkerDlg.this.dispose();
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        } catch (ExecutionException ex) {
-            ex.printStackTrace();
-        }
+        worker.execute();
+
+        this.setVisible(true);
+
+
     }
 
     /**
