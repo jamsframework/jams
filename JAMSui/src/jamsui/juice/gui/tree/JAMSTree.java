@@ -22,6 +22,7 @@
  */
 package jamsui.juice.gui.tree;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.awt.*;
 import javax.swing.*;
@@ -55,6 +56,20 @@ public class JAMSTree extends JTree {
 
     public boolean isPathEditable(TreePath path) {
         return false;
+    }
+
+    @Override
+    public void updateUI() {
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+
+                public void run() {
+                    JAMSTree.super.updateUI();
+                }
+            });
+        } catch (InterruptedException ex) {
+        } catch (InvocationTargetException ex) {
+        }
     }
 
     public Insets getAutoscrollInsets() {
