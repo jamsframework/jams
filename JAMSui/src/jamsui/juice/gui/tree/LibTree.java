@@ -229,7 +229,7 @@ public class LibTree extends JAMSTree {
                 } else {
                     newPackage = "default package";
                 }
-                
+
                 if (!newPackage.equals(oldPackage)) {
                     packageNode = new JAMSNode(newPackage, JAMSNode.PACKAGE_NODE);
                     oldPackage = newPackage;

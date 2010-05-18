@@ -100,7 +100,7 @@ public class JAMSTree extends JTree {
             row--;
         }
     }
-    
+
     public void saveExpandedState(TreePath sourcePath) {
         expandedPaths = getExpandedDescendants(sourcePath);
     }
@@ -112,5 +112,5 @@ public class JAMSTree extends JTree {
                 expandPath(new TreePath(((DefaultMutableTreeNode) tmpPath.getLastPathComponent()).getPath()));
             }
         }
-    }    
+    }
 }
