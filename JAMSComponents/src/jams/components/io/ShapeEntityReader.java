@@ -87,7 +87,11 @@ public class ShapeEntityReader extends JAMSComponent {
         System.out.println("ShapeEntityReader.init. shape-file id " + idName);
         String workSpaceDirectory = getModel().getWorkspaceDirectory().getPath();
         String fileName = shapeFileName.getValue();
-        if (!fileName.startsWith(workSpaceDirectory)) {
+        boolean isCompleteFileName = false;
+        if (fileName.indexOf(":") > -1) {   // works only for windows
+            isCompleteFileName = true;
+        }
+        if (!isCompleteFileName) {
             fileName = workSpaceDirectory + File.separator + fileName;
         }
         URL shapeUrl = (new java.io.File(fileName).toURI().toURL());
@@ -126,6 +130,7 @@ public class ShapeEntityReader extends JAMSComponent {
             Coordinate coord = c2d.getCentroid();
             e.setDouble(xAttribute.getValue(), coord.x);
             e.setDouble(yAttribute.getValue(), coord.y);
+            //System.out.println("ShapeEntityReader.x/y: " + coord.x + "/" + coord.y);
 
             if (idAttributeIndex != -1) {
                 try {
