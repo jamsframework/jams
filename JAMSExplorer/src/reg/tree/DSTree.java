@@ -46,7 +46,8 @@ public class DSTree extends JAMSTree {
 
     private static final String ROOT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATENSPEICHER"), INPUT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EINGABEDATEN"), OUTPUT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AUSGABEDATEN");
 
-    private JPopupMenu popup;
+    private JPopupMenu popupDS;
+    private JPopupMenu popupDir;
 
     private NodeObservable nodeObservable = new NodeObservable();
 
@@ -67,9 +68,9 @@ public class DSTree extends JAMSTree {
             }
         });
 
-        JMenuItem deleteItem = new JMenuItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DELETE"));
-        deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-        deleteItem.addActionListener(new ActionListener() {
+        JMenuItem deleteFileItem = new JMenuItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DELETE"));
+        deleteFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+        deleteFileItem.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -77,9 +78,22 @@ public class DSTree extends JAMSTree {
             }
         });
 
-        popup = new JPopupMenu();
-        popup.add(detailItem);
-        popup.add(deleteItem);
+        JMenuItem deleteDirItem = new JMenuItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DELETE"));
+        deleteDirItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+        deleteDirItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                deleteDSDir();
+            }
+        });
+
+        popupDS = new JPopupMenu();
+        popupDS.add(detailItem);
+        popupDS.add(deleteFileItem);
+
+        popupDir = new JPopupMenu();
+        popupDir.add(deleteDirItem);
 
         addMouseListener(new MouseAdapter() {
 
@@ -152,13 +166,20 @@ public class DSTree extends JAMSTree {
     private void deleteDSFile(){
         explorer.getDisplayManager().deleteDS((DSTreeNode) getLastSelectedPathComponent());
     }
+    private void deleteDSDir(){
+        explorer.getDisplayManager().deleteDS((DSTreeNode) getLastSelectedPathComponent());
+    }
 
     private void showPopup(MouseEvent evt) {
         TreePath p = this.getClosestPathForLocation(evt.getX(), evt.getY());
         this.setSelectionPath(p);
         DSTreeNode node = (DSTreeNode) this.getLastSelectedPathComponent();
+        System.out.println("try to showPopup for node " + node.getType());
         if ((node != null) && ((node.getType() == DSTreeNode.INPUT_DS) || (node.getType() == DSTreeNode.OUTPUT_DS))) {
-            popup.show(this, evt.getX(), evt.getY());
+            popupDS.show(this, evt.getX(), evt.getY());
+        }
+        if ((node != null) && ((node.getType() == DSTreeNode.OUTPUT_DIR))) {
+            popupDir.show(this, evt.getX(), evt.getY());
         }
     }
 

@@ -23,6 +23,7 @@
 package reg;
 
 import jams.gui.tools.GUIHelper;
+import jams.tools.FileTools;
 import jams.workspace.stores.InputDataStore;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -49,15 +50,10 @@ import reg.tree.FileObject;
 public class DisplayManager implements Observer {
 
     private InputDSInfoPanel inputDSInfoPanel;
-
     private TSPanel tsPanel;
-
     private TreePanel treePanel;
-
     private HashMap<String, JPanel> dataPanels = new HashMap<String, JPanel>();
-
     private JAMSExplorer explorer;
-
     private JAMSSpreadSheet spreadSheet = null;
 
     public DisplayManager(JAMSExplorer explorer) {
@@ -102,6 +98,7 @@ public class DisplayManager implements Observer {
     public void displayDS(DSTreeNode node) {
 
         String dsID;
+        File datFile;
 
         if (node == null) {
             return;
@@ -142,9 +139,9 @@ public class DisplayManager implements Observer {
             case DSTreeNode.OUTPUT_DS:
 
                 FileObject fo = (FileObject) node.getUserObject();
+                datFile = fo.getFile();
 
-                dsID = fo.getFile().getName() + " " + fo.getFile().getParentFile().getName();
-
+                dsID = getIdFromName(datFile);
                 if (dataPanels.containsKey(dsID)) {
 
                     JPanel panel = dataPanels.get(dsID);
@@ -155,7 +152,7 @@ public class DisplayManager implements Observer {
 
                 try {
 
-                    JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(explorer, fo.getFile(), dsID);
+                    JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(explorer, datFile, dsID);
                     dataPanels.put(dsID, outputPanel);
                     explorer.getExplorerFrame().getTPane().addTab(dsID, outputPanel);
                     explorer.getExplorerFrame().getTPane().setSelectedComponent(outputPanel);
@@ -171,8 +168,6 @@ public class DisplayManager implements Observer {
 
     public void deleteDS(DSTreeNode node) {
 
-        String dsID;
-        File ttpFile;
         File datFile;
 
         if (node == null) {
@@ -200,39 +195,74 @@ public class DisplayManager implements Observer {
             case DSTreeNode.OUTPUT_DS:
 
                 FileObject fo = (FileObject) node.getUserObject();
-
-                dsID = fo.getFile().getName() + " " + fo.getFile().getParentFile().getName();
-
-                if (dataPanels.containsKey(dsID)) {
-                    removeDisplay(dsID);
-                    dataPanels.remove(dsID);
-                }
-
                 datFile = fo.getFile();
-                System.out.println("dat file:"+fo.getFile().getAbsolutePath());
-
-                String fileID = fo.getFile().getName();
-                StringTokenizer name_tokenizer = new StringTokenizer(fileID, ".");
-                String filename = "";
-                if (name_tokenizer.hasMoreTokens()) {
-                    filename = name_tokenizer.nextToken() + SpreadsheetConstants.FILE_ENDING_TTP;
-                } else {
-                    filename = fileID + SpreadsheetConstants.FILE_ENDING_TTP;
-                }
-
-                ttpFile = new File(fo.getFile().getParent(), filename);
-
-                if(ttpFile.exists()){
-                    ttpFile.delete();
-                }
-                if(datFile.exists()){
-                    datFile.delete();
-                }else{
-                }
-
+                deleteOutputFile(datFile);
                 explorer.getExplorerFrame().update();
-
                 break;
+
+            case DSTreeNode.OUTPUT_DIR:
+                String delDirName = node.getUserObject().toString();
+                //System.out.println("delDirName:" + delDirName);
+                File currentOutDir = explorer.getWorkspace().getOutputDataDirectory();
+                if (currentOutDir != null && currentOutDir.getName().equals(delDirName)) {
+                    System.out.println("can not delete actual output directory!!");
+                } else {
+                    File[] outDirs = explorer.getWorkspace().getOutputDataDirectories();
+                    for (File outDir : outDirs) {
+                        if (outDir.getName().equals(delDirName)) {
+                            //System.out.println("try to delete " + outDir.getName());
+                            for (File file : explorer.getWorkspace().getOutputDataFiles(outDir)) {
+                                deleteOutputFile(file);
+                            }
+                            FileTools.deleteFiles(outDir.listFiles()); //may be some db-files left?
+                            outDir.delete();
+                            explorer.getExplorerFrame().update();
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    /**
+     * encapsulates special id-stuff
+     * @param theFile
+     * @return id
+     * @todo: this method should be a static method of outbput-datastore or ??
+     */
+    private String getIdFromName(File theFile) {
+        String id = theFile.getName() + " " + theFile.getParentFile().getName();
+        return id;
+    }
+
+    private void deleteOutputFile(File datFile) {
+        String dsID;
+        File ttpFile;
+
+        dsID = getIdFromName(datFile);
+
+        if (dataPanels.containsKey(dsID)) {
+            removeDisplay(dsID);
+            dataPanels.remove(dsID);
+        }
+
+        System.out.println("dat file:" + datFile.getAbsolutePath());
+
+        String fileID = datFile.getName();
+        StringTokenizer name_tokenizer = new StringTokenizer(fileID, ".");
+        String filename = "";
+        if (name_tokenizer.hasMoreTokens()) {
+            filename = name_tokenizer.nextToken() + SpreadsheetConstants.FILE_ENDING_TTP;
+        } else {
+            filename = fileID + SpreadsheetConstants.FILE_ENDING_TTP;
+        }
+
+        ttpFile = new File(datFile.getParent(), filename);
+        if (ttpFile.exists()) {
+            ttpFile.delete();
+        }
+        if (datFile.exists()) {
+            datFile.delete();
         }
     }
 
@@ -267,5 +297,4 @@ public class DisplayManager implements Observer {
     public JAMSSpreadSheet getSpreadSheet() {
         return spreadSheet;
     }
-
 }
