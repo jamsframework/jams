@@ -24,6 +24,7 @@ package reg.gui;
 
 import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -36,8 +37,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
@@ -71,19 +70,12 @@ import reg.dsproc.TimeSpaceProcessor;
 public class TimeSpaceDSPanel extends DSPanel {
 
     private static final Dimension ACTION_BUTTON_DIM = new Dimension(150, 25), LIST_DIMENSION = new Dimension(150, 250);
-
     private TimeSpaceProcessor proc;
-
     private GridBagLayout mainLayout;
-
     private JList timeList, entityList, monthList, yearList;
-
     private JTextField timeField;
-
     private JPanel aggregationPanel;
-
     private GridBagLayout aggregationLayout;
-
     private Action[] actions = {
         new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_STEP")) {
 
@@ -134,9 +126,7 @@ public class TimeSpaceDSPanel extends DSPanel {
                 showCrossProduct();
             }
         },};
-
     private Action timePoint = actions[0], timeMean = actions[1], spacePoint = actions[2], spaceMean = actions[3], monthMean = actions[4], yearMean = actions[5], crossProduct = actions[6];
-
     private Action cacheReset = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RESET_CACHES")) {
 
         @Override
@@ -144,7 +134,6 @@ public class TimeSpaceDSPanel extends DSPanel {
             resetCaches();
         }
     };
-
     private Action indexReset = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RELOAD_INDEX")) {
 
         @Override
@@ -152,7 +141,6 @@ public class TimeSpaceDSPanel extends DSPanel {
             resetIndex();
         }
     };
-
     private Action freeTempMean = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TEMP._MEAN_(FILTER)")) {
 
         @Override
@@ -180,7 +168,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
         timeList = new JList();
         JScrollPane timeListScroll = new JScrollPane(timeList);
-        timeListScroll.setPreferredSize(LIST_DIMENSION);
+//        timeListScroll.setPreferredSize(LIST_DIMENSION);
         timeList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
@@ -208,7 +196,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
         entityList = new JList();
         JScrollPane entityListScroll = new JScrollPane(entityList);
-        entityListScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width - 50, LIST_DIMENSION.height));
+//        entityListScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width - 50, LIST_DIMENSION.height));
         entityList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
@@ -237,7 +225,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         monthList = new JList();
         monthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane monthListScroll = new JScrollPane(monthList);
-        monthListScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width - 100, LIST_DIMENSION.height));
+//        monthListScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width - 100, LIST_DIMENSION.height));
         monthList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
@@ -254,7 +242,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         yearList = new JList();
         yearList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane yearListScroll = new JScrollPane(yearList);
-        yearListScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width - 100, LIST_DIMENSION.height));
+//        yearListScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width - 100, LIST_DIMENSION.height));
         yearList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
@@ -274,7 +262,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         aggregationPanel = new JPanel();
         aggregationPanel.setLayout(aggregationLayout);
         JScrollPane aggregationScroll = new JScrollPane(aggregationPanel);
-        aggregationScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width + 100, LIST_DIMENSION.height));
+        aggregationScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width + 120, LIST_DIMENSION.height));
 
         GUIHelper.addGBComponent(this, mainLayout, aggregationScroll, 0, 20, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_STEPS:")), 10, 10, 1, 1, 0, 0);
@@ -376,12 +364,12 @@ public class TimeSpaceDSPanel extends DSPanel {
         JScrollPane scroll = new JScrollPane(tsp);
         frame.add(scroll);
         tsp.setParent(frame);
-        //frame.setPreferredSize(new Dimension(300, 100));
+        frame.setPreferredSize(new Dimension(300, 100));
         frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        DataStoreProcessor dsdb = new DataStoreProcessor(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/TestData.dat"));
+        DataStoreProcessor dsdb = new DataStoreProcessor(new File("/home/nsk/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_1.dat"));
         //dsdb.removeDB();
         dsdb.addImportProgressObserver(new Observer() {
 
@@ -447,13 +435,11 @@ public class TimeSpaceDSPanel extends DSPanel {
     }
 
     private void resetIndex() {
-
         try {
             dsdb.clearDB();
         } catch (SQLException ex) {
-            Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
-
         createDB();
     }
 
@@ -526,14 +512,22 @@ public class TimeSpaceDSPanel extends DSPanel {
         label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AGGREGATION_WEIGHT"));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 3, 3, 1, 0, 0);
-        label = new JLabel("1");
-        label.setHorizontalAlignment(SwingConstants.CENTER);
+
+        Dimension labelDim = new Dimension(50, 20);
+
+        label = new JLabel("sum");
+//        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setPreferredSize(labelDim);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 5, 1, 1, 0, 0);
-        label = new JLabel("1/n");
-        label.setHorizontalAlignment(SwingConstants.CENTER);
+
+        label = new JLabel("mean");
+//        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setPreferredSize(labelDim);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 11, 5, 1, 1, 0, 0);
-        label = new JLabel("w/W");
-        label.setHorizontalAlignment(SwingConstants.LEFT);
+
+        label = new JLabel("weighted");
+//        label.setHorizontalAlignment(SwingConstants.LEFT);
+        label.setPreferredSize(labelDim);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 12, 5, 1, 1, 0, 0);
 
         int i = 0;
