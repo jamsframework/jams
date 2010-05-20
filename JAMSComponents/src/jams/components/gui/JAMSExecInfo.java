@@ -93,7 +93,7 @@ import java.io.Serializable;
         jamsProgressBar.setIndeterminate(false);        
         updatePBar = new Runnable() {
             public void run() {
-                jamsProgressBar.setValue(c++);
+                jamsProgressBar.setValue(++c);
                 counter.setValue(c);
                 jamsProgressBar.setString(Math.round(jamsProgressBar.getPercentComplete()*100) + "%");
             }

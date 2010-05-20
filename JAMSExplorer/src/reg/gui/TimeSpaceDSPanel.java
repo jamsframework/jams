@@ -24,7 +24,6 @@ package reg.gui;
 
 import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
-import jams.tools.JAMSTools;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -701,7 +700,6 @@ public class TimeSpaceDSPanel extends DSPanel {
     }
 
     private void showMonthlyMean() {
-
         if (monthList.getSelectedValues().length == 0) {
             return;
         }
@@ -717,9 +715,8 @@ public class TimeSpaceDSPanel extends DSPanel {
 
                     int month = (Integer) monthList.getSelectedValue();
 
-                    workerDlg.setInderminate(true);
-
                     m = getProc().getMonthlyMean(month);
+//                    workerDlg.setInderminate(true);
 
                 } catch (SQLException ex) {
                     ex.printStackTrace();
@@ -759,11 +756,11 @@ public class TimeSpaceDSPanel extends DSPanel {
 
                     int year = (Integer) yearList.getSelectedValue();
 
-                    if (!proc.isYearlyMeanExisiting()) {
-                        proc.calcYearlyMean();
-                    }
+//                    if (!proc.isYearlyMeanExisiting()) {
+//                        proc.calcYearlyMean();
+//                    }
                     m = proc.getYearlyMean(year);
-                    workerDlg.setInderminate(true);
+//                    workerDlg.setInderminate(true);
 
                 } catch (SQLException ex) {
                     ex.printStackTrace();
@@ -829,7 +826,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
                         m = tsproc.getTemporalMean();
                     } else {
-                        m = tsproc.getTemporalMean(dates);
+                        m = tsproc.getTemporalAggregate(dates);
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();
