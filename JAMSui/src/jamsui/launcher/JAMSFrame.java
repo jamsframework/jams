@@ -672,7 +672,7 @@ public class JAMSFrame extends JAMSLauncher {
         try {
 
             if (theExplorer == null) {
-                theExplorer = new JAMSExplorer(null, false, false);
+                theExplorer = new JAMSExplorer(null, false);
             }
 
             if ((theExplorer.getWorkspace() == null) || (!theExplorer.getWorkspace().getDirectory().equals(workspaceFile))) {
