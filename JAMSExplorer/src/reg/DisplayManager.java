@@ -202,11 +202,8 @@ public class DisplayManager implements Observer {
 
             case DSTreeNode.OUTPUT_DIR:
                 String delDirName = node.getUserObject().toString();
-                //System.out.println("delDirName:" + delDirName);
                 File currentOutDir = explorer.getWorkspace().getOutputDataDirectory();
-                if (currentOutDir != null && currentOutDir.getName().equals(delDirName)) {
-                    System.out.println("can not delete actual output directory!!");
-                } else {
+                if (currentOutDir == null || !currentOutDir.getName().equals(delDirName)) {
                     File[] outDirs = explorer.getWorkspace().getOutputDataDirectories();
                     for (File outDir : outDirs) {
                         if (outDir.getName().equals(delDirName)) {
@@ -245,8 +242,6 @@ public class DisplayManager implements Observer {
             removeDisplay(dsID);
             dataPanels.remove(dsID);
         }
-
-        System.out.println("dat file:" + datFile.getAbsolutePath());
 
         String fileID = datFile.getName();
         StringTokenizer name_tokenizer = new StringTokenizer(fileID, ".");

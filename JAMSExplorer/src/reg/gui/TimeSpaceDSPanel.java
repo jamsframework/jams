@@ -24,7 +24,6 @@ package reg.gui;
 
 import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -69,12 +68,12 @@ import reg.dsproc.TimeSpaceProcessor;
  */
 public class TimeSpaceDSPanel extends DSPanel {
 
-    private static final Dimension ACTION_BUTTON_DIM = new Dimension(150, 25), LIST_DIMENSION = new Dimension(150, 250);
+    private static final Dimension LIST_DIMENSION = new Dimension(300, 250);
     private TimeSpaceProcessor proc;
     private GridBagLayout mainLayout;
     private JList timeList, entityList, monthList, yearList;
     private JTextField timeField;
-    private JPanel aggregationPanel;
+    private JPanel outerPanel, aggregationPanel;
     private GridBagLayout aggregationLayout;
     private Action[] actions = {
         new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_STEP")) {
@@ -105,6 +104,13 @@ public class TimeSpaceDSPanel extends DSPanel {
                 showSpatEntity();
             }
         },
+        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CROSSPRODUCT")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showCrossProduct();
+            }
+        },
         new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONTHLY_MEAN")) {
 
             @Override
@@ -118,15 +124,9 @@ public class TimeSpaceDSPanel extends DSPanel {
             public void actionPerformed(ActionEvent e) {
                 showYearlyMean();
             }
-        },
-        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CROSSPRODUCT")) {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showCrossProduct();
-            }
-        },};
-    private Action timePoint = actions[0], timeMean = actions[1], spacePoint = actions[2], spaceMean = actions[3], monthMean = actions[4], yearMean = actions[5], crossProduct = actions[6];
+        }
+    };
+    private Action timePoint = actions[0], timeMean = actions[1], spacePoint = actions[2], spaceMean = actions[3], crossProduct = actions[4], monthMean = actions[5], yearMean = actions[6];
     private Action cacheReset = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RESET_CACHES")) {
 
         @Override
@@ -163,8 +163,10 @@ public class TimeSpaceDSPanel extends DSPanel {
         cacheReset.setEnabled(false);
         indexReset.setEnabled(false);
 
+        outerPanel = new JPanel();
+
         mainLayout = new GridBagLayout();
-        this.setLayout(mainLayout);
+        outerPanel.setLayout(mainLayout);
 
         timeList = new JList();
         JScrollPane timeListScroll = new JScrollPane(timeList);
@@ -256,47 +258,43 @@ public class TimeSpaceDSPanel extends DSPanel {
             }
         });
 
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ATTRIBUTE/AGGREGATION:")), 0, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ATTRIBUTE/AGGREGATION:")), 0, 10, 1, 1, 0, 0);
 
         aggregationLayout = new GridBagLayout();
         aggregationPanel = new JPanel();
         aggregationPanel.setLayout(aggregationLayout);
         JScrollPane aggregationScroll = new JScrollPane(aggregationPanel);
-        aggregationScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width + 120, LIST_DIMENSION.height));
+        aggregationScroll.setPreferredSize(LIST_DIMENSION);
 
-        GUIHelper.addGBComponent(this, mainLayout, aggregationScroll, 0, 20, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_STEPS:")), 10, 10, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, timeListScroll, 10, 20, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ENTITIY_IDS:")), 20, 10, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, entityListScroll, 20, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, aggregationScroll, 0, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_STEPS:")), 10, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, timeListScroll, 10, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ENTITIY_IDS:")), 20, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, entityListScroll, 20, 20, 1, 1, 0, 0);
 
         JPanel buttonPanelA = new JPanel();
-        buttonPanelA.setPreferredSize(LIST_DIMENSION);
+        GridBagLayout panelALayout = new GridBagLayout();
+        buttonPanelA.setLayout(panelALayout);
+//        buttonPanelA.setPreferredSize(LIST_DIMENSION);
         JButton button;
 
-        for (int i = 0; i <= 3; i++) {
+        for (int i = 0; i <= 4; i++) {
             Action a = actions[i];
             button = new JButton(a);
-            button.setPreferredSize(ACTION_BUTTON_DIM);
-            buttonPanelA.add(button);
+            GUIHelper.addGBComponent(buttonPanelA, panelALayout, button, 0, i, 1, 1, 0, 0);
         }
 
-        buttonPanelA.add(new JButton(crossProduct) {
-
-            {
-                setPreferredSize(ACTION_BUTTON_DIM);
-            }
-        });
-
         JPanel filterPanel = new JPanel();
-        filterPanel.setPreferredSize(new Dimension(LIST_DIMENSION.width, LIST_DIMENSION.height - 150));
+        GridBagLayout filterPanelLayout = new GridBagLayout();
+        filterPanel.setLayout(filterPanelLayout);
+//        filterPanel.setPreferredSize(new Dimension(LIST_DIMENSION.width, LIST_DIMENSION.height - 150));
         filterPanel.setBorder(BorderFactory.createEtchedBorder());
 
-        filterPanel.add(new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_FILTER:")));
+        GUIHelper.addGBComponent(filterPanel, filterPanelLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_FILTER:")), 0, 0, 1, 1, 0, 0);
         timeField = new JTextField();
         timeField.setEnabled(false);
         timeField.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATE_EXPRESSION_IN_SQL_SYNTAX,_E.G._1992-11-%_FOR_ALL_NOVEMBER_VALUES_IN_1992"));
-        timeField.setPreferredSize(new Dimension(ACTION_BUTTON_DIM.width - 20, timeField.getPreferredSize().height));
+//        timeField.setPreferredSize(new Dimension(ACTION_BUTTON_DIM.width - 20, timeField.getPreferredSize().height));
         timeField.getDocument().addDocumentListener(new DocumentListener() {
 
             public void insertUpdate(DocumentEvent e) {
@@ -316,43 +314,61 @@ public class TimeSpaceDSPanel extends DSPanel {
             }
         });
 
-        filterPanel.add(timeField);
+        GUIHelper.addGBComponent(filterPanel, filterPanelLayout, timeField, 0, 10, 1, 1, 0, 0);
 
         button = new JButton(freeTempMean);
-        button.setPreferredSize(new Dimension(ACTION_BUTTON_DIM.width - 20, ACTION_BUTTON_DIM.height));
-        filterPanel.add(button);
+        //button.setPreferredSize(new Dimension(ACTION_BUTTON_DIM.width - 20, ACTION_BUTTON_DIM.height));
+        GUIHelper.addGBComponent(filterPanel, filterPanelLayout, button, 0, 20, 1, 1, 0, 0);
 
-        buttonPanelA.add(filterPanel);
+        GUIHelper.addGBComponent(buttonPanelA, panelALayout, filterPanel, 0, 10, 1, 1, 0, 0);
 
-        GUIHelper.addGBComponent(this, mainLayout, buttonPanelA, 40, 20, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONTHS:")), 60, 10, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, monthListScroll, 60, 20, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YEARS:")), 70, 10, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, yearListScroll, 70, 20, 1, 1, 0, 0);
+
+        GUIHelper.addGBComponent(outerPanel, mainLayout, buttonPanelA, 40, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONTHS:")), 60, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, monthListScroll, 60, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YEARS:")), 70, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, yearListScroll, 70, 20, 1, 1, 0, 0);
 
         JPanel buttonPanelB = new JPanel();
-        buttonPanelB.setPreferredSize(LIST_DIMENSION);
+        GridBagLayout panelBLayout = new GridBagLayout();
+        buttonPanelB.setLayout(panelBLayout);
+//        buttonPanelB.setPreferredSize(LIST_DIMENSION);
 
-        for (int i = 4; i < actions.length - 1; i++) {
+        for (int i = 5; i < actions.length; i++) {
             Action a = actions[i];
             button = new JButton(a);
-            button.setPreferredSize(ACTION_BUTTON_DIM);
-            buttonPanelB.add(button);
+            GUIHelper.addGBComponent(buttonPanelB, panelBLayout, button, 0, i, 1, 1, 0, 0);
         }
 
-        buttonPanelB.add(new JPanel());
-
         button = new JButton(cacheReset);
-        button.setPreferredSize(ACTION_BUTTON_DIM);
-        buttonPanelB.add(button);
+//        button.setPreferredSize(ACTION_BUTTON_DIM);
+//        GUIHelper.addGBComponent(buttonPanelB, panelBLayout, button, 0, 10, 1, 1, 0, 0);
 
         button = new JButton(indexReset);
-        button.setPreferredSize(ACTION_BUTTON_DIM);
-        buttonPanelB.add(button);
+//        button.setPreferredSize(ACTION_BUTTON_DIM);
+        GUIHelper.addGBComponent(buttonPanelB, panelBLayout, button, 0, 20, 1, 1, 0, 0);
 
-        GUIHelper.addGBComponent(this, mainLayout, buttonPanelB, 80, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, buttonPanelB, 80, 20, 1, 1, 0, 0);
+
+        this.add(outerPanel);
 
     }
+
+//    private void syncButton(ArrayList<JButton> buttonList) {
+//
+//        int maxW = Integer.MIN_VALUE;
+//        int maxH = Integer.MIN_VALUE;
+//        for (JButton b : buttonList) {
+//            maxW = Math.max(maxW, b.getPreferredSize().width);
+//            maxH = Math.max(maxH, b.getPreferredSize().height);
+//        }
+//
+//        Dimension d = new Dimension(maxW, maxH);
+//
+//        for (JButton b : buttonList) {
+//            b.setPreferredSize(d);
+//        }
+//    }
 
     public static void main(String[] args) throws Exception {
         try {
@@ -374,7 +390,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         dsdb.addImportProgressObserver(new Observer() {
 
             public void update(Observable o, Object arg) {
-                System.out.println(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("IMPORT_PROGRESS:_") + arg);
+                System.out.println("IMPORT PROGRESS: " + arg);
             }
         });
 
@@ -516,17 +532,14 @@ public class TimeSpaceDSPanel extends DSPanel {
         Dimension labelDim = new Dimension(50, 20);
 
         label = new JLabel("sum");
-//        label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setPreferredSize(labelDim);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 5, 1, 1, 0, 0);
 
         label = new JLabel("mean");
-//        label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setPreferredSize(labelDim);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 11, 5, 1, 1, 0, 0);
 
         label = new JLabel("weighted");
-//        label.setHorizontalAlignment(SwingConstants.LEFT);
         label.setPreferredSize(labelDim);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 12, 5, 1, 1, 0, 0);
 
@@ -1003,6 +1016,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
     private void toggleFreeTempMeanButton() {
         String filter = timeField.getText();
+//        if (StringTools.isEmptyString(filter)) {
         if (!filter.contains("%") && !filter.contains("?")) {
             freeTempMean.setEnabled(false);
         } else {

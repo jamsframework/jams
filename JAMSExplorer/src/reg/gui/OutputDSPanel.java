@@ -25,7 +25,6 @@ package reg.gui;
 import java.awt.BorderLayout;
 import java.io.File;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import reg.JAMSExplorer;
 import reg.dsproc.DataStoreProcessor;
 import reg.spreadsheet.JAMSSpreadSheet;
@@ -75,22 +74,6 @@ public class OutputDSPanel extends JPanel {
         tsp.setParent(explorer.getExplorerFrame());
         tsp.setOutputSpreadSheet(this.spreadsheet);
         tsp.createProc(file);
-
-//        JSplitPane sp = new JSplitPane();
-//        sp.setOrientation(JSplitPane.VERTICAL_SPLIT);
-
-//        tsp.setPreferredSize(new Dimension(800, 400));
-
-//        sp.setTopComponent(tsp);
-//        sp.setBottomComponent(this.spreadsheet);
-//
-//        this.add(sp);
-
-//        GridBagLayout mainLayout = new GridBagLayout();
-//        this.setLayout(mainLayout);
-
-//        GUIHelper.addGBComponent(this, mainLayout, new JScrollPane(tsp), 0, 0, 1, 2, 0, 0);
-//        GUIHelper.addGBComponent(this, mainLayout, this.spreadsheet, 0, 10, 1, 1, 0, 0);
 
         this.add(tsp, BorderLayout.NORTH);
         this.add(this.spreadsheet, BorderLayout.CENTER);

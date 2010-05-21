@@ -174,7 +174,6 @@ public class DSTree extends JAMSTree {
         TreePath p = this.getClosestPathForLocation(evt.getX(), evt.getY());
         this.setSelectionPath(p);
         DSTreeNode node = (DSTreeNode) this.getLastSelectedPathComponent();
-        System.out.println("try to showPopup for node " + node.getType());
         if ((node != null) && ((node.getType() == DSTreeNode.INPUT_DS) || (node.getType() == DSTreeNode.OUTPUT_DS))) {
             popupDS.show(this, evt.getX(), evt.getY());
         }

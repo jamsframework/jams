@@ -51,10 +51,8 @@ public class InputDSInfoPanel extends JPanel {
         }
 
         Class storeClass = store.getClass();
-        //System.out.println("store:" + storeID + ", (" + store.getClass().getSimpleName() + ")");
         InputInfoPanelSimple infoPanel = infoPanels.get(storeClass);
         if (infoPanel == null) {
-            //System.out.println("create a new one.");
             if (store instanceof TSDataStore) {
                 infoPanel = new InputInfoPanelTS();
             }
