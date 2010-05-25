@@ -27,7 +27,6 @@ import jams.tools.XMLTools;
 import jams.tools.JAMSTools;
 import java.io.*;
 import javax.swing.UIManager;
-import jams.gui.JAMSSplash;
 import jams.runtime.*;
 import jams.io.*;
 import jams.JAMS;
