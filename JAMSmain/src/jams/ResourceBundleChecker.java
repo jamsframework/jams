@@ -55,6 +55,8 @@ public class ResourceBundleChecker {
 
     private static void compareBundles(String res1, String res2) throws IOException {
 
+        System.out.println(">>>>>>>>>>>>>>>> Comparing " + res1 + " with " + res2);
+
         ArrayList<String> resKeys1 = getKeySet(res1);
         ArrayList<String> resKeys2 = getKeySet(res2);
 

@@ -129,6 +129,7 @@ public class ModelLoader {
                     String outputDSName = ((Element) outputDSNode).getAttribute("name");
 
                     try {
+
                         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                         DocumentBuilder builder = factory.newDocumentBuilder();
                         Document document = builder.newDocument();
@@ -140,7 +141,9 @@ public class ModelLoader {
                         }
 
                     } catch (ParserConfigurationException pce) {
+
                         jamsModel.getRuntime().handle(pce);
+
                     }
                 }
             }
@@ -151,11 +154,7 @@ public class ModelLoader {
         jamsModel.getRuntime().println(JAMS.resources.getString("workspace_:_") + jamsModel.getWorkspacePath(), JAMS.STANDARD);
         jamsModel.getRuntime().println(JAMS.resources.getString("author____:_") + jamsModel.getAuthor(), JAMS.STANDARD);
         jamsModel.getRuntime().println(JAMS.resources.getString("date______:_") + jamsModel.getDate(), JAMS.STANDARD);
-        jamsModel.getRuntime().println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
-
         jamsModel.getRuntime().println("", JAMS.STANDARD);
-        jamsModel.getRuntime().println(JAMS.resources.getString("loading_components"), JAMS.STANDARD);
-        jamsModel.getRuntime().println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
 
         // create the model
         ArrayList<Component> childComponentList = new ArrayList<Component>();

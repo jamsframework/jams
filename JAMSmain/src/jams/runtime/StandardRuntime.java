@@ -40,6 +40,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import jams.JAMS;
+import jams.JAMSProperties;
+import jams.JAMSVersion;
 import jams.SystemProperties;
 import jams.data.JAMSData;
 import jams.model.SmallModelState;
@@ -61,6 +63,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import org.w3c.dom.Document;
@@ -72,50 +76,56 @@ import org.w3c.dom.Document;
 public class StandardRuntime extends Observable implements JAMSRuntime, Serializable {
 
     private HashMap<String, JAMSData> dataHandles = new HashMap<String, JAMSData>();
-
     private JAMSLog errorLog = new JAMSLog();
-
     private JAMSLog infoLog = new JAMSLog();
-
     private int debugLevel = JAMS.STANDARD;
     //private RunState runState = new RunState();
-
     private ArrayList<GUIComponent> guiComponents = new ArrayList<GUIComponent>();
-
     transient private JButton stopButton, pauseButton, saveButton, closeButton;
-
     transient private JFrame frame;
-
     private Model model;
-
     transient private PrintStream infoStream, errorStream;
-
     private boolean guiEnabled = false;
-
     transient private ClassLoader classLoader;
-
     private Document modelDocument = null;
-
     private SystemProperties properties = null;
-
     String[] libs = null;
-
     private int runState = -1;
-
-    private HashMap<String, Integer> idMap;        
+    private HashMap<String, Integer> idMap;
     transient private SmallModelState state = new JAMSSmallModelState();
-    
+
     @Override
-    public void loadModel(Document modelDocument, SystemProperties properties) {        
+    public void loadModel(Document modelDocument, SystemProperties properties) {
+
         this.modelDocument = modelDocument;
         this.properties = properties;
 
+        initLogging();
+
+        String user = properties.getProperty(JAMSProperties.USERNAME_IDENTIFIER);
+        if (!StringTools.isEmptyString(user)) {
+            user = System.getProperty("user.name") + " (" + user + ")";
+        } else {
+            user = System.getProperty("user.name");
+        }
+
+        this.println(JAMS.resources.getString("JAMS_version") + JAMSVersion.getInstance().getVersionDateString(), JAMS.STANDARD);
+        this.println(JAMS.resources.getString("User_name_:") + user, JAMS.STANDARD);
+        this.println(JAMS.resources.getString("Date_time") + new SimpleDateFormat().format(new Date()), JAMS.STANDARD);
+        this.println("", JAMS.STANDARD);
+
+
+        // start the loading process
         long start = System.currentTimeMillis();
 
         // get libraries specified in properties
         libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
 
         // load the libraries and create the class loader
+
+        this.println(JAMS.resources.getString("Creating_class_loader"), JAMS.STANDARD);
+        this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
+
         classLoader = JAMSClassLoader.createClassLoader(libs, this);
 
         // create model config object from config document
@@ -128,7 +138,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         //preProc.process();
         ParameterProcessor.preProcess(modelDocument);
 
+
         // load the model
+
+        this.println("", JAMS.STANDARD);
+        this.println(JAMS.resources.getString("Loading_Model"), JAMS.STANDARD);
+
         ModelLoader modelLoader = new ModelLoader(null, this);
         this.model = modelLoader.loadModel(modelDocument);
         this.idMap = modelLoader.getIdMap();
@@ -150,8 +165,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 //            i++;
 //        }
 
-        config();
-
         // create GUI if needed
         int wEnable = Integer.parseInt(properties.getProperty("windowenable", "1"));
         if (wEnable != 0) {
@@ -161,7 +174,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             this.initGUI(model.getName(), (ontop == 1 ? true : false), width, height);
             this.guiEnabled = true;
         }
-        
+
         long end = System.currentTimeMillis();
         this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
         this.println(JAMS.resources.getString("JAMS_model_setup_time:_") + (end - start) + " ms", JAMS.STANDARD);
@@ -171,9 +184,10 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 //        Runtime.getRuntime().gc();
 
         runState = JAMSRuntime.STATE_RUN;
+
     }
 
-    private void config(){        
+    private void initLogging() {
         // set the debug (i.e. output verbosity) level
         this.setDebugLevel(Integer.parseInt(properties.getProperty(SystemProperties.DEBUG_IDENTIFIER, "1")));
 
@@ -235,51 +249,51 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             }
         } catch (FileNotFoundException fnfe) {
             this.handle(fnfe);
-        }       
+        }
     }
-    
-    public String[] getLibs(){
+
+    public String[] getLibs() {
         return libs;
     }
-    
-    public FullModelState getFullModelState(){
-        try{
-            return new JAMSFullModelState(this.state,this.getModel());
-        }catch(IOException ioe){
+
+    public FullModelState getFullModelState() {
+        try {
+            return new JAMSFullModelState(this.state, this.getModel());
+        } catch (IOException ioe) {
             this.sendErrorMsg(ioe.toString());
             return null;
         }
     }
-    
-    private void recoverIteratorStates(JAMSContext context, SmallModelState state) {          
+
+    private void recoverIteratorStates(JAMSContext context, SmallModelState state) {
         //this is ugly but adds the context as runstate observer to our runtime
         context.setModel(model);
         for (int i = 0; i < context.getComponents().size(); i++) {
             if (context.getComponents().get(i) instanceof JAMSContext) {
-                recoverIteratorStates(((JAMSContext) context.getComponents().get(i)), state);                
+                recoverIteratorStates(((JAMSContext) context.getComponents().get(i)), state);
             }
         }
     }
-                
-    public void resume(SmallModelState state) throws Exception {                                        
+
+    public void resume(SmallModelState state) throws Exception {
         deleteErrorLogObservers();
         deleteInfoLogObservers();
-        this.config();
-        
+        this.initLogging();
+
         this.state = state;
-        
+
         if (guiEnabled && (guiComponents.size() > 0)) {
             frame.setVisible(true);
         }
         //is there a better method without unsafe casting?
-        recoverIteratorStates((JAMSModel)model,state);
-        model.getWorkspace().restore(state);                        
+        recoverIteratorStates((JAMSModel) model, state);
+        model.getWorkspace().restore(state);
         this.setRunState(JAMSRuntime.STATE_RUN);
-        
+
         // add this runtime to the runtime manager
         RuntimeManager.getInstance().addRuntime(this);
         long start = System.currentTimeMillis();
-                
+
         if (this.getState() == JAMSRuntime.STATE_RUN) {
             model.resume();
         }
@@ -288,14 +302,14 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             model.cleanup();
         }
 
-        if (this.getState() == JAMSRuntime.STATE_PAUSE){            
+        if (this.getState() == JAMSRuntime.STATE_PAUSE) {
             this.model.getWorkspace().saveState(state);
-        }                
-        state.setExecutionTime(state.getExecutionTime()+(System.currentTimeMillis()-start));
-        
+        }
+        state.setExecutionTime(state.getExecutionTime() + (System.currentTimeMillis() - start));
+
         finishModelExecution(state.getExecutionTime());
     }
-            
+
     @Override
     public void runModel() throws Exception {
 
@@ -331,26 +345,26 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         if (this.getState() == JAMSRuntime.STATE_RUN) {
             model.cleanup();
-        }   
-        
-        finishModelExecution(System.currentTimeMillis()-start);
-                       
-        if (this.getState() != JAMSRuntime.STATE_PAUSE){
+        }
+
+        finishModelExecution(System.currentTimeMillis() - start);
+
+        if (this.getState() != JAMSRuntime.STATE_PAUSE) {
             model = null;
             classLoader = null;
             Runtime.getRuntime().gc();
         }
     }
-    
-    private void finishModelExecution(long executionTime){
-        if (this.getState() == JAMSRuntime.STATE_PAUSE){            
+
+    private void finishModelExecution(long executionTime) {
+        if (this.getState() == JAMSRuntime.STATE_PAUSE) {
             this.model.getWorkspace().saveState(state);
         }
-        
+
         if (model.getWorkspace() != null) {
             model.getWorkspace().close();
         }
-        
+
         if (infoStream != null) {
             infoStream.print(this.getInfoLog());
             infoStream.flush();
@@ -360,17 +374,17 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         if (errorStream != null) {
             errorStream.print(this.getErrorLog());
             errorStream.close();
-        }    
-        
-        if (this.getState() != JAMSRuntime.STATE_PAUSE){                        
+        }
+
+        if (this.getState() != JAMSRuntime.STATE_PAUSE) {
             this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
             this.println(JAMS.resources.getString("JAMS_model_execution_time:_") + (executionTime) + " ms", JAMS.STANDARD);
-            this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);       
+            this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
             this.sendHalt();
-        }else{
+        } else {
             this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
             this.println(JAMS.resources.getString("JAMS_model_execution_paused"), JAMS.STANDARD);
-            this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);  
+            this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
         }
     }
 
@@ -399,8 +413,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
                 try {
                     tabbedPane.addTab(comp.getInstanceName(), comp.getPanel());
                 } catch (Throwable t) {
-                    this.sendErrorMsg(JAMS.resources.getString("Could_not_load_component") + comp.getInstanceName() +
-                            JAMS.resources.getString("Proceed_anyway?"));
+                    this.sendErrorMsg(JAMS.resources.getString("Could_not_load_component") + comp.getInstanceName()
+                            + JAMS.resources.getString("Proceed_anyway?"));
                     this.handle(t, true);
                 }
             }
@@ -431,7 +445,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             }
         });
         toolBar.add(stopButton);
-        
+
         pauseButton = new JButton();
         pauseButton.setToolTipText(JAMS.resources.getString("Pause_model"));
         pauseButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelPause.png")));
@@ -440,27 +454,26 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
             @Override
             public void actionPerformed(ActionEvent evt) {
-                if (StandardRuntime.this.runState == JAMSRuntime.STATE_RUN){
+                if (StandardRuntime.this.runState == JAMSRuntime.STATE_RUN) {
                     StandardRuntime.this.pause();
                     pauseButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
                     saveButton.setEnabled(true);
-                }
-                else if (StandardRuntime.this.runState == JAMSRuntime.STATE_PAUSE){
-                    Thread resumedModelThread = new Thread( new Runnable() {
-                            public void run(){                     
-                                pauseButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelPause.png")));
-                                saveButton.setEnabled(false);
-                                try{
-                                    StandardRuntime.this.resume(state);                                
-                                }catch(Exception e){
-                                    StandardRuntime.this.sendErrorMsg(e.toString());
-                                    StandardRuntime.this.handle(e, true);
-                                }
+                } else if (StandardRuntime.this.runState == JAMSRuntime.STATE_PAUSE) {
+                    Thread resumedModelThread = new Thread(new Runnable() {
+
+                        public void run() {
+                            pauseButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelPause.png")));
+                            saveButton.setEnabled(false);
+                            try {
+                                StandardRuntime.this.resume(state);
+                            } catch (Exception e) {
+                                StandardRuntime.this.sendErrorMsg(e.toString());
+                                StandardRuntime.this.handle(e, true);
                             }
-                    }); 
+                        }
+                    });
                     resumedModelThread.start();
-                }
-                else{
+                } else {
                     //error
                 }
                 //pauseButton.setEnabled(false);
@@ -476,7 +489,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
             @Override
             public void actionPerformed(ActionEvent evt) {
-                if (StandardRuntime.this.runState == JAMSRuntime.STATE_PAUSE){
+                if (StandardRuntime.this.runState == JAMSRuntime.STATE_PAUSE) {
                     JFileChooser fc = new JFileChooser();
                     fc.setFileFilter(new FileFilter() {
 
@@ -494,20 +507,20 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
                     int returnVal = fc.showSaveDialog(StandardRuntime.this.frame);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File file = fc.getSelectedFile();
-                        try{
-                            JAMSFullModelState state = new JAMSFullModelState(StandardRuntime.this.state, 
-                                    StandardRuntime.this.getModel());                        
+                        try {
+                            JAMSFullModelState state = new JAMSFullModelState(StandardRuntime.this.state,
+                                    StandardRuntime.this.getModel());
                             state.writeToFile(file);
-                        }catch(IOException e){
+                        } catch (IOException e) {
                             sendErrorMsg(JAMS.resources.getString("Unable_to_save_model_state_because,") + e.toString());
                             handle(e, true);
                         }
                     }
-                }                
+                }
             }
         });
         toolBar.add(saveButton);
-        
+
         closeButton = new JButton();
         closeButton.setToolTipText(JAMS.resources.getString("Close_window"));
         closeButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Shutdown.png")));
@@ -604,7 +617,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             message += JAMS.resources.getString("Exception_occured_in_component_") + cName + "!\n";
         }
 
-         message += t.toString();
+        message += t.toString();
         if (getDebugLevel() > JAMS.STANDARD) {
             message += "\n" + StringTools.getStackTraceString(t.getStackTrace());
         }
@@ -670,9 +683,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     @Override
     public void pause() {
-        setRunState(JAMSRuntime.STATE_PAUSE);        
+        setRunState(JAMSRuntime.STATE_PAUSE);
     }
-    
+
     private void setRunState(int state) {
         this.runState = state;
         this.setChanged();
@@ -685,7 +698,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     }
 
     @Override
-    public void deleteInfoLogObservers() {        
+    public void deleteInfoLogObservers() {
         infoLog.deleteObservers();
     }
 
@@ -700,12 +713,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     }
 
     @Override
-    public void deleteErrorLogObservers() {        
+    public void deleteErrorLogObservers() {
         errorLog.deleteObservers();
     }
 
     @Override
-    public void deleteErrorLogObserver(Observer o) {        
+    public void deleteErrorLogObserver(Observer o) {
         errorLog.deleteObserver(o);
     }
 
@@ -734,15 +747,15 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
 
         try {
-            File modelFile = new File(this.model.getWorkspace().getOutputDataDirectory().getPath() +
-                    File.separator + JAMS.DEFAULT_MODEL_FILENAME);
+            File modelFile = new File(this.model.getWorkspace().getOutputDataDirectory().getPath()
+                    + File.separator + JAMS.DEFAULT_MODEL_FILENAME);
             modelFile.getParentFile().mkdirs();
             ParameterProcessor.saveParams(this.modelDocument, modelFile, this.properties.getProperty("username"), null);
         } catch (IOException ioe) {
             getModel().getRuntime().handle(ioe);
         }
     }
-            
+
     @Override
     public Model getModel() {
         return this.model;
@@ -756,16 +769,16 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     @Override
     public ClassLoader getClassLoader() {
         return classLoader;
-    }     
-    
-    private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException{                
-        objIn.defaultReadObject();
-        this.initGUI((String)objIn.readObject(), objIn.readBoolean(), objIn.readInt(), objIn.readInt());                        
     }
-    
-    private void writeObject(ObjectOutputStream objOut) throws IOException{
+
+    private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {
+        objIn.defaultReadObject();
+        this.initGUI((String) objIn.readObject(), objIn.readBoolean(), objIn.readInt(), objIn.readInt());
+    }
+
+    private void writeObject(ObjectOutputStream objOut) throws IOException {
         objOut.defaultWriteObject();
-        objOut.writeObject(frame.getTitle()); 
+        objOut.writeObject(frame.getTitle());
         objOut.writeBoolean(frame.isAlwaysOnTop());
         objOut.writeInt(frame.getWidth());
         objOut.writeInt(frame.getHeight());
