@@ -75,37 +75,21 @@ import org.w3c.dom.NodeList;
 public class JAMSLauncher extends JFrame {
 
     protected static final String BASE_TITLE = JAMS.resources.getString("JAMS_Launcher");
-
     private static final int BUTTON_SIZE = 20;
-
     private Map<InputComponent, Element> inputMap;
-
     private Map<InputComponent, JScrollPane> groupMap;
-
     protected Document modelDocument = null;
-
     private JTabbedPane tabbedPane = new JTabbedPane();
-
     private SystemProperties properties;
-
     private JButton runButton;
-    
     private HelpDlg helpDlg;
-
     protected String initialModelDocString = "";
-
     protected File loadPath;
-
     private JAMSRuntime runtime;
-
     private Runnable modelLoading;
-
     private WorkerDlg loadModelDlg;
-
     private Font titledBorderFont;
-
     private Action runModelAction;
-
     private JToolBar toolBar;
 
     public JAMSLauncher(Frame parent, SystemProperties properties) {
@@ -177,7 +161,7 @@ public class JAMSLauncher extends JFrame {
                 }
             }
         };
-                
+
         runModelAction = new AbstractAction(JAMS.resources.getString("Run_Model")) {
 
             @Override
@@ -578,7 +562,7 @@ public class JAMSLauncher extends JFrame {
         };
         t.start();
     }
-    
+
     protected SystemProperties getProperties() {
         return properties;
     }
