@@ -60,6 +60,7 @@ public class WorkspaceDlg extends JDialog {
     public WorkspaceDlg(Frame parent) {
 
         super(parent);
+        this.setLocationByPlatform(true);
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 

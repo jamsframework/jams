@@ -59,7 +59,7 @@ public class JAMSExplorer {
     protected DisplayManager displayManager;
     protected JAMSWorkspace workspace;
     protected ArrayList<Window> childWindows = new ArrayList<Window>();
-    protected boolean standAlone;
+    private boolean standAlone;
     protected static JAMSExplorer explorer;
 
     public JAMSExplorer(JAMSRuntime runtime) {
@@ -92,7 +92,7 @@ public class JAMSExplorer {
         properties = JAMSProperties.createProperties();
         String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
         File file = new File(defaultFile);
-        if (file.exists()) {
+        if (file.exists() && standAlone) {
             try {
                 properties.load(defaultFile);
             } catch (IOException ioe) {
@@ -101,8 +101,7 @@ public class JAMSExplorer {
         }
 
         displayManager = new DisplayManager(this);
-        boolean doInit = true;
-        explorerFrame = new ExplorerFrame(JAMSExplorer.this, doInit);
+        explorerFrame = new ExplorerFrame(JAMSExplorer.this);
 
     }
 
@@ -219,8 +218,15 @@ public class JAMSExplorer {
     }
 
     public void exit() {
-        if (standAlone) {
+        if (isStandAlone()) {
             System.exit(0);
         }
+    }
+
+    /**
+     * @return the standAlone
+     */
+    public boolean isStandAlone() {
+        return standAlone;
     }
 }

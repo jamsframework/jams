@@ -85,12 +85,10 @@ public class ExplorerFrame extends JFrame {
     protected Document modelDoc = null;
     protected MCAT5Toolbar mcat5ToolBar = null;
 
-    public ExplorerFrame(JAMSExplorer explorer, boolean doInit) {
+    public ExplorerFrame(JAMSExplorer explorer) {
         this.explorer = explorer;
         mcat5ToolBar = new MCAT5Toolbar(this);
-        if (doInit) {
-            init();
-        }
+        init();
     }
 
     private void init() {
@@ -151,7 +149,7 @@ public class ExplorerFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                STPConfigurator stp = new STPConfigurator((JAMSExplorer)explorer);
+                STPConfigurator stp = new STPConfigurator((JAMSExplorer) explorer);
             }
         };
 
@@ -261,8 +259,10 @@ public class ExplorerFrame extends JFrame {
         JMenuItem editWSItem = new JMenuItem(editWSAction);
         prefsMenu.add(editWSItem);
 
-        JMenuItem editPrefsItem = new JMenuItem(editPrefsAction);
-        prefsMenu.add(editPrefsItem);
+        if (explorer.isStandAlone()) {
+            JMenuItem editPrefsItem = new JMenuItem(editPrefsAction);
+            prefsMenu.add(editPrefsItem);
+        }
 
         JMenu plotMenu = new JMenu(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT"));
         mainMenu.add(plotMenu);
@@ -293,7 +293,6 @@ public class ExplorerFrame extends JFrame {
     protected JToolBar processToolBarHook(JToolBar toolBar) {
         return toolBar;
     }
-
 
     public void open(File workspaceFile) throws InvalidWorkspaceException {
         String[] libs = StringTools.toArray(explorer.getProperties().getProperty(SystemProperties.LIBS_IDENTIFIER, ""), ";");
@@ -348,8 +347,6 @@ public class ExplorerFrame extends JFrame {
             mainSplitPane.setDividerLocation(INOUT_PANE_WIDTH);
         }
     }
-
-
 
     protected void setWorkSpace2Model() {
         JAMSWorkspace workspace = explorer.getWorkspace();
@@ -407,7 +404,7 @@ public class ExplorerFrame extends JFrame {
 
         Viewer.destroy();
 
-        for (Window window : ((JAMSExplorer)explorer).getChildWindows()) {
+        for (Window window : ((JAMSExplorer) explorer).getChildWindows()) {
             window.dispose();
         }
 
