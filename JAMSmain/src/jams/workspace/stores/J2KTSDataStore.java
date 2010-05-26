@@ -217,10 +217,10 @@ public class J2KTSDataStore extends TSDataStore{
             if (key.equalsIgnoreCase(TAGNAME_MISSINGDATAVAL)) {
                 missingDataValue = tok2.nextToken();
             } else if (key.equalsIgnoreCase(TAGNAME_DATASTART) || key.equalsIgnoreCase(TAGNAME_DATAEND)) {
-                String dateFormat = JAMSTools.DATE_FORMAT_PATTERN_DE;
+
+                String dateFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
                 String dateString = tok2.nextToken();
                 if (tok2.hasMoreTokens()) {
-                    dateFormat = JAMSTools.DATE_TIME_FORMAT_PATTERN_DE;
                     dateString += " " + tok2.nextToken();
                 }
                 try {

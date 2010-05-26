@@ -39,11 +39,7 @@ import java.util.StringTokenizer;
  */
 public class JAMSTools {
 
-    public final static String DATE_TIME_FORMAT_PATTERN_DE = "dd.MM.yyyy HH:mm";
-
     public final static String DATE_TIME_FORMAT_PATTERN = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
-
-    public final static String DATE_FORMAT_PATTERN_DE = "dd.MM.yyyy";
 
     /**
      * Looks for a field with a given name in a class and all its superclasses

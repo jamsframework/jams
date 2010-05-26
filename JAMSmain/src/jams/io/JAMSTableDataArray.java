@@ -54,16 +54,12 @@ public class JAMSTableDataArray implements Serializable {
         int valueNumber = parts.length - 1;
         if (parts.length > 1) {
             String dateString = parts[0];   // date
-            String timeString = parts[1];   // maybe we have time?
+            String timeString = parts[1];   // time
             int dataReadIndex = 2;
-            String dateFormat = JAMSTools.DATE_FORMAT_PATTERN_DE;
-            if (timeString.indexOf(":") > -1) {     // yes we have a time.
-                dateString += " " + timeString;
-                valueNumber = parts.length - 2;
-                dateFormat = JAMSTools.DATE_TIME_FORMAT_PATTERN_DE;
-            } else {                                // no time, but data
-                dataReadIndex = 1;
-            }
+            
+            String dateFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
+            dateString += " " + timeString;
+            valueNumber = parts.length - 2;
 
             Attribute.Calendar cal = JAMSDataFactory.createCalendar();
             cal.setValue(dateString, dateFormat);
