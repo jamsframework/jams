@@ -31,42 +31,34 @@ import jams.JAMS;
  */
 public class EntityAccessor implements DataAccessor {
 
-    JAMSEntity componentObject;
-
+    Attribute.Entity componentObject;
     Attribute.Entity[] entityObject;
-
     int index;
-
     int accessType;
-
     String attributeName;
 
-    public EntityAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public EntityAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws Attribute.Entity.NoSuchAttributeException {
 
         //get the entities' data objects
-        entityObject = new JAMSEntity[entities.length];
+        entityObject = new Attribute.Entity[entities.length];
         for (int i = 0; i < entities.length; i++) {
             if (entities[i].existsAttribute(attributeName)) {
                 try {
-                    entityObject[i] = (JAMSEntity) entities[i].getObject(attributeName);
-                } catch (JAMSEntity.NoSuchAttributeException nsae) {
+                    entityObject[i] = (Attribute.Entity) entities[i].getObject(attributeName);
+                } catch (Attribute.Entity.NoSuchAttributeException nsae) {
                 }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
-                    try {
-                        entityObject[i] = (JAMSEntity) JAMSDataFactory.createInstance(JAMSEntity.class);
-                    } catch (InstantiationException ex) {
-                    } catch (IllegalAccessException ex) {
-                    }
+                    entityObject[i] = JAMSDataFactory.createEntity();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
-                    throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist!"));
+                    throw new Attribute.Entity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist!"));
                 }
             }
         }
 
         this.accessType = accessType;
-        this.componentObject = (JAMSEntity) dataObject;
+        this.componentObject = (Attribute.Entity) dataObject;
         this.attributeName = attributeName;
     }
 
