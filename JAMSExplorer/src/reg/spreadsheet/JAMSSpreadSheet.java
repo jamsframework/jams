@@ -851,11 +851,7 @@ public class JAMSSpreadSheet extends JPanel {
             Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
             try {
                 String timeString = rowData[0].getString();
-                String timePattern = JAMSTools.DATE_TIME_FORMAT_PATTERN_DE;
-                if (timeString != null && timeString.length() == JAMSTools.DATE_FORMAT_PATTERN_DE.length()) {
-                    timePattern = JAMSTools.DATE_FORMAT_PATTERN_DE;
-                }
-
+                String timePattern = store.getTimeFormat();
                 timeval.setValue(timeString, timePattern);
             } catch (ParseException pe) {
                 pe.printStackTrace();
