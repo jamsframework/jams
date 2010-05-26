@@ -86,7 +86,12 @@ public class JAMSClassLoader extends URLClassLoader {
 
             }
         }
-        rt.println(JAMS.resources.getString("created_class_loader_using_") + urls, JAMS.STANDARD);
+
+        rt.println(JAMS.resources.getString("created_class_loader_using_"), JAMS.STANDARD);
+        for (URL url : urls) {
+            rt.println("\t" + url.toString(), JAMS.STANDARD);
+        }
+
 
         URL[] urlArray = urls.toArray(new URL[urls.size()]);
 
