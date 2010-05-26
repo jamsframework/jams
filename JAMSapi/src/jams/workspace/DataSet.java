@@ -23,11 +23,13 @@
 
 package jams.workspace;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public interface DataSet {
+public interface DataSet extends Serializable{
 
     DataValue[] getData();
 
