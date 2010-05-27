@@ -52,30 +52,19 @@ public class TSDataStore extends TableDataStore {
 
     public static final String NEWLINE = "\n";
     public static final String SEPARATOR = "\t";
-
     protected CalendarValue calendar;
-
     protected Attribute.Calendar currentDate, startDate, endDate, stopDate;
-
     protected int timeUnit, timeUnitCount;
-
     protected String timeFormat;
-
     File file = null;
     transient private BufferedFileReader dumpFileReader;
-
     private static final int DOUBLE = 0;
-
     private static final int LONG = 1;
-
     private static final int STRING = 2;
-    
     private static final int TIMESTAMP = 3;
-
     private static final int OBJECT = 4;
-
     private int[] type;
-        
+
     public TSDataStore(JAMSWorkspace ws) {
         super(ws);
         startDate = JAMSDataFactory.createCalendar();
@@ -228,8 +217,8 @@ public class TSDataStore extends TableDataStore {
             try {
                 dataTypes.add(Class.forName(className));
             } catch (ClassNotFoundException ex) {
-                ws.getRuntime().sendErrorMsg("Referenced type in datastore " + id +
-                        " could not be found: " + className);
+                ws.getRuntime().sendErrorMsg("Referenced type in datastore " + id
+                        + " could not be found: " + className);
             }
         }
 
@@ -244,9 +233,9 @@ public class TSDataStore extends TableDataStore {
                 type[i] = DOUBLE;
             } else if (clazz.equals(String.class)) {
                 type[i] = STRING;
-            } else if (clazz.equals(Timestamp.class)){
+            } else if (clazz.equals(Timestamp.class)) {
                 type[i] = TIMESTAMP;
-            } else{
+            } else {
                 type[i] = OBJECT;
             }
             i++;
@@ -267,8 +256,8 @@ public class TSDataStore extends TableDataStore {
             try {
                 clazz = Class.forName(className);
             } catch (ClassNotFoundException ex) {
-                ws.getRuntime().sendErrorMsg("Referenced type in datastore " + id +
-                        " could not be found: " + className);
+                ws.getRuntime().sendErrorMsg("Referenced type in datastore " + id
+                        + " could not be found: " + className);
                 return null;
             }
             def.addAttribute(attributeName, clazz);
@@ -296,11 +285,11 @@ public class TSDataStore extends TableDataStore {
             o = cal;
         } else if (clazz.equals(Timestamp.class)) {
             Attribute.Calendar cal = JAMSDataFactory.createCalendar();
-            cal.setTimeInMillis(new Long(valueString)*1000);
+            cal.setTimeInMillis(new Long(valueString) * 1000);
             o = cal;
         } else if (clazz.equals(String.class)) {
             o = new String(valueString);
-        } else{
+        } else {
             o = new Object();
         }
 
@@ -418,8 +407,9 @@ public class TSDataStore extends TableDataStore {
     public String getTimeFormat() {
         return timeFormat;
     }
-    
-    static public class TSDataStoreState extends TableDataStoreState{
+
+    static public class TSDataStoreState extends TableDataStoreState {
+
         protected CalendarValue calendar;
         protected Calendar currentDate;
         protected Calendar startDate;
@@ -431,9 +421,11 @@ public class TSDataStore extends TableDataStore {
         protected int timeUnitCount;
         protected String fileName;
         protected long position;
-        
-        TSDataStoreState(){}
-        public void fill(TSDataStoreState state){
+
+        TSDataStoreState() {
+        }
+
+        public void fill(TSDataStoreState state) {
             super.fill(state);
             state.calendar = this.calendar;
             state.currentDate = this.currentDate;
@@ -443,16 +435,16 @@ public class TSDataStore extends TableDataStore {
             state.type = this.type;
             state.timeFormat = this.timeFormat;
             state.timeUnit = this.timeUnit;
-            state.timeUnitCount = this.timeUnitCount;            
+            state.timeUnitCount = this.timeUnitCount;
             state.fileName = this.fileName;
-            state.position = this.position;           
+            state.position = this.position;
         }
-        
-        TSDataStoreState(TableDataStoreState state){
+
+        TSDataStoreState(TableDataStoreState state) {
             state.fill(this);
         }
     }
-    
+
     @Override
     public DataStoreState getState() {
         TSDataStoreState state = new TSDataStoreState((TableDataStoreState) super.getState());
@@ -471,12 +463,12 @@ public class TSDataStore extends TableDataStore {
         }
         return state;
     }
-    
+
     @Override
-    public void setState(DataStoreState state) throws IOException{
-        TSDataStoreState tsDataStore = (TSDataStoreState)state;
+    public void setState(DataStoreState state) throws IOException {
+        TSDataStoreState tsDataStore = (TSDataStoreState) state;
         super.setState(tsDataStore);
-        
+
         calendar = tsDataStore.calendar;
         currentDate = tsDataStore.currentDate;
         startDate = tsDataStore.startDate;
@@ -486,24 +478,25 @@ public class TSDataStore extends TableDataStore {
         timeFormat = tsDataStore.timeFormat;
         timeUnit = tsDataStore.timeUnit;
         timeUnitCount = tsDataStore.timeUnitCount;
-        
-        String fileName = (String)tsDataStore.fileName;
+
+        String fileName = (String) tsDataStore.fileName;
         //deserialize reader
-        if (this.dumpFileReader != null){
-           try{
-               this.dumpFileReader.close();    
-               dumpFileReader = null;
-           }catch(Exception e){}
+        if (this.dumpFileReader != null) {
+            try {
+                this.dumpFileReader.close();
+                dumpFileReader = null;
+            } catch (Exception e) {
+            }
         }
-                
-        if (fileName != null){            
-            file = new File(fileName);                   
-            this.dumpFileReader = new BufferedFileReader(new FileInputStream(file));                
-            this.dumpFileReader.setPosition(tsDataStore.position);                
-        }            
+
+        if (fileName != null) {
+            file = new File(fileName);
+            this.dumpFileReader = new BufferedFileReader(new FileInputStream(file));
+            this.dumpFileReader.setPosition(tsDataStore.position);
+        }
     }
-    
-    public Set<DataReader> getDataIOs(){
+
+    public Set<DataReader> getDataIOs() {
         return this.dataIOSet;
     }
 }

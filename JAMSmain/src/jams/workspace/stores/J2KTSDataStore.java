@@ -23,11 +23,9 @@
 package jams.workspace.stores;
 
 import jams.JAMS;
-import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import jams.io.BufferedFileReader;
 import jams.runtime.JAMSRuntime;
-import jams.tools.JAMSTools;
 import jams.tools.StringTools;
 import jams.workspace.DataSetDefinition;
 import jams.workspace.DefaultDataSet;
@@ -38,7 +36,6 @@ import jams.workspace.datatypes.StringValue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -50,35 +47,23 @@ import org.w3c.dom.Node;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class J2KTSDataStore extends TSDataStore{
+public class J2KTSDataStore extends TSDataStore {
 
+    public static final String DATE_TIME_FORMAT_PATTERN_J2K = "dd.MM.yyyy HH:mm";
     public static final String TAGNAME_DATAEND = "dataEnd";
-
     public static final String TAGNAME_DATASETATTRIBS = "@dataSetAttribs";
-
     public static final String TAGNAME_DATASTART = "dataStart";
-
     public static final String TAGNAME_DATAVAL = "@dataVal";
-
     public static final String TAGNAME_DATAVALUEATTRIBS = "@dataValueAttribs";
-
     public static final String TAGNAME_MISSINGDATAVAL = "missingDataVal";
-
     public static final String TAGNAME_STATATTRIBVAL = "@statAttribVal";
-
     public static final String TAGNAME_TEMP_RES = "tres";
-
     private String cache = null;
-
     private int columnCount = 0;
     //private RandomAccessFile j2kTSFileReader;
-
     transient private BufferedFileReader j2kTSFileReader;
-
     private File sourceFile;
-
     private boolean parseDate = false;
-
     private String charsetName;
 
     public J2KTSDataStore(JAMSWorkspace ws, String id, Document doc) throws IOException {
@@ -218,7 +203,7 @@ public class J2KTSDataStore extends TSDataStore{
                 missingDataValue = tok2.nextToken();
             } else if (key.equalsIgnoreCase(TAGNAME_DATASTART) || key.equalsIgnoreCase(TAGNAME_DATAEND)) {
 
-                String dateFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
+                String dateFormat = DATE_TIME_FORMAT_PATTERN_J2K;
                 String dateString = tok2.nextToken();
                 if (tok2.hasMoreTokens()) {
                     dateString += " " + tok2.nextToken();
@@ -232,7 +217,7 @@ public class J2KTSDataStore extends TSDataStore{
                     }
 
                 } catch (ParseException pe) {
-                    ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Could_not_parse_date_\"") + dateString + JAMS.resources.getString("\"_-_date_kept_unchanged!"));
+                    ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Could_not_parse_date_") + dateString + JAMS.resources.getString("_date_kept_unchanged!"));
                 }
             } else if (key.equalsIgnoreCase(TAGNAME_TEMP_RES)) {
                 String tres = tok2.nextToken();
@@ -252,6 +237,84 @@ public class J2KTSDataStore extends TSDataStore{
 
         this.dsd = def;
 
+    }
+
+    private String[] parseTSRow(String line) throws ParseException {
+
+        StringTokenizer tok = new StringTokenizer(line);
+        String[] parts = line.split("\\s+");
+
+        String[] result = new String[parts.length];
+        // join the first two tokens to one
+
+
+        int n = tok.countTokens();
+
+        if (n > 1) {
+
+            String dateString = tok.nextToken();
+            String[] data;
+            int i;
+
+            String s = tok.nextToken();
+            if (s.contains(":")) {
+                data = new String[n - 1];
+                data[0] = dateString + " " + s;
+                i = 1;
+            } else {
+                data = new String[n];
+                data[0] = dateString;
+                data[1] = s;
+                i = 2;
+            }
+
+            while (tok.hasMoreTokens()) {
+                data[i++] = tok.nextToken();
+            }
+
+            return data;
+
+        } else {
+
+            return null;
+
+        }
+    }
+
+    private String[] parseTSRow_(String row) throws ParseException {
+
+        StringTokenizer tok = new StringTokenizer(row);
+        int n = tok.countTokens();
+
+        if (n > 1) {
+
+            String dateString = tok.nextToken();
+            String[] data;
+            int i;
+
+            String s = tok.nextToken();
+            if (s.contains(":")) {
+                data = new String[n - 1];
+                data[0] = dateString + " " + s;
+                i = 1;
+            } else {
+                data = new String[n];
+                data[0] = dateString;
+                data[1] = s;
+                i = 2;
+            }
+
+            while (tok.hasMoreTokens()) {
+                data[i++] = tok.nextToken();
+            }
+
+            return data;
+
+        } else {
+
+            return null;
+
+        }
     }
 
     @Override
@@ -274,25 +337,17 @@ public class J2KTSDataStore extends TSDataStore{
             return null;
         }
 
-        try {
-            DefaultDataSet result = new DefaultDataSet(columnCount + 1);
-            String[] values = StringTools.parseTSRow(cache);
-            result.setData(0, new StringValue(values[0]));
+        DefaultDataSet result = new DefaultDataSet(columnCount + 1);
+        String[] values = cache.split("\\s+");
+        result.setData(0, new StringValue(values[0] + " " + values[1]));
 
-            for (int i = 1; i < values.length; i++) {
-                double d = Double.parseDouble(values[i]);
-                result.setData(i, new DoubleValue(d));
-            }
-
-            cache = null;
-            return result;
-
-        } catch (ParseException e) {
-            ws.getRuntime().handle(e);
+        for (int i = 2; i < values.length; i++) {
+            double d = Double.parseDouble(values[i]);
+            result.setData(i-1, new DoubleValue(d));
         }
 
         cache = null;
-        return null;
+        return result;
     }
 
 //    @Override
@@ -333,48 +388,49 @@ public class J2KTSDataStore extends TSDataStore{
         }
     }
 
-    static public class J2KTSDataStoreState extends TSDataStoreState{
+    static public class J2KTSDataStoreState extends TSDataStoreState {
+
         String cache;
         boolean parseDate;
         int columnCount;
         String sourceFilePath;
         long tsPosition;
-        
-        protected void fill(J2KTSDataStoreState state){
+
+        protected void fill(J2KTSDataStoreState state) {
             state.cache = cache;
             state.parseDate = parseDate;
             state.columnCount = columnCount;
             state.sourceFilePath = sourceFilePath;
-            state.tsPosition= tsPosition;
+            state.tsPosition = tsPosition;
         }
-        
-        public J2KTSDataStoreState(TSDataStoreState store){
-            store.fill(J2KTSDataStoreState.this);            
+
+        public J2KTSDataStoreState(TSDataStoreState store) {
+            store.fill(J2KTSDataStoreState.this);
         }
     }
-    
+
     @Override
-    public DataStoreState getState(){
-        TSDataStoreState superState = ((TSDataStoreState)super.getState());
-        
-        J2KTSDataStoreState state = new J2KTSDataStoreState(superState);        
+    public DataStoreState getState() {
+        TSDataStoreState superState = ((TSDataStoreState) super.getState());
+
+        J2KTSDataStoreState state = new J2KTSDataStoreState(superState);
         state.cache = cache;
         state.parseDate = this.parseDate;
         state.columnCount = this.columnCount;
         state.sourceFilePath = this.sourceFile.getPath();
-        state.tsPosition = this.j2kTSFileReader.getPosition();        
-        
+        state.tsPosition = this.j2kTSFileReader.getPosition();
+
         return state;
     }
-        
+
     @Override
     public void setState(DataStoreState state) throws IOException {
-        J2KTSDataStoreState j2kState = (J2KTSDataStoreState)state;
+        J2KTSDataStoreState j2kState = (J2KTSDataStoreState) state;
         super.setState(j2kState);
         this.cache = j2kState.cache;
         this.parseDate = j2kState.parseDate;
         this.columnCount = j2kState.columnCount;
-        
+
         this.sourceFile = new File((String) j2kState.sourceFilePath);
         if (j2kTSFileReader != null) {
             try {

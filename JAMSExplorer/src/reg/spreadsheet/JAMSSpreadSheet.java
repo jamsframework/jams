@@ -11,7 +11,6 @@
  */
 package reg.spreadsheet;
 
-import jams.tools.JAMSTools;
 import jams.JAMSFileFilter;
 import java.util.Vector;
 import java.awt.event.*;
@@ -29,6 +28,7 @@ import jams.workspace.DataValue;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.stores.InputDataStore;
+import jams.workspace.stores.J2KTSDataStore;
 import jams.workspace.stores.ShapeFileDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.awt.datatransfer.DataFlavor;
@@ -212,7 +212,7 @@ public class JAMSSpreadSheet extends JPanel {
 
     public JAMSSpreadSheet(JAMSExplorer explorer) {
         this.explorer = explorer;
-        this.parent_frame = (JFrame)explorer.getExplorerFrame();
+        this.parent_frame = (JFrame) explorer.getExplorerFrame();
     }
 
     private void close() {
@@ -806,6 +806,8 @@ public class JAMSSpreadSheet extends JPanel {
 
         this.store = store;
 
+        String dumpTimeFormat = store.getTimeFormat();
+
         int colNumber = 0;
         double[] rowBuffer;
         String[] headers;
@@ -851,8 +853,13 @@ public class JAMSSpreadSheet extends JPanel {
             Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
             try {
                 String timeString = rowData[0].getString();
-                String timePattern = store.getTimeFormat();
-                timeval.setValue(timeString, timePattern);
+
+                if (store instanceof J2KTSDataStore) {
+                    timeval.setValue(timeString, J2KTSDataStore.DATE_TIME_FORMAT_PATTERN_J2K);
+                } else {
+                    timeval.setValue(timeString);
+                }
+                timeval.setDateFormat(dumpTimeFormat);
             } catch (ParseException pe) {
                 pe.printStackTrace();
             }
@@ -891,7 +898,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         if (table.getValueAt(0, 0).getClass().equals(JAMSCalendar.class)) {
             JTSConfigurator jts;
-            jts = new JTSConfigurator((JFrame)explorer.getExplorerFrame(), this, explorer);
+            jts = new JTSConfigurator((JFrame) explorer.getExplorerFrame(), this, explorer);
         } else {
 
             GUIHelper.showErrorDlg(this, ERR_MSG_CTS, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
@@ -906,9 +913,9 @@ public class JAMSSpreadSheet extends JPanel {
         if (table.getValueAt(0, 0).getClass().equals(JAMSCalendar.class)) {
             JTSConfigurator jts;
             if (useTemplateButton.isSelected()) {
-                jts = new JTSConfigurator((JFrame)explorer.getExplorerFrame(), this, templateFile, explorer);
+                jts = new JTSConfigurator((JFrame) explorer.getExplorerFrame(), this, templateFile, explorer);
             } else {
-                jts = new JTSConfigurator((JFrame)explorer.getExplorerFrame(), this, null, explorer);
+                jts = new JTSConfigurator((JFrame) explorer.getExplorerFrame(), this, null, explorer);
             }
         } else {
             GUIHelper.showErrorDlg(this, ERR_MSG_CTS, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
@@ -921,9 +928,9 @@ public class JAMSSpreadSheet extends JPanel {
         JXYConfigurator jxys;
 
         try {
-            jxys = new JXYConfigurator((JFrame)explorer.getExplorerFrame(), this, null, explorer);
+            jxys = new JXYConfigurator((JFrame) explorer.getExplorerFrame(), this, null, explorer);
         } catch (NullPointerException npe) {
-            jxys = new JXYConfigurator((JFrame)explorer.getExplorerFrame(), this, null, explorer);
+            jxys = new JXYConfigurator((JFrame) explorer.getExplorerFrame(), this, null, explorer);
         }
     }
 
@@ -931,9 +938,9 @@ public class JAMSSpreadSheet extends JPanel {
         JXYConfigurator jxys;
 
         if (useTemplateButton.isSelected()) {
-            jxys = new JXYConfigurator((JFrame)explorer.getExplorerFrame(), this, templateFile, explorer);
+            jxys = new JXYConfigurator((JFrame) explorer.getExplorerFrame(), this, templateFile, explorer);
         } else {
-            jxys = new JXYConfigurator((JFrame)explorer.getExplorerFrame(), this, null, explorer);
+            jxys = new JXYConfigurator((JFrame) explorer.getExplorerFrame(), this, null, explorer);
         }
     }
 
