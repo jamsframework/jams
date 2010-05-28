@@ -834,15 +834,6 @@ public class JAMSSpreadSheet extends JPanel {
         ArrayList<Object> names = store.getDataSetDefinition().getAttributeValues("NAME");
         colNumber = store.getDataSetDefinition().getColumnCount();
 
-        for (String name : store.getDataSetDefinition().getAttributeNames()) {
-            Class type = store.getDataSetDefinition().getType(name);
-            System.out.println(name + " : " + type);
-        }
-        System.out.println("-------------------------------------------------------");
-        Class firstColumnType = store.getDataSetDefinition().getType(store.getDataSetDefinition().getAttributeNames().get(0));
-        System.out.println(firstColumnType);
-        System.out.println("-------------------------------------------------------");
-
         headers = new String[colNumber + 1];
         headers[0] = "";
         int i = 1;
@@ -864,13 +855,13 @@ public class JAMSSpreadSheet extends JPanel {
             try {
                 String timeString = rowData[0].getString();
 
-                if (store instanceof J2KTSDataStore) {
-                    timeval.setValue(timeString, J2KTSDataStore.DATE_TIME_FORMAT_PATTERN_J2K);
-                } else {
-                    timeval.setValue(timeString);
-                }
+//                if (store instanceof J2KTSDataStore) {
+//                    timeval.setValue(timeString, J2KTSDataStore.DATE_TIME_FORMAT_PATTERN_J2K);
+//                } else {
+                timeval.setValue(timeString);
+//                }
                 timeval.setDateFormat(dumpTimeFormat);
-            } catch (ParseException pe) {
+            } catch (Exception pe) {
                 pe.printStackTrace();
             }
             timeVector.add(timeval);

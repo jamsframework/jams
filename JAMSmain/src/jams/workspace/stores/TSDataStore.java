@@ -110,6 +110,8 @@ public class TSDataStore extends TableDataStore {
         if (this.accessMode != InputDataStore.CACHE_MODE) {
 
             // check validity of the data, e.g. unique start dates
+            // a tsdatastore assumes that all columns have synchronous time and
+            // start/end at the same time step
 
             fillBuffer();
             if (maxPosition >= 2) {

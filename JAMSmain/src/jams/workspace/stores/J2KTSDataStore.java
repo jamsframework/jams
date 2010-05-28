@@ -23,7 +23,9 @@
 package jams.workspace.stores;
 
 import jams.JAMS;
+import jams.data.Attribute;
 import jams.data.JAMSCalendar;
+import jams.data.JAMSDataFactory;
 import jams.io.BufferedFileReader;
 import jams.runtime.JAMSRuntime;
 import jams.tools.StringTools;
@@ -31,6 +33,7 @@ import jams.workspace.DataSetDefinition;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.DefaultDataSetDefinition;
 import jams.workspace.JAMSWorkspace;
+import jams.workspace.datatypes.CalendarValue;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.StringValue;
 import java.io.File;
@@ -39,8 +42,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -120,6 +121,12 @@ public class J2KTSDataStore extends TSDataStore {
         readJ2KFile();
 
         this.columnCount = this.getDataSetDefinition().getColumnCount();
+
+        currentDate = JAMSDataFactory.createCalendar();
+        currentDate.setDateFormat(timeFormat);
+        currentDate.setValue(startDate);
+        currentDate.add(timeUnit, -1 * timeUnitCount);
+        calendar = new CalendarValue(currentDate);
 
         if (ws.getRuntime().getState() != JAMSRuntime.STATE_RUN) {
             return;
@@ -300,7 +307,9 @@ public class J2KTSDataStore extends TSDataStore {
         DefaultDataSet result = new DefaultDataSet(columnCount + 1);
         String[] values = cache.split("\\s+");
 
-        result.setData(0, new StringValue(values[0] + " " + values[1]));
+//        result.setData(0, new StringValue(values[0] + " " + values[1]));
+        currentDate.add(timeUnit, timeUnitCount);
+        result.setData(0, calendar);
 
         for (int i = 2; i < values.length; i++) {
             double d = Double.parseDouble(values[i]);
