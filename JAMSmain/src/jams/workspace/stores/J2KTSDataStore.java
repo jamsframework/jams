@@ -39,6 +39,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -239,49 +241,7 @@ public class J2KTSDataStore extends TSDataStore {
 
     }
 
-    private String[] parseTSRow(String line) throws ParseException {
-
-        StringTokenizer tok = new StringTokenizer(line);
-        String[] parts = line.split("\\s+");
-
-        String[] result = new String[parts.length];
-        // join the first two tokens to one
-
-
-        int n = tok.countTokens();
-
-        if (n > 1) {
-
-            String dateString = tok.nextToken();
-            String[] data;
-            int i;
-
-            String s = tok.nextToken();
-            if (s.contains(":")) {
-                data = new String[n - 1];
-                data[0] = dateString + " " + s;
-                i = 1;
-            } else {
-                data = new String[n];
-                data[0] = dateString;
-                data[1] = s;
-                i = 2;
-            }
-
-            while (tok.hasMoreTokens()) {
-                data[i++] = tok.nextToken();
-            }
-
-            return data;
-
-        } else {
-
-            return null;
-
-        }
-    }
-
-    private String[] parseTSRow_(String row) throws ParseException {
+    private String[] parseTSRow(String row) throws ParseException {
 
         StringTokenizer tok = new StringTokenizer(row);
         int n = tok.countTokens();
@@ -339,11 +299,12 @@ public class J2KTSDataStore extends TSDataStore {
 
         DefaultDataSet result = new DefaultDataSet(columnCount + 1);
         String[] values = cache.split("\\s+");
+
         result.setData(0, new StringValue(values[0] + " " + values[1]));
 
         for (int i = 2; i < values.length; i++) {
             double d = Double.parseDouble(values[i]);
-            result.setData(i-1, new DoubleValue(d));
+            result.setData(i - 1, new DoubleValue(d));
         }
 
         cache = null;
