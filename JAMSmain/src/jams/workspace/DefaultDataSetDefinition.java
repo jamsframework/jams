@@ -249,5 +249,9 @@ public class DefaultDataSetDefinition implements DataSetDefinition, Serializable
 
         System.out.println(def.toASCIIString());
     }
+
+    public ArrayList<String> getAttributeNames() {
+        return attributeNames;
+    }
 }
 

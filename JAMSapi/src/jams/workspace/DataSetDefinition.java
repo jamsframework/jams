@@ -45,6 +45,8 @@ public interface DataSetDefinition extends Serializable {
 
     Set<String> getAttributes();
 
+    ArrayList<String> getAttributeNames();
+
     int getColumnCount();
 
     Class getType(String attributeName);
