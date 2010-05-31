@@ -36,10 +36,12 @@ public class JAMSCmdLine {
     private String modelFileName = null;
     private String parameterValues = null;
     private String[] otherArgs = null;
+    private boolean nogui = false;
     private static final String USAGE_STRING = JAMS.resources.getString("[Options]") +
             JAMS.resources.getString("__-h,_--help_________________________________________Print_help") +
             JAMS.resources.getString("__-c,_--config_<config_file_name>____________________Provide_config_file_name") +
             JAMS.resources.getString("__-m,_--model_<model_definition_file_name>___________Provide_model_file_name") +
+            JAMS.resources.getString("__-n,_--nogui________________________________________Suppress_all_GUI") +
             JAMS.resources.getString("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons");
     
     /**
@@ -53,6 +55,7 @@ public class JAMSCmdLine {
         CmdLineParser.Option configOption = parser.addStringOption('c', "config");
         CmdLineParser.Option modelOption = parser.addStringOption('m', "model");
         CmdLineParser.Option pValueOption = parser.addStringOption('p', "parametervalue");
+        CmdLineParser.Option noguiOption = parser.addBooleanOption('n', "nogui");
         CmdLineParser.Option helpOption = parser.addBooleanOption('h', "help");
 
         try {
@@ -68,7 +71,8 @@ public class JAMSCmdLine {
             System.out.println(JAMS.resources.getString("Usage:_") + appTitle + " " + USAGE_STRING);
             System.exit(0);
         }
-        
+
+        this.nogui = ((Boolean) parser.getOptionValue(noguiOption, Boolean.FALSE)).booleanValue();
         this.configFileName = (String) parser.getOptionValue(configOption, null);
         this.modelFileName = (String) parser.getOptionValue(modelOption, null);
         this.parameterValues = (String) parser.getOptionValue(pValueOption, null);
@@ -105,5 +109,12 @@ public class JAMSCmdLine {
      */
     public String getParameterValues() {
         return parameterValues;
+    }
+
+    /**
+     * @return the nogui
+     */
+    public boolean isNogui() {
+        return nogui;
     }
 }

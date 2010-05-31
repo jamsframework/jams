@@ -92,6 +92,12 @@ public class JAMSui {
 
         JAMSTools.configureLocaleEncoding(properties);
 
+        if (cmdLine.isNogui()) {
+            properties.setProperty(JAMSProperties.GUICONFIG_IDENTIFIER, "0");
+            properties.setProperty(JAMSProperties.WINDOWENABLE_IDENTIFIER, "0");
+            properties.setProperty(JAMSProperties.VERBOSITY_IDENTIFIER, "1");
+        }
+
         int guiConfig = Integer.parseInt(properties.getProperty(SystemProperties.GUICONFIG_IDENTIFIER, "0"));
         String modelFileName = cmdLine.getModelFileName();
 
