@@ -43,35 +43,27 @@ import jams.io.datatracer.AbstractTracer;
 import jams.runtime.JAMSRuntime;
 import jams.workspace.stores.Filter;
 
-@JAMSComponentDescription (title = "JAMS Context",
-                           author = "Sven Kralisch",
-                           date = "27. Juni 2005",
-                           description = "This component represents a JAMS "
+@JAMSComponentDescription(title = "JAMS Context",
+author = "Sven Kralisch",
+date = "27. Juni 2005",
+description = "This component represents a JAMS "
 + "context which is the top level component of every component hierarchie in JAMS")
 public class JAMSContext extends JAMSComponent implements Context {
 
     private Attribute.EntityCollection entities;
-
     protected ArrayList<Component> components = new ArrayList<Component>();
-
     protected ComponentEnumerator runEnumerator = null;
-
     protected ComponentEnumerator initCleanupEnumerator = null;
-
     private ArrayList<AttributeAccess> attributeAccessList = new ArrayList<AttributeAccess>();
-
     private ArrayList<AttributeSpec> attributeSpecs = new ArrayList<AttributeSpec>();
-
     protected DataAccessor[] dataAccessors = new DataAccessor[0];
-
     private HashMap<String, DataAccessor> dataAccessorMap;
-
     private HashMap<String, JAMSData> attributeMap;
-
     protected DataTracer[] dataTracers;
-
     protected boolean doRun = true;
     protected boolean isPaused = false;
+    protected HashMap<Component, Long> execTime = new HashMap<Component, Long>();
+    protected static boolean profile = false;
 
     /**
      * Creates a new context
@@ -201,18 +193,19 @@ public class JAMSContext extends JAMSComponent implements Context {
      * @param model The model object
      */
     @Override
-    public void setModel(Model model) {        
-        super.setModel(model);        
+    public void setModel(Model model) {
+        super.setModel(model);
         JAMSRuntime rt = getModel().getRuntime();
-        
+
         rt.addStateObserver(new Observer() {
 
             @Override
             public void update(Observable obs, Object obj) {
                 if (getModel().getRuntime().getState() != JAMSRuntime.STATE_RUN) {
                     JAMSContext.this.doRun = false;
-                }else
+                } else {
                     JAMSContext.this.doRun = true;
+                }
             }
         });
     }
@@ -374,12 +367,12 @@ public class JAMSContext extends JAMSComponent implements Context {
                     for (int j = 0; j < entities.length; j++) {
 
                         output(entities[j].getId());
-                        
+
                         for (int i = 0; i < dataAccessors.length; i++) {
                             dataAccessors[i].setIndex(j);
                             dataAccessors[i].read();
                             output(dataAccessors[i].getComponentObject());
-                            
+
                         }
                         nextRow();
                     }
@@ -646,60 +639,129 @@ public class JAMSContext extends JAMSComponent implements Context {
         }
     }
 
+    private void measureTime(long startTime, Component c) {
+        long time = System.currentTimeMillis() - startTime;
+        Long current = execTime.get(c);
+        if (current == null) {
+            current = new Long(0);
+        }
+        current += time;
+        execTime.put(c, current);
+    }
+
     @Override
     public void run() {
 
-        for (DataTracer dataTracer : dataTracers) {
-            dataTracer.startMark();
+        Runnable runRunnable;
+
+        if (profile) {
+            runRunnable = new Runnable() {
+
+                public void run() {
+
+                    long thisStart = System.currentTimeMillis();
+
+
+                    for (DataTracer dataTracer : dataTracers) {
+                        dataTracer.startMark();
+                    }
+
+                    //initEntityData();
+
+                    if (runEnumerator == null) {
+                        runEnumerator = getRunEnumerator();
+                    }
+
+                    runEnumerator.reset();
+                    while (runEnumerator.hasNext() && doRun) {
+                        Component comp = runEnumerator.next();
+                        //comp.updateRun();
+                        try {
+                            long cStart = System.currentTimeMillis();
+                            comp.run();
+                            measureTime(cStart, comp);
+                        } catch (Exception e) {
+                            getModel().getRuntime().handle(e, comp.getInstanceName());
+                        }
+                    }
+
+                    updateEntityData();
+
+                    for (DataTracer dataTracer : dataTracers) {
+                        dataTracer.trace();
+                        dataTracer.endMark();
+                    }
+
+                    measureTime(thisStart, JAMSContext.this);
+
+                }
+            };
+
+        } else {
+
+            runRunnable = new Runnable() {
+
+                public void run() {
+
+                    for (DataTracer dataTracer : dataTracers) {
+                        dataTracer.startMark();
+                    }
+
+                    //initEntityData();
+
+                    if (runEnumerator == null) {
+                        runEnumerator = getRunEnumerator();
+                    }
+
+                    runEnumerator.reset();
+                    while (runEnumerator.hasNext() && doRun) {
+                        Component comp = runEnumerator.next();
+                        //comp.updateRun();
+                        try {
+                            comp.run();
+                        } catch (Exception e) {
+                            getModel().getRuntime().handle(e, comp.getInstanceName());
+                        }
+                    }
+
+                    updateEntityData();
+
+                    for (DataTracer dataTracer : dataTracers) {
+                        dataTracer.trace();
+                        dataTracer.endMark();
+                    }
+                }
+            };
+
         }
+        runRunnable.run();
 
-        //initEntityData();
-
-        if (runEnumerator == null) {
-            runEnumerator = getRunEnumerator();
-        }
-
-        runEnumerator.reset();
-        while (runEnumerator.hasNext() && doRun) {
-            Component comp = runEnumerator.next();
-            //comp.updateRun();
-            try {
-                comp.run();
-            } catch (Exception e) {
-                getModel().getRuntime().handle(e, comp.getInstanceName());
-            }
-        }
-
-        updateEntityData();
-
-        for (DataTracer dataTracer : dataTracers) {
-            dataTracer.trace();
-            dataTracer.endMark();
-        }
     }
-    
+
     @Override
     public void resume() {
-        for (int i=0;i<this.getCompArray().length;i++)
-            try{
+        for (int i = 0; i < this.getCompArray().length; i++) {
+            try {
                 this.getCompArray()[i].restore();
-            }catch (Exception e) {
+            } catch (Exception e) {
                 getModel().getRuntime().handle(e, this.getCompArray()[i].getInstanceName());
             }
-        
+        }
+
         if (runEnumerator == null) {
             runEnumerator = getRunEnumerator();
         }
         if (runEnumerator.hasPrevious()) {
             Component comp = runEnumerator.previous();
             try {
-                if (comp instanceof JAMSContext)
-                    ((Context)comp).resume();
+                if (comp instanceof JAMSContext) {
+                    ((Context) comp).resume();
+                }
             } catch (Exception e) {
                 getModel().getRuntime().handle(e, comp.getInstanceName());
             }
             runEnumerator.next();
-        }        
+        }
         while (runEnumerator.hasNext() && doRun) {
             Component comp = runEnumerator.next();
             try {
@@ -711,14 +773,16 @@ public class JAMSContext extends JAMSComponent implements Context {
 
         updateEntityData();
 
-        if (!this.isPaused)
-            for (DataTracer dataTracer : dataTracers) {            
+        if (!this.isPaused) {
+            for (DataTracer dataTracer : dataTracers) {
                 dataTracer.trace();
-                if (!isPaused)
+                if (!isPaused) {
                     dataTracer.endMark();
+                }
             }
+        }
     }
-    
+
     @Override
     public void cleanup() {
 
@@ -762,24 +826,26 @@ public class JAMSContext extends JAMSComponent implements Context {
     public void setAccessSpecs(ArrayList<AttributeAccess> accessSpecs) {
         this.attributeAccessList = accessSpecs;
     }
-        
+
     class ChildrenEnumerator implements ComponentEnumerator {
 
         Component[] compArray = getCompArray();
-
         int index = 0;
 
         @Override
         public boolean hasNext() {
             return (index < compArray.length);
         }
+
         public boolean hasPrevious() {
             return (index > 0);
-        }       
+        }
+
         @Override
         public Component next() {
             return compArray[index++];
         }
+
         @Override
         public Component previous() {
             return compArray[--index];
@@ -788,15 +854,13 @@ public class JAMSContext extends JAMSComponent implements Context {
         @Override
         public void reset() {
             index = 0;
-        }             
+        }
     }
-    
+
     class RunEnumerator implements ComponentEnumerator {
 
         ComponentEnumerator ce = getChildrenEnumerator();
-
         EntityEnumerator ee = getEntities().getEntityEnumerator();
-
         int index = 0;
 
         @Override
@@ -805,6 +869,7 @@ public class JAMSContext extends JAMSComponent implements Context {
             boolean nextEntity = ee.hasNext();
             return (nextEntity || nextComp);
         }
+
         @Override
         public boolean hasPrevious() {
             boolean prevComp = ce.hasPrevious();
@@ -836,22 +901,22 @@ public class JAMSContext extends JAMSComponent implements Context {
             updateComponentData(index);
         }
 
-        public Component previous(){
-            if (ce.hasPrevious())
+        public Component previous() {
+            if (ce.hasPrevious()) {
                 return ce.previous();
-            else if (ee.hasPrevious()){
+            } else if (ee.hasPrevious()) {
                 ee.previous();
                 index--;
                 updateComponentData(index);
-                while(ce.hasNext())
+                while (ce.hasNext()) {
                     ce.next();
+                }
                 return ce.previous();
             }
             return null;
         }
-                       
     }
-    
+
     public Component getComponent(String name) {
         for (int i = 0; i < components.size(); i++) {
             if (components.get(i).getInstanceName().equals(name)) {

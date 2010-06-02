@@ -25,7 +25,6 @@ package jams.model;
 import jams.JAMS;
 import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
-import jams.data.SnapshotData;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.OutputDataStore;
 import java.io.File;
@@ -48,6 +47,8 @@ public class JAMSModel extends JAMSContext implements Model {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
     public Attribute.DirName workspaceDirectory = JAMSDataFactory.createDirName();
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, defaultValue = "false")
+    public Attribute.Boolean profileComponents;
     private JAMSRuntime runtime;
     private String name, author, date;
     public JAMSWorkspace workspace;
@@ -93,6 +94,9 @@ public class JAMSModel extends JAMSContext implements Model {
         runtime.println(JAMS.resources.getString("starting_simulation"), JAMS.STANDARD);
         runtime.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
 
+        // set static attribute profile which defines profiling for contexts
+        profile = profileComponents.getValue();
+
         // check if workspace directory was specified
         if (workspaceDirectory.getValue() == null) {
             runtime.sendHalt(JAMS.resources.getString("No_workspace_directory_specified,_stopping_execution!"));
@@ -124,6 +128,36 @@ public class JAMSModel extends JAMSContext implements Model {
             getRuntime().println(JAMS.resources.getString("####################################################################"), JAMS.VVERBOSE);
         }
         setupDataTracer();
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+
+        if (profile) {
+            printExecTimes();
+        }
+    }
+
+    private void printExecTimes() {
+
+        String tabs = "";
+        Component model = getModel();
+        Component thisC = this;
+
+        while (thisC != model) {
+            getModel().getRuntime().println(thisC.getInstanceName() + "\t\t" + execTime.get(this));
+
+            thisC = thisC.getContext();
+            getModel().getRuntime().println(thisC.getInstanceName());
+            tabs += "  ";
+        }
+
+        for (Component c : execTime.keySet()) {
+            if (c != this) {
+                getModel().getRuntime().println(tabs + "  " + c.getInstanceName() + " " + execTime.get(c));
+            }
+        }
     }
 
     public boolean moveWorkspaceDirectory(String workspaceDirectory) {
@@ -182,5 +216,5 @@ public class JAMSModel extends JAMSContext implements Model {
 
     public void setNullFields(HashMap<Component, ArrayList<Field>> nullFields) {
         this.nullFields = nullFields;
-    }                 
+    }
 }

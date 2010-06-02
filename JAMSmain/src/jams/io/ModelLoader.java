@@ -32,7 +32,6 @@ import jams.tools.JAMSTools;
 import jams.data.*;
 import jams.runtime.JAMSRuntime;
 import jams.tools.StringTools;
-import jams.tools.XMLTools;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -179,6 +178,13 @@ public class ModelLoader {
         }
         jamsModel.setComponents(childComponentList);
         jamsModel.setNullFields(nullFields);
+        try {
+            createMembers(jamsModel);
+        } catch (IllegalAccessException ex) {
+            jamsModel.getRuntime().handle(ex, false);
+        } catch (InstantiationException ex) {
+            jamsModel.getRuntime().handle(ex, false);
+        }
 
         return jamsModel;
     }
