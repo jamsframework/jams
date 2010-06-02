@@ -234,18 +234,18 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
 
         try {
-            String infoLog = properties.getProperty(SystemProperties.INFOLOG_IDENTIFIER);
-            if (!StringTools.isEmptyString(infoLog)) {
-                infoStream = new PrintStream(infoLog);
+            String infoLogFile = properties.getProperty(SystemProperties.INFOLOG_IDENTIFIER);
+            if (!StringTools.isEmptyString(infoLogFile)) {
+                infoStream = new PrintStream(infoLogFile);
             }
         } catch (FileNotFoundException fnfe) {
             this.handle(fnfe);
         }
 
         try {
-            String errorLog = properties.getProperty(SystemProperties.ERRORLOG_IDENTIFIER);
-            if (!StringTools.isEmptyString(errorLog)) {
-                errorStream = new PrintStream(errorLog);
+            String errorLogFile = properties.getProperty(SystemProperties.ERRORLOG_IDENTIFIER);
+            if (!StringTools.isEmptyString(errorLogFile)) {
+                errorStream = new PrintStream(errorLogFile);
             }
         } catch (FileNotFoundException fnfe) {
             this.handle(fnfe);

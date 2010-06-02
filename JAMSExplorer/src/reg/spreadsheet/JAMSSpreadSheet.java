@@ -28,7 +28,6 @@ import jams.workspace.DataValue;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.stores.InputDataStore;
-import jams.workspace.stores.J2KTSDataStore;
 import jams.workspace.stores.ShapeFileDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.awt.datatransfer.DataFlavor;
