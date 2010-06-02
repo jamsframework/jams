@@ -647,18 +647,18 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             return jamsID;
         }
 
-        int i = 1;
-        String caller = Reflection.getCallerClass(i).getName();
-        while (caller.equals("jams.runtime.StandardRuntime")) {
-            caller = Reflection.getCallerClass(++i).getName();
-        }
-
-//        StackTraceElement[] ste = Thread.currentThread().getStackTrace();
 //        int i = 1;
-//        String caller = ste[i].getClassName();
+//        String caller = Reflection.getCallerClass(i).getName();
 //        while (caller.equals("jams.runtime.StandardRuntime")) {
-//            caller = ste[++i].getClassName();
+//            caller = Reflection.getCallerClass(++i).getName();
 //        }
+
+        StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+        int i = 1;
+        String caller = ste[i].getClassName();
+        while (caller.equals("jams.runtime.StandardRuntime")) {
+            caller = ste[++i].getClassName();
+        }
 
         Integer id = idMap.get(caller);
         if (id != null) {
