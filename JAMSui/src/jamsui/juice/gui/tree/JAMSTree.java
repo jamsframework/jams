@@ -58,20 +58,6 @@ public class JAMSTree extends JTree {
         return false;
     }
 
-    @Override
-    public void updateUI() {
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-
-                public void run() {
-                    JAMSTree.super.updateUI();
-                }
-            });
-        } catch (InterruptedException ex) {
-        } catch (InvocationTargetException ex) {
-        }
-    }
-
     public Insets getAutoscrollInsets() {
         return (autoscrollInsets);
     }
