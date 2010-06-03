@@ -480,7 +480,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         JMenuItem editModelItem = new JMenuItem(editModelAction);
         editModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, ActionEvent.CTRL_MASK));
-        modelMenu.add(editModelItem);
+//        modelMenu.add(editModelItem);
 
         modelMenu.add(new JSeparator());
 
