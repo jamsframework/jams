@@ -115,20 +115,22 @@ public class JAMSModel extends JAMSContext implements Model {
             return;
         }
 
-        if (!getNullFields().isEmpty()) {
-            getRuntime().println(JAMS.resources.getString("##############_UNDEFINED_FIELDS_####################################"), JAMS.VVERBOSE);
+        if (!getNullFields().isEmpty() && (runtime.getDebugLevel() >= JAMS.VVERBOSE)) {
+            runtime.println("");
+            runtime.println(JAMS.resources.getString("UNDEFINED_FIELDS"));
+            runtime.println(JAMS.resources.getString("*************************************"));
             for (Component comp : getNullFields().keySet()) {
                 ArrayList<Field> nf = getNullFields().get(comp);
                 if (nf.isEmpty()) {
                     continue;
                 }
-                String str = JAMS.resources.getString("##_") + comp.getInstanceName() + ": ";
+                String str = "  " + comp.getInstanceName() + ": ";
                 for (Field field : nf) {
                     str += field.getName() + " ";
                 }
-                getRuntime().println(str, JAMS.VVERBOSE);
+                getRuntime().println(str);
             }
-            getRuntime().println(JAMS.resources.getString("####################################################################"), JAMS.VVERBOSE);
+            runtime.println(JAMS.resources.getString("*************************************"));
         }
         setupDataTracer();
     }
@@ -171,25 +173,6 @@ public class JAMSModel extends JAMSContext implements Model {
             }
 
         }
-        runtime.println(JAMS.resources.getString("*************************************"));
-
-//        String tabs = "";
-//        Component model = getModel();
-//        Component thisC = this;
-//
-//        while (thisC != model) {
-//            getModel().getRuntime().println(thisC.getInstanceName() + "\t\t" + execTime.get(this));
-//
-//            thisC = thisC.getContext();
-//            getModel().getRuntime().println(thisC.getInstanceName());
-//            tabs += "  ";
-//        }
-//
-//        for (Component c : execTime.keySet()) {
-//            if (c != this) {
-//                getModel().getRuntime().println(tabs + "  " + c.getInstanceName() + " " + execTime.get(c));
-//            }
-//        }
     }
 
     public boolean moveWorkspaceDirectory(String workspaceDirectory) {
