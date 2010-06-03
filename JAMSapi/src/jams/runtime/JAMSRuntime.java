@@ -42,12 +42,10 @@ public interface JAMSRuntime extends Serializable {
      * Run state causing runtime to stop model execution
      */
     public static final int STATE_STOP = 0;
-
     /**
      * Run state causing runtime to continue model execution
      */
     public static final int STATE_RUN = 1;
-    
     public static final int STATE_PAUSE = 2;
 
     public int getDebugLevel();
@@ -71,7 +69,9 @@ public interface JAMSRuntime extends Serializable {
     public void sendHalt(String str);
 
     public int getState();
+
     public void resume(SmallModelState state) throws Exception;
+
     public void pause();
 
     public void addStateObserver(Observer o);

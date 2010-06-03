@@ -63,7 +63,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     protected boolean doRun = true;
     protected boolean isPaused = false;
     protected HashMap<Component, Long> execTime = new HashMap<Component, Long>();
-    protected static boolean profile = false;
+    protected static boolean profiling = false;
 
     /**
      * Creates a new context
@@ -654,7 +654,7 @@ public class JAMSContext extends JAMSComponent implements Context {
 
         Runnable runRunnable;
 
-        if (profile) {
+        if (profiling) {
             runRunnable = new Runnable() {
 
                 public void run() {

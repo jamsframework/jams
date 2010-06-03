@@ -140,12 +140,17 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
 
         // load the model
-
         this.println("", JAMS.STANDARD);
         this.println(JAMS.resources.getString("Loading_Model"), JAMS.STANDARD);
 
         ModelLoader modelLoader = new ModelLoader(null, this);
         this.model = modelLoader.loadModel(modelDocument);
+
+        // define if the model should profile or not
+        boolean doProfiling = ("1".equals(properties.getProperty(JAMSProperties.PROFILE_IDENTIFIER, "0")) ? true : false);
+        this.model.setProfiling(doProfiling);
+
+        // get the id map which maps class names to id values (used during logging)
         this.idMap = modelLoader.getIdMap();
 
         //this.idMap.put(JAMSWorkspace.class.getName(), 0);

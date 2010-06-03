@@ -55,6 +55,7 @@ public interface SystemProperties {
     String SERVER_IDENTIFIER = "server";
     String SERVER_PASSWORD_IDENTIFIER = "serverpassword";
     String WORKSPACE_IDENTIFIER = "workspace";
+    String PROFILE_IDENTIFIER = "profiling";
 
     /**
      * Adds an observer for some property
@@ -111,6 +112,7 @@ public interface SystemProperties {
      */
     void setProperty(String key, String value);
 
+    @Override
     String toString();
 
 }

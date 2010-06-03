@@ -178,13 +178,6 @@ public class ModelLoader {
         }
         jamsModel.setComponents(childComponentList);
         jamsModel.setNullFields(nullFields);
-        try {
-            createMembers(jamsModel);
-        } catch (IllegalAccessException ex) {
-            jamsModel.getRuntime().handle(ex, false);
-        } catch (InstantiationException ex) {
-            jamsModel.getRuntime().handle(ex, false);
-        }
 
         return jamsModel;
     }

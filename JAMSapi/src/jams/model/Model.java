@@ -23,7 +23,6 @@
 package jams.model;
 
 import jams.runtime.JAMSRuntime;
-import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.Workspace;
 import jams.workspace.stores.OutputDataStore;
 import java.io.File;
@@ -58,6 +57,8 @@ public interface Model extends Context {
     void setDate(String date);
     
     void setName(String name);
+
+    void setProfiling(boolean profiling);
 
     void setNullFields(HashMap<Component, ArrayList<Field>> nullFields);
 

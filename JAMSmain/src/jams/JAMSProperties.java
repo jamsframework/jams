@@ -171,6 +171,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
             p.setProperty(GUICONFIGWIDTH_IDENTIFIER, "600");
             p.setProperty(GUICONFIGHEIGHT_IDENTIFIER, "600");
             p.setProperty(CHARSET_IDENTIFIER, "");
+            p.setProperty(PROFILE_IDENTIFIER, "0");
 
             theProperties = new JAMSProperties(p);
             theProperties.setDefaultFilename(System.getProperty("user.dir") + File.separator + JAMS.DEFAULT_PARAMETER_FILENAME);

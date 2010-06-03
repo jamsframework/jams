@@ -47,8 +47,6 @@ public class JAMSModel extends JAMSContext implements Model {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
     public Attribute.DirName workspaceDirectory = JAMSDataFactory.createDirName();
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, defaultValue = "false")
-    public Attribute.Boolean profileComponents;
     private JAMSRuntime runtime;
     private String name, author, date;
     public JAMSWorkspace workspace;
@@ -87,15 +85,20 @@ public class JAMSModel extends JAMSContext implements Model {
         this.date = date;
     }
 
+    /**
+     * Set static attribute profile which defines profiling for contexts
+     * @param profile Profile or not
+     */
+    public void setProfiling(boolean profiling) {
+        JAMSModel.profiling = profiling;
+    }
+
     @Override
     public void init() {
 
         runtime.println("", JAMS.STANDARD);
         runtime.println(JAMS.resources.getString("starting_simulation"), JAMS.STANDARD);
         runtime.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
-
-        // set static attribute profile which defines profiling for contexts
-        profile = profileComponents.getValue();
 
         // check if workspace directory was specified
         if (workspaceDirectory.getValue() == null) {
@@ -134,12 +137,25 @@ public class JAMSModel extends JAMSContext implements Model {
     public void cleanup() {
         super.cleanup();
 
-        if (profile) {
+        if (profiling) {
             printExecTimes();
         }
     }
 
+    private  void printExecTimes(Context context) {
+
+        for (Component c : context.getComponents()) {
+
+            if (c instanceof Context) {
+                printExecTimes((Context) c);
+            }
+
+        }
+    }
+
     private void printExecTimes() {
+
+        printExecTimes(this);
 
         String tabs = "";
         Component model = getModel();
