@@ -36,7 +36,6 @@ import jams.model.Model;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
 import jams.workspace.InvalidWorkspaceException;
-import jams.workspace.JAMSWorkspace;
 import jamsui.juice.JUICE;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -533,6 +532,12 @@ public class JAMSFrame extends JAMSLauncher {
         saveButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelSave.png")));
         getToolBar().add(saveButton);
 
+        JButton prefsButton = new JButton(editPrefsAction);
+        prefsButton.setText("");
+        prefsButton.setToolTipText(JAMS.resources.getString("Edit_Preferences..."));
+        prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
+        getToolBar().add(prefsButton);
+        
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
         infoLogButton.setToolTipText(JAMS.resources.getString("Show_Info_Log..."));

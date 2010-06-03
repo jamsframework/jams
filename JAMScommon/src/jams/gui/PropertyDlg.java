@@ -44,7 +44,7 @@ public class PropertyDlg extends JDialog {
 
     private static final int JCOMP_HEIGHT = 20;
     private FileListInput list;
-    private BooleanInput verboseCheck,  windowEnable,  windowOnTop,  errorDlg;
+    private BooleanInput verboseCheck,  windowEnable,  windowOnTop,  errorDlg, profiling;
     private JSpinner debugSpinner;
     private FileInput infoFile,  errorFile;
     private TextInput windowHeight,  windowWidth, helpBaseURL, userName, forceLocale, charset;
@@ -128,6 +128,12 @@ public class PropertyDlg extends JDialog {
         windowOnTop = new BooleanInput();
         windowOnTop.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, windowOnTop, 1, y, 1, 1, 1, 1);
+
+        y++;
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Create_profile_info:")), 0, y, 1, 1, 0, 0);
+        profiling = new BooleanInput();
+        profiling.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
+        GUIHelper.addGBComponent(contentPanel, gbl, profiling, 1, y, 1, 1, 1, 1);
 
         y++;
         GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Force_Localization:")), 0, y, 1, 1, 0, 0);
@@ -255,6 +261,7 @@ public class PropertyDlg extends JDialog {
         windowEnable.setValue(properties.getProperty(SystemProperties.WINDOWENABLE_IDENTIFIER));
         errorDlg.setValue(properties.getProperty(SystemProperties.ERRORDLG_IDENTIFIER));
         windowOnTop.setValue(properties.getProperty(SystemProperties.WINDOWONTOP_IDENTIFIER));
+        profiling.setValue(properties.getProperty(SystemProperties.PROFILE_IDENTIFIER));
         forceLocale.setValue(properties.getProperty(SystemProperties.LOCALE_IDENTIFIER));
         charset.setValue(properties.getProperty(SystemProperties.CHARSET_IDENTIFIER));
 
@@ -283,6 +290,7 @@ public class PropertyDlg extends JDialog {
         properties.setProperty(SystemProperties.WINDOWENABLE_IDENTIFIER, windowEnable.getValue());
         properties.setProperty(SystemProperties.ERRORDLG_IDENTIFIER, errorDlg.getValue());
         properties.setProperty(SystemProperties.WINDOWONTOP_IDENTIFIER, windowOnTop.getValue());
+        properties.setProperty(SystemProperties.PROFILE_IDENTIFIER, profiling.getValue());
         properties.setProperty(SystemProperties.LOCALE_IDENTIFIER, forceLocale.getValue());
         properties.setProperty(SystemProperties.CHARSET_IDENTIFIER, charset.getValue());
         properties.setProperty(SystemProperties.WINDOWHEIGHT_IDENTIFIER, windowHeight.getValue());

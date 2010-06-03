@@ -62,8 +62,9 @@ public class JAMSContext extends JAMSComponent implements Context {
     protected DataTracer[] dataTracers;
     protected boolean doRun = true;
     protected boolean isPaused = false;
-    protected HashMap<Component, Long> execTime = new HashMap<Component, Long>();
+    protected static HashMap<Component, Long> execTime = new HashMap<Component, Long>();
     protected static boolean profiling = false;
+    protected Runnable runRunnable;
 
     /**
      * Creates a new context
@@ -509,6 +510,87 @@ public class JAMSContext extends JAMSComponent implements Context {
 
         initEntityData();
         initTracerDataAccess();
+
+
+        // create the runnable object that is executet at each run stage of that context
+        // this will differ depending if the child components' execution time should be
+        // measured or not
+        if (profiling) {
+            runRunnable = new Runnable() {
+
+                public void run() {
+
+                    for (DataTracer dataTracer : dataTracers) {
+                        dataTracer.startMark();
+                    }
+
+                    //initEntityData();
+
+                    if (runEnumerator == null) {
+                        runEnumerator = getRunEnumerator();
+                    }
+
+                    runEnumerator.reset();
+                    while (runEnumerator.hasNext() && doRun) {
+                        Component comp = runEnumerator.next();
+                        //comp.updateRun();
+                        try {
+                            long cStart = System.currentTimeMillis();
+                            comp.run();
+                            measureTime(cStart, comp);
+                        } catch (Exception e) {
+                            getModel().getRuntime().handle(e, comp.getInstanceName());
+                        }
+                    }
+
+                    updateEntityData();
+
+                    for (DataTracer dataTracer : dataTracers) {
+                        dataTracer.trace();
+                        dataTracer.endMark();
+                    }
+
+                }
+            };
+
+        } else {
+
+            runRunnable = new Runnable() {
+
+                public void run() {
+
+                    for (DataTracer dataTracer : dataTracers) {
+                        dataTracer.startMark();
+                    }
+
+                    //initEntityData();
+
+                    if (runEnumerator == null) {
+                        runEnumerator = getRunEnumerator();
+                    }
+
+                    runEnumerator.reset();
+                    while (runEnumerator.hasNext() && doRun) {
+                        Component comp = runEnumerator.next();
+                        //comp.updateRun();
+                        try {
+                            comp.run();
+                        } catch (Exception e) {
+                            getModel().getRuntime().handle(e, comp.getInstanceName());
+                        }
+                    }
+
+                    updateEntityData();
+
+                    for (DataTracer dataTracer : dataTracers) {
+                        dataTracer.trace();
+                        dataTracer.endMark();
+                    }
+                }
+            };
+
+        }
+
     }
 
     protected void initTracerDataAccess() {
@@ -651,91 +733,7 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     @Override
     public void run() {
-
-        Runnable runRunnable;
-
-        if (profiling) {
-            runRunnable = new Runnable() {
-
-                public void run() {
-
-                    long thisStart = System.currentTimeMillis();
-
-
-                    for (DataTracer dataTracer : dataTracers) {
-                        dataTracer.startMark();
-                    }
-
-                    //initEntityData();
-
-                    if (runEnumerator == null) {
-                        runEnumerator = getRunEnumerator();
-                    }
-
-                    runEnumerator.reset();
-                    while (runEnumerator.hasNext() && doRun) {
-                        Component comp = runEnumerator.next();
-                        //comp.updateRun();
-                        try {
-                            long cStart = System.currentTimeMillis();
-                            comp.run();
-                            measureTime(cStart, comp);
-                        } catch (Exception e) {
-                            getModel().getRuntime().handle(e, comp.getInstanceName());
-                        }
-                    }
-
-                    updateEntityData();
-
-                    for (DataTracer dataTracer : dataTracers) {
-                        dataTracer.trace();
-                        dataTracer.endMark();
-                    }
-
-                    measureTime(thisStart, JAMSContext.this);
-
-                }
-            };
-
-        } else {
-
-            runRunnable = new Runnable() {
-
-                public void run() {
-
-                    for (DataTracer dataTracer : dataTracers) {
-                        dataTracer.startMark();
-                    }
-
-                    //initEntityData();
-
-                    if (runEnumerator == null) {
-                        runEnumerator = getRunEnumerator();
-                    }
-
-                    runEnumerator.reset();
-                    while (runEnumerator.hasNext() && doRun) {
-                        Component comp = runEnumerator.next();
-                        //comp.updateRun();
-                        try {
-                            comp.run();
-                        } catch (Exception e) {
-                            getModel().getRuntime().handle(e, comp.getInstanceName());
-                        }
-                    }
-
-                    updateEntityData();
-
-                    for (DataTracer dataTracer : dataTracers) {
-                        dataTracer.trace();
-                        dataTracer.endMark();
-                    }
-                }
-            };
-
-        }
         runRunnable.run();
-
     }
 
     @Override

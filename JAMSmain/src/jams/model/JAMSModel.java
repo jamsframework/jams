@@ -142,12 +142,16 @@ public class JAMSModel extends JAMSContext implements Model {
         }
     }
 
-    private  void printExecTimes(Context context) {
+    private void printExecTimes(Context context, String indent) {
+
+        runtime.println(indent + context.getInstanceName() + "\t" + execTime.get(context));
 
         for (Component c : context.getComponents()) {
 
             if (c instanceof Context) {
-                printExecTimes((Context) c);
+                printExecTimes((Context) c, indent + "\t");
+            } else {
+                runtime.println(indent + "\t" + c.getInstanceName() + "\t" + execTime.get(c));
             }
 
         }
@@ -155,25 +159,37 @@ public class JAMSModel extends JAMSContext implements Model {
 
     private void printExecTimes() {
 
-        printExecTimes(this);
+        runtime.println("");
+        runtime.println("JAMS profiler results");
+        runtime.println(JAMS.resources.getString("*************************************"));
+        for (Component c : this.getComponents()) {
 
-        String tabs = "";
-        Component model = getModel();
-        Component thisC = this;
-
-        while (thisC != model) {
-            getModel().getRuntime().println(thisC.getInstanceName() + "\t\t" + execTime.get(this));
-
-            thisC = thisC.getContext();
-            getModel().getRuntime().println(thisC.getInstanceName());
-            tabs += "  ";
-        }
-
-        for (Component c : execTime.keySet()) {
-            if (c != this) {
-                getModel().getRuntime().println(tabs + "  " + c.getInstanceName() + " " + execTime.get(c));
+            if (c instanceof Context) {
+                printExecTimes((Context) c, "");
+            } else {
+                runtime.println(c.getInstanceName() + "\t" + execTime.get(c));
             }
+
         }
+        runtime.println(JAMS.resources.getString("*************************************"));
+
+//        String tabs = "";
+//        Component model = getModel();
+//        Component thisC = this;
+//
+//        while (thisC != model) {
+//            getModel().getRuntime().println(thisC.getInstanceName() + "\t\t" + execTime.get(this));
+//
+//            thisC = thisC.getContext();
+//            getModel().getRuntime().println(thisC.getInstanceName());
+//            tabs += "  ";
+//        }
+//
+//        for (Component c : execTime.keySet()) {
+//            if (c != this) {
+//                getModel().getRuntime().println(tabs + "  " + c.getInstanceName() + " " + execTime.get(c));
+//            }
+//        }
     }
 
     public boolean moveWorkspaceDirectory(String workspaceDirectory) {
