@@ -90,20 +90,20 @@ public abstract class MOOptimizer extends Optimizer {
             if (((Sample)d1).fx.length != ((Sample)d2).fx.length){
                 return 0;
             }
-            int ord = -1000;
+            int ord = 0;
             for (int i=0;i<m;i++){
                 int nextOrd;
                 if (((Sample) d1).fx[i] < ((Sample) d2).fx[i]) {
                     nextOrd = -1 * order;
-                } else if (((Sample) d1).fx == ((Sample) d2).fx) {
+                } else if ( Math.abs(((Sample) d1).fx[i] - ((Sample) d2).fx[i] )<0.000000001) {
                     nextOrd = 0 * order;
                 } else {
                     nextOrd = 1 * order;
                 }
-                if (ord == -1000)
+                if (ord == 0)
                     ord = nextOrd;
                 else{
-                    if (ord != nextOrd)
+                    if (ord != nextOrd && nextOrd != 0)
                         return 0;                    
                 }
             }
@@ -124,16 +124,20 @@ public abstract class MOOptimizer extends Optimizer {
         super.init();        
         if (!enable.getValue())
             return;            
-        
-        if (this.effMethodName == null)
-            stop(JAMS.resources.getString("effMethod_not_specified"));
-        if (this.effValue == null)
-            stop(JAMS.resources.getString("effValue_not_specified"));
-        if (this.mode == null)
-            stop(JAMS.resources.getString("mode_not_specified"));
+
+        if (this.GoalFunction == null){
+            if (this.effMethodName == null)
+                stop(JAMS.resources.getString("effMethod_not_specified"));
+            if (this.effValue == null)
+                stop(JAMS.resources.getString("effValue_not_specified"));
+            if (this.mode == null)
+                stop(JAMS.resources.getString("mode_not_specified"));
                
-        m = effValue.length;
-                
+            m = effValue.length;
+        }else{
+            StringTokenizer tok = new StringTokenizer(this.mode.getValue(),";");
+            m = tok.countTokens();
+        }
         StringTokenizer tok = new StringTokenizer(this.mode.getValue(),";");
         if (tok.countTokens() != m)
             stop(JAMS.resources.getString("efficiency_count_does_not_match_mode_count"));

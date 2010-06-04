@@ -35,12 +35,15 @@ public class JAMSCmdLine {
     private String configFileName;
     private String modelFileName = null;
     private String parameterValues = null;
+    private String snapshotFileName = null;
+    
     private String[] otherArgs = null;
     private boolean nogui = false;
     private static final String USAGE_STRING = JAMS.resources.getString("[Options]") +
             JAMS.resources.getString("__-h,_--help_________________________________________Print_help") +
             JAMS.resources.getString("__-c,_--config_<config_file_name>____________________Provide_config_file_name") +
             JAMS.resources.getString("__-m,_--model_<model_definition_file_name>___________Provide_model_file_name") +
+            JAMS.resources.getString("__-s,_--snapshot_<save_snapshot_file>________________Provide_model_snapshot_name") +
             JAMS.resources.getString("__-n,_--nogui________________________________________Suppress_all_GUI") +
             JAMS.resources.getString("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons");
     
@@ -55,6 +58,7 @@ public class JAMSCmdLine {
         CmdLineParser.Option configOption = parser.addStringOption('c', "config");
         CmdLineParser.Option modelOption = parser.addStringOption('m', "model");
         CmdLineParser.Option pValueOption = parser.addStringOption('p', "parametervalue");
+        CmdLineParser.Option snapshotOption = parser.addStringOption('s', "snapshot");
         CmdLineParser.Option noguiOption = parser.addBooleanOption('n', "nogui");
         CmdLineParser.Option helpOption = parser.addBooleanOption('h', "help");
 
@@ -75,6 +79,7 @@ public class JAMSCmdLine {
         this.nogui = ((Boolean) parser.getOptionValue(noguiOption, Boolean.FALSE)).booleanValue();
         this.configFileName = (String) parser.getOptionValue(configOption, null);
         this.modelFileName = (String) parser.getOptionValue(modelOption, null);
+        this.snapshotFileName = (String) parser.getOptionValue(snapshotOption, null);
         this.parameterValues = (String) parser.getOptionValue(pValueOption, null);
         this.otherArgs = parser.getRemainingArgs();
     }
@@ -94,7 +99,10 @@ public class JAMSCmdLine {
     public String getModelFileName() {
         return modelFileName;
     }
-    
+
+    public String getSnapshotFileName() {
+        return this.snapshotFileName;
+    }
     /**
      * Return all additional arguments
      * @return The list of additional arguments as String array
@@ -102,7 +110,7 @@ public class JAMSCmdLine {
     public String[] getOtherArgs() {
         return otherArgs;
     }
-    
+
     /**
      * Return the list of parameter values
      * @return The String representing a list of parameter values

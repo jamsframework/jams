@@ -178,6 +178,87 @@ public class modelModifier {
         return true;
     }
 
+    static private boolean readNSGA2Method(OptimizerDescription desc, Properties props) {
+        desc.optimizerClassName = "jams.components.optimizer.NSGA2";
+        String str_maximumNumberOfIterations = props.getProperty("maxn");
+        String str_populationSize = props.getProperty("popSize");
+        String str_crossoverProbability = props.getProperty("crossoverProbability");
+        String str_mutationProbability = props.getProperty("mutationProbability");
+        String str_crossoverDistributionIndex = props.getProperty("crossoverDistributionIndex");
+        String str_mutationDistributionIndex = props.getProperty("mutationDistributionIndex");
+        String str_maxGeneration = props.getProperty("maxGeneration");
+
+        int maxn = 0;
+        try {
+            maxn = Integer.parseInt(str_maximumNumberOfIterations);
+        } catch (Exception e) {
+        }
+        if (maxn < 1) {
+            System.err.println(JAMS.resources.getString("error_maxiter_greater_1"));
+            return false;
+        }
+        desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
+
+        int popSize = 0;
+        try {
+            popSize = Integer.parseInt(str_populationSize);
+        } catch (Exception e) {
+        }
+        if (popSize < 1) {
+            System.err.println(JAMS.resources.getString("population_size_must_be_positive"));
+            return false;
+        }
+        desc.attributes.add(new AttributeDescription("populationSize", null, Integer.toString(popSize), false));
+
+        double crossoverProbability = 0;
+        try {
+            crossoverProbability = Double.parseDouble(str_crossoverProbability);
+        } catch (Exception e) {
+        }
+        if (crossoverProbability < 0 || crossoverProbability > 1) {
+            System.err.println(JAMS.resources.getString("crossoverProbability_must_be_between_0_and_1"));
+            return false;
+        }
+        double mutationProbability = 0;
+        try {
+            mutationProbability = Double.parseDouble(str_mutationProbability);
+        } catch (Exception e) {
+        }
+        if (mutationProbability < 0.5 || mutationProbability > 1) {
+            System.err.println(JAMS.resources.getString("mutationProbability_must_be_between_05_and_1"));
+            return false;
+        }
+        double crossoverDistributionIndex = 0;
+        try {
+            crossoverDistributionIndex = Double.parseDouble(str_crossoverDistributionIndex);
+        } catch (Exception e) {
+        }
+        if (crossoverDistributionIndex < 0.5 || crossoverDistributionIndex > 100) {
+            System.err.println(JAMS.resources.getString("crossoverDistributionIndex_must_be_between_05_and_100"));
+            return false;
+        }
+        double mutationDistributionIndex = 0;
+        try {
+            mutationDistributionIndex = Double.parseDouble(str_mutationDistributionIndex);
+        } catch (Exception e) {
+        }
+        if (mutationDistributionIndex < 0.5 || mutationDistributionIndex > 100) {
+            System.err.println(JAMS.resources.getString("mutationDistributionIndex_must_be_between_05_and_100"));
+            return false;
+        }
+        double maxGeneration = 0;
+        try {
+            maxGeneration = Double.parseDouble(str_maxGeneration);
+        } catch (Exception e) {
+        }
+        if (maxGeneration < 1) {
+            System.err.println(JAMS.resources.getString("maxGeneration_must_be_positive"));
+            return false;
+        }
+        desc.attributes.add(new AttributeDescription("populationSize", null, Integer.toString(popSize), false));
+        return true;
+    }
+
     static private boolean readMOCOMMethod(OptimizerDescription desc, Properties props) {
         desc.optimizerClassName = "jams.components.optimizer.MOCOM";
         String str_maximumNumberOfIterations = props.getProperty("maxn");
@@ -450,7 +531,14 @@ public class modelModifier {
                     return false;
                 }
                 break;
-            }            
+            }
+            case 9: {
+                if (!readNSGA2Method(desc, props)) {
+                    System.err.println("invalid NSGA2 method configuration");
+                    return false;
+                }
+                break;
+            }
         }
         return true;
     }

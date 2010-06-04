@@ -5,8 +5,8 @@
 
 package jams.components.tools;
 
+import jams.data.Attribute;
 import jams.model.*;
-import jams.data.JAMSBoolean;
 import jams.data.JAMSString;
 import jams.runtime.StandardRuntime;
 import jams.tools.FileTools;
@@ -23,7 +23,7 @@ public class JAMSModelSnapshot extends JAMSComponent{
             update = JAMSVarDescription.UpdateType.RUN,
             description = "Description"
             )
-            public JAMSString snapshotFile;
+            public Attribute.String snapshotFile;
     
         
     @JAMSVarDescription(
@@ -31,7 +31,7 @@ public class JAMSModelSnapshot extends JAMSComponent{
             update = JAMSVarDescription.UpdateType.RUN,
             description = "Description"
             )
-            public JAMSBoolean enable;
+            public Attribute.Boolean enable;
                 
     public void freeze(){
         if (this.getModel().getRuntime() instanceof StandardRuntime){

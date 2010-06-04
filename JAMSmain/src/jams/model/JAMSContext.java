@@ -42,6 +42,7 @@ import jams.dataaccess.CalendarAccessor;
 import jams.io.datatracer.AbstractTracer;
 import jams.runtime.JAMSRuntime;
 import jams.workspace.stores.Filter;
+import java.io.IOException;
 
 @JAMSComponentDescription(title = "JAMS Context",
 author = "Sven Kralisch",
@@ -64,7 +65,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     protected boolean isPaused = false;
     protected static HashMap<Component, Long> execTime = new HashMap<Component, Long>();
     protected static boolean profiling = false;
-    protected Runnable runRunnable;
+    transient protected Runnable runRunnable;
 
     /**
      * Creates a new context
@@ -512,6 +513,10 @@ public class JAMSContext extends JAMSComponent implements Context {
         initTracerDataAccess();
 
 
+        createRunnable();
+    }
+
+    private void createRunnable(){
         // create the runnable object that is executet at each run stage of that context
         // this will differ depending if the child components' execution time should be
         // measured or not
@@ -590,7 +595,6 @@ public class JAMSContext extends JAMSComponent implements Context {
             };
 
         }
-
     }
 
     protected void initTracerDataAccess() {
@@ -977,5 +981,10 @@ public class JAMSContext extends JAMSComponent implements Context {
     @Override
     public void setEntities(Attribute.EntityCollection entities) {
         this.entities = entities;
+    }
+
+    private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
+        stream.defaultReadObject();
+        createRunnable();
     }
 }

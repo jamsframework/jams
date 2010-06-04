@@ -55,9 +55,9 @@ public class JdbcSQL implements DataReader {
     private static final int OBJECT = 4;
     
     private String user,  password,  host,  db,  query, driver;
-    private ResultSet rs;
-    private ResultSetMetaData rsmd;
-    private JdbcSQLConnector pgsql;
+    transient private ResultSet rs;
+    transient private ResultSetMetaData rsmd;
+    transient private JdbcSQLConnector pgsql;
     private int numberOfColumns = -1;
     private int[] type;
     private final boolean alwaysReconnect = false;

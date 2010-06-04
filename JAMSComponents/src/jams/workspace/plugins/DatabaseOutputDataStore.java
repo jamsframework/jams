@@ -213,6 +213,13 @@ public class DatabaseOutputDataStore implements OutputDataStore {
     
     public boolean isValid() {
         try{
+            if (pgsql==null){
+                try{
+                    open(false);
+                }catch(IOException e){
+                    return false;
+                }
+            }
             return pgsql.isValid();
         }catch (SQLException e){
             return false;

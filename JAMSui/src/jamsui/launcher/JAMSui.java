@@ -32,6 +32,8 @@ import jams.io.*;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jams.SystemProperties;
+import jams.model.JAMSFullModelState;
+import jams.model.Model;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
 import org.w3c.dom.Document;
@@ -173,7 +175,24 @@ public class JAMSui {
                     if (!info.equals("")) {
                         runtime.println(info);
                     }
-                    runtime.runModel();
+                    String snapshotFileName = cmdLine.getSnapshotFileName();
+                    if (snapshotFileName != null) {
+                        File snapshotFile = new File(snapshotFileName);
+                        if (!snapshotFile.exists()) {
+                            final JAMSFullModelState state = new JAMSFullModelState(snapshotFile);
+
+                            Model model = state.getModel();
+                            try {
+                                model.getRuntime().resume(state.getSmallModelState());
+                            } catch (Exception e) {
+                                JAMSTools.handle(e);
+                            }
+                            // collect some garbage ;)
+                            Runtime.getRuntime().gc();
+                        }
+                    } else {
+                        runtime.runModel();
+                    }
 
                 } catch (IOException ioe) {
                     System.out.println(JAMS.resources.getString("The_model_definition_file_") + modelFileName + JAMS.resources.getString("_could_not_be_loaded,_because:_") + ioe.toString());

@@ -44,11 +44,8 @@ public class MOCOM extends MOOptimizer {
 
         public MOCOM_Comparator(int col, boolean decreasing_order) {
             this.col = col;
-            if (decreasing_order) {
-                order = -1;
-            } else {
-                order = 1;
-            }
+            if (decreasing_order)   order = -1;
+            else                    order = 1;
         }
 
         public int compare(Object d1, Object d2) {
@@ -72,7 +69,7 @@ public class MOCOM extends MOOptimizer {
     int s; //population size        
     int icall = 0;
     int MaxIter;
-    boolean continousOutput = false;
+    boolean continuousOutput = false;
     long start, end = 0;
     String effNames[];
     
@@ -557,7 +554,7 @@ public class MOCOM extends MOOptimizer {
             this.sort(currentResult, n + m);
 
             int c = 0;
-            if (continousOutput) {
+            if (continuousOutput) {
                 while (c < s && loopcounter % 10 == 0) {
                     String out = "";
                     out += ("" + currentResult[c][n+m] + "\t");
@@ -685,16 +682,16 @@ public class MOCOM extends MOOptimizer {
     @Override
     public void run() {        
         if (this.populationSize == null) {
-            stop("Component " + this.getInstanceName() + ": populationsize unknown. please set populationsize");
+            stop("Component " + this.getInstanceName() + ": " +JAMS.resources.getString("populationsize_unknown_please_set_populationsize"));
         }
         
         this.s = this.populationSize.getValue();
 
         if (this.s <= 0) {
-            getModel().getRuntime().sendHalt("Component " + this.getInstanceName() + ": populationsize ist zero");
+            getModel().getRuntime().sendHalt(JAMS.resources.getString("Component") + " " + this.getInstanceName() + ": "+ JAMS.resources.getString("populationsize_is_zero"));
         }
         
         Object ret[] = mocom(this.s, this.lowBound, this.upBound, maxn.getValue());
-        System.out.println("Mocom has finished");
+        sayThis(JAMS.resources.getString("Mocom_has_finished"));
     }   
 }

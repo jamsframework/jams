@@ -151,11 +151,7 @@ public class SimpleSCE extends SOOptimizer {
             }
         }
     }
-
-    public double Custom_rand() {
-        return generator.nextDouble();
-    }
-       
+           
     public double NormalizedgeometricRange(SampleSO x[], double bound[]) {
         if (x.length == 0) {
             return 0;
@@ -318,7 +314,7 @@ public class SimpleSCE extends SOOptimizer {
             for (int k3 = 1; k3 < nps; k3++) {
                 int lpos = 0;
                 for (int iter = 0; iter < 1000; iter++) {
-                    lpos = (int) Math.floor(npg + 0.5 - Math.sqrt((npg + 0.5) * (npg + 0.5) - npg * (npg + 1) * Custom_rand()));
+                    lpos = (int) Math.floor(npg + 0.5 - Math.sqrt((npg + 0.5) * (npg + 0.5) - npg * (npg + 1) * this.randomValue()));
                     //wirklich n^tig??
                     int idx = find(lcs, 0, k3, lpos);
                     if (idx == -1) {

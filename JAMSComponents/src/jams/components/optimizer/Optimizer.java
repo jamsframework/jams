@@ -153,7 +153,9 @@ public abstract class Optimizer extends JAMSContext {
 
     @Override
     public void init() {
-        super.init();
+        if (getModel()!=null)
+            super.init();
+        
         if (!enable.getValue())
             return;
         generator = new Random(System.nanoTime());
@@ -195,7 +197,8 @@ public abstract class Optimizer extends JAMSContext {
 
             i++;
         }
-        dirName = this.getModel().getWorkspaceDirectory().getPath();
+        if (this.getModel()!=null)
+            dirName = this.getModel().getWorkspaceDirectory().getPath();
 
         if (this.startValue!=null){
             x0 = new double[n];
@@ -228,10 +231,14 @@ public abstract class Optimizer extends JAMSContext {
         }
     }
 
+    protected double randomValue(){
+        return generator.nextDouble();
+    }
+
     protected double[] RandomSampler() {
         double[] sample = new double[n];
         for (int i = 0; i < n; i++) {
-            sample[i] = (lowBound[i] + generator.nextDouble() * (upBound[i] - lowBound[i]));
+            sample[i] = (lowBound[i] + randomValue() * (upBound[i] - lowBound[i]));
         }
         return sample;
     }
