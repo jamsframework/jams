@@ -43,6 +43,7 @@ import jams.io.datatracer.AbstractTracer;
 import jams.runtime.JAMSRuntime;
 import jams.workspace.stores.Filter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 @JAMSComponentDescription(title = "JAMS Context",
 author = "Sven Kralisch",
@@ -64,6 +65,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     protected boolean doRun = true;
     protected boolean isPaused = false;
     transient protected Runnable runRunnable;
+    transient protected Runnable resumeRunnable;
 
     /**
      * Creates a new context
@@ -595,6 +597,116 @@ public class JAMSContext extends JAMSComponent implements Context {
         }
     }
 
+    private void createResumeRunnable(boolean isProfiling) {
+        // create the runnable object that is executet at each run stage of that context
+        // this will differ depending if the child components' execution time should be
+        // measured or not
+        if (isProfiling) {
+            resumeRunnable = new Runnable() {
+
+                public void run() {
+
+                    for (int i = 0; i < getCompArray().length; i++) {
+                        try {
+                            getCompArray()[i].restore();
+                        } catch (Exception e) {
+                            getModel().getRuntime().handle(e, getCompArray()[i].getInstanceName());
+                        }
+                    }
+
+                    if (runEnumerator == null) {
+                        runEnumerator = getRunEnumerator();
+                    }
+                    if (runEnumerator.hasPrevious()) {
+                        Component comp = runEnumerator.previous();
+                        try {
+                            if (comp instanceof JAMSContext) {
+                                long cStart = System.currentTimeMillis();
+                                ((Context) comp).resume();
+                                getModel().measureTime(cStart, comp);
+                            }
+                        } catch (Exception e) {
+                            getModel().getRuntime().handle(e, comp.getInstanceName());
+                        }
+                        runEnumerator.next();
+                    }
+                    while (runEnumerator.hasNext() && doRun) {
+                        Component comp = runEnumerator.next();
+                        try {
+                            long cStart = System.currentTimeMillis();
+                            comp.run();
+                            getModel().measureTime(cStart, comp);
+                        } catch (Exception e) {
+                            getModel().getRuntime().handle(e, comp.getInstanceName());
+                        }
+                    }
+
+                    updateEntityData();
+
+                    if (!isPaused) {
+                        for (DataTracer dataTracer : dataTracers) {
+                            dataTracer.trace();
+                            if (!isPaused) {
+                                dataTracer.endMark();
+                            }
+                        }
+                    }
+                }
+            };
+
+        } else {
+
+            resumeRunnable = new Runnable() {
+
+                public void run() {
+
+                    for (int i = 0; i < getCompArray().length; i++) {
+                        try {
+                            getCompArray()[i].restore();
+                        } catch (Exception e) {
+                            getModel().getRuntime().handle(e, getCompArray()[i].getInstanceName());
+                        }
+                    }
+
+                    if (runEnumerator == null) {
+                        runEnumerator = getRunEnumerator();
+                    }
+                    if (runEnumerator.hasPrevious()) {
+                        Component comp = runEnumerator.previous();
+                        try {
+                            if (comp instanceof JAMSContext) {
+                                ((Context) comp).resume();
+                            }
+                        } catch (Exception e) {
+                            getModel().getRuntime().handle(e, comp.getInstanceName());
+                        }
+                        runEnumerator.next();
+                    }
+                    while (runEnumerator.hasNext() && doRun) {
+                        Component comp = runEnumerator.next();
+                        try {
+                            comp.run();
+                        } catch (Exception e) {
+                            getModel().getRuntime().handle(e, comp.getInstanceName());
+                        }
+                    }
+
+                    updateEntityData();
+
+                    if (!isPaused) {
+                        for (DataTracer dataTracer : dataTracers) {
+                            dataTracer.trace();
+                            if (!isPaused) {
+                                dataTracer.endMark();
+                            }
+                        }
+                    }
+                }
+            };
+
+        }
+    }
+
     protected void initTracerDataAccess() {
         // get the output stores if existing
         OutputDataStore[] stores = getModel().getOutputDataStores(this.getInstanceName());
@@ -730,47 +842,7 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     @Override
     public void resume() {
-        for (int i = 0; i < this.getCompArray().length; i++) {
-            try {
-                this.getCompArray()[i].restore();
-            } catch (Exception e) {
-                getModel().getRuntime().handle(e, this.getCompArray()[i].getInstanceName());
-            }
-        }
-
-        if (runEnumerator == null) {
-            runEnumerator = getRunEnumerator();
-        }
-        if (runEnumerator.hasPrevious()) {
-            Component comp = runEnumerator.previous();
-            try {
-                if (comp instanceof JAMSContext) {
-                    ((Context) comp).resume();
-                }
-            } catch (Exception e) {
-                getModel().getRuntime().handle(e, comp.getInstanceName());
-            }
-            runEnumerator.next();
-        }
-        while (runEnumerator.hasNext() && doRun) {
-            Component comp = runEnumerator.next();
-            try {
-                comp.run();
-            } catch (Exception e) {
-                getModel().getRuntime().handle(e, comp.getInstanceName());
-            }
-        }
-
-        updateEntityData();
-
-        if (!this.isPaused) {
-            for (DataTracer dataTracer : dataTracers) {
-                dataTracer.trace();
-                if (!isPaused) {
-                    dataTracer.endMark();
-                }
-            }
-        }
+        resumeRunnable.run();
     }
 
     @Override
@@ -971,8 +1043,15 @@ public class JAMSContext extends JAMSComponent implements Context {
         this.entities = entities;
     }
 
+    private void writeObject(ObjectOutputStream objOut) throws IOException {
+        objOut.defaultWriteObject();
+        objOut.writeBoolean(this.getModel().isProfiling());
+    }
     private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
         stream.defaultReadObject();
+
         createRunRunnable();
+        boolean doProfiling = stream.readBoolean();
+        createResumeRunnable(doProfiling);
     }
 }

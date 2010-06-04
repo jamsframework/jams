@@ -133,26 +133,27 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Colors for extra shapefiles")
     public JAMSStringArray shapeColors;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.RUN, description = "Original shape file name")
+
     public JAMSString baseShape;
-    private JPanel panel, waitPanel;
-    private GISPanel gispanel;
-    private DefaultMapLayer[] optLayers = new DefaultMapLayer[3];
-    private MapCollection[] mc;
+    transient private JPanel panel, waitPanel;
+    transient private GISPanel gispanel;
+    transient private DefaultMapLayer[] optLayers = new DefaultMapLayer[3];
+    transient private MapCollection[] mc;
     private int numOfParams,  infoidx;
     private String mapFTypeName = "mapFType";
     private DefaultMutableTreeNode top,  last;
     private JTree tree;
     private boolean finished = false;
-    private DefaultMapContext map;
-    private JMapPane mp;
-    private JTextPane info;
-    private JSplitPane mainSplitPane;
-    private JSplitPane legendPane;
-    public JScrollPane treeView;
+    transient private DefaultMapContext map;
+    transient private JMapPane mp;
+    transient private JTextPane info;
+    transient private JSplitPane mainSplitPane;
+    transient private JSplitPane legendPane;
+    transient public JScrollPane treeView;
     private SimpleFeature selectedF = null;
     private CoordinateReferenceSystem crs;
-    private DefaultMapContext topmap;
-    private DefaultMapLayer selection = null;
+    transient private DefaultMapContext topmap;
+    transient private DefaultMapLayer selection = null;
     private Envelope fullExtent;
     private String[] otherLayers;
     private int div_hor;
@@ -284,6 +285,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             panel.setLayout(new BorderLayout());
             panel.add(gispanel, BorderLayout.CENTER);
         } catch (Exception e) {
+            e.printStackTrace();
             this.getModel().getRuntime().handle(e);
         }
 
@@ -760,5 +762,10 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
 
     public void mouseExited(MouseEvent e) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
+        stream.defaultReadObject();
+        optLayers = new DefaultMapLayer[3];
     }
 }

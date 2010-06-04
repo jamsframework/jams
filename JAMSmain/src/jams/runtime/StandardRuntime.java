@@ -280,11 +280,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
     }
 
-    public void resume(SmallModelState state) throws Exception {
-        deleteErrorLogObservers();
-        deleteInfoLogObservers();
-        this.initLogging();
-
+    public void resume(SmallModelState state) throws Exception {        
         this.state = state;
 
         if (guiEnabled && (guiComponents.size() > 0)) {
@@ -784,14 +780,15 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {
         objIn.defaultReadObject();
-        this.initGUI((String) objIn.readObject(), objIn.readBoolean(), objIn.readInt(), objIn.readInt());
+        
+        deleteErrorLogObservers();
+        deleteInfoLogObservers();
+        this.initLogging();
+
+        classLoader = JAMSClassLoader.createClassLoader(libs, this);
     }
 
     private void writeObject(ObjectOutputStream objOut) throws IOException {
-        objOut.defaultWriteObject();
-        objOut.writeObject(frame.getTitle());
-        objOut.writeBoolean(frame.isAlwaysOnTop());
-        objOut.writeInt(frame.getWidth());
-        objOut.writeInt(frame.getHeight());
+        objOut.defaultWriteObject();        
     }
 }

@@ -32,6 +32,9 @@ import java.util.HashMap;
 import jams.runtime.JAMSRuntime;
 import jams.tools.StringTools;
 import jams.workspace.InvalidWorkspaceException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -250,5 +253,21 @@ public class JAMSModel extends JAMSContext implements Model {
      */
     public void setProfiling(boolean profiling) {
         this.profiling = profiling;
+    }
+
+    private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {
+        objIn.defaultReadObject();
+
+        this.getRuntime().initGUI((String)objIn.readObject(),
+                objIn.readBoolean(),
+                objIn.readInt(),objIn.readInt());
+    }
+
+    private void writeObject(ObjectOutputStream objOut) throws IOException {
+        objOut.defaultWriteObject();
+        objOut.writeObject(this.getRuntime().getFrame().getTitle());
+        objOut.writeBoolean(this.getRuntime().getFrame().isAlwaysOnTop());
+        objOut.writeInt(this.getRuntime().getFrame().getWidth());
+        objOut.writeInt(this.getRuntime().getFrame().getHeight());
     }
 }
