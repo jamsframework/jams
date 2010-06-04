@@ -63,8 +63,6 @@ public class JAMSContext extends JAMSComponent implements Context {
     protected DataTracer[] dataTracers;
     protected boolean doRun = true;
     protected boolean isPaused = false;
-    protected static HashMap<Component, Long> execTime = new HashMap<Component, Long>();
-    protected static boolean profiling = false;
     transient protected Runnable runRunnable;
 
     /**
@@ -513,14 +511,14 @@ public class JAMSContext extends JAMSComponent implements Context {
         initTracerDataAccess();
 
 
-        createRunnable();
+        createRunRunnable();
     }
 
-    private void createRunnable(){
+    private void createRunRunnable(){
         // create the runnable object that is executet at each run stage of that context
         // this will differ depending if the child components' execution time should be
         // measured or not
-        if (profiling) {
+        if (getModel().isProfiling()) {
             runRunnable = new Runnable() {
 
                 public void run() {
@@ -542,7 +540,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                         try {
                             long cStart = System.currentTimeMillis();
                             comp.run();
-                            measureTime(cStart, comp);
+                            getModel().measureTime(cStart, comp);
                         } catch (Exception e) {
                             getModel().getRuntime().handle(e, comp.getInstanceName());
                         }
@@ -723,16 +721,6 @@ public class JAMSContext extends JAMSComponent implements Context {
                 dataAccessors[i].initEntityData();
             }
         }
-    }
-
-    private void measureTime(long startTime, Component c) {
-        long time = System.currentTimeMillis() - startTime;
-        Long current = execTime.get(c);
-        if (current == null) {
-            current = new Long(0);
-        }
-        current += time;
-        execTime.put(c, current);
     }
 
     @Override
@@ -985,6 +973,6 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
         stream.defaultReadObject();
-        createRunnable();
+        createRunRunnable();
     }
 }

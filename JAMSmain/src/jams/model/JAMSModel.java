@@ -51,6 +51,8 @@ public class JAMSModel extends JAMSContext implements Model {
     private String name, author, date;
     public JAMSWorkspace workspace;
     transient private HashMap<Component, ArrayList<Field>> nullFields;
+    private HashMap<Component, Long> execTime = new HashMap<Component, Long>();
+    private boolean profiling = false;
 
     public JAMSModel(JAMSRuntime runtime) {
         this.runtime = runtime;
@@ -83,14 +85,6 @@ public class JAMSModel extends JAMSContext implements Model {
 
     public void setDate(String date) {
         this.date = date;
-    }
-
-    /**
-     * Set static attribute profile which defines profiling for contexts
-     * @param profile Profile or not
-     */
-    public void setProfiling(boolean profiling) {
-        JAMSModel.profiling = profiling;
     }
 
     @Override
@@ -231,5 +225,30 @@ public class JAMSModel extends JAMSContext implements Model {
 
     public void setNullFields(HashMap<Component, ArrayList<Field>> nullFields) {
         this.nullFields = nullFields;
+    }
+
+    public void measureTime(long startTime, Component c) {
+        long time = System.currentTimeMillis() - startTime;
+        Long current = execTime.get(c);
+        if (current == null) {
+            current = new Long(0);
+        }
+        current += time;
+        execTime.put(c, current);
+    }
+
+    /**
+     * @return True, if the model is in profiling mode, false otherwise
+     */
+    public boolean isProfiling() {
+        return profiling;
+    }
+
+    /**
+     * Set static attribute profile which defines profiling for contexts
+     * @param profile Profile or not
+     */
+    public void setProfiling(boolean profiling) {
+        this.profiling = profiling;
     }
 }

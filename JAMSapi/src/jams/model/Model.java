@@ -65,4 +65,8 @@ public interface Model extends Context {
     void setWorkspacePath(String workspaceDirectory);
 
     String getWorkspacePath();
+
+    public void measureTime(long startTime, Component c);
+
+    public boolean isProfiling();
 }
