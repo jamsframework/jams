@@ -54,6 +54,8 @@ import java.io.Serializable;
     private JProgressBar jamsProgressBar;
     private JPanel progressPanel;
     transient private Runnable updatePBar;
+    transient private Observer infoLogObserver;
+    transient private Observer errorLogObserver;
     private JScrollPane scrollPanel;
     private JTextArea logArea;
     private int c = 0;
@@ -77,7 +79,24 @@ import java.io.Serializable;
             };
         }
     }
-    
+
+    private void createObserver(){
+        if (infoLogObserver==null){
+            infoLogObserver = new Observer() {
+            public void update(Observable obs, Object obj) {
+                logArea.append(obj.toString());
+                //logArea.setCaretPosition(logArea.getText().length());
+            }
+            };}
+        if (errorLogObserver==null){
+            errorLogObserver = new Observer() {
+            public void update(Observable obs, Object obj) {
+                logArea.append(obj.toString());
+                //logArea.setCaretPosition(logArea.getText().length());
+            }
+        };}
+    }
+
     private void createPanel() {
         
         panel = new JPanel();
@@ -117,19 +136,10 @@ import java.io.Serializable;
         
         logArea.append(this.getModel().getRuntime().getInfoLog());
         logArea.append(this.getModel().getRuntime().getErrorLog());
-        
-        this.getModel().getRuntime().addInfoLogObserver(new Observer() {
-            public void update(Observable obs, Object obj) {
-                logArea.append(obj.toString());
-                //logArea.setCaretPosition(logArea.getText().length());
-            }
-        });
-        this.getModel().getRuntime().addErrorLogObserver(new Observer() {
-            public void update(Observable obs, Object obj) {
-                logArea.append(obj.toString());
-                //logArea.setCaretPosition(logArea.getText().length());
-            }
-        });
+
+        createObserver();
+        this.getModel().getRuntime().addInfoLogObserver(infoLogObserver);
+        this.getModel().getRuntime().addErrorLogObserver(errorLogObserver);
     }
 
     @Override
@@ -151,18 +161,9 @@ import java.io.Serializable;
                 jamsProgressBar.setString(Math.round(jamsProgressBar.getPercentComplete()*100) + "%");
             }            
         };
-        this.getModel().getRuntime().addInfoLogObserver(new Observer() {
-            public void update(Observable obs, Object obj) {
-                logArea.append(obj.toString());
-                //logArea.setCaretPosition(logArea.getText().length());
-            }
-        });
-        this.getModel().getRuntime().addErrorLogObserver(new Observer() {
-            public void update(Observable obs, Object obj) {
-                logArea.append(obj.toString());
-                //logArea.setCaretPosition(logArea.getText().length());
-            }
-        });
-        run();
+        
+        createObserver();
+        this.getModel().getRuntime().addInfoLogObserver(infoLogObserver);
+        this.getModel().getRuntime().addErrorLogObserver(errorLogObserver);        
     }    
 }

@@ -160,30 +160,30 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
             )
             public JAMSBoolean light = null;
     
-    private JPanel panel, waitPanel;
-    private GISPanel gispanel;
-    private DefaultMapLayer[] optLayers = new DefaultMapLayer[3];
-    private MapCollection[] mc;
+    transient private JPanel panel, waitPanel;
+    transient private GISPanel gispanel;
+    transient private DefaultMapLayer[] optLayers = new DefaultMapLayer[3];
+    transient private MapCollection[] mc;
     private int numOfParams,  infoidx;
     private String mapFTypeName = "mapFType";
-    private DefaultMutableTreeNode top,  last;
-    private JTree tree;
+    transient private DefaultMutableTreeNode top,  last;
+    transient private JTree tree;
     private boolean finished = false;
-    private DefaultMapContext map;    
-    private JTextPane info;
-    private JSplitPane mainSplitPane;
-    private JSplitPane legendPane;
-    public JScrollPane treeView;
-    private SimpleFeature selectedF = null;
+    transient private DefaultMapContext map;
+    transient private JTextPane info;
+    transient private JSplitPane mainSplitPane;
+    transient private JSplitPane legendPane;
+    transient public JScrollPane treeView;
+    transient private SimpleFeature selectedF = null;
     private CoordinateReferenceSystem crs;
-    private DefaultMapContext topmap;
+    transient private DefaultMapContext topmap;
     private Envelope fullExtent;
     private DefaultMapLayer selection = null;
     private String[] otherLayers;
     private int div_hor;
 
-    private Styled3DMapPane mp;        
-    private JAMSAscGridReader asg;
+    transient private Styled3DMapPane mp;
+    transient private JAMSAscGridReader asg;
     
     static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory(null);
 
@@ -875,5 +875,10 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
 
     public void mouseExited(MouseEvent e) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
+        stream.defaultReadObject();
+        optLayers = new DefaultMapLayer[3];
     }
 }

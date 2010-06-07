@@ -295,6 +295,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         RuntimeManager.getInstance().addRuntime(this);
         long start = System.currentTimeMillis();
 
+        model.restore();
         if (this.getState() == JAMSRuntime.STATE_RUN) {
             model.resume();
         }

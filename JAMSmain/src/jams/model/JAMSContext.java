@@ -514,6 +514,7 @@ public class JAMSContext extends JAMSComponent implements Context {
 
 
         createRunRunnable();
+        createResumeRunnable(getModel().isProfiling());
     }
 
     private void createRunRunnable(){
@@ -604,16 +605,7 @@ public class JAMSContext extends JAMSComponent implements Context {
         if (isProfiling) {
             resumeRunnable = new Runnable() {
 
-                public void run() {
-
-                    for (int i = 0; i < getCompArray().length; i++) {
-                        try {
-                            getCompArray()[i].restore();
-                        } catch (Exception e) {
-                            getModel().getRuntime().handle(e, getCompArray()[i].getInstanceName());
-                        }
-                    }
-
+                public void run() {                    
                     if (runEnumerator == null) {
                         runEnumerator = getRunEnumerator();
                     }
@@ -843,6 +835,17 @@ public class JAMSContext extends JAMSComponent implements Context {
     @Override
     public void resume() {
         resumeRunnable.run();
+    }
+
+    @Override
+    public void restore() {
+        for (int i = 0; i < getCompArray().length; i++) {
+            try {
+                getCompArray()[i].restore();
+            } catch (Exception e) {
+                getModel().getRuntime().handle(e, getCompArray()[i].getInstanceName());
+            }
+        }
     }
 
     @Override

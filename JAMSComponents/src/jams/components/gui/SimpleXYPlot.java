@@ -40,6 +40,9 @@ import jams.data.JAMSInteger;
 import jams.data.JAMSString;
 import jams.model.JAMSGUIComponent;
 import jams.model.JAMSVarDescription;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import org.jfree.data.xy.*;
 
 /**
@@ -97,11 +100,11 @@ public class SimpleXYPlot extends JAMSGUIComponent {
             )
             public JAMSInteger PlotCount;
     
-    private XYPlot plot;
-    private XYSeries dataset[];
-    private JPanel panel;
-    JFreeChart chart;
-    JButton saveButton;
+    transient private XYPlot plot;
+    transient private XYSeries dataset[];
+    transient private JPanel panel;
+    transient JFreeChart chart;
+    transient JButton saveButton;
     int i, graphCountLeft = 0, graphCountRight = 0;
     HashMap<Integer, Color> colorTable = new HashMap<Integer, Color>();
         
@@ -138,7 +141,7 @@ public class SimpleXYPlot extends JAMSGUIComponent {
         }           	
 
     }
-    private JPanel CreatePanel() {	
+    private JPanel createPanel() {
 	plot = new XYPlot();
 	plot.setDomainAxis(new NumberAxis(xAxisTitle.getValue()));
 	plot.setRangeAxis(new NumberAxis(yAxisTitle.getValue()));
@@ -154,16 +157,18 @@ public class SimpleXYPlot extends JAMSGUIComponent {
     }
     
     public JPanel getPanel() {  
-	if(this.paint == null || this.paint.getValue()) {	   	
-	    return CreatePanel();
+	if(panel==null) {
+	    return createPanel();
 	}
-	return null;
+	return panel;
     }
               
+    @Override
     public void init() {
     	
     }
     
+    @Override
     public void run() {
         if (dataset == null) {
             this.initDataSets();
@@ -175,8 +180,38 @@ public class SimpleXYPlot extends JAMSGUIComponent {
     	}
     }
     
+    @Override
     public void cleanup() {
 //        saveButton.setEnabled(true);
     }
-    
+
+    private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {
+        objIn.defaultReadObject();
+
+        createPanel();
+
+        for (int i=0;i<dataset.length;i++){
+            int n = objIn.readInt();
+            for (int j=0;j<n;j++){
+                XYDataItem item = dataset[i].getDataItem(j);
+                double x = objIn.readDouble();
+                double y = objIn.readDouble();
+                dataset[i].add(x,y);
+            }
+        }
+    }
+
+    private void writeObject(ObjectOutputStream objOut) throws IOException {
+        objOut.defaultWriteObject();
+
+        for (int i=0;i<dataset.length;i++){
+            int n = dataset[i].getItemCount();
+            objOut.writeInt(n);
+            for (int j=0;j<n;j++){
+                XYDataItem item = dataset[i].getDataItem(j);
+                objOut.writeDouble(item.getX().doubleValue());
+                objOut.writeDouble(item.getY().doubleValue());
+            }
+        }
+    }
 }

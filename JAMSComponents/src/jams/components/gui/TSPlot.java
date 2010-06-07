@@ -57,6 +57,12 @@ import jams.data.JAMSString;
 import jams.data.JAMSStringArray;
 import jams.model.JAMSGUIComponent;
 import jams.model.JAMSVarDescription;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Iterator;
+import java.util.List;
+import org.jfree.data.time.TimeSeriesDataItem;
 
 /**
  *
@@ -205,11 +211,11 @@ public class TSPlot extends JAMSGUIComponent {
     
     
     TimeSeries[] tsLeft, tsRight;
-    TimeSeriesCollection dataset1, dataset2;
-    XYItemRenderer rightRenderer, leftRenderer;
-    XYPlot plot;
-    JFreeChart chart;
-    JButton saveButton;
+    transient TimeSeriesCollection dataset1, dataset2;
+    transient XYItemRenderer rightRenderer, leftRenderer;
+    transient XYPlot plot;
+    transient JFreeChart chart;
+    transient JButton saveButton;
     int i, graphCountLeft = 0, graphCountRight = 0;
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
     double noDataValue_;
@@ -306,9 +312,12 @@ public class TSPlot extends JAMSGUIComponent {
         return r;
     }
     
+    @Override
     public void init() {
         
         noDataValue_ = noDataValue.getValue();
+        dataset1.removeAllSeries();
+        dataset2.removeAllSeries();
         
         if (chart!=null) {
             plot = chart.getXYPlot();
@@ -361,6 +370,7 @@ public class TSPlot extends JAMSGUIComponent {
         count = 0;
     }
     
+    @Override
     public void run() {
         timeStamps[count] = time.getTimeInMillis();
         int offsetRight = count * graphCountRight;
@@ -426,8 +436,54 @@ public class TSPlot extends JAMSGUIComponent {
         } catch (Exception e) {} //caused by bugs in JFreeChart
     }
     
+    @Override
     public void cleanup() {
         plotData();
     }
-    
+
+    @Override
+    public void restore(){
+
+        List leftLists[] = null, rightLists[]=null;
+        if (tsLeft!=null){
+            leftLists = new List[tsLeft.length];
+            for (int i=0;i<tsLeft.length;i++){
+                leftLists[i] = this.tsLeft[i].getItems();
+            }
+        }
+        if (tsRight!=null){
+            rightLists = new List[tsRight.length];
+        
+            for (int i=0;i<tsRight.length;i++){
+                rightLists[i] = this.tsRight[i].getItems();
+            }
+        }
+        this.init();
+        if (tsLeft!=null){
+            for (int i=0;i<tsLeft.length;i++){
+                Iterator iter = leftLists[i].iterator();
+                while(iter.hasNext())
+                    this.tsLeft[i].add((TimeSeriesDataItem)iter.next());
+            }
+        }
+        if (tsRight!=null){
+            for (int i=0;i<tsRight.length;i++){
+                Iterator iter = rightLists[i].iterator();
+                while(iter.hasNext())
+                    this.tsRight[i].add((TimeSeriesDataItem)iter.next());
+            }
+        }
+    }
+
+    private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {        
+        objIn.defaultReadObject();
+        
+        this.plotData();
+    }
+
+    private void writeObject(ObjectOutputStream objOut) throws IOException {
+        this.plotData();
+        this.count=0;
+        objOut.defaultWriteObject();
+    }
 }

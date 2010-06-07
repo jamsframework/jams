@@ -25,6 +25,7 @@ package jams.runtime;
 
 import java.io.Serializable;
 import java.util.Observable;
+import java.util.Observer;
 
 /**
  *
@@ -54,5 +55,11 @@ public class JAMSLog extends Observable implements Serializable {
         logString.append(c);
         this.setChanged();
         this.notifyObservers(c);
+    }
+
+    @Override
+    public void addObserver(Observer o){
+        this.deleteObserver(o);
+        super.addObserver(o);
     }
 }
