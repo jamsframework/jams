@@ -29,10 +29,12 @@ import java.io.Serializable;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public interface DataTracer extends Serializable{
+public interface DataTracer extends Serializable {
 
     public DataAccessor[] getAccessorObjects();
+
     public void updateDataAccessors();
+
     public void trace();
 
     public void startMark();

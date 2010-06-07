@@ -347,7 +347,7 @@ public class JAMSContext extends JAMSComponent implements Context {
      * @return A string representing the current state of the context
      */
     public String getTraceMark() {
-        return Long.toString(entities.getCurrent().getId());
+        return Long.toString(getEntities().getCurrent().getId());
     }
 
     /**
@@ -364,11 +364,18 @@ public class JAMSContext extends JAMSComponent implements Context {
 
                 @Override
                 public void trace() {
-                    DataAccessor[] dataAccessors = this.accessorObjects;
-                    Attribute.Entity[] entities = context.getEntities().getEntityArray();
-                    for (int j = 0; j < entities.length; j++) {
 
-                        output(entities[j].getId());
+                    startMark();
+
+                    DataAccessor[] dataAccessors = this.accessorObjects;
+                    EntityEnumerator ee = getEntities().getEntityEnumerator();
+                    int j = 0;
+                    while (ee.hasNext()) {
+
+                        ee.next();
+                        j++;
+
+                        output(getTraceMark());
 
                         for (int i = 0; i < dataAccessors.length; i++) {
                             dataAccessors[i].setIndex(j);
@@ -378,7 +385,8 @@ public class JAMSContext extends JAMSComponent implements Context {
                         }
                         nextRow();
                     }
-//                    flush();
+
+                    endMark();
                 }
             };
         } else {
@@ -398,17 +406,23 @@ public class JAMSContext extends JAMSComponent implements Context {
                         }
                     }
 
+                    boolean hasOutput = false;
+
                     DataAccessor[] dataAccessors = this.accessorObjects;
-                    Attribute.Entity[] entities = context.getEntities().getEntityArray();
-                    for (int j = 0; j < entities.length; j++) {
+                    EntityEnumerator ee = getEntities().getEntityEnumerator();
+                    int j = 0;
+                    while (ee.hasNext()) {
+
+                        ee.next();
+                        j++;
+                        String traceMark = getTraceMark();
 
                         boolean doBreak = false;
 
                         // take care of filters in this context
                         for (Filter filter : store.getFilters()) {
                             if (filter.getContext() == JAMSContext.this) {
-                                String s = Long.toString(entities[j].getId());
-                                Matcher matcher = filter.getPattern().matcher(s);
+                                Matcher matcher = filter.getPattern().matcher(traceMark);
                                 if (!matcher.matches()) {
                                     doBreak = true;
                                 }
@@ -417,9 +431,12 @@ public class JAMSContext extends JAMSComponent implements Context {
 
                         if (doBreak) {
                             continue;
+                        } else if (!hasOutput) {
+                            hasOutput = true;
+                            startMark();
                         }
 
-                        output(entities[j].getId());
+                        output(traceMark);
 
                         for (int i = 0; i < dataAccessors.length; i++) {
                             dataAccessors[i].setIndex(j);
@@ -428,7 +445,10 @@ public class JAMSContext extends JAMSComponent implements Context {
                         }
                         nextRow();
                     }
-//                    flush();
+
+                    if (hasOutput) {
+                        endMark();
+                    }
                 }
             };
         }
@@ -517,7 +537,7 @@ public class JAMSContext extends JAMSComponent implements Context {
         createResumeRunnable(getModel().isProfiling());
     }
 
-    private void createRunRunnable(){
+    private void createRunRunnable() {
         // create the runnable object that is executet at each run stage of that context
         // this will differ depending if the child components' execution time should be
         // measured or not
@@ -525,10 +545,6 @@ public class JAMSContext extends JAMSComponent implements Context {
             runRunnable = new Runnable() {
 
                 public void run() {
-
-                    for (DataTracer dataTracer : dataTracers) {
-                        dataTracer.startMark();
-                    }
 
                     //initEntityData();
 
@@ -553,7 +569,6 @@ public class JAMSContext extends JAMSComponent implements Context {
 
                     for (DataTracer dataTracer : dataTracers) {
                         dataTracer.trace();
-                        dataTracer.endMark();
                     }
 
                 }
@@ -564,10 +579,6 @@ public class JAMSContext extends JAMSComponent implements Context {
             runRunnable = new Runnable() {
 
                 public void run() {
-
-                    for (DataTracer dataTracer : dataTracers) {
-                        dataTracer.startMark();
-                    }
 
                     //initEntityData();
 
@@ -590,7 +601,6 @@ public class JAMSContext extends JAMSComponent implements Context {
 
                     for (DataTracer dataTracer : dataTracers) {
                         dataTracer.trace();
-                        dataTracer.endMark();
                     }
                 }
             };
@@ -638,9 +648,6 @@ public class JAMSContext extends JAMSComponent implements Context {
                     if (!isPaused) {
                         for (DataTracer dataTracer : dataTracers) {
                             dataTracer.trace();
-                            if (!isPaused) {
-                                dataTracer.endMark();
-                            }
                         }
                     }
                 }
@@ -688,9 +695,6 @@ public class JAMSContext extends JAMSComponent implements Context {
                     if (!isPaused) {
                         for (DataTracer dataTracer : dataTracers) {
                             dataTracer.trace();
-                            if (!isPaused) {
-                                dataTracer.endMark();
-                            }
                         }
                     }
                 }
@@ -1050,7 +1054,8 @@ public class JAMSContext extends JAMSComponent implements Context {
         objOut.defaultWriteObject();
         objOut.writeBoolean(this.getModel().isProfiling());
     }
-    private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
+
+    private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
 
         createRunRunnable();

@@ -29,8 +29,6 @@ import jams.dataaccess.DataAccessor;
 import jams.io.datatracer.DataTracer;
 import jams.io.datatracer.AbstractTracer;
 import jams.workspace.stores.Filter;
-import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  *
@@ -71,7 +69,7 @@ public class JAMSTemporalContext extends JAMSContext {
                     }
                 }
 
-                output(current);
+                output(getTraceMark());
                 
                 for (DataAccessor dataAccessor : getAccessorObjects()) {
                     output(dataAccessor.getComponentObject());                

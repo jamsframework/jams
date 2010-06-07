@@ -29,11 +29,15 @@ import java.io.Serializable;
  * @author S. Kralisch
  */
 public interface EntityEnumerator extends Serializable{            
+
     boolean hasNext();
+
     boolean hasPrevious();
     
+    void reset();
+
     Attribute.Entity next();
+
     Attribute.Entity previous();
 
-    void reset();        
 }

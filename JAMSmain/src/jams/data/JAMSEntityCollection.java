@@ -56,6 +56,7 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
             public boolean hasNext() {
                 return (index + 1 < entityArray.length);
             }
+            
             @Override
             public boolean hasPrevious() {
                 return index > 0;
@@ -65,14 +66,14 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
             public Attribute.Entity next() {
                 index++;
                 JAMSEntityCollection.this.current = entityArray[index];
-                return entityArray[index];
+                return JAMSEntityCollection.this.current;
             }
             
             @Override
             public Attribute.Entity previous() {
                 index--;
                 JAMSEntityCollection.this.current = entityArray[index];
-                return entityArray[index];
+                return JAMSEntityCollection.this.current;
             }
 
             @Override
