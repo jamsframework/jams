@@ -98,6 +98,7 @@ public class JAMSui {
             properties.setProperty(JAMSProperties.GUICONFIG_IDENTIFIER, "0");
             properties.setProperty(JAMSProperties.WINDOWENABLE_IDENTIFIER, "0");
             properties.setProperty(JAMSProperties.VERBOSITY_IDENTIFIER, "1");
+            properties.setProperty(JAMSProperties.ERRORDLG_IDENTIFIER, "0");
         }
 
         int guiConfig = Integer.parseInt(properties.getProperty(SystemProperties.GUICONFIG_IDENTIFIER, "0"));
