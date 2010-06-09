@@ -44,6 +44,7 @@ public abstract class AbstractTracer implements DataTracer {
     private Context[] parents;
     protected OutputDataStore store;
     private Class idClazz;
+    private boolean output;
 
     /**
      * DataTracer constructor
@@ -231,5 +232,19 @@ public abstract class AbstractTracer implements DataTracer {
             store.close();
         } catch (IOException ioe) {
         }
+    }
+
+    /**
+     * @return the output
+     */
+    public boolean hasOutput() {
+        return output;
+    }
+
+    /**
+     * @param output the output to set
+     */
+    public void setOutput(boolean output) {
+        this.output = output;
     }
 }

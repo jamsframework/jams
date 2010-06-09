@@ -359,99 +359,102 @@ public class JAMSContext extends JAMSComponent implements Context {
     protected DataTracer createDataTracer(OutputDataStore store) {
 
         // create a DataTracer which is suited for this context
-        if (store.getFilters().length == 0) {
-            return new AbstractTracer(this, store, JAMSLong.class) {
+//        if (store.getFilters().length == 0) {
+//            return new AbstractTracer(this, store, JAMSLong.class) {
+//
+//                @Override
+//                public void trace() {
+//
+//                    startMark();
+//
+//                    DataAccessor[] dataAccessors = this.accessorObjects;
+//                    EntityEnumerator ee = getEntities().getEntityEnumerator();
+//                    int j = 0;
+//                    while (ee.hasNext()) {
+//
+//                        ee.next();
+//                        j++;
+//
+//                        output(getTraceMark());
+//
+//                        for (int i = 0; i < dataAccessors.length; i++) {
+//                            dataAccessors[i].setIndex(j);
+//                            dataAccessors[i].read();
+//                            output(dataAccessors[i].getComponentObject());
+//
+//                        }
+//                        nextRow();
+//                    }
+//
+//                    endMark();
+//                }
+//            };
+//        } else {
+        return new AbstractTracer(this, store, JAMSLong.class) {
 
-                @Override
-                public void trace() {
+            @Override
+            public void trace() {
 
-                    startMark();
-
-                    DataAccessor[] dataAccessors = this.accessorObjects;
-                    EntityEnumerator ee = getEntities().getEntityEnumerator();
-                    int j = 0;
-                    while (ee.hasNext()) {
-
-                        ee.next();
-                        j++;
-
-                        output(getTraceMark());
-
-                        for (int i = 0; i < dataAccessors.length; i++) {
-                            dataAccessors[i].setIndex(j);
-                            dataAccessors[i].read();
-                            output(dataAccessors[i].getComponentObject());
-
+                // check for filters on other contexts first
+                for (Filter filter : store.getFilters()) {
+                    if (filter.getContext() != JAMSContext.this) {
+                        String s = filter.getContext().getTraceMark();
+                        Matcher matcher = filter.getPattern().matcher(s);
+                        if (!matcher.matches()) {
+                            return;
                         }
-                        nextRow();
+                    }
+                }
+
+                DataAccessor[] dataAccessors = this.getAccessorObjects();//accessorObjects;
+                EntityEnumerator ee = getEntities().getEntityEnumerator();
+                ee.reset();
+                int j = 0;
+
+                whileLoop:
+                while (true) {
+
+                    String traceMark = getTraceMark();
+
+                    // take care of filters in this context
+                    for (Filter filter : store.getFilters()) {
+                        if (filter.getContext() == JAMSContext.this) {
+                            Matcher matcher = filter.getPattern().matcher(traceMark);
+                            if (!matcher.matches()) {
+                                continue whileLoop;
+                            }
+                        }
                     }
 
+                    // if we haven't output a mark so far, do it now
+                    if (!hasOutput()) {
+                        setOutput(true);
+                        startMark();
+                    }
+
+                    output(traceMark);
+
+                    for (int i = 0; i < dataAccessors.length; i++) {
+                        dataAccessors[i].setIndex(j);
+                        dataAccessors[i].read();
+                        output(dataAccessors[i].getComponentObject());
+                    }
+                    nextRow();
+
+                    if (ee.hasNext()) {
+                        ee.next();
+                        j++;
+                    } else {
+                        break;
+                    }
+                }
+
+                if (hasOutput()) {
                     endMark();
                 }
-            };
-        } else {
-            return new AbstractTracer(this, store, JAMSLong.class) {
-
-                @Override
-                public void trace() {
-
-                    // check for filters on other contexts first
-                    for (Filter filter : store.getFilters()) {
-                        if (filter.getContext() != JAMSContext.this) {
-                            String s = filter.getContext().getTraceMark();
-                            Matcher matcher = filter.getPattern().matcher(s);
-                            if (!matcher.matches()) {
-                                return;
-                            }
-                        }
-                    }
-
-                    boolean hasOutput = false;
-
-                    DataAccessor[] dataAccessors = this.accessorObjects;
-                    EntityEnumerator ee = getEntities().getEntityEnumerator();
-                    int j = 0;
-                    while (ee.hasNext()) {
-
-                        ee.next();
-                        j++;
-                        String traceMark = getTraceMark();
-
-                        boolean doBreak = false;
-
-                        // take care of filters in this context
-                        for (Filter filter : store.getFilters()) {
-                            if (filter.getContext() == JAMSContext.this) {
-                                Matcher matcher = filter.getPattern().matcher(traceMark);
-                                if (!matcher.matches()) {
-                                    doBreak = true;
-                                }
-                            }
-                        }
-
-                        if (doBreak) {
-                            continue;
-                        } else if (!hasOutput) {
-                            hasOutput = true;
-                            startMark();
-                        }
-
-                        output(traceMark);
-
-                        for (int i = 0; i < dataAccessors.length; i++) {
-                            dataAccessors[i].setIndex(j);
-                            dataAccessors[i].read();
-                            output(dataAccessors[i].getComponentObject());
-                        }
-                        nextRow();
-                    }
-
-                    if (hasOutput) {
-                        endMark();
-                    }
-                }
-            };
-        }
+            }
+        };
+//        }
     }
 
     /**
@@ -615,7 +618,7 @@ public class JAMSContext extends JAMSComponent implements Context {
         if (isProfiling) {
             resumeRunnable = new Runnable() {
 
-                public void run() {                    
+                public void run() {
                     if (runEnumerator == null) {
                         runEnumerator = getRunEnumerator();
                     }

@@ -31,10 +31,9 @@ import java.util.*;
 public class JAMSEntityCollection implements Attribute.EntityCollection {
 
     protected ArrayList<Attribute.Entity> entities = new ArrayList<Attribute.Entity>();
-
     protected Attribute.Entity[] entityArray;
-
     protected Attribute.Entity current;
+    private EntityEnumerator ee = null;
 
     JAMSEntityCollection() {
     }
@@ -43,45 +42,50 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     public Attribute.Entity[] getEntityArray() {
         return this.entityArray;
     }
-       
+
     @Override
     public EntityEnumerator getEntityEnumerator() {
-        return new EntityEnumerator() {
 
-            Attribute.Entity[] entityArray = getEntityArray();
+        if (ee == null) {
 
-            int index = 0;
+            ee = new EntityEnumerator() {
 
-            @Override
-            public boolean hasNext() {
-                return (index + 1 < entityArray.length);
-            }
-            
-            @Override
-            public boolean hasPrevious() {
-                return index > 0;
-            }
+                Attribute.Entity[] entityArray = getEntityArray();
+                int index = 0;
 
-            @Override
-            public Attribute.Entity next() {
-                index++;
-                JAMSEntityCollection.this.current = entityArray[index];
-                return JAMSEntityCollection.this.current;
-            }
-            
-            @Override
-            public Attribute.Entity previous() {
-                index--;
-                JAMSEntityCollection.this.current = entityArray[index];
-                return JAMSEntityCollection.this.current;
-            }
+                @Override
+                public boolean hasNext() {
+                    return (index + 1 < entityArray.length);
+                }
 
-            @Override
-            public void reset() {
-                index = 0;
-                JAMSEntityCollection.this.current = entityArray[index];
-            }                                                
-        };
+                @Override
+                public boolean hasPrevious() {
+                    return index > 0;
+                }
+
+                @Override
+                public Attribute.Entity next() {
+                    index++;
+                    JAMSEntityCollection.this.current = entityArray[index];
+                    return JAMSEntityCollection.this.current;
+                }
+
+                @Override
+                public Attribute.Entity previous() {
+                    index--;
+                    JAMSEntityCollection.this.current = entityArray[index];
+                    return JAMSEntityCollection.this.current;
+                }
+
+                @Override
+                public void reset() {
+                    index = 0;
+                    JAMSEntityCollection.this.current = entityArray[index];
+                }
+            };
+        }
+
+        return ee;
     }
 
     @Override

@@ -118,8 +118,6 @@ public class WorkerDlg extends JDialog {
         worker.execute();
 
         this.setVisible(true);
-
-
     }
 
     /**

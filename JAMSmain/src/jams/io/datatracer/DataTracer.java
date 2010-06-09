@@ -42,4 +42,8 @@ public interface DataTracer extends Serializable {
     public void endMark();
 
     public void close();
+
+    public boolean hasOutput();
+
+    public void setOutput(boolean value);
 }

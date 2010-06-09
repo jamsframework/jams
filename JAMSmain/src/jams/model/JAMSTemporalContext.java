@@ -37,8 +37,8 @@ import jams.workspace.stores.Filter;
 @JAMSComponentDescription(title = "JAMS temporal context",
 author = "Sven Kralisch",
 date = "31. Juli 2005",
-description = "This component represents a JAMS context which can be used to " +
-"represent temporal contexts in environmental models")
+description = "This component represents a JAMS context which can be used to "
++ "represent temporal contexts in environmental models")
 public class JAMSTemporalContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
@@ -55,26 +55,49 @@ public class JAMSTemporalContext extends JAMSContext {
 
     @Override
     protected DataTracer createDataTracer(OutputDataStore store) {
-        return new AbstractTracer(this, store, Attribute.Calendar.class) {
+        return new AbstractTracer(this, store, JAMSLong.class) {
 
             @Override
             public void trace() {
 
                 // check for filters on other contexts first
                 for (Filter filter : store.getFilters()) {
-                    String s = filter.getContext().getTraceMark();
-                    Matcher matcher = filter.getPattern().matcher(s);
-                    if (!matcher.matches()) {
-                        return;
+                    if (filter.getContext() != JAMSTemporalContext.this) {
+                        String s = filter.getContext().getTraceMark();
+                        Matcher matcher = filter.getPattern().matcher(s);
+                        if (!matcher.matches()) {
+                            return;
+                        }
                     }
                 }
 
-                output(getTraceMark());
-                
-                for (DataAccessor dataAccessor : getAccessorObjects()) {
-                    output(dataAccessor.getComponentObject());                
+                EntityEnumerator ee = getEntities().getEntityEnumerator();
+                ee.reset();
+
+                String traceMark = getTraceMark();
+
+                // take care of filters in this context
+                for (Filter filter : store.getFilters()) {
+                    if (filter.getContext() == JAMSTemporalContext.this) {
+                        Matcher matcher = filter.getPattern().matcher(traceMark);
+                        if (!matcher.matches()) {
+                            return;
+                        }
+                    }
                 }
-                this.nextRow();
+
+                // if we haven't output a mark so far, do it now
+                if (!hasOutput()) {
+                    setOutput(true);
+                    startMark();
+                }
+
+                output(traceMark);
+                for (DataAccessor dataAccessor : getAccessorObjects()) {
+                    output(dataAccessor.getComponentObject());
+                }
+                nextRow();
+
             }
         };
     }
@@ -87,6 +110,18 @@ public class JAMSTemporalContext extends JAMSContext {
         lastValue.add(JAMSCalendar.MILLISECOND, 1);
         if (current == null) {
             current = JAMSDataFactory.createCalendar();
+        }
+    }
+
+    @Override
+    public void run() {
+        
+        super.run();
+
+        for (DataTracer dataTracer : dataTracers) {
+            if (dataTracer.hasOutput()) {
+                dataTracer.endMark();
+            }
         }
     }
 
@@ -126,17 +161,19 @@ public class JAMSTemporalContext extends JAMSContext {
     public String getTraceMark() {
         return current.toString();
     }
-                    
+
     class RunEnumerator implements ComponentEnumerator {
 
         ComponentEnumerator ce = getChildrenEnumerator();
         //DataTracer dataTracers = getDataTracer();
+
         @Override
         public boolean hasNext() {
             boolean nextTime = current.before(lastValue);
             boolean nextComp = ce.hasNext();
             return (nextTime || nextComp);
         }
+
         @Override
         public boolean hasPrevious() {
             boolean prevTime = current.after(timeInterval.getStart());
@@ -163,18 +200,17 @@ public class JAMSTemporalContext extends JAMSContext {
             current.setValue(timeInterval.getStart().getValue());
             ce.reset();
         }
-        
-        public Component previous(){
-            if (ce.hasPrevious())
+
+        public Component previous() {
+            if (ce.hasPrevious()) {
                 return ce.previous();
-            else{
+            } else {
                 current.add(timeInterval.getTimeUnit(), -timeInterval.getTimeUnitCount());
-                while(ce.hasNext())
+                while (ce.hasNext()) {
                     ce.next();
+                }
                 return ce.previous();
             }
         }
-        
-                  
-    }    
+    }
 }
