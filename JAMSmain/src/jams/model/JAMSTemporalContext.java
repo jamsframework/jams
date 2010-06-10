@@ -71,9 +71,6 @@ public class JAMSTemporalContext extends JAMSContext {
                     }
                 }
 
-                EntityEnumerator ee = getEntities().getEntityEnumerator();
-                ee.reset();
-
                 String traceMark = getTraceMark();
 
                 // take care of filters in this context
@@ -121,6 +118,7 @@ public class JAMSTemporalContext extends JAMSContext {
         for (DataTracer dataTracer : dataTracers) {
             if (dataTracer.hasOutput()) {
                 dataTracer.endMark();
+                dataTracer.setOutput(false);
             }
         }
     }

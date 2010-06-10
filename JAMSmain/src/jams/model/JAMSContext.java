@@ -414,32 +414,8 @@ public class JAMSContext extends JAMSComponent implements Context {
                 whileLoop:
                 while (true) {
 
-                    String traceMark = getTraceMark();
-
-                    // take care of filters in this context
-                    for (Filter filter : store.getFilters()) {
-                        if (filter.getContext() == JAMSContext.this) {
-                            Matcher matcher = filter.getPattern().matcher(traceMark);
-                            if (!matcher.matches()) {
-                                continue whileLoop;
-                            }
-                        }
-                    }
-
-                    // if we haven't output a mark so far, do it now
-                    if (!hasOutput()) {
-                        setOutput(true);
-                        startMark();
-                    }
-
-                    output(traceMark);
-
-                    for (int i = 0; i < dataAccessors.length; i++) {
-                        dataAccessors[i].setIndex(j);
-                        dataAccessors[i].read();
-                        output(dataAccessors[i].getComponentObject());
-                    }
-                    nextRow();
+                    // process the entity with index j
+                    process(dataAccessors, j);
 
                     if (ee.hasNext()) {
                         ee.next();
@@ -451,7 +427,38 @@ public class JAMSContext extends JAMSComponent implements Context {
 
                 if (hasOutput()) {
                     endMark();
+                    setOutput(false);
                 }
+            }
+
+            private void process(DataAccessor[] dataAccessors, int j) {
+                String traceMark = getTraceMark();
+
+                // take care of filters in this context
+                for (Filter filter : store.getFilters()) {
+                    if (filter.getContext() == JAMSContext.this) {
+                        Matcher matcher = filter.getPattern().matcher(traceMark);
+                        if (!matcher.matches()) {
+                            return;
+                        }
+                    }
+                }
+
+                // if we haven't output a mark so far, do it now
+                if (!hasOutput()) {
+                    setOutput(true);
+                    startMark();
+                }
+
+                output(traceMark);
+
+                for (int i = 0; i < dataAccessors.length; i++) {
+                    dataAccessors[i].setIndex(j);
+                    dataAccessors[i].read();
+                    output(dataAccessors[i].getComponentObject());
+                }
+                nextRow();
+
             }
         };
 //        }

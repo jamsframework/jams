@@ -46,7 +46,7 @@ title="Title",
             update = JAMSVarDescription.UpdateType.RUN,
             description = "Description"
             )
-            public JAMSDoubleArray d;
+            public Attribute.DoubleArray d;
     
     
     /*
