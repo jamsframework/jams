@@ -108,6 +108,8 @@ public interface JAMSRuntime extends Serializable {
 
     public Model getModel();
 
+    public Document getModelDocument();
+
     public ClassLoader getClassLoader();
 
     public void saveModelParameter();

@@ -219,7 +219,7 @@ public class JAMSFrame extends JAMSLauncher {
                     try {
                         state = new JAMSFullModelState(jfcSer.getSelectedFile());
                         Model model = state.getModel();
-                        Document doc = ((StandardRuntime) model.getRuntime()).getModelDocument();
+                        Document doc = model.getRuntime().getModelDocument();
                         loadModelDefinition(doc);
                         modelFilename = model.getWorkspacePath() + "/" + model.getName();
                         saveModelAction.setEnabled(true);

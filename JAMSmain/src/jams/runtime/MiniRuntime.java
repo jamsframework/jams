@@ -242,4 +242,8 @@ public class MiniRuntime implements JAMSRuntime {
     public JAMSModel getModel() {
         return null;
     }
+
+    public Document getModelDocument() {
+        return null;
+    }
 }
