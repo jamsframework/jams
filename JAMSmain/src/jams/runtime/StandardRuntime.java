@@ -192,6 +192,10 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     }
 
+    public Document getModelDocument(){
+        return this.modelDocument;
+    }
+
     private void initLogging() {
         // set the debug (i.e. output verbosity) level
         this.setDebugLevel(Integer.parseInt(properties.getProperty(SystemProperties.DEBUG_IDENTIFIER, "1")));

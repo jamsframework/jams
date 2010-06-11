@@ -543,15 +543,15 @@ public class JAMSContext extends JAMSComponent implements Context {
         initTracerDataAccess();
 
 
-        createRunRunnable();
+        createRunRunnable(getModel().isProfiling());
         createResumeRunnable(getModel().isProfiling());
     }
 
-    private void createRunRunnable() {
+    private void createRunRunnable(boolean doProfiling){
         // create the runnable object that is executet at each run stage of that context
         // this will differ depending if the child components' execution time should be
         // measured or not
-        if (getModel().isProfiling()) {
+        if (doProfiling) {
             runRunnable = new Runnable() {
 
                 public void run() {
@@ -1068,8 +1068,8 @@ public class JAMSContext extends JAMSComponent implements Context {
     private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
 
-        createRunRunnable();
         boolean doProfiling = stream.readBoolean();
+        createRunRunnable(doProfiling);
         createResumeRunnable(doProfiling);
     }
 }

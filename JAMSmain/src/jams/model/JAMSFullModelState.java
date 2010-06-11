@@ -55,7 +55,6 @@ public class JAMSFullModelState implements FullModelState{
             }
         }
     }
-
     
     public JAMSFullModelState(SmallModelState state, Model model) throws IOException{
         this.setSmallModelState(state);
@@ -66,7 +65,7 @@ public class JAMSFullModelState implements FullModelState{
         ClassLoaderObjectInputStream objIn = new ClassLoaderObjectInputStream(fis);
         JAMSFullModelState _this = (JAMSFullModelState) objIn.readObject();
         this.state = _this.state;
-        this.data = _this.data;
+        this.data = _this.data;        
         objIn.close();
         fis.close();
 

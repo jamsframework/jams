@@ -58,6 +58,8 @@ import jams.io.ParameterProcessor;
 import jams.runtime.StandardRuntime;
 import jams.runtime.JAMSRuntime;
 import jams.gui.input.InputComponentFactory;
+import jams.model.JAMSFullModelState;
+import jams.model.Model;
 import jams.model.SmallModelState;
 import jams.tools.StringTools;
 import java.awt.Frame;
@@ -85,12 +87,13 @@ public class JAMSLauncher extends JFrame {
     private HelpDlg helpDlg;
     protected String initialModelDocString = "";
     protected File loadPath;
-    private JAMSRuntime runtime;
+    protected JAMSRuntime runtime;
     private Runnable modelLoading;
     private WorkerDlg loadModelDlg;
     private Font titledBorderFont;
     private Action runModelAction;
     private JToolBar toolBar;
+    protected JAMSFullModelState state = null;
 
     public JAMSLauncher(Frame parent, SystemProperties properties) {
         this.properties = properties;
@@ -118,7 +121,11 @@ public class JAMSLauncher extends JFrame {
         modelLoading = new Runnable() {
 
             public void run() {
-
+                if (state!=null){
+                    Model model = state.getModel();                    
+                    runtime = model.getRuntime();
+                    return;
+                }
                 // check if provided values are valid
                 if (!verifyInputs()) {
                     runtime = null;
@@ -520,7 +527,10 @@ public class JAMSLauncher extends JFrame {
 
             public void run() {
                 try {
-                    runtime.runModel();
+                    if (state==null)
+                        runtime.runModel();
+                    else
+                        runtime.resume(state.getSmallModelState());
                 } catch (Exception e) {
                     runtime.handle(e);
                 }
@@ -532,37 +542,7 @@ public class JAMSLauncher extends JFrame {
         };
         t.start();
     }
-
-    protected void resumeModel(final SmallModelState state) {
-
-        // first load the model via the modelLoading runnable
-        loadModelDlg.setTask(modelLoading);
-        loadModelDlg.execute();
-
-        // check if runtime has been created successfully
-        if (runtime == null) {
-            return;
-        }
-
-        // start the model
-        Thread t = new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    runtime.resume(state);
-                } catch (Exception e) {
-                    runtime.handle(e);
-                }
-
-                //dump the runtime and clean up
-                runtime = null;
-                Runtime.getRuntime().gc();
-            }
-        };
-        t.start();
-    }
-
+    
     protected SystemProperties getProperties() {
         return properties;
     }

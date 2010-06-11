@@ -33,6 +33,7 @@ import jams.tools.XMLTools;
 import jams.io.XMLProcessor;
 import jams.model.JAMSFullModelState;
 import jams.model.Model;
+import jams.runtime.StandardRuntime;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
 import jams.workspace.InvalidWorkspaceException;
@@ -81,7 +82,7 @@ public class JAMSFrame extends JAMSLauncher {
             aboutAction, loadModelParamAction, saveModelParamAction,
             loadModelExecutionStateAction, rtManagerAction, infoLogAction,
             errorLogAction, onlineAction, explorerAction, editModelAction;
-    private static JAMSExplorer theExplorer;
+    private static JAMSExplorer theExplorer;    
 
     public JAMSFrame(Frame parent, SystemProperties properties) {
         super(parent, properties);
@@ -216,22 +217,16 @@ public class JAMSFrame extends JAMSLauncher {
 
                 if (result == JFileChooser.APPROVE_OPTION) {
                     try {
-                        final JAMSFullModelState state = new JAMSFullModelState(jfcSer.getSelectedFile());
-                        Thread t = new Thread() {
-
-                            public void run() {
-                                Model model = state.getModel();
-                                try {
-                                    model.getRuntime().resume(state.getSmallModelState());
-                                } catch (Exception e) {
-                                    JAMSTools.handle(e);
-                                }
-                                // collect some garbage ;)
-                                Runtime.getRuntime().gc();
-                            }
-                        };
-                        t.start();
+                        state = new JAMSFullModelState(jfcSer.getSelectedFile());
+                        Model model = state.getModel();
+                        Document doc = ((StandardRuntime) model.getRuntime()).getModelDocument();
+                        loadModelDefinition(doc);
+                        modelFilename = model.getWorkspacePath() + "/" + model.getName();
+                        saveModelAction.setEnabled(true);
+                        saveAsModelAction.setEnabled(true);
                         modelMenu.setEnabled(true);
+                        editModelAction.setEnabled(true);
+                        getRunModelAction().setEnabled(true);                        
                     } catch (IOException ioe) {
                         GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Could_not_resume_model_execution_because") + ioe, JAMS.resources.getString("Resume_error"));
                     } catch (ClassNotFoundException cnfe) {
@@ -251,7 +246,7 @@ public class JAMSFrame extends JAMSLauncher {
                     jfcModel.setSelectedFile(new File(""));
                 }
                 if (jfcModel.showOpenDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
-
+                    state = null;
                     loadModelDefinition(jfcModel.getSelectedFile().getAbsolutePath(), null);
 
                 }
@@ -604,7 +599,7 @@ public class JAMSFrame extends JAMSLauncher {
     }
 
     private boolean closeModel() {
-
+        this.state = null;
         if (getModelDocument() == null) {
             return true;
         }

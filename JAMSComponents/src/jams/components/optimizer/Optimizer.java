@@ -313,7 +313,10 @@ public abstract class Optimizer extends JAMSContext {
         }
     }
             
-    protected void singleRun() {        
+    protected void singleRun() {
+        if (!doRun)
+            return;
+        
         if (runEnumerator == null) {
             runEnumerator = getChildrenEnumerator();
         }

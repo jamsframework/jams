@@ -473,7 +473,7 @@ public class SimpleSCE extends SOOptimizer {
         }
         sayThis(JAMS.resources.getString("SEARCH_WAS_STOPPED_AT_TRIAL_NUMBER") + " " + currentSampleCount);
         sayThis(JAMS.resources.getString("NORMALIZED_GEOMETRIC_RANGE") + " " + gnrng);
-        sayThis(JAMS.resources.getString("THE BEST POINT HAS IMPROVED IN LAST ") + kstop + " "+JAMS.resources.getString("LOOPS_BY") + " "+ criter_change + "%");
+        sayThis(JAMS.resources.getString("THE_BEST_POINT_HAS_IMPROVED_IN_LAST") + kstop + " "+JAMS.resources.getString("LOOPS_BY") + " "+ criter_change + "%");
                 
         return x[0];
     }
