@@ -87,7 +87,8 @@ public class JUICEFrame extends JFrame {
     private Action saveModelParamAction;
     private Action runModelAction;
     private Action runModelFromLauncherAction;
-    private Action jadeAction;
+    private Action explorerAction;
+    private Action browserAction;
     private Action infoLogAction;
     private Action errorLogAction;
     private Action onlineAction;
@@ -365,12 +366,21 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        jadeAction = new AbstractAction(JAMS.resources.getString("DATA_EXPLORER")) {
+        explorerAction = new AbstractAction(JAMS.resources.getString("DATA_EXPLORER")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
                 view.openExplorer();
+            }
+        };
+
+        browserAction = new AbstractAction(JAMS.resources.getString("Browse_WS_Dir")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ModelView view = getCurrentView();
+                view.openWSBrowser();
             }
         };
 
@@ -579,10 +589,13 @@ public class JUICEFrame extends JFrame {
         JMenuItem runModelInLauncherItem = new JMenuItem(runModelFromLauncherAction);
         modelMenu.add(runModelInLauncherItem);
 
-        JMenuItem jadeItem = new JMenuItem(jadeAction);
+        JMenuItem jadeItem = new JMenuItem(explorerAction);
         jadeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
         modelMenu.add(jadeItem);
 
+        JMenuItem browserItem = new JMenuItem(browserAction);
+        browserItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+        modelMenu.add(browserItem);
 
         modelMenu.add(new JSeparator());
 
@@ -710,11 +723,19 @@ public class JUICEFrame extends JFrame {
     }
 
     public void newModel() {
-        ModelView mView = new ModelView(modelPanel);
-        mView.setTree(new ModelTree(mView, null));
-        mView.setInitialState();
-        mView.getFrame().setVisible(true);
-        mView.getFrame().requestFocus();
+        SwingWorker w = new SwingWorker() {
+
+            @Override
+            protected Object doInBackground() throws Exception {
+                ModelView mView = new ModelView(modelPanel);
+                mView.setTree(new ModelTree(mView, null));
+                mView.setInitialState();
+                mView.getFrame().setVisible(true);
+                mView.getFrame().requestFocus();
+                return mView;
+            }
+        };
+        w.execute();
     }
 
     public void loadModel(String path) {
@@ -808,7 +829,7 @@ public class JUICEFrame extends JFrame {
     }
 
     public Action getJADEAction() {
-        return jadeAction;
+        return explorerAction;
     }
 
     private class WindowItem extends JMenuItem {
