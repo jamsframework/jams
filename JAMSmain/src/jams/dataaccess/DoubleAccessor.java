@@ -32,11 +32,8 @@ import jams.JAMS;
 public class DoubleAccessor implements DataAccessor {
 
     Attribute.Double componentObject;
-
     Attribute.Double[] entityObject;
-
     int index;
-
     int accessType;
 
     public DoubleAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
@@ -82,11 +79,7 @@ public class DoubleAccessor implements DataAccessor {
 
     @Override
     public void write() {
-        try {
-            entityObject[index].setValue(componentObject.getValue());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        entityObject[index].setValue(componentObject.getValue());
     }
 
     @Override
