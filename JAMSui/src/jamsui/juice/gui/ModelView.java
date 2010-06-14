@@ -65,6 +65,9 @@ import jamsui.juice.ModelProperties.Group;
 import jamsui.juice.ModelProperties.ModelElement;
 import jamsui.juice.ModelProperties.ModelProperty;
 import jamsui.juice.gui.tree.ModelTree;
+import jamsui.launcher.JAMSFrame;
+import java.awt.Desktop;
+import java.net.URI;
 import java.util.ArrayList;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -791,6 +794,30 @@ public class ModelView {
         } catch (InvalidWorkspaceException ex) {
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
         }
+    }
+
+    public void openWSBrowser() {
+        if (!Desktop.isDesktopSupported()) {
+            return;
+        }
+
+        File workspacePath = new File(XMLProcessor.getWorkspacePath(getModelDoc()));
+        if (!workspacePath.isDirectory()) {
+            if (savePath != null) {
+                workspacePath = savePath.getParentFile();
+            } else {
+                return;
+            }
+        }
+
+        // try to open file browser in workspace dir
+        try {
+            URI workspaceURI = workspacePath.toURI();
+            Desktop.getDesktop().browse(workspaceURI);
+        } catch (IOException ex) {
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), "\"" + workspacePath + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+        }
+
     }
 }    
     

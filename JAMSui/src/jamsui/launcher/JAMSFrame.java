@@ -398,6 +398,8 @@ public class JAMSFrame extends JAMSLauncher {
                 if (!workspacePath.isDirectory()) {
                     if (loadPath != null) {
                         workspacePath = loadPath.getParentFile();
+                    } else {
+                        return;
                     }
                 }
 
