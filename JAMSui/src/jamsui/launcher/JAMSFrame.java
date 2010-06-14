@@ -33,16 +33,17 @@ import jams.tools.XMLTools;
 import jams.io.XMLProcessor;
 import jams.model.JAMSFullModelState;
 import jams.model.Model;
-import jams.runtime.StandardRuntime;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
 import jams.workspace.InvalidWorkspaceException;
 import jamsui.juice.JUICE;
+import java.awt.Desktop;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
@@ -54,6 +55,7 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
+import java.net.URI;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -81,8 +83,8 @@ public class JAMSFrame extends JAMSLauncher {
             loadModelAction, saveModelAction, saveAsModelAction, exitAction,
             aboutAction, loadModelParamAction, saveModelParamAction,
             loadModelExecutionStateAction, rtManagerAction, infoLogAction,
-            errorLogAction, onlineAction, explorerAction, editModelAction;
-    private static JAMSExplorer theExplorer;    
+            errorLogAction, onlineAction, explorerAction, browserAction, editModelAction;
+    private static JAMSExplorer theExplorer;
 
     public JAMSFrame(Frame parent, SystemProperties properties) {
         super(parent, properties);
@@ -109,6 +111,8 @@ public class JAMSFrame extends JAMSLauncher {
             if (!file.exists()) {
                 GUIHelper.showErrorDlg(this, JAMS.resources.getString("Model_file_") + fileName + JAMS.resources.getString("_could_not_be_found!"), JAMS.resources.getString("File_Open_Error"));
                 return;
+            } else {
+                loadPath = file;
             }
 
             // first do search&replace on the input xml file
@@ -226,7 +230,7 @@ public class JAMSFrame extends JAMSLauncher {
                         saveAsModelAction.setEnabled(true);
                         modelMenu.setEnabled(true);
                         editModelAction.setEnabled(true);
-                        getRunModelAction().setEnabled(true);                        
+                        getRunModelAction().setEnabled(true);
                     } catch (IOException ioe) {
                         GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Could_not_resume_model_execution_because") + ioe, JAMS.resources.getString("Resume_error"));
                     } catch (ClassNotFoundException cnfe) {
@@ -381,6 +385,32 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
+        browserAction = new AbstractAction(JAMS.resources.getString("Browse_WS_Dir")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if (!Desktop.isDesktopSupported()) {
+                    return;
+                }
+
+                File workspacePath = new File(XMLProcessor.getWorkspacePath(modelDocument));
+                if (!workspacePath.isDirectory()) {
+                    if (loadPath != null) {
+                        workspacePath = loadPath.getParentFile();
+                    }
+                }
+
+                // try to open file browser in workspace dir
+                try {
+                    URI workspaceURI = workspacePath.toURI();
+                    Desktop.getDesktop().browse(workspaceURI);
+                } catch (IOException ex) {
+                    GUIHelper.showErrorDlg(JAMSFrame.this, "\"" + workspacePath + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+                }
+            }
+        };
+
         // create additional dialogs
         this.propertyDlg = new PropertyDlg(this, getProperties());
 
@@ -473,6 +503,10 @@ public class JAMSFrame extends JAMSLauncher {
         explorerItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
         modelMenu.add(explorerItem);
 
+        JMenuItem fileBrowserItem = new JMenuItem(browserAction);
+        fileBrowserItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
+        modelMenu.add(fileBrowserItem);
+
         JMenuItem editModelItem = new JMenuItem(editModelAction);
         editModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, ActionEvent.CTRL_MASK));
 //        modelMenu.add(editModelItem);
@@ -532,7 +566,7 @@ public class JAMSFrame extends JAMSLauncher {
         prefsButton.setToolTipText(JAMS.resources.getString("Edit_Preferences..."));
         prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
         getToolBar().add(prefsButton);
-        
+
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
         infoLogButton.setToolTipText(JAMS.resources.getString("Show_Info_Log..."));
