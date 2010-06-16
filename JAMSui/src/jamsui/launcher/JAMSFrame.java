@@ -389,27 +389,7 @@ public class JAMSFrame extends JAMSLauncher {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                if (!Desktop.isDesktopSupported()) {
-                    return;
-                }
-
-                File workspacePath = new File(XMLProcessor.getWorkspacePath(modelDocument));
-                if (!workspacePath.isDirectory()) {
-                    if (loadPath != null) {
-                        workspacePath = loadPath.getParentFile();
-                    } else {
-                        return;
-                    }
-                }
-
-                // try to open file browser in workspace dir
-                try {
-                    URI workspaceURI = workspacePath.toURI();
-                    Desktop.getDesktop().browse(workspaceURI);
-                } catch (IOException ex) {
-                    GUIHelper.showErrorDlg(JAMSFrame.this, "\"" + workspacePath + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
-                }
+                browseWSDir();
             }
         };
 
@@ -690,6 +670,33 @@ public class JAMSFrame extends JAMSLauncher {
 
     }
 
+    private void browseWSDir() {
+
+        if (!Desktop.isDesktopSupported()) {
+            return;
+        }
+
+        Document modelDoc = getModelDocument();
+
+        File workspaceFile = new File(XMLProcessor.getWorkspacePath(modelDoc));
+        if (!workspaceFile.isDirectory()) {
+            if (loadPath != null) {
+                workspaceFile = loadPath.getParentFile();
+            } else {
+                GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+                return;
+            }
+        }
+
+        // try to open file browser in workspace dir
+        try {
+            URI workspaceURI = workspaceFile.toURI();
+            Desktop.getDesktop().browse(workspaceURI);
+        } catch (IOException ex) {
+            GUIHelper.showErrorDlg(JAMSFrame.this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+        }
+    }
+
     private void openExplorer() {
 
         // check if provided values are valid
@@ -700,11 +707,16 @@ public class JAMSFrame extends JAMSLauncher {
 
         Document modelDoc = getModelDocument();
 
-        NodeList varList = modelDoc.getDocumentElement().getElementsByTagName("var");
-        Element varNode = (Element) varList.item(0);
-        String workspacePath = varNode.getAttribute("value");
+        File workspaceFile = new File(XMLProcessor.getWorkspacePath(modelDoc));
+        if (!workspaceFile.isDirectory()) {
+            if (loadPath != null) {
+                workspaceFile = loadPath.getParentFile();
+            } else {
+                GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+                return;
+            }
+        }
 
-        File workspaceFile = new File(workspacePath);
         try {
 
             if (theExplorer == null) {

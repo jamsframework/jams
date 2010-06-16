@@ -778,7 +778,18 @@ public class ModelView {
     }
 
     public void openExplorer() {
+        
         File workspaceFile = new File(getWorkspacePath());
+
+        if (!workspaceFile.isDirectory()) {
+            if (getSavePath() != null) {
+                workspaceFile = getSavePath().getParentFile();
+            } else {
+                GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+                return;
+            }
+        }
+
         try {
             if (theExplorer == null) {
                 theExplorer = new JAMSExplorer(null, false);
