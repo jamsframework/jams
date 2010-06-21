@@ -7,7 +7,6 @@ package reg.spreadsheet;
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGEncodeParam;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
@@ -19,6 +18,7 @@ import jams.workspace.DataValue;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.stores.InputDataStore;
+import jams.workspace.stores.TSDataStore;
 import java.util.Vector;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -57,99 +57,55 @@ import reg.JAMSExplorer;
 public class STPConfigurator extends JFrame {
 
     JPanel plotpanel;
-
     JPanel optionpanel;
-
     JPanel chooserpanel;
-
     GridBagLayout ogbl;
-
     JComboBox templateBox[];
-
     JRadioButton timeButton[];
-
     JLabel titleLabel[];
-
     JTextField weightField[];
-
     JTextField titleField;
-
     ButtonGroup axisGroup;
-
     JButton plotbutton;
-
     JButton settitleButton;
-
     JButton epsButton;
-
     JButton addbutton;
-
     JButton removebutton;
-
     JLabel edTitleLabel;
-
     JPanel chartpanel;
-
     JAMSSpreadSheet sheet;
-
     JAMSStackedPlot stackedplot;
-
     JFrame parent;
-
     JFileChooser templateChooser;
 //    JTable table; //wichtig?
-
     File templateFile;
-
     private JAMSWorkspace workspace;
-
     HashMap<String, File> template_hashmap = new HashMap<String, File>();
-
     int rows, columns, graphCount, selectedTimeAxis;
-
     double[] weights;
-
     String[] headers;
-
     Vector<double[]> arrayVector;
-
     Vector<GraphProperties> propVector; //for one plot!!!
-
     Vector<Attribute.Calendar> timeVector;
-
 //    static String DATASET_01 = "tmax";
 //    static String DATASET_02 = "tmean";
     static String DATASET[] = {"tmax", "tmean"};
-
     String[] dataset;
-
     String[] output;
-
     String datasetID;
-
     final static int INPUT = 0;
-
     final static int OUTPUT = 1;
 //    private JAMSTimePlot jts_01 = new JAMSTimePlot();
 //    private JAMSTimePlot jts_02 = new JAMSTimePlot();
-
     private JAMSTimePlot jts[];
-
-    InputDataStore store;
-
+    TSDataStore store;
 //    boolean output_store = false;
     int rLeft, rRight = 0;
-
     boolean invLeft, invRight = false;
-
     boolean timeFormat_yy, timeFormat_mm, timeFormat_dd, timeFormat_hm = true;
-
     String title, tLeft, tRight, xAxisTitle = "";
-
     JPanel plotPanel;
-
     File templateFiles[];
-
     int numberOfPlots;
 
     public STPConfigurator(JAMSExplorer explorer) {
@@ -174,7 +130,7 @@ public class STPConfigurator extends JFrame {
 
 //        dataset = getAccessibleIDs();
         dataset = createHashMap(getAccessibleTemplates());
-        
+
         if (dataset.length <= 2) {
             this.numberOfPlots = dataset.length;
         }
@@ -957,7 +913,13 @@ public class STPConfigurator extends JFrame {
         timeVector = new Vector<Attribute.Calendar>();
 
         double rowBuffer[];
-        this.store = getInputDataStore(datasetID);
+        InputDataStore inputDS = getInputDataStore(datasetID);
+        if (inputDS instanceof TSDataStore) {
+            this.store = (TSDataStore) inputDS;
+        } else {
+            return;
+        }
+        String dumpTimeFormat = store.getTimeFormat();
 
         ArrayList<Object> names = store.getDataSetDefinition().getAttributeValues("NAME");
         columns = store.getDataSetDefinition().getColumnCount();
@@ -975,11 +937,8 @@ public class STPConfigurator extends JFrame {
             DataValue[] rowData = ds.getData();
 
             Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
-            try {
-                timeval.setValue(rowData[0].getString(), "dd.MM.yyyy HH:mm");
-            } catch (ParseException pe) {
-                pe.printStackTrace();
-            }
+            timeval.setValue(rowData[0].getString());
+            timeval.setDateFormat(dumpTimeFormat);
             timeVector.add(timeval);
 
             rowBuffer = new double[columns];
@@ -1549,7 +1508,6 @@ public class STPConfigurator extends JFrame {
             setVisible(true);
         }
     };
-
     ActionListener titleListener = new ActionListener() {
 
         public void actionPerformed(ActionEvent te) {
@@ -1557,7 +1515,6 @@ public class STPConfigurator extends JFrame {
             stackedplot.setTitle(title);
         }
     };
-
     ActionListener saveImageAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -1583,7 +1540,6 @@ public class STPConfigurator extends JFrame {
             }
         }
     };
-
     ActionListener addAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent te) {
@@ -1591,7 +1547,6 @@ public class STPConfigurator extends JFrame {
             addPlot();
         }
     };
-
     ActionListener removeAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent te) {
@@ -1599,5 +1554,4 @@ public class STPConfigurator extends JFrame {
             removePlot();
         }
     };
-
 }
