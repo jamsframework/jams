@@ -130,7 +130,6 @@ public class DisplayManager implements Observer {
                         spreadSheet.loadTSDS((TSDataStore) store, explorer.getWorkspace().getInputDirectory());
                     } catch (Throwable e) {
                         GUIHelper.showErrorDlg(explorer.getExplorerFrame(), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AN_ERROR_OCCURED_WHILE_TRYING_TO_READ_FROM_DATASTORE_") + store.getID() + "\"", java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
-                        e.printStackTrace();
                     }
 
                 }
