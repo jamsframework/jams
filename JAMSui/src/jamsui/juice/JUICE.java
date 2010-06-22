@@ -23,7 +23,10 @@
 package jamsui.juice;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.UIManager;
 import jams.JAMS;
 import jams.JAMSProperties;
@@ -37,6 +40,7 @@ import jamsui.juice.gui.JUICEFrame;
 import jamsui.juice.gui.ModelView;
 import jamsui.juice.gui.tree.LibTree;
 import jamsui.cmdline.JAMSCmdLine;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -116,7 +120,20 @@ public class JUICE {
         juiceFrame.setVisible(true);
 
         libTree = new LibTree();
-        JUICE.updateLibs();
+
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+
+                public void run() {
+                    JUICE.updateLibs();
+                }
+            });
+        } catch (InterruptedException ex) {
+            Logger.getLogger(JUICE.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(JUICE.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         juiceFrame.setLibTree(libTree);
 
         getJamsProperties().addObserver(JAMSProperties.LIBS_IDENTIFIER, new Observer() {
