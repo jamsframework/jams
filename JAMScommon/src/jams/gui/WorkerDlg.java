@@ -129,14 +129,12 @@ public class WorkerDlg extends JDialog {
      */
     public void setTask(Runnable task) {
         this.task = task;
+
+        // put the task into a worker
         worker = new SwingWorker<Object, Void>() {
 
             public Object doInBackground() {
-                try {
-                    WorkerDlg.this.task.run();
-                } catch (Throwable t) {
-                    JAMSTools.handle(t);
-                }
+                WorkerDlg.this.task.run();
                 return WorkerDlg.this.task;
             }
         };
