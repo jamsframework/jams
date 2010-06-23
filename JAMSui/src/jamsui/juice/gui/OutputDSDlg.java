@@ -109,7 +109,7 @@ public class OutputDSDlg extends JDialog {
         super.setVisible(isVisible);
         if (isVisible) {
             ModelView view = JUICE.getJuiceFrame().getCurrentView();
-            HashMap<String, ComponentDescriptor> cdMap = view.getComponentDescriptors();
+            HashMap<String, ComponentDescriptor> cdMap = view.getModelDescriptor().getComponentDescriptors();
 
             // create a list containing all contexts of this model
             ArrayList<ComponentDescriptor> contextList = new ArrayList<ComponentDescriptor>();

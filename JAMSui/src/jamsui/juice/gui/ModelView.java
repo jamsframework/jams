@@ -93,8 +93,6 @@ public class ModelView {
     private ModelGUIPanel launcherPanel;
     private ModelEditPanel modelEditPanel;
     private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "";
-    private HashMap<String, ComponentDescriptor> componentDescriptors = new HashMap<String, ComponentDescriptor>();
-    private HashMap<String, OutputDSDescriptor> outputDataStores = new HashMap<String, OutputDSDescriptor>();
     private TreePanel modelTreePanel;
     private JDesktopPane parentPanel;
     private ModelProperties modelProperties = new ModelProperties();
@@ -104,6 +102,7 @@ public class ModelView {
     public static ViewList viewList = new ViewList();
     private JAMSRuntime runtime;
     private static JAMSExplorer theExplorer;
+    private ModelDescriptor modelDescriptor = new ModelDescriptor();
 //    private PanelDlg launcherPanelDlg;
 
     public ModelView(JDesktopPane parentPanel) {
@@ -400,7 +399,7 @@ public class ModelView {
     public void loadParams(File paramsFile) {
         try {
             Document doc = ParameterProcessor.loadParams(getModelDoc(), paramsFile);
-            componentDescriptors = new HashMap<String, ComponentDescriptor>();
+            modelDescriptor = new ModelDescriptor();
             this.setTree(new ModelTree(this, doc));
         } catch (Exception ex) {
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("File_") + paramsFile.getName() + JAMS.resources.getString("_could_not_be_loaded."), JAMS.resources.getString("File_open_error"));
@@ -426,7 +425,7 @@ public class ModelView {
      */
     public String createComponentInstanceName(String name) {
 
-        Set<String> names = getComponentDescriptors().keySet();
+        Set<String> names = getModelDescriptor().getComponentDescriptors().keySet();
 
         if (!names.contains(name)) {
             return name;
@@ -739,20 +738,20 @@ public class ModelView {
     }
 
     public ComponentDescriptor getComponentDescriptor(String name) {
-        return this.getComponentDescriptors().get(name);
+        return getModelDescriptor().getComponentDescriptors().get(name);
     }
 
     public String registerComponentDescriptor(String oldName, String newName, ComponentDescriptor cd) {
 
         String newNewName = createComponentInstanceName(newName);
-        this.getComponentDescriptors().remove(oldName);
-        this.getComponentDescriptors().put(newNewName, cd);
+        getModelDescriptor().getComponentDescriptors().remove(oldName);
+        getModelDescriptor().getComponentDescriptors().put(newNewName, cd);
 
         return newNewName;
     }
 
     public void unRegisterComponentDescriptor(ComponentDescriptor cd) {
-        this.getComponentDescriptors().remove(cd.getName());
+        getModelDescriptor().getComponentDescriptors().remove(cd.getName());
     }
 
     public void setInitialState() {
@@ -767,8 +766,8 @@ public class ModelView {
         this.modelProperties = modelProperties;
     }
 
-    public HashMap<String, ComponentDescriptor> getComponentDescriptors() {
-        return componentDescriptors;
+    public ModelDescriptor getModelDescriptor() {
+        return modelDescriptor;
     }
 
     private void setHelpComponent(Element theElement, ModelElement theModelElement) throws DOMException {

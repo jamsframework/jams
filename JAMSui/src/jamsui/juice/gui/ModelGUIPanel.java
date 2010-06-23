@@ -634,7 +634,7 @@ public class ModelGUIPanel extends JPanel {
         }
         String groupName = tabbedPane.getTitleAt(index);
 
-        propertyDlg.update(view.getModelProperties().getAllGroupNames(), view.getComponentDescriptors(), null, groupName);
+        propertyDlg.update(view.getModelProperties().getAllGroupNames(), view.getModelDescriptor().getComponentDescriptors(), null, groupName);
         propertyDlg.setVisible(true);
 
         if (propertyDlg.getResult() == ModelPropertyDlg.OK_RESULT) {
@@ -695,7 +695,7 @@ public class ModelGUIPanel extends JPanel {
 
         ModelProperties.Group group = property.getGroup();
 
-        propertyDlg.update(view.getModelProperties().getAllGroupNames(), view.getComponentDescriptors(), property, group.getName());
+        propertyDlg.update(view.getModelProperties().getAllGroupNames(), view.getModelDescriptor().getComponentDescriptors(), property, group.getName());
         propertyDlg.setVisible(true);
 
         if (propertyDlg.getResult() == ModelPropertyDlg.OK_RESULT) {
