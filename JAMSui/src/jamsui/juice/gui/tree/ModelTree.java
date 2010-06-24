@@ -56,6 +56,7 @@ import jamsui.juice.ComponentDescriptor;
 import jamsui.juice.ComponentDescriptor.ComponentAttribute;
 import jamsui.juice.ContextAttribute;
 import jamsui.juice.JUICE;
+import jamsui.juice.ModelDescriptor;
 import jamsui.juice.ModelProperties.ModelProperty;
 import jamsui.juice.ModelProperties.Group;
 import jamsui.juice.gui.ModelView;
@@ -321,7 +322,7 @@ public class ModelTree extends JAMSTree {
     }
 
     // Create a XML document from the model tree
-    public Document getModelDocument() {
+    public Document getModelDocument(ModelDescriptor md) {
 
         Document document = null;
         Element element;
@@ -343,9 +344,9 @@ public class ModelTree extends JAMSTree {
 
             Element rootElement = (Element) document.createElement("model");
             rootElement.setAttribute("name", cd.getName());
-            rootElement.setAttribute("author", view.getAuthor());
-            rootElement.setAttribute("date", view.getDate());
-            rootElement.setAttribute("helpbaseurl", view.getHelpBaseUrl());
+            rootElement.setAttribute("author", md.getAuthor());
+            rootElement.setAttribute("date", md.getDate());
+            rootElement.setAttribute("helpbaseurl", md.getHelpBaseUrl());
             rootElement.setAttribute("version", JAMSVersion.getInstance().getVersionString());
 
             rootElement.appendChild(document.createTextNode("\n"));
@@ -353,21 +354,21 @@ public class ModelTree extends JAMSTree {
             document.appendChild(rootElement);
 
             element = (Element) document.createElement("description");
-            element.appendChild(document.createCDATASection(view.getDescription()));
+            element.appendChild(document.createCDATASection(md.getDescription()));
             rootElement.appendChild(element);
 
             element = (Element) document.createElement("var");
             element.setAttribute("name", "workspaceDirectory");
-            element.setAttribute("value", view.getWorkspacePath());
+            element.setAttribute("value", md.getWorkspacePath());
             rootElement.appendChild(element);
 
             rootElement.appendChild(document.createTextNode("\n"));
 
             element = (Element) document.createElement("launcher");
-            for (String group : view.getModelProperties().getGroupNames()) {
+            for (String group : md.getModelProperties().getGroupNames()) {
                 Element groupElement = (Element) document.createElement("group");
                 groupElement.setAttribute("name", group);
-                Vector properties = view.getModelProperties().getGroup(group).getProperties();
+                Vector properties = md.getModelProperties().getGroup(group).getProperties();
                 if (properties != null) {
                     for (Object modelProperty : properties) {
 
@@ -554,6 +555,8 @@ public class ModelTree extends JAMSTree {
         Element element, docRoot;
         Class<?> modelClazz;
 
+        ModelDescriptor md = view.getModelDescriptor();
+
         try {
             modelClazz = JUICE.getLoader().loadClass(MODEL_CLASS_NAME);
         } catch (ClassNotFoundException cnfe) {
@@ -571,20 +574,20 @@ public class ModelTree extends JAMSTree {
 
         docRoot = modelDoc.getDocumentElement();
         modelName = docRoot.getAttribute("name");
-        view.setAuthor(docRoot.getAttribute("author"));
-        view.setDate(docRoot.getAttribute("date"));
-        view.setHelpBaseUrl(docRoot.getAttribute("helpbaseurl"));
+        md.setAuthor(docRoot.getAttribute("author"));
+        md.setDate(docRoot.getAttribute("date"));
+        md.setHelpBaseUrl(docRoot.getAttribute("helpbaseurl"));
 
         //handle the description node
         Node descriptionNode = docRoot.getElementsByTagName("description").item(0);
         if (descriptionNode != null) {
-            view.setDescription(descriptionNode.getTextContent().trim());
+            md.setDescription(descriptionNode.getTextContent().trim());
         }
 
         //handle the datastores node
         Element dataStoreNode = (Element) docRoot.getElementsByTagName("datastores").item(0);
         if (dataStoreNode != null) {
-            view.setDatastores(dataStoreNode);
+            md.setDatastores(dataStoreNode);
         }
 
         //create the tree's root node
@@ -617,7 +620,7 @@ public class ModelTree extends JAMSTree {
             } else if (node.getNodeName().equals("var")) {
                 element = (Element) node;
                 if (element.getAttribute("name").equals("workspaceDirectory")) {
-                    view.setWorkspacePath(element.getAttribute("value"));
+                    md.setWorkspacePath(element.getAttribute("value"));
                 }
             }
         }
@@ -626,7 +629,7 @@ public class ModelTree extends JAMSTree {
         //handle the launcher node
         Element launcherNode = (Element) docRoot.getElementsByTagName("launcher").item(0);
         if (launcherNode != null) {
-            view.setModelParameters(launcherNode);
+            view.getModelDescriptor().setModelParameters(launcherNode);
         }
 
         return rootNode;
@@ -743,7 +746,7 @@ public class ModelTree extends JAMSTree {
                 contextName = modelName;
             }
 
-            ComponentDescriptor context = view.getComponentDescriptor(contextName);
+            ComponentDescriptor context = view.getModelDescriptor().getComponentDescriptor(contextName);
             if (context == null) {
                 GUIHelper.showErrorDlg(this.view.getFrame(), JAMS.resources.getString("Error_while_loading_component_") + cd.getName()
                         + JAMS.resources.getString("_context_") + contextName + JAMS.resources.getString("_does_not_exist!"), JAMS.resources.getString("Model_loading_error"));

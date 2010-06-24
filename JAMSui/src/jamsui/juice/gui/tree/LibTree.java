@@ -242,7 +242,13 @@ public class LibTree extends JAMSTree {
 
                     try {
 
-                        ComponentDescriptor no = new ComponentDescriptor(clazz, this);
+                        ComponentDescriptor no = new ComponentDescriptor(clazz, null);
+                        no.addObserver(new Observer() {
+
+                            public void update(Observable o, Object arg) {
+                                LibTree.this.updateUI();
+                            }
+                        });
 
                         if (JAMSContext.class.isAssignableFrom(clazz)) {
                             compNode = new JAMSNode(no, JAMSNode.CONTEXT_NODE);

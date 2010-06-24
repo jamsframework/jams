@@ -39,7 +39,7 @@ public class HelpComponent {
 
     private String helpURL = "";
     private String helpText = "";
-    public static ImageIcon HELP_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/help.png")).getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH));
+    //public static ImageIcon HELP_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/help.png")).getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH));
 
     public HelpComponent() {
     }

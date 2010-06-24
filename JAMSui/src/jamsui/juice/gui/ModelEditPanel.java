@@ -127,7 +127,7 @@ public class ModelEditPanel extends JPanel {
 
             @Override
             public void valueChanged() {
-                view.setWorkspacePath(workspace.getValue());
+                view.getModelDescriptor().setWorkspacePath(workspace.getValue());
             }
         });
 
@@ -191,11 +191,11 @@ public class ModelEditPanel extends JPanel {
     }
 
     public void updatePanel() {
-        author.setValue(view.getAuthor());
-        date.setValue(view.getDate());
-        helpBaseURL.setValue(view.getHelpBaseUrl());
-        description.setText(view.getDescription());
-        workspace.setValue(view.getWorkspacePath());
+        author.setValue(view.getModelDescriptor().getAuthor());
+        date.setValue(view.getModelDescriptor().getDate());
+        helpBaseURL.setValue(view.getModelDescriptor().getHelpBaseUrl());
+        description.setText(view.getModelDescriptor().getDescription());
+        workspace.setValue(view.getModelDescriptor().getWorkspacePath());
     }
 
 //    private void openExplorer() {
@@ -215,18 +215,18 @@ public class ModelEditPanel extends JPanel {
 //    }
 
     private void updateAuthor() {
-        view.setAuthor(author.getValue());
+        view.getModelDescriptor().setAuthor(author.getValue());
     }
 
     private void updateDate() {
-        view.setDate(date.getValue());
+        view.getModelDescriptor().setDate(date.getValue());
     }
 
     private void updateDescription() {
-        view.setDescription(description.getText());
+        view.getModelDescriptor().setDescription(description.getText());
     }
 
     private void updateHelpBaseUrl() {
-        view.setHelpBaseUrl(helpBaseURL.getValue());
+        view.getModelDescriptor().setHelpBaseUrl(helpBaseURL.getValue());
     }
 }

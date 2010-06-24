@@ -92,10 +92,8 @@ public class ModelView {
     //private HashMap<ComponentDescriptor, DataRepository> dataRepositories = new HashMap<ComponentDescriptor, DataRepository>();
     private ModelGUIPanel launcherPanel;
     private ModelEditPanel modelEditPanel;
-    private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "";
     private TreePanel modelTreePanel;
     private JDesktopPane parentPanel;
-    private ModelProperties modelProperties = new ModelProperties();
     private WorkerDlg loadModelDlg;
     private Runnable modelLoading;
     private static int viewCounter = 0;
@@ -419,35 +417,6 @@ public class ModelView {
         }
     }
 
-    /*
-     * Create a new name for a component instance.
-     * If possible, use the given name, else add a suffix in order to create a unique one.
-     */
-    public String createComponentInstanceName(String name) {
-
-        Set<String> names = getModelDescriptor().getComponentDescriptors().keySet();
-
-        if (!names.contains(name)) {
-            return name;
-        }
-
-        String[] sArray = StringTools.toArray(name, "_");
-        if (sArray.length > 1) {
-            String suffix = "_" + sArray[sArray.length - 1];
-            name = name.substring(0, name.length() - suffix.length());
-        }
-
-        int i = 1;
-        String result = name + "_" + i;
-
-        while (names.contains(result)) {
-            i++;
-            result = name + "_" + i;
-        }
-
-        return result;
-    }
-
     public boolean exit() {
 
         boolean returnValue = false;
@@ -492,141 +461,6 @@ public class ModelView {
         }
     }
 
-    public void setDatastores(Element dataStoresNode) {
-
-        //hier outputdsdescriptor objekte erzeugen!
-        String name = dataStoresNode.getAttribute("name");
-        ComponentDescriptor context = getComponentDescriptor(dataStoresNode.getAttribute("context"));
-        OutputDSDescriptor od = new OutputDSDescriptor(context);
-        od.setName(name);
-
-        // fill the contextAttributes
-        ArrayList<ContextAttribute> contextAttributes = od.getContextAttributes();
-        NodeList attributeNodes = dataStoresNode.getElementsByTagName("attribute");
-        for (int i = 0; i < attributeNodes.getLength(); i++) {
-
-            Element attributeElement = (Element) attributeNodes.item(i);
-            String attributeName = attributeElement.getAttribute("id");
-            //context.getDataRepository().getAttributeByTypeName(null, name)
-        }
-
-        // fill the filters
-        ArrayList<String> filters = od.getFilters();
-    }
-
-    public void setModelParameters(Element launcherNode) {
-        Node node;
-
-        getModelProperties().removeAll();
-        NodeList groupNodes = launcherNode.getElementsByTagName("group");
-        for (int gindex = 0; gindex < groupNodes.getLength(); gindex++) {
-            node = groupNodes.item(gindex);
-            Element groupElement = (Element) node;
-            String groupName = groupElement.getAttribute("name");
-            getModelProperties().addGroup(groupName);
-            Group group = getModelProperties().getGroup(groupName);
-
-            // @todo subgroups and properties recursive
-            NodeList groupChildNodes = groupElement.getChildNodes();
-            for (int pindex = 0; pindex < groupChildNodes.getLength(); pindex++) {
-                node = groupChildNodes.item(pindex);
-                if (node.getNodeName().equalsIgnoreCase("property")) {
-                    Element propertyElement = (Element) node;
-                    ModelProperty property = getPropertyFromElement(propertyElement);
-                    if (property != null) {
-                        getModelProperties().addProperty(group, property);
-                    }
-                }
-                if (node.getNodeName().equalsIgnoreCase("subgroup")) {
-                    Element subgroupElement = (Element) node;
-                    String subgroupName = subgroupElement.getAttribute("name");
-                    Group subgroup = getModelProperties().createSubgroup(group, subgroupName);
-                    setHelpComponent(subgroupElement, subgroup);
-
-                    NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
-                    for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
-                        Element propertyElement = (Element) propertyNodes.item(kindex);
-                        ModelProperty property = getPropertyFromElement(propertyElement);
-                        if (property != null) {
-                            getModelProperties().addProperty(subgroup, property);
-                        }
-                    }
-                }
-            }
-        }
-        return;
-    }
-
-    private ModelProperty getPropertyFromElement(Element propertyElement) {
-        ModelProperties.ModelProperty property = getModelProperties().createProperty();
-        property.component = getComponentDescriptor(propertyElement.getAttribute("component"));
-
-        if (property.component == null) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Component_") + propertyElement.getAttribute("component")
-                    + JAMS.resources.getString("_does_not_exist,_but_is_referred_in_list_of_model_parameters!")
-                    + JAMS.resources.getString("Will_be_removed_when_model_is_saved!"), JAMS.resources.getString("Model_loading_error"));
-            return null;
-        }
-
-        String attributeName = propertyElement.getAttribute("attribute");
-        if (attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
-            property.value = propertyElement.getAttribute("value");
-        } else {
-            // could refer to a component var or a context attribute
-            // only one of them will be != null
-            property.var = property.component.getComponentAttributes().get(attributeName);
-            property.attribute = property.component.getContextAttributes().get(attributeName);
-        }
-        /*
-        if (attributeName.equals("workspace") && (property.component.getClazz() == JAMSModel.class)) {
-        property.var = property.component.createComponentAttribute(attributeName, JAMSDirName.class, ComponentDescriptor.ComponentAttribute.READ_ACCESS);
-        }
-         */
-        //check wether the referred parameter is existing or not
-        if ((property.attribute == null) && (property.var == null)
-                && !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Attribute_") + attributeName
-                    + JAMS.resources.getString("_does_not_exist_in_component_") + property.component.getName()
-                    + JAMS.resources.getString("._Removing_visual_editor!"), JAMS.resources.getString("Model_loading_error"));
-            return null;
-        }
-
-        // not used anymore
-        //property.defaultValue = propertyElement.getAttribute("default");
-
-        // set description and name
-        property.description = propertyElement.getAttribute("description");
-        property.name = propertyElement.getAttribute("name");
-
-        // keep compatibility to old launcher behaviour
-        // if there is still a value given and it is not an 'enable' attribute, 
-        // then copy the value to the regarding component attribute
-        if (propertyElement.hasAttribute("value") && !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
-            String valueString = propertyElement.getAttribute("value");
-            if (property.var != null) {
-                property.var.setValue(valueString);
-            } else {
-                property.attribute.setValue(valueString);
-            }
-        }
-
-
-        String range = propertyElement.getAttribute("range");
-        StringTokenizer tok = new StringTokenizer(range, ";");
-        if (tok.countTokens() == 2) {
-            property.lowerBound = Double.parseDouble(tok.nextToken());
-            property.upperBound = Double.parseDouble(tok.nextToken());
-        }
-        String lenStr = propertyElement.getAttribute("length");
-        if (lenStr != null && lenStr.length() > 0) {
-            property.length = Integer.parseInt(lenStr);
-        }
-        setHelpComponent(propertyElement, property);
-
-        return property;
-
-    }
-
     /**
      * Return an XML document describing the model.
      * @return The XML document describing the model.
@@ -637,7 +471,7 @@ public class ModelView {
         }
 
         launcherPanel.updateProperties();
-        return tree.getModelDocument();
+        return tree.getModelDocument(getModelDescriptor());
     }
 
     /**
@@ -697,88 +531,18 @@ public class ModelView {
     return dataRepositories;
     }
      */
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getHelpBaseUrl() {
-        return helpBaseUrl;
-    }
-
-    public void setHelpBaseUrl(String helpBaseUrl) {
-        this.helpBaseUrl = helpBaseUrl;
-    }
-
-    public String getWorkspacePath() {
-        return workspacePath;
-    }
-
-    public void setWorkspacePath(String workspacePath) {
-        this.workspacePath = workspacePath;
-    }
-
-    public ComponentDescriptor getComponentDescriptor(String name) {
-        return getModelDescriptor().getComponentDescriptors().get(name);
-    }
-
-    public String registerComponentDescriptor(String oldName, String newName, ComponentDescriptor cd) {
-
-        String newNewName = createComponentInstanceName(newName);
-        getModelDescriptor().getComponentDescriptors().remove(oldName);
-        getModelDescriptor().getComponentDescriptors().put(newNewName, cd);
-
-        return newNewName;
-    }
-
-    public void unRegisterComponentDescriptor(ComponentDescriptor cd) {
-        getModelDescriptor().getComponentDescriptors().remove(cd.getName());
-    }
 
     public void setInitialState() {
-        this.initialDoc = tree.getModelDocument();
-    }
-
-    public ModelProperties getModelProperties() {
-        return modelProperties;
-    }
-
-    public void setModelProperties(ModelProperties modelProperties) {
-        this.modelProperties = modelProperties;
+        this.initialDoc = tree.getModelDocument(getModelDescriptor());
     }
 
     public ModelDescriptor getModelDescriptor() {
         return modelDescriptor;
     }
 
-    private void setHelpComponent(Element theElement, ModelElement theModelElement) throws DOMException {
-        // get help component from help node
-        HelpComponent helpComponent = new HelpComponent(theElement);
-        theModelElement.setHelpComponent(helpComponent);
-    }
-
     public void openExplorer() {
         
-        File workspaceFile = new File(getWorkspacePath());
+        File workspaceFile = new File(getModelDescriptor().getWorkspacePath());
 
         if (!workspaceFile.isDirectory()) {
             if (getSavePath() != null) {

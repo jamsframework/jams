@@ -74,7 +74,10 @@ public class JAMSNode extends DefaultMutableTreeNode {
     }
     
     public JAMSNode clone(JAMSTree target) {
-        JAMSNode clone = new JAMSNode(((ComponentDescriptor) this.getUserObject()).clone(target), this.getType());
+
+        ComponentDescriptor cd = ((ComponentDescriptor) this.getUserObject()).clone(target);
+
+        JAMSNode clone = new JAMSNode(cd, this.getType());
         return clone;
     }
     

@@ -268,7 +268,7 @@ public class JUICEFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
-                view.setModelParameters((Element) modelProperties);
+                view.getModelDescriptor().setModelParameters((Element) modelProperties);
                 view.updateLauncherPanel();
             }
         };

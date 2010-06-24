@@ -60,7 +60,7 @@ public class ModelGUIPanel extends JPanel {
 
     private static ImageIcon UP_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowup.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
     private static ImageIcon DOWN_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowdown.png")).getImage().getScaledInstance(9, 5, Image.SCALE_SMOOTH));
-    private static final Dimension BUTTON_DIMENSION = new Dimension(150, 20),  PANEL_DIMENSION = new Dimension(300, 0);
+    private static final Dimension BUTTON_DIMENSION = new Dimension(150, 20), PANEL_DIMENSION = new Dimension(300, 0);
     private JTabbedPane tabbedPane = new JTabbedPane();
     private HashMap<ModelProperty, InputComponent> inputMap = new HashMap<ModelProperty, InputComponent>();
     private ModelPropertyDlg propertyDlg = new ModelPropertyDlg(JUICE.getJuiceFrame());
@@ -188,14 +188,16 @@ public class ModelGUIPanel extends JPanel {
         int index = tabbedPane.getSelectedIndex();
         if (index > 0) {
 
-            ModelProperties.Group group = view.getModelProperties().getGroup(index);
-            view.getModelProperties().removeGroup(group);
+            ModelDescriptor md = view.getModelDescriptor();
+
+            ModelProperties.Group group = md.getModelProperties().getGroup(index);
+            md.getModelProperties().removeGroup(group);
             Component comp = tabbedPane.getComponentAt(index);
             tabbedPane.removeTabAt(index);
 
             index--;
 
-            view.getModelProperties().insertGroup(group, index);
+            md.getModelProperties().insertGroup(group, index);
             tabbedPane.add(comp, index);
             tabbedPane.setTitleAt(index, group.getName());
             tabbedPane.setSelectedIndex(index);
@@ -206,14 +208,16 @@ public class ModelGUIPanel extends JPanel {
         int index = tabbedPane.getSelectedIndex();
         if (index < tabbedPane.getTabCount() - 1) {
 
-            ModelProperties.Group group = view.getModelProperties().getGroup(index);
-            view.getModelProperties().removeGroup(group);
+            ModelDescriptor md = view.getModelDescriptor();
+
+            ModelProperties.Group group = md.getModelProperties().getGroup(index);
+            md.getModelProperties().removeGroup(group);
             Component comp = tabbedPane.getComponentAt(index);
             tabbedPane.removeTabAt(index);
 
             index++;
 
-            view.getModelProperties().insertGroup(group, index);
+            md.getModelProperties().insertGroup(group, index);
             tabbedPane.add(comp, index);
             tabbedPane.setTitleAt(index, group.getName());
             tabbedPane.setSelectedIndex(index);
@@ -228,7 +232,10 @@ public class ModelGUIPanel extends JPanel {
         if (index < 0) {
             return;
         }
-        ModelProperties.Group group = view.getModelProperties().getGroup(index);
+
+        ModelProperties mp = view.getModelDescriptor().getModelProperties();
+
+        ModelProperties.Group group = mp.getGroup(index);
 
         // query new name
 
@@ -240,7 +247,7 @@ public class ModelGUIPanel extends JPanel {
 
         //  try to set group's name
 
-        if (!view.getModelProperties().setGroupName(group, newGroupName)) {
+        if (!mp.setGroupName(group, newGroupName)) {
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Group_name_already_in_use!"), JAMS.resources.getString("Error"));
             return;
         }
@@ -263,12 +270,14 @@ public class ModelGUIPanel extends JPanel {
 
         // add group
 
-        if (!view.getModelProperties().addGroup(groupName)) {
+        ModelProperties mp = view.getModelDescriptor().getModelProperties();
+
+        if (!mp.addGroup(groupName)) {
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Group_name_already_in_use!"), JAMS.resources.getString("Error"));
             return;
         }
 
-        ModelProperties.Group group = view.getModelProperties().getGroup(groupName);
+        ModelProperties.Group group = mp.getGroup(groupName);
 
         // create panels and scrollpanes
 
@@ -300,11 +309,13 @@ public class ModelGUIPanel extends JPanel {
 
         // get group
 
-        ModelProperties.Group group = view.getModelProperties().getGroup(index);
+        ModelProperties mp = view.getModelDescriptor().getModelProperties();
+
+        ModelProperties.Group group = mp.getGroup(index);
 
         // remove group
 
-        view.getModelProperties().removeGroup(group);
+        mp.removeGroup(group);
 
         // remove tabbedPane and entry from groupPanels
 
@@ -388,7 +399,7 @@ public class ModelGUIPanel extends JPanel {
 
     public void updatePanel() {
 
-        ArrayList<ModelProperties.Group> groups = view.getModelProperties().getGroupList();
+        ArrayList<ModelProperties.Group> groups = view.getModelDescriptor().getModelProperties().getGroupList();
 
         groupPanels = new HashMap<ModelProperties.Group, JPanel>();
         groupPanes = new HashMap<ModelProperties.Group, JScrollPane>();
@@ -634,12 +645,14 @@ public class ModelGUIPanel extends JPanel {
         }
         String groupName = tabbedPane.getTitleAt(index);
 
-        propertyDlg.update(view.getModelProperties().getAllGroupNames(), view.getModelDescriptor().getComponentDescriptors(), null, groupName);
+        ModelProperties mp = view.getModelDescriptor().getModelProperties();
+
+        propertyDlg.update(mp.getAllGroupNames(), view.getModelDescriptor().getComponentDescriptors(), null, groupName);
         propertyDlg.setVisible(true);
 
         if (propertyDlg.getResult() == ModelPropertyDlg.OK_RESULT) {
 
-            ModelProperties.ModelProperty property = view.getModelProperties().createProperty();
+            ModelProperties.ModelProperty property = mp.createProperty();
 
             String newGroupName = propertyDlg.getGroup();
 
@@ -655,8 +668,8 @@ public class ModelGUIPanel extends JPanel {
             property.attribute = propertyDlg.getAttribute();
             property.var = propertyDlg.getVar();
 
-            ModelProperties.Group group = view.getModelProperties().getGroup(newGroupName);
-            view.getModelProperties().addProperty(group, property);
+            ModelProperties.Group group = mp.getGroup(newGroupName);
+            mp.addProperty(group, property);
             if (group.isSubGroup()) {
                 group = group.getGroup();
             }
@@ -672,17 +685,19 @@ public class ModelGUIPanel extends JPanel {
         }
         String groupName = tabbedPane.getTitleAt(index);
 
-        subgroupDlg.update(view.getModelProperties().getGroupNames(), null, groupName);
+        ModelProperties mp = view.getModelDescriptor().getModelProperties();
+
+        subgroupDlg.update(mp.getGroupNames(), null, groupName);
         subgroupDlg.setVisible(true);
 
         if (subgroupDlg.getResult() == ModelSubgroupDlg.OK_RESULT) {
 
             groupName = subgroupDlg.getGroup();
-            ModelProperties.Group group = view.getModelProperties().getGroup(groupName);
+            ModelProperties.Group group = mp.getGroup(groupName);
 
             String subgroubName = subgroupDlg.getName();
 
-            ModelProperties.Group subgroup = view.getModelProperties().createSubgroup(group, subgroubName);
+            ModelProperties.Group subgroup = mp.createSubgroup(group, subgroubName);
             subgroup.getHelpComponent().setHelpURL(subgroupDlg.getHelpURL());
             subgroup.getHelpComponent().setHelpText(subgroupDlg.getHelpText());
 
@@ -695,7 +710,9 @@ public class ModelGUIPanel extends JPanel {
 
         ModelProperties.Group group = property.getGroup();
 
-        propertyDlg.update(view.getModelProperties().getAllGroupNames(), view.getModelDescriptor().getComponentDescriptors(), property, group.getName());
+        ModelProperties mp = view.getModelDescriptor().getModelProperties();
+
+        propertyDlg.update(mp.getAllGroupNames(), view.getModelDescriptor().getComponentDescriptors(), property, group.getName());
         propertyDlg.setVisible(true);
 
         if (propertyDlg.getResult() == ModelPropertyDlg.OK_RESULT) {
@@ -712,11 +729,11 @@ public class ModelGUIPanel extends JPanel {
             property.attribute = propertyDlg.getAttribute();
             property.var = propertyDlg.getVar();
 
-            ModelProperties.Group newGroup = view.getModelProperties().getGroup(newGroupName);
+            ModelProperties.Group newGroup = mp.getGroup(newGroupName);
 
             if (!newGroup.equals(group)) {
-                view.getModelProperties().removePropertyFromGroup(group, property);
-                view.getModelProperties().addPropertyToGroup(newGroup, property);
+                mp.removePropertyFromGroup(group, property);
+                mp.addPropertyToGroup(newGroup, property);
 
                 updateGroup(newGroup);
             }
@@ -729,7 +746,9 @@ public class ModelGUIPanel extends JPanel {
 
         ModelProperties.Group group = subgroup.getGroup();
 
-        subgroupDlg.update(view.getModelProperties().getGroupNames(), subgroup, group.getName());
+        ModelProperties mp = view.getModelDescriptor().getModelProperties();
+
+        subgroupDlg.update(mp.getGroupNames(), subgroup, group.getName());
         subgroupDlg.setVisible(true);
 
         if (subgroupDlg.getResult() == ModelSubgroupDlg.OK_RESULT) {
@@ -739,11 +758,11 @@ public class ModelGUIPanel extends JPanel {
             subgroup.getHelpComponent().setHelpURL(subgroupDlg.getHelpURL());
             subgroup.getHelpComponent().setHelpText(subgroupDlg.getHelpText());
 
-            ModelProperties.Group newGroup = view.getModelProperties().getGroup(newGroupName);
+            ModelProperties.Group newGroup = mp.getGroup(newGroupName);
 
             if (!newGroup.equals(group)) {
-                view.getModelProperties().removePropertyFromGroup(group, subgroup);
-                view.getModelProperties().addPropertyToGroup(newGroup, subgroup);
+                mp.removePropertyFromGroup(group, subgroup);
+                mp.addPropertyToGroup(newGroup, subgroup);
 
                 updateGroup(newGroup);
             }

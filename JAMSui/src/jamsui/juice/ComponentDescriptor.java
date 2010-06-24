@@ -38,25 +38,26 @@ import jamsui.juice.gui.ModelView;
 import jamsui.juice.gui.tree.*;
 import jams.JAMS;
 import jams.model.Context;
+import java.util.Observable;
 
 /**
  *
  * @author S. Kralisch
  */
-public class ComponentDescriptor {
+public class ComponentDescriptor extends Observable {
 
     public static final int COMPONENT_TYPE = 0, CONTEXT_TYPE = 1;
     private String instanceName;
     private Class<?> clazz;
-    private JAMSTree tree;
     private ArrayList<String> componentAttributeList = new ArrayList<String>();
     private HashMap<String, ComponentAttribute> componentAttributes = new HashMap<String, ComponentAttribute>();
     private HashMap<String, ContextAttribute> contextAttributes = new HashMap<String, ContextAttribute>();
     private AttributeRepository dataRepository;
     private static HashMap<Class, JDialog> compViewDlgs = new HashMap<Class, JDialog>();
     private int type;
+    private ModelDescriptor modelDescriptor;
 
-    public ComponentDescriptor(String instanceName, Class clazz, JAMSTree tree) {
+    public ComponentDescriptor(String instanceName, Class clazz, ModelDescriptor modelDescriptor) {
         if (clazz == null) {
             GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Could_not_find_class_for_component_") + instanceName + "_!", JAMS.resources.getString("Error!"));
         }
@@ -68,7 +69,7 @@ public class ComponentDescriptor {
             this.type = COMPONENT_TYPE;
         }
 
-        this.tree = tree;
+        this.modelDescriptor = modelDescriptor;
 
         try {
             this.setInstanceName(instanceName);
@@ -79,8 +80,8 @@ public class ComponentDescriptor {
         dataRepository = new AttributeRepository(this);
     }
 
-    public ComponentDescriptor(Class clazz, JAMSTree tree) {
-        this(clazz.getSimpleName(), clazz, tree);
+    public ComponentDescriptor(Class clazz, ModelDescriptor modelDescriptor) {
+        this(clazz.getSimpleName(), clazz, modelDescriptor);
     }
 
     public void displayMetadataDlg(Frame owner) {
@@ -153,8 +154,8 @@ public class ComponentDescriptor {
         // info wenn attribut mit gleichem namen schon existent und dann zum repo adden!!!
         if (ma != null) {
 
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Context_attribute_") + name + JAMS.resources.getString("_does_already_exist._") +
-                        JAMS.resources.getString("Please_remove_or_chose_a_different_name!"), JAMS.resources.getString("Error_adding_context_attribute"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Context_attribute_") + name + JAMS.resources.getString("_does_already_exist._")
+                    + JAMS.resources.getString("Please_remove_or_chose_a_different_name!"), JAMS.resources.getString("Error_adding_context_attribute"));
             return null;
 
         } else {
@@ -189,7 +190,7 @@ public class ComponentDescriptor {
         }
     }
 
-    public ComponentDescriptor clone(JAMSTree target) {
+    public ComponentDescriptor clone(ModelDescriptor target) {
         ModelView view = JUICE.getJuiceFrame().getCurrentView();
         ComponentDescriptor copy = new ComponentDescriptor(getName(), getClazz(), target);
         for (String name : componentAttributes.keySet()) {
@@ -199,7 +200,7 @@ public class ComponentDescriptor {
             copy.componentAttributes.put(name, caCopy);
             if (ca.getContextAttribute() != null) {
                 caCopy.linkToAttribute(ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
-            //copy.linkComponentAttribute(ca.name, ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
+                //copy.linkComponentAttribute(ca.name, ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
             }
         }
         for (String name : contextAttributes.keySet()) {
@@ -241,11 +242,13 @@ public class ComponentDescriptor {
 
     public void setInstanceName(String name) throws JUICEException.NameAlreadyUsedException {
         String oldName = this.instanceName;
-        if (this.tree instanceof ModelTree) {
-            ModelTree modelTree = (ModelTree) this.tree;
 
-            this.instanceName = modelTree.getView().registerComponentDescriptor(oldName, name, this);
-            this.tree.updateUI();
+        if (this.modelDescriptor != null) {
+//        if (this.tree instanceof ModelTree) {
+//            ModelTree modelTree = (ModelTree) this.tree;
+
+            this.instanceName = modelDescriptor.registerComponentDescriptor(oldName, name, this);
+//            this.tree.updateUI();
 
             if (!this.instanceName.equals(name)) {
                 throw JUICEException.getNameAlreadyUsedException(name);
@@ -253,12 +256,13 @@ public class ComponentDescriptor {
 
         } else {
             this.instanceName = name;
-            this.tree.updateUI();
+//            this.tree.updateUI();
         }
-    }
 
-    public JAMSTree getTree() {
-        return tree;
+        if (!oldName.equals(this.instanceName)) {
+            this.setChanged();
+            this.notifyObservers();
+        }
     }
 
     public AttributeRepository getDataRepository() {
@@ -285,7 +289,6 @@ public class ComponentDescriptor {
         public String name = "";
         public Class type = null;
         public int accessType;
-
         //must be a vector!!!
         private ContextAttribute contextAttribute;
 
@@ -397,8 +400,8 @@ public class ComponentDescriptor {
 
             // finally, set the component attributes context and context attribute
             this.contextAttribute = attribute;
-        //ca.context = context;
-        //ca.attribute = contextAttributeName;
+            //ca.context = context;
+            //ca.attribute = contextAttributeName;
         }
 
         public void setValue(String value) {
