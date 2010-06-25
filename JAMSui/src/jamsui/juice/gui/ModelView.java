@@ -517,7 +517,6 @@ public class ModelView {
     return dataRepositories;
     }
      */
-
     public void setInitialState() {
         this.initialDoc = tree.getModelDocument(getModelDescriptor());
     }
@@ -527,7 +526,7 @@ public class ModelView {
     }
 
     public void openExplorer() {
-        
+
         File workspaceFile = new File(getModelDescriptor().getWorkspacePath());
 
         if (!workspaceFile.isDirectory()) {

@@ -273,5 +273,4 @@ public class ModelDescriptor extends ComponentCollection {
     public void setWorkspacePath(String workspacePath) {
         this.workspacePath = workspacePath;
     }
-
 }

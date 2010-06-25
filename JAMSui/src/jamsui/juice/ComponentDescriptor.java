@@ -35,7 +35,6 @@ import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 import jamsui.juice.gui.ComponentInfoPanel;
 import jamsui.juice.gui.ModelView;
-import jamsui.juice.gui.tree.*;
 import jams.JAMS;
 import jams.model.Context;
 import java.util.Observable;

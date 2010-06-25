@@ -23,10 +23,7 @@
 package jamsui.juice;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.UIManager;
 import jams.JAMS;
 import jams.JAMSProperties;
@@ -40,7 +37,6 @@ import jamsui.juice.gui.JUICEFrame;
 import jamsui.juice.gui.ModelView;
 import jamsui.juice.gui.tree.LibTree;
 import jamsui.cmdline.JAMSCmdLine;
-import javax.swing.SwingUtilities;
 
 /**
  *
