@@ -22,6 +22,7 @@
  */
 package jamsui.juice.gui.tree;
 
+import jamsui.juice.ComponentCollection;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.awt.*;
@@ -33,15 +34,17 @@ public class JAMSTree extends JTree {
 
     private Insets autoscrollInsets = new Insets(20, 20, 20, 20); // insets
     private Enumeration<TreePath> expandedPaths;
+    private ComponentCollection componentCollection;
 
-    public JAMSTree() {
+    public JAMSTree(ComponentCollection componentCollection) {
         setAutoscrolls(true);
         setRootVisible(true);
         setShowsRootHandles(false);//to show the root icon
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION); //set single selection for the Tree
         this.setSelectionRow(0);
         setCellRenderer(new JAMSTreeRenderer());
-        setDragEnabled(true);
+        this.componentCollection = componentCollection;
+//        setDragEnabled(true);
     }
 
     public void autoscroll(Point cursorLocation) {
@@ -60,15 +63,19 @@ public class JAMSTree extends JTree {
 
     @Override
     public void updateUI() {
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
 
-                public void run() {
-                    JAMSTree.super.updateUI();
-                }
-            });
-        } catch (InterruptedException ex) {
-        } catch (InvocationTargetException ex) {
+                    public void run() {
+                        JAMSTree.super.updateUI();
+                    }
+                });
+            } catch (InterruptedException ex) {
+            } catch (InvocationTargetException ex) {
+            }
+        } else {
+            super.updateUI();
         }
     }
 
@@ -84,6 +91,13 @@ public class JAMSTree extends JTree {
             copy.add(makeDeepCopy((JAMSNode) e.nextElement(), target));
         }
         return (copy);
+    }
+
+    /**
+     * @return the componentCollection
+     */
+    public ComponentCollection getComponentCollection() {
+        return componentCollection;
     }
 
     class JAMSTreeRenderer extends DefaultTreeCellRenderer {

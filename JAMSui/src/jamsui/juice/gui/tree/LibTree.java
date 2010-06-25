@@ -44,6 +44,7 @@ import jamsui.juice.ComponentDescriptor;
 import jamsui.juice.JUICE;
 import jams.JAMS;
 import jams.tools.StringTools;
+import jamsui.juice.ComponentCollection;
 
 /**
  *
@@ -56,8 +57,8 @@ public class LibTree extends JAMSTree {
     private String[] libsArray;
     private int contextCount, componentCount;
 
-    public LibTree() {
-        super();
+    public LibTree(ComponentCollection componentCollection) {
+        super(componentCollection);
 
         setEditable(false);
         new DefaultTreeTransferHandler(this, DnDConstants.ACTION_COPY);
@@ -119,14 +120,22 @@ public class LibTree extends JAMSTree {
     public void update(String libFileNames) {
 
         libsArray = StringTools.toArray(libFileNames, ";");
-        this.setModel(null);
 
         contextCount = 0;
         componentCount = 0;
         JUICE.setStatusText(JAMS.resources.getString("Loading_Libraries"));
         this.setVisible(false);
-        JAMSNode root = createLibTree(libsArray);
-        this.setModel(new DefaultTreeModel(root));
+
+        JAMSNode rootNode;
+
+        if ((getModel() != null) && (getModel().getRoot() instanceof JAMSNode)) {
+            rootNode = (JAMSNode) getModel().getRoot();
+            rootNode.remove();
+            setModel(null);
+        }
+
+        rootNode = createLibTree(libsArray);
+        this.setModel(new DefaultTreeModel(rootNode));
         //this.collapseAll();
         this.setVisible(true);
         JUICE.setStatusText(JAMS.resources.getString("Contexts:") + contextCount + " " + JAMS.resources.getString("Components:") + componentCount);
@@ -135,7 +144,7 @@ public class LibTree extends JAMSTree {
 
     private JAMSNode createLibTree(String[] libsArray) {
 
-        JAMSNode root = new JAMSNode(ROOT_NAME, JAMSNode.LIBRARY_ROOT);
+        JAMSNode root = new JAMSNode(ROOT_NAME, JAMSNode.LIBRARY_ROOT, this);
         JAMSNode jarNode;
 
         for (int i = 0; i < libsArray.length; i++) {
@@ -168,7 +177,7 @@ public class LibTree extends JAMSTree {
 
     private JAMSNode createJARNode(String jar, ClassLoader loader) {
 
-        JAMSNode jarRoot = new JAMSNode(jar, JAMSNode.ARCHIVE_NODE);
+        JAMSNode jarRoot = new JAMSNode(jar, JAMSNode.ARCHIVE_NODE, this);
         ArrayList<Class> components = new ArrayList<Class>();
         JAMSNode compNode;
         String jarName = "", clazzName = "", clazzFullName = "";
@@ -220,9 +229,6 @@ public class LibTree extends JAMSTree {
             String oldPackage = "", newPackage = "";
             JAMSNode packageNode = null;
             for (Class clazz : components) {
-                if (clazz.getSimpleName().equals("LPJ_Interception")) {
-                    System.out.println("");
-                }
 
                 if (clazz.getPackage() != null) {
                     newPackage = clazz.getPackage().getName();
@@ -231,7 +237,7 @@ public class LibTree extends JAMSTree {
                 }
 
                 if (!newPackage.equals(oldPackage)) {
-                    packageNode = new JAMSNode(newPackage, JAMSNode.PACKAGE_NODE);
+                    packageNode = new JAMSNode(newPackage, JAMSNode.PACKAGE_NODE, this);
                     oldPackage = newPackage;
                 }
 
@@ -242,7 +248,7 @@ public class LibTree extends JAMSTree {
 
                     try {
 
-                        ComponentDescriptor no = new ComponentDescriptor(clazz, null);
+                        ComponentDescriptor no = new ComponentDescriptor(clazz, getComponentCollection());
                         no.addObserver(new Observer() {
 
                             public void update(Observable o, Object arg) {
@@ -251,10 +257,10 @@ public class LibTree extends JAMSTree {
                         });
 
                         if (JAMSContext.class.isAssignableFrom(clazz)) {
-                            compNode = new JAMSNode(no, JAMSNode.CONTEXT_NODE);
+                            compNode = new JAMSNode(no, JAMSNode.CONTEXT_NODE, this);
                             contextCount++;
                         } else {
-                            compNode = new JAMSNode(no, JAMSNode.COMPONENT_NODE);
+                            compNode = new JAMSNode(no, JAMSNode.COMPONENT_NODE, this);
                             componentCount++;
                         }
 

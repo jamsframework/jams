@@ -60,6 +60,8 @@ import jamsui.juice.ModelDescriptor;
 import jamsui.juice.ModelProperties.ModelProperty;
 import jamsui.juice.ModelProperties.Group;
 import jamsui.juice.gui.ModelView;
+import java.util.Observable;
+import java.util.Observer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -79,7 +81,7 @@ public class ModelTree extends JAMSTree {
     private boolean smartExpand = true;
 
     public ModelTree(ModelView view, Document modelDoc) {
-        super();
+        super(view.getModelDescriptor());
         setEditable(true);
 
         new DefaultTreeTransferHandler(this, DnDConstants.ACTION_COPY_OR_MOVE);
@@ -193,8 +195,7 @@ public class ModelTree extends JAMSTree {
                     + JAMS.resources.getString("Really_delete_component_2"), JAMS.resources.getString("Deleting_component"));
             if (result == JOptionPane.YES_OPTION) {
                 ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
-                view.unRegisterComponentDescriptor(cd);
-                node.removeFromParent();
+                node.remove();
                 this.updateUI();
             }
         }
@@ -564,8 +565,14 @@ public class ModelTree extends JAMSTree {
         }
 
         if (modelDoc == null) {
-            ComponentDescriptor cd = new ComponentDescriptor(NEW_MODEL_NAME, modelClazz, this);
-            JAMSNode rootNode = new JAMSNode(cd);
+            ComponentDescriptor cd = new ComponentDescriptor(NEW_MODEL_NAME, modelClazz, this.getComponentCollection());
+            cd.addObserver(new Observer() {
+
+                public void update(Observable o, Object arg) {
+                    ModelTree.this.updateUI();
+                }
+            });
+            JAMSNode rootNode = new JAMSNode(cd, this);
             rootNode.setType(JAMSNode.MODEL_ROOT);
             return rootNode;
         }
@@ -592,8 +599,14 @@ public class ModelTree extends JAMSTree {
 
         //create the tree's root node
 
-        ComponentDescriptor cd = new ComponentDescriptor(modelName, modelClazz, this);
-        JAMSNode rootNode = new JAMSNode(cd);
+        ComponentDescriptor cd = new ComponentDescriptor(modelName, modelClazz, this.getComponentCollection());
+        cd.addObserver(new Observer() {
+
+            public void update(Observable o, Object arg) {
+                ModelTree.this.updateUI();
+            }
+        });
+        JAMSNode rootNode = new JAMSNode(cd, this);
         rootNode.setType(JAMSNode.MODEL_ROOT);
 
 
@@ -648,7 +661,13 @@ public class ModelTree extends JAMSTree {
 
             clazz = JUICE.getLoader().loadClass(className);
 
-            cd = new ComponentDescriptor(componentName, clazz, this);
+            cd = new ComponentDescriptor(componentName, clazz, this.getComponentCollection());
+            cd.addObserver(new Observer() {
+
+                public void update(Observable o, Object arg) {
+                    ModelTree.this.updateUI();
+                }
+            });
 
         } catch (ClassNotFoundException cnfe) {
             throw new ModelLoadException(className, componentName);
@@ -663,7 +682,7 @@ public class ModelTree extends JAMSTree {
 
         if (type.equals("component")) {
 
-            rootNode = new JAMSNode(cd);
+            rootNode = new JAMSNode(cd, this);
             rootNode.setType(JAMSNode.COMPONENT_NODE);
 
             NodeList varChilds = rootElement.getElementsByTagName("var");
@@ -673,7 +692,7 @@ public class ModelTree extends JAMSTree {
 
         } else if (type.equals("contextcomponent")) {
 
-            rootNode = new JAMSNode(cd);
+            rootNode = new JAMSNode(cd, this);
             rootNode.setType(JAMSNode.CONTEXT_NODE);
 
             NodeList childs = rootElement.getChildNodes();

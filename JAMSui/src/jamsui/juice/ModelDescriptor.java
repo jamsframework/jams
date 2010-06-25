@@ -31,7 +31,6 @@ import jamsui.juice.ModelProperties.ModelElement;
 import jamsui.juice.ModelProperties.ModelProperty;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Observable;
 import java.util.Set;
 import java.util.StringTokenizer;
 import org.w3c.dom.DOMException;
@@ -43,36 +42,22 @@ import org.w3c.dom.NodeList;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class ModelDescriptor {
+public class ModelDescriptor extends ComponentCollection {
 
-    private HashMap<String, ComponentDescriptor> componentDescriptors;
     private HashMap<String, OutputDSDescriptor> outputDataStores;
     private ModelProperties modelProperties;
     private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "";
 
     public ModelDescriptor() {
-        componentDescriptors = new HashMap<String, ComponentDescriptor>();
         outputDataStores = new HashMap<String, OutputDSDescriptor>();
         modelProperties = new ModelProperties();
-    }
-
-    public String registerComponentDescriptor(String oldName, String newName, ComponentDescriptor cd) {
-
-        String newNewName = createComponentInstanceName(newName);
-        getComponentDescriptors().remove(oldName);
-        getComponentDescriptors().put(newNewName, cd);
-
-        return newNewName;
-    }
-
-    public void unRegisterComponentDescriptor(ComponentDescriptor cd) {
-        getComponentDescriptors().remove(cd.getName());
     }
 
     /*
      * Create a new name for a component instance.
      * If possible, use the given name, else add a suffix in order to create a unique one.
      */
+    @Override
     public String createComponentInstanceName(String name) {
 
         Set<String> names = getComponentDescriptors().keySet();
@@ -239,14 +224,6 @@ public class ModelDescriptor {
 
         return property;
 
-    }
-
-    public ComponentDescriptor getComponentDescriptor(String name) {
-        return getComponentDescriptors().get(name);
-    }
-
-    public HashMap<String, ComponentDescriptor> getComponentDescriptors() {
-        return componentDescriptors;
     }
 
     public ModelProperties getModelProperties() {

@@ -47,7 +47,7 @@ import java.util.Observable;
 public class ComponentDescriptor extends Observable {
 
     public static final int COMPONENT_TYPE = 0, CONTEXT_TYPE = 1;
-    private String instanceName;
+    private String instanceName = "";
     private Class<?> clazz;
     private ArrayList<String> componentAttributeList = new ArrayList<String>();
     private HashMap<String, ComponentAttribute> componentAttributes = new HashMap<String, ComponentAttribute>();
@@ -55,9 +55,9 @@ public class ComponentDescriptor extends Observable {
     private AttributeRepository dataRepository;
     private static HashMap<Class, JDialog> compViewDlgs = new HashMap<Class, JDialog>();
     private int type;
-    private ModelDescriptor modelDescriptor;
+    private ComponentCollection componentCollection;
 
-    public ComponentDescriptor(String instanceName, Class clazz, ModelDescriptor modelDescriptor) {
+    public ComponentDescriptor(String instanceName, Class clazz, ComponentCollection componentCollection) {
         if (clazz == null) {
             GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Could_not_find_class_for_component_") + instanceName + "_!", JAMS.resources.getString("Error!"));
         }
@@ -69,7 +69,7 @@ public class ComponentDescriptor extends Observable {
             this.type = COMPONENT_TYPE;
         }
 
-        this.modelDescriptor = modelDescriptor;
+        this.componentCollection = componentCollection;
 
         try {
             this.setInstanceName(instanceName);
@@ -80,8 +80,8 @@ public class ComponentDescriptor extends Observable {
         dataRepository = new AttributeRepository(this);
     }
 
-    public ComponentDescriptor(Class clazz, ModelDescriptor modelDescriptor) {
-        this(clazz.getSimpleName(), clazz, modelDescriptor);
+    public ComponentDescriptor(Class clazz, ComponentCollection componentCollection) {
+        this(clazz.getSimpleName(), clazz, componentCollection);
     }
 
     public void displayMetadataDlg(Frame owner) {
@@ -190,7 +190,7 @@ public class ComponentDescriptor extends Observable {
         }
     }
 
-    public ComponentDescriptor clone(ModelDescriptor target) {
+    public ComponentDescriptor clone(ComponentCollection target) {
         ModelView view = JUICE.getJuiceFrame().getCurrentView();
         ComponentDescriptor copy = new ComponentDescriptor(getName(), getClazz(), target);
         for (String name : componentAttributes.keySet()) {
@@ -240,24 +240,27 @@ public class ComponentDescriptor extends Observable {
         return contextAttributes;
     }
 
+    public void unregister() {
+        componentCollection.unRegisterComponentDescriptor(this);
+    }
+
     public void setInstanceName(String name) throws JUICEException.NameAlreadyUsedException {
         String oldName = this.instanceName;
 
-        if (this.modelDescriptor != null) {
 //        if (this.tree instanceof ModelTree) {
 //            ModelTree modelTree = (ModelTree) this.tree;
 
-            this.instanceName = modelDescriptor.registerComponentDescriptor(oldName, name, this);
+            this.instanceName = componentCollection.registerComponentDescriptor(oldName, name, this);
 //            this.tree.updateUI();
 
             if (!this.instanceName.equals(name)) {
                 throw JUICEException.getNameAlreadyUsedException(name);
             }
 
-        } else {
-            this.instanceName = name;
+//        } else {
+//            this.instanceName = name;
 //            this.tree.updateUI();
-        }
+//        }
 
         if (!oldName.equals(this.instanceName)) {
             this.setChanged();

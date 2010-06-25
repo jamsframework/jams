@@ -119,20 +119,9 @@ public class JUICE {
 
         juiceFrame.setVisible(true);
 
-        libTree = new LibTree();
+        libTree = new LibTree(new ComponentCollection());
 
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-
-                public void run() {
-                    JUICE.updateLibs();
-                }
-            });
-        } catch (InterruptedException ex) {
-            Logger.getLogger(JUICE.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(JUICE.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        JUICE.updateLibs();
 
         juiceFrame.setLibTree(libTree);
 
