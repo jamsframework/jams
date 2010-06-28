@@ -190,7 +190,7 @@ public class ComponentDescriptor extends Observable {
     }
 
     public ComponentDescriptor clone(ComponentCollection target) {
-        ModelView view = JUICE.getJuiceFrame().getCurrentView();
+
         ComponentDescriptor copy = new ComponentDescriptor(getName(), getClazz(), target);
         for (String name : componentAttributes.keySet()) {
             ComponentAttribute ca = componentAttributes.get(name);
@@ -246,20 +246,11 @@ public class ComponentDescriptor extends Observable {
     public void setInstanceName(String name) throws JUICEException.NameAlreadyUsedException {
         String oldName = this.instanceName;
 
-//        if (this.tree instanceof ModelTree) {
-//            ModelTree modelTree = (ModelTree) this.tree;
+        this.instanceName = componentCollection.registerComponentDescriptor(oldName, name, this);
 
-            this.instanceName = componentCollection.registerComponentDescriptor(oldName, name, this);
-//            this.tree.updateUI();
-
-            if (!this.instanceName.equals(name)) {
-                throw JUICEException.getNameAlreadyUsedException(name);
-            }
-
-//        } else {
-//            this.instanceName = name;
-//            this.tree.updateUI();
-//        }
+        if (!this.instanceName.equals(name)) {
+            throw JUICEException.getNameAlreadyUsedException(name);
+        }
 
         if (!oldName.equals(this.instanceName)) {
             this.setChanged();
@@ -327,7 +318,7 @@ public class ComponentDescriptor extends Observable {
 
         public void unlinkFromAttribute() {
 
-            // if access is W or R/W (not R), then the component authomatically
+            // if access is W or R/W (not R), then the component automatically
             // removes its context attribute from the context
             if (this.accessType != ComponentAttribute.READ_ACCESS) {
 
@@ -363,10 +354,21 @@ public class ComponentDescriptor extends Observable {
         public void linkToAttribute(ComponentDescriptor context, String contextAttributeName) {
 
 
+            // check if the attribute does already exist
+            // if so, just rename it
+            if (this.contextAttribute != null) {
+                if (context == contextAttribute.getContext()) {
+                    this.contextAttribute.setName(contextAttributeName);
+                    return;
+                } else {
+                    unlinkFromAttribute();
+                }
+            }
+
             // this will be the attribute object to be linked
             ContextAttribute attribute;
 
-            // if access is W or R/W (not R), then the component authomatically
+            // if access is W or R/W (not R), then the component automatically
             // creates a new context attribute which is registered at the
             // contexts attribute repository in order to be accessed by
             // other components

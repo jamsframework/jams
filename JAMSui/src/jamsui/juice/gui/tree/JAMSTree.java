@@ -64,6 +64,8 @@ public class JAMSTree extends JTree {
     @Override
     public void updateUI() {
         if (!SwingUtilities.isEventDispatchThread()) {
+
+            // if not inside the EDT, try to execute updateUI on the EDT
             try {
                 SwingUtilities.invokeAndWait(new Runnable() {
 
@@ -74,7 +76,10 @@ public class JAMSTree extends JTree {
             } catch (InterruptedException ex) {
             } catch (InvocationTargetException ex) {
             }
+        
         } else {
+
+            // just call updateUI the normal way
             super.updateUI();
         }
     }

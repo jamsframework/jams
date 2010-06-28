@@ -199,7 +199,7 @@ public class ComponentAttributePanel extends JPanel {
 
         if (linkButton.isSelected() && !attribute.equals("") && (context != null)) {
             var.linkToAttribute(context, attribute);
-            linkText.setText(var.getContext() + " -> " + var.getContextAttribute());
+            linkText.setText(var.getContext() + "." + var.getContextAttribute());
             tableModel.setValueAt(var.getContext() + "." + var.getContextAttribute(), selectedRow, 3);
         }
 

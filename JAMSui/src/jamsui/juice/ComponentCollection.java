@@ -21,9 +21,7 @@
  */
 package jamsui.juice;
 
-import jams.tools.StringTools;
 import java.util.HashMap;
-import java.util.Set;
 
 /**
  * This class represents a collection of components which can either be

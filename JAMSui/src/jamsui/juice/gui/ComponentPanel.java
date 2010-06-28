@@ -64,42 +64,24 @@ import jams.JAMS;
  */
 public class ComponentPanel extends JPanel {
 
-    private static final String DEFAULT_STRING = JAMS.resources.getString("[none]"),  ATTR_CONFIG_STRING = JAMS.resources.getString("Attribute_configuration:"),  MODEL_CONFIG_STRING = JAMS.resources.getString("Model_configuration:"),  ATTR_OVERVIEW_STRING = JAMS.resources.getString("Attribute_overview:");
-
+    private static final String DEFAULT_STRING = JAMS.resources.getString("[none]"), ATTR_CONFIG_STRING = JAMS.resources.getString("Attribute_configuration:"), MODEL_CONFIG_STRING = JAMS.resources.getString("Model_configuration:"), ATTR_OVERVIEW_STRING = JAMS.resources.getString("Attribute_overview:");
     private static final Dimension BUTTON_DIMENSION = new Dimension(90, 20);
-
     private static final Dimension TABLE_DIMENSION = new Dimension(500, 200);
-
     private ComponentDescriptor componentDescriptor = null;
-
     private HashMap<String, JTextField> textFields = new HashMap<String, JTextField>();
-
     private JPanel componentPanel;
-
-    private JTable varTable,  attributeTable;
-
-    private Vector<String> varTableColumnIds = new Vector<String>(),  attributeTableColumnIds = new Vector<String>();
-
-    private DefaultTableModel varTableModel,  attributeTableModel;
-
-    private List<String> varNameList,  attrNameList;
-
-    private int selectedVarRow,  selectedAttrRow;
-
-    private JButton attributeEditButton,  attributeAddButton,  attributeDeleteButton;
-
+    private JTable varTable, attributeTable;
+    private Vector<String> varTableColumnIds = new Vector<String>(), attributeTableColumnIds = new Vector<String>();
+    private DefaultTableModel varTableModel, attributeTableModel;
+    private List<String> varNameList, attrNameList;
+    private int selectedVarRow, selectedAttrRow;
+    private JButton attributeEditButton, attributeAddButton, attributeDeleteButton;
     private ContextAttributeDlg attrEditDlg;
-
     private ModelView view;
-
     private JAMSNode node;
-
     private JTabbedPane tabPane;
-
     private ComponentAttributePanel attributeConfigPanel;
-
     private JPanel switchPanel;
-
     private JLabel configLabel;
 
     public ComponentPanel(ModelView view) {
@@ -523,8 +505,8 @@ public class ComponentPanel extends JPanel {
             try {
                 componentDescriptor.setInstanceName(name);
             } catch (JUICEException.NameAlreadyUsedException ex) {
-                GUIHelper.showInfoDlg(this, JAMS.resources.getString("Name_") + name + JAMS.resources.getString("_is_already_in_use._Renamed_component_to_") +
-                        componentDescriptor.getName() + "!", JAMS.resources.getString("Component_name"));
+                GUIHelper.showInfoDlg(this, JAMS.resources.getString("Name_") + name + JAMS.resources.getString("_is_already_in_use._Renamed_component_to_")
+                        + componentDescriptor.getName() + "!", JAMS.resources.getString("Component_name"));
                 textFields.get("name").setText(componentDescriptor.getName());
             }
         }
