@@ -25,6 +25,7 @@ package jams.components.conditional;
 import jams.data.JAMSBoolean;
 import jams.model.Component;
 import jams.model.ComponentEnumerator;
+import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSContext;
 import jams.model.JAMSVarDescription;
@@ -33,8 +34,8 @@ import jams.model.JAMSVarDescription;
  *
  * @author S. Kralisch
  */
-@JAMSComponentDescription(title = "BooleanConditionalContext", author = "Sven Kralisch", date = "7. January 2008", description = "This component represents a JAMS context which can be used to " +
-"conditionally execute components. This context must contain two components. If \"condition\" is true, the first one will be executed, otherwise the second one.")
+@JAMSComponentDescription(title = "BooleanConditionalContext", author = "Sven Kralisch", date = "7. January 2008", description = "This component represents a JAMS context which can be used to "
++ "conditionally execute components. This context must contain two components. If \"condition\" is true, the first one will be executed, otherwise the second one.")
 public class BooleanConditionalContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining which component to execute")
@@ -42,21 +43,29 @@ public class BooleanConditionalContext extends JAMSContext {
 
     public BooleanConditionalContext() {
     }
-    
+
     @Override
     public ComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
     }
-    
+
     @Override
     public long getNumberOfIterations() {
         return 1;
-    }    
-    
+    }
+
     class RunEnumerator implements ComponentEnumerator {
 
+        final DummyComponent dummy = new DummyComponent();
         Component[] compArray = getCompArray();
         boolean next = true;
+
+        public class DummyComponent extends JAMSComponent {
+
+            public void run() {
+                return;
+            }
+        }
 
         @Override
         public boolean hasNext() {
@@ -67,7 +76,7 @@ public class BooleanConditionalContext extends JAMSContext {
                 return false;
             }
         }
-        
+
         @Override
         public boolean hasPrevious() {
             return !hasNext();
@@ -79,10 +88,13 @@ public class BooleanConditionalContext extends JAMSContext {
             if (condition.getValue()) {
                 return compArray[0];
             } else {
+                if (compArray.length < 1 || compArray[1] == null) {
+                    return dummy;
+                }
                 return compArray[1];
             }
         }
-        
+
         @Override
         public Component previous() {
             return next();
@@ -91,6 +103,6 @@ public class BooleanConditionalContext extends JAMSContext {
         @Override
         public void reset() {
             next = true;
-        }            
+        }
     }
 }

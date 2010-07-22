@@ -25,6 +25,7 @@ package jams.components.conditional;
 import jams.data.JAMSDouble;
 import jams.model.Component;
 import jams.model.ComponentEnumerator;
+import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSContext;
 import jams.model.JAMSVarDescription;
@@ -33,14 +34,20 @@ import jams.model.JAMSVarDescription;
  *
  * @author S. Kralisch
  */
-@JAMSComponentDescription(title = "DoubleConditionalContext", author = "Sven Kralisch", date = "9. April 2008", description = "This component represents a JAMS context which can be used to " +
-"conditionally execute components. This context must contain two components. If \"value1\" equals \"value2\", the first one will be executed, otherwise the second one.")
+@JAMSComponentDescription(title = "DoubleConditionalContext", author = "Sven Kralisch", date = "9. April 2008", description = "This component represents a JAMS context which can be used to "
++ "conditionally execute components. This context must contain two components. If \"value1\" equals \"value2\", the first one will be executed, otherwise the second one.")
 public class DoubleConditionalContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining which component to execute")
     public JAMSDouble value1;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining which component to execute")
     public JAMSDouble value2;
+
+    public class DummyComponent extends JAMSComponent {
+        public void run() {
+            return;
+        }
+    }
 
     public DoubleConditionalContext() {
     }
@@ -57,6 +64,7 @@ public class DoubleConditionalContext extends JAMSContext {
 
     class RunEnumerator implements ComponentEnumerator {
 
+        final DummyComponent dummy = new DummyComponent();
         Component[] compArray = getCompArray();
         boolean next = true;
 
@@ -74,17 +82,20 @@ public class DoubleConditionalContext extends JAMSContext {
         public boolean hasPrevious() {
             return !hasNext();
         }
-        
+
         @Override
         public Component next() {
             // if condition is true return first component, else second component
             if (value1.getValue() == value2.getValue()) {
                 return compArray[0];
             } else {
+                if (compArray.length < 1 || compArray[1] == null) {
+                    return dummy;
+                }
                 return compArray[1];
             }
         }
-        
+
         @Override
         public Component previous() {
             return next();
@@ -93,6 +104,6 @@ public class DoubleConditionalContext extends JAMSContext {
         @Override
         public void reset() {
             next = true;
-        }           
+        }
     }
 }
