@@ -46,7 +46,7 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     @Override
     public EntityEnumerator getEntityEnumerator() {
 
-        if (ee == null) {
+//        if (ee == null) {
 
             ee = new EntityEnumerator() {
 
@@ -83,7 +83,7 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
                     JAMSEntityCollection.this.current = entityArray[index];
                 }
             };
-        }
+//        }
 
         return ee;
     }
