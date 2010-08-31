@@ -40,7 +40,7 @@ public class MainTest {
         System.out.println(System.getProperty("user.dir"));
         String args[] = new String[]{
             "-c", "../noGUI.jap",
-            "-m", "../../../ModelData/JAMS-Gehlberg/j2k_gehlberg.jam"
+            "-m", "../../../modeldata/JAMS-Gehlberg/j2k_gehlberg.jam"
         };
         jamsui.launcher.JAMSui.main(args);
 
