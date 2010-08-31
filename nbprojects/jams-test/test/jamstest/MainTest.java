@@ -8,7 +8,6 @@ package jamstest;
 import TextDiff.MatchCommand;
 import TextDiff.Report;
 import TextDiff.TextDiff;
-import java.util.ArrayList;
 import java.util.Iterator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -40,7 +39,7 @@ public class MainTest {
 
         System.out.println(System.getProperty("user.dir"));
         String args[] = new String[]{
-            "-c", "noGUI.jap",
+            "-c", "../noGUI.jap",
             "-m", "../../../ModelData/JAMS-Gehlberg/j2k_gehlberg.jam"
         };
         jamsui.launcher.JAMSui.main(args);
