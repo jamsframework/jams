@@ -1,0 +1,1187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="1" hostname="roda" name="jamstest.MainTest" tests="1" time="30.796" timestamp="2010-08-31T08:55:25">
+  <properties>
+    <property name="libs.jsp-compiler.javadoc" value="" />
+    <property name="netbeans.autoupdate.country" value="DE" />
+    <property name="javac.test.classpath" value="../jams-api/dist/jams-api.jar:../jams-main/dist/jams-main.jar:../jams-common/dist/jams-common.jar:../jams-ui/dist/jams-ui.jar:../jams-explorer/dist/jams-explorer.jar:../jams-components/dist/jams-components.jar:../j2000/dist/j2000.jar:build/classes:C:\Program Files (x86)\NetBeans 6.9\platform\modules\ext\junit-4.5.jar" />
+    <property name="project.j2000" value="../j2000" />
+    <property name="libs.junit.javadoc" value="C:\Users\chris\.netbeans\6.9\docs\junit-3.8.2-api.zip" />
+    <property name="ant.core.lib" value="C:\Users\chris\.netbeans\6.9\ant\lib\ant.jar" />
+    <property name="reference.jams-api.jar" value="../jams-api/dist/jams-api.jar" />
+    <property name="libs.swing-app-framework.src" value="" />
+    <property name="javadoc.windowtitle" value="" />
+    <property name="libs.toplink.classpath" value="C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\toplink\toplink-essentials.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\toplink\toplink-essentials-agent.jar" />
+    <property name="libs.jsp-compilation.javadoc" value="" />
+    <property name="reference.jams-explorer.jar" value="../jams-explorer/dist/jams-explorer.jar" />
+    <property name="user.dir" value="C:\Arbeit\JAMS\nbprojects\jams-test" />
+    <property name="libs.hibernate-persistence.javadoc" value="" />
+    <property name="java.vm.version" value="17.0-b17" />
+    <property name="libs.jstl11.maven-pom" value="" />
+    <property name="libs.Java-EE-GlassFish-v3.wsimport" value="" />
+    <property name="libs.MySQLDriver.classpath" value="C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\mysql-connector-java-5.1.6-bin.jar" />
+    <property name="libs.jstl11.src" value="" />
+    <property name="javadoc.notree" value="false" />
+    <property name="netbeans.autoupdate.version" value="1.23" />
+    <property name="libs.EclipseLink-GlassFish-v3.classpath" value="C:\Users\chris\GlassFish_Server_3\glassfish\modules\org.eclipse.persistence.antlr.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\org.eclipse.persistence.asm.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\org.eclipse.persistence.core.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\org.eclipse.persistence.jpa.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\org.eclipse.persistence.jpa.modelgen.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\org.eclipse.persistence.oracle.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\javax.persistence.jar" />
+    <property name="libs.javaee-web-api-6.0.classpath" value="C:\Users\chris\.netbeans\6.9\modules\ext\javaee-web-api-6.0.jar" />
+    <property name="libs.hibernate-support.maven-pom" value="" />
+    <property name="libs.hibernate-support.javadoc" value="" />
+    <property name="jdk.home" value="C:\Program Files\Java\jdk1.6.0_21" />
+    <property name="libs.javac-api.src" value="" />
+    <property name="javadoc.noindex" value="false" />
+    <property name="sun.os.patch.level" value="" />
+    <property name="do.archive+manifest.available" value="true" />
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+    <property name="nb.show.statistics.ui" value="usageStatisticsEnabled" />
+    <property name="netbeans.autoupdate.variant" value="" />
+    <property name="have.tests" value="true" />
+    <property name="org.xml.sax.driver" value="com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser" />
+    <property name="libs.javac-api.javadoc" value="" />
+    <property name="os.name" value="Windows 7" />
+    <property name="libs.beans-binding.classpath" value="C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\beansbinding-1.2.1.jar" />
+    <property name="libs.JWSAntTasks.maven-pom" value="" />
+    <property name="java.vendor.url.bug" value="http://java.sun.com/cgi-bin/bugreport.cgi" />
+    <property name="libs.jaxb.maven-pom" value="" />
+    <property name="os.arch" value="amd64" />
+    <property name="libs.eclipselink.src" value="" />
+    <property name="user.name" value="chris" />
+    <property name="libs.Comet-GlassFish-v3.javadoc" value="" />
+    <property name="manifest.available+main.class" value="true" />
+    <property name="libs.swing-layout.maven-pom" value="" />
+    <property name="build.classes.dir" value="build/classes" />
+    <property name="netbeans.accept_license_class" value="org.netbeans.license.AcceptLicense" />
+    <property name="libs.Java-EE-GlassFish-v3.wsjwsdp" value="" />
+    <property name="build.sysclasspath" value="ignore" />
+    <property name="libs.jaxws21.javadoc" value="C:\Program Files (x86)\NetBeans 6.9\java\docs\jaxws-api-doc.zip" />
+    <property name="project.jams-common" value="../jams-common" />
+    <property name="includes" value="**" />
+    <property name="user.country" value="DE" />
+    <property name="manifest.file" value="manifest.mf" />
+    <property name="libs.jstl11.javadoc" value="" />
+    <property name="javadoc.encoding" value="windows-1252" />
+    <property name="javac.classpath" value="../jams-api/dist/jams-api.jar:../jams-main/dist/jams-main.jar:../jams-common/dist/jams-common.jar:../jams-ui/dist/jams-ui.jar:../jams-explorer/dist/jams-explorer.jar:../jams-components/dist/jams-components.jar:../j2000/dist/j2000.jar" />
+    <property name="libs.JAVADB_DRIVER_LABEL.src" value="" />
+    <property name="debug-transport" value="dt_shmem" />
+    <property name="netbeans.home" value="C:\Program Files (x86)\NetBeans 6.9\platform" />
+    <property name="build.compiler.emacs" value="true" />
+    <property name="libs.javaee-web-api-6.0.src" value="" />
+    <property name="libs.ejb3-persistence.src" value="" />
+    <property name="libs.Java-EE-GlassFish-v3.javadoc" value="" />
+    <property name="java.endorsed.dirs" value="C:\Program Files\Java\jdk1.6.0_21\jre\lib\endorsed" />
+    <property name="libs.Comet-GlassFish-v3.maven-pom" value="" />
+    <property name="project.jams-explorer" value="../jams-explorer" />
+    <property name="netbeans.dynamic.classpath" value="C:\Users\chris\.netbeans\6.9\core\org-netbeans-upgrader.jar;C:\Users\chris\.netbeans\6.9\core\org-openide-filesystems.jar;C:\Users\chris\.netbeans\6.9\core\locale\org-netbeans-upgrader_ja.jar;C:\Users\chris\.netbeans\6.9\core\locale\org-netbeans-upgrader_pt_BR.jar;C:\Users\chris\.netbeans\6.9\core\locale\org-netbeans-upgrader_zh_CN.jar;C:\Users\chris\.netbeans\6.9\core\locale\org-openide-filesystems_ja.jar;C:\Users\chris\.netbeans\6.9\core\locale\org-openide-filesystems_pt_BR.jar;C:\Users\chris\.netbeans\6.9\core\locale\org-openide-filesystems_zh_CN.jar;C:\Program Files (x86)\NetBeans 6.9\platform\core\core.jar;C:\Program Files (x86)\NetBeans 6.9\platform\core\locale\core_ja.jar;C:\Program Files (x86)\NetBeans 6.9\platform\core\locale\core_pt_BR.jar;C:\Program Files (x86)\NetBeans 6.9\platform\core\locale\core_zh_CN.jar;C:\Program Files (x86)\NetBeans 6.9\nb\core\locale\core_nb.jar;C:\Program Files (x86)\NetBeans 6.9\nb\core\locale\core_nb_ja.jar;C:\Program Files (x86)\NetBeans 6.9\nb\core\locale\core_nb_pt_BR.jar;C:\Program Files (x86)\NetBeans 6.9\nb\core\locale\core_nb_zh_CN.jar" />
+    <property name="java.vm.specification.version" value="1.0" />
+    <property name="libs.javaee-api-6.0.classpath" value="C:\Users\chris\.netbeans\6.9\modules\ext\javaee-api-6.0.jar" />
+    <property name="ant.file.jams-test" value="C:\Arbeit\JAMS\nbprojects\jams-test\build.xml" />
+    <property name="libs.hibernate-persistence.classpath" value="C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\antlr-2.7.6.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\asm.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\asm-attrs.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\cglib-2.1.3.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\commons-collections-2.1.1.jar;C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\commons-logging-1.1.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\dom4j-1.6.1.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\ehcache-1.2.3.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\jdbc2_0-stdext.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\jta.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\hibernate3.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\hibernate-tools.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\hibernate-annotations.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\hibernate-commons-annotations.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\hibernate-entitymanager.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\javassist.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\ejb3-persistence.jar" />
+    <property name="libs.jaxws21.src" value="" />
+    <property name="application.title" value="jams-test" />
+    <property name="do.archive" value="true" />
+    <property name="libs.swing-app-framework.classpath" value="C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\appframework-1.0.3.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\swing-worker-1.1.jar" />
+    <property name="netbeans.autoupdate.language" value="de" />
+    <property name="java.vendor" value="Sun Microsystems Inc." />
+    <property name="libs.javaee-api-6.0.javadoc" value="" />
+    <property name="javac.debug" value="true" />
+    <property name="javadoc.splitindex" value="true" />
+    <property name="file.separator" value="\" />
+    <property name="libs.IdentityAntTasks.src" value="" />
+    <property name="libs.restlib_gfv3ee6.classpath" value="C:\Users\chris\GlassFish_Server_3\glassfish\modules\asm-all-repackaged.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\jackson-core-asl.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\jersey-gf-bundle.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\jersey-multipart.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\jettison.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\jsr311-api.jar" />
+    <property name="libs.junit_4.maven-pom" value="" />
+    <property name="javac.test.processorpath" value="../jams-api/dist/jams-api.jar:../jams-main/dist/jams-main.jar:../jams-common/dist/jams-common.jar:../jams-ui/dist/jams-ui.jar:../jams-explorer/dist/jams-explorer.jar:../jams-components/dist/jams-components.jar:../j2000/dist/j2000.jar:build/classes:C:\Program Files (x86)\NetBeans 6.9\platform\modules\ext\junit-4.5.jar" />
+    <property name="netbeans.buildnumber" value="201007282301" />
+    <property name="libs.JWSAntTasks.javadoc" value="" />
+    <property name="build.generated.sources.dir" value="build/generated-sources" />
+    <property name="user.variant" value="" />
+    <property name="libs.Java-EE-GlassFish-v3.wscompile" value="" />
+    <property name="sun.java.launcher" value="SUN_STANDARD" />
+    <property name="libs.junit.classpath" value="C:\Users\chris\.netbeans\6.9\modules\ext\junit-3.8.2.jar" />
+    <property name="libs.jaxb.javadoc" value="C:\Program Files (x86)\NetBeans 6.9\ide\docs\jaxb-api-doc.zip" />
+    <property name="ant.home" value="C:\Users\chris\.netbeans\6.9\ant" />
+    <property name="libs.junit_4.src" value="C:\Users\chris\.netbeans\6.9\docs\junit-4.5-src.jar" />
+    <property name="do.archive+manifest.available+main.class+mkdist.available" value="true" />
+    <property name="libs.absolutelayout.maven-pom" value="" />
+    <property name="ant.java.version" value="1.6" />
+    <property name="java.library.path" value="C:\Program Files\Java\jdk1.6.0_21\jre\bin;.;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files (x86)\MiKTeX 2.8\miktex\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\ThinkPad\Bluetooth Software\;C:\Program Files\ThinkPad\Bluetooth Software\syswow64;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files (x86)\Common Files\Lenovo;C:\Program Files (x86)\Common Files\Ulead Systems\MPEG;C:\Program Files (x86)\Lenovo\Access Connections\;C:\Program Files\Common Files\Lenovo;C:\Program Files (x86)\Lenovo\Client Security Solution;C:\Program Files\Lenovo\Client Security Solution;C:\Program Files\TortoiseSVN\bin;C:\Program Files\SlikSvn\bin\;C:\Program Files (x86)\Nmap" />
+    <property name="javadoc.author" value="false" />
+    <property name="libs.metro.maven-pom" value="" />
+    <property name="libs.IdentityAntTasks.classpath" value="C:\Users\chris\.netbeans\6.9\ant\nblib\org-netbeans-modules-identity-ant.jar;C:\Users\chris\.netbeans\6.9\modules\org-netbeans-modules-identity-profile-api.jar" />
+    <property name="libs.EclipseLink-GlassFish-v3.src" value="" />
+    <property name="java.util.logging.config.class" value="org.netbeans.core.startup.TopLogging" />
+    <property name="libs.PostgreSQLDriver.src" value="" />
+    <property name="sun.arch.data.model" value="64" />
+    <property name="basedir" value="C:\Arbeit\JAMS\nbprojects\jams-test" />
+    <property name="jar.compress" value="false" />
+    <property name="libs.jstl11.classpath" value="C:\Users\chris\.netbeans\6.9\modules\ext\standard.jar;C:\Users\chris\.netbeans\6.9\modules\ext\jstl.jar" />
+    <property name="path.separator" value=";" />
+    <property name="libs.javaee-web-api-6.0.javadoc" value="" />
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+    <property name="libs.jaxws21.classpath" value="C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\jaxb\jaxb-impl.jar;C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\jaxb\jaxb-xjc.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\FastInfoset.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\gmbal-api-only.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\http.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\jaxws-rt.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\jaxws-tools.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\management-api.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\mimepull.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\policy.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\saaj-impl.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\stax-ex.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\streambuffer.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\woodstox.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\api\jaxws-api.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\api\jsr181-api.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\api\jsr250-api.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\jaxws22\api\saaj-api.jar;C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\jaxb\activation.jar;C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\jaxb\api\jaxb-api.jar;C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\jaxb\api\jsr173_api.jar" />
+    <property name="compile.on.save" value="true" />
+    <property name="user.language" value="de" />
+    <property name="libs.spring-framework.classpath" value="C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\commons-logging-1.1.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\cglib-2.2.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring\spring-2.5.6.SEC01.jar" />
+    <property name="libs.eclipselink.maven-pom" value="" />
+    <property name="application.vendor" value="chris" />
+    <property name="manifest.available" value="true" />
+    <property name="libs.spring-framework300.maven-pom" value="" />
+    <property name="run.test.classpath" value="../jams-api/dist/jams-api.jar:../jams-main/dist/jams-main.jar:../jams-common/dist/jams-common.jar:../jams-ui/dist/jams-ui.jar:../jams-explorer/dist/jams-explorer.jar:../jams-components/dist/jams-components.jar:../j2000/dist/j2000.jar:build/classes:C:\Program Files (x86)\NetBeans 6.9\platform\modules\ext\junit-4.5.jar:build/test/classes" />
+    <property name="ant.project.invoked-targets" value="test" />
+    <property name="useJavaUtilZip" value="true" />
+    <property name="libs.swing-layout.javadoc" value="C:\Program Files (x86)\NetBeans 6.9\platform\docs\swing-layout-1.0.4-doc.zip" />
+    <property name="libs.swing-app-framework.javadoc" value="C:\Program Files (x86)\NetBeans 6.9\java\docs\appframework-1.0.3-doc.zip" />
+    <property name="libs.ejb3-persistence.maven-pom" value="" />
+    <property name="https.nonProxyHosts" value="localhost|127.0.0.1|roda" />
+    <property name="libs.PostgreSQLDriver.maven-pom" value="" />
+    <property name="java.class.version" value="50.0" />
+    <property name="libs.JAVADB_DRIVER_LABEL.classpath" value="C:\Users\chris\GlassFish_Server_3\javadb\lib\derby.jar;C:\Users\chris\GlassFish_Server_3\javadb\lib\derbyclient.jar;C:\Users\chris\GlassFish_Server_3\javadb\lib\derbynet.jar" />
+    <property name="libs.javaee-endorsed-api-6.0.src" value="" />
+    <property name="netbeans.system_http_proxy" value="DIRECT" />
+    <property name="libs.eclipselink.javadoc" value="" />
+    <property name="libs.jsp-compilation.maven-pom" value="" />
+    <property name="user.properties.file" value="C:\Users\chris\.netbeans\6.9\build.properties" />
+    <property name="runtime.encoding" value="windows-1252" />
+    <property name="libs.spring-framework.src" value="" />
+    <property name="libs.javac-api.maven-pom" value="" />
+    <property name="file.encoding.pkg" value="sun.io" />
+    <property name="sun.cpu.endian" value="little" />
+    <property name="libs.JWSAntTasks.classpath" value="C:\Program Files (x86)\NetBeans 6.9\java\ant\extra\org-netbeans-modules-javawebstart-anttasks.jar" />
+    <property name="libs.spring-framework300.src" value="" />
+    <property name="empty.dir" value="C:\Arbeit\JAMS\nbprojects\jams-test\build\empty" />
+    <property name="version-output" value="java version &quot;1.6" />
+    <property name="javadoc.preview" value="true" />
+    <property name="ant.file.type.jams-test" value="file" />
+    <property name="java.home" value="C:\Program Files\Java\jdk1.6.0_21\jre" />
+    <property name="libs.jsp-compilation.src" value="" />
+    <property name="debug.test.classpath" value="../jams-api/dist/jams-api.jar:../jams-main/dist/jams-main.jar:../jams-common/dist/jams-common.jar:../jams-ui/dist/jams-ui.jar:../jams-explorer/dist/jams-explorer.jar:../jams-components/dist/jams-components.jar:../j2000/dist/j2000.jar:build/classes:C:\Program Files (x86)\NetBeans 6.9\platform\modules\ext\junit-4.5.jar:build/test/classes" />
+    <property name="libs.javaee-endorsed-api-6.0.classpath" value="C:\Users\chris\.netbeans\6.9\modules\ext\javaee6-endorsed\javax.annotation.jar;C:\Users\chris\.netbeans\6.9\modules\ext\javaee6-endorsed\jaxb-api-osgi.jar;C:\Users\chris\.netbeans\6.9\modules\ext\javaee6-endorsed\webservices-api-osgi.jar" />
+    <property name="libs.javaee-api-6.0.src" value="" />
+    <property name="netbeans.importclass" value="org.netbeans.upgrade.AutoUpgrade" />
+    <property name="ant.project.default-target" value="default" />
+    <property name="annotation.processing.run.all.processors" value="true" />
+    <property name="libs.toplink.maven-pom" value="" />
+    <property name="project.jams-main" value="../jams-main" />
+    <property name="libs.PostgreSQLDriver.javadoc" value="" />
+    <property name="libs.MySQLDriver.maven-pom" value="" />
+    <property name="http.nonProxyHosts" value="localhost|127.0.0.1|roda" />
+    <property name="libs.junit_4.javadoc" value="C:\Users\chris\.netbeans\6.9\docs\junit-4.5-api.zip" />
+    <property name="libs.toplink.src" value="" />
+    <property name="libs.EclipseLink-GlassFish-v3.maven-pom" value="" />
+    <property name="libs.javaee-web-api-6.0.maven-pom" value="" />
+    <property name="run.classpath" value="../jams-api/dist/jams-api.jar:../jams-main/dist/jams-main.jar:../jams-common/dist/jams-common.jar:../jams-ui/dist/jams-ui.jar:../jams-explorer/dist/jams-explorer.jar:../jams-components/dist/jams-components.jar:../j2000/dist/j2000.jar:build/classes" />
+    <property name="libs.hibernate-support.src" value="" />
+    <property name="libs.javaee-endorsed-api-6.0.javadoc" value="" />
+    <property name="annotation.processing.enabled.in.editor" value="false" />
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Server Compiler" />
+    <property name="javac.deprecation" value="false" />
+    <property name="javadoc.use" value="true" />
+    <property name="jna.boot.library.path" value="C:\Users\chris\.netbeans\6.9\var\cache\jna" />
+    <property name="sun.java2d.noddraw" value="true" />
+    <property name="libs.jsp-compiler.classpath" value="C:\Users\chris\.netbeans\6.9\ant\extra\jspcompile.jar" />
+    <property name="javac.processorpath" value="../jams-api/dist/jams-api.jar:../jams-main/dist/jams-main.jar:../jams-common/dist/jams-common.jar:../jams-ui/dist/jams-ui.jar:../jams-explorer/dist/jams-explorer.jar:../jams-components/dist/jams-components.jar:../j2000/dist/j2000.jar" />
+    <property name="javac.compilerargs" value="" />
+    <property name="ant.file" value="C:\Arbeit\JAMS\nbprojects\jams-test\build.xml" />
+    <property name="libs.beans-binding.maven-pom" value="" />
+    <property name="sun.awt.exception.handler" value="org.netbeans.core.startup.TopLogging$AWTHandler" />
+    <property name="libs.beans-binding.src" value="" />
+    <property name="java.vm.specification.vendor" value="Sun Microsystems Inc." />
+    <property name="reference.jams-common.jar" value="../jams-common/dist/jams-common.jar" />
+    <property name="libs.swing-layout.src" value="C:\Program Files (x86)\NetBeans 6.9\platform\docs\swing-layout-1.0.4-src.zip" />
+    <property name="libs.Java-EE-GlassFish-v3.embedabbleejb" value="" />
+    <property name="org.openide.major.version" value="IDE/1" />
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM" />
+    <property name="netbeans.user" value="C:\Users\chris\.netbeans\6.9" />
+    <property name="javadoc.additionalparam" value="" />
+    <property name="java.io.tmpdir" value="C:\Users\chris\AppData\Local\Temp\" />
+    <property name="java.vendor.url" value="http://java.sun.com/" />
+    <property name="endorsed.classpath.cmd.line.arg" value="" />
+    <property name="libs.jsp-compiler.src" value="" />
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.6.0_21\jre\bin" />
+    <property name="have.sources" value="true" />
+    <property name="debug.classpath" value="../jams-api/dist/jams-api.jar:../jams-main/dist/jams-main.jar:../jams-common/dist/jams-common.jar:../jams-ui/dist/jams-ui.jar:../jams-explorer/dist/jams-explorer.jar:../jams-components/dist/jams-components.jar:../j2000/dist/j2000.jar:build/classes" />
+    <property name="javadoc.private" value="false" />
+    <property name="ant.file.jams-test-impl" value="C:\Arbeit\JAMS\nbprojects\jams-test\nbproject\build-impl.xml" />
+    <property name="test.src.dir" value="test" />
+    <property name="project.jams-ui" value="../jams-ui" />
+    <property name="project.jams-components" value="../jams-components" />
+    <property name="meta.inf.dir" value="src/META-INF" />
+    <property name="javadoc.encoding.used" value="windows-1252" />
+    <property name="dist.jar" value="dist/jams-test.jar" />
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
+    <property name="ant.project.name" value="jams-test" />
+    <property name="netbeans.hash.code" value="unique=NBJDK_JAVA_JDK07b4581eb-8f9c-4ad5-af01-1812608df65b_804f493f-c02e-4d87-904e-ca96af967c08" />
+    <property name="sun.cpu.isalist" value="amd64" />
+    <property name="libs.CopyLibs.javadoc" value="" />
+    <property name="org.openide.specification.version" value="6.2" />
+    <property name="libs.hibernate-support.classpath" value="C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\antlr-2.7.6.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\asm.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\asm-attrs.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\cglib-2.1.3.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\commons-collections-2.1.1.jar;C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\commons-logging-1.1.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\dom4j-1.6.1.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\ehcache-1.2.3.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\jdbc2_0-stdext.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\jta.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\hibernate3.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\hibernate-tools.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\hibernate-annotations.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\hibernate-commons-annotations.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\hibernate-entitymanager.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\javassist.jar" />
+    <property name="user.home" value="C:\Users\chris" />
+    <property name="annotation.processing.processors.list" value="" />
+    <property name="debug-args-line" value="-Xdebug" />
+    <property name="libs.javaee-api-6.0.maven-pom" value="" />
+    <property name="libs.JWSAntTasks.src" value="" />
+    <property name="jar.index" value="false" />
+    <property name="libs.CopyLibs.maven-pom" value="" />
+    <property name="libs.spring-framework300.javadoc" value="" />
+    <property name="libs.hibernate-persistence.maven-pom" value="" />
+    <property name="libs.absolutelayout.javadoc" value="" />
+    <property name="java.specification.name" value="Java Platform API Specification" />
+    <property name="libs.swing-app-framework.maven-pom" value="" />
+    <property name="java.specification.vendor" value="Sun Microsystems Inc." />
+    <property name="libs.javac-api.classpath" value="C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\javac-api-nb-7.0-b07.jar" />
+    <property name="java.version" value="1.6.0_21" />
+    <property name="javadoc.version" value="false" />
+    <property name="libs.MySQLDriver.javadoc" value="" />
+    <property name="org.openide.version" value="deprecated" />
+    <property name="libs.restlib_gfv3ee6.maven-pom" value="" />
+    <property name="source.encoding" value="windows-1252" />
+    <property name="ap.cmd.line.internal" value="" />
+    <property name="libs.junit.maven-pom" value="" />
+    <property name="libs.metro.javadoc" value="C:\Users\chris\.netbeans\6.9\docs\metro-1.4-doc.zip" />
+    <property name="netbeans.home+have.tests" value="true" />
+    <property name="annotation.processing.processor.options" value="" />
+    <property name="libs.IdentityAntTasks.maven-pom" value="" />
+    <property name="libs.jaxb.src" value="" />
+    <property name="libs.Java-EE-GlassFish-v3.wsgenerate" value="" />
+    <property name="work.dir" value="C:\Arbeit\JAMS\nbprojects\jams-test" />
+    <property name="libs.jaxb.classpath" value="C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\jaxb\jaxb-impl.jar;C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\jaxb\jaxb-xjc.jar;C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\jaxb\jaxb1-impl.jar;C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\jaxb\activation.jar;C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\jaxb\api\jaxb-api.jar;C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\jaxb\api\jsr173_api.jar" />
+    <property name="do.depend" value="false" />
+    <property name="dist.javadoc.dir" value="dist/javadoc" />
+    <property name="libs.swing-layout.classpath" value="C:\Program Files (x86)\NetBeans 6.9\platform\modules\ext\swing-layout-1.0.4.jar" />
+    <property name="build.generated.dir" value="build/generated" />
+    <property name="javac.source" value="1.5" />
+    <property name="libs.hibernate-persistence.src" value="" />
+    <property name="line.separator" value="
+" />
+    <property name="java.specification.version" value="1.6" />
+    <property name="libs.jaxws21.maven-pom" value="" />
+    <property name="java.vm.info" value="mixed mode" />
+    <property name="libs.spring-framework.maven-pom" value="" />
+    <property name="sun.boot.class.path" value="C:\Program Files\Java\jdk1.6.0_21\jre\lib\resources.jar;C:\Program Files\Java\jdk1.6.0_21\jre\lib\rt.jar;C:\Program Files\Java\jdk1.6.0_21\jre\lib\sunrsasign.jar;C:\Program Files\Java\jdk1.6.0_21\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.6.0_21\jre\lib\jce.jar;C:\Program Files\Java\jdk1.6.0_21\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.6.0_21\jre\classes" />
+    <property name="javac.target" value="1.5" />
+    <property name="built-jar.properties" value="C:\Arbeit\JAMS\nbprojects\jams-test\build\built-jar.properties" />
+    <property name="build.test.classes.dir" value="build/test/classes" />
+    <property name="src.dir" value="src" />
+    <property name="libs.IdentityAntTasks.javadoc" value="" />
+    <property name="annotation.processing.enabled" value="true" />
+    <property name="sun.awt.keepWorkingSetOnMinimize" value="true" />
+    <property name="libs.JAVADB_DRIVER_LABEL.maven-pom" value="" />
+    <property name="libs.Comet-GlassFish-v3.classpath" value="C:\Users\chris\GlassFish_Server_3\glassfish\modules\grizzly-comet.jar" />
+    <property name="libs.restlib_gfv3ee6.javadoc" value="" />
+    <property name="dist.dir" value="dist" />
+    <property name="do.archive+manifest.available+main.class" value="true" />
+    <property name="project.jams-api" value="../jams-api" />
+    <property name="javac.fork" value="false" />
+    <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob" />
+    <property name="default.javac.source" value="1.6" />
+    <property name="debug-transport-by-os" value="dt_shmem" />
+    <property name="libs.MySQLDriver.src" value="" />
+    <property name="sun.jnu.encoding" value="Cp1252" />
+    <property name="java.runtime.version" value="1.6.0_21-b07" />
+    <property name="build.test.results.dir" value="build/test/results" />
+    <property name="libs.ejb3-persistence.javadoc" value="" />
+    <property name="reference.j2000.jar" value="../j2000/dist/j2000.jar" />
+    <property name="manifest.available+main.class+mkdist.available" value="true" />
+    <property name="reference.jams-components.jar" value="../jams-components/dist/jams-components.jar" />
+    <property name="default.javac.target" value="1.6" />
+    <property name="libs.junit_4.classpath" value="C:\Program Files (x86)\NetBeans 6.9\platform\modules\ext\junit-4.5.jar" />
+    <property name="libs.Java-EE-GlassFish-v3.src" value="" />
+    <property name="user.timezone" value="" />
+    <property name="do.jar" value="true" />
+    <property name="libs.JAVADB_DRIVER_LABEL.javadoc" value="" />
+    <property name="libs.javaee-endorsed-api-6.0.maven-pom" value="" />
+    <property name="netbeans.dirs" value="C:\Program Files (x86)\NetBeans 6.9\nb;C:\Program Files (x86)\NetBeans 6.9\ergonomics;C:\Program Files (x86)\NetBeans 6.9\ide;C:\Program Files (x86)\NetBeans 6.9\java;C:\Program Files (x86)\NetBeans 6.9\xml;C:\Program Files (x86)\NetBeans 6.9\apisupport;C:\Program Files (x86)\NetBeans 6.9\webcommon;C:\Program Files (x86)\NetBeans 6.9\websvccommon;C:\Program Files (x86)\NetBeans 6.9\enterprise;C:\Program Files (x86)\NetBeans 6.9\mobility;C:\Program Files (x86)\NetBeans 6.9\profiler;C:\Program Files (x86)\NetBeans 6.9\ruby;C:\Program Files (x86)\NetBeans 6.9\python;C:\Program Files (x86)\NetBeans 6.9\php;C:\Program Files (x86)\NetBeans 6.9\visualweb;C:\Program Files (x86)\NetBeans 6.9\soa;C:\Program Files (x86)\NetBeans 6.9\identity;C:\Program Files (x86)\NetBeans 6.9\uml;C:\Program Files (x86)\NetBeans 6.9\harness;C:\Program Files (x86)\NetBeans 6.9\cnd;C:\Program Files (x86)\NetBeans 6.9\dlight;C:\Program Files (x86)\NetBeans 6.9\groovy;C:\Program Files (x86)\NetBeans 6.9\extra;C:\Program Files (x86)\NetBeans 6.9\javafx;C:\Program Files (x86)\NetBeans 6.9\javacard" />
+    <property name="libs.restlib_gfv3ee6.src" value="" />
+    <property name="java.ext.dirs" value="C:\Program Files\Java\jdk1.6.0_21\jre\lib\ext;C:\Windows\Sun\Java\lib\ext" />
+    <property name="libs.metro.src" value="" />
+    <property name="endorsed.classpath" value="" />
+    <property name="libs.absolutelayout.classpath" value="C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\AbsoluteLayout.jar" />
+    <property name="excludes" value="" />
+    <property name="libs.metro.classpath" value="C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\jaxb\activation.jar;C:\Users\chris\.netbeans\6.9\modules\ext\metro\webservices-api.jar;C:\Users\chris\.netbeans\6.9\modules\ext\metro\webservices-extra-api.jar;C:\Users\chris\.netbeans\6.9\modules\ext\metro\webservices-extra.jar;C:\Users\chris\.netbeans\6.9\modules\ext\metro\webservices-rt.jar;C:\Users\chris\.netbeans\6.9\modules\ext\metro\webservices-tools.jar" />
+    <property name="apple.laf.useScreenMenuBar" value="true" />
+    <property name="java.class.path" value="C:\Arbeit\JAMS\nbprojects\jams-api\dist\jams-api.jar;C:\Arbeit\JAMS\nbprojects\jams-main\dist\jams-main.jar;C:\Arbeit\JAMS\nbprojects\jams-common\dist\jams-common.jar;C:\Arbeit\JAMS\nbprojects\jams-ui\dist\jams-ui.jar;C:\Arbeit\JAMS\nbprojects\jams-explorer\dist\jams-explorer.jar;C:\Arbeit\JAMS\nbprojects\jams-components\dist\jams-components.jar;C:\Arbeit\JAMS\nbprojects\j2000\dist\j2000.jar;C:\Arbeit\JAMS\nbprojects\jams-test\build\classes;C:\Program Files (x86)\NetBeans 6.9\platform\modules\ext\junit-4.5.jar;C:\Arbeit\JAMS\nbprojects\jams-test\build\test\classes;C:\Users\chris\.netbeans\6.9\ant\lib\ant-launcher.jar;C:\Users\chris\.netbeans\6.9\ant\lib\ant.jar;C:\Users\chris\.netbeans\6.9\ant\patches\72080.jar" />
+    <property name="do.mkdist" value="true" />
+    <property name="libs.absolutelayout.src" value="" />
+    <property name="os.version" value="6.1" />
+    <property name="application.args" value="" />
+    <property name="libs.EclipseLink-GlassFish-v3.javadoc" value="" />
+    <property name="main.class.available" value="true" />
+    <property name="libs.toplink.javadoc" value="" />
+    <property name="sun.desktop" value="windows" />
+    <property name="libs.Comet-GlassFish-v3.src" value="" />
+    <property name="libs.eclipselink.classpath" value="C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\eclipselink\eclipselink-2.0.2.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\eclipselink\eclipselink-javax.persistence-2.0.jar" />
+    <property name="libs.beans-binding.javadoc" value="C:\Program Files (x86)\NetBeans 6.9\java\docs\beansbinding-1.2.1-doc.zip" />
+    <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment" />
+    <property name="libs.Java-EE-GlassFish-v3.classpath" value="C:\Users\chris\GlassFish_Server_3\glassfish\modules\javax.jms.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\jsf-impl.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\javax.security.auth.message.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\javax.security.jacc.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\javax.transaction.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\weld-osgi-bundle.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\javax.ejb.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\jstl-impl.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\javax.enterprise.deploy.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\endorsed\webservices-api-osgi.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\endorsed\javax.annotation.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\javax.persistence.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\javax.servlet.jsp.jstl.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\bean-validator.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\javax.servlet.jsp.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\javax.management.j2ee.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\endorsed\jaxb-api-osgi.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\mail.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\javax.servlet.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\jsf-api.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\javax.resource.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\jsr311-api.jar;C:\Users\chris\GlassFish_Server_3\glassfish\modules\web-core.jar" />
+    <property name="java.vm.vendor" value="Sun Microsystems Inc." />
+    <property name="libs.CopyLibs.classpath" value="C:\Users\chris\.netbeans\6.9\ant\extra\org-netbeans-modules-java-j2seproject-copylibstask.jar" />
+    <property name="libs.spring-framework300.classpath" value="C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\commons-logging-1.1.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\cglib-2.2.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-aop-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-asm-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-aspects-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-beans-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-context-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-context-support-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-core-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-expression-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-instrument-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-instrument-tomcat-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-jdbc-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-jms-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-orm-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-oxm-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-test-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-tx-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-web-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-webmvc-portlet-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-webmvc-3.0.2.RELEASE.jar;C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\spring-3.0\spring-struts-3.0.2.RELEASE.jar" />
+    <property name="libs.jsp-compiler.maven-pom" value="" />
+    <property name="libs.Java-EE-GlassFish-v3.wsinterop" value="" />
+    <property name="run.jvmargs" value="" />
+    <property name="libs.ejb3-persistence.classpath" value="C:\Program Files (x86)\NetBeans 6.9\java\modules\ext\hibernate\ejb3-persistence.jar" />
+    <property name="libs.spring-framework.javadoc" value="" />
+    <property name="libs.PostgreSQLDriver.classpath" value="C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\postgresql-8.3-603.jdbc3.jar" />
+    <property name="libs.junit.src" value="" />
+    <property name="annotation.processing.source.output" value="build/generated-sources/ap-source-output" />
+    <property name="main.class" value="jamstest.Main" />
+    <property name="libs.CopyLibs.src" value="" />
+    <property name="build.dir" value="build" />
+    <property name="libs.jsp-compilation.classpath" value="C:\Users\chris\.netbeans\6.9\ant\lib\ant.jar;C:\Users\chris\.netbeans\6.9\modules\ext\servlet2.5-jsp2.1-api.jar;C:\Users\chris\.netbeans\6.9\modules\ext\glassfish-jspparser-2.0.jar;C:\Users\chris\.netbeans\6.9\modules\ext\glassfish-logging-2.0.jar;C:\Program Files (x86)\NetBeans 6.9\ide\modules\ext\commons-logging-1.1.jar;C:\Users\chris\.netbeans\6.9\ant\lib\ant-launcher.jar" />
+    <property name="reference.jams-ui.jar" value="../jams-ui/dist/jams-ui.jar" />
+    <property name="ant.version" value="Apache Ant version 1.8.1 compiled on April 30 2010" />
+    <property name="file.encoding" value="Cp1252" />
+    <property name="build.classes.excludes" value="**/*.java,**/*.form" />
+    <property name="javadoc.nonavbar" value="false" />
+    <property name="reference.jams-main.jar" value="../jams-main/dist/jams-main.jar" />
+    <property name="platform.active" value="default_platform" />
+    <property name="awt.toolkit" value="sun.awt.windows.WToolkit" />
+    <property name="ant.file.type.jams-test-impl" value="file" />
+  </properties>
+  <testcase classname="jamstest.MainTest" name="testMain" time="30.729">
+    <failure type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: 
+	at jamstest.MainTest.testMain(MainTest.java:58)
+</failure>
+  </testcase>
+  <system-out><![CDATA[performing JAMS - Gehlberg Test
+C:\Arbeit\JAMS\nbprojects\jams-test
+INFO[000]: JAMS-Version : 2.10_09 (20100601)
+INFO[000]: Benutzername : chris
+INFO[000]: Datum/Zeit   : 31.08.10 10:55
+INFO[000]: 
+INFO[000]: Erzeuge Class Loader
+INFO[000]: --------------------------------------------------------------------
+INFO[000]: Classloader erzeugt unter Verwendung von 
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-api-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/j3dcore.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jel.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-mappane-2.5.5.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/javassist-3.6.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/log4j-1.2.15.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/activation-1.0.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-epsg-wkt-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jcommon-1.0.9.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jdbc2_0-stdext.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/demo.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-metadata-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-arcgrid-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jams-democomponents.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/sigar.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jts-1.9.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/Jama-1.0.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-main-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jai_codec.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/concurrent-1.3.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-libraryJTS-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/junit-4.4.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/Thornthwaite.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jgroups-all-2.6.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/forms.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gluegen-rt.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/mail-1.4.1.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jscience.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jta-spec1_0_1.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/vecmath.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jboss-serialization-1.0.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jams-start.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jnpserver-4.0.4.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-shapefile-renderer-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/postgresql-8.2-506.jdbc4.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/looks-2.1.3.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/aspectjrt-1.5.3.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jai_core.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/juice-starter.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-legacy-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jams-main.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/swingx.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-cql-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/JAMSParallel.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/spring-2.0.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/geonames-1.0.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/StartApp.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gridgain-2.0.3.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/commons-math-1.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jams-components.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/commons-beanutils-1.7.0.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jdom-1.0.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jfreechart-1.0.5.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/j2000.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-referencing-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/vecmath-1.3.1.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/commons-logging-1.1.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-geotiff-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/J2000g.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-coverage-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/h2-1.1.106.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-referencing3D-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/aspectjweaver-1.5.3.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/worldwind.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jogl.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/KMLViewer.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/ngmf.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/wizard.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/balloontip_2008-10-10.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-epsg-extension-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/J2K_SN.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-shapefile-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jams-starter.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/trove-1.0.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/mysql-connector-java-5.1.13-bin.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/commons-pool-1.3.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jai_imageio-1.1.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-data-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/swing-layout-1.0.3.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/units-0.01.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/tidy-04aug2000-r7.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/libgeowind.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/common-2.2.1.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jai_codec-1.1.3.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/edtftpj-1.5.6.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/bcel-5.1.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/JAMSGridEventFilter.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/openmap.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jamsremote-starter.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/gt-render-2.5.2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/xswingx.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/commons-logging-1.1.1.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/geoapi-2.2-M1.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jms-1.1.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jsr-275-1.0-beta-2.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/xmlgraphics-commons-1.3.1.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jams-remote.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/jakarta-oro-2.0.8.jar
+INFO[000]: 	file:/C:/Arbeit/JAMS/lib/j3dutils.jar
+INFO[000]: 
+INFO[000]: Lade Modell
+INFO[000]: Kein Arbeitsverzeichnis definiert, fahre ohne fort!
+INFO[000]: --------------------------------------------------------------------
+INFO[000]: Modell             : J2K
+INFO[000]: Arbeitsverzeichnis : 
+INFO[000]: Autor              : Peter Krause
+INFO[000]: Modelldatum        : 2006-01-31 00:00
+INFO[000]: 
+INFO[000]: ParameterInput [classID=001, className=jams.model.JAMSContext]
+INFO[000]: EntityReader [classID=002, className=org.unijena.j2k.io.StandardEntityReader]
+INFO[000]:      reachFileName [class=jams.data.Attribute$String, access=READ, connection=value]
+INFO[000]:      hruFileName [class=jams.data.Attribute$String, access=READ, connection=value]
+INFO[000]:      hrus [class=jams.data.Attribute$EntityCollection, access=WRITE, connection=link]
+INFO[000]:      reaches [class=jams.data.Attribute$EntityCollection, access=WRITE, connection=link]
+INFO[000]: LUReader [classID=003, className=org.unijena.j2k.io.StandardLUReader]
+INFO[000]:      luFileName [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      hrus [class=jams.data.JAMSEntityCollection, access=READ, connection=link]
+INFO[000]: STReader [classID=004, className=org.unijena.j2k.io.StandardSoilParaReader]
+INFO[000]:      stFileName [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      hrus [class=jams.data.JAMSEntityCollection, access=READ, connection=link]
+INFO[000]: GWReader [classID=005, className=org.unijena.j2k.io.StandardGroundwaterParaReader]
+INFO[000]:      gwFileName [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      hrus [class=jams.data.JAMSEntityCollection, access=READ, connection=link]
+INFO[000]: Initialization [classID=001, className=jams.model.JAMSContext]
+INFO[000]: CatchmentInit [classID=006, className=jams.model.JAMSSpatialContext]
+INFO[000]:      entities [class=jams.data.Attribute$EntityCollection, access=READ, connection=link]
+INFO[000]: AreaCalculator [classID=007, className=org.unijena.j2k.aggregate.SumAggregator]
+INFO[000]:      value [class=[Ljams.data.JAMSDouble;, access=READ, connection=link]
+INFO[000]:      sum [class=[Ljams.data.JAMSDouble;, access=READWRITE, connection=link]
+INFO[000]: HRUInit [classID=006, className=jams.model.JAMSSpatialContext]
+INFO[000]:      entities [class=jams.data.Attribute$EntityCollection, access=READ, connection=link]
+INFO[000]: AreaWeight [classID=008, className=org.unijena.j2k.CalcAreaWeight]
+INFO[000]:      entityArea [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      areaWeight [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      catchmentArea [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]: CalcLatLong [classID=009, className=org.unijena.j2k.geographicalCalculations.CalcLatLong]
+INFO[000]:      aspect [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      slope [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      projection [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      slAsCfArray [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      longitude [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      latitude [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      y [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      x [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]: CalcLanduseStateVars [classID=010, className=org.unijena.j2k.inputData.CalcLanduseStateVars]
+INFO[000]:      effHArray [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      elevation [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      LAIArray [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      rsc0Array [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      entities [class=jams.data.JAMSEntityCollection, access=READ, connection=link]
+INFO[000]: ExtRad [classID=011, className=org.unijena.j2k.radiation.CalcUniformExtraterrRadiation]
+INFO[000]:      locGrw [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      extRadArray [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      longitude [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      latitude [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      tempRes [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      longTZ [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]: InitSoilWater [classID=012, className=org.unijena.j2k.soilWater.InitJ2KProcessLumpedSoilWaterStates]
+INFO[000]:      ACAdaptation [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      actLPS [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      FCAdaptation [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      maxMPS [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      entities [class=jams.data.JAMSEntityCollection, access=READ, connection=link]
+INFO[000]:      rootDepth [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      maxLPS [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      area [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      satSoil [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      actMPS [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      satMPS [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      satLPS [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]: InitGroundWater [classID=013, className=org.unijena.j2k.groundwater.InitJ2KProcessGroundwater]
+INFO[000]:      area [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      actRG2 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      actRG1 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      maxRG2 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      maxRG1 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      initRG1 [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      initRG2 [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      entities [class=jams.data.JAMSEntityCollection, access=READ, connection=link]
+INFO[000]: tminWeights [classID=014, className=org.unijena.j2k.regionalisation.IDWWeightCalculator]
+INFO[000]:      pidw [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      entityX [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=WRITE, connection=link]
+INFO[000]:      entityY [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataStoreID [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]: tmeanWeights [classID=014, className=org.unijena.j2k.regionalisation.IDWWeightCalculator]
+INFO[000]:      pidw [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      entityX [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=WRITE, connection=link]
+INFO[000]:      entityY [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataStoreID [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]: tmaxWeights [classID=014, className=org.unijena.j2k.regionalisation.IDWWeightCalculator]
+INFO[000]:      pidw [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      entityX [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=WRITE, connection=link]
+INFO[000]:      entityY [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataStoreID [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]: ahumWeights [classID=014, className=org.unijena.j2k.regionalisation.IDWWeightCalculator]
+INFO[000]:      pidw [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      entityX [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=WRITE, connection=link]
+INFO[000]:      entityY [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataStoreID [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]: sunhWeights [classID=014, className=org.unijena.j2k.regionalisation.IDWWeightCalculator]
+INFO[000]:      pidw [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      entityX [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=WRITE, connection=link]
+INFO[000]:      entityY [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataStoreID [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]: windWeights [classID=014, className=org.unijena.j2k.regionalisation.IDWWeightCalculator]
+INFO[000]:      pidw [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      entityX [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=WRITE, connection=link]
+INFO[000]:      entityY [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataStoreID [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]: precipWeights [classID=014, className=org.unijena.j2k.regionalisation.IDWWeightCalculator]
+INFO[000]:      pidw [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      entityX [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=WRITE, connection=link]
+INFO[000]:      entityY [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataStoreID [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]: TimeLoop [classID=015, className=jams.model.JAMSTemporalContext]
+INFO[000]:      timeInterval [class=jams.data.JAMSTimeInterval, access=READ, connection=link]
+INFO[000]:      current [class=jams.data.Attribute$Calendar, access=WRITE, connection=link]
+INFO[000]: ExecutionInfo [classID=016, className=jams.components.gui.JAMSExecInfo]
+INFO[000]: CatchmentResetter [classID=017, className=org.unijena.j2k.DoubleSetter]
+INFO[000]:      value [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      attributes [class=[Ljams.data.JAMSDouble;, access=WRITE, connection=link]
+INFO[000]: TSInput [classID=001, className=jams.model.JAMSContext]
+INFO[000]: TmeanDataReader [classID=018, className=jams.components.io.TSDataStoreReader]
+INFO[000]:      id [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      xCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      timeInterval [class=jams.data.JAMSTimeInterval, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      elevation [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataSetName [class=jams.data.JAMSString, access=WRITE, connection=link]
+INFO[000]:      yCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]: TminDataReader [classID=018, className=jams.components.io.TSDataStoreReader]
+INFO[000]:      id [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      xCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      timeInterval [class=jams.data.JAMSTimeInterval, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      elevation [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataSetName [class=jams.data.JAMSString, access=WRITE, connection=link]
+INFO[000]:      yCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]: TmaxDataReader [classID=018, className=jams.components.io.TSDataStoreReader]
+INFO[000]:      id [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      xCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      timeInterval [class=jams.data.JAMSTimeInterval, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      elevation [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataSetName [class=jams.data.JAMSString, access=WRITE, connection=link]
+INFO[000]:      yCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]: AhumDataReader [classID=018, className=jams.components.io.TSDataStoreReader]
+INFO[000]:      id [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      xCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      timeInterval [class=jams.data.JAMSTimeInterval, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      elevation [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataSetName [class=jams.data.JAMSString, access=WRITE, connection=link]
+INFO[000]:      yCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]: PrecipDataReader [classID=018, className=jams.components.io.TSDataStoreReader]
+INFO[000]:      id [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      xCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      timeInterval [class=jams.data.JAMSTimeInterval, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      elevation [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataSetName [class=jams.data.JAMSString, access=WRITE, connection=link]
+INFO[000]:      yCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]: SunhDataReader [classID=018, className=jams.components.io.TSDataStoreReader]
+INFO[000]:      id [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      xCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      timeInterval [class=jams.data.JAMSTimeInterval, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      elevation [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataSetName [class=jams.data.JAMSString, access=WRITE, connection=link]
+INFO[000]:      yCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]: RCRichter [classID=019, className=org.unijena.j2k.inputData.RainCorrectionRichter]
+INFO[000]:      snow_trs [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      regThres [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      tempElevation [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      tempXCoord [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      rainElevation [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      rcorr [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      tempRegCoeff [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      tempYCoord [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      temperature [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      snow_trans [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      time [class=jams.data.JAMSCalendar, access=READ, connection=link]
+INFO[000]:      precip [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      tempNIDW [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      pIDW [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      rainXCoord [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      rainYCoord [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]: WindDataReader [classID=018, className=jams.components.io.TSDataStoreReader]
+INFO[000]:      id [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      xCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      timeInterval [class=jams.data.JAMSTimeInterval, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      elevation [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataSetName [class=jams.data.JAMSString, access=WRITE, connection=link]
+INFO[000]:      yCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]: ObsRunoffDataReader [classID=018, className=jams.components.io.TSDataStoreReader]
+INFO[000]:      id [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      xCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      timeInterval [class=jams.data.JAMSTimeInterval, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      elevation [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      dataSetName [class=jams.data.JAMSString, access=WRITE, connection=link]
+INFO[000]:      yCoord [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]: HRULoop [classID=006, className=jams.model.JAMSSpatialContext]
+INFO[000]:      entities [class=jams.data.Attribute$EntityCollection, access=READ, connection=link]
+INFO[000]: Regionalization [classID=001, className=jams.model.JAMSContext]
+INFO[000]: j2kArrayGrabber [classID=020, className=org.unijena.j2k.J2KArrayGrabber]
+INFO[000]:      effHArray [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      actRsc0 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      rsc0Array [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      actEffH [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      actExtRad [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      time [class=jams.data.JAMSCalendar, access=READ, connection=link]
+INFO[000]:      actSlAsCf [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      extRadArray [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      slAsCfArray [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      actLAI [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      LAIArray [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      tempRes [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]: TmeanRegionaliser [classID=021, className=org.unijena.j2k.regionalisation.Regionalisation]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      rsqThreshold [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      dataValue [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      elevationCorrection [class=jams.data.JAMSBoolean, access=READ, connection=value]
+INFO[000]:      statElevation [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      nidw [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      entityElevation [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      fixedMinimum [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=READ, connection=link]
+INFO[000]: TminRegionaliser [classID=021, className=org.unijena.j2k.regionalisation.Regionalisation]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      rsqThreshold [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      dataValue [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      elevationCorrection [class=jams.data.JAMSBoolean, access=READ, connection=value]
+INFO[000]:      statElevation [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      nidw [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      entityElevation [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      fixedMinimum [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=READ, connection=link]
+INFO[000]: TmaxRegionaliser [classID=021, className=org.unijena.j2k.regionalisation.Regionalisation]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      rsqThreshold [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      dataValue [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      elevationCorrection [class=jams.data.JAMSBoolean, access=READ, connection=value]
+INFO[000]:      statElevation [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      nidw [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      entityElevation [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      fixedMinimum [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=READ, connection=link]
+INFO[000]: AhumRegionaliser [classID=021, className=org.unijena.j2k.regionalisation.Regionalisation]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      rsqThreshold [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      dataValue [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      elevationCorrection [class=jams.data.JAMSBoolean, access=READ, connection=value]
+INFO[000]:      statElevation [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      nidw [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      entityElevation [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      fixedMinimum [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=READ, connection=link]
+INFO[000]: PrecipRegionaliser [classID=021, className=org.unijena.j2k.regionalisation.Regionalisation]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      rsqThreshold [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      dataValue [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      elevationCorrection [class=jams.data.JAMSBoolean, access=READ, connection=value]
+INFO[000]:      statElevation [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      nidw [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      entityElevation [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      fixedMinimum [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=READ, connection=link]
+INFO[000]: SunhRegionaliser [classID=021, className=org.unijena.j2k.regionalisation.Regionalisation]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      rsqThreshold [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      dataValue [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      elevationCorrection [class=jams.data.JAMSBoolean, access=READ, connection=value]
+INFO[000]:      statElevation [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      nidw [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      entityElevation [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      fixedMinimum [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=READ, connection=link]
+INFO[000]: WindRegionaliser [classID=021, className=org.unijena.j2k.regionalisation.Regionalisation]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      regCoeff [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      rsqThreshold [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statWeights [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      dataValue [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      elevationCorrection [class=jams.data.JAMSBoolean, access=READ, connection=value]
+INFO[000]:      statElevation [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      nidw [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      entityElevation [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      fixedMinimum [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      statOrder [class=jams.data.JAMSIntegerArray, access=READ, connection=link]
+INFO[000]: CalcRelativeHumidity [classID=022, className=org.unijena.j2k.inputData.CalcRelativeHumidity]
+INFO[000]:      rhum [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      ahum [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      tmean [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]: CalcDailySolarRadiation [classID=023, className=org.unijena.j2k.radiation.CalcDailySolarRadiation]
+INFO[000]:      actExtRad [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      sunh [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      time [class=jams.data.JAMSCalendar, access=READ, connection=link]
+INFO[000]:      angstrom_b [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      actSlAsCf [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      angstrom_a [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      latitude [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      solRad [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]: CalcDailyNetRadiation [classID=024, className=org.unijena.j2k.radiation.CalcDailyNetRadiation]
+INFO[000]:      albedo [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      rhum [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      swRad [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      extRad [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      elevation [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      lwRad [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      tmean [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      netRad [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      solRad [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]: CalcRefET [classID=025, className=org.unijena.j2k.potET.RefET]
+INFO[000]:      wind [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      rhum [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      area [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      actET [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      elevation [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      tempRes [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      tmean [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      refET [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      netRad [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]: CalcPotentialET [classID=026, className=org.unijena.j2k.potET.PenmanMonteith]
+INFO[000]:      wind [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      dataCaching [class=jams.data.JAMSInteger, access=READ, connection=link]
+INFO[000]:      actRsc0 [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      elevation [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      actEffH [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      ra [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      rhum [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      area [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      actET [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      rs [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      actLAI [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      potET [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      tempRes [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      tmean [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      netRad [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]: CalcRainSnowParts [classID=027, className=org.unijena.j2k.snow.CalcRainSnowParts]
+INFO[000]:      snow_trans [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      snow_trs [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      area [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      precip [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      snow [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      tmin [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      tmean [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      rain [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]: J2KProcessInterception [classID=028, className=org.unijena.j2k.interception.J2KProcessInterception]
+INFO[000]:      snow_trs [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      netSnow [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      a_snow [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      intercStorage [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      throughfall [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      netRain [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      snow_trans [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      a_rain [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      area [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      actET [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      snow [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      actLAI [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      potET [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      tmean [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      rain [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      interception [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]: J2KProcessSnow [classID=029, className=org.unijena.j2k.snow.J2KProcessSnow]
+INFO[000]:      totDens [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      ccf_factor [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      r_factor [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      netRain [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      minTemp [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      snowColdContent [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      baseTemp [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      dryDens [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      area [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      snowAge [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      snowTotSWE [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      snowDepth [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      g_factor [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      netSnow [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      t_factor [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      meanTemp [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      drySWE [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      maxTemp [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      actSlAsCf [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      snowCritDens [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      active [class=jams.data.JAMSBoolean, access=READ, connection=value]
+INFO[000]:      snowMelt [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]: J2KProcessLumpedSoilWater [classID=030, className=org.unijena.j2k.soilWater.J2KProcessLumpedSoilWater]
+INFO[000]:      genRD1 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      soilDiffMPSLPS [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      soilMaxInfWinter [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      soilOutLPS [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      inRD2 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      inRD1 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      actLPS [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      soilConcRD1 [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      soilConcRD2 [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      sealedGrade [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      netRain [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      soilPolRed [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      outRD2 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      time [class=jams.data.JAMSCalendar, access=READ, connection=link]
+INFO[000]:      soilImpLT80 [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      soilImpGT80 [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      area [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      outRD1 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      satSoil [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      soilLinRed [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      slope [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      satMPS [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      percolation [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      snowDepth [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      genRD2 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      satLPS [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      soilMaxDPS [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      soilMaxPerc [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      soilDistMPSLPS [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      netSnow [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      interflow [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      maxMPS [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      soilMaxInfSummer [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      maxLPS [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      soilMaxInfSnow [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      soilLatVertLPS [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      actDPS [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      actET [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      infiltration [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      actMPS [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      potET [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      snowMelt [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]: J2KProcessGroundwater [classID=031, className=org.unijena.j2k.groundwater.J2KProcessGroundwater]
+INFO[000]:      maxSoilStorage [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      actSoilStorage [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      gwExcess [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      gwRG2Fact [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      outRG1 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      outRG2 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      maxRG2 [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      maxRG1 [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      gwRG1RG2dist [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      inRG1 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      area [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      slope [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      actRG2 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      actRG1 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      percolation [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      genRG1 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      gwCapRise [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      gwRG1Fact [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      genRG2 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      kRG2 [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      kRG1 [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      inRG2 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]: TemporalSumAggregator1 [classID=032, className=jams.components.aggregate.TemporalSumAggregator]
+INFO[000]:      time [class=jams.data.Attribute$Calendar, access=READ, connection=link]
+INFO[000]:      weight [class=jams.data.Attribute$Double, access=READ, connection=link]
+INFO[000]:      value [class=[Ljams.data.Attribute$Double;, access=READ, connection=link]
+INFO[000]:      sum [class=[Ljams.data.Attribute$Double;, access=READWRITE, connection=link]
+INFO[000]:      aggregationTimeInterval [class=jams.data.Attribute$TimeInterval, access=READ, connection=link]
+INFO[000]:      average [class=jams.data.Attribute$Boolean, access=READ, connection=value]
+INFO[000]: J2KProcessRouting [classID=033, className=org.unijena.j2k.routing.J2KProcessRouting]
+INFO[000]:      toPoly [class=jams.data.Attribute$Entity, access=READWRITE, connection=link]
+INFO[000]:      inRD2 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      inRD1 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      outRG1 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      outRG2 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      entities [class=jams.data.JAMSEntityCollection, access=READ, connection=link]
+INFO[000]:      toReach [class=jams.data.Attribute$Entity, access=READWRITE, connection=link]
+INFO[000]:      reaches [class=jams.data.JAMSEntityCollection, access=READ, connection=link]
+INFO[000]:      outRD2 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      inRG1 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      outRD1 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      inRG2 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]: SpatialWeightedSumAggregator1 [classID=034, className=org.unijena.j2k.aggregate.WeightedSumAggregator]
+INFO[000]:      weight [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      value [class=[Ljams.data.JAMSDouble;, access=READ, connection=link]
+INFO[000]:      sum [class=[Ljams.data.JAMSDouble;, access=READWRITE, connection=link]
+INFO[000]: SpatialWeightedSumAggregator2 [classID=034, className=org.unijena.j2k.aggregate.WeightedSumAggregator]
+INFO[000]:      weight [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      value [class=[Ljams.data.JAMSDouble;, access=READ, connection=link]
+INFO[000]:      sum [class=[Ljams.data.JAMSDouble;, access=READWRITE, connection=link]
+INFO[000]: ReachLoop [classID=006, className=jams.model.JAMSSpatialContext]
+INFO[000]:      entities [class=jams.data.Attribute$EntityCollection, access=READ, connection=link]
+INFO[000]: J2KProcessReachRouting [classID=035, className=org.unijena.j2k.routing.J2KProcessReachRouting]
+INFO[000]:      inRD2 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      inRD1 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      catchmentRD1 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      catchmentRD2 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      catchmentSimRunoff [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      outRD2 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      outRD1 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      slope [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      actRG2 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      actRG1 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      length [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      flowRouteTA [class=jams.data.JAMSDouble, access=READ, connection=value]
+INFO[000]:      simRunoff [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      outRG1 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      width [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      outRG2 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      catchmentRG2 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      roughness [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      channelStorage [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      entities [class=jams.data.JAMSEntityCollection, access=READ, connection=link]
+INFO[000]:      catchmentRG1 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      inRG1 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      actRD2 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      actRD1 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]:      tempRes [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      inRG2 [class=jams.data.JAMSDouble, access=READWRITE, connection=link]
+INFO[000]: ChannelStorageAggregator [classID=007, className=org.unijena.j2k.aggregate.SumAggregator]
+INFO[000]:      value [class=[Ljams.data.JAMSDouble;, access=READ, connection=link]
+INFO[000]:      sum [class=[Ljams.data.JAMSDouble;, access=READWRITE, connection=link]
+INFO[000]: FlowWeightedSumAggregator [classID=034, className=org.unijena.j2k.aggregate.WeightedSumAggregator]
+INFO[000]:      weight [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      value [class=[Ljams.data.JAMSDouble;, access=READ, connection=link]
+INFO[000]:      sum [class=[Ljams.data.JAMSDouble;, access=READWRITE, connection=link]
+INFO[000]: SimRunoffConverter [classID=036, className=jams.components.tools.JAMSUnitConverter]
+INFO[000]:      outUnit [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      outValue [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      inUnit [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      inValue [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]: ObsRunoff [classID=037, className=org.unijena.j2k.io.StandardTSDataProvider]
+INFO[000]:      dataArray [class=jams.data.JAMSDoubleArray, access=READ, connection=link]
+INFO[000]:      column [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      attribute [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]: TSVisualization [classID=001, className=jams.model.JAMSContext]
+INFO[000]: Runoff Plot [classID=038, className=jams.components.gui.TSPlot]
+INFO[000]:      rightAxisInverted [class=jams.data.JAMSBoolean, access=READ, connection=value]
+INFO[000]:      typeLeft [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      colorRight [class=jams.data.JAMSStringArray, access=READ, connection=value]
+INFO[000]:      colorLeft [class=jams.data.JAMSStringArray, access=READ, connection=value]
+INFO[000]:      valueRight [class=[Ljams.data.JAMSDouble;, access=READ, connection=link]
+INFO[000]:      time [class=jams.data.JAMSCalendar, access=READ, connection=link]
+INFO[000]:      xAxisTitle [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      rightAxisTitle [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      valueLeft [class=[Ljams.data.JAMSDouble;, access=READ, connection=link]
+INFO[000]:      typeRight [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      titleLeft [class=jams.data.JAMSStringArray, access=READ, connection=value]
+INFO[000]:      titleRight [class=jams.data.JAMSStringArray, access=READ, connection=value]
+INFO[000]:      dateFormat [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      leftAxisTitle [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]: Soil moisture plot [classID=038, className=jams.components.gui.TSPlot]
+INFO[000]:      typeLeft [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      colorLeft [class=jams.data.JAMSStringArray, access=READ, connection=value]
+INFO[000]:      time [class=jams.data.JAMSCalendar, access=READ, connection=link]
+INFO[000]:      xAxisTitle [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      valueLeft [class=[Ljams.data.JAMSDouble;, access=READ, connection=link]
+INFO[000]:      titleLeft [class=jams.data.JAMSStringArray, access=READ, connection=value]
+INFO[000]:      dateFormat [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      leftAxisTitle [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]: SWE-plot [classID=038, className=jams.components.gui.TSPlot]
+INFO[000]:      typeLeft [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      colorLeft [class=jams.data.JAMSStringArray, access=READ, connection=value]
+INFO[000]:      time [class=jams.data.JAMSCalendar, access=READ, connection=link]
+INFO[000]:      xAxisTitle [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      valueLeft [class=[Ljams.data.JAMSDouble;, access=READ, connection=link]
+INFO[000]:      titleLeft [class=jams.data.JAMSStringArray, access=READ, connection=value]
+INFO[000]:      dateFormat [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      leftAxisTitle [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]: Efficiencies [classID=039, className=org.unijena.j2k.efficiencies.StandardEfficiencyCalculator]
+INFO[000]:      dsGrad [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      effTimeInterval [class=jams.data.JAMSTimeInterval, access=READ, connection=link]
+INFO[000]:      ioa1 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      grad [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      ioa2 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      rmse [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      validation [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      predictionValues [class=jams.data.JAMSDoubleArray, access=WRITE, connection=link]
+INFO[000]:      prediction [class=jams.data.JAMSDouble, access=READ, connection=link]
+INFO[000]:      e1 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      e2 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      absVolErr [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      wrsq [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      modelTimeInterval [class=jams.data.Attribute$TimeInterval, access=READ, connection=link]
+INFO[000]:      effMethod [class=jams.data.JAMSIntegerArray, access=READ, connection=value]
+INFO[000]:      pbias [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      rsq [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]:      le2 [class=jams.data.JAMSDouble, access=WRITE, connection=link]
+INFO[000]: MapVisualization [classID=001, className=jams.model.JAMSContext]
+INFO[000]: GeometryReader [classID=040, className=jams.components.io.GeomReader]
+INFO[000]:      baseShape [class=jams.data.JAMSString, access=WRITE, connection=link]
+INFO[000]:      idName [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      hrus [class=jams.data.JAMSEntityCollection, access=READ, connection=link]
+INFO[000]:      shapeFileName [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]: Map [classID=041, className=jams.components.gui.MapCreator]
+INFO[000]:      baseShape [class=jams.data.JAMSString, access=READ, connection=link]
+INFO[000]:      showAttr [class=jams.data.JAMSStringArray, access=READ, connection=value]
+INFO[000]:      styleID [class=jams.data.JAMSInteger, access=READ, connection=value]
+INFO[000]:      stylesFileName [class=jams.data.JAMSString, access=READ, connection=value]
+INFO[000]:      rangeColor [class=jams.data.JAMSStringArray, access=READ, connection=value]
+INFO[000]:      numOfRanges [class=jams.data.JAMSStringArray, access=READ, connection=value]
+INFO[000]:      shapeFileName1 [class=jams.data.Attribute$String, access=READ, connection=value]
+INFO[000]:      hrus [class=jams.data.JAMSEntityCollection, access=READ, connection=link]
+INFO[000]:      shapeColors [class=jams.data.JAMSStringArray, access=READ, connection=value]
+INFO[000]: --------------------------------------------------------------------
+INFO[000]: Dauer der Modellerzeugung: 3776 ms
+INFO[000]: --------------------------------------------------------------------
+INFO[000]: Kein Arbeitsverzeichnis definiert, verwende Elternverzeichnis der Modelldefinitionsdatei: ..\..\..\ModelData\JAMS-Gehlberg
+INFO[000]: Eingabe-Datastore hinzugefügt: "ahum" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\input\ahum.xml".
+INFO[000]: Eingabe-Datastore hinzugefügt: "hrus" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\input\hrus.xml".
+INFO[000]: Eingabe-Datastore hinzugefügt: "orun" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\input\orun.xml".
+INFO[000]: Eingabe-Datastore hinzugefügt: "rain" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\input\rain.xml".
+INFO[000]: Eingabe-Datastore hinzugefügt: "rcorr2" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\input\rcorr2.xml".
+INFO[000]: Eingabe-Datastore hinzugefügt: "rhum" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\input\rhum.xml".
+INFO[000]: Eingabe-Datastore hinzugefügt: "sunh" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\input\sunh.xml".
+INFO[000]: Eingabe-Datastore hinzugefügt: "tmax" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\input\tmax.xml".
+INFO[000]: Eingabe-Datastore hinzugefügt: "tmean" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\input\tmean.xml".
+INFO[000]: Eingabe-Datastore hinzugefügt: "tmin" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\input\tmin.xml".
+INFO[000]: Eingabe-Datastore hinzugefügt: "wind" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\input\wind.xml".
+INFO[000]: Ausgabe-Datastore hinzugefügt: "HRULoop" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\output\HRULoop.xml".
+INFO[000]: Ausgabe-Datastore hinzugefügt: "optimization_wizard_optimizer" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\output\optimization_wizard_optimizer.xml".
+INFO[000]: Ausgabe-Datastore hinzugefügt: "TimeLoop" aus "C:\Arbeit\JAMS\nbprojects\jams-test\..\..\..\ModelData\JAMS-Gehlberg\output\TimeLoop.xml".
+INFO[000]: 
+INFO[000]: Starte Simulation
+INFO[000]: --------------------------------------------------------------------
+INFO[002]: Cycle checking...
+INFO[002]: HRUs --> no cycle found
+INFO[002]: Create ordered hru-list
+INFO[002]: HRU entities read successfully
+INFO[002]: Create ordered reach-list
+INFO[002]: Reach entities read successfully
+INFO[003]: Landuse parameter file processed ...
+INFO[004]: Soil parameter file processed ...
+INFO[005]: Groundwater parameter file processed ...
+INFO[018]: Datastore tmean initialized!
+INFO[018]: Datastore tmin initialized!
+INFO[018]: Datastore tmax initialized!
+INFO[018]: Datastore ahum initialized!
+INFO[018]: Datastore rain initialized!
+INFO[018]: Datastore sunh initialized!
+INFO[018]: Datastore wind initialized!
+INFO[018]: Datastore orun initialized!
+INFO[039]: effStartdate:	1996-11-01 07:30
+INFO[039]: effEnddate:	2000-10-31 07:30
+INFO[000]: 
+INFO[000]: UNDEFINIERTE KOMPONENTEN-ATTRIBUTE
+INFO[000]: --------------------------------------------------------------------
+INFO[000]:   Runoff Plot: plotTitle varTitleLeft 
+INFO[000]:   Efficiencies: time effMonthList 
+INFO[000]:   CalcPotentialET: time 
+INFO[000]:   CalcLatLong: entities tempRes 
+INFO[000]:   J2KProcessLumpedSoilWater: entity 
+INFO[000]:   J2KProcessSnow: time entity snowMeltFormula 
+INFO[000]:   Map: shapeFileName2 shapeFileName3 
+INFO[000]:   CalcDailySolarRadiation: tempRes 
+INFO[000]:   ObsRunoff: corr_factor 
+INFO[000]:   CalcRefET: time 
+INFO[000]:   RCRichter: dirName fileName 
+INFO[000]:   J2KProcessRouting: reservoirs 
+INFO[000]:   SWE-plot: plotTitle varTitleLeft titleRight rightAxisInverted 
+INFO[000]:   Soil moisture plot: plotTitle varTitleLeft titleRight rightAxisInverted 
+INFO[000]:   InitSoilWater: satStartLPS satStartMPS 
+INFO[000]:   j2kArrayGrabber: haudeFactorArray 
+INFO[000]:   CalcLanduseStateVars: tempRes 
+INFO[000]:   J2KProcessReachRouting: reachID 
+INFO[000]: --------------------------------------------------------------------
+INFO[039]: 
+INFO[039]: *************************************************************
+INFO[039]: Efficiencies for period:	 1996-11-01 07:30 2000-10-31 07:30 6 1
+INFO[039]: Sampler: Efficiencies
+INFO[039]: *************************************************************
+INFO[039]: e1:		0.49729
+INFO[039]: e2:		0.74209
+INFO[039]: log_e1:		0.29332
+INFO[039]: log_e2:		0.47419
+INFO[039]: ioa1:		0.72966
+INFO[039]: ioa2:		0.92330
+INFO[039]: r²:		0.74480
+INFO[039]: grad:		0.77197
+INFO[039]: wr²:		0.57496
+INFO[039]: dsGrad:		0.92995
+INFO[039]: AVE:		29.36328
+INFO[039]: RMSE:		0.24663
+INFO[000]: --------------------------------------------------------------------
+INFO[000]: Dauer der Modellausführung: 26290 ms
+INFO[000]: --------------------------------------------------------------------
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

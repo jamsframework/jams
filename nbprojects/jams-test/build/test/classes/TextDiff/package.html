@@ -1,0 +1,30 @@
+<body>
+TextDiff compares two text files or arrays of strings and generates a report of edit 
+commands that would transform Old to New.
+<p>
+The algorithm (but no code) was taken from Java code by Ian F. Darwin, ian@darwinsys.com,
+January, 1997. Darwin's code was a translation of a C program by D. C. Lindsay, C (1982-1987)
+<p>
+The algorithm is:
+<ol>
+<li>For each each unique line of text create a symbol. The symbol state is: OldOnly, 
+NewOnly, UniqueMatch (both files exactly once), or Other. 
+<li>For each line, create a LineInfo object. Set state = symbol state and establish 
+bidirectional links between UniqueMatch lines in the two files.
+<li>For each UniqueMatch in old create a "match block". Stretch match blocks forward
+and backward to include matching lines with any state, including other match blocks. 
+<li>Build a Report of edit commands that can be used to tranform Old into New. 
+Matching blocks generate match or move commands. Non-matching blocks generate insert, 
+append, delete or change commands.
+<li>Iterate the commands to generate a report.
+</ol>
+The DefaultReportWriter prints a human-friendly report to a PrintStream such as 
+System.out. One could implement custom report writers to create machine-readable 
+reports such as concrete editor commands.
+<p>
+Usage:
+<pre>
+Report report = new TextDiff().compare( oldFileName, newFileName );
+report.print( );
+</pre>
+</body>
