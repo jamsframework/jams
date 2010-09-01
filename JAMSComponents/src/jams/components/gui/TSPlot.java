@@ -316,8 +316,10 @@ public class TSPlot extends JAMSGUIComponent {
     public void init() {
         
         noDataValue_ = noDataValue.getValue();
-        dataset1.removeAllSeries();
-        dataset2.removeAllSeries();
+        if (dataset1 != null)
+            dataset1.removeAllSeries();
+        if (dataset2 != null)
+            dataset2.removeAllSeries();
         
         if (chart!=null) {
             plot = chart.getXYPlot();
