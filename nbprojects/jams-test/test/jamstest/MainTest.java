@@ -39,14 +39,14 @@ public class MainTest {
 
         System.out.println(System.getProperty("user.dir"));
         String args[] = new String[]{
-            "-c", "../noGUI.jap",
+            "-c", "../test.jap",
             "-m", "../../../modeldata/JAMS-Gehlberg/j2k_gehlberg.jam"
         };
         jamsui.launcher.JAMSui.main(args);
 
         //test output
         try{
-            Report report = new TextDiff().compare("../../../ModelData/JAMS-Gehlberg/output/current/TimeLoop.dat","../../../ModelData/JAMS-Gehlberg/test/reference/TimeLoop.dat");
+            Report report = new TextDiff().compare("../../../modeldata/JAMS-Gehlberg/output/current/TimeLoop.dat","../../../ModelData/JAMS-Gehlberg/test/reference/TimeLoop.dat");
             Iterator<Object> iter = report.iterator();
             Report updateReport = new Report();
             while (iter.hasNext()){
