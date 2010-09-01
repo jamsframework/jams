@@ -1,7 +1,7 @@
 #JAMS-Konfigurationsdatei
 #Mon Aug 30 10:19:46 CEST 2010
 infolog=
-libs=..\lib\lib;..\lib
+libs=../lib/lib;../lib
 guiconfig=0
 model=
 charset=
