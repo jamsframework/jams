@@ -274,7 +274,7 @@ public class Viewer {
 
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             //frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            frame.setSize((int) (screenSize.width * .8), (int) (screenSize.height * .8));
+            frame.setSize((int) (screenSize.width * .5), (int) (screenSize.height * .7));
 
             // Get the size of the screen
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
