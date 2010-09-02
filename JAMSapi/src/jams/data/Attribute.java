@@ -263,6 +263,8 @@ public interface Attribute extends Serializable{
         public void setValue(ArrayList<Attribute.Entity> entities);
 
         public ArrayList<Attribute.Entity> getValue();
+        
+        public Attribute.Entity getEntity(long id);
     }
 
     public interface TimeInterval extends JAMSData {

@@ -22,7 +22,9 @@
  */
 package jams.data;
 
+import jams.data.Attribute.Entity;
 import java.util.*;
+import java.util.ArrayList;
 
 /**
  *
@@ -30,16 +32,17 @@ import java.util.*;
  */
 public class JAMSEntityCollection implements Attribute.EntityCollection {
 
-    protected ArrayList<Attribute.Entity> entities = new ArrayList<Attribute.Entity>();
-    protected Attribute.Entity[] entityArray;
-    protected Attribute.Entity current;
+    private ArrayList<Attribute.Entity> entities = new ArrayList<Attribute.Entity>();
+    private Attribute.Entity[] entityArray;
+    private Attribute.Entity current;
     private EntityEnumerator ee = null;
-
-    JAMSEntityCollection() {
-    }
+    private HashMap<Long, Attribute.Entity> idMap;
 
     @Override
     public Attribute.Entity[] getEntityArray() {
+        if (this.entityArray == null) {
+            this.entityArray = entities.toArray(new JAMSEntity[entities.size()]);
+        }
         return this.entityArray;
     }
 
@@ -96,11 +99,10 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     @Override
     public void setEntities(ArrayList<Attribute.Entity> entities) {
         this.entities = entities;
-        this.entityArray = entities.toArray(new JAMSEntity[entities.size()]);
-        if (entityArray.length > 0) {
-            this.current = entityArray[0];
-        } else {
+        if (this.entities.isEmpty()) {
             this.current = null;
+        } else {
+            this.current = this.entities.get(0);
         }
     }
 
@@ -122,5 +124,16 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     @Override
     public ArrayList<Attribute.Entity> getValue() {
         return getEntities();
+    }
+
+    @Override
+    public Entity getEntity(long id) {
+        if (idMap == null) {
+             idMap = new HashMap<Long, Attribute.Entity>();
+             for (Attribute.Entity e : entities) {
+                 idMap.put(e.getId(), e);
+             }
+        }
+        return idMap.get(id);
     }
 }

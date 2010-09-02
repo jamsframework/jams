@@ -55,6 +55,7 @@ public class XMLTools {
     public static Document getDocument(String fileName) throws FileNotFoundException {
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
         Document document = null;
         
         File file = new File(fileName);
@@ -93,6 +94,7 @@ public class XMLTools {
     public static Document getDocumentFromString(String docString) throws IOException, SAXException {
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
         Document document = null;
         
         try {
