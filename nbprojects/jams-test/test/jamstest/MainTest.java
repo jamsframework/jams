@@ -8,10 +8,12 @@ package jamstest;
 import TextDiff.MatchCommand;
 import TextDiff.Report;
 import TextDiff.TextDiff;
+import java.io.File;
 import java.util.Iterator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import reg.dsproc.SimpleSerieProcessor;
 
 /**
  *
@@ -44,8 +46,12 @@ public class MainTest {
         };
         jamsui.launcher.JAMSui.main(args);
 
+        SimpleSerieProcessor ssProcessorSimulation = new SimpleSerieProcessor(new File("../../../modeldata/JAMS-Gehlberg/output/current/TimeLoop.dat"));
+        SimpleSerieProcessor ssProcessorReference  = new SimpleSerieProcessor(new File("../../../modeldata/JAMS-Gehlberg/test/reference/TimeLoop.dat"));
+
+        ssProcessorSimulation.getData(args)
         //test output
-        try{
+/*        try{
             Report report = new TextDiff().compare("../../../modeldata/JAMS-Gehlberg/output/current/TimeLoop.dat","../../../modeldata/JAMS-Gehlberg/test/reference/TimeLoop.dat");
             Iterator<Object> iter = report.iterator();
             Report updateReport = new Report();
@@ -58,7 +64,7 @@ public class MainTest {
             org.junit.Assert.assertTrue(updateReport.isEmpty());            
         }catch(Exception e){
             org.junit.Assert.fail("Exception while comparing Gehlberg - Results:" + e.toString());
-        }
+        }*/
     }
 
 }
