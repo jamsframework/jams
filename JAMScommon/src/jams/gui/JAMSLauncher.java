@@ -307,73 +307,74 @@ public class JAMSLauncher extends JFrame {
 
         Element root = doc.getDocumentElement();
         Element config = (Element) root.getElementsByTagName("launcher").item(0);
-        NodeList groups = config.getElementsByTagName("group");
+        if (config != null) {
+            NodeList groups = config.getElementsByTagName("group");
 
-        for (int i = 0; i < groups.getLength(); i++) {
+            for (int i = 0; i < groups.getLength(); i++) {
 
-            contentPanel = new JPanel();
-            gbl = new GridBagLayout();
-            contentPanel.setLayout(gbl);
-            scrollPanel = new JPanel();
-            scrollPanel.add(contentPanel);
-            scrollPane = new JScrollPane(scrollPanel);
+                contentPanel = new JPanel();
+                gbl = new GridBagLayout();
+                contentPanel.setLayout(gbl);
+                scrollPanel = new JPanel();
+                scrollPanel.add(contentPanel);
+                scrollPane = new JScrollPane(scrollPanel);
 
-            Element groupElement = (Element) groups.item(i);
+                Element groupElement = (Element) groups.item(i);
 
-            int row = 1;
-            NodeList groupChildNodes = groupElement.getChildNodes();
-            for (int pindex = 0; pindex < groupChildNodes.getLength(); pindex++) {
-                node = groupChildNodes.item(pindex);
-                if (node.getNodeName().equalsIgnoreCase("property")) {
-                    Element propertyElement = (Element) node;
-                    drawProperty(contentPanel, scrollPane, gbl, propertyElement, componentHash, row);
-                    row++;
-                }
-                if (node.getNodeName().equalsIgnoreCase("subgroup")) {
-                    Element subgroupElement = (Element) node;
-                    String subgroupName = subgroupElement.getAttribute("name");
-
-                    // create the subgroup panel
-                    JPanel subgroupPanel = new JPanel(gbl);
-
-                    // create and set the border
-                    subgroupPanel.setBorder(BorderFactory.createTitledBorder(null, subgroupName,
-                            TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, titledBorderFont));
-
-                    // add the subgroup panel
-                    row++;
-                    GUIHelper.addGBComponent(contentPanel, gbl, subgroupPanel,
-                            0, row, 3, 1,
-                            6, 2, 6, 2,
-                            1, 1);
-                    // help button?
-                    HelpComponent helpComponent = new HelpComponent(subgroupElement);
-                    if (!helpComponent.isEmpty()) {
-                        JPanel helpPanel = new JPanel();
-                        HelpButton helpButton = createHelpButton(helpComponent);
-                        helpPanel.add(helpButton);
-                        GUIHelper.addGBComponent(contentPanel, gbl, helpPanel,
-                                4, row, 1, 1,
-                                1, 1, 1, 1,
-                                1, 1);
-                    }
-
-                    row++;
-                    NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
-                    for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
-                        Element propertyElement = (Element) propertyNodes.item(kindex);
-                        drawProperty(subgroupPanel, scrollPane, gbl, propertyElement, componentHash, row);
+                int row = 1;
+                NodeList groupChildNodes = groupElement.getChildNodes();
+                for (int pindex = 0; pindex < groupChildNodes.getLength(); pindex++) {
+                    node = groupChildNodes.item(pindex);
+                    if (node.getNodeName().equalsIgnoreCase("property")) {
+                        Element propertyElement = (Element) node;
+                        drawProperty(contentPanel, scrollPane, gbl, propertyElement, componentHash, row);
                         row++;
                     }
-                    row = row + 2;
+                    if (node.getNodeName().equalsIgnoreCase("subgroup")) {
+                        Element subgroupElement = (Element) node;
+                        String subgroupName = subgroupElement.getAttribute("name");
 
-                    row++;
+                        // create the subgroup panel
+                        JPanel subgroupPanel = new JPanel(gbl);
+
+                        // create and set the border
+                        subgroupPanel.setBorder(BorderFactory.createTitledBorder(null, subgroupName,
+                                TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, titledBorderFont));
+
+                        // add the subgroup panel
+                        row++;
+                        GUIHelper.addGBComponent(contentPanel, gbl, subgroupPanel,
+                                0, row, 3, 1,
+                                6, 2, 6, 2,
+                                1, 1);
+                        // help button?
+                        HelpComponent helpComponent = new HelpComponent(subgroupElement);
+                        if (!helpComponent.isEmpty()) {
+                            JPanel helpPanel = new JPanel();
+                            HelpButton helpButton = createHelpButton(helpComponent);
+                            helpPanel.add(helpButton);
+                            GUIHelper.addGBComponent(contentPanel, gbl, helpPanel,
+                                    4, row, 1, 1,
+                                    1, 1, 1, 1,
+                                    1, 1);
+                        }
+
+                        row++;
+                        NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
+                        for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
+                            Element propertyElement = (Element) propertyNodes.item(kindex);
+                            drawProperty(subgroupPanel, scrollPane, gbl, propertyElement, componentHash, row);
+                            row++;
+                        }
+                        row = row + 2;
+
+                        row++;
+                    }
                 }
+
+                tabbedPane.addTab(groupElement.getAttribute("name"), scrollPane);
             }
-
-            tabbedPane.addTab(groupElement.getAttribute("name"), scrollPane);
         }
-
         runButton.setEnabled(true);
     }
 
