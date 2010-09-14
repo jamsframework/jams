@@ -53,7 +53,7 @@ import java.awt.Font;
 import javax.swing.UIManager;
 import jamsui.juice.*;
 import jamsui.juice.ComponentDescriptor;
-import jamsui.juice.ComponentDescriptor.ComponentAttribute;
+import jamsui.juice.ComponentDescriptor.ComponentField;
 import jamsui.juice.gui.tree.JAMSNode;
 import jamsui.juice.ContextAttribute;
 import jams.JAMS;
@@ -452,7 +452,7 @@ public class ComponentPanel extends JPanel {
         Vector<Vector<String>> tableData = new Vector<Vector<String>>();
         Vector<String> rowData;
         for (String name : varNameList) {
-            ComponentAttribute var = componentDescriptor.getComponentAttributes().get(name);
+            ComponentField var = componentDescriptor.getComponentAttributes().get(name);
 
             //create a vector with table data from var properties
             rowData = new Vector<String>();
@@ -462,13 +462,13 @@ public class ComponentPanel extends JPanel {
             rowData.add(type);
 
             String accessType = "";
-            if (var.accessType == ComponentAttribute.READ_ACCESS) {
+            if (var.accessType == ComponentField.READ_ACCESS) {
                 accessType = "R";
             }
-            if (var.accessType == ComponentAttribute.WRITE_ACCESS) {
+            if (var.accessType == ComponentField.WRITE_ACCESS) {
                 accessType = "W";
             }
-            if (var.accessType == ComponentAttribute.READWRITE_ACCESS) {
+            if (var.accessType == ComponentField.READWRITE_ACCESS) {
                 accessType = "R/W";
             }
             rowData.add(accessType);
@@ -519,7 +519,7 @@ public class ComponentPanel extends JPanel {
             return;
         }
         String attributeName = varNameList.get(selectedVarRow);
-        ComponentAttribute attr = componentDescriptor.getComponentAttributes().get(attributeName);
+        ComponentField attr = componentDescriptor.getComponentAttributes().get(attributeName);
 
         Vector<ComponentDescriptor> ancestors = new Vector<ComponentDescriptor>();
 

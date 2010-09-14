@@ -33,9 +33,12 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
 import jams.JAMS;
+import jams.JAMSProperties;
+import jams.SystemProperties;
 import jams.model.SmallModelState;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSRuntime;
+import jams.runtime.StandardRuntime;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
 import jams.tools.XMLTools;
@@ -57,6 +60,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Properties;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -77,8 +82,8 @@ public class JAMSWorkspace implements Workspace {
     private Properties properties = new Properties();
     private ArrayList<DataStore> currentStores = new ArrayList<DataStore>();
     private boolean readonly;
-    
-    public JAMSWorkspace(File directory, JAMSRuntime runtime){
+
+    public JAMSWorkspace(File directory, JAMSRuntime runtime) {
         this(directory, runtime, false);
     }
 
@@ -139,25 +144,26 @@ public class JAMSWorkspace implements Workspace {
     }
 
     /*restores all datastores from a saved execution state*/
-    public void restore(SmallModelState state){
+    public void restore(SmallModelState state) {
         Iterator<DataStore> iter = this.getRegisteredDataStores().iterator();
-        while(iter.hasNext()){
-            try{
+        while (iter.hasNext()) {
+            try {
                 state.recoverDataStoreState(iter.next());
-            }catch(IOException e){
+            } catch (IOException e) {
                 this.getRuntime().sendHalt(JAMS.resources.getString("error_occured_while_restoring_model_state") + ":" + e.toString());
                 e.printStackTrace();
             }
         }
     }
     /*restores all datastores from a saved execution state*/
-    public void saveState(SmallModelState state){
+
+    public void saveState(SmallModelState state) {
         Iterator<DataStore> iter = this.getRegisteredDataStores().iterator();
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             state.saveDataStoreState(iter.next());
         }
-    } 
-    
+    }
+
     /**
      * Checks if this workspace is valid
      * @param readonly If readonly is false, the workspace can be fixed (e.g.
@@ -364,8 +370,8 @@ public class JAMSWorkspace implements Workspace {
         currentStores.add(store);
         return store;
     }
-    
-    public ArrayList<DataStore> getRegisteredDataStores(){
+
+    public ArrayList<DataStore> getRegisteredDataStores() {
         return currentStores;
     }
 
@@ -394,7 +400,7 @@ public class JAMSWorkspace implements Workspace {
         }
         return null;
     }
-    
+
     /**
      *
      * @param contextName The instance name of a context component
@@ -411,9 +417,9 @@ public class JAMSWorkspace implements Workspace {
         ArrayList<OutputDataStore> result = new ArrayList<OutputDataStore>();
 
         for (String storeID : stores) {
-            OutputDataStore listedStore = (OutputDataStore)getDataStoreByID(storeID);
-            if (listedStore!=null){
-                result.add(listedStore);                
+            OutputDataStore listedStore = (OutputDataStore) getDataStoreByID(storeID);
+            if (listedStore != null) {
+                result.add(listedStore);
                 continue;
             }
             Document doc = outputDataStores.get(storeID);
@@ -464,17 +470,17 @@ public class JAMSWorkspace implements Workspace {
             if (store.isValid()) {
                 currentStores.add(store);
                 result.add(store);
-            }         
-        }        
+            }
+        }
         return result.toArray(new OutputDataStore[result.size()]);
     }
-    
+
     /**
      * Closes the workspace, i.e. closes all datastores
      */
     public void close() {
         for (DataStore store : currentStores) {
-            try {                
+            try {
                 store.close();
             } catch (IOException ioe) {
                 runtime.handle(ioe);
@@ -780,7 +786,8 @@ public class JAMSWorkspace implements Workspace {
      */
     public File getTempDirectory() {
         return tmpDirectory;
-    }   
+    }
+
 //    public static void main(String[] args) throws IOException {
 //
 //        JAMSRuntime runtime = new StandardRuntime();
@@ -824,5 +831,43 @@ public class JAMSWorkspace implements Workspace {
 //        TSDumpProcessor asciiConverter = new TSDumpProcessor();
 //        System.out.println(asciiConverter.toASCIIString((TSDataStore) store));
 //    }
-}
+    public static void main(String[] args) throws IOException, InvalidWorkspaceException {
 
+        JAMSRuntime runtime = new StandardRuntime();
+        runtime.setDebugLevel(JAMS.VERBOSE);
+        runtime.addErrorLogObserver(new Observer() {
+
+            @Override
+            public void update(Observable o, Object arg) {
+                System.out.print(arg);
+            }
+        });
+        runtime.addInfoLogObserver(new Observer() {
+
+            @Override
+            public void update(Observable o, Object arg) {
+                System.out.print(arg);
+            }
+        });
+
+        SystemProperties properties = JAMSProperties.createProperties();
+        properties.load("D:/jamsapplication/nsk.jap");
+        String[] libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
+
+
+        JAMSWorkspace ws;
+        ws = new JAMSWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime, true);
+        //JAMSWorkspace ws = new JAMSWorkspace(new File("D:/jamsapplication/ws_test"), runtime);
+        ws.setLibs(libs);
+        ws.init();
+
+        //System.out.println(ws.dataStoreToString("tmin"));
+        //ws.inputDataStoreToFile("tmin");
+
+//        ws.inputDataStoreToFile();
+
+        InputDataStore store = ws.getInputDataStore("solrad");
+        TSDumpProcessor asciiConverter = new TSDumpProcessor();
+        System.out.println(asciiConverter.toASCIIString((TSDataStore) store));
+    }
+}

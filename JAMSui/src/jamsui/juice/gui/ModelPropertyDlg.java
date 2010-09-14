@@ -50,7 +50,7 @@ import jams.gui.input.FloatInput;
 import jams.gui.input.IntegerInput;
 import jamsui.juice.ModelProperties.ModelProperty;
 import jamsui.juice.ComponentDescriptor;
-import jamsui.juice.ComponentDescriptor.ComponentAttribute;
+import jamsui.juice.ComponentDescriptor.ComponentField;
 import jamsui.juice.ContextAttribute;
 import jams.JAMS;
 
@@ -177,12 +177,12 @@ public class ModelPropertyDlg extends JDialog {
 
     private void updateComponentVars(Object item) {
         ComponentDescriptor cd = this.componentDescriptors.get((String) item);
-        HashMap<String, ComponentAttribute> vars = cd.getComponentAttributes();
+        HashMap<String, ComponentField> vars = cd.getComponentAttributes();
         HashMap<String, ContextAttribute> attrs = cd.getContextAttributes();
 
         ArrayList<String> varNames = new ArrayList<String>();
         for (String name : vars.keySet()) {
-            ComponentAttribute var = vars.get(name);
+            ComponentField var = vars.get(name);
             if (var.getContext() == null) {
                 varNames.add(name);
             }
@@ -304,7 +304,7 @@ public class ModelPropertyDlg extends JDialog {
         return componentDescriptors.get(componentCombo.getSelectedItem());
     }
 
-    public ComponentAttribute getVar() {
+    public ComponentField getVar() {
         return getComponent().getComponentAttributes().get(varCombo.getSelectedItem());
     }
 

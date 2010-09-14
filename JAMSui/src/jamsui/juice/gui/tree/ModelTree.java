@@ -53,7 +53,7 @@ import jams.model.JAMSContext;
 import jams.tools.StringTools;
 import javax.swing.JFrame;
 import jamsui.juice.ComponentDescriptor;
-import jamsui.juice.ComponentDescriptor.ComponentAttribute;
+import jamsui.juice.ComponentDescriptor.ComponentField;
 import jamsui.juice.ContextAttribute;
 import jamsui.juice.JUICE;
 import jamsui.juice.ModelDescriptor;
@@ -510,7 +510,7 @@ public class ModelTree extends JAMSTree {
             rootElement.appendChild(element);
         }
 
-        for (ComponentAttribute var : cd.getComponentAttributes().values()) {
+        for (ComponentField var : cd.getComponentAttributes().values()) {
             if (!var.getValue().equals("") || ((var.getContext() != null) && !var.getAttribute().equals(""))) {
 
                 element = document.createElement("var");
@@ -775,7 +775,7 @@ public class ModelTree extends JAMSTree {
             String attribute = e.getAttribute("attribute");
 
             try {
-                ComponentDescriptor.ComponentAttribute ca = cd.getComponentAttributes().get(name);
+                ComponentDescriptor.ComponentField ca = cd.getComponentAttributes().get(name);
                 ca.linkToAttribute(context, attribute);
                 //cd.linkComponentAttribute(name, view.getComponentDescriptor(context), attribute);
 /*            } 

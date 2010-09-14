@@ -57,7 +57,7 @@ import jams.gui.input.InputComponent;
 import jams.gui.input.ValueChangeListener;
 import jamsui.juice.*;
 import jamsui.juice.ComponentDescriptor;
-import jamsui.juice.ComponentDescriptor.ComponentAttribute;
+import jamsui.juice.ComponentDescriptor.ComponentField;
 import jamsui.juice.ContextAttribute;
 import jams.gui.input.InputComponentFactory;
 import jams.JAMS;
@@ -80,7 +80,7 @@ public class ComponentAttributePanel extends JPanel {
     private Class type;
     private JList attributeList;
     private JToggleButton linkButton,  setButton;
-    private ComponentAttribute var;
+    private ComponentField field;
     private TableModel tableModel;
     private int selectedRow;
     private ActionListener linkButtonListener,  setButtonListener;
@@ -188,23 +188,23 @@ public class ComponentAttributePanel extends JPanel {
             return;
         }
 
-        String attribute = customAttributeText.getText();
+        String attributeName = customAttributeText.getText();
         ComponentDescriptor context = (ComponentDescriptor) contextCombo.getSelectedItem();
 
-        if (!attribute.equals("") && context != null) {
+        if (!attributeName.equals("") && context != null) {
             linkButton.setEnabled(true);
         } else {
             linkButton.setEnabled(false);
         }
 
-        if (linkButton.isSelected() && !attribute.equals("") && (context != null)) {
-            var.linkToAttribute(context, attribute);
-            linkText.setText(var.getContext() + "." + var.getContextAttribute());
-            tableModel.setValueAt(var.getContext() + "." + var.getContextAttribute(), selectedRow, 3);
+        if (linkButton.isSelected() && !attributeName.equals("") && (context != null)) {
+            field.linkToAttribute(context, attributeName);
+            linkText.setText(field.getContext() + "." + field.getContextAttribute());
+            tableModel.setValueAt(field.getContext() + "." + field.getContextAttribute(), selectedRow, 3);
         }
 
         if (!linkButton.isSelected()) {
-            var.unlinkFromAttribute();
+            field.unlinkFromAttribute();
             linkText.setText("");
             tableModel.setValueAt("", selectedRow, 3);
         }
@@ -228,18 +228,18 @@ public class ComponentAttributePanel extends JPanel {
 
         if (setButton.isSelected()) {
             //valueInput.getComponent().setEnabled(false);
-            var.setValue(valueInput.getValue());
+            field.setValue(valueInput.getValue());
         } else {
             //valueInput.getComponent().setEnabled(true);
-            var.setValue("");
+            field.setValue("");
         }
-        tableModel.setValueAt(var.getValue(), selectedRow, 4);
+        tableModel.setValueAt(field.getValue(), selectedRow, 4);
     }
 
     private void updateAttributeLinkGUI() {
 
         //adjust context input components according to context attributes
-        if (var.getContextAttribute() == null) {
+        if (field.getContextAttribute() == null) {
             linkButton.setSelected(false);
             linkText.setText("");
 
@@ -250,8 +250,8 @@ public class ComponentAttributePanel extends JPanel {
             attributeList.setSelectedValue(null, true);
         } else {
             linkButton.setSelected(true);
-            linkText.setText(var.getContext() + " -> " + var.getContextAttribute());
-            contextCombo.setSelectedItem(var.getContext());
+            linkText.setText(field.getContext() + " -> " + field.getContextAttribute());
+            contextCombo.setSelectedItem(field.getContext());
 
             if (type.isArray()) {
                 /*
@@ -260,25 +260,25 @@ public class ComponentAttributePanel extends JPanel {
                 attributeList.setSelectedValue(value, true);
                 }
                  */
-                customAttributeText.setText(var.getAttribute());
+                customAttributeText.setText(field.getAttribute());
             } else {
                 // @todo: should stay empty if attribute not provided by some 
                 // context -- workaround for errorneous model files
-                customAttributeText.setText(var.getAttribute());
+                customAttributeText.setText(field.getAttribute());
                 
-                attributeList.setSelectedValue(var.getAttribute().toString(), true);
+                attributeList.setSelectedValue(field.getAttribute().toString(), true);
             }
         }
 
         //adjust var input components according to var values
-        if (var.getValue().equals("")) {
+        if (field.getValue().equals("")) {
             setButton.setSelected(false);
         //valueInput.getComponent().setEnabled(true);
         } else {
             setButton.setSelected(true);
         //valueInput.getComponent().setEnabled(false);
         }
-        valueInput.setValue(var.getValue());
+        valueInput.setValue(field.getValue());
 
         if (customAttributeText.getText().equals("")) {
             linkButton.setEnabled(false);
@@ -287,12 +287,12 @@ public class ComponentAttributePanel extends JPanel {
         }
     }
 
-    public void update(ComponentAttribute var, ComponentDescriptor ancestorArray[],
+    public void update(ComponentField var, ComponentDescriptor ancestorArray[],
             ComponentDescriptor component, TableModel tableModel, int selectedRow) {
 
         adjusting = true;
 
-        this.var = var;
+        this.field = var;
         this.type = var.type;
         this.tableModel = tableModel;
         this.selectedRow = selectedRow;
@@ -306,7 +306,7 @@ public class ComponentAttributePanel extends JPanel {
         updateRepository();
 
         //enable field for custom attribute name if !READ_ACCESS        
-        if ((var.accessType == ComponentAttribute.READ_ACCESS) && !type.isArray()) {
+        if ((var.accessType == ComponentField.READ_ACCESS) && !type.isArray()) {
             // @todo: this should be disabled since some other context must
             // provide this attribute -- workaround for incomplete attributes list
             customAttributeText.setEnabled(true);

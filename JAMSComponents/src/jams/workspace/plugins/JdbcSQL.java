@@ -53,8 +53,7 @@ public class JdbcSQL implements DataReader {
     private static final int STRING = 2;
     private static final int TIMESTAMP = 3;
     private static final int OBJECT = 4;
-    
-    private String user,  password,  host,  db,  query, driver;
+    private String user, password, host, db, query, driver;
     transient private ResultSet rs;
     transient private ResultSetMetaData rsmd;
     transient private JdbcSQLConnector pgsql;
@@ -64,11 +63,11 @@ public class JdbcSQL implements DataReader {
     private DefaultDataSet[] currentData = null;
     private boolean isClosed;
     private int offset = 0;
-    
-    public void JdbcSQL(){
-        isClosed = true;        
+
+    public void JdbcSQL() {
+        isClosed = true;
     }
-    
+
     public void setUser(String user) {
         this.user = user;
     }
@@ -88,8 +87,8 @@ public class JdbcSQL implements DataReader {
     public void setDb(String db) {
         this.db = db;
     }
-    
-    public void setDriver(String driver){
+
+    public void setDriver(String driver) {
         this.driver = driver;
     }
 
@@ -111,20 +110,21 @@ public class JdbcSQL implements DataReader {
     }
 
     private boolean skip(long count) {
-        try{
-            for (int i=0;i<count;i++)
-                if (!rs.next()){
+        try {
+            for (int i = 0; i < count; i++) {
+                if (!rs.next()) {
                     offset++;
                     return false;
                 }
-        }catch(Exception e){
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return true;            
+        return true;
     }
-    
+
     private DefaultDataSet[] getDBRows(long count) {
-        
+
         ArrayList<DefaultDataSet> data = new ArrayList<DefaultDataSet>();
         DefaultDataSet dataSet;
         DataValue value;
@@ -141,7 +141,12 @@ public class JdbcSQL implements DataReader {
 
                     switch (type[j]) {
                         case DOUBLE:
-                            value = new DoubleValue(rs.getDouble(j + 1));
+                            double v = rs.getDouble(j + 1);
+                            if (!rs.wasNull()) {
+                                value = new DoubleValue(v);
+                            } else {
+                                value = new StringValue("");
+                            }
                             dataSet.setData(j, value);
                             break;
                         case LONG:
@@ -153,21 +158,21 @@ public class JdbcSQL implements DataReader {
                             dataSet.setData(j, value);
                             break;
                         case TIMESTAMP:
-                            Attribute.Calendar cal = JAMSDataFactory.createCalendar();                            
+                            Attribute.Calendar cal = JAMSDataFactory.createCalendar();
                             //does not work .. hours are not represented well
                             GregorianCalendar greg = new GregorianCalendar();
                             greg.setTimeZone(TimeZone.getTimeZone("GMT"));
-                            cal.setTimeInMillis(rs.getDate(j+1,greg).getTime());
-                                  
-                            String date = rs.getString(j+1);
+                            cal.setTimeInMillis(rs.getDate(j + 1, greg).getTime());
+
+                            String date = rs.getString(j + 1);
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-                            try{
-                                long millis = format.parse(date+" +0000").getTime();
+                            try {
+                                long millis = format.parse(date + " +0000").getTime();
                                 cal.setTimeInMillis(millis);
-                            }catch(Exception e){
+                            } catch (Exception e) {
                                 throw new SQLException(e.toString());
                             }
-                            
+
                             value = new CalendarValue(cal);
                             dataSet.setData(j, value);
                             break;
@@ -186,45 +191,46 @@ public class JdbcSQL implements DataReader {
         return data.toArray(new DefaultDataSet[data.size()]);
     }
 
-    void establishConnection(){
-        try{
-            if (pgsql == null){
-                pgsql = new JdbcSQLConnector(host,db,user,password,driver);
+    void establishConnection() {
+        try {
+            if (pgsql == null) {
+                pgsql = new JdbcSQLConnector(host, db, user, password, driver);
                 pgsql.connect();
-                isClosed = false;    
-            }else if (this.alwaysReconnect){
+                isClosed = false;
+            } else if (this.alwaysReconnect) {
                 pgsql.close();
                 pgsql = null;
-                isClosed=true;
+                isClosed = true;
                 establishConnection();
             }
-        }catch(SQLException sqlex){
-            System.err.println("jdbcSQL: " + sqlex);  
+        } catch (SQLException sqlex) {
+            System.err.println("jdbcSQL: " + sqlex);
             sqlex.printStackTrace();
-            isClosed = true;   
+            isClosed = true;
         }
     }
-    
-    public void query(){
+
+    public void query() {
         establishConnection();
-        try {                 
-            if (rs != null)
+        try {
+            if (rs != null) {
                 rs.close();
-            
+            }
+
             rs = pgsql.execQuery(query);
             rs.setFetchSize(0);
             rsmd = rs.getMetaData();
             numberOfColumns = rsmd.getColumnCount();
             type = new int[numberOfColumns];
             for (int i = 0; i < numberOfColumns; i++) {
-                if (rsmd.getColumnTypeName(i + 1).startsWith("int") || rsmd.getColumnTypeName(i + 1).startsWith("INT") || 
-                    rsmd.getColumnTypeName(i + 1).startsWith("integer") || rsmd.getColumnTypeName(i + 1).startsWith("INTEGER")  ) {
+                if (rsmd.getColumnTypeName(i + 1).startsWith("int") || rsmd.getColumnTypeName(i + 1).startsWith("INT")
+                        || rsmd.getColumnTypeName(i + 1).startsWith("integer") || rsmd.getColumnTypeName(i + 1).startsWith("INTEGER")) {
                     type[i] = LONG;
-                } else if (rsmd.getColumnTypeName(i + 1).startsWith("float") || rsmd.getColumnTypeName(i + 1).startsWith("FLOAT") ) {
+                } else if (rsmd.getColumnTypeName(i + 1).startsWith("float") || rsmd.getColumnTypeName(i + 1).startsWith("FLOAT")) {
                     type[i] = DOUBLE;
-                } else if (rsmd.getColumnTypeName(i + 1).startsWith("double") || rsmd.getColumnTypeName(i + 1).startsWith("DOUBLE") ) {
+                } else if (rsmd.getColumnTypeName(i + 1).startsWith("double") || rsmd.getColumnTypeName(i + 1).startsWith("DOUBLE")) {
                     type[i] = DOUBLE;
-                } else if (rsmd.getColumnTypeName(i + 1).startsWith("numeric") || rsmd.getColumnTypeName(i + 1).startsWith("NUMERIC") ) {
+                } else if (rsmd.getColumnTypeName(i + 1).startsWith("numeric") || rsmd.getColumnTypeName(i + 1).startsWith("NUMERIC")) {
                     type[i] = DOUBLE;
                 } else if (rsmd.getColumnTypeName(i + 1).startsWith("varchar") || rsmd.getColumnTypeName(i + 1).startsWith("VARCHAR")) {
                     type[i] = STRING;
@@ -235,15 +241,15 @@ public class JdbcSQL implements DataReader {
                 }
             }
         } catch (SQLException sqlex) {
-            System.err.println("jdbcSQL: " + sqlex);            
+            System.err.println("jdbcSQL: " + sqlex);
         }
         return;
     }
-    
+
     @Override
     public int init() {
         offset = 0;
-               
+
         if (db == null) {
             return -1;
         }
@@ -263,32 +269,32 @@ public class JdbcSQL implements DataReader {
         if (query == null) {
             return -1;
         }
-        
+
         if (driver == null) {
             driver = "jdbc:postgresql";
         }
-     
+
         query();
         return 1;
     }
 
     @Override
-    public int cleanup() {      
+    public int cleanup() {
         try {
-            if (rs != null){
+            if (rs != null) {
                 rs.close();
                 rs = null;
             }
-            if (pgsql != null){
+            if (pgsql != null) {
                 pgsql.close();
                 pgsql = null;
-                isClosed = true;    
-            }            
+                isClosed = true;
+            }
         } catch (SQLException sqlex) {
             System.out.println("jdbcSQL: " + sqlex);
             return -1;
         }
-        
+
         return 0;
     }
 
@@ -296,28 +302,31 @@ public class JdbcSQL implements DataReader {
     public int numberOfColumns() {
         return numberOfColumns;
     }
-    
-    public void setState(DataReaderState state){
-        
+
+    public void setState(DataReaderState state) {
     }
-    public DataReaderState getState(){
+
+    public DataReaderState getState() {
         return null;
     }
-    public void getState(java.io.ObjectOutputStream stream) throws IOException{
+
+    public void getState(java.io.ObjectOutputStream stream) throws IOException {
         stream.writeBoolean(isClosed);
-        stream.writeInt(this.offset);       
+        stream.writeInt(this.offset);
     }
-    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{       
+
+    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
         isClosed = stream.readBoolean();
         int oldOffset = stream.readInt();
-        if (isClosed){
+        if (isClosed) {
             this.cleanup();
             return;
         }
-        query();        
-        try{
+        query();
+        try {
             Thread.sleep(1000);
-        }catch(Exception e){}        
-        this.skip(oldOffset);        
+        } catch (Exception e) {
+        }
+        this.skip(oldOffset);
     }
 }

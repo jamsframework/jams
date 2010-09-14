@@ -868,7 +868,11 @@ public class JAMSSpreadSheet extends JPanel {
 
             rowBuffer = new double[colNumber];
             for (i = 1; i < rowData.length; i++) {
-                rowBuffer[i - 1] = ((DoubleValue) rowData[i]).getDouble();
+                if (!rowData[i].getString().isEmpty()) {
+                    rowBuffer[i - 1] = ((DoubleValue) rowData[i]).getDouble();
+                } else {
+                    rowBuffer[i - 1] = -9999;
+                }
             }
 
             formatDoubleArray(rowBuffer);

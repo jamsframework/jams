@@ -49,7 +49,7 @@ public class ComponentDescriptor extends Observable {
     private String instanceName = "";
     private Class<?> clazz;
     private ArrayList<String> componentAttributeList = new ArrayList<String>();
-    private HashMap<String, ComponentAttribute> componentAttributes = new HashMap<String, ComponentAttribute>();
+    private HashMap<String, ComponentField> componentAttributes = new HashMap<String, ComponentField>();
     private HashMap<String, ContextAttribute> contextAttributes = new HashMap<String, ContextAttribute>();
     private AttributeRepository dataRepository;
     private static HashMap<Class, JDialog> compViewDlgs = new HashMap<Class, JDialog>();
@@ -129,14 +129,14 @@ public class ComponentDescriptor extends Observable {
                 int accessType;
 
                 if (jvd.access() == JAMSVarDescription.AccessType.READ) {
-                    accessType = ComponentAttribute.READ_ACCESS;
+                    accessType = ComponentField.READ_ACCESS;
                 } else if (jvd.access() == JAMSVarDescription.AccessType.WRITE) {
-                    accessType = ComponentAttribute.WRITE_ACCESS;
+                    accessType = ComponentField.WRITE_ACCESS;
                 } else {
-                    accessType = ComponentAttribute.READWRITE_ACCESS;
+                    accessType = ComponentField.READWRITE_ACCESS;
                 }
 
-                getComponentAttributes().put(field.getName(), new ComponentAttribute(field.getName(), field.getType(), accessType));
+                getComponentAttributes().put(field.getName(), new ComponentField(field.getName(), field.getType(), accessType));
                 getComponentAttributeList().add(field.getName());
             }
         }
@@ -175,14 +175,14 @@ public class ComponentDescriptor extends Observable {
     }
 
     public void setComponentAttribute_(String name, String value) {
-        ComponentAttribute ca = getComponentAttributes().get(name);
+        ComponentField ca = getComponentAttributes().get(name);
         if (ca != null) {
             ca.setValue(value);
         }
     }
 
     public void outputUnsetAttributes() {
-        for (ComponentAttribute ad : getComponentAttributes().values()) {
+        for (ComponentField ad : getComponentAttributes().values()) {
             if (ad.getAttribute() == null && ad.getContext() == null && ad.getValue() == null) {
                 System.out.println(JAMS.resources.getString("Attribute_") + ad.name + " (" + ad.type + JAMS.resources.getString(")_not_set_in_component_") + getName());
             }
@@ -193,8 +193,8 @@ public class ComponentDescriptor extends Observable {
 
         ComponentDescriptor copy = new ComponentDescriptor(getName(), getClazz(), target);
         for (String name : componentAttributes.keySet()) {
-            ComponentAttribute ca = componentAttributes.get(name);
-            ComponentAttribute caCopy = new ComponentAttribute(ca.name, ca.type, ca.accessType);
+            ComponentField ca = componentAttributes.get(name);
+            ComponentField caCopy = new ComponentField(ca.name, ca.type, ca.accessType);
             caCopy.setValue(ca.getValue());
             copy.componentAttributes.put(name, caCopy);
             if (ca.getContextAttribute() != null) {
@@ -231,7 +231,7 @@ public class ComponentDescriptor extends Observable {
         return componentAttributeList;
     }
 
-    public HashMap<String, ComponentAttribute> getComponentAttributes() {
+    public HashMap<String, ComponentField> getComponentAttributes() {
         return componentAttributes;
     }
 
@@ -262,8 +262,8 @@ public class ComponentDescriptor extends Observable {
         return dataRepository;
     }
 
-    public ComponentAttribute createComponentAttribute(String name, Class type, int accessType) {
-        return new ComponentAttribute(name, type, accessType);
+    public ComponentField createComponentField(String name, Class type, int accessType) {
+        return new ComponentField(name, type, accessType);
     }
 
     /**
@@ -273,7 +273,7 @@ public class ComponentDescriptor extends Observable {
         return type;
     }
 
-    public class ComponentAttribute {
+    public class ComponentField {
 
         public static final int READ_ACCESS = 0;
         public static final int WRITE_ACCESS = 1;
@@ -285,7 +285,7 @@ public class ComponentDescriptor extends Observable {
         //must be a vector!!!
         private ContextAttribute contextAttribute;
 
-        public ComponentAttribute(String name, Class type, int accessType) {
+        public ComponentField(String name, Class type, int accessType) {
             super();
             this.name = name;
             this.type = type;
@@ -320,7 +320,7 @@ public class ComponentDescriptor extends Observable {
 
             // if access is W or R/W (not R), then the component automatically
             // removes its context attribute from the context
-            if (this.accessType != ComponentAttribute.READ_ACCESS) {
+            if (this.accessType != ComponentField.READ_ACCESS) {
 
                 // check if component attribute has been linked before
                 // and unlink if thats the case
@@ -332,38 +332,39 @@ public class ComponentDescriptor extends Observable {
             }
             this.contextAttribute = null;
         }
-        /*
-        public void linkToAttribute(ComponentDescriptor context, String contextAttributeName) {
-        if (!this.type.isArray()) {
-        // if the type is not an array, simply create a context attribute
-        // and add it to the repository
-        linkToAttribute_(context, contextAttributeName);
-        } else {
-        linkToAttribute_(context, contextAttributeName);
-        System.out.println(ComponentDescriptor.this.getName() + " -> " + contextAttributeName);
-        // if it is an array, tokenize the attribute string (semicolon-separated)
-        // and do the above for every token
-        String[] values = JAMSTools.arrayStringAsStringArray(contextAttributeName);
-        for (String value : values) {
-        linkToAttribute_(context, value);
-        }
-        }
-        }
-         */
+        
+//        public void linkToAttribute(ComponentDescriptor context, String contextAttributeName) {
+//            if (!this.type.isArray()) {
+//                // if the type is not an array, simply create a context attribute
+//                // and add it to the repository
+//                linkToAttribute_(context, contextAttributeName);
+//            } else {
+//                linkToAttribute_(context, contextAttributeName);
+//                System.out.println(ComponentDescriptor.this.getName() + " -> " + contextAttributeName);
+//                // if it is an array, tokenize the attribute string (semicolon-separated)
+//                // and do the above for every token
+//                String[] values = JAMSTools.arrayStringAsStringArray(contextAttributeName);
+//                for (String value : values) {
+//                    linkToAttribute_(context, value);
+//                }
+//            }
+//        }
 
-        public void linkToAttribute(ComponentDescriptor context, String contextAttributeName) {
+
+        public void linkToAttribute(ComponentDescriptor context, String attributeName) {
 
 
             // check if the attribute does already exist
             // if so, just rename it
-            if (this.contextAttribute != null) {
-                if (context == contextAttribute.getContext()) {
-                    this.contextAttribute.setName(contextAttributeName);
-                    return;
-                } else {
-                    unlinkFromAttribute();
-                }
-            }
+
+//            if (this.contextAttribute != null) {
+//                if (context == contextAttribute.getContext()) {
+//                    this.contextAttribute.setName(attributeName);
+//                    return;
+//                } else {
+//                    unlinkFromAttribute();
+//                }
+//            }
 
             // this will be the attribute object to be linked
             ContextAttribute attribute;
@@ -372,10 +373,10 @@ public class ComponentDescriptor extends Observable {
             // creates a new context attribute which is registered at the
             // contexts attribute repository in order to be accessed by
             // other components
-            if (this.accessType != ComponentAttribute.READ_ACCESS) {
+            if (this.accessType != ComponentField.READ_ACCESS) {
 
                 // create a context attribute object
-                attribute = new ContextAttribute(contextAttributeName, this.type, context);
+                attribute = new ContextAttribute(attributeName, this.type, context);
 
 //                if ((this.accessType == ComponentAttribute.WRITE_ACCESS) && this.type.isArray()) {
 //                    System.out.println(ComponentDescriptor.this.getName() + " -> " + contextAttributeName);
@@ -393,12 +394,12 @@ public class ComponentDescriptor extends Observable {
                 newRepo.addAttribute(attribute);
             } else {
                 //check if this one has been already declared by some writing component attribute
-                attribute = context.getDataRepository().getAttributeByTypeName(this.type, contextAttributeName);
+                attribute = context.getDataRepository().getAttributeByTypeName(this.type, attributeName);
 
                 // check if still not available
                 // this happens, if the attribute has been implicitly declared by an entity set
                 if (attribute == null) {
-                    attribute = new ContextAttribute(contextAttributeName, this.type, context);
+                    attribute = new ContextAttribute(attributeName, this.type, context);
                 }
             }
 

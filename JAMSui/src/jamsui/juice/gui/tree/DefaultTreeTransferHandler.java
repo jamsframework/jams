@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Vector;
 import jams.model.JAMSContext;
 import jamsui.juice.ComponentDescriptor;
-import jamsui.juice.ComponentDescriptor.ComponentAttribute;
+import jamsui.juice.ComponentDescriptor.ComponentField;
 import jamsui.juice.gui.ContextReplaceDlg;
 import jamsui.juice.JUICE;
 
@@ -182,7 +182,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
                 ancestor = (JAMSNode) ancestor.getParent();
             }
 
-            for (ComponentAttribute var : cd.getComponentAttributes().values()) {
+            for (ComponentField var : cd.getComponentAttributes().values()) {
                 if (var.getContext() != null) {
                     String contextName = var.getContext().getName();
 
@@ -242,7 +242,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             //iterate over all components referencing pending contexts
             for (ComponentDescriptor component : components) {
                 //iterate over all vars
-                for (ComponentAttribute var : component.getComponentAttributes().values()) {
+                for (ComponentField var : component.getComponentAttributes().values()) {
                     if (var.getContext() != null) {
                         //again select vars that reference this pending context and connect to new (selected) context
                         if (var.getContext().getName().equals(oldContextName)) {

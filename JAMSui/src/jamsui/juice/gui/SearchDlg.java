@@ -257,7 +257,7 @@ public class SearchDlg extends JDialog {
         }
 
         if (inComponentAttribs.isSelected()) {
-            for (ComponentDescriptor.ComponentAttribute ca : cd.getComponentAttributes().values()) {
+            for (ComponentDescriptor.ComponentField ca : cd.getComponentAttributes().values()) {
 
                 // check for component attribute name
                 if (contains(ca.name, needle, caseSensitive, wholeString)) {
@@ -267,7 +267,7 @@ public class SearchDlg extends JDialog {
         }
 
         if (inComponentValues.isSelected()) {
-            for (ComponentDescriptor.ComponentAttribute ca : cd.getComponentAttributes().values()) {
+            for (ComponentDescriptor.ComponentField ca : cd.getComponentAttributes().values()) {
 
                 // check for component attribute values
                 if (ca.getValue() != null) {
