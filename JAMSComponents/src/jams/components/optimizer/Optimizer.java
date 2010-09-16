@@ -8,9 +8,9 @@
  */
 package jams.components.optimizer;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import jams.data.*;
 import jams.dataaccess.DataAccessor;
 import jams.io.datatracer.*;
@@ -20,7 +20,13 @@ import jams.model.JAMSVarDescription;
 import jams.JAMS;
 import jams.workspace.stores.Filter;
 import jams.workspace.stores.OutputDataStore;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 
 /**
@@ -69,9 +75,35 @@ public abstract class Optimizer extends JAMSContext {
             defaultValue = "true"
             )
             public JAMSBoolean enable;
+
+     @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "file for saving sample data"
+            )
+            public JAMSString sampleDumpFile;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "file for saving sample data",
+            defaultValue = "false"
+            )
+            public JAMSBoolean debugMode;
            
-    Vector<Sample> sampleList = new Vector<Sample>();
-    
+    Set<Sample> sampleList = new HashSet<Sample>();
+
+    public class SampleLimitException extends Exception{
+        String msg;
+        SampleLimitException(String msg){
+            this.msg = msg;
+        }
+        @Override
+        public String toString(){
+            return msg;
+        }
+    }
+
     //class for representing samples
     public class Sample implements Serializable {
         private double[] x;
@@ -87,6 +119,7 @@ public abstract class Optimizer extends JAMSContext {
             for (int i = 0; i < x.length; i++) {
                 this.x[i] = x[i];
             }
+
             sampleList.add(this);
         }
 
@@ -105,6 +138,31 @@ public abstract class Optimizer extends JAMSContext {
                 cpy.fx[i] = fx[i];
 
             return cpy;
+        }
+
+        @Override
+        public boolean equals(Object obj){
+            if (!(obj instanceof Sample))
+                return false;
+            Sample s = (Sample)obj;
+            if (s.x.length != this.x.length)
+                return false;
+            if (s.fx.length != this.fx.length)
+                return false;
+
+            for (int i=0;i<this.x.length;i++){
+                if (s.x[i]!=x[i])
+                    return false;
+            }
+            return true;
+        }
+        //automatically gemerated
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 79 * hash + Arrays.hashCode(this.x);
+            hash = 79 * hash + Arrays.hashCode(this.fx);
+            return hash;
         }
 
         @Override
@@ -133,6 +191,8 @@ public abstract class Optimizer extends JAMSContext {
     protected int iterationCounter = 0;
     protected double x0[] = null;
 
+    BufferedWriter sampleWriter;
+
     public Optimizer() {
     }
 
@@ -158,7 +218,11 @@ public abstract class Optimizer extends JAMSContext {
         
         if (!enable.getValue())
             return;
-        generator = new Random(System.nanoTime());
+        if (debugMode!=null && !debugMode.getValue())
+            generator = new Random(System.nanoTime());
+        else
+            generator = new Random(0);
+
         currentSampleCount = 0;
         if (this.parameterIDs == null)
             stop(JAMS.resources.getString("parameterIDs_not_specified"));
@@ -220,7 +284,16 @@ public abstract class Optimizer extends JAMSContext {
             if (counter != n){
                 stop(JAMS.resources.getString("Component") + " " + JAMS.resources.getString("startvalue_too_many_parameter"));
             }
-        }        
+        }
+
+        if (this.sampleDumpFile!=null && !this.sampleDumpFile.getValue().equals("")){
+            try{
+                this.sampleWriter = new BufferedWriter(new FileWriter(new File(this.getModel().getWorkspacePath() + "/" + this.sampleDumpFile.getValue())));
+            }catch(IOException ioe){
+                sayThis(ioe.toString());
+                this.sampleWriter = null;
+            }
+        }
     }
 
     @Override
@@ -364,6 +437,12 @@ public abstract class Optimizer extends JAMSContext {
     public void cleanup(){
         if (!enable.getValue())
             return;
+        if (this.sampleWriter!=null)
+            try{
+                this.sampleWriter.close();
+            }catch(IOException e){
+                sayThis(e.toString());
+            }
         for (DataTracer dataTracer : dataTracers) {
             dataTracer.endMark();
             dataTracer.close();

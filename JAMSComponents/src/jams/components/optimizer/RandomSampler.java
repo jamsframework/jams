@@ -36,10 +36,20 @@ public class RandomSampler extends MOOptimizer{
         //first draw random points        
         SampleMO simplex[] = new SampleMO[this.maxn.getValue()];        
         for (int i=0;i<this.maxn.getValue();i++){
-            if (i==0&&x0!=null)
-                simplex[i] = this.getSample(x0);
-            else
-                simplex[i] = this.getSample(this.RandomSampler());
+            if (i==0&&x0!=null){
+                try{
+                    simplex[i] = this.getSample(x0);
+                }catch(SampleLimitException e){
+                    break;
+                }
+            }
+            else{
+                try{
+                    simplex[i] = this.getSample(this.RandomSampler());
+                }catch(SampleLimitException e){
+                    break;
+                }
+            }
         }        
         getModel().getRuntime().println("*********************************************************");
         getModel().getRuntime().println(JAMS.resources.getString("Maximum_number_of_iterations_reached_finished_optimization"));

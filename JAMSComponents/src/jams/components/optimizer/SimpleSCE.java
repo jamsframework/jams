@@ -367,8 +367,6 @@ public class SimpleSCE extends SOOptimizer {
             bound[i] = bu[i] - bl[i];
         }
 
-        // Create an initial population to fill array x(npt,nopt):
-        generator.setSeed(iseed);        
         SampleSO x[] = new SampleSO[npt];
         for (int i = 0; i < npt; i++) {
             if (i == 0) {

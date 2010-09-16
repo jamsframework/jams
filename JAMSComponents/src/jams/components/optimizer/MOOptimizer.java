@@ -29,7 +29,7 @@ public abstract class MOOptimizer extends Optimizer {
             update = JAMSVarDescription.UpdateType.RUN,
             description = "best paramter values found so far"
             )
-            public JAMSString bestParameterSets;
+            public JAMSDouble[] bestParameterSets;
                    
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -73,9 +73,9 @@ public abstract class MOOptimizer extends Optimizer {
             return new SampleMO(x.getParameter(),x.fx);            
         }
     }
-    SampleMO getFromSampleList(int i){
+/*    SampleMO getFromSampleList(int i){
         return (SampleMO)this.sampleList.get(i);
-    }
+    }*/
     //compare samples
     static public class SampleMOComperator implements Comparator {
 
@@ -161,7 +161,9 @@ public abstract class MOOptimizer extends Optimizer {
         bestSamples = new HashSet<SampleMO>();
     }
                 
-    public SampleMO getSample(double[]x){
+    public SampleMO getSample(double[]x) throws SampleLimitException{
+        if (this.sampleList.size()>this.maxn.getValue())
+            throw new SampleLimitException("maximum sampe count reached");
         return new SampleMO(x,funct(x));
     }
                   
@@ -199,12 +201,43 @@ public abstract class MOOptimizer extends Optimizer {
         } else {            
             value = GoalFunction.f(x);
         }
+        if (this.sampleWriter!=null){
+            try{
+                for (int i=0;i<x.length;i++)
+                    sampleWriter.write(x[i]+"\t");
+
+                for (int i=0;i<value.length;i++)
+                    sampleWriter.write(value[i]+"\t");
+
+                sampleWriter.write("\n");
+                sampleWriter.flush();
+            }catch(Exception e){
+
+            }
+        }
         currentSampleCount++;
         for (int i=0;i<m;i++)
             value[i] = this.transformByMode(value[i], iMode[i]);
         
         this.bestSamples.add(new SampleMO(x,value));
         this.bestSamples = this.getParetoOptimalSet(this.bestSamples);
+       
+        //this writes one of the best sample .. what to do with all of them???!
+        Iterator<SampleMO> iter = this.bestSamples.iterator();
+        //String sampleSet[] = new String[bestSamples.size()];
+        for (int i=0;iter.hasNext();i++){
+            //sampleSet[i]=iter.next().toString();
+            SampleMO s = iter.next();
+            int c=0;
+            for (int j=0;j<s.getParameter().length;j++)
+                this.bestParameterSets[c++].setValue(s.getParameter()[j]);
+            for (int j=0;j<s.fx.length;j++)
+                this.bestParameterSets[c++].setValue(s.fx[j]);
+        }
+
+        //this.bestParameterSets.setValue(array);
+        
+
         return value;
     }
 }

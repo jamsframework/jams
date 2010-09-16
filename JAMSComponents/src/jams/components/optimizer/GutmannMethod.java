@@ -19,24 +19,27 @@ import jams.data.JAMSDataFactory;
 import jams.model.JAMSComponentDescription;
 import jams.tools.FileTools;
 import jams.JAMS;
-import jams.data.JAMSInteger;
+import java.util.Iterator;
 @JAMSComponentDescription(
         title="GutmanMethod",
         author="Christian Fischer",
         description="under construction!!"
         )
+        //not sure if it works right now .. change made in management of Samples
 public class GutmannMethod extends SOOptimizer {
                
     int initalSampleSize = 10;
     SampleSO minValue = new SampleSO(null,Double.POSITIVE_INFINITY);
     SampleSO maxValue = new SampleSO(null,Double.NEGATIVE_INFINITY);
     ArrayList<SampleSO> best10 = new ArrayList<SampleSO>();
-    
+
+    ArrayList<Sample> sortedSampleList = new ArrayList<Sample>();
+
     public double evaluate(int N,int M,Matrix coefficient,double[]x){
         double sn = 0;
-        
+
         for (int i=0;i<N;i++){            
-            sn += coefficient.get(i, 0)*kernel(Transform(getFromSampleList(i).getParameter()),x);
+            sn += coefficient.get(i, 0)*kernel(Transform(sortedSampleList.get(i).getParameter()),x);
         }
         sn += coefficient.get(N+M-1, 0);
         for (int j=0;j<M-1;j++){
@@ -89,10 +92,10 @@ public class GutmannMethod extends SOOptimizer {
             Matrix b = new Matrix(N+1+M,1);
             
             for (int i=0;i<N;i++){
-                double transformedSample_i[] = Transform(getFromSampleList(i).getParameter());
+                double transformedSample_i[] = Transform(sortedSampleList.get(i).getParameter());
                 b.set(i, 0, 0.0);
                 for (int j=i;j<N;j++){
-                    double transformedSample_j[] = Transform(getFromSampleList(j).getParameter());
+                    double transformedSample_j[] = Transform(sortedSampleList.get(j).getParameter());
                     //set big Phi
                     double phi_ij = kernel(transformedSample_i,transformedSample_j);
                     A.set(i, j, phi_ij);
@@ -178,10 +181,10 @@ public class GutmannMethod extends SOOptimizer {
         Matrix b = new Matrix(N+M,1);
         
         for(int i=0;i<N;i++){
-            double transformedSample_i[] = Transform(getFromSampleList(i).getParameter());
+            double transformedSample_i[] = Transform(sortedSampleList.get(i).getParameter());
                         
             for (int j=i;j<N;j++){
-                double transformedSample_j[] = Transform(getFromSampleList(j).getParameter());
+                double transformedSample_j[] = Transform(sortedSampleList.get(j).getParameter());
                 double phi_ij = kernel(transformedSample_i,transformedSample_j);
                 A.set(i, j, phi_ij);
                 A.set(j, i, phi_ij);                                
@@ -194,7 +197,7 @@ public class GutmannMethod extends SOOptimizer {
             A.set(i,N+M-1,1.0);
             A.set(N+M-1,i,1.0);
             
-            b.set(i, 0, getFromSampleList(i).fx);            
+            b.set(i, 0, sortedSampleList.get(i).fx[0]);
         }
         for (int i=0;i<M;i++){
             for (int j=0;j<M;j++){
@@ -215,7 +218,7 @@ public class GutmannMethod extends SOOptimizer {
                 for (int j=i+1;j<sampleList.size();j++){
                     double d = 0;
                     for (int k=0;k<n;k++){
-                        d += (getFromSampleList(i).getParameter()[k]-getFromSampleList(j).getParameter()[k])*(getFromSampleList(i).getParameter()[k]-getFromSampleList(j).getParameter()[k]);
+                        d += (sortedSampleList.get(i).getParameter()[k]-sortedSampleList.get(j).getParameter()[k])*(sortedSampleList.get(i).getParameter()[k]-sortedSampleList.get(j).getParameter()[k]);
                     }
                     if (d <= 0.000000000001){
                         sampleList.remove(j);
@@ -411,7 +414,7 @@ public class GutmannMethod extends SOOptimizer {
 
             boolean toNear = false;
             for (int i=0;i<this.sampleList.size();i++){
-                double y[] = Transform(this.getFromSampleList(i).getParameter());
+                double y[] = Transform(this.sortedSampleList.get(i).getParameter());
                 double r = 0;
                 for (int j=0;j<n;j++){                    
                     r += (myMin.x[j] - y[j])*(myMin.x[j] - y[j]);
@@ -423,7 +426,7 @@ public class GutmannMethod extends SOOptimizer {
             }
             
             //double target = this.minValue.fx - (double)(k*k)*(getFromSampleList(((int)sigma(iterationCounter,n_snake,cycleLength)).fx-this.minValue.fx);
-            double target = (double)(k*k)*(getFromSampleList((int)sigma(sampleList.size()-1,n_snake,cycleLength)-1).fx-this.minValue.fx);
+            double target = (double)(k*k)*(sortedSampleList.get((int)sigma(sampleList.size()-1,n_snake,cycleLength)-1).fx[0]-this.minValue.fx);
             double next[] = null;
             if (toNear){
                 System.out.println(JAMS.resources.getString("use_target_point"));
@@ -439,7 +442,7 @@ public class GutmannMethod extends SOOptimizer {
             do{
                 minDist = Double.POSITIVE_INFINITY;
                 for (int j=0;j<sampleList.size();j++){                
-                    double y[] = Transform(this.getFromSampleList(j).getParameter());
+                    double y[] = Transform(sortedSampleList.get(j).getParameter());
                     double dist = 0;
                     for (int i=0;i<next.length;i++){                
                         dist += (y[i]-next[i])*(y[i]-next[i]);
@@ -477,21 +480,23 @@ public class GutmannMethod extends SOOptimizer {
                     if (i==0)
                         initialSimplex[i] = best10.get(best10.size()-1);
                     else{
-                        initialSimplex[i] = getFromSampleList(generator.nextInt(sampleList.size()));
+                        Sample sample = sortedSampleList.get(generator.nextInt(sampleList.size()));
+                        initialSimplex[i] = new SampleSO(sample.getParameter(),sample.fx[0]);
                     }
                 }
                 neldermeadOptimizer.initialSimplex = initialSimplex;
                 neldermeadOptimizer.setModel(this.getModel());
                 neldermeadOptimizer.run();                
                 this.sampleList.addAll(neldermeadOptimizer.sampleList);
+                this.sortedSampleList.addAll(neldermeadOptimizer.sampleList);
                 iterationCounter += neldermeadOptimizer.sampleList.size();
                 for (int i=0;i<sampleList.size();i++){
-                    if (getFromSampleList(i).fx < minValue.fx){
-                        minValue = getFromSampleList(i);
+                    if (sortedSampleList.get(i).fx[0] < minValue.fx){
+                        minValue = new SampleSO(sortedSampleList.get(i).getParameter(),sortedSampleList.get(i).fx[0]);
                         best10.add(minValue);
                     }
-                    if (getFromSampleList(i).fx > maxValue.fx)
-                        maxValue = getFromSampleList(i);
+                    if (sortedSampleList.get(i).fx[0] > maxValue.fx)
+                        maxValue = new SampleSO(sortedSampleList.get(i).getParameter(),sortedSampleList.get(i).fx[0]);
                 }
             }
             if (maxValue.fx < s.fx)

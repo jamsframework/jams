@@ -48,9 +48,9 @@ public abstract class SOOptimizer extends Optimizer {
             )
             public Attribute.Integer mode;    
             
-    SampleSO getFromSampleList(int i){
+    /*SampleSO getFromSampleList(int i){
         return (SampleSO)this.sampleList.get(i);
-    }
+    }*/
             
     /*************************
      * first some very useful nested classes     

@@ -75,7 +75,7 @@ public class NSGA2 extends MOOptimizer {
         
         public Population(int size) {
             this.size = size;
-            rankno = new int[size];
+            rankno = new int[size+1];
             ind = new Individual[size];
             rankar = new int[size][size];
         }
@@ -106,7 +106,7 @@ public class NSGA2 extends MOOptimizer {
         }
 
         /* Create next batch of 55 random numbers */
-        public void advance_random() {
+        private void advance_random() {
             double new_random;
             for (int j1 = 0; j1 < 24; j1++) {
                 new_random = oldrand[j1] - oldrand[j1 + 31];
@@ -137,7 +137,7 @@ public class NSGA2 extends MOOptimizer {
     /* name changed from random() to avoid library conflicts on some machines*/
     @Override
     protected double randomValue() {
-       return this.generator.rand();
+       return super.generator.nextDouble();// this.generator.rand();
     }
 
     private void ranking(Population population) {
@@ -281,7 +281,7 @@ public class NSGA2 extends MOOptimizer {
                         /*Variable selected*/
                         this.crossoverCount++;
                         double betaq = 1.0;
-                        if (Math.abs(par1 - par2) > 0.000001) { // changed by Deb (31/10/01)
+                        if (Math.abs(par1 - par2) > 1E-8) { // changed by Deb (31/10/01)
                             if (par2 <= par1) {
                                 y1 = par2;
                                 y2 = par1;                                
@@ -542,7 +542,10 @@ public class NSGA2 extends MOOptimizer {
             } else {
                 int sel = pop1.size - st;
                 lastRank = i + 1;
-                pop3.rankno[i] = sel;
+               /* if (i >= pop3.size)
+                    System.out.println("NSGA2 error, pop3 array out of bounds .. ");
+                else*/
+                    pop3.rankno[i] = sel;
                 gsort(i + 1, sel, globalPopulation, flag);
                 break;
             }
@@ -620,7 +623,7 @@ public class NSGA2 extends MOOptimizer {
         }
         if (this.crossoverProbability == null ||
             this.crossoverProbability.getValue() < 0.0 ||
-            this.mutationDistributionIndex.getValue() > 1.0){
+            this.crossoverProbability.getValue() > 1.0){
             sayThis(JAMS.resources.getString("crossoverProbability_not_specified_or_out_of_bounds"));
             return;
         }
@@ -642,7 +645,12 @@ public class NSGA2 extends MOOptimizer {
         Population newPopulation = new Population(populationSize.getValue());
 
         for (int i = 0; i < this.populationSize.getValue(); i++) {
-            oldPopulation.ind[i] = new Individual(this.getSample(RandomSampler()));
+            try{
+                oldPopulation.ind[i] = new Individual(this.getSample(RandomSampler()));
+            }catch(SampleLimitException e){
+                sayThis(e.toString());
+                return;
+            }
         }
         ranking(oldPopulation);
         /********************************************************************/
@@ -658,7 +666,12 @@ public class NSGA2 extends MOOptimizer {
             real_mutate(newParameter);
             /*----------FUNCTION EVALUATION-----------*/
             for (int j = 0; j < newParameter.length; j++) {
-                newPopulation.ind[j] = new Individual(this.getSample(newParameter[j]));
+                try{
+                    newPopulation.ind[j] = new Individual(this.getSample(newParameter[j]));
+                }catch(SampleLimitException e){
+                    sayThis(e.toString());
+                    return;
+                }
             }
             ranking(newPopulation);
             /*-------------------SELECTION KEEPING FRONTS ALIVE--------------*/
