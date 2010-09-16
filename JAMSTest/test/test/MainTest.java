@@ -64,8 +64,8 @@ public class MainTest {
         //test output
         try{
             Report report = J2KFileComparator.compare(
-                    new File("../../../modeldata/calibration/output/current/result.dat"),
-                    new File("../../../modeldata/calibration/test/reference/reference.dat"),0.001);
+                    new File("../../../modeldata/Calibration/output/current/result.dat"),
+                    new File("../../../modeldata/CSalibration/test/reference/reference.dat"),0.001);
             report.print(System.out);
             org.junit.Assert.assertFalse(report.isReportEmpty());
         }catch(Exception e){
