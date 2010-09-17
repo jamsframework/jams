@@ -52,7 +52,7 @@ public class MainTest {
     }
 
      public void testCalibration(){
-        System.out.println("performing Calibration Test");
+        System.out.println("performing Calibration Test(NSGA - Dixon-1)");
 
         System.out.println(System.getProperty("user.dir"));
         String args[] = new String[]{
@@ -65,7 +65,27 @@ public class MainTest {
         try{
             Report report = J2KFileComparator.compare(
                     new File("../../../modeldata/Calibration/output/current/result.dat"),
-                    new File("../../../modeldata/Calibration/test/reference/reference.dat"),0.001);
+                    new File("../../../modeldata/Calibration/test/reference/reference.dat"),0.005);
+            report.print(System.out);
+            org.junit.Assert.assertFalse(report.isReportEmpty());
+        }catch(Exception e){
+            org.junit.Assert.fail("Exception while comparing Calibration - Results:" + e.toString());
+        }
+
+        System.out.println("performing Calibration Test(Direct - J2K - Gehlberg -Lumped)");
+
+        System.out.println(System.getProperty("user.dir"));
+        String args2[] = new String[]{
+            "-c", "../test.jap",
+            "-m", "../../../modeldata/Calibration/JAMS-Gehlberg-Lumped/j2k_gehlberg_calibration.jam"
+        };
+        jamsui.launcher.JAMSui.main(args2);
+
+        //test output
+        try{
+            Report report = J2KFileComparator.compare(
+                    new File("../../../modeldata/Calibration/JAMS-Gehlberg-Lumped/output/current/result.dat"),
+                    new File("../../../modeldata/Calibration/JAMS-Gehlberg-Lumped/test/reference/reference.dat"),0.002);
             report.print(System.out);
             org.junit.Assert.assertFalse(report.isReportEmpty());
         }catch(Exception e){
