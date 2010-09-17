@@ -249,7 +249,7 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
         
         JAMSFullModelState state = null;
         try{
-            new JAMSFullModelState(new File(this.snapshotFile.getValue()));
+            state = new JAMSFullModelState(new File(this.snapshotFile.getValue()));
         }catch(ClassNotFoundException e){
             this.getModel().getRuntime().sendHalt("class not found, so that model state could not loaded:" + e.toString());
         }catch(IOException ioe){
@@ -272,7 +272,8 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
         for (int i=0;i<outValueCount;i++){
             String key = outNames[i];
             if (key != null){                
-                outValues[i] = ((JAMSDouble) model.getRuntime().getDataHandles().get(key)).getValue();       
+                outValues[i] = ((JAMSDouble) model.getRuntime().getDataHandles().get(key)).getValue();
+                System.out.println("key:" + key + " ----> " + outValues[i]);
             }
         }
         model = null;

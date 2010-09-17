@@ -14,7 +14,6 @@ package jams.components.optimizer;
 import java.util.ArrayList;
 import jams.model.JAMSComponentDescription;
 import jams.JAMS;
-import java.util.Vector;
 
 @JAMSComponentDescription(
         title="Branch and Bound Optimizer",
@@ -22,7 +21,7 @@ import java.util.Vector;
         description="Performs a branch and bound optimization. Advantage: It can be shown, that this method will find the global optimum. Disadvantage: This method usally requires many function evaluations. So it should only be used, if model execution is very fast"
         )
 public class Direct extends SOOptimizer{
-    Vector<SampleSO> Q = new Vector<SampleSO>();
+    ArrayList<SampleSO> Q = new ArrayList<SampleSO>();
     
     int lengths[][] = null;
     double fc[] = null;
@@ -66,6 +65,7 @@ public class Direct extends SOOptimizer{
         Q.add(new SampleSO(reTransform(c[0]),fc[0]));       
     }
     
+    @Override
     public void init(){        
         super.init();
         
@@ -278,6 +278,7 @@ public class Direct extends SOOptimizer{
         szes[index] = 0.5*Math.sqrt(szes[index]);
     }
     
+    @Override
     public void run() {
         if (!this.enable.getValue()){
             singleRun();

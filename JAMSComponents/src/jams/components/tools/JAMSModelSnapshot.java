@@ -42,14 +42,21 @@ public class JAMSModelSnapshot extends JAMSComponent{
                 fileName = FileTools.createAbsoluteFileName(getModel().getWorkspaceDirectory().getPath() , snapshotFile.getValue());
             //think about it .. after that call the model is NOT in an standardized state
             //.. i am not sure if this fact can 
-            runtime.pause();
+            //runtime.pause();
             File file = new File(fileName);
+            FullModelState state = runtime.getFullModelState();
             try {
-                runtime.getFullModelState().writeToFile(file);
+                state.writeToFile(file);
             } catch (IOException e) {
                 runtime.sendErrorMsg(jams.JAMS.resources.getString("Unable_to_save_model_state_because,") + e.toString());
                 runtime.handle(e, true);
-            }           
+            }    
+            /*try{
+                runtime.resume(state.getSmallModelState());
+            }catch(Exception e){
+                runtime.sendErrorMsg(jams.JAMS.resources.getString("Unable_to_resume_model_execution_because") + e.toString());
+                runtime.handle(e, true);
+            }*/
         }else{
             this.getModel().getRuntime().sendInfoMsg(jams.JAMS.resources.getString("Snapshoting_not_supported_by_runtime_"));            
         } 

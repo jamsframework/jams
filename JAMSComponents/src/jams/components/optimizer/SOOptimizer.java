@@ -24,7 +24,7 @@ public abstract class SOOptimizer extends Optimizer {
             update = JAMSVarDescription.UpdateType.RUN,
             description = "best paramter values found so far"
             )
-            public Attribute.String bestParameterSet;
+            public JAMSDouble[] bestParameterSet;
                    
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -132,12 +132,10 @@ public abstract class SOOptimizer extends Optimizer {
         
         if (result < this.bestValue) {
             bestValue = result;
-            if (bestParameterSet == null)//this can happen in offline mode
-                bestParameterSet = jams.data.JAMSDataFactory.createString();
-            this.bestParameterSet.setValue("");
-            for (int i = 0; i < x.length; i++) {
-                bestParameterSet.setValue(bestParameterSet.getValue() + x[i] + ";");
-            }
+            int c=0;
+            for (int j=0;j<x.length;j++)
+                this.bestParameterSet[c++].setValue(x[j]);
+            this.bestParameterSet[c++].setValue(value);
         }
         return result;
     }   
