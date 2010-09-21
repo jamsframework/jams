@@ -22,7 +22,6 @@
 
 package jams.components.gui;
 
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import jams.data.Attribute;
 import jams.data.Attribute.Entity.NoSuchAttributeException;
@@ -103,6 +102,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import jams.JAMS;
 
 /**
  * Viewer component for JAMS entities and parameter. Each parameter map is implemented by
@@ -112,51 +112,92 @@ import javax.swing.event.ChangeListener;
  * unsupported)
  * Note: In future and stable GeoTools 2.6 JMapPane will be rewritten and change to MapWidget...
  *
- * @author C. Schwartze
+ * @author C. Fischer
  */
 public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Name of SLD-File containing layer style information")
-    public JAMSString stylesFileName;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "ID of a style in the SLD-File")
-    public JAMSInteger styleID;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.RUN, description = "Collection of hru objects")
-    public JAMSEntityCollection hrus;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Name of hru attribute to add for mapping")
-    public JAMSStringArray showAttr;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Number of ranges for classification attribute")
-    public JAMSStringArray numOfRanges;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Color shading the ranges")
-    public JAMSStringArray rangeColor;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Name of shapefile to add as a layer to the map")
-    public Attribute.String shapeFileName1;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Name of shapefile to add as a layer to the map")
-    public Attribute.String shapeFileName2;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Name of shapefile to add as a layer to the map")
-    public Attribute.String shapeFileName3;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Colors for extra shapefiles")
-    public JAMSStringArray shapeColors;
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Name of SLD-File containing layer style information"
+            )public JAMSString stylesFileName;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "ID of a style in the SLD-File"
+            )public JAMSInteger styleID;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "Collection of hru objects"
+            )public JAMSEntityCollection hrus;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Name of hru attribute to add for mapping"
+            )public JAMSStringArray showAttr;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Number of ranges for classification attribute"
+            )public JAMSStringArray numOfRanges;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Color shading the ranges"
+            )public JAMSStringArray rangeColor;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Name of shapefile to add as a layer to the map"
+            )public Attribute.String shapeFileName1;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Name of shapefile to add as a layer to the map"
+            )public Attribute.String shapeFileName2;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Name of shapefile to add as a layer to the map"
+            )public Attribute.String shapeFileName3;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Colors for extra shapefiles"
+            )public JAMSStringArray shapeColors;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.RUN, description = "Original shape file name")
     public JAMSString baseShape;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "HeightMapFile"
+            description = "path to height map"
             )
             public JAMSString heightMap;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "HeightMapFile"
+            description = "resolution of 3d model, that means number of grid cells in each row",
+            defaultValue = "256"
             )
             public JAMSInteger resolution = null;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
-            description = "HeightMapFile"
+            description = "switch to toggle directional lighting of 3d model on and off",
+            defaultValue = "true"
             )
             public JAMSBoolean light = null;
     
@@ -177,7 +218,6 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
     transient private SimpleFeature selectedF = null;
     private CoordinateReferenceSystem crs;
     transient private DefaultMapContext topmap;
-    private Envelope fullExtent;
     private DefaultMapLayer selection = null;
     private String[] otherLayers;
     private int div_hor;
@@ -189,7 +229,6 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
 
     @Override
     public void run() throws Exception {
-
         if (panel == null) {
             return;
         }
@@ -218,27 +257,17 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
 
         if (mp == null)
             mp = new Styled3DMapPane();
-        info.setText("3D Map Pane ... loading map");
+        info.setText(JAMS.resources.getString("3D_Map_Pane_loading_map"));
         asg = new JAMSAscGridReader(getModel().getWorkspaceDirectory().getPath() + "/" + this.heightMap.toString());
-        boolean light = true;
-        int Resolution = 256;
-        
-        if (resolution != null) {
-            Resolution = resolution.getValue();
-        }
-        if (this.light != null) {
-            light = this.light.getValue();
-        }
-        
-        mp.light = light;
-        mp.xRes = Resolution;
-        mp.yRes = Resolution;
-        mp.textureWidth = 2.0*Resolution;
-        mp.textureHeight = 2.0*Resolution;
                 
-        //mp.setMapArea(mc[0].asCollectionDataStore().getCollection().getBounds());        
+        mp.light = this.light.getValue();
+        mp.xRes = resolution.getValue();
+        mp.yRes = resolution.getValue();
+        mp.textureWidth = 2.0*resolution.getValue();
+        mp.textureHeight = 2.0*resolution.getValue();
+                
         mp.setHeightMap(asg);
-        info.setText("3D Map Pane ... calculating normals");        
+        info.setText(JAMS.resources.getString("3D_Map_Pane_calculating_normals"));
                 
         otherLayers = new String[]{shapeFileName1.getValue(), shapeFileName2.getValue(), shapeFileName3.getValue()};
 
@@ -271,25 +300,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
             }
             j++;
         }
-
-        mp.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                /*if (mp.getState() == JMapPane.Select) {
-                    try {
-                        gispanel.getFeatureInfo(e.getX(), e.getY());
-                    } catch (CQLException ex) {
-                        MapCreator3D.this.getModel().getRuntime().handle(ex);
-                    } catch (IOException ex) {
-                        MapCreator3D.this.getModel().getRuntime().handle(ex);
-                    }
-                }*/
-            }
-        });
-
-        //skip that for 3d viewer
-//        gispanel.addToolbar();
-
+        
         /* Define a set of maps (MapCollection) and add them to MapPanel */
         numOfParams = showAttr.getValue().length;
         mc = new MapCollection[numOfParams];
@@ -314,11 +325,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
         }
                 
         finished = true;
-
-        fullExtent = topmap.getAreaOfInterest();
-
-//        mp.setMapArea(topmap.getLayerBounds());
-
+        
         div_hor = gispanel.getSize().width - mainSplitPane.getInsets().right - mainSplitPane.getDividerSize() - 150;
         int div_ver = gispanel.getSize().height - mainSplitPane.getInsets().bottom - mainSplitPane.getDividerSize() - 150;
 

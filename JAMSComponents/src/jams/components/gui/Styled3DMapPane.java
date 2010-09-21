@@ -98,7 +98,7 @@ public class Styled3DMapPane extends Applet {
         int x,x_last,y,y_last;
         int x2,x2_last,y2,y2_last;
         boolean init,initb2;
-        double xFactor = 0.0015,yFactor = 0.0015;
+        double xFactor = 0.0065,yFactor = 0.0065;
         double xTranslationFactor = 0.01,yTranslationFactor = 0.01;
         
         TransformGroup transformGroup;
