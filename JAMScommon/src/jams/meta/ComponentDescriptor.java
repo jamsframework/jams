@@ -28,6 +28,7 @@ import jams.model.JAMSVarDescription;
 import java.util.ArrayList;
 import jams.JAMS;
 import jams.JAMSException;
+import jams.data.JAMSDataFactory;
 import jams.model.Context;
 import java.util.Observable;
 
@@ -257,12 +258,23 @@ public class ComponentDescriptor extends Observable {
 
         public void linkToAttribute(ContextDescriptor context, String attributeName) throws JAMSException {
 
+            Class basicType;
+
+            if (this.type.isArray()) {
+                basicType = this.type.getComponentType();
+            } else {
+                basicType = this.type;
+            }
+
+            if (!basicType.isInterface()) {
+                basicType = JAMSDataFactory.getBelongingInterface(basicType);
+            }
 
             // this will be the attribute object to be linked
             ContextAttribute attribute = context.getDynamicAttributes().get(attributeName);
 
             // check if already existing
-            if ((attribute != null) && !attribute.getType().isAssignableFrom(this.type)) {
+            if ((attribute != null) && !attribute.getType().isAssignableFrom(basicType)) {
                 throw new JAMSException("Attribute " + attributeName + " already exists in context " +
                         context.getName() + " with type " + attribute.getType());
             } 
@@ -272,7 +284,7 @@ public class ComponentDescriptor extends Observable {
             
             // if not yet existing, create a new ContextAttribute and add it to the context
             if (attribute == null) {
-                attribute = new ContextAttribute(attributeName, type, context);
+                attribute = new ContextAttribute(attributeName, basicType, context);
                 context.getDynamicAttributes().put(attributeName, attribute);
             }
 

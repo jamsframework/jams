@@ -257,7 +257,6 @@ public class ModelIO {
         try {
             type = Class.forName(typeName);
         } catch (ClassNotFoundException ex) {
-            System.out.println("oops");
             throw new JAMSException("Given type " + typeName + " for context attribute " +
                     attribute + " in context " + cd.getName() + " does not exist!", JAMS.resources.getString("Model_loading_error"));
         }
