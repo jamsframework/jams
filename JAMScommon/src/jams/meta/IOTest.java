@@ -57,14 +57,19 @@ public class IOTest {
 
         output(md.getRootNode(), 0);
 
-        ComponentDescriptor cd = md.getComponentDescriptor("J2KProcessSnow");
+//        ComponentDescriptor cd = md.getComponentDescriptor("SpatialWeightedSumAggregator1");
+//        output(cd, "");
+
+
+    }
+
+    static void output(ComponentDescriptor cd, String indent) {
+        System.out.println(indent + cd.getName() + " [" + cd.getClazz() + "]");
         HashMap<String, ComponentDescriptor.ComponentField> fields = cd.getComponentFields();
         for (String fieldName : fields.keySet()) {
             ComponentDescriptor.ComponentField field = fields.get(fieldName);
-            System.out.println(fieldName + " -> " + field.getContext() + " -> " + field.getValue());
+            System.out.println(indent + "    " + fieldName + " [" + field.getContext() + "->" + field.getAttribute() + "] [" + field.getValue() + "]");
         }
-
-
     }
 
     static void output(JAMSNode node, int level) {
@@ -72,9 +77,9 @@ public class IOTest {
         for (int i = 0; i < level; i++) {
             indent += "    ";
         }
-        System.out.println(indent + node.getUserObject());
-        for (int i = 1; i < node.getChildCount(); i++) {
-            output(node.getChildAt(i), level+1);
+        output((ComponentDescriptor) node.getUserObject(), indent);
+        for (int i = 0; i < node.getChildCount(); i++) {
+            output(node.getChildAt(i), level + 1);
         }
     }
 }

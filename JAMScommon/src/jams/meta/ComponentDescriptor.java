@@ -30,6 +30,7 @@ import jams.JAMS;
 import jams.JAMSException;
 import jams.data.JAMSDataFactory;
 import jams.model.Context;
+import jams.tools.StringTools;
 import java.util.Observable;
 
 /**
@@ -127,8 +128,8 @@ public class ComponentDescriptor extends Observable {
             ComponentField caCopy = new ComponentField(ca.name, ca.type, ca.accessType);
             caCopy.setValue(ca.getValue());
             copy.componentFields.put(name, caCopy);
-            if (ca.getContextAttribute() != null) {
-                caCopy.linkToAttribute(ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
+            if (ca.getContextAttributes() != null) {
+                caCopy.linkToAttribute(ca.getContext(), ca.getAttribute());
                 //copy.linkComponentAttribute(ca.name, ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
             }
         }
@@ -204,8 +205,7 @@ public class ComponentDescriptor extends Observable {
         public String name = "";
         public Class type = null;
         public int accessType;
-        //must be a vector!!!
-        private ContextAttribute contextAttribute;
+        private ArrayList<ContextAttribute> contextAttributes = new ArrayList<ContextAttribute>();
 
         public ComponentField(String name, Class type, int accessType) {
             super();
@@ -215,23 +215,31 @@ public class ComponentDescriptor extends Observable {
         }
 
         public String getAttribute() {
-            if (contextAttribute != null) {
-                return contextAttribute.getName();
-            } else {
-                return "";
+
+            String aName = "";
+
+            if (contextAttributes.isEmpty()) {
+                return aName;
             }
+
+            for (ContextAttribute ca : contextAttributes) {
+                aName += ca.getName() + ";";
+            }
+            aName = aName.substring(0, aName.length() - 1);
+
+            return aName;
         }
 
         public ContextDescriptor getContext() {
-            if (contextAttribute != null) {
-                return contextAttribute.getContext();
+            if (contextAttributes.size() > 0) {
+                return contextAttributes.get(0).getContext();
             } else {
                 return null;
             }
         }
 
-        public ContextAttribute getContextAttribute() {
-            return contextAttribute;
+        public ArrayList<ContextAttribute> getContextAttributes() {
+            return contextAttributes;
         }
 
         public String getValue() {
@@ -239,26 +247,48 @@ public class ComponentDescriptor extends Observable {
         }
 
         public void unlinkFromAttribute() {
-
-            if (this.contextAttribute == null) {
-                return;
+            for (ContextAttribute ca : this.contextAttributes) {
+                unlinkFromAttribute(ca);
             }
+        }
 
+        public void unlinkFromAttribute(String caName) {
+            for (ContextAttribute ca : this.contextAttributes) {
+                if (ca.getName().equals(caName)) {
+                    unlinkFromAttribute(ca);
+                    return;
+                }
+            }
+        }
+
+        public void unlinkFromAttribute(ContextAttribute ca) {
             // remove from ContextAttribute
-            this.contextAttribute.getFields().remove(this);
+            ca.getFields().remove(this);
 
             // if ContextAttribute has no connected fields anymore, remove it from its context
-            if (this.contextAttribute.getFields().isEmpty()) {
-                ContextDescriptor context = this.contextAttribute.getContext();
-                context.getDynamicAttributes().remove(this.contextAttribute.getName());
+            if (ca.getFields().isEmpty()) {
+                ContextDescriptor context = ca.getContext();
+                context.getDynamicAttributes().remove(ca.getName());
             }
-
-            this.contextAttribute = null;
+            this.contextAttributes.remove(ca);
         }
 
         public void linkToAttribute(ContextDescriptor context, String attributeName) throws JAMSException {
 
             Class basicType;
+
+            // if there is more than one attribute bound to this
+            if (attributeName.contains(";")) {
+                if (this.type.isArray()) {
+                    String[] attributeNames = StringTools.toArray(attributeName, ";");
+                    for (String s : attributeNames) {
+                        linkToAttribute(context, s);
+                    }
+                    return;
+                } else {
+                    throw new JAMSException("Semicolons are not allowed in attribute names!");
+                }
+            }
 
             if (this.type.isArray()) {
                 basicType = this.type.getComponentType();
@@ -274,14 +304,16 @@ public class ComponentDescriptor extends Observable {
             ContextAttribute attribute = context.getDynamicAttributes().get(attributeName);
 
             // check if already existing
-            if ((attribute != null) && !attribute.getType().isAssignableFrom(basicType)) {
-                throw new JAMSException("Attribute " + attributeName + " already exists in context " +
-                        context.getName() + " with type " + attribute.getType());
-            } 
+            if ((attribute != null) && (attribute.getType() != basicType)) {
+                throw new JAMSException("Attribute " + attributeName + " already exists in context "
+                        + context.getName() + " with different type " + attribute.getType());
+            }
 
-            // unlink from old ContextAttribute
-            unlinkFromAttribute();
-            
+            if (!this.type.isArray()) {
+                // unlink from old ContextAttribute
+                unlinkFromAttribute();
+            }
+
             // if not yet existing, create a new ContextAttribute and add it to the context
             if (attribute == null) {
                 attribute = new ContextAttribute(attributeName, basicType, context);
@@ -290,7 +322,7 @@ public class ComponentDescriptor extends Observable {
 
             // link this field to new ContextAttribute
             attribute.getFields().add(this);
-            this.contextAttribute = attribute;
+            this.contextAttributes.add(attribute);
 
         }
 
