@@ -250,6 +250,11 @@ public class JAMSDataFactory {
      * @return The belonging JAMSData interface
      */
     public static Class getBelongingInterface(Class clazz) {
+
+        if (clazz.isInterface()) {
+            return clazz;
+        }
+
         if (classLookup == null) {
 
             classLookup = new HashMap<Class, Class>();

@@ -42,7 +42,7 @@ public class ComponentDescriptor extends Observable {
     public static final int COMPONENT_TYPE = 0, CONTEXT_TYPE = 1;
     private String instanceName = "";
     private Class<?> clazz;
-    private ArrayList<String> componentAttributeList = new ArrayList<String>();
+    private ArrayList<String> componentFieldList = new ArrayList<String>();
     protected HashMap<String, ComponentField> componentFields = new HashMap<String, ComponentField>();
     private int type;
     private ModelDescriptor modelDescriptor;
@@ -95,7 +95,7 @@ public class ComponentDescriptor extends Observable {
                 }
 
                 getComponentFields().put(field.getName(), new ComponentField(field.getName(), field.getType(), accessType));
-                getComponentAttributeList().add(field.getName());
+                getComponentFieldList().add(field.getName());
             }
         }
     }
@@ -152,8 +152,8 @@ public class ComponentDescriptor extends Observable {
     /**
      * @return the componentAttributeList
      */
-    public ArrayList<String> getComponentAttributeList() {
-        return componentAttributeList;
+    public ArrayList<String> getComponentFieldList() {
+        return componentFieldList;
     }
 
     public HashMap<String, ComponentField> getComponentFields() {

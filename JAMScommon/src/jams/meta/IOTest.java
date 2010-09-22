@@ -23,11 +23,14 @@ package jams.meta;
 
 import jams.JAMSProperties;
 import jams.SystemProperties;
+import jams.data.Attribute;
+import jams.data.JAMSEntity;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import jams.tools.StringTools;
 import jams.tools.XMLTools;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.w3c.dom.Document;
 
@@ -55,7 +58,18 @@ public class IOTest {
         System.out.println(md.getAuthor());
         System.out.println(md.getDescription());
 
+
+        ComponentDescriptor cd = md.getComponentDescriptor("TmeanRegionaliser");
+        ArrayList<ContextAttribute> tmean = cd.getComponentFields().get("dataValue").getContextAttributes();
+        ContextAttribute ca = tmean.get(0);
+        ca.setName("mytmean");
         output(md.getRootNode(), 0);
+
+        ContextDescriptor context = (ContextDescriptor) md.getComponentDescriptor("HRULoop");
+        HashMap<String, ContextAttribute> attribs = context.getDynamicAttributes(JAMSEntity.class);
+        for (ContextAttribute attrib : attribs.values()) {
+            System.out.println(attrib.getName() + " [" + attrib.getType() + "]");
+        }
 
 //        ComponentDescriptor cd = md.getComponentDescriptor("SpatialWeightedSumAggregator1");
 //        output(cd, "");

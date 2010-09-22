@@ -24,6 +24,9 @@ package jams.meta;
 import jams.JAMSException;
 import java.util.HashMap;
 import jams.JAMS;
+import jams.data.JAMSDataFactory;
+import java.util.ArrayList;
+import java.util.Map.Entry;
 
 /**
  *
@@ -31,13 +34,11 @@ import jams.JAMS;
  */
 public class ContextDescriptor extends ComponentDescriptor {
 
-    private AttributeRepository dataRepository;
     private HashMap<String, ContextAttribute> staticAttributes = new HashMap<String, ContextAttribute>();
     private HashMap<String, ContextAttribute> dynamicAttributes = new HashMap<String, ContextAttribute>();
 
     public ContextDescriptor(String instanceName, Class clazz) throws JAMSException {
         super(instanceName, clazz);
-        dataRepository = new AttributeRepository();
     }
 
     public ContextDescriptor(String instanceName, Class clazz, ModelDescriptor md) throws JAMSException {
@@ -47,10 +48,6 @@ public class ContextDescriptor extends ComponentDescriptor {
 
     public ContextDescriptor(Class clazz) throws JAMSException {
         this(clazz.getSimpleName(), clazz);
-    }
-
-    public AttributeRepository getDataRepository() {
-        return dataRepository;
     }
 
 //    public ContextAttribute addToDynamicAttribute(String name, ComponentField field) throws JAMSException {
@@ -80,7 +77,6 @@ public class ContextDescriptor extends ComponentDescriptor {
         } else {
             ca = new ContextAttribute(name, type, this);
             staticAttributes.put(name, ca);
-            getDataRepository().addAttribute(ca);
         }
 
         ca.setValue(value);
@@ -91,7 +87,6 @@ public class ContextDescriptor extends ComponentDescriptor {
     public void removeStaticAttribute(String name) {
         ContextAttribute ca = staticAttributes.get(name);
         staticAttributes.remove(name);
-        getDataRepository().removeAttribute(ca);
     }
 
     public HashMap<String, ContextAttribute> getStaticAttributes() {
@@ -100,6 +95,17 @@ public class ContextDescriptor extends ComponentDescriptor {
 
     public HashMap<String, ContextAttribute> getDynamicAttributes() {
         return dynamicAttributes;
+    }
+
+    public HashMap<String, ContextAttribute> getDynamicAttributes(Class<?> type) {
+        type = JAMSDataFactory.getBelongingInterface(type);
+        HashMap<String, ContextAttribute> result = new HashMap<String, ContextAttribute>();
+        for (Entry<String, ContextAttribute> entry : dynamicAttributes.entrySet()) {
+            if (type.isAssignableFrom(entry.getValue().getType())) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return result;
     }
 
     @Override
