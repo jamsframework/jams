@@ -52,27 +52,30 @@ public class IOTest {
 
         Document doc = XMLTools.getDocument("D:/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam");
 
+        // get the model and access some meta data
         ModelDescriptor md = io.loadModel(doc);
-
-
         System.out.println(md.getAuthor());
         System.out.println(md.getDescription());
 
-
+        // rename a context attribute
         ComponentDescriptor cd = md.getComponentDescriptor("TmeanRegionaliser");
         ArrayList<ContextAttribute> tmean = cd.getComponentFields().get("dataValue").getContextAttributes();
         ContextAttribute ca = tmean.get(0);
         ca.setName("mytmean");
+
+        // output a node
         output(md.getRootNode(), 0);
 
+        // get all attributes of a context (by type)
         ContextDescriptor context = (ContextDescriptor) md.getComponentDescriptor("HRULoop");
         HashMap<String, ContextAttribute> attribs = context.getDynamicAttributes(JAMSEntity.class);
         for (ContextAttribute attrib : attribs.values()) {
             System.out.println(attrib.getName() + " [" + attrib.getType() + "]");
         }
 
-//        ComponentDescriptor cd = md.getComponentDescriptor("SpatialWeightedSumAggregator1");
-//        output(cd, "");
+        // output a component
+        cd = md.getComponentDescriptor("SpatialWeightedSumAggregator1");
+        output(cd, "");
 
 
     }
