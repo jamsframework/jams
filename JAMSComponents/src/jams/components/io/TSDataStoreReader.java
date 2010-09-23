@@ -144,6 +144,18 @@ public class TSDataStoreReader extends JAMSComponent {
 
         // extract some meta information
         DataSetDefinition dsDef = store.getDataSetDefinition();
+        if (dsDef.getAttributeValues("X")==null){
+            getModel().getRuntime().sendHalt("Error in data set definition \"" +
+                    id + "\" from " + getInstanceName() + ": x coordinate not specified");
+        }
+        if (dsDef.getAttributeValues("Y")==null){
+            getModel().getRuntime().sendHalt("Error in data set definition \"" +
+                    id + "\" from " + getInstanceName() + ": y coordinate not specified");
+        }
+        if (dsDef.getAttributeValues("ELEVATION")==null){
+            getModel().getRuntime().sendHalt("Error in data set definition \"" +
+                    id + "\" from " + getInstanceName() + ": elevation not specified");
+        }
         xCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("X")));
         yCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("Y")));
         elevation.setValue(listToDoubleArray(dsDef.getAttributeValues("ELEVATION")));
@@ -185,11 +197,7 @@ public class TSDataStoreReader extends JAMSComponent {
                 }
                 steps = (int) steps / timeUnitCount;
 
-                // just call getNext() step times
-                for (int i = 0; i < steps; i++) {
-                    store.getNext();
-                }
-
+                store.skip(steps);
             } else {
 
                 // here we need to walk through time with a calendar object

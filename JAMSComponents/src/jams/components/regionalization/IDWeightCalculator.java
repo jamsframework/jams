@@ -71,13 +71,12 @@ public class IDWeightCalculator extends JAMSComponent {
     private double[] statX;
 
     private double[] statY;
-
+    InputDataStore store = null;
     /*
      *  Component run stages
      */
     @Override
-    public void init() {
-        InputDataStore store = null;
+    public void init() {        
         if (dataStoreID != null) {
             store = getModel().getWorkspace().getInputDataStore(dataStoreID.getValue());
         }
@@ -130,6 +129,13 @@ public class IDWeightCalculator extends JAMSComponent {
         double[] weights = statWeights.getValue();
         for (int i = 0; i < weights.length; i++) {
             weights[i] = 0;
+        }
+        if (store!=null){
+            try{
+                store.close();
+            }catch(Exception ioe){
+                ioe.printStackTrace();
+            }
         }
     }
 }

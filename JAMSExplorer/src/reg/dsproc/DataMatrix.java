@@ -129,6 +129,22 @@ public class DataMatrix extends Matrix {
         this.print(5, 3);
     }
 
+    public boolean equals(DataMatrix mat, double accuracy){
+        int N = this.getRowDimension();
+        int M = this.getColumnDimension();
+        if (N != mat.getRowDimension() ||
+            M != mat.getColumnDimension()){
+            return false;
+        }
+        for (int i=0;i<M;i++){
+            for (int j=0;j<N;j++){
+                if (Math.abs( this.get(i, j) - mat.get(i, j))>accuracy)
+                    return false;
+            }
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
         double[][] x = {{1, 2, 3}, {4, 5, 6}, {8, 10, 12}};
         String[] ids = {"a", "b", "c"};

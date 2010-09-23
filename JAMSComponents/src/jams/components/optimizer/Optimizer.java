@@ -431,6 +431,9 @@ public abstract class Optimizer extends JAMSContext {
                 dataTracer.trace();
             }
         }
+        //close all input data stores, otherwise thousands of files will
+        //opened while optimizing
+        //getModel().getWorkspace().
     }
             
     @Override

@@ -52,7 +52,7 @@ public class DatabaseOutputDataStore implements OutputDataStore {
     private String genericSqlStatement;
     private boolean cleanedup = false;
     private boolean dataStarted;
-    private JdbcSQLConnector pgsql;
+    transient private JdbcSQLConnector pgsql;
     ArrayList<String> lineArray = new ArrayList<String>(20);
 
     public void setUser(String user) {
@@ -149,13 +149,13 @@ public class DatabaseOutputDataStore implements OutputDataStore {
     }
 
     public void write(Object o) throws IOException {
-        if (o.toString().contains("@start")){
+        if (o.toString().contains("@data")){
             dataStarted = true;
         }
     }
 
     public void writeCell(Object o) {
-        if (o.toString().contains("@start")) {
+        if (o.toString().contains("@data")) {
             dataStarted = true;
         } else if (dataStarted) {
             lineArray.add(o.toString());
@@ -171,7 +171,11 @@ public class DatabaseOutputDataStore implements OutputDataStore {
             if (!sqlStatement.contains("#")) {
                 pgsql.execUpdate(sqlStatement);
             } else {
-                System.err.println("DatabaseOutputDataStore: skip line, because not all attributes are known");
+                String str = "->";
+                for (int i = 1; i <= this.lineArray.size(); i++) {
+                    str += lineArray.get(i-1) + "<->";
+                }
+                System.err.println("DatabaseOutputDataStore: skip line, because not all attributes are known:" + str);
             }
         } catch (SQLException sqlex) {
             System.err.println("DatabaseOutputDataStore: " + sqlex);
@@ -203,7 +207,12 @@ public class DatabaseOutputDataStore implements OutputDataStore {
     }
 //todo
     public void setState(DataStoreState state){
-        
+        try{
+            this.open(true);
+            dataStarted = true;
+        }catch(IOException ioe){
+            System.out.println(ioe);
+        }
     }
     
     //todo

@@ -26,7 +26,6 @@ import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
 import jams.workspace.DataReader;
 import jams.workspace.DataValue;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,6 +35,7 @@ import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.LongValue;
 import jams.workspace.datatypes.ObjectValue;
 import jams.workspace.datatypes.StringValue;
+import jams.workspace.plugins.JdbcSQLConnector.BufferedResultSet;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
@@ -65,9 +65,9 @@ public class PollingSQL implements DataReader {
     private static final int OBJECT = 4;
     
     private String user,  password,  host,  db,  query, driver, dateColumnName;
-    private ResultSet rs;
-    private ResultSetMetaData rsmd;
-    private JdbcSQLConnector pgsql;
+    transient private BufferedResultSet rs;
+    transient private ResultSetMetaData rsmd;
+    transient private JdbcSQLConnector pgsql;
     private int numberOfColumns = -1;
     private int[] type;    
     private DefaultDataSet[] currentData = null;
@@ -77,7 +77,7 @@ public class PollingSQL implements DataReader {
     private String lastDate;
     int offset = 0;
     
-    public void PollingSQL(){
+    public void PollingSQL(){        
         isClosed=true;
     }
     public void setUser(String user) {
@@ -127,13 +127,12 @@ public class PollingSQL implements DataReader {
 
     private boolean skip(long count) {
         try{
-            for (int i=0;i<count;i++){
-                offset++;
-                if (!rs.next())
-                    return false;
-            }
-        }catch(Exception e){
-            e.printStackTrace();
+            rs.skip(count);
+            rs.next();
+            System.out.println("after skip position is: " + rs.getString(0));
+        }catch(SQLException sqlex){
+            System.err.println("PollingSQL: " + sqlex);sqlex.printStackTrace();
+            return false;
         }
         return true;            
     }
@@ -142,7 +141,7 @@ public class PollingSQL implements DataReader {
         establishConnection();
         
         try{
-            ResultSet rs2 = null;
+            BufferedResultSet rs2 = null;
             if (query.contains("WHERE")){
                 rs2 = pgsql.execQuery(query + " AND " + dateColumnName + ">\"" + lastDate + "\" ORDER BY " + dateColumnName + " DESC");
             }else{
@@ -234,15 +233,14 @@ public class PollingSQL implements DataReader {
         establishConnection();
         try {
             if (rs != null){
-                rs.close();
-                rs = null;
+                rs.close();                
             }
             if (query.contains("WHERE")){
                 rs = pgsql.execQuery(query + " AND " + dateColumnName + ">\"" + lastDate + "\" ORDER BY " + dateColumnName + " ASC");
             }else{
                 rs = pgsql.execQuery(query + " WHERE " + dateColumnName + ">\"" + lastDate + "\" ORDER BY " + dateColumnName + " ASC");
             }
-            rs.setFetchSize(0);
+            //rs.setFetchSize(0);
             rsmd = rs.getMetaData();
             numberOfColumns = rsmd.getColumnCount();
             type = new int[numberOfColumns];
@@ -273,22 +271,22 @@ public class PollingSQL implements DataReader {
         }
     }
     
-    void establishConnection(){
-        try{
-            if (pgsql == null){
-                pgsql = new JdbcSQLConnector(host,db,user,password,driver);
+    void establishConnection() {
+        try {
+            if (pgsql == null) {
+                pgsql = new JdbcSQLConnector(host, db, user, password, driver);
                 pgsql.connect();
-                isClosed=false;
-            }else if (this.alwaysReconnect){
+                isClosed = false;
+            } else if (this.alwaysReconnect) {
                 pgsql.close();
                 pgsql = null;
-                isClosed=true;
+                isClosed = true;
                 establishConnection();
             }
-        }catch(SQLException sqlex){
-            System.err.println("PollingSQL: " + sqlex);  
+        } catch (SQLException sqlex) {
+            System.err.println("PollingSQL: " + sqlex);
             sqlex.printStackTrace();
-            isClosed=true;
+            isClosed = true;
         }
     }
     
@@ -325,23 +323,21 @@ public class PollingSQL implements DataReader {
     }
 
     @Override
-    public int cleanup() {        
+    public int cleanup() {
         try {
-            if (rs!=null){
-                rs.close();
-                rs = null;
+            if (rs != null) {
+                rs.close();                
             }
-            if (pgsql!=null){
-                pgsql.close();
-                pgsql = null;
-                isClosed=true;
-            }           
+            if (pgsql != null) {
+                pgsql.close();                
+                isClosed = true;
+            }
         } catch (SQLException sqlex) {
             System.out.println("PollingSQL: " + sqlex);
             sqlex.printStackTrace();
             return -1;
         }
-        
+
         return 0;
     }
 
@@ -349,12 +345,20 @@ public class PollingSQL implements DataReader {
     public int numberOfColumns() {
         return numberOfColumns;
     }
-    
+
     public DataReaderState getState(){
         return null;
     }
     
     public void setState(DataReaderState state){
+        int oldOffset = offset;
+        query();
+        try{
+            Thread.sleep(1000);
+        }catch(Exception e){}
+
+        //System.out.println(" skip: " + oldOffset + " entries!");
+        this.skip(oldOffset);
     }
     
      public void getState(java.io.ObjectOutputStream stream) throws IOException{

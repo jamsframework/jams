@@ -626,7 +626,9 @@ public class JAMSWorkspace implements Workspace {
      */
     public String dataStoreToString(String dsTitle) throws IOException {
         InputDataStore store = this.getInputDataStore(dsTitle);
-        return dataStoreToString(store);
+        String data = dataStoreToString(store);
+        store.close();
+        return data;
     }
 
     /**

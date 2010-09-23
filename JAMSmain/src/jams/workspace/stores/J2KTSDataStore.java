@@ -320,6 +320,12 @@ public class J2KTSDataStore extends TSDataStore {
         return result;
     }
 
+    @Override
+    public void skip(int count){
+        for (int i=0;i<count;i++)
+            getNext();
+    }
+
 //    @Override
 //    public DefaultDataSet getNext() {
 //        if (!hasNext()) {

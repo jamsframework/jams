@@ -197,7 +197,7 @@ public class TableDataStore extends StandardInputDataStore {
         protected int currentPosition;
         protected int maxPosition;
         
-        protected HashMap<String,DataReaderState> readerStates;
+        protected HashMap<String,DataReaderState> readerStates = new HashMap<String,DataReaderState>();
         
         protected void fill(TableDataStoreState state){
             state.accessMode = this.accessMode;

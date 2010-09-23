@@ -26,7 +26,6 @@ import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
 import jams.workspace.DataReader;
 import jams.workspace.DataValue;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.LongValue;
 import jams.workspace.datatypes.ObjectValue;
 import jams.workspace.datatypes.StringValue;
-import jams.workspace.stores.DataStoreState;
+import jams.workspace.plugins.JdbcSQLConnector.BufferedResultSet;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
@@ -54,7 +53,7 @@ public class JdbcSQL implements DataReader {
     private static final int TIMESTAMP = 3;
     private static final int OBJECT = 4;
     private String user, password, host, db, query, driver;
-    transient private ResultSet rs;
+    transient private BufferedResultSet rs;
     transient private ResultSetMetaData rsmd;
     transient private JdbcSQLConnector pgsql;
     private int numberOfColumns = -1;
@@ -110,12 +109,10 @@ public class JdbcSQL implements DataReader {
     }
 
     private boolean skip(long count) {
-        try {
-            for (int i = 0; i < count; i++) {
-                if (!rs.next()) {
-                    offset++;
-                    return false;
-                }
+        try{
+            rs.skip(count);
+            rs.next();
+            System.out.println("after skip position is: " + rs.getString(0));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -218,7 +215,7 @@ public class JdbcSQL implements DataReader {
             }
 
             rs = pgsql.execQuery(query);
-            rs.setFetchSize(0);
+            //rs.setFetchSize(0);
             rsmd = rs.getMetaData();
             numberOfColumns = rsmd.getColumnCount();
             type = new int[numberOfColumns];

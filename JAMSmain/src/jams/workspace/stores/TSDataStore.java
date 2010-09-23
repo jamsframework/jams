@@ -316,6 +316,26 @@ public class TSDataStore extends TableDataStore {
         }
     }
 
+    public void skip(int count) {        
+        currentDate.add(timeUnit, timeUnitCount*count);
+        if (currentDate.after(stopDate)) {
+            return;
+        }
+        if (this.accessMode != InputDataStore.CACHE_MODE) {
+            //todo .. make this step efficient
+            for (int i=0;i<count;i++)
+                getNext();
+        } else {
+            try {
+                for (int i=0;i<count;i++)
+                    dumpFileReader.readLine();
+            } catch (IOException ex) {
+                ws.getRuntime().sendErrorMsg("Premature end of dump file for datastore" + id);
+                return;
+            }
+        }
+    }
+
     @Override
     public DefaultDataSet getNext() {
 

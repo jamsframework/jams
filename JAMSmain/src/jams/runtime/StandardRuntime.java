@@ -267,6 +267,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     public FullModelState getFullModelState() {
         try {
+            getModel().getWorkspace().saveState(state);
             return new JAMSFullModelState(this.state, this.getModel());
         } catch (IOException ioe) {
             this.sendErrorMsg(ioe.toString());
