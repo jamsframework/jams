@@ -258,16 +258,23 @@ public class JAMSModel extends JAMSContext implements Model {
     private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {
         objIn.defaultReadObject();
 
-        this.getRuntime().initGUI((String)objIn.readObject(),
-                objIn.readBoolean(),
-                objIn.readInt(),objIn.readInt());
+        if (objIn.readBoolean()){
+            this.getRuntime().initGUI((String)objIn.readObject(),
+            objIn.readBoolean(),
+            objIn.readInt(),objIn.readInt());
+        }
     }
 
     private void writeObject(ObjectOutputStream objOut) throws IOException {
         objOut.defaultWriteObject();
-        objOut.writeObject(this.getRuntime().getFrame().getTitle());
-        objOut.writeBoolean(this.getRuntime().getFrame().isAlwaysOnTop());
-        objOut.writeInt(this.getRuntime().getFrame().getWidth());
-        objOut.writeInt(this.getRuntime().getFrame().getHeight());
+        if (this.getRuntime().getFrame()!=null){
+            objOut.writeBoolean(true);
+            objOut.writeObject(this.getRuntime().getFrame().getTitle());
+            objOut.writeBoolean(this.getRuntime().getFrame().isAlwaysOnTop());
+            objOut.writeInt(this.getRuntime().getFrame().getWidth());
+            objOut.writeInt(this.getRuntime().getFrame().getHeight());
+        }else{
+            objOut.writeBoolean(false);
+        }
     }
 }
