@@ -112,8 +112,7 @@ public class JdbcSQL implements DataReader {
         try{
             rs.skip(count);
             rs.next();
-            System.out.println("after skip position is: " + rs.getString(0));
-            }
+            System.out.println("after skip position is: " + rs.getString(0));            
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -145,6 +145,9 @@ static int counter = 0;
             nonBufferedSet = nonBufferedExecQuery(lmtQuery);
         }
 
+        public boolean wasNull() throws SQLException{
+            return this.nonBufferedSet.wasNull();
+        }
         private ResultSet nonBufferedExecQuery(String sqlQuery) throws SQLException {
             if (con == null) {
                 connect();
