@@ -25,7 +25,7 @@ package jamsui.juice;
 import java.util.Vector;
 import java.util.ArrayList;
 import java.util.HashMap;
-import jams.gui.HelpComponent;
+import jams.meta.HelpComponent;
 import jams.tools.StringTools;
 
 /**

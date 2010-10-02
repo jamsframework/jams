@@ -22,7 +22,7 @@
 package jamsui.juice;
 
 import jams.JAMS;
-import jams.gui.HelpComponent;
+import jams.meta.HelpComponent;
 import jams.gui.tools.GUIHelper;
 import jams.io.ParameterProcessor;
 import jams.tools.StringTools;
