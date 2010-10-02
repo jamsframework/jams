@@ -22,7 +22,6 @@
  */
 package jams.tools;
 
-import java.text.ParseException;
 import java.util.Locale;
 import java.util.StringTokenizer;
 

@@ -38,7 +38,6 @@ import jams.meta.JAMSNode;
 import jams.meta.ModelDescriptor;
 import jams.meta.ModelIO;
 import jams.runtime.JAMSRuntime;
-import jams.tools.StringTools;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
