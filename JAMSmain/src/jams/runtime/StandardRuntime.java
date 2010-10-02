@@ -44,8 +44,8 @@ import jams.JAMSProperties;
 import jams.JAMSVersion;
 import jams.SystemProperties;
 import jams.data.JAMSData;
-import jams.model.SmallModelState;
 import jams.io.ModelLoader;
+import jams.model.SmallModelState;
 import jams.io.ParameterProcessor;
 import jams.model.FullModelState;
 import jams.model.GUIComponent;
@@ -144,7 +144,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         this.println(JAMS.resources.getString("Loading_Model"), JAMS.STANDARD);
 
         ModelLoader modelLoader = new ModelLoader(null, this);
-        this.model = modelLoader.loadModel(modelDocument);
+
+        try {
+            this.model = modelLoader.loadModel(modelDocument);
+        } catch (Exception jex) {
+            this.handle(jex, false);
+        }
 
         // define if the model should profile or not
         boolean doProfiling = ("1".equals(properties.getProperty(JAMSProperties.PROFILE_IDENTIFIER, "0")) ? true : false);
@@ -192,7 +197,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     }
 
-    public Document getModelDocument(){
+    public Document getModelDocument() {
         return this.modelDocument;
     }
 
@@ -285,7 +290,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
     }
 
-    public void resume(SmallModelState state) throws Exception {        
+    public void resume(SmallModelState state) throws Exception {
         this.state = state;
 
         if (guiEnabled && (guiComponents.size() > 0)) {
@@ -786,7 +791,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {
         objIn.defaultReadObject();
-        
+
         deleteErrorLogObservers();
         deleteInfoLogObservers();
         this.initLogging();
@@ -795,6 +800,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     }
 
     private void writeObject(ObjectOutputStream objOut) throws IOException {
-        objOut.defaultWriteObject();        
+        objOut.defaultWriteObject();
     }
 }
