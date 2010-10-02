@@ -38,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import jams.JAMS;
+import jams.meta.HelpComponent;
 import jams.tools.StringTools;
 
 /**

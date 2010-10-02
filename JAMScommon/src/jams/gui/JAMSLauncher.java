@@ -22,6 +22,7 @@
  */
 package jams.gui;
 
+import jams.meta.HelpComponent;
 import jams.gui.tools.GUIHelper;
 import java.awt.BorderLayout;
 import java.awt.Component;
