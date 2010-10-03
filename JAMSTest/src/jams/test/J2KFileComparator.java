@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 import reg.dsproc.DataMatrix;
 import reg.dsproc.DataStoreProcessor;
 import reg.dsproc.SimpleSerieProcessor;
@@ -90,7 +91,7 @@ public class J2KFileComparator {
                 if (report.idsNotEqual.size()>0)
                     return report;
 
-                idsA = new HashSet<String>(Arrays.asList(sspA.getIDs()));
+                idsA = new TreeSet<String>(Arrays.asList(sspA.getIDs()));
                 Iterator<String> iter = idsA.iterator();
                 
                 while (iter.hasNext()) {
@@ -115,7 +116,7 @@ public class J2KFileComparator {
                                 identical = false;                            
                         }
                         if (!identical) {
-                            report.addLine("different line:" + i + "\nold:" + Arrays.toString(rowA) + "\nnew:" + Arrays.toString(rowB));
+                            report.addLine("different line:"+dataA.getIds()[i] + i + "\nnew:" + Arrays.toString(rowA) + "\nold:" + Arrays.toString(rowB));
                         }
                     }
 
