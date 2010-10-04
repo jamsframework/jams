@@ -1,0 +1,21 @@
+#JAMS-Konfigurationsdatei
+#Mon Aug 30 10:19:46 CEST 2010
+infolog=
+libs=/home/check-out/JAMS/lib/lib/;/home/check-out/JAMS/lib/
+guiconfig=0
+model=
+charset=
+username=
+profiling=1
+windowenable=0
+errordlg=0
+windowontop=0
+forcelocale=
+windowheight=600
+verbose=1
+debug=3
+guiconfigheight=600
+windowwidth=900
+guiconfigwidth=600
+errorlog=
+helpbaseurl=
