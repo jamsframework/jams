@@ -98,6 +98,11 @@ public class ModelIO {
 
         md.setRootNode(rootNode);
 
+        //handle the workspace node
+        Node workspaceNode = docRoot.getElementsByTagName("var").item(0);
+        if (workspaceNode != null) {
+            setVar(cd, (Element) workspaceNode, md);
+        }
 
         //handle all contextcomponent and component nodes
 

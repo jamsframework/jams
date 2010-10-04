@@ -94,6 +94,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private HashMap<String, Integer> idMap;
     transient private SmallModelState state = new JAMSSmallModelState();
 
+    /**
+     * Loads a model from an XML document
+     * @param modelDocument the XML document
+     * @param properties a set of system properties providing information on
+     * libs to be used and other parameter
+     */
     @Override
     public void loadModel(Document modelDocument, SystemProperties properties) {
 
