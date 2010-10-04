@@ -162,6 +162,7 @@ public class TSPlot extends JAMSGUIComponent {
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
+            defaultValue="0",
             description = "Paint inverted right y axis?"
             )
             public JAMSBoolean rightAxisInverted;
