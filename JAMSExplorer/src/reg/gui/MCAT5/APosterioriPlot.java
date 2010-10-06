@@ -6,7 +6,6 @@
 package reg.gui.MCAT5;
 
 import java.awt.Color;
-import java.awt.Window;
 import javax.swing.JPanel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -31,24 +30,7 @@ public class APosterioriPlot{
         EfficiencyDataSet eff;
                        
         final int BOX_COUNT = 20;
-        
-        private double FindMinimalParameterValue(ParameterSet data){
-            int n = data.set.length;
-            double min = Double.POSITIVE_INFINITY;
-            for (int i=0;i<n;i++){
-                min = Math.min(min, data.set[i]);
-            }
-            return min;
-        }
-        private double FindMaximalParameterValue(ParameterSet data){
-            int n = data.set.length;
-            double max = Double.NEGATIVE_INFINITY;
-            for (int i=0;i<n;i++){
-                max = Math.max(max, data.set[i]);
-            }
-            return max;
-        }
-    
+                    
         public APosterioriPlot(ParameterSet data, EfficiencyDataSet eff){                  
             this.data = data;
             this.eff = eff;
@@ -74,8 +56,8 @@ public class APosterioriPlot{
             double boxes[] = new double[BOX_COUNT];
             double boxes_count[] = new double[BOX_COUNT];
             
-            double min = this.FindMinimalParameterValue(data);
-            double max = this.FindMaximalParameterValue(data);
+            double min = MCAT5Tools.FindMinimalParameterValue(data);
+            double max = MCAT5Tools.FindMaximalParameterValue(data);
             
             for (int i=0;i<this.data.set.length;i++){
                 int index = (int)((data.set[i] - min) / (max-min) * (boxes.length-1));
