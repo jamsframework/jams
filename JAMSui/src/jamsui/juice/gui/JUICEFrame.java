@@ -44,6 +44,7 @@ import jamsui.juice.*;
 import jamsui.juice.gui.tree.LibTree;
 import jamsui.juice.gui.tree.ModelTree;
 import jamsui.juice.optimizer.wizard.OptimizationWizard;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -277,9 +278,16 @@ public class JUICEFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                OptimizationWizard wizard = new OptimizationWizard();
+                /*OptimizationWizard wizard = new OptimizationWizard();
                 ModelView view = getCurrentView();
-                wizard.runWizard(view.getModelDoc(), JUICE.getJamsProperties(), JUICEFrame.this);
+                wizard.runWizard(view.getModelDoc(), JUICE.getJamsProperties(), JUICEFrame.this);*/
+                /*WizardApplet applet = new WizardApplet();
+                applet.init();
+                applet.start();*/
+                ModelView view = getCurrentView();
+                OptimizationWizard.createDialog(JUICEFrame.this, view.getModelDoc() , 
+                        JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);
+                
             }
         };
 
@@ -732,6 +740,23 @@ public class JUICEFrame extends JFrame {
                 mView.setInitialState();
                 mView.getFrame().setVisible(true);
                 mView.getFrame().requestFocus();
+                return mView;
+            }
+        };
+        w.execute();
+    }
+    //this method is necessary if we like to create a view and set a doc
+    public void newModel(final Document doc) {
+        SwingWorker w = new SwingWorker() {
+
+            @Override
+            protected Object doInBackground() throws Exception {
+                ModelView mView = new ModelView(modelPanel);
+                mView.setTree(new ModelTree(mView, null));
+                mView.setInitialState();
+                mView.getFrame().setVisible(true);
+                mView.getFrame().requestFocus();
+                mView.setTree(new ModelTree(mView, doc));
                 return mView;
             }
         };

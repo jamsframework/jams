@@ -42,13 +42,13 @@ public class Tools {
         }
     }
     
-    public static class AttributeWrapper{
+    public static class AttributeWrapper implements Comparable{
         public String attributeName;
         public String variableName;
         public String componentName;
         public String contextName;
         public boolean isSetByValue;
-        
+                
         public AttributeWrapper(){
             
         }
@@ -58,13 +58,50 @@ public class Tools {
             this.componentName = componentName;
             this.contextName = contextName;            
         }
+        @Override
+        public boolean equals(Object a){
+            if (! (a instanceof AttributeWrapper))
+                return false;
+            return ((AttributeWrapper)a).extendedtoString2().equals(extendedtoString2());
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 4;
+            hash = 97 * hash + (this.attributeName != null ? this.attributeName.hashCode() : 0);
+            hash = 97 * hash + (this.variableName != null ? this.variableName.hashCode() : 0);
+            hash = 97 * hash + (this.componentName != null ? this.componentName.hashCode() : 0);
+            hash = 97 * hash + (this.contextName != null ? this.contextName.hashCode() : 0);
+            return hash;
+        }
         public String extendedtoString(){
             return componentName + "." + variableName +"="+ contextName + "." + attributeName;
         }
+        public String extendedtoString2() {
+            if (contextName == null) {
+                if (attributeName != null) {
+                    return componentName + "." + attributeName;
+                } else {
+                    return componentName + "." + variableName;
+                }
+            } else {
+                if (attributeName != null) {
+                    return contextName + "." + attributeName;
+                } else {
+                    return contextName + "." + variableName;
+                }
+            }
+        }
+        @Override
         public String toString(){
-            if (variableName!=null)
+            return extendedtoString2();
+            /*if (variableName!=null)
                 return variableName;
-            return attributeName;
+            return attributeName;*/
+        }
+
+        public int compareTo(Object a){
+            return this.extendedtoString2().compareTo( ((AttributeWrapper)a).extendedtoString2());
         }
     }
     
@@ -82,8 +119,36 @@ public class Tools {
             this.variableName = attr.variableName;
             this.isSetByValue = attr.isSetByValue;            
         }
+
+        public Parameter(AttributeWrapper attr, Range range){
+            startValueValid = false;
+            this.attributeName = attr.attributeName;
+            this.componentName = attr.componentName;
+            this.contextName = attr.contextName;
+            this.variableName = attr.variableName;
+            this.isSetByValue = attr.isSetByValue;
+            if (range != null){
+                this.lowerBound = range.lowerBound;
+                this.upperBound = range.upperBound;
+            }
+        }
     }
-    
+
+    static public class Range{
+        public double lowerBound;
+        public double upperBound;
+
+        public Range(double a,double b){
+            lowerBound = a;
+            upperBound = b;
+        }
+
+        @Override
+        public String toString(){
+            return lowerBound + "\t" + upperBound;
+        }
+    }
+
     public static class Efficiency extends AttributeWrapper{              
         public int mode;
         

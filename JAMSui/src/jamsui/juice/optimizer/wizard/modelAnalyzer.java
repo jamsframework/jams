@@ -13,14 +13,20 @@ import jams.runtime.StandardRuntime;
 import jams.tools.JAMSTools;
 import jamsui.juice.optimizer.wizard.Tools.AttributeWrapper;
 import jamsui.juice.optimizer.wizard.Tools.ComponentWrapper;
+import jamsui.juice.optimizer.wizard.Tools.Parameter;
+import jamsui.juice.optimizer.wizard.Tools.Range;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -34,10 +40,87 @@ public class modelAnalyzer {
     public static final int COLLECT_READATTRIBUTES = 0;
     public static final int COLLECT_WRITEATTTRIBUTES = 1;
     
-    private static Set<String> getAttributeList(Node root, ComponentWrapper component, StandardRuntime rt, int mode) {
+    public String error = null;
+    StandardRuntime rt;
+    Node root;
+
+    Document doc;
+    JAMSProperties properties;
+
+    public modelAnalyzer(JAMSProperties propertyFile, Document modelFile){
+        init(propertyFile, modelFile);
+    }
+    public modelAnalyzer(File propertyFile, File modelFile){
+        //default properties
+        properties = JAMSProperties.createProperties();
+        try {
+            properties.load(propertyFile.getAbsolutePath());
+        } catch (IOException e) {
+            //setError("Cant find property file, because:" + e.toString());
+        } catch (Exception e2) {
+            //setError("Error while loading property file, because: " + e2.toString());
+        }
+
+        DocumentLoader loader = new DocumentLoader();
+        loader.modelFile = JAMSDataFactory.createString();
+        loader.modelFile.setValue(modelFile.getName());
+        loader.workspaceDir = JAMSDataFactory.createString();
+        if (modelFile.getParent()!=null)
+            loader.workspaceDir.setValue(modelFile.getParent());
+        else
+            loader.workspaceDir.setValue("");
+        loader.modelDoc = JAMSDataFactory.createDocument();
+        String errorString = loader.init_withResponse();
+        Document loadedModel = loader.modelDoc.getValue();
+        if (loadedModel == null) {
+            //setError(errorString);
+        }        
+        doc = loadedModel;
+        init(properties, doc);
+    }
+
+    public Document getModelDoc(){
+        return doc;
+    }
+    public JAMSProperties getProperties(){
+        return properties;
+    }
+    private static HashMap<String, Range> getDefaultRangeMap(Node launcherNode) {
+        HashMap<String, Range> map = new HashMap<String, Range>();
+
+        NodeList childs = launcherNode.getChildNodes();
+
+        if (!(launcherNode.getNodeName().equals("launcher")
+                || launcherNode.getNodeName().equals("group")
+                || launcherNode.getNodeName().equals("subgroup")
+                || launcherNode.getNodeName().equals("property")
+                || launcherNode.getNodeName().equals("model"))) {
+            return new HashMap<String, Range>();
+        }
+        Element parent = (Element) launcherNode;
+        if (parent.getNodeName().equals("property")) {
+            String attribute = parent.getAttribute("attribute");
+            String component = parent.getAttribute("component");
+            String range = parent.getAttribute("range");
+            if (range != null) {
+                String ranges[] = range.split(";");
+                if (ranges.length == 2) {
+                    map.put(component + "." + attribute, new Range(Double.parseDouble(ranges[0]), Double.parseDouble(ranges[1])));
+                }
+            }
+        }
+
+        for (int i = 0; i < childs.getLength(); i++) {
+            map.putAll(getDefaultRangeMap(childs.item(i)));
+        }
+
+        return map;
+    }
+
+    private static Set<AttributeWrapper> getAttributeList(Node root, ComponentWrapper component, StandardRuntime rt, int mode) {
         NodeList childs = root.getChildNodes();
         Element parent = (Element) root;
-        HashSet<String> list = new HashSet<String>();
+        HashSet<AttributeWrapper> list = new HashSet<AttributeWrapper>();
         for (int i = 0; i < childs.getLength(); i++) {
             Node child = childs.item(i);
             if (child.getNodeName().equals("contextcomponent")) {
@@ -96,25 +179,12 @@ public class modelAnalyzer {
 
                 if (isDouble && ((mode == COLLECT_READATTRIBUTES  && (               jvd.access() == AccessType.READ  || attr == null)) ||
                                  (mode == COLLECT_WRITEATTTRIBUTES && (jvd == null || jvd.access() == AccessType.WRITE || jvd.access() == AccessType.READWRITE)))) {
-                    AttributeWrapper wrap = new AttributeWrapper(
+
+                    list.add(new AttributeWrapper(
                             name,
                             attr,
                             parent.getAttribute("name"),
-                            context);
-                    if (wrap.contextName == null) {
-                        if (wrap.attributeName != null) {
-                            list.add(wrap.componentName + "." + wrap.attributeName);
-                        } else {
-                            list.add(wrap.componentName + "." + wrap.variableName);
-                        }
-                    } else {
-                        if (wrap.attributeName != null) {
-                            list.add(wrap.contextName + "." + wrap.attributeName);
-                        } else {
-                            list.add(wrap.contextName + "." + wrap.variableName);
-                        }
-                    }
-
+                            context));
                 }
             }
             if (child.getNodeName().equals("attribute")) {
@@ -124,76 +194,103 @@ public class modelAnalyzer {
                 String clazz = elem.getAttribute("class");
 
                 if (clazz.equals("jams.data.JAMSDouble")) {
-                    list.add(context + "." + attr);
+                    list.add(new AttributeWrapper(
+                            null,
+                            attr,
+                            null,
+                            context));
                 }
             }
         }
         return list;
     }
-    
-    public static void modelAnalyzer(String propertyFile, File modelFile) {
-        DocumentLoader loader = new DocumentLoader();
-        loader.modelFile = JAMSDataFactory.createString();
-        loader.modelFile.setValue(modelFile.getName());
-        loader.workspaceDir = JAMSDataFactory.createString();
-        if (modelFile.getParent()!=null)
-            loader.workspaceDir.setValue(modelFile.getParent());
-        else
-            loader.workspaceDir.setValue("");
-        loader.modelDoc = JAMSDataFactory.createDocument();
 
-        String errorString = loader.init_withResponse();
-        Document loadedModel = loader.modelDoc.getValue();
-        if (loadedModel == null) {
-            System.err.println(errorString);
-            return;
+    private boolean init(JAMSProperties propertyFile, Document modelFile){                
+        properties = propertyFile;
+        this.doc = modelFile;
 
-        }
-        //default properties      
-        JAMSProperties properties = JAMSProperties.createProperties();
-        try {
-            properties.load(propertyFile);
-        } catch (IOException e) {
-            System.err.println("Cant find property file, because:" + e.toString());
-        } catch (Exception e2) {
-            System.err.println("Error while loading property file, because: " + e2.toString());
-        }
-
-        StandardRuntime rt = new StandardRuntime();
-
-        rt.loadModel(loadedModel, properties);
+        rt = new StandardRuntime();
+        rt.loadModel(doc, properties);
         if (rt.getDebugLevel() >= 3) {
-            if (rt.getErrorLog().length()>2)
-                System.err.println(rt.getErrorLog());
-            System.out.println(rt.getInfoLog());
-        }
+            if (rt.getErrorLog().length()>2){
+                setError(rt.getErrorLog());            
+                return false;}
+            }
+        root = jamsui.juice.optimizer.wizard.Tools.getModelNode(doc);
+        return true;
+    }
 
-        Node root = jamsui.juice.optimizer.wizard.Tools.getModelNode(loadedModel);
+    private void setError(String error){
+        this.error = error;
+    }
+    public void clearError(){
+        error = null;
+    }
+    
+    private SortedSet<Parameter> getParameters(Node root, StandardRuntime rt) {
+        SortedSet<Parameter> result = new TreeSet<Parameter>();
 
-        //Element rootElement = (Element)root;
-        Set<String> parameterList = getAttributeList(root, null, rt, COLLECT_READATTRIBUTES);
-        Set<String> objectiveList = getAttributeList(root, null, rt, COLLECT_WRITEATTTRIBUTES);
-        
+        Set<AttributeWrapper> parameterList = getAttributeList(root, null, rt, COLLECT_READATTRIBUTES);
+        Set<AttributeWrapper> objectiveList = getAttributeList(root, null, rt, COLLECT_WRITEATTTRIBUTES);
         parameterList.removeAll(objectiveList);
+
+        HashMap<String, Range> defaultRangeMap = getDefaultRangeMap(root);
+        Iterator<AttributeWrapper> iter1 = parameterList.iterator();
+        while (iter1.hasNext()) {
+            AttributeWrapper variable = iter1.next();
+            Range range = defaultRangeMap.get(variable.extendedtoString2());
+            result.add(new Parameter(variable, range));
+        }
+        return result;
+    }
+
+    private SortedSet<String> getObjectives(Node root, StandardRuntime rt) {
+        SortedSet<String> result = new TreeSet<String>();
+        Set<AttributeWrapper> objectiveList = getAttributeList(root, null, rt, COLLECT_WRITEATTTRIBUTES);
+        Iterator<AttributeWrapper> iter1 = objectiveList.iterator();
+        while (iter1.hasNext()) {
+            result.add(iter1.next().extendedtoString2());
+        }
+        return result;
+    }
+
+    public SortedSet<Parameter> getParameters() {        
+        return getParameters(root,rt);
+    }
+    public SortedSet<String> getObjectives() {
+        return getObjectives(root,rt);
+    }
+    public static String modelAnalyzer(File propertyFile, File modelFile) {
+        modelAnalyzer analyzer = new modelAnalyzer(propertyFile, modelFile);
+        return modelAnalyzer(analyzer.getProperties(), analyzer.getModelDoc());
+    }
+    //for compability with php interface
+    public static String modelAnalyzer(JAMSProperties propertyFile, Document modelFile) {
+        modelAnalyzer analyzer = new modelAnalyzer(propertyFile, modelFile);
+
+        SortedSet<Parameter> parameters = analyzer.getParameters();
+        SortedSet<String> objectives = analyzer.getObjectives();
+        
+        String paramResult = "";
         try {
             BufferedWriter paramOut = new BufferedWriter(new FileWriter("model_params.dat"));
-            Iterator<String> iter1 = parameterList.iterator();
-            while(iter1.hasNext()){                    
-                paramOut.write(iter1.next() + "\n");
+            Iterator<Parameter> iter1 = parameters.iterator();
+            while(iter1.hasNext()){   
+                Parameter variable = iter1.next();
+                paramOut.write(variable.extendedtoString2() + "\t" + variable.lowerBound + "\t" + variable.upperBound + "\n");
             }
-
             paramOut.close();
 
             BufferedWriter objectiveOut = new BufferedWriter(new FileWriter("model_eff.dat"));
-            Iterator<String> iter2 = objectiveList.iterator();
+            Iterator<String> iter2 = objectives.iterator();
             while(iter2.hasNext()){
                 objectiveOut.write(iter2.next() + "\n");
             }
-
             objectiveOut.close();
         } catch (Exception e) {
             System.err.println(e);e.printStackTrace();
         }
 
+        return paramResult;
     }
 }

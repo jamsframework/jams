@@ -5,7 +5,6 @@ import jams.io.XMLProcessor;
 import jams.runtime.StandardRuntime;
 import jamsui.juice.optimizer.wizard.Tools.AttributeWrapper;
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
@@ -25,7 +24,11 @@ import jams.model.Model;
 import jams.tools.XMLTools;
 import jamsui.juice.optimizer.wizard.Tools.Efficiency;
 import jamsui.juice.optimizer.wizard.Tools.Parameter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +39,17 @@ import org.w3c.dom.NodeList;
  * @author Christian Fischer
  */
 public class modelModifier {
+
+    String error = "";
+    StandardRuntime rt;
+    Document loadedModel;
+    JAMSProperties properties;
+
+    Hashtable<String, HashSet<String>> dependencyGraph;
+    Hashtable<String, HashSet<String>> transitiveClosureOfDependencyGraph;
+    HashSet<String> removedComponents = new HashSet<String>();
+
+    InputStream optimizerIniStream;
 
     static public class AttributeDescription {
 
@@ -65,6 +79,8 @@ public class modelModifier {
         boolean optimizeModelStructure;
         boolean removeUnusedComponents;
 
+        boolean changeWorkspace;
+        String newWorkspace;
         public OptimizerDescription() {
             parameters = new ArrayList<Parameter>();
             efficiencies = new ArrayList<Efficiency>();
@@ -106,7 +122,7 @@ public class modelModifier {
     private static boolean readParameterConfig(OptimizerDescription desc, Properties props, Node root) {
         int parameterCount = 0;
         if (props.getProperty("n") != null) {
-            parameterCount = Integer.parseInt(props.getProperty("n"));
+            parameterCount = (int)Double.parseDouble(props.getProperty("n"));
         } else {
             System.err.println("error: parameter count not specified");
             return false;
@@ -174,7 +190,7 @@ public class modelModifier {
                 p.startValueValid = false;
             }
             desc.parameters.add(p);
-        }
+        }       
         return true;
     }
 
@@ -190,7 +206,7 @@ public class modelModifier {
 
         int maxn = 0;
         try {
-            maxn = Integer.parseInt(str_maximumNumberOfIterations);
+            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
         } catch (Exception e) {
         }
         if (maxn < 1) {
@@ -201,7 +217,7 @@ public class modelModifier {
 
         int popSize = 0;
         try {
-            popSize = Integer.parseInt(str_populationSize);
+            popSize = (int)Double.parseDouble(str_populationSize);
         } catch (Exception e) {
         }
         if (popSize < 1) {
@@ -219,6 +235,7 @@ public class modelModifier {
             System.err.println(JAMS.resources.getString("crossoverProbability_must_be_between_0_and_1"));
             return false;
         }
+        desc.attributes.add(new AttributeDescription("crossoverProbability", null, Double.toString(crossoverProbability), false));
         double mutationProbability = 0;
         try {
             mutationProbability = Double.parseDouble(str_mutationProbability);
@@ -228,6 +245,7 @@ public class modelModifier {
             System.err.println(JAMS.resources.getString("mutationProbability_must_be_between_05_and_1"));
             return false;
         }
+        desc.attributes.add(new AttributeDescription("mutationProbability", null, Double.toString(mutationProbability), false));
         double crossoverDistributionIndex = 0;
         try {
             crossoverDistributionIndex = Double.parseDouble(str_crossoverDistributionIndex);
@@ -237,6 +255,7 @@ public class modelModifier {
             System.err.println(JAMS.resources.getString("crossoverDistributionIndex_must_be_between_05_and_100"));
             return false;
         }
+        desc.attributes.add(new AttributeDescription("crossoverDistributionIndex", null, Double.toString(crossoverDistributionIndex), false));
         double mutationDistributionIndex = 0;
         try {
             mutationDistributionIndex = Double.parseDouble(str_mutationDistributionIndex);
@@ -246,6 +265,7 @@ public class modelModifier {
             System.err.println(JAMS.resources.getString("mutationDistributionIndex_must_be_between_05_and_100"));
             return false;
         }
+        desc.attributes.add(new AttributeDescription("mutationDistributionIndex", null, Double.toString(mutationDistributionIndex), false));
         double maxGeneration = 0;
         try {
             maxGeneration = Double.parseDouble(str_maxGeneration);
@@ -254,8 +274,8 @@ public class modelModifier {
         if (maxGeneration < 1) {
             System.err.println(JAMS.resources.getString("maxGeneration_must_be_positive"));
             return false;
-        }
-        desc.attributes.add(new AttributeDescription("populationSize", null, Integer.toString(popSize), false));
+        }        
+        desc.attributes.add(new AttributeDescription("maxGeneration", null, Integer.toString((int)maxGeneration), false));
         return true;
     }
 
@@ -265,7 +285,7 @@ public class modelModifier {
         String str_populationSize = props.getProperty("popSize");
         int maxn = 0;
         try {
-            maxn = Integer.parseInt(str_maximumNumberOfIterations);
+            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
         } catch (Exception e) {
         }
         if (maxn < 1) {
@@ -276,7 +296,7 @@ public class modelModifier {
 
         int popSize = 0;
         try {
-            popSize = Integer.parseInt(str_populationSize);
+            popSize = (int)Double.parseDouble(str_populationSize);
         } catch (Exception e) {
         }
         if (popSize < 1) {
@@ -292,7 +312,23 @@ public class modelModifier {
         desc.optimizerClassName = "jams.components.optimizer.GutmannMethod";
         int maxn = 500;
         try {
-            maxn = Integer.parseInt(str_maximumNumberOfIterations);
+            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
+        } catch (Exception e) {
+        }
+        if (maxn < 1) {
+            System.err.println(JAMS.resources.getString("error_maxiter_greater_1"));
+            return false;
+        }
+        desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
+        return true;
+    }
+
+    static private boolean readDirectMethod(OptimizerDescription desc, Properties props) {
+        String str_maximumNumberOfIterations = props.getProperty("maxn");
+        desc.optimizerClassName = "jams.components.optimizer.Direct";
+        int maxn = 500;
+        try {
+            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
         } catch (Exception e) {
         }
         if (maxn < 1) {
@@ -308,7 +344,7 @@ public class modelModifier {
         desc.optimizerClassName = "jams.components.optimizer.BranchAndBound";
         int maxn = 500;
         try {
-            maxn = Integer.parseInt(str_maximumNumberOfIterations);
+            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
         } catch (Exception e) {
         }
         if (maxn < 1) {
@@ -325,8 +361,8 @@ public class modelModifier {
         desc.optimizerClassName = "jams.components.optimizer.GPSearch";
         int maxn = 0, kernel = 1;
         try {
-            maxn = Integer.parseInt(str_maximumNumberOfIterations);
-            kernel = Integer.parseInt(str_kernelMethod);
+            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
+            kernel = (int)Double.parseDouble(str_kernelMethod);
         } catch (Exception e) {
         }
         if (maxn < 1) {
@@ -348,7 +384,7 @@ public class modelModifier {
             desc.optimizerClassName = "jams.components.optimizer.RandomSampler";
         int maxn = 500;
         try {
-            maxn = Integer.parseInt(str_maximumNumberOfIterations);
+            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
         } catch (Exception e) {
         }
         if (maxn < 1) {
@@ -378,7 +414,7 @@ public class modelModifier {
         desc.optimizerClassName = "jams.components.optimizer.NelderMead";
         int maxn = 500;
         try {
-            maxn = Integer.parseInt(str_maximumNumberOfIterations);
+            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
         } catch (Exception e) {
         }
         if (maxn < 1) {
@@ -409,11 +445,11 @@ public class modelModifier {
         int maxn = 0;
 
         try {
-            numOfComplexes = Integer.parseInt(str_numberOfComplexes);
+            numOfComplexes = (int)Double.parseDouble(str_numberOfComplexes);
             pcento = Double.parseDouble(str_pcento);
             peps = Double.parseDouble(str_peps);
-            kstop = Integer.parseInt(str_kstop);
-            maxn = Integer.parseInt(str_maximumNumberOfIterations);
+            kstop = (int)Double.parseDouble(str_kstop);
+            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
         } catch (Exception e) {
         }
 
@@ -462,7 +498,7 @@ public class modelModifier {
     static private boolean readOptimizerMethod(OptimizerDescription desc, Properties props) {
         //read method
         if (props.getProperty("method") != null) {
-            desc.method = Integer.parseInt(props.getProperty("method"));
+            desc.method = (int)Double.parseDouble(props.getProperty("method"));
         } else {
             System.err.println("error: optimization method not specified");
             return false;
@@ -535,6 +571,13 @@ public class modelModifier {
             case 9: {
                 if (!readNSGA2Method(desc, props)) {
                     System.err.println("invalid NSGA2 method configuration");
+                    return false;
+                }
+                break;
+            }
+            case 10: {
+                if (!readDirectMethod(desc, props)) {
+                    System.err.println("invalid Direct method configuration");
                     return false;
                 }
                 break;
@@ -633,7 +676,7 @@ public class modelModifier {
         return true;
     }
 
-    public static void buildConfigurationString(OptimizerDescription desc) {
+    private static void buildConfigurationString(OptimizerDescription desc) {
         //build param string
         String param_string = "";
         for (int i = 0; i < desc.parameters.size(); i++) {
@@ -667,18 +710,24 @@ public class modelModifier {
         }
     }
 
-    public static OptimizerDescription loadOptimizerIni(Node root, String optimizerIni) {
+    private OptimizerDescription loadOptimizerIni() {
         OptimizerDescription desc = new OptimizerDescription();
         desc.attributes.add(new AttributeDescription("enable", null, "true", false));
 
         Properties props = new Properties();
         try {
-            props.load(new FileReader(optimizerIni));
-        } catch (Exception e) {
-            System.err.println("optimizer description file " + optimizerIni + " not found");
+            props.load(optimizerIniStream);
+        } catch (Exception e) {            
             return null;
         }
+
         loadOptimizationFlags(desc, props);
+        if (props.getProperty("workspace") != null) {            
+            desc.newWorkspace = props.getProperty("workspace");
+        }else{
+            System.err.println("error: workspace unknown");
+        }
+
         desc.optimizationRun = false;
 
         //read job mode        
@@ -686,11 +735,11 @@ public class modelModifier {
             return desc;
         }
         desc.optimizationRun = true;
-        if (!readParameterConfig(desc, props, root)) {
+        if (!readParameterConfig(desc, props, loadedModel)) {
             System.err.println("error: invalid parameter setup");
             return null;
         }
-        if (!readObjectiveConfig(desc, props, root)) {
+        if (!readObjectiveConfig(desc, props, loadedModel)) {
             System.err.println("error: invalid parameter setup");
             return null;
         }
@@ -698,7 +747,7 @@ public class modelModifier {
             System.err.println("error: invalid method setup");
             return null;
         }
-        if (!readOutputAttributeConfig(desc, props, root)) {
+        if (!readOutputAttributeConfig(desc, props, loadedModel)) {
             System.err.println("error: invalid output attribute setup");
             return null;
         }
@@ -707,7 +756,7 @@ public class modelModifier {
         return desc;
     }
 
-    public static boolean configOutput(OptimizerDescription desc, String optimizerContextName, String workspace) {
+    private static boolean configOutput(OptimizerDescription desc, String optimizerContextName) {
         Map<String, HashSet<String>> outputContexts = new HashMap<String, HashSet<String>>();
         //parameter and efficiencies are set by default
         for (int i = 0; i < desc.parameters.size(); i++) {
@@ -758,7 +807,7 @@ public class modelModifier {
             }
 
             try {
-                XMLTools.writeXmlFile(outputDoc, workspace + File.separator + "output" + File.separator + "optimization_wizard_" + context + ".xml");
+                XMLTools.writeXmlFile(outputDoc, desc.newWorkspace + File.separator + "output" + File.separator + "optimization_wizard_" + context + ".xml");
             } catch (Exception e) {
                 System.err.println(JAMS.resources.getString("Error_cant_write_xml_file_because_") + e.toString());
                 return false;
@@ -770,7 +819,7 @@ public class modelModifier {
     final static String fileVarList[] = {"reachFileName","hruFileName","luFileName","stFileName","gwFileName","shapeFileName","shapeFileName1",
     "stylesFileName","shapeFileName1","heightMap"};
     
-    public static void doAdjustments(Node root){
+    private static void doAdjustments(Node root){
         if (root.getNodeName().equals("var") || root.getNodeName().equals("attribute")) {
             Element elem = (Element) root;
             if (elem.hasAttribute("name") && elem.hasAttribute("value")){
@@ -794,7 +843,7 @@ public class modelModifier {
         }
     }
     
-    public static boolean changeWorkspace(Node root, String newWorkspace) {
+    private static boolean changeWorkspace(Node root, String newWorkspace) {
         if (root.getNodeName().equals("var")) {
             Element elem = (Element) root;
             if (elem.hasAttribute("name")) {
@@ -814,55 +863,101 @@ public class modelModifier {
         return false;
     }
 
-    public static void modelModifier(String propertyFile, File modelFile, String optimizerIni, String workspace) {
-        String optimizerContextName = "optimizer";
-        String infoLog = "";
-        JAMSProperties properties = JAMSProperties.createProperties();
-        HashSet<String> removedComponents = new HashSet<String>();
-        StandardRuntime rt = new StandardRuntime();
+    private void setError(String error){
+        this.error = error;
+    }
+    public void clearError(){
+        error = null;
+    }
+
+    private boolean init(){                
+        rt = new StandardRuntime();
+        rt.loadModel(loadedModel, properties);
+        if (rt.getDebugLevel() >= 3) {
+            if (rt.getErrorLog().length()>2){
+                setError(rt.getErrorLog());
+                return false;}
+            }
+        return true;
+    }
+
+    public void writeGDLFile(String path){
+        //show model graph
+        jams.model.metaoptimizer.metaModelOptimizer.ExportGDLFile(dependencyGraph, removedComponents, path);
+    }
+
+
+    public void setOptimizerIni(String optimizerIni){
+        optimizerIniStream = new ByteArrayInputStream(optimizerIni.getBytes());
+    }
+    public void setOptimizerIni(File optimizerIni){
+        try{
+            optimizerIniStream = new FileInputStream(optimizerIni);
+        }catch(FileNotFoundException fnfe){
+            optimizerIniStream = null;
+            System.err.println("optimizer description file " + optimizerIni + " not found");
+        }
+    }
+
+    public modelModifier(JAMSProperties properties, Document doc){
+
+        this.properties = properties;
+        this.loadedModel = doc;
+
+        init();
+    }
+    public modelModifier(File propertyFile, File modelFile){        
+        //default properties
+        properties = JAMSProperties.createProperties();
+        try {
+            properties.load(propertyFile.getAbsolutePath());
+        } catch (IOException e) {
+            //setError("Cant find property file, because:" + e.toString());
+        } catch (Exception e2) {
+            //setError("Error while loading property file, because: " + e2.toString());
+        }
+
         DocumentLoader loader = new DocumentLoader();
         loader.modelFile = JAMSDataFactory.createString();
         loader.modelFile.setValue(modelFile.getName());
         loader.workspaceDir = JAMSDataFactory.createString();
-        loader.workspaceDir.setValue(workspace);
+        if (modelFile.getParent()!=null)
+            loader.workspaceDir.setValue(modelFile.getParent());
+        else
+            loader.workspaceDir.setValue("");
         loader.modelDoc = JAMSDataFactory.createDocument();
-
         String errorString = loader.init_withResponse();
-        Document loadedModel = loader.modelDoc.getValue();
+        loadedModel = loader.modelDoc.getValue();
         if (loadedModel == null) {
-            System.err.println(errorString);
-            return;
+            //setError(errorString);
         }
-        changeWorkspace(loadedModel, workspace);
-        try {
-            properties.load(propertyFile);
-        } catch (IOException e) {
-            System.err.println("Cant find property file, because:" + e.toString());
-        } catch (Exception e2) {
-            System.err.println("Error while loading property file, because: " + e2.toString());
-        }
+        init();
+    }
 
-        rt.loadModel(loadedModel, properties);
-        if (rt.getDebugLevel() >= 3) {
-            System.err.println(rt.getErrorLog());
-            System.out.println(rt.getInfoLog());
-        }
+    public Document modifyModel() {
+        String optimizerContextName = "optimizer";
+        String infoLog = "";        
 
-        OptimizerDescription desc = loadOptimizerIni(loadedModel, optimizerIni);
+        if (!init())
+            return null;
+
+        OptimizerDescription desc = loadOptimizerIni();
         if (desc == null){
-            return;
+            return null;
         }
         Model model = rt.getModel();
         //1. schritt
-        //parameter relevante componenten verschieben                
+        //parameter relevante componenten verschieben
         infoLog += JAMS.resources.getString("create_transitive_hull_of_dependency_graph") + "\n";
-        Hashtable<String, HashSet<String>> dependencyGraph = jams.model.metaoptimizer.metaModelOptimizer.getDependencyGraph(loadedModel.getDocumentElement(), model);
-        Hashtable<String, HashSet<String>> transitiveClosureOfDependencyGraph =
-                jams.model.metaoptimizer.metaModelOptimizer.TransitiveClosure(dependencyGraph);
+        dependencyGraph = jams.model.metaoptimizer.metaModelOptimizer.getDependencyGraph(loadedModel.getDocumentElement(), model);
+        transitiveClosureOfDependencyGraph = jams.model.metaoptimizer.metaModelOptimizer.TransitiveClosure(dependencyGraph);
 
         Document doc = (Document) loadedModel.cloneNode(true);
         Node root = (Node) doc.getDocumentElement();
-
+        
+        if (!changeWorkspace(root, desc.newWorkspace)){
+            System.err.println("unable to change workspace!");
+        }
         if (desc.removeGUIComponents || !desc.optimizationRun) {
             infoLog = JAMS.resources.getString("removing_GUI_components") + ":\n";
             ArrayList<String> removedGUIComponents = jams.model.metaoptimizer.metaModelOptimizer.RemoveGUIComponents(root);
@@ -913,7 +1008,7 @@ public class modelModifier {
             Node firstComponent = XMLProcessor.getFirstComponent(root);
             if (firstComponent == null) {
                 System.err.println(JAMS.resources.getString("Error_model_file_does_not_contain_any_components"));
-                return;
+                return null;
             }
             //collect all following siblings of firstComponent and add them to contextOptimizer
             Node currentNode = firstComponent;
@@ -925,7 +1020,7 @@ public class modelModifier {
 
             if (firstComponent.getParentNode() == null) {
                 System.err.println(JAMS.resources.getString("Error_model_file_does_not_contain_a_model_context"));
-                return;
+                return null;
             }
 
             Node modelContext = firstComponent.getParentNode();
@@ -945,21 +1040,47 @@ public class modelModifier {
             writer.close();
         } catch (Exception e) {
         }
-        if (!configOutput(desc, optimizerContextName, workspace)) {
+        if (!configOutput(desc, optimizerContextName)) {
             System.err.println("error: could not configure output!");
-            return;
+            return null;
         }
-        //show model graph
-        jams.model.metaoptimizer.metaModelOptimizer.ExportGDLFile(dependencyGraph, removedComponents, "model.gdl");
-
         //some adjustments like file separators and data-caching
         doAdjustments(doc);
+
+        return doc;
+    }
+
+    /*public modelModifier(JAMSProperties propertyFile, Document modelFile){
+        this.properties = propertyFile;
+        this.loadedModel = modelFile;
+        init();
+    }*/
+
+    public static Document modelModifier(JAMSProperties propertyFile, Document modelFile, String optimizerIni) {
+        modelModifier modifyModel = new modelModifier(propertyFile, modelFile);
+        modifyModel.setOptimizerIni(optimizerIni);
+        Document doc = modifyModel.modifyModel();
+        /*modifyModel.writeGDLFile("graph.gdl");
         try {
             XMLTools.writeXmlFile(doc, "optimization.jam");
         } catch (Exception e) {
             return;
         }
-        rt.sendHalt();
-        System.exit(0);
+        System.exit(0);*/
+        return doc;
+    }
+
+    public static Document modelModifier(String propertyFile, String modelFile, String optimizerIni) {
+        modelModifier modifyModel = new modelModifier(new File(propertyFile), new File(modelFile));
+        modifyModel.setOptimizerIni(optimizerIni);
+        Document doc = modifyModel.modifyModel();
+        /*modifyModel.writeGDLFile("graph.gdl");
+        try {
+            XMLTools.writeXmlFile(doc, "optimization.jam");
+        } catch (Exception e) {
+            return;
+        }
+        System.exit(0);*/
+        return doc;
     }
 }
