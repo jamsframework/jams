@@ -409,7 +409,7 @@ public class ModelLoader {
         }
     }
 
-    private ArrayList<Field> createMembers(Component component) throws IllegalAccessException, InstantiationException {
+    private ArrayList<Field> createMembers(Component component) throws IllegalAccessException, InstantiationException, JAMSException {
 
         Object o;
         Class dataType;
@@ -435,7 +435,11 @@ public class ModelLoader {
 
                 // set value for data object if defined
                 if (!jvd.defaultValue().equals(JAMSVarDescription.NULL_VALUE)) {
-                    dataObject.setValue(jvd.defaultValue());
+                    try {
+                        dataObject.setValue(jvd.defaultValue());
+                    } catch (NumberFormatException nfe) {
+                        throw new JAMSException("Invalid default value (" + jvd.defaultValue() + ") for field " + fields[i].getName() + " in component " + component.getInstanceName());
+                    }
                 }
 
             }
