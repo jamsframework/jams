@@ -1,18 +1,20 @@
 #JAMS-Konfigurationsdatei
-#Wed Nov 11 15:59:18 CET 2009
+#Thu Oct 07 09:56:04 CEST 2010
 infolog=
 libs=..\\..\\lib
 guiconfig=1
 excludes=.cache;.svn;.xls
 model=
+charset=
 username=
 splashtimeout=0
+profiling=0
 windowenable=1
 errordlg=1
 serverpassword=
 windowontop=0
-serveraccount=
 forcelocale=
+serveraccount=
 windowheight=768
 verbose=0
 debug=1
