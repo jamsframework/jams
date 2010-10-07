@@ -69,6 +69,7 @@ public class JAMSSpreadSheet extends JPanel {
     private JButton dataplotButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_PLOT"));
     private JButton closeButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLOSE_TAB"));
     private JCheckBox useTemplateButton = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("USE_TEMPLATE"));
+    private JCheckBox useTransposedButton = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("USE_TRANSPOSED"));
     private JButton stpButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STACKED_TIME_PLOT"));
     private JComboBox shapeSelector = new JComboBox();
 
@@ -87,7 +88,7 @@ public class JAMSSpreadSheet extends JPanel {
     private String[] calclist = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SUM____"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN___")};
     JComboBox calculations = new JComboBox(calclist);
     private int kindofcalc = 0;
-    private JFileChooser epsFileChooser, templateChooser, datChooser;
+    private JFileChooser epsFileChooser, templateChooser, datChooser , savefileChooser;
     private JAMSExplorer explorer;
 
     /* Messages */
@@ -259,76 +260,64 @@ public class JAMSSpreadSheet extends JPanel {
     ActionListener saveAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
-            String filename = null;
-            try {
-
-                boolean dont_save = true;
-                while (dont_save) {
-                    String inputString = GUIHelper.showInputDlg(parent_frame, SpreadsheetConstants.INFO_MSG_SAVEDAT, getName());
-                    if (!(inputString == null)) {
-
-                        inputString += SpreadsheetConstants.FILE_ENDING_DAT;
-
-                        if (isOutputSheet()) {
-
-                            File file = new File(getOutputDSDir(), inputString);
-
-                            if (!file.exists()) {
-                                filename = file.getName();
-//                                save(filename, getSaveHeaders());
-                                saveAll(filename);
-                                dont_save = false;
-                            } else {
-                                String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_") + file + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
-                                int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
-                                if (result == 0) { //overwrite
-                                    filename = file.getName();
-//                                    save(filename, getSaveHeaders());
-                                    saveAll(filename);
-                                    dont_save = false;
-                                }
-
-                            }
-                        } else {
-
-                            File file = new File(explorer.getWorkspace().getDirectory().toString() + "/explorer", inputString);
-                            if (!file.exists()) {
-                                filename = file.getName();
-//                                save(filename, getSaveHeaders());
-                                saveAll(filename);
-                                dont_save = false;
-                            } else {
-                                String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_") + file + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
-                                int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
-                                if (result == 0) { //overwrite
-                                    filename = file.getName();
-//                                    save(filename, getSaveHeaders());
-                                    saveAll(filename);
-                                    dont_save = false;
-                                }
-
-                            }
-                        }
-                    } else {
-                        dont_save = false; //CANCEL OPTION!
-                    }
-                }
-            } catch (Exception ex) {
+        // ABSOLUT NEW TEST
+               JFileChooser Save = new JFileChooser();
+               Save.setSelectedFile(new File("new file"));   
+               Save.setFileSelectionMode(javax.swing.JFileChooser.FILES_ONLY);
+               Save.setCurrentDirectory(new File ("user.dir"));
+                 try{
+                     boolean dont_save =true;
+                     while(dont_save){
+                    int rc = Save.showSaveDialog(panel);
+                     if (rc != JFileChooser.APPROVE_OPTION ){
+                         dont_save=false;
+                 
+                     }else{
+                         String filename =Save.getSelectedFile().getName();
+                         setOutputDSDir(Save.getCurrentDirectory());
+                             if (!(filename==null)){
+                                 filename +=SpreadsheetConstants.FILE_ENDING_DAT;
+                                 if(isOutputSheet()){
+                                     File file = new File(getOutputDSDir(),filename);
+                                     if(!file.exists()){
+                                         save(filename,getSaveHeaders());
+                                         dont_save=false;
+                                     } else {
+                                        String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_") + file + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
+                                        int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
+                                        if (result == 0) { //overwrite
+                                            filename=Save.getSelectedFile().getName();
+                                            filename +=SpreadsheetConstants.FILE_ENDING_DAT;
+                                          save(filename,getSaveHeaders());
+                                           // saveAll(filename);
+                                            dont_save = false;
+                                         }
+                                     }
+                                 }else{
+                                     File file = new File(explorer.getWorkspace().getDirectory().toString() + "/explorer", filename);
+                                     if(!file.exists()){
+                                         save(filename,getSaveHeaders());
+                                         dont_save=false;
+                                     } else {
+                                        String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_") + file + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
+                                        int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
+                                        if (result == 0) { //overwrite
+                                            filename=Save.getSelectedFile().getName();
+                                            filename +=SpreadsheetConstants.FILE_ENDING_DAT;
+                                          save(filename,getSaveHeaders());
+                                           // saveAll(filename);
+                                            dont_save = false;
+                                         }
+                                     }
+                                 }
+                             }else{
+                                 dont_save=false; //Abbruch
+                             }
+                     }
+                     }
+                     } catch (Exception ex) {
                 ex.printStackTrace();
             }
-
-
-            //ACTION!
-//            try {
-//            JFileChooser chooser = new JFileChooser();
-//            int returnVal = chooser.showSaveDialog(panel);
-//            if (returnVal == JFileChooser.APPROVE_OPTION) {
-//                
-//                File file = chooser.getSelectedFile();
-//                save(file.getAbsolutePath());
-//            }
-//        } catch (Exception fnfex) {
-//        }
         }
     };
 
@@ -356,7 +345,7 @@ public class JAMSSpreadSheet extends JPanel {
         String[] headers_with_time = new String[write_headers.length + 1];
         headers_with_time[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ID");
         java.lang.System.arraycopy(write_headers, 0, headers_with_time, 1, write_headers.length);
-
+        System.out.println(headers_with_time[0]+headers_with_time[1]);
         return headers_with_time;
     }
     ActionListener loadAction = new ActionListener() {
@@ -410,17 +399,18 @@ public class JAMSSpreadSheet extends JPanel {
 
             File file;
             if (isOutputSheet()) {
-//                    file = new File(regionalizer.getWorkspace().getOutputDataDirectory()+filename);
-//                file = new File(regionalizer.getWorkspace().getDirectory().toString() + "/output/current/" + filename);
+            //        file = new File(regionalizer.getWorkspace().getOutputDataDirectory()+filename);
+           //     file = new File(regionalizer.getWorkspace().getDirectory().toString() + "/output/current/" + filename);
                 file = new File(this.getOutputDSDir().toString() + "/" + filename);
             } else {
-                file = new File(explorer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME + filename);
+         //      file = new File(explorer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME + filename);
+                file = new File(this.getOutputDSDir().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME + filename);
             }
 
             //File file = chooser.getSelectedFile();
             //File file = chooser.getSelectedFile();
             FileWriter filewriter = new FileWriter(file);
-
+            if(!useTransposedButton.isSelected()){
             filewriter.write(SpreadsheetConstants.LOAD_HEADERS + "\r\n");
             String col_string = "";
             for (int j = 0; j < colcount; j++) {
@@ -443,8 +433,7 @@ public class JAMSSpreadSheet extends JPanel {
 
             filewriter.write("\r\n" + SpreadsheetConstants.LOAD_DATA);
             filewriter.write("\r\n");
-
-            for (int k = 0; k < rowcount; k++) {
+              for (int k = 0; k < rowcount; k++) {
 //                        value = table.getValueAt(k, 0).toString();//timeRow
 //                        filewriter.write(value, 0, value.length());
 //                        filewriter.write("\t");
@@ -458,7 +447,7 @@ public class JAMSSpreadSheet extends JPanel {
 
                         value = table.getValueAt(k, col_index[i]).toString();
                         filewriter.write(value, 0, value.length());
-                        filewriter.write("\t");
+                        filewriter.write("\t\t");
                     }
                 }
                 filewriter.write("\r\n");
@@ -466,6 +455,49 @@ public class JAMSSpreadSheet extends JPanel {
             filewriter.write(SpreadsheetConstants.LOAD_END);
             filewriter.close();
 
+            } else{ //AB hier Das gleich nur Transponiert
+
+               
+                filewriter.write(SpreadsheetConstants.LOAD_HEADERS + "\r\n");
+
+            String col_string = "";
+            for (int j = 0; j < colcount; j++) {
+                col_string = columnNames[j];
+                for (int c = 0; c < write_col_cnt; c++) {
+
+                    if (col_string.compareTo(write_headers[c]) == 0) {
+                        if (c == write_col_cnt - 1) {
+                            filewriter.write(columnNames[j], 0, columnNames[j].length());
+                            filewriter.write("\r\n");
+                            col_index[c] = j;
+                        } else {
+                            filewriter.write(columnNames[j], 0, columnNames[j].length());
+                            filewriter.write("\r\n");
+                            col_index[c] = j;
+                        }
+                    }
+
+                }
+            }
+        
+            filewriter.write("\r\n" + SpreadsheetConstants.LOAD_DATA + " NR.2");
+            filewriter.write("\r\n");
+            System.out.println("rowcount =" + rowcount + "  write_col_cnt =" + write_col_cnt);
+            for (int i = 0;i< write_col_cnt; i++){
+                    for (int k = 0 ; k < rowcount ; k++){
+                            value =table.getValueAt(k, col_index[i]).toString();
+                            filewriter.write(value, 0 , value.length());
+                            filewriter.write("\t");
+                    }
+                    filewriter.write("\r\n");
+            }
+
+
+
+
+            filewriter.write(SpreadsheetConstants.LOAD_END);
+            filewriter.close();
+            }
         } catch (IOException ex) {
         }
 
@@ -481,11 +513,11 @@ public class JAMSSpreadSheet extends JPanel {
         //int[] col_index = new int[write_col_cnt];
         String value;
         String[] columnNames = tmodel.getCoulumnNameArray();
+//String wd = System.getProperty("user.dir");
+  //      JFileChooser chooser = new JFileChooser(wd); //ACHTUNG!!!!!!!!!
 
-//        JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
-
-//        int returnVal = chooser.showSaveDialog(panel);
-//        if (returnVal == JFileChooser.APPROVE_OPTION) {
+   //    int returnVal = chooser.showSaveDialog(panel);
+   //    if (returnVal == JFileChooser.APPROVE_OPTION) {
 
         try {
 
@@ -547,7 +579,7 @@ public class JAMSSpreadSheet extends JPanel {
         }
 
 
-//        }
+//      }
     }
 
     public void load(File file) {
@@ -670,7 +702,6 @@ public class JAMSSpreadSheet extends JPanel {
             GUIHelper.showErrorDlg(this, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_NOT_FOUND!"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR!"));
         }
     }
-
     public JFileChooser getTemplateChooser() {
 
         File explorerDir;
@@ -725,6 +756,9 @@ public class JAMSSpreadSheet extends JPanel {
     public File getOutputDSDir() {
         //call only if spreadsheet is output spreadsheet!
         return outputDSDir;
+    }
+    public void setOutputDSDir(File outputDSDir) {
+        this.outputDSDir = outputDSDir;
     }
 
     private void formatDoubleArray(double[] rowBuffer) {
@@ -868,11 +902,7 @@ public class JAMSSpreadSheet extends JPanel {
 
             rowBuffer = new double[colNumber];
             for (i = 1; i < rowData.length; i++) {
-                if (!rowData[i].getString().isEmpty()) {
-                    rowBuffer[i - 1] = ((DoubleValue) rowData[i]).getDouble();
-                } else {
-                    rowBuffer[i - 1] = -9999;
-                }
+                rowBuffer[i - 1] = ((DoubleValue) rowData[i]).getDouble();
             }
 
             formatDoubleArray(rowBuffer);
@@ -1339,6 +1369,8 @@ public class JAMSSpreadSheet extends JPanel {
 
         useTemplateButton.setEnabled(true);
         useTemplateButton.setSelected(false);
+        useTransposedButton.setEnabled(true);
+        useTransposedButton.setSelected(false);
 
 //        closeButton.setBackground(SpreadsheetConstants.GUI_COLOR_CLOSETAB);
         //dataplotButton.setEnabled(false);
@@ -1359,16 +1391,17 @@ public class JAMSSpreadSheet extends JPanel {
         GUIHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 6, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 7, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, useTemplateButton, 0, 8, 1, 1, 0, 0);
-//        GUIHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 9, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 10, 1, 1, 0, 0);
-//        GUIHelper.addGBComponent(controlpanel, gbl, loadbutton, 0, 11, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(controlpanel, gbl, statButton, 0, 12, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(controlpanel, gbl, useTransposedButton, 0, 9, 1, 1, 0, 0);
+//        GUIHelper.addGBComponent(controlpanel, gbl, stpButton, 0, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 11, 1, 1, 0, 0);
+//        GUIHelper.addGBComponent(controlpanel, gbl, loadbutton, 0, 12, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(controlpanel, gbl, statButton, 0, 13, 1, 1, 0, 0);
 
         // populate shape-combobox, if shape file is in input stores
         if (updateShapeSelector()) {
             JButton joinMapButton = new JButton(joinMapAction);
-            GUIHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 13, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 14, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 14, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 15, 1, 1, 0, 0);
         }
 
 //              controlpanel.add(openbutton);
