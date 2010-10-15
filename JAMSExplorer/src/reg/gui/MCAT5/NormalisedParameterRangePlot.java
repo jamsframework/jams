@@ -84,7 +84,7 @@ public class NormalisedParameterRangePlot {
         return minMaxOptimalTS;
     }
     
-    public void updateData() {
+    private void updateData() {
         double minMaxparetoOptimal[][] = getMinMaxParetoTS(this.param,this.eff);
                                                                  
         XYSeries minTSDataset_pareto = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINIMAL_PARETO_OPTIMAL_VALUE"));

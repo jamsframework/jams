@@ -35,8 +35,8 @@ public class BestPredictionPlot {
         this.eff = eff;
         this.obs = obs;
                 
-        plot1.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT")));
-        plot1.setRangeAxis(new NumberAxis(""));
+        plot1.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
+        plot1.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT")));
 
         JFreeChart chart1 = new JFreeChart(plot1);
         chart1.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BEST_PREDICTION_PLOT"));

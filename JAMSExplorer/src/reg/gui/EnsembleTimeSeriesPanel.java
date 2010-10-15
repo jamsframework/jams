@@ -180,7 +180,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
         modelRunList = new JList();
         JScrollPane modelRunListScroll = new JScrollPane(modelRunList);
-        modelRunListScroll.setPreferredSize(LIST_DIMENSION);
+        modelRunListScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width - 100, LIST_DIMENSION.height));
         modelRunList.addListSelectionListener(new ListSelectionListener() {
             
             public void valueChanged(ListSelectionEvent e) {

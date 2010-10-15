@@ -38,8 +38,8 @@ public class ParetoOutputUncertainty {
         this.obs = obs;
         this.eff = eff;
         
-        plot1.setDomainAxis(new NumberAxis(sim.name));
-        plot1.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
+        plot1.setRangeAxis(new NumberAxis(sim.name));
+        plot1.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
 
         JFreeChart chart1 = new JFreeChart(plot1);
         chart1.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARETO_OUTPUT_UNCERTAINTY"));

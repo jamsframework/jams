@@ -762,9 +762,9 @@ public class JAMSSpreadSheet extends JPanel {
     }
 
     private void formatDoubleArray(double[] rowBuffer) {
-        // shorten double values to two decimal digits
+        // shorten double values to four decimal digits
         for (int i = 0; i < rowBuffer.length; i++) {
-            rowBuffer[i] = Math.round(rowBuffer[i] * 100.) / 100.;
+            rowBuffer[i] = Math.round(rowBuffer[i] * 10000.) / 10000.;
         }
     }
 

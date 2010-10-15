@@ -14,6 +14,7 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JToolBar;
 import reg.gui.MCAT5.APosterioriPlot;
 import reg.gui.MCAT5.BestPredictionPlot;
@@ -24,6 +25,7 @@ import reg.gui.MCAT5.GLUEOutputUncertainty;
 import reg.gui.MCAT5.GLUEVariableUncertainty;
 import reg.gui.MCAT5.IdentifiabilityPlot;
 import reg.gui.MCAT5.NormalisedParameterRangePlot;
+import reg.gui.MCAT5.ParameterInterpolation;
 import reg.gui.MCAT5.ParetoOutputUncertainty;
 import reg.gui.MCAT5.RegionalSensitivityAnalyser;
 import reg.gui.MCAT5.RegionalSensitivityAnalyser2;
@@ -274,9 +276,22 @@ public class MCAT5Toolbar extends JToolBar {
     JButton MultiObjectivePlots = new JButton(new ImageIcon(getClass().getResource("/reg/resources/images/multiobj.png")));
     JButton NormalizedParameterRangePlot = new JButton(new ImageIcon(getClass().getResource("/reg/resources/images/normalisedparameter.png")));
     JButton BestPredictionPlot = new JButton(new ImageIcon(getClass().getResource("/reg/resources/images/bestpredictionplot.png")));
+    JButton paramterInterpolation = new JButton(new ImageIcon(getClass().getResource("/reg/resources/images/bestpredictionplot.png")));
 
     Window owner;
     
+    private JFrame getDefaultPlotWindow(String title) {
+        JFrame plotWindow = new JFrame(title);
+        plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        plotWindow.setLayout(new BorderLayout());        
+        plotWindow.setVisible(true);
+        plotWindow.setSize(800, 400);
+        this.setVisible(false);
+        
+        return plotWindow;
+    }
+
+
     public MCAT5Toolbar(Window param_owner) {
         super();
         this.owner = param_owner;
@@ -293,7 +308,7 @@ public class MCAT5Toolbar extends JToolBar {
         MultiObjectivePlots.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MULTI_OBJECTIVE_PLOT"));
         NormalizedParameterRangePlot.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NORMALIZED_PARAMETER_RANGE_PLOT"));
         BestPredictionPlot.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BEST_PREDICTION_PLOT"));
-
+        paramterInterpolation.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BEST_PREDICTION_PLOT"));
         dottyPlotObjFct.addActionListener(new ActionListener() {
 
             @Override
@@ -303,16 +318,13 @@ public class MCAT5Toolbar extends JToolBar {
                 req[1] = new DataRequestDlg.DataRequest(DataRequestDlg.ENSEMBLE_EFFICIENCY, "test", false);
 
                 new DataRequestDlg(req,owner) {
-
                     public void dataCollectAction() {
                         for (int i = 0; i < this.mcData.parameters.size(); i++) {
-                            JDialog plotWindow = new JDialog(this);
-                            plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                            plotWindow.setLayout(new BorderLayout());
-                            plotWindow.add((new DottyPlot(this.mcData.parameters.get(i), this.mcData.efficiencies.get(0)).getPanel()),BorderLayout.CENTER);
-                            plotWindow.setVisible(true);
-                            plotWindow.setSize(800, 400);
+                            JFrame plotWindow = getDefaultPlotWindow(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"));
+                            plotWindow.add((new DottyPlot(this.mcData.parameters.get(i), this.mcData.efficiencies.get(0)).getPanel()),BorderLayout.CENTER);                            
                         }
+                        this.setVisible(false);
+                        MCAT5Toolbar.this.setVisible(true);
                     }
                 };
             }
@@ -327,15 +339,11 @@ public class MCAT5Toolbar extends JToolBar {
                 req[1] = new DataRequestDlg.DataRequest(DataRequestDlg.ENSEMBLE_EFFICIENCY, "test", false);
 
                 new DataRequestDlg(req,owner) {
-
                     public void dataCollectAction() {
-                        JDialog plotWindow = new JDialog(this);
-                        plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                        plotWindow.setLayout(new BorderLayout());
-                        plotWindow.add((new APosterioriPlot(this.mcData.parameters.get(0), this.mcData.efficiencies.get(0)).getPanel()),BorderLayout.CENTER);                        
-                        plotWindow.setVisible(true);
-                        plotWindow.setSize(800, 400);
-
+                        JFrame plotWindow = getDefaultPlotWindow(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("A_POSTERIO_PARAMETER_DISTRIBUTION"));
+                        plotWindow.add((new APosterioriPlot(this.mcData.parameters.get(0), this.mcData.efficiencies.get(0)).getPanel()),BorderLayout.CENTER);                                                
+                        this.setVisible(false);
+                        MCAT5Toolbar.this.setVisible(true);
                     }
                 };
             }
@@ -350,14 +358,11 @@ public class MCAT5Toolbar extends JToolBar {
                         req[1] = new DataRequestDlg.DataRequest(DataRequestDlg.ENSEMBLE_EFFICIENCY, "test", false);
 
                         new DataRequestDlg(req,owner) {
-
                             public void dataCollectAction() {
-                                JDialog plotWindow = new JDialog(this);
-                                plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);                                
-                                plotWindow.setLayout(new BorderLayout());
-                                plotWindow.add((new IdentifiabilityPlot(this.mcData.parameters.get(0), this.mcData.efficiencies.get(0)).getPanel()),BorderLayout.CENTER);
-                                plotWindow.setVisible(true);
-                                plotWindow.setSize(800, 400);                                
+                                JFrame plotWindow = getDefaultPlotWindow(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("IDENTIFYABLITY_PLOT"));
+                                plotWindow.add((new IdentifiabilityPlot(this.mcData.parameters.get(0), this.mcData.efficiencies.get(0)).getPanel()),BorderLayout.CENTER);                                
+                                this.setVisible(false);
+                                MCAT5Toolbar.this.setVisible(true);
                             }
                         };
                     }
@@ -374,15 +379,11 @@ public class MCAT5Toolbar extends JToolBar {
                         req[2] = new DataRequestDlg.DataRequest(DataRequestDlg.OBSERVATED_TIMESERIE, "test", false);
 
                         new DataRequestDlg(req,owner) {
-
                             public void dataCollectAction() {
-                                JDialog plotWindow = new JDialog(this);
-                                plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                                plotWindow.setLayout(new BorderLayout());
-                                plotWindow.add((new DYNIA(this.mcData.ts_simulations.get(0), this.mcData.parameters.get(0), this.mcData.observations.get(0)).getPanel()),BorderLayout.CENTER);                                
-                                plotWindow.setVisible(true);
-                                plotWindow.setSize(800, 400);
-
+                                JFrame plotWindow = getDefaultPlotWindow(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DYNIA"));
+                                plotWindow.add((new DYNIA(this.mcData.ts_simulations.get(0), this.mcData.parameters.get(0), this.mcData.observations.get(0)).getPanel()),BorderLayout.CENTER);                                                                
+                                this.setVisible(false);
+                                MCAT5Toolbar.this.setVisible(true);
                             }
                         };
                     }
@@ -398,15 +399,11 @@ public class MCAT5Toolbar extends JToolBar {
                         req[1] = new DataRequestDlg.DataRequest(DataRequestDlg.ENSEMBLE_EFFICIENCY, "test", false);
 
                         new DataRequestDlg(req,owner) {
-
                             public void dataCollectAction() {
-                                JDialog plotWindow = new JDialog(this);
-                                plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                                plotWindow.setLayout(new BorderLayout());
+                                JFrame plotWindow = getDefaultPlotWindow(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS"));
                                 plotWindow.add((new RegionalSensitivityAnalyser(this.mcData.parameters.get(0), this.mcData.efficiencies.get(0)).getPanel()),BorderLayout.CENTER);                                
-                                plotWindow.setVisible(true);
-                                plotWindow.setSize(800, 400);
-
+                                this.setVisible(false);
+                                MCAT5Toolbar.this.setVisible(true);
                             }
                         };
                     }
@@ -424,17 +421,12 @@ public class MCAT5Toolbar extends JToolBar {
                         new DataRequestDlg(req,owner) {
 
                             public void dataCollectAction() {
-                                JDialog plotWindow = new JDialog(this);
-                                plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                                EfficiencyDataSet effSet[] = new EfficiencyDataSet[this.mcData.efficiencies.size()];
-                                for (int i = 0; i < effSet.length; i++) {
-                                    effSet[i] = this.mcData.efficiencies.get(i);
-                                }
-                                plotWindow.setLayout(new BorderLayout());
-                                plotWindow.add((new RegionalSensitivityAnalyser2(this.mcData.parameters.get(0), effSet).getPanel()),BorderLayout.CENTER);                                
-                                plotWindow.setVisible(true);
-                                plotWindow.setSize(800, 400);
-
+                                JFrame plotWindow = getDefaultPlotWindow(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS_II"));
+                                plotWindow.add((new RegionalSensitivityAnalyser2(this.mcData.parameters.get(0), 
+                                        this.mcData.efficiencies.toArray(new EfficiencyDataSet[1])).getPanel()),
+                                        BorderLayout.CENTER);
+                                this.setVisible(false);
+                                MCAT5Toolbar.this.setVisible(true);
                             }
                         };
                     }
@@ -452,13 +444,12 @@ public class MCAT5Toolbar extends JToolBar {
                         new DataRequestDlg(req,owner) {
 
                             public void dataCollectAction() {
-                                JDialog plotWindow = new JDialog(this);
-                                plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                                plotWindow.setLayout(new BorderLayout());
+                                JFrame plotWindow = getDefaultPlotWindow(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLASS_PLOT"));
                                 plotWindow.add((new ClassPlot(this.mcData.ts_simulations.get(0), mcData.efficiencies.get(0)).getPanel()),BorderLayout.CENTER);
-                                plotWindow.setVisible(true);
-                                plotWindow.setSize(800, 400);
-
+                                plotWindow.setSize(1000, 400);
+                                plotWindow.pack();                                                           
+                                this.setVisible(false);
+                                MCAT5Toolbar.this.setVisible(true);
                             }
                         };
                     }
@@ -476,15 +467,13 @@ public class MCAT5Toolbar extends JToolBar {
                         new DataRequestDlg(req,owner) {
 
                             public void dataCollectAction() {
-                                JDialog plotWindow = new JDialog(this);
-                                plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                                plotWindow.setLayout(new BorderLayout());
+                                JFrame plotWindow = getDefaultPlotWindow(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUMULATIVE_DENSITY_PLOT"));
                                 GLUEVariableUncertainty dataPlot = new GLUEVariableUncertainty(this.mcData.simulations.get(0), mcData.efficiencies.get(0));
                                 plotWindow.add((dataPlot.getPanel1()), BorderLayout.NORTH);
                                 plotWindow.add((dataPlot.getPanel2()), BorderLayout.SOUTH);
-                                plotWindow.setVisible(true);
                                 plotWindow.setSize(800, 900);
-
+                                this.setVisible(false);
+                                MCAT5Toolbar.this.setVisible(true);
                             }
                         };
                     }
@@ -502,15 +491,13 @@ public class MCAT5Toolbar extends JToolBar {
                         new DataRequestDlg(req,owner) {
 
                             public void dataCollectAction() {
-                                JDialog plotWindow = new JDialog(this);
-                                plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                                plotWindow.setLayout(new BorderLayout());
+                                JFrame plotWindow = getDefaultPlotWindow(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT_UNCERTAINTY_PLOT"));
                                 GLUEOutputUncertainty dataPlot = new GLUEOutputUncertainty(this.mcData.ts_simulations.get(0), mcData.observations.get(0));
                                 plotWindow.add(dataPlot.getPanel1(), BorderLayout.NORTH);
-                                plotWindow.add(dataPlot.getPanel2(), BorderLayout.SOUTH);
-                                plotWindow.setVisible(true);
+                                plotWindow.add(dataPlot.getPanel2(), BorderLayout.SOUTH);                                
                                 plotWindow.setSize(800, 900);
-
+                                this.setVisible(false);
+                                MCAT5Toolbar.this.setVisible(true);
                             }
                         };
                     }
@@ -529,18 +516,12 @@ public class MCAT5Toolbar extends JToolBar {
                         new DataRequestDlg(req,owner) {
 
                             public void dataCollectAction() {
-                                JDialog plotWindow = new JDialog(this);
-                                plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                                plotWindow.setLayout(new BorderLayout());
-                                EfficiencyDataSet effSet[] = new EfficiencyDataSet[mcData.efficiencies.size()];
-                                for (int i = 0; i < effSet.length; i++) {
-                                    effSet[i] = mcData.efficiencies.get(i);
-                                }
-                                ParetoOutputUncertainty dataPlot = new ParetoOutputUncertainty(this.mcData.ts_simulations.get(0), mcData.observations.get(0), effSet);
+                                JFrame plotWindow = getDefaultPlotWindow(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARETO_OUTPUT_UNCERTAINTY"));
+                                ParetoOutputUncertainty dataPlot = new ParetoOutputUncertainty(this.mcData.ts_simulations.get(0),
+                                        mcData.observations.get(0), mcData.efficiencies.toArray(new EfficiencyDataSet[1]));
                                 plotWindow.add(dataPlot.getPanel1(), BorderLayout.CENTER);
-                                plotWindow.setVisible(true);
-                                plotWindow.setSize(800, 400);
-
+                                this.setVisible(false);
+                                MCAT5Toolbar.this.setVisible(true);
                             }
                         };
                     }
@@ -572,15 +553,15 @@ public class MCAT5Toolbar extends JToolBar {
                                 for (int i = 0; i < eff.length; i++) {
                                     for (int j = i + 1; j < eff.length; j++) {
                                         DottyPlot p = new DottyPlot(eff[i], eff[j]);
-                                        JDialog plotWindow = new JDialog(this);
-                                        plotWindow.setLayout(new BorderLayout());
-                                        plotWindow.add(p.getPanel(),BorderLayout.CENTER);
-                                        plotWindow.setVisible(true);
+                                        JFrame plotWindow = getDefaultPlotWindow("Multiobjective Plot");
+                                        plotWindow.add(p.getPanel(),BorderLayout.CENTER);                                        
                                         plotWindow.setSize(400, 400);
                                         plotWindow.setLocation(viewPosition[counter % 4]);
                                         counter++;
                                     }
                                 }
+                                this.setVisible(false);
+                                MCAT5Toolbar.this.setVisible(true);
                             }
                         };
                     }
@@ -599,25 +580,12 @@ public class MCAT5Toolbar extends JToolBar {
                         new DataRequestDlg(req,owner) {
 
                             public void dataCollectAction() {
-                                JDialog plotWindow = new JDialog(this);
-                                plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-                                EfficiencyDataSet eff[] = new EfficiencyDataSet[mcData.efficiencies.size()];
-
-                                for (int i = 0; i < eff.length; i++) {
-                                    eff[i] = mcData.efficiencies.get(i);
-                                }
-
-                                ParameterSet param[] = new ParameterSet[mcData.parameters.size()];
-
-                                for (int i = 0; i < param.length; i++) {
-                                    param[i] = mcData.parameters.get(i);
-                                }
+                                JFrame plotWindow = getDefaultPlotWindow(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NORMALISED_PARAMETER_RANGE_PLOT"));
                                 plotWindow.setLayout(new BorderLayout());
-                                plotWindow.add((new NormalisedParameterRangePlot(param, eff).getPanel1()),BorderLayout.CENTER);
-                                plotWindow.setVisible(true);
-                                plotWindow.setSize(800, 400);
-
+                                plotWindow.add((new NormalisedParameterRangePlot(mcData.parameters.toArray(new ParameterSet[1]),
+                                        mcData.efficiencies.toArray(new EfficiencyDataSet[1])).getPanel1()),BorderLayout.CENTER);
+                                this.setVisible(false);
+                                MCAT5Toolbar.this.setVisible(true);
                             }
                         };
                     }
@@ -636,19 +604,37 @@ public class MCAT5Toolbar extends JToolBar {
                         new DataRequestDlg(req,owner) {
 
                             public void dataCollectAction() {
-                                JDialog plotWindow = new JDialog(this);
-                                plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-                                EfficiencyDataSet eff[] = new EfficiencyDataSet[mcData.efficiencies.size()];
-
-                                for (int i = 0; i < eff.length; i++) {
-                                    eff[i] = mcData.efficiencies.get(i);
-                                }
+                                JFrame plotWindow = getDefaultPlotWindow(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BEST_PREDICTION_PLOT"));
                                 plotWindow.setLayout(new BorderLayout());
-                                plotWindow.add((new BestPredictionPlot(mcData.ts_simulations.get(0), mcData.observations.get(0), eff).getPanel1()),BorderLayout.CENTER);
-                                plotWindow.setVisible(true);
-                                plotWindow.setSize(800, 400);
+                                plotWindow.add((new BestPredictionPlot(mcData.ts_simulations.get(0), mcData.observations.get(0), 
+                                        mcData.efficiencies.toArray(new EfficiencyDataSet[1])).getPanel1()),BorderLayout.CENTER);
+                                this.setVisible(false);
+                                MCAT5Toolbar.this.setVisible(true);
+                            }
+                        };
+                    }
+                });
+        paramterInterpolation.addActionListener(
+                new ActionListener() {
 
+                    @Override
+                    public void actionPerformed(ActionEvent evt) {
+                        DataRequestDlg.DataRequest req[] = new DataRequestDlg.DataRequest[3];
+                        req[0] = new DataRequestDlg.DataRequest(DataRequestDlg.ENSEMBLE_PARAMETER, "test2", true);
+                        req[1] = new DataRequestDlg.DataRequest(DataRequestDlg.SIMULATATED_TIMESERIE, "test", false);
+                        req[2] = new DataRequestDlg.DataRequest(DataRequestDlg.OBSERVATED_TIMESERIE, "test", false);
+
+                        new DataRequestDlg(req,owner) {
+
+                            public void dataCollectAction() {
+                                JFrame plotWindow = getDefaultPlotWindow("Parameter Interpolation");
+                                ParameterSet parameterSets[] = new ParameterSet[this.mcData.parameters.size()];
+                                for (int i=0;i<parameterSets.length;i++){
+                                    parameterSets[i] = this.mcData.parameters.get(i);
+                                }
+                                plotWindow.add((new ParameterInterpolation(this.mcData.ts_simulations.get(0),parameterSets , this.mcData.observations.get(0)).getPanel()),BorderLayout.CENTER);
+                                this.setVisible(false);
+                                MCAT5Toolbar.this.setVisible(true);
                             }
                         };
                     }
@@ -666,6 +652,7 @@ public class MCAT5Toolbar extends JToolBar {
         this.add(MultiObjectivePlots);
         this.add(NormalizedParameterRangePlot);
         this.add(BestPredictionPlot);
+        this.add(paramterInterpolation);
         this.setVisible(false);
     }
 }

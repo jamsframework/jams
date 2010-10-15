@@ -34,25 +34,7 @@ public class RegionalSensitivityAnalyser {
     double likelihood[] = null;
     
     int GROUPS = 10;
-    
-    private double FindMin(double data[][], int col) {
-        int n = data.length;
-        double min = Double.POSITIVE_INFINITY;
-        for (int i = 0; i < n; i++) {
-            min = Math.min(min, data[i][col]);
-        }
-        return min;
-    }
-
-    private double FindMax(double data[][], int col) {
-        int n = data.length;
-        double max = Double.NEGATIVE_INFINITY;
-        for (int i = 0; i < n; i++) {
-            max = Math.max(max, data[i][col]);
-        }
-        return max;
-    }
-
+        
     public RegionalSensitivityAnalyser(ParameterSet data, EfficiencyDataSet eff) {
         this.data = data;
         this.eff = eff;
@@ -69,8 +51,8 @@ public class RegionalSensitivityAnalyser {
             renderer.setSeriesPaint(i, new Color(255-c,0,c));                           
         }               
         plot.setRenderer(renderer);
-        plot.setDomainAxis(new NumberAxis(data.name));
         plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIKELIHOOD")));
+        plot.setDomainAxis(new NumberAxis(data.name));
 
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS"));
@@ -93,7 +75,7 @@ public class RegionalSensitivityAnalyser {
         return tmp_data;
     }
         
-    public void updateData() {    
+    private void updateData() {
         XYSeriesCollection series = new XYSeriesCollection();
                 
         ArrayList<double[]> boxes[]  = new ArrayList[GROUPS];
@@ -116,11 +98,13 @@ public class RegionalSensitivityAnalyser {
             range_max = Math.max(sorted_data[i][0],range_max);
             range_min = Math.min(sorted_data[i][0],range_min);
         }
-                        
-        for (int i = 0; i < boxes.length; i++) {           
-            XYSeries dataset = new XYSeries("");
-            if (i==0)                   dataset.setDescription("best group");
-            if (i==boxes.length-1)      dataset.setDescription("worst group");
+
+        XYSeries dataset = null;
+        for (int i = 0; i < boxes.length; i++) {                       
+            if (i==0)                   dataset=new XYSeries("best group");
+            else if(i == boxes.length - 1)      dataset = new XYSeries("worst group");
+            else dataset = new XYSeries("");
+
             double box_data[][] = new double[boxes[i].size()][];
             for (int j=0;j<boxes[i].size();j++){
                 box_data[j] = boxes[i].get(j);

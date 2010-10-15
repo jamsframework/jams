@@ -69,7 +69,7 @@ public class RegionalSensitivityAnalyser2 {
         return tmp_data;
     }
         
-    public void updateData() {        
+    private void updateData() {
         int numberOfObjFct = eff.length;
         XYSeries dataset[] = new XYSeries[numberOfObjFct];
         double sorted_data[][][] = new double[numberOfObjFct][][];

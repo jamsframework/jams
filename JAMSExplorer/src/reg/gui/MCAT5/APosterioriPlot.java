@@ -12,6 +12,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.data.xy.XYBarDataset;
@@ -65,13 +66,14 @@ public class APosterioriPlot{
                 boxes_count[index] += 1.0;
             }
             for (int i=0;i<boxes.length;i++){
-                dataset.add(((max-min)/(boxes.length-1))*i,boxes[i]/boxes_count[i]);
+                dataset.add(min+((max-min)/(boxes.length-1))*i,boxes[i]/boxes_count[i]);
             }
             
-            plot.setDataset(0, new XYBarDataset(new XYSeriesCollection(dataset),(max-min)/(double)BOX_COUNT));
-            
+            plot.setDataset(0, new XYBarDataset(new XYSeriesCollection(dataset),((max-min)/(double)BOX_COUNT)));
+
+
             if (null != plot.getRangeAxis())   plot.getRangeAxis().setAutoRange(true);
-            if (null != plot.getDomainAxis())  plot.getDomainAxis().setAutoRange(true);            
+            if (null != plot.getDomainAxis())  plot.getDomainAxis().setRange(new Range(min,max));
         }
         
         public JPanel getPanel(){

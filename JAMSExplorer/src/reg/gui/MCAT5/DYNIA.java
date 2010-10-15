@@ -207,6 +207,7 @@ public class DYNIA {
                 
         if (plot.getRangeAxis() != null) plot.getRangeAxis().setRange(new Range(minParam,maxParam));
         if (plot.getDomainAxis() != null)plot.getDomainAxis().setRange(new Range(0,ts_length));
+        if (plot.getRangeAxis(1) != null) plot.getRangeAxis(1).setRange(new Range(obs_min,obs_max));
        
     }
 
