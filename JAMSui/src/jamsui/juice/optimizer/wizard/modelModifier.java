@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +41,19 @@ import org.w3c.dom.NodeList;
  */
 public class modelModifier {
 
-    String error = "";
+    static final int BRANCH_AND_BOUND_METHOD = 0;
+    static final int GPSEARCH_METHOD = 1;
+    static final int NELDERMEAD_METHOD = 2;
+    static final int PARALLEL_SCE_METHOD = 3;
+    static final int GUTMANN_METHOD = 4;
+    static final int SCE_METHOD = 5;
+    static final int MOCOM_METHOD = 6;
+    static final int PARALLEL_RANDOMSAMPLER_METHOD = 7;
+    static final int RANDOMSAMPLER_METHOD = 8;
+    static final int NSGA2_METHOD = 9;
+    static final int DIRECT_METHOD = 10;
+    static final int LATINHYPERCUBE_METHOD = 11;
+
     StandardRuntime rt;
     Document loadedModel;
     JAMSProperties properties;
@@ -50,6 +63,19 @@ public class modelModifier {
     HashSet<String> removedComponents = new HashSet<String>();
 
     InputStream optimizerIniStream;
+
+    static public class WizardException extends Exception{
+        String e;
+
+        WizardException(String desc){
+            e = desc;
+        }
+
+        @Override
+        public String toString(){
+            return e;
+        }
+    }
 
     static public class AttributeDescription {
 
@@ -119,13 +145,12 @@ public class modelModifier {
         }
     }
 
-    private static boolean readParameterConfig(OptimizerDescription desc, Properties props, Node root) {
+    private static void readParameterConfig(OptimizerDescription desc, Properties props, Node root) throws WizardException{
         int parameterCount = 0;
         if (props.getProperty("n") != null) {
             parameterCount = (int)Double.parseDouble(props.getProperty("n"));
         } else {
-            System.err.println("error: parameter count not specified");
-            return false;
+            throw new WizardException(JAMS.resources.getString("error_parameter_count_not_specified"));
         }
         double lowerBounds[] = new double[parameterCount],
                 upperBounds[] = new double[parameterCount],
@@ -138,16 +163,14 @@ public class modelModifier {
         String strParameterNames = props.getProperty("parameters");
 
         if (strLowerBounds == null || strUpperBounds == null || strParameterNames == null) {
-            System.err.println("error: parameter name, upper or lower bound not specified");
-            return false;
+            throw new WizardException(JAMS.resources.getString("error_parameter_name_upper_or_lower_bound_not_specified"));
         }
 
         StringTokenizer tok1 = new StringTokenizer(strLowerBounds, ";");
         StringTokenizer tok2 = new StringTokenizer(strUpperBounds, ";");
         StringTokenizer tok3 = new StringTokenizer(strParameterNames, ";");
         if (tok1.countTokens() != parameterCount || tok2.countTokens() != parameterCount || tok3.countTokens() != parameterCount) {
-            System.err.println("error: upper or lower bound count does not match parameter count");
-            return false;
+            throw new WizardException(JAMS.resources.getString("error_upper_or_lower_bound_count_does_not_match_parameter_count"));
         }
         for (int i = 0; i < parameterCount; i++) {
             lowerBounds[i] = Double.parseDouble(tok1.nextToken());
@@ -161,8 +184,7 @@ public class modelModifier {
         if (strStartValue != null) {
             StringTokenizer tok = new StringTokenizer(strStartValue, ";");
             if (tok.countTokens() != parameterCount) {
-                System.err.println("error: start value bound count does not match parameter count");
-                return false;
+                throw new WizardException(JAMS.resources.getString("error_start_value_bound_count_does_not_match_parameter_count"));
             }
             for (int i = 0; i < parameterCount; i++) {
                 startValue[i] = Double.parseDouble(tok.nextToken());
@@ -172,8 +194,7 @@ public class modelModifier {
         for (int i = 0; i < parameterCount; i++) {
             String result = jamsui.juice.optimizer.wizard.Tools.getTypeFromNodeName(root, parameterOwner[i]);
             if (result == null) {
-                System.err.println("unknown parameter owner " + parameterOwner[i]);
-                return false;
+                throw new WizardException(JAMS.resources.getString("unknown parameter owner " + parameterOwner[i]));
             }
             Parameter p = null;
             if (result.equals("jams.model.contextcomponent")) {
@@ -191,10 +212,9 @@ public class modelModifier {
             }
             desc.parameters.add(p);
         }       
-        return true;
     }
 
-    static private boolean readNSGA2Method(OptimizerDescription desc, Properties props) {
+    static private void readNSGA2Method(OptimizerDescription desc, Properties props) throws WizardException, NumberFormatException, NullPointerException{
         desc.optimizerClassName = "jams.components.optimizer.NSGA2";
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         String str_populationSize = props.getProperty("popSize");
@@ -204,177 +224,90 @@ public class modelModifier {
         String str_mutationDistributionIndex = props.getProperty("mutationDistributionIndex");
         String str_maxGeneration = props.getProperty("maxGeneration");
 
-        int maxn = 0;
-        try {
-            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
-        } catch (Exception e) {
-        }
-        if (maxn < 1) {
-            System.err.println(JAMS.resources.getString("error_maxiter_greater_1"));
-            return false;
-        }
-        desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
+        int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
+        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
 
-        int popSize = 0;
-        try {
-            popSize = (int)Double.parseDouble(str_populationSize);
-        } catch (Exception e) {
-        }
-        if (popSize < 1) {
-            System.err.println(JAMS.resources.getString("population_size_must_be_positive"));
-            return false;
-        }
-        desc.attributes.add(new AttributeDescription("populationSize", null, Integer.toString(popSize), false));
+        int popSize = (int)Double.parseDouble(str_populationSize);
+        if (popSize < 1)  throw new WizardException(JAMS.resources.getString("population_size_must_be_positive"));
 
-        double crossoverProbability = 0;
-        try {
-            crossoverProbability = Double.parseDouble(str_crossoverProbability);
-        } catch (Exception e) {
-        }
-        if (crossoverProbability < 0 || crossoverProbability > 1) {
-            System.err.println(JAMS.resources.getString("crossoverProbability_must_be_between_0_and_1"));
-            return false;
-        }
+        double mutationProbability = Double.parseDouble(str_mutationProbability);
+        if (mutationProbability < 0.5 || mutationProbability > 1)
+            throw new WizardException(JAMS.resources.getString("mutationProbability_must_be_between_05_and_1"));
+
+        double crossoverProbability = Double.parseDouble(str_crossoverProbability);
+        if (crossoverProbability < 0 || crossoverProbability > 1)
+            throw new WizardException(JAMS.resources.getString("crossoverProbability_must_be_between_0_and_1"));
+
+        double crossoverDistributionIndex = Double.parseDouble(str_crossoverDistributionIndex);
+        if (crossoverDistributionIndex < 0.5 || crossoverDistributionIndex > 100)
+            throw new WizardException(JAMS.resources.getString("crossoverDistributionIndex_must_be_between_05_and_100"));
+
+        double mutationDistributionIndex = Double.parseDouble(str_mutationDistributionIndex);
+        if (mutationDistributionIndex < 0.5 || mutationDistributionIndex > 100)
+            throw new WizardException(JAMS.resources.getString("mutationDistributionIndex_must_be_between_05_and_100"));
+
+        double maxGeneration = Double.parseDouble(str_maxGeneration);
+        if (maxGeneration < 1)
+            throw new WizardException(JAMS.resources.getString("maxGeneration_must_be_positive"));
+
+        desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));        
+        desc.attributes.add(new AttributeDescription("populationSize", null, Integer.toString(popSize), false));  
         desc.attributes.add(new AttributeDescription("crossoverProbability", null, Double.toString(crossoverProbability), false));
-        double mutationProbability = 0;
-        try {
-            mutationProbability = Double.parseDouble(str_mutationProbability);
-        } catch (Exception e) {
-        }
-        if (mutationProbability < 0.5 || mutationProbability > 1) {
-            System.err.println(JAMS.resources.getString("mutationProbability_must_be_between_05_and_1"));
-            return false;
-        }
         desc.attributes.add(new AttributeDescription("mutationProbability", null, Double.toString(mutationProbability), false));
-        double crossoverDistributionIndex = 0;
-        try {
-            crossoverDistributionIndex = Double.parseDouble(str_crossoverDistributionIndex);
-        } catch (Exception e) {
-        }
-        if (crossoverDistributionIndex < 0.5 || crossoverDistributionIndex > 100) {
-            System.err.println(JAMS.resources.getString("crossoverDistributionIndex_must_be_between_05_and_100"));
-            return false;
-        }
         desc.attributes.add(new AttributeDescription("crossoverDistributionIndex", null, Double.toString(crossoverDistributionIndex), false));
-        double mutationDistributionIndex = 0;
-        try {
-            mutationDistributionIndex = Double.parseDouble(str_mutationDistributionIndex);
-        } catch (Exception e) {
-        }
-        if (mutationDistributionIndex < 0.5 || mutationDistributionIndex > 100) {
-            System.err.println(JAMS.resources.getString("mutationDistributionIndex_must_be_between_05_and_100"));
-            return false;
-        }
         desc.attributes.add(new AttributeDescription("mutationDistributionIndex", null, Double.toString(mutationDistributionIndex), false));
-        double maxGeneration = 0;
-        try {
-            maxGeneration = Double.parseDouble(str_maxGeneration);
-        } catch (Exception e) {
-        }
-        if (maxGeneration < 1) {
-            System.err.println(JAMS.resources.getString("maxGeneration_must_be_positive"));
-            return false;
-        }        
         desc.attributes.add(new AttributeDescription("maxGeneration", null, Integer.toString((int)maxGeneration), false));
-        return true;
     }
 
-    static private boolean readMOCOMMethod(OptimizerDescription desc, Properties props) {
+    static private void readMOCOMMethod(OptimizerDescription desc, Properties props) throws WizardException, NumberFormatException, NullPointerException{
         desc.optimizerClassName = "jams.components.optimizer.MOCOM";
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         String str_populationSize = props.getProperty("popSize");
-        int maxn = 0;
-        try {
-            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
-        } catch (Exception e) {
-        }
-        if (maxn < 1) {
-            System.err.println(JAMS.resources.getString("error_maxiter_greater_1"));
-            return false;
-        }
-        desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
+        int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
+        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
 
-        int popSize = 0;
-        try {
-            popSize = (int)Double.parseDouble(str_populationSize);
-        } catch (Exception e) {
-        }
-        if (popSize < 1) {
-            System.err.println(JAMS.resources.getString("population_size_must_be_positive"));
-            return false;
-        }
+        int popSize = (int)Double.parseDouble(str_populationSize);
+        if (popSize < 1) throw new WizardException(JAMS.resources.getString("population_size_must_be_positive"));
+
+        desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
         desc.attributes.add(new AttributeDescription("populationSize", null, Integer.toString(popSize), false));
-        return true;
     }
 
-    static private boolean readGutmannMethod(OptimizerDescription desc, Properties props) {
+    static private void readGutmannMethod(OptimizerDescription desc, Properties props) throws WizardException, NumberFormatException, NullPointerException {
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         desc.optimizerClassName = "jams.components.optimizer.GutmannMethod";
-        int maxn = 500;
-        try {
-            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
-        } catch (Exception e) {
-        }
-        if (maxn < 1) {
-            System.err.println(JAMS.resources.getString("error_maxiter_greater_1"));
-            return false;
-        }
+        int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
+        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
         desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
-        return true;
     }
 
-    static private boolean readDirectMethod(OptimizerDescription desc, Properties props) {
+    static private void readDirectMethod(OptimizerDescription desc, Properties props) throws WizardException, NumberFormatException, NullPointerException{
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         desc.optimizerClassName = "jams.components.optimizer.Direct";
-        int maxn = 500;
-        try {
-            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
-        } catch (Exception e) {
-        }
-        if (maxn < 1) {
-            System.err.println(JAMS.resources.getString("error_maxiter_greater_1"));
-            return false;
-        }
-        desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
-        return true;
+        int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
+        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
     }
 
-    static private boolean readBranchAndBoundMethod(OptimizerDescription desc, Properties props) {
+    static private void readBranchAndBoundMethod(OptimizerDescription desc, Properties props) throws WizardException, NumberFormatException, NullPointerException{
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         desc.optimizerClassName = "jams.components.optimizer.BranchAndBound";
-        int maxn = 500;
-        try {
-            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
-        } catch (Exception e) {
-        }
-        if (maxn < 1) {
-            System.err.println(JAMS.resources.getString("error_maxiter_greater_1"));
-            return false;
-        }
-        desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
-        return true;
+        int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
+        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
     }
 
-    static private boolean readGPSearchMethod(OptimizerDescription desc, Properties props) {
+    static private void readGPSearchMethod(OptimizerDescription desc, Properties props) throws WizardException, NumberFormatException, NullPointerException{
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         String str_kernelMethod = props.getProperty("kernelMethod");
         desc.optimizerClassName = "jams.components.optimizer.GPSearch";
-        int maxn = 0, kernel = 1;
-        try {
-            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
+        int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations),
             kernel = (int)Double.parseDouble(str_kernelMethod);
-        } catch (Exception e) {
-        }
-        if (maxn < 1) {
-            System.err.println(JAMS.resources.getString("error_maxiter_greater_1"));
-            return false;
-        }
+        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+       
         desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
         desc.attributes.add(new AttributeDescription("GPMethod", null, Integer.toString(kernel), false));
-        return true;
     }
 
-    static private boolean readRandomSamplerMethod(OptimizerDescription desc, Properties props, boolean isParallel) {
+    static private void readRandomSamplerMethod(OptimizerDescription desc, Properties props, boolean isParallel) throws WizardException, NumberFormatException, NullPointerException{
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         String str_excludedFiles = props.getProperty("fileFilter");
         
@@ -382,50 +315,39 @@ public class modelModifier {
             desc.optimizerClassName = "jams.parallel.optimizer.ParallelRandomSampler";
         else
             desc.optimizerClassName = "jams.components.optimizer.RandomSampler";
-        int maxn = 500;
-        try {
-            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
-        } catch (Exception e) {
-        }
-        if (maxn < 1) {
-            System.err.println(JAMS.resources.getString("error_maxiter_greater_1"));
-            return false;
-        }        
+        int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
+        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
         try {
             if (isParallel) {
-                if (str_excludedFiles == null) {
-                    str_excludedFiles = "";
-                }
+                if (str_excludedFiles == null) str_excludedFiles = "";
                 Pattern.compile(str_excludedFiles);
                 desc.attributes.add(new AttributeDescription("excludeFiles", null, str_excludedFiles, false));
             }
         } catch (PatternSyntaxException pse) {
-            System.err.println(JAMS.resources.getString("There_is_a_problem_with_the_regular_expression!") + "\n" +
+            throw new WizardException(JAMS.resources.getString("There_is_a_problem_with_the_regular_expression!") + "\n" +
                     JAMS.resources.getString("The_pattern_in_question_is") + ": " + pse.getPattern() + "\n" +
                     JAMS.resources.getString("The_description_is") + ": " + pse.getDescription() + "\n");
-            return false;
         }
-        desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));        
-        return true;
+        desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));                
     }
 
-    static private boolean readNelderMeadMethod(OptimizerDescription desc, Properties props) {
+    static private void readLatinHyperCubeRandomSamplerMethod(OptimizerDescription desc, Properties props) throws WizardException, NumberFormatException, NullPointerException{
+        String str_maximumNumberOfIterations = props.getProperty("maxn");
+        desc.optimizerClassName = "jams.components.optimizer.LatinHyperCubeRandomSampler";
+        int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
+        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+        desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
+    }
+
+    static private void readNelderMeadMethod(OptimizerDescription desc, Properties props) throws WizardException, NumberFormatException, NullPointerException{
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         desc.optimizerClassName = "jams.components.optimizer.NelderMead";
-        int maxn = 500;
-        try {
-            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
-        } catch (Exception e) {
-        }
-        if (maxn < 1) {
-            System.err.println(JAMS.resources.getString("error_maxiter_greater_1"));
-            return false;
-        }
+        int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
+        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
         desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
-        return true;
     }
     
-    static private boolean readSCEMethod(OptimizerDescription desc, Properties props, boolean parallel) {
+    static private void readSCEMethod(OptimizerDescription desc, Properties props, boolean parallel) throws WizardException, NumberFormatException, NullPointerException{
         if (parallel) {
             desc.optimizerClassName = "jams.parallel.optimizer.SimpleParallelSCE";
         } else {
@@ -438,41 +360,23 @@ public class modelModifier {
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         String str_excludedFiles = props.getProperty("excludedFiles");
 
-        int numOfComplexes = 2;
-        double pcento = 0.1;
-        double peps = 0;
-        int kstop = 0;
-        int maxn = 0;
-
-        try {
-            numOfComplexes = (int)Double.parseDouble(str_numberOfComplexes);
-            pcento = Double.parseDouble(str_pcento);
-            peps = Double.parseDouble(str_peps);
-            kstop = (int)Double.parseDouble(str_kstop);
-            maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
-        } catch (Exception e) {
-        }
-
-        if (numOfComplexes < 1 || numOfComplexes > 100) {
-            System.err.println(JAMS.resources.getString("number_of_complexes_have_to_be_an_integer_between_1_and_100"));
-            return false;
-        }
-        if (pcento < 0 || pcento > 1) {
-            System.err.println(JAMS.resources.getString("value_of_pcento_have_to_be_between_0_and_1"));
-            return false;
-        }
-        if (peps < 0 || peps > 1) {
-            System.err.println(JAMS.resources.getString("value_of_peps_have_to_be_between_0_and_1"));
-            return false;
-        }
-        if (kstop < 1 || kstop > 100) {
-            System.err.println(JAMS.resources.getString("kstop_have_to_be_an_integer_between_1_and_100"));
-            return false;
-        }
-        if (maxn < 1) {
-            System.err.println(JAMS.resources.getString("error_maxiter_greater_1"));
-            return false;
-        }
+        int numOfComplexes = (int)Double.parseDouble(str_numberOfComplexes);
+        double pcento = Double.parseDouble(str_pcento);
+        double peps = Double.parseDouble(str_peps);
+        int kstop = (int)Double.parseDouble(str_kstop);
+        int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
+                  
+        if (numOfComplexes < 1 || numOfComplexes > 100)
+            throw new WizardException(JAMS.resources.getString("number_of_complexes_have_to_be_an_integer_between_1_and_100"));
+        if (pcento < 0 || pcento > 1)
+            throw new WizardException(JAMS.resources.getString("value_of_pcento_have_to_be_between_0_and_1"));
+        if (peps < 0 || peps > 1)
+            throw new WizardException(JAMS.resources.getString("value_of_peps_have_to_be_between_0_and_1"));
+        if (kstop < 1 || kstop > 100) 
+            throw new WizardException(JAMS.resources.getString("kstop_have_to_be_an_integer_between_1_and_100"));
+        if (maxn < 1) 
+            throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+                    
         try {
             if (parallel) {
                 if (str_excludedFiles == null) {
@@ -482,123 +386,87 @@ public class modelModifier {
                 desc.attributes.add(new AttributeDescription("excludeFiles", null, str_excludedFiles, false));
             }
         } catch (PatternSyntaxException pse) {
-            System.err.println(JAMS.resources.getString("There_is_a_problem_with_the_regular_expression!") + "\n" +
+            throw new WizardException(JAMS.resources.getString("There_is_a_problem_with_the_regular_expression!") + "\n" +
                     JAMS.resources.getString("The_pattern_in_question_is") + ": " + pse.getPattern() + "\n" +
                     JAMS.resources.getString("The_description_is") + ": " + pse.getDescription() + "\n");
-            return false;
         }
         desc.attributes.add(new AttributeDescription("NumberOfComplexes", null, Integer.toString(numOfComplexes), false));
         desc.attributes.add(new AttributeDescription("pcento", null, Double.toString(pcento), false));
         desc.attributes.add(new AttributeDescription("peps", null, Double.toString(peps), false));
         desc.attributes.add(new AttributeDescription("kstop", null, Integer.toString(kstop), false));
         desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));        
-        return true;
     }
 
-    static private boolean readOptimizerMethod(OptimizerDescription desc, Properties props) {
+    static private void readOptimizerMethod(OptimizerDescription desc, Properties props) throws WizardException, NullPointerException, NumberFormatException{
         //read method
         if (props.getProperty("method") != null) {
             desc.method = (int)Double.parseDouble(props.getProperty("method"));
         } else {
-            System.err.println("error: optimization method not specified");
-            return false;
+            throw new WizardException(JAMS.resources.getString("error_optimization_method_not_specified"));
         }
         switch (desc.method) {
-            case 0: {
-                if (!readBranchAndBoundMethod(desc, props)) {
-                    System.err.println("invalid Branch&Bound method configuration");
-                    return false;
-                }
+            case BRANCH_AND_BOUND_METHOD: {
+                readBranchAndBoundMethod(desc, props);
                 break;
             }
-            case 1: {
-                if (!readGPSearchMethod(desc, props)) {
-                    System.err.println("invalid GPSearch method configuration");
-                    return false;
-                }
+            case GPSEARCH_METHOD: {
+                readGPSearchMethod(desc, props);
                 break;
             }
-            case 2: {
-                if (!readNelderMeadMethod(desc, props)) {
-                    System.err.println("invalid Nelder Mead method configuration");
-                    return false;
-                }
+            case NELDERMEAD_METHOD: {
+                readNelderMeadMethod(desc, props);
                 break;
             }
-            case 3: {
-                if (!readSCEMethod(desc, props, true)) {
-                    System.err.println("invalid Parallel - SCE method configuration");
-                    return false;
-                }
+            case PARALLEL_SCE_METHOD: {
+                readSCEMethod(desc, props, true);
                 break;
             }
-            case 4: {
-                if (!readGutmannMethod(desc, props)) {
-                    System.err.println("invalid Gutmann/RBF method configuration");
-                    return false;
-                }
+            case GUTMANN_METHOD: {
+                readGutmannMethod(desc, props);
                 break;
             }
-            case 5: {
-                if (!readSCEMethod(desc, props, false)) {
-                    System.err.println("invalid SCE method configuration");
-                    return false;
-                }
+            case SCE_METHOD: {
+                readSCEMethod(desc, props, false);
                 break;
             }
-            case 6: {
-                if (!readMOCOMMethod(desc, props)) {
-                    System.err.println("invalid MOCOM method configuration");
-                    return false;
-                }
+            case MOCOM_METHOD: {
+                readMOCOMMethod(desc, props);
                 break;
             }
-            case 7: {
-                if (!readRandomSamplerMethod(desc, props, true)) {
-                    System.err.println("invalid P-SCE method configuration");
-                    return false;
-                }
-                //desc.optimizerClassName = "jams.parallel.optimizer.ParallelRandomSampler";                
+            case PARALLEL_RANDOMSAMPLER_METHOD: {
+                readRandomSamplerMethod(desc, props, true);
                 break;
             }
-            case 8: {
-                if (!readRandomSamplerMethod(desc, props, false)) {
-                    System.err.println("invalid RandomSampler method configuration");
-                    return false;
-                }
+            case RANDOMSAMPLER_METHOD: {
+                readRandomSamplerMethod(desc, props, false);
                 break;
             }
-            case 9: {
-                if (!readNSGA2Method(desc, props)) {
-                    System.err.println("invalid NSGA2 method configuration");
-                    return false;
-                }
+            case NSGA2_METHOD: {
+                readNSGA2Method(desc, props);
                 break;
             }
-            case 10: {
-                if (!readDirectMethod(desc, props)) {
-                    System.err.println("invalid Direct method configuration");
-                    return false;
-                }
+            case DIRECT_METHOD: {
+                readDirectMethod(desc, props);
+                break;
+            }
+            case LATINHYPERCUBE_METHOD: {
+                readLatinHyperCubeRandomSamplerMethod(desc, props);
                 break;
             }
         }
-        return true;
     }
 
-    private static boolean readObjectiveConfig(OptimizerDescription desc, Properties props, Node root) {
+    private static void readObjectiveConfig(OptimizerDescription desc, Properties props, Node root) throws WizardException {
         String strObjective = props.getProperty("efficiencies");
         String strObjectiveModes = props.getProperty("efficiency_modes");
         if (strObjective == null || strObjectiveModes == null) {
-            System.err.println("error: no objective specified");
-            return false;
+            throw new WizardException(JAMS.resources.getString("error_no_objective"));
         }
         StringTokenizer tok1 = new StringTokenizer(strObjective, ";");
         StringTokenizer tok2 = new StringTokenizer(strObjectiveModes, ";");
         int objectiveCount = tok1.countTokens();
         if (tok2.countTokens() != objectiveCount) {
-            System.err.println("error: objective count does not match objecitve mode count");
-            return false;
+            throw new WizardException(JAMS.resources.getString("error_objective_count_does_not_match_objecitve_mode_count"));
         }
 
         String objectiveName[] = new String[objectiveCount];
@@ -613,8 +481,8 @@ public class modelModifier {
 
             String result = jamsui.juice.optimizer.wizard.Tools.getTypeFromNodeName(root, objectiveContext[i]);
             if (result == null) {
-                System.err.println("unknown objective owner " + objectiveContext[i]);
-                return false;
+                throw new WizardException(JAMS.resources.getString("unknown_objective_owner") + objectiveContext[i]);
+                
             }
             Efficiency p = null;
             if (result.equals("jams.model.contextcomponent")) {
@@ -641,11 +509,9 @@ public class modelModifier {
         desc.attributes.add(new AttributeDescription("effValue", "optimizer", effValueString, true));
         desc.attributes.add(new AttributeDescription("effMethodName", null, effMethodNameString, false));
         desc.attributes.add(new AttributeDescription("mode", null, effModeString, false));    
-        
-        return true;
     }
 
-    private static boolean readOutputAttributeConfig(OptimizerDescription desc, Properties props, Node root) {
+    private static void readOutputAttributeConfig(OptimizerDescription desc, Properties props, Node root) throws WizardException {
         int outputAttrCount = 0;
         String outputAttrName[] = null;
         String outputAttrContext[] = null;
@@ -663,8 +529,7 @@ public class modelModifier {
 
                 String result = jamsui.juice.optimizer.wizard.Tools.getTypeFromNodeName(root, outputAttrContext[i]);
                 if (result == null) {
-                    System.err.println("unknown objective owner " + outputAttrContext[i]);
-                    return false;
+                    throw new WizardException(JAMS.resources.getString("unknown_objective_owner") + outputAttrContext[i]);
                 }
                 if (result.equals("jams.model.contextcomponent")) {
                     desc.outputAttributes.add(new AttributeWrapper(null, outputAttrName[i], null, outputAttrContext[i]));
@@ -673,10 +538,9 @@ public class modelModifier {
                 }
             }
         }
-        return true;
     }
 
-    private static void buildConfigurationString(OptimizerDescription desc) {
+    private static void buildConfigurationString(OptimizerDescription desc){
         //build param string
         String param_string = "";
         for (int i = 0; i < desc.parameters.size(); i++) {
@@ -710,7 +574,7 @@ public class modelModifier {
         }
     }
 
-    private OptimizerDescription loadOptimizerIni() {
+    private OptimizerDescription loadOptimizerIni() throws WizardException{
         OptimizerDescription desc = new OptimizerDescription();
         desc.attributes.add(new AttributeDescription("enable", null, "true", false));
 
@@ -718,14 +582,14 @@ public class modelModifier {
         try {
             props.load(optimizerIniStream);
         } catch (Exception e) {            
-            return null;
+            throw new WizardException(JAMS.resources.getString("Could_not_load_JAMS_property_file"));
         }
 
         loadOptimizationFlags(desc, props);
         if (props.getProperty("workspace") != null) {            
             desc.newWorkspace = props.getProperty("workspace");
         }else{
-            System.err.println("error: workspace unknown");
+            throw new WizardException(JAMS.resources.getString("Error_unknown_workspace"));
         }
 
         desc.optimizationRun = false;
@@ -735,28 +599,38 @@ public class modelModifier {
             return desc;
         }
         desc.optimizationRun = true;
-        if (!readParameterConfig(desc, props, loadedModel)) {
-            System.err.println("error: invalid parameter setup");
-            return null;
+        try{
+            readParameterConfig(desc, props, loadedModel);
+        }catch(WizardException e){
+            throw new WizardException(JAMS.resources.getString("invalid_parameter_setup") + e.toString());
         }
-        if (!readObjectiveConfig(desc, props, loadedModel)) {
-            System.err.println("error: invalid parameter setup");
-            return null;
+
+        try{
+            readObjectiveConfig(desc, props, loadedModel);
+        }catch(WizardException e){
+            throw new WizardException(JAMS.resources.getString("invalid_objective_setup") + e.toString());
         }
-        if (!readOptimizerMethod(desc, props)) {
-            System.err.println("error: invalid method setup");
-            return null;
+        try{
+            readOptimizerMethod(desc, props);
+        }catch(WizardException e){
+            throw new WizardException(JAMS.resources.getString("invalid_optimizer_setup") + e.toString());
+        }catch(NumberFormatException e){
+            throw new WizardException(JAMS.resources.getString("invalid_optimizer_setup") + e.toString());
+        }catch(NullPointerException e){
+            e.printStackTrace();
+            throw new WizardException(JAMS.resources.getString("invalid_optimizer_setup") + e.toString());            
         }
-        if (!readOutputAttributeConfig(desc, props, loadedModel)) {
-            System.err.println("error: invalid output attribute setup");
-            return null;
+        try{
+            readOutputAttributeConfig(desc, props, loadedModel);
+        }catch(WizardException e){
+            throw new WizardException(JAMS.resources.getString("invalid_output_setup") + e.toString());
         }
         buildConfigurationString(desc);
 
         return desc;
     }
 
-    private static boolean configOutput(OptimizerDescription desc, String optimizerContextName) {
+    private static void configOutput(OptimizerDescription desc, String optimizerContextName) throws WizardException {
         Map<String, HashSet<String>> outputContexts = new HashMap<String, HashSet<String>>();
         //parameter and efficiencies are set by default
         for (int i = 0; i < desc.parameters.size(); i++) {
@@ -809,11 +683,9 @@ public class modelModifier {
             try {
                 XMLTools.writeXmlFile(outputDoc, desc.newWorkspace + File.separator + "output" + File.separator + "optimization_wizard_" + context + ".xml");
             } catch (Exception e) {
-                System.err.println(JAMS.resources.getString("Error_cant_write_xml_file_because_") + e.toString());
-                return false;
+                throw new WizardException(JAMS.resources.getString("Error_cant_write_xml_file_because_") + e.toString());
             }
         }
-        return true;
     }
 
     final static String fileVarList[] = {"reachFileName","hruFileName","luFileName","stFileName","gwFileName","shapeFileName","shapeFileName1",
@@ -863,22 +735,14 @@ public class modelModifier {
         return false;
     }
 
-    private void setError(String error){
-        this.error = error;
-    }
-    public void clearError(){
-        error = null;
-    }
-
-    private boolean init(){                
+    private void init() throws WizardException{
         rt = new StandardRuntime();
         rt.loadModel(loadedModel, properties);
         if (rt.getDebugLevel() >= 3) {
             if (rt.getErrorLog().length()>2){
-                setError(rt.getErrorLog());
-                return false;}
+                throw new WizardException(rt.getErrorLog());
             }
-        return true;
+        }
     }
 
     public void writeGDLFile(String path){
@@ -888,33 +752,37 @@ public class modelModifier {
 
 
     public void setOptimizerIni(String optimizerIni){
-        optimizerIniStream = new ByteArrayInputStream(optimizerIni.getBytes());
+        try{
+            optimizerIniStream = new ByteArrayInputStream(optimizerIni.getBytes("ISO-8859-1"));
+        }catch(UnsupportedEncodingException uee){
+
+        }
     }
-    public void setOptimizerIni(File optimizerIni){
+    public void setOptimizerIni(File optimizerIni) throws WizardException{
         try{
             optimizerIniStream = new FileInputStream(optimizerIni);
         }catch(FileNotFoundException fnfe){
             optimizerIniStream = null;
-            System.err.println("optimizer description file " + optimizerIni + " not found");
+            throw new WizardException("optimizer description file " + optimizerIni + " not found");
         }
     }
 
-    public modelModifier(JAMSProperties properties, Document doc){
+    public modelModifier(JAMSProperties properties, Document doc) throws WizardException{
 
         this.properties = properties;
         this.loadedModel = doc;
 
         init();
     }
-    public modelModifier(File propertyFile, File modelFile){        
+    public modelModifier(File propertyFile, File modelFile) throws WizardException{
         //default properties
         properties = JAMSProperties.createProperties();
         try {
             properties.load(propertyFile.getAbsolutePath());
         } catch (IOException e) {
-            //setError("Cant find property file, because:" + e.toString());
-        } catch (Exception e2) {
-            //setError("Error while loading property file, because: " + e2.toString());
+            throw new WizardException(JAMS.resources.getString("error_could_not_load_JAMS_property_file") + e.toString());
+        } catch (Exception e) {
+            throw new WizardException(JAMS.resources.getString("error_could_not_load_JAMS_property_file") + e.toString());
         }
 
         DocumentLoader loader = new DocumentLoader();
@@ -929,22 +797,18 @@ public class modelModifier {
         String errorString = loader.init_withResponse();
         loadedModel = loader.modelDoc.getValue();
         if (loadedModel == null) {
-            //setError(errorString);
+            throw new WizardException("error_while_loading_model_file");
         }
         init();
     }
 
-    public Document modifyModel() {
+    public Document modifyModel() throws WizardException {
         String optimizerContextName = "optimizer";
         String infoLog = "";        
 
-        if (!init())
-            return null;
+        init();
 
-        OptimizerDescription desc = loadOptimizerIni();
-        if (desc == null){
-            return null;
-        }
+        OptimizerDescription desc = loadOptimizerIni();       
         Model model = rt.getModel();
         //1. schritt
         //parameter relevante componenten verschieben
@@ -955,9 +819,10 @@ public class modelModifier {
         Document doc = (Document) loadedModel.cloneNode(true);
         Node root = (Node) doc.getDocumentElement();
         
-        if (!changeWorkspace(root, desc.newWorkspace)){
-            System.err.println("unable to change workspace!");
-        }
+        if (!changeWorkspace(root, desc.newWorkspace))
+            throw new WizardException(JAMS.resources.getString("unable_to_change_workspace"));
+           
+       
         if (desc.removeGUIComponents || !desc.optimizationRun) {
             infoLog = JAMS.resources.getString("removing_GUI_components") + ":\n";
             ArrayList<String> removedGUIComponents = jams.model.metaoptimizer.metaModelOptimizer.RemoveGUIComponents(root);
@@ -1007,8 +872,7 @@ public class modelModifier {
             //find place for optimization context
             Node firstComponent = XMLProcessor.getFirstComponent(root);
             if (firstComponent == null) {
-                System.err.println(JAMS.resources.getString("Error_model_file_does_not_contain_any_components"));
-                return null;
+                throw new WizardException(JAMS.resources.getString("Error_model_file_does_not_contain_any_components"));
             }
             //collect all following siblings of firstComponent and add them to contextOptimizer
             Node currentNode = firstComponent;
@@ -1019,8 +883,7 @@ public class modelModifier {
             }
 
             if (firstComponent.getParentNode() == null) {
-                System.err.println(JAMS.resources.getString("Error_model_file_does_not_contain_a_model_context"));
-                return null;
+                throw new WizardException(JAMS.resources.getString("Error_model_file_does_not_contain_a_model_context"));
             }
 
             Node modelContext = firstComponent.getParentNode();
@@ -1040,23 +903,14 @@ public class modelModifier {
             writer.close();
         } catch (Exception e) {
         }
-        if (!configOutput(desc, optimizerContextName)) {
-            System.err.println("error: could not configure output!");
-            return null;
-        }
+        configOutput(desc, optimizerContextName);
         //some adjustments like file separators and data-caching
         doAdjustments(doc);
 
         return doc;
     }
 
-    /*public modelModifier(JAMSProperties propertyFile, Document modelFile){
-        this.properties = propertyFile;
-        this.loadedModel = modelFile;
-        init();
-    }*/
-
-    public static Document modelModifier(JAMSProperties propertyFile, Document modelFile, String optimizerIni) {
+    public static Document modelModifier(JAMSProperties propertyFile, Document modelFile, String optimizerIni) throws WizardException{
         modelModifier modifyModel = new modelModifier(propertyFile, modelFile);
         modifyModel.setOptimizerIni(optimizerIni);
         Document doc = modifyModel.modifyModel();
@@ -1070,7 +924,7 @@ public class modelModifier {
         return doc;
     }
 
-    public static Document modelModifier(String propertyFile, String modelFile, String optimizerIni) {
+    public static Document modelModifier(String propertyFile, String modelFile, String optimizerIni) throws WizardException{
         modelModifier modifyModel = new modelModifier(new File(propertyFile), new File(modelFile));
         modifyModel.setOptimizerIni(optimizerIni);
         Document doc = modifyModel.modifyModel();

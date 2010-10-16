@@ -33,24 +33,21 @@ import org.w3c.dom.Document;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jamsui.juice.gui.JUICEFrame;
+import jamsui.juice.optimizer.wizard.modelModifier.WizardException;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.text.NumberFormatter;
 
 /**
  *
@@ -66,7 +63,10 @@ public class OptimizationWizard{
     Document doc;
     JAMSProperties propertyFile;
 
-    String optimizationModes[] = {"Minimization", "Maximization", "absolute Minimization", "absolute Maximization"};
+    String optimizationModes[] = {JAMS.resources.getString("minimization"),
+                                    JAMS.resources.getString("maximization"),
+                                    JAMS.resources.getString("absolute_minimization"),
+                                    JAMS.resources.getString("absolute_maximization")};
     String workspace = null;
 
     OptimizerDescription optimizerDesc[];
@@ -266,14 +266,7 @@ public class OptimizationWizard{
         };
     NumericKeyListener stdNumericKeyListener = new NumericKeyListener();
     NumericFocusListener stdFocusListener = new NumericFocusListener();
-
-    /*public void setModel(File doc, File propertyFile){
-        //this.doc = doc;
-        modelAnalyzer analyzer = new modelAnalyzer(propertyFile, doc);
-        fillParameterList(analyzer.getParameters());
-        fillObjectiveList(analyzer.getObjectives());
-    }*/
-
+    
     public void setModel(Document doc, JAMSProperties propertyFile){
         this.doc = doc;
         this.propertyFile = propertyFile;
@@ -389,7 +382,7 @@ public class OptimizationWizard{
     public OptimizerDescription getSCEDescription(){
         OptimizerDescription sceDesc = getDefaultOptimizerDescription(JAMS.resources.getString("SCE"),
                                         "jams.components.optimizer.SimpleSCE",5,false);
-        sceDesc.addParameter(new NumericOptimizerParameter("NumberOfComplexes",
+        sceDesc.addParameter(new NumericOptimizerParameter("numberOfComplexes",
                 JAMS.resources.getString("number_of_complexes"),2,1,100));        
         sceDesc.addParameter(new NumericOptimizerParameter(
                 "pcento",JAMS.resources.getString("worst_acceptable_improvement"),
@@ -538,7 +531,7 @@ public class OptimizationWizard{
         c.weighty = 1.0;
         mainPanel.add(objectivePanel,c);
 
-        buttonPanel.add(new JButton("Create XML"){{
+        buttonPanel.add(new JButton(JAMS.resources.getString("Create_XML")){{
 
             addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
@@ -546,31 +539,37 @@ public class OptimizationWizard{
                     String strIni = "";
                     Iterator<Entry<String,String>> iter = ini.entrySet().iterator();
                     if (OptimizationWizard.this.parameterList.getSelectedIndices().length<1){
-                        JOptionPane.showMessageDialog(OptimizationWizard.this.mainPanel, "Error! You should select at least one parameter for optimization!");
+                        JOptionPane.showMessageDialog(OptimizationWizard.this.mainPanel,JAMS.resources.getString("Error_You_should_select_at_least_one_parameter_for_optimization"));
                         return;
                     }
                     if (OptimizationWizard.this.objectiveList.getSelectedIndices().length<1){
-                        JOptionPane.showMessageDialog(OptimizationWizard.this.mainPanel, "Error! You should select at least one objective for optimization!");
+                        JOptionPane.showMessageDialog(OptimizationWizard.this.mainPanel, JAMS.resources.getString("Error_You_should_select_at_least_one_objective_for_optimization"));
                         return;
                     }
                     while(iter.hasNext()){
                         Entry<String,String> entry = iter.next();
                         strIni += entry.getKey() + "=" + entry.getValue() + "\n";
                     }
-                    Document optDocument = modelModifier.modelModifier(propertyFile, doc, strIni );
-                    if (parent != null){
-                        parent.newModel(optDocument);
+                    try{
+                        Document optDocument = modelModifier.modelModifier(propertyFile, doc, strIni );
+                        if (parent != null){
+                            parent.newModel(optDocument);
+                        
+                        }
+                    }catch(WizardException we){
+                        JOptionPane.showMessageDialog(OptimizationWizard.this.mainPanel, we.toString());
+                        return;
                     }
                 }
             });
          }},BorderLayout.CENTER);
 
         parameterPanel.setBorder(BorderFactory.createTitledBorder(
-                                    "Parameter Configuration"));
+                                    JAMS.resources.getString("Parameter_Configuration")));
         objectivePanel.setBorder(BorderFactory.createTitledBorder(
-                                    "Objective Configuration"));
+                                    JAMS.resources.getString("Objective_Configuration")));
         optimizerPanel.setBorder(BorderFactory.createTitledBorder(
-                                    "Optimizer Configuration"));
+                                    JAMS.resources.getString("Optimizer_Configuration")));
         
         parameterConfigurationPanel = new JPanel(new GridBagLayout());
         JScrollPane scrollPaneParameterList = new JScrollPane(parameterList);
@@ -612,14 +611,14 @@ public class OptimizationWizard{
                 c.weighty = 1.0;
                 c.insets = new Insets(5,0,5,0);
                 c.anchor = GridBagConstraints.NORTHWEST;
-                parameterConfigurationPanel.add(new JLabel("Parameter"),c);
+                parameterConfigurationPanel.add(new JLabel(JAMS.resources.getString("parameter")),c);
                 c.gridx = 1;                
                 c.anchor = GridBagConstraints.CENTER;
-                parameterConfigurationPanel.add(new JLabel("Lower Bound"),c);
+                parameterConfigurationPanel.add(new JLabel(JAMS.resources.getString("lower_bound")),c);
                 c.gridx = 2;                                
-                parameterConfigurationPanel.add(new JLabel("Upper Bound"),c);
+                parameterConfigurationPanel.add(new JLabel(JAMS.resources.getString("upper_bound")),c);
                 c.gridx = 3;                
-                parameterConfigurationPanel.add(new JLabel("Startvalue"),c);
+                parameterConfigurationPanel.add(new JLabel(JAMS.resources.getString("start_value")),c);
 
                 for (Object o : params){
                     Parameter p = (Parameter)o;
@@ -682,10 +681,10 @@ public class OptimizationWizard{
                 c.weighty = 1.0;
                 c.insets = new Insets(5,0,5,0);
                 c.anchor = GridBagConstraints.NORTHWEST;
-                objectiveConfigurationPanel.add(new JLabel("Objective"),c);
+                objectiveConfigurationPanel.add(new JLabel(JAMS.resources.getString("Objective")),c);
                 c.gridx = 1;
                 c.anchor = GridBagConstraints.CENTER;
-                objectiveConfigurationPanel.add(new JLabel("Mode"),c);
+                objectiveConfigurationPanel.add(new JLabel(JAMS.resources.getString("mode")),c);
 
                 for (Object o : objectives){
                     String obj = (String)o;
@@ -734,15 +733,14 @@ public class OptimizationWizard{
         selectOptimizer.addItemListener(new ItemListener(){
             public void itemStateChanged(ItemEvent e){                
                 OptimizerDescription desc = (OptimizerDescription)e.getItem();
-                if (desc.multiObjective){
+                /*if (desc.multiObjective){
                     objectiveList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                 }else
-                    objectiveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                    objectiveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)*/
                 optimizerConfigurationPanel.putClientProperty("optimizer", desc);
                 optimizerConfigurationPanel.removeAll();
                 GridBagConstraints c = new GridBagConstraints();
-                int counter = 0;
-                objectiveConfigurationPanel.removeAll();
+                int counter = 0;              
                 c.gridx = 0;
                 c.gridy = counter++;
                 c.gridwidth=2;
@@ -812,6 +810,7 @@ public class OptimizationWizard{
                     }
                 }
                 optimizerConfigurationPanel.updateUI();
+                mainPanel.updateUI();
                 mainPanel.validate();
             }
         });
@@ -822,33 +821,39 @@ public class OptimizationWizard{
     public void setWorkspace(String ws){        
         this.workspace = ws.replace("\\", "/");
     }
-    public static JDialog createDialog(JUICEFrame parent, Document modelFile, JAMSProperties propertyFile, String workspace){
-        JDialog dialog = new JDialog(parent,false);
+    public static JFrame createDialog(JUICEFrame parent, Document modelFile, JAMSProperties propertyFile, String workspace){
+        JFrame dialog = new JFrame(JAMS.resources.getString("Optimization_Wizard"));
         OptimizationWizard wizard = new OptimizationWizard(parent);
-        dialog.add(wizard.getPanel());
+        //dialog
+        dialog.getContentPane().add(wizard.getPanel());
         /*wizard.setModel(new File("C:/Arbeit/modeldata/JAMS-Gehlberg/j2k_gehlberg.jam"),
                 new File("C:/Arbeit/JAMS/standard.jap"));*/
         wizard.setModel(modelFile, propertyFile);
         wizard.setWorkspace(workspace);
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         dialog.setSize(750,700);
+        //dialog.setMaximumSize(new Dimension(750,700));
+        dialog.setPreferredSize(new Dimension(750,700));
         dialog.setResizable(false);
+        dialog.setAlwaysOnTop(false);
+        dialog.pack();
         //dialog.setVisible(true);
         return dialog;
     }
 
-    public static JDialog createDialog(JUICEFrame parent, File modelFile, File propertyFile){
-        JDialog dialog = new JDialog(parent,false);
+    public static JFrame createDialog(JUICEFrame parent, File modelFile, File propertyFile){
+        JFrame dialog = new JFrame(JAMS.resources.getString("Optimization_Wizard"));
         OptimizationWizard wizard = new OptimizationWizard(parent);
-        dialog.add(wizard.getPanel());
+        dialog.getContentPane().add(wizard.getPanel());
         /*wizard.setModel(new File("C:/Arbeit/modeldata/JAMS-Gehlberg/j2k_gehlberg.jam"),
                 new File("C:/Arbeit/JAMS/standard.jap"));*/
         wizard.setModel(modelFile, propertyFile);
-
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setSize(750,700);
+        //dialog.setMaximumSize(new Dimension(750,700));
+        //dialog.setPreferredSize(new Dimension(750,700));
         dialog.setResizable(false);
-        //dialog.setVisible(true);
+        dialog.pack();
         return dialog;
     }
 
