@@ -119,6 +119,7 @@ public class modelAnalyzer {
     private static Set<AttributeWrapper> getAttributeList(Node root, ComponentWrapper component, StandardRuntime rt, int mode) {
         NodeList childs = root.getChildNodes();
         Element parent = (Element) root;
+        String className = "";
         HashSet<AttributeWrapper> list = new HashSet<AttributeWrapper>();
         for (int i = 0; i < childs.getLength(); i++) {
             Node child = childs.item(i);
@@ -157,12 +158,19 @@ public class modelAnalyzer {
                 Field field = null;
                 boolean isDouble = true;
                 try {
-                    clazz = rt.getClassLoader().loadClass(parent.getAttribute("class"));
+
+                    if (parent.getTagName().equals("model")) {
+                        className = "jams.model.JAMSModel";
+                    } else {
+                        className = parent.getAttribute("class");
+                    }
+
+                    clazz = rt.getClassLoader().loadClass(className);
                     if (clazz != null) {
                         field = JAMSTools.getField(clazz, name);
                     }
                 } catch (Exception e) {
-                    System.out.println(e.toString() + parent.getAttribute("class"));
+                    System.out.println(e.toString() + className);
                     continue;
                 }
                 if (field == null) {
