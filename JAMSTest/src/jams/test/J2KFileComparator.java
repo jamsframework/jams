@@ -35,8 +35,13 @@ public class J2KFileComparator {
                 errorMessage = msg;
             }
 
+            public String getFailure(){
+                if (failure)
+                    return errorMessage;
+                return null;
+            }
             public boolean isReportEmpty(){
-                return dataNotEqual.size()>0 || idsNotEqual.size()>0;
+                return !(dataNotEqual.size()>0 || idsNotEqual.size()>0);
             }
 
             public void addLine(String str){
@@ -44,6 +49,10 @@ public class J2KFileComparator {
             }
 
             public void print(PrintStream out){
+                if (this.failure){
+                    out.println(errorMessage);
+                    return;
+                }
                 out.println("different ids:");
                 Collections.sort(idsNotEqual);
                 for (int i=0;i<idsNotEqual.size();i++){
@@ -64,6 +73,13 @@ public class J2KFileComparator {
 
             SimpleSerieProcessor sspA  = new SimpleSerieProcessor(fileA);
             SimpleSerieProcessor sspB  = new SimpleSerieProcessor(fileB);
+            boolean empty = sspA.isEmpty();
+            System.out.println("wert2:" + sspA.isEmpty());
+            if ( (sspA.isEmpty() && !sspB.isEmpty()) ||
+                 (!sspA.isEmpty() && sspB.isEmpty())){
+                report.setFailure("one of the compared files is empty");
+                return report;
+            }
 
             for (DataStoreProcessor.AttributeData attrib : sspA.getDataStoreProcessor().getAttributes()){
                 attrib.setSelected(true);
