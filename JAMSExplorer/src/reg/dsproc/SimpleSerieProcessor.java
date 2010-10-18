@@ -45,6 +45,9 @@ public class SimpleSerieProcessor extends Processor {
         timeSerie = this.dsdb.isSimpleTimeSerieDatastore();        
     }
 
+    public boolean isEmpty(){        
+        return (this.dsdb.getSize()<=1);
+    }
     public boolean isTimeSerie(){
         return timeSerie;
     }
