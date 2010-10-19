@@ -129,13 +129,22 @@ public abstract class SOOptimizer extends Optimizer {
         currentSampleCount++;
                 
         double result = transformByMode(value,mode.getValue());
-        
-        if (result < this.bestValue) {
-            bestValue = result;
-            int c=0;
-            for (int j=0;j<x.length;j++)
-                this.bestParameterSet[c++].setValue(x[j]);
-            this.bestParameterSet[c++].setValue(value);
+
+        if (bestParameterSet!=null && x.length == bestParameterSet.length-1){
+            if (result < this.bestValue) {
+                bestValue = result;
+                int c=0;
+                for (int j=0;j<x.length;j++){
+                    if (this.bestParameterSet[c]!=null){
+                        this.bestParameterSet[c].setValue(x[j]);
+                    }
+                    c++;
+                }
+                if (this.bestParameterSet[c]!=null){
+                    this.bestParameterSet[c].setValue(value);
+                }
+                c++;
+            }
         }
         return result;
     }   

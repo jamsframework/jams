@@ -221,7 +221,7 @@ public abstract class MOOptimizer extends Optimizer {
         
         this.bestSamples.add(new SampleMO(x,value));
         this.bestSamples = this.getParetoOptimalSet(this.bestSamples);
-       
+
         //this writes one of the best sample .. what to do with all of them???!
         Iterator<SampleMO> iter = this.bestSamples.iterator();
         //String sampleSet[] = new String[bestSamples.size()];
@@ -229,10 +229,10 @@ public abstract class MOOptimizer extends Optimizer {
             //sampleSet[i]=iter.next().toString();
             SampleMO s = iter.next();
             int c=0;
-            for (int j=0;j<s.getParameter().length;j++)
+            /*for (int j=0;j<s.getParameter().length;j++)
                 this.bestParameterSets[c++].setValue(s.getParameter()[j]);
             for (int j=0;j<s.fx.length;j++)
-                this.bestParameterSets[c++].setValue(s.fx[j]);
+                this.bestParameterSets[c++].setValue(s.fx[j]);*/
         }
 
         //this.bestParameterSets.setValue(array);

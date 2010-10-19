@@ -111,14 +111,13 @@ public abstract class Optimizer extends JAMSContext {
 
         public Sample(){}
 
+        @SuppressWarnings("LeakingThisInConstructor")
         public Sample(double[] x, double fx[]) {
             this.fx = fx;
             if(x == null)
                 return;
             this.x = new double[x.length];
-            for (int i = 0; i < x.length; i++) {
-                this.x[i] = x[i];
-            }
+            System.arraycopy(x, 0, this.x, 0, x.length);
 
             sampleList.add(this);
         }
@@ -132,11 +131,8 @@ public abstract class Optimizer extends JAMSContext {
             Sample cpy = new Sample();
             cpy.x = new double[x.length];
             cpy.fx = new double[fx.length];
-            for (int i=0;i<x.length;i++)
-                cpy.x[i] = x[i];
-            for (int i=0;i<fx.length;i++)
-                cpy.fx[i] = fx[i];
-
+            System.arraycopy(x, 0, cpy.x, 0, x.length);
+            System.arraycopy(fx, 0, cpy.fx, 0, fx.length);
             return cpy;
         }
 
