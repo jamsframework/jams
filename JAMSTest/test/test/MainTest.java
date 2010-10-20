@@ -118,16 +118,19 @@ public class MainTest {
     }
 
     public boolean compareDirectory(File dirTest, File dirReference){
-        for (File file : dirReference.listFiles()){
-            File testFile = new File(dirTest.getAbsoluteFile() + "/" + file.getName());
+        for (File referenceFile : dirReference.listFiles()){
+            File testFile = new File(dirTest.getAbsoluteFile() + "/" + referenceFile.getName());
+
+            if (!referenceFile.getAbsolutePath().endsWith("*.dat"))
+                continue;
             if (!testFile.exists()){
                 System.err.println("file:" + testFile + " does not exists!");
                 return false;
             }else{
                 try{
                     Report report = J2KFileComparator.compare(
-                        new File("../../../modeldata/Calibration/output/current/result.dat"),
-                        new File("../../../modeldata/Calibration/test/reference/reference.dat"),0.005);
+                        testFile,
+                        referenceFile,0.005);
                     report.print(System.out);
                     if (report.getFailure()!=null){
                         return false;
