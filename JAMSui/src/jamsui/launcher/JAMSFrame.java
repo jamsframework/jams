@@ -43,7 +43,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
@@ -62,6 +61,7 @@ import javax.swing.JDialog;
 import javax.swing.WindowConstants;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import reg.JAMSExplorer;
 
 /**
@@ -138,7 +138,11 @@ public class JAMSFrame extends JAMSLauncher {
         } catch (IOException ioe) {
             GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("The_specified_model_configuration_file_") + fileName + JAMS.resources.getString("_could_not_be_found!"), JAMS.resources.getString("Error"));
         } catch (SAXException se) {
-            GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("The_specified_model_configuration_file_") + fileName + JAMS.resources.getString("_contains_errors!"), JAMS.resources.getString("Error"));
+            if (se instanceof SAXParseException){
+                SAXParseException spe = (SAXParseException)se;
+                GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("The_specified_model_configuration_file_") + fileName + JAMS.resources.getString("_contains_errors!") + "\n[Fatal Error] :" + spe.getLineNumber() + ":" + spe.getColumnNumber() + ":"+ spe.getMessage(), JAMS.resources.getString("Error"));
+            }else
+                GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("The_specified_model_configuration_file_") + fileName + JAMS.resources.getString("_contains_errors!"), JAMS.resources.getString("Error"));
         }
 
         this.modelFilename = fileName;
