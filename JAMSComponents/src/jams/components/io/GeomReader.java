@@ -54,7 +54,6 @@ import org.opengis.feature.type.Name;
         process="Visualization",
         version="1.0",
         date="2010-10-22"
-
         )
 
 public class GeomReader extends JAMSComponent {
