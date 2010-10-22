@@ -115,7 +115,6 @@ import jams.components.io.ShapeTool;
         title="MapCreator",
         author="Christian Schwartze",
         description="Viewer component for JAMS entities, parameter and optional vector layers.",
-        process="Visualization",
         version="1.0",
         date="2010-10-22"
         )
