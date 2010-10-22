@@ -51,7 +51,6 @@ import org.opengis.feature.type.Name;
         title="GeomReader",
         author="Christian Schwartze",
         description="Reads geometries from HRU shapefile and adds them to JAMS entities as spatial attributes.",
-        process="Visualization",
         version="1.0",
         date="2010-10-22"
         )
