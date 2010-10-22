@@ -110,31 +110,95 @@ import jams.components.io.ShapeTool;
  *
  * @author C. Schwartze
  */
+
+@JAMSComponentDescription(
+        title="MapCreator",
+        author="Christian Schwartze",
+        description="Viewer component for JAMS entities, parameter and optional vector layers.",
+        process="Visualization",
+        version="1.0",
+        date="2010-10-22"
+        )
+
 public class MapCreator extends JAMSGUIComponent implements MouseListener {
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Name of SLD-File containing layer style information")
-    public JAMSString stylesFileName;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "ID of a style in the SLD-File")
-    public JAMSInteger styleID;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.RUN, description = "Collection of hru objects")
-    public JAMSEntityCollection hrus;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Name of hru attribute to add for mapping")
-    public JAMSStringArray showAttr;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Number of ranges for classification attribute")
-    public JAMSStringArray numOfRanges;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Color shading the ranges")
-    public JAMSStringArray rangeColor;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Name of shapefile to add as a layer to the map")
-    public Attribute.String shapeFileName1;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Name of shapefile to add as a layer to the map")
-    public Attribute.String shapeFileName2;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Name of shapefile to add as a layer to the map")
-    public Attribute.String shapeFileName3;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Colors for extra shapefiles")
-    public JAMSStringArray shapeColors;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.RUN, description = "Original shape file name")
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.INIT,
+        description = "Name of SLD-File containing layer style information"
+        )
+        public JAMSString stylesFileName;
 
-    public JAMSString baseShape;
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.INIT,
+        description = "ID of a style in the SLD-File"
+        )
+        public JAMSInteger styleID;
+
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.RUN,
+        description = "Collection of hru objects"
+        )
+        public JAMSEntityCollection hrus;
+
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.INIT,
+        description = "Name of hru attribute to add for mapping"
+        )
+        public JAMSStringArray showAttr;
+
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.INIT,
+        description = "Number of ranges for classification attribute"
+        )
+        public JAMSStringArray numOfRanges;
+
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.INIT,
+        description = "Color shading the ranges"
+        )
+        public JAMSStringArray rangeColor;
+
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.INIT,
+        description = "Name of shapefile to add as a layer to the map"
+        )
+        public Attribute.String shapeFileName1;
+
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.INIT,
+        description = "Name of shapefile to add as a layer to the map"
+        )
+        public Attribute.String shapeFileName2;
+
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.INIT,
+        description = "Name of shapefile to add as a layer to the map"
+        )
+        public Attribute.String shapeFileName3;
+
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.INIT,
+        description = "Colors for extra shapefiles"
+        )
+        public JAMSStringArray shapeColors;
+
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.RUN,
+        description = "Original shape file name"
+        )
+        public JAMSString baseShape;
+
     transient private JPanel panel, waitPanel;
     transient private GISPanel gispanel;
     transient private DefaultMapLayer[] optLayers = new DefaultMapLayer[3];
