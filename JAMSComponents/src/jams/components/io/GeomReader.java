@@ -46,24 +46,46 @@ import org.opengis.feature.type.Name;
  *
  * @author C. Schwartze
  */
+
+@JAMSComponentDescription(
+        title="GeomReader",
+        author="Christian Schwartze",
+        description="Reads geometries from HRU shapefile and adds them to JAMS entities as spatial attributes.",
+        process="Visualization",
+        version="1.0",
+        date="2010-10-22"
+
+        )
+
 public class GeomReader extends JAMSComponent {
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
-    description = "shape file name")
-    public JAMSString shapeFileName;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.RUN,
-    description = "Collection of hru objects")
-    public JAMSEntityCollection hrus;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
-    description = "Name of identifier column in shape file")
-    public JAMSString idName;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    update = JAMSVarDescription.UpdateType.RUN,
-    description = "Original Shape file name")
-    public JAMSString baseShape;
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.INIT,
+        description = "shape file name"
+        )
+        public JAMSString shapeFileName;
+
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.RUN,
+        description = "Collection of hru objects"
+        )
+        public JAMSEntityCollection hrus;
+
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        update = JAMSVarDescription.UpdateType.INIT,
+        description = "Name of identifier column in shape file"
+        )
+        public JAMSString idName;
+
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.WRITE,
+        update = JAMSVarDescription.UpdateType.RUN,
+        description = "Original Shape file name"
+        )
+        public JAMSString baseShape;
 
     @Override
     public void run() throws Exception {
