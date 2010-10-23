@@ -30,6 +30,7 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import jams.data.JAMSEntityCollection;
 import jams.data.JAMSString;
 import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 
 import java.util.HashMap;

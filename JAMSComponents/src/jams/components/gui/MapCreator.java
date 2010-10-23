@@ -99,6 +99,7 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import jams.components.io.ShapeTool;
+import jams.model.JAMSComponentDescription;
 
 /**
  * Viewer component for JAMS entities and parameter. Each parameter map is implemented by
