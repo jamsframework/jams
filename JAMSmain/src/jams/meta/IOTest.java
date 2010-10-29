@@ -45,13 +45,13 @@ public class IOTest {
 
         JAMSRuntime runtime = new StandardRuntime();
         SystemProperties properties = JAMSProperties.createProperties();
-        properties.load("D:/jamsapplication/nsk.jap");
+        properties.load("/home/nsk/jamsapplication/nsk.jap");
         String[] libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
         ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
 
         ModelIO io = new ModelIO(classLoader);
 
-        Document doc = XMLTools.getDocument("D:/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam");
+        Document doc = XMLTools.getDocument("/home/nsk/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam");
 
         // get the model and access some meta data
 
@@ -65,9 +65,17 @@ public class IOTest {
         System.out.println(md.getAuthor());
         System.out.println(md.getDescription());
 
+
+        ArrayList<ComponentField> fields = md.getParameterFields();
+
+        for (ComponentField field : fields) {
+            System.out.println(field.getParent().getName() + "." + field.getName());
+        }
+
+
         // rename a context attribute
         ComponentDescriptor cd = md.getComponentDescriptor("TmeanRegionaliser");
-        ComponentDescriptor.ComponentField dataValueField = cd.getComponentFields().get("dataValue");
+        ComponentField dataValueField = cd.getComponentFields().get("dataValue");
         ArrayList<ContextAttribute> tmean = dataValueField.getContextAttributes();
         ContextAttribute ca = tmean.get(0);
         ca.setName("mytmean");
@@ -96,8 +104,8 @@ public class IOTest {
 
         Document doc2 = io.getModelDocument(md);
 
-        XMLTools.writeXmlFile(doc, "d:/doc1.xml");
-        XMLTools.writeXmlFile(doc2, "d:/doc2.xml");
+        XMLTools.writeXmlFile(doc, "/home/nsk/doc1.xml");
+        XMLTools.writeXmlFile(doc2, "/home/nsk/doc2.xml");
 
         // output a component
 //        cd = md.getComponentDescriptor("SpatialWeightedSumAggregator1");
@@ -108,9 +116,9 @@ public class IOTest {
 
     static void output(ComponentDescriptor cd, String indent) {
         System.out.println(indent + cd.getName() + " [" + cd.getClazz() + "]");
-        HashMap<String, ComponentDescriptor.ComponentField> fields = cd.getComponentFields();
+        HashMap<String, ComponentField> fields = cd.getComponentFields();
         for (String fieldName : fields.keySet()) {
-            ComponentDescriptor.ComponentField field = fields.get(fieldName);
+            ComponentField field = fields.get(fieldName);
             System.out.println(indent + "    " + fieldName + " [" + field.getContext() + "->" + field.getAttribute() + "] [" + field.getValue() + "]");
         }
     }

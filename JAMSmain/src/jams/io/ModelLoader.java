@@ -32,6 +32,7 @@ import jams.JAMS;
 import jams.tools.JAMSTools;
 import jams.data.*;
 import jams.meta.ComponentDescriptor;
+import jams.meta.ComponentField;
 import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
 import jams.meta.JAMSNode;
@@ -242,11 +243,11 @@ public class ModelLoader {
         // put the Component object into the component repository
         this.componentRepository.put(componentName, component);
 
-        for (ComponentDescriptor.ComponentField cdField : rootCd.getComponentFields().values()) {
+        for (ComponentField cdField : rootCd.getComponentFields().values()) {
 
             // process components variable declarations
 
-            varName = cdField.name;
+            varName = cdField.getName();
             // varClassName = element.getAttribute("class");
 
             // check if component variable exists

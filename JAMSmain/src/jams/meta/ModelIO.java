@@ -27,7 +27,6 @@ import jams.JAMSVersion;
 import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
 import jams.io.ParameterProcessor;
-import jams.meta.ComponentDescriptor.ComponentField;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelProperty;
 import jams.tools.StringTools;
@@ -432,8 +431,8 @@ public class ModelIO {
         Element propertyElement = (Element) document.createElement("property");
         propertyElement.setAttribute("component", property.component.getName());
         if (property.var != null) {
-            propertyElement.setAttribute("attribute", property.var.name);
-            propertyElement.setAttribute("type", property.var.type.getSimpleName());
+            propertyElement.setAttribute("attribute", property.var.getName());
+            propertyElement.setAttribute("type", property.var.getType().getSimpleName());
         } else if (property.attribute != null) {
             propertyElement.setAttribute("attribute", property.attribute.getName());
             propertyElement.setAttribute("type", property.attribute.getType().getSimpleName());
@@ -507,7 +506,7 @@ public class ModelIO {
             if (!StringTools.isEmptyString(var.getValue()) || ((var.getContext() != null) && !var.getAttribute().equals(""))) {
 
                 element = document.createElement("var");
-                element.setAttribute("name", var.name);
+                element.setAttribute("name", var.getName());
                 if (!var.getAttribute().equals("")) {
                     element.setAttribute("attribute", var.getAttribute());
                     element.setAttribute("context", var.getContext().getName());

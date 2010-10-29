@@ -258,7 +258,7 @@ public class ModelProperties {
 
         public String value,  description;
         public ComponentDescriptor component;
-        public ComponentDescriptor.ComponentField var;
+        public ComponentField var;
         public ContextAttribute attribute;
         public double lowerBound,  upperBound;
         public int length;

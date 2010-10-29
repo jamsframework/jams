@@ -211,7 +211,7 @@ public class ModelDescriptor {
             if (property.component instanceof ContextDescriptor) {
                 property.attribute = ((ContextDescriptor) property.component).getStaticAttributes().get(attributeName);
             }
-            
+
         }
         /*
         if (attributeName.equals("workspace") && (property.component.getClazz() == JAMSModel.class)) {
@@ -336,5 +336,18 @@ public class ModelDescriptor {
      */
     public void setDataStoresNode(Node dataStoresNode) {
         this.dataStoresNode = dataStoresNode;
+    }
+
+    public ArrayList<ComponentField> getParameterFields() {
+
+        ArrayList<ComponentField> fields = new ArrayList<ComponentField>();
+
+        ArrayList<JAMSNode> nodes = rootNode.breathFirstEnum();
+        for (JAMSNode node : nodes) {
+            ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
+            fields.addAll(cd.getParameterFields());
+        }
+
+        return fields;
     }
 }

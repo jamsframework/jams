@@ -26,7 +26,7 @@ package jams.meta;
 import java.util.HashMap;
 import jams.JAMS;
 import jams.JAMSException;
-import jams.meta.ComponentDescriptor.ComponentField;
+import jams.meta.ComponentField;
 import java.util.HashSet;
 
 /**

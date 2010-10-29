@@ -112,4 +112,21 @@ public class JAMSNode {
     public void setType(int type) {
         this.type = type;
     }
+
+    public ArrayList<JAMSNode> breathFirstEnum() {
+        return breathFirstEnum(this);
+    }
+
+    private ArrayList<JAMSNode> breathFirstEnum(JAMSNode root) {
+
+        ArrayList<JAMSNode> nodes = new ArrayList<JAMSNode>();
+
+        nodes.add(root);
+        for (int i = 0; i < root.getChildCount(); i++) {
+            JAMSNode child = root.getChildAt(i);
+            nodes.addAll(breathFirstEnum(child));
+        }
+        return nodes;
+    }
+
 }
