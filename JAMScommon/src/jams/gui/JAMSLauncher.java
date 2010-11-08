@@ -163,7 +163,7 @@ public class JAMSLauncher extends JFrame {
                 if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
                         && (loadPath != null)) {
                     String dir = loadPath.getParent();
-                    runtime.getModel().setWorkspacePath(dir);
+                    //runtime.getModel().setWorkspacePath(dir);
                     runtime.sendInfoMsg(JAMS.resources.getString("no_workspace_defined_use_loadpath") + dir);
                 }
             }
