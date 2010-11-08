@@ -46,11 +46,13 @@ import javax.swing.border.TitledBorder;
 import jams.gui.tools.GUIHelper;
 import jams.gui.input.InputComponent;
 import jamsui.juice.*;
-import jamsui.juice.ModelProperties.Group;
-import jamsui.juice.ModelProperties.ModelElement;
-import jamsui.juice.ModelProperties.ModelProperty;
 import jams.gui.input.InputComponentFactory;
 import jams.JAMS;
+import jams.meta.ModelDescriptor;
+import jams.meta.ModelProperties;
+import jams.meta.ModelProperties.Group;
+import jams.meta.ModelProperties.ModelElement;
+import jams.meta.ModelProperties.ModelProperty;
 
 /**
  *
@@ -445,7 +447,7 @@ public class ModelGUIPanel extends JPanel {
         GUIHelper.addGBComponent(contentPanel, gbl, nameLabel, 0, row, 1, 1, 0, 0);
 
         if (property.var != null) {
-            ic = InputComponentFactory.createInputComponent(property.var.type, true);
+            ic = InputComponentFactory.createInputComponent(property.var.getType(), true);
         } else if (property.attribute != null) {
             ic = InputComponentFactory.createInputComponent(property.attribute.getType(), true);
         } else {

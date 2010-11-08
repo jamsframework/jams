@@ -22,6 +22,8 @@
 
 package jamsui.juice;
 
+import jams.meta.ComponentDescriptor;
+import jams.meta.ContextAttribute;
 import java.util.ArrayList;
 
 /**

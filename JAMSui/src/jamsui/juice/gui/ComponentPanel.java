@@ -22,6 +22,7 @@
  */
 package jamsui.juice.gui;
 
+import jams.JAMSException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -34,6 +35,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -48,15 +51,17 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import jams.gui.tools.GUIHelper;
-import jams.model.JAMSModel;
 import java.awt.Font;
 import javax.swing.UIManager;
 import jamsui.juice.*;
-import jamsui.juice.ComponentDescriptor;
-import jamsui.juice.ComponentDescriptor.ComponentField;
-import jamsui.juice.gui.tree.JAMSNode;
-import jamsui.juice.ContextAttribute;
+
 import jams.JAMS;
+import jams.meta.ComponentDescriptor;
+import jams.meta.ComponentField;
+import jams.meta.ContextAttribute;
+import jams.meta.ContextDescriptor;
+import jams.meta.ModelNode;
+import jamsui.juice.gui.tree.JAMSNode;
 
 /**
  *
@@ -78,7 +83,6 @@ public class ComponentPanel extends JPanel {
     private JButton attributeEditButton, attributeAddButton, attributeDeleteButton;
     private ContextAttributeDlg attrEditDlg;
     private ModelView view;
-    private JAMSNode node;
     private JTabbedPane tabPane;
     private ComponentAttributePanel attributeConfigPanel;
     private JPanel switchPanel;
@@ -318,14 +322,18 @@ public class ComponentPanel extends JPanel {
         }
 
         String attributeName = attrNameList.get(selectedAttrRow);
-        ContextAttribute attr = componentDescriptor.getContextAttributes().get(attributeName);
+        ContextAttribute attr = ((ContextDescriptor) componentDescriptor).getStaticAttributes().get(attributeName);
         attrEditDlg.show(attr.getName(), attr.getType(), attr.getValue());
 
         if (attrEditDlg.getResult() == ContextAttributeDlg.APPROVE_OPTION) {
             attr.setValue(attrEditDlg.getValue());
             attr.setType(attrEditDlg.getType());
-
-            attr.setName(attrEditDlg.getAttributeName());
+            try {
+                //@TODO: proper handling
+                attr.setName(attrEditDlg.getAttributeName());
+            } catch (JAMSException ex) {
+                Logger.getLogger(ComponentPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
             this.updateCtxtAttrs();
             attributeTable.setRowSelectionInterval(tmpSelectedAttrRow, tmpSelectedAttrRow);
         }
@@ -339,7 +347,12 @@ public class ComponentPanel extends JPanel {
         attrEditDlg.show("", JUICE.JAMS_DATA_TYPES[10], "");
 
         if (attrEditDlg.getResult() == ContextAttributeDlg.APPROVE_OPTION) {
-            componentDescriptor.addContextAttribute(attrEditDlg.getAttributeName(), attrEditDlg.getType(), attrEditDlg.getValue());
+            try {
+                //@TODO: proper handling
+                ((ContextDescriptor) componentDescriptor).addStaticAttribute(attrEditDlg.getAttributeName(), attrEditDlg.getType(), attrEditDlg.getValue());
+            } catch (JAMSException ex) {
+                Logger.getLogger(ComponentPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
             this.updateCtxtAttrs();
         }
     }
@@ -353,7 +366,7 @@ public class ComponentPanel extends JPanel {
         if (result == JOptionPane.NO_OPTION) {
             return;
         }
-        componentDescriptor.removeContextAttribute(attrName);
+        ((ContextDescriptor) componentDescriptor).removeStaticAttribute(attrName);
         this.updateCtxtAttrs();
 
         if (tmpSelectedAttrRow > attributeTable.getRowCount() - 1) {
@@ -375,11 +388,10 @@ public class ComponentPanel extends JPanel {
         return text;
     }
 
-    public void setComponentDescriptor(JAMSNode node) {
-        this.node = node;
-        this.componentDescriptor = (ComponentDescriptor) node.getUserObject();
+    public void setComponentDescriptor(ComponentDescriptor cd) {
+        this.componentDescriptor = cd;
 
-        if (componentDescriptor.getClazz() == JAMSModel.class) {
+        if (componentDescriptor.getType() == JAMSNode.MODEL_TYPE) {
             if (switchPanel.getComponents()[0] != view.getModelEditPanel()) {
                 switchPanel.remove(switchPanel.getComponents()[0]);
                 switchPanel.add(view.getModelEditPanel());
@@ -396,11 +408,11 @@ public class ComponentPanel extends JPanel {
         }
 
 
-        if (node.getType() == JAMSNode.COMPONENT_NODE) {
+        if (componentDescriptor.getType() == JAMSNode.COMPONENT_TYPE) {
             tabPane.setEnabledAt(1, false);
             tabPane.setEnabledAt(0, true);
             tabPane.setSelectedIndex(0);
-        } else if (node.getType() == JAMSNode.MODEL_ROOT) {
+        } else if (componentDescriptor.getType() == JAMSNode.MODEL_TYPE) {
             tabPane.setEnabledAt(0, false);
             tabPane.setEnabledAt(1, true);
             tabPane.setSelectedIndex(1);
@@ -417,15 +429,22 @@ public class ComponentPanel extends JPanel {
     }
 
     private void updateCtxtAttrs() {
+
+        if (!(componentDescriptor instanceof ContextDescriptor)) {
+            return;
+        }
+
         selectedAttrRow = -1;
 
-        attrNameList = new ArrayList<String>(componentDescriptor.getContextAttributes().keySet());
+        HashMap<String, ContextAttribute> attributes = ((ContextDescriptor) componentDescriptor).getStaticAttributes();
+
+        attrNameList = new ArrayList<String>(attributes.keySet());
         Collections.sort(attrNameList);
 
         Vector<Vector<String>> tableData = new Vector<Vector<String>>();
         Vector<String> rowData;
         for (String name : attrNameList) {
-            ContextAttribute attr = componentDescriptor.getContextAttributes().get(name);
+            ContextAttribute attr = attributes.get(name);
 
             //create a vector with table data from attr properties
             rowData = new Vector<String>();
@@ -447,28 +466,28 @@ public class ComponentPanel extends JPanel {
 
         selectedVarRow = -1;
 
-        varNameList = componentDescriptor.getComponentAttributeList();
+        varNameList = componentDescriptor.getComponentFieldList();
 
         Vector<Vector<String>> tableData = new Vector<Vector<String>>();
         Vector<String> rowData;
         for (String name : varNameList) {
-            ComponentField var = componentDescriptor.getComponentAttributes().get(name);
+            ComponentField var = componentDescriptor.getComponentFields().get(name);
 
             //create a vector with table data from var properties
             rowData = new Vector<String>();
-            rowData.add(var.name);
+            rowData.add(var.getName());
 
-            String type = var.type.getSimpleName();
+            String type = var.getType().getSimpleName();
             rowData.add(type);
 
             String accessType = "";
-            if (var.accessType == ComponentField.READ_ACCESS) {
+            if (var.getAccessType() == ComponentField.READ_ACCESS) {
                 accessType = "R";
             }
-            if (var.accessType == ComponentField.WRITE_ACCESS) {
+            if (var.getAccessType() == ComponentField.WRITE_ACCESS) {
                 accessType = "W";
             }
-            if (var.accessType == ComponentField.READWRITE_ACCESS) {
+            if (var.getAccessType() == ComponentField.READWRITE_ACCESS) {
                 accessType = "R/W";
             }
             rowData.add(accessType);
@@ -504,7 +523,7 @@ public class ComponentPanel extends JPanel {
         if (componentDescriptor != null) {
             try {
                 componentDescriptor.setInstanceName(name);
-            } catch (JUICEException.NameAlreadyUsedException ex) {
+            } catch (JAMSException ex) {
                 GUIHelper.showInfoDlg(this, JAMS.resources.getString("Name_") + name + JAMS.resources.getString("_is_already_in_use._Renamed_component_to_")
                         + componentDescriptor.getName() + "!", JAMS.resources.getString("Component_name"));
                 textFields.get("name").setText(componentDescriptor.getName());
@@ -519,14 +538,14 @@ public class ComponentPanel extends JPanel {
             return;
         }
         String attributeName = varNameList.get(selectedVarRow);
-        ComponentField attr = componentDescriptor.getComponentAttributes().get(attributeName);
+        ComponentField attr = componentDescriptor.getComponentFields().get(attributeName);
 
         Vector<ComponentDescriptor> ancestors = new Vector<ComponentDescriptor>();
 
-        JAMSNode ancestor = (JAMSNode) node.getParent();
+        ModelNode ancestor = (ModelNode) componentDescriptor.getNode().getParent();
         while (ancestor != null) {
             ancestors.add((ComponentDescriptor) ancestor.getUserObject());
-            ancestor = (JAMSNode) ancestor.getParent();
+            ancestor = (ModelNode) ancestor.getParent();
         }
 
         ComponentDescriptor ancestorArray[] = ancestors.toArray(new ComponentDescriptor[ancestors.size()]);

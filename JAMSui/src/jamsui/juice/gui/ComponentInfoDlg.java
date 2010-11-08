@@ -1,5 +1,5 @@
 /*
- * ComponentInfoPanel.java
+ * ComponentInfoDlg.java
  * Created on 24. April 2006, 09:45
  *
  * This file is part of JAMS
@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jamsui.juice.gui;
 
 import java.awt.Dimension;
@@ -34,17 +33,18 @@ import jams.gui.tools.GUIHelper;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import jams.JAMS;
+import java.awt.Frame;
+import java.util.HashMap;
 
 /**
  *
  * @author S. Kralisch
  */
-public class ComponentInfoPanel extends JPanel {
-    
+public class ComponentInfoDlg extends JDialog {
+
     private static final String DEFAULT_STRING = JAMS.resources.getString("[none]");
     private static final int TEXTAREA_WIDTH = 295;
     private static final int GRIDBAG_MAX_Y = 3;
-    
     private Hashtable<String, JTextField> textFields = new Hashtable<String, JTextField>();
     private Hashtable<String, JTextPane> textAreas = new Hashtable<String, JTextPane>();
     private SimpleAttributeSet descriptionText;
@@ -52,30 +52,45 @@ public class ComponentInfoPanel extends JPanel {
     private GridBagLayout mainLayout;
     private Vector<JPanel> varPanels = new Vector<JPanel>();
     private JLabel varLabel = new JLabel(JAMS.resources.getString("Variables:"));
-    
-    public ComponentInfoPanel() {
-        
-        setBorder(BorderFactory.createTitledBorder(JAMS.resources.getString("Component_Details")));
-        
+    private static HashMap<Class, JDialog> compViewDlgs = new HashMap<Class, JDialog>();
+
+    public ComponentInfoDlg(Frame owner, Class clazz) {
+
+        super(owner);
+        this.setLocationByPlatform(true);
+        this.setTitle(clazz.getCanonicalName());
+        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
         contentPanel = new JPanel();
         mainLayout = new GridBagLayout();
         contentPanel.setLayout(mainLayout);
-        
+
         GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Type:")), 0, 0, 1, 1, 0, 0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Author:")), 0, 1, 1, 1, 0, 0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Date:")), 0, 2, 1, 1, 0, 0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Description:")), 0, 3, 1, 1, 0, 0);
-        
+
         GUIHelper.addGBComponent(contentPanel, mainLayout, getTextField("type", ""), 1, 0, 1, 1, 1.0, 1.0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, getTextField("author", ""), 1, 1, 1, 1, 1.0, 1.0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, getTextField("date", ""), 1, 2, 1, 1, 1.0, 1.0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, getTextPane("description", "", 140), 1, 3, 1, 1, 1.0, 1.0);
-        
+
         reset(DEFAULT_STRING);
-        
-        add(contentPanel);
+
+        this.add(new JScrollPane(contentPanel));
+        JAMSComponentDescription jcd = (JAMSComponentDescription) clazz.getAnnotation(JAMSComponentDescription.class);
+        if (jcd != null) {
+            update(clazz.getCanonicalName(), jcd);
+        } else {
+            reset(clazz.getCanonicalName());
+        }
+
+        update(clazz.getFields());
+
+        setPreferredSize(new Dimension(450, 600));
+        pack();
     }
-    
+
     public JScrollPane getTextPane(String key, String value, int height) {
         JTextPane textPane = new JTextPane();
         textPane.setContentType("text/plain");
@@ -86,7 +101,7 @@ public class ComponentInfoPanel extends JPanel {
         textAreas.put(key, textPane);
         return scroll;
     }
-    
+
     public JTextField getTextField(String key, String value) {
         JTextField text = new JTextField();
         text.setEditable(false);
@@ -94,61 +109,62 @@ public class ComponentInfoPanel extends JPanel {
         textFields.put(key, text);
         return text;
     }
-    
-    public void update(String clazz, JAMSComponentDescription jcd) {
+
+    private void update(String clazz, JAMSComponentDescription jcd) {
         textFields.get("type").setText(clazz);
         textFields.get("author").setText(jcd.author());
         textFields.get("date").setText(jcd.date());
         textAreas.get("description").setText(jcd.description());
     }
-    
-    public void update(Field compFields[]) {
-        
-        int pos = GRIDBAG_MAX_Y+1;
-        
+
+    private void update(Field compFields[]) {
+
+        int pos = GRIDBAG_MAX_Y + 1;
+
         //get rid of current var components
         for (JPanel p : varPanels) {
             contentPanel.remove(p);
         }
         contentPanel.remove(varLabel);
-        
+
         //create new components
-        if (compFields.length > 0)
+        if (compFields.length > 0) {
             GUIHelper.addGBComponent(contentPanel, mainLayout, varLabel, 0, pos++, 1, 1, 0, 0);
-        
+        }
+
         for (Field field : compFields) {
             JAMSVarDescription jvd = (JAMSVarDescription) field.getAnnotation(JAMSVarDescription.class);
-            
+
             //check if there actually is a jvd, else this is some other field and we're not interested
             if (jvd != null) {
-                
+
                 JPanel fieldPanel = new JPanel();
                 varPanels.add(fieldPanel);
                 fieldPanel.setBorder(BorderFactory.createTitledBorder(field.getName()));
                 GUIHelper.addGBComponent(contentPanel, mainLayout, fieldPanel, 0, pos++, 2, 1, 0, 0);
-                
+
                 GridBagLayout fieldLayout = new GridBagLayout();
                 fieldPanel.setLayout(fieldLayout);
-                
+
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Type:")), 0, 0, 1, 1, 0, 0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Access:")), 0, 1, 1, 1, 0, 0);
                 //GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Update:"), 0, 2, 1, 1, 0, 0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Description:")), 0, 3, 1, 1, 0, 0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Unit:")), 0, 4, 1, 1, 0, 0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Default:")), 0, 5, 1, 1, 0, 0);
-                
+
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", field.getType().getName()), 1, 0, 1, 1, 1.0, 1.0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.access().toString()), 1, 1, 1, 1, 1.0, 1.0);
                 //GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.update().toString()), 1, 2, 1, 1, 1.0, 1.0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextPane("", jvd.description(), 70), 1, 3, 1, 1, 1.0, 1.0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.unit()), 1, 4, 1, 1, 1.0, 1.0);
-                GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.defaultValue().equals(JAMSVarDescription.NULL_VALUE)? "" : jvd.defaultValue()), 1, 5, 1, 1, 1.0, 1.0);
-                
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.defaultValue().equals(JAMSVarDescription.NULL_VALUE) ? "" : jvd.defaultValue()), 1, 5, 1, 1, 1.0, 1.0);
+
 //                this.getParent().validate();
             }
         }
     }
-    
+
     public void reset(String clazz) {
         for (JTextField text : textFields.values()) {
             text.setText(DEFAULT_STRING);
@@ -158,6 +174,20 @@ public class ComponentInfoPanel extends JPanel {
         }
         textFields.get("type").setText(clazz);
     }
-    
-    
+
+    public static void displayMetadataDlg(Frame owner, Class clazz) {
+
+        if (clazz != null) {
+
+            if (compViewDlgs.containsKey(clazz)) {
+                compViewDlgs.get(clazz).setVisible(true);
+                return;
+            }
+
+            ComponentInfoDlg compViewDlg = new ComponentInfoDlg(owner, clazz);
+            compViewDlgs.put(clazz, compViewDlg);
+            compViewDlg.setVisible(true);
+
+        }
+    }
 }

@@ -22,12 +22,15 @@
  */
 package jamsui.juice.gui;
 
+import jams.JAMSException;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import jams.JAMS;
 import jams.JAMSFileFilter;
@@ -269,7 +272,12 @@ public class JUICEFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
-                view.getModelDescriptor().setModelParameters((Element) modelProperties);
+                try {
+                    //@TODO: proper handling
+                    view.getModelDescriptor().setModelParameters((Element) modelProperties);
+                } catch (JAMSException ex) {
+                    Logger.getLogger(JUICEFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 view.updateLauncherPanel();
             }
         };

@@ -50,7 +50,6 @@ import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import javax.swing.tree.TreePath;
-import jamsui.juice.ComponentDescriptor;
 import jamsui.juice.gui.tree.JAMSNode;
 import jamsui.juice.gui.tree.JAMSTree;
 import jamsui.juice.gui.tree.LibTree;
@@ -58,6 +57,9 @@ import jamsui.juice.gui.tree.ModelTree;
 import jamsui.juice.JUICE;
 import jams.gui.input.InputComponentFactory;
 import jams.JAMS;
+import jams.meta.ComponentDescriptor;
+import jams.meta.ComponentField;
+import jams.meta.ContextDescriptor;
 
 /**
  *
@@ -214,7 +216,7 @@ public class SearchDlg extends JDialog {
         while (treeEnum.hasMoreElements()) {
 
             JAMSNode node = (JAMSNode) treeEnum.nextElement();
-            if ((node.getType() == JAMSNode.COMPONENT_NODE) || (node.getType() == JAMSNode.CONTEXT_NODE) || (node.getType() == JAMSNode.MODEL_ROOT)) {
+            if ((node.getType() == JAMSNode.COMPONENT_TYPE) || (node.getType() == JAMSNode.CONTEXT_TYPE) || (node.getType() == JAMSNode.MODEL_TYPE)) {
 
                 ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
 
@@ -257,17 +259,17 @@ public class SearchDlg extends JDialog {
         }
 
         if (inComponentAttribs.isSelected()) {
-            for (ComponentDescriptor.ComponentField ca : cd.getComponentAttributes().values()) {
+            for (ComponentField ca : cd.getComponentFields().values()) {
 
                 // check for component attribute name
-                if (contains(ca.name, needle, caseSensitive, wholeString)) {
+                if (contains(ca.getName(), needle, caseSensitive, wholeString)) {
                     return FOUND_IN_COMPONENT_ATTRIBS;
                 }
             }
         }
 
         if (inComponentValues.isSelected()) {
-            for (ComponentDescriptor.ComponentField ca : cd.getComponentAttributes().values()) {
+            for (ComponentField ca : cd.getComponentFields().values()) {
 
                 // check for component attribute values
                 if (ca.getValue() != null) {
@@ -277,16 +279,16 @@ public class SearchDlg extends JDialog {
                 }
 
                 // check for context attribute name
-                if (ca.getContextAttribute() != null) {
-                    if (contains(ca.getContextAttribute().getName(), needle, caseSensitive, wholeString)) {
+                if (ca.getAttribute() != null) {
+                    if (contains(ca.getAttribute(), needle, caseSensitive, wholeString)) {
                         return FOUND_IN_COMPONENT_VALUES;
                     }
                 }
             }
         }
 
-        if (inContextAttribs.isSelected()) {
-            for (String hay : cd.getContextAttributes().keySet()) {
+        if (inContextAttribs.isSelected() && (cd instanceof  ContextDescriptor)) {
+            for (String hay : ((ContextDescriptor) cd).getStaticAttributes().keySet()) {
                 if (contains(hay, needle, caseSensitive, wholeString)) {
                     return FOUND_IN_CONTEXT_ATTRIBS;
                 }

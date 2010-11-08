@@ -43,8 +43,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.WindowConstants;
 import jams.gui.tools.GUIHelper;
-import jamsui.juice.ComponentDescriptor;
 import jams.JAMS;
+import jams.meta.ComponentDescriptor;
 
 /**
  *

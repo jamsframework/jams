@@ -22,23 +22,19 @@
  */
 package jamsui.juice.gui;
 
+import jams.JAMSException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -46,21 +42,29 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 import jams.gui.tools.GUIHelper;
 import jams.gui.input.InputComponent;
-import jams.gui.input.ValueChangeListener;
-import jamsui.juice.*;
-import jamsui.juice.ComponentDescriptor;
-import jamsui.juice.ComponentDescriptor.ComponentField;
-import jamsui.juice.ContextAttribute;
 import jams.gui.input.InputComponentFactory;
 import jams.JAMS;
+import jams.gui.input.ValueChangeListener;
+import jams.meta.ComponentDescriptor;
+import jams.meta.ComponentField;
+import jams.meta.ContextAttribute;
+import jams.meta.ContextDescriptor;
+import jams.tools.StringTools;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.StringTokenizer;
+import javax.swing.DefaultListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.ListSelectionEvent;
 
 /**
  *
@@ -75,15 +79,15 @@ public class ComponentAttributePanel extends JPanel {
     private JComboBox contextCombo;
     private InputComponent valueInput;
     private GridBagLayout infoLayout;
-    private JTextField localNameText,  compNameText,  linkText,  customAttributeText;
-    private JPanel listPanel,  infoPanel,  valuePanel;
+    private JTextField localNameText, compNameText, linkText, customAttributeText;
+    private JPanel listPanel, infoPanel, valuePanel;
     private Class type;
     private JList attributeList;
-    private JToggleButton linkButton,  setButton;
+    private JToggleButton linkButton, setButton;
     private ComponentField field;
     private TableModel tableModel;
     private int selectedRow;
-    private ActionListener linkButtonListener,  setButtonListener;
+    private ActionListener linkButtonListener, setButtonListener;
     private ItemListener contextComboListener;
     private DocumentListener customAttributeTextListener;
     private ListSelectionListener attributeListListener;
@@ -189,7 +193,7 @@ public class ComponentAttributePanel extends JPanel {
         }
 
         String attributeName = customAttributeText.getText();
-        ComponentDescriptor context = (ComponentDescriptor) contextCombo.getSelectedItem();
+        ContextDescriptor context = (ContextDescriptor) contextCombo.getSelectedItem();
 
         if (!attributeName.equals("") && context != null) {
             linkButton.setEnabled(true);
@@ -198,9 +202,14 @@ public class ComponentAttributePanel extends JPanel {
         }
 
         if (linkButton.isSelected() && !attributeName.equals("") && (context != null)) {
-            field.linkToAttribute(context, attributeName);
-            linkText.setText(field.getContext() + "." + field.getContextAttribute());
-            tableModel.setValueAt(field.getContext() + "." + field.getContextAttribute(), selectedRow, 3);
+            try {
+                //@TODO: proper handling
+                field.linkToAttribute(context, attributeName);
+            } catch (JAMSException ex) {
+                Logger.getLogger(ComponentAttributePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            linkText.setText(field.getContext() + "." + field.getAttribute());
+            tableModel.setValueAt(field.getContext() + "." + field.getAttribute(), selectedRow, 3);
         }
 
         if (!linkButton.isSelected()) {
@@ -239,7 +248,7 @@ public class ComponentAttributePanel extends JPanel {
     private void updateAttributeLinkGUI() {
 
         //adjust context input components according to context attributes
-        if (field.getContextAttribute() == null) {
+        if (field.getContextAttributes().isEmpty()) {
             linkButton.setSelected(false);
             linkText.setText("");
 
@@ -250,7 +259,7 @@ public class ComponentAttributePanel extends JPanel {
             attributeList.setSelectedValue(null, true);
         } else {
             linkButton.setSelected(true);
-            linkText.setText(field.getContext() + " -> " + field.getContextAttribute());
+            linkText.setText(field.getContext() + "." + field.getAttribute());
             contextCombo.setSelectedItem(field.getContext());
 
             if (type.isArray()) {
@@ -265,18 +274,18 @@ public class ComponentAttributePanel extends JPanel {
                 // @todo: should stay empty if attribute not provided by some 
                 // context -- workaround for errorneous model files
                 customAttributeText.setText(field.getAttribute());
-                
+
                 attributeList.setSelectedValue(field.getAttribute().toString(), true);
             }
         }
 
         //adjust var input components according to var values
-        if (field.getValue().equals("")) {
+        if (StringTools.isEmptyString(field.getValue())) {
             setButton.setSelected(false);
-        //valueInput.getComponent().setEnabled(true);
+            //valueInput.getComponent().setEnabled(true);
         } else {
             setButton.setSelected(true);
-        //valueInput.getComponent().setEnabled(false);
+            //valueInput.getComponent().setEnabled(false);
         }
         valueInput.setValue(field.getValue());
 
@@ -293,12 +302,12 @@ public class ComponentAttributePanel extends JPanel {
         adjusting = true;
 
         this.field = var;
-        this.type = var.type;
+        this.type = var.getType();
         this.tableModel = tableModel;
         this.selectedRow = selectedRow;
 
         //set component's and var's name
-        localNameText.setText(var.name);
+        localNameText.setText(var.getName());
         compNameText.setText(component.getName());
 
         //fill the context combo box
@@ -306,7 +315,7 @@ public class ComponentAttributePanel extends JPanel {
         updateRepository();
 
         //enable field for custom attribute name if !READ_ACCESS        
-        if ((var.accessType == ComponentField.READ_ACCESS) && !type.isArray()) {
+        if ((var.getAccessType() == ComponentField.READ_ACCESS) && !type.isArray()) {
             // @todo: this should be disabled since some other context must
             // provide this attribute -- workaround for incomplete attributes list
             customAttributeText.setEnabled(true);
@@ -320,7 +329,7 @@ public class ComponentAttributePanel extends JPanel {
         }
 
         //create value input component
-        valueInput = InputComponentFactory.createInputComponent(var.type, true);
+        valueInput = InputComponentFactory.createInputComponent(var.getType(), true);
         valuePanel.add(valueInput.getComponent(), BorderLayout.WEST);
         valuePanel.updateUI();
 
@@ -343,16 +352,25 @@ public class ComponentAttributePanel extends JPanel {
 
     private void updateRepository() {
 
-        ComponentDescriptor context = (ComponentDescriptor) contextCombo.getSelectedItem();
+        ContextDescriptor context = (ContextDescriptor) contextCombo.getSelectedItem();
 
         if (context == null) {
             return;
         }
 
-        AttributeRepository repo = context.getDataRepository();
-        //ArrayList<Attribute> attributes = repo.getAttributesByType(type);
+        ArrayList<ContextAttribute> attributes = new ArrayList<ContextAttribute>();
 
-        ArrayList<ContextAttribute> attributes = repo.getUniqueAttributesByType(type);
+        for (ContextAttribute attribute : context.getAttributes(type).values()) {
+            attributes.add(attribute);
+        }
+        Collections.sort(attributes, new Comparator<ContextAttribute>() {
+
+            @Override
+            public int compare(ContextAttribute a1, ContextAttribute a2) {
+                return a1.toString().compareTo(a2.toString());
+            }
+        });
+
 
         if (type.isArray()) {
             //attributes.addAll(repo.getUniqueAttributesByType(type.getComponentType()));

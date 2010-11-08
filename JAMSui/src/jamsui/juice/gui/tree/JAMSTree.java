@@ -22,13 +22,13 @@
  */
 package jamsui.juice.gui.tree;
 
-import jamsui.juice.ComponentCollection;
+import jams.meta.ComponentDescriptor;
+import jams.meta.ComponentCollection;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
-import jamsui.juice.ComponentDescriptor;
 
 public class JAMSTree extends JTree {
 
@@ -57,6 +57,7 @@ public class JAMSTree extends JTree {
         }
     }
 
+    @Override
     public boolean isPathEditable(TreePath path) {
         return false;
     }
@@ -88,7 +89,7 @@ public class JAMSTree extends JTree {
         return (autoscrollInsets);
     }
 
-    public static JAMSNode makeDeepCopy(JAMSNode node, JAMSTree target) {
+    public static DefaultMutableTreeNode makeDeepCopy(JAMSNode node, JAMSTree target) {
 
         JAMSNode copy = node.clone(target);
         ComponentDescriptor cd = (ComponentDescriptor) copy.getUserObject();
@@ -103,6 +104,13 @@ public class JAMSTree extends JTree {
      */
     public ComponentCollection getComponentCollection() {
         return componentCollection;
+    }
+
+    /**
+     * @param componentCollection the componentCollection to set
+     */
+    public void setComponentCollection(ComponentCollection componentCollection) {
+        this.componentCollection = componentCollection;
     }
 
     class JAMSTreeRenderer extends DefaultTreeCellRenderer {

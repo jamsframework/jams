@@ -22,11 +22,15 @@
  */
 package jamsui.juice.gui.tree;
 
+import jams.JAMSException;
+import jams.meta.ComponentDescriptor;
+import jams.meta.ModelNode;
 import java.awt.Image;
+import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.tree.DefaultMutableTreeNode;
-import jamsui.juice.ComponentDescriptor;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -35,21 +39,18 @@ import java.util.Observer;
  *
  * @author S. Kralisch
  */
-public class JAMSNode extends DefaultMutableTreeNode {
+public class JAMSNode extends ModelNode {
 
-    public final static int MODEL_ROOT = 0;
-    public final static int LIBRARY_ROOT = 1;
-    public final static int CONTEXT_NODE = 2;
-    public final static int COMPONENT_NODE = 3;
-    public final static int PACKAGE_NODE = 4;
-    public final static int ARCHIVE_NODE = 5;
+    public final static int LIBRARY_TYPE = 3;
+    public final static int PACKAGE_TYPE = 4;
+    public final static int ARCHIVE_TYPE = 5;
     static int ICON_WIDTH = 16;
     static int ICON_HEIGHT = 16;
     static Icon[] NODE_ICON = {
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Component_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
+        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Context_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Context_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/World_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
-        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Context_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
-        new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Component_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Folder_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Package_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH))
     };
@@ -126,8 +127,15 @@ public class JAMSNode extends DefaultMutableTreeNode {
 
     public JAMSNode clone(JAMSTree target) {
 
-        ComponentDescriptor cd = ((ComponentDescriptor) this.getUserObject()).clone(target.getComponentCollection());
-        JAMSNode clone = new JAMSNode(cd, this.getType(), target);
+        JAMSNode clone = null;
+        try {
+            //@TODO: proper handling
+            ComponentDescriptor cd = ((ComponentDescriptor) this.getUserObject()).cloneNode();
+            clone = new JAMSNode(cd, this.getType(), target);
+            cd.register(target.getComponentCollection());
+        } catch (JAMSException ex) {
+            Logger.getLogger(JAMSNode.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return clone;
     }
 }

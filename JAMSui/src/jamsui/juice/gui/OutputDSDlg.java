@@ -22,7 +22,6 @@
 package jamsui.juice.gui;
 
 import jams.gui.tools.GUIHelper;
-import jamsui.juice.ComponentDescriptor;
 import jamsui.juice.JUICE;
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -38,7 +37,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import jams.JAMS;
-import jamsui.juice.ContextAttribute;
+import jams.meta.ComponentDescriptor;
+import jams.meta.ContextAttribute;
+import jams.meta.ContextDescriptor;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.util.Collections;
@@ -114,7 +115,7 @@ public class OutputDSDlg extends JDialog {
             // create a list containing all contexts of this model
             ArrayList<ComponentDescriptor> contextList = new ArrayList<ComponentDescriptor>();
             for (ComponentDescriptor cd : cdMap.values()) {
-                if (cd.getType() == ComponentDescriptor.CONTEXT_TYPE) {
+                if (cd instanceof ContextDescriptor) {
                     contextList.add(cd);
                 }
             }
@@ -135,9 +136,9 @@ public class OutputDSDlg extends JDialog {
 
     private void updateContextAttributes() {
         System.out.println("updating list");
-        ComponentDescriptor cd = (ComponentDescriptor) contextCombo.getSelectedItem();
-         ArrayList<ContextAttribute> caList = cd.getDataRepository().getAttributes();
-         for (ContextAttribute ca : caList) {
+        ContextDescriptor cd = (ContextDescriptor) contextCombo.getSelectedItem();
+
+        for (ContextAttribute ca : cd.getDynamicAttributes().values()) {
              System.out.println(ca.getName());
          }
     }

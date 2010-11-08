@@ -41,8 +41,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import jams.gui.tools.GUIHelper;
-import jamsui.juice.ModelProperties.Group;
 import jams.JAMS;
+import jams.meta.ModelProperties.Group;
 
 /**
  *

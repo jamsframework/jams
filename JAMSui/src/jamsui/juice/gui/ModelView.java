@@ -51,6 +51,7 @@ import jams.gui.WorkerDlg;
 import jams.io.ParameterProcessor;
 import jams.tools.XMLTools;
 import jams.io.XMLProcessor;
+import jams.meta.ModelDescriptor;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import jams.tools.StringTools;
@@ -523,6 +524,10 @@ public class ModelView {
 
     public ModelDescriptor getModelDescriptor() {
         return modelDescriptor;
+    }
+
+    public void setModelDescriptor(ModelDescriptor md) {
+        this.modelDescriptor = md;
     }
 
     public void openExplorer() {

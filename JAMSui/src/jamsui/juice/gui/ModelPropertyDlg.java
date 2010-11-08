@@ -48,11 +48,12 @@ import javax.swing.WindowConstants;
 import jams.gui.tools.GUIHelper;
 import jams.gui.input.FloatInput;
 import jams.gui.input.IntegerInput;
-import jamsui.juice.ModelProperties.ModelProperty;
-import jamsui.juice.ComponentDescriptor;
-import jamsui.juice.ComponentDescriptor.ComponentField;
-import jamsui.juice.ContextAttribute;
 import jams.JAMS;
+import jams.meta.ComponentDescriptor;
+import jams.meta.ComponentField;
+import jams.meta.ContextAttribute;
+import jams.meta.ContextDescriptor;
+import jams.meta.ModelProperties.ModelProperty;
 
 /**
  *
@@ -63,11 +64,11 @@ public class ModelPropertyDlg extends JDialog {
     private static final Dimension TEXT_FIELD_DIM = new Dimension(200, 20), TEXT_AREA_DIM = new Dimension(300, 100);
     public final static int OK_RESULT = 0;
     public final static int CANCEL_RESULT = -1;
-    private JComboBox groupCombo,  componentCombo,  varCombo;
+    private JComboBox groupCombo, componentCombo, varCombo;
     private HashMap<String, ComponentDescriptor> componentDescriptors;
-    private JTextField nameField,  descriptionField,  helpURLField;
+    private JTextField nameField, descriptionField, helpURLField;
     private JTextArea helpTextField;
-    private FloatInput lowField,  upField;
+    private FloatInput lowField, upField;
     private IntegerInput lengthField;
     private int result = CANCEL_RESULT;
 
@@ -177,8 +178,7 @@ public class ModelPropertyDlg extends JDialog {
 
     private void updateComponentVars(Object item) {
         ComponentDescriptor cd = this.componentDescriptors.get((String) item);
-        HashMap<String, ComponentField> vars = cd.getComponentAttributes();
-        HashMap<String, ContextAttribute> attrs = cd.getContextAttributes();
+        HashMap<String, ComponentField> vars = cd.getComponentFields();
 
         ArrayList<String> varNames = new ArrayList<String>();
         for (String name : vars.keySet()) {
@@ -187,8 +187,12 @@ public class ModelPropertyDlg extends JDialog {
                 varNames.add(name);
             }
         }
-        for (String name : attrs.keySet()) {
-            varNames.add(name);
+
+        if (cd instanceof ContextDescriptor) {
+            HashMap<String, ContextAttribute> attrs = ((ContextDescriptor) cd).getStaticAttributes();
+            for (String name : attrs.keySet()) {
+                varNames.add(name);
+            }
         }
 
         Collections.sort(varNames);
@@ -217,7 +221,7 @@ public class ModelPropertyDlg extends JDialog {
             componentCombo.setSelectedItem(property.component.getName());
 
             if (property.var != null) {
-                varCombo.setSelectedItem(property.var.name);
+                varCombo.setSelectedItem(property.var.getName());
             } else if (property.attribute != null) {
                 varCombo.setSelectedItem(property.attribute.getName());
             }
@@ -305,10 +309,15 @@ public class ModelPropertyDlg extends JDialog {
     }
 
     public ComponentField getVar() {
-        return getComponent().getComponentAttributes().get(varCombo.getSelectedItem());
+        return getComponent().getComponentFields().get(varCombo.getSelectedItem());
     }
 
     public ContextAttribute getAttribute() {
-        return getComponent().getContextAttributes().get(varCombo.getSelectedItem());
+        ComponentDescriptor cd = getComponent();
+        if (cd instanceof ContextDescriptor) {
+            return ((ContextDescriptor) cd).getStaticAttributes().get(varCombo.getSelectedItem());
+        } else {
+            return null;
+        }
     }
 }

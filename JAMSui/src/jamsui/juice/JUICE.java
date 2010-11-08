@@ -22,6 +22,7 @@
  */
 package jamsui.juice;
 
+import jams.meta.ComponentCollection;
 import java.io.File;
 import java.util.*;
 import javax.swing.UIManager;

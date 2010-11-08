@@ -1,7 +1,13 @@
 package jamsui.juice.gui.tree;
 
+import jams.JAMSException;
+import jams.meta.ComponentDescriptor;
+import jams.meta.ComponentField;
+import jams.meta.ContextDescriptor;
 import java.awt.*;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.tree.*;
 import java.awt.dnd.*;
 import java.util.ArrayList;
@@ -10,8 +16,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 import jams.model.JAMSContext;
-import jamsui.juice.ComponentDescriptor;
-import jamsui.juice.ComponentDescriptor.ComponentField;
 import jamsui.juice.gui.ContextReplaceDlg;
 import jamsui.juice.JUICE;
 
@@ -28,12 +32,12 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
         JAMSNode targetRoot = (JAMSNode) target.getModel().getRoot();
 
         //nothing can be moved to a tree with lib root
-        if (targetRoot.getType() == JAMSNode.LIBRARY_ROOT) {
+        if (targetRoot.getType() == JAMSNode.LIBRARY_TYPE) {
             return false;
         }
 
         //package and library nodes can't be moved
-        if (draggedNode.getType() == JAMSNode.PACKAGE_NODE || draggedNode.getType() == JAMSNode.LIBRARY_ROOT || draggedNode.getType() == JAMSNode.ARCHIVE_NODE) {
+        if (draggedNode.getType() == JAMSNode.PACKAGE_TYPE || draggedNode.getType() == JAMSNode.LIBRARY_TYPE || draggedNode.getType() == JAMSNode.ARCHIVE_TYPE) {
             return false;
         }
 
@@ -49,7 +53,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
         }
          */
 
-        if (((JAMSNode) pathTarget.getLastPathComponent()).getType() == JAMSNode.COMPONENT_NODE) { // or ((JAMSNode)pathTarget.getLastPathComponent()).getChildCount()==0
+        if (((JAMSNode) pathTarget.getLastPathComponent()).getType() == JAMSNode.COMPONENT_TYPE) { // or ((JAMSNode)pathTarget.getLastPathComponent()).getChildCount()==0
 //            target.setSelectionPath(null);
 //            return(false);
         }
@@ -75,7 +79,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
 
         int position = 0;
 
-        if (newParentNode.getType() == JAMSNode.COMPONENT_NODE) {
+        if (newParentNode.getType() == JAMSNode.COMPONENT_TYPE) {
             JAMSNode siblingNode = newParentNode;
             newParentNode = (JAMSNode) newParentNode.getParent();
             position = newParentNode.getIndex(siblingNode);
@@ -88,7 +92,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
 
         if (action == DnDConstants.ACTION_COPY) {
 
-            JAMSNode newNode = JAMSTree.makeDeepCopy(draggedNode, target);
+            JAMSNode newNode = (JAMSNode) JAMSTree.makeDeepCopy(draggedNode, target);
             newNode.setType(draggedNode.getType());
 
             if (target instanceof ModelTree) {
@@ -182,7 +186,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
                 ancestor = (JAMSNode) ancestor.getParent();
             }
 
-            for (ComponentField var : cd.getComponentAttributes().values()) {
+            for (ComponentField var : cd.getComponentFields().values()) {
                 if (var.getContext() != null) {
                     String contextName = var.getContext().getName();
 
@@ -237,20 +241,23 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             if (dlg.show(oldContextName, ancestorNameArray, components) == ContextReplaceDlg.CANCEL_OPTION) {
                 return false;
             }
-            ComponentDescriptor newContext = ancestors.get(dlg.getContext());
+            ContextDescriptor newContext = (ContextDescriptor) ancestors.get(dlg.getContext());
 
             //iterate over all components referencing pending contexts
             for (ComponentDescriptor component : components) {
                 //iterate over all vars
-                for (ComponentField var : component.getComponentAttributes().values()) {
+                for (ComponentField var : component.getComponentFields().values()) {
                     if (var.getContext() != null) {
                         //again select vars that reference this pending context and connect to new (selected) context
                         if (var.getContext().getName().equals(oldContextName)) {
-
-                            var.linkToAttribute(newContext, var.getAttribute());
-                        //component.linkComponentAttribute(var.name, newContext, var.getAttribute());
-
-                        //var.context = newContext;
+                            try {
+                                //@TODO: proper handling
+                                var.linkToAttribute(newContext, var.getAttribute());
+                                //component.linkComponentAttribute(var.name, newContext, var.getAttribute());
+                                //var.context = newContext;
+                            } catch (JAMSException ex) {
+                                Logger.getLogger(DefaultTreeTransferHandler.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                     }
                 }
