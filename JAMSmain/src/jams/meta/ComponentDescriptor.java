@@ -38,13 +38,13 @@ import java.util.Observable;
  */
 public class ComponentDescriptor extends Observable {
 
-    public static final int COMPONENT_TYPE = 0, CONTEXT_TYPE = 1;
     private String instanceName = "";
     private Class<?> clazz;
     private ArrayList<String> componentFieldList = new ArrayList<String>();
     protected HashMap<String, ComponentField> componentFields = new HashMap<String, ComponentField>();
-    private int type;
-    private ModelDescriptor modelDescriptor;
+//    private int type;
+    private ComponentCollection componentRepository;
+    private ModelNode node;
 
     public ComponentDescriptor(String instanceName, Class clazz) throws JAMSException {
 
@@ -55,25 +55,27 @@ public class ComponentDescriptor extends Observable {
         this.clazz = clazz;
         this.instanceName = instanceName;
 
-        if (Context.class.isAssignableFrom(clazz)) {
-            this.type = CONTEXT_TYPE;
-        } else {
-            this.type = COMPONENT_TYPE;
-        }
+//        if (Model.class.isAssignableFrom(clazz)) {
+//            this.type = MODEL_TYPE;
+//        } else if (Context.class.isAssignableFrom(clazz)) {
+//            this.type = CONTEXT_TYPE;
+//        } else {
+//            this.type = COMPONENT_TYPE;
+//        }
 
         init();
 
     }
 
-    public ComponentDescriptor(String instanceName, Class clazz, ModelDescriptor md) throws JAMSException {
+    public ComponentDescriptor(String instanceName, Class clazz, ComponentCollection md) throws JAMSException {
         this(instanceName, clazz);
         register(md);
     }
 
-    public ComponentDescriptor(Class clazz) throws JAMSException {
-        this(clazz.getSimpleName(), clazz);
+    public ComponentDescriptor(Class clazz, ComponentCollection md) throws JAMSException {
+        this(clazz.getSimpleName(), clazz, md);
     }
-
+    
     private void init() {
 
         Field[] compFields = getClazz().getFields();
@@ -127,7 +129,7 @@ public class ComponentDescriptor extends Observable {
             ComponentField caCopy = new ComponentField(ca.getName(), ca.getType(), ca.getAccessType(), copy);
             caCopy.setValue(ca.getValue());
             copy.componentFields.put(name, caCopy);
-            if (ca.getContextAttributes() != null) {
+            if (ca.getContextAttributes().size() > 0) {
                 caCopy.linkToAttribute(ca.getContext(), ca.getAttribute());
                 //copy.linkComponentAttribute(ca.name, ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
             }
@@ -160,19 +162,19 @@ public class ComponentDescriptor extends Observable {
     }
 
     public void unregister() {
-        this.modelDescriptor.unRegisterComponentDescriptor(this);
-        this.modelDescriptor = null;
+        this.componentRepository.unRegisterComponentDescriptor(this);
+        this.componentRepository = null;
     }
 
-    public final void register(ModelDescriptor md) throws JAMSException {
-        this.modelDescriptor = md;
+    public final void register(ComponentCollection md) throws JAMSException {
+        this.componentRepository = md;
         setInstanceName(this.instanceName);
     }
 
     public void setInstanceName(String name) throws JAMSException {
         String oldName = this.instanceName;
 
-        this.instanceName = this.modelDescriptor.registerComponentDescriptor(oldName, name, this);
+        this.instanceName = this.componentRepository.registerComponentDescriptor(oldName, name, this);
 
         if (!this.instanceName.equals(name)) {
             throw new JAMSException(name);
@@ -191,10 +193,9 @@ public class ComponentDescriptor extends Observable {
     /**
      * @return the type
      */
-    public int getType() {
-        return type;
-    }
-
+//    public int getType() {
+//        return type;
+//    }
     public ArrayList<ComponentField> getParameterFields() {
 
         ArrayList<ComponentField> fields = new ArrayList<ComponentField>();
@@ -207,5 +208,31 @@ public class ComponentDescriptor extends Observable {
         }
 
         return fields;
+    }
+
+    /**
+     * @return the node
+     */
+    public ModelNode getNode() {
+        return node;
+    }
+
+    /**
+     * @param node the node to set
+     */
+    public void setNode(ModelNode node) {
+        this.node = node;
+    }
+
+    public int getType() {
+        if (this.node != null) {
+            return this.node.getType();
+        } else {
+            if (Context.class.isAssignableFrom(clazz)) {
+                return ModelNode.CONTEXT_TYPE;
+            } else {
+                return ModelNode.COMPONENT_TYPE;
+            }
+        }
     }
 }

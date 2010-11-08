@@ -40,14 +40,13 @@ public class ContextDescriptor extends ComponentDescriptor {
         super(instanceName, clazz);
     }
 
-    public ContextDescriptor(String instanceName, Class clazz, ModelDescriptor md) throws JAMSException {
-        this(instanceName, clazz);
-        register(md);
+    public ContextDescriptor(String instanceName, Class clazz, ComponentCollection md) throws JAMSException {
+        super(instanceName, clazz, md);
     }
 
-    public ContextDescriptor(Class clazz) throws JAMSException {
-        this(clazz.getSimpleName(), clazz);
-    }
+//    public ContextDescriptor(Class clazz) throws JAMSException {
+//        this(clazz.getSimpleName(), clazz);
+//    }
 
 //    public ContextAttribute addToDynamicAttribute(String name, ComponentField field) throws JAMSException {
 //
@@ -62,7 +61,6 @@ public class ContextDescriptor extends ComponentDescriptor {
 //
 //        return ca;
 //    }
-
     public ContextAttribute addStaticAttribute(String name, Class type, String value) throws JAMSException {
 
         ContextAttribute ca = staticAttributes.get(name);
@@ -96,10 +94,15 @@ public class ContextDescriptor extends ComponentDescriptor {
         return dynamicAttributes;
     }
 
-    public HashMap<String, ContextAttribute> getDynamicAttributes(Class<?> type) {
+    public HashMap<String, ContextAttribute> getAttributes(Class<?> type) {
         type = JAMSDataFactory.getBelongingInterface(type);
         HashMap<String, ContextAttribute> result = new HashMap<String, ContextAttribute>();
         for (Entry<String, ContextAttribute> entry : dynamicAttributes.entrySet()) {
+            if (type.isAssignableFrom(entry.getValue().getType())) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+        for (Entry<String, ContextAttribute> entry : staticAttributes.entrySet()) {
             if (type.isAssignableFrom(entry.getValue().getType())) {
                 result.put(entry.getKey(), entry.getValue());
             }

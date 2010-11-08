@@ -45,13 +45,17 @@ public class IOTest {
 
         JAMSRuntime runtime = new StandardRuntime();
         SystemProperties properties = JAMSProperties.createProperties();
-        properties.load("/home/nsk/jamsapplication/nsk.jap");
+        properties.load("d:/jamsapplication/nsk.jap");
         String[] libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
         ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
 
-        ModelIO io = new ModelIO(classLoader);
+        ModelIO io = new ModelIO(classLoader, new NodeFactory() {
+            public ModelNode createNode(ComponentDescriptor cd) {
+                return new ModelNode(cd);
+            }
+        });
 
-        Document doc = XMLTools.getDocument("/home/nsk/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam");
+        Document doc = XMLTools.getDocument("d:/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam");
 
         // get the model and access some meta data
 
@@ -85,27 +89,27 @@ public class IOTest {
 
         // get all attributes of a context (by type)
         ContextDescriptor context = (ContextDescriptor) md.getComponentDescriptor("HRULoop");
-        HashMap<String, ContextAttribute> attribs = context.getDynamicAttributes(JAMSEntity.class);
+        HashMap<String, ContextAttribute> attribs = context.getAttributes(JAMSEntity.class);
         for (ContextAttribute attrib : attribs.values()) {
             System.out.println(attrib.getName() + " [" + attrib.getType() + "]");
         }
 
         ContextDescriptor ccopy = context.cloneNode();
-        attribs = ccopy.getDynamicAttributes(JAMSEntity.class);
+        attribs = ccopy.getAttributes(JAMSEntity.class);
         for (ContextAttribute attrib : attribs.values()) {
             attrib.setName(attrib.getName() + "__");
             System.out.println(attrib.getName() + " [" + attrib.getType() + "]");
         }
 
-        attribs = context.getDynamicAttributes(JAMSEntity.class);
+        attribs = context.getAttributes(JAMSEntity.class);
         for (ContextAttribute attrib : attribs.values()) {
             System.out.println(attrib.getName() + " [" + attrib.getType() + "]");
         }
 
         Document doc2 = io.getModelDocument(md);
 
-        XMLTools.writeXmlFile(doc, "/home/nsk/doc1.xml");
-        XMLTools.writeXmlFile(doc2, "/home/nsk/doc2.xml");
+        XMLTools.writeXmlFile(doc, "d:/doc1.xml");
+        XMLTools.writeXmlFile(doc2, "d:/doc2.xml");
 
         // output a component
 //        cd = md.getComponentDescriptor("SpatialWeightedSumAggregator1");
@@ -115,7 +119,7 @@ public class IOTest {
     }
 
     static void output(ComponentDescriptor cd, String indent) {
-        System.out.println(indent + cd.getName() + " [" + cd.getClazz() + "]");
+        System.out.println(indent + cd.getName() + " [" + cd.getClazz() + "] " + cd.getNode().getType());
         HashMap<String, ComponentField> fields = cd.getComponentFields();
         for (String fieldName : fields.keySet()) {
             ComponentField field = fields.get(fieldName);
@@ -123,14 +127,14 @@ public class IOTest {
         }
     }
 
-    static void output(JAMSNode node, int level) {
+    static void output(ModelNode node, int level) {
         String indent = "";
         for (int i = 0; i < level; i++) {
             indent += "    ";
         }
         output((ComponentDescriptor) node.getUserObject(), indent);
         for (int i = 0; i < node.getChildCount(); i++) {
-            output(node.getChildAt(i), level + 1);
+            output((ModelNode) node.getChildAt(i), level + 1);
         }
     }
 }

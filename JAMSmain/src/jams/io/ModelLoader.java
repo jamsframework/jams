@@ -35,9 +35,11 @@ import jams.meta.ComponentDescriptor;
 import jams.meta.ComponentField;
 import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
-import jams.meta.JAMSNode;
+import jams.meta.ModelNode;
 import jams.meta.ModelDescriptor;
 import jams.meta.ModelIO;
+import jams.meta.NodeFactory;
+import jams.meta.SimpleNode;
 import jams.runtime.JAMSRuntime;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
@@ -62,7 +64,15 @@ public class ModelLoader {
     public ModelLoader(String[] globvars, JAMSRuntime rt) {
 
         this.loader = rt.getClassLoader();
-        this.modelIO = new ModelIO(this.loader);
+        this.modelIO = new ModelIO(this.loader, new NodeFactory() {
+
+            public ModelNode createNode(ComponentDescriptor cd) {
+                ModelNode node = new ModelNode(cd);
+                cd.setNode(node);
+                return node;
+            }
+
+        });
 
         // create an empty model
         jamsModel = new JAMSModel(rt);
@@ -77,7 +87,7 @@ public class ModelLoader {
     public Model loadModel(Document modelDoc) throws JAMSException {
 
         Element element;
-        JAMSNode rootNode, node;
+        ModelNode rootNode, node;
 //        Node node;
         Component topComponent;
 
@@ -140,7 +150,7 @@ public class ModelLoader {
         ArrayList<Component> childComponentList = new ArrayList<Component>();
         for (int index = 0; index < rootNode.getChildCount(); index++) {
 
-            node = rootNode.getChildAt(index);
+            node = (ModelNode) rootNode.getChildAt(index);
 
             try {
 
@@ -177,7 +187,7 @@ public class ModelLoader {
     /**
      * Recursively create all components used in the model and add them to the component repository for easy access
      */
-    private Component loadComponent(JAMSNode rootNode) throws ModelSpecificationException {
+    private Component loadComponent(ModelNode rootNode) throws ModelSpecificationException {
 
         String componentName, componentClassName, varName, varClassName = "", varValue;
         Component component, childComponent;
@@ -372,7 +382,7 @@ public class ModelLoader {
         // get element child nodes
         for (int index = 0; index < rootNode.getChildCount(); index++) {
 
-            JAMSNode childNode = rootNode.getChildAt(index);
+            ModelNode childNode = (ModelNode) rootNode.getChildAt(index);
 
             // process child components of context components
             childComponent = loadComponent(childNode);

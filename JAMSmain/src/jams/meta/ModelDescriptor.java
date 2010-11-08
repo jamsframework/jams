@@ -29,6 +29,7 @@ import jams.meta.ModelProperties.ModelElement;
 import jams.meta.ModelProperties.ModelProperty;
 import jams.tools.StringTools;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -41,57 +42,24 @@ import org.w3c.dom.NodeList;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class ModelDescriptor {
+public class ModelDescriptor extends ComponentCollection {
 
     private HashMap<String, OutputDSDescriptor> outputDataStores;
     private ModelProperties modelProperties;
     private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "";
-    private JAMSNode rootNode;
-    private HashMap<String, ComponentDescriptor> componentDescriptors = new HashMap<String, ComponentDescriptor>();
     private Node dataStoresNode;
+    private ModelNode rootNode;
 
     public ModelDescriptor() {
         outputDataStores = new HashMap<String, OutputDSDescriptor>();
         modelProperties = new ModelProperties();
     }
 
-    public String registerComponentDescriptor(String oldName, String newName, ComponentDescriptor cd) {
-
-        String newNewName = createComponentInstanceName(newName);
-
-        if (cd.equals(componentDescriptors.get(oldName))) {
-            componentDescriptors.remove(oldName);
-        }
-
-        componentDescriptors.put(newNewName, cd);
-
-        return newNewName;
-    }
-
-    public void unRegisterComponentDescriptor(ComponentDescriptor cd) {
-        getComponentDescriptors().remove(cd.getName());
-    }
-
-    public HashMap<String, ComponentDescriptor> getComponentDescriptors() {
-        return componentDescriptors;
-    }
-
-    public ComponentDescriptor getComponentDescriptor(String name) {
-        return getComponentDescriptors().get(name);
-    }
-
-//    /*
-//     * Create a new name for a component instance.
-//     * Use the given name.
-//     */
-//    public String createComponentInstanceName(String name) {
-//        return name;
-//    }
-
     /*
      * Create a new name for a component instance.
      * If possible, use the given name, else add a suffix in order to create a unique one.
      */
+    @Override
     public String createComponentInstanceName(String name) {
 
         Set<String> names = getComponentDescriptors().keySet();
@@ -313,14 +281,14 @@ public class ModelDescriptor {
     /**
      * @return the rootNode
      */
-    public JAMSNode getRootNode() {
+    public ModelNode getRootNode() {
         return rootNode;
     }
 
     /**
      * @param rootNode the rootNode to set
      */
-    public void setRootNode(JAMSNode rootNode) {
+    public void setRootNode(ModelNode rootNode) {
         this.rootNode = rootNode;
     }
 
@@ -342,9 +310,9 @@ public class ModelDescriptor {
 
         ArrayList<ComponentField> fields = new ArrayList<ComponentField>();
 
-        ArrayList<JAMSNode> nodes = rootNode.breathFirstEnum();
-        for (JAMSNode node : nodes) {
-            ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
+        Enumeration<ModelNode> nodes = rootNode.breadthFirstEnumeration();
+        while (nodes.hasMoreElements()) {
+            ComponentDescriptor cd = (ComponentDescriptor) nodes.nextElement().getUserObject();
             fields.addAll(cd.getParameterFields());
         }
 

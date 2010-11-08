@@ -48,9 +48,11 @@ public class ModelIO {
     private static final Class modelClazz = jams.model.JAMSModel.class;
     private ClassLoader loader;
     private String modelName;
+    private NodeFactory nodeFactory;
 
-    public ModelIO(ClassLoader loader) {
+    public ModelIO(ClassLoader loader, NodeFactory nodeFactory) {
         this.loader = loader;
+        this.nodeFactory = nodeFactory;
     }
 
 //    public ModelIO(ModelDescriptor md, JAMSClassLoader loader) {
@@ -92,8 +94,8 @@ public class ModelIO {
 
         //create the tree's root node
         ContextDescriptor cd = new ContextDescriptor(modelName, modelClazz, md);
-        JAMSNode rootNode = new JAMSNode(cd);
-        rootNode.setType(JAMSNode.MODEL_ROOT);
+        ModelNode rootNode = nodeFactory.createNode(cd);
+        rootNode.setType(ModelNode.MODEL_TYPE);
 
         md.setRootNode(rootNode);
 
@@ -145,11 +147,11 @@ public class ModelIO {
         return md;
     }
 
-    private JAMSNode getSubTree(Element rootElement, ModelDescriptor md) throws ModelLoadException, JAMSException {
+    private ModelNode getSubTree(Element rootElement, ModelDescriptor md) throws ModelLoadException, JAMSException {
 
         Class<?> clazz;
-        JAMSNode rootNode = null;
         String componentName = "", className = "";
+        ModelNode rootNode = null;
 
         try {
 
@@ -172,16 +174,15 @@ public class ModelIO {
             throw new ModelLoadException(className, componentName);
         }
 
-        //JAMSNode rootNode = new JAMSNode(rootElement.getAttribute("name"));
+        //ModelNode rootNode = new ModelNode(rootElement.getAttribute("name"));
 
         String type = rootElement.getNodeName();
 
         if (type.equals("component")) {
 
             ComponentDescriptor cd = new ComponentDescriptor(componentName, clazz, md);
-            rootNode = new JAMSNode(cd);
-
-            rootNode.setType(JAMSNode.COMPONENT_NODE);
+            rootNode = nodeFactory.createNode(cd);
+            rootNode.setType(ModelNode.COMPONENT_TYPE);
 
             NodeList varChilds = rootElement.getElementsByTagName("var");
             for (int index = 0; index < varChilds.getLength(); index++) {
@@ -191,16 +192,15 @@ public class ModelIO {
         } else if (type.equals("contextcomponent")) {
 
             ContextDescriptor cd = new ContextDescriptor(componentName, clazz, md);
-            rootNode = new JAMSNode(cd);
+            rootNode = nodeFactory.createNode(cd);
+            rootNode.setType(ModelNode.CONTEXT_TYPE);
 
-            rootNode.setType(JAMSNode.CONTEXT_NODE);
-
-            NodeList childs = rootElement.getChildNodes();
-            for (int index = 0; index < childs.getLength(); index++) {
-                Node node = childs.item(index);
+            NodeList children = rootElement.getChildNodes();
+            for (int index = 0; index < children.getLength(); index++) {
+                Node node = children.item(index);
                 if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
 
-                    JAMSNode childNode = getSubTree((Element) childs.item(index), md);
+                    ModelNode childNode = getSubTree((Element) children.item(index), md);
                     if (childNode != null) {
                         rootNode.add(childNode);
                     }
@@ -308,7 +308,7 @@ public class ModelIO {
         Document document = null;
         Element element;
 
-        JAMSNode rootNode = (JAMSNode) md.getRootNode();
+        ModelNode rootNode = md.getRootNode();
 
         // in case no model had been loaded or created, the rootNode is null
         if (rootNode == null) {
@@ -413,7 +413,7 @@ public class ModelIO {
             int childCount = rootNode.getChildCount();
             for (int i = 0; i < childCount; i++) {
 
-                rootElement.appendChild(getSubDoc((JAMSNode) rootNode.getChildAt(i), document));
+                rootElement.appendChild(getSubDoc((ModelNode) rootNode.getChildAt(i), document));
                 rootElement.appendChild(document.createTextNode("\n"));
 
             }
@@ -461,20 +461,20 @@ public class ModelIO {
     }
 
     // return XML document element representing subtree of a JAMSTree (JTree)
-    // whose root node is a given JAMSNode
-    private Element getSubDoc(JAMSNode rootNode, Document document) {
+    // whose root node is a given ModelNode
+    private Element getSubDoc(ModelNode rootNode, Document document) {
 
         Element rootElement = null;
         ComponentDescriptor cd = (ComponentDescriptor) rootNode.getUserObject();
 
         switch (rootNode.getType()) {
-            case JAMSNode.COMPONENT_NODE:
+            case ModelNode.COMPONENT_TYPE:
                 rootElement = (Element) document.createElement("component");
                 break;
-            case JAMSNode.CONTEXT_NODE:
+            case ModelNode.CONTEXT_TYPE:
                 rootElement = (Element) document.createElement("contextcomponent");
                 break;
-            case JAMSNode.MODEL_ROOT:
+            case ModelNode.MODEL_TYPE:
                 rootElement = (Element) document.createElement("contextcomponent");
                 cd.setClazz(jams.model.JAMSContext.class);
         }
@@ -521,10 +521,10 @@ public class ModelIO {
             }
         }
 
-        if ((rootNode.getType() == JAMSNode.CONTEXT_NODE) || (rootNode.getType() == JAMSNode.MODEL_ROOT)) {
+        if ((rootNode.getType() == ModelNode.CONTEXT_TYPE) || (rootNode.getType() == ModelNode.MODEL_TYPE)) {
             int childCount = rootNode.getChildCount();
             for (int i = 0; i < childCount; i++) {
-                rootElement.appendChild(getSubDoc((JAMSNode) rootNode.getChildAt(i), document));
+                rootElement.appendChild(getSubDoc((ModelNode) rootNode.getChildAt(i), document));
                 rootElement.appendChild(document.createTextNode("\n"));
             }
         }

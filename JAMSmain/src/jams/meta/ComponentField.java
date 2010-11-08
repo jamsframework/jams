@@ -55,7 +55,7 @@ public class ComponentField {
     }
 
     public void unlinkFromAttribute() {
-        for (ContextAttribute ca : this.contextAttributes) {
+        for (ContextAttribute ca : this.contextAttributes.toArray(new ContextAttribute[this.contextAttributes.size()])) {
             unlinkFromAttribute(ca);
         }
     }

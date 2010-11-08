@@ -26,11 +26,11 @@ package jams.meta;
 import java.util.HashMap;
 import jams.JAMS;
 import jams.JAMSException;
-import jams.meta.ComponentField;
 import java.util.HashSet;
 
 /**
- *
+ * This class represents attributes of a context, which can be static attributes
+ * (user defined) or dynamic attributes (defined by other components)
  * @author Sven Kralisch
  */
 public class ContextAttribute {
