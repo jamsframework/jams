@@ -574,6 +574,8 @@ public class ModelTree extends JAMSTree {
 
         }
 
+        view.getModelEditPanel().updatePanel();
+
         TreeModel model = new DefaultTreeModel(rootNode);
 //        TreeModel model = new DefaultTreeModel(getModelTree(modelDoc));
         setModel(model);
