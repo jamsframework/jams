@@ -36,9 +36,11 @@ import jams.workspace.stores.Filter;
  */
 @JAMSComponentDescription(title = "JAMS temporal context",
 author = "Sven Kralisch",
-date = "31. Juli 2005",
+date = "2005-07-31",
 description = "This component represents a JAMS context which can be used to "
-+ "represent temporal contexts in environmental models")
++ "represent iteration over discrete time steps typically used in conceptional"
++ "environmental models",
+version = "1.0_0")
 public class JAMSTemporalContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
@@ -112,7 +114,7 @@ public class JAMSTemporalContext extends JAMSContext {
 
     @Override
     public void run() {
-        
+
         super.run();
 
         for (DataTracer dataTracer : dataTracers) {
