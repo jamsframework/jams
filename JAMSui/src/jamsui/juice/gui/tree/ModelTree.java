@@ -45,6 +45,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import jams.gui.tools.GUIHelper;
 import jams.meta.ComponentDescriptor;
+import jams.meta.ContextDescriptor;
 import jams.meta.ModelDescriptor;
 import jams.meta.ModelIO;
 import jams.meta.ModelNode;
@@ -546,21 +547,33 @@ public class ModelTree extends JAMSTree {
 
         if (modelDoc == null) {
             try {
-                Class<?> modelClazz = JUICE.getLoader().loadClass(MODEL_CLASS_NAME);
-                ComponentDescriptor cd = new ComponentDescriptor(NEW_MODEL_NAME, modelClazz, this.getComponentCollection());
-                cd.addObserver(new Observer() {
+//                Class<?> modelClazz = JUICE.getLoader().loadClass(MODEL_CLASS_NAME);
+//                ContextDescriptor cd = new ContextDescriptor(NEW_MODEL_NAME, modelClazz, this.getComponentCollection());
+//                cd.addObserver(new Observer() {
+//
+//                    public void update(Observable o, Object arg) {
+//                        ModelTree.this.updateUI();
+//                    }
+//                });
+//
+//                rootNode = new JAMSNode(cd, this);
+//                rootNode.setType(ModelNode.MODEL_TYPE);
+//                cd.setNode(rootNode);
+//
+//                this.setComponentCollection();
+//         rootNode = nodeFactory.createNode(cd);
+//        rootNode.setType(ModelNode.MODEL_TYPE);
+//
+//        this.getModel
 
-                    public void update(Observable o, Object arg) {
-                        ModelTree.this.updateUI();
-                    }
-                });
-                rootNode = new JAMSNode(cd, this);
-                rootNode.setType(JAMSNode.MODEL_TYPE);
+                ModelDescriptor md = modelIO.createModel();
+                view.setModelDescriptor(md);
+                this.setComponentCollection(md);
+                rootNode = md.getRootNode();
+
 
             } catch (JAMSException ex) {
                 Logger.getLogger(ModelTree.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException cnfe) {
-                Logger.getLogger(ModelTree.class.getName()).log(Level.SEVERE, null, cnfe);
             }
         } else {
             try {
