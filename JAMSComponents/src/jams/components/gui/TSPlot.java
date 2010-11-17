@@ -55,6 +55,7 @@ import jams.data.JAMSDouble;
 import jams.data.JAMSInteger;
 import jams.data.JAMSString;
 import jams.data.JAMSStringArray;
+import jams.model.JAMSComponentDescription;
 import jams.model.JAMSGUIComponent;
 import jams.model.JAMSVarDescription;
 import java.io.IOException;
@@ -68,6 +69,12 @@ import org.jfree.data.time.TimeSeriesDataItem;
  *
  * @author S. Kralisch
  */
+@JAMSComponentDescription(title = "Timeseries plot",
+author = "Sven Kralisch",
+date = "2005-07-31",
+description = "This component creates a graphical plot of time series data, "
++ "e.g. precipitation and runoff over time.",
+version = "1.0_0")
 public class TSPlot extends JAMSGUIComponent {
     
     @JAMSVarDescription(
