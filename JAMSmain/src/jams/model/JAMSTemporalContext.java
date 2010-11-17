@@ -34,7 +34,7 @@ import jams.workspace.stores.Filter;
  *
  * @author S. Kralisch
  */
-@JAMSComponentDescription(title = "JAMS temporal context",
+@JAMSComponentDescription(title = "Temporal context",
 author = "Sven Kralisch",
 date = "2005-07-31",
 description = "This component represents a JAMS context which can be used to "

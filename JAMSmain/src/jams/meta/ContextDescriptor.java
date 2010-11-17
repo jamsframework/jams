@@ -119,7 +119,7 @@ public class ContextDescriptor extends ComponentDescriptor {
             ComponentField caCopy = new ComponentField(ca.getName(), ca.getType(), ca.getAccessType(), this);
             caCopy.setValue(ca.getValue());
             copy.componentFields.put(name, caCopy);
-            if (ca.getContextAttributes() != null) {
+            if (ca.getContextAttributes().size() > 0) {
                 caCopy.linkToAttribute(ca.getContext(), ca.getAttribute());
                 //copy.linkComponentAttribute(ca.name, ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
             }

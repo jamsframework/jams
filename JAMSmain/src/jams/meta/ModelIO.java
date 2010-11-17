@@ -59,6 +59,16 @@ public class ModelIO {
 //        this.md = md;
 //        this.loader = loader;
 //    }
+    public ModelDescriptor createModel() throws JAMSException {
+
+        ModelDescriptor md = new ModelDescriptor();
+        ContextDescriptor cd = new ContextDescriptor(JAMS.resources.getString("New_Model"), modelClazz, md);
+        ModelNode rootNode = nodeFactory.createNode(cd);
+        rootNode.setType(ModelNode.MODEL_TYPE);
+        md.setRootNode(rootNode);
+        return md;
+    }
+
     public ModelDescriptor loadModel(Document modelDoc, boolean processEditors) throws JAMSException {
 
         return getModelDescriptor(modelDoc, processEditors);
