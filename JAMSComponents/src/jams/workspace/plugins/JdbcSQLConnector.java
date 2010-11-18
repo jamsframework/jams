@@ -42,10 +42,11 @@ public class JdbcSQLConnector {
 
     private String hostname,  database,  username,  passwd, driver;
     private Connection con;
+    private Statement stmt;
 
     transient static HashMap<String,ConnectionInfo> connPool;
 
-    transient private Set<BufferedResultSet> resultSetPool;
+    transient private Set<ResultSet> resultSetPool;
 
     private class ConnectionInfo{
         Connection connection;
@@ -75,11 +76,11 @@ public class JdbcSQLConnector {
         if (connPool == null){
             connPool = new HashMap<String,ConnectionInfo>();
         }
-        resultSetPool = new HashSet<BufferedResultSet>();        
+        resultSetPool = new HashSet<ResultSet>();        
     }
 
     public void connect() throws SQLException {
-        ConnectionInfo info = this.connPool.get(getKey());
+        ConnectionInfo info = connPool.get(getKey());
         if (info != null){
             this.con = info.connection;
             info.useCount++;
@@ -108,126 +109,42 @@ public class JdbcSQLConnector {
         stmt.close();
         return result;
     }
-static int counter = 0;
-    public class BufferedResultSet{
-        ResultSet nonBufferedSet;
-        Statement stmt;
-        String query;
-        int limit = 100;
-        int marker;
 
-        BufferedResultSet(String query){
-            this.query = query;
-            marker = 0;
-            try{
-                fetch();
-            }catch(SQLException ex){
-            
-            }
+    public ResultSet execQuery(String sqlQuery) throws SQLException {
+        if (con == null) {
+            connect();
         }
 
-        public void skip(long count)throws SQLException {
-            while (nonBufferedSet.next() && count>0){
-                count--;
-            }
-            marker += count;            
-        }
+        int trialCount = 0;
+        while (true) {
+            try {
+                //do use a prepare statment to stream the result. this reduces memory
+                //usage
+                if (stmt != null) {
+                    stmt.close();
+                }
+                /*stmt = con.prepareStatement(sqlQuery,
+                ResultSet.TYPE_FORWARD_ONLY,
+                ResultSet.CONCUR_READ_ONLY);*/
 
-        private void fetch() throws SQLException {
-            String lmtQuery = query + " LIMIT " + marker + "," + limit;
-            marker += limit;
-            if (counter++ % 500 == 0) {
-                System.gc();
-            }
-            if (nonBufferedSet != null) {
-                nonBufferedSet.close();                
-            }
-            nonBufferedSet = nonBufferedExecQuery(lmtQuery);
-        }
+                stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery(sqlQuery);
+                resultSetPool.add(rs);
+                return rs;
 
-        public boolean wasNull() throws SQLException{
-            return this.nonBufferedSet.wasNull();
-        }
-        private ResultSet nonBufferedExecQuery(String sqlQuery) throws SQLException {
-            if (con == null) {
+            } catch (SQLException sqlex) {
+                trialCount++;
+                if (trialCount > 4) {
+                    throw sqlex;
+                }
                 connect();
-            }
-
-            int trialCount = 0;
-            while (true) {
+                System.err.println("lost connection to database, attempt " + trialCount + " of 4 to reconnect" + sqlex.toString());
                 try {
-                    //do use a prepare statment to stream the result. this reduces memory
-                    //usage
-                    if (stmt != null) {
-                        stmt.close();
-                    }
-                    stmt = con.prepareStatement(sqlQuery,
-                            ResultSet.TYPE_FORWARD_ONLY,
-                            ResultSet.CONCUR_READ_ONLY);
-
-                    //Statement stmt = con.createStatement();
-                    return stmt.executeQuery(sqlQuery);
-                } catch (SQLException sqlex) {
-                    trialCount++;
-                    if (trialCount > 4) {
-                        throw sqlex;
-                    }
-                    connect();
-                    System.err.println("lost connection to database, attempt " + trialCount + " of 4 to reconnect" + sqlex.toString());
-                    try {
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-                    }
+                    Thread.sleep(1000);
+                } catch (Exception e) {
                 }
             }
         }
-
-        public boolean next() throws SQLException {
-            if (nonBufferedSet == null){
-                fetch();
-            }
-            if (nonBufferedSet.next())
-                return true;
-            fetch();            
-            return nonBufferedSet.next();
-        }
-
-        public String getString(int i) throws SQLException {
-            return nonBufferedSet.getString(i);
-        }
-
-        public double getDouble(int i) throws SQLException {
-            return nonBufferedSet.getDouble(i);
-        }
-
-        public long getLong(int i) throws SQLException {
-            return nonBufferedSet.getLong(i);
-        }
-
-        public Object getObject(int i) throws SQLException {
-            return nonBufferedSet.getObject(i);
-        }
-
-        public ResultSetMetaData getMetaData() throws SQLException {
-            return nonBufferedSet.getMetaData();
-        }
-        public Date getDate(int i, Calendar cal) throws SQLException {
-            return nonBufferedSet.getDate(i,cal);
-        }
-
-        public void close() throws SQLException {
-            if (nonBufferedSet != null)
-                nonBufferedSet.close();
-            if (stmt!=null)
-                stmt.close();
-            resultSetPool.remove(this);
-        }
-    }
-
-    public BufferedResultSet execQuery(String sqlQuery) throws SQLException {
-        BufferedResultSet rs = new BufferedResultSet(sqlQuery);
-        resultSetPool.add(rs);
-        return rs;
     }
     
     public boolean isValid() throws SQLException {
@@ -246,7 +163,7 @@ static int counter = 0;
             con = null;
             connPool.remove(getKey());
         }
-        for (BufferedResultSet set : this.resultSetPool){
+        for (ResultSet set : this.resultSetPool){
             set.close();
         }
         if (resultSetPool.size()>0){

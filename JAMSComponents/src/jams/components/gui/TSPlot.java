@@ -24,6 +24,7 @@
 package jams.components.gui;
 
 import java.awt.BorderLayout;
+import jams.JAMS;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -88,7 +89,8 @@ public class TSPlot extends JAMSGUIComponent {
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "Title strings for left graphs. Number of entries " +
-            "must be identical to number of plottet values (valueLeft)."
+            "must be identical to number of plottet values (valueLeft).",
+            defaultValue = "titleLeft1;titleLeft2"
             )
             public JAMSStringArray titleLeft;
     
@@ -102,7 +104,8 @@ public class TSPlot extends JAMSGUIComponent {
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
-            description = "Title strings for right graphs"
+            description = "Title strings for right graphs",
+            defaultValue = "titleRight"
             )
             public JAMSStringArray titleRight;
     
@@ -112,7 +115,7 @@ public class TSPlot extends JAMSGUIComponent {
             description = "Colors for left graphs (yellow, orange, red, pink, " +
             "magenta, cyan, yellow, green, lightgray, gray, black). Number of " +
             "entries must be identical to number of plottet values (valueLeft).",
-            defaultValue = "blue"            
+            defaultValue = "blue;red"
             )
             public JAMSStringArray colorLeft;
     
@@ -337,7 +340,10 @@ public class TSPlot extends JAMSGUIComponent {
             
             leftRenderer = getRenderer(typeLeft.getValue());
             plot.setRenderer(0, leftRenderer);
-            
+
+            if (valueLeft==null){
+                getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("no_value_for_time_series_plot"));
+            }
             graphCountLeft = valueLeft.length;
             tsLeft = new TimeSeries[graphCountLeft];
             for (i = 0; i < graphCountLeft; i++) {
@@ -382,6 +388,9 @@ public class TSPlot extends JAMSGUIComponent {
     
     @Override
     public void run() {
+        if (time==null){
+            getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("no_time_value_was_provided_for_time_series_plot"));
+        }
         timeStamps[count] = time.getTimeInMillis();
         int offsetRight = count * graphCountRight;
         int offsetLeft = count * graphCountLeft;

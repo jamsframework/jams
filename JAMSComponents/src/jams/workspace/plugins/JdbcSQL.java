@@ -35,8 +35,8 @@ import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.LongValue;
 import jams.workspace.datatypes.ObjectValue;
 import jams.workspace.datatypes.StringValue;
-import jams.workspace.plugins.JdbcSQLConnector.BufferedResultSet;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -53,7 +53,7 @@ public class JdbcSQL implements DataReader {
     private static final int TIMESTAMP = 3;
     private static final int OBJECT = 4;
     private String user, password, host, db, query, driver;
-    transient private BufferedResultSet rs;
+    transient private ResultSet rs;
     transient private ResultSetMetaData rsmd;
     transient private JdbcSQLConnector pgsql;
     private int numberOfColumns = -1;
@@ -110,8 +110,8 @@ public class JdbcSQL implements DataReader {
 
     private boolean skip(long count) {
         try{
-            rs.skip(count);
-            rs.next();
+            for (int i=0;i<count;i++)
+                rs.next();
             System.out.println("after skip position is: " + rs.getString(0));            
         } catch (Exception e) {
             e.printStackTrace();
