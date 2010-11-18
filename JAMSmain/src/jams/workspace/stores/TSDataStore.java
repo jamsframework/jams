@@ -316,11 +316,7 @@ public class TSDataStore extends TableDataStore {
         }
     }
 
-    public void skip(int count) {        
-        currentDate.add(timeUnit, timeUnitCount*count);
-        if (currentDate.after(stopDate)) {
-            return;
-        }
+    public void skip(int count) {                
         if (this.accessMode != InputDataStore.CACHE_MODE) {
             //todo .. make this step efficient
             for (int i=0;i<count;i++)
@@ -329,6 +325,10 @@ public class TSDataStore extends TableDataStore {
             try {
                 for (int i=0;i<count;i++)
                     dumpFileReader.readLine();
+                currentDate.add(timeUnit, timeUnitCount*count);
+                if (currentDate.after(stopDate)) {
+                    return;
+                }
             } catch (IOException ex) {
                 ws.getRuntime().sendErrorMsg("Premature end of dump file for datastore" + id);
                 return;
