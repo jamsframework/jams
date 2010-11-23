@@ -40,11 +40,16 @@ import jams.JAMS;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
+import jams.meta.OutputDSDescriptor;
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.util.Collections;
 import java.util.Comparator;
+import javax.swing.AbstractListModel;
 import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 
 /**
  *
@@ -54,6 +59,8 @@ public class OutputDSDlg extends JDialog {
 
     private JComboBox contextCombo;
     private JButton okButton, cancelButton;
+    private ModelView view;
+    private JList dsList;
 
     public OutputDSDlg(Frame owner) {
         super(owner);
@@ -78,6 +85,13 @@ public class OutputDSDlg extends JDialog {
                 }
             }
         });
+
+        dsList = new JList();
+        dsList.setPreferredSize(new Dimension(100,100));
+        JPanel storesPanel = new JPanel();
+        storesPanel.add(new JLabel("Datastores"));
+        storesPanel.add(new JScrollPane(dsList));
+        getContentPane().add(storesPanel, BorderLayout.WEST);
 
         GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Contexts:")), 1, 0, 1, 1, 0, 0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, contextCombo, 2, 0, 1, 1, 0, 0);
@@ -109,7 +123,7 @@ public class OutputDSDlg extends JDialog {
     public void setVisible(boolean isVisible) {
         super.setVisible(isVisible);
         if (isVisible) {
-            ModelView view = JUICE.getJuiceFrame().getCurrentView();
+            view = JUICE.getJuiceFrame().getCurrentView();
             HashMap<String, ComponentDescriptor> cdMap = view.getModelDescriptor().getComponentDescriptors();
 
             // create a list containing all contexts of this model
@@ -130,8 +144,37 @@ public class OutputDSDlg extends JDialog {
             });
 
             this.contextCombo.setModel(new DefaultComboBoxModel(contextList.toArray(new ComponentDescriptor[contextList.size()])));
-
         }
+
+        dsList.setModel(new AbstractListModel() {
+
+            public int getSize() {
+                HashMap<String, OutputDSDescriptor> stores = view.getModelDescriptor().getDatastores();
+                return stores.size();
+            }
+
+            public Object getElementAt(int index) {
+
+                HashMap<String, OutputDSDescriptor> stores = view.getModelDescriptor().getDatastores();
+
+                // create a list of all stores
+                ArrayList<OutputDSDescriptor> storesList = new ArrayList<OutputDSDescriptor>();
+                for (OutputDSDescriptor store : stores.values()) {
+                    storesList.add(store);
+                }
+
+                // sort the stores list
+                Collections.sort(storesList, new Comparator<OutputDSDescriptor>() {
+
+                    @Override
+                    public int compare(OutputDSDescriptor a1, OutputDSDescriptor a2) {
+                        return a1.getName().compareTo(a2.getName());
+                    }
+                });
+
+                return storesList.get(index);
+            }
+        });
     }
 
     private void updateContextAttributes() {
@@ -139,7 +182,7 @@ public class OutputDSDlg extends JDialog {
         ContextDescriptor cd = (ContextDescriptor) contextCombo.getSelectedItem();
 
         for (ContextAttribute ca : cd.getDynamicAttributes().values()) {
-             System.out.println(ca.getName());
-         }
+            System.out.println(ca.getName());
+        }
     }
 }

@@ -39,7 +39,7 @@ import jams.meta.ModelNode;
 import jams.meta.ModelDescriptor;
 import jams.meta.ModelIO;
 import jams.meta.NodeFactory;
-import jams.meta.SimpleNode;
+import jams.meta.OutputDSDescriptor;
 import jams.runtime.JAMSRuntime;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
@@ -71,7 +71,6 @@ public class ModelLoader {
                 cd.setNode(node);
                 return node;
             }
-
         });
 
         // create an empty model
@@ -86,7 +85,6 @@ public class ModelLoader {
      */
     public Model loadModel(Document modelDoc) throws JAMSException {
 
-        Element element;
         ModelNode rootNode, node;
 //        Node node;
         Component topComponent;
@@ -114,25 +112,12 @@ public class ModelLoader {
         jamsModel.setWorkspacePath(modelContext.getComponentFields().get("workspaceDirectory").getValue());
 
         // handle output datastores
-        element = (Element) md.getDataStoresNode();
-        if (element != null) {
-            NodeList outputDSNodes = element.getElementsByTagName("outputdatastore");
-            for (int j = 0; j < outputDSNodes.getLength(); j++) {
-                Node outputDSNode = outputDSNodes.item(j);
-                String outputDSName = ((Element) outputDSNode).getAttribute("name");
+        if (jamsModel.getWorkspace() != null) {
 
+            for (OutputDSDescriptor ds : md.getDatastores().values()) {
                 try {
-
-                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder builder = factory.newDocumentBuilder();
-                    Document document = builder.newDocument();
-                    Node clone = document.importNode(outputDSNode, true);
-                    document.appendChild(clone);
-
-                    if (jamsModel.getWorkspace() != null) {
-                        jamsModel.getWorkspace().registerOutputDataStore(outputDSName, document);
-                    }
-
+                    Document document = ds.createDocument();
+                    jamsModel.getWorkspace().registerOutputDataStore(ds.getName(), document);
                 } catch (ParserConfigurationException pce) {
                     jamsModel.getRuntime().handle(pce);
                 }

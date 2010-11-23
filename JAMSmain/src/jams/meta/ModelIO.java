@@ -405,6 +405,16 @@ public class ModelIO {
             rootElement.appendChild(element);
             rootElement.appendChild(document.createTextNode("\n"));
 
+            //create output datastore elements
+            element = (Element) document.createElement("datastores");
+            for (OutputDSDescriptor ds : md.getDatastores().values()) {
+                Document outputDSDoc = ds.createDocument();
+                element.appendChild(document.importNode(outputDSDoc.getDocumentElement(), true));
+                element.appendChild(document.createTextNode("\n"));
+            }
+            rootElement.appendChild(element);
+            rootElement.appendChild(document.createTextNode("\n"));
+
             if (cd instanceof ContextDescriptor) {
                 ContextDescriptor context = (ContextDescriptor) cd;
 
@@ -418,7 +428,6 @@ public class ModelIO {
                     rootElement.appendChild(document.createTextNode("\n"));
                 }
             }
-
 
             int childCount = rootNode.getChildCount();
             for (int i = 0; i < childCount; i++) {

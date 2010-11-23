@@ -868,7 +868,7 @@ public class JAMSWorkspace implements Workspace {
 
 //        ws.inputDataStoreToFile();
 
-        InputDataStore store = ws.getInputDataStore("solrad");
+        InputDataStore store = ws.getInputDataStore("tmean_db");
         TSDumpProcessor asciiConverter = new TSDumpProcessor();
         System.out.println(asciiConverter.toASCIIString((TSDataStore) store));
     }

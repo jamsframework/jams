@@ -27,6 +27,7 @@ import jams.io.ParameterProcessor;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelElement;
 import jams.meta.ModelProperties.ModelProperty;
+import jams.meta.OutputDSDescriptor.Filter;
 import jams.tools.StringTools;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -51,7 +52,6 @@ public class ModelDescriptor extends ComponentCollection {
     private ModelNode rootNode;
 
     public ModelDescriptor() {
-        outputDataStores = new HashMap<String, OutputDSDescriptor>();
         modelProperties = new ModelProperties();
     }
 
@@ -85,26 +85,49 @@ public class ModelDescriptor extends ComponentCollection {
         return result;
     }
 
-    public void setDatastores(Element dataStoresNode) {
+    public HashMap<String, OutputDSDescriptor> getDatastores() {
 
-        //hier outputdsdescriptor objekte erzeugen!
-        String name = dataStoresNode.getAttribute("name");
-        ComponentDescriptor context = getComponentDescriptor(dataStoresNode.getAttribute("context"));
-        OutputDSDescriptor od = new OutputDSDescriptor(context);
-        od.setName(name);
+        if (outputDataStores == null) {
 
-        // fill the contextAttributes
-        ArrayList<ContextAttribute> contextAttributes = od.getContextAttributes();
-        NodeList attributeNodes = dataStoresNode.getElementsByTagName("attribute");
-        for (int i = 0; i < attributeNodes.getLength(); i++) {
+            this.outputDataStores = new HashMap<String, OutputDSDescriptor>();
 
-            Element attributeElement = (Element) attributeNodes.item(i);
-            String attributeName = attributeElement.getAttribute("id");
-            //context.getDataRepository().getAttributeByTypeName(null, name)
+            if (dataStoresNode == null) {
+                return this.outputDataStores;
+            }
+
+            NodeList nodes = ((Element) dataStoresNode).getElementsByTagName("outputdatastore");
+
+            for (int i = 0; i < nodes.getLength(); i++) {
+
+                Element e = (Element) nodes.item(i);
+
+                ContextDescriptor context = (ContextDescriptor) getComponentDescriptor(e.getAttribute("context"));
+                String name = e.getAttribute("name");
+                OutputDSDescriptor od = new OutputDSDescriptor(context);
+                od.setName(name);
+
+                // fill the contextAttributes
+                ArrayList<ContextAttribute> contextAttributes = od.getContextAttributes();
+                NodeList attributeNodes = e.getElementsByTagName("attribute");
+                for (int j = 0; j < attributeNodes.getLength(); j++) {
+
+                    Element attributeElement = (Element) attributeNodes.item(j);
+                    String attributeName = attributeElement.getAttribute("id");
+                    ContextAttribute ca = context.getDynamicAttributes().get(attributeName);
+                    contextAttributes.add(ca);
+                }
+
+                NodeList filterNodes = e.getElementsByTagName("filter");
+                for (int j = 0; j < filterNodes.getLength(); j++) {
+                    Element filterElement = (Element) filterNodes.item(j);
+                    String expression = filterElement.getAttribute("expression");
+                    ContextDescriptor filterContext = (ContextDescriptor) getComponentDescriptor(filterElement.getAttribute("context"));
+                    od.addFilter(filterContext, expression);
+                }
+                this.outputDataStores.put(od.getName(), od);
+            }
         }
-
-        // fill the filters
-        ArrayList<String> filters = od.getFilters();
+        return this.outputDataStores;
     }
 
     public void setModelParameters(Element launcherNode) throws JAMSException {
@@ -290,13 +313,6 @@ public class ModelDescriptor extends ComponentCollection {
      */
     public void setRootNode(ModelNode rootNode) {
         this.rootNode = rootNode;
-    }
-
-    /**
-     * @return the dataStoresNode
-     */
-    public Node getDataStoresNode() {
-        return dataStoresNode;
     }
 
     /**
