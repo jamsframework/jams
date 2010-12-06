@@ -288,9 +288,8 @@ public class Direct extends SOOptimizer{
         DirInit();
                
         double minval = fc[0];
-        double[] xatmin = new double[2];
-        xatmin[0] = c[0][0];
-        xatmin[1] = c[0][1];
+        double[] xatmin = new double[n];
+        xatmin = reTransform(c[0]);
         int iter = 0;
         while (Q.size()<maxn.getValue()){
             ArrayList<Integer> final_pos = find_po(minval);

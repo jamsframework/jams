@@ -174,7 +174,6 @@ public abstract class Optimizer extends JAMSContext {
         }
     }
     protected JAMSDouble[] parameters;
-    protected String[] parameterNames;
     protected double[] lowBound;
     protected double[] upBound;
     protected String dirName;
@@ -227,7 +226,6 @@ public abstract class Optimizer extends JAMSContext {
 
         n = parameterIDs.length;
         parameters = parameterIDs;
-        parameterNames = new String[n];
         lowBound = new double[n];
         upBound = new double[n];
         

@@ -110,8 +110,14 @@ public class BufferedJdbcSQL implements DataReader {
 
     private boolean skip(long count) {
         try{
-            rs.skip(count);
-            rs.next();
+            if (count == 0)
+                return true;
+            else if(count > 1){
+                rs.skip(count-1);
+                rs.next();
+            }else{
+                rs.next();
+            }
             System.out.println("after skip position is: " + rs.getString(0));            
         } catch (Exception e) {
             e.printStackTrace();

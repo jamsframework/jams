@@ -156,7 +156,7 @@ public class SensitivityAnalyser extends SOOptimizer{
             else
                 classification = "low";
             
-            infoString += this.parameterNames[i] + ":" + Math.exp(param[i]) + "-->" + classification + "\n";
+//            infoString += this.parameterNames[i] + ":" + Math.exp(param[i]) + "-->" + classification + "\n";
         }
         
         this.getModel().getRuntime().sendInfoMsg(infoString);        
@@ -220,7 +220,7 @@ public class SensitivityAnalyser extends SOOptimizer{
             else
                 classification = "very sensitive";
             
-            infoString += this.parameterNames[i] + ":" + (highValue[i] - lowValue[i])/value0 + "-->" + classification + "\n";
+//            infoString += this.parameterNames[i] + ":" + (highValue[i] - lowValue[i])/value0 + "-->" + classification + "\n";
         }
         
         this.getModel().getRuntime().sendInfoMsg(infoString);        

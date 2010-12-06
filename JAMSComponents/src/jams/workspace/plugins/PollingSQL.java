@@ -127,9 +127,15 @@ public class PollingSQL implements DataReader {
 
     private boolean skip(long count) {
         try{
-            rs.skip(count);
-            rs.next();
-            System.out.println("after skip position is: " + rs.getString(0));
+            if (count == 0)
+                return true;
+            else if(count > 1){
+                rs.skip(count-1);
+                rs.next();
+            }else{
+                rs.next();
+            }
+            System.out.println("after skip position is: " + rs.getString(1));
         }catch(SQLException sqlex){
             System.err.println("PollingSQL: " + sqlex);sqlex.printStackTrace();
             return false;

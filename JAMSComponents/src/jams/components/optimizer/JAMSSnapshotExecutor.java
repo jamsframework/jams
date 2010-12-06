@@ -5,13 +5,19 @@
 
 package jams.components.optimizer;
 
+import jams.data.JAMSData;
 import jams.data.JAMSDouble;
+import jams.data.JAMSEntity;
 import jams.data.JAMSString;
+import jams.model.Context;
 import jams.model.JAMSComponent;
 import jams.model.JAMSFullModelState;
 import jams.model.JAMSVarDescription;
 import jams.model.Model;
 import java.io.File;
+import jams.JAMS;
+import jams.data.Attribute.Entity;
+import jams.model.Component;
 import java.io.IOException;
 
 /**
@@ -211,6 +217,28 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
     
     private final int inValueCount = 10;
     private final int outValueCount = 5;
+
+    public double searchForAttributeInModel(Context c, String key) throws JAMSEntity.NoSuchAttributeException{
+        JAMSData d = (c.getAttributeMap().get(key));
+        if (d!=null){
+            if (d instanceof JAMSDouble)
+                return ((JAMSDouble)d).getValue();
+            else
+                throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + key + JAMS.resources.getString("_(float)_not_found!"));
+        }else{
+            for (Component comp : c.getComponents()){
+                if (comp instanceof Context){
+                    try{
+                        return searchForAttributeInModel((Context)comp,key);
+                    }catch(JAMSEntity.NoSuchAttributeException nsae){
+
+                    }
+                }
+            }
+        }
+        throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + key + JAMS.resources.getString("_(float)_not_found!"));
+    }
+
     @Override
     public void run(){
         double inValues[] = new double[inValueCount];
@@ -249,7 +277,7 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
         
         JAMSFullModelState state = null;
         try{
-            state = new JAMSFullModelState(new File(this.snapshotFile.getValue()));
+            state = new JAMSFullModelState(new File(this.getModel().getWorkspacePath() + "/" + this.snapshotFile.getValue()));
         }catch(ClassNotFoundException e){
             this.getModel().getRuntime().sendHalt("class not found, so that model state could not loaded:" + e.toString());
         }catch(IOException ioe){
@@ -267,12 +295,17 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
             model.getRuntime().resume(state.getSmallModelState());                
         }catch(Exception e){
             this.getModel().getRuntime().sendHalt(e.toString());
+            e.printStackTrace();
         }
         
         for (int i=0;i<outValueCount;i++){
             String key = outNames[i];
-            if (key != null){                
-                outValues[i] = ((JAMSDouble) model.getRuntime().getDataHandles().get(key)).getValue();
+            if (key != null){
+                try{
+                    outValues[i] = searchForAttributeInModel(model,key);
+                }catch(Entity.NoSuchAttributeException nsae){
+                    System.out.println(nsae.toString());
+                }
                 System.out.println("key:" + key + " ----> " + outValues[i]);
             }
         }

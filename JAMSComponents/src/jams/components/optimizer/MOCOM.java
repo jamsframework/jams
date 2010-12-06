@@ -579,7 +579,7 @@ public class MOCOM extends MOOptimizer {
                 String out = JAMS.resources.getString("Rank")+"\t";
                 
                 for (int i = 0; i < n; i++) {
-                    out += this.parameterNames[i] + "\t";
+//                    out += this.parameterNames[i] + "\t";
                 }
                 for (int i = 0; i < m; i++) {
                     out += efficiencyNames[i] + "\t";
@@ -602,7 +602,7 @@ public class MOCOM extends MOOptimizer {
                 sayThis(JAMS.resources.getString("Number of model runs: ") + this.icall);
                 out = JAMS.resources.getString("Rank")+"\t";
                 for (int i = 0; i < n; i++) {
-                    out+=this.parameterNames[i] + "\t";
+//                    out+=this.parameterNames[i] + "\t";
                 }
                 for (int i = 0; i < m; i++) {
                     out+=this.effNames[i] + "\t";
@@ -629,7 +629,7 @@ public class MOCOM extends MOOptimizer {
                 c = 0;
                 String out = JAMS.resources.getString("Rank")+"\t";
                 for (int i = 0; i < n; i++) {
-                    out+=(this.parameterNames[i] + "\t");
+//                    out+=(this.parameterNames[i] + "\t");
                 }
                 for (int i = 0; i < m; i++) {
                     out+=(this.effNames[i] + "\t");
@@ -653,7 +653,7 @@ public class MOCOM extends MOOptimizer {
                 sayThis(JAMS.resources.getString("Number of model runs: ") + this.icall);
                 out = JAMS.resources.getString("Rank")+"\t";
                 for (int i = 0; i < n; i++) {
-                    out+=(this.parameterNames[i] + "\t");
+//                    out+=(this.parameterNames[i] + "\t");
                 }
                 for (int i = 0; i < m; i++) {
                     out+=(this.effNames[i] + "\t");

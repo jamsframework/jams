@@ -154,16 +154,19 @@ import java.io.Serializable;
     @Override
     public void restore(){
         updatePBar = new Runnable() {
-            public void run() {
-                int c = counter.getValue();
-                jamsProgressBar.setValue(c++);
-                counter.setValue(c);
-                jamsProgressBar.setString(Math.round(jamsProgressBar.getPercentComplete()*100) + "%");
+            public void run() {                
+                if (jamsProgressBar != null){
+                    int c = counter.getValue();
+                    jamsProgressBar.setValue(c++);
+                    counter.setValue(c);
+                    jamsProgressBar.setString(Math.round(jamsProgressBar.getPercentComplete()*100) + "%");
+                }
             }            
         };
-        
-        createObserver();
-        this.getModel().getRuntime().addInfoLogObserver(infoLogObserver);
-        this.getModel().getRuntime().addErrorLogObserver(errorLogObserver);        
+        if (this.logArea!=null){
+            createObserver();
+            this.getModel().getRuntime().addInfoLogObserver(infoLogObserver);
+            this.getModel().getRuntime().addErrorLogObserver(errorLogObserver);
+        }
     }    
 }

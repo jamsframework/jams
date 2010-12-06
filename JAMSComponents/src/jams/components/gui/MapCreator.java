@@ -100,6 +100,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import jams.components.io.ShapeTool;
 import jams.model.JAMSComponentDescription;
+import java.util.HashSet;
+import org.geotools.gui.swing.event.SelectionChangeListener;
+import org.geotools.gui.swing.event.SelectionChangedEvent;
 
 /**
  * Viewer component for JAMS entities and parameter. Each parameter map is implemented by
@@ -199,7 +202,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
         public JAMSString baseShape;
 
     transient private JPanel panel, waitPanel;
-    transient private GISPanel gispanel;
+    transient protected GISPanel gispanel;
     transient private DefaultMapLayer[] optLayers = new DefaultMapLayer[3];
     transient private MapCollection[] mc;
     private int numOfParams,  infoidx;
@@ -223,6 +226,12 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
     private Style selectStyle;
 
     static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory(null);
+
+    Set<SelectionChangeListener> listenerSet = new HashSet<SelectionChangeListener>();
+
+    public void addSelectionChangeListener(SelectionChangeListener listener){
+        this.listenerSet.add(listener);
+    }
 
     @Override
     public void run() throws Exception {
@@ -291,6 +300,9 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                 if (mp.getState() == JMapPane.Select) {
                     try {
                         gispanel.getFeatureInfo(e.getX(), e.getY());
+                        for (SelectionChangeListener l : listenerSet){
+                            l.selectionChanged(new SelectionChangedEvent(mp,null));
+                        }
                     } catch (CQLException ex) {
                         MapCreator.this.getModel().getRuntime().handle(ex);
                     } catch (IOException ex) {
