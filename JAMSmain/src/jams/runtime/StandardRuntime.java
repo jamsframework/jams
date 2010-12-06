@@ -338,7 +338,10 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         // prepare the model's workspace
         try {
-            model.getWorkspace().init();
+            if (model.getWorkspace()==null){
+                this.sendHalt(JAMS.resources.getString("no_workspace_defined_did_you_save_your_model"));
+            }else
+                model.getWorkspace().init();
         } catch (InvalidWorkspaceException iwe) {
             this.sendHalt(iwe.getMessage());
             return;
@@ -409,7 +412,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     @Override
     public void initGUI(String title, boolean ontop, int width, int height) {
 
-        if (guiComponents.size() == 0) {
+        if (guiComponents.isEmpty()) {
             return;
         }
 

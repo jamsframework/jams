@@ -23,6 +23,7 @@
 package jams.model;
 
 import jams.workspace.stores.OutputDataStore;
+import jams.JAMS;
 import java.util.regex.Matcher;
 import jams.data.*;
 import jams.dataaccess.DataAccessor;
@@ -104,6 +105,11 @@ public class JAMSTemporalContext extends JAMSContext {
     @Override
     public void init() {
         super.init();
+        if (timeInterval == null)
+            getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("time_interval_for_JAMS_Temporal_context_not_provided"));
+        if (timeInterval.getEnd() == null || timeInterval.getStart() == null){
+            getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("time_interval_for_JAMS_Temporal_context_not_provided"));
+        }
         lastValue = timeInterval.getEnd().clone();
         lastValue.add(timeInterval.getTimeUnit(), -timeInterval.getTimeUnitCount());
         lastValue.add(JAMSCalendar.MILLISECOND, 1);

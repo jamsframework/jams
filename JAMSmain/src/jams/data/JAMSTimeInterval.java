@@ -22,6 +22,7 @@
  */
 package jams.data;
 
+import java.util.Calendar;
 import java.util.StringTokenizer;
 
 /**
@@ -135,6 +136,16 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
     public void setTimeUnitCount(int timeUnitCount) {
         this.timeUnitCount = timeUnitCount;
         this.timestepCount = -1;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (obj instanceof JAMSTimeInterval){
+            if ( ((JAMSTimeInterval)obj).start.compareTo(this.start,Calendar.MINUTE) == 0 ||
+                 ((JAMSTimeInterval)obj).end.compareTo(this.end,Calendar.MINUTE) == 0)
+                return true;
+        }
+        return false;
     }
 
     public long getNumberOfTimesteps() {
