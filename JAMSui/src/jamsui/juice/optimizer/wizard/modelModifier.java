@@ -53,6 +53,7 @@ public class modelModifier {
     static final int NSGA2_METHOD = 9;
     static final int DIRECT_METHOD = 10;
     static final int LATINHYPERCUBE_METHOD = 11;
+    static final int MULTIPOINT_RANDOMSAMPLER_METHOD = 12;
 
     StandardRuntime rt;
     Document loadedModel;
@@ -339,6 +340,19 @@ public class modelModifier {
         desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
     }
 
+    static private void readMultipointRandomSamplerMethod(OptimizerDescription desc, Properties props) throws WizardException, NumberFormatException, NullPointerException{
+        String str_maximumNumberOfIterations = props.getProperty("maxn");
+        String str_pfd = props.getProperty("pfd");
+        desc.optimizerClassName = "jams.components.optimizer.MultiPointRandomSampler";
+        int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
+        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+        desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
+
+        int pfd = (int)Double.parseDouble(str_pfd);;
+        if (pfd < 2) throw new WizardException(JAMS.resources.getString("error_pfd_greater_1"));
+        desc.attributes.add(new AttributeDescription("pfd", null, Integer.toString(pfd), false));
+    }
+
     static private void readNelderMeadMethod(OptimizerDescription desc, Properties props) throws WizardException, NumberFormatException, NullPointerException{
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         desc.optimizerClassName = "jams.components.optimizer.NelderMead";
@@ -355,7 +369,7 @@ public class modelModifier {
         }
         String str_numberOfComplexes = props.getProperty("numberOfComplexes");
         String str_pcento = props.getProperty("pcento");
-        String str_peps = props.getProperty("prange");
+        String str_peps = props.getProperty("peps");
         String str_kstop = props.getProperty("kstop");
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         String str_excludedFiles = props.getProperty("excludedFiles");
@@ -451,6 +465,10 @@ public class modelModifier {
             }
             case LATINHYPERCUBE_METHOD: {
                 readLatinHyperCubeRandomSamplerMethod(desc, props);
+                break;
+            }
+            case MULTIPOINT_RANDOMSAMPLER_METHOD: {
+                readMultipointRandomSamplerMethod(desc, props);
                 break;
             }
         }
@@ -789,8 +807,8 @@ public class modelModifier {
         loader.modelFile = JAMSDataFactory.createString();
         loader.modelFile.setValue(modelFile.getName());
         loader.workspaceDir = JAMSDataFactory.createString();
-        if (modelFile.getParent()!=null)
-            loader.workspaceDir.setValue(modelFile.getParent());
+        if (modelFile.getParentFile()!=null)
+            loader.workspaceDir.setValue(modelFile.getParentFile().getAbsolutePath());
         else
             loader.workspaceDir.setValue("");
         loader.modelDoc = JAMSDataFactory.createDocument();
@@ -799,6 +817,7 @@ public class modelModifier {
         if (loadedModel == null) {
             throw new WizardException("error_while_loading_model_file");
         }
+
         init();
     }
 
@@ -924,17 +943,17 @@ public class modelModifier {
         return doc;
     }
 
-    public static Document modelModifier(String propertyFile, String modelFile, String optimizerIni) throws WizardException{
-        modelModifier modifyModel = new modelModifier(new File(propertyFile), new File(modelFile));
+    public static void modelModifier(File propertyFile, File modelFile, File optimizerIni) throws WizardException{
+        modelModifier modifyModel = new modelModifier(propertyFile, modelFile);
         modifyModel.setOptimizerIni(optimizerIni);
         Document doc = modifyModel.modifyModel();
-        /*modifyModel.writeGDLFile("graph.gdl");
+        modifyModel.writeGDLFile("graph.gdl");
         try {
             XMLTools.writeXmlFile(doc, "optimization.jam");
         } catch (Exception e) {
+            System.out.println(e.toString());
             return;
         }
-        System.exit(0);*/
-        return doc;
+        System.exit(0);        
     }
 }
