@@ -93,7 +93,7 @@ public class RegionalSensitivityAnalyser {
         
         //sort data into boxes
         for (int i = 0; i < data.parent.numberOfRuns; i++) {
-            int index = (int) Math.round((sorted_data[i][1] - min) / (max - min) * (boxes.length - 1));
+            int index = (int)(((double)i/(double)data.parent.numberOfRuns)*(boxes.length));// (int) Math.round((sorted_data[i][1] - min) / (max - min) * (boxes.length - 1));
             boxes[index].add(sorted_data[i]);
             range_max = Math.max(sorted_data[i][0],range_max);
             range_min = Math.min(sorted_data[i][0],range_min);

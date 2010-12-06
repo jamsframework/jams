@@ -484,15 +484,16 @@ public class MCAT5Toolbar extends JToolBar {
 
                     @Override
                     public void actionPerformed(ActionEvent evt) {
-                        DataRequestDlg.DataRequest req[] = new DataRequestDlg.DataRequest[2];
+                        DataRequestDlg.DataRequest req[] = new DataRequestDlg.DataRequest[3];
                         req[0] = new DataRequestDlg.DataRequest(DataRequestDlg.SIMULATATED_TIMESERIE, "test2", false);
                         req[1] = new DataRequestDlg.DataRequest(DataRequestDlg.OBSERVATED_TIMESERIE, "test", false);
+                        req[2] = new DataRequestDlg.DataRequest(DataRequestDlg.ENSEMBLE_EFFICIENCY, "test3", false);
 
                         new DataRequestDlg(req,owner) {
 
                             public void dataCollectAction() {
                                 JFrame plotWindow = getDefaultPlotWindow(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT_UNCERTAINTY_PLOT"));
-                                GLUEOutputUncertainty dataPlot = new GLUEOutputUncertainty(this.mcData.ts_simulations.get(0), mcData.observations.get(0));
+                                GLUEOutputUncertainty dataPlot = new GLUEOutputUncertainty(this.mcData.ts_simulations.get(0), mcData.observations.get(0), mcData.efficiencies.get(0));
                                 plotWindow.add(dataPlot.getPanel1(), BorderLayout.NORTH);
                                 plotWindow.add(dataPlot.getPanel2(), BorderLayout.SOUTH);                                
                                 plotWindow.setSize(800, 900);

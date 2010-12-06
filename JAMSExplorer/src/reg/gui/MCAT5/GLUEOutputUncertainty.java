@@ -5,9 +5,15 @@
 package reg.gui.MCAT5;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -17,6 +23,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import reg.gui.MCAT5Toolbar.ArrayComparator;
+import reg.gui.MCAT5Toolbar.EfficiencyDataSet;
 import reg.gui.MCAT5Toolbar.ObservationDataSet;
 import reg.gui.MCAT5Toolbar.SimulationTimeSeriesDataSet;
 
@@ -31,11 +38,17 @@ public class GLUEOutputUncertainty {
             
     ChartPanel chartPanel1 = null;
     ChartPanel chartPanel2 = null;
-    
+
+    JPanel mainPanel = null;
+
     SimulationTimeSeriesDataSet output = null;
     ObservationDataSet observation = null;
-            
-    public GLUEOutputUncertainty(SimulationTimeSeriesDataSet output,ObservationDataSet observation) {
+    EfficiencyDataSet eff = null;
+
+    double threshold = 0.5;
+    double percentil = 0.95;
+
+    public GLUEOutputUncertainty(SimulationTimeSeriesDataSet output,ObservationDataSet observation, EfficiencyDataSet eff) {
         XYDifferenceRenderer renderer1 = new XYDifferenceRenderer(Color.LIGHT_GRAY,Color.LIGHT_GRAY,false);
         XYLineAndShapeRenderer renderer2 = new XYLineAndShapeRenderer(); 
                 
@@ -54,7 +67,8 @@ public class GLUEOutputUncertainty {
         
         
         this.output = output;
-        this.observation = observation;        
+        this.observation = observation;
+        this.eff = eff;
         
         plot1.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
         plot1.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT")));
@@ -68,11 +82,65 @@ public class GLUEOutputUncertainty {
         chart2.removeLegend();
         
         chartPanel1 = new ChartPanel(chart1, true);
+        mainPanel = new JPanel(new BorderLayout());
+        JPanel panel2 = new JPanel(new FlowLayout());
+
+        mainPanel.add(chartPanel1,BorderLayout.NORTH);
+
+        JTextField numberField = new JTextField("0.5",5);
+        numberField.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                JTextField field = (JTextField)e.getSource();
+                try{
+                    threshold = Double.parseDouble(field.getText());
+                    if (threshold < 0){
+                        threshold = 0.0;
+                        field.setText("0.0");
+                    }else if (threshold > 1){
+                        threshold = 1.0;
+                        field.setText("1.0");
+                    }
+                    updateData();
+                }catch(NumberFormatException nfe){
+                    System.out.println(nfe.toString());
+                    nfe.printStackTrace();
+                }
+            }
+        });
+
+        JTextField numberField2 = new JTextField("0.95",5);
+        numberField2.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                JTextField field = (JTextField)e.getSource();
+                try{
+                    percentil = Double.parseDouble(field.getText());
+                    if (percentil < 0){
+                        percentil = 0.0;
+                        field.setText("0.0");
+                    }else if (percentil > 1){
+                        percentil = 1.0;
+                        field.setText("1.0");
+                    }
+                    updateData();
+                }catch(NumberFormatException nfe){
+                    System.out.println(nfe.toString());
+                    nfe.printStackTrace();
+                }
+            }
+        });
+
+        panel2.add(new JLabel("percentage of data used"));
+        panel2.add(numberField);
+        panel2.add(new JLabel("percentil"));
+        panel2.add(numberField2);
+        mainPanel.add(panel2,BorderLayout.SOUTH);
         chartPanel2 = new ChartPanel(chart2, true);
                         
         updateData();
     }
-        
+
     public double[][] sortbyEff(double data[],double likelihood[]) {
         int n = data.length;        
         double tmp_data[][] = new double[n][2];
@@ -82,7 +150,7 @@ public class GLUEOutputUncertainty {
             tmp_data[i][1] = likelihood[i];
         }
 
-        Arrays.sort(tmp_data, new ArrayComparator(1, false));
+        Arrays.sort(tmp_data, new ArrayComparator(1, true));
         return tmp_data;
     }
     
@@ -98,12 +166,24 @@ public class GLUEOutputUncertainty {
         
         double low_conf[] = new double[time_length];
         double high_conf[] = new double[time_length];
-        double conf = 0.05;
+        double conf = 1.0-percentil;
         double max_diff = 0;
-                        
-        for (int i=0;i<time_length;i++){                                                
-            double likelihood[] = Efficiencies.CalculateLikelihood(output.set[i].set);
-            double sorted_data[][] = sortbyEff(likelihood,output.set[i].set);
+
+        double map[] = new double[MCparam];
+
+        for (int i=0;i<MCparam;i++)
+            map[i] = i;
+        double eff_sorted_data[][] = sortbyEff(map,this.eff.set);
+        
+        for (int i=0;i<time_length;i++){
+            
+            double reducedOutputSet[] = new double[(int)(threshold*MCparam)];
+            for (int j=0;j<(int)(threshold*MCparam);j++){
+                reducedOutputSet[j] = output.set[i].set[(int)eff_sorted_data[j][0]];
+            }
+
+            double likelihood[] = Efficiencies.CalculateLikelihood(reducedOutputSet);
+            double sorted_data[][] = sortbyEff(likelihood,reducedOutputSet);
             
             //search for conf low and upbound
             double sum = 0;
@@ -114,10 +194,15 @@ public class GLUEOutputUncertainty {
                 if (sum < 1.0-conf && sum + sorted_data[j][0] > 1.0-conf){
                     high_conf[i] = sorted_data[j][1];
                 }        
-                sum += sorted_data[j][0];                
+                sum += sorted_data[j][0];
             }
             max_diff = Math.max(high_conf[i]-low_conf[i], max_diff);
-                    
+
+            if (low_conf[i]>high_conf[i]){
+                double tmp = low_conf[i];
+                low_conf[i] = high_conf[i];
+                high_conf[i] = tmp;
+            }
             dataset1.add(i,low_conf[i]);
             dataset2.add(i,high_conf[i]);
             dataset3.add(i,this.observation.set[i]);
@@ -146,7 +231,7 @@ public class GLUEOutputUncertainty {
     }
 
     public JPanel getPanel1() {
-        return chartPanel1;
+        return mainPanel;
     }
     public JPanel getPanel2() {
         return chartPanel2;

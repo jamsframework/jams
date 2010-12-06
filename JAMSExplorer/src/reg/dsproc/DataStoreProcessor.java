@@ -630,10 +630,12 @@ public class DataStoreProcessor {
         int i, j, numSelected = 0;
 
         boolean selected[] = new boolean[attributes.size()];
+        ArrayList<String> attributeNames = new ArrayList<String>();
         i = 0;
         for (AttributeData a : attributes) {
             if (a.isSelected() && a.getType().equals("JAMSDouble")) {
                 selected[i] = true;
+                attributeNames.add(a.getName());
                 numSelected++;
             } else {
                 selected[i] = false;
@@ -666,7 +668,7 @@ public class DataStoreProcessor {
         double[][] data = rows.toArray(new double[rows.size()][numSelected]);
         String ids[] = idList.toArray(new String[idList.size()]);
 
-        return new DataMatrix(data, ids, null);
+        return new DataMatrix(data, ids, attributeNames.toArray(new String[attributeNames.size()]));
     }
 
     public synchronized String[] getSelectedDoubleAttribs() {
@@ -760,7 +762,7 @@ public class DataStoreProcessor {
         }
     }
 
-    public class AttributeData {
+    public class AttributeData implements Comparable{
 
         public static final boolean SELECTION_DEFAULT = false;
 
@@ -808,6 +810,10 @@ public class DataStoreProcessor {
             synchronized (DataStoreProcessor.this) {
                 this.aggregationType = aggregationWeight;
             }
+        }
+
+        public int compareTo(Object obj){
+            return (this.getName().compareTo(((AttributeData)obj).getName()));
         }
     }
 
