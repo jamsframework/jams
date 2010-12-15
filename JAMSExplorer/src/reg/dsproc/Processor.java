@@ -90,7 +90,7 @@ public abstract class Processor {
 
                 i++;
                 switch (attrib.getAggregationType()) {
-                    case DataStoreProcessor.AttributeData.AGGREGATION_WEIGHT:
+                    case DataStoreProcessor.AttributeData.AGGREGATION_AVG:
 
                         for (int j = 0; j < a.length; j++) {
                             result[j][i] = 1d/a.length;

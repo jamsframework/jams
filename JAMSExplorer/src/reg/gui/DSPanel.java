@@ -60,7 +60,7 @@ public abstract class DSPanel extends JPanel {
             return;
         }
 
-        //postProcess(m, timeSeries);
+//        postProcess(m, timeSeries);
 
         if (m.getAttributeIDs() == null) {
             m.setAttributeIDs(dsdb.getSelectedDoubleAttribs());
@@ -87,10 +87,10 @@ public abstract class DSPanel extends JPanel {
                 continue;
             }
 
-            if (attrib.getAggregationType() != DataStoreProcessor.AttributeData.AGGREGATION_NONE) {
+            if (attrib.getAggregationType() != DataStoreProcessor.AttributeData.AGGREGATION_SUM) {
 
                 if (attribCombo.getSelectedIndex() == 0) {
-                    GUIHelper.showInfoDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_AREA_ATTRIBUTE_HAS_BEEN_CHOSEN!_SKIPPING_WEIGHTED_AGGREGATION_FOR_ATTRIBUTE_") +
+                    GUIHelper.showInfoDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_AREA_ATTRIBUTE_HAS_BEEN_CHOSEN!_SKIPPING_WEIGHTED_AGGREGATION_FOR_ATTRIBUTE_\"") +
                             attrib.getName() + "\".", java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"));
                     continue;
                 }
@@ -136,7 +136,7 @@ public abstract class DSPanel extends JPanel {
                                 data[i][j] /= weights[i];
                             }
                             break;
-                        case DataStoreProcessor.AttributeData.AGGREGATION_WEIGHT:
+                        case DataStoreProcessor.AttributeData.AGGREGATION_AVG:
                             data[i][j] *= (weights[i] / area);
                             break;
                     }
