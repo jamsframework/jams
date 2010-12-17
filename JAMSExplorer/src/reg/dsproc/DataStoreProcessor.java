@@ -767,7 +767,7 @@ public class DataStoreProcessor {
         public static final boolean SELECTION_DEFAULT = false;
 
         public static final int AGGREGATION_SUM = 1;
-        public static final int AGGREGATION_AVG = 2;
+        public static final int AGGREGATION_MEAN = 2;
         public static final int AGGREGATION_WEIGHT = 3;
         public static final int AGGREGATION_REL_WEIGHT = 4;
 

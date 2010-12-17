@@ -567,7 +567,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
             AttribRadioButton button1, button2, button3;
             button1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_SUM);
-            button2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_AVG);
+            button2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_MEAN);
             button3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_REL_WEIGHT);
             button1.setSelected(true);
 

@@ -185,7 +185,7 @@ public class TimeSpaceProcessor extends Processor {
 
                 i++;
 
-                if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_AVG) {
+                if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_MEAN) {
 
                     double a[][] = aggregate.getArray();
                     for (int k = 0; k < a.length; k++) {

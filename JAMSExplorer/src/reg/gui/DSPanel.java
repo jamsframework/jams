@@ -136,7 +136,7 @@ public abstract class DSPanel extends JPanel {
                                 data[i][j] /= weights[i];
                             }
                             break;
-                        case DataStoreProcessor.AttributeData.AGGREGATION_AVG:
+                        case DataStoreProcessor.AttributeData.AGGREGATION_MEAN:
                             data[i][j] *= (weights[i] / area);
                             break;
                     }
