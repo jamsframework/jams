@@ -31,6 +31,8 @@ import jams.JAMSException;
 import jams.model.Context;
 import jams.tools.StringTools;
 import java.util.Observable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -75,7 +77,7 @@ public class ComponentDescriptor extends Observable {
     public ComponentDescriptor(Class clazz, ComponentCollection md) throws JAMSException {
         this(clazz.getSimpleName(), clazz, md);
     }
-    
+
     private void init() {
 
         Field[] compFields = getClazz().getFields();
@@ -166,18 +168,21 @@ public class ComponentDescriptor extends Observable {
         this.componentRepository = null;
     }
 
-    public final void register(ComponentCollection md) throws JAMSException {
+    public final void register(ComponentCollection md) {
         this.componentRepository = md;
         setInstanceName(this.instanceName);
     }
 
-    public void setInstanceName(String name) throws JAMSException {
+    public void setInstanceName(String name) {
         String oldName = this.instanceName;
 
         this.instanceName = this.componentRepository.registerComponentDescriptor(oldName, name, this);
 
         if (!this.instanceName.equals(name)) {
-            throw new JAMSException(name);
+            Logger.getLogger(ModelIO.class.getName()).log(Level.INFO, JAMS.resources.getString("Name_") + name + JAMS.resources.getString("_is_already_in_use._Renamed_component_to_")
+                    + this.instanceName + "!", JAMS.resources.getString("Component_name"));
+
+//            throw new JAMSException(name);
         }
 
         if (!oldName.equals(this.instanceName)) {
