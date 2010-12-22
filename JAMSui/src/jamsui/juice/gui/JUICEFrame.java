@@ -272,12 +272,8 @@ public class JUICEFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
-                try {
-                    //@TODO: proper handling
-                    view.getModelDescriptor().setModelParameters((Element) modelProperties);
-                } catch (JAMSException ex) {
-                    Logger.getLogger(JUICEFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                //@TODO: proper handling
+                view.getModelDescriptor().setModelParameters((Element) modelProperties);
                 view.updateLauncherPanel();
             }
         };
@@ -293,9 +289,9 @@ public class JUICEFrame extends JFrame {
                 applet.init();
                 applet.start();*/
                 ModelView view = getCurrentView();
-                OptimizationWizard.createDialog(JUICEFrame.this, view.getModelDoc() , 
+                OptimizationWizard.createDialog(JUICEFrame.this, view.getModelDoc(),
                         JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);
-                
+
             }
         };
 
@@ -754,6 +750,7 @@ public class JUICEFrame extends JFrame {
         w.execute();
     }
     //this method is necessary if we like to create a view and set a doc
+
     public void newModel(final Document doc) {
         SwingWorker w = new SwingWorker() {
 

@@ -31,8 +31,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -45,7 +43,6 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import jams.gui.tools.GUIHelper;
 import jams.meta.ComponentDescriptor;
-import jams.meta.ContextDescriptor;
 import jams.meta.ModelDescriptor;
 import jams.meta.ModelIO;
 import jams.meta.ModelNode;
@@ -55,8 +52,6 @@ import jamsui.juice.JUICE;
 import jamsui.juice.gui.ComponentInfoDlg;
 import javax.swing.JFrame;
 import jamsui.juice.gui.ModelView;
-import java.util.Observable;
-import java.util.Observer;
 import org.w3c.dom.Document;
 
 /**
@@ -573,7 +568,7 @@ public class ModelTree extends JAMSTree {
 
 
             } catch (JAMSException ex) {
-                Logger.getLogger(ModelTree.class.getName()).log(Level.SEVERE, null, ex);
+                GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
             }
         } else {
             try {
@@ -582,7 +577,7 @@ public class ModelTree extends JAMSTree {
                 this.setComponentCollection(md);
                 rootNode = md.getRootNode();
             } catch (JAMSException ex) {
-                Logger.getLogger(ModelTree.class.getName()).log(Level.SEVERE, null, ex);
+                GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
             }
 
         }

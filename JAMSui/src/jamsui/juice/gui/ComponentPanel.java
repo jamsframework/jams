@@ -347,12 +347,8 @@ public class ComponentPanel extends JPanel {
         attrEditDlg.show("", JUICE.JAMS_DATA_TYPES[10], "");
 
         if (attrEditDlg.getResult() == ContextAttributeDlg.APPROVE_OPTION) {
-            try {
-                //@TODO: proper handling
-                ((ContextDescriptor) componentDescriptor).addStaticAttribute(attrEditDlg.getAttributeName(), attrEditDlg.getType(), attrEditDlg.getValue());
-            } catch (JAMSException ex) {
-                Logger.getLogger(ComponentPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            //@TODO: proper handling
+            ((ContextDescriptor) componentDescriptor).addStaticAttribute(attrEditDlg.getAttributeName(), attrEditDlg.getType(), attrEditDlg.getValue());
             this.updateCtxtAttrs();
         }
     }
@@ -521,13 +517,8 @@ public class ComponentPanel extends JPanel {
     private void setComponentName() {
         String name = textFields.get("name").getText();
         if (componentDescriptor != null) {
-            try {
-                componentDescriptor.setInstanceName(name);
-            } catch (JAMSException ex) {
-                GUIHelper.showInfoDlg(this, JAMS.resources.getString("Name_") + name + JAMS.resources.getString("_is_already_in_use._Renamed_component_to_")
-                        + componentDescriptor.getName() + "!", JAMS.resources.getString("Component_name"));
-                textFields.get("name").setText(componentDescriptor.getName());
-            }
+            componentDescriptor.setInstanceName(name);
+            textFields.get("name").setText(componentDescriptor.getName());
         }
     }
 
