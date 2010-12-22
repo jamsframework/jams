@@ -44,8 +44,8 @@ public class JAMSNode extends ModelNode {
     public final static int LIBRARY_TYPE = 3;
     public final static int PACKAGE_TYPE = 4;
     public final static int ARCHIVE_TYPE = 5;
-    static int ICON_WIDTH = 16;
-    static int ICON_HEIGHT = 16;
+    static final int ICON_WIDTH = 16;
+    static final int ICON_HEIGHT = 16;
     static Icon[] NODE_ICON = {
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Component_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
         new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/Context_s.png")).getImage().getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH)),
