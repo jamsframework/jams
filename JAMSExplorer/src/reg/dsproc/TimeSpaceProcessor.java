@@ -159,7 +159,7 @@ public class TimeSpaceProcessor extends Processor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getTemporalData(Attribute.Calendar date) throws SQLException, IOException {
+    private synchronized DataMatrix getTemporalData(Attribute.Calendar date) throws SQLException, IOException {
 
         String oldFormat = ((SimpleDateFormat) date.getDateFormat()).toPattern();
         date.setDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -176,7 +176,7 @@ public class TimeSpaceProcessor extends Processor {
         return result;
     }
 
-    private DataMatrix getAverage(DataMatrix aggregate, int count) {
+    private DataMatrix getAggregate(DataMatrix aggregate, int count, int weightAttribIndex) {
         int i = -1;
 
         for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
@@ -185,6 +185,8 @@ public class TimeSpaceProcessor extends Processor {
 
                 i++;
 
+                // aggregate already contains the sum of all matrices, so just
+                // check if we need to calculate the mean
                 if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_MEAN) {
 
                     double a[][] = aggregate.getArray();
@@ -192,6 +194,18 @@ public class TimeSpaceProcessor extends Processor {
                         a[k][i] /= count;
                     }
                 }
+
+                // if the weighting is set to WEIGHTING_DIV_AREA we will divide the results by the area
+                // of each single entity (given by its index (weightAttribIndex)
+                if ((attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA) && (weightAttribIndex >= 0)) {
+
+                    double a[][] = aggregate.getArray();
+                    for (int k = 0; k < a.length; k++) {
+                        a[k][i] /= a[k][weightAttribIndex];
+                    }
+
+                }
+
             }
         }
         return aggregate;
@@ -207,7 +221,7 @@ public class TimeSpaceProcessor extends Processor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getTemporalAggregate(Attribute.Calendar[] dates) throws SQLException, IOException {
+    public synchronized DataMatrix getTemporalAggregate(Attribute.Calendar[] dates, int weightAttribIndex) throws SQLException, IOException {
 
         if ((dates == null) || (dates.length == 0)) {
             return null;
@@ -248,7 +262,7 @@ public class TimeSpaceProcessor extends Processor {
 //        if ((aggregate != null) && (aggrType == 1)) {
 //            aggregate = aggregate.times(1d / count);
 //        }
-        return getAverage(aggregate, count);
+        return getAggregate(aggregate, count, weightAttribIndex);
     }
 
     /**
@@ -260,7 +274,7 @@ public class TimeSpaceProcessor extends Processor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getTemporalMean(String datePattern) throws SQLException, IOException {
+    public synchronized DataMatrix getTemporalAggregate(String datePattern, int weightAttribIndex) throws SQLException, IOException {
 
         // set the temporal filter and get the result set
         setTimeFilter(datePattern);
@@ -302,7 +316,7 @@ public class TimeSpaceProcessor extends Processor {
         }
 
 //        aggregate = aggregate.times(1d / count);
-        return getAverage(aggregate, count);
+        return getAggregate(aggregate, count, weightAttribIndex);
 //        return aggregate;
     }
 
@@ -324,6 +338,10 @@ public class TimeSpaceProcessor extends Processor {
         ArrayList<String> timeStamps = new ArrayList<String>();
         double[][] weights;
 
+        if ((weightAttribIndex < 0) || (weightAttribIndex >= attributeIDs.length)) {
+            return null;
+        }
+
         // reset filter and get the data
         resetTimeFilter();
         ResultSet rs = getData();
@@ -341,7 +359,7 @@ public class TimeSpaceProcessor extends Processor {
                 a[i] = m.getRow(idPosition[i]);
             }
             weights = calcWeights(a, weightAttribIndex);
-            data.add(getSum(a, weights));
+            data.add(getWeightedSum(a, weights));
             timeStamps.add(rs.getTimestamp(timeID).toString());
         } else {
             return null;
@@ -362,7 +380,7 @@ public class TimeSpaceProcessor extends Processor {
             for (int i = 0; i < ids.length; i++) {
                 a[i] = m.getRow(idPosition[i]);
             }
-            data.add(getSum(a, weights));
+            data.add(getWeightedSum(a, weights));
             timeStamps.add(rs.getTimestamp(timeID).toString());
 
             // update the observer
@@ -462,7 +480,7 @@ public class TimeSpaceProcessor extends Processor {
     public synchronized DataMatrix getMonthlyMean(int month) throws SQLException, IOException {
 
         if (true) {
-            return getTemporalMean("%-"+String.format("%02d", month) + "-%");
+            return getTemporalAggregate("%-"+String.format("%02d", month) + "-%", -1);
         }
 
         DataMatrix result = null;
@@ -516,7 +534,7 @@ public class TimeSpaceProcessor extends Processor {
     public synchronized DataMatrix getYearlyMean(int year) throws SQLException, IOException {
 
         if (true) {
-            return getTemporalMean(String.format("%04d", year) + "%");
+            return getTemporalAggregate(String.format("%04d", year) + "%", -1);
         }
 
         DataMatrix result = null;
@@ -775,6 +793,8 @@ public class TimeSpaceProcessor extends Processor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
+
+    // DELETE THIS
     public synchronized DataMatrix calcSpatialSum() throws SQLException, IOException {
 
         String[] attributeIDs = getDataStoreProcessor().getSelectedDoubleAttribs();
@@ -904,7 +924,7 @@ public class TimeSpaceProcessor extends Processor {
     }
 
     public static void main(String[] args) throws Exception {
-        TimeSpaceProcessor tsproc = new TimeSpaceProcessor(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_0.dat"));
+        TimeSpaceProcessor tsproc = new TimeSpaceProcessor(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/ATestData.dat"));
         tsproc.dsdb.isTimeSpaceDatastore();
 
 //        JAMSCalendar date = new JAMSCalendar();
@@ -919,7 +939,7 @@ public class TimeSpaceProcessor extends Processor {
 
         ArrayList<DataStoreProcessor.AttributeData> attribs = tsproc.getDataStoreProcessor().getAttributes();
         for (DataStoreProcessor.AttributeData attrib : attribs) {
-            if (attrib.getName().startsWith("act")) {
+            if (!attrib.getName().startsWith("act")) {
                 attrib.setSelected(true);
                 System.out.print(attrib.getName() + " ");
             } else {
@@ -936,7 +956,7 @@ public class TimeSpaceProcessor extends Processor {
         });
 
 
-        tsproc.deleteCache();
+//        tsproc.deleteCache();
 
         int c = 4;
 
@@ -976,7 +996,7 @@ public class TimeSpaceProcessor extends Processor {
                 break;
             case 6:
                 // get temporal mean values matching a date pattern
-                m = tsproc.getTemporalMean("2%-10-30 07:30%");
+                m = tsproc.getTemporalAggregate("2%-10-30 07:30%", -1);
                 break;
             case 7:
                 // get temporal mean values for an array of specific dates
@@ -985,7 +1005,7 @@ public class TimeSpaceProcessor extends Processor {
                 dates[0].setValue("2000-10-31 07:30");
                 dates[1] = JAMSDataFactory.createCalendar();
                 dates[1].setValue("2000-10-30 07:30");
-                m = tsproc.getTemporalAggregate(dates);
+                m = tsproc.getTemporalAggregate(dates, -1);
                 break;
             case 8:
                 dates = tsproc.getTimeSteps();

@@ -768,8 +768,9 @@ public class DataStoreProcessor {
 
         public static final int AGGREGATION_SUM = 1;
         public static final int AGGREGATION_MEAN = 2;
-        public static final int AGGREGATION_WEIGHT = 3;
-        public static final int AGGREGATION_REL_WEIGHT = 4;
+        public static final int WEIGHTING_NONE = 1;
+        public static final int WEIGHTING_TIMES_AREA = 2;
+        public static final int WEIGHTING_DIV_AREA = 3;
 
         private String type;
 
@@ -778,6 +779,7 @@ public class DataStoreProcessor {
         private boolean selected;
 
         private int aggregationType = AGGREGATION_SUM;
+        private int weightingType = WEIGHTING_NONE;
 
         public AttributeData(String type, String name) {
             this.type = type;
@@ -807,9 +809,19 @@ public class DataStoreProcessor {
             return aggregationType;
         }
 
-        public void setAggregationType(int aggregationWeight) {
+        public int getWeightingType() {
+            return weightingType;
+        }
+
+        public void setAggregationType(int aggregationType) {
             synchronized (DataStoreProcessor.this) {
-                this.aggregationType = aggregationWeight;
+                this.aggregationType = aggregationType;
+            }
+        }
+
+        public void setWeightingType(int weightingType) {
+            synchronized (DataStoreProcessor.this) {
+                this.weightingType = weightingType;
             }
         }
 

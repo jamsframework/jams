@@ -418,7 +418,7 @@ public class SimpleDSPanel extends DSPanel {
         ArrayList<JCheckBox> allChecks = new ArrayList<JCheckBox>();
         for (DataStoreProcessor.AttributeData attrib : attribs) {
 
-            AttribCheckBox attribCheck = new AttribCheckBox(attrib);
+            AttribCheckBox attribCheck = new AttribCheckBox(attrib, attrib.getName());
             attribCheck.setSelected(attrib.isSelected());
 
             attribCheck.addItemListener(new ItemListener() {
@@ -441,7 +441,7 @@ public class SimpleDSPanel extends DSPanel {
             button2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_MEAN);
 
 
-            button3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_REL_WEIGHT);
+//            button3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_REL_WEIGHT);
             button1.setSelected(true);
 
             ItemListener attribRadioButtonListener = new ItemListener() {
@@ -451,7 +451,7 @@ public class SimpleDSPanel extends DSPanel {
                         return;
                     }
                     AttribRadioButton thisButton = (AttribRadioButton) e.getSource();
-                    thisButton.attrib.setAggregationType(thisButton.aggregationType);
+                    thisButton.attrib.setAggregationType(thisButton.processingType);
                     setCheckBox(thisButton.attrib.getName());
 
                 }
@@ -459,16 +459,16 @@ public class SimpleDSPanel extends DSPanel {
 
             button1.addItemListener(attribRadioButtonListener);
             button2.addItemListener(attribRadioButtonListener);
-            button3.addItemListener(attribRadioButtonListener);
+//            button3.addItemListener(attribRadioButtonListener);
 
             ButtonGroup bGroup = new ButtonGroup();
             bGroup.add(button1);
             bGroup.add(button2);
-            bGroup.add(button3);
+//            bGroup.add(button3);
 
             GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, button1, 10, i + 10, 1, 1, 0, 0);
             GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, button2, 11, i + 10, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, button3, 12, i + 10, 1, 1, 0, 0);
+//            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, button3, 12, i + 10, 1, 1, 0, 0);
 
             i++;
         }

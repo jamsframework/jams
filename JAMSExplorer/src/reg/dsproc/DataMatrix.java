@@ -126,7 +126,7 @@ public class DataMatrix extends Matrix {
             System.out.print(o + " ");
         }
         System.out.println();
-        this.print(5, 3);
+//        this.print(5, 3);
     }
 
     public boolean equals(DataMatrix mat, double accuracy){

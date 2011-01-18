@@ -20,13 +20,9 @@ import java.util.Observer;
 public abstract class Processor {
 
     protected DataStoreProcessor dsdb;
-
     protected Connection conn;
-
     protected ArrayList<DataStoreProcessor.ContextData> contexts;
-
     protected ProcessingProgressObservable processingProgressObservable = new ProcessingProgressObservable();
-
     protected boolean abortOperation = false;
 
     /**
@@ -82,49 +78,88 @@ public abstract class Processor {
 
         double result[][] = new double[a.length][a[0].length];
         double relWeights[] = null;
+        double absWeights[] = null;
         int i = -1;
 
         for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
 
-            if (attrib.isSelected()) {
-
-                i++;
-                switch (attrib.getAggregationType()) {
-                    case DataStoreProcessor.AttributeData.AGGREGATION_MEAN:
-
-                        for (int j = 0; j < a.length; j++) {
-                            result[j][i] = 1d/a.length;
-                        }
-
-                        break;
-
-                    case DataStoreProcessor.AttributeData.AGGREGATION_REL_WEIGHT:
-
-                        // if the relative weights have not been calculated yet
-                        // do so now
-                        if (relWeights == null) {
-                            relWeights = new double[a.length];
-                            double sum = 0;
-                            for (int j = 0; j < a.length; j++) {
-                                sum += a[j][weightAttribIndex];
-                            }
-                            for (int j = 0; j < a.length; j++) {
-                                relWeights[j] = a[j][weightAttribIndex] / sum;
-                            }
-                        }
-
-                        for (int j = 0; j < a.length; j++) {
-                            result[j][i] = relWeights[j];
-                        }
-
-                        break;
-
-                    default:
-                        for (int j = 0; j < a.length; j++) {
-                            result[j][i] = 1;
-                        }
-                }
+            if (!attrib.isSelected()) {
+                continue;
             }
+
+            i++;
+
+            if (attrib.getWeightingType() != DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA) {
+
+                double weight = 0;
+                if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_MEAN) {
+
+                    weight = 1d / a.length;
+
+                } else if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_SUM) {
+
+                    weight = 1d;
+
+                }
+                for (int j = 0; j < a.length; j++) {
+                    result[j][i] = weight;
+                }
+
+            } else {
+
+                if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_MEAN) {
+
+                    // if the relative weights have not been calculated yet
+                    // do so now
+                    if (relWeights == null) {
+                        relWeights = new double[a.length];
+                        double sum = 0;
+                        for (int j = 0; j < a.length; j++) {
+                            sum += a[j][weightAttribIndex];
+                        }
+                        for (int j = 0; j < a.length; j++) {
+                            relWeights[j] = a[j][weightAttribIndex] / sum;
+                        }
+                    }
+
+                    for (int j = 0; j < a.length; j++) {
+                        result[j][i] = relWeights[j];
+                    }
+
+                } else if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_SUM) {
+
+                    // if the absolute weights have not been calculated yet
+                    // do so now
+                    if (absWeights == null) {
+                        absWeights = new double[a.length];
+                        for (int j = 0; j < a.length; j++) {
+                            absWeights[j] = a[j][weightAttribIndex];
+                        }
+                    }
+
+                    for (int j = 0; j < a.length; j++) {
+                        result[j][i] = absWeights[j];
+                    }
+
+                }
+
+//            } else if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA) {
+//
+//                // if the absolute weights have not been calculated yet
+//                // do so now
+//                if (absWeights == null) {
+//                    absWeights = new double[a.length];
+//                    for (int j = 0; j < a.length; j++) {
+//                        absWeights[j] = a[j][weightAttribIndex];
+//                    }
+//                }
+//
+//                for (int j = 0; j < a.length; j++) {
+//                    result[j][i] = 1 / absWeights[j];
+//                }
+
+            }
+
         }
 
         return result;
@@ -138,7 +173,7 @@ public abstract class Processor {
         return result;
     }
 
-    protected synchronized double[] getSum(double[][] a, double[][] weights) {
+    protected synchronized double[] getWeightedSum(double[][] a, double[][] weights) {
 
         double[] result = arrayMulti(a[0], weights[0]);
         double[] b;

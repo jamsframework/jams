@@ -26,6 +26,7 @@ import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -42,6 +43,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -369,7 +371,6 @@ public class TimeSpaceDSPanel extends DSPanel {
 //            b.setPreferredSize(d);
 //        }
 //    }
-
     public static void main(String[] args) throws Exception {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -385,7 +386,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        DataStoreProcessor dsdb = new DataStoreProcessor(new File("/home/nsk/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_1.dat"));
+        DataStoreProcessor dsdb = new DataStoreProcessor(new File("d:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop.dat"));
         //dsdb.removeDB();
         dsdb.addImportProgressObserver(new Observer() {
 
@@ -525,29 +526,45 @@ public class TimeSpaceDSPanel extends DSPanel {
 
         ArrayList<DataStoreProcessor.AttributeData> attribs = getProc().getDataStoreProcessor().getAttributes();
 
-        label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AGGREGATION_WEIGHT"));
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 3, 3, 1, 0, 0);
+//        label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AGGREGATION_WEIGHT"));
+//        label.setHorizontalAlignment(SwingConstants.CENTER);
+//        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 3, 2, 1, 0, 0);
 
-        Dimension labelDim = new Dimension(50, 20);
+        Image image;
+        float scale = 0.8f;
 
-        label = new JLabel("sum");
-        label.setPreferredSize(labelDim);
+        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_sum.png")).getImage();
+        image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
+        label = new JLabel(new ImageIcon(image));
+//        label.setPreferredSize(labelDim);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 5, 1, 1, 0, 0);
 
-        label = new JLabel("mean");
-        label.setPreferredSize(labelDim);
+        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_mean.png")).getImage();
+        image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
+        label = new JLabel(new ImageIcon(image));
+//        label.setPreferredSize(labelDim);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 11, 5, 1, 1, 0, 0);
 
-        label = new JLabel("weighted");
-        label.setPreferredSize(labelDim);
+        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_x.png")).getImage();
+        image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
+        label = new JLabel(new ImageIcon(image));
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 12, 5, 1, 1, 0, 0);
+
+        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_xdiva.png")).getImage();
+        image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
+        label = new JLabel(new ImageIcon(image));
+        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 13, 5, 1, 1, 0, 0);
+
+        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_xtimesa.png")).getImage();
+        image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
+        label = new JLabel(new ImageIcon(image));
+        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 14, 5, 1, 1, 0, 0);
 
         int i = 0;
         ArrayList<JCheckBox> allChecks = new ArrayList<JCheckBox>();
         for (DataStoreProcessor.AttributeData attrib : attribs) {
 
-            AttribCheckBox attribCheck = new AttribCheckBox(attrib);
+            AttribCheckBox attribCheck = new AttribCheckBox(attrib, attrib.getName());
             attribCheck.setSelected(attrib.isSelected());
 
             attribCheck.addItemListener(new ItemListener() {
@@ -565,37 +582,62 @@ public class TimeSpaceDSPanel extends DSPanel {
             allChecks.add(attribCheck);
             GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCheck, 5, i + 10, 1, 1, 0, 0);
 
-            AttribRadioButton button1, button2, button3;
-            button1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_SUM);
-            button2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_MEAN);
-            button3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_REL_WEIGHT);
-            button1.setSelected(true);
+            AttribRadioButton aggregationButton1, aggregationButton2, weightingbutton1, weightingbutton2, weightingbutton3;
+            aggregationButton1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_SUM);
+            aggregationButton2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_MEAN);
+            weightingbutton1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.WEIGHTING_NONE);
+            weightingbutton2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA);
+            weightingbutton3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA);
 
-            ItemListener attribRadioButtonListener = new ItemListener() {
+            aggregationButton1.setSelected(true);
+            weightingbutton1.setSelected(true);
+
+            ItemListener aggregationButtonListener = new ItemListener() {
 
                 public void itemStateChanged(ItemEvent e) {
                     if (e.getStateChange() == ItemEvent.DESELECTED) {
                         return;
                     }
                     AttribRadioButton thisButton = (AttribRadioButton) e.getSource();
-                    thisButton.attrib.setAggregationType(thisButton.aggregationType);
+                    thisButton.attrib.setAggregationType(thisButton.processingType);
                     setCheckBox(thisButton.attrib.getName());
 
                 }
             };
 
-            button1.addItemListener(attribRadioButtonListener);
-            button2.addItemListener(attribRadioButtonListener);
-            button3.addItemListener(attribRadioButtonListener);
+            ItemListener weightingButtonListener = new ItemListener() {
 
-            ButtonGroup bGroup = new ButtonGroup();
-            bGroup.add(button1);
-            bGroup.add(button2);
-            bGroup.add(button3);
+                public void itemStateChanged(ItemEvent e) {
+                    if (e.getStateChange() == ItemEvent.DESELECTED) {
+                        return;
+                    }
+                    AttribRadioButton thisButton = (AttribRadioButton) e.getSource();
+                    thisButton.attrib.setWeightingType(thisButton.processingType);
+                    setCheckBox(thisButton.attrib.getName());
 
-            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, button1, 10, i + 10, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, button2, 11, i + 10, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, button3, 12, i + 10, 1, 1, 0, 0);
+                }
+            };
+
+            aggregationButton1.addItemListener(aggregationButtonListener);
+            aggregationButton2.addItemListener(aggregationButtonListener);
+            weightingbutton1.addItemListener(weightingButtonListener);
+            weightingbutton2.addItemListener(weightingButtonListener);
+            weightingbutton3.addItemListener(weightingButtonListener);
+
+            ButtonGroup bGroup1 = new ButtonGroup();
+            bGroup1.add(aggregationButton1);
+            bGroup1.add(aggregationButton2);
+
+            ButtonGroup bGroup2 = new ButtonGroup();
+            bGroup2.add(weightingbutton1);
+            bGroup2.add(weightingbutton2);
+            bGroup2.add(weightingbutton3);
+
+            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, aggregationButton1, 10, i + 10, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, aggregationButton2, 11, i + 10, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, weightingbutton1, 12, i + 10, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, weightingbutton2, 13, i + 10, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, weightingbutton3, 14, i + 10, 1, 1, 0, 0);
 
             i++;
         }
@@ -621,7 +663,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         GroupCheckBox allOnOffCheck = new GroupCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ALL_ON/OFF"), allChecks);
         allOnOffCheck.setSelected(DataStoreProcessor.AttributeData.SELECTION_DEFAULT);
 
-        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, allOnOffCheck, 5, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, allOnOffCheck, 5, 5, 1, 1, 0, 0);
 
         allOnOffCheck.addActionListener(new ActionListener() {
 
@@ -681,16 +723,33 @@ public class TimeSpaceDSPanel extends DSPanel {
         workerDlg.setTask(new SwingWorker<Object, Void>() {
 
             DataMatrix m = null;
+            int weightAttribIndex = -1;
 
             public Object doInBackground() {
                 JAMSCalendar date = (JAMSCalendar) timeList.getSelectedValue();
+                JAMSCalendar[] dates = {date};
 
                 if (date == null) {
                     return m;
                 }
 
+                if (attribCombo.getSelectedIndex() != 0) {
+                    weightAttribIndex = 0;
+                    String weightAttribName = attribCombo.getSelectedItem().toString();
+                    for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
+                        if (attrib.getName().equals(weightAttribName)) {
+                            break;
+                        }
+                        if (attrib.isSelected()) {
+                            weightAttribIndex++;
+                        }
+                    }
+                }
+
                 try {
-                    m = getProc().getTemporalData(date);
+
+                    m = getProc().getTemporalAggregate(dates, weightAttribIndex);
+
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
                 }
@@ -703,6 +762,88 @@ public class TimeSpaceDSPanel extends DSPanel {
             }
         });
 
+        workerDlg.execute();
+    }
+
+    private void showTempMean() {
+
+        if (timeList.getSelectedValues().length == 0) {
+            return;
+        }
+
+        workerDlg.setInderminate(false);
+        workerDlg.setProgress(0);
+        workerDlg.setTask(new CancelableSwingWorker() {
+
+            DataMatrix m = null;
+            int weightAttribIndex = -1;
+
+            public Object doInBackground() {
+                try {
+
+                    Object[] objects = timeList.getSelectedValues();
+
+                    ArrayList<JAMSCalendar> dateList = new ArrayList<JAMSCalendar>();
+                    for (Object o : objects) {
+                        dateList.add((JAMSCalendar) o);
+                    }
+                    JAMSCalendar[] dates = dateList.toArray(new JAMSCalendar[dateList.size()]);
+
+                    if (attribCombo.getSelectedIndex() != 0) {
+                        weightAttribIndex = 0;
+                        String weightAttribName = attribCombo.getSelectedItem().toString();
+                        for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
+                            if (attrib.getName().equals(weightAttribName)) {
+                                break;
+                            }
+                            if (attrib.isSelected()) {
+                                weightAttribIndex++;
+                            }
+                        }
+                    }
+
+                    TimeSpaceProcessor tsproc = getProc();
+
+                    // check if number of selected ids is equal to all ids
+                    // if so, we better derive temp avg from monthly means
+                    if (false && dates.length == timeList.getModel().getSize()) {
+
+                        tsproc.deleteCache();
+
+                        // check if cache tables are available
+                        if (!tsproc.isMonthlyMeanExisiting()) {
+                            tsproc.calcMonthlyMean();
+                        }
+                        workerDlg.setInderminate(true);
+
+                        if (!tsproc.isMonthlyMeanExisiting()) {
+                            return null;
+                        }
+
+                        m = tsproc.getTemporalMean();
+                    } else {
+
+                        m = tsproc.getTemporalAggregate(dates, weightAttribIndex);
+
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            public void done() {
+                loadData(m, false);
+            }
+
+            public int cancel() {
+                proc.sendAbortOperation();
+                return 0;
+            }
+        });
         workerDlg.execute();
     }
 
@@ -790,72 +931,6 @@ public class TimeSpaceDSPanel extends DSPanel {
         workerDlg.execute();
     }
 
-    private void showTempMean() {
-
-        if (timeList.getSelectedValues().length == 0) {
-            return;
-        }
-
-        workerDlg.setInderminate(false);
-        workerDlg.setProgress(0);
-        workerDlg.setTask(new CancelableSwingWorker() {
-
-            DataMatrix m = null;
-
-            public Object doInBackground() {
-                try {
-
-                    Object[] objects = timeList.getSelectedValues();
-
-                    ArrayList<JAMSCalendar> dateList = new ArrayList<JAMSCalendar>();
-                    for (Object o : objects) {
-                        dateList.add((JAMSCalendar) o);
-                    }
-                    JAMSCalendar[] dates = dateList.toArray(new JAMSCalendar[dateList.size()]);
-
-                    TimeSpaceProcessor tsproc = getProc();
-
-                    // check if number of selected ids is equal to all ids
-                    // if so, we better derive temp avg from monthly means
-                    if (false && dates.length == timeList.getModel().getSize()) {
-
-                        tsproc.deleteCache();
-
-                        // check if cache tables are available
-                        if (!tsproc.isMonthlyMeanExisiting()) {
-                            tsproc.calcMonthlyMean();
-                        }
-                        workerDlg.setInderminate(true);
-
-                        if (!tsproc.isMonthlyMeanExisiting()) {
-                            return null;
-                        }
-
-                        m = tsproc.getTemporalMean();
-                    } else {
-                        m = tsproc.getTemporalAggregate(dates);
-                    }
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            public void done() {
-                loadData(m, false);
-            }
-
-            public int cancel() {
-                proc.sendAbortOperation();
-                return 0;
-            }
-        });
-        workerDlg.execute();
-    }
-
     private void showSpatEntity() {
         if (entityList.getSelectedValues().length == 0) {
             return;
@@ -866,6 +941,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         workerDlg.setTask(new CancelableSwingWorker() {
 
             DataMatrix m = null;
+            int weightAttribIndex = -1;
 
             public Object doInBackground() {
                 try {
@@ -875,7 +951,6 @@ public class TimeSpaceDSPanel extends DSPanel {
                     Object[] objects = entityList.getSelectedValues();
 
                     // get the position of the weight attribute, if existing
-                    int weightAttribIndex = -1;
                     if (attribCombo.getSelectedIndex() != 0) {
                         weightAttribIndex = 0;
                         String weightAttribName = attribCombo.getSelectedItem().toString();
@@ -888,7 +963,6 @@ public class TimeSpaceDSPanel extends DSPanel {
                             }
                         }
                     }
-
 
                     long[] ids = new long[objects.length];
                     int c = 0;
@@ -925,6 +999,16 @@ public class TimeSpaceDSPanel extends DSPanel {
 
             @Override
             public void done() {
+
+                if (m == null) {
+
+                    if (weightAttribIndex < 0) {
+                        System.out.println("A weight attribute must be chosen!");
+                    } else {
+                        System.out.println("An error occured during data extraction!");
+                    }
+                }
+
                 loadData(m, true);
             }
 
@@ -948,11 +1032,26 @@ public class TimeSpaceDSPanel extends DSPanel {
         workerDlg.setTask(new CancelableSwingWorker() {
 
             DataMatrix m;
+            int weightAttribIndex = -1;
 
             public Object doInBackground() {
                 try {
                     String filter = timeField.getText();
-                    m = getProc().getTemporalMean(filter);
+
+                    if (attribCombo.getSelectedIndex() != 0) {
+                        weightAttribIndex = 0;
+                        String weightAttribName = attribCombo.getSelectedItem().toString();
+                        for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
+                            if (attrib.getName().equals(weightAttribName)) {
+                                break;
+                            }
+                            if (attrib.isSelected()) {
+                                weightAttribIndex++;
+                            }
+                        }
+                    }
+
+                    m = getProc().getTemporalAggregate(filter, weightAttribIndex);
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 } catch (IOException ex) {

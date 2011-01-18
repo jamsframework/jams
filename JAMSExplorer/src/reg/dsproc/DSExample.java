@@ -76,7 +76,7 @@ public class DSExample {
         // monthly mean values
         for (int year : tsproc.getYears()) {
             for (int i = 1; i <= 12; i++) {
-                DataMatrix monthlyMean = tsproc.getTemporalMean(year + "-" + String.format("%02d", i) + "-%");
+                DataMatrix monthlyMean = tsproc.getTemporalAggregate(year + "-" + String.format("%02d", i) + "-%", -1);
                 if (monthlyMean == null) {
                     continue;
                 }

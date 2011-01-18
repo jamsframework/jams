@@ -128,18 +128,18 @@ public abstract class DSPanel extends JPanel {
                 }
 
                 for (int i = 0; i < data.length; i++) {
-                    switch (attrib.getAggregationType()) {
-                        case DataStoreProcessor.AttributeData.AGGREGATION_REL_WEIGHT:
-                            if (timeSeries) {
-                                data[i][j] /= area;
-                            } else {
-                                data[i][j] /= weights[i];
-                            }
-                            break;
-                        case DataStoreProcessor.AttributeData.AGGREGATION_MEAN:
-                            data[i][j] *= (weights[i] / area);
-                            break;
-                    }
+//                    switch (attrib.getAggregationType()) {
+//                        case DataStoreProcessor.AttributeData.AGGREGATION_REL_WEIGHT:
+//                            if (timeSeries) {
+//                                data[i][j] /= area;
+//                            } else {
+//                                data[i][j] /= weights[i];
+//                            }
+//                            break;
+//                        case DataStoreProcessor.AttributeData.AGGREGATION_MEAN:
+//                            data[i][j] *= (weights[i] / area);
+//                            break;
+//                    }
                 }
             }
             j++;
@@ -159,12 +159,12 @@ public abstract class DSPanel extends JPanel {
     protected class AttribRadioButton extends JRadioButton {
 
         DataStoreProcessor.AttributeData attrib;
-        int aggregationType;
+        int processingType;
 
-        public AttribRadioButton(DataStoreProcessor.AttributeData attrib, int aggregationType) {
+        public AttribRadioButton(DataStoreProcessor.AttributeData attrib, int processingType) {
             super();
             this.attrib = attrib;
-            this.aggregationType = aggregationType;
+            this.processingType = processingType;
         }
     }
 
@@ -182,10 +182,10 @@ public abstract class DSPanel extends JPanel {
 
         DataStoreProcessor.AttributeData attrib;
 
-        public AttribCheckBox(DataStoreProcessor.AttributeData attrib) {
-            super(attrib.getName());
+        public AttribCheckBox(DataStoreProcessor.AttributeData attrib, String text) {
+            super(text);
             this.attrib = attrib;
-        }
+        }        
     }
     
     public void setOutputSpreadSheet(JAMSSpreadSheet spreadsheet) {
