@@ -35,6 +35,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import reg.gui.TimeSpaceDSPanel;
 
 /**
  *
@@ -61,7 +64,7 @@ public class TimeSpaceProcessor extends Processor {
             try {
                 this.conn = dsdb.getH2Connection(true);
             } catch (SQLException ex) {
-                System.out.println("Error while creating connection to H2 database of " + dsdb.getFile());
+                Logger.getLogger(TimeSpaceProcessor.class.getName()).log(Level.INFO, "Error while creating connection to H2 database of {0}", dsdb.getFile());
             }
         }
     }
@@ -338,7 +341,8 @@ public class TimeSpaceProcessor extends Processor {
         ArrayList<String> timeStamps = new ArrayList<String>();
         double[][] weights;
 
-        if ((weightAttribIndex < 0) || (weightAttribIndex >= attributeIDs.length)) {
+        if (weightAttribIndex >= attributeIDs.length) {
+            Logger.getLogger(TimeSpaceProcessor.class.getName()).log(Level.INFO, "Area attribute does not exist!");
             return null;
         }
 
@@ -480,7 +484,7 @@ public class TimeSpaceProcessor extends Processor {
     public synchronized DataMatrix getMonthlyMean(int month) throws SQLException, IOException {
 
         if (true) {
-            return getTemporalAggregate("%-"+String.format("%02d", month) + "-%", -1);
+            return getTemporalAggregate("%-" + String.format("%02d", month) + "-%", -1);
         }
 
         DataMatrix result = null;
@@ -793,7 +797,6 @@ public class TimeSpaceProcessor extends Processor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-
     // DELETE THIS
     public synchronized DataMatrix calcSpatialSum() throws SQLException, IOException {
 

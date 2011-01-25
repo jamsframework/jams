@@ -32,12 +32,13 @@ import org.jfree.chart.renderer.xy.XYStepRenderer;
 import jams.JAMSFileFilter;
 
 import jams.gui.tools.GUIHelper;
-import jams.gui.WorkerDlg;
 import jams.workspace.JAMSWorkspace;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import reg.JAMSExplorer;
 
 /**
@@ -362,7 +363,7 @@ public class JXYConfigurator extends JFrame {
                 }
             } catch (Exception fnfe) {
 //                System.out.println("ERROR");
-                fnfe.printStackTrace();
+                Logger.getLogger(JXYConfigurator.class.getName()).log(Level.SEVERE, null, fnfe);
 
                 initGraphLoad();
             }
@@ -1766,7 +1767,7 @@ public class JXYConfigurator extends JFrame {
                 }
 //            }
         } catch (Exception fnfex) {
-            fnfex.printStackTrace();
+            Logger.getLogger(JXYConfigurator.class.getName()).log(Level.SEVERE, null, fnfex);
         }
         
         return filename;

@@ -37,7 +37,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -71,19 +73,12 @@ import reg.dsproc.EnsembleTimeSeriesProcessor;
 public class EnsembleTimeSeriesPanel extends DSPanel {
 
     private static final Dimension ACTION_BUTTON_DIM = new Dimension(150, 25), LIST_DIMENSION = new Dimension(150, 250);
-
     private EnsembleTimeSeriesProcessor proc;
-       
     private GridBagLayout mainLayout;
-
-    private JList modelRunList, timeList, monthList, yearList;   
-
-    private JTextField timeField;        
-
+    private JList modelRunList, timeList, monthList, yearList;
+    private JTextField timeField;
     private JPanel aggregationPanel;
-
-    private GridBagLayout aggregationLayout;   
-        
+    private GridBagLayout aggregationLayout;
     private Action[] actions = {
         new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_STEP")) {
 
@@ -134,9 +129,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
                 showCrossProduct();
             }
         },};
-
     private Action timePoint = actions[0], timeMean = actions[1], modelRun = actions[2], modelRunMean = actions[3], monthMean = actions[4], yearMean = actions[5], crossProduct = actions[6];
-
     private Action cacheReset = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RESET_CACHES")) {
 
         @Override
@@ -144,7 +137,6 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
             resetCaches();
         }
     };
-
     private Action indexReset = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RELOAD_INDEX")) {
 
         @Override
@@ -152,7 +144,6 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
             resetIndex();
         }
     };
-
     private Action freeTempMean = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TEMP._MEAN_(FILTER)")) {
 
         @Override
@@ -182,19 +173,21 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         JScrollPane modelRunListScroll = new JScrollPane(modelRunList);
         modelRunListScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width - 100, LIST_DIMENSION.height));
         modelRunList.addListSelectionListener(new ListSelectionListener() {
-            
+
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     if (modelRunList.getSelectedValues().length == 1) {
                         modelRun.setEnabled(true);
                         modelRunMean.setEnabled(false);
-                        if (timeList.getSelectedValues().length > 0)
+                        if (timeList.getSelectedValues().length > 0) {
                             crossProduct.setEnabled(true);
+                        }
                     } else if (modelRunList.getSelectedValues().length > 1) {
                         modelRun.setEnabled(false);
                         modelRunMean.setEnabled(true);
-                        if (timeList.getSelectedValues().length > 0)
+                        if (timeList.getSelectedValues().length > 0) {
                             crossProduct.setEnabled(true);
+                        }
                     } else {
                         modelRun.setEnabled(false);
                         modelRunMean.setEnabled(false);
@@ -208,19 +201,21 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         JScrollPane timeListScroll = new JScrollPane(timeList);
         timeListScroll.setPreferredSize(LIST_DIMENSION);
         timeList.addListSelectionListener(new ListSelectionListener() {
-            
+
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     if (timeList.getSelectedValues().length == 1) {
                         timePoint.setEnabled(true);
                         timeMean.setEnabled(false);
-                        if (modelRunList.getSelectedValues().length > 0 )
+                        if (modelRunList.getSelectedValues().length > 0) {
                             crossProduct.setEnabled(true);
+                        }
                     } else if (timeList.getSelectedValues().length > 1) {
                         timePoint.setEnabled(false);
                         timeMean.setEnabled(true);
-                        if (modelRunList.getSelectedValues().length > 0)
+                        if (modelRunList.getSelectedValues().length > 0) {
                             crossProduct.setEnabled(true);
+                        }
                     } else {
                         timePoint.setEnabled(false);
                         timeMean.setEnabled(false);
@@ -229,7 +224,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
                 }
             }
         });
-        
+
         monthList = new JList();
         monthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane monthListScroll = new JScrollPane(monthList);
@@ -288,9 +283,12 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
             button.setPreferredSize(ACTION_BUTTON_DIM);
             buttonPanelA.add(button);
         }
-                
-        buttonPanelA.add(new JButton(crossProduct){
-            {setPreferredSize(ACTION_BUTTON_DIM);}
+
+        buttonPanelA.add(new JButton(crossProduct) {
+
+            {
+                setPreferredSize(ACTION_BUTTON_DIM);
+            }
         });
 
         JPanel filterPanel = new JPanel();
@@ -339,7 +337,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         JPanel buttonPanelB = new JPanel();
         buttonPanelB.setPreferredSize(LIST_DIMENSION);
 
-        for (int i = 4; i < actions.length-1; i++) {
+        for (int i = 4; i < actions.length - 1; i++) {
             Action a = actions[i];
             button = new JButton(a);
             button.setPreferredSize(ACTION_BUTTON_DIM);
@@ -359,14 +357,14 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         GUIHelper.addGBComponent(this, mainLayout, buttonPanelB, 80, 20, 1, 1, 0, 0);
 
     }
-        
+
     /**
      * @return the tsproc
      */
     public EnsembleTimeSeriesProcessor getProc() {
         return proc;
     }
-        
+
     private void createDB() {
         workerDlg.setInderminate(false);
         workerDlg.setTask(new CancelableSwingWorker() {
@@ -380,11 +378,11 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
                 try {
                     dsdb.createDB();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ClassNotFoundException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -397,14 +395,14 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
             if (!dsdb.existsH2DB()) {
                 clearPanel();
-                System.out.println(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CREATION_CANCELED"));
+                Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.WARNING, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CREATION_CANCELED"));
             }
 
-            if (!dsdb.isEnsembleTimeSeriesDatastore()){
-                System.out.println(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("WRONG_DATASTORE!"));
+            if (!dsdb.isEnsembleTimeSeriesDatastore()) {
+                Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.WARNING, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("WRONG_DATASTORE!"));
             }
             setEnsembleTsProc(new EnsembleTimeSeriesProcessor(dsdb));
-            
+
         } catch (SQLException ex) {
         } catch (IOException ex) {
         }
@@ -414,12 +412,12 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         try {
             dsdb.clearDB();
         } catch (SQLException ex) {
-            Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
 
         createDB();
     }
-    
+
     public void createProc(File file) {
 
         workerDlg.setTitle(workerDlg.getTitle() + " [" + file.getName() + "]");
@@ -440,7 +438,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
         timeList.setModel(new AbstractListModel() {
 
-            Attribute.Calendar[] dates = ((EnsembleTimeSeriesProcessor)getProc()).getTimeSteps();
+            Attribute.Calendar[] dates = ((EnsembleTimeSeriesProcessor) getProc()).getTimeSteps();
 
             public int getSize() {
                 return dates.length;
@@ -450,16 +448,18 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
                 return dates[i];
             }
         });
-                
+
         modelRunList.setModel(new AbstractListModel() {
-            
-            long[] ids_int = ((EnsembleTimeSeriesProcessor)getProc()).getModelRuns();
+
+            long[] ids_int = ((EnsembleTimeSeriesProcessor) getProc()).getModelRuns();
             Long[] ids = new Long[ids_int.length];
-            {        
-                for (int i=0;i<ids_int.length;i++){
+
+            {
+                for (int i = 0; i < ids_int.length; i++) {
                     ids[i] = new Long(ids_int[i]);
                 }
             }
+
             public int getSize() {
                 return ids.length;
             }
@@ -471,7 +471,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
         yearList.setModel(new AbstractListModel() {
 
-            int[] years = ((EnsembleTimeSeriesProcessor)getProc()).getYears();
+            int[] years = ((EnsembleTimeSeriesProcessor) getProc()).getYears();
 
             public int getSize() {
                 return years.length;
@@ -503,7 +503,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AREA_ATTRIBUTE"));
         label.setHorizontalAlignment(SwingConstants.LEFT);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 5, 0, 1, 1, 0, 0);
-        
+
         ArrayList<DataStoreProcessor.AttributeData> attribs = getProc().getDataStoreProcessor().getAttributes();
 
         label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AGGREGATION_WEIGHT"));
@@ -622,9 +622,9 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
             public void update(Observable o, Object arg) {
                 workerDlg.setProgress(Integer.parseInt(arg.toString()));
             }
-        });                
+        });
     }
-        
+
     private boolean setCheckBox(String theLabel) {
 
         for (JCheckBox check : attribCombo.checkBoxList) {
@@ -635,7 +635,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         }
         return false;
     }
-    
+
     private void clearPanel() {
         timeList.setEnabled(false);
         modelRunList.setEnabled(false);
@@ -665,7 +665,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
                     return m;
                 }
 
-                try {                                        
+                try {
                     m = getProc().getTemporalData(date);
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
@@ -704,11 +704,9 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
                     }
                     m = proc.getMonthlyMean(month);
                 } catch (SQLException ex) {
-                    System.out.println(ex);
-                    ex.printStackTrace();
+                    Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    System.out.println(ex);
-                    ex.printStackTrace();
+                    Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -741,14 +739,14 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
             public Object doInBackground() {
                 try {
 
-                    int year = (Integer) yearList.getSelectedValue();    
-                    m = proc.getYearlyMean(year);                    
+                    int year = (Integer) yearList.getSelectedValue();
+                    m = proc.getYearlyMean(year);
                     workerDlg.setInderminate(true);
-                    
+
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -787,14 +785,12 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
                     for (Object o : objects) {
                         dateList.add((JAMSCalendar) o);
                     }
-                    JAMSCalendar[] dates = dateList.toArray(new JAMSCalendar[dateList.size()]);                                                                
-                    m = proc.getTemporalMean(dates);                                                                
+                    JAMSCalendar[] dates = dateList.toArray(new JAMSCalendar[dateList.size()]);
+                    m = proc.getTemporalMean(dates);
                 } catch (SQLException ex) {
-                    System.out.println(ex);
-                    ex.printStackTrace();
+                    Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    System.out.println(ex);
-                    ex.printStackTrace();
+                    Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -812,11 +808,11 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         workerDlg.execute();
     }
 
-    private void showModelRun() {                                       
-        if (modelRunList.getSelectedValues().length == 0) {                
+    private void showModelRun() {
+        if (modelRunList.getSelectedValues().length == 0) {
             return;
-        }   
-                        
+        }
+
         workerDlg.setInderminate(false);
         workerDlg.setProgress(0);
         workerDlg.setTask(new CancelableSwingWorker() {
@@ -824,15 +820,15 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
             DataMatrix m = null;
 
             public Object doInBackground() {
-                try {                                                            
-                        Object[] objects = modelRunList.getSelectedValues();
+                try {
+                    Object[] objects = modelRunList.getSelectedValues();
 
-                        long[] ids = new long[objects.length];
-                        int c = 0;
-                        for (Object o : objects) {
-                            ids[c++] = (Long) o;
-                        }                                                
-                        m = proc.getEnsembleMean(ids);
+                    long[] ids = new long[objects.length];
+                    int c = 0;
+                    for (Object o : objects) {
+                        ids[c++] = (Long) o;
+                    }
+                    m = proc.getEnsembleMean(ids);
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
                 }
@@ -851,8 +847,8 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         });
         workerDlg.execute();
     }
-    
-    private void showCrossProduct() {        
+
+    private void showCrossProduct() {
         workerDlg.setInderminate(false);
         workerDlg.setProgress(0);
         workerDlg.setTask(new CancelableSwingWorker() {
@@ -864,21 +860,22 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
                     Object[] objects1 = modelRunList.getSelectedValues();
 
                     long[] ids1 = new long[objects1.length];
-                    for (int c=0;c<ids1.length;c++){
+                    for (int c = 0; c < ids1.length; c++) {
                         ids1[c] = (Long) objects1[c];
                     }
-                    
+
                     Object[] objects2 = timeList.getSelectedValues();
 
                     String[] ids2 = new String[objects2.length];
-                    for (int c=0;c<ids2.length;c++){
+                    for (int c = 0; c < ids2.length; c++) {
                         ids2[c] = ((JAMSCalendar) objects2[c]).toString();
                     }
-                                                                               
-                    m = proc.getCrossProduct(ids1, ids2);                    
+
+                    m = proc.getCrossProduct(ids1, ids2);
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
+                    Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -895,7 +892,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         });
         workerDlg.execute();
     }
-    
+
     private void toggleFreeTempMeanButton() {
         String filter = timeField.getText();
         if (!filter.contains("%") && !filter.contains("?")) {
@@ -909,7 +906,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
         try {
             getProc().deleteCache();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(EnsembleTimeSeriesPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }    
+    }
 }

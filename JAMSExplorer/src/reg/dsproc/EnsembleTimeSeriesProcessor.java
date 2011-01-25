@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -41,12 +43,10 @@ import java.util.Observer;
  */
 public class EnsembleTimeSeriesProcessor extends Processor {
 
-    private static final String TABLE_NAME_MONTHAVG = "MONTHAVG",  TABLE_NAME_YEARAVG = "YEARAVG",  TABLE_NAME_SPATSUM = "SPATSUM";
-    
+    private static final String TABLE_NAME_MONTHAVG = "MONTHAVG", TABLE_NAME_YEARAVG = "YEARAVG", TABLE_NAME_SPATSUM = "SPATSUM";
     private String ensembleID;
-
     private String ensembleFilter = null;
-    
+
     public EnsembleTimeSeriesProcessor(File file) {
         this(new DataStoreProcessor(file));
     }
@@ -57,15 +57,15 @@ public class EnsembleTimeSeriesProcessor extends Processor {
         if (dsdb.isEnsembleTimeSeriesDatastore()) {
 
             ensembleID = contexts.get(1).getName() + "ID";
-            
+
             try {
                 this.conn = dsdb.getH2Connection(true);
             } catch (SQLException ex) {
-                System.out.println("Error while creating connection to H2 database of " + dsdb.getFile());
+                Logger.getLogger(EnsembleTimeSeriesProcessor.class.getName()).log(Level.SEVERE, "Error while creating connection to H2 database of {0}", dsdb.getFile());
             }
         }
     }
-    
+
     /**
      * Get data from the database based on defined filters on time and space
      * @return The data as JDBC result set
@@ -95,30 +95,32 @@ public class EnsembleTimeSeriesProcessor extends Processor {
         ResultSet rs = customSelectQuery(query);
         return rs;
     }
-   
+
     public synchronized DataMatrix getCrossProduct(long[] modelRunIds, String[] dateIds) throws SQLException, IOException {
-        double [][] matrix = new double[dateIds.length][modelRunIds.length];
+        double[][] matrix = new double[dateIds.length][modelRunIds.length];
         int idMap[] = null;
-        
-        for (int i=0;i<modelRunIds.length;i++){
+
+        for (int i = 0; i < modelRunIds.length; i++) {
             DataMatrix col = getTimeSeriesData(i);
-            if (idMap == null){
-                idMap = new int[dateIds.length];                
+            if (idMap == null) {
+                idMap = new int[dateIds.length];
                 //bad quadratic time!!
-                for (int j=0;j<dateIds.length;j++)
+                for (int j = 0; j < dateIds.length; j++) {
                     idMap[j] = col.getIDPosition(dateIds[j]);
+                }
             }
             double timeSerie[] = col.getCol(0);
-            for (int j=0;j<dateIds.length;j++){
+            for (int j = 0; j < dateIds.length; j++) {
                 matrix[j][i] = timeSerie[idMap[j]];
             }
-        }        
+        }
         String modelRunIdStrings[] = new String[modelRunIds.length];
-        for (int i=0;i<modelRunIds.length;i++)
+        for (int i = 0; i < modelRunIds.length; i++) {
             modelRunIdStrings[i] = Long.toString(modelRunIds[i]);
-        return new DataMatrix(matrix,dateIds, modelRunIdStrings);
+        }
+        return new DataMatrix(matrix, dateIds, modelRunIdStrings);
     }
-    
+
     /**
      * Gets the values of the selected attributes for all timesteps for a
      * specific modelrun
@@ -129,7 +131,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
      * @throws java.io.IOException
      */
     public synchronized DataMatrix getTimeSeriesData(long modelRun) throws SQLException, IOException {
-       
+
         setEnsembleFilter(new Long(modelRun).toString());
         ResultSet rs = getData();
         DataMatrix result = null;
@@ -139,7 +141,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
         }
         return result;
     }
-       
+
     /**
      * Initialises the calculation of longterm monthly average values of the
      * selected attributes for all entities
@@ -172,7 +174,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
 
             // calc the monthly average values
             String filterString = ".*-" + String.format("%02d", i) + "-.*";
-            calcTemporalMean(filterString, TABLE_NAME_MONTHAVG, String.valueOf(i),true);
+            calcTemporalMean(filterString, TABLE_NAME_MONTHAVG, String.valueOf(i), true);
 
             if (abortOperation) {
                 customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_MONTHAVG);
@@ -187,7 +189,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
             }
         }
     }
-        
+
     /**
      * Initialises the calculation of longterm monthly average values of the
      * selected attributes for all entities
@@ -216,7 +218,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
         int percent = 0;
 
         int[] years = this.getYears();
-        
+
         // loop over months
         for (int i = 0; i < years.length; i++) {
             int y = years[i];
@@ -230,14 +232,14 @@ public class EnsembleTimeSeriesProcessor extends Processor {
             }
 
             // update the observer
-            int current = Math.round(((i+1) / (float)years.length) * (float)100);
+            int current = Math.round(((i + 1) / (float) years.length) * (float) 100);
             if (current > percent) {
                 percent = current;
                 processingProgressObservable.setProgress(percent);
             }
         }
     }
-                 
+
     /**
      * Gets the sum of the selected attributes for an array of
      * model runs at all time steps
@@ -249,22 +251,23 @@ public class EnsembleTimeSeriesProcessor extends Processor {
      */
     public synchronized DataMatrix getEnsembleMean(long[] ids) throws SQLException, IOException {
         DataMatrix aggregate = null;
-                             
-        if (ids.length == 0)
+
+        if (ids.length == 0) {
             return null;
-        
-        aggregate = this.getTimeSeriesData(ids[0]);
-        for (int i=1;i<ids.length;i++){
-            aggregate.plus(this.getTimeSeriesData(ids[i]));
-            
-            processingProgressObservable.setProgress((int)((double)(i+1)*100.0 / (double)ids.length));
         }
-                
-        aggregate.times(1.0 / (double)ids.length);
-        
+
+        aggregate = this.getTimeSeriesData(ids[0]);
+        for (int i = 1; i < ids.length; i++) {
+            aggregate.plus(this.getTimeSeriesData(ids[i]));
+
+            processingProgressObservable.setProgress((int) ((double) (i + 1) * 100.0 / (double) ids.length));
+        }
+
+        aggregate.times(1.0 / (double) ids.length);
+
         return aggregate;
     }
-    
+
     /**
      * Gets the overall spatial sum of the selected
      * attributes for all time steps
@@ -276,7 +279,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
     public synchronized DataMatrix getEnsembleMean() throws SQLException, IOException {
         return getEnsembleMean(getModelRuns());
     }
-    
+
     /**
      * Gets the overall temporal average values of the selected
      * attributes for all entities
@@ -301,7 +304,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
         aggregate = aggregate.times(1d / 12);
         return aggregate;
     }
-    
+
     /**
      * Gets the mean values of the selected attributes for a set of time steps
      * given by an array of JAMSCalendar objects
@@ -323,9 +326,9 @@ public class EnsembleTimeSeriesProcessor extends Processor {
         // we have a set of positions now, so get the matrixes and rock'n roll
         // get the first dataset
         long position;
-        HashMap<Long,double[]> aggregate = new HashMap<Long,double[]>();
-        HashMap<Long,int[]>  counter   = new HashMap<Long,int[]>();
-               
+        HashMap<Long, double[]> aggregate = new HashMap<Long, double[]>();
+        HashMap<Long, int[]> counter = new HashMap<Long, int[]>();
+
         // loop over datasets for current month
         while (rs.next()) {
 
@@ -337,52 +340,52 @@ public class EnsembleTimeSeriesProcessor extends Processor {
             DataMatrix m = dsdb.getData(position);
             Object[] ids = m.getIds();
             attrSet = m.getAttributeIDs();
-            for (int i=0;i<ids.length;i++){
-                String current_id = (String)ids[i];
+            for (int i = 0; i < ids.length; i++) {
+                String current_id = (String) ids[i];
                 boolean match = false;
-                for (int j=0;j<dates.length;j++){
-                    if (dates[j].toString().equals(current_id)){
+                for (int j = 0; j < dates.length; j++) {
+                    if (dates[j].toString().equals(current_id)) {
                         match = true;
                         break;
                     }
                 }
-                if (match){
+                if (match) {
                     Long modelrun = rs.getLong(ensembleID);
                     double entry[] = aggregate.get(modelrun);
-                    if (entry == null){
-                        aggregate.put(modelrun, m.getRow(i).clone());     
-                        counter.put(modelrun, new int[]{1});     
-                    }else{
-                        for (int j=0;j<entry.length;j++){
+                    if (entry == null) {
+                        aggregate.put(modelrun, m.getRow(i).clone());
+                        counter.put(modelrun, new int[]{1});
+                    } else {
+                        for (int j = 0; j < entry.length; j++) {
                             entry[j] += m.getRow(i)[j];
                         }
-                        counter.get(modelrun)[0]++;     
+                        counter.get(modelrun)[0]++;
                     }
                 }
-            }            
+            }
         }
         double table[][] = new double[aggregate.size()][];
         String id_table[] = new String[aggregate.size()];
-        
+
         Iterator<Long> iter = aggregate.keySet().iterator();
         int tableCounter = 0;
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             Long modelrun = iter.next();
             double data[] = aggregate.get(modelrun);
             int count = counter.get(modelrun)[0];
-            for (int i=0;i<data.length;i++){
-                data[i] /= (double)count;
+            for (int i = 0; i < data.length; i++) {
+                data[i] /= (double) count;
             }
             table[tableCounter] = data;
-            id_table[tableCounter] = modelrun.toString();                        
+            id_table[tableCounter] = modelrun.toString();
             tableCounter++;
         }
-        
-        DataMatrix result = new DataMatrix(table,id_table,attrSet);
-                            
+
+        DataMatrix result = new DataMatrix(table, id_table, attrSet);
+
         return result;
     }
-    
+
     /**
      * Gets the yearly average values of the selected
      * attributes for the ensemble
@@ -393,7 +396,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
      * @throws java.io.IOException
      */
     public synchronized DataMatrix getYearlyMean(int year) throws SQLException, IOException {
-      
+
         // check if the values have already been calculated, otherwise calculate them
         if (!isYearlyMeanExisiting()) {
             calcYearlyMean();
@@ -438,7 +441,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
 
         return new DataMatrix(dataArray, idArray, attributeIDs);
     }
-    
+
     /**
      * Gets the longtime monthly average values of the selected
      * attributes for the ensemble
@@ -449,7 +452,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
-    public synchronized DataMatrix getMonthlyMean(int month) throws SQLException, IOException {    
+    public synchronized DataMatrix getMonthlyMean(int month) throws SQLException, IOException {
         // check if the values have already been calculated, otherwise calculate them
         if (!isMonthlyMeanExisiting()) {
             calcMonthlyMean();
@@ -481,15 +484,15 @@ public class EnsembleTimeSeriesProcessor extends Processor {
 
         return new DataMatrix(dataArray, idArray, attributeIDs);
     }
-    
+
     /*calculates temporal mean according to the java regular expression given and stores the result in a new table*/
     private synchronized DataMatrix calcTemporalMean(String regex, String tableName, String id, boolean putInTable) throws SQLException, IOException {
         this.resetEnsembleFilter();
         ResultSet rs = getData();
         String attrSet[] = null;
-        HashMap<Long,double[]> aggregate = new HashMap<Long,double[]>();
-        HashMap<Long,int[]>  counter   = new HashMap<Long,int[]>();
-        
+        HashMap<Long, double[]> aggregate = new HashMap<Long, double[]>();
+        HashMap<Long, int[]> counter = new HashMap<Long, int[]>();
+
         // we have a set of positions now, so get the matrixes and rock'n roll                                     
         // loop over datasets for current month
         while (rs.next()) {
@@ -498,38 +501,39 @@ public class EnsembleTimeSeriesProcessor extends Processor {
             }
             long position = rs.getLong("POSITION");
             DataMatrix m = dsdb.getData(position);
-            
+
             attrSet = m.getAttributeIDs();
-            Object[] ids = m.getIds();   
-            
-            for (int i=0;i<ids.length;i++){
-                String current_id = (String)ids[i];
-                if (!current_id.matches(regex))
+            Object[] ids = m.getIds();
+
+            for (int i = 0; i < ids.length; i++) {
+                String current_id = (String) ids[i];
+                if (!current_id.matches(regex)) {
                     continue;
+                }
                 Long modelrun = rs.getLong(ensembleID);
                 double entry[] = aggregate.get(modelrun);
-                if (entry == null){
-                    aggregate.put(modelrun, m.getRow(i).clone());     
-                    counter.put(modelrun, new int[]{1});     
-                }else{
-                    for (int j=0;j<entry.length;j++){
+                if (entry == null) {
+                    aggregate.put(modelrun, m.getRow(i).clone());
+                    counter.put(modelrun, new int[]{1});
+                } else {
+                    for (int j = 0; j < entry.length; j++) {
                         entry[j] += m.getRow(i)[j];
                     }
-                    counter.get(modelrun)[0]++;                         
+                    counter.get(modelrun)[0]++;
                 }
-            }            
+            }
         }
         double table[][] = new double[aggregate.size()][];
         String id_table[] = new String[aggregate.size()];
-        
+
         Iterator<Long> iter = aggregate.keySet().iterator();
         int tableCounter = 0;
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             Long modelrun = iter.next();
             double data[] = aggregate.get(modelrun);
             int count = counter.get(modelrun)[0];
-            for (int i=0;i<data.length;i++){
-                data[i] /= (double)count;
+            for (int i = 0; i < data.length; i++) {
+                data[i] /= (double) count;
             }
             table[tableCounter] = data;
             id_table[tableCounter] = modelrun.toString();
@@ -538,24 +542,24 @@ public class EnsembleTimeSeriesProcessor extends Processor {
                 q += ", " + data[j];
             }
             q += ")";
-            if (putInTable)
+            if (putInTable) {
                 customQuery(q);
+            }
             tableCounter++;
         }
-                                           
-        return new DataMatrix(table,id_table,attrSet);
+
+        return new DataMatrix(table, id_table, attrSet);
     }
-        
+
     /**
      * Gets the ensemble data for one specific date
      * @return DataMatrix with ensemble
      * @throws java.sql.SQLException
      */
     public synchronized DataMatrix getTemporalData(JAMSCalendar date) throws SQLException, IOException {
-        return calcTemporalMean(date.toString(),"dummy","dummy", false);        
+        return calcTemporalMean(date.toString(), "dummy", "dummy", false);
     }
-    
-    
+
     /**
      * Get the model runs that data are available for
      * @return An int array containing the modelruns
@@ -567,17 +571,18 @@ public class EnsembleTimeSeriesProcessor extends Processor {
         String q = "SELECT min(" + ensembleID + ") AS MINDATE, max(" + ensembleID + ") AS MAXDATE FROM index";
         ResultSet rs = customSelectQuery(q);
         rs.next();
-        int minID = (int)rs.getLong("MINDATE");
-        int maxID = (int)rs.getLong("MAXDATE");
+        int minID = (int) rs.getLong("MINDATE");
+        int maxID = (int) rs.getLong("MAXDATE");
 
         long[] ids = new long[maxID - minID + 1];
-        
+
         for (int i = 0; i < ids.length; i++) {
-            ids[i] = i+minID;
+            ids[i] = i + minID;
         }
 
         return ids;
     }
+
     /**
      * Get the years that data are available for
      * @return An int array containing the years
@@ -585,12 +590,12 @@ public class EnsembleTimeSeriesProcessor extends Processor {
      */
     public synchronized int[] getYears() throws SQLException, IOException {
         DataMatrix block0 = getTimeSeriesData(0);
-                                
+
         Attribute.Calendar minDate = JAMSDataFactory.createCalendar();
-        minDate.setValue((String)block0.getIds()[0]);
+        minDate.setValue((String) block0.getIds()[0]);
         Attribute.Calendar maxDate = JAMSDataFactory.createCalendar();
-        maxDate.setValue((String)block0.getIds()[block0.getIds().length-1]);
-        
+        maxDate.setValue((String) block0.getIds()[block0.getIds().length - 1]);
+
         int startYear = minDate.get(JAMSCalendar.YEAR);
         int endYear = maxDate.get(JAMSCalendar.YEAR);
         int[] years = new int[endYear - startYear + 1];
@@ -602,7 +607,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
 
         return years;
     }
-    
+
     /**
      * Get all available time steps
      * @return An array of calendar objects representing the time steps
@@ -611,12 +616,12 @@ public class EnsembleTimeSeriesProcessor extends Processor {
     public synchronized Attribute.Calendar[] getTimeSteps() throws SQLException, IOException {
 
         DataMatrix block0 = getTimeSeriesData(0);
-        Object [] ids = block0.getIds();
+        Object[] ids = block0.getIds();
         Attribute.Calendar steps[] = new Attribute.Calendar[ids.length];
-        
-        for (int i=0;i<ids.length;i++){
+
+        for (int i = 0; i < ids.length; i++) {
             Attribute.Calendar calendar = JAMSDataFactory.createCalendar();
-            calendar.setValue((String)ids[i]);
+            calendar.setValue((String) ids[i]);
             steps[i] = calendar;
         }
         return steps;
@@ -625,12 +630,15 @@ public class EnsembleTimeSeriesProcessor extends Processor {
     public boolean isMonthlyMeanExisiting() throws SQLException {
         return isTableExisting(TABLE_NAME_MONTHAVG);
     }
+
     public boolean isYearlyMeanExisiting() throws SQLException {
         return isTableExisting(TABLE_NAME_YEARAVG);
     }
+
     public boolean isSpatSumExisiting() throws SQLException {
         return isTableExisting(TABLE_NAME_SPATSUM);
     }
+
     /**
      * @param ensembleFilter the ensembleIDFilter to set
      */
@@ -648,7 +656,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
             customQuery("DROP TABLE IF EXISTS " + table);
         }
     }
-    
+
     public static void main(String[] args) throws Exception {
         EnsembleTimeSeriesProcessor tsproc = new EnsembleTimeSeriesProcessor(new File("C:/Arbeit/ModelData/JAMS-Gehlberg/output/output_gehlberg_e2_gutmann/TimeLoop.dat"));
         tsproc.dsdb.isEnsembleTimeSeriesDatastore();
@@ -668,7 +676,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
 
 
         tsproc.deleteCache();
-                
+
         int c = 0;
 
         DataMatrix m = null;

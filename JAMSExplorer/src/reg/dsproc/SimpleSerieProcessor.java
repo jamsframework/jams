@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -59,7 +61,7 @@ public class SimpleSerieProcessor extends Processor {
             try {
                 this.conn = dsdb.getH2Connection(true);
             } catch (SQLException ex) {
-                System.out.println("Error while creating connection to H2 database of " + dsdb.getFile());
+                Logger.getLogger(SimpleSerieProcessor.class.getName()).log(Level.INFO, "Error while creating connection to H2 database of {0}", dsdb.getFile());
             }
         }
         timeSerie = this.dsdb.isSimpleTimeSerieDatastore();        

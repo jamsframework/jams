@@ -307,11 +307,11 @@ public class SimpleDSPanel extends DSPanel {
                 try {
                     dsdb.createDB();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ClassNotFoundException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -338,7 +338,7 @@ public class SimpleDSPanel extends DSPanel {
         try {
             dsdb.clearDB();
         } catch (SQLException ex) {
-            Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
 
         createDB();
@@ -606,9 +606,9 @@ public class SimpleDSPanel extends DSPanel {
                     m = getProc().getMonthlyMean(month);
 
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -647,9 +647,9 @@ public class SimpleDSPanel extends DSPanel {
                     workerDlg.setInderminate(true);
 
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -727,8 +727,9 @@ public class SimpleDSPanel extends DSPanel {
                     String filter = timeField.getText();
                     m = getProc().calcTemporalMean(filter);
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
+                    Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }

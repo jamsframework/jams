@@ -34,6 +34,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.BorderFactory.*;
 import javax.swing.GroupLayout.*;
@@ -49,6 +51,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import reg.JAMSExplorer;
+import reg.dsproc.SimpleSerieProcessor;
 
 /**
  *
@@ -182,7 +185,7 @@ public class STPConfigurator extends JFrame {
 
 //        dataset = getAccessibleIDs();
         dataset = createHashMap(getAccessibleTemplates());
-        System.out.println("dataset.length = " + dataset.length);
+        Logger.getLogger(STPConfigurator.class.getName()).log(Level.INFO, "dataset.length = {0}", dataset.length);
         if (dataset.length <= 2) {
             this.numberOfPlots = dataset.length;
         }
@@ -280,7 +283,7 @@ public class STPConfigurator extends JFrame {
 
 //                    File ttpdatfile = new File(templateFiles[i].getPath()+".dat");
                 File ttpdatfile = new File(filename);
-                System.out.println("ttpdatFile:" + ttpdatfile.getPath());
+
                 loadOutputTTPData(ttpdatfile);
                 loadTemplate(templateFiles[i], OUTPUT);
 
@@ -448,7 +451,6 @@ public class STPConfigurator extends JFrame {
                 GUIHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 2, c + 1, 1, 1, 0, 0);
                 GUIHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 3, c + 1, 1, 1, 0, 0);
             }
-            System.out.println(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD:_NUMBEROFPLOTS_=_") + numberOfPlots);
             repaintPlotPanel();
 
         } else {
@@ -458,7 +460,6 @@ public class STPConfigurator extends JFrame {
     }
 
     private void removePlot() {
-        System.out.println(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REMOVEPLOT()"));
         dataset = createHashMap(getAccessibleTemplates());
 
         if ((numberOfPlots < dataset.length) && (numberOfPlots > 1)) {
@@ -520,7 +521,6 @@ public class STPConfigurator extends JFrame {
                 GUIHelper.addGBComponent(optionpanel, ogbl, titleLabel[c], 2, c + 1, 1, 1, 0, 0);
                 GUIHelper.addGBComponent(optionpanel, ogbl, timeButton[c], 3, c + 1, 1, 1, 0, 0);
             }
-            System.out.println("remove: numberOfPlots = " + numberOfPlots);
             repaintPlotPanel();
 
         } else {
@@ -846,7 +846,7 @@ public class STPConfigurator extends JFrame {
                                     timeval.setValue(actual_string, JAMSTools.DATE_TIME_FORMAT_PATTERN);
 
                                 } catch (ParseException pe) {
-                                    pe.printStackTrace();
+                                    Logger.getLogger(STPConfigurator.class.getName()).log(Level.SEVERE, null, pe);
                                 }
                                 timeVector.add(timeval);
                                 time_set = true;
@@ -856,7 +856,7 @@ public class STPConfigurator extends JFrame {
                                     val = new Double(actual_string);
                                     rowBuffer[i++] = val.doubleValue();
                                 } catch (Exception pe2) {
-                                    pe2.printStackTrace();
+                                    Logger.getLogger(STPConfigurator.class.getName()).log(Level.SEVERE, null, pe2);
                                 }
                             }
                         } else {
@@ -1446,7 +1446,6 @@ public class STPConfigurator extends JFrame {
                 }
                 if (r == 0 && l == 0) {
                     jts[index].plotEmpty();
-                    System.out.println("plot empty");
                 }
 
                 jts[index].setTitle(title);

@@ -96,7 +96,7 @@ public class JAMSExplorer {
             try {
                 properties.load(defaultFile);
             } catch (IOException ioe) {
-                Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, null, ioe);
+                Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, ioe.getMessage(), ioe);
             }
         }
 
@@ -121,9 +121,9 @@ public class JAMSExplorer {
                 }
             });
         } catch (InterruptedException ex) {
-            Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         } catch (InvocationTargetException ex) {
-            Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
 
         explorer.getExplorerFrame().setVisible(true);
@@ -132,7 +132,7 @@ public class JAMSExplorer {
             try {
                 explorer.getExplorerFrame().open(new File(args[0]));
             } catch (InvalidWorkspaceException ex) {
-                Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
     }

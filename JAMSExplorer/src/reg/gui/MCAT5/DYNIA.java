@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -125,7 +127,9 @@ public class DYNIA {
             int number = Integer.parseInt(input);                
             if (number >= 1)
                 window_size = number;
-        }catch(Exception e){}
+        }catch(Exception e){
+            Logger.getLogger(DYNIA.class.getName()).log(Level.SEVERE, null, e);
+        }
         XYSeries dataset = new XYSeries(observation.name);
                             
         int MCparam = timeserie.parent.numberOfRuns;

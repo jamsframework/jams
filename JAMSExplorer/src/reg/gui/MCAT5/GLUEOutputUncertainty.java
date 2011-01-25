@@ -11,6 +11,8 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -103,8 +105,7 @@ public class GLUEOutputUncertainty {
                     }
                     updateData();
                 }catch(NumberFormatException nfe){
-                    System.out.println(nfe.toString());
-                    nfe.printStackTrace();
+                    Logger.getLogger(GLUEOutputUncertainty.class.getName()).log(Level.SEVERE, null, nfe);
                 }
             }
         });
@@ -125,8 +126,7 @@ public class GLUEOutputUncertainty {
                     }
                     updateData();
                 }catch(NumberFormatException nfe){
-                    System.out.println(nfe.toString());
-                    nfe.printStackTrace();
+                    Logger.getLogger(GLUEOutputUncertainty.class.getName()).log(Level.SEVERE, null, nfe);
                 }
             }
         });

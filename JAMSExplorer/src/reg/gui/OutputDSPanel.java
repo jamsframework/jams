@@ -24,6 +24,8 @@ package reg.gui;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 import reg.JAMSExplorer;
 import reg.dsproc.DataStoreProcessor;
@@ -34,7 +36,7 @@ import reg.spreadsheet.JAMSSpreadSheet;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 public class OutputDSPanel extends JPanel {
-        
+
     private JAMSSpreadSheet spreadsheet;
 
     public OutputDSPanel(JAMSExplorer explorer, File file, String id) {
@@ -50,15 +52,16 @@ public class OutputDSPanel extends JPanel {
 
         DSPanel tsp = null;
         // create the controller panel
-        switch(DataStoreProcessor.getDataStoreType(file)){
-            case DataStoreProcessor.UnsupportedDataStore: 
-                System.out.println("unsupported datastore"); break;
-            
+        switch (DataStoreProcessor.getDataStoreType(file)) {
+            case DataStoreProcessor.UnsupportedDataStore:
+                Logger.getLogger(OutputDSPanel.class.getName()).log(Level.WARNING, "Unsupported datastore");
+                break;
+
             case DataStoreProcessor.EnsembleTimeSeriesDataStore:
                 tsp = new EnsembleTimeSeriesPanel();
                 break;
-                
-            case DataStoreProcessor.TimeSpaceDataStore:                
+
+            case DataStoreProcessor.TimeSpaceDataStore:
                 tsp = new TimeSpaceDSPanel();
                 break;
             case DataStoreProcessor.SimpleDataSerieDataStore:
@@ -68,9 +71,10 @@ public class OutputDSPanel extends JPanel {
                 tsp = new SimpleDSPanel();
                 break;
             default:
-                System.out.println("unsupported datastore"); break;    
+                Logger.getLogger(OutputDSPanel.class.getName()).log(Level.WARNING, "Unsupported datastore");
+                break;
         }
-        
+
         tsp.setParent(explorer.getExplorerFrame());
         tsp.setOutputSpreadSheet(this.spreadsheet);
         tsp.createProc(file);
@@ -85,5 +89,4 @@ public class OutputDSPanel extends JPanel {
     public JAMSSpreadSheet getSpreadsheet() {
         return spreadsheet;
     }
-    
 }

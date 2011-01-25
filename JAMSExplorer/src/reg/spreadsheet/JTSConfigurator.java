@@ -9,7 +9,6 @@
 package reg.spreadsheet;
 
 import jams.data.Attribute;
-import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 import java.util.HashMap;
 import java.util.Vector;
@@ -41,6 +40,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import reg.JAMSExplorer;
 
 /**
@@ -425,8 +426,7 @@ public class JTSConfigurator extends JFrame {
                 }
             } catch (Exception fnfe) {
 //                System.out.println("ERROR");
-                fnfe.printStackTrace();
-                
+                Logger.getLogger(JTSConfigurator.class.getName()).log(Level.SEVERE, null, fnfe);
                 initGraphLoad();
             }
         } else {
@@ -1982,7 +1982,7 @@ try{
                                     val = new Double(actual_string);
                                     rowBuffer[i++] = val.doubleValue();
                                 }catch(Exception pe2){
-                                    pe2.printStackTrace();
+                                    Logger.getLogger(JTSConfigurator.class.getName()).log(Level.SEVERE, null, pe2);
                                 }
                             }
                         }else{
@@ -2027,7 +2027,7 @@ try{
             final String ERROR_NODAT_MSG ="File not found: "+file.getName()+"!";
             GUIHelper.showErrorDlg(this, ERROR_NODAT_MSG, "DAT file not found!");
         }catch(Exception eee){
-            eee.printStackTrace();
+            Logger.getLogger(JTSConfigurator.class.getName()).log(Level.SEVERE, null, eee);
         }
 
     }

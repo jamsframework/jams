@@ -35,8 +35,14 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
@@ -77,6 +83,7 @@ public class TimeSpaceDSPanel extends DSPanel {
     private JTextField timeField;
     private JPanel outerPanel, aggregationPanel;
     private GridBagLayout aggregationLayout;
+    private HashMap<String, AttribRadioButton> defaultWeightingMap = new HashMap<String, AttribRadioButton>();
     private Action[] actions = {
         new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_STEP")) {
 
@@ -386,6 +393,27 @@ public class TimeSpaceDSPanel extends DSPanel {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+
+//        LogManager.getLogManager().reset();
+        Logger globalLogger = Logger.getLogger("");
+        globalLogger.addHandler(new Handler() {
+
+            @Override
+            public void publish(LogRecord record) {
+                GUIHelper.showInfoDlg(null, record.getMessage(), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"));
+            }
+
+            @Override
+            public void flush() {
+            }
+
+            @Override
+            public void close() throws SecurityException {
+            }
+
+        });
+
+
         DataStoreProcessor dsdb = new DataStoreProcessor(new File("d:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop.dat"));
         //dsdb.removeDB();
         dsdb.addImportProgressObserver(new Observer() {
@@ -425,11 +453,11 @@ public class TimeSpaceDSPanel extends DSPanel {
                 try {
                     dsdb.createDB();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ClassNotFoundException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -447,7 +475,9 @@ public class TimeSpaceDSPanel extends DSPanel {
             this.setTsProc(new TimeSpaceProcessor(dsdb));
 
         } catch (SQLException ex) {
+            Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
+            Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -455,7 +485,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         try {
             dsdb.clearDB();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         createDB();
     }
@@ -582,15 +612,16 @@ public class TimeSpaceDSPanel extends DSPanel {
             allChecks.add(attribCheck);
             GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCheck, 5, i + 10, 1, 1, 0, 0);
 
-            AttribRadioButton aggregationButton1, aggregationButton2, weightingbutton1, weightingbutton2, weightingbutton3;
+            AttribRadioButton aggregationButton1, aggregationButton2, weightingButton1, weightingButton2, weightingButton3;
             aggregationButton1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_SUM);
             aggregationButton2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_MEAN);
-            weightingbutton1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.WEIGHTING_NONE);
-            weightingbutton2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA);
-            weightingbutton3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA);
+            weightingButton1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.WEIGHTING_NONE);
+            weightingButton2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA);
+            weightingButton3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA);
 
             aggregationButton1.setSelected(true);
-            weightingbutton1.setSelected(true);
+            defaultWeightingMap.put(attrib.getName(), weightingButton1);
+            weightingButton1.setSelected(true);
 
             ItemListener aggregationButtonListener = new ItemListener() {
 
@@ -611,33 +642,42 @@ public class TimeSpaceDSPanel extends DSPanel {
                     if (e.getStateChange() == ItemEvent.DESELECTED) {
                         return;
                     }
+
                     AttribRadioButton thisButton = (AttribRadioButton) e.getSource();
+
+                    if ((attribCombo.getSelectedIndex() == 0) && (thisButton.processingType != DataStoreProcessor.AttributeData.WEIGHTING_NONE)) {
+                        AttribRadioButton defaultButton = defaultWeightingMap.get(thisButton.attrib.getName());
+                        if (defaultButton != null) {
+                            defaultButton.setSelected(true);
+                        }
+                        Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.INFO, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_AREA_ATTRIBUTE_HAS_BEEN_CHOSEN!_SKIPPING_WEIGHTED_AGGREGATION_FOR_ATTRIBUTE"), thisButton.attrib.getName());
+                        return;
+                    }
                     thisButton.attrib.setWeightingType(thisButton.processingType);
                     setCheckBox(thisButton.attrib.getName());
-
                 }
             };
 
             aggregationButton1.addItemListener(aggregationButtonListener);
             aggregationButton2.addItemListener(aggregationButtonListener);
-            weightingbutton1.addItemListener(weightingButtonListener);
-            weightingbutton2.addItemListener(weightingButtonListener);
-            weightingbutton3.addItemListener(weightingButtonListener);
+            weightingButton1.addItemListener(weightingButtonListener);
+            weightingButton2.addItemListener(weightingButtonListener);
+            weightingButton3.addItemListener(weightingButtonListener);
 
             ButtonGroup bGroup1 = new ButtonGroup();
             bGroup1.add(aggregationButton1);
             bGroup1.add(aggregationButton2);
 
             ButtonGroup bGroup2 = new ButtonGroup();
-            bGroup2.add(weightingbutton1);
-            bGroup2.add(weightingbutton2);
-            bGroup2.add(weightingbutton3);
+            bGroup2.add(weightingButton1);
+            bGroup2.add(weightingButton2);
+            bGroup2.add(weightingButton3);
 
             GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, aggregationButton1, 10, i + 10, 1, 1, 0, 0);
             GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, aggregationButton2, 11, i + 10, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, weightingbutton1, 12, i + 10, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, weightingbutton2, 13, i + 10, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, weightingbutton3, 14, i + 10, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, weightingButton1, 12, i + 10, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, weightingButton2, 13, i + 10, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, weightingButton3, 14, i + 10, 1, 1, 0, 0);
 
             i++;
         }
@@ -655,7 +695,13 @@ public class TimeSpaceDSPanel extends DSPanel {
 
             public void itemStateChanged(ItemEvent e) {
                 AttribComboBox thisCombo = (AttribComboBox) e.getSource();
-                setCheckBox(thisCombo.getSelectedItem().toString());
+                if (thisCombo.getSelectedIndex() != 0) {
+                    setCheckBox(thisCombo.getSelectedItem().toString());
+                } else {
+                    for (AttribRadioButton b : defaultWeightingMap.values()) {
+                        b.setSelected(true);
+                    }
+                }
             }
         });
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCombo, 10, 0, 5, 1, 0, 0);
@@ -827,9 +873,9 @@ public class TimeSpaceDSPanel extends DSPanel {
 
                     }
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -867,9 +913,9 @@ public class TimeSpaceDSPanel extends DSPanel {
 //                    workerDlg.setInderminate(true);
 
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -911,9 +957,9 @@ public class TimeSpaceDSPanel extends DSPanel {
 //                    workerDlg.setInderminate(true);
 
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -990,9 +1036,9 @@ public class TimeSpaceDSPanel extends DSPanel {
                         m = tsproc.getSpatialSum(ids, weightAttribIndex);
                     }
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -1003,9 +1049,9 @@ public class TimeSpaceDSPanel extends DSPanel {
                 if (m == null) {
 
                     if (weightAttribIndex < 0) {
-                        System.out.println("A weight attribute must be chosen!");
+                        Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.INFO, "A weight attribute must be chosen!");
                     } else {
-                        System.out.println("An error occured during data extraction!");
+                        Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.INFO, "An error occured during data extraction!");
                     }
                 }
 
@@ -1053,8 +1099,9 @@ public class TimeSpaceDSPanel extends DSPanel {
 
                     m = getProc().getTemporalAggregate(filter, weightAttribIndex);
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -1095,8 +1142,9 @@ public class TimeSpaceDSPanel extends DSPanel {
                     }
                     m = getProc().getCrossProduct(ids3, ids2);
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
@@ -1127,7 +1175,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         try {
             getProc().deleteCache();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

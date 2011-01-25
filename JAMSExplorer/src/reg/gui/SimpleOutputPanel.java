@@ -25,6 +25,8 @@ package reg.gui;
 import jams.tools.FileTools;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
@@ -42,7 +44,7 @@ public class SimpleOutputPanel extends JPanel {
         try {
             text = FileTools.fileToString(file.getAbsolutePath());
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(SimpleOutputPanel.class.getName()).log(Level.SEVERE, null, ex);
             text = "";
         }
         textArea = new JTextArea(text);

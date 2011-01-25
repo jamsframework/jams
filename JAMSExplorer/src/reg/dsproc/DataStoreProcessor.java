@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -45,45 +47,31 @@ import java.util.StringTokenizer;
 public class DataStoreProcessor {
 
     public static final HashMap<String, String> TYPE_MAP = getTypeMap();
-
     public static final String DB_USER = "jamsuser", DB_PASSWORD = "";
-
     private File dsFile;
-
     private ArrayList<ContextData> contexts = new ArrayList<ContextData>();
-
     private ArrayList<FilterData> filters = new ArrayList<FilterData>();
-
     private ArrayList<AttributeData> attributes = new ArrayList<AttributeData>();
-
     private BufferedFileReader reader;
-
     private int overallSize;
-
     private String jdbcURL;
-
     private Connection conn;
-
     private Statement stmt;
-
     private ImportProgressObservable importProgressObservable = new ImportProgressObservable();
-
     private boolean cancelCreateIndex = false;
-
     public static final int UnsupportedDataStore = 0;
     public static final int TimeSpaceDataStore = 1;
     public static final int EnsembleTimeSeriesDataStore = 2;
     public static final int SimpleDataSerieDataStore = 3;
     public static final int SimpleTimeSerieDataStore = 4;
-    
-    
+
     public DataStoreProcessor(File dsFile) {
         this.dsFile = dsFile;
 
         try {
             initDS();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(DataStoreProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         jdbcURL = "jdbc:h2:" + dsFile.toString().substring(0, dsFile.toString().lastIndexOf(".")) + ";LOG=0";
@@ -93,24 +81,28 @@ public class DataStoreProcessor {
     public static int getDataStoreType(File file) {
         DataStoreProcessor dsdb = new DataStoreProcessor(file);
 
-        try{
+        try {
             //if (!dsdb.existsH2DB()) {
-                if (dsdb.isTimeSpaceDatastore())
-                    return TimeSpaceDataStore;
-                if (dsdb.isSimpleDataSerieDatastore())
-                    return SimpleDataSerieDataStore;
-                if (dsdb.isSimpleTimeSerieDatastore())
-                    return SimpleTimeSerieDataStore;
-                if (dsdb.isEnsembleTimeSeriesDatastore())
-                    return EnsembleTimeSeriesDataStore;
-                return UnsupportedDataStore;
+            if (dsdb.isTimeSpaceDatastore()) {
+                return TimeSpaceDataStore;
+            }
+            if (dsdb.isSimpleDataSerieDatastore()) {
+                return SimpleDataSerieDataStore;
+            }
+            if (dsdb.isSimpleTimeSerieDatastore()) {
+                return SimpleTimeSerieDataStore;
+            }
+            if (dsdb.isEnsembleTimeSeriesDatastore()) {
+                return EnsembleTimeSeriesDataStore;
+            }
+            return UnsupportedDataStore;
             //}
-        }catch(Exception e){
-            
+        } catch (Exception e) {
+            Logger.getLogger(DataStoreProcessor.class.getName()).log(Level.SEVERE, null, e);
         }
         return UnsupportedDataStore;
     }
-    
+
     public synchronized void createDB() throws IOException, SQLException, ClassNotFoundException {
         Class.forName("org.h2.Driver");
         clearDB();
@@ -171,13 +163,14 @@ public class DataStoreProcessor {
         File[] h2Files = parent.listFiles(filter);
 
         for (File h2File : h2Files) {
-            System.out.println(h2File.delete());
+            boolean result = h2File.delete();
+            Logger.getLogger(DataStoreProcessor.class.getName()).log(Level.INFO, "Trying to delete {0}: {1}", new Object[]{h2File.getPath(), result});
         }
     }
 
     public void close() throws SQLException {
         if ((conn != null) && !conn.isClosed()) {
-            System.out.println("closing");
+            Logger.getLogger(DataStoreProcessor.class.getName()).log(Level.INFO, "Closing database connection");
             conn.close();
             //conn = null;
         }
@@ -503,7 +496,7 @@ public class DataStoreProcessor {
         this.contexts = cntxt;
         return true;
     }
-    
+
     /**
      * Check if this is a datastore that contains several model runs each having timeseries
      * @return True or false
@@ -523,7 +516,7 @@ public class DataStoreProcessor {
         this.contexts = cntxt;
         return true;
     }
-    
+
     /**
      * Check if this is a datastore that contains no further inner contexts
      * @return True or false
@@ -536,24 +529,24 @@ public class DataStoreProcessor {
         if (cntxt.get(0).getType().equals("jams.model.JAMSTemporalContext")) {
             return true;
         }
-        
+
         this.contexts = cntxt;
         return false;
     }
-    
+
     public synchronized boolean isSimpleDataSerieDatastore() {
         ArrayList<DataStoreProcessor.ContextData> cntxt = getContexts();
         if (cntxt.size() != 1) {
             return false;
-        }        
+        }
         if (cntxt.get(0).getType().equals("jams.model.JAMSTemporalContext")) {
             return false;
         }
-        
+
         this.contexts = cntxt;
         return true;
     }
-    
+
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
 
         DataStoreProcessor dsdb = new DataStoreProcessor(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_1.dat"));
@@ -616,14 +609,13 @@ public class DataStoreProcessor {
         return size;
     }
 
-    public long getStartPosition()throws IOException {
+    public long getStartPosition() throws IOException {
         reader.setPosition(0);
-        while(!reader.readLine().startsWith("@start")){
-            
+        while (!reader.readLine().startsWith("@start")) {
         }
         return reader.getPosition();
     }
-    
+
     public synchronized DataMatrix getData(long position) throws IOException {
 
         String line, token;
@@ -685,11 +677,8 @@ public class DataStoreProcessor {
     public class ContextData {
 
         private String type;
-
         private String name;
-
         private String idType;
-
         private int size;
 
         public ContextData(String type, String name, String size, String idType) {
@@ -702,8 +691,9 @@ public class DataStoreProcessor {
                     this.idType = "JAMSCalendar";
                 } else if (type.equals("jams.model.JAMSSpatialContext")) {
                     this.idType = "JAMSLong";
-                } else if (type.contains("jams.components.optimizer"))
+                } else if (type.contains("jams.components.optimizer")) {
                     this.idType = "JAMSLong";
+                }
             }
         }
 
@@ -739,7 +729,6 @@ public class DataStoreProcessor {
     public class FilterData {
 
         private String regex;
-
         private String contextName;
 
         public FilterData(String regex, String contextName) {
@@ -762,22 +751,17 @@ public class DataStoreProcessor {
         }
     }
 
-    public class AttributeData implements Comparable{
+    public class AttributeData implements Comparable {
 
         public static final boolean SELECTION_DEFAULT = false;
-
         public static final int AGGREGATION_SUM = 1;
         public static final int AGGREGATION_MEAN = 2;
         public static final int WEIGHTING_NONE = 1;
         public static final int WEIGHTING_TIMES_AREA = 2;
         public static final int WEIGHTING_DIV_AREA = 3;
-
         private String type;
-
         private String name;
-
         private boolean selected;
-
         private int aggregationType = AGGREGATION_SUM;
         private int weightingType = WEIGHTING_NONE;
 
@@ -825,8 +809,8 @@ public class DataStoreProcessor {
             }
         }
 
-        public int compareTo(Object obj){
-            return (this.getName().compareTo(((AttributeData)obj).getName()));
+        public int compareTo(Object obj) {
+            return (this.getName().compareTo(((AttributeData) obj).getName()));
         }
     }
 

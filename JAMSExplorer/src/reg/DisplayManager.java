@@ -35,6 +35,8 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 import reg.gui.InputDSInfoPanel;
 import reg.gui.TSPanel;
@@ -75,8 +77,7 @@ public class DisplayManager implements Observer {
                 StandardInputDataStore store = (StandardInputDataStore) explorer.getWorkspace().getInputDataStore(node.toString());
                 inputDSInfoPanel.updateDS(store);
             } catch (Exception e) {
-                explorer.getRuntime().sendErrorMsg(e.toString());
-                e.printStackTrace();
+                Logger.getLogger(DisplayManager.class.getName()).log(Level.SEVERE, null, e);
             }
         } else if (node.getType() == DSTreeNode.OUTPUT_DS) {
             //display info dlg
@@ -157,9 +158,9 @@ public class DisplayManager implements Observer {
                     explorer.getExplorerFrame().getTPane().setSelectedComponent(outputPanel);
 
                 } catch (FileNotFoundException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(DisplayManager.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(DisplayManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 break;
         }

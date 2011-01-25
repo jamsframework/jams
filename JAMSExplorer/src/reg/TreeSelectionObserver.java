@@ -26,6 +26,8 @@ import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.DataStore;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import reg.tree.DSTreeNode;
 
 /**
@@ -55,7 +57,7 @@ public class TreeSelectionObserver implements Observer {
 //                JAMSExplorer.getExplorerFrame().getInfoPanel().updateDS(store);
             } catch (Exception e) {
                 explorer.getRuntime().sendErrorMsg(e.toString());
-                e.printStackTrace();
+                Logger.getLogger(TreeSelectionObserver.class.getName()).log(Level.SEVERE, null, e);
             }
         } else if (node.getType() == DSTreeNode.OUTPUT_DS) {
 //                    JAMSExplorer.getTree().getWorkspace().getO(node.toString());

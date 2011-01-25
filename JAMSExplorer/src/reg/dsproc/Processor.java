@@ -12,6 +12,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -105,7 +107,7 @@ public abstract class Processor {
                     result[j][i] = weight;
                 }
 
-            } else {
+            } else if (weightAttribIndex >= 0) {
 
                 if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_MEAN) {
 
@@ -143,21 +145,11 @@ public abstract class Processor {
 
                 }
 
-//            } else if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA) {
-//
-//                // if the absolute weights have not been calculated yet
-//                // do so now
-//                if (absWeights == null) {
-//                    absWeights = new double[a.length];
-//                    for (int j = 0; j < a.length; j++) {
-//                        absWeights[j] = a[j][weightAttribIndex];
-//                    }
-//                }
-//
-//                for (int j = 0; j < a.length; j++) {
-//                    result[j][i] = 1 / absWeights[j];
-//                }
-
+            } else {
+                Logger.getLogger(Processor.class.getName()).log(Level.INFO, "No area attribute has been chosen! Applying unweighted sum aggregation.");
+                for (int j = 0; j < a.length; j++) {
+                    result[j][i] = 1;
+                }
             }
 
         }
