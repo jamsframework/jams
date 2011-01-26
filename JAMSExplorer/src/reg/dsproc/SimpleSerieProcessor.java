@@ -62,6 +62,7 @@ public class SimpleSerieProcessor extends Processor {
                 this.conn = dsdb.getH2Connection(true);
             } catch (SQLException ex) {
                 Logger.getLogger(SimpleSerieProcessor.class.getName()).log(Level.INFO, "Error while creating connection to H2 database of {0}", dsdb.getFile());
+                Logger.getLogger(SimpleSerieProcessor.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
         timeSerie = this.dsdb.isSimpleTimeSerieDatastore();        

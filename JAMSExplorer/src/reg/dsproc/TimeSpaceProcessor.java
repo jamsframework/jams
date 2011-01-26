@@ -65,6 +65,7 @@ public class TimeSpaceProcessor extends Processor {
                 this.conn = dsdb.getH2Connection(true);
             } catch (SQLException ex) {
                 Logger.getLogger(TimeSpaceProcessor.class.getName()).log(Level.INFO, "Error while creating connection to H2 database of {0}", dsdb.getFile());
+                Logger.getLogger(TimeSpaceProcessor.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
     }

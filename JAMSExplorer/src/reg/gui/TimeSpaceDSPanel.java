@@ -24,6 +24,7 @@ package reg.gui;
 
 import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
+import jams.tools.StringTools;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -38,10 +39,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -393,26 +392,9 @@ public class TimeSpaceDSPanel extends DSPanel {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-
-//        LogManager.getLogManager().reset();
+        LogManager.getLogManager().reset();
         Logger globalLogger = Logger.getLogger("");
-        globalLogger.addHandler(new Handler() {
-
-            @Override
-            public void publish(LogRecord record) {
-                GUIHelper.showInfoDlg(null, record.getMessage(), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"));
-            }
-
-            @Override
-            public void flush() {
-            }
-
-            @Override
-            public void close() throws SecurityException {
-            }
-
-        });
-
+        GUIHelper.setupLogHandler(globalLogger, null);
 
         DataStoreProcessor dsdb = new DataStoreProcessor(new File("d:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop.dat"));
         //dsdb.removeDB();
@@ -647,10 +629,11 @@ public class TimeSpaceDSPanel extends DSPanel {
 
                     if ((attribCombo.getSelectedIndex() == 0) && (thisButton.processingType != DataStoreProcessor.AttributeData.WEIGHTING_NONE)) {
                         AttribRadioButton defaultButton = defaultWeightingMap.get(thisButton.attrib.getName());
+
+                        GUIHelper.showInfoDlg(parent, String.format(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_AREA_ATTRIBUTE_HAS_BEEN_CHOSEN!_SKIPPING_WEIGHTED_AGGREGATION_FOR_ATTRIBUTE"), thisButton.attrib.getName()));
                         if (defaultButton != null) {
                             defaultButton.setSelected(true);
                         }
-                        Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.INFO, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_AREA_ATTRIBUTE_HAS_BEEN_CHOSEN!_SKIPPING_WEIGHTED_AGGREGATION_FOR_ATTRIBUTE"), thisButton.attrib.getName());
                         return;
                     }
                     thisButton.attrib.setWeightingType(thisButton.processingType);
@@ -1049,9 +1032,9 @@ public class TimeSpaceDSPanel extends DSPanel {
                 if (m == null) {
 
                     if (weightAttribIndex < 0) {
-                        Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.INFO, "A weight attribute must be chosen!");
+                        Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.WARNING, "A weight attribute must be chosen!");
                     } else {
-                        Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.INFO, "An error occured during data extraction!");
+                        Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.WARNING, "An error occured during data extraction!");
                     }
                 }
 
