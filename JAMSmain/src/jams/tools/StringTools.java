@@ -51,19 +51,20 @@ public class StringTools {
     }
 
     public static boolean parseToBoolean(String theString) {
-        if (isEmptyString(theString))
+        if (isEmptyString(theString)) {
             return false;
+        }
 
-        if (theString.equals("1") || 
-                theString.equalsIgnoreCase("true") || 
-                theString.equalsIgnoreCase("on") || 
-                theString.equalsIgnoreCase("yes") || 
-                theString.equalsIgnoreCase("ja"))
+        if (theString.equals("1")
+                || theString.equalsIgnoreCase("true")
+                || theString.equalsIgnoreCase("on")
+                || theString.equalsIgnoreCase("yes")
+                || theString.equalsIgnoreCase("ja")) {
             return true;
+        }
 
         return false;
     }
-
 
     /**
      * Creates a string representation of a stack trace
@@ -135,9 +136,6 @@ public class StringTools {
         return result;
     }
 
-    public static String translate(String name){
-        return jams.JAMS.resources.getString(name);
-    }
     public static String getGetterName(String attribName) {
         return "get" + attribName.substring(0, 1).toUpperCase(STANDARD_LOCALE) + attribName.substring(1);
     }
