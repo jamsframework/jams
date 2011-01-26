@@ -32,6 +32,10 @@ import jams.JAMS;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
@@ -191,6 +195,15 @@ public class GUIHelper {
     }
 
     /**
+     * Show info dialog
+     * @param owner The parent component
+     * @param message
+     */
+    public static void showInfoDlg(Component owner, String message) {
+        JOptionPane.showMessageDialog(owner, message, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"), JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /**
      * Show error dialog
      * @param owner The parent component
      * @param message
@@ -198,6 +211,15 @@ public class GUIHelper {
      */
     public static void showErrorDlg(Component owner, String message, String title) {
         JOptionPane.showMessageDialog(owner, message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Show error dialog
+     * @param owner The parent component
+     * @param message
+     */
+    public static void showErrorDlg(Component owner, String message) {
+        JOptionPane.showMessageDialog(owner, message, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"), JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -314,5 +336,34 @@ public class GUIHelper {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, errMsg + ":\n" + e.getLocalizedMessage());
         }
+    }
+
+    static public void setupLogHandler(Logger logger, final Component owner) {
+        logger.addHandler(new Handler() {
+
+            @Override
+            public void publish(LogRecord record) {
+                String msg = record.getMessage();
+                int i = 0;
+                for (Object o : record.getParameters()) {
+                    msg = msg.replace("{"+i+"}", o.toString());
+                    i++;
+                }
+                if (record.getLevel().intValue() <= Level.INFO.intValue()) {
+                    GUIHelper.showInfoDlg(owner, msg, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"));
+                } else if (record.getLevel().intValue() <= Level.SEVERE.intValue()) {
+                    GUIHelper.showErrorDlg(owner, msg, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
+                }
+            }
+
+            @Override
+            public void flush() {
+            }
+
+            @Override
+            public void close() throws SecurityException {
+            }
+
+        });
     }
 }
