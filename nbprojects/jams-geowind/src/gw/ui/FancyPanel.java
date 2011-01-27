@@ -326,7 +326,6 @@ public class FancyPanel extends JPanel implements GeoWindView {
                 String layerName = layer.getName();
                 String dataPanelName = layerName.substring(0, layerName.length()-4) + ".dbf";
                 int col = ((Integer) evt.getNewValue()).intValue();
-                System.out.println("Aufruf von ww_classify mit " + dataPanelName + "/" + col);
                 AttributeTableProperties table = (AttributeTableProperties) lc.getLayerPanel(dataPanelName);
                 if (table != null) {
                     table.setMinMaxValue(col);
