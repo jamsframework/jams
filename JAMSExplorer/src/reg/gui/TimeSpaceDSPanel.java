@@ -545,13 +545,13 @@ public class TimeSpaceDSPanel extends DSPanel {
         Image image;
         float scale = 0.8f;
 
-        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_sum.png")).getImage();
+        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_mean.png")).getImage();
         image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
         label = new JLabel(new ImageIcon(image));
 //        label.setPreferredSize(labelDim);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 5, 1, 1, 0, 0);
 
-        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_mean.png")).getImage();
+        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_sum.png")).getImage();
         image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
         label = new JLabel(new ImageIcon(image));
 //        label.setPreferredSize(labelDim);
@@ -595,8 +595,8 @@ public class TimeSpaceDSPanel extends DSPanel {
             GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCheck, 5, i + 10, 1, 1, 0, 0);
 
             AttribRadioButton aggregationButton1, aggregationButton2, weightingButton1, weightingButton2, weightingButton3;
-            aggregationButton1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_SUM);
-            aggregationButton2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_MEAN);
+            aggregationButton1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_MEAN);
+            aggregationButton2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_SUM);
             weightingButton1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.WEIGHTING_NONE);
             weightingButton2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA);
             weightingButton3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA);

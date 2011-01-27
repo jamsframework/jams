@@ -762,7 +762,7 @@ public class DataStoreProcessor {
         private String type;
         private String name;
         private boolean selected;
-        private int aggregationType = AGGREGATION_SUM;
+        private int aggregationType = AGGREGATION_MEAN;
         private int weightingType = WEIGHTING_NONE;
 
         public AttributeData(String type, String name) {
