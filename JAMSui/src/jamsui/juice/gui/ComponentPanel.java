@@ -329,9 +329,9 @@ public class ComponentPanel extends JPanel {
             attr.setValue(attrEditDlg.getValue());
             attr.setType(attrEditDlg.getType());
             try {
-                //@TODO: proper handling
                 attr.setName(attrEditDlg.getAttributeName());
             } catch (JAMSException ex) {
+                GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
                 Logger.getLogger(ComponentPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
             this.updateCtxtAttrs();
@@ -347,9 +347,14 @@ public class ComponentPanel extends JPanel {
         attrEditDlg.show("", JUICE.JAMS_DATA_TYPES[10], "");
 
         if (attrEditDlg.getResult() == ContextAttributeDlg.APPROVE_OPTION) {
-            //@TODO: proper handling
-            ((ContextDescriptor) componentDescriptor).addStaticAttribute(attrEditDlg.getAttributeName(), attrEditDlg.getType(), attrEditDlg.getValue());
-            this.updateCtxtAttrs();
+            try {
+                ((ContextDescriptor) componentDescriptor).addStaticAttribute(attrEditDlg.getAttributeName(), attrEditDlg.getType(), attrEditDlg.getValue());
+                this.updateCtxtAttrs();
+            } catch (JAMSException ex) {
+                GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
+                Logger.getLogger(ComponentPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
     }
 
@@ -517,7 +522,13 @@ public class ComponentPanel extends JPanel {
     private void setComponentName() {
         String name = textFields.get("name").getText();
         if (componentDescriptor != null) {
-            componentDescriptor.setInstanceName(name);
+            try {
+                componentDescriptor.setInstanceName(name);
+            } catch (JAMSException ex) {
+                GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
+                Logger.getLogger(ComponentPanel.class.getName()).log(Level.WARNING, null, ex);
+            }
+
             textFields.get("name").setText(componentDescriptor.getName());
         }
     }
@@ -531,7 +542,7 @@ public class ComponentPanel extends JPanel {
         String attributeName = varNameList.get(selectedVarRow);
         ComponentField attr = componentDescriptor.getComponentFields().get(attributeName);
 
-        Vector<ComponentDescriptor> ancestors = new Vector<ComponentDescriptor>();
+        ArrayList<ComponentDescriptor> ancestors = new ArrayList<ComponentDescriptor>();
 
         ModelNode ancestor = (ModelNode) componentDescriptor.getNode().getParent();
         while (ancestor != null) {

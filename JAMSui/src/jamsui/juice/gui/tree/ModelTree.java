@@ -60,10 +60,7 @@ import org.w3c.dom.Document;
  */
 public class ModelTree extends JAMSTree {
 
-    private static final String NEW_MODEL_NAME = JAMS.resources.getString("New_Model");
-    private static final String MODEL_CLASS_NAME = "jams.model.JAMSModel";
     private ModelView view;
-    private String modelName = NEW_MODEL_NAME;
     private JPopupMenu popup;
     private boolean smartExpand = true;
     private ModelIO modelIO;
@@ -80,7 +77,7 @@ public class ModelTree extends JAMSTree {
 
             public ModelNode createNode(ComponentDescriptor cd) {
                 JAMSNode node = new JAMSNode(cd, ModelTree.this);
-                cd.setNode(node);
+//                cd.setNode(node);
                 return node;
             }
         });
@@ -263,15 +260,22 @@ public class ModelTree extends JAMSTree {
         for (TreePath path : paths) {
             JAMSNode node = (JAMSNode) path.getLastPathComponent();
             JAMSNode parent = (JAMSNode) node.getParent();
-            index[i] = parent.getIndex(node);
+            if (parent != null) {
+                index[i] = parent.getIndex(node);
+            }
             i++;
         }
 
-        i = 0;
+        i = -1;
         for (TreePath path : paths) {
 
+            i++;
             JAMSNode node = (JAMSNode) path.getLastPathComponent();
             JAMSNode parent = (JAMSNode) node.getParent();
+
+            if (parent == null) {
+                continue;
+            }
 
             index[i]++;
             j = i + 1;
@@ -283,7 +287,6 @@ public class ModelTree extends JAMSTree {
             if (index[i] < parent.getChildCount()) {
                 parent.insert(node, index[i]);
             }
-            i++;
         }
 
         this.updateUI();

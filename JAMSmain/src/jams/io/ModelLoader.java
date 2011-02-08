@@ -67,9 +67,7 @@ public class ModelLoader {
         this.modelIO = new ModelIO(this.loader, new NodeFactory() {
 
             public ModelNode createNode(ComponentDescriptor cd) {
-                ModelNode node = new ModelNode(cd);
-                cd.setNode(node);
-                return node;
+                return new ModelNode(cd);
             }
         });
 

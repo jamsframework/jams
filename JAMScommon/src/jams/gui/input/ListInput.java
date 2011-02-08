@@ -42,18 +42,13 @@ public class ListInput extends JPanel {
     private JList listbox;
     private JButton addButton,  removeButton,  upButton,  downButton,  editButton;
     protected JScrollPane scrollPane;
-    private JFileChooser jfc;
     protected ListData listData = new ListData();
-    private boolean orderButtons = true;
 
     public ListInput() {
         this(true);
     }
 
     public ListInput(boolean orderButtons) {
-
-        jfc = GUIHelper.getJFileChooser();
-        jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
         // create a panel to hold all other components
         BorderLayout layout = new BorderLayout();

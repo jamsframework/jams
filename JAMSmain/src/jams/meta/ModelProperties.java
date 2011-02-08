@@ -22,7 +22,6 @@
  */
 package jams.meta;
 
-import java.util.Vector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import jams.tools.StringTools;
@@ -42,7 +41,7 @@ public class ModelProperties {
 
     public boolean addProperty(Group group, ModelProperty p) {
 
-        Vector<Object> properties = group.propertyList;
+        ArrayList<Object> properties = group.propertyList;
 
         if (properties.contains(p)) {
             return false;
@@ -188,7 +187,7 @@ public class ModelProperties {
      */
     public String[] getAllGroupNames() {
 
-        Vector<String> rv = new Vector<String>();
+        ArrayList<String> rv = new ArrayList<String>();
 
         for (Group group : groupList) {
             rv.add(group.getName());
@@ -271,14 +270,14 @@ public class ModelProperties {
 
     public class Group extends ModelElement {
 
-        private Vector<Object> propertyList = new Vector<Object>();
+        private ArrayList<Object> propertyList = new ArrayList<Object>();
         private boolean subGroup = false;
 
         public Group() {
             super();
         }
 
-        public Vector<Object> getProperties() {
+        public ArrayList<Object> getProperties() {
             return propertyList;
         }
 

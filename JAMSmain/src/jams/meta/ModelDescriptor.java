@@ -33,8 +33,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -86,6 +84,10 @@ public class ModelDescriptor extends ComponentCollection {
         return result;
     }
 
+    public void addOutputDataStore(String name, OutputDSDescriptor dataStore) {
+        outputDataStores.put(name, dataStore);
+    }
+
     public HashMap<String, OutputDSDescriptor> getDatastores() {
 
         if (outputDataStores == null) {
@@ -131,7 +133,7 @@ public class ModelDescriptor extends ComponentCollection {
         return this.outputDataStores;
     }
 
-    public void setModelParameters(Element launcherNode) {
+    public void setModelParameters(Element launcherNode) throws JAMSException {
         Node node;
 
         ModelProperties mProp = getModelProperties();
@@ -182,20 +184,15 @@ public class ModelDescriptor extends ComponentCollection {
         theModelElement.setHelpComponent(helpComponent);
     }
 
-    private ModelProperty getPropertyFromElement(Element propertyElement, ModelProperties mProp) {
+    private ModelProperty getPropertyFromElement(Element propertyElement, ModelProperties mProp) throws JAMSException {
         ModelProperties.ModelProperty property = mProp.createProperty();
         property.component = getComponentDescriptor(propertyElement.getAttribute("component"));
 
         if (property.component == null) {
 
-            Logger.getLogger(ModelIO.class.getName()).log(Level.INFO, JAMS.resources.getString("Component_") + propertyElement.getAttribute("component")
+            throw new JAMSException(JAMS.resources.getString("Component_") + propertyElement.getAttribute("component")
                     + JAMS.resources.getString("_does_not_exist,_but_is_referred_in_list_of_model_parameters!")
                     + JAMS.resources.getString("Will_be_removed_when_model_is_saved!"), JAMS.resources.getString("Model_loading_error"));
-
-            return null;
-//            throw new JAMSException(JAMS.resources.getString("Component_") + propertyElement.getAttribute("component")
-//                    + JAMS.resources.getString("_does_not_exist,_but_is_referred_in_list_of_model_parameters!")
-//                    + JAMS.resources.getString("Will_be_removed_when_model_is_saved!"), JAMS.resources.getString("Model_loading_error"));
         }
 
         String attributeName = propertyElement.getAttribute("attribute");
@@ -220,13 +217,9 @@ public class ModelDescriptor extends ComponentCollection {
         if ((property.attribute == null) && (property.var == null)
                 && !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
 
-            Logger.getLogger(ModelIO.class.getName()).log(Level.INFO, JAMS.resources.getString("Attribute_") + attributeName
+            throw new JAMSException(JAMS.resources.getString("Attribute_") + attributeName
                     + JAMS.resources.getString("_does_not_exist_in_component_") + property.component.getName()
                     + JAMS.resources.getString("._Removing_visual_editor!"), JAMS.resources.getString("Model_loading_error"));
-
-//            throw new JAMSException(JAMS.resources.getString("Attribute_") + attributeName
-//                    + JAMS.resources.getString("_does_not_exist_in_component_") + property.component.getName()
-//                    + JAMS.resources.getString("._Removing_visual_editor!"), JAMS.resources.getString("Model_loading_error"));
         }
 
         // not used anymore

@@ -32,9 +32,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Vector;
 
 /**
  *
@@ -116,7 +116,7 @@ public class FileTools {
         });
 
         // remove directories
-        Vector<File> files = new Vector<File>();
+        ArrayList<File> files = new ArrayList<File>();
         for (int i = 0; i < fileArray.length; i++) {
             File file = fileArray[i];
             if (!file.isDirectory()) {
@@ -125,7 +125,7 @@ public class FileTools {
         }
         fileArray = new File[files.size()];
         for (int i = 0; i < files.size(); i++) {
-            File file = files.elementAt(i);
+            File file = files.get(i);
             fileArray[i] = file;
         }
 

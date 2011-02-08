@@ -30,7 +30,7 @@ import jams.io.ParameterProcessor;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelProperty;
 import jams.tools.StringTools;
-import java.util.Vector;
+import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -129,7 +129,6 @@ public class ModelIO {
                     throw new JAMSException(JAMS.resources.getString("Could_not_load_component_")
                             + mle.getComponentName() + "\" (" + mle.getClassName() + "). "
                             + JAMS.resources.getString("Please_fix_the_model_definition_file!"), JAMS.resources.getString("Error_loading_model"));
-//                    this.view.getFrame().dispose();
                 }
 
             } else if (node.getNodeName().equals("attribute")) {
@@ -359,7 +358,7 @@ public class ModelIO {
             for (String group : md.getModelProperties().getGroupNames()) {
                 Element groupElement = (Element) document.createElement("group");
                 groupElement.setAttribute("name", group);
-                Vector properties = md.getModelProperties().getGroup(group).getProperties();
+                ArrayList properties = md.getModelProperties().getGroup(group).getProperties();
                 if (properties != null) {
                     for (Object modelProperty : properties) {
 
@@ -383,7 +382,7 @@ public class ModelIO {
                                 subgroupElement.appendChild(document.createTextNode("\n"));
                             }
 
-                            Vector subgroupProperties = subgroup.getProperties();
+                            ArrayList subgroupProperties = subgroup.getProperties();
                             for (int k = 0; k < subgroupProperties.size(); k++) {
                                 Object subgroupProperty = subgroupProperties.get(k);
 

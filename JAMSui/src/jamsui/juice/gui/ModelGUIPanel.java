@@ -31,7 +31,6 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Vector;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -342,7 +341,7 @@ public class ModelGUIPanel extends JPanel {
 
         int y = 1;
 
-        Vector properties = group.getProperties();
+        ArrayList properties = group.getProperties();
         for (int j = 0; j < properties.size(); j++) {
             Object modelElement = properties.get(j);
 
@@ -358,7 +357,7 @@ public class ModelGUIPanel extends JPanel {
 
             if (modelElement instanceof Group) {
                 Group subgroup = (Group) modelElement;
-                Vector subgroupProperties = subgroup.getProperties();
+                ArrayList subgroupProperties = subgroup.getProperties();
 
                 int height = subgroupProperties.size() + 3;
 
@@ -586,7 +585,7 @@ public class ModelGUIPanel extends JPanel {
 
     private void moveDownElement(ModelElement element) {
 
-        Vector<Object> list = element.getGroup().getProperties();
+        ArrayList<Object> list = element.getGroup().getProperties();
         int index = list.indexOf(element);
         if (index < list.size() - 1) {
             list.remove(index);
@@ -601,7 +600,7 @@ public class ModelGUIPanel extends JPanel {
 
     private void moveUpElement(ModelElement element) {
 
-        Vector<Object> list = element.getGroup().getProperties();
+        ArrayList<Object> list = element.getGroup().getProperties();
         int index = list.indexOf(element);
         if (index > 0) {
             list.remove(index);
@@ -616,11 +615,11 @@ public class ModelGUIPanel extends JPanel {
 
     private void deleteElement(ModelElement element) {
 
-        Vector list = element.getGroup().getProperties();
+        ArrayList list = element.getGroup().getProperties();
 
         // subgroup has to be empty
         if (element instanceof Group) {
-            Vector test = ((Group) element).getProperties();
+            ArrayList test = ((Group) element).getProperties();
             if (test.size() > 0) {
                 GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Subgroup_needs_to_be_empty."), JAMS.resources.getString("Deletion_not_possible"));
                 return;

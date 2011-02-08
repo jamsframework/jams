@@ -46,7 +46,10 @@ import jams.JAMSException;
 import jams.meta.ComponentDescriptor;
 import jams.tools.StringTools;
 import jams.meta.ComponentCollection;
+import jams.meta.ContextDescriptor;
 import jamsui.juice.gui.ComponentInfoDlg;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
@@ -215,6 +218,8 @@ public class LibTree extends JAMSTree {
 
                         GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Error_while_loading_archive_") + jarName + "\"" + JAMS.resources.getString("_(class_") + classString
                                 + JAMS.resources.getString("_could_not_be_found)!"), JAMS.resources.getString("Error_while_loading_archive"));
+                        Logger.getLogger(LibTree.class.getName()).log(Level.SEVERE, null, cnfe);
+
 
                     } catch (NoClassDefFoundError ncdfe) {
                         // loading classes can cause a lot of NoClassDefFoundError
@@ -225,6 +230,7 @@ public class LibTree extends JAMSTree {
                         // while loading JARs containing JAMS components
                         GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Error_while_loading_archive_") + jarName + "\"" + JAMS.resources.getString("_(class_") + classString
                                 + JAMS.resources.getString("_could_not_be_loaded)!") + "\n" + e.getMessage(), JAMS.resources.getString("Error_while_loading_archive"));
+                        Logger.getLogger(LibTree.class.getName()).log(Level.SEVERE, null, e);
                     }
                 }
             }
@@ -251,7 +257,13 @@ public class LibTree extends JAMSTree {
 
                     try {
 
-                        ComponentDescriptor no = new ComponentDescriptor(clazz, getComponentCollection());
+                        ComponentDescriptor no;
+                        if (JAMSContext.class.isAssignableFrom(clazz)) {
+                            no = new ContextDescriptor(clazz, getComponentCollection());
+                        } else {
+                            no = new ComponentDescriptor(clazz, getComponentCollection());
+                        }
+
                         no.addObserver(new Observer() {
 
                             public void update(Observable o, Object arg) {
@@ -267,15 +279,19 @@ public class LibTree extends JAMSTree {
                             componentCount++;
                         }
 
+                        no.setNode(compNode);
+
                         packageNode.add((DefaultMutableTreeNode) compNode);
 
                     } catch (NoClassDefFoundError ncdfe) {
 
                         GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Missing_class_while_loading_component_") + clazzFullName
                                 + JAMS.resources.getString("_in_archive_") + jarName + "\"!", JAMS.resources.getString("Error_while_loading_archive"));
+                        Logger.getLogger(LibTree.class.getName()).log(Level.SEVERE, null, ncdfe);
 
                     } catch (JAMSException jex) {
                         GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), jex.getMessage(), jex.getHeader());
+                        Logger.getLogger(LibTree.class.getName()).log(Level.SEVERE, null, jex);
                     } catch (Throwable t) {
                         t.printStackTrace();
                     }

@@ -35,17 +35,9 @@ public class ModelNode extends DefaultMutableTreeNode {
 
     public ModelNode(Object o) {
         super(o);
-    }
-
-    public ModelNode(ComponentDescriptor cd) {
-        super(cd);
-        cd.setNode(this);
-    }
-
-    public ModelNode(ComponentDescriptor cd, int type) {
-        super(cd);
-        this.type = type;
-        cd.setNode(this);
+        if (ComponentDescriptor.class.isAssignableFrom(o.getClass())) {
+            ((ComponentDescriptor) o).setNode(this);
+        }
     }
 
     public int getType() {

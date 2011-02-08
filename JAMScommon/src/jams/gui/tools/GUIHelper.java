@@ -271,15 +271,14 @@ public class GUIHelper {
             };
         }
     }
-
     private static HashMap<FileFilter, JFileChooser> choosers = new HashMap<FileFilter, JFileChooser>();
-    
+
     /**
      * Create a new JFileChooser
      * @return new JFileChooser
      */
     public static JFileChooser getJFileChooser(FileFilter filter) {
-        
+
         JFileChooser jfc = choosers.get(filter);
         if (jfc == null) {
             jfc = getJFileChooser(true);
@@ -345,9 +344,12 @@ public class GUIHelper {
             public void publish(LogRecord record) {
                 String msg = record.getMessage();
                 int i = 0;
-                for (Object o : record.getParameters()) {
-                    msg = msg.replace("{"+i+"}", o.toString());
-                    i++;
+                Object[] params = record.getParameters();
+                if (params != null) {
+                    for (Object o : params) {
+                        msg = msg.replace("{" + i + "}", o.toString());
+                        i++;
+                    }
                 }
                 if (record.getLevel().intValue() <= Level.INFO.intValue()) {
                     GUIHelper.showInfoDlg(owner, msg, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"));
@@ -361,9 +363,8 @@ public class GUIHelper {
             }
 
             @Override
-            public void close() throws SecurityException {
+            public void close() {
             }
-
         });
     }
 }

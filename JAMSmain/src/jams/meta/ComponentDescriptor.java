@@ -30,6 +30,7 @@ import jams.JAMS;
 import jams.JAMSException;
 import jams.model.Context;
 import jams.tools.StringTools;
+import java.text.MessageFormat;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,7 +52,7 @@ public class ComponentDescriptor extends Observable {
     public ComponentDescriptor(String instanceName, Class clazz) throws JAMSException {
 
         if (clazz == null) {
-            throw new JAMSException(JAMS.resources.getString("Could_not_find_class_for_component_") + instanceName + "_!", JAMS.resources.getString("Error!"));
+            throw new JAMSException(JAMS.resources.getString("Could_not_find_class_for_component_") + instanceName + "_!");
         }
 
         this.clazz = clazz;
@@ -118,7 +119,7 @@ public class ComponentDescriptor extends Observable {
     public void outputUnsetAttributes() {
         for (ComponentField ad : getComponentFields().values()) {
             if (ad.getAttribute() == null && ad.getContext() == null && ad.getValue() == null) {
-                System.out.println(JAMS.resources.getString("Attribute_") + ad.getName() + " (" + ad.getType() + JAMS.resources.getString(")_not_set_in_component_") + getName());
+                Logger.getLogger(ComponentDescriptor.class.getName()).log(Level.INFO, JAMS.resources.getString("Attribute_") + ad.getName() + " (" + ad.getType() + JAMS.resources.getString(")_not_set_in_component_") + getName());
             }
         }
     }
@@ -168,26 +169,23 @@ public class ComponentDescriptor extends Observable {
         this.componentRepository = null;
     }
 
-    public final void register(ComponentCollection md) {
+    public final void register(ComponentCollection md) throws JAMSException {
         this.componentRepository = md;
         setInstanceName(this.instanceName);
     }
 
-    public void setInstanceName(String name) {
+    public void setInstanceName(String name) throws JAMSException {
         String oldName = this.instanceName;
 
         this.instanceName = this.componentRepository.registerComponentDescriptor(oldName, name, this);
 
-        if (!this.instanceName.equals(name)) {
-            Logger.getLogger(ModelIO.class.getName()).log(Level.INFO, JAMS.resources.getString("Name_") + name + JAMS.resources.getString("_is_already_in_use._Renamed_component_to_")
-                    + this.instanceName + "!", JAMS.resources.getString("Component_name"));
-
-//            throw new JAMSException(name);
-        }
-
         if (!oldName.equals(this.instanceName)) {
             this.setChanged();
             this.notifyObservers();
+        }
+
+        if (!this.instanceName.equals(name)) {
+            throw new JAMSException(MessageFormat.format(JAMS.resources.getString("Component_name_is_already_in_use._Renamed_component_to_"), name, this.instanceName), JAMS.resources.getString("Invalid_value!"));
         }
     }
 

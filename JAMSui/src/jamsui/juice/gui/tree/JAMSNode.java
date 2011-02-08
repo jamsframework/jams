@@ -26,7 +26,6 @@ import jams.JAMSException;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ModelNode;
 import java.awt.Image;
-import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;

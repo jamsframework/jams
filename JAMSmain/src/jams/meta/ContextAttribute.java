@@ -26,6 +26,7 @@ package jams.meta;
 import java.util.HashMap;
 import jams.JAMS;
 import jams.JAMSException;
+import java.text.MessageFormat;
 import java.util.HashSet;
 
 /**
@@ -51,8 +52,8 @@ public class ContextAttribute {
         HashMap<String, ContextAttribute> attributes = getContext().getDynamicAttributes();
         
         if (attributes.get(newName) != null) {
-            throw new JAMSException(JAMS.resources.getString("Context_attribute_") + newName + JAMS.resources.getString("_does_already_exist._") +
-                    JAMS.resources.getString("Please_remove_or_chose_a_different_name!"), JAMS.resources.getString("Error_renaming_context_attribute"));
+            throw new JAMSException(MessageFormat.format(JAMS.resources.getString("Context_attribute_does_already_exist"), newName),
+                    JAMS.resources.getString("Error_renaming_context_attribute"));
         } else {
             attributes.remove(this.name);
             this.name = newName;

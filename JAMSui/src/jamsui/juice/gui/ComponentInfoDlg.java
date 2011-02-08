@@ -25,8 +25,6 @@ package jamsui.juice.gui;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.lang.reflect.Field;
-import java.util.Hashtable;
-import java.util.Vector;
 import javax.swing.*;
 import javax.swing.text.SimpleAttributeSet;
 import jams.gui.tools.GUIHelper;
@@ -34,6 +32,7 @@ import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import jams.JAMS;
 import java.awt.Frame;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -45,12 +44,12 @@ public class ComponentInfoDlg extends JDialog {
     private static final String DEFAULT_STRING = JAMS.resources.getString("[none]");
     private static final int TEXTAREA_WIDTH = 295;
     private static final int GRIDBAG_MAX_Y = 3;
-    private Hashtable<String, JTextField> textFields = new Hashtable<String, JTextField>();
-    private Hashtable<String, JTextPane> textAreas = new Hashtable<String, JTextPane>();
+    private HashMap<String, JTextField> textFields = new HashMap<String, JTextField>();
+    private HashMap<String, JTextPane> textAreas = new HashMap<String, JTextPane>();
     private SimpleAttributeSet descriptionText;
     private JPanel contentPanel;
     private GridBagLayout mainLayout;
-    private Vector<JPanel> varPanels = new Vector<JPanel>();
+    private ArrayList<JPanel> varPanels = new ArrayList<JPanel>();
     private JLabel varLabel = new JLabel(JAMS.resources.getString("Variables:"));
     private static HashMap<Class, JDialog> compViewDlgs = new HashMap<Class, JDialog>();
 

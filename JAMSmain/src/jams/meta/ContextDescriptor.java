@@ -25,9 +25,8 @@ import jams.JAMSException;
 import java.util.HashMap;
 import jams.JAMS;
 import jams.data.JAMSDataFactory;
+import java.text.MessageFormat;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -46,6 +45,10 @@ public class ContextDescriptor extends ComponentDescriptor {
         super(instanceName, clazz, md);
     }
 
+    public ContextDescriptor(Class clazz, ComponentCollection md) throws JAMSException {
+        super(clazz, md);
+    }
+
 //    public ContextDescriptor(Class clazz) throws JAMSException {
 //        this(clazz.getSimpleName(), clazz);
 //    }
@@ -62,19 +65,15 @@ public class ContextDescriptor extends ComponentDescriptor {
 //
 //        return ca;
 //    }
-    public ContextAttribute addStaticAttribute(String name, Class type, String value) {
+    public ContextAttribute addStaticAttribute(String name, Class type, String value) throws JAMSException {
 
         ContextAttribute ca = staticAttributes.get(name);
 
         // info wenn attribut mit gleichem namen schon existent und dann zum repo adden!!!
         if (ca != null) {
 
-            Logger.getLogger(ModelIO.class.getName()).log(Level.WARNING, JAMS.resources.getString("Context_attribute_") + name + JAMS.resources.getString("_does_already_exist._")
-                    + JAMS.resources.getString("Please_remove_or_chose_a_different_name!"), JAMS.resources.getString("Error_adding_context_attribute"));
-
-            return null;
-//            throw new JAMSException(JAMS.resources.getString("Context_attribute_") + name + JAMS.resources.getString("_does_already_exist._")
-//                    + JAMS.resources.getString("Please_remove_or_chose_a_different_name!"), JAMS.resources.getString("Error_adding_context_attribute"));
+            throw new JAMSException(MessageFormat.format(JAMS.resources.getString("Context_attribute_does_already_exist"), name),
+                    JAMS.resources.getString("Error_adding_context_attribute"));
 
         } else {
             ca = new ContextAttribute(name, type, this);
