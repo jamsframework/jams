@@ -84,8 +84,12 @@ public class ModelDescriptor extends ComponentCollection {
         return result;
     }
 
-    public void addOutputDataStore(String name, OutputDSDescriptor dataStore) {
-        outputDataStores.put(name, dataStore);
+    public void addOutputDataStore(OutputDSDescriptor dataStore) {
+        outputDataStores.put(dataStore.getName(), dataStore);
+    }
+
+    public void removeOutputDataStore(OutputDSDescriptor dataStore) {
+        outputDataStores.remove(dataStore.getName());
     }
 
     public HashMap<String, OutputDSDescriptor> getDatastores() {

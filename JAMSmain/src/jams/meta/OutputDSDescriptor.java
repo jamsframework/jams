@@ -34,12 +34,12 @@ import org.w3c.dom.Element;
  */
 public class OutputDSDescriptor {
 
-    private ComponentDescriptor context;
+    private ContextDescriptor context;
     private String name;
     private ArrayList<ContextAttribute> contextAttributes = new ArrayList<ContextAttribute>();
-    private ArrayList<Filter> filters = new ArrayList<Filter>();
+    private ArrayList<FilterDescriptor> filters = new ArrayList<FilterDescriptor>();
 
-    public OutputDSDescriptor(ComponentDescriptor context) {
+    public OutputDSDescriptor(ContextDescriptor context) {
         this.context = context;
     }
 
@@ -54,7 +54,7 @@ public class OutputDSDescriptor {
         dsElement.setAttribute("name", this.getName());
         dsElement.appendChild(document.createTextNode("\n"));
 
-        for (Filter f : filters) {
+        for (FilterDescriptor f : filters) {
             Element filterElement = (Element) document.createElement("filter");
             filterElement.setAttribute("context", f.context.getName());
             filterElement.setAttribute("expression", f.expression);
@@ -100,32 +100,40 @@ public class OutputDSDescriptor {
     /**
      * @return the filters
      */
-    public ArrayList<Filter> getFilters() {
+    public ArrayList<FilterDescriptor> getFilters() {
         return filters;
     }
 
     /**
      * @return the context
      */
-    public ComponentDescriptor getContext() {
+    public ContextDescriptor getContext() {
         return context;
     }
 
     @Override
     public String toString() {
-        return getName();
+        return name + " [" + context.getName() + "]";
     }
 
-    public void addFilter(ContextDescriptor context, String expression) {
-        Filter f = new Filter();
+    public FilterDescriptor addFilter(ContextDescriptor context, String expression) {
+        FilterDescriptor f = new FilterDescriptor();
         f.context = context;
         f.expression = expression;
         filters.add(f);
+        return f;
     }
 
-    public class Filter {
+    public void removeFilter(FilterDescriptor f) {
+        filters.remove(f);
+    }
 
-        String expression;
-        ContextDescriptor context;
+    public class FilterDescriptor {
+        public String expression;
+        public ContextDescriptor context;
+
+        public String toString() {
+            return expression + " [" + context.getName() + "]";
+        }
     }
 }

@@ -40,7 +40,7 @@ public class ListInput extends JPanel {
     static final int BUTTON_SIZE = 20;
     private static final Dimension BUTTON_DIMENSION = new Dimension(BUTTON_SIZE, BUTTON_SIZE);
     private JList listbox;
-    private JButton addButton,  removeButton,  upButton,  downButton,  editButton;
+    private JButton addButton, removeButton, upButton, downButton, editButton;
     protected JScrollPane scrollPane;
     protected ListData listData = new ListData();
 
@@ -49,6 +49,10 @@ public class ListInput extends JPanel {
     }
 
     public ListInput(boolean orderButtons) {
+        this(orderButtons, true);
+    }
+
+    public ListInput(boolean orderButtons, boolean editButtons) {
 
         // create a panel to hold all other components
         BorderLayout layout = new BorderLayout();
@@ -114,17 +118,20 @@ public class ListInput extends JPanel {
             }
         });
 
-        editButton = new JButton("...");
-        editButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
-        editButton.setPreferredSize(BUTTON_DIMENSION);
-        editButton.setToolTipText(JAMS.resources.getString("Edit"));
-        buttonPanel.add(editButton);
-        editButton.addActionListener(new ActionListener() {
+        if (editButtons) {
 
-            public void actionPerformed(ActionEvent e) {
-                editItem();
-            }
-        });
+            editButton = new JButton("...");
+            editButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
+            editButton.setPreferredSize(BUTTON_DIMENSION);
+            editButton.setToolTipText(JAMS.resources.getString("Edit"));
+            buttonPanel.add(editButton);
+            editButton.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    editItem();
+                }
+            });
+        }
 
         if (orderButtons) {
             upButton = new JButton();
@@ -159,7 +166,7 @@ public class ListInput extends JPanel {
     private void moveUp() {
         int index = listbox.getSelectedIndex();
         if (index > 0) {
-            String tmp = listData.getElementAt(index - 1);
+            Object tmp = listData.getElementAt(index - 1);
             listData.setElementAt(index - 1, listData.getElementAt(index));
             listData.setElementAt(index, tmp);
             listbox.setSelectedIndex(index - 1);
@@ -170,7 +177,7 @@ public class ListInput extends JPanel {
     private void moveDown() {
         int index = listbox.getSelectedIndex();
         if (index < listData.getValue().size() - 1) {
-            String tmp = listData.getElementAt(index + 1);
+            Object tmp = listData.getElementAt(index + 1);
             listData.setElementAt(index + 1, listData.getElementAt(index));
             listData.setElementAt(index, tmp);
             listbox.setSelectedIndex(index + 1);
@@ -182,17 +189,22 @@ public class ListInput extends JPanel {
         listData.addObserver(obs);
     }
 
-    public void setListData(Vector<String> listData) {
+    public void setListData(Vector<Object> listData) {
         this.listData.setValue(listData);
         scrollPane.revalidate();
         scrollPane.repaint();
     }
 
-    public Vector<String> getListData() {
+    public void revalidateScroll() {
+        scrollPane.revalidate();
+        scrollPane.repaint();
+    }
+
+    public Vector<Object> getListData() {
         return listData.getValue();
     }
 
-    public String getSelectedString() {
+    public Object getSelectedString() {
         int selection = getListbox().getSelectedIndex();
         if (selection >= 0) {
             return listData.getValue().elementAt(selection);
@@ -254,8 +266,8 @@ public class ListInput extends JPanel {
         int selection = getListbox().getSelectedIndex();
         if (selection >= 0) {
             // edit this item
-            String value = listData.getElementAt(selection);
-            value = GUIHelper.showInputDlg(ListInput.this, null, JAMS.resources.getString("New_value"), value);
+            Object value = listData.getElementAt(selection);
+            value = GUIHelper.showInputDlg(ListInput.this, null, JAMS.resources.getString("New_value"), value.toString());
             if (value != null) {
                 listData.setElementAt(selection, value);
                 scrollPane.revalidate();
@@ -266,9 +278,9 @@ public class ListInput extends JPanel {
 
     protected class ListData extends Observable {
 
-        private Vector<String> listData = new Vector<String>();
+        private Vector<Object> listData = new Vector<Object>();
 
-        public void addElement(String s) {
+        public void addElement(Object s) {
             listData.addElement(s);
             getListbox().setListData(listData);
             getListbox().setSelectedValue(s, true);
@@ -283,19 +295,19 @@ public class ListInput extends JPanel {
             this.notifyObservers();
         }
 
-        public String getElementAt(int selection) {
+        public Object getElementAt(int selection) {
             return listData.get(selection);
         }
 
-        public void setElementAt(int selection, String s) {
+        public void setElementAt(int selection, Object s) {
             listData.set(selection, s);
         }
 
-        public Vector<String> getValue() {
+        public Vector<Object> getValue() {
             return listData;
         }
 
-        public void setValue(Vector<String> listData) {
+        public void setValue(Vector<Object> listData) {
             this.listData = listData;
             getListbox().setListData(listData);
             this.setChanged();

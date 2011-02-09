@@ -158,8 +158,8 @@ public class JAMSRemoteLauncher extends JAMSFrame {
 
             public void update(Observable o, Object arg) {
                 String servers = "";
-                for (String server : serverList.getListData()) {
-                    servers += server + ";";
+                for (Object server : serverList.getListData()) {
+                    servers += server.toString() + ";";
                 }
                 if (!servers.isEmpty()) {
                     servers = servers.substring(0, servers.length() - 1);
@@ -186,7 +186,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
 
         String server = getProperties().getProperty(JAMSProperties.SERVER_IDENTIFIER);
         if (server != null) {
-            Vector<String> listData = new Vector<String>();
+            Vector<Object> listData = new Vector<Object>();
             for (String str : StringTools.toArray(server, ";")) {
                 listData.add(str);
             }

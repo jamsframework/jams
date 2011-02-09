@@ -82,8 +82,8 @@ public class FileListInput extends ListInput {
         int selection = getListbox().getSelectedIndex();
         if (selection >= 0) {
             // edit this item
-            String value = listData.getElementAt(selection);
-            File file = new File(value);
+            Object value = listData.getElementAt(selection);
+            File file = new File(value.toString());
             if (file.exists()) {
                 jfc.setSelectedFile(file);
             }

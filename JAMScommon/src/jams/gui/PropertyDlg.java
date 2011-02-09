@@ -240,7 +240,7 @@ public class PropertyDlg extends JDialog {
         this.properties = properties;
 
         String[] libs = StringTools.toArray(properties.getProperty(SystemProperties.LIBS_IDENTIFIER), ";");
-        Vector<String> v = new Vector<String>();
+        Vector<Object> v = new Vector<Object>();
         for (int i = 0; i < libs.length; i++) {
             v.add(libs[i]);
         }
@@ -273,10 +273,10 @@ public class PropertyDlg extends JDialog {
 
     public void validateProperties() {
 
-        Vector<String> v = list.getListData();
+        Vector<Object> v = list.getListData();
         String libs = "";
         if (v.size() > 0) {
-            libs = v.get(0);
+            libs = v.get(0).toString();
         }
 
         for (int i = 1; i < v.size(); i++) {
