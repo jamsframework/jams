@@ -606,8 +606,12 @@ public class JUICEFrame extends JFrame {
         JMenuItem runModelInLauncherItem = new JMenuItem(runModelFromLauncherAction);
         modelMenu.add(runModelInLauncherItem);
 
+        JMenuItem dsItem = new JMenuItem(outputDSAction);
+        dsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+        modelMenu.add(dsItem);
+
         JMenuItem jadeItem = new JMenuItem(explorerAction);
-        jadeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+        jadeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, ActionEvent.CTRL_MASK));
         modelMenu.add(jadeItem);
 
         JMenuItem browserItem = new JMenuItem(browserAction);

@@ -223,7 +223,9 @@ public class ListInput extends JPanel {
         getListbox().setEnabled(enabled);
         addButton.setEnabled(enabled);
         removeButton.setEnabled(enabled);
-        editButton.setEnabled(enabled);
+        if (editButton != null) {
+            editButton.setEnabled(enabled);
+        }
         if (upButton != null) {
             upButton.setEnabled(enabled);
         }
