@@ -43,6 +43,7 @@ public class ListInput extends JPanel {
     private JButton addButton, removeButton, upButton, downButton, editButton;
     protected JScrollPane scrollPane;
     protected ListData listData = new ListData();
+    protected MouseListener editListener;
 
     public ListInput() {
         this(true);
@@ -63,7 +64,7 @@ public class ListInput extends JPanel {
         listbox = new JList(listData.getValue());
         listbox.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        listbox.addMouseListener(new MouseListener() {
+        editListener = new MouseListener() {
 
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() > 1) {
@@ -82,7 +83,8 @@ public class ListInput extends JPanel {
 
             public void mouseExited(MouseEvent e) {
             }
-        });
+        };
+        listbox.addMouseListener(editListener);
 
         // add the listbox to a scrolling pane
         scrollPane = new JScrollPane();

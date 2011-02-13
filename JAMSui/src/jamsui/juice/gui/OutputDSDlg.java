@@ -43,15 +43,18 @@ import jams.meta.ContextDescriptor;
 import jams.meta.ModelDescriptor;
 import jams.meta.OutputDSDescriptor;
 import jams.meta.OutputDSDescriptor.FilterDescriptor;
+import jams.tools.StringTools;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -73,6 +76,7 @@ public class OutputDSDlg extends JDialog {
 
     public OutputDSDlg(Frame owner) {
         super(owner);
+        setTitle("Datastore editor");
         setLocationRelativeTo(owner);
         setModal(false);
         setResizable(false);
@@ -82,7 +86,7 @@ public class OutputDSDlg extends JDialog {
 
         JPanel contentPanel = new JPanel();
         getContentPane().add(contentPanel, BorderLayout.CENTER);
-        contentPanel.setBorder(BorderFactory.createTitledBorder("Datastore detail"));
+        contentPanel.setBorder(BorderFactory.createTitledBorder("Datastore details"));
         GridBagLayout mainLayout = new GridBagLayout();
         contentPanel.setLayout(mainLayout);
 
@@ -169,7 +173,7 @@ public class OutputDSDlg extends JDialog {
     class FilterListInput extends ListInput {
 
         private OutputDSDescriptor ods;
-        private NewDSDlg newDSDlg;
+        private DSDlg newDSDlg;
 
         public FilterListInput() {
             super(false);
@@ -194,7 +198,7 @@ public class OutputDSDlg extends JDialog {
         protected void addItem() {
 
             if (newDSDlg == null) {
-                newDSDlg = new NewDSDlg(OutputDSDlg.this, "Filter details", true);
+                newDSDlg = new DSDlg(OutputDSDlg.this, "Add filter", true, false);
             }
 
             view = JUICE.getJuiceFrame().getCurrentView();
@@ -209,10 +213,24 @@ public class OutputDSDlg extends JDialog {
             }
 
             // display the dialog
-            newDSDlg.setVisible(true, contextList);
+            newDSDlg.update(contextList);
+            newDSDlg.setVisible(true);
+
 
             // Get the text field value
-            if (newDSDlg.getResult() == NewDSDlg.RESULT_OK) {
+            if (newDSDlg.getResult() == DSDlg.RESULT_OK) {
+
+                if (StringTools.isEmptyString(newDSDlg.getDsName())) {
+                    GUIHelper.showErrorDlg(this, "Filter expression must not be empty!", "Error creating new filter");
+                    addItem();
+                    return;
+                }
+
+                if (newDSDlg.getValue().length < 1) {
+                    GUIHelper.showErrorDlg(this, "You must choose a context!", "Error creating new filter");
+                    addItem();
+                    return;
+                }
 
                 ContextDescriptor context = (ContextDescriptor) newDSDlg.getValue()[0];
 
@@ -231,6 +249,13 @@ public class OutputDSDlg extends JDialog {
 
                 String value = GUIHelper.showInputDlg(FilterListInput.this, null, JAMS.resources.getString("New_value"), f.expression);
                 if (value != null) {
+
+                    if (StringTools.isEmptyString(value)) {
+                        GUIHelper.showErrorDlg(this, "Filter expression must not be empty!", "Error creating new filter");
+                        editItem();
+                        return;
+                    }
+
                     f.expression = value;
                     scrollPane.revalidate();
                     scrollPane.repaint();
@@ -259,10 +284,12 @@ public class OutputDSDlg extends JDialog {
     class AttributeListInput extends ListInput {
 
         private OutputDSDescriptor ods;
-        private NewDSDlg newDSDlg;
+        private DSDlg newDSDlg;
 
         public AttributeListInput() {
             super(false, false);
+            getListbox().removeMouseListener(editListener);
+            this.getListbox().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         }
 
         public void setValue(OutputDSDescriptor ods) {
@@ -292,45 +319,29 @@ public class OutputDSDlg extends JDialog {
         }
 
         protected void addItem() {
-//            // Get the text field value
-//            String stringValue = GUIHelper.showInputDlg(AttributeListInput.this, null, JAMS.resources.getString("New_value"), null);
-//
-//            // add this item to the list and refresh
-//            if (stringValue != null && !listData.getValue().contains(stringValue)) {
-//
-//                ContextDescriptor context = ods.getContext();
-//                ContextAttribute ca = context.getDynamicAttributes().get(stringValue);
-//
-//                if (ca == null) {
-//                    GUIHelper.showErrorDlg(this, MessageFormat.format("Could not find attribute with name \"{0}\"", stringValue), JAMS.resources.getString("ERROR"));
-//                    return;
-//                }
-//
-//                if (!ods.getContextAttributes().contains(ca)) {
-//                    ods.getContextAttributes().add(ca);
-//                }
-//
-//                setValue(ods);
-//            }
 
             if (newDSDlg == null) {
-                newDSDlg = new NewDSDlg(OutputDSDlg.this, "Datastore details", false);
+                newDSDlg = new DSDlg(OutputDSDlg.this, "Add attributes", false, false);
             }
-
 
             HashMap<String, ContextAttribute> caMap = ods.getContext().getDynamicAttributes();
 
             // create a list containing all contexts of this model
             ArrayList<Object> caList = new ArrayList<Object>();
+            Vector<Object> ld = getListData();
             for (ContextAttribute ca : caMap.values()) {
-                caList.add(ca);
+                if (!ld.contains(ca)) {
+                    caList.add(ca);
+                }
             }
 
             // display the dialog
-            newDSDlg.setVisible(true, caList);
+            newDSDlg.update(caList);
+            newDSDlg.setVisible(true);
+
 
             // Get the text field value
-            if (newDSDlg.getResult() == NewDSDlg.RESULT_OK) {
+            if (newDSDlg.getResult() == DSDlg.RESULT_OK) {
 
                 Object[] attributes = newDSDlg.getValue();
 
@@ -354,10 +365,13 @@ public class OutputDSDlg extends JDialog {
         protected void removeItem() {
             //get the current selection
             int selection = getListbox().getSelectedIndex();
-            ContextAttribute value = (ContextAttribute) getListbox().getSelectedValue();
-            if (value != null) {
+            Object[] values = getListbox().getSelectedValues();
 
-                ods.getContextAttributes().remove(value);
+            if (values.length > 0) {
+
+                for (int i = 0; i < values.length; i++) {
+                    ods.getContextAttributes().remove((ContextAttribute) values[i]);
+                }
                 setValue(ods);
 
                 //select the next item
@@ -372,7 +386,7 @@ public class OutputDSDlg extends JDialog {
     class DSListInput extends ListInput {
 
         private ModelDescriptor md;
-        private NewDSDlg newDSDlg;
+        private DSDlg newDSDlg, editDSDlg;
 
         public DSListInput() {
             super(false);
@@ -408,7 +422,7 @@ public class OutputDSDlg extends JDialog {
         protected void addItem() {
 
             if (newDSDlg == null) {
-                newDSDlg = new NewDSDlg(OutputDSDlg.this, "Datastore details", true);
+                newDSDlg = new DSDlg(OutputDSDlg.this, "Add datastore", true, true);
             }
 
             view = JUICE.getJuiceFrame().getCurrentView();
@@ -423,15 +437,29 @@ public class OutputDSDlg extends JDialog {
             }
 
             // display the dialog
-            newDSDlg.setVisible(true, contextList);
+            newDSDlg.update(contextList);
+            newDSDlg.setVisible(true);
 
             // Get the text field value
-            if (newDSDlg.getResult() == NewDSDlg.RESULT_OK) {
+            if (newDSDlg.getResult() == DSDlg.RESULT_OK) {
+
+                if (StringTools.isEmptyString(newDSDlg.getDsName())) {
+                    GUIHelper.showErrorDlg(this, "Datastore name must not be empty!", "Error creating new datastore");
+                    addItem();
+                    return;
+                }
+
+                if (newDSDlg.getValue().length < 1) {
+                    GUIHelper.showErrorDlg(this, "You must choose a context!", "Error creating new datastore");
+                    addItem();
+                    return;
+                }
 
                 ContextDescriptor context = (ContextDescriptor) newDSDlg.getValue()[0];
 
                 OutputDSDescriptor ods = new OutputDSDescriptor(context);
                 ods.setName(newDSDlg.getDsName());
+                ods.setEnabled(newDSDlg.isDsEnabled());
 
                 md.addOutputDataStore(ods);
 
@@ -445,9 +473,24 @@ public class OutputDSDlg extends JDialog {
             if (selection >= 0) {
                 // edit this item
                 OutputDSDescriptor ods = (OutputDSDescriptor) listData.getElementAt(selection);
-                String value = GUIHelper.showInputDlg(DSListInput.this, null, JAMS.resources.getString("New_value"), ods.getName());
-                if (value != null) {
-                    ods.setName(value);
+
+                if (editDSDlg == null) {
+                    editDSDlg = new DSDlg(OutputDSDlg.this, "Edit datastore", true, true, false);
+                }
+
+                editDSDlg.update(ods);
+                editDSDlg.setVisible(true);
+
+                if (editDSDlg.getResult() == DSDlg.RESULT_OK) {
+
+                    if (StringTools.isEmptyString(editDSDlg.getDsName())) {
+                        GUIHelper.showErrorDlg(this, "Datastore name must not be empty!", "Error creating new datastore");
+                        editItem();
+                        return;
+                    }
+
+                    ods.setName(editDSDlg.getDsName());
+                    ods.setEnabled(editDSDlg.isDsEnabled());
                     scrollPane.revalidate();
                     scrollPane.repaint();
                 }
@@ -472,16 +515,19 @@ public class OutputDSDlg extends JDialog {
         }
     }
 
-    class NewDSDlg extends JDialog {
+    class DSDlg extends JDialog {
 
-        private JTextField nameText = new JTextField();
+        private JTextField nameText;
         private JList objectList = new JList();
         public static final int RESULT_OK = 1, RESULT_CANCEL = 0;
         private int result = RESULT_CANCEL;
-        private String dsName;
-        private Object[] value;
+        private JCheckBox enableBox;
 
-        public NewDSDlg(Dialog owner, String title, boolean showTextField) {
+        public DSDlg(Dialog owner, String title, boolean showTextField, boolean showEnabledBox) {
+            this(owner, title, showTextField, showEnabledBox, true);
+        }
+
+        public DSDlg(Dialog owner, String title, boolean showTextField, boolean showEnabledBox, boolean showList) {
             super(owner);
             setLocationRelativeTo(owner);
             setModal(true);
@@ -496,6 +542,14 @@ public class OutputDSDlg extends JDialog {
             GridBagLayout mainLayout = new GridBagLayout();
             contentPanel.setLayout(mainLayout);
 
+            enableBox = new JCheckBox("Enabled");
+            if (showEnabledBox) {
+                GUIHelper.addGBComponent(contentPanel, mainLayout, enableBox, 1, 40, 1, 1, 0, 0);
+            }
+
+            nameText = new JTextField();
+            nameText.setPreferredSize(new Dimension(200, 20));
+
             String listLabel;
             if (showTextField) {
                 GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel("Name"), 1, 0, 1, 1, 0, 0);
@@ -507,19 +561,24 @@ public class OutputDSDlg extends JDialog {
                 listLabel = "Attribute";
             }
 
-            JScrollPane listScroll = new JScrollPane(objectList);
-            listScroll.setPreferredSize(new Dimension(200, 300));
+            if (showList) {
+                JScrollPane listScroll = new JScrollPane(objectList);
 
-            GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(listLabel), 1, 20, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(contentPanel, mainLayout, listScroll, 1, 30, 1, 1, 0, 0);
+                if (showTextField) {
+                    listScroll.setPreferredSize(new Dimension(200, 200));
+                } else {
+                    listScroll.setPreferredSize(new Dimension(200, 400));
+                }
+
+                GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(listLabel), 1, 20, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(contentPanel, mainLayout, listScroll, 1, 30, 1, 1, 0, 0);
+            }
 
             JButton okButton = new JButton("OK");
             okButton.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
                     result = RESULT_OK;
-                    dsName = nameText.getText();
-                    value = objectList.getSelectedValues();
                     setVisible(false);
                 }
             });
@@ -529,8 +588,6 @@ public class OutputDSDlg extends JDialog {
 
                 public void actionPerformed(ActionEvent e) {
                     result = RESULT_CANCEL;
-                    dsName = null;
-                    value = null;
                     setVisible(false);
                 }
             });
@@ -543,26 +600,30 @@ public class OutputDSDlg extends JDialog {
             this.pack();
         }
 
-        public void setVisible(boolean isVisible, ArrayList<Object> values) {
+        public void update(OutputDSDescriptor ods) {
+            this.nameText.setText(ods.getName());
+            this.nameText.requestFocus();
+            this.enableBox.setSelected(ods.isEnabled());
+        }
 
-            if (isVisible) {
+        public void update(ArrayList<Object> values) {
 
-                this.nameText.setText("");
-                this.nameText.requestFocus();
+            this.nameText.setText("");
+            this.nameText.requestFocus();
+            this.enableBox.setSelected(false);
 
-                // sort the context list
-                Collections.sort(values, new Comparator<Object>() {
+            // sort the context list
+            Collections.sort(values, new Comparator<Object>() {
 
-                    @Override
-                    public int compare(Object a1, Object a2) {
-                        return a1.toString().compareTo(a2.toString());
-                    }
-                });
+                @Override
+                public int compare(Object a1, Object a2) {
+                    return a1.toString().compareTo(a2.toString());
+                }
+            });
 
-                this.objectList.setModel(new DefaultComboBoxModel(values.toArray(new Object[values.size()])));
-            }
+            this.objectList.setModel(new DefaultComboBoxModel(values.toArray(new Object[values.size()])));
+
             pack();
-            super.setVisible(isVisible);
 
         }
 
@@ -573,18 +634,16 @@ public class OutputDSDlg extends JDialog {
             return result;
         }
 
-        /**
-         * @return the dsName
-         */
         public String getDsName() {
-            return dsName;
+            return nameText.getText();
         }
 
-        /**
-         * @return the contextName
-         */
+        public boolean isDsEnabled() {
+            return enableBox.isSelected();
+        }
+
         public Object[] getValue() {
-            return value;
+            return objectList.getSelectedValues();
         }
     }
 }

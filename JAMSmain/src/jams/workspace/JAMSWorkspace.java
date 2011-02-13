@@ -586,8 +586,12 @@ public class JAMSWorkspace implements Workspace {
         //clear old map and add pre-registered output datastores
         outputDataStores.clear();
         for (String storeID : registeredOutputDataStores.keySet()) {
-            outputDataStores.put(storeID, registeredOutputDataStores.get(storeID));
-            this.getRuntime().println(JAMS.resources.getString("Added_output_store_") + storeID + JAMS.resources.getString("_from_") + "XML", JAMS.VERBOSE);
+
+            Document doc = registeredOutputDataStores.get(storeID);
+            if (isEnabledOutputDS(doc)) {
+                outputDataStores.put(storeID, doc);
+                this.getRuntime().println(JAMS.resources.getString("Added_output_store_") + storeID + JAMS.resources.getString("_from_") + "XML", JAMS.VERBOSE);
+            }
         }
 
         //add output datastores from file system
@@ -597,9 +601,12 @@ public class JAMSWorkspace implements Workspace {
 
                 String storeID = getStoreID(child);
                 if (!outputDataStores.containsKey(storeID)) {
+
                     Document doc = XMLTools.getDocument(child.getAbsolutePath());
-                    outputDataStores.put(storeID, doc);
-                    this.getRuntime().println(JAMS.resources.getString("Added_output_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
+                    if (isEnabledOutputDS(doc)) {
+                        outputDataStores.put(storeID, doc);
+                        this.getRuntime().println(JAMS.resources.getString("Added_output_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
+                    }
                 }
 
             } catch (FileNotFoundException fnfe) {
@@ -615,6 +622,16 @@ public class JAMSWorkspace implements Workspace {
                 contextStores.put(contextName, stores);
             }
             stores.add(storeID);
+        }
+    }
+
+    private boolean isEnabledOutputDS(Document doc) {
+
+        Element root = doc.getDocumentElement();
+        if (root.getAttribute("enabled").equals(Boolean.toString(true))) {
+            return true;
+        } else {
+            return false;
         }
     }
 

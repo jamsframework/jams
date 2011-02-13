@@ -607,6 +607,7 @@ public class JUICEFrame extends JFrame {
         modelMenu.add(runModelInLauncherItem);
 
         JMenuItem dsItem = new JMenuItem(outputDSAction);
+        outputDSAction.setEnabled(false);
         dsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         modelMenu.add(dsItem);
 
@@ -714,10 +715,12 @@ public class JUICEFrame extends JFrame {
                 if (ModelView.viewList.getViewList().size() > 0) {
                     JUICEFrame.this.modelMenu.setEnabled(true);
                     JUICEFrame.this.saveModelAction.setEnabled(true);
+                    JUICEFrame.this.outputDSAction.setEnabled(true);
                     JUICEFrame.this.saveAsModelAction.setEnabled(true);
                     JUICEFrame.this.OptimizationWizardGUIAction.setEnabled(true);
                 } else {
                     JUICEFrame.this.modelMenu.setEnabled(false);
+                    JUICEFrame.this.outputDSAction.setEnabled(false);
                     JUICEFrame.this.saveModelAction.setEnabled(false);
                     JUICEFrame.this.saveAsModelAction.setEnabled(false);
                 }

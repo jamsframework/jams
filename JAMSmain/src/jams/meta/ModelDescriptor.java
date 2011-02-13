@@ -110,8 +110,10 @@ public class ModelDescriptor extends ComponentCollection {
 
                 ContextDescriptor context = (ContextDescriptor) getComponentDescriptor(e.getAttribute("context"));
                 String name = e.getAttribute("name");
+                boolean enabled = Boolean.parseBoolean(e.getAttribute("enabled"));
                 OutputDSDescriptor od = new OutputDSDescriptor(context);
                 od.setName(name);
+                od.setEnabled(enabled);
 
                 // fill the contextAttributes
                 ArrayList<ContextAttribute> contextAttributes = od.getContextAttributes();

@@ -36,6 +36,7 @@ public class OutputDSDescriptor {
 
     private ContextDescriptor context;
     private String name;
+    private boolean enabled = true;
     private ArrayList<ContextAttribute> contextAttributes = new ArrayList<ContextAttribute>();
     private ArrayList<FilterDescriptor> filters = new ArrayList<FilterDescriptor>();
 
@@ -52,6 +53,7 @@ public class OutputDSDescriptor {
         Element dsElement = (Element) document.createElement("outputdatastore");
         dsElement.setAttribute("context", this.context.getName());
         dsElement.setAttribute("name", this.getName());
+        dsElement.setAttribute("enabled", Boolean.toString(this.enabled));
         dsElement.appendChild(document.createTextNode("\n"));
 
         for (FilterDescriptor f : filters) {
@@ -113,7 +115,13 @@ public class OutputDSDescriptor {
 
     @Override
     public String toString() {
-        return name + " [" + context.getName() + "]";
+        char enabledChar;
+        if (this.isEnabled()) {
+            enabledChar = Character.toChars(9746)[0];//9745
+        } else {
+            enabledChar = Character.toChars(9744)[0];
+        }
+        return enabledChar + " " + name + " [" + context.getName() + "]";
     }
 
     public FilterDescriptor addFilter(ContextDescriptor context, String expression) {
@@ -126,6 +134,20 @@ public class OutputDSDescriptor {
 
     public void removeFilter(FilterDescriptor f) {
         filters.remove(f);
+    }
+
+    /**
+     * @return the enabled
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * @param enabled the enabled to set
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public class FilterDescriptor {
