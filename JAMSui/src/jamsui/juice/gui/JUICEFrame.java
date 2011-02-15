@@ -502,16 +502,10 @@ public class JUICEFrame extends JFrame {
         modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         toolBar.add(modelRunButton);
 
-        JButton modelGUIRunButton = new JButton(runModelFromLauncherAction);
-        modelGUIRunButton.setText("");
-        modelGUIRunButton.setToolTipText(JAMS.i18n("Run_model_from_JAMS_Launcher"));
-        modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
-        toolBar.add(modelGUIRunButton);
-
         JButton outputDSButton = new JButton(outputDSAction);
         outputDSButton.setText("");
         outputDSButton.setToolTipText(JAMS.i18n("Model_output"));
-        outputDSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/DataOutput2.png")));
+        outputDSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/DataOutput3.png")));
         toolBar.add(outputDSButton);
 
         JButton explorerButton = new JButton(explorerAction);
@@ -520,6 +514,14 @@ public class JUICEFrame extends JFrame {
         explorerButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Layers_small.png")));
 //        explorerButton.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/images/Layers.png")).getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
         toolBar.add(explorerButton);
+
+        toolBar.addSeparator();
+        
+        JButton modelGUIRunButton = new JButton(runModelFromLauncherAction);
+        modelGUIRunButton.setText("");
+        modelGUIRunButton.setToolTipText(JAMS.i18n("Run_model_from_JAMS_Launcher"));
+        modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
+        toolBar.add(modelGUIRunButton);
 
         JButton copyGUIButton = new JButton(copyModelGUIAction);
         copyGUIButton.setText("");
@@ -643,10 +645,6 @@ public class JUICEFrame extends JFrame {
         runModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         modelMenu.add(runModelItem);
 
-        JMenuItem runModelInLauncherItem = new JMenuItem(runModelFromLauncherAction);
-        runModelFromLauncherAction.setEnabled(false);
-        modelMenu.add(runModelInLauncherItem);
-
         JMenuItem dsItem = new JMenuItem(outputDSAction);
         outputDSAction.setEnabled(false);
         dsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
@@ -672,6 +670,10 @@ public class JUICEFrame extends JFrame {
         modelMenu.add(saveModelParamItem);
 
         modelMenu.add(new JSeparator());
+
+        JMenuItem runModelInLauncherItem = new JMenuItem(runModelFromLauncherAction);
+        runModelFromLauncherAction.setEnabled(false);
+        modelMenu.add(runModelInLauncherItem);
 
         JMenuItem copyModelParameterItem = new JMenuItem(copyModelGUIAction);
         copyModelGUIAction.setEnabled(false);
