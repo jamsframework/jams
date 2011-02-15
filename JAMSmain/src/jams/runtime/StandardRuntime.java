@@ -115,9 +115,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             user = System.getProperty("user.name");
         }
 
-        this.println(JAMS.resources.getString("JAMS_version") + JAMSVersion.getInstance().getVersionDateString(), JAMS.STANDARD);
-        this.println(JAMS.resources.getString("User_name_:") + user, JAMS.STANDARD);
-        this.println(JAMS.resources.getString("Date_time") + new SimpleDateFormat().format(new Date()), JAMS.STANDARD);
+        this.println(JAMS.i18n("JAMS_version") + JAMSVersion.getInstance().getVersionDateString(), JAMS.STANDARD);
+        this.println(JAMS.i18n("User_name_:") + user, JAMS.STANDARD);
+        this.println(JAMS.i18n("Date_time") + new SimpleDateFormat().format(new Date()), JAMS.STANDARD);
         this.println("", JAMS.STANDARD);
 
 
@@ -129,8 +129,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         // load the libraries and create the class loader
 
-        this.println(JAMS.resources.getString("Creating_class_loader"), JAMS.STANDARD);
-        this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
+        this.println(JAMS.i18n("Creating_class_loader"), JAMS.STANDARD);
+        this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
 
         classLoader = JAMSClassLoader.createClassLoader(libs, this);
 
@@ -147,7 +147,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         // load the model
         this.println("", JAMS.STANDARD);
-        this.println(JAMS.resources.getString("Loading_Model"), JAMS.STANDARD);
+        this.println(JAMS.i18n("Loading_Model"), JAMS.STANDARD);
 
         ModelLoader modelLoader = new ModelLoader(null, this);
 
@@ -192,9 +192,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
 
         long end = System.currentTimeMillis();
-        this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
-        this.println(JAMS.resources.getString("JAMS_model_setup_time:_") + (end - start) + " ms", JAMS.STANDARD);
-        this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
+        this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
+        this.println(JAMS.i18n("JAMS_model_setup_time:_") + (end - start) + " ms", JAMS.STANDARD);
+        this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
 
 //        classLoader = null;
 //        Runtime.getRuntime().gc();
@@ -241,8 +241,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
                 @Override
                 public void update(Observable obs, Object obj) {
 
-                    Object[] options = {JAMS.resources.getString("OK"), JAMS.resources.getString("OK,_skip_other_messages")};
-                    int result = JOptionPane.showOptionDialog(frame, obj.toString(), JAMS.resources.getString("Model_execution_error"),
+                    Object[] options = {JAMS.i18n("OK"), JAMS.i18n("OK,_skip_other_messages")};
+                    int result = JOptionPane.showOptionDialog(frame, obj.toString(), JAMS.i18n("Model_execution_error"),
                             JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 
                     if (result == 1) {
@@ -339,7 +339,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         // prepare the model's workspace
         try {
             if (model.getWorkspace()==null){
-                this.sendHalt(JAMS.resources.getString("no_workspace_defined_did_you_save_your_model"));
+                this.sendHalt(JAMS.i18n("no_workspace_defined_did_you_save_your_model"));
             }else
                 model.getWorkspace().init();
         } catch (InvalidWorkspaceException iwe) {
@@ -398,14 +398,14 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
 
         if (this.getState() != JAMSRuntime.STATE_PAUSE) {
-            this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
-            this.println(JAMS.resources.getString("JAMS_model_execution_time:_") + (executionTime) + " ms", JAMS.STANDARD);
-            this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
+            this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
+            this.println(JAMS.i18n("JAMS_model_execution_time:_") + (executionTime) + " ms", JAMS.STANDARD);
+            this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
             this.sendHalt();
         } else {
-            this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
-            this.println(JAMS.resources.getString("JAMS_model_execution_paused"), JAMS.STANDARD);
-            this.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
+            this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
+            this.println(JAMS.i18n("JAMS_model_execution_paused"), JAMS.STANDARD);
+            this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
         }
     }
 
@@ -434,8 +434,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
                 try {
                     tabbedPane.addTab(comp.getInstanceName(), comp.getPanel());
                 } catch (Throwable t) {
-                    this.sendErrorMsg(JAMS.resources.getString("Could_not_load_component") + comp.getInstanceName()
-                            + JAMS.resources.getString("Proceed_anyway?"));
+                    this.sendErrorMsg(JAMS.i18n("Could_not_load_component") + comp.getInstanceName()
+                            + JAMS.i18n("Proceed_anyway?"));
                     this.handle(t, true);
                 }
             }
@@ -453,7 +453,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 //        toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
         stopButton = new JButton();
-        stopButton.setToolTipText(JAMS.resources.getString("Stop_model"));
+        stopButton.setToolTipText(JAMS.i18n("Stop_model"));
         stopButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelStop.png")));
         stopButton.setEnabled(true);
         stopButton.addActionListener(new ActionListener() {
@@ -468,7 +468,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         toolBar.add(stopButton);
 
         pauseButton = new JButton();
-        pauseButton.setToolTipText(JAMS.resources.getString("Pause_model"));
+        pauseButton.setToolTipText(JAMS.i18n("Pause_model"));
         pauseButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelPause.png")));
         pauseButton.setEnabled(true);
         pauseButton.addActionListener(new ActionListener() {
@@ -503,7 +503,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         toolBar.add(pauseButton);
 
         saveButton = new JButton();
-        saveButton.setToolTipText(JAMS.resources.getString("Pause_model"));
+        saveButton.setToolTipText(JAMS.i18n("Pause_model"));
         saveButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelSave.png")));
         saveButton.setEnabled(false);
         saveButton.addActionListener(new ActionListener() {
@@ -521,7 +521,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
                         @Override
                         public String getDescription() {
-                            return JAMS.resources.getString("Serialization_(ser)");
+                            return JAMS.i18n("Serialization_(ser)");
                         }
                     });
 
@@ -533,7 +533,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
                                     StandardRuntime.this.getModel());
                             state.writeToFile(file);
                         } catch (IOException e) {
-                            sendErrorMsg(JAMS.resources.getString("Unable_to_save_model_state_because,") + e.toString());
+                            sendErrorMsg(JAMS.i18n("Unable_to_save_model_state_because,") + e.toString());
                             handle(e, true);
                         }
                     }
@@ -543,7 +543,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         toolBar.add(saveButton);
 
         closeButton = new JButton();
-        closeButton.setToolTipText(JAMS.resources.getString("Close_window"));
+        closeButton.setToolTipText(JAMS.i18n("Close_window"));
         closeButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Shutdown.png")));
         closeButton.setEnabled(false);
         closeButton.addActionListener(new ActionListener() {
@@ -635,7 +635,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         String message = "";
 
         if (cName != null) {
-            message += JAMS.resources.getString("Exception_occured_in_component_") + cName + "!\n";
+            message += JAMS.i18n("Exception_occured_in_component_") + cName + "!\n";
         }
 
         message += t.toString();
@@ -690,12 +690,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     @Override
     public void sendErrorMsg(String str) {
-        errorLog.print(JAMS.resources.getString("ERROR") + ": " + str + "\n");
+        errorLog.print(JAMS.i18n("ERROR") + ": " + str + "\n");
     }
 
     @Override
     public void sendInfoMsg(String str) {
-        infoLog.print(JAMS.resources.getString("INFO") + getCallerID() + ": " + str + "\n");
+        infoLog.print(JAMS.i18n("INFO") + getCallerID() + ": " + str + "\n");
     }
 
     @Override

@@ -89,9 +89,9 @@ public class ContextAttributeDlg extends JDialog {
         mainPanel.setLayout(mainLayout);
 
         GUIHelper.addGBComponent(mainPanel, mainLayout, new JPanel(), 0, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JAMS.resources.getString("Name:")), 0, 1, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JAMS.resources.getString("Type:")), 0, 2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JAMS.resources.getString("Value:")), 0, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JAMS.i18n("Name:")), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JAMS.i18n("Type:")), 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JAMS.i18n("Value:")), 0, 3, 1, 1, 0, 0);
 
         nameText = new JTextField();
         nameText.setColumns(40);
@@ -127,7 +127,7 @@ public class ContextAttributeDlg extends JDialog {
 
         JPanel buttonPanel = new JPanel();
 
-        JButton okButton = new JButton(JAMS.resources.getString("OK"));
+        JButton okButton = new JButton(JAMS.i18n("OK"));
         okButton.addActionListener(new ActionListener() {
 
             @Override
@@ -135,7 +135,7 @@ public class ContextAttributeDlg extends JDialog {
 
                 if (!valueInput.verify()) {
                     valueInput.setMarked(true);
-                    GUIHelper.showErrorDlg(ContextAttributeDlg.this, JAMS.resources.getString("Invalid_value!"), JAMS.resources.getString("Format_error"));
+                    GUIHelper.showErrorDlg(ContextAttributeDlg.this, JAMS.i18n("Invalid_value!"), JAMS.i18n("Format_error"));
                     valueInput.setMarked(false);
                     return;
                 }
@@ -146,7 +146,7 @@ public class ContextAttributeDlg extends JDialog {
         buttonPanel.add(okButton);
         getRootPane().setDefaultButton(okButton);
 
-        JButton cancelButton = new JButton(JAMS.resources.getString("Cancel"));
+        JButton cancelButton = new JButton(JAMS.i18n("Cancel"));
         ActionListener cancelActionListener = new ActionListener() {
 
             @Override
@@ -182,7 +182,7 @@ public class ContextAttributeDlg extends JDialog {
 
     public void show(String name, Class type, String value) {
 
-        this.setTitle(JAMS.resources.getString("Attribute:_") + name);
+        this.setTitle(JAMS.i18n("Attribute:_") + name);
         updateInputComponent(type, false);
         this.valueInput.setValue(value);
         this.typeCombo.setSelectedItem(type.getSimpleName());

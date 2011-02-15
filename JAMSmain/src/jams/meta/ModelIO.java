@@ -62,7 +62,7 @@ public class ModelIO {
     public ModelDescriptor createModel() throws JAMSException {
 
         ModelDescriptor md = new ModelDescriptor();
-        ContextDescriptor cd = new ContextDescriptor(JAMS.resources.getString("New_Model"), modelClazz, md);
+        ContextDescriptor cd = new ContextDescriptor(JAMS.i18n("New_Model"), modelClazz, md);
         ModelNode rootNode = nodeFactory.createNode(cd);
         rootNode.setType(ModelNode.MODEL_TYPE);
         md.setRootNode(rootNode);
@@ -126,9 +126,9 @@ public class ModelIO {
                 try {
                     rootNode.add(getSubTree(element, md));
                 } catch (ModelLoadException mle) {
-                    throw new JAMSException(JAMS.resources.getString("Could_not_load_component_")
+                    throw new JAMSException(JAMS.i18n("Could_not_load_component_")
                             + mle.getComponentName() + "\" (" + mle.getClassName() + "). "
-                            + JAMS.resources.getString("Please_fix_the_model_definition_file!"), JAMS.resources.getString("Error_loading_model"));
+                            + JAMS.i18n("Please_fix_the_model_definition_file!"), JAMS.i18n("Error_loading_model"));
                 }
 
             } else if (node.getNodeName().equals("attribute")) {
@@ -237,8 +237,8 @@ public class ModelIO {
         ComponentField field = cd.getComponentFields().get(fieldName);
 
         if (field == null) {
-            throw new JAMSException(JAMS.resources.getString("Error_while_loading_component_") + cd.getName()
-                    + JAMS.resources.getString("_component_attribute_") + fieldName + JAMS.resources.getString("_does_not_exist!"), JAMS.resources.getString("Model_loading_error"));
+            throw new JAMSException(JAMS.i18n("Error_while_loading_component_") + cd.getName()
+                    + JAMS.i18n("_component_attribute_") + fieldName + JAMS.i18n("_does_not_exist!"), JAMS.i18n("Model_loading_error"));
         }
 
         if (e.hasAttribute("attribute")) {
@@ -250,8 +250,8 @@ public class ModelIO {
 
             ContextDescriptor context = (ContextDescriptor) md.getComponentDescriptor(contextName);
             if (context == null) {
-                throw new JAMSException(JAMS.resources.getString("Error_while_loading_component_") + cd.getName()
-                        + JAMS.resources.getString("_context_") + contextName + JAMS.resources.getString("_does_not_exist!"), JAMS.resources.getString("Model_loading_error"));
+                throw new JAMSException(JAMS.i18n("Error_while_loading_component_") + cd.getName()
+                        + JAMS.i18n("_context_") + contextName + JAMS.i18n("_does_not_exist!"), JAMS.i18n("Model_loading_error"));
             }
 
             String attribute = e.getAttribute("attribute");
@@ -284,7 +284,7 @@ public class ModelIO {
             type = Class.forName(typeName);
         } catch (ClassNotFoundException ex) {
             throw new JAMSException("Given type " + typeName + " for context attribute "
-                    + attribute + " in context " + cd.getName() + " does not exist!", JAMS.resources.getString("Model_loading_error"));
+                    + attribute + " in context " + cd.getName() + " does not exist!", JAMS.i18n("Model_loading_error"));
         }
 
         // workaround for models that use the "old" API, i.e. JAMSData

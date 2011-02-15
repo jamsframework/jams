@@ -76,8 +76,8 @@ public class JAMSFrame extends JAMSLauncher {
     private JFileChooser jfcProps, jfcSer, jfcModel, jfcParam;
     private JDialog rtManagerDlg;
     private PropertyDlg propertyDlg;
-    private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Info_Log"));
-    private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Error_Log"));
+    private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Info_Log"));
+    private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Error_Log"));
     private String modelFilename;
     private Action editPrefsAction, loadPrefsAction, savePrefsAction,
             loadModelAction, saveModelAction, saveAsModelAction, exitAction,
@@ -109,7 +109,7 @@ public class JAMSFrame extends JAMSLauncher {
             //check if file exists
             File file = new File(fileName);
             if (!file.exists()) {
-                GUIHelper.showErrorDlg(this, JAMS.resources.getString("Model_file_") + fileName + JAMS.resources.getString("_could_not_be_found!"), JAMS.resources.getString("File_Open_Error"));
+                GUIHelper.showErrorDlg(this, JAMS.i18n("Model_file_") + fileName + JAMS.i18n("_could_not_be_found!"), JAMS.i18n("File_Open_Error"));
                 return;
             } else {
                 loadPath = file;
@@ -120,7 +120,7 @@ public class JAMSFrame extends JAMSLauncher {
             if (!newFilename.equalsIgnoreCase(fileName)) {
                 fileName = newFilename;
                 GUIHelper.showInfoDlg(JAMSFrame.this,
-                        JAMS.resources.getString("The_model_definition_in_") + fileName + JAMS.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newFilename + JAMS.resources.getString("_while_your_original_file_was_left_untouched."), JAMS.resources.getString("Info"));
+                        JAMS.i18n("The_model_definition_in_") + fileName + JAMS.i18n("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newFilename + JAMS.i18n("_while_your_original_file_was_left_untouched."), JAMS.i18n("Info"));
             }
 
             // create string from input model definition file and replace "%x" occurences by cmd line data
@@ -136,13 +136,13 @@ public class JAMSFrame extends JAMSLauncher {
             this.initialModelDocString = XMLTools.getStringFromDocument(this.modelDocument);
 
         } catch (IOException ioe) {
-            GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("The_specified_model_configuration_file_") + fileName + JAMS.resources.getString("_could_not_be_found!"), JAMS.resources.getString("Error"));
+            GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.i18n("The_specified_model_configuration_file_") + fileName + JAMS.i18n("_could_not_be_found!"), JAMS.i18n("Error"));
         } catch (SAXException se) {
             if (se instanceof SAXParseException){
                 SAXParseException spe = (SAXParseException)se;
-                GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("The_specified_model_configuration_file_") + fileName + JAMS.resources.getString("_contains_errors!") + "\n[Fatal Error] :" + spe.getLineNumber() + ":" + spe.getColumnNumber() + ":"+ spe.getMessage(), JAMS.resources.getString("Error"));
+                GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.i18n("The_specified_model_configuration_file_") + fileName + JAMS.i18n("_contains_errors!") + "\n[Fatal Error] :" + spe.getLineNumber() + ":" + spe.getColumnNumber() + ":"+ spe.getMessage(), JAMS.i18n("Error"));
             }else
-                GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("The_specified_model_configuration_file_") + fileName + JAMS.resources.getString("_contains_errors!"), JAMS.resources.getString("Error"));
+                GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.i18n("The_specified_model_configuration_file_") + fileName + JAMS.i18n("_contains_errors!"), JAMS.i18n("Error"));
         }
 
         this.modelFilename = fileName;
@@ -166,7 +166,7 @@ public class JAMSFrame extends JAMSLauncher {
         getRunModelAction().setEnabled(false);
 
         // define some actions
-        editPrefsAction = new AbstractAction(JAMS.resources.getString("Edit_Preferences...")) {
+        editPrefsAction = new AbstractAction(JAMS.i18n("Edit_Preferences...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -178,7 +178,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        loadPrefsAction = new AbstractAction(JAMS.resources.getString("Load_Preferences...")) {
+        loadPrefsAction = new AbstractAction(JAMS.i18n("Load_Preferences...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -197,7 +197,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        savePrefsAction = new AbstractAction(JAMS.resources.getString("Save_Preferences...")) {
+        savePrefsAction = new AbstractAction(JAMS.i18n("Save_Preferences...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -216,7 +216,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        loadModelExecutionStateAction = new AbstractAction(JAMS.resources.getString("Resume_Model_Execution")) {
+        loadModelExecutionStateAction = new AbstractAction(JAMS.i18n("Resume_Model_Execution")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -236,15 +236,15 @@ public class JAMSFrame extends JAMSLauncher {
                         editModelAction.setEnabled(true);
                         getRunModelAction().setEnabled(true);
                     } catch (IOException ioe) {
-                        GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Could_not_resume_model_execution_because") + ioe, JAMS.resources.getString("Resume_error"));
+                        GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.i18n("Could_not_resume_model_execution_because") + ioe, JAMS.i18n("Resume_error"));
                     } catch (ClassNotFoundException cnfe) {
-                        GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Could_not_resume_model_execution_because") + cnfe, JAMS.resources.getString("Resume_error"));
+                        GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.i18n("Could_not_resume_model_execution_because") + cnfe, JAMS.i18n("Resume_error"));
                     }
                 }
             }
         };
 
-        loadModelAction = new AbstractAction(JAMS.resources.getString("Open_Model...")) {
+        loadModelAction = new AbstractAction(JAMS.i18n("Open_Model...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -261,7 +261,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        saveModelAction = new AbstractAction(JAMS.resources.getString("Save_Model")) {
+        saveModelAction = new AbstractAction(JAMS.i18n("Save_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -270,7 +270,7 @@ public class JAMSFrame extends JAMSLauncher {
         };
         saveModelAction.setEnabled(false);
 
-        saveAsModelAction = new AbstractAction(JAMS.resources.getString("Save_Model_As...")) {
+        saveAsModelAction = new AbstractAction(JAMS.i18n("Save_Model_As...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -287,7 +287,7 @@ public class JAMSFrame extends JAMSLauncher {
         };
         saveAsModelAction.setEnabled(false);
 
-        editModelAction = new AbstractAction(JAMS.resources.getString("Edit_Model...")) {
+        editModelAction = new AbstractAction(JAMS.i18n("Edit_Model...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -303,7 +303,7 @@ public class JAMSFrame extends JAMSLauncher {
         };
         editModelAction.setEnabled(false);
 
-        exitAction = new AbstractAction(JAMS.resources.getString("Exit")) {
+        exitAction = new AbstractAction(JAMS.i18n("Exit")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -311,7 +311,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        aboutAction = new AbstractAction(JAMS.resources.getString("About")) {
+        aboutAction = new AbstractAction(JAMS.i18n("About")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -319,15 +319,15 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        onlineAction = new AbstractAction(JAMS.resources.getString("JAMS_online...")) {
+        onlineAction = new AbstractAction(JAMS.i18n("JAMS_online...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                GUIHelper.openURL(JAMS.resources.getString("JAMS_URL"));
+                GUIHelper.openURL(JAMS.i18n("JAMS_URL"));
             }
         };
 
-        loadModelParamAction = new AbstractAction(JAMS.resources.getString("Load_Model_Parameter...")) {
+        loadModelParamAction = new AbstractAction(JAMS.i18n("Load_Model_Parameter...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -342,7 +342,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        saveModelParamAction = new AbstractAction(JAMS.resources.getString("Save_Model_Parameter...")) {
+        saveModelParamAction = new AbstractAction(JAMS.i18n("Save_Model_Parameter...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -357,7 +357,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        rtManagerAction = new AbstractAction(JAMS.resources.getString("Show_Runtime_Manager...")) {
+        rtManagerAction = new AbstractAction(JAMS.i18n("Show_Runtime_Manager...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -365,7 +365,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        infoLogAction = new AbstractAction(JAMS.resources.getString("Info_Log...")) {
+        infoLogAction = new AbstractAction(JAMS.i18n("Info_Log...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -373,7 +373,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        errorLogAction = new AbstractAction(JAMS.resources.getString("Error_Log...")) {
+        errorLogAction = new AbstractAction(JAMS.i18n("Error_Log...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -381,7 +381,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        explorerAction = new AbstractAction(JAMS.resources.getString("DATA_EXPLORER")) {
+        explorerAction = new AbstractAction(JAMS.i18n("DATA_EXPLORER")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -389,7 +389,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
 
-        browserAction = new AbstractAction(JAMS.resources.getString("Browse_WS_Dir")) {
+        browserAction = new AbstractAction(JAMS.i18n("Browse_WS_Dir")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -418,14 +418,14 @@ public class JAMSFrame extends JAMSLauncher {
 
 
         // runtime manager dlg
-        rtManagerDlg = new JDialog(this, JAMS.resources.getString("Runtime_Manager"));
+        rtManagerDlg = new JDialog(this, JAMS.i18n("Runtime_Manager"));
         rtManagerDlg.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         rtManagerDlg.setLocationByPlatform(true);
         RuntimeManagerPanel rtManagerPanel = new RuntimeManagerPanel();
         rtManagerDlg.getContentPane().add(rtManagerPanel);
         rtManagerDlg.pack();
 
-        JButton closeButton = new JButton(JAMS.resources.getString("Close"));
+        JButton closeButton = new JButton(JAMS.i18n("Close"));
         closeButton.addActionListener(new ActionListener() {
 
             @Override
@@ -440,7 +440,7 @@ public class JAMSFrame extends JAMSLauncher {
         mainMenu = new JMenuBar();
 
         // file menu
-        JMenu fileMenu = new JMenu(JAMS.resources.getString("File"));
+        JMenu fileMenu = new JMenu(JAMS.i18n("File"));
 
         JMenuItem loadItem = new JMenuItem(loadModelAction);
         loadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
@@ -460,7 +460,7 @@ public class JAMSFrame extends JAMSLauncher {
         getMainMenu().add(fileMenu);
 
         // extras menu
-        JMenu editMenu = new JMenu(JAMS.resources.getString("Extras"));
+        JMenu editMenu = new JMenu(JAMS.i18n("Extras"));
 
         JMenuItem editOptionsItem = new JMenuItem(editPrefsAction);
         editOptionsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
@@ -477,7 +477,7 @@ public class JAMSFrame extends JAMSLauncher {
         getMainMenu().add(editMenu);
 
         // model menu
-        modelMenu = new JMenu(JAMS.resources.getString("Model"));
+        modelMenu = new JMenu(JAMS.i18n("Model"));
         modelMenu.setEnabled(false);
         mainMenu.add(modelMenu);
 
@@ -513,7 +513,7 @@ public class JAMSFrame extends JAMSLauncher {
         modelMenu.add(rtManagerItem);
 
         // logs menu
-        logsMenu = new JMenu(JAMS.resources.getString("Logs"));
+        logsMenu = new JMenu(JAMS.i18n("Logs"));
 
         JMenuItem infoLogItem = new JMenuItem(infoLogAction);
         getLogsMenu().add(infoLogItem);
@@ -523,7 +523,7 @@ public class JAMSFrame extends JAMSLauncher {
         getMainMenu().add(getLogsMenu());
 
         // help menu
-        JMenu helpMenu = new JMenu(JAMS.resources.getString("Help"));
+        JMenu helpMenu = new JMenu(JAMS.i18n("Help"));
 
         JMenuItem onlineItem = new JMenuItem(onlineAction);
         helpMenu.add(onlineItem);
@@ -537,37 +537,37 @@ public class JAMSFrame extends JAMSLauncher {
 
         JButton loadButton = new JButton(loadModelAction);
         loadButton.setText("");
-        loadButton.setToolTipText(JAMS.resources.getString("Open_Model..."));
+        loadButton.setToolTipText(JAMS.i18n("Open_Model..."));
         loadButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelOpen.png")));
         getToolBar().add(loadButton);
 
         JButton saveButton = new JButton(saveModelAction);
         saveButton.setText("");
-        saveButton.setToolTipText(JAMS.resources.getString("Save_Model"));
+        saveButton.setToolTipText(JAMS.i18n("Save_Model"));
         saveButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelSave.png")));
         getToolBar().add(saveButton);
 
         JButton prefsButton = new JButton(editPrefsAction);
         prefsButton.setText("");
-        prefsButton.setToolTipText(JAMS.resources.getString("Edit_Preferences..."));
+        prefsButton.setToolTipText(JAMS.i18n("Edit_Preferences..."));
         prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
         getToolBar().add(prefsButton);
 
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
-        infoLogButton.setToolTipText(JAMS.resources.getString("Show_Info_Log..."));
+        infoLogButton.setToolTipText(JAMS.i18n("Show_Info_Log..."));
         infoLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/InfoLog.png")));
         getToolBar().add(infoLogButton);
 
         JButton errorLogButton = new JButton(errorLogAction);
         errorLogButton.setText("");
-        errorLogButton.setToolTipText(JAMS.resources.getString("Show_Error_Log..."));
+        errorLogButton.setToolTipText(JAMS.i18n("Show_Error_Log..."));
         errorLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ErrorLog.png")));
         getToolBar().add(errorLogButton);
 
         JButton exitButton = new JButton(exitAction);
         exitButton.setText("");
-        exitButton.setToolTipText(JAMS.resources.getString("Exit"));
+        exitButton.setToolTipText(JAMS.i18n("Exit"));
         exitButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/system-shutdown.png")));
         getToolBar().add(exitButton);
 
@@ -579,7 +579,7 @@ public class JAMSFrame extends JAMSLauncher {
             ParameterProcessor.loadParams(getModelDocument(), paramsFile);
             loadModelDefinition(getModelDocument());
         } catch (Exception ex) {
-            GUIHelper.showErrorDlg(this, JAMS.resources.getString("File_") + paramsFile.getName() + JAMS.resources.getString("_could_not_be_loaded."), JAMS.resources.getString("File_Open_Error"));
+            GUIHelper.showErrorDlg(this, JAMS.i18n("File_") + paramsFile.getName() + JAMS.i18n("_could_not_be_loaded."), JAMS.i18n("File_Open_Error"));
         }
     }
 
@@ -588,7 +588,7 @@ public class JAMSFrame extends JAMSLauncher {
             ParameterProcessor.saveParams(getModelDocument(), paramsFile,
                     getProperties().getProperty(SystemProperties.USERNAME_IDENTIFIER), modelFilename);
         } catch (Exception ex) {
-            GUIHelper.showErrorDlg(this, JAMS.resources.getString("File_") + paramsFile.getName() + JAMS.resources.getString("_could_not_be_saved."), JAMS.resources.getString("File_saving_error"));
+            GUIHelper.showErrorDlg(this, JAMS.i18n("File_") + paramsFile.getName() + JAMS.i18n("_could_not_be_saved."), JAMS.i18n("File_saving_error"));
         }
     }
 
@@ -626,7 +626,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         // check for invalid parameter values
         if (!verifyInputs(false)) {
-            int result = GUIHelper.showYesNoDlg(this, JAMS.resources.getString("Found_invalid_parameter_values_which_won't_be_saved._Proceed_anyway?"), JAMS.resources.getString("Invalid_parameter_values"));
+            int result = GUIHelper.showYesNoDlg(this, JAMS.i18n("Found_invalid_parameter_values_which_won't_be_saved._Proceed_anyway?"), JAMS.i18n("Invalid_parameter_values"));
             if (result == JOptionPane.NO_OPTION) {
                 return false;
             }
@@ -638,7 +638,7 @@ public class JAMSFrame extends JAMSLauncher {
         if (getModelDocument() != null) {
             String modelDocString = XMLTools.getStringFromDocument(getModelDocument());
             if (!getInitialModelDocString().equals(modelDocString)) {
-                int result = GUIHelper.showYesNoCancelDlg(this, JAMS.resources.getString("Save_modifications_in_") + modelFilename + JAMS.resources.getString("_?"), JAMS.resources.getString("JAMS_Launcher:_unsaved_modifications"));
+                int result = GUIHelper.showYesNoCancelDlg(this, JAMS.i18n("Save_modifications_in_") + modelFilename + JAMS.i18n("_?"), JAMS.i18n("JAMS_Launcher:_unsaved_modifications"));
                 if (result == JOptionPane.CANCEL_OPTION) {
                     return false;
                 } else if (result == JOptionPane.OK_OPTION) {
@@ -659,7 +659,7 @@ public class JAMSFrame extends JAMSLauncher {
             this.initialModelDocString = XMLTools.getStringFromDocument(this.modelDocument);
             fillAttributes(getModelDocument());
         } catch (IOException ioe) {
-            GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.resources.getString("Error_saving_configuration_to_") + modelFilename, JAMS.resources.getString("Error"));
+            GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.i18n("Error_saving_configuration_to_") + modelFilename, JAMS.i18n("Error"));
             return;
         }
     }
@@ -687,7 +687,7 @@ public class JAMSFrame extends JAMSLauncher {
             if (loadPath != null) {
                 workspaceFile = loadPath.getParentFile();
             } else {
-                GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+                GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.i18n("Invalid_Workspace"), JAMS.i18n("Error"));
                 return;
             }
         }
@@ -697,7 +697,7 @@ public class JAMSFrame extends JAMSLauncher {
             URI workspaceURI = workspaceFile.toURI();
             Desktop.getDesktop().browse(workspaceURI);
         } catch (IOException ex) {
-            GUIHelper.showErrorDlg(JAMSFrame.this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+            GUIHelper.showErrorDlg(JAMSFrame.this, "\"" + workspaceFile + "\"" + JAMS.i18n("Invalid_Workspace"), JAMS.i18n("Error"));
         }
     }
 
@@ -716,7 +716,7 @@ public class JAMSFrame extends JAMSLauncher {
             if (loadPath != null) {
                 workspaceFile = loadPath.getParentFile();
             } else {
-                GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+                GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.i18n("Invalid_Workspace"), JAMS.i18n("Error"));
                 return;
             }
         }
@@ -734,10 +734,10 @@ public class JAMSFrame extends JAMSLauncher {
             theExplorer.getExplorerFrame().setVisible(true);
 
         } catch (NoClassDefFoundError ncdfe) {
-            GUIHelper.showInfoDlg(this, JAMS.resources.getString("ExplorerDisabled"), JAMS.resources.getString("Info"));
+            GUIHelper.showInfoDlg(this, JAMS.i18n("ExplorerDisabled"), JAMS.i18n("Info"));
             explorerAction.setEnabled(false);
         } catch (InvalidWorkspaceException ex) {
-            GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+            GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.i18n("Invalid_Workspace"), JAMS.i18n("Error"));
         }
 
     }

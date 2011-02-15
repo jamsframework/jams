@@ -193,7 +193,7 @@ public class GPSearch extends SOOptimizer {
                 }
                 writer.write(value + "\n");
                 }catch(Exception e){
-                    System.out.println(JAMS.resources.getString("Error") + " " + e.toString());
+                    System.out.println(JAMS.i18n("Error") + " " + e.toString());
                 }
         }
         try{
@@ -206,7 +206,7 @@ public class GPSearch extends SOOptimizer {
     
     public void WriteGPData(GaussianLearner GP,String GPmeanFile,String GPvarFile){
         if (this.n != 2){
-            System.out.println((JAMS.resources.getString("Skip_rasterized_output")));
+            System.out.println((JAMS.i18n("Skip_rasterized_output")));
             return;
         }
         
@@ -229,14 +229,14 @@ public class GPSearch extends SOOptimizer {
                     writer_mean.write( mean + "\t");
                     writer_var.write( variance + "\t");
                 }catch(Exception e){
-                    System.out.println(JAMS.resources.getString("Error") + " " + e.toString());
+                    System.out.println(JAMS.i18n("Error") + " " + e.toString());
                 }           
             }
             try{
                     writer_mean.write("\n");
                     writer_var.write("\n");
                 }catch(Exception e){
-                    System.out.println(JAMS.resources.getString("Error") + " " + e.toString());
+                    System.out.println(JAMS.i18n("Error") + " " + e.toString());
                 }
         }
         try{
@@ -250,7 +250,7 @@ public class GPSearch extends SOOptimizer {
     
      public void WriteGPProb(GaussianLearner GP,String GPprobFile,double target,int method){
         if (this.n != 2){
-            System.out.println(JAMS.resources.getString("Skip_rasterized_output"));
+            System.out.println(JAMS.i18n("Skip_rasterized_output"));
             return;
         }
         
@@ -275,13 +275,13 @@ public class GPSearch extends SOOptimizer {
                 try{
                     writer_prob.write( optprob + "\t");
                 }catch(Exception e){
-                    System.out.println(JAMS.resources.getString("Error") + " " + e.toString());
+                    System.out.println(JAMS.i18n("Error") + " " + e.toString());
                 }           
             }
             try{
                     writer_prob.write("\n");
                 }catch(Exception e){
-                    System.out.println(JAMS.resources.getString("Error") + " " + e.toString());
+                    System.out.println(JAMS.i18n("Error") + " " + e.toString());
                 }
         }
         try{
@@ -416,7 +416,7 @@ public class GPSearch extends SOOptimizer {
         Vector<double[]> bestPoints = new Vector<double[]>();
         bestPoints.add(FindMostProbablePoint(minPosition,GP,minValue,2));
         
-        System.out.println(JAMS.resources.getString("Expected_Improvement") + GP.getExpectedImprovement(bestPoints.get(0),minValue));
+        System.out.println(JAMS.i18n("Expected_Improvement") + GP.getExpectedImprovement(bestPoints.get(0),minValue));
         if (writeGPData != null && writeGPData.getValue() == true){
             WriteGPProb(GP,"\\info\\gp_eimpr_" + iterationCounter + ".dat",minValue,2);
         }
@@ -505,9 +505,9 @@ public class GPSearch extends SOOptimizer {
                 for (int j=0;j<n;j++){
                     System.out.println(nextSample[j] + " ");                    
                 }
-                System.out.println(JAMS.resources.getString("value") + ":" + value);
+                System.out.println(JAMS.i18n("value") + ":" + value);
             }                        
-            System.out.println(JAMS.resources.getString("Evaluations") + ":" + this.currentSampleCount + "\n" + JAMS.resources.getString("Minimum") + ":" + minValue);
+            System.out.println(JAMS.i18n("Evaluations") + ":" + this.currentSampleCount + "\n" + JAMS.i18n("Minimum") + ":" + minValue);
             if (currentSampleCount > this.maxn.getValue())
                 return;
             iterationCounter++;

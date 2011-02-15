@@ -49,13 +49,13 @@ public class DocumentLoader {
             //check if file exists
             File file = new File(modelFilename);
             if (!file.exists()) {                
-                return JAMS.resources.getString("Model_file_") + modelFilename + JAMS.resources.getString("_could_not_be_found_-_exiting!");
+                return JAMS.i18n("Model_file_") + modelFilename + JAMS.i18n("_could_not_be_found_-_exiting!");
             }
 
             // do some search and replace on the input file and create new file if necessary
             String newModelFilename = XMLProcessor.modelDocConverter(modelFilename);
             if (!newModelFilename.equalsIgnoreCase(modelFilename)) {
-                info = JAMS.resources.getString("The_model_definition_in_") + modelFilename + JAMS.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JAMS.resources.getString("_while_your_original_file_was_left_untouched.");
+                info = JAMS.i18n("The_model_definition_in_") + modelFilename + JAMS.i18n("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JAMS.i18n("_while_your_original_file_was_left_untouched.");
                 modelFilename = newModelFilename;
             }
 
@@ -71,13 +71,13 @@ public class DocumentLoader {
                 modelDoc.setValue(XMLTools.getDocumentFromString(xmlString));
                
             } catch (IOException ioe) {                
-                return JAMS.resources.getString("The_model_definition_file_") + modelFilename + JAMS.resources.getString("_could_not_be_loaded,_because:_") + ioe.toString();
+                return JAMS.i18n("The_model_definition_file_") + modelFilename + JAMS.i18n("_could_not_be_loaded,_because:_") + ioe.toString();
             } catch (SAXException se) {
-                return JAMS.resources.getString("The_model_definition_file_") + modelFilename + JAMS.resources.getString("_contained_errors!");
+                return JAMS.i18n("The_model_definition_file_") + modelFilename + JAMS.i18n("_contained_errors!");
             }                        
         }catch(Exception e){
             e.printStackTrace();
-            return JAMS.resources.getString("Cant_load_model_file,_because_") + e.toString();
+            return JAMS.i18n("Cant_load_model_file,_because_") + e.toString();
         } 
         return null;
     }

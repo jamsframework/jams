@@ -41,7 +41,7 @@ import java.util.HashMap;
  */
 public class ComponentInfoDlg extends JDialog {
 
-    private static final String DEFAULT_STRING = JAMS.resources.getString("[none]");
+    private static final String DEFAULT_STRING = JAMS.i18n("[none]");
     private static final int TEXTAREA_WIDTH = 295;
     private static final int GRIDBAG_MAX_Y = 3;
     private HashMap<String, JTextField> textFields = new HashMap<String, JTextField>();
@@ -50,7 +50,7 @@ public class ComponentInfoDlg extends JDialog {
     private JPanel contentPanel;
     private GridBagLayout mainLayout;
     private ArrayList<JPanel> varPanels = new ArrayList<JPanel>();
-    private JLabel varLabel = new JLabel(JAMS.resources.getString("Variables:"));
+    private JLabel varLabel = new JLabel(JAMS.i18n("Variables:"));
     private static HashMap<Class, JDialog> compViewDlgs = new HashMap<Class, JDialog>();
 
     public ComponentInfoDlg(Frame owner, Class clazz) {
@@ -64,10 +64,10 @@ public class ComponentInfoDlg extends JDialog {
         mainLayout = new GridBagLayout();
         contentPanel.setLayout(mainLayout);
 
-        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Type:")), 0, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Author:")), 0, 1, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Date:")), 0, 2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Description:")), 0, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.i18n("Type:")), 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.i18n("Author:")), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.i18n("Date:")), 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.i18n("Description:")), 0, 3, 1, 1, 0, 0);
 
         GUIHelper.addGBComponent(contentPanel, mainLayout, getTextField("type", ""), 1, 0, 1, 1, 1.0, 1.0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, getTextField("author", ""), 1, 1, 1, 1, 1.0, 1.0);
@@ -145,12 +145,12 @@ public class ComponentInfoDlg extends JDialog {
                 GridBagLayout fieldLayout = new GridBagLayout();
                 fieldPanel.setLayout(fieldLayout);
 
-                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Type:")), 0, 0, 1, 1, 0, 0);
-                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Access:")), 0, 1, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.i18n("Type:")), 0, 0, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.i18n("Access:")), 0, 1, 1, 1, 0, 0);
                 //GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel("Update:"), 0, 2, 1, 1, 0, 0);
-                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Description:")), 0, 3, 1, 1, 0, 0);
-                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Unit:")), 0, 4, 1, 1, 0, 0);
-                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.resources.getString("Default:")), 0, 5, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.i18n("Description:")), 0, 3, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.i18n("Unit:")), 0, 4, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(fieldPanel, fieldLayout, new JLabel(JAMS.i18n("Default:")), 0, 5, 1, 1, 0, 0);
 
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", field.getType().getName()), 1, 0, 1, 1, 1.0, 1.0);
                 GUIHelper.addGBComponent(fieldPanel, fieldLayout, getTextField("", jvd.access().toString()), 1, 1, 1, 1, 1.0, 1.0);

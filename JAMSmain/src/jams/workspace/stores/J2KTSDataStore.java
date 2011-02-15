@@ -89,7 +89,7 @@ public class J2KTSDataStore extends TSDataStore {
         if (charsetElement != null) {
             charsetName = charsetElement.getAttribute("value");
         } else {
-            charsetName = JAMS.charset;
+            charsetName = JAMS.getCharset();
         }
 
         if (parseTimeElement != null) {
@@ -226,7 +226,7 @@ public class J2KTSDataStore extends TSDataStore {
                     }
 
                 } catch (ParseException pe) {
-                    ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Could_not_parse_date_") + dateString + JAMS.resources.getString("_date_kept_unchanged!"));
+                    ws.getRuntime().sendErrorMsg(JAMS.i18n("Could_not_parse_date_") + dateString + JAMS.i18n("_date_kept_unchanged!"));
                 }
             } else if (key.equalsIgnoreCase(TAGNAME_TEMP_RES)) {
                 String tres = tok2.nextToken();

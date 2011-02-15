@@ -220,9 +220,9 @@ public abstract class Optimizer extends JAMSContext {
 
         currentSampleCount = 0;
         if (this.parameterIDs == null)
-            stop(JAMS.resources.getString("parameterIDs_not_specified"));
+            stop(JAMS.i18n("parameterIDs_not_specified"));
         if (this.boundaries == null)
-            stop(JAMS.resources.getString("parameter_boundaries_not_specified"));
+            stop(JAMS.i18n("parameter_boundaries_not_specified"));
 
         n = parameterIDs.length;
         parameters = parameterIDs;
@@ -233,7 +233,7 @@ public abstract class Optimizer extends JAMSContext {
         int i = 0;
         while (tok.hasMoreTokens()) {
             if (i>=n){
-               stop(JAMS.resources.getString("too_many_boundaries"));
+               stop(JAMS.i18n("too_many_boundaries"));
                return;
             }
             String key = tok.nextToken();
@@ -244,12 +244,12 @@ public abstract class Optimizer extends JAMSContext {
                 lowBound[i] = Double.parseDouble(boundTok.nextToken());
                 upBound[i] = Double.parseDouble(boundTok.nextToken());
             }catch(NumberFormatException e){
-                stop(JAMS.resources.getString("unsupported_number_format_found_for_lower_or_upper_bound"));
+                stop(JAMS.i18n("unsupported_number_format_found_for_lower_or_upper_bound"));
                 return;
             }
             //check if upBound is higher than lowBound
             if (upBound[i] <= lowBound[i]) {
-                stop(JAMS.resources.getString("Component") + " " + this.getInstanceName() + ": " + JAMS.resources.getString("upBound_must_be_higher_than_lowBound"));
+                stop(JAMS.i18n("Component") + " " + this.getInstanceName() + ": " + JAMS.i18n("upBound_must_be_higher_than_lowBound"));
                 return;
             }
 
@@ -272,11 +272,11 @@ public abstract class Optimizer extends JAMSContext {
                     x0[counter] = Double.valueOf(param).doubleValue();
                     counter++;
                 }catch(NumberFormatException e){
-                    stop(JAMS.resources.getString("Component") + " " + this.getInstanceName() + ": " + JAMS.resources.getString("unparseable_number") + param);
+                    stop(JAMS.i18n("Component") + " " + this.getInstanceName() + ": " + JAMS.i18n("unparseable_number") + param);
                 }
             }
             if (counter != n){
-                stop(JAMS.resources.getString("Component") + " " + JAMS.resources.getString("startvalue_too_many_parameter"));
+                stop(JAMS.i18n("Component") + " " + JAMS.i18n("startvalue_too_many_parameter"));
             }
         }
 
@@ -375,7 +375,7 @@ public abstract class Optimizer extends JAMSContext {
             try {
                 parameters[j].setValue(x[j]);
             } catch (Exception e) {
-                stop(JAMS.resources.getString("Error_Parameter_No") + " " + j + JAMS.resources.getString("wasnt_found") + " " + e.toString());
+                stop(JAMS.i18n("Error_Parameter_No") + " " + j + JAMS.i18n("wasnt_found") + " " + e.toString());
             }
         }
     }

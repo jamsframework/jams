@@ -79,7 +79,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
      */
     public void save(String fileName) throws IOException {
         try {
-            properties.store(new FileOutputStream(fileName), JAMS.resources.getString("JAMS_configuration_file"));
+            properties.store(new FileOutputStream(fileName), JAMS.i18n("JAMS_configuration_file"));
             defaultFilename = fileName;
         } catch (Exception ex) {
             JAMSTools.handle(ex);

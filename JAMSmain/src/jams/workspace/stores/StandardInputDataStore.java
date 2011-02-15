@@ -128,13 +128,13 @@ public abstract class StandardInputDataStore implements InputDataStore, Serializ
             if (metadataIO != null) {
                 int result = metadataIO.init();
                 if (result < 0) {
-                    ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Initialization_of_data_I/O_component_") +
-                            this.getID() + JAMS.resources.getString("_(") + this.getClass().getName() + JAMS.resources.getString(")_failed!"));
+                    ws.getRuntime().sendErrorMsg(JAMS.i18n("Initialization_of_data_I/O_component_") +
+                            this.getID() + JAMS.i18n("_(") + this.getClass().getName() + JAMS.i18n(")_failed!"));
                     return null;
                 }
             } else {
-                ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Initialization_of_data_I/O_component_") +
-                        this.getID() + JAMS.resources.getString("_(") + this.getClass().getName() + JAMS.resources.getString(")_failed!"));
+                ws.getRuntime().sendErrorMsg(JAMS.i18n("Initialization_of_data_I/O_component_") +
+                        this.getID() + JAMS.i18n("_(") + this.getClass().getName() + JAMS.i18n(")_failed!"));
                 return null;
             }
         }

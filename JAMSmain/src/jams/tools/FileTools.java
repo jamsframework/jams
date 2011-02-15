@@ -161,7 +161,7 @@ public class FileTools {
 
     public static void stringToFile(String fileName, String string) throws IOException {
 
-        String newString = new String(string.getBytes(JAMS.charset));
+        String newString = new String(string.getBytes(JAMS.getCharset()));
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
         writer.write(string);
@@ -194,7 +194,7 @@ public class FileTools {
         byte[] buffer = new byte[in.available()];
         in.read(buffer);
 
-        content = new String(buffer, JAMS.charset);
+        content = new String(buffer, JAMS.getCharset());
 
         return content;
     }

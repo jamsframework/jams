@@ -76,7 +76,7 @@ import org.w3c.dom.NodeList;
  */
 public class JAMSLauncher extends JFrame {
 
-    protected static final String BASE_TITLE = JAMS.resources.getString("JAMS_Launcher");
+    protected static final String BASE_TITLE = JAMS.i18n("JAMS_Launcher");
     private static final int BUTTON_SIZE = 20;
     private Map<InputComponent, Element> inputMap;
     private Map<InputComponent, JScrollPane> groupMap;
@@ -164,12 +164,12 @@ public class JAMSLauncher extends JFrame {
                         && (loadPath != null)) {
                     String dir = loadPath.getParent();
                     runtime.getModel().setWorkspacePath(dir);
-                    runtime.sendInfoMsg(JAMS.resources.getString("no_workspace_defined_use_loadpath") + dir);
+                    runtime.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + dir);
                 }
             }
         };
 
-        runModelAction = new AbstractAction(JAMS.resources.getString("Run_Model")) {
+        runModelAction = new AbstractAction(JAMS.i18n("Run_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -186,7 +186,7 @@ public class JAMSLauncher extends JFrame {
             }
         };
 
-        loadModelDlg = new WorkerDlg(this, JAMS.resources.getString("Model_Setup"));
+        loadModelDlg = new WorkerDlg(this, JAMS.i18n("Model_Setup"));
 
         // create some nice font for the border title
         titledBorderFont = (Font) UIManager.getDefaults().get("TitledBorder.font");
@@ -234,7 +234,7 @@ public class JAMSLauncher extends JFrame {
 
         runButton = new JButton(runModelAction);
         runButton.setText("");
-        runButton.setToolTipText(JAMS.resources.getString("Run_Model"));
+        runButton.setToolTipText(JAMS.i18n("Run_Model"));
         runButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         runButton.setEnabled(false);
 
@@ -273,13 +273,13 @@ public class JAMSLauncher extends JFrame {
 
                 String info = "";
                 if (runModel) {
-                    info = JAMS.resources.getString("_Stopping_model_execution.");
+                    info = JAMS.i18n("_Stopping_model_execution.");
                 }
 
                 if (ic.getErrorCode() == InputComponent.INPUT_OUT_OF_RANGE) {
-                    GUIHelper.showErrorDlg(this, JAMS.resources.getString("Selected_value_out_of_range!") + info, JAMS.resources.getString("Range_error"));
+                    GUIHelper.showErrorDlg(this, JAMS.i18n("Selected_value_out_of_range!") + info, JAMS.i18n("Range_error"));
                 } else {
-                    GUIHelper.showErrorDlg(this, JAMS.resources.getString("Invalid_value_found!") + info, JAMS.resources.getString("Format_error"));
+                    GUIHelper.showErrorDlg(this, JAMS.i18n("Invalid_value_found!") + info, JAMS.i18n("Format_error"));
                 }
 
                 ic.setMarked(false);
@@ -424,7 +424,7 @@ public class JAMSLauncher extends JFrame {
 
             // case 3: attribute does not exist, property removed
             property.getParentNode().removeChild(property);
-            GUIHelper.showInfoDlg(this, JAMS.resources.getString("Attribute_") + attributeName + JAMS.resources.getString("_does_not_exist_in_component_") + componentName + JAMS.resources.getString("!_Removing_visual_editor!"), JAMS.resources.getString("Info"));
+            GUIHelper.showInfoDlg(this, JAMS.i18n("Attribute_") + attributeName + JAMS.i18n("_does_not_exist_in_component_") + componentName + JAMS.i18n("!_Removing_visual_editor!"), JAMS.i18n("Info"));
             return;
         }
 
@@ -616,7 +616,7 @@ public class JAMSLauncher extends JFrame {
             this.getInsets().set(0, 0, 0, 0);
             this.setText("?");
             this.setFont(titledBorderFont);
-            this.setToolTipText(JAMS.resources.getString("Help"));
+            this.setToolTipText(JAMS.i18n("Help"));
             this.helpComponent = helpComponent;
 
         }

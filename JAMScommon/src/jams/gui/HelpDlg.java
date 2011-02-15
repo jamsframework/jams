@@ -86,7 +86,7 @@ public class HelpDlg extends JDialog {
      */
     public void init() {
         setModal(false);
-        this.setTitle(JAMS.resources.getString("Help"));
+        this.setTitle(JAMS.i18n("Help"));
 
         this.setLayout(new BorderLayout());
         GridBagLayout gbl = new GridBagLayout();
@@ -96,7 +96,7 @@ public class HelpDlg extends JDialog {
 
         GUIHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
 
-        JButton okButton = new JButton(JAMS.resources.getString("OK"));
+        JButton okButton = new JButton(JAMS.i18n("OK"));
         ActionListener okListener = new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -147,8 +147,8 @@ public class HelpDlg extends JDialog {
                 GUIHelper.openURL(url);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(webPagePane, new String[]{
-                            JAMS.resources.getString("Unable_to_open_file"), url
-                        }, JAMS.resources.getString("File_Open_Error"),
+                            JAMS.i18n("Unable_to_open_file"), url
+                        }, JAMS.i18n("File_Open_Error"),
                         JOptionPane.ERROR_MESSAGE);
                 setCursor(Cursor.getDefaultCursor());
             }

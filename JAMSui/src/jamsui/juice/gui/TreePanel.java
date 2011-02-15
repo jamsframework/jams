@@ -55,7 +55,7 @@ public class TreePanel extends JPanel {
 
         this.setLayout(new BorderLayout());
 
-        expandButton = new JButton(JAMS.resources.getString("+"));
+        expandButton = new JButton(JAMS.i18n("+"));
         expandButton.setMargin(new Insets(4, 4, 4, 4));
         expandButton.addActionListener(new ActionListener() {
 
@@ -66,9 +66,9 @@ public class TreePanel extends JPanel {
             }
         });
         expandButton.setPreferredSize(BUTTON_DIMENSION);
-        expandButton.setToolTipText(JAMS.resources.getString("Expand_Tree"));
+        expandButton.setToolTipText(JAMS.i18n("Expand_Tree"));
 
-        collapseButton = new JButton(JAMS.resources.getString("-"));
+        collapseButton = new JButton(JAMS.i18n("-"));
         collapseButton.setMargin(new Insets(4, 4, 4, 4));
         collapseButton.addActionListener(new ActionListener() {
 
@@ -79,7 +79,7 @@ public class TreePanel extends JPanel {
             }
         });
         collapseButton.setPreferredSize(BUTTON_DIMENSION);
-        collapseButton.setToolTipText(JAMS.resources.getString("Collapse_Tree"));
+        collapseButton.setToolTipText(JAMS.i18n("Collapse_Tree"));
 
         lowerPanel.add(expandButton);
         lowerPanel.add(collapseButton);

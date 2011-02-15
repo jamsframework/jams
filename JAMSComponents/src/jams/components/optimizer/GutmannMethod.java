@@ -131,7 +131,7 @@ public class GutmannMethod extends SOOptimizer {
             try{
                 mu = A.solve(b);
             }catch(Exception e){
-                System.out.print(JAMS.resources.getString("cant_solve_interpolation_system"));
+                System.out.print(JAMS.i18n("cant_solve_interpolation_system"));
                 return Double.POSITIVE_INFINITY;
             }
             double m0factor = -1;
@@ -145,7 +145,7 @@ public class GutmannMethod extends SOOptimizer {
             double value = mu.get(N, 0)*(sn - fstar)*(sn - fstar)*m0factor;
             //this is not possible
             if (value < 0){
-                System.out.println(JAMS.resources.getString("error_integral_of_2nd_order_is_less_than_zero"));
+                System.out.println(JAMS.i18n("error_integral_of_2nd_order_is_less_than_zero"));
                 value = -value; //better possibilities??
             }
             return value;
@@ -231,7 +231,7 @@ public class GutmannMethod extends SOOptimizer {
                     }
                 }
             }
-            System.out.println(JAMS.resources.getString("remove_index") + ":" + min_d_index);
+            System.out.println(JAMS.i18n("remove_index") + ":" + min_d_index);
             sampleList.remove(min_d_index);
             return CreateInterpolant();
         }
@@ -242,7 +242,7 @@ public class GutmannMethod extends SOOptimizer {
             
     public void WriteData(String GPmeanFile){
         if (this.n != 2){
-            System.out.println(JAMS.resources.getString("Skip_rasterized_output"));
+            System.out.println(JAMS.i18n("Skip_rasterized_output"));
             return;
         }
         Matrix coeff = CreateInterpolant();
@@ -262,14 +262,14 @@ public class GutmannMethod extends SOOptimizer {
                 try{
                     writer_mean.write( guess + "\t");                    
                 }catch(Exception e){
-                    System.out.println(JAMS.resources.getString("Error") + e.toString());
+                    System.out.println(JAMS.i18n("Error") + e.toString());
                 }           
             }
             try{
                     writer_mean.write("\n");
                     //writer_var.write("\n");
                 }catch(Exception e){
-                    System.out.println(JAMS.resources.getString("Error") + e.toString());
+                    System.out.println(JAMS.i18n("Error") + e.toString());
                 }
         }
         try{
@@ -429,11 +429,11 @@ public class GutmannMethod extends SOOptimizer {
             double target = (double)(k*k)*(sortedSampleList.get((int)sigma(sampleList.size()-1,n_snake,cycleLength)-1).fx[0]-this.minValue.fx);
             double next[] = null;
             if (toNear){
-                System.out.println(JAMS.resources.getString("use_target_point"));
+                System.out.println(JAMS.i18n("use_target_point"));
                 next = this.FindMostProbablePoint(this.sampleList.size(), coefficient, target);
             }
             else{
-                System.out.println(JAMS.resources.getString("use_minimum"));
+                System.out.println(JAMS.i18n("use_minimum"));
                 next = myMin.x;
             }
             toNear = false;
@@ -450,7 +450,7 @@ public class GutmannMethod extends SOOptimizer {
                     minDist = Math.min(dist, minDist);                    
                     //SampleSO randomly
                     if (minDist < 0.000000001){
-                        System.out.println(JAMS.resources.getString("distance_between_next_point_and_a_allready_sampled_point_is_too_small"));
+                        System.out.println(JAMS.i18n("distance_between_next_point_and_a_allready_sampled_point_is_too_small"));
                         next = Transform(this.RandomSampler());                    
                         break;
                     }
@@ -501,7 +501,7 @@ public class GutmannMethod extends SOOptimizer {
             }
             if (maxValue.fx < s.fx)
                 maxValue = s;
-            System.out.println(JAMS.resources.getString("minimum") + minValue);
+            System.out.println(JAMS.i18n("minimum") + minValue);
                         
 //            WriteData("output\\datafile"+iterationCounter+".dat");
         }

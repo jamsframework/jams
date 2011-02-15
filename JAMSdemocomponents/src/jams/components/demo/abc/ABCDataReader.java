@@ -70,10 +70,10 @@ public class ABCDataReader extends JAMSComponent {
     public void init() {
         try {
             if (fileName == null) {
-                getModel().getRuntime().sendHalt(JAMS.resources.getString("You_should_specify_a_file_for_ABCDataReader"));
+                getModel().getRuntime().sendHalt(JAMS.i18n("You_should_specify_a_file_for_ABCDataReader"));
             } else if (!(new File(fileName.getValue())).isFile()) {
-                getModel().getRuntime().sendHalt(JAMS.resources.getString("The_file") + " " + fileName.getValue() + " "
-                        + JAMS.resources.getString("ABCDataReader_should_read_from_is_not_valid"));
+                getModel().getRuntime().sendHalt(JAMS.i18n("The_file") + " " + fileName.getValue() + " "
+                        + JAMS.i18n("ABCDataReader_should_read_from_is_not_valid"));
             }
             reader = new BufferedReader(new FileReader(this.fileName.getValue()));
             reader.readLine();
@@ -93,8 +93,8 @@ public class ABCDataReader extends JAMSComponent {
 
             line = reader.readLine();
             if (line == null) {
-                getModel().getRuntime().sendHalt(JAMS.resources.getString("There_is_no_more_data_in") + " "
-                        + this.fileName + JAMS.resources.getString("Check_your_data_file_or_timeInterval"));
+                getModel().getRuntime().sendHalt(JAMS.i18n("There_is_no_more_data_in") + " "
+                        + this.fileName + JAMS.i18n("Check_your_data_file_or_timeInterval"));
                 return;
             }
             StringTokenizer st = new StringTokenizer(line);

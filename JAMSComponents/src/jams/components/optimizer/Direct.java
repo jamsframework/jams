@@ -73,7 +73,7 @@ public class Direct extends SOOptimizer{
             return; 
         
         if (x0 != null){
-            this.getModel().getRuntime().sendInfoMsg(JAMS.resources.getString("start_value_not_supported_by_branch_and_bound"));
+            this.getModel().getRuntime().sendInfoMsg(JAMS.i18n("start_value_not_supported_by_branch_and_bound"));
         }
               
         maxevals = this.maxn.getValue();                

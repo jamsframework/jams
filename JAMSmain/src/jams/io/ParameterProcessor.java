@@ -197,7 +197,7 @@ public class ParameterProcessor {
             modelNameString +=  " <" + modelFileName + ">";
         }
         
-        params.store(new FileOutputStream(paramsFile), JAMS.resources.getString("JAMS_model_parameter_file") +
+        params.store(new FileOutputStream(paramsFile), JAMS.i18n("JAMS_model_parameter_file") +
                 "\nUser: " + userNameString + "\nModel: " + modelNameString);
     }
 

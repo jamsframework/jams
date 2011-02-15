@@ -52,8 +52,8 @@ public class ContextAttribute {
         HashMap<String, ContextAttribute> attributes = getContext().getDynamicAttributes();
         
         if (attributes.get(newName) != null) {
-            throw new JAMSException(MessageFormat.format(JAMS.resources.getString("Context_attribute_does_already_exist"), newName),
-                    JAMS.resources.getString("Error_renaming_context_attribute"));
+            throw new JAMSException(MessageFormat.format(JAMS.i18n("Context_attribute_does_already_exist"), newName),
+                    JAMS.i18n("Error_renaming_context_attribute"));
         } else {
             attributes.remove(this.name);
             this.name = newName;

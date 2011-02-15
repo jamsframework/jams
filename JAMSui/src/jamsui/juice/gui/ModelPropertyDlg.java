@@ -81,7 +81,7 @@ public class ModelPropertyDlg extends JDialog {
     private void init() {
 
         setModal(true);
-        this.setTitle(JAMS.resources.getString("Model_property_editor"));
+        this.setTitle(JAMS.i18n("Model_property_editor"));
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         this.setLayout(new BorderLayout());
@@ -90,16 +90,16 @@ public class ModelPropertyDlg extends JDialog {
         contentPanel.setLayout(gbl);
 
         GUIHelper.addGBComponent(contentPanel, gbl, new JPanel(), 0, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Group:")), 0, 1, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Component:")), 0, 2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Variable/Attribute:")), 0, 3, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Name:")), 0, 4, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Description:")), 0, 5, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Lower_Boundary:")), 0, 6, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Upper_Boundary:")), 0, 7, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Length:")), 0, 8, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Help_URL:")), 0, 9, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Help_Text:")), 0, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Group:")), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Component:")), 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Variable/Attribute:")), 0, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Name:")), 0, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Description:")), 0, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Lower_Boundary:")), 0, 6, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Upper_Boundary:")), 0, 7, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Length:")), 0, 8, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Help_URL:")), 0, 9, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Help_Text:")), 0, 10, 1, 1, 0, 0);
 
         groupCombo = new JComboBox();
         GUIHelper.addGBComponent(contentPanel, gbl, groupCombo, 1, 1, 1, 1, 0, 0);
@@ -140,7 +140,7 @@ public class ModelPropertyDlg extends JDialog {
         textScroll.setPreferredSize(TEXT_AREA_DIM);
         GUIHelper.addGBComponent(contentPanel, gbl, textScroll, 1, 10, 2, 1, 0, 0);
 
-        JButton okButton = new JButton(JAMS.resources.getString("OK"));
+        JButton okButton = new JButton(JAMS.i18n("OK"));
         ActionListener okListener = new ActionListener() {
 
             @Override
@@ -152,7 +152,7 @@ public class ModelPropertyDlg extends JDialog {
         okButton.addActionListener(okListener);
         getRootPane().setDefaultButton(okButton);
 
-        JButton cancelButton = new JButton(JAMS.resources.getString("Cancel"));
+        JButton cancelButton = new JButton(JAMS.i18n("Cancel"));
         ActionListener cancelListener = new ActionListener() {
 
             @Override
@@ -197,7 +197,7 @@ public class ModelPropertyDlg extends JDialog {
 
         Collections.sort(varNames);
 
-        varNames.add(0, JAMS.resources.getString("[enable_component]"));
+        varNames.add(0, JAMS.i18n("[enable_component]"));
 
         String[] varNameArray = varNames.toArray(new String[varNames.size()]);
         varCombo.setModel(new DefaultComboBoxModel(varNameArray));

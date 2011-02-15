@@ -113,7 +113,7 @@ public class SimpleSCE extends SOOptimizer {
                     LinearConstraints_A = new Matrix(n, m);
                 }
                 if (m != line_tok.countTokens()) {
-                    stop(JAMS.resources.getString("Linear_Constraint_Matrix_dimension_mismatch"));
+                    stop(JAMS.i18n("Linear_Constraint_Matrix_dimension_mismatch"));
                 }
                 for (int j = 0; j < m; j++) {
                     String number = line_tok.nextToken();
@@ -121,7 +121,7 @@ public class SimpleSCE extends SOOptimizer {
                     try {
                         value = Double.parseDouble(number);
                     } catch (NumberFormatException e) {
-                        stop(JAMS.resources.getString("Cant_read_Linear_Constraint_Matrix_because_there_are_unparseable_elements") + ":" + e.toString());
+                        stop(JAMS.i18n("Cant_read_Linear_Constraint_Matrix_because_there_are_unparseable_elements") + ":" + e.toString());
                     }
                     LinearConstraints_A.set(i, j, value);
                 }
@@ -136,7 +136,7 @@ public class SimpleSCE extends SOOptimizer {
                 try {
                     value = Double.parseDouble(number);
                 } catch (NumberFormatException e) {
-                    stop(JAMS.resources.getString("Cant_read_Linear_Constraint_Matrix_because_there_are_unparseable_elements") + ":" + e.toString());
+                    stop(JAMS.i18n("Cant_read_Linear_Constraint_Matrix_because_there_are_unparseable_elements") + ":" + e.toString());
                 }
                 LinearConstraints_b.set(i, 0, value);
             }
@@ -144,10 +144,10 @@ public class SimpleSCE extends SOOptimizer {
 
         if (LinearConstraints_A != null && LinearConstraints_b != null) {
             if (LinearConstraints_A.getRowDimension() != LinearConstraints_b.getRowDimension()) {
-                stop(JAMS.resources.getString("LinearConstraintMatrixA_must_have_the_same_number_of_rows_as_LinearConstraintVectorB"));
+                stop(JAMS.i18n("LinearConstraintMatrixA_must_have_the_same_number_of_rows_as_LinearConstraintVectorB"));
             }
             if (LinearConstraints_A.getColumnDimension() != n) {
-                stop(JAMS.resources.getString("LinearConstraintMatrixA_must_have_the_same_number_of_columns_as_there_are_parameters"));
+                stop(JAMS.i18n("LinearConstraintMatrixA_must_have_the_same_number_of_columns_as_there_are_parameters"));
             }
         }
     }
@@ -383,21 +383,21 @@ public class SimpleSCE extends SOOptimizer {
         // Computes the normalized geometric range of the parameters
         double gnrng = NormalizedgeometricRange(x, bound); //exp(mean(log((max(x)-min(x))./bound)));
 
-        sayThis(JAMS.resources.getString("The_Inital_Loop_0"));
-        sayThis(JAMS.resources.getString("Best") + x[0].toString());
-        sayThis(JAMS.resources.getString("Worst") + x[npt-1].toString());
+        sayThis(JAMS.i18n("The_Inital_Loop_0"));
+        sayThis(JAMS.i18n("Best") + x[0].toString());
+        sayThis(JAMS.i18n("Worst") + x[npt-1].toString());
                         
         
         //Check for convergency;
         if (currentSampleCount >= maxn) {
-            sayThis(JAMS.resources.getString("OPTIMIZATION_SEARCH_TERMINATED_BECAUSE_THE_LIMIT"));
-            sayThis(JAMS.resources.getString("ON_THE_MAXIMUM_NUMBER_OF_TRIALS") + ":" + maxn);
-            sayThis(JAMS.resources.getString("HAS_BEEN_EXCEEDED_SEARCH_WAS_STOPPED_AT_TRIAL_NUMBER") + ":" + currentSampleCount);
-            sayThis(JAMS.resources.getString("OF_THE_INITIAL_LOOP"));            
+            sayThis(JAMS.i18n("OPTIMIZATION_SEARCH_TERMINATED_BECAUSE_THE_LIMIT"));
+            sayThis(JAMS.i18n("ON_THE_MAXIMUM_NUMBER_OF_TRIALS") + ":" + maxn);
+            sayThis(JAMS.i18n("HAS_BEEN_EXCEEDED_SEARCH_WAS_STOPPED_AT_TRIAL_NUMBER") + ":" + currentSampleCount);
+            sayThis(JAMS.i18n("OF_THE_INITIAL_LOOP"));            
         }
 
         if (gnrng < peps) {            
-            sayThis(JAMS.resources.getString("THE_POPULATION_HAS_CONVERGED_TO_A_PRESPECIFIED_SMALL_PARAMETER_SPACE"));
+            sayThis(JAMS.i18n("THE_POPULATION_HAS_CONVERGED_TO_A_PRESPECIFIED_SMALL_PARAMETER_SPACE"));
         }
 
         // Begin evolution loops:
@@ -436,17 +436,17 @@ public class SimpleSCE extends SOOptimizer {
             gnrng = NormalizedgeometricRange(x, bound);
 
             // Record the best and worst points;            
-            sayThis(JAMS.resources.getString("Evolution_Loop") + ":" + nloop + JAMS.resources.getString("Trial") + " " + currentSampleCount);
-            sayThis(JAMS.resources.getString("Best") + x[0]);
-            sayThis(JAMS.resources.getString("Worst") + x[x.length-1]);
+            sayThis(JAMS.i18n("Evolution_Loop") + ":" + nloop + JAMS.i18n("Trial") + " " + currentSampleCount);
+            sayThis(JAMS.i18n("Best") + x[0]);
+            sayThis(JAMS.i18n("Worst") + x[x.length-1]);
             
             // Check for convergency;
             if (currentSampleCount >= maxn) {
-                sayThis(JAMS.resources.getString("OPTIMIZATION_SEARCH_TERMINATED_BECAUSE_THE_LIMIT"));
-                sayThis(JAMS.resources.getString("ON_THE_MAXIMUM_NUMBER_OF_TRIALS") + " " + maxn + JAMS.resources.getString("HAS_BEEN_EXCEEDED"));
+                sayThis(JAMS.i18n("OPTIMIZATION_SEARCH_TERMINATED_BECAUSE_THE_LIMIT"));
+                sayThis(JAMS.i18n("ON_THE_MAXIMUM_NUMBER_OF_TRIALS") + " " + maxn + JAMS.i18n("HAS_BEEN_EXCEEDED"));
             }
             if (gnrng < peps) {
-                sayThis(JAMS.resources.getString("THE_POPULATION_HAS_CONVERGED_TO_A_PRESPECIFIED_SMALL_PARAMETER_SPACE"));
+                sayThis(JAMS.i18n("THE_POPULATION_HAS_CONVERGED_TO_A_PRESPECIFIED_SMALL_PARAMETER_SPACE"));
             }
 
             for (int i = 0; i < kstop - 1; i++) {
@@ -463,15 +463,15 @@ public class SimpleSCE extends SOOptimizer {
                 criter_change /= criter_mean;
 
                 if (criter_change < pcento) {
-                    sayThis(JAMS.resources.getString("THE_BEST_POINT_HAS_IMPROVED_IN_LAST") + " " + kstop + " " +  JAMS.resources.getString("LOOPS_BY"));
-                    sayThis(JAMS.resources.getString("LESS_THAN_THE_THRESHOLD") + " " + pcento + "%");
-                    sayThis(JAMS.resources.getString("CONVERGENCY_HAS_ACHIEVED_BASED_ON_OBJECTIVE_FUNCTION_CRITERIA"));                   
+                    sayThis(JAMS.i18n("THE_BEST_POINT_HAS_IMPROVED_IN_LAST") + " " + kstop + " " +  JAMS.i18n("LOOPS_BY"));
+                    sayThis(JAMS.i18n("LESS_THAN_THE_THRESHOLD") + " " + pcento + "%");
+                    sayThis(JAMS.i18n("CONVERGENCY_HAS_ACHIEVED_BASED_ON_OBJECTIVE_FUNCTION_CRITERIA"));                   
                 }
             }
         }
-        sayThis(JAMS.resources.getString("SEARCH_WAS_STOPPED_AT_TRIAL_NUMBER") + " " + currentSampleCount);
-        sayThis(JAMS.resources.getString("NORMALIZED_GEOMETRIC_RANGE") + " " + gnrng);
-        sayThis(JAMS.resources.getString("THE_BEST_POINT_HAS_IMPROVED_IN_LAST") + kstop + " "+JAMS.resources.getString("LOOPS_BY") + " "+ criter_change + "%");
+        sayThis(JAMS.i18n("SEARCH_WAS_STOPPED_AT_TRIAL_NUMBER") + " " + currentSampleCount);
+        sayThis(JAMS.i18n("NORMALIZED_GEOMETRIC_RANGE") + " " + gnrng);
+        sayThis(JAMS.i18n("THE_BEST_POINT_HAS_IMPROVED_IN_LAST") + kstop + " "+JAMS.i18n("LOOPS_BY") + " "+ criter_change + "%");
                 
         return x[0];
     }

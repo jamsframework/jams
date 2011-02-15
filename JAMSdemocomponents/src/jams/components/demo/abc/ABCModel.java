@@ -101,13 +101,13 @@ public class ABCModel extends JAMSComponent {
     @Override
     public void init() {
         if (this.a == null)
-            getModel().getRuntime().sendHalt(JAMS.resources.getString("parameter_ABCModel_a_unspecified"));
+            getModel().getRuntime().sendHalt(JAMS.i18n("parameter_ABCModel_a_unspecified"));
         if (this.b == null)
-            getModel().getRuntime().sendHalt(JAMS.resources.getString("parameter_ABCModel_b_unspecified"));
+            getModel().getRuntime().sendHalt(JAMS.i18n("parameter_ABCModel_b_unspecified"));
         if (this.c == null)
-            getModel().getRuntime().sendHalt(JAMS.resources.getString("parameter_ABCModel_c_unspecified"));
+            getModel().getRuntime().sendHalt(JAMS.i18n("parameter_ABCModel_c_unspecified"));
         if (this.initStorage == null)
-            getModel().getRuntime().sendHalt(JAMS.resources.getString("parameter_ABCModel_initStorage_unspecified"));
+            getModel().getRuntime().sendHalt(JAMS.i18n("parameter_ABCModel_initStorage_unspecified"));
         else
             storage.setValue(initStorage.getValue());
     }
@@ -115,10 +115,10 @@ public class ABCModel extends JAMSComponent {
     @Override
     public void run() {
         if (this.precip==null){
-            getModel().getRuntime().sendHalt(JAMS.resources.getString("input_data_ABCModel_precip_unspecified"));
+            getModel().getRuntime().sendHalt(JAMS.i18n("input_data_ABCModel_precip_unspecified"));
         }
         if (this.storage==null){
-            getModel().getRuntime().sendHalt(JAMS.resources.getString("input_data_ABCModel_storage_unspecified"));
+            getModel().getRuntime().sendHalt(JAMS.i18n("input_data_ABCModel_storage_unspecified"));
         }
         double precip = this.precip.getValue();
         double runoff;

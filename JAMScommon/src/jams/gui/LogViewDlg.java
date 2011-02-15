@@ -62,7 +62,7 @@ public class LogViewDlg extends JDialog {
         getContentPane().add(scrollPane, BorderLayout.CENTER);
 
         JButton closeButton = new JButton();
-        closeButton.setText(JAMS.resources.getString("Close"));
+        closeButton.setText(JAMS.i18n("Close"));
         closeButton.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -70,7 +70,7 @@ public class LogViewDlg extends JDialog {
             }
         });
         JButton clearButton = new JButton();
-        clearButton.setText(JAMS.resources.getString("Clear"));
+        clearButton.setText(JAMS.i18n("Clear"));
         clearButton.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {

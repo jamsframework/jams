@@ -493,7 +493,7 @@ public class MOCOM extends MOOptimizer {
             for (int j = 0; j < nA; j++) {
                 //addsim
                 if (S1.length != F1.length || F1.length != R1.length) {
-                    stop(JAMS.resources.getString("interner_Fehler"));
+                    stop(JAMS.i18n("interner_Fehler"));
                 }
                 //build S,SF,SR
                 double S[][] = new double[S1.length + 1][S1[0].length];
@@ -573,10 +573,10 @@ public class MOCOM extends MOOptimizer {
             if (MaxIter < loopcounter) {
                 sayThis("********************************************");
                 sayThis("---------->OPTIMIZATION STOP<---------------");
-                sayThis(JAMS.resources.getString("MAXIMUM_NUMBER_OF_LOOPS_HAS_REACHED"));
+                sayThis(JAMS.i18n("MAXIMUM_NUMBER_OF_LOOPS_HAS_REACHED"));
                 sayThis("********************************************");
                 c = 0;
-                String out = JAMS.resources.getString("Rank")+"\t";
+                String out = JAMS.i18n("Rank")+"\t";
                 
                 for (int i = 0; i < n; i++) {
 //                    out += this.parameterNames[i] + "\t";
@@ -599,8 +599,8 @@ public class MOCOM extends MOOptimizer {
                     c++;
                 }
                 c = 0;
-                sayThis(JAMS.resources.getString("Number of model runs: ") + this.icall);
-                out = JAMS.resources.getString("Rank")+"\t";
+                sayThis(JAMS.i18n("Number of model runs: ") + this.icall);
+                out = JAMS.i18n("Rank")+"\t";
                 for (int i = 0; i < n; i++) {
 //                    out+=this.parameterNames[i] + "\t";
                 }
@@ -624,10 +624,10 @@ public class MOCOM extends MOOptimizer {
             if (Rmax <= 1) {
                 System.out.println("********************************************");
                 System.out.println("---------->OPTIMIZATION STOP<---------------");
-                sayThis(JAMS.resources.getString("SUCCESSFUL"));                
+                sayThis(JAMS.i18n("SUCCESSFUL"));                
                 System.out.println("********************************************");
                 c = 0;
-                String out = JAMS.resources.getString("Rank")+"\t";
+                String out = JAMS.i18n("Rank")+"\t";
                 for (int i = 0; i < n; i++) {
 //                    out+=(this.parameterNames[i] + "\t");
                 }
@@ -650,8 +650,8 @@ public class MOCOM extends MOOptimizer {
                 }
 
                 c = 0;
-                sayThis(JAMS.resources.getString("Number of model runs: ") + this.icall);
-                out = JAMS.resources.getString("Rank")+"\t";
+                sayThis(JAMS.i18n("Number of model runs: ") + this.icall);
+                out = JAMS.i18n("Rank")+"\t";
                 for (int i = 0; i < n; i++) {
 //                    out+=(this.parameterNames[i] + "\t");
                 }
@@ -682,16 +682,16 @@ public class MOCOM extends MOOptimizer {
     @Override
     public void run() {        
         if (this.populationSize == null) {
-            stop("Component " + this.getInstanceName() + ": " +JAMS.resources.getString("populationsize_unknown_please_set_populationsize"));
+            stop("Component " + this.getInstanceName() + ": " +JAMS.i18n("populationsize_unknown_please_set_populationsize"));
         }
         
         this.s = this.populationSize.getValue();
 
         if (this.s <= 0) {
-            getModel().getRuntime().sendHalt(JAMS.resources.getString("Component") + " " + this.getInstanceName() + ": "+ JAMS.resources.getString("populationsize_is_zero"));
+            getModel().getRuntime().sendHalt(JAMS.i18n("Component") + " " + this.getInstanceName() + ": "+ JAMS.i18n("populationsize_is_zero"));
         }
         
         Object ret[] = mocom(this.s, this.lowBound, this.upBound, maxn.getValue());
-        sayThis(JAMS.resources.getString("Mocom_has_finished"));
+        sayThis(JAMS.i18n("Mocom_has_finished"));
     }   
 }

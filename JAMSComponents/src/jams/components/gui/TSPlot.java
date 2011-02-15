@@ -342,7 +342,7 @@ public class TSPlot extends JAMSGUIComponent {
             plot.setRenderer(0, leftRenderer);
 
             if (valueLeft==null){
-                getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("no_value_for_time_series_plot"));
+                getModel().getRuntime().sendErrorMsg(JAMS.i18n("no_value_for_time_series_plot"));
             }
             graphCountLeft = valueLeft.length;
             tsLeft = new TimeSeries[graphCountLeft];
@@ -389,7 +389,7 @@ public class TSPlot extends JAMSGUIComponent {
     @Override
     public void run() {
         if (time==null){
-            getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("no_time_value_was_provided_for_time_series_plot"));
+            getModel().getRuntime().sendErrorMsg(JAMS.i18n("no_time_value_was_provided_for_time_series_plot"));
         }
         timeStamps[count] = time.getTimeInMillis();
         int offsetRight = count * graphCountRight;

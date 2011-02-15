@@ -151,7 +151,7 @@ public class modelModifier {
         if (props.getProperty("n") != null) {
             parameterCount = (int)Double.parseDouble(props.getProperty("n"));
         } else {
-            throw new WizardException(JAMS.resources.getString("error_parameter_count_not_specified"));
+            throw new WizardException(JAMS.i18n("error_parameter_count_not_specified"));
         }
         double lowerBounds[] = new double[parameterCount],
                 upperBounds[] = new double[parameterCount],
@@ -164,14 +164,14 @@ public class modelModifier {
         String strParameterNames = props.getProperty("parameters");
 
         if (strLowerBounds == null || strUpperBounds == null || strParameterNames == null) {
-            throw new WizardException(JAMS.resources.getString("error_parameter_name_upper_or_lower_bound_not_specified"));
+            throw new WizardException(JAMS.i18n("error_parameter_name_upper_or_lower_bound_not_specified"));
         }
 
         StringTokenizer tok1 = new StringTokenizer(strLowerBounds, ";");
         StringTokenizer tok2 = new StringTokenizer(strUpperBounds, ";");
         StringTokenizer tok3 = new StringTokenizer(strParameterNames, ";");
         if (tok1.countTokens() != parameterCount || tok2.countTokens() != parameterCount || tok3.countTokens() != parameterCount) {
-            throw new WizardException(JAMS.resources.getString("error_upper_or_lower_bound_count_does_not_match_parameter_count"));
+            throw new WizardException(JAMS.i18n("error_upper_or_lower_bound_count_does_not_match_parameter_count"));
         }
         for (int i = 0; i < parameterCount; i++) {
             lowerBounds[i] = Double.parseDouble(tok1.nextToken());
@@ -185,7 +185,7 @@ public class modelModifier {
         if (strStartValue != null) {
             StringTokenizer tok = new StringTokenizer(strStartValue, ";");
             if (tok.countTokens() != parameterCount) {
-                throw new WizardException(JAMS.resources.getString("error_start_value_bound_count_does_not_match_parameter_count"));
+                throw new WizardException(JAMS.i18n("error_start_value_bound_count_does_not_match_parameter_count"));
             }
             for (int i = 0; i < parameterCount; i++) {
                 startValue[i] = Double.parseDouble(tok.nextToken());
@@ -195,7 +195,7 @@ public class modelModifier {
         for (int i = 0; i < parameterCount; i++) {
             String result = jamsui.juice.optimizer.wizard.Tools.getTypeFromNodeName(root, parameterOwner[i]);
             if (result == null) {
-                throw new WizardException(JAMS.resources.getString("unknown parameter owner " + parameterOwner[i]));
+                throw new WizardException(JAMS.i18n("unknown parameter owner " + parameterOwner[i]));
             }
             Parameter p = null;
             if (result.equals("jams.model.contextcomponent")) {
@@ -226,30 +226,30 @@ public class modelModifier {
         String str_maxGeneration = props.getProperty("maxGeneration");
 
         int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
-        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+        if (maxn < 1) throw new WizardException(JAMS.i18n("error_maxiter_greater_1"));
 
         int popSize = (int)Double.parseDouble(str_populationSize);
-        if (popSize < 1)  throw new WizardException(JAMS.resources.getString("population_size_must_be_positive"));
+        if (popSize < 1)  throw new WizardException(JAMS.i18n("population_size_must_be_positive"));
 
         double mutationProbability = Double.parseDouble(str_mutationProbability);
         if (mutationProbability < 0.5 || mutationProbability > 1)
-            throw new WizardException(JAMS.resources.getString("mutationProbability_must_be_between_05_and_1"));
+            throw new WizardException(JAMS.i18n("mutationProbability_must_be_between_05_and_1"));
 
         double crossoverProbability = Double.parseDouble(str_crossoverProbability);
         if (crossoverProbability < 0 || crossoverProbability > 1)
-            throw new WizardException(JAMS.resources.getString("crossoverProbability_must_be_between_0_and_1"));
+            throw new WizardException(JAMS.i18n("crossoverProbability_must_be_between_0_and_1"));
 
         double crossoverDistributionIndex = Double.parseDouble(str_crossoverDistributionIndex);
         if (crossoverDistributionIndex < 0.5 || crossoverDistributionIndex > 100)
-            throw new WizardException(JAMS.resources.getString("crossoverDistributionIndex_must_be_between_05_and_100"));
+            throw new WizardException(JAMS.i18n("crossoverDistributionIndex_must_be_between_05_and_100"));
 
         double mutationDistributionIndex = Double.parseDouble(str_mutationDistributionIndex);
         if (mutationDistributionIndex < 0.5 || mutationDistributionIndex > 100)
-            throw new WizardException(JAMS.resources.getString("mutationDistributionIndex_must_be_between_05_and_100"));
+            throw new WizardException(JAMS.i18n("mutationDistributionIndex_must_be_between_05_and_100"));
 
         double maxGeneration = Double.parseDouble(str_maxGeneration);
         if (maxGeneration < 1)
-            throw new WizardException(JAMS.resources.getString("maxGeneration_must_be_positive"));
+            throw new WizardException(JAMS.i18n("maxGeneration_must_be_positive"));
 
         desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));        
         desc.attributes.add(new AttributeDescription("populationSize", null, Integer.toString(popSize), false));  
@@ -265,10 +265,10 @@ public class modelModifier {
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         String str_populationSize = props.getProperty("popSize");
         int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
-        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+        if (maxn < 1) throw new WizardException(JAMS.i18n("error_maxiter_greater_1"));
 
         int popSize = (int)Double.parseDouble(str_populationSize);
-        if (popSize < 1) throw new WizardException(JAMS.resources.getString("population_size_must_be_positive"));
+        if (popSize < 1) throw new WizardException(JAMS.i18n("population_size_must_be_positive"));
 
         desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
         desc.attributes.add(new AttributeDescription("populationSize", null, Integer.toString(popSize), false));
@@ -278,7 +278,7 @@ public class modelModifier {
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         desc.optimizerClassName = "jams.components.optimizer.GutmannMethod";
         int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
-        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+        if (maxn < 1) throw new WizardException(JAMS.i18n("error_maxiter_greater_1"));
         desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
     }
 
@@ -286,14 +286,14 @@ public class modelModifier {
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         desc.optimizerClassName = "jams.components.optimizer.Direct";
         int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
-        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+        if (maxn < 1) throw new WizardException(JAMS.i18n("error_maxiter_greater_1"));
     }
 
     static private void readBranchAndBoundMethod(OptimizerDescription desc, Properties props) throws WizardException, NumberFormatException, NullPointerException{
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         desc.optimizerClassName = "jams.components.optimizer.BranchAndBound";
         int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
-        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+        if (maxn < 1) throw new WizardException(JAMS.i18n("error_maxiter_greater_1"));
     }
 
     static private void readGPSearchMethod(OptimizerDescription desc, Properties props) throws WizardException, NumberFormatException, NullPointerException{
@@ -302,7 +302,7 @@ public class modelModifier {
         desc.optimizerClassName = "jams.components.optimizer.GPSearch";
         int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations),
             kernel = (int)Double.parseDouble(str_kernelMethod);
-        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+        if (maxn < 1) throw new WizardException(JAMS.i18n("error_maxiter_greater_1"));
        
         desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
         desc.attributes.add(new AttributeDescription("GPMethod", null, Integer.toString(kernel), false));
@@ -317,7 +317,7 @@ public class modelModifier {
         else
             desc.optimizerClassName = "jams.components.optimizer.RandomSampler";
         int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
-        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+        if (maxn < 1) throw new WizardException(JAMS.i18n("error_maxiter_greater_1"));
         try {
             if (isParallel) {
                 if (str_excludedFiles == null) str_excludedFiles = "";
@@ -325,9 +325,9 @@ public class modelModifier {
                 desc.attributes.add(new AttributeDescription("excludeFiles", null, str_excludedFiles, false));
             }
         } catch (PatternSyntaxException pse) {
-            throw new WizardException(JAMS.resources.getString("There_is_a_problem_with_the_regular_expression!") + "\n" +
-                    JAMS.resources.getString("The_pattern_in_question_is") + ": " + pse.getPattern() + "\n" +
-                    JAMS.resources.getString("The_description_is") + ": " + pse.getDescription() + "\n");
+            throw new WizardException(JAMS.i18n("There_is_a_problem_with_the_regular_expression!") + "\n" +
+                    JAMS.i18n("The_pattern_in_question_is") + ": " + pse.getPattern() + "\n" +
+                    JAMS.i18n("The_description_is") + ": " + pse.getDescription() + "\n");
         }
         desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));                
     }
@@ -336,7 +336,7 @@ public class modelModifier {
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         desc.optimizerClassName = "jams.components.optimizer.LatinHyperCubeRandomSampler";
         int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
-        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+        if (maxn < 1) throw new WizardException(JAMS.i18n("error_maxiter_greater_1"));
         desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
     }
 
@@ -345,11 +345,11 @@ public class modelModifier {
         String str_pfd = props.getProperty("pfd");
         desc.optimizerClassName = "jams.components.optimizer.MultiPointRandomSampler";
         int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
-        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+        if (maxn < 1) throw new WizardException(JAMS.i18n("error_maxiter_greater_1"));
         desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
 
         int pfd = (int)Double.parseDouble(str_pfd);;
-        if (pfd < 2) throw new WizardException(JAMS.resources.getString("error_pfd_greater_1"));
+        if (pfd < 2) throw new WizardException(JAMS.i18n("error_pfd_greater_1"));
         desc.attributes.add(new AttributeDescription("pfd", null, Integer.toString(pfd), false));
     }
 
@@ -357,7 +357,7 @@ public class modelModifier {
         String str_maximumNumberOfIterations = props.getProperty("maxn");
         desc.optimizerClassName = "jams.components.optimizer.NelderMead";
         int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);;
-        if (maxn < 1) throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+        if (maxn < 1) throw new WizardException(JAMS.i18n("error_maxiter_greater_1"));
         desc.attributes.add(new AttributeDescription("maxn", null, Integer.toString(maxn), false));
     }
     
@@ -381,15 +381,15 @@ public class modelModifier {
         int maxn = (int)Double.parseDouble(str_maximumNumberOfIterations);
                   
         if (numOfComplexes < 1 || numOfComplexes > 100)
-            throw new WizardException(JAMS.resources.getString("number_of_complexes_have_to_be_an_integer_between_1_and_100"));
+            throw new WizardException(JAMS.i18n("number_of_complexes_have_to_be_an_integer_between_1_and_100"));
         if (pcento < 0 || pcento > 1)
-            throw new WizardException(JAMS.resources.getString("value_of_pcento_have_to_be_between_0_and_1"));
+            throw new WizardException(JAMS.i18n("value_of_pcento_have_to_be_between_0_and_1"));
         if (peps < 0 || peps > 1)
-            throw new WizardException(JAMS.resources.getString("value_of_peps_have_to_be_between_0_and_1"));
+            throw new WizardException(JAMS.i18n("value_of_peps_have_to_be_between_0_and_1"));
         if (kstop < 1 || kstop > 100) 
-            throw new WizardException(JAMS.resources.getString("kstop_have_to_be_an_integer_between_1_and_100"));
+            throw new WizardException(JAMS.i18n("kstop_have_to_be_an_integer_between_1_and_100"));
         if (maxn < 1) 
-            throw new WizardException(JAMS.resources.getString("error_maxiter_greater_1"));
+            throw new WizardException(JAMS.i18n("error_maxiter_greater_1"));
                     
         try {
             if (parallel) {
@@ -400,9 +400,9 @@ public class modelModifier {
                 desc.attributes.add(new AttributeDescription("excludeFiles", null, str_excludedFiles, false));
             }
         } catch (PatternSyntaxException pse) {
-            throw new WizardException(JAMS.resources.getString("There_is_a_problem_with_the_regular_expression!") + "\n" +
-                    JAMS.resources.getString("The_pattern_in_question_is") + ": " + pse.getPattern() + "\n" +
-                    JAMS.resources.getString("The_description_is") + ": " + pse.getDescription() + "\n");
+            throw new WizardException(JAMS.i18n("There_is_a_problem_with_the_regular_expression!") + "\n" +
+                    JAMS.i18n("The_pattern_in_question_is") + ": " + pse.getPattern() + "\n" +
+                    JAMS.i18n("The_description_is") + ": " + pse.getDescription() + "\n");
         }
         desc.attributes.add(new AttributeDescription("NumberOfComplexes", null, Integer.toString(numOfComplexes), false));
         desc.attributes.add(new AttributeDescription("pcento", null, Double.toString(pcento), false));
@@ -416,7 +416,7 @@ public class modelModifier {
         if (props.getProperty("method") != null) {
             desc.method = (int)Double.parseDouble(props.getProperty("method"));
         } else {
-            throw new WizardException(JAMS.resources.getString("error_optimization_method_not_specified"));
+            throw new WizardException(JAMS.i18n("error_optimization_method_not_specified"));
         }
         switch (desc.method) {
             case BRANCH_AND_BOUND_METHOD: {
@@ -478,13 +478,13 @@ public class modelModifier {
         String strObjective = props.getProperty("efficiencies");
         String strObjectiveModes = props.getProperty("efficiency_modes");
         if (strObjective == null || strObjectiveModes == null) {
-            throw new WizardException(JAMS.resources.getString("error_no_objective"));
+            throw new WizardException(JAMS.i18n("error_no_objective"));
         }
         StringTokenizer tok1 = new StringTokenizer(strObjective, ";");
         StringTokenizer tok2 = new StringTokenizer(strObjectiveModes, ";");
         int objectiveCount = tok1.countTokens();
         if (tok2.countTokens() != objectiveCount) {
-            throw new WizardException(JAMS.resources.getString("error_objective_count_does_not_match_objecitve_mode_count"));
+            throw new WizardException(JAMS.i18n("error_objective_count_does_not_match_objecitve_mode_count"));
         }
 
         String objectiveName[] = new String[objectiveCount];
@@ -499,7 +499,7 @@ public class modelModifier {
 
             String result = jamsui.juice.optimizer.wizard.Tools.getTypeFromNodeName(root, objectiveContext[i]);
             if (result == null) {
-                throw new WizardException(JAMS.resources.getString("unknown_objective_owner") + objectiveContext[i]);
+                throw new WizardException(JAMS.i18n("unknown_objective_owner") + objectiveContext[i]);
                 
             }
             Efficiency p = null;
@@ -547,7 +547,7 @@ public class modelModifier {
 
                 String result = jamsui.juice.optimizer.wizard.Tools.getTypeFromNodeName(root, outputAttrContext[i]);
                 if (result == null) {
-                    throw new WizardException(JAMS.resources.getString("unknown_objective_owner") + outputAttrContext[i]);
+                    throw new WizardException(JAMS.i18n("unknown_objective_owner") + outputAttrContext[i]);
                 }
                 if (result.equals("jams.model.contextcomponent")) {
                     desc.outputAttributes.add(new AttributeWrapper(null, outputAttrName[i], null, outputAttrContext[i]));
@@ -600,14 +600,14 @@ public class modelModifier {
         try {
             props.load(optimizerIniStream);
         } catch (Exception e) {            
-            throw new WizardException(JAMS.resources.getString("Could_not_load_JAMS_property_file"));
+            throw new WizardException(JAMS.i18n("Could_not_load_JAMS_property_file"));
         }
 
         loadOptimizationFlags(desc, props);
         if (props.getProperty("workspace") != null) {            
             desc.newWorkspace = props.getProperty("workspace");
         }else{
-            throw new WizardException(JAMS.resources.getString("Error_unknown_workspace"));
+            throw new WizardException(JAMS.i18n("Error_unknown_workspace"));
         }
 
         desc.optimizationRun = false;
@@ -620,28 +620,28 @@ public class modelModifier {
         try{
             readParameterConfig(desc, props, loadedModel);
         }catch(WizardException e){
-            throw new WizardException(JAMS.resources.getString("invalid_parameter_setup") + e.toString());
+            throw new WizardException(JAMS.i18n("invalid_parameter_setup") + e.toString());
         }
 
         try{
             readObjectiveConfig(desc, props, loadedModel);
         }catch(WizardException e){
-            throw new WizardException(JAMS.resources.getString("invalid_objective_setup") + e.toString());
+            throw new WizardException(JAMS.i18n("invalid_objective_setup") + e.toString());
         }
         try{
             readOptimizerMethod(desc, props);
         }catch(WizardException e){
-            throw new WizardException(JAMS.resources.getString("invalid_optimizer_setup") + e.toString());
+            throw new WizardException(JAMS.i18n("invalid_optimizer_setup") + e.toString());
         }catch(NumberFormatException e){
-            throw new WizardException(JAMS.resources.getString("invalid_optimizer_setup") + e.toString());
+            throw new WizardException(JAMS.i18n("invalid_optimizer_setup") + e.toString());
         }catch(NullPointerException e){
             e.printStackTrace();
-            throw new WizardException(JAMS.resources.getString("invalid_optimizer_setup") + e.toString());            
+            throw new WizardException(JAMS.i18n("invalid_optimizer_setup") + e.toString());            
         }
         try{
             readOutputAttributeConfig(desc, props, loadedModel);
         }catch(WizardException e){
-            throw new WizardException(JAMS.resources.getString("invalid_output_setup") + e.toString());
+            throw new WizardException(JAMS.i18n("invalid_output_setup") + e.toString());
         }
         buildConfigurationString(desc);
 
@@ -701,7 +701,7 @@ public class modelModifier {
             try {
                 XMLTools.writeXmlFile(outputDoc, desc.newWorkspace + File.separator + "output" + File.separator + "optimization_wizard_" + context + ".xml");
             } catch (Exception e) {
-                throw new WizardException(JAMS.resources.getString("Error_cant_write_xml_file_because_") + e.toString());
+                throw new WizardException(JAMS.i18n("Error_cant_write_xml_file_because_") + e.toString());
             }
         }
     }
@@ -798,9 +798,9 @@ public class modelModifier {
         try {
             properties.load(propertyFile.getAbsolutePath());
         } catch (IOException e) {
-            throw new WizardException(JAMS.resources.getString("error_could_not_load_JAMS_property_file") + e.toString());
+            throw new WizardException(JAMS.i18n("error_could_not_load_JAMS_property_file") + e.toString());
         } catch (Exception e) {
-            throw new WizardException(JAMS.resources.getString("error_could_not_load_JAMS_property_file") + e.toString());
+            throw new WizardException(JAMS.i18n("error_could_not_load_JAMS_property_file") + e.toString());
         }
 
         DocumentLoader loader = new DocumentLoader();
@@ -831,7 +831,7 @@ public class modelModifier {
         Model model = rt.getModel();
         //1. schritt
         //parameter relevante componenten verschieben
-        infoLog += JAMS.resources.getString("create_transitive_hull_of_dependency_graph") + "\n";
+        infoLog += JAMS.i18n("create_transitive_hull_of_dependency_graph") + "\n";
         dependencyGraph = jams.model.metaoptimizer.metaModelOptimizer.getDependencyGraph(loadedModel.getDocumentElement(), model);
         transitiveClosureOfDependencyGraph = jams.model.metaoptimizer.metaModelOptimizer.TransitiveClosure(dependencyGraph);
 
@@ -839,11 +839,11 @@ public class modelModifier {
         Node root = (Node) doc.getDocumentElement();
         
         if (!changeWorkspace(root, desc.newWorkspace))
-            throw new WizardException(JAMS.resources.getString("unable_to_change_workspace"));
+            throw new WizardException(JAMS.i18n("unable_to_change_workspace"));
            
        
         if (desc.removeGUIComponents || !desc.optimizationRun) {
-            infoLog = JAMS.resources.getString("removing_GUI_components") + ":\n";
+            infoLog = JAMS.i18n("removing_GUI_components") + ":\n";
             ArrayList<String> removedGUIComponents = jams.model.metaoptimizer.metaModelOptimizer.RemoveGUIComponents(root);
             for (int i = 0; i < removedGUIComponents.size(); i++) {
                 infoLog += "    ***" + removedGUIComponents.get(i) + "\n";
@@ -865,14 +865,14 @@ public class modelModifier {
                     jams.model.metaoptimizer.metaModelOptimizer.GetRelevantComponentsList(transitiveClosureOfDependencyGraph,
                     effWritingComponents));
 
-            infoLog += JAMS.resources.getString("removing_components_without_relevant_influence") + ":\n";
+            infoLog += JAMS.i18n("removing_components_without_relevant_influence") + ":\n";
             for (int i = 0; i < removedUnusedComponents.size(); i++) {
                 infoLog += "    ***" + removedUnusedComponents.get(i) + "\n";
                 removedComponents.addAll(removedUnusedComponents);
             }
         }
         if (desc.optimizationRun) {
-            infoLog += JAMS.resources.getString("add_optimization_context") + "\n";
+            infoLog += JAMS.i18n("add_optimization_context") + "\n";
             //optimierer bauen
             Element optimizerContext = doc.createElement("contextcomponent");
             optimizerContext.setAttribute("class", desc.optimizerClassName);
@@ -887,11 +887,11 @@ public class modelModifier {
             jamsui.juice.optimizer.wizard.Tools.addParameters(desc.parameters, root, optimizerContextName);
             jamsui.juice.optimizer.wizard.Tools.addEfficiencies(desc.efficiencies, root, optimizerContextName);
 
-            infoLog += JAMS.resources.getString("find_a_position_to_place_optimizer") + "\n";
+            infoLog += JAMS.i18n("find_a_position_to_place_optimizer") + "\n";
             //find place for optimization context
             Node firstComponent = XMLProcessor.getFirstComponent(root);
             if (firstComponent == null) {
-                throw new WizardException(JAMS.resources.getString("Error_model_file_does_not_contain_any_components"));
+                throw new WizardException(JAMS.i18n("Error_model_file_does_not_contain_any_components"));
             }
             //collect all following siblings of firstComponent and add them to contextOptimizer
             Node currentNode = firstComponent;
@@ -902,7 +902,7 @@ public class modelModifier {
             }
 
             if (firstComponent.getParentNode() == null) {
-                throw new WizardException(JAMS.resources.getString("Error_model_file_does_not_contain_a_model_context"));
+                throw new WizardException(JAMS.i18n("Error_model_file_does_not_contain_a_model_context"));
             }
 
             Node modelContext = firstComponent.getParentNode();

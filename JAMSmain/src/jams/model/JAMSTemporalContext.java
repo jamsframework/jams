@@ -106,9 +106,9 @@ public class JAMSTemporalContext extends JAMSContext {
     public void init() {
         super.init();
         if (timeInterval == null)
-            getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("time_interval_for_JAMS_Temporal_context_not_provided"));
+            getModel().getRuntime().sendErrorMsg(JAMS.i18n("time_interval_for_JAMS_Temporal_context_not_provided"));
         if (timeInterval.getEnd() == null || timeInterval.getStart() == null){
-            getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("time_interval_for_JAMS_Temporal_context_not_provided"));
+            getModel().getRuntime().sendErrorMsg(JAMS.i18n("time_interval_for_JAMS_Temporal_context_not_provided"));
         }
         lastValue = timeInterval.getEnd().clone();
         lastValue.add(timeInterval.getTimeUnit(), -timeInterval.getTimeUnitCount());

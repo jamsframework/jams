@@ -224,7 +224,7 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
             if (d instanceof JAMSDouble)
                 return ((JAMSDouble)d).getValue();
             else
-                throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + key + JAMS.resources.getString("_(float)_not_found!"));
+                throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + key + JAMS.i18n("_(float)_not_found!"));
         }else{
             for (Component comp : c.getComponents()){
                 if (comp instanceof Context){
@@ -236,7 +236,7 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
                 }
             }
         }
-        throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + key + JAMS.resources.getString("_(float)_not_found!"));
+        throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + key + JAMS.i18n("_(float)_not_found!"));
     }
 
     @Override

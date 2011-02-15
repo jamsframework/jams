@@ -52,7 +52,7 @@ public class RandomSampler extends MOOptimizer{
             }
         }        
         getModel().getRuntime().println("*********************************************************");
-        getModel().getRuntime().println(JAMS.resources.getString("Maximum_number_of_iterations_reached_finished_optimization"));
+        getModel().getRuntime().println(JAMS.i18n("Maximum_number_of_iterations_reached_finished_optimization"));
         getModel().getRuntime().println("*********************************************************");                                                      
     }        
 }

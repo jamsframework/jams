@@ -196,9 +196,9 @@ public class ModelDescriptor extends ComponentCollection {
 
         if (property.component == null) {
 
-            throw new JAMSException(JAMS.resources.getString("Component_") + propertyElement.getAttribute("component")
-                    + JAMS.resources.getString("_does_not_exist,_but_is_referred_in_list_of_model_parameters!")
-                    + JAMS.resources.getString("Will_be_removed_when_model_is_saved!"), JAMS.resources.getString("Model_loading_error"));
+            throw new JAMSException(JAMS.i18n("Component_") + propertyElement.getAttribute("component")
+                    + JAMS.i18n("_does_not_exist,_but_is_referred_in_list_of_model_parameters!")
+                    + JAMS.i18n("Will_be_removed_when_model_is_saved!"), JAMS.i18n("Model_loading_error"));
         }
 
         String attributeName = propertyElement.getAttribute("attribute");
@@ -223,9 +223,9 @@ public class ModelDescriptor extends ComponentCollection {
         if ((property.attribute == null) && (property.var == null)
                 && !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
 
-            throw new JAMSException(JAMS.resources.getString("Attribute_") + attributeName
-                    + JAMS.resources.getString("_does_not_exist_in_component_") + property.component.getName()
-                    + JAMS.resources.getString("._Removing_visual_editor!"), JAMS.resources.getString("Model_loading_error"));
+            throw new JAMSException(JAMS.i18n("Attribute_") + attributeName
+                    + JAMS.i18n("_does_not_exist_in_component_") + property.component.getName()
+                    + JAMS.i18n("._Removing_visual_editor!"), JAMS.i18n("Model_loading_error"));
         }
 
         // not used anymore

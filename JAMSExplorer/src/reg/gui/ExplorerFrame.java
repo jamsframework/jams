@@ -245,7 +245,7 @@ public class ExplorerFrame extends JFrame {
         statusPanel.setBorder(BorderFactory.createEtchedBorder());
         statusPanel.setPreferredSize(new java.awt.Dimension(14, 20));
         statusLabel = new JLabel();
-        statusLabel.setText(JAMS.resources.getString("DATA_EXPLORER"));
+        statusLabel.setText(JAMS.i18n("DATA_EXPLORER"));
         statusPanel.add(statusLabel, java.awt.BorderLayout.CENTER);
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
 

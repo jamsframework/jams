@@ -75,13 +75,13 @@ public class CalendarInput extends JPanel implements InputComponent {
 
             this.setLayout(gbl);
 
-//            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Date")), 1, 0, 1, 1, 0, 0);
-//            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time")), 11, 0, 1, 1, 0, 0);
+//            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.i18n("Date")), 1, 0, 1, 1, 0, 0);
+//            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.i18n("Time")), 11, 0, 1, 1, 0, 0);
 
             GUIHelper.addGBComponent(this, gbl, datePanel, 1, 1, 1, 1, 0, 0);
             GUIHelper.addGBComponent(this, gbl, timePanel, 11, 1, 1, 1, 0, 0);
-            dateText.setToolTipText(jams.JAMS.resources.getString("Date"));
-            timeText.setToolTipText(jams.JAMS.resources.getString("Time"));
+            dateText.setToolTipText(jams.JAMS.i18n("Date"));
+            timeText.setToolTipText(jams.JAMS.i18n("Time"));
 
 //            JButton test = new JButton("Value");
 //            test.addActionListener(new ActionListener() {

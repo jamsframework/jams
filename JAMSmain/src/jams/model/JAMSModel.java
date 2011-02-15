@@ -94,12 +94,12 @@ public class JAMSModel extends JAMSContext implements Model {
     public void init() {
 
         runtime.println("", JAMS.STANDARD);
-        runtime.println(JAMS.resources.getString("starting_simulation"), JAMS.STANDARD);
-        runtime.println(JAMS.resources.getString("*************************************"), JAMS.STANDARD);
+        runtime.println(JAMS.i18n("starting_simulation"), JAMS.STANDARD);
+        runtime.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
 
         // check if workspace directory was specified
         if (workspaceDirectory.getValue() == null) {
-            runtime.sendHalt(JAMS.resources.getString("No_workspace_directory_specified,_stopping_execution!"));
+            runtime.sendHalt(JAMS.i18n("No_workspace_directory_specified,_stopping_execution!"));
             return;
         }
 
@@ -114,8 +114,8 @@ public class JAMSModel extends JAMSContext implements Model {
 
         if (!getNullFields().isEmpty() && (runtime.getDebugLevel() >= JAMS.VVERBOSE)) {
             runtime.println("");
-            runtime.println(JAMS.resources.getString("UNDEFINED_FIELDS"));
-            runtime.println(JAMS.resources.getString("*************************************"));
+            runtime.println(JAMS.i18n("UNDEFINED_FIELDS"));
+            runtime.println(JAMS.i18n("*************************************"));
             for (Component comp : getNullFields().keySet()) {
                 ArrayList<Field> nf = getNullFields().get(comp);
                 if (nf.isEmpty()) {
@@ -127,7 +127,7 @@ public class JAMSModel extends JAMSContext implements Model {
                 }
                 getRuntime().println(str);
             }
-            runtime.println(JAMS.resources.getString("*************************************"));
+            runtime.println(JAMS.i18n("*************************************"));
         }
         setupDataTracer();
     }
@@ -160,7 +160,7 @@ public class JAMSModel extends JAMSContext implements Model {
 
         runtime.println("");
         runtime.println("JAMS profiler results");
-        runtime.println(JAMS.resources.getString("*************************************"));
+        runtime.println(JAMS.i18n("*************************************"));
         for (Component c : this.getComponents()) {
 
             if (c instanceof Context) {
@@ -194,7 +194,7 @@ public class JAMSModel extends JAMSContext implements Model {
         if (StringTools.isEmptyString(workspacePath)) {
             this.workspaceDirectory.setValue("");
             this.workspace = null;
-            getRuntime().sendInfoMsg(JAMS.resources.getString("no_workspace_defined"));
+            getRuntime().sendInfoMsg(JAMS.i18n("no_workspace_defined"));
         } else {
             this.workspaceDirectory.setValue(workspacePath);
             this.workspace = new JAMSWorkspace(new File(workspacePath), getRuntime());

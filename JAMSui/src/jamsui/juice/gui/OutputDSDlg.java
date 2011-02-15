@@ -118,7 +118,7 @@ public class OutputDSDlg extends JDialog {
         GUIHelper.addGBComponent(contentPanel, mainLayout, filterList, 1, 30, 1, 1, 0, 0);
 //        GUIHelper.addGBComponent(contentPanel, mainLayout, contextCombo, 1, 40, 1, 1, 0, 0);
 
-        okButton = new JButton(JAMS.resources.getString("OK"));
+        okButton = new JButton(JAMS.i18n("OK"));
         okButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -244,7 +244,7 @@ public class OutputDSDlg extends JDialog {
                 // edit this item
                 FilterDescriptor f = (FilterDescriptor) getListbox().getSelectedValue();
 
-                String value = GUIHelper.showInputDlg(FilterListInput.this, null, JAMS.resources.getString("New_value"), f.expression);
+                String value = GUIHelper.showInputDlg(FilterListInput.this, null, JAMS.i18n("New_value"), f.expression);
                 if (value != null) {
 
                     if (StringTools.isEmptyString(value)) {
@@ -347,7 +347,7 @@ public class OutputDSDlg extends JDialog {
                     ContextAttribute ca = (ContextAttribute) attribute;
 
                     if (ca == null) {
-                        GUIHelper.showErrorDlg(this, JAMS.i18n("Could_not_add_attribute"), JAMS.resources.getString("ERROR"));
+                        GUIHelper.showErrorDlg(this, JAMS.i18n("Could_not_add_attribute"), JAMS.i18n("ERROR"));
                         return;
                     }
 

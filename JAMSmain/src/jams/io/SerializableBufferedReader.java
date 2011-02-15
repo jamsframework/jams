@@ -61,13 +61,13 @@ public class SerializableBufferedReader implements Serializable {
         if (reader != null) {
             return reader.read();
         }
-        throw new IOException(JAMS.resources.getString("reader_not_reader!"));
+        throw new IOException(JAMS.i18n("reader_not_reader!"));
     }
     
     public String readLine() throws IOException {
         if (reader != null) {
             return reader.readLine();
         }
-        throw new IOException(JAMS.resources.getString("reader_not_reader!"));
+        throw new IOException(JAMS.i18n("reader_not_reader!"));
     }    
 }

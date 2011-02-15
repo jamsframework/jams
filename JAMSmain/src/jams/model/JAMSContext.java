@@ -331,7 +331,7 @@ public class JAMSContext extends JAMSComponent implements Context {
 //                    }
                 }
             } catch (Exception e) {
-                getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Error_occured_in_") + accessSpec.getComponent().getInstanceName() + ": " + accessSpec.getVarName());
+                getModel().getRuntime().sendErrorMsg(JAMS.i18n("Error_occured_in_") + accessSpec.getComponent().getInstanceName() + ": " + accessSpec.getVarName());
                 getModel().getRuntime().handle(e, false);
             }
 
@@ -730,12 +730,12 @@ public class JAMSContext extends JAMSComponent implements Context {
                     Class clazz = attribute.getClass();
                     getDataObject(entityArray, clazz, attributeName, DataAccessor.READ_ACCESS, null);
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {
-                    getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Can't_trace_attribute_") + attributeName
-                            + JAMS.resources.getString("_in_context_") + this.getInstanceName() + JAMS.resources.getString("_(not_found)!"));
+                    getModel().getRuntime().sendErrorMsg(JAMS.i18n("Can't_trace_attribute_") + attributeName
+                            + JAMS.i18n("_in_context_") + this.getInstanceName() + JAMS.i18n("_(not_found)!"));
                     // will do nothing here since this will be handled at
                     // the DataTracer's init method below..
                 } catch (Exception e) {
-                    getModel().getRuntime().sendErrorMsg(JAMS.resources.getString("Error_while_trying_to_trace_") + attributeName + ": " + this.getInstanceName());
+                    getModel().getRuntime().sendErrorMsg(JAMS.i18n("Error_while_trying_to_trace_") + attributeName + ": " + this.getInstanceName());
                     getModel().getRuntime().handle(e, false);
                 }
             }
@@ -822,7 +822,7 @@ public class JAMSContext extends JAMSComponent implements Context {
             } else if (clazz.equals(JAMSObject.class)) {
                 da = new ObjectAccessor(ea, dataObject, attributeName, accessType);
             } else {
-                getModel().getRuntime().sendHalt(JAMS.resources.getString("Class_") + clazz.getCanonicalName() + JAMS.resources.getString("_not_supported!"));
+                getModel().getRuntime().sendHalt(JAMS.i18n("Class_") + clazz.getCanonicalName() + JAMS.i18n("_not_supported!"));
             }
 
             if (da != null) {

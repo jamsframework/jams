@@ -606,36 +606,36 @@ public class NSGA2 extends MOOptimizer {
     @Override
     public void run() {
         if (this.populationSize == null || this.populationSize.getValue() < 1){
-            sayThis(JAMS.resources.getString("size_of_population_not_specified_or_out_of_bounds"));
+            sayThis(JAMS.i18n("size_of_population_not_specified_or_out_of_bounds"));
             return;
         }
         if (this.crossoverDistributionIndex == null ||
             this.crossoverDistributionIndex.getValue() < 0.5 ||
             this.crossoverDistributionIndex.getValue() > 100.0){
-            sayThis(JAMS.resources.getString("crossoverDistributionIndex_not_specified_or_out_of_bounds"));
+            sayThis(JAMS.i18n("crossoverDistributionIndex_not_specified_or_out_of_bounds"));
             return;
         }
         if (this.mutationDistributionIndex == null ||
             this.mutationDistributionIndex.getValue() < 0.5 ||
             this.mutationDistributionIndex.getValue() > 100.0){
-            sayThis(JAMS.resources.getString("mutationDistributionIndex_not_specified_or_out_of_bounds"));
+            sayThis(JAMS.i18n("mutationDistributionIndex_not_specified_or_out_of_bounds"));
             return;
         }
         if (this.crossoverProbability == null ||
             this.crossoverProbability.getValue() < 0.0 ||
             this.crossoverProbability.getValue() > 1.0){
-            sayThis(JAMS.resources.getString("crossoverProbability_not_specified_or_out_of_bounds"));
+            sayThis(JAMS.i18n("crossoverProbability_not_specified_or_out_of_bounds"));
             return;
         }
         if (this.mutationProbability == null ||
             this.mutationProbability.getValue() < 0.0 ||
             this.mutationProbability.getValue() > 1.0){
-            sayThis(JAMS.resources.getString("mutationProbability_not_specified_or_out_of_bounds"));
+            sayThis(JAMS.i18n("mutationProbability_not_specified_or_out_of_bounds"));
             return;
         }
         if (this.maxGeneration == null ||
             this.maxGeneration.getValue() < 0.0){
-            sayThis(JAMS.resources.getString("maxGeneration_not_specified_or_out_of_bounds"));
+            sayThis(JAMS.i18n("maxGeneration_not_specified_or_out_of_bounds"));
             return;
         }
 
@@ -685,8 +685,8 @@ public class NSGA2 extends MOOptimizer {
         }
         /*                   Generation Loop Ends                                */
         /************************************************************************/
-        sayThis(JAMS.resources.getString("NO_OF_MUTATION") + this.crossoverCount);
-        sayThis(JAMS.resources.getString("NO_OF_CROSSOVER") + this.mutationCount);
+        sayThis(JAMS.i18n("NO_OF_MUTATION") + this.crossoverCount);
+        sayThis(JAMS.i18n("NO_OF_CROSSOVER") + this.mutationCount);
         sayThis("-----------------------------------------------------------------------------------");
     }
 

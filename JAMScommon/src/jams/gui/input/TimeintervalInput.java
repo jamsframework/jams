@@ -80,22 +80,22 @@ public class TimeintervalInput extends JPanel implements InputComponent {
 
         this.setLayout(gbl);
 
-//        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
-//        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Start:_")), 0, 1, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("End:_")), 0, 2, 1, 1, 0, 0);
+//        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.i18n("Date_(YYYY/MM/DD)")), 1, 0, 1, 1, 0, 0);
+//        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.i18n("Time_(HH:MM)")), 11, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.i18n("Start:_")), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.i18n("End:_")), 0, 2, 1, 1, 0, 0);
 
         startDate = new CalendarInput(false);
         GUIHelper.addGBComponent(this, gbl, startDate.getDatePanel(), 1, 1, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, gbl, startDate.getTimePanel(), 11, 1, 1, 1, 0, 0);
-        startDate.getTimeText().setToolTipText(JAMS.resources.getString("Starttime"));
-        startDate.getDateText().setToolTipText(JAMS.resources.getString("Startdate"));
+        startDate.getTimeText().setToolTipText(JAMS.i18n("Starttime"));
+        startDate.getDateText().setToolTipText(JAMS.i18n("Startdate"));
 
         endDate = new CalendarInput(false);
         GUIHelper.addGBComponent(this, gbl, endDate.getDatePanel(), 1, 2, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, gbl, endDate.getTimePanel(), 11, 2, 1, 1, 0, 0);
-        endDate.getTimeText().setToolTipText(JAMS.resources.getString("Endtime"));
-        endDate.getDateText().setToolTipText(JAMS.resources.getString("Enddate"));
+        endDate.getTimeText().setToolTipText(JAMS.i18n("Endtime"));
+        endDate.getDateText().setToolTipText(JAMS.i18n("Enddate"));
 
         indexMap.put(JAMSCalendar.YEAR, 0);
         indexMap.put(JAMSCalendar.MONTH, 1);
@@ -112,12 +112,12 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         fieldMap.put(5, JAMSCalendar.SECOND);
 
         timeUnit = new JComboBox();
-        timeUnit.addItem(JAMS.resources.getString("YEAR"));
-        timeUnit.addItem(JAMS.resources.getString("MONTH"));
-        timeUnit.addItem(JAMS.resources.getString("DAY"));
-        timeUnit.addItem(JAMS.resources.getString("HOUR"));
-        timeUnit.addItem(JAMS.resources.getString("MINUTE"));
-        timeUnit.addItem(JAMS.resources.getString("SECOND"));
+        timeUnit.addItem(JAMS.i18n("YEAR"));
+        timeUnit.addItem(JAMS.i18n("MONTH"));
+        timeUnit.addItem(JAMS.i18n("DAY"));
+        timeUnit.addItem(JAMS.i18n("HOUR"));
+        timeUnit.addItem(JAMS.i18n("MINUTE"));
+        timeUnit.addItem(JAMS.i18n("SECOND"));
         timeUnit.setPreferredSize(new Dimension(40, 20));
 
         tuCount = new JTextField();
@@ -125,8 +125,8 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         tuCount.setPreferredSize(new Dimension(40, 20));
 
         if (intervalEdit) {
-            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit:_")), 0, 3, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.resources.getString("Unit_Count:_")), 0, 4, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.i18n("Unit:_")), 0, 3, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.i18n("Unit_Count:_")), 0, 4, 1, 1, 0, 0);
             GUIHelper.addGBComponent(this, gbl, timeUnit, 1, 3, 1, 1, 0, 0);
             GUIHelper.addGBComponent(this, gbl, tuCount, 1, 4, 1, 1, 0, 0);
         }

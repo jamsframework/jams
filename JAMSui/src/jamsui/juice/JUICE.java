@@ -106,8 +106,8 @@ public class JUICE {
             for (StackTraceElement ste : st) {
                 s += "        at " + ste.toString() + "\n";
             }
-            System.out.println(JAMS.resources.getString("JUICE_Error"));
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("An_error_occured_during_JUICE_execution") + t.toString() + "\n" + s, JAMS.resources.getString("JUICE_Error"));
+            System.out.println(JAMS.i18n("JUICE_Error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("An_error_occured_during_JUICE_execution") + t.toString() + "\n" + s, JAMS.i18n("JUICE_Error"));
         }
     }
 
@@ -132,7 +132,7 @@ public class JUICE {
 
     public static void updateLibs() {
         if (loadLibsDlg == null) {
-            loadLibsDlg = new WorkerDlg(juiceFrame, JAMS.resources.getString("Loading_Libraries"));
+            loadLibsDlg = new WorkerDlg(juiceFrame, JAMS.i18n("Loading_Libraries"));
         }
         try {
             loadLibsDlg.setTask(new Runnable() {

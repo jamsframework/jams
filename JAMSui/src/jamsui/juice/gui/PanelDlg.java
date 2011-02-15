@@ -55,7 +55,7 @@ public abstract class PanelDlg extends JDialog {
         setLayout(new BorderLayout());
         getContentPane().add(panel, BorderLayout.CENTER);
 
-        JButton okButton = new JButton(JAMS.resources.getString("OK"));
+        JButton okButton = new JButton(JAMS.i18n("OK"));
         okButton.addActionListener(new ActionListener() {
 
             @Override
@@ -63,7 +63,7 @@ public abstract class PanelDlg extends JDialog {
                 processOK();
             }
         });
-        JButton cancelButton = new JButton(JAMS.resources.getString("Cancel"));
+        JButton cancelButton = new JButton(JAMS.i18n("Cancel"));
         cancelButton.addActionListener(new ActionListener() {
 
             @Override

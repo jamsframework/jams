@@ -48,7 +48,7 @@ public class ParticleSwarm extends SOOptimizer {
     }
     @Override
     public void run() {  
-        System.out.println(JAMS.resources.getString("start_optimization_of") + " " + this.getInstanceName());
+        System.out.println(JAMS.i18n("start_optimization_of") + " " + this.getInstanceName());
         for (int i=0;i<numberOfParticles;i++){
             SampleSO rndSample = null;
             
@@ -104,8 +104,8 @@ public class ParticleSwarm extends SOOptimizer {
                     bestParticle = particles[i];
                 }
             }
-            System.out.println(JAMS.resources.getString("current_best")+":" + bestParticle.local_best.toString() + " " + JAMS.resources.getString("after") + " " +  this.currentSampleCount);
+            System.out.println(JAMS.i18n("current_best")+":" + bestParticle.local_best.toString() + " " + JAMS.i18n("after") + " " +  this.currentSampleCount);
         }
-        System.out.println(JAMS.resources.getString("finished_optimization"));
+        System.out.println(JAMS.i18n("finished_optimization"));
     }
 }

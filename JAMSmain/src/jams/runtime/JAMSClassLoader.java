@@ -55,10 +55,10 @@ public class JAMSClassLoader extends URLClassLoader {
         try {
             URL url = f.toURI().toURL();
             if (!urls.add(url)) {
-                rt.println(JAMS.resources.getString("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.resources.getString("_is_already_loaded"));
+                rt.println(JAMS.i18n("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.i18n("_is_already_loaded"));
             }
         } catch (MalformedURLException murle) {
-            rt.println(JAMS.resources.getString("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.resources.getString("_could_not_be_converted_to_URL."));
+            rt.println(JAMS.i18n("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.i18n("_could_not_be_converted_to_URL."));
         }
     }
 
@@ -69,7 +69,7 @@ public class JAMSClassLoader extends URLClassLoader {
             File dir = new File(lib);
 
             if (!dir.exists()) {
-                rt.println(JAMS.resources.getString("DANGER_-_directory_") + dir.getAbsolutePath() + JAMS.resources.getString("_does_not_exist"), JAMS.STANDARD);
+                rt.println(JAMS.i18n("DANGER_-_directory_") + dir.getAbsolutePath() + JAMS.i18n("_does_not_exist"), JAMS.STANDARD);
                 continue;
             }
 
@@ -87,7 +87,7 @@ public class JAMSClassLoader extends URLClassLoader {
             }
         }
 
-        rt.println(JAMS.resources.getString("created_class_loader_using_"), JAMS.STANDARD);
+        rt.println(JAMS.i18n("created_class_loader_using_"), JAMS.STANDARD);
         for (URL url : urls) {
             rt.println("\t" + url.toString(), JAMS.STANDARD);
         }

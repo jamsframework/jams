@@ -72,8 +72,8 @@ public class ContextDescriptor extends ComponentDescriptor {
         // info wenn attribut mit gleichem namen schon existent und dann zum repo adden!!!
         if (ca != null) {
 
-            throw new JAMSException(MessageFormat.format(JAMS.resources.getString("Context_attribute_does_already_exist"), name),
-                    JAMS.resources.getString("Error_adding_context_attribute"));
+            throw new JAMSException(MessageFormat.format(JAMS.i18n("Context_attribute_does_already_exist"), name),
+                    JAMS.i18n("Error_adding_context_attribute"));
 
         } else {
             ca = new ContextAttribute(name, type, this);

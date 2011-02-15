@@ -83,7 +83,7 @@ public class RuntimeManagerPanel extends JPanel {
             }
         });
 
-        stopButton = new JButton(JAMS.resources.getString("stop_model"));
+        stopButton = new JButton(JAMS.i18n("stop_model"));
         stopButton.setEnabled(false);
         stopButton.addActionListener(new ActionListener() {
 

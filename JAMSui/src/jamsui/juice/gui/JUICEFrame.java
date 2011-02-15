@@ -66,8 +66,8 @@ public class JUICEFrame extends JFrame {
     private JMenu windowMenu, modelMenu;
     private JMenuItem pasteModelParameterItem, copyModelParameterItem, searchModelItem, OptimizationWizardItem;
     private JLabel statusLabel;
-    private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Info_Log"));
-    private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.resources.getString("Error_Log"));
+    private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Info_Log"));
+    private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Error_Log"));
     private Node modelProperties;
     private WorkerDlg loadModelDlg;
     private SearchDlg searchDlg;
@@ -137,7 +137,7 @@ public class JUICEFrame extends JFrame {
             }
         });
 
-        editPrefsAction = new AbstractAction(JAMS.resources.getString("Edit_Preferences...")) {
+        editPrefsAction = new AbstractAction(JAMS.i18n("Edit_Preferences...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -149,7 +149,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        reloadLibsAction = new AbstractAction(JAMS.resources.getString("Reload")) {
+        reloadLibsAction = new AbstractAction(JAMS.i18n("Reload")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -157,7 +157,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        newModelAction = new AbstractAction(JAMS.resources.getString("New_Model")) {
+        newModelAction = new AbstractAction(JAMS.i18n("New_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -165,7 +165,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        loadPrefsAction = new AbstractAction(JAMS.resources.getString("Load_Preferences...")) {
+        loadPrefsAction = new AbstractAction(JAMS.i18n("Load_Preferences...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -185,7 +185,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        savePrefsAction = new AbstractAction(JAMS.resources.getString("Save_Preferences...")) {
+        savePrefsAction = new AbstractAction(JAMS.i18n("Save_Preferences...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -204,7 +204,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        loadModelAction = new AbstractAction(JAMS.resources.getString("Open_Model...")) {
+        loadModelAction = new AbstractAction(JAMS.i18n("Open_Model...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -212,7 +212,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        saveModelAction = new AbstractAction(JAMS.resources.getString("Save_Model")) {
+        saveModelAction = new AbstractAction(JAMS.i18n("Save_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -221,7 +221,7 @@ public class JUICEFrame extends JFrame {
         };
         saveModelAction.setEnabled(false);
 
-        saveAsModelAction = new AbstractAction(JAMS.resources.getString("Save_Model_As...")) {
+        saveAsModelAction = new AbstractAction(JAMS.i18n("Save_Model_As...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -230,7 +230,7 @@ public class JUICEFrame extends JFrame {
         };
         saveAsModelAction.setEnabled(false);
 
-        exitAction = new AbstractAction(JAMS.resources.getString("Exit")) {
+        exitAction = new AbstractAction(JAMS.i18n("Exit")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -238,7 +238,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        aboutAction = new AbstractAction(JAMS.resources.getString("About")) {
+        aboutAction = new AbstractAction(JAMS.i18n("About")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -246,7 +246,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        searchAction = new AbstractAction(JAMS.resources.getString("Find...")) {
+        searchAction = new AbstractAction(JAMS.i18n("Find...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -257,7 +257,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        copyModelGUIAction = new AbstractAction(JAMS.resources.getString("Copy_Model_GUI")) {
+        copyModelGUIAction = new AbstractAction(JAMS.i18n("Copy_Model_GUI")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -267,7 +267,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        pasteModelGUIAction = new AbstractAction(JAMS.resources.getString("Paste_Model_GUI")) {
+        pasteModelGUIAction = new AbstractAction(JAMS.i18n("Paste_Model_GUI")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -283,7 +283,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        OptimizationWizardGUIAction = new AbstractAction(JAMS.resources.getString("Optimization_Wizard")) {
+        OptimizationWizardGUIAction = new AbstractAction(JAMS.i18n("Optimization_Wizard")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -300,7 +300,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        loadModelParamAction = new AbstractAction(JAMS.resources.getString("Load_Model_Parameter...")) {
+        loadModelParamAction = new AbstractAction(JAMS.i18n("Load_Model_Parameter...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -315,7 +315,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        saveModelParamAction = new AbstractAction(JAMS.resources.getString("Save_Model_Parameter...")) {
+        saveModelParamAction = new AbstractAction(JAMS.i18n("Save_Model_Parameter...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -330,7 +330,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        runModelAction = new AbstractAction(JAMS.resources.getString("Run_Model")) {
+        runModelAction = new AbstractAction(JAMS.i18n("Run_Model")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -339,7 +339,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        runModelFromLauncherAction = new AbstractAction(JAMS.resources.getString("Run_model_from_JAMS_Launcher")) {
+        runModelFromLauncherAction = new AbstractAction(JAMS.i18n("Run_model_from_JAMS_Launcher")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -348,7 +348,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        infoLogAction = new AbstractAction(JAMS.resources.getString("Info_Log...")) {
+        infoLogAction = new AbstractAction(JAMS.i18n("Info_Log...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -356,7 +356,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        errorLogAction = new AbstractAction(JAMS.resources.getString("Error_Log...")) {
+        errorLogAction = new AbstractAction(JAMS.i18n("Error_Log...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -364,15 +364,15 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        onlineAction = new AbstractAction(JAMS.resources.getString("JAMS_online...")) {
+        onlineAction = new AbstractAction(JAMS.i18n("JAMS_online...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                GUIHelper.openURL(JAMS.resources.getString("JAMS_URL"));
+                GUIHelper.openURL(JAMS.i18n("JAMS_URL"));
             }
         };
 
-        outputDSAction = new AbstractAction(JAMS.resources.getString("Model_output")) {
+        outputDSAction = new AbstractAction(JAMS.i18n("Model_output")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -383,7 +383,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        explorerAction = new AbstractAction(JAMS.resources.getString("DATA_EXPLORER")) {
+        explorerAction = new AbstractAction(JAMS.i18n("DATA_EXPLORER")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -392,7 +392,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        browserAction = new AbstractAction(JAMS.resources.getString("Browse_WS_Dir")) {
+        browserAction = new AbstractAction(JAMS.i18n("Browse_WS_Dir")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -404,7 +404,7 @@ public class JUICEFrame extends JFrame {
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
         setTitle(JUICE.APP_TITLE);
 
-        loadModelDlg = new WorkerDlg(this, JAMS.resources.getString("Loading_Model"));
+        loadModelDlg = new WorkerDlg(this, JAMS.i18n("Loading_Model"));
 
         propertyDlg = new PropertyDlg(this, JUICE.getJamsProperties());
 
@@ -434,7 +434,7 @@ public class JUICEFrame extends JFrame {
 
         JPanel rtManagerPanel = new JPanel();
         rtManagerPanel.setLayout(new BorderLayout());
-        rtManagerPanel.add(new JLabel(" " + JAMS.resources.getString("Runtime_Manager") + ":"), BorderLayout.NORTH);
+        rtManagerPanel.add(new JLabel(" " + JAMS.i18n("Runtime_Manager") + ":"), BorderLayout.NORTH);
         rtManagerPanel.add(new RuntimeManagerPanel(), BorderLayout.CENTER);
 
         JSplitPane leftSplitPane = new JSplitPane();
@@ -464,61 +464,61 @@ public class JUICEFrame extends JFrame {
          */
         JButton modelNewButton = new JButton(newModelAction);
         modelNewButton.setText("");
-        modelNewButton.setToolTipText(JAMS.resources.getString("New_Model"));
+        modelNewButton.setToolTipText(JAMS.i18n("New_Model"));
         modelNewButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelNew.png")));
         toolBar.add(modelNewButton);
 
         JButton modelOpenButton = new JButton(loadModelAction);
         modelOpenButton.setText("");
-        modelOpenButton.setToolTipText(JAMS.resources.getString("Open_Model..."));
+        modelOpenButton.setToolTipText(JAMS.i18n("Open_Model..."));
         modelOpenButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelOpen.png")));
         toolBar.add(modelOpenButton);
 
         JButton modelSaveButton = new JButton(saveModelAction);
         modelSaveButton.setText("");
-        modelSaveButton.setToolTipText(JAMS.resources.getString("Save_Model"));
+        modelSaveButton.setToolTipText(JAMS.i18n("Save_Model"));
         modelSaveButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelSave.png")));
         toolBar.add(modelSaveButton);
 
         JButton searchButton = new JButton(searchAction);
         searchButton.setText("");
-        searchButton.setToolTipText(JAMS.resources.getString("Find..."));
+        searchButton.setToolTipText(JAMS.i18n("Find..."));
         searchButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Search.png")));
         toolBar.add(searchButton);
 
         JButton outputDSButton = new JButton(outputDSAction);
         outputDSButton.setText("");
-        outputDSButton.setToolTipText(JAMS.resources.getString("Model_output"));
+        outputDSButton.setToolTipText(JAMS.i18n("Model_output"));
         outputDSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/DataOutput.png")));
         toolBar.add(outputDSButton);
 
         JButton prefsButton = new JButton(editPrefsAction);
         prefsButton.setText("");
-        prefsButton.setToolTipText(JAMS.resources.getString("Edit_Preferences..."));
+        prefsButton.setToolTipText(JAMS.i18n("Edit_Preferences..."));
         prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
         toolBar.add(prefsButton);
 
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
-        infoLogButton.setToolTipText(JAMS.resources.getString("Show_Info_Log..."));
+        infoLogButton.setToolTipText(JAMS.i18n("Show_Info_Log..."));
         infoLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/InfoLog.png")));
         toolBar.add(infoLogButton);
 
         JButton errorLogButton = new JButton(errorLogAction);
         errorLogButton.setText("");
-        errorLogButton.setToolTipText(JAMS.resources.getString("Show_Error_Log..."));
+        errorLogButton.setToolTipText(JAMS.i18n("Show_Error_Log..."));
         errorLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ErrorLog.png")));
         toolBar.add(errorLogButton);
 
         JButton helpButton = new JButton(onlineAction);
         helpButton.setText("");
-        helpButton.setToolTipText(JAMS.resources.getString("JAMS_online..."));
+        helpButton.setToolTipText(JAMS.i18n("JAMS_online..."));
         helpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Browser.png")));
         toolBar.add(helpButton);
 
         JButton exitButton = new JButton(exitAction);
         exitButton.setText("");
-        exitButton.setToolTipText(JAMS.resources.getString("Exit"));
+        exitButton.setToolTipText(JAMS.i18n("Exit"));
         exitButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/system-shutdown.png")));
         toolBar.add(exitButton);
 
@@ -534,7 +534,7 @@ public class JUICEFrame extends JFrame {
         statusPanel.setBorder(BorderFactory.createEtchedBorder());
         statusPanel.setPreferredSize(new java.awt.Dimension(14, 20));
         statusLabel = new JLabel();
-        statusLabel.setText(JAMS.resources.getString("JAMS_Status"));
+        statusLabel.setText(JAMS.i18n("JAMS_Status"));
         statusPanel.add(statusLabel, java.awt.BorderLayout.CENTER);
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
 
@@ -546,7 +546,7 @@ public class JUICEFrame extends JFrame {
         /*
          * file menu
          */
-        JMenu fileMenu = new JMenu(JAMS.resources.getString("File"));
+        JMenu fileMenu = new JMenu(JAMS.i18n("File"));
         mainMenu.add(fileMenu);
 
         JMenuItem newModelItem = new JMenuItem(newModelAction);
@@ -572,7 +572,7 @@ public class JUICEFrame extends JFrame {
         /*
          * edit menu
          */
-        JMenu extrasMenu = new JMenu(JAMS.resources.getString("Edit"));
+        JMenu extrasMenu = new JMenu(JAMS.i18n("Edit"));
         mainMenu.add(extrasMenu);
 
         JMenuItem editPrefsItem = new JMenuItem(editPrefsAction);
@@ -595,7 +595,7 @@ public class JUICEFrame extends JFrame {
         /*
          * model menu
          */
-        modelMenu = new JMenu(JAMS.resources.getString("Model"));
+        modelMenu = new JMenu(JAMS.i18n("Model"));
         modelMenu.setEnabled(false);
         mainMenu.add(modelMenu);
 
@@ -646,7 +646,7 @@ public class JUICEFrame extends JFrame {
         /*
          * logs menu
          */
-        JMenu logsMenu = new JMenu(JAMS.resources.getString("Logs"));
+        JMenu logsMenu = new JMenu(JAMS.i18n("Logs"));
         mainMenu.add(logsMenu);
 
         JMenuItem infoLogItem = new JMenuItem(infoLogAction);
@@ -658,7 +658,7 @@ public class JUICEFrame extends JFrame {
         /*
          * windows menu
          */
-        windowMenu = new JMenu(JAMS.resources.getString("Windows"));
+        windowMenu = new JMenu(JAMS.i18n("Windows"));
         windowMenu.setEnabled(false);
         ModelView.viewList.addObserver(new Observer() {
 
@@ -696,7 +696,7 @@ public class JUICEFrame extends JFrame {
         /*
          * help menu
          */
-        JMenu helpMenu = new JMenu(JAMS.resources.getString("Help"));
+        JMenu helpMenu = new JMenu(JAMS.i18n("Help"));
         mainMenu.add(helpMenu);
 
         JMenuItem onlineItem = new JMenuItem(onlineAction);
@@ -818,7 +818,7 @@ public class JUICEFrame extends JFrame {
     public void saveModel(ModelView view) {
         if (view.getSavePath() != null) {
             if (!view.save()) {
-                GUIHelper.showErrorDlg(this, JAMS.resources.getString("Error_saving_model_to_") + view.getSavePath(), JAMS.resources.getString("Error"));
+                GUIHelper.showErrorDlg(this, JAMS.i18n("Error_saving_model_to_") + view.getSavePath(), JAMS.i18n("Error"));
                 view.setSavePath(null);
             } else {
                 view.setInitialState();

@@ -150,7 +150,7 @@ public class JAMSWorkspace implements Workspace {
             try {
                 state.recoverDataStoreState(iter.next());
             } catch (IOException e) {
-                this.getRuntime().sendHalt(JAMS.resources.getString("error_occured_while_restoring_model_state") + ":" + e.toString());
+                this.getRuntime().sendHalt(JAMS.i18n("error_occured_while_restoring_model_state") + ":" + e.toString());
                 e.printStackTrace();
             }
         }
@@ -173,14 +173,14 @@ public class JAMSWorkspace implements Workspace {
     public void checkValidity(boolean readonly) throws InvalidWorkspaceException {
 
         if (!directory.isDirectory()) {
-            throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_")
-                    + directory.toString() + JAMS.resources.getString("_is_not_a_directory"));
+            throw new InvalidWorkspaceException(JAMS.i18n("Error_during_model_setup:_")
+                    + directory.toString() + JAMS.i18n("_is_not_a_directory"));
         }
 
 //        File configFile = new File(directory, "config.txt");
 //        if (!configFile.exists()) {
-//            throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_")
-//                    + directory.toString() + JAMS.resources.getString("_does_not_contain_config_file"));
+//            throw new InvalidWorkspaceException(JAMS.i18n("Error_during_model_setup:_")
+//                    + directory.toString() + JAMS.i18n("_does_not_contain_config_file"));
 //        }
 
         File inDir = new File(directory, INPUT_DIR_NAME);
@@ -195,9 +195,9 @@ public class JAMSWorkspace implements Workspace {
         if (readonly) {
             for (File dir : allDirs) {
                 if (!dir.exists()) {
-                    throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_")
-                            + directory.toString() + JAMS.resources.getString("_does_not_contain_needed_directory_")
-                            + dir.toString() + JAMS.resources.getString("_)"));
+                    throw new InvalidWorkspaceException(JAMS.i18n("Error_during_model_setup:_")
+                            + directory.toString() + JAMS.i18n("_does_not_contain_needed_directory_")
+                            + dir.toString() + JAMS.i18n("_)"));
                 }
             }
 
@@ -211,8 +211,8 @@ public class JAMSWorkspace implements Workspace {
                 }
 
             } catch (SecurityException se) {
-                throw new InvalidWorkspaceException(JAMS.resources.getString("Error_during_model_setup:_")
-                        + directory.toString() + JAMS.resources.getString("_is_not_a_valid_workspace!"));
+                throw new InvalidWorkspaceException(JAMS.i18n("Error_during_model_setup:_")
+                        + directory.toString() + JAMS.i18n("_is_not_a_valid_workspace!"));
             }
         }
 
@@ -355,15 +355,15 @@ public class JAMSWorkspace implements Workspace {
                 store = new ShapeFileDataStore(this, dsTitle, doc);
             }
         } catch (ClassNotFoundException cnfe) {
-            getRuntime().sendErrorMsg(JAMS.resources.getString("Error_initializing_datastore_") + dsTitle + JAMS.resources.getString("!"));
+            getRuntime().sendErrorMsg(JAMS.i18n("Error_initializing_datastore_") + dsTitle + JAMS.i18n("!"));
             getRuntime().handle(cnfe);
             return null;
         } catch (IOException ioe) {
-            getRuntime().sendErrorMsg(JAMS.resources.getString("Error_initializing_datastore_") + dsTitle + JAMS.resources.getString("!"));
+            getRuntime().sendErrorMsg(JAMS.i18n("Error_initializing_datastore_") + dsTitle + JAMS.i18n("!"));
             getRuntime().handle(ioe);
             return null;
         } catch (URISyntaxException use) {
-            getRuntime().sendErrorMsg(JAMS.resources.getString("Error_initializing_datastore_") + dsTitle + JAMS.resources.getString("!"));
+            getRuntime().sendErrorMsg(JAMS.i18n("Error_initializing_datastore_") + dsTitle + JAMS.i18n("!"));
             getRuntime().handle(use);
             return null;
         }
@@ -563,7 +563,7 @@ public class JAMSWorkspace implements Workspace {
         inputDataStores.clear();
         for (String storeID : registeredInputDataStores.keySet()) {
             inputDataStores.put(storeID, registeredInputDataStores.get(storeID));
-            this.getRuntime().println(JAMS.resources.getString("Added_input_store_") + storeID + JAMS.resources.getString("_from_") + "XML", JAMS.VERBOSE);
+            this.getRuntime().println(JAMS.i18n("Added_input_store_") + storeID + JAMS.i18n("_from_") + "XML", JAMS.VERBOSE);
         }
 
         //add input datastores from file system
@@ -575,11 +575,11 @@ public class JAMSWorkspace implements Workspace {
                 if (!inputDataStores.containsKey(storeID)) {
                     Document doc = XMLTools.getDocument(child.getAbsolutePath());
                     inputDataStores.put(storeID, doc);
-                    this.getRuntime().println(JAMS.resources.getString("Added_input_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
+                    this.getRuntime().println(JAMS.i18n("Added_input_store_") + storeID + JAMS.i18n("_from_") + child.getAbsolutePath() + JAMS.i18n("."), JAMS.VERBOSE);
                 }
 
             } catch (FileNotFoundException fnfe) {
-                this.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.resources.getString("!"));
+                this.getRuntime().sendErrorMsg(JAMS.i18n("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.i18n("!"));
             }
         }
 
@@ -590,7 +590,7 @@ public class JAMSWorkspace implements Workspace {
             Document doc = registeredOutputDataStores.get(storeID);
             if (isEnabledOutputDS(doc)) {
                 outputDataStores.put(storeID, doc);
-                this.getRuntime().println(JAMS.resources.getString("Added_output_store_") + storeID + JAMS.resources.getString("_from_") + "XML", JAMS.VERBOSE);
+                this.getRuntime().println(JAMS.i18n("Added_output_store_") + storeID + JAMS.i18n("_from_") + "XML", JAMS.VERBOSE);
             }
         }
 
@@ -605,12 +605,12 @@ public class JAMSWorkspace implements Workspace {
                     Document doc = XMLTools.getDocument(child.getAbsolutePath());
                     if (isEnabledOutputDS(doc)) {
                         outputDataStores.put(storeID, doc);
-                        this.getRuntime().println(JAMS.resources.getString("Added_output_store_") + storeID + JAMS.resources.getString("_from_") + child.getAbsolutePath() + JAMS.resources.getString("."), JAMS.VERBOSE);
+                        this.getRuntime().println(JAMS.i18n("Added_output_store_") + storeID + JAMS.i18n("_from_") + child.getAbsolutePath() + JAMS.i18n("."), JAMS.VERBOSE);
                     }
                 }
 
             } catch (FileNotFoundException fnfe) {
-                this.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.resources.getString("!"));
+                this.getRuntime().sendErrorMsg(JAMS.i18n("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.i18n("!"));
             }
         }
         for (String storeID : outputDataStores.keySet()) {
@@ -664,7 +664,7 @@ public class JAMSWorkspace implements Workspace {
             String result = asciiConverter.toASCIIString((TSDataStore) store);
             return result;
         } else {
-            return store.getClass().toString() + JAMS.resources.getString("_not_yet_supported!");
+            return store.getClass().toString() + JAMS.i18n("_not_yet_supported!");
         }
     }
 
@@ -683,7 +683,7 @@ public class JAMSWorkspace implements Workspace {
             TSDumpProcessor asciiConverter = new TSDumpProcessor();
             File file = new File(this.getLocalDumpDirectory(), store.getID() + ".dump");
             asciiConverter.toASCIIFile((TSDataStore) store, file);
-            getRuntime().sendInfoMsg(JAMS.resources.getString("Dumped_input_datastore_1") + store.getID() + JAMS.resources.getString("Dumped_input_datastore_2") + file + JAMS.resources.getString("Dumped_input_datastore_3"));
+            getRuntime().sendInfoMsg(JAMS.i18n("Dumped_input_datastore_1") + store.getID() + JAMS.i18n("Dumped_input_datastore_2") + file + JAMS.i18n("Dumped_input_datastore_3"));
         }
 
         store.close();

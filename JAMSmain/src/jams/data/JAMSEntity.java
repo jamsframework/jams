@@ -96,7 +96,7 @@ public class JAMSEntity implements Attribute.Entity {
         if (values.containsKey(name)) {
             return ((JAMSFloat) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + name + JAMS.resources.getString("_(float)_not_found!"));
+            throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + name + JAMS.i18n("_(float)_not_found!"));
         }
     }
 
@@ -105,7 +105,7 @@ public class JAMSEntity implements Attribute.Entity {
         if (values.containsKey(name)) {
             return ((JAMSDouble) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + name + JAMS.resources.getString("_(double)_not_found!"));
+            throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + name + JAMS.i18n("_(double)_not_found!"));
         }
     }
 
@@ -114,7 +114,7 @@ public class JAMSEntity implements Attribute.Entity {
         if (values.containsKey(name)) {
             return ((JAMSInteger) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + name + JAMS.resources.getString("_(int)_not_found!"));
+            throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + name + JAMS.i18n("_(int)_not_found!"));
         }
     }
 
@@ -123,7 +123,7 @@ public class JAMSEntity implements Attribute.Entity {
         if (values.containsKey(name)) {
             return ((JAMSLong) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + name + JAMS.resources.getString("_(long)_not_found!"));
+            throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + name + JAMS.i18n("_(long)_not_found!"));
         }
     }
 
@@ -132,7 +132,7 @@ public class JAMSEntity implements Attribute.Entity {
         if (values.containsKey(name)) {
             return values.get(name);
         } else {
-            throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + name + JAMS.resources.getString("_(Object)_not_found!"));
+            throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + name + JAMS.i18n("_(Object)_not_found!"));
         }
     }
 
@@ -141,7 +141,7 @@ public class JAMSEntity implements Attribute.Entity {
         if (values.containsKey(name)) {
             return ((JAMSGeometry) values.get(name)).getValue();
         } else {
-            throw new JAMSEntity.NoSuchAttributeException(JAMS.resources.getString("Attribute_") + name + JAMS.resources.getString("_(Geometry)_not_found!"));
+            throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + name + JAMS.i18n("_(Geometry)_not_found!"));
         }
     }
 

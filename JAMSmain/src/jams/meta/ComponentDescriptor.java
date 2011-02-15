@@ -52,7 +52,7 @@ public class ComponentDescriptor extends Observable {
     public ComponentDescriptor(String instanceName, Class clazz) throws JAMSException {
 
         if (clazz == null) {
-            throw new JAMSException(JAMS.resources.getString("Could_not_find_class_for_component_") + instanceName + "_!");
+            throw new JAMSException(JAMS.i18n("Could_not_find_class_for_component_") + instanceName + "_!");
         }
 
         this.clazz = clazz;
@@ -119,7 +119,7 @@ public class ComponentDescriptor extends Observable {
     public void outputUnsetAttributes() {
         for (ComponentField ad : getComponentFields().values()) {
             if (ad.getAttribute() == null && ad.getContext() == null && ad.getValue() == null) {
-                Logger.getLogger(ComponentDescriptor.class.getName()).log(Level.INFO, JAMS.resources.getString("Attribute_") + ad.getName() + " (" + ad.getType() + JAMS.resources.getString(")_not_set_in_component_") + getName());
+                Logger.getLogger(ComponentDescriptor.class.getName()).log(Level.INFO, JAMS.i18n("Attribute_") + ad.getName() + " (" + ad.getType() + JAMS.i18n(")_not_set_in_component_") + getName());
             }
         }
     }
@@ -185,7 +185,7 @@ public class ComponentDescriptor extends Observable {
         }
 
         if (!this.instanceName.equals(name)) {
-            throw new JAMSException(MessageFormat.format(JAMS.resources.getString("Component_name_is_already_in_use._Renamed_component_to_"), name, this.instanceName), JAMS.resources.getString("Invalid_value!"));
+            throw new JAMSException(MessageFormat.format(JAMS.i18n("Component_name_is_already_in_use._Renamed_component_to_"), name, this.instanceName), JAMS.i18n("Invalid_value!"));
         }
     }
 

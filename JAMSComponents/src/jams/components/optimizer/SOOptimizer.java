@@ -103,11 +103,11 @@ public abstract class SOOptimizer extends Optimizer {
             return;            
         
         if (this.effMethodName == null)
-            stop(JAMS.resources.getString("effMethod_not_specified"));
+            stop(JAMS.i18n("effMethod_not_specified"));
         if (this.effValue == null)
-            stop(JAMS.resources.getString("effValue_not_specified"));
+            stop(JAMS.i18n("effValue_not_specified"));
         if (this.mode == null)
-            stop(JAMS.resources.getString("mode_not_specified"));
+            stop(JAMS.i18n("mode_not_specified"));
         
         bestValue = Double.MAX_VALUE;                   
     }

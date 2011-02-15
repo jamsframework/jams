@@ -51,7 +51,7 @@ import reg.gui.ExplorerFrame;
  */
 public class JAMSExplorer {
 
-    public static final String APP_TITLE = JAMS.resources.getString("JADE");
+    public static final String APP_TITLE = JAMS.i18n("JADE");
     public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 750;
     protected ExplorerFrame explorerFrame;
     protected JAMSRuntime runtime;
@@ -76,13 +76,13 @@ public class JAMSExplorer {
             this.runtime.addErrorLogObserver(new Observer() {
 
                 public void update(Observable o, Object arg) {
-                    GUIHelper.showErrorDlg(explorerFrame, arg.toString(), JAMS.resources.getString("Error"));
+                    GUIHelper.showErrorDlg(explorerFrame, arg.toString(), JAMS.i18n("Error"));
                 }
             });
             this.runtime.addInfoLogObserver(new Observer() {
 
                 public void update(Observable o, Object arg) {
-                    //GUIHelper.showInfoDlg(regFrame, arg.toString(), JAMS.resources.getString("Info"));
+                    //GUIHelper.showInfoDlg(regFrame, arg.toString(), JAMS.i18n("Info"));
                 }
             });
         } else {

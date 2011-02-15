@@ -86,7 +86,7 @@ public class JAMSRemote extends JAMSui {
 //            try {
 //                properties.load(cmdLine.getConfigFileName());
 //            } catch (IOException ioe) {
-//                System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + cmdLine.getConfigFileName());
+//                System.out.println(JAMS.i18n("Error_while_loading_config_from") + cmdLine.getConfigFileName());
 //                handle(ioe);
 //            }
 //        } else {
@@ -97,7 +97,7 @@ public class JAMSRemote extends JAMSui {
 //                try {
 //                    properties.load(defaultFile);
 //                } catch (IOException ioe) {
-//                    System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + defaultFile);
+//                    System.out.println(JAMS.i18n("Error_while_loading_config_from") + defaultFile);
 //                    handle(ioe);
 //                }
 //            }

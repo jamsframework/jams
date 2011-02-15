@@ -35,7 +35,7 @@ public class BranchAndBound extends SOOptimizer{
             return; 
         
         if (x0 != null){
-            this.getModel().getRuntime().sendInfoMsg(JAMS.resources.getString("start_value_not_supported_by_branch_and_bound"));
+            this.getModel().getRuntime().sendInfoMsg(JAMS.i18n("start_value_not_supported_by_branch_and_bound"));
         }
 /*             
         if (SampleDumpFileName != null){
@@ -357,7 +357,7 @@ public class BranchAndBound extends SOOptimizer{
         int k=1;                                
 
         getModel().getRuntime().sendInfoMsg("***************************");
-        getModel().getRuntime().sendInfoMsg(JAMS.resources.getString("_start_optimization_"));
+        getModel().getRuntime().sendInfoMsg(JAMS.i18n("_start_optimization_"));
         getModel().getRuntime().sendInfoMsg("***************************");
                         
         SampleSO a = getSample(super.lowBound);

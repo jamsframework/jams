@@ -91,21 +91,21 @@ public class SearchDlg extends JDialog {
         GridBagLayout mainLayout = new GridBagLayout();
         contentPanel.setLayout(mainLayout);
 
-        inClassName = new JCheckBox(JAMS.resources.getString("inClassName"), true);
-        inInstanceName = new JCheckBox(JAMS.resources.getString("inInstanceName"), true);
-        inContextAttribs = new JCheckBox(JAMS.resources.getString("inContextAttribs"), true);
-        inComponentAttribs = new JCheckBox(JAMS.resources.getString("inComponentAttribs"), true);
-        inComponentValues = new JCheckBox(JAMS.resources.getString("inComponentValues"), true);
-        inComponentMetadata = new JCheckBox(JAMS.resources.getString("inComponentMetadata"), true);
+        inClassName = new JCheckBox(JAMS.i18n("inClassName"), true);
+        inInstanceName = new JCheckBox(JAMS.i18n("inInstanceName"), true);
+        inContextAttribs = new JCheckBox(JAMS.i18n("inContextAttribs"), true);
+        inComponentAttribs = new JCheckBox(JAMS.i18n("inComponentAttribs"), true);
+        inComponentValues = new JCheckBox(JAMS.i18n("inComponentValues"), true);
+        inComponentMetadata = new JCheckBox(JAMS.i18n("inComponentMetadata"), true);
 
-        caseSensitive = new JCheckBox(JAMS.resources.getString("caseSensitiveSearch"), false);
-        wholeString = new JCheckBox(JAMS.resources.getString("wholeStringSearch"), false);
+        caseSensitive = new JCheckBox(JAMS.i18n("caseSensitiveSearch"), false);
+        wholeString = new JCheckBox(JAMS.i18n("wholeStringSearch"), false);
 
         searchText = InputComponentFactory.createInputComponent(JAMSString.class);
         searchText.setLength(TEXTFIELD_WIDTH);
 
-        repo = new JRadioButton(JAMS.resources.getString("Search_in_Repo"));
-        model = new JRadioButton(JAMS.resources.getString("Search_in_Model"));
+        repo = new JRadioButton(JAMS.i18n("Search_in_Repo"));
+        model = new JRadioButton(JAMS.i18n("Search_in_Model"));
         model.setSelected(true);
 
         repo.addActionListener(new ActionListener() {
@@ -133,7 +133,7 @@ public class SearchDlg extends JDialog {
         group.add(repo);
         group.add(model);
 
-        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Search_text")), 1, 0, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.i18n("Search_text")), 1, 0, 2, 1, 0, 0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, searchText.getComponent(), 1, 1, 2, 1, 0, 0);
 
         GUIHelper.addGBComponent(contentPanel, mainLayout, model, 1, 2, 1, 1, 0, 0);
@@ -142,7 +142,7 @@ public class SearchDlg extends JDialog {
         GUIHelper.addGBComponent(contentPanel, mainLayout, caseSensitive, 1, 5, 1, 1, 0, 0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, wholeString, 2, 5, 1, 1, 0, 0);
 
-        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Where_to_search")), 1, 10, 2, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.i18n("Where_to_search")), 1, 10, 2, 1, 0, 0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, inClassName, 1, 11, 2, 1, 0, 0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, inComponentAttribs, 1, 12, 2, 1, 0, 0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, inComponentMetadata, 1, 14, 2, 1, 0, 0);
@@ -150,7 +150,7 @@ public class SearchDlg extends JDialog {
         GUIHelper.addGBComponent(contentPanel, mainLayout, inComponentValues, 1, 18, 2, 1, 0, 0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, inContextAttribs, 1, 20, 2, 1, 0, 0);
 
-        JButton findButton = new JButton(JAMS.resources.getString("Find"));
+        JButton findButton = new JButton(JAMS.i18n("Find"));
         findButton.addActionListener(new ActionListener() {
 
             @Override
@@ -159,7 +159,7 @@ public class SearchDlg extends JDialog {
             }
         });
 
-        JButton resetButton = new JButton(JAMS.resources.getString("ResetSearch"));
+        JButton resetButton = new JButton(JAMS.i18n("ResetSearch"));
         resetButton.addActionListener(new ActionListener() {
 
             @Override
@@ -169,7 +169,7 @@ public class SearchDlg extends JDialog {
             }
         });
 
-        JButton closeButton = new JButton(JAMS.resources.getString("Close"));
+        JButton closeButton = new JButton(JAMS.i18n("Close"));
         closeButton.addActionListener(new ActionListener() {
 
             @Override
@@ -197,12 +197,12 @@ public class SearchDlg extends JDialog {
         this.tree = tree;
 
         if (tree instanceof LibTree) {
-            this.setTitle(JAMS.resources.getString("Search_in_Repo"));
+            this.setTitle(JAMS.i18n("Search_in_Repo"));
             inInstanceName.setEnabled(false);
             inComponentValues.setEnabled(false);
             inContextAttribs.setEnabled(false);
         } else if (tree instanceof ModelTree) {
-            this.setTitle(JAMS.resources.getString("Search_in_Model"));
+            this.setTitle(JAMS.i18n("Search_in_Model"));
             inInstanceName.setEnabled(true);
             inComponentValues.setEnabled(true);
             inContextAttribs.setEnabled(true);
@@ -232,13 +232,13 @@ public class SearchDlg extends JDialog {
 
         // check if we have found anything
         if (!foundResult) {
-            GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("No_searchresults_txt"), JAMS.resources.getString("Search_finished"));
+            GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), JAMS.i18n("No_searchresults_txt"), JAMS.i18n("Search_finished"));
             reset();
             return;
         }
 
         // we've found all results, ask what to do next
-        if (GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("No_further_searchresults_txt"), JAMS.resources.getString("Search_finished")) == JOptionPane.YES_OPTION) {
+        if (GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(), JAMS.i18n("No_further_searchresults_txt"), JAMS.i18n("Search_finished")) == JOptionPane.YES_OPTION) {
             reset();
             processFind();
         }

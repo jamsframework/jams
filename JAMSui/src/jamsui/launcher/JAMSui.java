@@ -74,7 +74,7 @@ public class JAMSui {
             try {
                 properties.load(cmdLine.getConfigFileName());
             } catch (IOException ioe) {
-                System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + cmdLine.getConfigFileName());
+                System.out.println(JAMS.i18n("Error_while_loading_config_from") + cmdLine.getConfigFileName());
                 handle(ioe);
             }
             baseDir = new File(cmdLine.getConfigFileName()).getParentFile();
@@ -86,7 +86,7 @@ public class JAMSui {
                 try {
                     properties.load(defaultFile);
                 } catch (IOException ioe) {
-                    System.out.println(JAMS.resources.getString("Error_while_loading_config_from") + defaultFile);
+                    System.out.println(JAMS.i18n("Error_while_loading_config_from") + defaultFile);
                     handle(ioe);
                 }
             }
@@ -111,7 +111,7 @@ public class JAMSui {
             if (guiConfig == 1) {
                 startGUI();
             } else {
-                System.out.println(JAMS.resources.getString("You_must_provide_a_model_file_name_(see_JAMS_--help)_when_disabling_GUI_config!"));
+                System.out.println(JAMS.i18n("You_must_provide_a_model_file_name_(see_JAMS_--help)_when_disabling_GUI_config!"));
                 System.exit(-1);
             }
 
@@ -138,14 +138,14 @@ public class JAMSui {
                 //check if file exists
                 File file = new File(modelFileName);
                 if (!file.exists()) {
-                    System.out.println(JAMS.resources.getString("Model_file_") + modelFileName + JAMS.resources.getString("_could_not_be_found_-_exiting!"));
+                    System.out.println(JAMS.i18n("Model_file_") + modelFileName + JAMS.i18n("_could_not_be_found_-_exiting!"));
                     return;
                 }
 
                 // do some search and replace on the input file and create new file if necessary
                 String newModelFilename = XMLProcessor.modelDocConverter(modelFileName);
                 if (!newModelFilename.equalsIgnoreCase(modelFileName)) {
-                    info = JAMS.resources.getString("The_model_definition_in_") + modelFileName + JAMS.resources.getString("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JAMS.resources.getString("_while_your_original_file_was_left_untouched.");
+                    info = JAMS.i18n("The_model_definition_in_") + modelFileName + JAMS.i18n("_has_been_adapted_in_order_to_meet_changes_in_the_JAMS_model_specification.The_new_definition_has_been_stored_in_") + newModelFilename + JAMS.i18n("_while_your_original_file_was_left_untouched.");
                     modelFileName = newModelFilename;
                 }
 
@@ -170,7 +170,7 @@ public class JAMSui {
                             && !StringTools.isEmptyString(modelFileName)) {
                         String dir = new File(modelFileName).getParent();
                         runtime.getModel().setWorkspacePath(dir);
-                        runtime.sendInfoMsg(JAMS.resources.getString("no_workspace_defined_use_loadpath") + dir);
+                        runtime.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + dir);
                     }
 
                     if (!info.equals("")) {
@@ -196,9 +196,9 @@ public class JAMSui {
                     }
 
                 } catch (IOException ioe) {
-                    System.out.println(JAMS.resources.getString("The_model_definition_file_") + modelFileName + JAMS.resources.getString("_could_not_be_loaded,_because:_") + ioe.toString());
+                    System.out.println(JAMS.i18n("The_model_definition_file_") + modelFileName + JAMS.i18n("_could_not_be_loaded,_because:_") + ioe.toString());
                 } catch (SAXException se) {
-                    System.out.println(JAMS.resources.getString("The_model_definition_file_") + modelFileName + JAMS.resources.getString("_contained_errors!"));
+                    System.out.println(JAMS.i18n("The_model_definition_file_") + modelFileName + JAMS.i18n("_contained_errors!"));
                 } catch (Exception ex) {
                     if (runtime != null) {
                         runtime.handle(ex);

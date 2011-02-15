@@ -62,7 +62,7 @@ public class PropertyDlg extends JDialog {
 
         this.properties = properties;
 
-        setTitle(JAMS.resources.getString("JAMS_Preferences"));
+        setTitle(JAMS.i18n("JAMS_Preferences"));
         setModal(true);
 
         JPanel contentPanel = new JPanel();
@@ -72,19 +72,19 @@ public class PropertyDlg extends JDialog {
 
         int y = 0;
 
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Libraries:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Libraries:")), 0, y, 1, 1, 0, 0);
         list = new FileListInput();
         list.setPreferredSize(new Dimension(295, 130));
         GUIHelper.addGBComponent(contentPanel, gbl, list, 1, y, 1, 1, 1, 1);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Command_line_output:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Command_line_output:")), 0, y, 1, 1, 0, 0);
         verboseCheck = new BooleanInput();
         verboseCheck.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, verboseCheck, 1, y, 1, 1, 1, 1);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Verbosity_level:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Verbosity_level:")), 0, y, 1, 1, 0, 0);
         debugSpinner = new JSpinner();
         JPanel spinnerPanel = new JPanel();
         spinnerPanel.setLayout(new BorderLayout());
@@ -100,79 +100,79 @@ public class PropertyDlg extends JDialog {
         GUIHelper.addGBComponent(contentPanel, gbl, spinnerPanel, 1, y, 1, 1, 0, 0);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Info_log_file:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Info_log_file:")), 0, y, 1, 1, 0, 0);
         infoFile = new FileInput();
         infoFile.setPreferredSize(new Dimension(286, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, infoFile, 1, y, 1, 1, 1, 1);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Error_log_file:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Error_log_file:")), 0, y, 1, 1, 0, 0);
         errorFile = new FileInput();
         errorFile.setPreferredSize(new Dimension(286, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, errorFile, 1, y, 1, 1, 1, 1);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Model_window_visible:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Model_window_visible:")), 0, y, 1, 1, 0, 0);
         windowEnable = new BooleanInput();
         windowEnable.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, windowEnable, 1, y, 1, 1, 1, 1);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Show_dialog_on_errors:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Show_dialog_on_errors:")), 0, y, 1, 1, 0, 0);
         errorDlg = new BooleanInput();
         errorDlg.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, errorDlg, 1, y, 1, 1, 1, 1);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Model_window_on_top:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Model_window_on_top:")), 0, y, 1, 1, 0, 0);
         windowOnTop = new BooleanInput();
         windowOnTop.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, windowOnTop, 1, y, 1, 1, 1, 1);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Create_profile_info:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Create_profile_info:")), 0, y, 1, 1, 0, 0);
         profiling = new BooleanInput();
         profiling.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, profiling, 1, y, 1, 1, 1, 1);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Force_Localization:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Force_Localization:")), 0, y, 1, 1, 0, 0);
         forceLocale = new TextInput();
         forceLocale.getComponent().setPreferredSize(new Dimension(40, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, forceLocale, 1, y, 1, 1, 1, 1);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Character_Set:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Character_Set:")), 0, y, 1, 1, 0, 0);
         charset = new TextInput();
         charset.getComponent().setPreferredSize(new Dimension(100, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, charset, 1, y, 1, 1, 1, 1);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Model_window_width:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Model_window_width:")), 0, y, 1, 1, 0, 0);
         windowWidth = new TextInput();
         windowWidth.getComponent().setPreferredSize(new Dimension(100, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, windowWidth, 1, y, 1, 1, 1, 1);
         JPanel buttonPanel = new JPanel();
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Model_window_height:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Model_window_height:")), 0, y, 1, 1, 0, 0);
         windowHeight = new TextInput();
         windowHeight.getComponent().setPreferredSize(new Dimension(100, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, windowHeight, 1, y, 1, 1, 1, 1);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("User_name:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("User_name:")), 0, y, 1, 1, 0, 0);
         userName = new TextInput();
         userName.getComponent().setPreferredSize(new Dimension(300, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, userName, 1, y, 1, 1, 1, 1);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.resources.getString("Help_Base_URL:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Help_Base_URL:")), 0, y, 1, 1, 0, 0);
         helpBaseURL = new TextInput();
         helpBaseURL.getComponent().setPreferredSize(new Dimension(300, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, helpBaseURL, 1, y, 1, 1, 1, 1);
 
-        JButton okButton = new JButton(JAMS.resources.getString("OK"));
+        JButton okButton = new JButton(JAMS.i18n("OK"));
         okButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -183,7 +183,7 @@ public class PropertyDlg extends JDialog {
         getRootPane().setDefaultButton(okButton);
 
 
-        JButton cancelButton = new JButton(JAMS.resources.getString("Cancel"));
+        JButton cancelButton = new JButton(JAMS.i18n("Cancel"));
         cancelButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {

@@ -91,7 +91,7 @@ public class ModelTree extends JAMSTree {
             }
         });
 
-        JMenuItem showMetadataItem = new JMenuItem(JAMS.resources.getString("Show_Metadata..."));
+        JMenuItem showMetadataItem = new JMenuItem(JAMS.i18n("Show_Metadata..."));
         showMetadataItem.setAccelerator(KeyStroke.getKeyStroke('M'));
         showMetadataItem.addActionListener(new ActionListener() {
 
@@ -101,7 +101,7 @@ public class ModelTree extends JAMSTree {
             }
         });
 
-        JMenuItem deleteItem = new JMenuItem(JAMS.resources.getString("Delete"));
+        JMenuItem deleteItem = new JMenuItem(JAMS.i18n("Delete"));
         deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
         deleteItem.addActionListener(new ActionListener() {
 
@@ -111,7 +111,7 @@ public class ModelTree extends JAMSTree {
             }
         });
 
-        JMenuItem moveUpItem = new JMenuItem(JAMS.resources.getString("Move_up"));
+        JMenuItem moveUpItem = new JMenuItem(JAMS.i18n("Move_up"));
         moveUpItem.setAccelerator(KeyStroke.getKeyStroke('-'));
         moveUpItem.addActionListener(new ActionListener() {
 
@@ -120,7 +120,7 @@ public class ModelTree extends JAMSTree {
                 moveUpNode();
             }
         });
-        JMenuItem moveDownItem = new JMenuItem(JAMS.resources.getString("Move_down"));
+        JMenuItem moveDownItem = new JMenuItem(JAMS.i18n("Move_down"));
         moveDownItem.setAccelerator(KeyStroke.getKeyStroke('+'));
         moveDownItem.addActionListener(new ActionListener() {
 
@@ -184,9 +184,9 @@ public class ModelTree extends JAMSTree {
             JAMSNode node = (JAMSNode) path.getLastPathComponent();
 
             int result = GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(),
-                    JAMS.resources.getString("Really_delete_component_")
+                    JAMS.i18n("Really_delete_component_")
                     + node.getUserObject().toString()
-                    + JAMS.resources.getString("Really_delete_component_2"), JAMS.resources.getString("Deleting_component"));
+                    + JAMS.i18n("Really_delete_component_2"), JAMS.i18n("Deleting_component"));
             if (result == JOptionPane.YES_OPTION) {
                 ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
                 node.remove();
@@ -673,9 +673,9 @@ public class ModelTree extends JAMSTree {
 //                try {
 //                    rootNode.add(getSubTree(element));
 //                } catch (ModelLoadException mle) {
-//                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.resources.getString("Could_not_load_component_")
+//                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("Could_not_load_component_")
 //                            + mle.getComponentName() + "\" (" + mle.getClassName() + "). "
-//                            + JAMS.resources.getString("Please_fix_the_model_definition_file!"), JAMS.resources.getString("Error_loading_model"));
+//                            + JAMS.i18n("Please_fix_the_model_definition_file!"), JAMS.i18n("Error_loading_model"));
 //                    this.view.getFrame().dispose();
 //                    return null;
 //                }
@@ -819,8 +819,8 @@ public class ModelTree extends JAMSTree {
 //
 //            ComponentDescriptor context = view.getModelDescriptor().getComponentDescriptor(contextName);
 //            if (context == null) {
-//                GUIHelper.showErrorDlg(this.view.getFrame(), JAMS.resources.getString("Error_while_loading_component_") + cd.getName()
-//                        + JAMS.resources.getString("_context_") + contextName + JAMS.resources.getString("_does_not_exist!"), JAMS.resources.getString("Model_loading_error"));
+//                GUIHelper.showErrorDlg(this.view.getFrame(), JAMS.i18n("Error_while_loading_component_") + cd.getName()
+//                        + JAMS.i18n("_context_") + contextName + JAMS.i18n("_does_not_exist!"), JAMS.i18n("Model_loading_error"));
 //                return;
 //            }
 //            String name = e.getAttribute("name");
@@ -837,8 +837,8 @@ public class ModelTree extends JAMSTree {
 //                context.getDataRepository().addAttribute(new ContextAttribute(attribute, attributeType, context));
 //                }*/
 //            } catch (NullPointerException ex) {
-//                GUIHelper.showErrorDlg(this.view.getFrame(), JAMS.resources.getString("Error_while_loading_component_") + cd.getName()
-//                        + JAMS.resources.getString("_component_attribute_") + name + JAMS.resources.getString("_does_not_exist!"), JAMS.resources.getString("Model_loading_error"));
+//                GUIHelper.showErrorDlg(this.view.getFrame(), JAMS.i18n("Error_while_loading_component_") + cd.getName()
+//                        + JAMS.i18n("_component_attribute_") + name + JAMS.i18n("_does_not_exist!"), JAMS.i18n("Model_loading_error"));
 //                return;
 //            }
 //
@@ -847,8 +847,8 @@ public class ModelTree extends JAMSTree {
 //            try {
 //                cd.getComponentAttributes().get(e.getAttribute("name")).setValue(e.getAttribute("value"));
 //            } catch (NullPointerException ex) {
-//                GUIHelper.showErrorDlg(this.view.getFrame(), JAMS.resources.getString("Error_while_loading_component_") + cd.getName()
-//                        + JAMS.resources.getString("_component_attribute_") + e.getAttribute("name") + JAMS.resources.getString("_does_not_exist!"), JAMS.resources.getString("Model_loading_error"));
+//                GUIHelper.showErrorDlg(this.view.getFrame(), JAMS.i18n("Error_while_loading_component_") + cd.getName()
+//                        + JAMS.i18n("_component_attribute_") + e.getAttribute("name") + JAMS.i18n("_does_not_exist!"), JAMS.i18n("Model_loading_error"));
 //                return;
 //            }
 //

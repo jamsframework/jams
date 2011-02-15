@@ -75,13 +75,13 @@ public class ContextReplaceDlg extends JDialog {
         mainPanel.setLayout(mainLayout);
         
         
-        String replaceText = JAMS.resources.getString("Found_references_to_context");
+        String replaceText = JAMS.i18n("Found_references_to_context");
         
-        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JAMS.resources.getString("Found_references_to_old_context")), 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JAMS.i18n("Found_references_to_old_context")), 0, 1, 1, 1, 0, 0);
         GUIHelper.addGBComponent(mainPanel, mainLayout, oldComponentLabel, 0, 2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JAMS.resources.getString("from_the_following_components:_")), 0, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JAMS.i18n("from_the_following_components:_")), 0, 3, 1, 1, 0, 0);
         GUIHelper.addGBComponent(mainPanel, mainLayout, getTextPane("components", "", 140, false), 0, 4, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JAMS.resources.getString("Please_choose_new_context_from_this_list:")), 0, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(mainPanel, mainLayout, new JLabel(JAMS.i18n("Please_choose_new_context_from_this_list:")), 0, 5, 1, 1, 0, 0);
         
         GUIHelper.addGBComponent(mainPanel, mainLayout, contextCombo, 0, 6, 1, 1, 0, 0);
         
@@ -89,7 +89,7 @@ public class ContextReplaceDlg extends JDialog {
         
         JPanel buttonPanel = new JPanel();
         
-        JButton okButton = new JButton(JAMS.resources.getString("OK"));
+        JButton okButton = new JButton(JAMS.i18n("OK"));
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
@@ -98,7 +98,7 @@ public class ContextReplaceDlg extends JDialog {
         });
         buttonPanel.add(okButton);
         
-        JButton cancelButton = new JButton(JAMS.resources.getString("Cancel"));
+        JButton cancelButton = new JButton(JAMS.i18n("Cancel"));
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
@@ -124,7 +124,7 @@ public class ContextReplaceDlg extends JDialog {
     
     public int show(String oldContext, String[] availableContexts, HashSet<ComponentDescriptor> components) {
         
-        this.setTitle(JAMS.resources.getString("Replace_context_:_") + oldContext);
+        this.setTitle(JAMS.i18n("Replace_context_:_") + oldContext);
         
         oldComponentLabel.setText("  \"" + oldContext + "\"");
         contextCombo.setModel(new DefaultComboBoxModel(availableContexts));

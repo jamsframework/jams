@@ -100,7 +100,7 @@ public class XMLTools {
         try {
             
             DocumentBuilder builder = factory.newDocumentBuilder();
-            InputStream source = new ByteArrayInputStream(docString.getBytes(JAMS.charset));
+            InputStream source = new ByteArrayInputStream(docString.getBytes(JAMS.getCharset()));
             document = builder.parse(source);
             
         } catch (ParserConfigurationException pce) {
@@ -228,7 +228,7 @@ public class XMLTools {
 //        transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "4");
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-        transformer.setOutputProperty(OutputKeys.ENCODING, JAMS.charset);
+        transformer.setOutputProperty(OutputKeys.ENCODING, JAMS.getCharset());
         
         return transformer;
     }

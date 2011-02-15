@@ -127,11 +127,11 @@ public abstract class MOOptimizer extends Optimizer {
 
         if (this.GoalFunction == null){
             if (this.effMethodName == null)
-                stop(JAMS.resources.getString("effMethod_not_specified"));
+                stop(JAMS.i18n("effMethod_not_specified"));
             if (this.effValue == null)
-                stop(JAMS.resources.getString("effValue_not_specified"));
+                stop(JAMS.i18n("effValue_not_specified"));
             if (this.mode == null)
-                stop(JAMS.resources.getString("mode_not_specified"));
+                stop(JAMS.i18n("mode_not_specified"));
                
             m = effValue.length;
         }else{
@@ -140,7 +140,7 @@ public abstract class MOOptimizer extends Optimizer {
         }
         StringTokenizer tok = new StringTokenizer(this.mode.getValue(),";");
         if (tok.countTokens() != m)
-            stop(JAMS.resources.getString("efficiency_count_does_not_match_mode_count"));
+            stop(JAMS.i18n("efficiency_count_does_not_match_mode_count"));
         
         int j=0;
         iMode = new int[m];
@@ -155,7 +155,7 @@ public abstract class MOOptimizer extends Optimizer {
             try{
                 efficiencyNames[i] = effTok.nextToken();            
             }catch(NoSuchElementException e){
-                stop(JAMS.resources.getString("efficiency_count_does_not_effMethodName_mode_count"));
+                stop(JAMS.i18n("efficiency_count_does_not_effMethodName_mode_count"));
             }
         }           
         bestSamples = new HashSet<SampleMO>();

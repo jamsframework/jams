@@ -93,8 +93,8 @@ public class AboutDlg extends JDialog {
         /*
          * version text
          */
-        String text = JAMS.resources.getString("Version") + "\t" + versionText
-                + "\n" + JAMS.resources.getString("Contact") + "\t" + contactText;
+        String text = JAMS.i18n("Version") + "\t" + versionText
+                + "\n" + JAMS.i18n("Contact") + "\t" + contactText;
 
         JTextArea versionTextArea = new JTextArea();
         versionTextArea.setEditable(false);
@@ -136,7 +136,7 @@ public class AboutDlg extends JDialog {
         contentPanel.add(tabPane);
 
         JButton closeButton = new JButton();
-        closeButton.setText(JAMS.resources.getString("OK"));
+        closeButton.setText(JAMS.i18n("OK"));
         closeButton.addActionListener(new ActionListener() {
 
             @Override
@@ -150,7 +150,7 @@ public class AboutDlg extends JDialog {
         //this.setAlwaysOnTop(true);
         //this.setUndecorated(true);
         //this.setModal(true);
-        this.setTitle(JAMS.resources.getString("About"));
+        this.setTitle(JAMS.i18n("About"));
 
         pack();
 

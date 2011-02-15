@@ -60,10 +60,10 @@ public class OptimizationWizard {
     JPanel parameterConfigurationPanel, objectiveConfigurationPanel, optimizerConfigurationPanel;
     Document doc;
     JAMSProperties propertyFile;
-    String optimizationModes[] = {JAMS.resources.getString("minimization"),
-        JAMS.resources.getString("maximization"),
-        JAMS.resources.getString("absolute_minimization"),
-        JAMS.resources.getString("absolute_maximization")};
+    String optimizationModes[] = {JAMS.i18n("minimization"),
+        JAMS.i18n("maximization"),
+        JAMS.i18n("absolute_minimization"),
+        JAMS.i18n("absolute_maximization")};
     String workspace = null;
     OptimizerDescription optimizerDesc[];
     JUICEFrame parent = null;
@@ -399,86 +399,86 @@ public class OptimizationWizard {
         OptimizerDescription defDesc = new OptimizerDescription(shortName, id, multiObj);
         defDesc.setOptimizerClassName(className);
         defDesc.addParameter(new NumericOptimizerParameter(
-                "maxn", JAMS.resources.getString("maximum_number_of_iterations"),
+                "maxn", JAMS.i18n("maximum_number_of_iterations"),
                 500, 1, 100000));
         defDesc.addParameter(new BooleanOptimizerParameter(
-                "removeUnusedComponents", JAMS.resources.getString("remove_unused_components"),
+                "removeUnusedComponents", JAMS.i18n("remove_unused_components"),
                 true));
         defDesc.addParameter(new BooleanOptimizerParameter(
-                "optimizeModelStructure", JAMS.resources.getString("optimize_model_structure"),
+                "optimizeModelStructure", JAMS.i18n("optimize_model_structure"),
                 false));
         defDesc.addParameter(new BooleanOptimizerParameter(
-                "removeGUIComponents", JAMS.resources.getString("remove_GUI_components"),
+                "removeGUIComponents", JAMS.i18n("remove_GUI_components"),
                 true));
         return defDesc;
     }
 
     public OptimizerDescription getSCEDescription() {
-        OptimizerDescription sceDesc = getDefaultOptimizerDescription(JAMS.resources.getString("SCE"),
+        OptimizerDescription sceDesc = getDefaultOptimizerDescription(JAMS.i18n("SCE"),
                 "jams.components.optimizer.SimpleSCE", 5, false);
         sceDesc.addParameter(new NumericOptimizerParameter("numberOfComplexes",
-                JAMS.resources.getString("number_of_complexes"), 2, 1, 100));
+                JAMS.i18n("number_of_complexes"), 2, 1, 100));
         sceDesc.addParameter(new NumericOptimizerParameter(
-                "pcento", JAMS.resources.getString("worst_acceptable_improvement"),
+                "pcento", JAMS.i18n("worst_acceptable_improvement"),
                 0.05, 0.000001, 1));
         sceDesc.addParameter(new NumericOptimizerParameter(
-                "peps", JAMS.resources.getString("minimal_geometric_population"),
+                "peps", JAMS.i18n("minimal_geometric_population"),
                 0.00001, 0.000001, 1));
         sceDesc.addParameter(new NumericOptimizerParameter(
-                "kstop", JAMS.resources.getString("kStop"),
+                "kstop", JAMS.i18n("kStop"),
                 10, 1, 100));
 
         return sceDesc;
     }
 
     public OptimizerDescription getNelderMeadDescription() {
-        return getDefaultOptimizerDescription(JAMS.resources.getString("Nelder_Mead"),
+        return getDefaultOptimizerDescription(JAMS.i18n("Nelder_Mead"),
                 "jams.components.optimizer.NelderMead", 2, false);
     }
 
     public OptimizerDescription getMOCOMDescription() {
-        OptimizerDescription MOCOMDesc = getDefaultOptimizerDescription(JAMS.resources.getString("MOCOM"),
+        OptimizerDescription MOCOMDesc = getDefaultOptimizerDescription(JAMS.i18n("MOCOM"),
                 "jams.components.optimizer.MOCOM", 6, true);
         MOCOMDesc.addParameter(new NumericOptimizerParameter(
-                "popSize", JAMS.resources.getString("individuals_in_population"),
+                "popSize", JAMS.i18n("individuals_in_population"),
                 500, 1, 100000));
         return MOCOMDesc;
     }
 
     public OptimizerDescription getBranchAndBoundDescription() {
-        return getDefaultOptimizerDescription(JAMS.resources.getString("Branch_and_Bound"),
+        return getDefaultOptimizerDescription(JAMS.i18n("Branch_and_Bound"),
                 "jams.components.optimizer.BranchAndBound", 0, false);
     }
 
     public OptimizerDescription getGutmannDescription() {
-        OptimizerDescription GutmannDesc = getDefaultOptimizerDescription(JAMS.resources.getString("Gutmann"),
+        OptimizerDescription GutmannDesc = getDefaultOptimizerDescription(JAMS.i18n("Gutmann"),
                 "jams.components.optimizer.GutmannMethod", 4, false);
         GutmannDesc.addParameter(new NumericOptimizerParameter(
-                "popSize", JAMS.resources.getString("individuals_in_population"),
+                "popSize", JAMS.i18n("individuals_in_population"),
                 500, 1, 100000));
         return GutmannDesc;
     }
 
     public OptimizerDescription getGPDescription() {
-        OptimizerDescription GPDesc = getDefaultOptimizerDescription(JAMS.resources.getString("Gaussian_Process_Optimizer"),
+        OptimizerDescription GPDesc = getDefaultOptimizerDescription(JAMS.i18n("Gaussian_Process_Optimizer"),
                 "jams.components.optimizer.GPSearch", 1, false);
         GPDesc.addParameter(new NumericOptimizerParameter(
-                "kernelMethod", JAMS.resources.getString("Kernel_Method"),
+                "kernelMethod", JAMS.i18n("Kernel_Method"),
                 6, 0, 100));
         return GPDesc;
     }
 
     public OptimizerDescription getRandomSamplerDescription() {
-        return getDefaultOptimizerDescription(JAMS.resources.getString("Random_Sampler"),
+        return getDefaultOptimizerDescription(JAMS.i18n("Random_Sampler"),
                 "jams.components.optimizer.RandomSampler", 8, true);
     }
 
     public OptimizerDescription getParallelRandomSamplerDescription() {
         OptimizerDescription ParallelRandomSamplerDesc =
-                getDefaultOptimizerDescription(JAMS.resources.getString("Parallel_Random_Sampler"),
+                getDefaultOptimizerDescription(JAMS.i18n("Parallel_Random_Sampler"),
                 "jams.components.optimizer.ParallelRandomSampler", 7, true);
         ParallelRandomSamplerDesc.addParameter(new StringOptimizerParameter(
-                "fileFilter", JAMS.resources.getString("do_not_transfer"),
+                "fileFilter", JAMS.i18n("do_not_transfer"),
                 "(.*.cache)|(.*.jam)|(.*.ser)|(.*.svn)|(.*output)"));
         return ParallelRandomSamplerDesc;
     }
@@ -486,39 +486,39 @@ public class OptimizationWizard {
     public OptimizerDescription getParallelSCEDescription() {
         OptimizerDescription ParallelSCEDesc = getSCEDescription();
         ParallelSCEDesc.id = 3;
-        ParallelSCEDesc.shortName = JAMS.resources.getString("Parallel_SCE");
+        ParallelSCEDesc.shortName = JAMS.i18n("Parallel_SCE");
         ParallelSCEDesc.setOptimizerClassName("jams.components.optimizer.SimpleParallelSCE");
         ParallelSCEDesc.addParameter(new StringOptimizerParameter(
-                "excludedFiles", JAMS.resources.getString("do_not_transfer"),
+                "excludedFiles", JAMS.i18n("do_not_transfer"),
                 "(.*.cache)|(.*.jam)|(.*.ser)|(.*.svn)|(.*output)"));
         return ParallelSCEDesc;
     }
 
     public OptimizerDescription getDIRECTDescription() {
-        return getDefaultOptimizerDescription(JAMS.resources.getString("DIRECT"),
+        return getDefaultOptimizerDescription(JAMS.i18n("DIRECT"),
                 "jams.components.optimizer.Direct", 10, false);
     }
 
     public OptimizerDescription getNSGA2Description() {
-        OptimizerDescription NSGA2Desc = getDefaultOptimizerDescription(JAMS.resources.getString("NSGA2"),
+        OptimizerDescription NSGA2Desc = getDefaultOptimizerDescription(JAMS.i18n("NSGA2"),
                 "jams.components.optimizer.NSGA2", 9, true);
         NSGA2Desc.addParameter(new NumericOptimizerParameter(
-                "popSize", JAMS.resources.getString("individuals_in_population"),
+                "popSize", JAMS.i18n("individuals_in_population"),
                 500, 1, 100000));
         NSGA2Desc.addParameter(new NumericOptimizerParameter(
-                "crossoverProbability", JAMS.resources.getString("crossoverProbability"),
+                "crossoverProbability", JAMS.i18n("crossoverProbability"),
                 0.5, 0, 1));
         NSGA2Desc.addParameter(new NumericOptimizerParameter(
-                "mutationProbability", JAMS.resources.getString("mutationProbability"),
+                "mutationProbability", JAMS.i18n("mutationProbability"),
                 0.5, 0.5, 1));
         NSGA2Desc.addParameter(new NumericOptimizerParameter(
-                "crossoverDistributionIndex", JAMS.resources.getString("crossoverDistributionIndex"),
+                "crossoverDistributionIndex", JAMS.i18n("crossoverDistributionIndex"),
                 10, 1, 100));
         NSGA2Desc.addParameter(new NumericOptimizerParameter(
-                "mutationDistributionIndex", JAMS.resources.getString("mutationDistributionIndex"),
+                "mutationDistributionIndex", JAMS.i18n("mutationDistributionIndex"),
                 10, 1, 100));
         NSGA2Desc.addParameter(new NumericOptimizerParameter(
-                "maxGeneration", JAMS.resources.getString("maxGeneration"),
+                "maxGeneration", JAMS.i18n("maxGeneration"),
                 10, 1, 1000));
         return NSGA2Desc;
     }
@@ -577,7 +577,7 @@ public class OptimizationWizard {
         c.weighty = 1.0;
         mainPanel.add(objectivePanel, c);
 
-        buttonPanel.add(new JButton(JAMS.resources.getString("Create_XML")) {
+        buttonPanel.add(new JButton(JAMS.i18n("Create_XML")) {
 
             {
 
@@ -588,11 +588,11 @@ public class OptimizationWizard {
                         String strIni = "";
                         Iterator<Entry<String, String>> iter = ini.entrySet().iterator();
                         if (OptimizationWizard.this.parameterList.getSelectedIndices().length < 1) {
-                            JOptionPane.showMessageDialog(OptimizationWizard.this.mainPanel, JAMS.resources.getString("Error_You_should_select_at_least_one_parameter_for_optimization"));
+                            JOptionPane.showMessageDialog(OptimizationWizard.this.mainPanel, JAMS.i18n("Error_You_should_select_at_least_one_parameter_for_optimization"));
                             return;
                         }
                         if (OptimizationWizard.this.objectiveList.getSelectedIndices().length < 1) {
-                            JOptionPane.showMessageDialog(OptimizationWizard.this.mainPanel, JAMS.resources.getString("Error_You_should_select_at_least_one_objective_for_optimization"));
+                            JOptionPane.showMessageDialog(OptimizationWizard.this.mainPanel, JAMS.i18n("Error_You_should_select_at_least_one_objective_for_optimization"));
                             return;
                         }
                         while (iter.hasNext()) {
@@ -615,11 +615,11 @@ public class OptimizationWizard {
         }, BorderLayout.CENTER);
 
         parameterPanel.setBorder(BorderFactory.createTitledBorder(
-                JAMS.resources.getString("Parameter_Configuration")));
+                JAMS.i18n("Parameter_Configuration")));
         objectivePanel.setBorder(BorderFactory.createTitledBorder(
-                JAMS.resources.getString("Objective_Configuration")));
+                JAMS.i18n("Objective_Configuration")));
         optimizerPanel.setBorder(BorderFactory.createTitledBorder(
-                JAMS.resources.getString("Optimizer_Configuration")));
+                JAMS.i18n("Optimizer_Configuration")));
 
         parameterConfigurationPanel = new JPanel(new GridBagLayout());
         JScrollPane scrollPaneParameterList = new JScrollPane(parameterList);
@@ -662,14 +662,14 @@ public class OptimizationWizard {
                 c.weighty = 1.0;
                 c.insets = new Insets(5, 0, 5, 0);
                 c.anchor = GridBagConstraints.NORTHWEST;
-                parameterConfigurationPanel.add(new JLabel(JAMS.resources.getString("parameter")), c);
+                parameterConfigurationPanel.add(new JLabel(JAMS.i18n("parameter")), c);
                 c.gridx = 1;
                 c.anchor = GridBagConstraints.CENTER;
-                parameterConfigurationPanel.add(new JLabel(JAMS.resources.getString("lower_bound")), c);
+                parameterConfigurationPanel.add(new JLabel(JAMS.i18n("lower_bound")), c);
                 c.gridx = 2;
-                parameterConfigurationPanel.add(new JLabel(JAMS.resources.getString("upper_bound")), c);
+                parameterConfigurationPanel.add(new JLabel(JAMS.i18n("upper_bound")), c);
                 c.gridx = 3;
-                parameterConfigurationPanel.add(new JLabel(JAMS.resources.getString("start_value")), c);
+                parameterConfigurationPanel.add(new JLabel(JAMS.i18n("start_value")), c);
 
                 for (Object o : params) {
                     Parameter p = (Parameter) o;
@@ -735,10 +735,10 @@ public class OptimizationWizard {
                 c.weighty = 1.0;
                 c.insets = new Insets(5, 0, 5, 0);
                 c.anchor = GridBagConstraints.NORTHWEST;
-                objectiveConfigurationPanel.add(new JLabel(JAMS.resources.getString("Objective")), c);
+                objectiveConfigurationPanel.add(new JLabel(JAMS.i18n("Objective")), c);
                 c.gridx = 1;
                 c.anchor = GridBagConstraints.CENTER;
-                objectiveConfigurationPanel.add(new JLabel(JAMS.resources.getString("mode")), c);
+                objectiveConfigurationPanel.add(new JLabel(JAMS.i18n("mode")), c);
 
                 for (Object o : objectives) {
                     String obj = (String) o;
@@ -887,7 +887,7 @@ public class OptimizationWizard {
     }
 
     public static JFrame createDialog(JUICEFrame parent, Document modelFile, JAMSProperties propertyFile, String workspace) {
-        JFrame dialog = new JFrame(JAMS.resources.getString("Optimization_Wizard"));
+        JFrame dialog = new JFrame(JAMS.i18n("Optimization_Wizard"));
         OptimizationWizard wizard = new OptimizationWizard(parent);
         //dialog
         dialog.getContentPane().add(wizard.getPanel());
@@ -907,7 +907,7 @@ public class OptimizationWizard {
     }
 
     public static JFrame createDialog(JUICEFrame parent, File modelFile, File propertyFile) {
-        JFrame dialog = new JFrame(JAMS.resources.getString("Optimization_Wizard"));
+        JFrame dialog = new JFrame(JAMS.i18n("Optimization_Wizard"));
         OptimizationWizard wizard = new OptimizationWizard(parent);
         dialog.getContentPane().add(wizard.getPanel());
         /*wizard.setModel(new File("C:/Arbeit/modeldata/JAMS-Gehlberg/j2k_gehlberg.jam"),

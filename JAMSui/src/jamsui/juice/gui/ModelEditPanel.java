@@ -81,11 +81,11 @@ public class ModelEditPanel extends JPanel {
         mainLayout = new GridBagLayout();
         componentPanel.setLayout(mainLayout);
 
-        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.resources.getString("Workspace:")), 1, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.resources.getString("Author:")), 1, 1, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.resources.getString("Help_Base_URL:")), 1, 5, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.resources.getString("Date:")), 1, 3, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.resources.getString("Description:")), 1, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.i18n("Workspace:")), 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.i18n("Author:")), 1, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.i18n("Help_Base_URL:")), 1, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.i18n("Date:")), 1, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, new JLabel(JAMS.i18n("Description:")), 1, 4, 1, 1, 0, 0);
 
         workspace = InputComponentFactory.createInputComponent(Attribute.DirName.class);
         workspace.setLength(TEXTFIELD_WIDTH);
@@ -109,7 +109,7 @@ public class ModelEditPanel extends JPanel {
         explorerButton = new JButton(JUICE.getJuiceFrame().getJADEAction());
         explorerButton.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/images/Layers.png")).getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH)));
         explorerButton.setText("");
-        explorerButton.setToolTipText(JAMS.resources.getString("DATA_EXPLORER"));
+        explorerButton.setToolTipText(JAMS.i18n("DATA_EXPLORER"));
 
         GUIHelper.addGBComponent(componentPanel, mainLayout, workspace.getComponent(), 2, 0, 1, 1, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);
@@ -202,14 +202,14 @@ public class ModelEditPanel extends JPanel {
 //        try {
 //            File workspaceFile = new File(view.getWorkspace());
 //            if (!workspaceFile.exists()) {
-//                GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.resources.getString("Invalid_Workspace"), JAMS.resources.getString("Error"));
+//                GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.i18n("Invalid_Workspace"), JAMS.i18n("Error"));
 //                return;
 //            }
 //            JAMSExplorer explorer = new JAMSExplorer(null, false, false);
 //            explorer.getExplorerFrame().setVisible(true);
 //            explorer.getExplorerFrame().open(workspaceFile);
 //        } catch (NoClassDefFoundError ncdfe) {
-//            GUIHelper.showInfoDlg(this, jams.JAMS.resources.getString("ExplorerDisabled"), jams.JAMS.resources.getString("Info"));
+//            GUIHelper.showInfoDlg(this, jams.JAMS.i18n("ExplorerDisabled"), jams.JAMS.i18n("Info"));
 //            explorerAction.setEnabled(false);
 //        }
 //    }

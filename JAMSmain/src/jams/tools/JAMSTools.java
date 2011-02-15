@@ -163,12 +163,12 @@ public class JAMSTools {
                 Locale.setDefault(new Locale(forcedLocale));
             }
 
-            JAMS.resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
+            JAMS.setResources(java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle"));
         }
 
         String charset = properties.getProperty(SystemProperties.CHARSET_IDENTIFIER);
         if (!StringTools.isEmptyString(charset)) {
-            JAMS.charset = charset;
+            JAMS.setCharset(charset);
         }
     }
 

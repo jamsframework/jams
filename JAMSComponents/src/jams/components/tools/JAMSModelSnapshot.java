@@ -48,17 +48,17 @@ public class JAMSModelSnapshot extends JAMSComponent{
             try {
                 state.writeToFile(file);
             } catch (IOException e) {
-                runtime.sendErrorMsg(jams.JAMS.resources.getString("Unable_to_save_model_state_because,") + e.toString());
+                runtime.sendErrorMsg(jams.JAMS.i18n("Unable_to_save_model_state_because,") + e.toString());
                 runtime.handle(e, true);
             }    
             /*try{
                 runtime.resume(state.getSmallModelState());
             }catch(Exception e){
-                runtime.sendErrorMsg(jams.JAMS.resources.getString("Unable_to_resume_model_execution_because") + e.toString());
+                runtime.sendErrorMsg(jams.JAMS.i18n("Unable_to_resume_model_execution_because") + e.toString());
                 runtime.handle(e, true);
             }*/
         }else{
-            this.getModel().getRuntime().sendInfoMsg(jams.JAMS.resources.getString("Snapshoting_not_supported_by_runtime_"));            
+            this.getModel().getRuntime().sendInfoMsg(jams.JAMS.i18n("Snapshoting_not_supported_by_runtime_"));            
         } 
     }
         

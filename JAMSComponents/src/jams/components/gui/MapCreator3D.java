@@ -257,7 +257,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
 
         if (mp == null)
             mp = new Styled3DMapPane();
-        info.setText(JAMS.resources.getString("3D_Map_Pane_loading_map"));
+        info.setText(JAMS.i18n("3D_Map_Pane_loading_map"));
         asg = new JAMSAscGridReader(getModel().getWorkspaceDirectory().getPath() + "/" + this.heightMap.toString());
                 
         mp.light = this.light.getValue();
@@ -267,7 +267,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
         mp.textureHeight = 2.0*resolution.getValue();
                 
         mp.setHeightMap(asg);
-        info.setText(JAMS.resources.getString("3D_Map_Pane_calculating_normals"));
+        info.setText(JAMS.i18n("3D_Map_Pane_calculating_normals"));
                 
         otherLayers = new String[]{shapeFileName1.getValue(), shapeFileName2.getValue(), shapeFileName3.getValue()};
 

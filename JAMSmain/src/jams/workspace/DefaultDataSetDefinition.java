@@ -89,7 +89,7 @@ public class DefaultDataSetDefinition implements DataSetDefinition, Serializable
         Class<?> type = attributes.get(attributeName);
         for (int i = 0; i < values.size(); i++) {
             if (!type.isAssignableFrom(values.get(i).getClass())) {
-                System.out.println(JAMS.resources.getString("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type +
+                System.out.println(JAMS.i18n("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type +
                         " (" + attributeName + ")");
                 return false;
             }
@@ -128,7 +128,7 @@ public class DefaultDataSetDefinition implements DataSetDefinition, Serializable
             Class<?> type = attributes.get(attributeName);
 
             if (!type.isAssignableFrom(values.get(i).getClass())) {
-                System.out.println(JAMS.resources.getString("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type +
+                System.out.println(JAMS.i18n("Invalid_type_in_dataset_definition:_") + values.get(i).getClass() + "<->" + type +
                         " (" + attributeName + ")");
                 return false;
             }

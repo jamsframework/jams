@@ -125,7 +125,7 @@ public class ListInput extends JPanel {
             editButton = new JButton("...");
             editButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
             editButton.setPreferredSize(BUTTON_DIMENSION);
-            editButton.setToolTipText(JAMS.resources.getString("Edit"));
+            editButton.setToolTipText(JAMS.i18n("Edit"));
             buttonPanel.add(editButton);
             editButton.addActionListener(new ActionListener() {
 
@@ -139,7 +139,7 @@ public class ListInput extends JPanel {
             upButton = new JButton();
             upButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
             upButton.setPreferredSize(BUTTON_DIMENSION);
-            upButton.setToolTipText(JAMS.resources.getString("Move_up"));
+            upButton.setToolTipText(JAMS.i18n("Move_up"));
             upButton.setIcon(UP_ICON);
             upButton.addActionListener(new ActionListener() {
 
@@ -151,7 +151,7 @@ public class ListInput extends JPanel {
             downButton = new JButton();
             downButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
             downButton.setPreferredSize(BUTTON_DIMENSION);
-            downButton.setToolTipText(JAMS.resources.getString("Move_down"));
+            downButton.setToolTipText(JAMS.i18n("Move_down"));
             downButton.setIcon(DOWN_ICON);
             downButton.addActionListener(new ActionListener() {
 
@@ -238,7 +238,7 @@ public class ListInput extends JPanel {
 
     protected void addItem() {
         // Get the text field value
-        String stringValue = GUIHelper.showInputDlg(ListInput.this, null, JAMS.resources.getString("New_value"), null);
+        String stringValue = GUIHelper.showInputDlg(ListInput.this, null, JAMS.i18n("New_value"), null);
 
         // add this item to the list and refresh
         if (stringValue != null && !listData.getValue().contains(stringValue)) {
@@ -271,7 +271,7 @@ public class ListInput extends JPanel {
         if (selection >= 0) {
             // edit this item
             Object value = listData.getElementAt(selection);
-            value = GUIHelper.showInputDlg(ListInput.this, null, JAMS.resources.getString("New_value"), value.toString());
+            value = GUIHelper.showInputDlg(ListInput.this, null, JAMS.i18n("New_value"), value.toString());
             if (value != null) {
                 listData.setElementAt(selection, value);
                 scrollPane.revalidate();

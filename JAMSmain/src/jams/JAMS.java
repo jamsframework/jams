@@ -52,11 +52,11 @@ public class JAMS {
     /**
      * Resource bundle containing all string literals for some localization
      */
-    public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
+    private static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
     /**
      * Default character encoding
      */
-    public static String charset = "ISO-8859-1";
+    private static String charset = "ISO-8859-1";
     /**
      * The standard font
      */
@@ -72,13 +72,43 @@ public class JAMS {
 
     /**
      * Return a localized string 
+     * @param key A resource key
+     * @return A localized string belonging to the resource key
      */
     public static String i18n(String key) {
-        if (resources.containsKey(key)) {
-            return resources.getString(key);
+        if (getResources().containsKey(key)) {
+            return getResources().getString(key);
         } else {
             Logger.getLogger(JAMS.class.getName()).log(Level.INFO, "Could not find i18n key \"" + key + "\", using the key as result!", new JAMSException("Invalid resource key"));
             return key;
         }
+    }
+
+    /**
+     * @return the resources
+     */
+    public static ResourceBundle getResources() {
+        return resources;
+    }
+
+    /**
+     * @param aResources the resources to set
+     */
+    public static void setResources(ResourceBundle aResources) {
+        resources = aResources;
+    }
+
+    /**
+     * @return the charset
+     */
+    public static String getCharset() {
+        return charset;
+    }
+
+    /**
+     * @param aCharset the charset to set
+     */
+    public static void setCharset(String aCharset) {
+        charset = aCharset;
     }
 }

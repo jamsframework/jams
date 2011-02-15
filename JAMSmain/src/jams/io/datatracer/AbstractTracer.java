@@ -105,7 +105,7 @@ public abstract class AbstractTracer implements DataTracer {
         try {
             store.open(false);
         } catch (IOException ioe) {
-            context.getModel().getRuntime().sendErrorMsg("Datastore \"" + store.getID() + "\": " + JAMS.resources.getString("Error_creating_data_output_directory!"));
+            context.getModel().getRuntime().sendErrorMsg("Datastore \"" + store.getID() + "\": " + JAMS.i18n("Error_creating_data_output_directory!"));
             context.getModel().getRuntime().handle(ioe, true);
             return;
         }

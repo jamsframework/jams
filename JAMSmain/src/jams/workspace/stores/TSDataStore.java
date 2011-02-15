@@ -137,7 +137,7 @@ public class TSDataStore extends TableDataStore {
                         long demandedSeconds = Math.abs(cal1.getTimeInMillis() - cal.getTimeInMillis()) / 1000;
                         long currentSeconds = Math.abs(cal.getTimeInMillis() - cal2.getTimeInMillis()) / 1000;
 
-                        this.ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_in_") + this.getClass().getName() + JAMS.resources.getString(":_wrong_time_interval_in_column_") + i + JAMS.resources.getString("_(demanded_interval_=_") + demandedSeconds + JAMS.resources.getString("_sec,_provided_interval_=_") + currentSeconds + JAMS.resources.getString("_sec)!"));
+                        this.ws.getRuntime().sendErrorMsg(JAMS.i18n("Error_in_") + this.getClass().getName() + JAMS.i18n(":_wrong_time_interval_in_column_") + i + JAMS.i18n("_(demanded_interval_=_") + demandedSeconds + JAMS.i18n("_sec,_provided_interval_=_") + currentSeconds + JAMS.i18n("_sec)!"));
 
                         dataIOSet.clear();
                         currentPosition = maxPosition;
@@ -159,7 +159,7 @@ public class TSDataStore extends TableDataStore {
 
                     if (cal.compareTo(startDate, timeUnit) != 0) {
 
-                        this.ws.getRuntime().sendErrorMsg(JAMS.resources.getString("Error_in_") + this.getClass().getName() + JAMS.resources.getString(":_wrong_start_time_in_column_") + i + JAMS.resources.getString("_(demanded_=_") + startDate + JAMS.resources.getString(",_provided_=_") + cal + JAMS.resources.getString(")!"));
+                        this.ws.getRuntime().sendErrorMsg(JAMS.i18n("Error_in_") + this.getClass().getName() + JAMS.i18n(":_wrong_start_time_in_column_") + i + JAMS.i18n("_(demanded_=_") + startDate + JAMS.i18n(",_provided_=_") + cal + JAMS.i18n(")!"));
 
                         dataIOSet.clear();
                         currentPosition = maxPosition;
