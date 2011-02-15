@@ -64,7 +64,7 @@ public class JUICEFrame extends JFrame {
     private TreePanel libTreePanel;
     private JDesktopPane modelPanel = new JDesktopPane();
     private JMenu windowMenu, modelMenu;
-    private JMenuItem pasteModelParameterItem, copyModelParameterItem, searchModelItem, OptimizationWizardItem;
+    private JMenuItem OptimizationWizardItem;
     private JLabel statusLabel;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Info_Log"));
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Error_Log"));
@@ -261,7 +261,7 @@ public class JUICEFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                getPasteModelGUIAction().setEnabled(true);
+                pasteModelGUIAction.setEnabled(true);
                 ModelView view = getCurrentView();
                 modelProperties = view.getModelDoc().getElementsByTagName("launcher").item(0).cloneNode(true);
             }
@@ -480,23 +480,60 @@ public class JUICEFrame extends JFrame {
         modelSaveButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelSave.png")));
         toolBar.add(modelSaveButton);
 
+        toolBar.addSeparator();
+
         JButton searchButton = new JButton(searchAction);
         searchButton.setText("");
         searchButton.setToolTipText(JAMS.i18n("Find..."));
         searchButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Search.png")));
         toolBar.add(searchButton);
 
-        JButton outputDSButton = new JButton(outputDSAction);
-        outputDSButton.setText("");
-        outputDSButton.setToolTipText(JAMS.i18n("Model_output"));
-        outputDSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/DataOutput.png")));
-        toolBar.add(outputDSButton);
-
         JButton prefsButton = new JButton(editPrefsAction);
         prefsButton.setText("");
         prefsButton.setToolTipText(JAMS.i18n("Edit_Preferences..."));
         prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
         toolBar.add(prefsButton);
+
+        toolBar.addSeparator();
+
+        JButton modelRunButton = new JButton(runModelAction);
+        modelRunButton.setText("");
+        modelRunButton.setToolTipText(JAMS.i18n("Run_Model"));
+        modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
+        toolBar.add(modelRunButton);
+
+        JButton modelGUIRunButton = new JButton(runModelFromLauncherAction);
+        modelGUIRunButton.setText("");
+        modelGUIRunButton.setToolTipText(JAMS.i18n("Run_model_from_JAMS_Launcher"));
+        modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
+        toolBar.add(modelGUIRunButton);
+
+        JButton outputDSButton = new JButton(outputDSAction);
+        outputDSButton.setText("");
+        outputDSButton.setToolTipText(JAMS.i18n("Model_output"));
+        outputDSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/DataOutput2.png")));
+        toolBar.add(outputDSButton);
+
+        JButton explorerButton = new JButton(explorerAction);
+        explorerButton.setText("");
+        explorerButton.setToolTipText(JAMS.i18n("JADE"));
+        explorerButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Layers_small.png")));
+//        explorerButton.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/images/Layers.png")).getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+        toolBar.add(explorerButton);
+
+        JButton copyGUIButton = new JButton(copyModelGUIAction);
+        copyGUIButton.setText("");
+        copyGUIButton.setToolTipText(JAMS.i18n("Copy_Model_GUI"));
+        copyGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Copy.png")));
+        toolBar.add(copyGUIButton);
+
+        JButton pasteGUIButton = new JButton(pasteModelGUIAction);
+        pasteGUIButton.setText("");
+        pasteGUIButton.setToolTipText(JAMS.i18n("Paste_Model_GUI"));
+        pasteGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Paste.png")));
+        toolBar.add(pasteGUIButton);
+
+        toolBar.addSeparator();
 
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
@@ -509,6 +546,8 @@ public class JUICEFrame extends JFrame {
         errorLogButton.setToolTipText(JAMS.i18n("Show_Error_Log..."));
         errorLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ErrorLog.png")));
         toolBar.add(errorLogButton);
+
+        toolBar.addSeparator();
 
         JButton helpButton = new JButton(onlineAction);
         helpButton.setText("");
@@ -600,10 +639,12 @@ public class JUICEFrame extends JFrame {
         mainMenu.add(modelMenu);
 
         JMenuItem runModelItem = new JMenuItem(runModelAction);
+        runModelAction.setEnabled(false);
         runModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         modelMenu.add(runModelItem);
 
         JMenuItem runModelInLauncherItem = new JMenuItem(runModelFromLauncherAction);
+        runModelFromLauncherAction.setEnabled(false);
         modelMenu.add(runModelInLauncherItem);
 
         JMenuItem dsItem = new JMenuItem(outputDSAction);
@@ -612,6 +653,7 @@ public class JUICEFrame extends JFrame {
         modelMenu.add(dsItem);
 
         JMenuItem jadeItem = new JMenuItem(explorerAction);
+        explorerAction.setEnabled(false);
         jadeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, ActionEvent.CTRL_MASK));
         modelMenu.add(jadeItem);
 
@@ -631,10 +673,11 @@ public class JUICEFrame extends JFrame {
 
         modelMenu.add(new JSeparator());
 
-        copyModelParameterItem = new JMenuItem(copyModelGUIAction);
+        JMenuItem copyModelParameterItem = new JMenuItem(copyModelGUIAction);
+        copyModelGUIAction.setEnabled(false);
         modelMenu.add(copyModelParameterItem);
 
-        pasteModelParameterItem = new JMenuItem(pasteModelGUIAction);
+        JMenuItem pasteModelParameterItem = new JMenuItem(pasteModelGUIAction);
         pasteModelGUIAction.setEnabled(false);
         modelMenu.add(pasteModelParameterItem);
 
@@ -716,11 +759,20 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.modelMenu.setEnabled(true);
                     JUICEFrame.this.saveModelAction.setEnabled(true);
                     JUICEFrame.this.outputDSAction.setEnabled(true);
+                    JUICEFrame.this.runModelAction.setEnabled(true);
+                    JUICEFrame.this.runModelFromLauncherAction.setEnabled(true);
+                    JUICEFrame.this.explorerAction.setEnabled(true);
+                    JUICEFrame.this.copyModelGUIAction.setEnabled(true);
                     JUICEFrame.this.saveAsModelAction.setEnabled(true);
                     JUICEFrame.this.OptimizationWizardGUIAction.setEnabled(true);
                 } else {
                     JUICEFrame.this.modelMenu.setEnabled(false);
                     JUICEFrame.this.outputDSAction.setEnabled(false);
+                    JUICEFrame.this.runModelAction.setEnabled(false);
+                    JUICEFrame.this.runModelFromLauncherAction.setEnabled(false);
+                    JUICEFrame.this.explorerAction.setEnabled(false);
+                    JUICEFrame.this.copyModelGUIAction.setEnabled(false);
+                    JUICEFrame.this.pasteModelGUIAction.setEnabled(false);
                     JUICEFrame.this.saveModelAction.setEnabled(false);
                     JUICEFrame.this.saveAsModelAction.setEnabled(false);
                 }
@@ -852,22 +904,6 @@ public class JUICEFrame extends JFrame {
 
     public TreePanel getLibTreePanel() {
         return libTreePanel;
-    }
-
-    public Action getCopyModelGUIAction() {
-        return copyModelGUIAction;
-    }
-
-    public Action getPasteModelGUIAction() {
-        return pasteModelGUIAction;
-    }
-
-    public Action getRunModelAction() {
-        return runModelAction;
-    }
-
-    public Action getRunModelFromLauncherAction() {
-        return runModelFromLauncherAction;
     }
 
     public Action getJADEAction() {

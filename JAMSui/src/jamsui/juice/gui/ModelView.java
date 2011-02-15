@@ -200,32 +200,32 @@ public class ModelView {
         /*
          * create the toolbar
          */
-        JToolBar toolBar = new JToolBar();
+//        JToolBar toolBar = new JToolBar();
         //toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
 
-        modelRunButton = new JButton(JUICE.getJuiceFrame().getRunModelAction());
-        modelRunButton.setText("");
-        modelRunButton.setToolTipText(JAMS.i18n("Run_Model"));
-        modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
-        toolBar.add(modelRunButton);
-
-        modelGUIRunButton = new JButton(JUICE.getJuiceFrame().getRunModelFromLauncherAction());
-        modelGUIRunButton.setText("");
-        modelGUIRunButton.setToolTipText(JAMS.i18n("Run_model_from_JAMS_Launcher"));
-        modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
-        toolBar.add(modelGUIRunButton);
-
-        JButton copyGUIButton = new JButton(JUICE.getJuiceFrame().getCopyModelGUIAction());
-        copyGUIButton.setText("");
-        copyGUIButton.setToolTipText(JAMS.i18n("Copy_Model_GUI"));
-        copyGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Copy.png")));
-        toolBar.add(copyGUIButton);
-
-        JButton pasteGUIButton = new JButton(JUICE.getJuiceFrame().getPasteModelGUIAction());
-        pasteGUIButton.setText("");
-        pasteGUIButton.setToolTipText(JAMS.i18n("Paste_Model_GUI"));
-        pasteGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Paste.png")));
-        toolBar.add(pasteGUIButton);
+//        modelRunButton = new JButton(JUICE.getJuiceFrame().getRunModelAction());
+//        modelRunButton.setText("");
+//        modelRunButton.setToolTipText(JAMS.i18n("Run_Model"));
+//        modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
+//        toolBar.add(modelRunButton);
+//
+//        modelGUIRunButton = new JButton(JUICE.getJuiceFrame().getRunModelFromLauncherAction());
+//        modelGUIRunButton.setText("");
+//        modelGUIRunButton.setToolTipText(JAMS.i18n("Run_model_from_JAMS_Launcher"));
+//        modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
+//        toolBar.add(modelGUIRunButton);
+//
+//        JButton copyGUIButton = new JButton(JUICE.getJuiceFrame().getCopyModelGUIAction());
+//        copyGUIButton.setText("");
+//        copyGUIButton.setToolTipText(JAMS.i18n("Copy_Model_GUI"));
+//        copyGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Copy.png")));
+//        toolBar.add(copyGUIButton);
+//
+//        JButton pasteGUIButton = new JButton(JUICE.getJuiceFrame().getPasteModelGUIAction());
+//        pasteGUIButton.setText("");
+//        pasteGUIButton.setToolTipText(JAMS.i18n("Paste_Model_GUI"));
+//        pasteGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Paste.png")));
+//        toolBar.add(pasteGUIButton);
 
         /*
          * create the splitpane
@@ -249,7 +249,7 @@ public class ModelView {
         /*
          * add everything to the frame
          */
-        frame.getContentPane().add(toolBar, BorderLayout.NORTH);
+//        frame.getContentPane().add(toolBar, BorderLayout.NORTH);
         frame.getContentPane().add(modelSplitPane, BorderLayout.CENTER);
 
         ModelView.viewList.addView(frame, this);
@@ -350,8 +350,6 @@ public class ModelView {
         this.tree = tree;
         modelTreePanel.setTree(tree);
         updateLauncherPanel();
-        modelRunButton.setEnabled(true);
-        modelGUIRunButton.setEnabled(true);
     }
 
     public void updateLauncherPanel() {
