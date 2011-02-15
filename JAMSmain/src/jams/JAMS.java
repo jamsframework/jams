@@ -24,6 +24,8 @@ package jams;
 
 import java.awt.Font;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -35,45 +37,48 @@ public class JAMS {
      * Verbosity level 0 of 3
      */
     public static final int SILENT = 0;
-
     /**
      * Verbosity level 1 of 3
      */
     public static final int STANDARD = 1;
-
     /**
      * Verbosity level 2 of 3
      */
     public static final int VERBOSE = 2;
-
     /**
      * Verbosity level 3 of 3
      */
     public static final int VVERBOSE = 3;
-
     /**
      * Resource bundle containing all string literals for some localization
      */
     public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
-
     /**
      * Default character encoding
      */
     public static String charset = "ISO-8859-1";
-
     /**
      * The standard font
      */
     public static final Font STANDARD_FONT = new java.awt.Font(Font.MONOSPACED, Font.PLAIN, 11);
-
     /**
      * Default name of model output file
      */
     public static final String DEFAULT_MODEL_FILENAME = "model.jmp";
-
     /**
      * Default name of parameter output file
      */
     public static final String DEFAULT_PARAMETER_FILENAME = "default.jap";
 
+    /**
+     * Return a localized string 
+     */
+    public static String i18n(String key) {
+        if (resources.containsKey(key)) {
+            return resources.getString(key);
+        } else {
+            Logger.getLogger(JAMS.class.getName()).log(Level.INFO, "Could not find i18n key \"" + key + "\", using the key as result!", new JAMSException("Invalid resource key"));
+            return key;
+        }
+    }
 }

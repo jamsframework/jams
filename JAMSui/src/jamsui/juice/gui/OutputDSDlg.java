@@ -30,7 +30,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -47,8 +46,6 @@ import jams.tools.StringTools;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
-import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
@@ -76,7 +73,7 @@ public class OutputDSDlg extends JDialog {
 
     public OutputDSDlg(Frame owner) {
         super(owner);
-        setTitle("Datastore editor");
+        setTitle(JAMS.i18n("Datastore_editor"));
         setLocationRelativeTo(owner);
         setModal(false);
         setResizable(false);
@@ -86,12 +83,12 @@ public class OutputDSDlg extends JDialog {
 
         JPanel contentPanel = new JPanel();
         getContentPane().add(contentPanel, BorderLayout.CENTER);
-        contentPanel.setBorder(BorderFactory.createTitledBorder("Datastore details"));
+        contentPanel.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Datastore_details")));
         GridBagLayout mainLayout = new GridBagLayout();
         contentPanel.setLayout(mainLayout);
 
         JPanel storesPanel = new JPanel();
-        storesPanel.setBorder(BorderFactory.createTitledBorder("Datastores"));
+        storesPanel.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Datastores")));
         getContentPane().add(storesPanel, BorderLayout.WEST);
 
         dslist = new DSListInput();
@@ -115,9 +112,9 @@ public class OutputDSDlg extends JDialog {
         attributeList.setPreferredSize(new Dimension(200, 300));
         attributeList.setEnabled(false);
 
-        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Attributes")), 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.i18n("Attributes")), 1, 0, 1, 1, 0, 0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, attributeList, 1, 10, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.resources.getString("Filters")), 1, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.i18n("Filters")), 1, 20, 1, 1, 0, 0);
         GUIHelper.addGBComponent(contentPanel, mainLayout, filterList, 1, 30, 1, 1, 0, 0);
 //        GUIHelper.addGBComponent(contentPanel, mainLayout, contextCombo, 1, 40, 1, 1, 0, 0);
 
@@ -198,7 +195,7 @@ public class OutputDSDlg extends JDialog {
         protected void addItem() {
 
             if (newDSDlg == null) {
-                newDSDlg = new DSDlg(OutputDSDlg.this, "Add filter", true, false);
+                newDSDlg = new DSDlg(OutputDSDlg.this, JAMS.i18n("Add_filter"), true, false);
             }
 
             view = JUICE.getJuiceFrame().getCurrentView();
@@ -221,13 +218,13 @@ public class OutputDSDlg extends JDialog {
             if (newDSDlg.getResult() == DSDlg.RESULT_OK) {
 
                 if (StringTools.isEmptyString(newDSDlg.getDsName())) {
-                    GUIHelper.showErrorDlg(this, "Filter expression must not be empty!", "Error creating new filter");
+                    GUIHelper.showErrorDlg(this, JAMS.i18n("Filter_expression_must_not_be_empty!"), JAMS.i18n("Error_creating_new_filter"));
                     addItem();
                     return;
                 }
 
                 if (newDSDlg.getValue().length < 1) {
-                    GUIHelper.showErrorDlg(this, "You must choose a context!", "Error creating new filter");
+                    GUIHelper.showErrorDlg(this, JAMS.i18n("You_must_choose_a_context!"), JAMS.i18n("Error_creating_new_filter"));
                     addItem();
                     return;
                 }
@@ -251,7 +248,7 @@ public class OutputDSDlg extends JDialog {
                 if (value != null) {
 
                     if (StringTools.isEmptyString(value)) {
-                        GUIHelper.showErrorDlg(this, "Filter expression must not be empty!", "Error creating new filter");
+                        GUIHelper.showErrorDlg(this, JAMS.i18n("Filter_expression_must_not_be_empty!"), JAMS.i18n("Error_creating_new_filter"));
                         editItem();
                         return;
                     }
@@ -321,7 +318,7 @@ public class OutputDSDlg extends JDialog {
         protected void addItem() {
 
             if (newDSDlg == null) {
-                newDSDlg = new DSDlg(OutputDSDlg.this, "Add attributes", false, false);
+                newDSDlg = new DSDlg(OutputDSDlg.this, JAMS.i18n("Add_attributes"), false, false);
             }
 
             HashMap<String, ContextAttribute> caMap = ods.getContext().getDynamicAttributes();
@@ -350,7 +347,7 @@ public class OutputDSDlg extends JDialog {
                     ContextAttribute ca = (ContextAttribute) attribute;
 
                     if (ca == null) {
-                        GUIHelper.showErrorDlg(this, "Could not add attribute", JAMS.resources.getString("ERROR"));
+                        GUIHelper.showErrorDlg(this, JAMS.i18n("Could_not_add_attribute"), JAMS.resources.getString("ERROR"));
                         return;
                     }
 
@@ -422,7 +419,7 @@ public class OutputDSDlg extends JDialog {
         protected void addItem() {
 
             if (newDSDlg == null) {
-                newDSDlg = new DSDlg(OutputDSDlg.this, "Add datastore", true, true);
+                newDSDlg = new DSDlg(OutputDSDlg.this, JAMS.i18n("Add_datastore"), true, true);
             }
 
             view = JUICE.getJuiceFrame().getCurrentView();
@@ -444,13 +441,13 @@ public class OutputDSDlg extends JDialog {
             if (newDSDlg.getResult() == DSDlg.RESULT_OK) {
 
                 if (StringTools.isEmptyString(newDSDlg.getDsName())) {
-                    GUIHelper.showErrorDlg(this, "Datastore name must not be empty!", "Error creating new datastore");
+                    GUIHelper.showErrorDlg(this, JAMS.i18n("Datastore_name_must_not_be_empty!"), JAMS.i18n("Error_creating_new_datastore"));
                     addItem();
                     return;
                 }
 
                 if (newDSDlg.getValue().length < 1) {
-                    GUIHelper.showErrorDlg(this, "You must choose a context!", "Error creating new datastore");
+                    GUIHelper.showErrorDlg(this, JAMS.i18n("You_must_choose_a_context!"), JAMS.i18n("Error_creating_new_datastore"));
                     addItem();
                     return;
                 }
@@ -475,7 +472,7 @@ public class OutputDSDlg extends JDialog {
                 OutputDSDescriptor ods = (OutputDSDescriptor) listData.getElementAt(selection);
 
                 if (editDSDlg == null) {
-                    editDSDlg = new DSDlg(OutputDSDlg.this, "Edit datastore", true, true, false);
+                    editDSDlg = new DSDlg(OutputDSDlg.this, JAMS.i18n("Edit_datastore"), true, true, false);
                 }
 
                 editDSDlg.update(ods);
@@ -484,7 +481,7 @@ public class OutputDSDlg extends JDialog {
                 if (editDSDlg.getResult() == DSDlg.RESULT_OK) {
 
                     if (StringTools.isEmptyString(editDSDlg.getDsName())) {
-                        GUIHelper.showErrorDlg(this, "Datastore name must not be empty!", "Error creating new datastore");
+                        GUIHelper.showErrorDlg(this, JAMS.i18n("Datastore_name_must_not_be_empty!"), JAMS.i18n("Error_creating_new_datastore"));
                         editItem();
                         return;
                     }
@@ -542,7 +539,7 @@ public class OutputDSDlg extends JDialog {
             GridBagLayout mainLayout = new GridBagLayout();
             contentPanel.setLayout(mainLayout);
 
-            enableBox = new JCheckBox("Enabled");
+            enableBox = new JCheckBox(JAMS.i18n("Enabled"));
             if (showEnabledBox) {
                 GUIHelper.addGBComponent(contentPanel, mainLayout, enableBox, 1, 40, 1, 1, 0, 0);
             }
@@ -552,13 +549,13 @@ public class OutputDSDlg extends JDialog {
 
             String listLabel;
             if (showTextField) {
-                GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel("Name"), 1, 0, 1, 1, 0, 0);
+                GUIHelper.addGBComponent(contentPanel, mainLayout, new JLabel(JAMS.i18n("Name")), 1, 0, 1, 1, 0, 0);
                 GUIHelper.addGBComponent(contentPanel, mainLayout, nameText, 1, 10, 1, 1, 0, 0);
                 objectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                listLabel = "Context";
+                listLabel = JAMS.i18n("Context");
             } else {
                 objectList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-                listLabel = "Attribute";
+                listLabel = JAMS.i18n("Attribute");
             }
 
             if (showList) {
@@ -574,7 +571,7 @@ public class OutputDSDlg extends JDialog {
                 GUIHelper.addGBComponent(contentPanel, mainLayout, listScroll, 1, 30, 1, 1, 0, 0);
             }
 
-            JButton okButton = new JButton("OK");
+            JButton okButton = new JButton(JAMS.i18n("OK"));
             okButton.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
@@ -583,7 +580,7 @@ public class OutputDSDlg extends JDialog {
                 }
             });
 
-            JButton cancelButton = new JButton("Cancel");
+            JButton cancelButton = new JButton(JAMS.i18n("Cancel"));
             cancelButton.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
