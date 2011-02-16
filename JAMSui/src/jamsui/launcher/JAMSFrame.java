@@ -31,12 +31,15 @@ import jams.JAMSFileFilter;
 import jams.io.ParameterProcessor;
 import jams.tools.XMLTools;
 import jams.io.XMLProcessor;
+import jams.meta.ModelIO;
 import jams.model.JAMSFullModelState;
 import jams.model.Model;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
 import jams.workspace.InvalidWorkspaceException;
 import jamsui.juice.JUICE;
+import jamsui.juice.gui.JUICEFrame;
+import jamsui.juice.gui.OutputDSDlg;
 import java.awt.Desktop;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -83,7 +86,8 @@ public class JAMSFrame extends JAMSLauncher {
             loadModelAction, saveModelAction, saveAsModelAction, exitAction,
             aboutAction, loadModelParamAction, saveModelParamAction,
             loadModelExecutionStateAction, rtManagerAction, infoLogAction,
-            errorLogAction, onlineAction, explorerAction, browserAction, editModelAction;
+            errorLogAction, onlineAction, explorerAction, browserAction,
+            editModelAction;
     private static JAMSExplorer theExplorer;
 
     public JAMSFrame(Frame parent, SystemProperties properties) {
@@ -138,11 +142,12 @@ public class JAMSFrame extends JAMSLauncher {
         } catch (IOException ioe) {
             GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.i18n("The_specified_model_configuration_file_") + fileName + JAMS.i18n("_could_not_be_found!"), JAMS.i18n("Error"));
         } catch (SAXException se) {
-            if (se instanceof SAXParseException){
-                SAXParseException spe = (SAXParseException)se;
-                GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.i18n("The_specified_model_configuration_file_") + fileName + JAMS.i18n("_contains_errors!") + "\n[Fatal Error] :" + spe.getLineNumber() + ":" + spe.getColumnNumber() + ":"+ spe.getMessage(), JAMS.i18n("Error"));
-            }else
+            if (se instanceof SAXParseException) {
+                SAXParseException spe = (SAXParseException) se;
+                GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.i18n("The_specified_model_configuration_file_") + fileName + JAMS.i18n("_contains_errors!") + "\n[Fatal Error] :" + spe.getLineNumber() + ":" + spe.getColumnNumber() + ":" + spe.getMessage(), JAMS.i18n("Error"));
+            } else {
                 GUIHelper.showErrorDlg(JAMSFrame.this, JAMS.i18n("The_specified_model_configuration_file_") + fileName + JAMS.i18n("_contains_errors!"), JAMS.i18n("Error"));
+            }
         }
 
         this.modelFilename = fileName;
@@ -154,6 +159,7 @@ public class JAMSFrame extends JAMSLauncher {
         saveAsModelAction.setEnabled(true);
         modelMenu.setEnabled(true);
         editModelAction.setEnabled(true);
+        explorerAction.setEnabled(true);
         getRunModelAction().setEnabled(true);
 
         //GUIHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
@@ -231,6 +237,7 @@ public class JAMSFrame extends JAMSLauncher {
                         loadModelDefinition(doc);
                         modelFilename = model.getWorkspacePath() + "/" + model.getName();
                         saveModelAction.setEnabled(true);
+                        explorerAction.setEnabled(true);
                         saveAsModelAction.setEnabled(true);
                         modelMenu.setEnabled(true);
                         editModelAction.setEnabled(true);
@@ -388,6 +395,7 @@ public class JAMSFrame extends JAMSLauncher {
                 openExplorer();
             }
         };
+        explorerAction.setEnabled(false);
 
         browserAction = new AbstractAction(JAMS.i18n("Browse_WS_Dir")) {
 
@@ -495,7 +503,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         JMenuItem editModelItem = new JMenuItem(editModelAction);
         editModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, ActionEvent.CTRL_MASK));
-//        modelMenu.add(editModelItem);
+        modelMenu.add(editModelItem);
 
         modelMenu.add(new JSeparator());
 
@@ -539,19 +547,25 @@ public class JAMSFrame extends JAMSLauncher {
         loadButton.setText("");
         loadButton.setToolTipText(JAMS.i18n("Open_Model..."));
         loadButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelOpen.png")));
-        getToolBar().add(loadButton);
+        getToolBar().add(loadButton, 0);
 
         JButton saveButton = new JButton(saveModelAction);
         saveButton.setText("");
         saveButton.setToolTipText(JAMS.i18n("Save_Model"));
         saveButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelSave.png")));
-        getToolBar().add(saveButton);
+        getToolBar().add(saveButton, 1);
 
         JButton prefsButton = new JButton(editPrefsAction);
         prefsButton.setText("");
         prefsButton.setToolTipText(JAMS.i18n("Edit_Preferences..."));
         prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
-        getToolBar().add(prefsButton);
+        getToolBar().add(prefsButton, 2);
+
+        JButton explorerButton = new JButton(explorerAction);
+        explorerButton.setText("");
+        explorerButton.setToolTipText(JAMS.i18n("JADE"));
+        explorerButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Layers_small.png")));
+        getToolBar().add(explorerButton);
 
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");

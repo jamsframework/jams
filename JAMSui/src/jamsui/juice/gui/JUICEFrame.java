@@ -71,32 +71,14 @@ public class JUICEFrame extends JFrame {
     private Node modelProperties;
     private WorkerDlg loadModelDlg;
     private SearchDlg searchDlg;
-    private OutputDSDlg outputDSDlg;
     private String modelPath;
-    private Action editPrefsAction;
-    private Action reloadLibsAction;
-    private Action newModelAction;
-    private Action loadPrefsAction;
-    private Action savePrefsAction;
-    private Action loadModelAction;
-    private Action saveModelAction;
-    private Action saveAsModelAction;
-    private Action exitAction;
-    private Action aboutAction;
-    private Action searchAction;
-    private Action copyModelGUIAction;
-    private Action pasteModelGUIAction;
-    private Action OptimizationWizardGUIAction;
-    private Action loadModelParamAction;
-    private Action saveModelParamAction;
-    private Action runModelAction;
-    private Action runModelFromLauncherAction;
-    private Action explorerAction;
-    private Action browserAction;
-    private Action infoLogAction;
-    private Action errorLogAction;
-    private Action onlineAction;
-    private Action outputDSAction;
+    private Action editPrefsAction, reloadLibsAction, newModelAction,
+            loadPrefsAction, savePrefsAction, loadModelAction, saveModelAction,
+            saveAsModelAction, exitAction, aboutAction, searchAction,
+            copyModelGUIAction, pasteModelGUIAction, OptimizationWizardGUIAction,
+            loadModelParamAction, saveModelParamAction, runModelAction,
+            runModelFromLauncherAction, explorerAction, browserAction,
+            infoLogAction, errorLogAction, onlineAction, outputDSAction;
 
     public JUICEFrame() {
         init();
@@ -376,10 +358,7 @@ public class JUICEFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (outputDSDlg == null) {
-                    outputDSDlg = new OutputDSDlg(JUICEFrame.this);
-                }
-                outputDSDlg.setVisible(true);
+                getCurrentView().getOutputDSDlg().setVisible(true);
             }
         };
 
@@ -502,6 +481,12 @@ public class JUICEFrame extends JFrame {
         modelRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         toolBar.add(modelRunButton);
 
+        JButton modelGUIRunButton = new JButton(runModelFromLauncherAction);
+        modelGUIRunButton.setText("");
+        modelGUIRunButton.setToolTipText(JAMS.i18n("Run_model_from_JAMS_Launcher"));
+        modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
+        toolBar.add(modelGUIRunButton);
+
         JButton outputDSButton = new JButton(outputDSAction);
         outputDSButton.setText("");
         outputDSButton.setToolTipText(JAMS.i18n("Model_output"));
@@ -512,17 +497,10 @@ public class JUICEFrame extends JFrame {
         explorerButton.setText("");
         explorerButton.setToolTipText(JAMS.i18n("JADE"));
         explorerButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Layers_small.png")));
-//        explorerButton.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/images/Layers.png")).getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
         toolBar.add(explorerButton);
 
         toolBar.addSeparator();
         
-        JButton modelGUIRunButton = new JButton(runModelFromLauncherAction);
-        modelGUIRunButton.setText("");
-        modelGUIRunButton.setToolTipText(JAMS.i18n("Run_model_from_JAMS_Launcher"));
-        modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
-        toolBar.add(modelGUIRunButton);
-
         JButton copyGUIButton = new JButton(copyModelGUIAction);
         copyGUIButton.setText("");
         copyGUIButton.setToolTipText(JAMS.i18n("Copy_Model_GUI"));
@@ -534,8 +512,6 @@ public class JUICEFrame extends JFrame {
         pasteGUIButton.setToolTipText(JAMS.i18n("Paste_Model_GUI"));
         pasteGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Paste.png")));
         toolBar.add(pasteGUIButton);
-
-        toolBar.addSeparator();
 
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");

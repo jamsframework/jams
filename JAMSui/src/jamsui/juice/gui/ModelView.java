@@ -88,6 +88,7 @@ public class ModelView {
     private JAMSRuntime runtime;
     private static JAMSExplorer theExplorer;
     private ModelDescriptor modelDescriptor = new ModelDescriptor();
+    private OutputDSDlg outputDSDlg;
 //    private PanelDlg launcherPanelDlg;
 
     public ModelView(JDesktopPane parentPanel) {
@@ -581,6 +582,14 @@ public class ModelView {
         }
 
     }
-}    
-    
-    
+
+    /**
+     * @return the outputDSDlg
+     */
+    public OutputDSDlg getOutputDSDlg() {
+        if (outputDSDlg == null) {
+            outputDSDlg = new OutputDSDlg(JUICE.getJuiceFrame(), this.getModelDescriptor());
+        }
+        return outputDSDlg;
+    }
+}

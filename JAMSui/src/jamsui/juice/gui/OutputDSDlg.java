@@ -66,12 +66,12 @@ import javax.swing.event.ListSelectionListener;
 public class OutputDSDlg extends JDialog {
 
     private JButton okButton;
-    private ModelView view;
+    private ModelDescriptor md;
     private DSListInput dslist;
     private FilterListInput filterList;
     private AttributeListInput attributeList;
 
-    public OutputDSDlg(Frame owner) {
+    public OutputDSDlg(Frame owner, ModelDescriptor md) {
         super(owner);
         setTitle(JAMS.i18n("Datastore_editor"));
         setLocationRelativeTo(owner);
@@ -129,21 +129,20 @@ public class OutputDSDlg extends JDialog {
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(okButton);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-        this.pack();
         getRootPane().setDefaultButton(okButton);
+
+        this.md = md;
+
+        this.pack();
     }
 
     @Override
-    public void setVisible(boolean isVisible) {
-        if (isVisible) {
-
-            // get the stores
-            view = JUICE.getJuiceFrame().getCurrentView();
-            dslist.setValue(view.getModelDescriptor());
-        }
-
-        super.setVisible(isVisible);
+    public void setVisible(boolean b) {
+        dslist.setValue(md);
+        super.setVisible(b);
     }
+
+
 
     private void updateContextAttributes(Object value) {
 
@@ -198,8 +197,8 @@ public class OutputDSDlg extends JDialog {
                 newDSDlg = new DSDlg(OutputDSDlg.this, JAMS.i18n("Add_filter"), true, false);
             }
 
-            view = JUICE.getJuiceFrame().getCurrentView();
-            HashMap<String, ComponentDescriptor> cdMap = view.getModelDescriptor().getComponentDescriptors();
+//            view = JUICE.getJuiceFrame().getCurrentView();
+            HashMap<String, ComponentDescriptor> cdMap = md.getComponentDescriptors();
 
             // create a list containing all contexts of this model
             ArrayList<Object> contextList = new ArrayList<Object>();
@@ -422,8 +421,8 @@ public class OutputDSDlg extends JDialog {
                 newDSDlg = new DSDlg(OutputDSDlg.this, JAMS.i18n("Add_datastore"), true, true);
             }
 
-            view = JUICE.getJuiceFrame().getCurrentView();
-            HashMap<String, ComponentDescriptor> cdMap = view.getModelDescriptor().getComponentDescriptors();
+//            view = JUICE.getJuiceFrame().getCurrentView();
+            HashMap<String, ComponentDescriptor> cdMap = md.getComponentDescriptors();
 
             // create a list containing all contexts of this model
             ArrayList<Object> contextList = new ArrayList<Object>();

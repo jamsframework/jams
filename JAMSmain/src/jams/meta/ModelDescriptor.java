@@ -33,6 +33,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -123,7 +125,13 @@ public class ModelDescriptor extends ComponentCollection {
                     Element attributeElement = (Element) attributeNodes.item(j);
                     String attributeName = attributeElement.getAttribute("id");
                     ContextAttribute ca = context.getDynamicAttributes().get(attributeName);
-                    contextAttributes.add(ca);
+                    if (ca == null) {
+                        Logger.getLogger(ModelDescriptor.class.getName()).log(Level.INFO, 
+                                JAMS.i18n("Attribute_does_not_exist_and_is_removed"),
+                                new Object[]{attributeName, od.getName()});
+                    } else {
+                        contextAttributes.add(ca);
+                    }
                 }
 
                 NodeList filterNodes = e.getElementsByTagName("filter");
