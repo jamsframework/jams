@@ -548,8 +548,8 @@ public class JAMSContext extends JAMSComponent implements Context {
     }
 
     private void createRunRunnable(boolean doProfiling){
-        // create the runnable object that is executet at each run stage of that context
-        // this will differ depending if the child components' execution time should be
+        // create the runnable object that is executed at each run stage of that context
+        // this will differ depending on wether the child components' execution time should be
         // measured or not
         if (doProfiling) {
             runRunnable = new Runnable() {
@@ -619,8 +619,8 @@ public class JAMSContext extends JAMSComponent implements Context {
     }
 
     private void createResumeRunnable(boolean isProfiling) {
-        // create the runnable object that is executet at each run stage of that context
-        // this will differ depending if the child components' execution time should be
+        // create the runnable object that is executed at each run stage of that context
+        // this will differ depending on wether the child components' execution time should be
         // measured or not
         if (isProfiling) {
             resumeRunnable = new Runnable() {
