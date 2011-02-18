@@ -572,7 +572,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         JButton juiceButton = new JButton(editModelAction);
         juiceButton.setText("");
-        juiceButton.setToolTipText(JAMS.i18n("JUICE"));
+        juiceButton.setToolTipText(JAMS.i18n("Edit_Model..."));
         juiceButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/JUICEicon32.png")));
         getToolBar().add(juiceButton);
 
