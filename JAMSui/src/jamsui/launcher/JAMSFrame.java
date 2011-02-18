@@ -61,6 +61,7 @@ import java.net.URI;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -561,11 +562,21 @@ public class JAMSFrame extends JAMSLauncher {
         prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
         getToolBar().add(prefsButton, 2);
 
+        getToolBar().add(new JToolBar.Separator(null), 3);
+
         JButton explorerButton = new JButton(explorerAction);
         explorerButton.setText("");
         explorerButton.setToolTipText(JAMS.i18n("JADE"));
         explorerButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Layers_small.png")));
         getToolBar().add(explorerButton);
+
+        JButton juiceButton = new JButton(editModelAction);
+        juiceButton.setText("");
+        juiceButton.setToolTipText(JAMS.i18n("JUICE"));
+        juiceButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/JUICEicon32.png")));
+        getToolBar().add(juiceButton);
+
+        getToolBar().addSeparator();
 
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
