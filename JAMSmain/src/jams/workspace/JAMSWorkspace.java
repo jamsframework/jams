@@ -628,7 +628,7 @@ public class JAMSWorkspace implements Workspace {
     private boolean isEnabledOutputDS(Document doc) {
 
         Element root = doc.getDocumentElement();
-        if (root.getAttribute("enabled").equals(Boolean.toString(true))) {
+        if (!root.hasAttribute("enabled") || root.getAttribute("enabled").equals(Boolean.toString(true))) {
             return true;
         } else {
             return false;

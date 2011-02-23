@@ -29,17 +29,33 @@ package jams;
 public class JAMSException extends Exception {
 
     private String header;
+    private Exception wrappedException;
 
     public JAMSException(String message, String header) {
         super(message);
         this.header = header;
     }
 
+    public JAMSException(String message, String header, Exception wrappedException) {
+        super(message);
+        this.header = header;
+        this.wrappedException = wrappedException;
+    }
+
     public JAMSException(String message) {
         super(message);
     }
 
+    public JAMSException(String message, Exception wrappedException) {
+        super(message);
+        this.wrappedException = wrappedException;
+    }
+
     public String getHeader() {
         return header;
+    }
+
+    public Exception getWrappedException() {
+        return wrappedException;
     }
 }

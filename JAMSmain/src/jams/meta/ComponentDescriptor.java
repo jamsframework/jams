@@ -28,6 +28,7 @@ import jams.model.JAMSVarDescription;
 import java.util.ArrayList;
 import jams.JAMS;
 import jams.JAMSException;
+import jams.JAMSExceptionHandler;
 import jams.model.Context;
 import jams.tools.StringTools;
 import java.text.MessageFormat;
@@ -49,10 +50,10 @@ public class ComponentDescriptor extends Observable {
     private ComponentCollection componentRepository;
     private ModelNode node;
 
-    public ComponentDescriptor(String instanceName, Class clazz) throws JAMSException {
+    public ComponentDescriptor(String instanceName, Class clazz) throws NullClassException {
 
         if (clazz == null) {
-            throw new JAMSException(JAMS.i18n("Could_not_find_class_for_component_") + instanceName + "_!");
+            throw new NullClassException(JAMS.i18n("Could_not_find_class_for_component_") + instanceName + "_!", JAMS.i18n("Error"));
         }
 
         this.clazz = clazz;
@@ -70,13 +71,17 @@ public class ComponentDescriptor extends Observable {
 
     }
 
-    public ComponentDescriptor(String instanceName, Class clazz, ComponentCollection md) throws JAMSException {
+    public ComponentDescriptor(String instanceName, Class clazz, ComponentCollection md, JAMSExceptionHandler jeh) throws NullClassException {
         this(instanceName, clazz);
-        register(md);
+        try {
+            register(md);
+        } catch (RenameException re) {
+            jeh.handle(re);
+        }
     }
 
-    public ComponentDescriptor(Class clazz, ComponentCollection md) throws JAMSException {
-        this(clazz.getSimpleName(), clazz, md);
+    public ComponentDescriptor(Class clazz, ComponentCollection md, JAMSExceptionHandler jeh) throws NullClassException {
+        this(clazz.getSimpleName(), clazz, md, jeh);
     }
 
     private void init() {
@@ -169,12 +174,12 @@ public class ComponentDescriptor extends Observable {
         this.componentRepository = null;
     }
 
-    public final void register(ComponentCollection md) throws JAMSException {
+    public final void register(ComponentCollection md) throws RenameException {
         this.componentRepository = md;
         setInstanceName(this.instanceName);
     }
 
-    public void setInstanceName(String name) throws JAMSException {
+    public void setInstanceName(String name) throws RenameException {
         String oldName = this.instanceName;
 
         this.instanceName = this.componentRepository.registerComponentDescriptor(oldName, name, this);
@@ -185,7 +190,21 @@ public class ComponentDescriptor extends Observable {
         }
 
         if (!this.instanceName.equals(name)) {
-            throw new JAMSException(MessageFormat.format(JAMS.i18n("Component_name_is_already_in_use._Renamed_component_to_"), name, this.instanceName), JAMS.i18n("Invalid_value!"));
+            throw new RenameException(MessageFormat.format(JAMS.i18n("Component_name_is_already_in_use._Renamed_component_to_"), name, this.instanceName), JAMS.i18n("Invalid_value!"));
+        }
+    }
+
+    public class RenameException extends JAMSException {
+
+        public RenameException(String message, String header) {
+            super(message, header);
+        }
+    }
+
+    public class NullClassException extends JAMSException {
+
+        public NullClassException(String message, String header) {
+            super(message, header);
         }
     }
 

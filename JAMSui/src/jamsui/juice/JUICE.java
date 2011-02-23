@@ -22,11 +22,13 @@
  */
 package jamsui.juice;
 
+import jams.JAMSException;
 import jams.meta.ComponentCollection;
 import java.io.File;
 import java.util.*;
 import javax.swing.UIManager;
 import jams.JAMS;
+import jams.JAMSExceptionHandler;
 import jams.JAMSProperties;
 import jams.tools.JAMSTools;
 import jams.gui.tools.GUIHelper;
@@ -57,6 +59,7 @@ public class JUICE {
     private static JAMSCmdLine cmdLine;
     private static LibTree libTree;
     private static WorkerDlg loadLibsDlg;
+    private static JAMSExceptionHandler exHandler, multiExHandler;
 
     public static void main(String args[]) {
 
@@ -217,5 +220,48 @@ public class JUICE {
      */
     public static LibTree getLibTree() {
         return libTree;
+    }
+
+    /**
+     * @return the exHandler
+     */
+    public static JAMSExceptionHandler getExHandler() {
+        
+        if (exHandler == null) {
+            exHandler = new JAMSExceptionHandler() {
+
+                public void handle(JAMSException ex) {
+                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
+                }
+
+                public void handle(ArrayList<JAMSException> exList) {
+                    
+                }
+            };
+        }
+
+        return exHandler;
+    }
+
+    /**
+     * @return the exMultiHandler
+     */
+    public static JAMSExceptionHandler getMultiExHandler() {
+        if (multiExHandler == null) {
+            multiExHandler = new JAMSExceptionHandler() {
+
+                public void handle(JAMSException ex) {
+
+                }
+
+                public void handle(ArrayList<JAMSException> exList) {
+                    for (JAMSException ex : exList) {
+                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
+                    }
+                }
+            };
+        }
+
+        return multiExHandler;
     }
 }

@@ -77,7 +77,6 @@ public class JAMSDataFactory {
 //        }
 //        return value;
 //    }
-
     /**
      * Creates a new JAMSData instance that is a representation of a given data object
      * @param value The object to be represented by a JAMSData instance
@@ -213,6 +212,11 @@ public class JAMSDataFactory {
      * provided interface
      */
     public static Class getImplementingClass(Class interfaceType) {
+
+        while (interfaceType.isArray()) {
+            interfaceType = interfaceType.getComponentType();
+        }
+
         if (interfaceLookup == null) {
 
             interfaceLookup = new HashMap<Class, Class>();
@@ -253,6 +257,10 @@ public class JAMSDataFactory {
 
         if (clazz.isInterface()) {
             return clazz;
+        }
+
+        while (clazz.isArray()) {
+            clazz = clazz.getComponentType();
         }
 
         if (classLookup == null) {

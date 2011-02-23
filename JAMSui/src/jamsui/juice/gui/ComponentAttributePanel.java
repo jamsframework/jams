@@ -22,7 +22,6 @@
  */
 package jamsui.juice.gui;
 
-import jams.JAMSException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -52,6 +51,7 @@ import jams.JAMS;
 import jams.gui.input.ValueChangeListener;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ComponentField;
+import jams.meta.ComponentField.AttributeLinkException;
 import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
 import jams.tools.StringTools;
@@ -205,7 +205,7 @@ public class ComponentAttributePanel extends JPanel {
             try {
                 //@TODO: proper handling
                 field.linkToAttribute(context, attributeName);
-            } catch (JAMSException ex) {
+            } catch (AttributeLinkException ex) {
                 Logger.getLogger(ComponentAttributePanel.class.getName()).log(Level.SEVERE, null, ex);
             }
             linkText.setText(field.getContext() + "." + field.getAttribute());

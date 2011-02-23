@@ -259,9 +259,9 @@ public class LibTree extends JAMSTree {
 
                         ComponentDescriptor no;
                         if (JAMSContext.class.isAssignableFrom(clazz)) {
-                            no = new ContextDescriptor(clazz, getComponentCollection());
+                            no = new ContextDescriptor(clazz, getComponentCollection(), JUICE.getExHandler());
                         } else {
-                            no = new ComponentDescriptor(clazz, getComponentCollection());
+                            no = new ComponentDescriptor(clazz, getComponentCollection(), JUICE.getExHandler());
                         }
 
                         no.addObserver(new Observer() {

@@ -564,7 +564,7 @@ public class ModelTree extends JAMSTree {
 //
 //        this.getModel
 
-                ModelDescriptor md = modelIO.createModel();
+                ModelDescriptor md = modelIO.createModel(JUICE.getExHandler());
                 view.setModelDescriptor(md);
                 this.setComponentCollection(md);
                 rootNode = md.getRootNode();
@@ -575,7 +575,7 @@ public class ModelTree extends JAMSTree {
             }
         } else {
             try {
-                ModelDescriptor md = modelIO.loadModel(modelDoc, true);
+                ModelDescriptor md = modelIO.loadModel(modelDoc, true, JUICE.getMultiExHandler());
                 view.setModelDescriptor(md);
                 this.setComponentCollection(md);
                 rootNode = md.getRootNode();

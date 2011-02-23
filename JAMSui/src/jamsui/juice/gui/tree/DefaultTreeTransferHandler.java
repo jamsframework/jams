@@ -1,8 +1,8 @@
 package jamsui.juice.gui.tree;
 
-import jams.JAMSException;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ComponentField;
+import jams.meta.ComponentField.AttributeLinkException;
 import jams.meta.ContextDescriptor;
 import java.awt.*;
 import java.util.Collections;
@@ -255,7 +255,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
                                 var.linkToAttribute(newContext, var.getAttribute());
                                 //component.linkComponentAttribute(var.name, newContext, var.getAttribute());
                                 //var.context = newContext;
-                            } catch (JAMSException ex) {
+                            } catch (AttributeLinkException ex) {
                                 Logger.getLogger(DefaultTreeTransferHandler.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }

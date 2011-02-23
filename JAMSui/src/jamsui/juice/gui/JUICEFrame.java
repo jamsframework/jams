@@ -254,13 +254,8 @@ public class JUICEFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
-                try {
-                    view.getModelDescriptor().setModelParameters((Element) modelProperties);
-                    view.updateLauncherPanel();
-                } catch (JAMSException ex) {
-                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
-                    Logger.getLogger(JUICEFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
+
+                view.getModelDescriptor().setModelParameters((Element) modelProperties, JUICE.getMultiExHandler());
 
             }
         };
@@ -500,7 +495,7 @@ public class JUICEFrame extends JFrame {
         toolBar.add(explorerButton);
 
         toolBar.addSeparator();
-        
+
         JButton copyGUIButton = new JButton(copyModelGUIAction);
         copyGUIButton.setText("");
         copyGUIButton.setToolTipText(JAMS.i18n("Copy_Model_GUI"));

@@ -24,7 +24,9 @@ package jams.meta;
 import jams.JAMSException;
 import java.util.HashMap;
 import jams.JAMS;
+import jams.JAMSExceptionHandler;
 import jams.data.JAMSDataFactory;
+import jams.meta.ComponentField.AttributeLinkException;
 import java.text.MessageFormat;
 import java.util.Map.Entry;
 
@@ -37,16 +39,16 @@ public class ContextDescriptor extends ComponentDescriptor {
     private HashMap<String, ContextAttribute> staticAttributes = new HashMap<String, ContextAttribute>();
     private HashMap<String, ContextAttribute> dynamicAttributes = new HashMap<String, ContextAttribute>();
 
-    public ContextDescriptor(String instanceName, Class clazz) throws JAMSException {
+    public ContextDescriptor(String instanceName, Class clazz) throws NullClassException {
         super(instanceName, clazz);
     }
 
-    public ContextDescriptor(String instanceName, Class clazz, ComponentCollection md) throws JAMSException {
-        super(instanceName, clazz, md);
+    public ContextDescriptor(String instanceName, Class clazz, ComponentCollection md, JAMSExceptionHandler jeh) throws NullClassException {
+        super(instanceName, clazz, md, jeh);
     }
 
-    public ContextDescriptor(Class clazz, ComponentCollection md) throws JAMSException {
-        super(clazz, md);
+    public ContextDescriptor(Class clazz, ComponentCollection md, JAMSExceptionHandler jeh) throws NullClassException {
+        super(clazz, md, jeh);
     }
 
 //    public ContextDescriptor(Class clazz) throws JAMSException {
@@ -65,14 +67,14 @@ public class ContextDescriptor extends ComponentDescriptor {
 //
 //        return ca;
 //    }
-    public ContextAttribute addStaticAttribute(String name, Class type, String value) throws JAMSException {
+        public ContextAttribute addStaticAttribute(String name, Class type, String value) throws ContextAttributeException {
 
         ContextAttribute ca = staticAttributes.get(name);
 
         // info wenn attribut mit gleichem namen schon existent und dann zum repo adden!!!
         if (ca != null) {
 
-            throw new JAMSException(MessageFormat.format(JAMS.i18n("Context_attribute_does_already_exist"), name),
+            throw new ContextAttributeException(MessageFormat.format(JAMS.i18n("Context_attribute_does_already_exist"), name),
                     JAMS.i18n("Error_adding_context_attribute"));
 
         } else {
@@ -83,6 +85,13 @@ public class ContextDescriptor extends ComponentDescriptor {
         ca.setValue(value);
 
         return ca;
+    }
+
+    public class ContextAttributeException extends JAMSException {
+
+        public ContextAttributeException(String message, String header) {
+            super(message, header);
+        }
     }
 
     public void removeStaticAttribute(String name) {
@@ -115,7 +124,7 @@ public class ContextDescriptor extends ComponentDescriptor {
     }
 
     @Override
-    public ContextDescriptor cloneNode() throws JAMSException {
+    public ContextDescriptor cloneNode() throws AttributeLinkException, NullClassException {
 
         ContextDescriptor copy = new ContextDescriptor(getName(), getClazz());
         for (String name : componentFields.keySet()) {

@@ -1,5 +1,6 @@
 package jams.meta;
 
+import jams.JAMS;
 import jams.JAMSException;
 import jams.data.JAMSDataFactory;
 import jams.tools.StringTools;
@@ -80,7 +81,7 @@ public class ComponentField {
         this.contextAttributes.remove(ca);
     }
 
-    public void linkToAttribute(ContextDescriptor context, String attributeName) throws JAMSException {
+    public void linkToAttribute(ContextDescriptor context, String attributeName) throws AttributeLinkException {
         Class basicType;
         // if there is more than one attribute bound to this
         if (attributeName.contains(";")) {
@@ -91,7 +92,7 @@ public class ComponentField {
                 }
                 return;
             } else {
-                throw new JAMSException("Semicolons are not allowed in attribute names!");
+                throw new AttributeLinkException("Semicolons are not allowed in attribute names!", JAMS.i18n("Error"));
             }
         }
         if (this.type.isArray()) {
@@ -105,7 +106,7 @@ public class ComponentField {
         ContextAttribute attribute = context.getDynamicAttributes().get(attributeName);
         // check if already existing
         if ((attribute != null) && (attribute.getType() != basicType)) {
-            throw new JAMSException("Attribute " + attributeName + " already exists in context " + context.getName() + " with different type " + attribute.getType());
+            throw new AttributeLinkException("Attribute " + attributeName + " already exists in context " + context.getName() + " with different type " + attribute.getType(), JAMS.i18n("Error"));
         }
         if (!this.type.isArray()) {
             // unlink from old ContextAttribute
@@ -117,6 +118,13 @@ public class ComponentField {
         }
         attribute.getFields().add(this);
         this.contextAttributes.add(attribute);
+    }
+
+    public class AttributeLinkException extends JAMSException {
+
+        public AttributeLinkException(String message, String header) {
+            super(message, header);
+        }
     }
 
     public void setValue(String value) {

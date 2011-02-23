@@ -29,6 +29,7 @@ import jams.model.*;
 import org.w3c.dom.*;
 import java.lang.reflect.*;
 import jams.JAMS;
+import jams.JAMSExceptionHandler;
 import jams.tools.JAMSTools;
 import jams.data.*;
 import jams.meta.ComponentDescriptor;
@@ -42,8 +43,6 @@ import jams.meta.NodeFactory;
 import jams.meta.OutputDSDescriptor;
 import jams.runtime.JAMSRuntime;
 import java.util.ArrayList;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
@@ -87,7 +86,14 @@ public class ModelLoader {
 //        Node node;
         Component topComponent;
 
-        this.md = modelIO.loadModel(modelDoc, false);
+        this.md = modelIO.loadModel(modelDoc, false, new JAMSExceptionHandler() {
+
+            public void handle(JAMSException ex) {
+            }
+
+            public void handle(ArrayList<JAMSException> exList) {
+            }
+        });
 
         rootNode = md.getRootNode();
 

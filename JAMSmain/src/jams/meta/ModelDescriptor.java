@@ -23,6 +23,7 @@ package jams.meta;
 
 import jams.JAMS;
 import jams.JAMSException;
+import jams.JAMSExceptionHandler;
 import jams.io.ParameterProcessor;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelElement;
@@ -98,10 +99,10 @@ public class ModelDescriptor extends ComponentCollection {
 
         if (outputDataStores == null) {
 
-            this.outputDataStores = new HashMap<String, OutputDSDescriptor>();
+            outputDataStores = new HashMap<String, OutputDSDescriptor>();
 
             if (dataStoresNode == null) {
-                return this.outputDataStores;
+                return outputDataStores;
             }
 
             NodeList nodes = ((Element) dataStoresNode).getElementsByTagName("outputdatastore");
@@ -126,7 +127,7 @@ public class ModelDescriptor extends ComponentCollection {
                     String attributeName = attributeElement.getAttribute("id");
                     ContextAttribute ca = context.getDynamicAttributes().get(attributeName);
                     if (ca == null) {
-                        Logger.getLogger(ModelDescriptor.class.getName()).log(Level.INFO, 
+                        Logger.getLogger(ModelDescriptor.class.getName()).log(Level.INFO,
                                 JAMS.i18n("Attribute_does_not_exist_and_is_removed"),
                                 new Object[]{attributeName, od.getName()});
                     } else {
@@ -147,9 +148,10 @@ public class ModelDescriptor extends ComponentCollection {
         return this.outputDataStores;
     }
 
-    public void setModelParameters(Element launcherNode) throws JAMSException {
+    public void setModelParameters(Element launcherNode, JAMSExceptionHandler exHandler) {//throws JAMSException {
         Node node;
 
+        ArrayList<JAMSException> exceptions = new ArrayList<JAMSException>();
         ModelProperties mProp = getModelProperties();
 
         mProp.removeAll();
@@ -167,9 +169,12 @@ public class ModelDescriptor extends ComponentCollection {
                 node = groupChildNodes.item(pindex);
                 if (node.getNodeName().equalsIgnoreCase("property")) {
                     Element propertyElement = (Element) node;
-                    ModelProperty property = getPropertyFromElement(propertyElement, mProp);
-                    if (property != null) {
+                    try {
+                        ModelProperty property = getPropertyFromElement(propertyElement, mProp);
                         mProp.addProperty(group, property);
+                    } catch (JAMSException je) {
+                        exceptions.add(je);
+                        exHandler.handle(je);
                     }
                 }
                 if (node.getNodeName().equalsIgnoreCase("subgroup")) {
@@ -181,14 +186,19 @@ public class ModelDescriptor extends ComponentCollection {
                     NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
                     for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
                         Element propertyElement = (Element) propertyNodes.item(kindex);
-                        ModelProperty property = getPropertyFromElement(propertyElement, mProp);
-                        if (property != null) {
+                        try {
+                            ModelProperty property = getPropertyFromElement(propertyElement, mProp);
                             mProp.addProperty(subgroup, property);
+                        } catch (JAMSException je) {
+                            exceptions.add(je);
+                            exHandler.handle(je);
                         }
                     }
                 }
             }
         }
+
+        exHandler.handle(exceptions);
         return;
     }
 
