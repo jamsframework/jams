@@ -22,12 +22,14 @@
  */
 package jams.runtime;
 
+import jams.ExceptionHandler;
 import java.awt.BorderLayout;
 import java.util.HashMap;
 import java.util.Observer;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import jams.JAMS;
+import jams.JAMSException;
 import jams.SystemProperties;
 import jams.data.JAMSData;
 import jams.model.Component;

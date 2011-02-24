@@ -22,6 +22,8 @@
  */
 package jams.runtime;
 
+import jams.ExceptionHandler;
+import jams.JAMSException;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -149,10 +151,21 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         this.println("", JAMS.STANDARD);
         this.println(JAMS.i18n("Loading_Model"), JAMS.STANDARD);
 
-        ModelLoader modelLoader = new ModelLoader(null, this);
+        ModelLoader modelLoader = new ModelLoader(this);
+
+        ExceptionHandler exHandler = new ExceptionHandler() {
+
+            public void handle(JAMSException ex) {
+                StandardRuntime.this.handle(ex, true);
+            }
+
+            public void handle(ArrayList<JAMSException> exList) {
+                
+            }
+        };
 
         try {
-            this.model = modelLoader.loadModel(modelDocument);
+            this.model = modelLoader.loadModel(modelDocument, exHandler);
         } catch (Exception jex) {
             this.handle(jex, false);
         }

@@ -24,7 +24,7 @@ package jams.meta;
 import jams.JAMSException;
 import java.util.HashMap;
 import jams.JAMS;
-import jams.JAMSExceptionHandler;
+import jams.ExceptionHandler;
 import jams.data.JAMSDataFactory;
 import jams.meta.ComponentField.AttributeLinkException;
 import java.text.MessageFormat;
@@ -43,11 +43,11 @@ public class ContextDescriptor extends ComponentDescriptor {
         super(instanceName, clazz);
     }
 
-    public ContextDescriptor(String instanceName, Class clazz, ComponentCollection md, JAMSExceptionHandler jeh) throws NullClassException {
+    public ContextDescriptor(String instanceName, Class clazz, ComponentCollection md, ExceptionHandler jeh) throws NullClassException {
         super(instanceName, clazz, md, jeh);
     }
 
-    public ContextDescriptor(Class clazz, ComponentCollection md, JAMSExceptionHandler jeh) throws NullClassException {
+    public ContextDescriptor(Class clazz, ComponentCollection md, ExceptionHandler jeh) throws NullClassException {
         super(clazz, md, jeh);
     }
 

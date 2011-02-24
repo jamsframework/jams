@@ -29,7 +29,7 @@ import jams.model.*;
 import org.w3c.dom.*;
 import java.lang.reflect.*;
 import jams.JAMS;
-import jams.JAMSExceptionHandler;
+import jams.ExceptionHandler;
 import jams.tools.JAMSTools;
 import jams.data.*;
 import jams.meta.ComponentDescriptor;
@@ -60,7 +60,7 @@ public class ModelLoader {
     private ModelIO modelIO;
     private ModelDescriptor md;
 
-    public ModelLoader(String[] globvars, JAMSRuntime rt) {
+    public ModelLoader(JAMSRuntime rt) {
 
         this.loader = rt.getClassLoader();
         this.modelIO = new ModelIO(this.loader, new NodeFactory() {
@@ -80,20 +80,13 @@ public class ModelLoader {
      * @param modelDoc The XML document describing the model
      * @return The loaded model
      */
-    public Model loadModel(Document modelDoc) throws JAMSException {
+    public Model loadModel(Document modelDoc, ExceptionHandler exHandler) throws JAMSException {
 
         ModelNode rootNode, node;
 //        Node node;
         Component topComponent;
 
-        this.md = modelIO.loadModel(modelDoc, false, new JAMSExceptionHandler() {
-
-            public void handle(JAMSException ex) {
-            }
-
-            public void handle(ArrayList<JAMSException> exList) {
-            }
-        });
+        this.md = modelIO.loadModel(modelDoc, false, exHandler);
 
         rootNode = md.getRootNode();
 

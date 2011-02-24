@@ -28,7 +28,7 @@ import java.io.File;
 import java.util.*;
 import javax.swing.UIManager;
 import jams.JAMS;
-import jams.JAMSExceptionHandler;
+import jams.ExceptionHandler;
 import jams.JAMSProperties;
 import jams.tools.JAMSTools;
 import jams.gui.tools.GUIHelper;
@@ -59,7 +59,7 @@ public class JUICE {
     private static JAMSCmdLine cmdLine;
     private static LibTree libTree;
     private static WorkerDlg loadLibsDlg;
-    private static JAMSExceptionHandler exHandler, multiExHandler;
+    private static ExceptionHandler exHandler, multiExHandler;
 
     public static void main(String args[]) {
 
@@ -225,10 +225,10 @@ public class JUICE {
     /**
      * @return the exHandler
      */
-    public static JAMSExceptionHandler getExHandler() {
+    public static ExceptionHandler getExHandler() {
         
         if (exHandler == null) {
-            exHandler = new JAMSExceptionHandler() {
+            exHandler = new ExceptionHandler() {
 
                 public void handle(JAMSException ex) {
                     GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
@@ -246,9 +246,9 @@ public class JUICE {
     /**
      * @return the exMultiHandler
      */
-    public static JAMSExceptionHandler getMultiExHandler() {
+    public static ExceptionHandler getMultiExHandler() {
         if (multiExHandler == null) {
-            multiExHandler = new JAMSExceptionHandler() {
+            multiExHandler = new ExceptionHandler() {
 
                 public void handle(JAMSException ex) {
 

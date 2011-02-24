@@ -575,7 +575,7 @@ public class ModelTree extends JAMSTree {
             }
         } else {
             try {
-                ModelDescriptor md = modelIO.loadModel(modelDoc, true, JUICE.getMultiExHandler());
+                ModelDescriptor md = modelIO.loadModel(modelDoc, true, JUICE.getExHandler());
                 view.setModelDescriptor(md);
                 this.setComponentCollection(md);
                 rootNode = md.getRootNode();

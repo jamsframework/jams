@@ -23,12 +23,13 @@ package jams.meta;
 
 import jams.JAMS;
 import jams.JAMSException;
-import jams.JAMSExceptionHandler;
+import jams.ExceptionHandler;
 import jams.io.ParameterProcessor;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelElement;
 import jams.meta.ModelProperties.ModelProperty;
 import jams.tools.StringTools;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -95,60 +96,66 @@ public class ModelDescriptor extends ComponentCollection {
         outputDataStores.remove(dataStore.getName());
     }
 
-    public HashMap<String, OutputDSDescriptor> getDatastores() {
+    public void initDatastores(ExceptionHandler exHandler) {
 
-        if (outputDataStores == null) {
+        outputDataStores = new HashMap<String, OutputDSDescriptor>();
 
-            outputDataStores = new HashMap<String, OutputDSDescriptor>();
-
-            if (dataStoresNode == null) {
-                return outputDataStores;
-            }
-
-            NodeList nodes = ((Element) dataStoresNode).getElementsByTagName("outputdatastore");
-
-            for (int i = 0; i < nodes.getLength(); i++) {
-
-                Element e = (Element) nodes.item(i);
-
-                ContextDescriptor context = (ContextDescriptor) getComponentDescriptor(e.getAttribute("context"));
-                String name = e.getAttribute("name");
-                boolean enabled = Boolean.parseBoolean(e.getAttribute("enabled"));
-                OutputDSDescriptor od = new OutputDSDescriptor(context);
-                od.setName(name);
-                od.setEnabled(enabled);
-
-                // fill the contextAttributes
-                ArrayList<ContextAttribute> contextAttributes = od.getContextAttributes();
-                NodeList attributeNodes = e.getElementsByTagName("attribute");
-                for (int j = 0; j < attributeNodes.getLength(); j++) {
-
-                    Element attributeElement = (Element) attributeNodes.item(j);
-                    String attributeName = attributeElement.getAttribute("id");
-                    ContextAttribute ca = context.getDynamicAttributes().get(attributeName);
-                    if (ca == null) {
-                        Logger.getLogger(ModelDescriptor.class.getName()).log(Level.INFO,
-                                JAMS.i18n("Attribute_does_not_exist_and_is_removed"),
-                                new Object[]{attributeName, od.getName()});
-                    } else {
-                        contextAttributes.add(ca);
-                    }
-                }
-
-                NodeList filterNodes = e.getElementsByTagName("filter");
-                for (int j = 0; j < filterNodes.getLength(); j++) {
-                    Element filterElement = (Element) filterNodes.item(j);
-                    String expression = filterElement.getAttribute("expression");
-                    ContextDescriptor filterContext = (ContextDescriptor) getComponentDescriptor(filterElement.getAttribute("context"));
-                    od.addFilter(filterContext, expression);
-                }
-                this.outputDataStores.put(od.getName(), od);
-            }
+        if (dataStoresNode == null) {
+            return;
         }
+
+        NodeList nodes = ((Element) dataStoresNode).getElementsByTagName("outputdatastore");
+
+        for (int i = 0; i < nodes.getLength(); i++) {
+
+            Element e = (Element) nodes.item(i);
+
+            ContextDescriptor context = (ContextDescriptor) getComponentDescriptor(e.getAttribute("context"));
+
+            if (context == null) {
+                exHandler.handle(new JAMSException(MessageFormat.format(JAMS.i18n("Context_does_not_exist"), e.getAttribute("context")), JAMS.i18n("Error")));
+                continue;
+            }
+
+            String name = e.getAttribute("name");
+            boolean enabled = Boolean.parseBoolean(e.getAttribute("enabled"));
+            OutputDSDescriptor od = new OutputDSDescriptor(context);
+            od.setName(name);
+            od.setEnabled(enabled);
+
+            // fill the contextAttributes
+            ArrayList<ContextAttribute> contextAttributes = od.getContextAttributes();
+            NodeList attributeNodes = e.getElementsByTagName("attribute");
+            for (int j = 0; j < attributeNodes.getLength(); j++) {
+
+                Element attributeElement = (Element) attributeNodes.item(j);
+                String attributeName = attributeElement.getAttribute("id");
+                ContextAttribute ca = context.getDynamicAttributes().get(attributeName);
+                if (ca == null) {
+//                        Logger.getLogger(ModelDescriptor.class.getName()).log(Level.INFO,
+                    exHandler.handle(new JAMSException(MessageFormat.format(JAMS.i18n("Attribute_does_not_exist_and_is_removed"),
+                            attributeName, od.getName()), JAMS.i18n("Error")));
+                } else {
+                    contextAttributes.add(ca);
+                }
+            }
+
+            NodeList filterNodes = e.getElementsByTagName("filter");
+            for (int j = 0; j < filterNodes.getLength(); j++) {
+                Element filterElement = (Element) filterNodes.item(j);
+                String expression = filterElement.getAttribute("expression");
+                ContextDescriptor filterContext = (ContextDescriptor) getComponentDescriptor(filterElement.getAttribute("context"));
+                od.addFilter(filterContext, expression);
+            }
+            this.outputDataStores.put(od.getName(), od);
+        }
+    }
+
+    public HashMap<String, OutputDSDescriptor> getDatastores() {
         return this.outputDataStores;
     }
 
-    public void setModelParameters(Element launcherNode, JAMSExceptionHandler exHandler) {//throws JAMSException {
+    public void setModelParameters(Element launcherNode, ExceptionHandler exHandler) {//throws JAMSException {
         Node node;
 
         ArrayList<JAMSException> exceptions = new ArrayList<JAMSException>();

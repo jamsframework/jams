@@ -22,7 +22,7 @@
 package jams.meta;
 
 import jams.JAMSException;
-import jams.JAMSExceptionHandler;
+import jams.ExceptionHandler;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.data.JAMSEntity;
@@ -51,6 +51,7 @@ public class IOTest {
         ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
 
         ModelIO io = new ModelIO(classLoader, new NodeFactory() {
+
             public ModelNode createNode(ComponentDescriptor cd) {
                 return new ModelNode(cd);
             }
@@ -63,7 +64,7 @@ public class IOTest {
         ModelDescriptor md = null;
 
         try {
-            md = io.loadModel(doc, true, new JAMSExceptionHandler() {
+            md = io.loadModel(doc, true, new ExceptionHandler() {
 
                 public void handle(JAMSException ex) {
                     ex.printStackTrace();

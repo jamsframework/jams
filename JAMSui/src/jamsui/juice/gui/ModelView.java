@@ -73,7 +73,6 @@ public class ModelView {
     private JInternalFrame frame;
     private File savePath;
     private Document initialDoc;
-    private JButton modelRunButton, modelGUIRunButton;
     private ModelTree tree;
     private ComponentPanel compEditPanel;
     //private HashMap<ComponentDescriptor, DataRepository> dataRepositories = new HashMap<ComponentDescriptor, DataRepository>();

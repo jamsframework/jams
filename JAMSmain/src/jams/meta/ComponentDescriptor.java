@@ -28,7 +28,7 @@ import jams.model.JAMSVarDescription;
 import java.util.ArrayList;
 import jams.JAMS;
 import jams.JAMSException;
-import jams.JAMSExceptionHandler;
+import jams.ExceptionHandler;
 import jams.model.Context;
 import jams.tools.StringTools;
 import java.text.MessageFormat;
@@ -71,7 +71,7 @@ public class ComponentDescriptor extends Observable {
 
     }
 
-    public ComponentDescriptor(String instanceName, Class clazz, ComponentCollection md, JAMSExceptionHandler jeh) throws NullClassException {
+    public ComponentDescriptor(String instanceName, Class clazz, ComponentCollection md, ExceptionHandler jeh) throws NullClassException {
         this(instanceName, clazz);
         try {
             register(md);
@@ -80,7 +80,7 @@ public class ComponentDescriptor extends Observable {
         }
     }
 
-    public ComponentDescriptor(Class clazz, ComponentCollection md, JAMSExceptionHandler jeh) throws NullClassException {
+    public ComponentDescriptor(Class clazz, ComponentCollection md, ExceptionHandler jeh) throws NullClassException {
         this(clazz.getSimpleName(), clazz, md, jeh);
     }
 

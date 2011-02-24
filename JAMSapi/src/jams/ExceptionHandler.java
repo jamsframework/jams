@@ -1,5 +1,5 @@
 /*
- * JAMSExceptionHandler.java
+ * ExceptionHandler.java
  * Created on 22.02.2011, 11:48:39
  *
  * This file is part of JAMS
@@ -28,7 +28,7 @@ import java.util.ArrayList;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public interface JAMSExceptionHandler {
+public interface ExceptionHandler {
 
     public void handle(JAMSException ex);
     public void handle(ArrayList<JAMSException> exList);

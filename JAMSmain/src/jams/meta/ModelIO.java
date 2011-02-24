@@ -23,7 +23,7 @@ package jams.meta;
 
 import jams.JAMS;
 import jams.JAMSException;
-import jams.JAMSExceptionHandler;
+import jams.ExceptionHandler;
 import jams.JAMSVersion;
 import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
@@ -62,7 +62,7 @@ public class ModelIO {
 //        this.md = md;
 //        this.loader = loader;
 //    }
-    public ModelDescriptor createModel(JAMSExceptionHandler exHandler) throws JAMSException {
+    public ModelDescriptor createModel(ExceptionHandler exHandler) throws JAMSException {
 
         ModelDescriptor md = new ModelDescriptor();
         ContextDescriptor cd = new ContextDescriptor(JAMS.i18n("New_Model"), modelClazz, md, exHandler);
@@ -72,13 +72,13 @@ public class ModelIO {
         return md;
     }
 
-    public ModelDescriptor loadModel(Document modelDoc, boolean processEditors, JAMSExceptionHandler exHandler) throws JAMSException {
+    public ModelDescriptor loadModel(Document modelDoc, boolean processEditors, ExceptionHandler exHandler) throws JAMSException {
 
         return getModelDescriptor(modelDoc, processEditors, exHandler);
 
     }
 
-    private ModelDescriptor getModelDescriptor(Document modelDoc, boolean processEditors, JAMSExceptionHandler exHandler) throws NullClassException, NullFieldException, AttributeLinkException {
+    private ModelDescriptor getModelDescriptor(Document modelDoc, boolean processEditors, ExceptionHandler exHandler) throws NullClassException {
 
         Node node;
         Element element, docRoot;
@@ -115,7 +115,11 @@ public class ModelIO {
         //handle the workspace node
         Node workspaceNode = docRoot.getElementsByTagName("var").item(0);
         if (workspaceNode != null) {
-            setVar(cd, (Element) workspaceNode, md);
+            try {
+                setVar(cd, (Element) workspaceNode, md, exHandler);
+            } catch (NullFieldException ex) {
+                exHandler.handle(ex);
+            }
         }
 
         //handle all contextcomponent and component nodes
@@ -130,6 +134,8 @@ public class ModelIO {
                     rootNode.add(getSubTree(element, md, exHandler));
                 } catch (ModelLoadException mle) {
                     exHandler.handle(mle);
+                } catch (NullClassException nfe) {
+                    exHandler.handle(nfe);
                 }
 
             } else if (node.getNodeName().equals("attribute")) {
@@ -159,11 +165,13 @@ public class ModelIO {
                 md.setModelParameters(launcherNode, exHandler);
             }
         }
+        
+        md.initDatastores(exHandler);
 
         return md;
     }
 
-    private ModelNode getSubTree(Element rootElement, ModelDescriptor md, JAMSExceptionHandler exHandler) throws ModelLoadException, NullClassException, NullFieldException, AttributeLinkException {
+    private ModelNode getSubTree(Element rootElement, ModelDescriptor md, ExceptionHandler exHandler) throws ModelLoadException, NullClassException {
 
         Class<?> clazz;
         String componentName = "", className = "";
@@ -206,7 +214,13 @@ public class ModelIO {
 
             NodeList varChilds = rootElement.getElementsByTagName("var");
             for (int index = 0; index < varChilds.getLength(); index++) {
-                setVar(cd, (Element) varChilds.item(index), md);
+
+                try {
+                    setVar(cd, (Element) varChilds.item(index), md, exHandler);
+                } catch (NullFieldException ex) {
+                    exHandler.handle(ex);
+                }
+
             }
 
         } else if (type.equals("contextcomponent")) {
@@ -220,14 +234,24 @@ public class ModelIO {
                 Node node = children.item(index);
                 if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
 
-                    ModelNode childNode = getSubTree((Element) children.item(index), md, exHandler);
-                    if (childNode != null) {
-                        rootNode.add(childNode);
+                    try {
+                        ModelNode childNode = getSubTree((Element) children.item(index), md, exHandler);
+                        if (childNode != null) {
+                            rootNode.add(childNode);
+                        }
+                    } catch (ModelLoadException mle) {
+                        exHandler.handle(mle);
+                    } catch (NullClassException nfe) {
+                        exHandler.handle(nfe);
                     }
 
                 } else if (node.getNodeName().equals("var")) {
 
-                    setVar(cd, (Element) node, md);
+                    try {
+                        setVar(cd, (Element) node, md, exHandler);
+                    } catch (NullFieldException ex) {
+                        exHandler.handle(ex);
+                    }
 
                 } else if (node.getNodeName().equals("attribute")) {
 
@@ -246,7 +270,7 @@ public class ModelIO {
         return rootNode;
     }
 
-    private void setVar(ComponentDescriptor cd, Element e, ModelDescriptor md) throws NullFieldException, AttributeLinkException {
+    private void setVar(ComponentDescriptor cd, Element e, ModelDescriptor md, ExceptionHandler exHandler) throws NullFieldException {
 
         String fieldName = e.getAttribute("name");
         ComponentField field = cd.getComponentFields().get(fieldName);
@@ -270,10 +294,13 @@ public class ModelIO {
             }
 
             String attribute = e.getAttribute("attribute");
-
-            field.linkToAttribute(context, attribute);
+            try {
+                field.linkToAttribute(context, attribute);
+            } catch (AttributeLinkException ex) {
+                exHandler.handle(ex);
+            }
             //cd.linkComponentAttribute(name, view.getComponentDescriptor(context), attribute);
-/*            }
+                /*            }
             try {
             if (cd.getComponentAttributes().get(name).accessType != ComponentAttribute.READ_ACCESS) {
             Class attributeType = cd.getComponentAttributes().get(name).type;

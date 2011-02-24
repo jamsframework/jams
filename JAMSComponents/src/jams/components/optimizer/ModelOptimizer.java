@@ -5,6 +5,8 @@
 
 package jams.components.optimizer;
 
+import jams.ExceptionHandler;
+import jams.JAMSException;
 import jams.JAMSProperties;
 import java.io.File;
 import java.io.IOException;
