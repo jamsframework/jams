@@ -69,6 +69,9 @@ public class ModelIO {
         ModelNode rootNode = nodeFactory.createNode(cd);
         rootNode.setType(ModelNode.MODEL_TYPE);
         md.setRootNode(rootNode);
+
+        md.initDatastores(exHandler);
+
         return md;
     }
 
