@@ -22,7 +22,6 @@
 package jamsui.juice.gui;
 
 import jams.gui.tools.GUIHelper;
-import jamsui.juice.JUICE;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
@@ -38,6 +37,7 @@ import jams.JAMS;
 import jams.gui.input.ListInput;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ContextAttribute;
+import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
 import jams.meta.ModelDescriptor;
 import jams.meta.OutputDSDescriptor;
@@ -46,6 +46,7 @@ import jams.tools.StringTools;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
@@ -141,8 +142,6 @@ public class OutputDSDlg extends JDialog {
         dslist.setValue(md);
         super.setVisible(b);
     }
-
-
 
     private void updateContextAttributes(Object value) {
 
@@ -283,7 +282,7 @@ public class OutputDSDlg extends JDialog {
         private DSDlg newDSDlg;
 
         public AttributeListInput() {
-            super(false, false);
+            super(true, false);
             getListbox().removeMouseListener(editListener);
             this.getListbox().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         }
@@ -299,13 +298,13 @@ public class OutputDSDlg extends JDialog {
             }
 
             // sort the context attributes list
-            Collections.sort(ods.getContextAttributes(), new Comparator<ContextAttribute>() {
-
-                @Override
-                public int compare(ContextAttribute a1, ContextAttribute a2) {
-                    return a1.getName().compareTo(a2.getName());
-                }
-            });
+//            Collections.sort(ods.getContextAttributes(), new Comparator<ContextAttribute>() {
+//
+//                @Override
+//                public int compare(ContextAttribute a1, ContextAttribute a2) {
+//                    return a1.getName().compareTo(a2.getName());
+//                }
+//            });
 
             for (ContextAttribute ca : ods.getContextAttributes()) {
                 aVector.add(ca);
@@ -376,6 +375,41 @@ public class OutputDSDlg extends JDialog {
                 }
                 getListbox().setSelectedIndex(selection);
             }
+        }
+
+        @Override
+        protected void moveUp() {
+            int[] indices = getListbox().getSelectedIndices();
+            for (int i = 0; i < indices.length; i++) {
+                int index = indices[i];
+                if (index > 0) {
+                    ArrayList<ContextAttribute> al = ods.getContextAttributes();
+                    ContextAttribute tmp = al.get(index - 1);
+                    al.set(index - 1, al.get(index));
+                    al.set(index, tmp);
+                    indices[i]--;
+                }
+            }
+            setValue(ods);
+            getListbox().setSelectedIndices(indices);
+
+        }
+
+        @Override
+        protected void moveDown() {
+            int[] indices = getListbox().getSelectedIndices();
+            for (int i = indices.length - 1; i >= 0; i--) {
+                int index = indices[i];
+                if (index < listData.getValue().size() - 1) {
+                    ArrayList<ContextAttribute> al = ods.getContextAttributes();
+                    ContextAttribute tmp = al.get(index + 1);
+                    al.set(index + 1, al.get(index));
+                    al.set(index, tmp);
+                    indices[i]++;
+                }
+            }
+            setValue(ods);
+            getListbox().setSelectedIndices(indices);
         }
     }
 

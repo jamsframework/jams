@@ -165,7 +165,7 @@ public class ListInput extends JPanel {
         }
     }
 
-    private void moveUp() {
+    protected void moveUp() {
         int index = listbox.getSelectedIndex();
         if (index > 0) {
             Object tmp = listData.getElementAt(index - 1);
@@ -176,7 +176,7 @@ public class ListInput extends JPanel {
         }
     }
 
-    private void moveDown() {
+    protected void moveDown() {
         int index = listbox.getSelectedIndex();
         if (index < listData.getValue().size() - 1) {
             Object tmp = listData.getElementAt(index + 1);
