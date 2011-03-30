@@ -47,9 +47,11 @@ public class JAMSTemporalContext extends JAMSContext {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Time interval of temporal context")
     public JAMSTimeInterval timeInterval;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "Current date of temporal context")
     public Attribute.Calendar current;
+    
     private Attribute.Calendar lastValue;
 
     public JAMSTemporalContext() {
@@ -105,9 +107,10 @@ public class JAMSTemporalContext extends JAMSContext {
     @Override
     public void init() {
         super.init();
-        if (timeInterval == null)
+        if (timeInterval == null) {
             getModel().getRuntime().sendErrorMsg(JAMS.i18n("time_interval_for_JAMS_Temporal_context_not_provided"));
-        if (timeInterval.getEnd() == null || timeInterval.getStart() == null){
+        }
+        if (timeInterval.getEnd() == null || timeInterval.getStart() == null) {
             getModel().getRuntime().sendErrorMsg(JAMS.i18n("time_interval_for_JAMS_Temporal_context_not_provided"));
         }
         lastValue = timeInterval.getEnd().clone();
