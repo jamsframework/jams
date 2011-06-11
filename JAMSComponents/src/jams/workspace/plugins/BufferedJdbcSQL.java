@@ -305,30 +305,18 @@ public class BufferedJdbcSQL implements DataReader {
         return numberOfColumns;
     }
 
-    public void setState(DataReaderState state) {
+    public void writeObject(java.io.ObjectOutputStream stream) throws IOException {
+        stream.defaultWriteObject();
     }
 
-    public DataReaderState getState() {
-        return null;
-    }
-
-    public void getState(java.io.ObjectOutputStream stream) throws IOException {
-        stream.writeBoolean(isClosed);
-        stream.writeInt(this.offset);
-    }
-
-    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        isClosed = stream.readBoolean();
-        int oldOffset = stream.readInt();
+    public void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
         if (isClosed) {
             this.cleanup();
             return;
         }
+        int oldOffset = this.offset;
         query();
-        try {
-            Thread.sleep(1000);
-        } catch (Exception e) {
-        }
         this.skip(oldOffset);
     }
 }

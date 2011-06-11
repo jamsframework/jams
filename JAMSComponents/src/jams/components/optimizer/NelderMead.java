@@ -64,7 +64,7 @@ public class NelderMead extends SOOptimizer{
     }
     
     @Override
-    public void run(){
+    public void procedure() throws SampleLimitException, ObjectiveAchievedException{
         if (enable!=null)
             if (!enable.getValue()){
                 singleRun();

@@ -34,6 +34,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
@@ -415,7 +416,7 @@ public class DataStoreProcessor {
         long position = reader.getPosition();
         query += "'" + position + "')";
 
-        while (!(row = reader.readLine()).equals("@end")) {
+        while (!(row = reader.readLine()).startsWith("@end")) {
         }
 
         stmt.execute(query);
@@ -451,7 +452,7 @@ public class DataStoreProcessor {
         while (true) {
             String q = "";
             int i = 0;
-            while ((i < rowCount) && !(row = reader.readLine()).equals("@end")) {
+            while ((i < rowCount) && !(row = reader.readLine()).startsWith("@end")) {
 
                 q += queryPrefix;
 
@@ -470,7 +471,7 @@ public class DataStoreProcessor {
                 q = insertString + q.substring(0, q.length() - 1);
                 stmt.execute(q);
             }
-            if (row.equals("@end")) {
+            if (row.startsWith("@end")) {
                 break;
             }
         }
@@ -641,15 +642,20 @@ public class DataStoreProcessor {
 
         reader.setPosition(position);
 
-        while ((line = reader.readLine()) != null && !line.equals("@end")) {
+        while ((line = reader.readLine()) != null && !line.startsWith("@end")) {
 
             cols = new double[numSelected];
             StringTokenizer tok = new StringTokenizer(line, "\t");
             j = 0;
+            token = null;
             idList.add(tok.nextToken());
             for (i = 0; i < attributes.size(); i++) {
 //            while (tok.hasMoreTokens()) {
-                token = tok.nextToken();
+                try{
+                    token = tok.nextToken();
+                }catch(NoSuchElementException nsee){
+                    System.out.println(nsee);
+                }
                 if (selected[i]) {
                     cols[j] = Double.parseDouble(token);
                     j++;

@@ -92,7 +92,10 @@ public class Efficiencies {
         for (int i=0;i<obs.length;i++){
             a += Math.pow(Math.abs(obs[i]-sim[i]),pow);
             b += Math.pow(Math.abs(obs[i]-mw),pow);
-        }        
+        }
+        if (b==0){
+            b = 0.001;
+        }
         return 1 - a/b;
     }
     

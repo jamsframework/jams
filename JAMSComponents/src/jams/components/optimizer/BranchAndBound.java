@@ -28,9 +28,12 @@ public class BranchAndBound extends SOOptimizer{
     @SuppressWarnings("unchecked")
     public BranchAndBound() {
     }
-    
+
+    double test=0;
     public void init(){        
         super.init();
+
+        this.test = 0;
         if (!enable.getValue())
             return; 
         
@@ -61,7 +64,7 @@ public class BranchAndBound extends SOOptimizer{
         
         protected double highestLowBound;
         
-        HyperCube(SampleSO a,SampleSO b,SampleSO midPoint,HyperCube parent){
+        HyperCube(SampleSO a,SampleSO b,SampleSO midPoint,HyperCube parent) throws SampleLimitException, ObjectiveAchievedException{
             this.a = a;
             this.b = b;
             this.midPoint = midPoint;
@@ -206,9 +209,9 @@ public class BranchAndBound extends SOOptimizer{
         }
         return index;
     }
-    double test=0;
+    
     @SuppressWarnings("unchecked")
-    public double ApproxL(SampleSO a,SampleSO b,HyperCube myCube){
+    public double ApproxL(SampleSO a,SampleSO b,HyperCube myCube) throws SampleLimitException, ObjectiveAchievedException{
         super.lowBound = a.x;
         super.upBound  = b.x;
                 
@@ -342,7 +345,7 @@ public class BranchAndBound extends SOOptimizer{
         }
     }
     
-    public void run() {
+    protected void procedure() throws SampleLimitException, ObjectiveAchievedException{
         if (!this.enable.getValue()){
             singleRun();
             return;
@@ -397,7 +400,7 @@ public class BranchAndBound extends SOOptimizer{
             
             //System.out.println("Processing next cube:\nR:" + R.toString() + "\nMinimum:" + gamma + "\nk:" + k + "\nSampleCount:" + currentSampleCount);            
             
-            SaveCubes(cubes,"cubedump" + xCount + ".dat");
+            //SaveCubes(cubes,"cubedump" + xCount + ".dat");
             if (this.maxn != null){
                 if ( this.sampleList.size() >= this.maxn.getValue() ){                    
                     break;

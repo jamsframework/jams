@@ -12,7 +12,7 @@ import java.util.Comparator;
 import jams.data.*;
 import jams.JAMS;
 import jams.model.JAMSVarDescription;
-import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  *
@@ -24,8 +24,8 @@ public abstract class SOOptimizer extends Optimizer {
             update = JAMSVarDescription.UpdateType.RUN,
             description = "best paramter values found so far"
             )
-            public JAMSDouble[] bestParameterSet;
-                   
+            public Attribute.EntityCollection bestParameterSets;
+                       
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
@@ -46,7 +46,23 @@ public abstract class SOOptimizer extends Optimizer {
             description = "optimization mode, 1 - minimization, 2 - maximization, 3 - max |f(x)|, 4 - min |f(x)|",
             defaultValue = "1"
             )
-            public Attribute.Integer mode;    
+            public Attribute.Integer mode;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "known optimal value",
+            defaultValue = "0"
+            )
+            public Attribute.Double target;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "stopping criterion if target is met",
+            defaultValue = "-Infinity"
+            )
+            public Attribute.Double epsilonToTarget;
             
     /*SampleSO getFromSampleList(int i){
         return (SampleSO)this.sampleList.get(i);
@@ -56,7 +72,7 @@ public abstract class SOOptimizer extends Optimizer {
      * first some very useful nested classes     
      *************************/ 
     public static abstract class AbstractFunction {
-        public abstract double f(double x[]);
+        public abstract double f(double x[]) throws SampleLimitException, ObjectiveAchievedException;
     }        
     //class for representing samples
     public class SampleSO extends Sample {        
@@ -112,11 +128,14 @@ public abstract class SOOptimizer extends Optimizer {
         bestValue = Double.MAX_VALUE;                   
     }
     
-    public SampleSO getSample(double[]x){
+    public SampleSO getSample(double[]x) throws ObjectiveAchievedException, SampleLimitException{
+        if (sampleList.size()>=this.maxn.getValue())
+            throw new SampleLimitException("maximum sample count reached");
+        
         return new SampleSO(x,funct(x));
     }
         
-    public double funct(double x[]) {
+    public double funct(double x[]) throws ObjectiveAchievedException, SampleLimitException {
         double value;        
         if (GoalFunction == null) {
             //RefreshDataHandles();
@@ -126,11 +145,10 @@ public abstract class SOOptimizer extends Optimizer {
         } else {
             value = GoalFunction.f(x);
         }
-        currentSampleCount++;
-                
-        double result = transformByMode(value,mode.getValue());
+        this.iterationCounter.setValue(this.iterationCounter.getValue()+1);
 
-        if (bestParameterSet!=null && x.length == bestParameterSet.length-1){
+        double result = transformByMode(value,mode.getValue());
+        /*if (bestParameterSet!=null && x.length == bestParameterSet.length-1){
             if (result < this.bestValue) {
                 bestValue = result;
                 int c=0;
@@ -145,6 +163,23 @@ public abstract class SOOptimizer extends Optimizer {
                 }
                 c++;
             }
+        }*/
+        //this.bestParameterSets = JAMSDataFactory.createEntityCollection();
+
+        ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
+        Attribute.Entity entity = JAMSDataFactory.createEntity();
+        entity.setId(0);
+        for (int j = 0; j < n; j++) {
+            entity.setDouble("x_" + (j + 1), x[j]);
+        }
+        entity.setDouble("y_1", value);
+
+        list.add(entity);
+
+        this.bestParameterSets.setEntities(list);
+
+        if ( (value-target.getValue()) < this.epsilonToTarget.getValue() ){
+            throw new ObjectiveAchievedException(value, target.getValue());
         }
         return result;
     }   

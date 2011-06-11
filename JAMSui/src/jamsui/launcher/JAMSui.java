@@ -36,6 +36,7 @@ import jams.model.JAMSFullModelState;
 import jams.model.Model;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
+import java.util.Properties;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -123,7 +124,15 @@ public class JAMSui {
             if (guiConfig == 1) {
 
                 try {
-                    startGUI(modelFileName, cmdLineParameterValues);
+                    Properties props = null;
+                    if (cmdLine.getJmpFileName()!=null){
+                        props = new Properties();
+                        FileInputStream fis = new FileInputStream(new File(cmdLine.getJmpFileName()));
+                        props.load(fis);
+                        fis.close();
+                    }
+                    startGUI(modelFileName, cmdLineParameterValues, props);
+                    
                 } catch (Exception e) {
                     JAMSui.handle(e);
                 }
@@ -151,7 +160,6 @@ public class JAMSui {
 
                 JAMSRuntime runtime = null;
                 try {
-
                     String xmlString = FileTools.fileToString(modelFileName);
                     String[] args = StringTools.toArray(cmdLineParameterValues, ";");
                     if (args != null) {
@@ -161,6 +169,12 @@ public class JAMSui {
                     }
 
                     Document modelDoc = XMLTools.getDocumentFromString(xmlString);
+
+                    String jmpFileName = cmdLine.getJmpFileName();
+                    if (jmpFileName!=null){
+                        modelDoc = ParameterProcessor.loadParams(modelDoc, new File(jmpFileName));
+                    }
+
                     runtime = new StandardRuntime();
                     runtime.loadModel(modelDoc, properties);
 
@@ -214,8 +228,8 @@ public class JAMSui {
         new JAMSFrame(null, properties).setVisible(true);
     }
 
-    protected void startGUI(String modelFileName, String cmdLineParameterValues) {
-        new JAMSFrame(null, properties, modelFileName, cmdLineParameterValues).setVisible(true);
+    protected void startGUI(String modelFileName, String cmdLineParameterValues, Properties jmpParameters) {
+        new JAMSFrame(null, properties, modelFileName, cmdLineParameterValues, jmpParameters).setVisible(true);
     }
 
     /**

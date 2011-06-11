@@ -123,13 +123,13 @@ public class JAMSTemporalContext extends JAMSContext {
 
     @Override
     public void run() {
-
         super.run();
-
-        for (DataTracer dataTracer : dataTracers) {
-            if (dataTracer.hasOutput()) {
-                dataTracer.endMark();
-                dataTracer.setOutput(false);
+        if (!this.isPaused){
+            for (DataTracer dataTracer : dataTracers) {
+                if (dataTracer.hasOutput()) {
+                    dataTracer.endMark();
+                    dataTracer.setOutput(false);
+                }
             }
         }
     }
@@ -197,7 +197,7 @@ public class JAMSTemporalContext extends JAMSContext {
             if (!ce.hasNext() && current.before(lastValue)) {
                 for (DataTracer dataTracer : dataTracers) {
                     dataTracer.trace();
-                }
+                }                
                 current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
                 ce.reset();
             }

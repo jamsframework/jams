@@ -70,7 +70,7 @@ public class LatinHyperCubeSampler extends MOOptimizer{
     }
 
     @Override
-    public void run(){
+    public void procedure() throws SampleLimitException, ObjectiveAchievedException{
         if (enable!=null)
             if (!enable.getValue()){
                 singleRun();

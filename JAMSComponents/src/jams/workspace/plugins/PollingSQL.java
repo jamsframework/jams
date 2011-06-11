@@ -37,7 +37,10 @@ import jams.workspace.datatypes.ObjectValue;
 import jams.workspace.datatypes.StringValue;
 import jams.workspace.plugins.BufferedJdbcSQLConnector.BufferedResultSet;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -64,21 +67,25 @@ public class PollingSQL implements DataReader {
     private static final int TIMESTAMP = 3;
     private static final int OBJECT = 4;
     
-    private String user,  password,  host,  db,  query, driver, dateColumnName;
+    private String user,  password,  host,  db,  query, lastDateQuery, driver, dateColumnName;
+    private boolean openEnd=false;
     transient private BufferedResultSet rs;
     transient private ResultSetMetaData rsmd;
     transient private BufferedJdbcSQLConnector pgsql;
     private int numberOfColumns = -1;
     private int[] type;    
     private DefaultDataSet[] currentData = null;
-    private boolean isClosed;
     private final boolean alwaysReconnect = false;
     
     private String lastDate;
+
+    private Long currentDateDB;
+    private Long currentDateDS;
+    private Long timestep = 3600L;
+
     int offset = 0;
     
-    public void PollingSQL(){        
-        isClosed=true;
+    public PollingSQL(){        
     }
     public void setUser(String user) {
         this.user = user;
@@ -104,9 +111,21 @@ public class PollingSQL implements DataReader {
         this.driver = driver;
     }
 
-    public void setDateColumnName(String name) {
+    public void setDateColumnName(String name){
         this.dateColumnName = name;
     }
+
+    public void setLastDateQuery(String query) {
+        this.lastDateQuery = query;
+    }
+
+    public void setOpenEnd(String openEnd) {
+        if (openEnd.equals("true"))
+            this.openEnd = true;
+        else
+            this.openEnd = false;
+    }
+
     
     @Override
     public DefaultDataSet[] getData() {
@@ -115,7 +134,7 @@ public class PollingSQL implements DataReader {
 
     @Override
     public int fetchValues() {
-        currentData = getDBRows(Long.MAX_VALUE);
+        currentData = getDBRows(Long.MAX_VALUE);        
         return 0;
     }
 
@@ -135,7 +154,6 @@ public class PollingSQL implements DataReader {
             }else{
                 rs.next();
             }
-            System.out.println("after skip position is: " + rs.getString(1));
         }catch(SQLException sqlex){
             System.err.println("PollingSQL: " + sqlex);sqlex.printStackTrace();
             return false;
@@ -148,11 +166,8 @@ public class PollingSQL implements DataReader {
         
         try{
             BufferedResultSet rs2 = null;
-            if (query.contains("WHERE")){
-                rs2 = pgsql.execQuery(query + " AND " + dateColumnName + ">\"" + lastDate + "\" ORDER BY " + dateColumnName + " DESC");
-            }else{
-                rs2 = pgsql.execQuery(query + " WHERE " + dateColumnName + ">\"" + lastDate + "\" ORDER BY " + dateColumnName + " DESC");
-            }                        
+            rs2 = pgsql.execQuery(lastDateQuery);
+            
             Attribute.Calendar cal = JAMSDataFactory.createCalendar();                                                                             
             String date = lastDate;
             
@@ -168,70 +183,133 @@ public class PollingSQL implements DataReader {
         }
         return null;
     }
-    
-    private DefaultDataSet[] getDBRows(long count) {
-        
-        ArrayList<DefaultDataSet> data = new ArrayList<DefaultDataSet>();
+
+    private DefaultDataSet constructDefaultDataSet(Date date) {
+        DefaultDataSet dataSet = new DefaultDataSet(numberOfColumns);
+        for (int j = 0; j < numberOfColumns; j++) {
+            switch (type[j]) {
+                case DOUBLE:
+                    dataSet.setData(j, new DoubleValue(-9999.0));
+                    break;
+                case LONG:
+                    dataSet.setData(j, new LongValue(-9999L));
+                    break;
+                case STRING:
+                    dataSet.setData(j, new StringValue("-9999"));
+                    break;
+                case TIMESTAMP:
+                    Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+                    cal.setTime(date);
+                    dataSet.setData(j, new CalendarValue(cal));
+                    break;
+                default:
+                    dataSet.setData(j, new StringValue("-9999"));
+            }
+        }
+        return dataSet;
+    }
+
+    private DefaultDataSet getNextDBRow() {
         DefaultDataSet dataSet;
         DataValue value;
 
         try {
-            int i = 0;
-                                    
-            while ((i < count) && rs.next()) {
-                i++;
-                offset++;
-                dataSet = new DefaultDataSet(numberOfColumns);
+            if (!rs.next()) {
+                return null;
+            }            
+            offset++;
+            dataSet = new DefaultDataSet(numberOfColumns);
 
-                this.lastDate = rs.getString(1);
-                                              
-                for (int j = 0; j < numberOfColumns; j++) {
+            this.lastDate = rs.getString(1);
+            currentDateDB = Long.parseLong(lastDate);
 
-                    switch (type[j]) {
-                        case DOUBLE:
-                            value = new DoubleValue(rs.getDouble(j + 1));
-                            dataSet.setData(j, value);
-                            break;
-                        case LONG:
-                            value = new LongValue(rs.getLong(j + 1));
-                            dataSet.setData(j, value);
-                            break;
-                        case STRING:
-                            value = new StringValue(rs.getString(j + 1));
-                            dataSet.setData(j, value);
-                            break;
-                        case TIMESTAMP:
-                            Attribute.Calendar cal = JAMSDataFactory.createCalendar();                            
-                            //does not work .. hours are not represented well
-                            GregorianCalendar greg = new GregorianCalendar();
-                            greg.setTimeZone(TimeZone.getTimeZone("GMT"));
-                            cal.setTimeInMillis(rs.getDate(j+1,greg).getTime());
-                                  
-                            String date = rs.getString(j+1);
-                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-                            try{
-                                long millis = format.parse(date+" +0000").getTime();
-                                cal.setTimeInMillis(millis);
-                            }catch(Exception e){
-                                throw new SQLException(e.toString());
-                            }
-                            
-                            value = new CalendarValue(cal);
-                            dataSet.setData(j, value);
-                            break;
-                        default:
-                            value = new ObjectValue(rs.getObject(j + 1));
-                            dataSet.setData(j, value);
-                    }
+            for (int j = 0; j < numberOfColumns; j++) {
+
+                switch (type[j]) {
+                    case DOUBLE:
+                        value = new DoubleValue(rs.getDouble(j + 1));
+                        dataSet.setData(j, value);
+                        break;
+                    case LONG:
+                        value = new LongValue(rs.getLong(j + 1));
+                        dataSet.setData(j, value);
+                        break;
+                    case STRING:
+                        value = new StringValue(rs.getString(j + 1));
+                        dataSet.setData(j, value);
+                        break;
+                    case TIMESTAMP:
+                        Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+                        //does not work .. hours are not represented well
+                        GregorianCalendar greg = new GregorianCalendar();
+                        greg.setTimeZone(TimeZone.getTimeZone("GMT"));
+                        cal.setTimeInMillis(rs.getDate(j + 1, greg).getTime());
+
+                        String date = rs.getString(j + 1);
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+                        try {
+                            long millis = format.parse(date + " +0000").getTime();
+                            cal.setTimeInMillis(millis);
+                        } catch (Exception e) {
+                            throw new SQLException(e.toString());
+                        }
+
+                        value = new CalendarValue(cal);
+                        dataSet.setData(j, value);
+                        break;
+                    default:
+                        value = new ObjectValue(rs.getObject(j + 1));
+                        dataSet.setData(j, value);
                 }
-                data.add(dataSet);
             }
+            return dataSet;
 
         } catch (SQLException sqlex) {
-            System.err.println("PollingSQL: " + sqlex);sqlex.printStackTrace();
+            System.err.println("PollingSQL: " + sqlex);
+            sqlex.printStackTrace();
             sqlex.printStackTrace();
         }
+        return null;
+    }
+    DefaultDataSet nextDataSet = null;
 
+    private DefaultDataSet[] getDBRows(long count) {        
+        ArrayList<DefaultDataSet> data = new ArrayList<DefaultDataSet>();
+        DefaultDataSet dataSet;
+        
+        while ((data.size() < count)) {
+            if (currentDateDS == null) {
+                dataSet = getNextDBRow();
+                data.add(dataSet);
+                currentDateDS = new Long(currentDateDB);
+                currentDateDS += timestep;
+            } else {
+                if (nextDataSet != null) {
+                    dataSet = nextDataSet;
+                } else {
+                    dataSet = getNextDBRow();
+                    if (dataSet == null) {
+                        if (openEnd){
+                            dataSet = constructDefaultDataSet(new Date(currentDateDS));
+                            currentDateDB = currentDateDS;                            
+                        }else
+                            break;
+                    }
+                }
+
+                if (Math.abs(currentDateDB - currentDateDS) <= 1800) {
+                    nextDataSet = null;
+                    data.add(dataSet);
+                    currentDateDS += timestep;
+                } else if (currentDateDB > currentDateDS) {
+                    nextDataSet = dataSet;
+                    data.add(constructDefaultDataSet(new Date(currentDateDS)));
+                    currentDateDS += timestep;
+                } else if (currentDateDB < currentDateDS) {
+                    nextDataSet = null;
+                }
+            }
+        }
         return data.toArray(new DefaultDataSet[data.size()]);
     }
 
@@ -241,11 +319,14 @@ public class PollingSQL implements DataReader {
             if (rs != null){
                 rs.close();                
             }
-            if (query.contains("WHERE")){
-                rs = pgsql.execQuery(query + " AND " + dateColumnName + ">\"" + lastDate + "\" ORDER BY " + dateColumnName + " ASC");
-            }else{
-                rs = pgsql.execQuery(query + " WHERE " + dateColumnName + ">\"" + lastDate + "\" ORDER BY " + dateColumnName + " ASC");
-            }
+            if (!query.contains("LIMIT")){
+                if (query.contains("WHERE")){
+                    rs = pgsql.execQuery(query + " AND " + dateColumnName + ">\"" + lastDate + "\" ORDER BY " + dateColumnName + " ASC");
+                }else{
+                    rs = pgsql.execQuery(query + " WHERE " + dateColumnName + ">\"" + lastDate + "\" ORDER BY " + dateColumnName + " ASC");
+                }
+            }else
+                rs = pgsql.execQuery(query);
             //rs.setFetchSize(0);
             rsmd = rs.getMetaData();
             numberOfColumns = rsmd.getColumnCount();
@@ -282,17 +363,14 @@ public class PollingSQL implements DataReader {
             if (pgsql == null) {
                 pgsql = new BufferedJdbcSQLConnector(host, db, user, password, driver);
                 pgsql.connect();
-                isClosed = false;
             } else if (this.alwaysReconnect) {
                 pgsql.close();
                 pgsql = null;
-                isClosed = true;
                 establishConnection();
             }
         } catch (SQLException sqlex) {
             System.err.println("PollingSQL: " + sqlex);
             sqlex.printStackTrace();
-            isClosed = true;
         }
     }
     
@@ -336,7 +414,6 @@ public class PollingSQL implements DataReader {
             }
             if (pgsql != null) {
                 pgsql.close();                
-                isClosed = true;
             }
         } catch (SQLException sqlex) {
             System.out.println("PollingSQL: " + sqlex);
@@ -352,39 +429,19 @@ public class PollingSQL implements DataReader {
         return numberOfColumns;
     }
 
-    public DataReaderState getState(){
-        return null;
+    private void writeObject(ObjectOutputStream out) throws IOException{
+        out.defaultWriteObject();
     }
-    
-    public void setState(DataReaderState state){
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+        in.defaultReadObject();
+        long ot = System.currentTimeMillis();
+
         int oldOffset = offset;
         query();
-        try{
-            Thread.sleep(1000);
-        }catch(Exception e){}
 
-        //System.out.println(" skip: " + oldOffset + " entries!");
+        long dt = System.currentTimeMillis() - ot;
+        System.out.println("recover-time_query:" + dt);
         this.skip(oldOffset);
-    }
-    
-     public void getState(java.io.ObjectOutputStream stream) throws IOException{
-        stream.writeBoolean(this.isClosed);
-        stream.writeInt(this.offset);
-        
-    }
-    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{        
-        isClosed = stream.readBoolean();
-        int oldOffset = stream.readInt();
-        if (isClosed){
-            this.cleanup();
-            return;
-        }        
-        query();
-        try{
-            Thread.sleep(1000);
-        }catch(Exception e){}
-        
-        //System.out.println(" skip: " + oldOffset + " entries!");
-        this.skip(oldOffset);        
     }
 }

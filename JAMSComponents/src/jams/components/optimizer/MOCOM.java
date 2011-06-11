@@ -140,7 +140,7 @@ public class MOCOM extends MOOptimizer {
         return s;
     }
 
-    public double[][] compf(double[][] D) {
+    public double[][] compf(double[][] D)throws SampleLimitException, ObjectiveAchievedException {
         int s = D.length, r = 0;
         if (s == 0) {
             return null;
@@ -330,7 +330,7 @@ public class MOCOM extends MOOptimizer {
         return new Object[]{S1, F1, R1};
     }
     // Function performs multi objective downhill simplex
-    public Object[] mosim(double S[][], double SF[][], int SR[], double minn[], double maxn[]) {
+    public Object[] mosim(double S[][], double SF[][], int SR[], double minn[], double maxn[]) throws SampleLimitException, ObjectiveAchievedException{
         int lenS = S[0].length;
         int lenSF = SF[0].length;
 
@@ -461,7 +461,7 @@ public class MOCOM extends MOOptimizer {
     // s - populationsize
     // minn/maxn - define feasible space    
     // MaxIter - maximum iteration count
-    public Object[] mocom(int s, double minn[], double maxn[], int MaxIter) {
+    public Object[] mocom(int s, double minn[], double maxn[], int MaxIter) throws SampleLimitException, ObjectiveAchievedException{
         // Start with generating the initial population
         double D[][] = lhsu(minn, maxn, s);
         // Compute the objective function value for each point
@@ -680,7 +680,7 @@ public class MOCOM extends MOOptimizer {
     }
 
     @Override
-    public void run() {        
+    public void procedure()  throws SampleLimitException, ObjectiveAchievedException{
         if (this.populationSize == null) {
             stop("Component " + this.getInstanceName() + ": " +JAMS.i18n("populationsize_unknown_please_set_populationsize"));
         }

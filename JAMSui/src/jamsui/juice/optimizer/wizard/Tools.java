@@ -306,8 +306,7 @@ public class Tools {
                     String node_component = ((Element)varNode.getParentNode()).getAttribute("name");
                     if (node_component == null)
                         continue;
-                    if (node_attr.equals(attribute.variableName) && node_component.equals(attribute.componentName)){
-                        jams.model.metaoptimizer.metaModelOptimizer.RemoveProperty(root.getOwnerDocument().getDocumentElement(), attribute.variableName, attribute.componentName);
+                    if (node_attr.equals(attribute.variableName) && node_component.equals(attribute.componentName)){                        
                         varNode.setAttribute("attribute", newAttributeName);
                         varNode.setAttribute("context", newAttributeContext);
                         varNode.removeAttribute("value");                        
@@ -321,8 +320,7 @@ public class Tools {
                     String node_context = ((Element)root).getAttribute("name");
                                             
                     if (node_attr.equals(attribute.attributeName) && node_context.equals(attribute.contextName)){
-                        //remove broken links
-                        jams.model.metaoptimizer.metaModelOptimizer.RemoveProperty(root.getOwnerDocument().getDocumentElement(), attribute.attributeName, attribute.contextName);
+                        //remove broken links                        
                         nodesToRemove.add(node);
                     }
                 }                
@@ -331,6 +329,7 @@ public class Tools {
         for (int i=0;i<nodesToRemove.size();i++){
             root.removeChild(nodesToRemove.get(i));
         }
+        jams.model.metaoptimizer.metaModelOptimizer.removeUnlinkedProperties(root);
     }
                         
     public static void addAttribute(Element parent,String name,String value,String context,boolean isValue){

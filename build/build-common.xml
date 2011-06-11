@@ -17,6 +17,7 @@
                 <equals arg1="${application.title}" arg2="jams-components"/>
                 <equals arg1="${application.title}" arg2="jams-main"/>
                 <equals arg1="${application.title}" arg2="jams-starter"/>
+                <equals arg1="${application.title}" arg2="j2000"/>
             </or>
             <then>
                 <if>

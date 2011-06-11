@@ -43,7 +43,9 @@ import jams.gui.LogViewDlg;
 import jams.gui.PropertyDlg;
 import jams.gui.RuntimeManagerPanel;
 import jams.gui.WorkerDlg;
+import jams.tools.XMLTools;
 import jamsui.juice.*;
+import jamsui.juice.documentation.DocumentationWizard;
 import jamsui.juice.gui.tree.LibTree;
 import jamsui.juice.gui.tree.ModelTree;
 import jamsui.juice.optimizer.wizard.OptimizationWizard;
@@ -72,13 +74,31 @@ public class JUICEFrame extends JFrame {
     private WorkerDlg loadModelDlg;
     private SearchDlg searchDlg;
     private String modelPath;
-    private Action editPrefsAction, reloadLibsAction, newModelAction,
-            loadPrefsAction, savePrefsAction, loadModelAction, saveModelAction,
-            saveAsModelAction, exitAction, aboutAction, searchAction,
-            copyModelGUIAction, pasteModelGUIAction, OptimizationWizardGUIAction,
-            loadModelParamAction, saveModelParamAction, runModelAction,
-            runModelFromLauncherAction, explorerAction, browserAction,
-            infoLogAction, errorLogAction, onlineAction, outputDSAction;
+    private Action editPrefsAction;
+    private Action reloadLibsAction;
+    private Action newModelAction;
+    private Action loadPrefsAction;
+    private Action savePrefsAction;
+    private Action loadModelAction;
+    private Action saveModelAction;
+    private Action saveAsModelAction;
+    private Action exitAction;
+    private Action aboutAction;
+    private Action searchAction;
+    private Action copyModelGUIAction;
+    private Action pasteModelGUIAction;
+    private Action OptimizationWizardGUIAction;
+    private Action GenerateDocumentationGUIAction;
+    private Action loadModelParamAction;
+    private Action saveModelParamAction;
+    private Action runModelAction;
+    private Action runModelFromLauncherAction;
+    private Action explorerAction;
+    private Action browserAction;
+    private Action infoLogAction;
+    private Action errorLogAction;
+    private Action onlineAction;
+    private Action outputDSAction;
 
     public JUICEFrame() {
         init();
@@ -276,9 +296,21 @@ public class JUICEFrame extends JFrame {
 
             }
         };
+        
+        GenerateDocumentationGUIAction = new AbstractAction(JAMS.i18n("Generate_Docu")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ModelView view = getCurrentView();
+
+                DocumentationWizard docuWiz = new DocumentationWizard();
+                docuWiz.createDocumentation(JUICEFrame.this, view.getModelDoc(), JUICE.getJamsProperties());
+                /*DocumentationWizard.(JUICEFrame.this, view.getModelDoc() ,
+                        JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);*/
+            }
+        };
 
         loadModelParamAction = new AbstractAction(JAMS.i18n("Load_Model_Parameter...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfcParams.setSelectedFile(new File(""));
@@ -659,6 +691,9 @@ public class JUICEFrame extends JFrame {
         OptimizationWizardGUIAction.setEnabled(false);
         modelMenu.add(OptimizationWizardItem);
 
+        JMenuItem GenerateDocumentationItem = new JMenuItem(GenerateDocumentationGUIAction);
+        //GenerateDocumentationGUIAction.setEnabled(false);
+        modelMenu.add(GenerateDocumentationItem);
         /*
          * logs menu
          */
@@ -799,6 +834,7 @@ public class JUICEFrame extends JFrame {
                 mView.getFrame().setVisible(true);
                 mView.getFrame().requestFocus();
                 mView.setTree(new ModelTree(mView, doc));
+                System.out.println(XMLTools.getStringFromDocument(doc));
                 return mView;
             }
         };

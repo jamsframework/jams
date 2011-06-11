@@ -22,6 +22,10 @@
  */
 package reg.tree;
 
+import jams.workspace.stores.InputDataStore;
+import jams.workspace.stores.J2KTSDataStore;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -29,7 +33,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.*;
+import javax.swing.JDialog;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.tree.TreePath;
@@ -37,6 +43,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import reg.JAMSExplorer;
+import reg.hydro.HydroAnalysisPanel;
 
 /**
  *
@@ -47,6 +54,7 @@ public class DSTree extends JAMSTree {
     private static final String ROOT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATENSPEICHER"), INPUT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EINGABEDATEN"), OUTPUT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AUSGABEDATEN");
 
     private JPopupMenu popupDS;
+    private JPopupMenu popupIDS;
     private JPopupMenu popupDir;
 
     private NodeObservable nodeObservable = new NodeObservable();
@@ -65,6 +73,15 @@ public class DSTree extends JAMSTree {
 
             public void actionPerformed(ActionEvent evt) {
                 displayDSData();
+            }
+        });
+
+        JMenuItem hydroAnalyseItem = new JMenuItem("Hydrograph Analysis");
+        //detailItem.setAccelerator(KeyStroke.getKeyStroke('D'));
+        hydroAnalyseItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent evt) {
+                showHydrograph();
             }
         });
 
@@ -91,6 +108,11 @@ public class DSTree extends JAMSTree {
         popupDS = new JPopupMenu();
         popupDS.add(detailItem);
         popupDS.add(deleteFileItem);
+
+        popupIDS = new JPopupMenu();
+        popupIDS.add(detailItem);
+        popupIDS.add(deleteFileItem);
+        popupIDS.add(hydroAnalyseItem);
 
         popupDir = new JPopupMenu();
         popupDir.add(deleteDirItem);
@@ -159,6 +181,24 @@ public class DSTree extends JAMSTree {
         return outputRoot;
     }
 
+    private void showHydrograph(){
+        DSTreeNode node = (DSTreeNode) getLastSelectedPathComponent();
+        String dsID = node.toString();
+        InputDataStore store = explorer.getWorkspace().getInputDataStore(dsID);
+        if (store instanceof J2KTSDataStore){
+            JDialog hydroAnalysisDialog = new JDialog();
+            hydroAnalysisDialog.setLayout(new BorderLayout());
+            hydroAnalysisDialog.setPreferredSize(new Dimension(800,500));
+            hydroAnalysisDialog.setMinimumSize(new Dimension(800,500));
+            hydroAnalysisDialog.add(new HydroAnalysisPanel(this.explorer.getExplorerFrame(), (J2KTSDataStore)store ));
+            hydroAnalysisDialog.invalidate();
+            hydroAnalysisDialog.pack();
+            hydroAnalysisDialog.setVisible(true);
+        }else{
+            JOptionPane.showMessageDialog(this, "unsuitable datastore");
+        }
+    }
+
     private void displayDSData() {
         explorer.getDisplayManager().displayDS((DSTreeNode) getLastSelectedPathComponent());
     }
@@ -174,8 +214,16 @@ public class DSTree extends JAMSTree {
         TreePath p = this.getClosestPathForLocation(evt.getX(), evt.getY());
         this.setSelectionPath(p);
         DSTreeNode node = (DSTreeNode) this.getLastSelectedPathComponent();
+
         if ((node != null) && ((node.getType() == DSTreeNode.INPUT_DS) || (node.getType() == DSTreeNode.OUTPUT_DS))) {
-            popupDS.show(this, evt.getX(), evt.getY());
+            if ((node != null) && ((node.getType() == DSTreeNode.INPUT_DS))) {
+                InputDataStore store = explorer.getWorkspace().getInputDataStore(node.toString());
+                if (store instanceof J2KTSDataStore)
+                    popupIDS.show(this, evt.getX(), evt.getY());
+                else
+                    popupDS.show(this, evt.getX(), evt.getY());
+            }else
+                popupDS.show(this, evt.getX(), evt.getY());
         }
         if ((node != null) && ((node.getType() == DSTreeNode.OUTPUT_DIR))) {
             popupDir.show(this, evt.getX(), evt.getY());

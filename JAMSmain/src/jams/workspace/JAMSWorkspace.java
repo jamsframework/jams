@@ -773,7 +773,7 @@ public class JAMSWorkspace implements Workspace {
 
             @Override
             public boolean accept(File pathname) {
-                if (pathname.isFile() && (pathname.getName().endsWith(OUTPUT_FILE_ENDING) || pathname.getName().endsWith(SPREADSHEET_FILE_ENDING))) {
+                if (pathname.isFile() && (pathname.getName().endsWith(OUTPUT_FILE_ENDING) || pathname.getName().endsWith(SPREADSHEET_FILE_ENDING) || pathname.getName().endsWith(DATACOLLECTION_FILE_ENDING))) {
                     return true;
                 } else {
                     return false;

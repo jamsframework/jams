@@ -157,7 +157,7 @@ import java.io.Serializable;
             public void run() {                
                 if (jamsProgressBar != null){
                     int c = counter.getValue();
-                    jamsProgressBar.setValue(c++);
+                    jamsProgressBar.setValue(++c);
                     counter.setValue(c);
                     jamsProgressBar.setString(Math.round(jamsProgressBar.getPercentComplete()*100) + "%");
                 }

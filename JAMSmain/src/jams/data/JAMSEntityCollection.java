@@ -42,6 +42,18 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     }
 
     @Override
+    public String toString() {
+        String result = "";
+        int i=0;
+        for (Attribute.Entity entity : entities ){
+            if (i++!=0)
+                result += "\n";
+            result += entity.toString();
+        }
+        return result;
+    }
+
+    @Override
     public EntityEnumerator getEntityEnumerator() {
 
 //        if (ee == null) {

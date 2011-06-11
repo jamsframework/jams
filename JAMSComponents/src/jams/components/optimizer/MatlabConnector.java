@@ -136,7 +136,7 @@ public class MatlabConnector extends SOOptimizer{
         }
     }
     
-    public void run() {
+    public void procedure() {
         
         //read parameterfile
         try{

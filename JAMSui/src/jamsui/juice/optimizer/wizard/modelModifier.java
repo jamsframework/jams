@@ -190,7 +190,8 @@ public class modelModifier {
             for (int i = 0; i < parameterCount; i++) {
                 startValue[i] = Double.parseDouble(tok.nextToken());
             }
-        }
+        }else
+            startValue = null;
 
         for (int i = 0; i < parameterCount; i++) {
             String result = jamsui.juice.optimizer.wizard.Tools.getTypeFromNodeName(root, parameterOwner[i]);

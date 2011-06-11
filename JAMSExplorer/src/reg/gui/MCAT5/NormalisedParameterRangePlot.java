@@ -5,6 +5,7 @@
 package reg.gui.MCAT5;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import javax.swing.JPanel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -13,24 +14,27 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import reg.gui.MCAT5Toolbar.EfficiencyDataSet;
-import reg.gui.MCAT5Toolbar.ParameterSet;
+import reg.hydro.data.DataSet;
+import reg.hydro.data.Efficiency;
+import reg.hydro.data.EfficiencyEnsemble;
+import reg.hydro.data.Parameter;
+import reg.hydro.data.SimpleEnsemble;
 
 /**
  *
  * @author Christian Fischer
  */
-public class NormalisedParameterRangePlot {   
+public class NormalisedParameterRangePlot extends MCAT5Plot{
     XYPlot plot1 = new XYPlot();            
     ChartPanel chartPanel1 = null;
-        
-    EfficiencyDataSet eff[] = null;
-    ParameterSet param[] = null;
-            
-    public NormalisedParameterRangePlot(ParameterSet param[], EfficiencyDataSet eff[]) {        
-        this.eff = eff;
-        this.param = param;
-        
+                    
+    public NormalisedParameterRangePlot() {
+        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"),Parameter.class,1,10));
+        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"),Efficiency.class,1,10));
+
+        init();
+    }
+    private void init(){
         XYDifferenceRenderer renderer1 = new XYDifferenceRenderer(Color.LIGHT_GRAY,Color.LIGHT_GRAY,false);                
         renderer1.setPaint(Color.BLACK);                                                               
         plot1.setRenderer(0, renderer1);
@@ -43,18 +47,25 @@ public class NormalisedParameterRangePlot {
         chart1.removeLegend();
         chartPanel1 = new ChartPanel(chart1, true);
                         
-        updateData();
+        refresh();
     }
         
-    boolean isParetoOptimal(double eff_actual[],EfficiencyDataSet eff_set[]){
-        int MC_PARAM = eff_set[0].set.length;
+    boolean isParetoOptimal(double eff_actual[],EfficiencyEnsemble eff_set[]){
+        int MC_PARAM = eff_set[0].getSize();
         for (int i=0;i<MC_PARAM;i++){
             boolean dominated = true;
             for (int j=0;j<eff_actual.length;j++){
-                if (eff_set[j].set[i]<=eff_actual[j]){
-                    dominated = false;
-                    break;
-                }                    
+                if (eff_set[j].isPositiveBest()){
+                    if (eff_set[j].getValue(i)>=eff_actual[j]){
+                        dominated = false;
+                        break;
+                    }
+                }else{
+                    if (eff_set[j].getValue(i)<=eff_actual[j]){
+                        dominated = false;
+                        break;
+                    }
+                }
             }
             if (dominated)
                 return false;
@@ -62,7 +73,7 @@ public class NormalisedParameterRangePlot {
         return true;
     }
         
-    double[][] getMinMaxParetoTS(ParameterSet[]data, EfficiencyDataSet eff[]){
+    double[][] getMinMaxParetoTS(SimpleEnsemble[]data, EfficiencyEnsemble eff[]){
         double minMaxOptimalTS[][] = new double[2][data.length];
                 
         for (int i=0;i<data.length;i++){
@@ -70,27 +81,43 @@ public class NormalisedParameterRangePlot {
             minMaxOptimalTS[1][i] = Double.NEGATIVE_INFINITY;
         }
         
-        for (int i=0;i<data[0].parent.numberOfRuns;i++){
+        for (int i=0;i<data[0].getSize();i++){
             double actualEffSet[] = new double[eff.length];
             for (int j=0;j<eff.length;j++)
-                actualEffSet[j] = eff[j].set[i];
+                actualEffSet[j] = eff[j].getValue(i);
             if (isParetoOptimal(actualEffSet,eff)){
                 for (int t=0;t<data.length;t++){
-                    minMaxOptimalTS[0][t] = Math.min(minMaxOptimalTS[0][t],data[t].set[i] );
-                    minMaxOptimalTS[1][t] = Math.max(minMaxOptimalTS[1][t],data[t].set[i] );
+                    minMaxOptimalTS[0][t] = Math.min(minMaxOptimalTS[0][t],data[t].getValue(i) );
+                    minMaxOptimalTS[1][t] = Math.max(minMaxOptimalTS[1][t],data[t].getValue(i) );
                 }
             }
         }
         return minMaxOptimalTS;
     }
     
-    private void updateData() {
-        double minMaxparetoOptimal[][] = getMinMaxParetoTS(this.param,this.eff);
+    public void refresh() {
+        if (!this.isRequestFulfilled())
+            return;
+
+        ArrayList<DataSet>  dataInParam   = (ArrayList<DataSet>)getMultipleData(0);
+        ArrayList<DataSet>  dataInEff     = (ArrayList<DataSet>)getMultipleData(1);
+
+        SimpleEnsemble[] params = new SimpleEnsemble[dataInParam.size()];
+        EfficiencyEnsemble[] eff = new EfficiencyEnsemble[dataInEff.size()];
+
+        for (int i=0;i<dataInEff.size();i++)
+            eff[i] = (EfficiencyEnsemble)dataInEff.get(i);
+
+        for (int i=0;i<dataInParam.size();i++)
+            params[i] = (SimpleEnsemble)dataInParam.get(i);
+
+
+        double minMaxparetoOptimal[][] = getMinMaxParetoTS(params,eff);
                                                                  
         XYSeries minTSDataset_pareto = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINIMAL_PARETO_OPTIMAL_VALUE"));
         XYSeries maxTSDataset_pareto = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAXIMAL_PARETO_OPTIMAL_VALUE"));
-                            
-        for (int i=0;i<this.param.length;i++){            
+
+        for (int i=0;i<params.length;i++){
             minTSDataset_pareto.add(i,minMaxparetoOptimal[0][i]);
             maxTSDataset_pareto.add(i,minMaxparetoOptimal[1][i]);            
         }
@@ -106,7 +133,7 @@ public class NormalisedParameterRangePlot {
 
     }
 
-    public JPanel getPanel1() {
+    public JPanel getPanel() {
         return chartPanel1;
     }
 }

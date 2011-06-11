@@ -4,9 +4,14 @@
  */
 package reg.gui.MCAT5;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.util.Arrays;
+import java.awt.Dimension;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -14,88 +19,117 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import reg.gui.MCAT5Toolbar.ArrayComparator;
-import reg.gui.MCAT5Toolbar.EfficiencyDataSet;
-import reg.gui.MCAT5Toolbar.SimulationTimeSeriesDataSet;
+import reg.gui.MCAT5.MCAT5Plot.SimpleRequest;
+import reg.hydro.data.Efficiency;
+import reg.hydro.data.EfficiencyEnsemble;
+import reg.hydro.data.TimeSerie;
+import reg.hydro.data.TimeSerieEnsemble;
 
 /**
  *
  * @author Christian Fischer
  */
 @SuppressWarnings({"unchecked"})
-public class ClassPlot {
+public class ClassPlot extends MCAT5Plot {
 
+    XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
     XYPlot plot = new XYPlot();    
-    ChartPanel chartPanel = null;    
-    SimulationTimeSeriesDataSet data = null;
-    EfficiencyDataSet eff = null;
-    double likelihood[][] = null;
+    JPanel mainPanel = new JPanel();
+    int GROUPS = 10;
 
-    final int GROUPS = 10;
-        
-    public ClassPlot(SimulationTimeSeriesDataSet data, EfficiencyDataSet eff) {
-        this.data = data;
-        this.eff = eff;
-        
-        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        for (int i=0;i<GROUPS;i++){            
-            renderer.setSeriesShapesVisible(i, false);            
-            int c = (int)(i*255.0/GROUPS);
-            renderer.setSeriesPaint(i, new Color(255-c,0,c));                           
-            renderer.setSeriesVisibleInLegend(i, false);
-        }               
-        renderer.setSeriesVisibleInLegend(0, true);
-        renderer.setSeriesVisibleInLegend(GROUPS-1, true);
+    public ClassPlot() {
+        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"), TimeSerie.class));
+        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
+        init();
+    }
+
+    private void init() {
         plot.setRenderer(renderer);
         plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
         plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT")));
 
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLASS_PLOT"));
-        chartPanel = new ChartPanel(chart, true);
+        ChartPanel chartPanel = new ChartPanel(chart, true);
 
-        updateData();
+        mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(chartPanel, BorderLayout.NORTH);
+
+        JPanel sliderPanel = new JPanel(new BorderLayout());
+        sliderPanel.setMaximumSize(new Dimension(500, 100));
+        sliderPanel.setPreferredSize(new Dimension(500, 100));
+        sliderPanel.setMinimumSize(new Dimension(500, 100));
+
+        JSlider slider = new JSlider();
+        slider.setMinimum(1);
+        slider.setMaximum(30);
+        slider.setValue(GROUPS);
+        slider.addChangeListener(new ChangeListener() {
+
+            public void stateChanged(ChangeEvent e) {
+                JSlider slider = (JSlider) e.getSource();
+                ClassPlot.this.GROUPS = slider.getValue();
+                ClassPlot.this.refresh();
+            }
+        });
+        sliderPanel.add(new JLabel("number of boxes"), BorderLayout.WEST);
+        sliderPanel.add(slider, BorderLayout.EAST);
+        mainPanel.add(sliderPanel, BorderLayout.SOUTH);
+
+        refresh();
     }
-        
-    public double[][] sortbyEff(SimulationTimeSeriesDataSet data,double likelihood[]) {
-        int n = data.parent.numberOfRuns;
-        int m = data.timeLength;
-        double tmp_data[][] = new double[n][m+1];
 
-        for (int i = 0; i < n; i++) {
-            for (int j=0;j<m;j++)
-                tmp_data[i][j] = data.set[j].set[i];
-            tmp_data[i][m] = likelihood[i];
+    public void refresh() {
+        if (!this.isRequestFulfilled()) {
+            return;
         }
 
-        Arrays.sort(tmp_data, new ArrayComparator(1, true));
-        return tmp_data;
-    }
-        
-    public void updateData() {                     
-        double sorted_data[][] = null;
-        sorted_data = sortbyEff(data,Efficiencies.CalculateLikelihood(eff.set));
-        XYSeriesCollection series = new XYSeriesCollection();
-        for (int i=0;i<GROUPS;i++){   
-            XYSeries dataset = new XYSeries("");
-            if (i == 0)
-                dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("HIGH_LIKELIHOOD"));
-            if (i == GROUPS-1)
-                dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LOW_LIKELIHOOD"));
-            int index = (int)((sorted_data.length / (double)GROUPS)*i);
-            for (int j=0;j<sorted_data[0].length;j++){
-                dataset.add(j,sorted_data[index][j]);                
-            }                 
-            series.addSeries(dataset);
-        }                                                                                                                     
-        
-        plot.setDataset(series);            
-                
-        if (plot.getRangeAxis() != null)  plot.getRangeAxis().setAutoRange(true);        
-        if (plot.getDomainAxis() != null) plot.getDomainAxis().setAutoRange(true);
-    }
+        TimeSerieEnsemble ts = (TimeSerieEnsemble) getData(0);
+        EfficiencyEnsemble eff = (EfficiencyEnsemble) getData(1);
 
+        for (int i = 0; i < GROUPS; i++) {
+            renderer.setSeriesShapesVisible(i, false);
+            int c = (int) (i * 255.0 / GROUPS);
+            renderer.setSeriesPaint(i, new Color(255 - c, 0, c));
+            renderer.setSeriesVisibleInLegend(i, false);
+        }
+        renderer.setSeriesVisibleInLegend(0, true);
+        renderer.setSeriesVisibleInLegend(GROUPS - 1, true);
+
+        EfficiencyEnsemble likelihood = eff.CalculateLikelihood();
+        Integer sortedIds[] = likelihood.sort();
+
+        int n = eff.getSize();
+        int T = ts.getTimesteps();
+
+        XYSeriesCollection series = new XYSeriesCollection();
+        for (int i = 0; i < GROUPS; i++) {
+            XYSeries dataset = new XYSeries("");
+            if (i == 0) {
+                dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("HIGH_LIKELIHOOD"));
+            }
+            if (i == GROUPS - 1) {
+                dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LOW_LIKELIHOOD"));
+            }
+            int index = (int) ((n / (double) GROUPS) * i);
+
+            for (int j = 0; j < T; j++) {
+                dataset.add(j, ts.get(j, sortedIds[index]));
+            }
+            series.addSeries(dataset);
+        }
+
+        plot.setDataset(series);
+
+        if (plot.getRangeAxis() != null) {
+            plot.getRangeAxis().setAutoRange(true);
+        }
+        if (plot.getDomainAxis() != null) {
+            plot.getDomainAxis().setAutoRange(true);
+        }
+    }
+    
     public JPanel getPanel() {
-        return chartPanel;
+        return mainPanel;
     }
 }

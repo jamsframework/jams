@@ -6,6 +6,7 @@ package reg.gui.MCAT5;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.util.ArrayList;
 import javax.swing.JPanel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -15,30 +16,33 @@ import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import reg.gui.MCAT5Toolbar.EfficiencyDataSet;
-import reg.gui.MCAT5Toolbar.ObservationDataSet;
-import reg.gui.MCAT5Toolbar.SimulationTimeSeriesDataSet;
+import reg.gui.MCAT5.MCAT5Plot.SimpleRequest;
+import reg.hydro.data.DataSet;
+import reg.hydro.data.Efficiency;
+import reg.hydro.data.EfficiencyEnsemble;
+import reg.hydro.data.Measurement;
+import reg.hydro.data.TimeSerie;
+import reg.hydro.data.TimeSerieEnsemble;
 
 /**
  *
  * @author Christian Fischer
  */
-public class ParetoOutputUncertainty {   
+public class ParetoOutputUncertainty extends MCAT5Plot {
     XYPlot plot1 = new XYPlot();            
     ChartPanel chartPanel1 = null;
-    
-    SimulationTimeSeriesDataSet sim = null;
-    ObservationDataSet obs = null;
-    EfficiencyDataSet eff[] = null;
-    
+            
     String var_name = null;
         
-    public ParetoOutputUncertainty(SimulationTimeSeriesDataSet sim, ObservationDataSet obs, EfficiencyDataSet eff[]) {
-        this.sim = sim;
-        this.obs = obs;
-        this.eff = eff;
-        
-        plot1.setRangeAxis(new NumberAxis(sim.name));
+    public ParetoOutputUncertainty() {
+        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"), TimeSerie.class));
+        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class,1,10));
+        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSERVED_TIMESERIE"),Measurement.class));
+
+        init();
+    }
+
+    private void init(){
         plot1.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
 
         JFreeChart chart1 = new JFreeChart(plot1);
@@ -64,42 +68,25 @@ public class ParetoOutputUncertainty {
         plot1.setRenderer(1, renderer2);
         plot1.setRenderer(2, renderer1);
         
-        updateData();
+        refresh();
     }
-    
-    double[] getMaxValues(SimulationTimeSeriesDataSet data){
-        double[] max = new double[data.timeLength];
         
-        for (int t=0;t<data.timeLength;t++){        
-            max[t] = Double.NEGATIVE_INFINITY;
-            for (int mc=0;mc<data.parent.numberOfRuns;mc++){
-                max[t] = Math.max(data.set[t].set[mc],max[t]);
-            }
-        }
-        return max;
-    }
-    
-    double[] getMinValues(SimulationTimeSeriesDataSet data){
-        double[] min = new double[data.timeLength];
-        
-        for (int t=0;t<data.timeLength;t++){        
-            min[t] = Double.POSITIVE_INFINITY;
-            for (int mc=0;mc<data.parent.numberOfRuns;mc++){
-                min[t] = Math.min(data.set[t].set[mc],min[t]);
-            }
-        }
-        return min;
-    }
-    
-    boolean isParetoOptimal(double eff_actual[],EfficiencyDataSet eff_set[]){
-        int MC_PARAM = eff_set[0].set.length;
+    boolean isParetoOptimal(double eff_actual[],EfficiencyEnsemble eff_set[]){
+        int MC_PARAM = eff_set[0].getSize();
         for (int i=0;i<MC_PARAM;i++){
             boolean dominated = true;
             for (int j=0;j<eff_actual.length;j++){
-                if (eff_set[j].set[i]<=eff_actual[j]){
-                    dominated = false;
-                    break;
-                }                    
+                if (eff_set[j].isPositiveBest()){
+                    if (eff_set[j].getValue(i)<=eff_actual[j]){
+                        dominated = false;
+                        break;
+                    }
+                }else{
+                    if (eff_set[j].getValue(i)>=eff_actual[j]){
+                        dominated = false;
+                        break;
+                    }
+                }
             }
             if (dominated)
                 return false;
@@ -107,35 +94,48 @@ public class ParetoOutputUncertainty {
         return true;
     }
     
-    double[][] getMinMaxParetoTS(SimulationTimeSeriesDataSet data, EfficiencyDataSet eff[]){
-        double minMaxOptimalTS[][] = new double[2][data.timeLength];
+    double[][] getMinMaxParetoTS(TimeSerieEnsemble data, EfficiencyEnsemble eff[]){
+        double minMaxOptimalTS[][] = new double[2][data.getTimesteps()];
                 
-        for (int i=0;i<data.timeLength;i++){
+        for (int i=0;i<data.getTimesteps();i++){
             minMaxOptimalTS[0][i] = Double.POSITIVE_INFINITY;
             minMaxOptimalTS[1][i] = Double.NEGATIVE_INFINITY;
         }
         
-        for (int i=0;i<data.parent.numberOfRuns;i++){
+        for (int i=0;i<data.getSize();i++){
             double actualEffSet[] = new double[eff.length];
             for (int j=0;j<eff.length;j++)
-                actualEffSet[j] = eff[j].set[i];
+                actualEffSet[j] = eff[j].getValue(new Integer(i));
             if (isParetoOptimal(actualEffSet,eff)){
-                for (int t=0;t<data.timeLength;t++){
-                    minMaxOptimalTS[0][t] = Math.min(minMaxOptimalTS[0][t],data.set[t].set[i] );
-                    minMaxOptimalTS[1][t] = Math.max(minMaxOptimalTS[1][t],data.set[t].set[i] );
+                for (int t=0;t<data.getTimesteps();t++){
+                    minMaxOptimalTS[0][t] = Math.min(minMaxOptimalTS[0][t],data.get(t, i) );
+                    minMaxOptimalTS[1][t] = Math.max(minMaxOptimalTS[1][t],data.get(t, i) );
                 }
             }
         }
         return minMaxOptimalTS;
     }
     
-    public void updateData() {
-        int time_length = this.obs.timeLength;
+    public void refresh() {
+        if (!this.isRequestFulfilled())
+            return;
+
+        TimeSerieEnsemble ts   = (TimeSerieEnsemble)getData(0);
+        ArrayList<DataSet>  dataInEff     = (ArrayList<DataSet>)getMultipleData(1);
+        Measurement obs = (Measurement) getData(2);
+
+        EfficiencyEnsemble eff[] = new EfficiencyEnsemble[dataInEff.size()];
+        for (int i=0;i<eff.length;i++)
+            eff[i] = (EfficiencyEnsemble)dataInEff.get(i);
+
+        plot1.setRangeAxis(new NumberAxis(ts.name));
+
+        int time_length = ts.getTimesteps();
         
-        double maxTS[] = getMaxValues(sim);
-        double minTS[] = getMinValues(sim);
-        
-        double minMaxOptimalTS[][] = getMinMaxParetoTS(sim,eff);
+        TimeSerie maxTS = ts.getMax();
+        TimeSerie minTS = ts.getMin();
+
+        double minMaxOptimalTS[][] = getMinMaxParetoTS(ts,eff);
                         
         XYSeries minTSDataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINIMAL_VALUE_IN_DATASET"));
         XYSeries maxTSDataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAXIMAL_VALUE_IN_DATASET"));
@@ -146,13 +146,13 @@ public class ParetoOutputUncertainty {
         XYSeries observation = new XYSeries(obs.name);
     
         for (int i=0;i<time_length;i++){
-            minTSDataset.add(i,minTS[i]);
-            maxTSDataset.add(i,maxTS[i]);
+            minTSDataset.add(i,minTS.getValue(i));
+            maxTSDataset.add(i,maxTS.getValue(i));
             
             minTSDataset_pareto.add(i,minMaxOptimalTS[0][i]);
             maxTSDataset_pareto.add(i,minMaxOptimalTS[1][i]);
             
-            observation.add(i,obs.set[i]);
+            observation.add(i,obs.getValue(i));
         }
         
         XYSeriesCollection dataInterval = new XYSeriesCollection();
@@ -172,7 +172,7 @@ public class ParetoOutputUncertainty {
         if (plot1.getDomainAxis() != null)  plot1.getDomainAxis().setAutoRange(true);
     }
 
-    public JPanel getPanel1() {
+    public JPanel getPanel() {
         return chartPanel1;
     }
 }

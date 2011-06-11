@@ -90,6 +90,9 @@ public class BufferedJdbcSQLConnector {
             info = new ConnectionInfo();
             info.connection = con;
             info.useCount++;
+            if (driver.contains("mysql")){
+                execUpdate("SET time_zone = \'+00:00\'");
+            }
             connPool.put(getKey(), info);
         }
     }
@@ -127,14 +130,15 @@ static int counter = 0;
         }
 
         public void skip(long count)throws SQLException {
-            while (nonBufferedSet.next() && count>0){
+            nonBufferedSet.relative((int)count);
+            /*while (nonBufferedSet.next() && count>0){
                 count--;
             }
-            marker += count;            
+            marker += count;            */
         }
 
         private void fetch() throws SQLException {
-            String lmtQuery = query + " LIMIT " + marker + "," + limit;
+            String lmtQuery = query;// + " LIMIT " + marker + "," + limit;
             marker += limit;
             if (counter++ % 500 == 0) {
                 System.gc();
@@ -166,7 +170,10 @@ static int counter = 0;
                             ResultSet.CONCUR_READ_ONLY);*/
 
                     stmt = con.createStatement();
-                    return stmt.executeQuery(sqlQuery);
+                    //long queryTime = System.currentTimeMillis();
+                    ResultSet rs = stmt.executeQuery(sqlQuery);
+                    //System.out.println("Query.. : " + (System.currentTimeMillis() - queryTime) );
+                    return rs;
 
                 } catch (SQLException sqlex) {
                     trialCount++;
@@ -189,8 +196,9 @@ static int counter = 0;
             }
             if (nonBufferedSet.next())
                 return true;
-            fetch();            
-            return nonBufferedSet.next();
+            /*fetch();
+            return nonBufferedSet.next();*/
+            return false;
         }
 
         public String getString(int i) throws SQLException {
@@ -251,7 +259,7 @@ static int counter = 0;
             set.close();
         }
         if (resultSetPool.size()>0){
-            System.out.println("warning: resultSet-Pool was not empty after close");
+            System.out.println("warning: resultSet-Pool was not empty before close");
         }
         resultSetPool.clear();
     }

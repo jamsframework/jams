@@ -71,14 +71,14 @@ public class SimpleSCE extends SOOptimizer {
         access = JAMSVarDescription.AccessType.READ,
         update = JAMSVarDescription.UpdateType.RUN,
         description = "stopping parameter: pcento, optimization is stopped if objective function does not improve by pcento percent in the last kstop iterations",
-        defaultValue = "0.1")
+        defaultValue = "0.01")
         public JAMSDouble pcento;
     
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
         update = JAMSVarDescription.UpdateType.RUN,
         description = "stopping parameter: kstop, for further description see pcento",
-        defaultValue = "10")
+        defaultValue = "5")
         public JAMSInteger kstop;
     
     @JAMSVarDescription(
@@ -215,14 +215,14 @@ public class SimpleSCE extends SOOptimizer {
             myOptimizer = mySCE;
         }
 
-        public double f(double x[]) {
+        public double f(double x[])  throws SampleLimitException, ObjectiveAchievedException {
             return myOptimizer.funct(x);
         }
     }
     //s forms the simplex
     //sf function values of simplex
     /*bl lower bound, bu upper bound */
-    public SampleSO cceua2(SampleSO[] s, double bl[], double bu[]) {
+    public SampleSO cceua2(SampleSO[] s, double bl[], double bu[])  throws SampleLimitException, ObjectiveAchievedException{
         int nps = s.length;
         int nopt = s[0].x.length;
 
@@ -283,7 +283,7 @@ public class SimpleSCE extends SOOptimizer {
         return fnew;
     }
     
-    public SampleSO cceua(SampleSO[] simplex, double bl[], double bu[]) {                
+    public SampleSO cceua(SampleSO[] simplex, double bl[], double bu[]) throws SampleLimitException, ObjectiveAchievedException {
         //convert boundary constraints to linear constraints
         Matrix A = new Matrix(bl.length + bu.length, n);
         Matrix b = new Matrix(bl.length + bu.length, 1);
@@ -332,7 +332,11 @@ public class SimpleSCE extends SOOptimizer {
                 s[i] = c[lcs[i]].clone();   //?necessary to clone?
             }            
             // Replace the worst point in Simplex with the new point:
-            s[nps - 1] = cceua(s, bl, bu);
+            try{
+                s[nps - 1] = cceua(s, bl, bu);
+            }catch(Exception e){
+                return;
+            }
 
             //Replace the simplex into the complex;            
             for (int i = 0; i < nps; i++) {
@@ -345,7 +349,7 @@ public class SimpleSCE extends SOOptimizer {
         }
     }
        
-    public SampleSO sceua(double[] x0, double[] bl, double[] bu, int maxn, int kstop, double pcento, double peps, int ngs, int iseed) {
+    public SampleSO sceua(double[] x0, double[] bl, double[] bu, int maxn, int kstop, double pcento, double peps, int ngs, int iseed){
         int method = 1;
                 
         SearchMethod = null;
@@ -368,12 +372,13 @@ public class SimpleSCE extends SOOptimizer {
         }
 
         SampleSO x[] = new SampleSO[npt];
-        for (int i = 0; i < npt; i++) {
-            if (i == 0) {
-                x[i] = getSample(x0);
-            } else {
+        try{
+            x[0] = getSample(x0);
+            for (int i = 0; i < npt; i++) {
                 x[i] = getSample(RandomSampler());
             }
+        }catch(Exception e){
+            System.out.println(e);
         }
 
         int nloop = 0;        
@@ -386,16 +391,7 @@ public class SimpleSCE extends SOOptimizer {
         sayThis(JAMS.i18n("The_Inital_Loop_0"));
         sayThis(JAMS.i18n("Best") + x[0].toString());
         sayThis(JAMS.i18n("Worst") + x[npt-1].toString());
-                        
-        
-        //Check for convergency;
-        if (currentSampleCount >= maxn) {
-            sayThis(JAMS.i18n("OPTIMIZATION_SEARCH_TERMINATED_BECAUSE_THE_LIMIT"));
-            sayThis(JAMS.i18n("ON_THE_MAXIMUM_NUMBER_OF_TRIALS") + ":" + maxn);
-            sayThis(JAMS.i18n("HAS_BEEN_EXCEEDED_SEARCH_WAS_STOPPED_AT_TRIAL_NUMBER") + ":" + currentSampleCount);
-            sayThis(JAMS.i18n("OF_THE_INITIAL_LOOP"));            
-        }
-
+                                
         if (gnrng < peps) {            
             sayThis(JAMS.i18n("THE_POPULATION_HAS_CONVERGED_TO_A_PRESPECIFIED_SMALL_PARAMETER_SPACE"));
         }
@@ -405,7 +401,7 @@ public class SimpleSCE extends SOOptimizer {
         double criter[] = new double[kstop];
         double criter_change = 100000;
 
-        while (currentSampleCount < maxn && /*gnrng > peps &&*/ criter_change > pcento) {
+        while (criter_change > pcento) {
             nloop++;
             // Loop on complexes (sub-populations);
             for (int igs = 0; igs < ngs; igs++) {
@@ -436,15 +432,10 @@ public class SimpleSCE extends SOOptimizer {
             gnrng = NormalizedgeometricRange(x, bound);
 
             // Record the best and worst points;            
-            sayThis(JAMS.i18n("Evolution_Loop") + ":" + nloop + JAMS.i18n("Trial") + " " + currentSampleCount);
+            sayThis(JAMS.i18n("Evolution_Loop") + ":" + nloop + JAMS.i18n("Trial") + " " + iterationCounter.getValue());
             sayThis(JAMS.i18n("Best") + x[0]);
             sayThis(JAMS.i18n("Worst") + x[x.length-1]);
-            
-            // Check for convergency;
-            if (currentSampleCount >= maxn) {
-                sayThis(JAMS.i18n("OPTIMIZATION_SEARCH_TERMINATED_BECAUSE_THE_LIMIT"));
-                sayThis(JAMS.i18n("ON_THE_MAXIMUM_NUMBER_OF_TRIALS") + " " + maxn + JAMS.i18n("HAS_BEEN_EXCEEDED"));
-            }
+                        
             if (gnrng < peps) {
                 sayThis(JAMS.i18n("THE_POPULATION_HAS_CONVERGED_TO_A_PRESPECIFIED_SMALL_PARAMETER_SPACE"));
             }
@@ -469,7 +460,7 @@ public class SimpleSCE extends SOOptimizer {
                 }
             }
         }
-        sayThis(JAMS.i18n("SEARCH_WAS_STOPPED_AT_TRIAL_NUMBER") + " " + currentSampleCount);
+        sayThis(JAMS.i18n("SEARCH_WAS_STOPPED_AT_TRIAL_NUMBER") + " " + this.iterationCounter.getValue());
         sayThis(JAMS.i18n("NORMALIZED_GEOMETRIC_RANGE") + " " + gnrng);
         sayThis(JAMS.i18n("THE_BEST_POINT_HAS_IMPROVED_IN_LAST") + kstop + " "+JAMS.i18n("LOOPS_BY") + " "+ criter_change + "%");
                 
@@ -477,7 +468,7 @@ public class SimpleSCE extends SOOptimizer {
     }
 
     @Override
-    public void run() {
+    public void procedure()  throws SampleLimitException, ObjectiveAchievedException {
         int iseed = 10;
         
         if (runEnumerator == null) {
@@ -515,7 +506,7 @@ public class SimpleSCE extends SOOptimizer {
         sceua(x0, this.lowBound, this.upBound, maxn.getValue(), kstop.getValue(), pcento.getValue(), peps.getValue(), NumberOfComplexes.getValue(), iseed);    
     }
 
-    public SampleSO offlineRun(double[] start, double lowBound[], double upBound[], int NumberOfComplexes, int MaximizeEff, int maxn, int kstop, double pcento, double peps, SOOptimizer.AbstractFunction destFunction) {
+    public SampleSO offlineRun(double[] start, double lowBound[], double upBound[], int NumberOfComplexes, int MaximizeEff, int maxn, int kstop, double pcento, double peps, SOOptimizer.AbstractFunction destFunction){
         int iseed = 10;
         this.lowBound = lowBound;
         this.upBound = upBound;

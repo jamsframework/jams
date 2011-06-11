@@ -38,6 +38,7 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -60,6 +61,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
+import javax.swing.filechooser.FileFilter;
 import org.w3c.dom.Document;
 import reg.JAMSExplorer;
 import reg.spreadsheet.STPConfigurator;
@@ -76,19 +78,17 @@ public class ExplorerFrame extends JFrame {
     protected JFileChooser jfc = GUIHelper.getJFileChooser();
     protected WorkerDlg openWSDlg;
     protected Action openWSAction, openSTPAction, exitAction, editWSAction, editPrefsAction,
-            sensitivityAnalysisAction, reloadWSAction;
+            sensitivityAnalysisAction, reloadWSAction, createEnsembleAction;
     protected JLabel statusLabel;
     protected JSplitPane mainSplitPane;
     protected JTabbedPane tPane;
     protected JAMSExplorer explorer;
     protected PropertyDlg propertyDlg;
     protected WorkspaceDlg wsDlg;
-    protected Document modelDoc = null;
-    protected MCAT5Toolbar mcat5ToolBar = null;
+    protected Document modelDoc = null;    
 
     public ExplorerFrame(JAMSExplorer explorer) {
-        this.explorer = explorer;
-        mcat5ToolBar = new MCAT5Toolbar(this);
+        this.explorer = explorer;        
         init();
     }
 
@@ -135,15 +135,13 @@ public class ExplorerFrame extends JFrame {
                 }
             }
         };
+        
+        createEnsembleAction = new AbstractAction("Create Ensemble") {
 
-        sensitivityAnalysisAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MCAT5...")) {
-
-            @Override
             public void actionPerformed(ActionEvent e) {
-                mcat5ToolBar.setVisible(!mcat5ToolBar.isVisible());
+                createEnsemble();
             }
         };
-
 
 
         openSTPAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STACKED_TIME_PLOT")) {
@@ -227,16 +225,9 @@ public class ExplorerFrame extends JFrame {
 
         toolBar = processToolBarHook(toolBar);
 
-        JButton sensitivityAnalysisButton = new JButton(sensitivityAnalysisAction);
-        sensitivityAnalysisButton.setText("");
-        sensitivityAnalysisButton.setToolTipText((String) sensitivityAnalysisAction.getValue(Action.NAME));
-        sensitivityAnalysisButton.setIcon(new ImageIcon(getClass().getResource("/reg/resources/images/gold.png")));
-        toolBar.add(sensitivityAnalysisButton);
-
         JPanel toolBarPanel = new JPanel();
         toolBarPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        toolBarPanel.add(toolBar);
-        toolBarPanel.add(mcat5ToolBar);
+        toolBarPanel.add(toolBar);        
 
         getContentPane().add(toolBarPanel, BorderLayout.NORTH);
 
@@ -272,6 +263,9 @@ public class ExplorerFrame extends JFrame {
         openWSItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
         fileMenu.add(openWSItem);
 
+        JMenuItem createEnsemble = new JMenuItem(createEnsembleAction);
+        fileMenu.add(createEnsemble);
+
         JMenuItem exitItem = new JMenuItem(exitAction);
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         fileMenu.add(exitItem);
@@ -293,6 +287,32 @@ public class ExplorerFrame extends JFrame {
      */
     protected JToolBar processToolBarHook(JToolBar toolBar) {
         return toolBar;
+    }
+
+    private void createEnsemble(){
+        ImportMonteCarloDataPanel importDlg = new ImportMonteCarloDataPanel(this);
+        importDlg.addActionEventListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                JFileChooser chooser = GUIHelper.getJFileChooser();
+                chooser.setFileFilter(new FileFilter(){
+                    public String getDescription(){
+                        return "data collection";
+                    }
+                    public boolean accept(File file){
+                        if (file.getAbsolutePath().endsWith("cdat"))
+                            return true;
+                        if (file.isDirectory())
+                            return true;
+                        return false;
+                    }
+                });
+                int result = chooser.showSaveDialog(ExplorerFrame.this);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    ((ImportMonteCarloDataPanel)e.getSource()).getEnsemble().save(chooser.getSelectedFile());
+                }
+            }
+        });
+        importDlg.getDialog().setVisible(true);
     }
 
     public void open(File workspaceFile) throws InvalidWorkspaceException {

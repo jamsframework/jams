@@ -47,7 +47,7 @@ public class ParticleSwarm extends SOOptimizer {
         super.init();
     }
     @Override
-    public void run() {  
+    public void procedure() throws SampleLimitException, ObjectiveAchievedException{
         System.out.println(JAMS.i18n("start_optimization_of") + " " + this.getInstanceName());
         for (int i=0;i<numberOfParticles;i++){
             SampleSO rndSample = null;
@@ -66,7 +66,7 @@ public class ParticleSwarm extends SOOptimizer {
                 bestParticle = particles[i];            
         }
         
-        while(this.currentSampleCount<this.maxn.getValue()){
+        while(true){
             //randomly generate r1 and r2
             double r1[] = new double[n];
             double r2[] = new double[n];
@@ -104,8 +104,8 @@ public class ParticleSwarm extends SOOptimizer {
                     bestParticle = particles[i];
                 }
             }
-            System.out.println(JAMS.i18n("current_best")+":" + bestParticle.local_best.toString() + " " + JAMS.i18n("after") + " " +  this.currentSampleCount);
+            System.out.println(JAMS.i18n("current_best")+":" + bestParticle.local_best.toString() + " " + JAMS.i18n("after") + " " +  this.iterationCounter.getValue());
         }
-        System.out.println(JAMS.i18n("finished_optimization"));
+        //System.out.println(JAMS.i18n("finished_optimization"));
     }
 }

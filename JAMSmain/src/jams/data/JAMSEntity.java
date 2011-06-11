@@ -214,4 +214,16 @@ public class JAMSEntity implements Attribute.Entity {
     public void setId(long id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        String result = "";
+        TreeSet orderedSet = new TreeSet<String>(values.keySet());
+        Iterator<String> iter = orderedSet.iterator();
+        while(iter.hasNext()){
+            String key = iter.next();
+            result += key + "=" + values.get(key) + "\t";
+        }
+        return result;
+    }
 }

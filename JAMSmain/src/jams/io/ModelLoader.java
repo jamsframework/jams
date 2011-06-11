@@ -343,7 +343,7 @@ public class ModelLoader {
                 throw new ModelSpecificationException(JAMS.i18n("Component_") + componentName + JAMS.i18n(":_variable_") + varName + JAMS.i18n(":_Instantiation_exception!"));
             } catch (IllegalAccessException iae) {
                 throw new ModelSpecificationException(JAMS.i18n("Component_") + componentName + JAMS.i18n(":_variable_") + varName + JAMS.i18n(":_Access_exception!"));
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 jamsModel.getRuntime().handle(ex);
             }
         }

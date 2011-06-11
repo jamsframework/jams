@@ -30,10 +30,6 @@ import java.io.Serializable;
  * @author Sven Kralisch
  */
 public interface DataReader extends Serializable{
-
-    public static interface DataReaderState{
-        
-    }
     
     public int init();
 
@@ -45,8 +41,5 @@ public interface DataReader extends Serializable{
     
     public DataSet[] getData();
 
-    public int numberOfColumns();        
-    
-    public DataReaderState getState();
-    public void setState(DataReaderState state) throws IOException; 
+    public int numberOfColumns();            
 }

@@ -160,7 +160,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             }
 
             public void handle(ArrayList<JAMSException> exList) {
-                
+                System.out.println("brrr");
             }
         };
 
@@ -656,6 +656,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             message += "\n" + StringTools.getStackTraceString(t.getStackTrace());
         }
         sendErrorMsg(message);
+        try{
+            Thread.sleep(200);
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
         if (!proceed) {
             sendHalt();
         }

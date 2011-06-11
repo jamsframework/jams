@@ -11,10 +11,10 @@ package jams.components.optimizer.DirectSearchMethods;
 
 import java.util.Vector;
 import Jama.*;
-import jams.components.optimizer.DirectSearchMethods.PatternSearch;
 import jams.components.optimizer.LinearConstraintDirectPatternSearch;
+import jams.components.optimizer.Optimizer.ObjectiveAchievedException;
+import jams.components.optimizer.Optimizer.SampleLimitException;
 import jams.components.optimizer.SOOptimizer;
-import jams.components.optimizer.SOOptimizer.AbstractFunction;
 import jams.components.optimizer.SOOptimizer.SampleSO;
 import jams.components.optimizer.SOOptimizer.SampleSOComperator;
 import java.util.Random;
@@ -26,7 +26,7 @@ import java.util.Random;
 @SuppressWarnings("unchecked")
 public class ImplicitFiltering extends PatternSearch{
         
-    public SampleSO step(SOOptimizer context,SampleSO[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]){
+    public SampleSO step(SOOptimizer context,SampleSO[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]) throws SampleLimitException, ObjectiveAchievedException{
         //1 compare worst
         //2 compare best
         //3 zuf^llige richtung

@@ -28,6 +28,8 @@ import jams.workspace.DefaultDataSet;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  *
@@ -98,28 +100,21 @@ import java.io.IOException;
     public void setDataFileName(String dataFileName) {
         this.dataFileName = dataFileName;
     }
-    
-    public static class J2KTSFileReaderState implements DataReaderState{
-        String fileName;
-        long position;
+       
+    private void writeObject(ObjectOutputStream out) throws IOException{
+        out.defaultWriteObject();
+        out.writeLong(this.reader.getPosition());
     }
-    public J2KTSFileReaderState getState(){
-        J2KTSFileReaderState state = new J2KTSFileReaderState();
-        state.fileName = this.dataFileName;
-        state.position = this.reader.getPosition();      
-        return state;
-    }
-    
-    public void setState(DataReaderState state) throws IOException{
-        J2KTSFileReaderState J2KTSstate = (J2KTSFileReaderState)state;
-        this.dataFileName = J2KTSstate.fileName;
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+        in.defaultReadObject();
+        long position = in.readLong();
         if (this.reader!=null){
             try{
                 this.reader.close();
             }catch(Exception e){}
         }
         init();
-        this.reader.setPosition(J2KTSstate.position);        
+        this.reader.setPosition(position);
     }
-    
 }

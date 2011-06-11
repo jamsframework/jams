@@ -172,6 +172,30 @@ public class JAMSTools {
         }
     }
 
+    static public boolean cloneInto(Object dst, Object src, Class clazz){
+        if (!clazz.isInstance(dst) ||
+            !clazz.isInstance(src))
+            return false;
+        if (clazz.getSuperclass()!=null){
+            cloneInto(dst,src,clazz.getSuperclass());
+        }
+        Field fields[] = clazz.getDeclaredFields();
+        for (Field f : fields){
+            try{                
+                f.setAccessible(true);
+                Modifier m;
+                if (Modifier.isFinal(f.getModifiers()) ||
+                    Modifier.isStatic(f.getModifiers()) )
+                    continue;
+                f.set(dst, f.get(src));
+                f.setAccessible(false);
+            }catch(Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+    }        
     /**
      *
      * @param dirName

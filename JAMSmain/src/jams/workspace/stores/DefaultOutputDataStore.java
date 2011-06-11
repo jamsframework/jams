@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 import jams.model.Context;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  *
@@ -48,7 +50,7 @@ public class DefaultOutputDataStore implements OutputDataStore {
     private String[] attributes;
     private DefaultFilter[] filters;
     transient private BufferedFileWriter writer;
-    private JAMSWorkspace ws;
+    transient private JAMSWorkspace ws;
     private int columnsPerLine;
     private int columnCounter;
     private boolean firstRow;
@@ -139,27 +141,22 @@ public class DefaultOutputDataStore implements OutputDataStore {
             writer.close();
         }
     }
-        
-    static public class DefaultOutputDataStoreState extends DataStoreState{
-        long position;
-        String fileName;
-    }
-    
-    public DataStoreState getState(){
-        DefaultOutputDataStoreState state = new DefaultOutputDataStoreState();
-        state.position = writer.getPosition();
-        state.fileName = this.fileName;
-        return state;
-    }
-            
-    public void setState(DataStoreState state) throws IOException{
-        DefaultOutputDataStoreState outputState = (DefaultOutputDataStoreState)state;        
-         
-        if (this.writer!=null)
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+        in.defaultReadObject();
+        long position = in.readLong();
+        if (this.writer!=null){
             writer.close();
-        this.open(true);                
-        writer.setPosition(outputState.position);                
-        
+        }
+        //this is not ok, because in this case we cannot move the workspace
+        //directory .. 
+        writer = new BufferedFileWriter(new FileOutputStream(outputFile,true));
+        writer.setPosition(position);
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException{
+        out.defaultWriteObject();
+        out.writeLong(writer.getPosition());
     }
                     
     public DefaultFilter[] getFilters() {

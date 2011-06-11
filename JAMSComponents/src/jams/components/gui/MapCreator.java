@@ -100,6 +100,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import jams.components.io.ShapeTool;
 import jams.model.JAMSComponentDescription;
+import java.io.Serializable;
 import java.util.HashSet;
 import org.geotools.gui.swing.event.SelectionChangeListener;
 import org.geotools.gui.swing.event.SelectionChangedEvent;
@@ -471,7 +472,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
     }
 
     /* Colored Icon style for parameter ranges in map legend */
-    class MyIcon implements Icon {
+    class MyIcon implements Icon, Serializable {
 
         private Integer a,  b;
 

@@ -135,6 +135,10 @@ public class ModelIO {
 
                 try {
                     rootNode.add(getSubTree(element, md, exHandler));
+                }catch (NoClassDefFoundError ncdfe){
+                    //TODO exception handling
+                    System.out.println(ncdfe);
+                    ncdfe.printStackTrace();
                 } catch (ModelLoadException mle) {
                     exHandler.handle(mle);
                 } catch (NullClassException nfe) {

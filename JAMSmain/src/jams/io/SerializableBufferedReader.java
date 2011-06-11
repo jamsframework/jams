@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import jams.JAMS;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
@@ -41,7 +42,11 @@ public class SerializableBufferedReader implements Serializable {
     public SerializableBufferedReader(File s) throws FileNotFoundException {
         reader = new RandomAccessFile(s,"r");        
     }
-
+//todo
+    public SerializableBufferedReader(FileInputStream s) throws FileNotFoundException {
+        //reader = new RandomAccessFile(s.,"r");
+        System.out.println("dummy contructor of serializable buffered reader called!!!");
+    }
     public void close() throws IOException {
         if (reader != null) {
             reader.close();

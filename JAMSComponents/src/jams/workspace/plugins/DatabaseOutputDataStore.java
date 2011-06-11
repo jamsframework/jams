@@ -30,6 +30,8 @@ import jams.workspace.JAMSWorkspace;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import jams.model.Context;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -47,10 +49,8 @@ public class DatabaseOutputDataStore implements OutputDataStore {
     private String id;
     private String[] attributes;
     private DefaultFilter[] filters;
-    private JAMSWorkspace ws;
     private String user, password, host, db, driver;
     private String genericSqlStatement;
-    private boolean cleanedup = false;
     private boolean dataStarted;
     transient private JdbcSQLConnector pgsql;
     ArrayList<String> lineArray = new ArrayList<String>(20);
@@ -81,10 +81,6 @@ public class DatabaseOutputDataStore implements OutputDataStore {
 
     public void setID(String id) {
         this.id = id;
-    }
-
-    public void setWorkspace(JAMSWorkspace ws) {
-        this.ws = ws;
     }
 
     public void setDoc(Document doc) {
@@ -135,7 +131,9 @@ public class DatabaseOutputDataStore implements OutputDataStore {
         if (this.genericSqlStatement == null) {
             throw new IOException("unknown sql query");
         }
-
+        if (pgsql!=null){
+            close();
+        }
         pgsql = new JdbcSQLConnector(host, db, user, password, driver);
         try {
             dataStarted = false;
@@ -184,6 +182,10 @@ public class DatabaseOutputDataStore implements OutputDataStore {
         lineArray.clear();
     }
 
+    public void setWorkspace(JAMSWorkspace ws){
+
+    }
+
     public void flush() throws IOException {
     }
 
@@ -198,7 +200,6 @@ public class DatabaseOutputDataStore implements OutputDataStore {
             sqlex.printStackTrace();
             return;
         }
-
         return;
     }
 
@@ -206,20 +207,17 @@ public class DatabaseOutputDataStore implements OutputDataStore {
         return filters;
     }
 //todo
-    public void setState(DataStoreState state){
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+        in.defaultReadObject();
         try{
             this.open(true);
             dataStarted = true;
         }catch(IOException ioe){
             System.out.println(ioe);
+            ioe.printStackTrace();
         }
     }
-    
-    //todo
-    public DataStoreState getState(){
-        return null;
-    }
-    
+        
     public boolean isValid() {
         try{
             if (pgsql==null){
@@ -269,5 +267,9 @@ public class DatabaseOutputDataStore implements OutputDataStore {
         public void setContext(Context context) {
             this.context = context;
         }
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException{
+        out.defaultWriteObject();
     }
 }

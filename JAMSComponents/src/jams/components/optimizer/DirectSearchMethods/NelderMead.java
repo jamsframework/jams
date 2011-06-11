@@ -7,8 +7,9 @@ package jams.components.optimizer.DirectSearchMethods;
 
 import Jama.Matrix;
 import jams.components.optimizer.LinearConstraintDirectPatternSearch;
+import jams.components.optimizer.Optimizer.ObjectiveAchievedException;
+import jams.components.optimizer.Optimizer.SampleLimitException;
 import jams.components.optimizer.SOOptimizer;
-import jams.components.optimizer.SOOptimizer.AbstractFunction;
 import jams.components.optimizer.SOOptimizer.SampleSO;
 import jams.components.optimizer.SOOptimizer.SampleSOComperator;
 import java.util.Random;
@@ -20,7 +21,7 @@ import java.util.Vector;
  */
 @SuppressWarnings("unchecked")
 public class NelderMead extends PatternSearch{
-    public SampleSO step(SOOptimizer context,SampleSO[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]){
+    public SampleSO step(SOOptimizer context,SampleSO[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]) throws SampleLimitException, ObjectiveAchievedException{
 
         //sort simplex        
         java.util.Arrays.sort(Simplex,new SampleSOComperator(false));

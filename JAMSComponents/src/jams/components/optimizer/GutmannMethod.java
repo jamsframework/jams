@@ -66,7 +66,7 @@ public class GutmannMethod extends SOOptimizer {
     }
     
     public class innerOptimizer extends AbstractFunction{                    
-        public double f(double x[]){   
+        public double f(double x[]) throws SampleLimitException, ObjectiveAchievedException{
             return funct(x);
         }
         
@@ -356,7 +356,7 @@ public class GutmannMethod extends SOOptimizer {
         return solution;
     }
             
-    public void initalPhase(){                
+    public void initalPhase() throws SampleLimitException, ObjectiveAchievedException{
         for (int i=0;i<n*initalSampleSize;i++){                        
             SampleSO s = null;
             if (i==0 && x0 != null){
@@ -377,7 +377,7 @@ public class GutmannMethod extends SOOptimizer {
     public long sigma(int counter,int n_snake,int cycleLength){
         if (counter == n_snake)
             return n_snake;
-        return sigma(counter-1,n_snake,cycleLength)-Math.round((this.currentSampleCount-this.initalSampleSize)/(double)cycleLength);
+        return sigma(counter-1,n_snake,cycleLength)-Math.round((this.iterationCounter.getValue()-this.initalSampleSize)/(double)cycleLength);
     }
            
     public double[] Transform(double[]x){
@@ -392,9 +392,11 @@ public class GutmannMethod extends SOOptimizer {
             nx[i] = x[i]*(this.upBound[i]-this.lowBound[i])+this.lowBound[i];
         return nx;
     }
-            
+
+
+
     @Override
-    public void run() { 
+    protected void procedure() throws SampleLimitException, ObjectiveAchievedException {
         if (!enable.getValue()){
             singleRun();
             return;
@@ -402,7 +404,7 @@ public class GutmannMethod extends SOOptimizer {
         initalPhase();
                                 
         int cycleLength = 5;
-        while(iterationCounter < this.maxn.getValue()){  
+        while(true){
                         
             Matrix coefficient = this.CreateInterpolant();
       
@@ -489,7 +491,7 @@ public class GutmannMethod extends SOOptimizer {
                 neldermeadOptimizer.run();                
                 this.sampleList.addAll(neldermeadOptimizer.sampleList);
                 this.sortedSampleList.addAll(neldermeadOptimizer.sampleList);
-                iterationCounter += neldermeadOptimizer.sampleList.size();
+                //iterationCounter += neldermeadOptimizer.sampleList.size();
                 for (int i=0;i<sampleList.size();i++){
                     if (sortedSampleList.get(i).fx[0] < minValue.fx){
                         minValue = new SampleSO(sortedSampleList.get(i).getParameter(),sortedSampleList.get(i).fx[0]);

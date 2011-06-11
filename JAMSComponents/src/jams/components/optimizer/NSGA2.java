@@ -21,32 +21,38 @@ import java.util.Arrays;
 public class NSGA2 extends MOOptimizer {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "population size")
+    description = "population size",
+    defaultValue="500")
     public Attribute.Integer populationSize;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "probability for population crossover, range between 0.5 and 1")
+    description = "probability for population crossover, range between 0.5 and 1",
+            defaultValue="0.5")
     public Attribute.Double crossoverProbability;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "probability for population mutation, range between 0.0 and 1/nvar")
+    description = "probability for population mutation, range between 0.0 and 1/nvar",
+            defaultValue="0.5")
     public Attribute.Double mutationProbability;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "crossover distribution index, range between 0.5 and 100")
+    description = "crossover distribution index, range between 0.5 and 100",
+            defaultValue="10")
     public Attribute.Double crossoverDistributionIndex;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "mutation distribution index, range between 0.5 and 100")
+    description = "mutation distribution index, range between 0.5 and 100",
+            defaultValue="10")
     public Attribute.Double mutationDistributionIndex;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "maximum number of generations")
+    description = "maximum number of generations",
+            defaultValue="100")
     public Attribute.Integer maxGeneration;
 
     int crossoverCount = 0;
@@ -604,7 +610,7 @@ public class NSGA2 extends MOOptimizer {
     }
 
     @Override
-    public void run() {
+    public void procedure() throws SampleLimitException, ObjectiveAchievedException {
         if (this.populationSize == null || this.populationSize.getValue() < 1){
             sayThis(JAMS.i18n("size_of_population_not_specified_or_out_of_bounds"));
             return;
@@ -645,12 +651,7 @@ public class NSGA2 extends MOOptimizer {
         Population newPopulation = new Population(populationSize.getValue());
 
         for (int i = 0; i < this.populationSize.getValue(); i++) {
-            try{
-                oldPopulation.ind[i] = new Individual(this.getSample(RandomSampler()));
-            }catch(SampleLimitException e){
-                sayThis(e.toString());
-                return;
-            }
+            oldPopulation.ind[i] = new Individual(this.getSample(RandomSampler()));
         }
         ranking(oldPopulation);
         /********************************************************************/
@@ -666,12 +667,7 @@ public class NSGA2 extends MOOptimizer {
             real_mutate(newParameter);
             /*----------FUNCTION EVALUATION-----------*/
             for (int j = 0; j < newParameter.length; j++) {
-                try{
-                    newPopulation.ind[j] = new Individual(this.getSample(newParameter[j]));
-                }catch(SampleLimitException e){
-                    sayThis(e.toString());
-                    return;
-                }
+                newPopulation.ind[j] = new Individual(this.getSample(newParameter[j]));                
             }
             ranking(newPopulation);
             /*-------------------SELECTION KEEPING FRONTS ALIVE--------------*/

@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import javax.swing.BorderFactory;
@@ -28,72 +29,89 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import reg.gui.MCAT5Toolbar.ObservationDataSet;
-import reg.gui.MCAT5Toolbar.ParameterSet;
-import reg.gui.MCAT5Toolbar.SimulationTimeSeriesDataSet;
+import reg.hydro.data.DataSet;
+import reg.hydro.data.Measurement;
+import reg.hydro.data.Parameter;
+import reg.hydro.data.SimpleEnsemble;
+import reg.hydro.data.TimeSerie;
+import reg.hydro.data.TimeSerieEnsemble;
 
 /**
  *
  * @author Christian Fischer
  */
 @SuppressWarnings({"unchecked"})
-public class ParameterInterpolation {
+public class ParameterInterpolation extends MCAT5Plot {
 
     XYPlot plot = new XYPlot();
     ChartPanel chartPanel = null;
-    JPanel panel = null;
-    SimulationTimeSeriesDataSet timeserie;
-    ParameterSet param[];
-    ObservationDataSet observation;
+    JPanel panel = null;    
     JSlider slider = new JSlider();
 
-    double interpolatedTS[][];
-    int timesteps = 0;
+    TimeSerieEnsemble timeserie;
+    SimpleEnsemble[] params;
+
+    double interpolatedTS[][];    
     final int RESOLUTION = 100;
 
     int currentIndex = -1;
     double paramMin, paramMax;
     double point[];
 
-    double globalMin = Double.MAX_VALUE,
-               globalMax = Double.MIN_VALUE;
+    double  globalMin = Double.MAX_VALUE,
+            globalMax = Double.MIN_VALUE;
 
-    public ParameterInterpolation(SimulationTimeSeriesDataSet timeserie, ParameterSet param[], ObservationDataSet observation) {
-        this.timeserie = timeserie;
-        this.param = param;
-        this.observation = observation;
+    public ParameterInterpolation() {
+        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"),TimeSerie.class));
+        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"),Parameter.class,1,10));
+        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSERVED_TIMESERIE"),Measurement.class));
 
-        timesteps = timeserie.timeLength;
-        interpolatedTS = new double[RESOLUTION][timesteps];
-        point = new double[param.length];
+        init();
+    }
 
-
-
-        for (int t=0;t<timesteps;t++){
-            for (int j=0;j<timeserie.parent.numberOfRuns;j++){
-                if (timeserie.set[t].set[j]<globalMin)
-                    globalMin = timeserie.set[t].set[j];
-                if (timeserie.set[t].set[j]>globalMax)
-                    globalMax = timeserie.set[t].set[j];
-            }
-        }
-
+    private void init(){
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         renderer.setSeriesPaint(0, new Color(0,0,255));
         renderer.setSeriesVisibleInLegend(0, true);
         renderer.setSeriesPaint(1, new Color(255,0,0));
         renderer.setSeriesVisibleInLegend(1, true);
         renderer.setBaseShapesVisible(false);
-        
+
         plot.setRenderer(renderer);
         plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
         plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT")));
+    }
 
+    public void refresh(){
+        if (!this.isRequestFulfilled())
+            return;
+
+        timeserie = (TimeSerieEnsemble)this.getData(0);
+
+        ArrayList<DataSet>  dataInParam   = (ArrayList<DataSet>)getMultipleData(1);
+        params = new SimpleEnsemble[dataInParam.size()];
+
+        Measurement obs = (Measurement) getData(2);
+
+        int timesteps = timeserie.getTimesteps();
+
+        interpolatedTS = new double[RESOLUTION][timesteps];
+        point = new double[params.length];
+
+        for (int t=0;t<timesteps;t++){
+            for (int j=0;j<timeserie.getSize();j++){
+                if (timeserie.get(t, j)<globalMin)
+                    globalMin = timeserie.get(t, j);
+                if (timeserie.get(t, j)>globalMax)
+                    globalMax = timeserie.get(t, j);
+            }
+        }
+        
         if (plot.getDomainAxis() != null) plot.getDomainAxis().setAutoRange(true);
         if (plot.getRangeAxis() != null) plot.getRangeAxis().setRange(globalMin, globalMax);
         
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLASS_PLOT"));
+        chart.setTitle("Interpolation");
         chartPanel = new ChartPanel(chart, true);
 
         panel = new JPanel(new BorderLayout());
@@ -111,14 +129,14 @@ public class ParameterInterpolation {
         slider.addChangeListener(new ChangeListener(){
            public void stateChanged(ChangeEvent evt){
                point[currentIndex] = (((paramMax-paramMin)*(double)slider.getValue())/(double)RESOLUTION)+paramMin;
-               updateData();
+               refresh();
            }
         });
         adjustmentPanel.add(slider, BorderLayout.CENTER);
 
-        Object[] listItem = new Object[param.length];
-        for (int i=0;i<param.length;i++){
-            listItem[i] = param[i].name;
+        Object[] listItem = new Object[params.length];
+        for (int i=0;i<params.length;i++){
+            listItem[i] = params[i].name;
         }
         final JList list = new JList(listItem);
 
@@ -132,8 +150,8 @@ public class ParameterInterpolation {
                 NumberFormat f = NumberFormat.getInstance();
 
                 if (currentIndex != -1){
-                    paramMin = MCAT5Tools.FindMinimalParameterValue(ParameterInterpolation.this.param[currentIndex]);
-                    paramMax = MCAT5Tools.FindMaximalParameterValue(ParameterInterpolation.this.param[currentIndex]);
+                    paramMin = params[currentIndex].getMin();
+                    paramMax = params[currentIndex].getMax();
                     Dictionary labels = new Hashtable<Integer,JLabel>();
                     for (int i=0;i<=100;i+=10){
                         labels.put(i, new JLabel(f.format( (double)i*((paramMax - paramMin)/100.0)+paramMin )));
@@ -142,7 +160,7 @@ public class ParameterInterpolation {
                     slider.setValue( (int)Math.round((point[currentIndex]-paramMin)/(paramMax-paramMin)*(double)RESOLUTION));
                     slider.setEnabled(true);
                     doInterpolation(currentIndex);
-                    updateData();
+                    refresh();
                 }else{
                     slider.setEnabled(false);
                 }
@@ -157,56 +175,15 @@ public class ParameterInterpolation {
         listPanel.add(listScroller,BorderLayout.SOUTH);
         adjustmentPanel.add(listPanel,BorderLayout.NORTH);
         
-
         panel.add(adjustmentPanel,BorderLayout.EAST);
 
-        updateData();
-    }
-
-    public void doInterpolation(int parameter) {
-        double weights[][] = new double[RESOLUTION][this.timeserie.parent.numberOfRuns];
-        double sum[] = new double[RESOLUTION];
-
-        for (int r = 0; r < RESOLUTION; r++) {
-            double p = paramMin + (paramMax - paramMin) * (double) r / (double) RESOLUTION;
-            sum[r] = 0;
-
-            for (int i = 0; i < this.timeserie.parent.numberOfRuns; i++) {
-                double dist = 0;
-                for (int j = 0; j < param.length; j++) {
-                    if (j != parameter) {
-                        dist += (param[j].set[i] - this.point[j]) * (param[j].set[i] - this.point[j]);
-                    } else {
-                        dist += (param[j].set[i] - p) * (param[j].set[i] - p);
-                    }
-                }
-                weights[r][i] = 1.0/Math.sqrt(dist);
-                sum[r] += weights[r][i];
-            }
-        }
-        for (int r = 0; r < RESOLUTION; r++) {
-            for (int i = 0; i < this.timeserie.parent.numberOfRuns; i++) {
-                weights[r][i] /= sum[r];
-            }
-            for (int t = 0; t < this.timeserie.timeLength;t++){
-                interpolatedTS[r][t] = 0;
-                for (int i = 0; i < this.timeserie.parent.numberOfRuns; i++) {
-                    interpolatedTS[r][t] += timeserie.set[t].set[i]*weights[r][i];
-                }
-            }
-
-        }
-
-    }
-
-    public void updateData() {                
         XYSeriesCollection series = new XYSeriesCollection();
-        
+
         XYSeries dataset1 = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("HIGH_LIKELIHOOD"));
         XYSeries dataset2 = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("HIGH_LIKELIHOOD"));
 
         for (int j = 0; j < timesteps; j++) {
-            dataset1.add(j, observation.set[j]);
+            dataset1.add(j, obs.getValue(j));
         }
         series.addSeries(dataset1);
 
@@ -218,10 +195,44 @@ public class ParameterInterpolation {
             series.addSeries(dataset2);
         }
         plot.setDataset(series);
-
-        //if (plot.getRangeAxis() != null)  plot.getRangeAxis().setAutoRange(true);        
     }
 
+    public void doInterpolation(int parameter) {
+        double weights[][] = new double[RESOLUTION][this.timeserie.getSize()];
+        double sum[] = new double[RESOLUTION];
+
+        for (int r = 0; r < RESOLUTION; r++) {
+            double p = paramMin + (paramMax - paramMin) * (double) r / (double) RESOLUTION;
+            sum[r] = 0;
+
+            for (int i = 0; i < this.timeserie.getSize(); i++) {
+                double dist = 0;
+                for (int j = 0; j < params.length; j++) {
+                    if (j != parameter) {
+                        dist += (params[j].getValue(i) - this.point[j]) * (params[j].getValue(i) - this.point[j]);
+                    } else {
+                        dist += (params[j].getValue(i) - p) * (params[j].getValue(i) - p);
+                    }
+                }
+                weights[r][i] = 1.0/Math.sqrt(dist);
+                sum[r] += weights[r][i];
+            }
+        }
+        for (int r = 0; r < RESOLUTION; r++) {
+            for (int i = 0; i < this.timeserie.getSize(); i++) {
+                weights[r][i] /= sum[r];
+            }
+            for (int t = 0; t < this.timeserie.getTimesteps();t++){
+                interpolatedTS[r][t] = 0;
+                for (int i = 0; i < this.timeserie.getSize(); i++) {
+                    interpolatedTS[r][t] += timeserie.get(t, i)*weights[r][i];
+                }
+            }
+
+        }
+
+    }
+    
     public JPanel getPanel() {
         return panel;
     }

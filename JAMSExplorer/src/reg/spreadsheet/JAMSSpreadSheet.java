@@ -1176,6 +1176,11 @@ public class JAMSSpreadSheet extends JPanel {
             }
 
             URI uri = dataStore.getUri();
+            if (uri==null){
+                System.out.println("error: can't access shapefile! path is: "
+                        + dataStore.getShapeFile().getAbsolutePath());
+                return;
+            }
             String keyColumn = dataStore.getKeyColumn();
             String shapeFileName = dataStore.getFileName();
 

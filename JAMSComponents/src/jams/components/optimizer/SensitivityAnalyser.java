@@ -120,7 +120,7 @@ public class SensitivityAnalyser extends SOOptimizer{
                
         return GP;
     }
-    double TransformAndEvaluate(double []in){
+    double TransformAndEvaluate(double []in) throws SampleLimitException, ObjectiveAchievedException{
         double value[] = new double[in.length];
         for (int i=0;i<in.length;i++){
             value[i] = in[i]*(this.upBound[i]-this.lowBound[i]) + this.lowBound[i];
@@ -128,7 +128,7 @@ public class SensitivityAnalyser extends SOOptimizer{
         return this.funct(value);
     }
     
-    public void GaussianAnalysis(){
+    public void GaussianAnalysis() throws SampleLimitException, ObjectiveAchievedException{
         Vector<double[]> samplePoint = new Vector<double[]>();
         Vector<Double> sampleValue = new Vector<Double>();
                 
@@ -174,7 +174,7 @@ public class SensitivityAnalyser extends SOOptimizer{
         } 
     }
     
-    void GradientAnalysis(double p){
+    void GradientAnalysis(double p) throws SampleLimitException, ObjectiveAchievedException{
         double startPoint[] = new double[n];
         double x[] = new double[n];
                         
@@ -238,7 +238,7 @@ public class SensitivityAnalyser extends SOOptimizer{
         } 
     }
     
-    void GSA(){
+    void GSA() throws SampleLimitException, ObjectiveAchievedException{
         Vector<double[]> samplePoint = new Vector<double[]>();
         Vector<Double> sampleValue = new Vector<Double>();
                 
@@ -276,7 +276,7 @@ public class SensitivityAnalyser extends SOOptimizer{
         }
     }
     
-    public void run() {
+    public void procedure() throws SampleLimitException, ObjectiveAchievedException {
         if (method.getValue() == 1){
             GaussianAnalysis();
         }

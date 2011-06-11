@@ -192,13 +192,5 @@ public class ShapeFileDataStore extends GeoDataStore {
 
     public String getKeyColumn() {
         return keyColumn;
-    }
-    
-    public DataStoreState getState() {
-        return null;
-        //throw new IOException("serialization of ShapeFileDataStore not supported");
-    }
-    public void setState(DataStoreState state) throws IOException{
-        //throw new IOException("deserialization of ShapeFileDataStore not supported");
-    }
+    }       
 }

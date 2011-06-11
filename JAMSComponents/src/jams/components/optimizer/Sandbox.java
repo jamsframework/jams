@@ -124,7 +124,7 @@ public class Sandbox extends SOOptimizer{
         }
     }
      
-    double TransformAndEvaluate(double []in){
+    double TransformAndEvaluate(double []in)  throws SampleLimitException, ObjectiveAchievedException{
         double value[] = new double[in.length];
         for (int i=0;i<in.length;i++){
             value[i] = in[i]*(this.upBound[i]-this.lowBound[i]) + this.lowBound[i];
@@ -132,7 +132,7 @@ public class Sandbox extends SOOptimizer{
         return this.funct(value);
     }
     
-    public void initalPhase(){                
+    public void initalPhase() throws SampleLimitException, ObjectiveAchievedException{
         for (int i=0;i<n*initalSampleSize;i++){
             double nextSample[] = this.RandomSampler();
             for (int j=0;j<n;j++){
@@ -236,7 +236,7 @@ public class Sandbox extends SOOptimizer{
         }
     }
     
-    public Sample FindMostProbablePoint(){
+    public Sample FindMostProbablePoint() throws SampleLimitException, ObjectiveAchievedException{
         SandBoxEffFunction function = new SandBoxEffFunction();
         
         SimpleSCE sce = new SimpleSCE();
@@ -250,7 +250,7 @@ public class Sandbox extends SOOptimizer{
         return sce.offlineRun(null,normedLowBound,normedUpBound,3,Optimizer.MODE_MAXIMIZATION,10000,12,0.05,0.0001,function);                                
     }
     
-    public void run() {     
+    public void procedure()  throws SampleLimitException, ObjectiveAchievedException {
         initalPhase();
         double best = 1000.0;
         int counter = 0;

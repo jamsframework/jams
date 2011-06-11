@@ -16,7 +16,10 @@ import jams.model.JAMSVarDescription;
 import jams.model.Model;
 import java.io.File;
 import jams.JAMS;
+import jams.data.Attribute;
 import jams.data.Attribute.Entity;
+import jams.data.JAMSBoolean;
+import jams.data.JAMSObject;
 import jams.model.Component;
 import java.io.IOException;
 
@@ -207,6 +210,18 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
             description = "parameter input"
             )
             public JAMSString outName5;
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.WRITE,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "parameter input"
+            )
+            public Attribute.Object outObj1;
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "parameter input"
+            )
+            public Attribute.String outObjName1;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -217,12 +232,34 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
     
     private final int inValueCount = 10;
     private final int outValueCount = 5;
+    private final int outObjValueCount = 1;
 
     public double searchForAttributeInModel(Context c, String key) throws JAMSEntity.NoSuchAttributeException{
         JAMSData d = (c.getAttributeMap().get(key));
         if (d!=null){
             if (d instanceof JAMSDouble)
                 return ((JAMSDouble)d).getValue();
+            else
+                throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + key + JAMS.i18n("_(float)_not_found!"));
+        }else{
+            for (Component comp : c.getComponents()){
+                if (comp instanceof Context){
+                    try{
+                        return searchForAttributeInModel((Context)comp,key);
+                    }catch(JAMSEntity.NoSuchAttributeException nsae){
+
+                    }
+                }
+            }
+        }
+        throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + key + JAMS.i18n("_(float)_not_found!"));
+    }
+
+    public Object searchForObjectInModel(Context c, String key) throws JAMSEntity.NoSuchAttributeException{
+        JAMSData d = (c.getAttributeMap().get(key));
+        if (d!=null){
+            if (d instanceof JAMSObject)
+                return ((JAMSObject)d).getValue();
             else
                 throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + key + JAMS.i18n("_(float)_not_found!"));
         }else{
@@ -246,6 +283,9 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
         
         double outValues[] = new double[outValueCount];
         String outNames[]  = new String[outValueCount];
+
+        Object outObjValues[] = new Object[outObjValueCount];
+        String outObjNames[]  = new String[outObjValueCount];
         
         if (in1 != null)    inValues[0] = in1.getValue();
         if (in2 != null)    inValues[1] = in2.getValue();
@@ -274,6 +314,8 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
         if (outName3 != null)    outNames[2] = outName3.getValue();
         if (outName4 != null)    outNames[3] = outName4.getValue();
         if (outName5 != null)    outNames[4] = outName5.getValue();
+
+        if (outObjName1 != null)    outObjNames[0] = outObjName1.getValue();
         
         JAMSFullModelState state = null;
         try{
@@ -287,8 +329,20 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
         for (int i=0;i<inValueCount;i++){
             String key = inNames[i];
             double value = inValues[i];
-            if (key != null){                
-                ((JAMSDouble) model.getRuntime().getDataHandles().get(key)).setValue(value);         
+            if (key != null){
+                if (model.getRuntime().getDataHandles().get(key) instanceof JAMSDouble){
+                    ((JAMSDouble)model.getRuntime().getDataHandles().get(key) ).setValue(value);
+                }
+
+                if (model.getRuntime().getDataHandles().get(key) instanceof JAMSBoolean){
+                    if (value==1.0){
+                        ((JAMSBoolean)model.getRuntime().getDataHandles().get(key) ).setValue(true);
+                    }else if(value == 0.0){
+                        ((JAMSBoolean)model.getRuntime().getDataHandles().get(key) ).setValue(false);
+                    }else{
+                        this.getModel().getRuntime().sendHalt("invalid value for boolean:" + value);
+                    }
+                }
             }
         }
         try{
@@ -309,6 +363,19 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
                 System.out.println("key:" + key + " ----> " + outValues[i]);
             }
         }
+
+        for (int i=0;i<outObjValueCount;i++){
+            String key = outObjNames[i];
+            if (key != null){
+                try{
+                    outObjValues[i] = searchForObjectInModel(model,key);
+                }catch(Entity.NoSuchAttributeException nsae){
+                    System.out.println(nsae.toString());
+                }
+                System.out.println("key:" + key + " ----> " + outValues[i]);
+            }
+        }
+
         model = null;
         // collect some garbage ;)
         Runtime.getRuntime().gc();    
@@ -317,7 +384,9 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
         if (outName2 != null)    out2.setValue(outValues[1]);
         if (outName3 != null)    out3.setValue(outValues[2]);
         if (outName4 != null)    out4.setValue(outValues[3]);
-        if (outName5 != null)    out5.setValue(outValues[4]);                
+        if (outName5 != null)    out5.setValue(outValues[4]);
+        
+        if (outObjName1 != null)    outObj1.setValue(outObjValues[0]);
     }
     
 }

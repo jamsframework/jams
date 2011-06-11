@@ -32,7 +32,5 @@ import java.io.Serializable;
 public interface DataStore extends Serializable {
 
     public String getID();
-    public DataStoreState getState();
-    public void setState(DataStoreState state) throws IOException;
     public void close() throws IOException;
 }

@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.swing.JPanel;
+import reg.gui.DataCollectionPanel;
 import reg.gui.OutputDSPanel;
 import reg.gui.SimpleOutputPanel;
 import reg.spreadsheet.JAMSSpreadSheet;
@@ -40,6 +41,9 @@ import reg.spreadsheet.SpreadsheetConstants;
 public class OutputPanelFactory {
 
     public static JPanel getOutputDSPanel(JAMSExplorer explorer, File file, String id) throws FileNotFoundException, IOException {
+        if (file.getAbsolutePath().endsWith("cdat")){
+            return new DataCollectionPanel(explorer.getExplorerFrame(), file, null);
+        }
         BufferedFileReader reader = new BufferedFileReader(new FileInputStream(file));
         String line = reader.readLine();
         reader.close();

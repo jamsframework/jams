@@ -15,45 +15,40 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import reg.gui.MCAT5Toolbar.ArrayComparator;
-import reg.gui.MCAT5Toolbar.EfficiencyDataSet;
-import reg.gui.MCAT5Toolbar.ParameterSet;
+import reg.gui.MCAT5.MCAT5Plot.SimpleRequest;
+import reg.gui.MCAT5.MCAT5Toolbar.ArrayComparator;
+import reg.hydro.data.DataSet;
+import reg.hydro.data.Efficiency;
+import reg.hydro.data.EfficiencyEnsemble;
+import reg.hydro.data.Parameter;
+import reg.hydro.data.SimpleEnsemble;
 
 /**
  *
  * @author Christian Fischer
  */
 @SuppressWarnings({"unchecked"})
-public class RegionalSensitivityAnalyser2 {
+public class RegionalSensitivityAnalyser2 extends MCAT5Plot{
 
     XYPlot plot = new XYPlot();    
-    ChartPanel chartPanel = null;    
-    ParameterSet data = null;
-    EfficiencyDataSet eff[] = null;
-    double likelihood[][] = null;
+    ChartPanel chartPanel = null;        
     
     final int GROUPS = 10;
       
-    public RegionalSensitivityAnalyser2(ParameterSet data, EfficiencyDataSet eff[]) {
-        this.data = data;
-        this.eff = eff;
+    public RegionalSensitivityAnalyser2() {
+        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"), Parameter.class));
+        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class,1,10));
 
-        XYLineAndShapeRenderer renderer[] = new XYLineAndShapeRenderer[GROUPS];
-        for (int i=0;i<eff.length;i++){
-            renderer[i] = new XYLineAndShapeRenderer();
-            renderer[i].setBaseShapesVisible(false);
-            int c = (int)(i*255.0/eff.length);
-            renderer[i].setSeriesPaint(0, new Color(255-c,0,c));
-               
-            plot.setRenderer(i, renderer[i]);
-        }               
-        plot.setDomainAxis(new NumberAxis(data.name));
+        init();
+    }
+
+    private void init(){
         plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIKELIHOOD")));
 
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS_II"));
         chartPanel = new ChartPanel(chart, true);
-        updateData();        
+        refresh();
     }
         
     public double[][] sortbyEff(double data[],double likelihood[]) {
@@ -69,42 +64,69 @@ public class RegionalSensitivityAnalyser2 {
         return tmp_data;
     }
         
-    private void updateData() {
+    public void refresh() {
+        if (!this.isRequestFulfilled()){
+            return;
+        }
+
+        SimpleEnsemble param = (SimpleEnsemble) getData(0);
+        ArrayList<DataSet> effIn = (ArrayList<DataSet>) getMultipleData(1);
+        EfficiencyEnsemble eff[] = new EfficiencyEnsemble[effIn.size()];
+        for (int i=0;i<effIn.size();i++){
+            eff[i] = (EfficiencyEnsemble)effIn.get(i);
+        }
+
+        XYLineAndShapeRenderer renderer[] = new XYLineAndShapeRenderer[GROUPS];
+        for (int i=0;i<eff.length;i++){
+            renderer[i] = new XYLineAndShapeRenderer();
+            renderer[i].setBaseShapesVisible(false);
+            int c = (int)(i*255.0/eff.length);
+            renderer[i].setSeriesPaint(0, new Color(255-c,0,c));
+
+            plot.setRenderer(i, renderer[i]);
+        }
+        plot.setDomainAxis(new NumberAxis(param.name));
+
         int numberOfObjFct = eff.length;
         XYSeries dataset[] = new XYSeries[numberOfObjFct];
-        double sorted_data[][][] = new double[numberOfObjFct][][];
+        //double sorted_data[][][] = new double[numberOfObjFct][][];
                                         
         for (int i=0;i<numberOfObjFct;i++){
             dataset[i] = new XYSeries(eff[i].name);
-            sorted_data[i] = sortbyEff(data.set,Efficiencies.CalculateLikelihood(this.eff[i].set));
-            ArrayList<double[]> boxes[] = new ArrayList[numberOfObjFct];
+            EfficiencyEnsemble likelihood = eff[i].CalculateLikelihood();
+            Integer sortedIds[] = likelihood.sort();
+            //sorted_data[i] = sortbyEff(data.set,Efficiencies.CalculateLikelihood(this.eff[i].set));
+            ArrayList<Integer> boxes[] = new ArrayList[numberOfObjFct];
             
             for (int j=0;j<boxes.length;j++)
-                boxes[j] = new ArrayList<double[]>();
-            
-            double min = 0;
-            double max = sorted_data[i][0][1];
-            double range_max = Double.NEGATIVE_INFINITY;
-            double range_min = Double.POSITIVE_INFINITY;
+                boxes[j] = new ArrayList<Integer>();
+                        
+            double range_min = param.getMin();
+            double range_max = param.getMax();
             
             int index = 0,counter=0;
             do{
-                index = (int) Math.round((sorted_data[i][counter][1] - min) / (max - min) * 9);
-                boxes[i].add(sorted_data[i][counter]);
-                range_max = Math.max(sorted_data[i][counter][0],range_max);
-                range_min = Math.min(sorted_data[i][counter][0],range_min);
+                //index = (int) Math.round((sorted_data[i][counter][1] - min) / (max - min) * 9);
+                index = (int) (((double) counter / (double) param.getSize()) * (GROUPS));
+                //index = (int)((likelihood.getValue(sortedIds[counter]) - min)/(max - min) * GROUPS);
+                if (index == GROUPS)
+                    index = GROUPS - 1;
+                boxes[i].add(sortedIds[counter]);
+                //boxes[i].add(sorted_data[i][counter]);
+                //range_max = Math.max(sorted_data[i][counter][0],range_max);
+                //range_min = Math.min(sorted_data[i][counter][0],range_min);
                 counter++;
-            }while (index == GROUPS-1);
+            }while (index == 0);
                         
-            double box_data[][] = new double[boxes[i].size()][];
+            double box_data[] = new double[boxes[i].size()];
             for (int j=0;j<boxes[i].size();j++){
-                box_data[j] = boxes[i].get(j);
+                box_data[j] = param.getValue(boxes[i].get(j));
             }
-            Arrays.sort(box_data,new ArrayComparator(0,false));
+            Arrays.sort(box_data);
                          
             dataset[i].add(range_min,0.0);
             for (int j=0;j<box_data.length;j++){
-                dataset[i].add(box_data[j][0],(double)j / (double)box_data.length);                
+                dataset[i].add(box_data[j],(double)j / (double)box_data.length);                
             }
             dataset[i].add(range_max,1.0);
             

@@ -32,6 +32,7 @@ import jams.workspace.DefaultDataSet;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -233,6 +234,7 @@ public class TSDataStoreReader extends JAMSComponent {
         for (int i = 1; i < data.length; i++) {
             doubles[i - 1] = data[i].getDouble();
         }
+        //System.out.println(this.getInstanceName() + "-->" + data[0].getCalendar().getTime().toString() + "-->" + Arrays.toString(doubles));
         dataArray.setValue(doubles);
         if (dataCaching.getValue() != 1) {
             regCoeff.setValue(Regression.calcLinReg(elevationArray, doubles));

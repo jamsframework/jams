@@ -6,8 +6,9 @@
 package jams.components.optimizer.DirectSearchMethods;
 
 import Jama.Matrix;
+import jams.components.optimizer.Optimizer.ObjectiveAchievedException;
+import jams.components.optimizer.Optimizer.SampleLimitException;
 import jams.components.optimizer.SOOptimizer;
-import jams.components.optimizer.SOOptimizer.AbstractFunction;
 import jams.components.optimizer.SOOptimizer.SampleSO;
 import java.util.Random;
 import java.util.Vector;
@@ -17,10 +18,10 @@ import java.util.Vector;
  * @author Christian Fischer
  */
 abstract public class PatternSearch {
-    abstract public SampleSO step(SOOptimizer context,SampleSO[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]);
+    abstract public SampleSO step(SOOptimizer context,SampleSO[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]) throws SampleLimitException, ObjectiveAchievedException;
     static Random Generator = null;
         
-    protected SampleSO step(SOOptimizer context,SampleSO best,SampleSO worst,Vector<Matrix> P){
+    protected SampleSO step(SOOptimizer context,SampleSO best,SampleSO worst,Vector<Matrix> P) throws SampleLimitException, ObjectiveAchievedException{
         Matrix x = new Matrix(best.x,best.x.length);
         for (int i=0;i<P.size();i++){
             Matrix x_next = x.plus(P.get(i));

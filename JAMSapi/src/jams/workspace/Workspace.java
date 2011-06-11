@@ -49,6 +49,7 @@ public interface Workspace extends Serializable {
      * Comment string used to mark dump files of input datastores
      */
     String OUTPUT_FILE_ENDING = ".dat";
+    String DATACOLLECTION_FILE_ENDING = ".cdat";
 
     /**
      * Comment string used to mark dump files of input datastores

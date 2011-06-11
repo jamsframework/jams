@@ -45,7 +45,7 @@ public class Direct extends SOOptimizer{
         return x;
     }
     
-    public void DirInit(){                
+    public void DirInit()  throws SampleLimitException, ObjectiveAchievedException{
         // length array will store # of slices in each dimension for
         // each rectangle. dimension will be rows; each rectangle
         // will be a column
@@ -173,7 +173,7 @@ public class Direct extends SOOptimizer{
         return bound;
     }
                      
-    void DIRDivide(int index){
+    void DIRDivide(int index) throws SampleLimitException, ObjectiveAchievedException{
         int []li = lengths[index];
         double oldc[] = c[index];
         int oldfcncounter = Q.size();
@@ -279,7 +279,7 @@ public class Direct extends SOOptimizer{
     }
     
     @Override
-    public void run() {
+    protected void procedure() throws SampleLimitException, ObjectiveAchievedException {
         if (!this.enable.getValue()){
             singleRun();
             return;

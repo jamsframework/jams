@@ -36,6 +36,7 @@ public class JAMSCmdLine {
     private String modelFileName = null;
     private String parameterValues = null;
     private String snapshotFileName = null;
+    private String jmpFileName = null;
     
     private String[] otherArgs = null;
     private boolean nogui = false;
@@ -45,7 +46,8 @@ public class JAMSCmdLine {
             JAMS.i18n("__-m,_--model_<model_definition_file_name>___________Provide_model_file_name") +
             JAMS.i18n("__-s,_--snapshot_<save_snapshot_file>________________Provide_model_snapshot_name") +
             JAMS.i18n("__-n,_--nogui________________________________________Suppress_all_GUI") +
-            JAMS.i18n("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons");
+            JAMS.i18n("__-p,_--parametervalue_<list_of_parameter_values>____Provide_initial_parameter_values_divided_by_semicolons") +
+            JAMS.i18n("__-j,_--jams_parameterfile_<parameter_file_name>___Provide_initial_parameter_values_by_jmpfile");
     
     /**
      * Creates a new JAMSCmdLine object
@@ -58,6 +60,7 @@ public class JAMSCmdLine {
         CmdLineParser.Option configOption = parser.addStringOption('c', "config");
         CmdLineParser.Option modelOption = parser.addStringOption('m', "model");
         CmdLineParser.Option pValueOption = parser.addStringOption('p', "parametervalue");
+        CmdLineParser.Option jmpValueOption = parser.addStringOption('j', "jmpfile");
         CmdLineParser.Option snapshotOption = parser.addStringOption('s', "snapshot");
         CmdLineParser.Option noguiOption = parser.addBooleanOption('n', "nogui");
         CmdLineParser.Option helpOption = parser.addBooleanOption('h', "help");
@@ -81,6 +84,7 @@ public class JAMSCmdLine {
         this.modelFileName = (String) parser.getOptionValue(modelOption, null);
         this.snapshotFileName = (String) parser.getOptionValue(snapshotOption, null);
         this.parameterValues = (String) parser.getOptionValue(pValueOption, null);
+        this.jmpFileName = (String) parser.getOptionValue(jmpValueOption, null);
         this.otherArgs = parser.getRemainingArgs();
     }
     
@@ -117,6 +121,14 @@ public class JAMSCmdLine {
      */
     public String getParameterValues() {
         return parameterValues;
+    }
+
+    /**
+     * Returns the name of the config file
+     * @return The name of the config file
+     */
+    public String getJmpFileName() {
+        return jmpFileName;
     }
 
     /**

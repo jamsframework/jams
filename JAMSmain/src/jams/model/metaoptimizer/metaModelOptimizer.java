@@ -25,7 +25,6 @@ package jams.model.metaoptimizer;
 import jams.tools.JAMSTools;
 import jams.model.Component;
 import jams.model.Context;
-import jams.model.JAMSModel;
 import jams.model.JAMSSpatialContext;
 import jams.model.JAMSVarDescription;
 import jams.model.JAMSVarDescription.AccessType;
@@ -430,6 +429,19 @@ public class metaModelOptimizer {
         return TransitiveClosure;
     }
 
+    static public Node getNodeByName(Node root, String name){
+        if (root.getNodeName().equals(name)){
+            return root;
+        }
+        NodeList childs = root.getChildNodes();
+        for (int i=0;i<childs.getLength();i++){
+            Node model = getNodeByName(childs.item(i), name);
+            if (model != null)
+                return model;
+        }
+        return null;
+    }
+
     public static ArrayList<String> RemoveGUIComponents(Node root) {
         ArrayList<String> removedComponents = new ArrayList<String>();
 
@@ -445,7 +457,7 @@ public class metaModelOptimizer {
                 Element comp = (Element) node;
                 if (comp.getAttribute("class").contains("jams.components.gui")) {
                     childsToRemove.add(node);
-                    RemoveProperty(mainRoot, null, comp.getAttribute("name"));
+                    //RemoveProperty(mainRoot, null, comp.getAttribute("name"));
                 }
             }
         }
@@ -455,6 +467,8 @@ public class metaModelOptimizer {
             removedComponents.add(elem.getAttribute("name"));
             root.removeChild(childsToRemove.get(i));
         }
+        if (getNodeByName(mainRoot,"launcher")!=null)
+            removeUnlinkedProperties(root);
         //delete empty contexts
         removedComponents.addAll(RemoveEmptyContextes(root));
 
@@ -513,7 +527,7 @@ public class metaModelOptimizer {
             } else if (node.getNodeName().equals("component")) {
                 Element comp = (Element) node;
                 if (!list.contains(comp.getAttribute("name"))) {
-                    RemoveProperty(mainRoot, null, comp.getAttribute("name"));
+                    //RemoveProperty(mainRoot, null, comp.getAttribute("name"));
                     childsToRemove.add(node);
                 }
             }
@@ -525,35 +539,74 @@ public class metaModelOptimizer {
             removedNodes.add(elem.getAttribute("name"));
             root.removeChild(childsToRemove.get(i));
         }
+        if (getNodeByName(mainRoot,"launcher")!=null)
+            removeUnlinkedProperties(root);
         //delete empty contexts
         removedNodes.addAll(RemoveEmptyContextes(root));
 
         return removedNodes;
     }
 
-    static public void RemoveProperty(Node root, String attrName, String component) {
-        ArrayList<Node> nodesToRemove = new ArrayList<Node>();
+     static public Node getNode(Node root, String owner){
+        if (root.getNodeName().equals("context")){
+            Element elem = (Element)root;
+            if (elem.getAttribute("name").equals(owner))
+                return root;
+        }
+        if (root.getNodeName().equals("component")){
+            Element elem = (Element)root;
+            if (elem.getAttribute("name").equals(owner))
+                return root;
+        }
         NodeList childs = root.getChildNodes();
-        for (int i = 0; i < childs.getLength(); i++) {
-            Node node = childs.item(i);
-            if (node.getNodeName().equals("property")) {
-                Element elem = (Element) node;
-                if (elem.hasAttribute("attribute") && elem.hasAttribute("component")) {
-                    String attr = elem.getAttribute("attribute");
-                    String comp = elem.getAttribute("component");
-                    if ((attrName == null || attr.equals(attrName)) && comp.equals(component)) {
-                        nodesToRemove.add(node);
-                    }
-                }
-            } else {
-                RemoveProperty(node, attrName, component);
-            }
+        for (int i=0;i<childs.getLength();i++){
+            Node value = getNode(childs.item(i),owner);
+            if (value != null)
+                return value;
         }
-        for (int i = 0; i < nodesToRemove.size(); i++) {
-            root.removeChild(nodesToRemove.get(i));
-        }
+        return null;
     }
 
+    public static void removeUnlinkedProperties(Node root) {
+        Element launcherNode = (Element)getNodeByName(root.getOwnerDocument(),"launcher");
+
+        ArrayList<Node> nodesToRemove = new ArrayList<Node>();
+
+        Node node;
+
+        NodeList groupNodes = launcherNode.getElementsByTagName("group");
+        for (int gindex = 0; gindex < groupNodes.getLength(); gindex++) {
+            node = groupNodes.item(gindex);
+            Element groupElement = (Element) node;
+            // @todo subgroups and properties recursive
+            NodeList groupChildNodes = groupElement.getChildNodes();
+            for (int pindex = 0; pindex < groupChildNodes.getLength(); pindex++) {
+                node = groupChildNodes.item(pindex);
+                if (node.getNodeName().equalsIgnoreCase("property")) {
+                    Element propertyElement = (Element) node;
+                    String comp = propertyElement.getAttribute("component");
+                    if (getNode(root, comp)==null){
+                        nodesToRemove.add(propertyElement);
+                    }
+                }
+                if (node.getNodeName().equalsIgnoreCase("subgroup")) {
+                    Element subgroupElement = (Element) node;
+                    NodeList propertyNodes = subgroupElement.getElementsByTagName("property");
+                    for (int kindex = 0; kindex < propertyNodes.getLength(); kindex++) {
+                        Element propertyElement = (Element) propertyNodes.item(kindex);
+                        String comp = propertyElement.getAttribute("component");
+                        if (getNode(root, comp)==null){
+                            nodesToRemove.add(propertyElement);
+                        }
+                    }
+                }
+            }
+        }
+        for (Node p : nodesToRemove)
+            p.getParentNode().removeChild(p);
+        return;
+    }
+    
     @SuppressWarnings("unchecked")
     public static Set<String> GetRelevantComponentsList(Hashtable<String, HashSet<String>> dependencyGraph, Set<String> EffWritingComponentsList) {
         HashSet<String> compList = new HashSet();

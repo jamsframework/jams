@@ -36,6 +36,8 @@ import jams.workspace.datatypes.LongValue;
 import jams.workspace.datatypes.ObjectValue;
 import jams.workspace.datatypes.StringValue;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
@@ -299,30 +301,17 @@ public class JdbcSQL implements DataReader {
         return numberOfColumns;
     }
 
-    public void setState(DataReaderState state) {
-    }
-
-    public DataReaderState getState() {
-        return null;
-    }
-
-    public void getState(java.io.ObjectOutputStream stream) throws IOException {
-        stream.writeBoolean(isClosed);
-        stream.writeInt(this.offset);
-    }
-
-    public void setState(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        isClosed = stream.readBoolean();
-        int oldOffset = stream.readInt();
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
         if (isClosed) {
             this.cleanup();
             return;
         }
         query();
-        try {
-            Thread.sleep(1000);
-        } catch (Exception e) {
-        }
-        this.skip(oldOffset);
+        this.skip(this.offset);
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException{
+        out.defaultWriteObject();
     }
 }

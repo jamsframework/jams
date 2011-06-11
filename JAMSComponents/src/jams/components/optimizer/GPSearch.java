@@ -91,7 +91,7 @@ public class GPSearch extends SOOptimizer {
             return;
     }
                               
-    double TransformAndEvaluate(double []in){
+    double TransformAndEvaluate(double []in) throws SampleLimitException, ObjectiveAchievedException{
         double value[] = new double[in.length];
         for (int i=0;i<in.length;i++){
             value[i] = in[i]*(this.upBound[i]-this.lowBound[i]) + this.lowBound[i];
@@ -399,7 +399,13 @@ public class GPSearch extends SOOptimizer {
                 nextSample[j] = (nextSample[j] - lowBound[j])/(upBound[j]-lowBound[j]);
             }
             samplePoint.add(nextSample);
-            double value = this.TransformAndEvaluate(nextSample);
+            double value=0;
+            try{
+                value = this.TransformAndEvaluate(nextSample);
+            }catch(Exception e){
+                System.out.println(e);
+                return;
+            }
             if (value < minValue){
                 minValue = value;
                 minPosition = nextSample;
@@ -454,14 +460,14 @@ public class GPSearch extends SOOptimizer {
     }
     
     @Override
-    public void run() { 
+    protected void procedure() throws SampleLimitException, ObjectiveAchievedException{
         if (!enable.getValue()){
             singleRun();
             return;
         }
         initalPhase();
         
-        while(iterationCounter < this.maxn.getValue()){                               
+        while(true){
             GaussianLearner GP = CreateGPModel(samplePoint,sampleValue);
                     
             if (writeGPData != null && writeGPData.getValue() == true){
@@ -492,8 +498,8 @@ public class GPSearch extends SOOptimizer {
                 }
                                                 
                 samplePoint.add(nextSample);
-                double value = TransformAndEvaluate(nextSample);
-                
+                double value= TransformAndEvaluate(nextSample);
+                                
                 if (value < minValue){
                     minValue = value;
                     minPosition = nextSample;                    
@@ -507,10 +513,7 @@ public class GPSearch extends SOOptimizer {
                 }
                 System.out.println(JAMS.i18n("value") + ":" + value);
             }                        
-            System.out.println(JAMS.i18n("Evaluations") + ":" + this.currentSampleCount + "\n" + JAMS.i18n("Minimum") + ":" + minValue);
-            if (currentSampleCount > this.maxn.getValue())
-                return;
-            iterationCounter++;
+            System.out.println(JAMS.i18n("Evaluations") + ":" + this.iterationCounter.getValue() + "\n" + JAMS.i18n("Minimum") + ":" + minValue);
         }
     }                     
 }

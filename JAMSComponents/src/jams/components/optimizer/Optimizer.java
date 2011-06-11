@@ -25,8 +25,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 
 /**
@@ -84,6 +84,13 @@ public abstract class Optimizer extends JAMSContext {
             public JAMSString sampleDumpFile;
 
     @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.WRITE,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "current iteration"
+            )
+            public JAMSInteger iterationCounter;
+
+    @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "file for saving sample data",
@@ -91,7 +98,7 @@ public abstract class Optimizer extends JAMSContext {
             )
             public JAMSBoolean debugMode;
            
-    Set<Sample> sampleList = new HashSet<Sample>();
+    protected List<Sample> sampleList = new ArrayList<Sample>();
 
     public class SampleLimitException extends Exception{
         String msg;
@@ -103,6 +110,22 @@ public abstract class Optimizer extends JAMSContext {
             return msg;
         }
     }
+  
+    public class ObjectiveAchievedException extends Exception{
+        String msg;
+        ObjectiveAchievedException(double value[], double target[]){
+            this.msg = "Objectives " + Arrays.toString(target) + " is achieved with value " + Arrays.toString(value);
+        }
+        ObjectiveAchievedException(double value, double target){
+            this.msg = "Objective " + target + " is achieved with value " + value;
+        }
+        @Override
+        public String toString(){
+            return msg;
+        }
+    }
+
+
 
     //class for representing samples
     public class Sample implements Serializable {
@@ -179,11 +202,9 @@ public abstract class Optimizer extends JAMSContext {
     protected String dirName;
     //number of parameters!!
     public int n;
-    //number of drawn samples
-    protected int currentSampleCount;
+    //number of drawn samples    
     static protected Random generator;
-
-    protected int iterationCounter = 0;
+    
     protected double x0[] = null;
 
     BufferedWriter sampleWriter;
@@ -217,8 +238,7 @@ public abstract class Optimizer extends JAMSContext {
             generator = new Random(System.nanoTime());
         else
             generator = new Random(0);
-
-        currentSampleCount = 0;
+        
         if (this.parameterIDs == null)
             stop(JAMS.i18n("parameterIDs_not_specified"));
         if (this.boundaries == null)
@@ -288,6 +308,8 @@ public abstract class Optimizer extends JAMSContext {
                 this.sampleWriter = null;
             }
         }
+        this.sampleList.clear();
+        iterationCounter.setValue(0);
     }
 
     @Override
@@ -311,7 +333,7 @@ public abstract class Optimizer extends JAMSContext {
     }
     
     String buildMark(){
-        return Integer.toString(currentSampleCount) + "\t";
+        return Integer.toString(iterationCounter.getValue()) + "\t";
     }
 
     @Override
@@ -379,7 +401,20 @@ public abstract class Optimizer extends JAMSContext {
             }
         }
     }
-            
+
+    @Override
+    public void run(){
+        try{
+            procedure();
+        }catch(SampleLimitException e1){
+            System.out.println(e1);
+        }catch(ObjectiveAchievedException e2){
+            System.out.println(e2);
+        }
+    }
+
+    protected abstract void procedure() throws SampleLimitException, ObjectiveAchievedException;
+
     protected void singleRun() {
         if (!doRun)
             return;
@@ -436,6 +471,8 @@ public abstract class Optimizer extends JAMSContext {
             return;
         if (this.sampleWriter!=null)
             try{
+                for (Sample s : this.sampleList)
+                    sampleWriter.write(s + "\n");
                 this.sampleWriter.close();
             }catch(IOException e){
                 sayThis(e.toString());

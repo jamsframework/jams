@@ -14,6 +14,7 @@ import jams.data.*;
 import jams.model.JAMSVarDescription;
 import jams.JAMS;
 import jams.components.optimizer.Optimizer.Sample;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -29,21 +30,21 @@ public abstract class MOOptimizer extends Optimizer {
             update = JAMSVarDescription.UpdateType.RUN,
             description = "best paramter values found so far"
             )
-            public JAMSDouble[] bestParameterSets;
+            public Attribute.EntityCollection bestParameterSets;
                    
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.INIT,
             description = "objective function name"
             )
-            public JAMSString effMethodName;
+            public Attribute.String effMethodName;
             
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "the prediction series"
             )
-            public JAMSDouble[] effValue;
+            public Attribute.Double[] effValue;
         
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
@@ -51,7 +52,23 @@ public abstract class MOOptimizer extends Optimizer {
             description = "optimization mode, 1 - minimization, 2 - maximization, 3 - max |f(x)|, 4 - min |f(x)|",
             defaultValue = "1"
             )
-            public JAMSString mode;              
+            public Attribute.String mode;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "known optimal value",
+            defaultValue = "0;0"
+            )
+            public Attribute.Double[] target;
+
+    @JAMSVarDescription(
+    access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "stopping criterion if target is met",
+            defaultValue = "-1"
+            )
+            public Attribute.Double epsilonToTarget;
     /*************************
      * first some very useful nested classes     
      *************************/ 
@@ -161,10 +178,14 @@ public abstract class MOOptimizer extends Optimizer {
         bestSamples = new HashSet<SampleMO>();
     }
                 
-    public SampleMO getSample(double[]x) throws SampleLimitException{
-        if (this.sampleList.size()>this.maxn.getValue())
-            throw new SampleLimitException("maximum sampe count reached");
-        return new SampleMO(x,funct(x));
+    public SampleMO getSample(double[]x) throws SampleLimitException, ObjectiveAchievedException{
+        if (sampleList.size()>=this.maxn.getValue())
+            throw new SampleLimitException("maximum sample count reached");
+        SampleMO s = new SampleMO(x,funct(x));
+        this.bestSamples.add(s);
+        this.bestSamples = this.getParetoOptimalSet(this.bestSamples);
+
+        return s;
     }
                   
     public Set<SampleMO> getParetoOptimalSet(Set<SampleMO> set){        
@@ -190,7 +211,7 @@ public abstract class MOOptimizer extends Optimizer {
         return result;
     }
     
-    public double[] funct(double x[]) {     
+    public double[] funct(double x[]) throws ObjectiveAchievedException {
         
         double value[] = new double[m];        
         if (GoalFunction == null) {          
@@ -215,29 +236,42 @@ public abstract class MOOptimizer extends Optimizer {
 
             }
         }
-        currentSampleCount++;
+        this.iterationCounter.setValue(this.iterationCounter.getValue()+1);
         for (int i=0;i<m;i++)
             value[i] = this.transformByMode(value[i], iMode[i]);
-        
-        this.bestSamples.add(new SampleMO(x,value));
-        this.bestSamples = this.getParetoOptimalSet(this.bestSamples);
-
-        //this writes one of the best sample .. what to do with all of them???!
-        Iterator<SampleMO> iter = this.bestSamples.iterator();
-        //String sampleSet[] = new String[bestSamples.size()];
+                        
+        Iterator<SampleMO> iter = this.bestSamples.iterator();        
         for (int i=0;iter.hasNext();i++){
-            //sampleSet[i]=iter.next().toString();
             SampleMO s = iter.next();
-            int c=0;
-            /*for (int j=0;j<s.getParameter().length;j++)
-                this.bestParameterSets[c++].setValue(s.getParameter()[j]);
-            for (int j=0;j<s.fx.length;j++)
-                this.bestParameterSets[c++].setValue(s.fx[j]);*/
+            
+            ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
+            Attribute.Entity entity = JAMSDataFactory.createEntity();
+            entity.setId(i);
+            for (int j=0;j<n;j++){
+                entity.setDouble("x_"+(j+1), s.getParameter()[j]);
+            }
+            for (int j=0;j<m;j++){
+                entity.setDouble("y_"+(j+1), s.getFX()[j]);
+            }
+            list.add(entity);
+
+            this.bestParameterSets.setEntities(list);
         }
-
-        //this.bestParameterSets.setValue(array);
         
-
+        if (target!=null && this.target.length == effValue.length){
+            boolean objectiveAchieved = true;
+            for (int i=0;i<this.effValue.length;i++){
+                if (Math.abs(effValue[i].getValue() - target[i].getValue())>=this.epsilonToTarget.getValue())
+                    objectiveAchieved = false;
+            }
+            if (objectiveAchieved) {
+                double targets[] = new double[target.length];
+                for (int i = 0; i < targets.length; i++) {
+                    targets[i] = target[i].getValue();
+                }
+                throw new ObjectiveAchievedException(value, targets);
+            }
+        }
         return value;
     }
 }

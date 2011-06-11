@@ -58,6 +58,7 @@ import javax.swing.KeyStroke;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.net.URI;
+import java.util.Properties;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -95,14 +96,14 @@ public class JAMSFrame extends JAMSLauncher {
         super(parent, properties);
     }
 
-    public JAMSFrame(Frame parent, SystemProperties properties, String modelFilename, String cmdLineArgs) {
+    public JAMSFrame(Frame parent, SystemProperties properties, String modelFilename, String cmdLineArgs, Properties jmpParameters) {
         //super(properties, modelFilename, cmdLineArgs);
         this(parent, properties);
-        loadModelDefinition(modelFilename, StringTools.toArray(cmdLineArgs, ";"));
+        loadModelDefinition(modelFilename, StringTools.toArray(cmdLineArgs, ";"), jmpParameters);
         loadPath = new File(modelFilename);
     }
 
-    protected void loadModelDefinition(String fileName, String[] args) {
+    protected void loadModelDefinition(String fileName, String[] args, Properties jmpParameters) {
 
         // first close any already opened models
         if (!closeModel()) {
@@ -138,6 +139,11 @@ public class JAMSFrame extends JAMSLauncher {
 
             // finally, create the model document from the string
             this.modelDocument = XMLTools.getDocumentFromString(xmlString);
+
+            if (jmpParameters!=null){
+                modelDocument = ParameterProcessor.loadParams(modelDocument, jmpParameters);
+            }
+
             this.initialModelDocString = XMLTools.getStringFromDocument(this.modelDocument);
 
         } catch (IOException ioe) {
@@ -263,7 +269,7 @@ public class JAMSFrame extends JAMSLauncher {
                 }
                 if (jfcModel.showOpenDialog(JAMSFrame.this) == JFileChooser.APPROVE_OPTION) {
                     state = null;
-                    loadModelDefinition(jfcModel.getSelectedFile().getAbsolutePath(), null);
+                    loadModelDefinition(jfcModel.getSelectedFile().getAbsolutePath(), null, null);
 
                 }
             }

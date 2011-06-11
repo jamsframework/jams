@@ -227,12 +227,24 @@ public class modelAnalyzer {
         this.doc = modelFile;
 
         rt = new StandardRuntime();
-        rt.loadModel(doc, properties);
+        try{
+            rt.loadModel(doc, properties);
+        }catch(Throwable t){
+            if (rt.getDebugLevel() >= 3) {
+                if (rt.getErrorLog().length()>2){
+                    setError("++++Error Log+++++\n" + rt.getErrorLog() + 
+                             "+++++Info Log+++++\n" + rt.getInfoLog());            
+                    return false;
+                }
+            }
+        }
+
         if (rt.getDebugLevel() >= 3) {
             if (rt.getErrorLog().length()>2){
                 setError(rt.getErrorLog());            
-                return false;}
+                return false;
             }
+        }
         root = jamsui.juice.optimizer.wizard.Tools.getModelNode(doc);
         return true;
     }

@@ -29,9 +29,9 @@ import org.w3c.dom.Element;
 import jams.workspace.datatypes.CalendarValue;
 import jams.JAMS;
 import jams.data.Attribute;
-import jams.data.Attribute.Calendar;
 import jams.data.JAMSDataFactory;
 import jams.io.BufferedFileReader;
+import jams.io.SerializableBufferedReader;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.LongValue;
 import jams.workspace.datatypes.ObjectValue;
@@ -41,6 +41,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -57,7 +58,7 @@ public class TSDataStore extends TableDataStore {
     protected int timeUnit, timeUnitCount;
     protected String timeFormat;
     File file = null;
-    transient private BufferedFileReader dumpFileReader;
+    private SerializableBufferedReader dumpFileReader;
     private static final int DOUBLE = 0;
     private static final int LONG = 1;
     private static final int STRING = 2;
@@ -180,7 +181,8 @@ public class TSDataStore extends TableDataStore {
             }
 
             //this.dumpFileReader = new BufferedReader(new FileReader(file));
-            this.dumpFileReader = new BufferedFileReader(new FileInputStream(file));
+            //this is a dummy implementation ... still to do
+            this.dumpFileReader = new SerializableBufferedReader(new FileInputStream(file));
 
             this.dsd = getDSDFromDumpFile();
 
@@ -405,8 +407,7 @@ public class TSDataStore extends TableDataStore {
                 ws.getRuntime().sendErrorMsg("Premature end of dump file for datastore" + id);
                 return null;
             }
-        }
-
+        }      
         return result;
     }
 
@@ -428,94 +429,6 @@ public class TSDataStore extends TableDataStore {
 
     public String getTimeFormat() {
         return timeFormat;
-    }
-
-    static public class TSDataStoreState extends TableDataStoreState {
-
-        protected CalendarValue calendar;
-        protected Calendar currentDate;
-        protected Calendar startDate;
-        protected Calendar endDate;
-        protected Calendar stopDate;
-        protected int[] type;
-        protected String timeFormat;
-        protected int timeUnit;
-        protected int timeUnitCount;
-        protected String fileName;
-        protected long position;
-
-        TSDataStoreState() {
-        }
-
-        public void fill(TSDataStoreState state) {
-            super.fill(state);
-            state.calendar = this.calendar;
-            state.currentDate = this.currentDate;
-            state.startDate = this.startDate;
-            state.endDate = this.endDate;
-            state.stopDate = this.stopDate;
-            state.type = this.type;
-            state.timeFormat = this.timeFormat;
-            state.timeUnit = this.timeUnit;
-            state.timeUnitCount = this.timeUnitCount;
-            state.fileName = this.fileName;
-            state.position = this.position;
-        }
-
-        TSDataStoreState(TableDataStoreState state) {
-            state.fill(this);
-        }
-    }
-
-    @Override
-    public DataStoreState getState() {
-        TSDataStoreState state = new TSDataStoreState((TableDataStoreState) super.getState());
-        state.calendar = this.calendar;
-        state.currentDate = this.currentDate;
-        state.startDate = this.startDate;
-        state.endDate = this.endDate;
-        state.stopDate = this.stopDate;
-        state.type = this.type;
-        state.timeFormat = this.timeFormat;
-        state.timeUnit = this.timeUnit;
-        state.timeUnitCount = this.timeUnitCount;
-        if (file != null) {
-            state.fileName = file.getAbsolutePath();
-            state.position = dumpFileReader.getPosition();
-        }
-        return state;
-    }
-
-    @Override
-    public void setState(DataStoreState state) throws IOException {
-        TSDataStoreState tsDataStore = (TSDataStoreState) state;
-        super.setState(tsDataStore);
-
-        calendar = tsDataStore.calendar;
-        currentDate = tsDataStore.currentDate;
-        startDate = tsDataStore.startDate;
-        endDate = tsDataStore.endDate;
-        stopDate = tsDataStore.stopDate;
-        type = tsDataStore.type;
-        timeFormat = tsDataStore.timeFormat;
-        timeUnit = tsDataStore.timeUnit;
-        timeUnitCount = tsDataStore.timeUnitCount;
-
-        String fileName = (String) tsDataStore.fileName;
-        //deserialize reader
-        if (this.dumpFileReader != null) {
-            try {
-                this.dumpFileReader.close();
-                dumpFileReader = null;
-            } catch (Exception e) {
-            }
-        }
-
-        if (fileName != null) {
-            file = new File(fileName);
-            this.dumpFileReader = new BufferedFileReader(new FileInputStream(file));
-            this.dumpFileReader.setPosition(tsDataStore.position);
-        }
     }
 
     public Set<DataReader> getDataIOs() {
