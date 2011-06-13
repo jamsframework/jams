@@ -46,9 +46,13 @@ public interface Workspace extends Serializable {
     String DUMP_MARKER = "#JAMSdatadump";
 
     /**
-     * Comment string used to mark dump files of input datastores
+     * file extension for dump files of input datastores
      */
     String OUTPUT_FILE_ENDING = ".dat";
+    
+    /**
+     * extension for data collection output files
+     */    
     String DATACOLLECTION_FILE_ENDING = ".cdat";
 
     /**

@@ -38,10 +38,10 @@ import jams.workspace.stores.Filter;
 @JAMSComponentDescription(title = "Temporal context",
 author = "Sven Kralisch",
 date = "2005-07-31",
+version = "1.0_0",
 description = "This component represents a JAMS context which can be used to "
 + "represent iteration over discrete time steps typically used in conceptional"
-+ "environmental models",
-version = "1.0_0")
++ "environmental models")
 public class JAMSTemporalContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,

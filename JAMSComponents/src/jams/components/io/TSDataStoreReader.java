@@ -32,7 +32,6 @@ import jams.workspace.DefaultDataSet;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  *
@@ -40,6 +39,8 @@ import java.util.Arrays;
  */
 @JAMSComponentDescription(title = "TSDataStoreReader",
 author = "Sven Kralisch",
+date = "2008-10-16",
+version = "1.0_0",
 description = "This component can be used obtain data from a time series " +
 "data store which contains only double values.")
 public class TSDataStoreReader extends JAMSComponent {
@@ -49,17 +50,16 @@ public class TSDataStoreReader extends JAMSComponent {
      */
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Datastore ID")
-    public JAMSString id;
+    public Attribute.String id;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "The time interval within which the component shall read " +
     "data from the datastore")
-    public JAMSTimeInterval timeInterval;
+    public Attribute.TimeInterval timeInterval;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Dataset descriptor (equals datastore ID)",
-    defaultValue = "")
-    public JAMSString dataSetName;
+    description = "Descriptive name of the dataset (equals datastore ID)")
+    public Attribute.String dataSetName;
 
     /*
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
@@ -69,32 +69,28 @@ public class TSDataStoreReader extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "Array of double values received from the datastore. Order " +
     "according to datastore")
-    public JAMSDoubleArray dataArray;
+    public Attribute.DoubleArray dataArray;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Array of station elevations",
-    defaultValue = "")
-    public JAMSDoubleArray elevation;
+    description = "Array of station elevations")
+    public Attribute.DoubleArray elevation;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Array of station's x coordinate",
-    defaultValue = "")
-    public JAMSDoubleArray xCoord;
+    description = "Array of station's x coordinate")
+    public Attribute.DoubleArray xCoord;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Array of station's y coordinate",
-    defaultValue = "")
-    public JAMSDoubleArray yCoord;
+    description = "Array of station's y coordinate")
+    public Attribute.DoubleArray yCoord;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Regression coefficients",
-    defaultValue = "")
-    public JAMSDoubleArray regCoeff;
+    description = "Regression coefficients")
+    public Attribute.DoubleArray regCoeff;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Caching configuration: 0 - write cache, 1 - use cache, 2 - caching off",
     defaultValue = "0")
-    public JAMSInteger dataCaching;
+    public Attribute.Integer dataCaching;
 
     private TSDataStore store;
 
@@ -234,7 +230,7 @@ public class TSDataStoreReader extends JAMSComponent {
         for (int i = 1; i < data.length; i++) {
             doubles[i - 1] = data[i].getDouble();
         }
-        //System.out.println(this.getInstanceName() + "-->" + data[0].getCalendar().getTime().toString() + "-->" + Arrays.toString(doubles));
+
         dataArray.setValue(doubles);
         if (dataCaching.getValue() != 1) {
             regCoeff.setValue(Regression.calcLinReg(elevationArray, doubles));

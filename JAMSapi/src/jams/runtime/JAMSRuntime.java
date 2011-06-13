@@ -22,7 +22,6 @@
  */
 package jams.runtime;
 
-import jams.ExceptionHandler;
 import jams.SystemProperties;
 import java.io.Serializable;
 import java.util.*;

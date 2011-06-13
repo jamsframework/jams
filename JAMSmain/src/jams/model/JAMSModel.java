@@ -44,7 +44,8 @@ import java.util.ArrayList;
  */
 @JAMSComponentDescription(title = "JAMS model",
 author = "Sven Kralisch",
-date = "26. September 2005",
+date = "2006-05-31",
+version = "1.0_0",
 description = "This component represents a JAMS model which is a special type of context component")
 public class JAMSModel extends JAMSContext implements Model {
 

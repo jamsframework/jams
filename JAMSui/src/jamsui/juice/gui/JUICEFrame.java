@@ -834,7 +834,7 @@ public class JUICEFrame extends JFrame {
                 mView.getFrame().setVisible(true);
                 mView.getFrame().requestFocus();
                 mView.setTree(new ModelTree(mView, doc));
-                System.out.println(XMLTools.getStringFromDocument(doc));
+//                System.out.println(XMLTools.getStringFromDocument(doc));
                 return mView;
             }
         };

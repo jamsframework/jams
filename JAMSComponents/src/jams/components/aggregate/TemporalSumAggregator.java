@@ -29,36 +29,32 @@ import jams.data.*;
  *
  * @author S. Kralisch
  */
-@JAMSComponentDescription (title = "TemporalSumAggregator",
-                           author = "Sven Kralisch",
-                           description = "Calculates the weighted average of given values in a given time interval")
+@JAMSComponentDescription(title = "TemporalSumAggregator",
+author = "Sven Kralisch",
+date = "2006-07-19",
+version = "1.0_0",
+description = "Component for the weighted aggregation of time-variant data over a time interval")
 public class TemporalSumAggregator extends JAMSComponent {
 
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         description = "Current time")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    description = "Current time")
     public Attribute.Calendar time;
-
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         description = "The value(s) to be summed up")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    description = "The value(s) to be aggregated")
     public Attribute.Double[] value;
-
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         description = "A weight to be used to calculate the weighted average")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    description = "A weight to be used to calculate the weighted aggregate")
     public Attribute.Double weight;
-
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READWRITE,
-                         description = "The resulting weighted average(s) of the given values")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
+    description = "The resulting weighted aggregate(s) of the given values")
     public Attribute.Double[] sum;
-
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         description = "A time interval defining start and end of the weighted temporal aggregation")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    description = "A time interval defining start and end of the weighted temporal aggregation")
     public Attribute.TimeInterval aggregationTimeInterval;
-
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         description = "Calculate the average value? If average is false, the (weighted) sum will be calculated.",
-                         defaultValue = "true")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    description = "Calculate the average value? If average is false, the sum will be calculated.",
+    defaultValue = "true")
     public Attribute.Boolean average;
-
     private long count;
 
     public void init() {

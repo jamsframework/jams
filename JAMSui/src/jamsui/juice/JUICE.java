@@ -47,7 +47,7 @@ import jamsui.cmdline.JAMSCmdLine;
  */
 public class JUICE {
 
-    public static final String APP_TITLE = "JUICE";
+    public static final String APP_TITLE = "JAMS Builder";
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
     public static final int SCREEN_WIDTH = 1200;
     public static final int SCREEN_HEIGHT = 850;

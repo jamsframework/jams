@@ -47,7 +47,8 @@ import java.io.ObjectOutputStream;
 
 @JAMSComponentDescription(title = "JAMS Context",
 author = "Sven Kralisch",
-date = "27. Juni 2005",
+date = "2005-06-22",
+version = "1.0_0",
 description = "This component represents a JAMS "
 + "context which is the top level component of every component hierarchie in JAMS")
 public class JAMSContext extends JAMSComponent implements Context {

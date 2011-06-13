@@ -259,8 +259,11 @@ public class JAMSDataFactory {
             return clazz;
         }
 
-        while (clazz.isArray()) {
-            clazz = clazz.getComponentType();
+        if (clazz.isArray()) {
+            while (clazz.isArray()) {
+                clazz = clazz.getComponentType();
+            }
+            return getBelongingInterface(clazz);
         }
 
         if (classLookup == null) {
