@@ -10,13 +10,11 @@ import jams.gui.WorkerDlg;
 import jams.gui.tools.GUIHelper;
 import jams.tools.XMLTools;
 import java.awt.Frame;
-import jams.JAMS;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import org.w3c.dom.Document;
 
 /**
