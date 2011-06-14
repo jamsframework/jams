@@ -22,9 +22,9 @@
  */
 package jams.remote.client;
 
-import jams.gui.JAMSSplash;
 import jamsui.cmdline.JAMSCmdLine;
 import jamsui.launcher.JAMSui;
+import java.util.Properties;
 
 /**
  *
@@ -42,7 +42,7 @@ public class JAMSRemote extends JAMSui {
     }
 
     @Override
-    protected void startGUI(String modelFileName, String cmdLineParameterValues) {
+    protected void startGUI(String modelFileName, String cmdLineParameterValues, Properties jmpParameters) {
         new JAMSRemoteLauncher(modelFileName, properties, cmdLineParameterValues).setVisible(true);
     }
 

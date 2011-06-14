@@ -115,7 +115,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
     }
 
     public JAMSRemoteLauncher(String modelFilename, SystemProperties properties, String cmdLineArgs) {
-        super(null, properties, modelFilename, cmdLineArgs);
+        super(null, properties, modelFilename, cmdLineArgs, null);
         adapt();
     }
 
@@ -506,7 +506,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
     }
 
     protected void loadModelDefinition(String modelFilename, String[] args) {
-        super.loadModelDefinition(modelFilename, args);
+        super.loadModelDefinition(modelFilename, args, null);
         fillWorkspaceSelector();
     }
 

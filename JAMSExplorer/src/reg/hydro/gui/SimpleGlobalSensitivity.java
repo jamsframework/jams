@@ -5,8 +5,6 @@
 
 package reg.hydro.gui;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import java.util.ArrayList;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
