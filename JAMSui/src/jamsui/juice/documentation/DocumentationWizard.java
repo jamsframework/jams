@@ -80,7 +80,7 @@ public class DocumentationWizard {
 
         this.modelDoc = doc;
 
-        JFileChooser chooser = GUIHelper.getJFileChooser(false);
+        JFileChooser chooser = GUIHelper.getJFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY );
 
         chooser.setDialogTitle("Select developer documentation directory");
