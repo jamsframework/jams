@@ -300,7 +300,8 @@ public class JUICEFrame extends JFrame {
                 ModelView view = getCurrentView();
 
                 DocumentationWizard docuWiz = new DocumentationWizard();
-                docuWiz.createDocumentation(JUICEFrame.this, view.getModelDoc(), JUICE.getJamsProperties());
+
+                docuWiz.createDocumentation(JUICEFrame.this, view.getModelDoc(), JUICE.getJamsProperties(), view.getSavePath());
                 /*DocumentationWizard.(JUICEFrame.this, view.getModelDoc() ,
                         JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);*/
             }
