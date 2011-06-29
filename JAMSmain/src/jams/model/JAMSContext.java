@@ -492,7 +492,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     public void setupDataTracer() {
 
         // get the output stores if existing
-        OutputDataStore[] stores = getModel().getOutputDataStores(this.getInstanceName());
+        OutputDataStore[] stores = getModel().getWorkspace().getOutputDataStores(this.getInstanceName());
 
         this.dataTracers = new DataTracer[stores.length];
         if (stores.length == 0) {
@@ -737,7 +737,7 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     protected void initTracerDataAccess() {
         // get the output stores if existing
-        OutputDataStore[] stores = getModel().getOutputDataStores(this.getInstanceName());
+        OutputDataStore[] stores = getModel().getWorkspace().getOutputDataStores(this.getInstanceName());
 
         // make sure there are accessors for all attributes        
         Attribute.Entity[] entityArray = getEntities().getEntityArray();

@@ -72,6 +72,8 @@ public class ModelLoader {
 
         // create an empty model
         jamsModel = new JAMSModel(rt);
+        
+        // this context refers to itself
         jamsModel.setModel(jamsModel);
     }
 

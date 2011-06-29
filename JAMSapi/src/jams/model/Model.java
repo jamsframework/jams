@@ -24,7 +24,6 @@ package jams.model;
 
 import jams.runtime.JAMSRuntime;
 import jams.workspace.Workspace;
-import jams.workspace.stores.OutputDataStore;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -43,8 +42,6 @@ public interface Model extends Context {
     String getName();
 
     HashMap<Component, ArrayList<Field>> getNullFields();
-
-    OutputDataStore[] getOutputDataStores(String contextName);
 
     JAMSRuntime getRuntime();
 
