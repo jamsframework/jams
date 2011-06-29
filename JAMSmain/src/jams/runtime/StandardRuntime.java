@@ -49,6 +49,11 @@ import jams.data.JAMSData;
 import jams.io.ModelLoader;
 import jams.model.SmallModelState;
 import jams.io.ParameterProcessor;
+import jams.meta.ComponentDescriptor;
+import jams.meta.ModelDescriptor;
+import jams.meta.ModelIO;
+import jams.meta.ModelNode;
+import jams.meta.NodeFactory;
 import jams.model.FullModelState;
 import jams.model.GUIComponent;
 import jams.model.JAMSContext;
@@ -151,8 +156,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         this.println("", JAMS.STANDARD);
         this.println(JAMS.i18n("Loading_Model"), JAMS.STANDARD);
 
-        ModelLoader modelLoader = new ModelLoader(this);
-
         ExceptionHandler exHandler = new ExceptionHandler() {
 
             public void handle(JAMSException ex) {
@@ -164,8 +167,27 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             }
         };
 
+
         try {
-            this.model = modelLoader.loadModel(modelDocument, exHandler);
+
+            // create a ModelIO instance to load the model from XML into a 
+            // ModelDescriptor data structure
+            ModelIO modelIO = new ModelIO(this.getClassLoader(), new NodeFactory() {
+
+                public ModelNode createNode(ComponentDescriptor cd) {
+                    return new ModelNode(cd);
+                }
+            });
+            ModelDescriptor md = modelIO.loadModel(modelDocument, false, exHandler);
+
+            // create a ModelLoader that can take the ModelDescriptor and generate
+            // the final JAMS model
+            ModelLoader modelLoader = new ModelLoader(this);
+            this.model = modelLoader.loadModel(md, exHandler);
+
+            // get the id map which maps class names to id values (used during logging)
+            this.idMap = modelLoader.getIdMap();
+
         } catch (Exception jex) {
             this.handle(jex, false);
         }
@@ -174,8 +196,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         boolean doProfiling = ("1".equals(properties.getProperty(JAMSProperties.PROFILE_IDENTIFIER, "0")) ? true : false);
         this.model.setProfiling(doProfiling);
 
-        // get the id map which maps class names to id values (used during logging)
-        this.idMap = modelLoader.getIdMap();
 
         //this.idMap.put(JAMSWorkspace.class.getName(), 0);
         //this.idMap.put(JAMSModel.class.getName(), 0);
@@ -351,10 +371,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         // prepare the model's workspace
         try {
-            if (model.getWorkspace()==null){
+            if (model.getWorkspace() == null) {
                 this.sendHalt(JAMS.i18n("no_workspace_defined_did_you_save_your_model"));
-            }else
+            } else {
                 model.getWorkspace().init();
+            }
         } catch (InvalidWorkspaceException iwe) {
             this.sendHalt(iwe.getMessage());
             return;
@@ -656,9 +677,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             message += "\n" + StringTools.getStackTraceString(t.getStackTrace());
         }
         sendErrorMsg(message);
-        try{
+        try {
             Thread.sleep(200);
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
         if (!proceed) {

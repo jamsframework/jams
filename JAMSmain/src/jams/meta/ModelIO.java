@@ -116,14 +116,14 @@ public class ModelIO {
         md.setRootNode(rootNode);
 
         //handle the workspace node
-        Node workspaceNode = docRoot.getElementsByTagName("var").item(0);
-        if (workspaceNode != null) {
-            try {
-                setVar(cd, (Element) workspaceNode, md, exHandler);
-            } catch (NullFieldException ex) {
-                exHandler.handle(ex);
-            }
-        }
+//        Node workspaceNode = docRoot.getElementsByTagName("var").item(0);
+//        if (workspaceNode != null) {
+//            try {
+//                setVar(cd, (Element) workspaceNode, md, exHandler);
+//            } catch (NullFieldException ex) {
+//                exHandler.handle(ex);
+//            }
+//        }
 
         //handle all contextcomponent and component nodes
 

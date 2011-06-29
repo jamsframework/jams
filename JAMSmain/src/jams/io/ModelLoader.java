@@ -57,18 +57,10 @@ public class ModelLoader {
     transient private HashMap<Component, ArrayList<Field>> nullFields = new HashMap<Component, ArrayList<Field>>();
     private HashMap<String, Integer> idMap = new HashMap<String, Integer>();
     private int maxID = 0;
-    private ModelIO modelIO;
-    private ModelDescriptor md;
 
     public ModelLoader(JAMSRuntime rt) {
 
         this.loader = rt.getClassLoader();
-        this.modelIO = new ModelIO(this.loader, new NodeFactory() {
-
-            public ModelNode createNode(ComponentDescriptor cd) {
-                return new ModelNode(cd);
-            }
-        });
 
         // create an empty model
         jamsModel = new JAMSModel(rt);
@@ -82,13 +74,11 @@ public class ModelLoader {
      * @param modelDoc The XML document describing the model
      * @return The loaded model
      */
-    public Model loadModel(Document modelDoc, ExceptionHandler exHandler) throws JAMSException {
+    public Model loadModel(ModelDescriptor md, ExceptionHandler exHandler) throws JAMSException {
 
         ModelNode rootNode, node;
 //        Node node;
         Component topComponent;
-
-        this.md = modelIO.loadModel(modelDoc, false, exHandler);
 
         rootNode = md.getRootNode();
 
@@ -108,7 +98,8 @@ public class ModelLoader {
         }
 
         // set the workspace dir
-        jamsModel.setWorkspacePath(modelContext.getComponentFields().get("workspaceDirectory").getValue());
+//        jamsModel.setWorkspacePath(modelContext.getComponentFields().get("workspaceDirectory").getValue());
+        jamsModel.setWorkspacePath(md.getWorkspacePath());
 
         // handle output datastores
         if (jamsModel.getWorkspace() != null) {
