@@ -292,7 +292,7 @@ public class JUICEFrame extends JFrame {
 
             }
         };
-        
+
         GenerateDocumentationGUIAction = new AbstractAction(JAMS.i18n("Generate_Docu")) {
 
             @Override
@@ -303,11 +303,12 @@ public class JUICEFrame extends JFrame {
 
                 docuWiz.createDocumentation(JUICEFrame.this, view.getModelDoc(), JUICE.getJamsProperties(), view.getSavePath());
                 /*DocumentationWizard.(JUICEFrame.this, view.getModelDoc() ,
-                        JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);*/
+                JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);*/
             }
         };
 
         loadModelParamAction = new AbstractAction(JAMS.i18n("Load_Model_Parameter...")) {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfcParams.setSelectedFile(new File(""));
@@ -839,8 +840,17 @@ public class JUICEFrame extends JFrame {
     }
 
     public void loadModel(String path) {
-        this.modelPath = path;
-        this.loadModel();
+        File f = new File(path);
+        if (f.exists()) {
+            try {
+                this.modelPath = f.getCanonicalPath();
+            } catch (IOException ex) {
+                GUIHelper.showErrorDlg(this, ex.toString(), JAMS.i18n("File_Open_Error"));
+            }
+            this.loadModel();
+        } else {
+            GUIHelper.showErrorDlg(this, JAMS.i18n("File_") + path + JAMS.i18n("_does_not_exist"), JAMS.i18n("File_Open_Error"));
+        }
     }
 
     private void loadModel() {
