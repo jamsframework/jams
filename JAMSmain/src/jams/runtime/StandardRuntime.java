@@ -170,8 +170,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         try {
 
-            // create a ModelIO instance to load the model from XML into a 
-            // ModelDescriptor data structure
+            // create a ModelIO instance and load the model from XML into a 
+            // ModelDescriptor object
             ModelIO modelIO = new ModelIO(this.getClassLoader(), new NodeFactory() {
 
                 public ModelNode createNode(ComponentDescriptor cd) {
@@ -180,7 +180,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             });
             ModelDescriptor md = modelIO.loadModel(modelDocument, false, exHandler);
 
-            // create a ModelLoader that can take the ModelDescriptor and generate
+            // create a ModelLoader and pass the ModelDescriptor to generate
             // the final JAMS model
             ModelLoader modelLoader = new ModelLoader(this);
             this.model = modelLoader.loadModel(md, exHandler);
