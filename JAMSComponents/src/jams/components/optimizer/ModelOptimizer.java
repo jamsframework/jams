@@ -551,7 +551,7 @@ public class ModelOptimizer extends JAMSComponent{
         }
         //baue abh^ngigkeitsgraph
         StandardRuntime rt = new StandardRuntime();
-        rt.loadModel(doc,properties );
+        rt.loadModel(doc,properties, null);
         Model model = rt.getModel();
         
         Hashtable<String,HashSet<String>> dependencyGraph = jams.model.metaoptimizer.metaModelOptimizer.getDependencyGraph(doc,model);

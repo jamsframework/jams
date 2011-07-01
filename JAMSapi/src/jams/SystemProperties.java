@@ -56,6 +56,7 @@ public interface SystemProperties {
     String SERVER_PASSWORD_IDENTIFIER = "serverpassword";
     String WORKSPACE_IDENTIFIER = "workspace";
     String PROFILE_IDENTIFIER = "profiling";
+    String USE_DEFAULT_WS_PATH = "defaultworkspace";
 
     /**
      * Adds an observer for some property

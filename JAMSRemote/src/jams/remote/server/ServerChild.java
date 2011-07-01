@@ -241,7 +241,7 @@ public class ServerChild {
         });
         
         
-        runtime.loadModel(modelDoc, properties);
+        runtime.loadModel(modelDoc, properties, null);
         
         if (!info.equals("")) {
             runtime.println(info);

@@ -756,7 +756,7 @@ public class modelModifier {
 
     private void init() throws WizardException{
         rt = new StandardRuntime();
-        rt.loadModel(loadedModel, properties);
+        rt.loadModel(loadedModel, properties, null);
         if (rt.getDebugLevel() >= 3) {
             if (rt.getErrorLog().length()>2){
                 throw new WizardException(rt.getErrorLog());

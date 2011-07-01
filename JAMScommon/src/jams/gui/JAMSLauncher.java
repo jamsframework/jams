@@ -121,8 +121,8 @@ public class JAMSLauncher extends JFrame {
         modelLoading = new Runnable() {
 
             public void run() {
-                if (state!=null){
-                    Model model = state.getModel();                    
+                if (state != null) {
+                    Model model = state.getModel();
                     runtime = model.getRuntime();
                     return;
                 }
@@ -155,17 +155,23 @@ public class JAMSLauncher extends JFrame {
                             }
                         });
 
+                // try to determine the default workspace directory
+                String defaultWorkspacePath = null;
+                if (properties.getProperty(JAMSProperties.USE_DEFAULT_WS_PATH).equals("1") && (loadPath != null)) {
+                    defaultWorkspacePath = loadPath.getParent();
+                }
+
                 // load the model
-                runtime.loadModel(modelDocCopy, getProperties());
+                runtime.loadModel(modelDocCopy, getProperties(), defaultWorkspacePath);
 
                 // if workspace has not been provided, check if the document has been
                 // read from file and try to use parent directory instead
-                if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
-                        && (loadPath != null)) {
-                    String dir = loadPath.getParent();
-                    runtime.getModel().setWorkspacePath(dir);
-                    runtime.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + dir);
-                }
+//                if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
+//                        && (loadPath != null)) {
+//                    String dir = loadPath.getParent();
+//                    runtime.getModel().setWorkspacePath(dir);
+//                    runtime.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + dir);
+//                }
             }
         };
 
@@ -528,10 +534,11 @@ public class JAMSLauncher extends JFrame {
 
             public void run() {
                 try {
-                    if (state==null)
+                    if (state == null) {
                         runtime.runModel();
-                    else
+                    } else {
                         runtime.resume(state.getSmallModelState());
+                    }
                 } catch (Throwable t) {
                     runtime.handle(t);
                 }
@@ -543,7 +550,7 @@ public class JAMSLauncher extends JFrame {
         };
         t.start();
     }
-    
+
     protected SystemProperties getProperties() {
         return properties;
     }

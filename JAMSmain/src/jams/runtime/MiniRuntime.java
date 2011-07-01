@@ -228,7 +228,7 @@ public class MiniRuntime implements JAMSRuntime {
     }
 
     @Override
-    public void loadModel(Document modelDocument, SystemProperties properties) {
+    public void loadModel(Document modelDocument, SystemProperties properties, String defaultWorkspacePath) {
     }
 
     @Override

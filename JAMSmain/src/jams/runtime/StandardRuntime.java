@@ -108,7 +108,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
      * libs to be used and other parameter
      */
     @Override
-    public void loadModel(Document modelDocument, SystemProperties properties) {
+    public void loadModel(Document modelDocument, SystemProperties properties, String defaultWorkspacePath) {
 
         this.modelDocument = modelDocument;
         this.properties = properties;
@@ -163,7 +163,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             }
 
             public void handle(ArrayList<JAMSException> exList) {
-                System.out.println("brrr");
+                for (JAMSException jex : exList) {
+                    StandardRuntime.this.handle(jex, true);
+                }
             }
         };
 
@@ -179,6 +181,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
                 }
             });
             ModelDescriptor md = modelIO.loadModel(modelDocument, false, exHandler);
+            
+            if (StringTools.isEmptyString(md.getWorkspacePath()) && (defaultWorkspacePath != null)) {
+                md.setWorkspacePath(defaultWorkspacePath);
+                this.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + defaultWorkspacePath);
+            }
+            
 
             // create a ModelLoader and pass the ModelDescriptor to generate
             // the final JAMS model

@@ -104,7 +104,7 @@ public interface JAMSRuntime extends Serializable {
 
     public void runModel() throws Exception;
 
-    public void loadModel(Document modelDocument, SystemProperties properties);
+    public void loadModel(Document modelDocument, SystemProperties properties, String defaultWorkspacePath);
 
     public Model getModel();
 

@@ -40,6 +40,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import jams.JAMS;
+import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.tools.JAMSTools;
 import jams.gui.JAMSLauncher;
@@ -127,16 +128,23 @@ public class ModelView {
                     // load the model
                     Document modelDoc = getModelDoc();
                     if (modelDoc != null) {
-                        runtime.loadModel(modelDoc, JUICE.getJamsProperties());
+
+                        // try to determine the default workspace directory
+                        String defaultWorkspacePath = null;
+                        if (JUICE.getJamsProperties().getProperty(JAMSProperties.USE_DEFAULT_WS_PATH).equals("1") && (getSavePath() != null)) {
+                            defaultWorkspacePath = getSavePath().getParent();
+                        }
+
+                        runtime.loadModel(modelDoc, JUICE.getJamsProperties(), defaultWorkspacePath);
 
                         // if workspace has not been provided, check if the document has been
                         // read from file and try to use parent directory instead
-                        if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
-                                && (getSavePath() != null)) {
-                            String dir = getSavePath().getParent();
-                            runtime.getModel().setWorkspacePath(dir);
-                            runtime.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + dir);
-                        }
+//                        if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
+//                                && (getSavePath() != null)) {
+//                            String dir = getSavePath().getParent();
+//                            runtime.getModel().setWorkspacePath(dir);
+//                            runtime.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + dir);
+//                        }
 
                     } else {
                         runtime = null;

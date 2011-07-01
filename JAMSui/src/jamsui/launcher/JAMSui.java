@@ -176,16 +176,23 @@ public class JAMSui {
                     }
 
                     runtime = new StandardRuntime();
-                    runtime.loadModel(modelDoc, properties);
+                    
+                    // try to determine the default workspace directory
+                    String defaultWorkspacePath = null;
+                    if (properties.getProperty(JAMSProperties.USE_DEFAULT_WS_PATH).equals("1") && !StringTools.isEmptyString(modelFileName)) {
+                        defaultWorkspacePath = new File(modelFileName).getParent();
+                    }
+                    
+                    runtime.loadModel(modelDoc, properties, defaultWorkspacePath);
 
                     // if workspace has not been provided, check if the document has been
                     // read from file and try to use parent directory instead
-                    if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
-                            && !StringTools.isEmptyString(modelFileName)) {
-                        String dir = new File(modelFileName).getParent();
-                        runtime.getModel().setWorkspacePath(dir);
-                        runtime.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + dir);
-                    }
+//                    if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
+//                            && !StringTools.isEmptyString(modelFileName)) {
+//                        String dir = new File(modelFileName).getParent();
+//                        runtime.getModel().setWorkspacePath(dir);
+//                        runtime.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + dir);
+//                    }
 
                     if (!info.equals("")) {
                         runtime.println(info);

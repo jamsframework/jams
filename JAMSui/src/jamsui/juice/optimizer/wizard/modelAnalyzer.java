@@ -228,7 +228,7 @@ public class modelAnalyzer {
 
         rt = new StandardRuntime();
         try{
-            rt.loadModel(doc, properties);
+            rt.loadModel(doc, properties, null);
         }catch(Throwable t){
             if (rt.getDebugLevel() >= 3) {
                 if (rt.getErrorLog().length()>2){
