@@ -380,7 +380,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         // prepare the model's workspace
         try {
             if (model.getWorkspace() == null) {
-                this.sendHalt(JAMS.i18n("no_workspace_defined_did_you_save_your_model"));
+//                this.sendHalt(JAMS.i18n("no_workspace_defined_did_you_save_your_model"));
             } else {
                 model.getWorkspace().init();
             }

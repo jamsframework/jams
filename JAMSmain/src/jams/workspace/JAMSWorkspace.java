@@ -54,6 +54,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -355,15 +356,15 @@ public class JAMSWorkspace implements Workspace {
                 store = new ShapeFileDataStore(this, dsTitle, doc);
             }
         } catch (ClassNotFoundException cnfe) {
-            getRuntime().sendErrorMsg(JAMS.i18n("Error_initializing_datastore_") + dsTitle + JAMS.i18n("!"));
+            getRuntime().sendErrorMsg(MessageFormat.format(JAMS.i18n("Error_initializing_datastore_"), dsTitle));
             getRuntime().handle(cnfe);
             return null;
         } catch (IOException ioe) {
-            getRuntime().sendErrorMsg(JAMS.i18n("Error_initializing_datastore_") + dsTitle + JAMS.i18n("!"));
+            getRuntime().sendErrorMsg(MessageFormat.format(JAMS.i18n("Error_initializing_datastore_"), dsTitle));
             getRuntime().handle(ioe);
             return null;
         } catch (URISyntaxException use) {
-            getRuntime().sendErrorMsg(JAMS.i18n("Error_initializing_datastore_") + dsTitle + JAMS.i18n("!"));
+            getRuntime().sendErrorMsg(MessageFormat.format(JAMS.i18n("Error_initializing_datastore_"), dsTitle));
             getRuntime().handle(use);
             return null;
         }
@@ -563,7 +564,7 @@ public class JAMSWorkspace implements Workspace {
         inputDataStores.clear();
         for (String storeID : registeredInputDataStores.keySet()) {
             inputDataStores.put(storeID, registeredInputDataStores.get(storeID));
-            this.getRuntime().println(JAMS.i18n("Added_input_store_") + storeID + JAMS.i18n("_from_") + "XML", JAMS.VERBOSE);
+            this.getRuntime().println(MessageFormat.format(JAMS.i18n("Added_input_store_"), storeID, "XML"), JAMS.VERBOSE);
         }
 
         //add input datastores from file system
@@ -575,11 +576,11 @@ public class JAMSWorkspace implements Workspace {
                 if (!inputDataStores.containsKey(storeID)) {
                     Document doc = XMLTools.getDocument(child.getAbsolutePath());
                     inputDataStores.put(storeID, doc);
-                    this.getRuntime().println(JAMS.i18n("Added_input_store_") + storeID + JAMS.i18n("_from_") + child.getAbsolutePath() + JAMS.i18n("."), JAMS.VERBOSE);
+                    this.getRuntime().println(MessageFormat.format(JAMS.i18n("Added_input_store_"), storeID, child.getAbsolutePath()), JAMS.VERBOSE);
                 }
 
             } catch (FileNotFoundException fnfe) {
-                this.getRuntime().sendErrorMsg(JAMS.i18n("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.i18n("!"));
+                this.getRuntime().sendErrorMsg(MessageFormat.format(JAMS.i18n("Error_reading_datastore_"), child.getAbsolutePath()));
             }
         }
 
@@ -590,7 +591,7 @@ public class JAMSWorkspace implements Workspace {
             Document doc = registeredOutputDataStores.get(storeID);
             if (isEnabledOutputDS(doc)) {
                 outputDataStores.put(storeID, doc);
-                this.getRuntime().println(JAMS.i18n("Added_output_store_") + storeID + JAMS.i18n("_from_") + "XML", JAMS.VERBOSE);
+                this.getRuntime().println(MessageFormat.format(JAMS.i18n("Added_output_store_"), storeID, "XML"), JAMS.VERBOSE);
             }
         }
 
@@ -605,12 +606,12 @@ public class JAMSWorkspace implements Workspace {
                     Document doc = XMLTools.getDocument(child.getAbsolutePath());
                     if (isEnabledOutputDS(doc)) {
                         outputDataStores.put(storeID, doc);
-                        this.getRuntime().println(JAMS.i18n("Added_output_store_") + storeID + JAMS.i18n("_from_") + child.getAbsolutePath() + JAMS.i18n("."), JAMS.VERBOSE);
+                        this.getRuntime().println(MessageFormat.format(JAMS.i18n("Added_output_store_"), storeID, child.getAbsolutePath()), JAMS.VERBOSE);
                     }
                 }
 
             } catch (FileNotFoundException fnfe) {
-                this.getRuntime().sendErrorMsg(JAMS.i18n("Error_reading_datastore_") + child.getAbsolutePath() + JAMS.i18n("!"));
+                this.getRuntime().sendErrorMsg(MessageFormat.format(JAMS.i18n("Error_reading_datastore_"), child.getAbsolutePath()));
             }
         }
         for (String storeID : outputDataStores.keySet()) {

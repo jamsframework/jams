@@ -491,21 +491,25 @@ public class JAMSContext extends JAMSComponent implements Context {
      */
     public void setupDataTracer() {
 
+        // check if there are output stores for this context
+        if (getModel().getWorkspace() == null) {
+            this.dataTracers = new DataTracer[0];
+            return;
+        }
+        
         // get the output stores if existing
         OutputDataStore[] stores = getModel().getWorkspace().getOutputDataStores(this.getInstanceName());
 
         this.dataTracers = new DataTracer[stores.length];
-        if (stores.length == 0) {
-            // if there is no store create a NullTracer (does nothing) and exit
-            //this.dataTracers = new NullTracer();
-            for (int j = 0; j < this.components.size(); j++) {
-                Component comp = components.get(j);
-                if (comp instanceof Context) {
-                    ((Context) comp).setupDataTracer();
-                }
-            }
-            return;
-        }
+//        if (stores.length == 0) {
+//            for (int j = 0; j < this.components.size(); j++) {
+//                Component comp = components.get(j);
+//                if (comp instanceof Context) {
+//                    ((Context) comp).setupDataTracer();
+//                }
+//            }
+//            return;
+//        }
         int i = 0;
         for (OutputDataStore store : stores) {
             this.dataTracers[i] = createDataTracer(store);
@@ -562,7 +566,7 @@ public class JAMSContext extends JAMSComponent implements Context {
         }
 
         initEntityData();
-        initTracerDataAccess();
+//        initTracerDataAccess();
 
 
         createRunRunnable(getModel().isProfiling());

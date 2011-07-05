@@ -31,6 +31,7 @@ import javax.swing.*;
 import jams.JAMS;
 import jams.JAMSVersion;
 import jams.tools.FileTools;
+import java.util.Properties;
 
 /**
  *
@@ -59,7 +60,7 @@ public class AboutDlg extends JDialog {
         int x = img.getWidth(null);
         int y = img.getHeight(null);
 
-        String gplText = "", contribText = "", versionText = "", contactText = "";
+        String gplText = "", contribText = "", versionText = "", contactText = "", vmText = "";
         try {
             URL textURL = ClassLoader.getSystemResource("resources/text/readme.txt");
             URL contribURL = ClassLoader.getSystemResource("resources/text/contribution.txt");
@@ -71,6 +72,20 @@ public class AboutDlg extends JDialog {
             }
         } catch (IOException ioe) {
         }
+        
+        Properties prop = System.getProperties();
+        vmText = vmText + list("java.version", ":\t\t");
+        vmText = vmText + list("java.vendor", ":\t\t");
+        vmText = vmText + list("java.home", ":\t\t");
+        vmText = vmText + list("java.class.path", ":\t");
+        vmText = vmText + list("java.library.path", ":\t");
+        vmText = vmText + list("os.name", ":\t\t");
+        vmText = vmText + list("os.arch", ":\t\t");
+        vmText = vmText + list("os.version", ":\t\t");
+        vmText = vmText + list("user.name", ":\t\t");
+        vmText = vmText + list("user.home", ":\t\t");
+        vmText = vmText + list("user.dir", ":\t\t");
+        
 
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(Color.white);
@@ -127,10 +142,20 @@ public class AboutDlg extends JDialog {
         contribTextArea.setCaretPosition(0);
         JScrollPane contribScroll = new JScrollPane(contribTextArea);
 
+        /*
+         * vm info text
+         */
+        JTextArea vmTextArea = new JTextArea();
+        vmTextArea.setEditable(false);
+        vmTextArea.setFont(new Font(Font.SANS_SERIF, 0, 10));
+        vmTextArea.setText(vmText);
+        vmTextArea.setCaretPosition(0);
+        JScrollPane vmScroll = new JScrollPane(vmTextArea);
 
         JTabbedPane tabPane = new JTabbedPane();
         tabPane.add(JAMS.i18n("Legal_notice"), gplScroll);
         tabPane.add(JAMS.i18n("Credits"), contribScroll);
+        tabPane.add(JAMS.i18n("VM_INFO"), vmScroll);
         tabPane.setPreferredSize(new Dimension(x + 1, 200));
 
         contentPanel.add(tabPane);
@@ -156,5 +181,9 @@ public class AboutDlg extends JDialog {
 
         Dimension d2 = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(d2.width / 2 - getWidth() / 2, d2.height / 2 - getHeight() / 2);
+    }
+    
+    private String list(String key, String space) {
+        return key + space + System.getProperty(key) + "\n";
     }
 }
