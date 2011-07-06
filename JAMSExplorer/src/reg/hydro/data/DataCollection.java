@@ -43,13 +43,13 @@ public class DataCollection extends DataSet implements Serializable{
         try {
             this.samplerClass = ClassLoader.getSystemClassLoader().loadClass(typeId);
         } catch (ClassNotFoundException cnfe) {
-            this.samplerClass = jams.components.optimizer.Optimizer.class;
+//            this.samplerClass = jams.components.optimizer.Optimizer.class;
         }
     }
 
     public Class getSamplerClass() {
         if (samplerClass == null) {
-            return jams.components.optimizer.Optimizer.class;
+//            return jams.components.optimizer.Optimizer.class;
         }
         return samplerClass;
     }
