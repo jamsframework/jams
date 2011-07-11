@@ -74,7 +74,11 @@ public class DataCollectionPanel extends JPanel{
         DefaultTableModel model = new DefaultTableModel();
         
         for (DataCollection e : ensembleList){
-            String sampleMethod = e.getSamplerClass().getName();
+            Class clazz = e.getSamplerClass();
+            String sampleMethod = "unknown";
+            if (clazz !=null)
+                sampleMethod = e.getSamplerClass().getName();
+            
             String simulations = Integer.toString(e.getSimulationCount());
             String timesteps = "null";
             if (e.getTimeDomain()!=null)
