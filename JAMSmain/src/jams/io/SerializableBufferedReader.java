@@ -40,7 +40,7 @@ public class SerializableBufferedReader implements Serializable {
     transient private RandomAccessFile reader = null;
 
     public SerializableBufferedReader(File s) throws FileNotFoundException {
-        reader = new RandomAccessFile(s,"r");        
+        reader = new RandomAccessFile(s,"r");      
     }
 //todo
     public SerializableBufferedReader(FileInputStream s) throws FileNotFoundException {

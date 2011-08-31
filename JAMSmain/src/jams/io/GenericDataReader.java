@@ -201,7 +201,7 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
     
     public boolean hasNext() {
         update();
-        if (nextString != null)
+        if (nextString != null && !nextString.startsWith("#end"))
             return true;
         else
             return false;

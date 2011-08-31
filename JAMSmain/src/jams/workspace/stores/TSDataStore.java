@@ -65,7 +65,7 @@ public class TSDataStore extends TableDataStore {
     private static final int TIMESTAMP = 3;
     private static final int OBJECT = 4;
     private int[] type;
-
+   
     public TSDataStore(JAMSWorkspace ws) {
         super(ws);
         startDate = JAMSDataFactory.createCalendar();
@@ -107,9 +107,8 @@ public class TSDataStore extends TableDataStore {
         if (bufferSize == 1) {
             bufferSize = 2;
         }
-
-        if (this.accessMode != InputDataStore.CACHE_MODE) {
-
+        //if no cache should be read, access datastore directy
+        if (!readCache()){
             // check validity of the data, e.g. unique start dates
             // a tsdatastore assumes that all columns have synchronous time and
             // start/end at the same time step
@@ -172,28 +171,24 @@ public class TSDataStore extends TableDataStore {
                     }
                 }
             }
-
-        } else {
-
-            file = new File(ws.getLocalDumpDirectory(), id + ".dump");
-            if (!file.exists()) {
-                throw new IOException("Dump file " + file.getPath() + " not found!");
-            }
-
-            //this.dumpFileReader = new BufferedReader(new FileReader(file));
-            //this is a dummy implementation ... still to do
-            this.dumpFileReader = new SerializableBufferedReader(new FileInputStream(file));
-
-            this.dsd = getDSDFromDumpFile();
-
-//            @TODO: Check if this is needed
-//            if (ws.getRuntime().getState() != JAMSRuntime.STATE_RUN) {
-//                return;
-//            }
         }
 
         currentDate.add(timeUnit, -1 * timeUnitCount);
         calendar = new CalendarValue(currentDate);
+        //cache should be written
+        if (writeCache) {
+            TSDumpProcessor asciiConverter = new TSDumpProcessor();
+            File file = new File(ws.getLocalDumpDirectory(), getID() + ".dump");
+            asciiConverter.toASCIIFile((TSDataStore) this, file);
+            ws.getRuntime().sendInfoMsg(JAMS.i18n("Dumped_input_datastore_1") + getID() + JAMS.i18n("Dumped_input_datastore_2") + file + JAMS.i18n("Dumped_input_datastore_3"));
+            writeCache = false;
+        }
+        //override setting if cache should be read
+        if (readCache()){
+            File file = new File(ws.getLocalDumpDirectory(), getID() + ".dump");
+            this.dumpFileReader = new SerializableBufferedReader((file));
+            this.dsd = getDSDFromDumpFile();
+        }
 
         bufferSize = oldBufferSize;
     }
@@ -274,7 +269,7 @@ public class TSDataStore extends TableDataStore {
         }
         return def;
     }
-
+    
     private Object getDataValue(Class clazz, String valueString) {
 
         Object o = null;
@@ -307,7 +302,7 @@ public class TSDataStore extends TableDataStore {
             return false;
         }
 
-        if (this.accessMode != InputDataStore.CACHE_MODE) {
+        if (writeCache || this.accessMode != InputDataStore.CACHE_MODE) {
 
             return super.hasNext();
 
@@ -348,7 +343,7 @@ public class TSDataStore extends TableDataStore {
         currentDate.add(timeUnit, timeUnitCount);
         DefaultDataSet result;
 
-        if (this.accessMode != InputDataStore.CACHE_MODE) {
+        if (!readCache()) {
 
             result = new DefaultDataSet(positionArray.length + 1);
             result.setData(0, calendar);
@@ -367,6 +362,7 @@ public class TSDataStore extends TableDataStore {
             try {
 
                 String str = dumpFileReader.readLine();
+
                 StringTokenizer tok = new StringTokenizer(str, SEPARATOR);
 
                 int length = tok.countTokens();

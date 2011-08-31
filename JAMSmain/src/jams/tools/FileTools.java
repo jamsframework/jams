@@ -179,7 +179,7 @@ public class FileTools {
 
         FileInputStream in = new FileInputStream(fileName);
         result = streamToString(in);
-
+        in.close();
         return result;
     }
 

@@ -86,7 +86,7 @@ public class TableDataStore extends StandardInputDataStore {
             return;
         }
 
-        if (accessMode != InputDataStore.CACHE_MODE) {
+        if (!readCache()) {
             initDataAccess(doc);
         }
     }

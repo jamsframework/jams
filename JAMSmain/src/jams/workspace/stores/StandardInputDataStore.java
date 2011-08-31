@@ -34,6 +34,7 @@ import org.w3c.dom.NodeList;
 import jams.workspace.DataReader;
 import jams.JAMS;
 import jams.tools.StringTools;
+import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -53,6 +54,8 @@ public abstract class StandardInputDataStore implements InputDataStore, Serializ
     protected String id, description = "", missingDataValue = "", displayName="";
 
     protected int accessMode = InputDataStore.LIVE_MODE;
+    protected boolean writeCache = false;
+
 
     public StandardInputDataStore(JAMSWorkspace ws) {
         this.ws = ws;
@@ -85,10 +88,22 @@ public abstract class StandardInputDataStore implements InputDataStore, Serializ
             this.accessMode = Integer.parseInt(accessmodeElement.getAttribute("value"));
         }
 
-        if (this.accessMode != InputDataStore.CACHE_MODE) {
+        if (this.accessMode == InputDataStore.CACHE_MODE) {
+            File file = null;
+            file = new File(ws.getLocalDumpDirectory(), id + ".dump");
+            if (!file.exists()) {
+                writeCache = true;
+                ws.getRuntime().sendInfoMsg("Writing cache file .. " + file.getPath());
+            }
+        }
+        if (readCache()) {
             this.dataIO = createDataIO(doc);
             this.dsd = createDataSetDefinitionFromDocument(doc);
         }
+    }
+
+    protected boolean readCache(){
+        return !writeCache && this.accessMode == InputDataStore.CACHE_MODE;
     }
 
     private DefaultDataSetDefinition createDataSetDefinitionFromDocument(Document doc) {
@@ -142,9 +157,9 @@ public abstract class StandardInputDataStore implements InputDataStore, Serializ
         for (int i = 0; i < columnList.getLength(); i++) {
             Element columnElement = (Element) columnList.item(i);
             DataReader metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
-
-            metadataIO.fetchValues(1);
-            DataSet metadataSet = metadataIO.getData()[0];
+            int source = Integer.parseInt(columnElement.getAttribute("source"));
+                        
+            DataSet metadataSet = metadataIO.getMetadata(source-1);
 
             ArrayList<Object> values = new ArrayList<Object>();
             for (DataValue value : metadataSet.getData()) {
@@ -158,7 +173,7 @@ public abstract class StandardInputDataStore implements InputDataStore, Serializ
             Element columnElement = (Element) columnList.item(i);
             DataReader metadataIO = dataIO.get(columnElement.getAttribute("metadataio"));
 
-            metadataIO.cleanup();
+            //metadataIO.cleanup();
         }
 
         return def;

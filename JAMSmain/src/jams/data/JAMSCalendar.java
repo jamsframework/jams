@@ -22,6 +22,9 @@
  */
 package jams.data;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,12 +36,28 @@ import java.util.*;
  */
 public class JAMSCalendar extends GregorianCalendar implements Attribute.Calendar {
 
-    public final static String DATE_TIME_FORMAT_PATTERN = "yyyy-MM-dd HH:mm";
-    public final static TimeZone STANDARD_TIME_ZONE = new SimpleTimeZone(0, "GMT");
-
+    transient public final static String DATE_TIME_FORMAT_PATTERN = "yyyy-MM-dd HH:mm";
+    transient public final static TimeZone STANDARD_TIME_ZONE = new SimpleTimeZone(0, "GMT");
     private DateFormat dateFormat;
+    private long milliSeconds;
 
-    JAMSCalendar() {
+    {
+        try {
+            BeanInfo info = Introspector.getBeanInfo(JAMSCalendar.class);
+            PropertyDescriptor[] propertyDescriptors =
+                    info.getPropertyDescriptors();
+            for (int i = 0; i < propertyDescriptors.length; ++i) {
+                PropertyDescriptor pd = propertyDescriptors[i];
+                if (!pd.getName().equals("milliSeconds") ) {
+                    pd.setValue("transient", Boolean.TRUE);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public JAMSCalendar() {
         super();
         this.setTimeInMillis(0);
         initTZ();
@@ -54,6 +73,12 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         this.setTimeZone(STANDARD_TIME_ZONE);
         dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT_PATTERN);
         dateFormat.setTimeZone(STANDARD_TIME_ZONE);
+    }
+
+    public void setTimeZone(TimeZone timezone){
+        super.setTimeZone(timezone);
+        dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT_PATTERN);
+        dateFormat.setTimeZone(timezone);
     }
 
     public JAMSCalendar clone() {
@@ -76,7 +101,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
     public Attribute.Calendar getValue() {
         return clone();
     }
-    
+
     /**
      * Compares the date represented by this object with the date represented by 
      * another JAMSCalendar object while considering a given accuracy. Example: 
@@ -204,10 +229,14 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         dateFormat.setTimeZone(this.getTimeZone());
     }
 
+    public void setDateFormat(DateFormat dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+
     public DateFormat getDateFormat() {
         return dateFormat;
     }
-    
+
     @Override
     public boolean after(Attribute.Calendar calendar) {
         return super.after(calendar);
@@ -222,7 +251,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
     public int compareTo(Attribute.Calendar cal) {
         long thisTime = this.getTimeInMillis();
         long calTime = cal.getTimeInMillis();
-	return (thisTime > calTime) ? 1 : (thisTime == calTime) ? 0 : -1;
+        return (thisTime > calTime) ? 1 : (thisTime == calTime) ? 0 : -1;
     }
 
     @Override
@@ -233,5 +262,23 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
     @Override
     public void add(int field, int amount) {
         super.add(field, amount);
+    }
+
+    /**
+     * @return the milliSeconds
+     */
+    public long getMilliSeconds() {
+        milliSeconds = this.getTime().getTime();
+        return milliSeconds;
+    }
+
+    /**
+     * @param milliSeconds the milliSeconds to set
+     */
+    public void setMilliSeconds(long milliSeconds) {
+        this.milliSeconds = milliSeconds;
+        Date d = new Date();
+        d.setTime(milliSeconds);
+        this.setTime(d);
     }
 }

@@ -162,7 +162,7 @@ public class ModelLoader {
     /**
      * Recursively create all components used in the model and add them to the component repository for easy access
      */
-    private Component loadComponent(ModelNode rootNode) throws ModelSpecificationException {
+    public Component loadComponent(ModelNode rootNode) throws ModelSpecificationException {
 
         String componentName, componentClassName, varName, varClassName = "", varValue;
         Component component, childComponent;
