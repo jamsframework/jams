@@ -68,7 +68,9 @@ public class WaterML2Reader implements DataReader {
     private String unit;
     private String parameter="";
 
-    private boolean readMetadata;
+    public ReaderType getReaderType(){
+        return ReaderType.ContentAndMetadataReader;
+    }
 
     private static String htmlResponseToString(HttpResponse response) throws Exception {
         HttpEntity entity = response.getEntity();
@@ -88,10 +90,12 @@ public class WaterML2Reader implements DataReader {
         HttpResponse response = null;
         int retry = 0;
         String result = "";
+        System.out.println("Sending Get Request ... ");
         do {
             response = client.execute(httpget);
             result = htmlResponseToString(response);
             if (retry++ >= 3) {
+                System.out.println("Retried to connect server three times, but was not successful!");
                 return null;
             }
         } while (response.getStatusLine().getStatusCode() > 300);
@@ -172,6 +176,22 @@ public class WaterML2Reader implements DataReader {
         return this.data[iterator++];
     }
 
+    public DefaultDataSet getMetadata(int index) {
+        DefaultDataSet data = new DefaultDataSet(7);
+        data.setData(0,new LongValue(this.ID));
+        data.setData(1,new StringValue(this.offering_name));
+        data.setData(2,new DoubleValue(this.x));
+        data.setData(3,new DoubleValue(this.y));
+        data.setData(4,new DoubleValue(this.z));
+        if (this.unit!=null)
+            data.setData(5,new StringValue(this.unit));
+        else
+            data.setData(5,new StringValue("?"));
+        data.setData(6,new StringValue(this.parameter));
+
+        return data;
+    }
+
     private DefaultDataSet getNextDataSet() {
         DefaultDataSet dataSet;
 
@@ -206,37 +226,14 @@ public class WaterML2Reader implements DataReader {
 
         return data.toArray(new DefaultDataSet[data.size()]);
     }
-
-    private DefaultDataSet[] fetchMetadata(){
-        DefaultDataSet[] data = new DefaultDataSet[1];
-        data[0] = new DefaultDataSet(7);
-        data[0].setData(0,new LongValue(this.ID));
-        data[0].setData(1,new StringValue(this.offering_name));
-        data[0].setData(2,new DoubleValue(this.x));
-        data[0].setData(3,new DoubleValue(this.y));
-        data[0].setData(4,new DoubleValue(this.z));
-        if (this.unit!=null)
-            data[0].setData(5,new StringValue(this.unit));
-        else
-            data[0].setData(5,new StringValue("?"));
-        data[0].setData(6,new StringValue(this.parameter));
-
-        return data;
-    }
-
-    public int fetchValues() {
-        if (isReadMetadata())
-            currentData = fetchMetadata();
-        else
+    
+    public int fetchValues() {        
             currentData = convertData(Long.MAX_VALUE);
         return 0;
 
     }
 
-    public int fetchValues(int count) {
-        if (isReadMetadata())
-            currentData = fetchMetadata();
-        else
+    public int fetchValues(int count) {        
             currentData = convertData(count);
         return 0;
     }
@@ -293,19 +290,5 @@ public class WaterML2Reader implements DataReader {
         System.out.println(Common.WML2_TIME_FORMAT.format(data.time.getTime()) + "\t" + data.value + " " + data.unit + "\n");
         }
         }*/
-    }
-
-    /**
-     * @return the readMetadata
-     */
-    public boolean isReadMetadata() {
-        return readMetadata;
-    }
-
-    /**
-     * @param readMetadata the readMetadata to set
-     */
-    public void setReadMetadata(String readMetadata) {
-        this.readMetadata = Boolean.parseBoolean(readMetadata);
     }
 }

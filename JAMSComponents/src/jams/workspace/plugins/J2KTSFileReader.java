@@ -47,7 +47,6 @@ import java.io.ObjectOutputStream;
         if (file.exists()) {
             try {                
                 this.reader = new BufferedFileReader(new FileInputStream(file));
-                readMetaData();
                 result = 0;
             } catch (IOException ioe) {
                 System.err.println("J2KTSFileReader: " + ioe);
@@ -58,9 +57,10 @@ import java.io.ObjectOutputStream;
         }
         return result;
     }
-    
-    private void readMetaData() {
-        
+
+
+    public ReaderType getReaderType(){
+        return ReaderType.Empty;
     }
 
     @Override
@@ -75,6 +75,10 @@ import java.io.ObjectOutputStream;
             }
         }
         return result;
+    }
+
+     public DefaultDataSet getMetadata(int index){
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
