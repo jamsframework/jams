@@ -38,7 +38,7 @@ public class ConcurrencyTest {
             tasks[i] = new RunnableComponent(new TestComponent(i));
         }
 
-        TaskExecutor executor = new TaskExecutor(2, tasks);
+        TaskExecutor executor = new TaskExecutor(4, tasks);
         long t = System.currentTimeMillis();
         executor.start();
         System.out.println("\nRuntime: " + (System.currentTimeMillis() - t));

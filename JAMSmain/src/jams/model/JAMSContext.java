@@ -496,7 +496,7 @@ public class JAMSContext extends JAMSComponent implements Context {
             this.dataTracers = new DataTracer[0];
             return;
         }
-        
+
         // get the output stores if existing
         OutputDataStore[] stores = getModel().getWorkspace().getOutputDataStores(this.getInstanceName());
 

@@ -52,6 +52,12 @@ public class ConcurrentContext extends JAMSContext {
     private Future[] futures;
 //    private ArrayList<Callable<Object>> runnableList;
 
+    public static void main(String[] args) {
+        float f = 100/3;
+        int number = Float.floatToRawIntBits(f);        
+        System.out.println(number + " - " + Float.intBitsToFloat(number));
+    }
+    
     /*
      *  Component run stages
      */
