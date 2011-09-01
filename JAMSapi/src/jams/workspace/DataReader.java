@@ -22,7 +22,6 @@
  */
 package jams.workspace;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -30,7 +29,9 @@ import java.io.Serializable;
  * @author Sven Kralisch
  */
 public interface DataReader extends Serializable{
-    
+
+    enum ReaderType{ContentReader, MetadataReader, ContentAndMetadataReader, Empty};
+
     public int init();
 
     public int cleanup();
@@ -40,6 +41,9 @@ public interface DataReader extends Serializable{
     public int fetchValues(int count);
     
     public DataSet[] getData();
+    public DataSet   getMetadata(int row);
+
+    public ReaderType getReaderType();
 
     public int numberOfColumns();            
 }

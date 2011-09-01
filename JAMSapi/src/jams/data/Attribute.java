@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 /**
  *
@@ -160,6 +161,8 @@ public interface Attribute extends Serializable{
         public void setDateFormat(java.lang.String formatString);
 
         public DateFormat getDateFormat();
+
+        public void setTimeZone(TimeZone t);
 
         public boolean after(Attribute.Calendar calendar);
 
