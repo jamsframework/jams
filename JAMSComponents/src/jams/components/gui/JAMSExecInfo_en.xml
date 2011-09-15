@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>JAMSExecInfo</title>
+  <subtitle>component for displaying simulation progress and info output</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>gui.info</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>counter</entry>
+          <entry>Number of invocations of this component</entry>
+        </row>        
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>This component creates a GUI panel showing a progress bar and a window containing the
+      information log output. This component is meant to be used within a temporal or spatial
+      context, showing the progress of the context's iteration. The number of iterations can be
+      provided via the <emphasis role="italic">counter</emphasis> attribute. If this stays empty,
+      the surrounding context's iteration count is used instead.</para>
+  </sect2>
+</sect1>
