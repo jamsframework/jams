@@ -3,12 +3,17 @@ package jamsui.juice.documentation;
 
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -16,9 +21,9 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Vector;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 import javax.swing.JOptionPane;
 
 
@@ -45,26 +50,14 @@ public class Doku{
         return fileName;
     }
 
-    static public void createDoc(String inJar, Class<?> superClass, HashMap<String, String> contentList, Vector<String> componentsList) throws Exception {
+    static public void createDoc(String directory,String inJar, Class<?> superClass, HashMap<String, String> contentList, Vector<String> componentsList) throws Exception {
         JarFile jfile = new JarFile(inJar);
         File file = new File(inJar);
         URLClassLoader loader = new URLClassLoader(new URL[]{file.toURL()}, ClassLoader.getSystemClassLoader());
 
         Enumeration jarentries = jfile.entries();
 
-        /*String compTemplate =   "<big>'''[[%package%]]'''</big><br />\n" +
-        "==%class%==\n" +
-        ":jar: [[%jarFile%]]\n"+
-        "===Component description===\n"+
-        ":Title: %title%\n"+
-        ":Author: %author%\n"+
-        ":Date: %date%\n"+
-        ":Description: %description%\n"+
-        "\n"+
-        "===Interface description===\n"+
-        "%componentvars%\n"+
-        "<span style=\"color:white\">%IDCODE%</span>\n"; //readContent(ClassLoader.getSystemResourceAsStream("resources/templates/comptemplate.txt"))";
-         */
+       
         String compTemplate = "<informaltable>" +
                 "<tgroup cols=\"3\">\n" +
                 "<colspec colname=\"c1\" colnum=\"1\" colwidth=\"1.0*\"/>\n" +
@@ -145,18 +138,10 @@ public class Doku{
                 "<entry>%access%</entry>\n" +
                 "<entry>%defaultValue%</entry>\n" +
                 "</row>";
-        /*"====%name%====\n" +
-        ":Type: %type%\n"  +
-        ":Access: %access%\n" +
-        ":Description: %description%\n" + 
-        ":Unit: %unit%\n"; */// readContent(ClassLoader.getSystemResourceAsStream("resources/templates/vartemplate.txt"));
+        
         String packageTemplate = ":[[%name%]] <br />\n";//readContent(ClassLoader.getSystemResourceAsStream("resources/templates/packagetemplate.txt"));
         String packageListTemplate = "";
-        /*"jar: [[%jarFile%]]<span style=\"color:white\">#</span>\n" +
-        "===Components===\n" +
-        "%complist%\n" +
-        "<span style=\"color:white\">%IDCODE%</span>\n"; //readContent(ClassLoader.getSystemResourceAsStream("resources/templates/pkglisttemplate.txt"));
-         */
+      
         HashMap<Class, String> componentDescriptions = new HashMap<Class, String>();
         ArrayList<Class> components = new ArrayList<Class>();
 
@@ -165,16 +150,52 @@ public class Doku{
 
         while (jarentries.hasMoreElements()) {
             String entry = jarentries.nextElement().toString();
-            if (!entry.endsWith(".class")) {
+//            Object entry1=jarentries.nextElement(); //neu
+               if (entry.endsWith(".xml"))
+            {
+                    System.out.println("XML");
+                    
+                    ZipEntry zipentry=jfile.getEntry(entry);
+                    File efile = new File(zipentry.getName());
+                    String filename=zipentry.getName();
+                    filename=filename.replaceAll("/", ".");
+
+                    jfile.getInputStream(zipentry);
+                    InputStream in = new BufferedInputStream( jfile.getInputStream(zipentry));
+                    OutputStream out = new BufferedOutputStream(new FileOutputStream(directory+filename));
+                     byte[] buffer = new byte[4096];
+                    for (;;)  {
+                        int nBytes = in.read(buffer);
+                        if (nBytes <= 0) break;
+                        out.write(buffer, 0, nBytes);
+                    }
+  
+      /*               while (in.available() > 0)
+                     {  // write contents of 'in' to 'out'
+		        out.write(in.read());
+	             }
+*/
+                    out.flush();
+                    out.close();
+                    in.close();
+
+
+            }
+
+            if (!entry.endsWith(".class") && !entry.endsWith(".xml") ) {
                 continue;
             }
+            if (entry.endsWith(".class"))
+            {
             String classString = entry.substring(0, entry.length() - 6);
             classString = classString.replace("/", ".");
             Class<?> clazz = null;
             try {
                 clazz = loader.loadClass(classString);
             } catch (java.lang.NoClassDefFoundError e) {
-                JOptionPane.showMessageDialog(null, "Class: " + classString + " was not found!, because " + e.toString());
+               // JOptionPane.showMessageDialog(null, "Class: " + classString + " was not found!, because " + e.toString());
+                System.out.println(e);
+                e.printStackTrace();
                 continue;
             }
             if (clazz == null) {
@@ -188,9 +209,20 @@ public class Doku{
                 //compDesc = compDesc.replace("%IDCODE%", idCode);
                 JAMSComponentDescription jcd = (JAMSComponentDescription) clazz.getAnnotation(JAMSComponentDescription.class);
 
+              /*  String author="";
+               if (!jcd.author().isEmpty())
+               {
+                    author=jcd.author();
+               }
+              
+               if (jcd.author().contains("&"))
+               {
+               author=jcd.author().replace("&", "and");
+               }
+ */
                 if (jcd != null) {
                     compDesc = compDesc.replace("%title%", jcd.title());
-                    compDesc = compDesc.replace("%author%", jcd.author());
+                    compDesc = compDesc.replace("%author%", jcd.author().replace("&", "and"));
                     compDesc = compDesc.replace("%date%", jcd.date());
                     compDesc = compDesc.replace("%description%", jcd.description());
                     compDesc = compDesc.replace("%version%", jcd.version());
@@ -213,7 +245,9 @@ public class Doku{
                     try {
                         field = clazz.getFields();
                     } catch (java.lang.NoClassDefFoundError e) {
-                        JOptionPane.showMessageDialog(null, "Can't load fields of class:" + clazz.getName() + " ,because:" + e.toString());
+                        System.out.println(e);
+                e.printStackTrace();
+                        //JOptionPane.showMessageDialog(null, "Can't load fields of class:" + clazz.getName() + " ,because:" + e.toString());
                         continue;
                     }
                     for (int i = 0; i < field.length; i++) {
@@ -247,6 +281,7 @@ public class Doku{
                     JOptionPane.showMessageDialog(null, "Error:" + exc.toString());
                 }
             }
+        }
         }
         String package_list = "";
         String oldPackage = "", newPackage;
@@ -321,7 +356,7 @@ public class Doku{
 
                 try 
                 {
-                    createDoc(model_jar, JAMSComponent.class, test, vector);
+                    createDoc(directory,model_jar, JAMSComponent.class, test, vector);
                    Iterator<String> iter = test.keySet().iterator();
                     while (iter.hasNext()) 
                     {
@@ -371,8 +406,8 @@ public class Doku{
 
     public static void main(String arg[]) 
     {
-     Locale loc = Locale.ENGLISH;
-     Locale.setDefault(loc);   
+  //   Locale loc = Locale.ENGLISH;
+  //   Locale.setDefault(loc);
    
 
      //String directory="C:/Arbeit/TASK/J2000_S_N/";
@@ -384,13 +419,17 @@ public class Doku{
     String model_jar="/model.jar";
     // String model1="C:/Arbeit/Erlbach/j2k_erlbach/j2k_erlbach_rr.jam";
    
-    String umgebung_jar=directory+"/jar/umgebung.jar";
-   // AnnotationUpdate(directory,model_jar);
-    AnnotationUpdate(directory,directory+"/jar/"+model_jar);
+    String umgebung_jar="/umgebung.jar";
+    String umgebung1_jar="/umgebung1.jar";
+    //AnnotationUpdate(directory,model_jar);
+   AnnotationUpdate(directory,directory+"/jar"+model_jar);
+    AnnotationUpdate(directory,directory+"/jar"+umgebung_jar);
+     AnnotationUpdate(directory,directory+"/jar"+umgebung1_jar);
     //AnnotationUpdate(directory,"C:/Arbeit/TASK/jar/JavaProject7.jar");
-    //  AnnotationUpdate(directory,"C:/Arbeit/TASK/jar/JamsComponents.jar");
+     // AnnotationUpdate(directory,"C:/Arbeit/TASK/jar/JamsComponents.jar");
     String pathin_vorlage =directory+"/KomponentenVorlage.xml";
-    
+
+
     ArrayList<ArrayList<String[]>> componentParameter = new ArrayList<ArrayList<String[]>>();
     componentParameter = Parameter_XML(directory,model,componentParameter);
     Documentation_Complete(directory,model,pathin_vorlage,componentParameter);
@@ -643,17 +682,27 @@ public class Doku{
         directory = directory + "/";
         String pathout_txt = directory+"Modellkomponenten.txt";
         String pathout_xml = directory+"Modellkomponenten.xml";
-        String pathout_xml_docu_complet = directory+"Dokumentation_komplett.xml";
-        //String pathout_xml_docu_complet = "//rhein/TASK/Dokumentation/Dokumentation_komplett.xml";
-        
-         ArrayList<String> ComponentList = new ArrayList<String>();
-        
+        String pathout_xml_docu_complet = directory+Bundle.resources.getString("Filename");
+        String pathout_biblio = directory+"bibliography_"+Bundle.resources.getString("lang")+".xml";
+
+
+        ArrayList<String> ComponentList = new ArrayList<String>();
+        ArrayList<String> BiblioEntryList = new ArrayList<String>();
         try {
+
+            BufferedWriter bibliography = new BufferedWriter(new FileWriter(pathout_biblio));
             BufferedReader in = new BufferedReader(new FileReader(model));
             BufferedWriter out_txt = new BufferedWriter(new FileWriter(pathout_txt));
             BufferedWriter out_xml = new BufferedWriter(new FileWriter(pathout_xml));
             BufferedWriter out_xml_docu_complet = new BufferedWriter(new FileWriter(pathout_xml_docu_complet));
             String line;
+
+            //Eröffnung des Literaturverzeichnisses
+            bibliography.write("<bibliography xmlns=\"http://docbook.org/ns/docbook\" version=\"5.0\" xml:lang=\""+Bundle.resources.getString("lang")+"\">\n");
+
+
+            //Ende Eröffnung des Literaturverzeichnisses
+
             //StringTokenizer st;
            // int datafound = 0;
             
@@ -819,7 +868,7 @@ public class Doku{
                        {
                            ComponentList.add(line4);
                            //erstelle verbunddokument
-                           Doku_AnnotitionAndManuell(pathin_vorlage,directory+"Component_Annotation."+line4+".xml",directory+line4+"_"+ Bundle.resources.getString("lang")+".xml",directory+line4+"1.xml",directory+line4+".xml",component);
+                           Doku_AnnotitionAndManuell(bibliography,BiblioEntryList,pathin_vorlage,directory+"Component_Annotation."+line4+".xml",directory+line4+"_"+ Bundle.resources.getString("lang")+".xml",directory+line4+"1.xml",directory+line4+".xml",component);
                            out_xml_docu_complet.write("<xi:include href=\""+line4+".xml\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"/>\n");
                            
                            //out_xml_docu_complet.write("<xi:include href=\""+line4+"_de.xml\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"/>\n");
@@ -841,14 +890,19 @@ public class Doku{
             out_txt.close();
             out_xml.close();
             out_xml_docu_complet.close();
+            
+            bibliography.write("</bibliography>\n");
+            bibliography.close();
         } catch (IOException e) {
         }
+
+
         System.out.print("Anzahl der Komponenten: ");System.out.println(ComponentList.size()); 
         for (int i=0;i<ComponentList.size();i++)
         {System.out.println(ComponentList.get(i));}
     }
     
-     public static void Doku_AnnotitionAndManuell(String pathin_vorlage,String pathin_annotation,String pathin_docu,String pathout,String pathout1,ArrayList<ArrayList<String[]>> component) {
+     public static void Doku_AnnotitionAndManuell( BufferedWriter bibliography,ArrayList<String> BiblioEntryList,String pathin_vorlage,String pathin_annotation,String pathin_docu,String pathout,String pathout1,ArrayList<ArrayList<String[]>> component) {
      
          
       //verbindet die automatische Dokumentation aus dem Quellcode mit der manuell erstellten von den Entwicklern und speichert diese in einem enddokument mit dem Namen des Pfades der Komponente  
@@ -871,7 +925,9 @@ public class Doku{
             BufferedReader in_vorlage = new BufferedReader(new FileReader(pathin_docu));
             BufferedWriter out = new BufferedWriter(new FileWriter(pathout));
             BufferedWriter out1 = new BufferedWriter(new FileWriter(pathout1));
-            
+
+
+
             String line_anno;
             line_anno = in_annotation.readLine();
             while (!line_anno.equals("</sect1>")) //Dokument ist zu ende
@@ -1055,7 +1111,9 @@ public class Doku{
                         line_docu = in_docu.readLine();
                     }
                     classification=line_docu.replace("<entry>", "");
-                    classification=classification.replace("</>", "");
+                    classification=classification.replace("</entry>", "");
+                    if (classification.contains("<entry namest=\"c2\" "))
+                        {classification=" ";}
                 }
                 
                   //ersetzen eines Variablenblocks
@@ -1159,7 +1217,10 @@ public class Doku{
             
             out.close();
             
-            
+
+
+
+
               //zusammensetzen des end-dokumentes
             
             
@@ -1390,7 +1451,9 @@ public class Doku{
                     variablen[i][4]="Double Array";
                 }
                 if (variablen[i][5].equals("WRITE"))
-                {String Variable = "<row>\n"+
+                {
+                    if (variablen[i][1].contains("</tbody>")) {variablen[i][1]=" ";}
+                    String Variable = "<row>\n"+
                     "<entry>"+variablen[i][0]+"</entry>\n"+
                     "<entry>"+variablen[i][1]+"</entry>\n"+
                     "<entry>"+variablen[i][2]+"</entry>\n"+
@@ -1403,6 +1466,7 @@ public class Doku{
                 "</informaltable>\n";
             out1.write(Ausgangsvariablen2);
             }
+            out1.write("<para></para>\n");
             out1.write("</sect2>\n");
             out1.write("<sect2>\n");
            /* //Parameter
@@ -1470,7 +1534,7 @@ public class Doku{
             }
             out1.write("<title>"+ Bundle.resources.getString("description_component")+"</title>\n");
             line_docu=in_vorlage.readLine();
-            while (!line_docu.contains("</sect1>"))
+            while (!line_docu.contains("</sect1>") &&  !line_docu.contains("<bibliography"))
             {
             
                 if (line_docu.contains("ns3:"))
@@ -1481,7 +1545,61 @@ public class Doku{
                 System.out.println(line_docu);
                 line_docu=in_vorlage.readLine();
             }
-          
+
+
+
+            if (line_docu.contains("<bibliography"))
+            {
+                 while (!line_docu.contains("</sect1>"))
+                 {
+
+                  line_docu=in_vorlage.readLine();
+                  if (line_docu.contains("<biblioentry"))
+                  {
+                    char[] c = line_docu.toCharArray();
+                        int start=0;
+                        int end=0;
+                        for (int i=0;i<c.length-1;i++)
+                        {
+                             if (c[i]=='i' && c[i+1]=='d') {start=i+4;i=c.length;} //nach id suchen
+                        }
+                         for (int i=start;i<c.length-1;i++)
+                        {
+                             if (c[i]=='"') {end=i;i=c.length;} //nach id suchen
+                        }
+                        String biblio_id;
+                        biblio_id=line_docu.substring(start, end);
+                        boolean doppelt=false;
+                        for (int j=0;j<BiblioEntryList.size();j++)//test, ob Bibliothekseintrag schon in der sturktur enthalten ist, um dopplungen auszuschlie�en
+                       {
+                           String line5=BiblioEntryList.get(j);
+                           if (line5.equals(biblio_id))
+                           {doppelt=true;}
+
+                       }
+                       if (!doppelt)
+                       {
+                            BiblioEntryList.add(biblio_id);
+                            while (!line_docu.contains("</biblioentry>"))
+                            {
+                                bibliography.write(line_docu+"\n");
+                                line_docu=in_vorlage.readLine();
+                            }
+                            bibliography.write(line_docu+"\n");
+                       }
+                       if (doppelt)
+                       {
+                            while (!line_docu.contains("</biblioentry>"))
+                            {
+                               
+                                line_docu=in_vorlage.readLine();
+                            }
+                      }
+                  }
+                }
+
+            }
+
             out1.write("</sect1>");
             out1.close();
             
@@ -1492,19 +1610,9 @@ public class Doku{
       }
       catch (IOException e) 
       {
-        Doku_AnnotitionAndManuell(pathin_vorlage,pathin_annotation,pathin_vorlage,pathout,pathout1,component);
+        Doku_AnnotitionAndManuell(bibliography,BiblioEntryList,pathin_vorlage,pathin_annotation,pathin_vorlage,pathout,pathout1,component);
       }
-      /*for (int i=0;i<50;i++)
-      {
-          if (!variablen[i][0].equals(null))
-          {              System.out.println("neue Variable:"+variablen[i][0]);
-                        System.out.println(variablen[i][1]);
-                        System.out.println(variablen[i][2]);
-                        System.out.println(variablen[i][3]);
-                        System.out.println(variablen[i][4]);
-                        System.out.println(variablen[i][5]);
-          }    
-      }*/
+      
      }
      
      public static String VariablenDescriptionDeutsch(String variable,String pathin_docu)

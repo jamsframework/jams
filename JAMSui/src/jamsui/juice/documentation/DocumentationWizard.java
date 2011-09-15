@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 import javax.swing.JFileChooser;
 import org.w3c.dom.Document;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -33,11 +34,14 @@ public class DocumentationWizard {
     public File workspace;
     public Document modelDoc;
 
-    public String docBookPath = "C:/Program Files (x86)/Oxygen XML Editor 11";
+    public String docBookPath = "C:/Programme/Oxygen XML Editor 11";
 
     public void runDocuProcess(){
+      
+
+
         String xmlFileName= developerDocumentation + "/xmlSavedForDocu.xml";
-        String documentationXML = workspace + "/data/Dokumentation_komplett.xml";
+        String documentationXML = workspace + "/documentation/Dokumentation_komplett.xml";
 
 
         try{
@@ -48,7 +52,7 @@ public class DocumentationWizard {
 
         System.out.println("working in workspace:" + workspace);
 
-        Doku.createDocumentation(new File(workspace + "/data"), new File(xmlFileName), new File(workspace+"/data/jar/model.jar"), new File[0]);
+        Doku.createDocumentation(new File(workspace + "/documentation"), new File(xmlFileName), new File(workspace+"/documentation/jar/model.jar"), new File[0]);
 
         ProcessBuilder pb = new ProcessBuilder(docBookPath + "/xsltproc.exe","--xinclude","--output" ,developerDocumentation + "/tmp.fo",
                 docBookPath + "/frameworks/docbook/xsl/fo/docbook.xsl",documentationXML);
@@ -88,7 +92,7 @@ public class DocumentationWizard {
 
 
         ProcessBuilder pb2 = new ProcessBuilder("java","-jar",docBookPath + "/lib/fop.jar","-fo",
-                developerDocumentation + "/tmp.fo","-pdf",developerDocumentation + "/doc.pdf");
+                developerDocumentation + "/tmp.fo","-pdf",developerDocumentation + "/documentation.pdf");
 
         pb2.redirectErrorStream(true);
         for (String s : pb.command()){
@@ -126,8 +130,8 @@ public class DocumentationWizard {
         /*
         Doku.Parameter_XML(developerDocumentation.getAbsolutePath(),xmlFileName);
         Doku.Documentation_Complete(developerDocumentation.getAbsolutePath(),xmlFileName);
-
-        JOptionPane.showMessageDialog(null, JAMS.resources.getString("your_documentation_was_created_successfully"));*/
+*/
+        JOptionPane.showMessageDialog(null,Bundle.resources.getString("Your_documentation_was_created_successfully."));
         /*System.out.println(developerDocumentation.getAbsolutePath());
 
         for (File f : libaries){
@@ -167,17 +171,17 @@ public class DocumentationWizard {
         }
 
         this.modelDoc = doc;
-
+/*
         JFileChooser chooser = GUIHelper.getJFileChooser(false);
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY );
 
         chooser.setDialogTitle("Select developer documentation directory");
         int returnValue = chooser.showOpenDialog(parent);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
-            File file = chooser.getSelectedFile();
+           File file = chooser.getSelectedFile();
             this.developerDocumentation = file;
-
-            WorkerDlg progress = new WorkerDlg(parent, "Generating Documentation");
+        }
+  */          WorkerDlg progress = new WorkerDlg(parent, Bundle.resources.getString("Generating_Documentation"));
             progress.setInderminate(true);
             progress.setTask(new Runnable() {
 
@@ -187,5 +191,5 @@ public class DocumentationWizard {
             });
             progress.execute();
         }
-    }
+    //}
 }
