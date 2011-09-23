@@ -25,3 +25,4 @@ workspace=workspaceDir
 guiconfigwidth=600
 errorlog=
 helpbaseurl=
+docbook-home=../docbook/
