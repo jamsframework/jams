@@ -20,3 +20,4 @@ windowwidth=900
 guiconfigwidth=600
 errorlog=
 helpbaseurl=
+docbook-home=/docbook/
