@@ -657,7 +657,7 @@ public class Doku {
         directory = directory + "/";
         String pathout_txt = directory + "Modellkomponenten.txt";
         String pathout_xml = directory + "Modellkomponenten.xml";
-        String pathout_xml_docu_complet = directory + Bundle.resources.getString("Filename");
+        String pathout_xml_docu_complet = directory + Bundle.resources.getString("Filename") + ".xml";
         String pathout_biblio = directory + "bibliography_" + Bundle.resources.getString("lang") + ".xml";
 
 

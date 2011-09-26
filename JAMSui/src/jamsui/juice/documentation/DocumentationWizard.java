@@ -10,6 +10,7 @@ import jams.tools.XMLTools;
 import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FilePermission;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,6 +42,11 @@ public class DocumentationWizard {
             public void checkPermission(Permission permission) {
                 if (permission.getName().contains("exit")) {
                     throw new ExitTrappedException();
+                }else if (permission instanceof FilePermission){
+                    FilePermission fp = (FilePermission)permission;
+                    if (fp.getActions().equals("delete") && fp.getName().contains(Bundle.resources.getString("Filename"))){
+                        throw new ExitTrappedException();
+                    }
                 }
             }
         };
@@ -65,7 +71,7 @@ public class DocumentationWizard {
 
 
         String xmlFileName = workspace + "/documentation/xmlSavedForDocu.xml";
-        String documentationXML = workspace + "/documentation/Documentation.xml";
+        String documentationXML = workspace + "/documentation/" + Bundle.resources.getString("Filename") + ".xml";
 
 
         try {
@@ -122,9 +128,9 @@ public class DocumentationWizard {
         try {
             forbidSystemExitCall();
             System.out.println(System.getProperty("java.class.path"));
-            org.apache.fop.cli.Main.main(new String[]{System.getProperty("java.class.path"), "-fo", developerDocumentation + "/tmp.fo", "-pdf", developerDocumentation + "/documentation.pdf"});
-            JOptionPane.showMessageDialog(null, Bundle.resources.getString("Your_documentation_was_created_successfully."));
+            org.apache.fop.cli.Main.main(new String[]{System.getProperty("java.class.path"), "-fo", developerDocumentation + "/tmp.fo", "-pdf", developerDocumentation + Bundle.resources.getString("Filename") + "pdf"});
         } catch (ExitTrappedException t) {
+            JOptionPane.showMessageDialog(null, Bundle.resources.getString("Your_documentation_was_created_successfully."));
             //normal
         } catch(Throwable t){
             t.printStackTrace();
