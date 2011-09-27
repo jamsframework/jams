@@ -1,7 +1,10 @@
 package jamsui.juice.documentation;
 
+import jams.JAMSProperties;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
+import jams.tools.StringTools;
+import jamsui.juice.JUICE;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -400,12 +403,46 @@ public class Doku {
         }
         main(args);
     }
+    
+    private static ArrayList<String> getJarList(String[] libsArray) {
+        
+        ArrayList<String> result = new ArrayList<String>();
 
+        for (int i = 0; i < libsArray.length; i++) {
+            File file = new File(libsArray[i]);
+
+            if (!file.exists()) {
+                continue;
+            }
+            if (file.isDirectory()) {
+                File[] f = file.listFiles();
+                for (int j = 0; j < f.length; j++) {
+                    if (f[j].getName().endsWith(".jar")) {
+                        ArrayList<String> subResult = getJarList(new String[]{f[j].toString()});
+                        if (!subResult.isEmpty()) {
+                            result.addAll(subResult);
+                        }
+                    }
+                }
+            } else {
+                result.add(file.toString());
+            }
+        }
+        
+        return result;
+    }    
+    
     public static void main(String arg[]) {
         //   Locale loc = Locale.ENGLISH;
         //   Locale.setDefault(loc);
 
-
+        String[] libList = StringTools.toArray(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER), ";");
+        ArrayList<String> list = getJarList(libList);
+        for (String s : list) {
+            System.out.println("lib : " + s);
+        }
+        
+        
         //String directory="C:/Arbeit/TASK/J2000_S_N/";
         // String directory="C:/Arbeit/TASK/ABCTest";
         String directory = arg[1];//"Y:/Dokumentation/Gehlberg Modell";
