@@ -634,6 +634,7 @@ public class OutputDSDlg extends JDialog {
             this.enableBox.setSelected(ods.isEnabled());
         }
 
+        @SuppressWarnings("unchecked")
         public void update(ArrayList<Object> values) {
 
             this.nameText.setText("");

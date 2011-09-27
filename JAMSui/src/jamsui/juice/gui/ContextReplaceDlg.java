@@ -122,6 +122,7 @@ public class ContextReplaceDlg extends JDialog {
         return scroll;
     }
     
+    @SuppressWarnings("unchecked")
     public int show(String oldContext, String[] availableContexts, HashSet<ComponentDescriptor> components) {
         
         this.setTitle(JAMS.i18n("Replace_context_:_") + oldContext);

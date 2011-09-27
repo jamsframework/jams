@@ -96,7 +96,7 @@ public class ModelDescriptor extends ComponentCollection {
 
     public void initDatastores(ExceptionHandler exHandler) {
 
-        outputDataStores = new HashMap<String, OutputDSDescriptor>();
+        outputDataStores = new HashMap<>();
 
         if (dataStoresNode == null) {
             return;
@@ -156,7 +156,7 @@ public class ModelDescriptor extends ComponentCollection {
     public void setModelParameters(Element launcherNode, ExceptionHandler exHandler) {//throws JAMSException {
         Node node;
 
-        ArrayList<JAMSException> exceptions = new ArrayList<JAMSException>();
+        ArrayList<JAMSException> exceptions = new ArrayList<>();
         ModelProperties mProp = getModelProperties();
 
         mProp.removeAll();
@@ -358,11 +358,11 @@ public class ModelDescriptor extends ComponentCollection {
 
     public ArrayList<ComponentField> getParameterFields() {
 
-        ArrayList<ComponentField> fields = new ArrayList<ComponentField>();
+        ArrayList<ComponentField> fields = new ArrayList<>();
 
-        Enumeration<ModelNode> nodes = rootNode.breadthFirstEnumeration();
+        Enumeration nodes = rootNode.breadthFirstEnumeration();
         while (nodes.hasMoreElements()) {
-            ComponentDescriptor cd = (ComponentDescriptor) nodes.nextElement().getUserObject();
+            ComponentDescriptor cd = (ComponentDescriptor) ((ModelNode) nodes.nextElement()).getUserObject();
             fields.addAll(cd.getParameterFields());
         }
 

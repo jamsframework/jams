@@ -126,7 +126,7 @@ public class ModelSubgroupDlg extends JDialog {
         pack();
     }
     
-    
+    @SuppressWarnings("unchecked")
     public void update(String[] groupNames, Group subgroup, String currentGroup) {
 
         groupCombo.setModel(new DefaultComboBoxModel(groupNames));

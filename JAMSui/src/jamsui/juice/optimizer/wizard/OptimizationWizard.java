@@ -304,6 +304,7 @@ public class OptimizationWizard {
 
     }
 
+    @SuppressWarnings("unchecked")
     private void fillParameterList(SortedSet<Parameter> parameterSet) {
         DefaultListModel model = new DefaultListModel();
         for (Parameter parameter : parameterSet) {
@@ -312,6 +313,7 @@ public class OptimizationWizard {
         parameterList.setModel(model);
     }
 
+    @SuppressWarnings("unchecked")
     private void fillObjectiveList(SortedSet<String> objectiveSet) {
         DefaultListModel model = new DefaultListModel();
         for (String objective : objectiveSet) {
@@ -546,6 +548,7 @@ public class OptimizationWizard {
         optimizerDesc[10] = getNSGA2Description();
     }
 
+    @SuppressWarnings("unchecked")
     public JPanel getPanel() {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());

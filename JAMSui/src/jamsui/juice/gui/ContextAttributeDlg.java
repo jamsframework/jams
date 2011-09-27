@@ -76,6 +76,7 @@ public class ContextAttributeDlg extends JDialog {
      * Creates a new instance of AttributeEditDlg
      * @param owner The parent frame of this JDialog
      */
+    @SuppressWarnings("unchecked")    
     public ContextAttributeDlg(Frame owner) {
 
         super(owner);
@@ -200,7 +201,7 @@ public class ContextAttributeDlg extends JDialog {
         return valueInput.getValue();
     }
 
-    public Class getType() {
+    public Class getAttributeType() {
         return classMap.get((String) typeCombo.getSelectedItem());
     }
 

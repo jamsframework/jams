@@ -327,7 +327,7 @@ public class ComponentPanel extends JPanel {
 
         if (attrEditDlg.getResult() == ContextAttributeDlg.APPROVE_OPTION) {
             attr.setValue(attrEditDlg.getValue());
-            attr.setType(attrEditDlg.getType());
+            attr.setType(attrEditDlg.getAttributeType());
             try {
                 attr.setName(attrEditDlg.getAttributeName());
             } catch (JAMSException ex) {
@@ -348,7 +348,7 @@ public class ComponentPanel extends JPanel {
 
         if (attrEditDlg.getResult() == ContextAttributeDlg.APPROVE_OPTION) {
             try {
-                ((ContextDescriptor) componentDescriptor).addStaticAttribute(attrEditDlg.getAttributeName(), attrEditDlg.getType(), attrEditDlg.getValue());
+                ((ContextDescriptor) componentDescriptor).addStaticAttribute(attrEditDlg.getAttributeName(), attrEditDlg.getAttributeType(), attrEditDlg.getValue());
                 this.updateCtxtAttrs();
             } catch (JAMSException ex) {
                 GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());

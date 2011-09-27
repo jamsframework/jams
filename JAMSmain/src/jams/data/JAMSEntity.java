@@ -218,10 +218,10 @@ public class JAMSEntity implements Attribute.Entity {
     @Override
     public String toString() {
         String result = "";
-        TreeSet orderedSet = new TreeSet<String>(values.keySet());
-        Iterator<String> iter = orderedSet.iterator();
+        TreeSet orderedSet = new TreeSet<>(values.keySet());
+        Iterator iter = orderedSet.iterator();
         while(iter.hasNext()){
-            String key = iter.next();
+            String key = (String) iter.next();
             result += key + "=" + values.get(key) + "\t";
         }
         return result;

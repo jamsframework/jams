@@ -296,6 +296,7 @@ public class ComponentAttributePanel extends JPanel {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void update(ComponentField var, ComponentDescriptor ancestorArray[],
             ComponentDescriptor component, TableModel tableModel, int selectedRow) {
 
@@ -350,6 +351,7 @@ public class ComponentAttributePanel extends JPanel {
         adjusting = false;
     }
 
+    @SuppressWarnings("unchecked")
     private void updateRepository() {
 
         ContextDescriptor context = (ContextDescriptor) contextCombo.getSelectedItem();
@@ -417,6 +419,7 @@ public class ComponentAttributePanel extends JPanel {
         attributeList.setModel(lModel);
     }
 
+    @SuppressWarnings("unchecked")
     public void cleanup() {
 
         adjusting = true;

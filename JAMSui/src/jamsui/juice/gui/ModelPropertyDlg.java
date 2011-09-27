@@ -176,6 +176,7 @@ public class ModelPropertyDlg extends JDialog {
         setResizable(false);
     }
 
+    @SuppressWarnings("unchecked")
     private void updateComponentVars(Object item) {
         ComponentDescriptor cd = this.componentDescriptors.get((String) item);
         HashMap<String, ComponentField> vars = cd.getComponentFields();
@@ -203,6 +204,7 @@ public class ModelPropertyDlg extends JDialog {
         varCombo.setModel(new DefaultComboBoxModel(varNameArray));
     }
 
+    @SuppressWarnings("unchecked")
     public void update(String[] groupNames, HashMap<String, ComponentDescriptor> componentDescriptors, ModelProperty property, String currentGroup) {
 
         groupCombo.setModel(new DefaultComboBoxModel(groupNames));

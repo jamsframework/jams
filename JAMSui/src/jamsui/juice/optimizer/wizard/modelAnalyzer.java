@@ -119,11 +119,12 @@ public class modelAnalyzer {
         return map;
     }
 
+    @SuppressWarnings("unchecked")
     private static Set<AttributeWrapper> getAttributeList(Node root, ComponentWrapper component, StandardRuntime rt, int mode) {
         NodeList childs = root.getChildNodes();
         Element parent = (Element) root;
         String className = "";
-        HashSet<AttributeWrapper> list = new HashSet<AttributeWrapper>();
+        HashSet<AttributeWrapper> list = new HashSet<>();
         for (int i = 0; i < childs.getLength(); i++) {
             Node child = childs.item(i);
             if (child.getNodeName().equals("contextcomponent")) {
