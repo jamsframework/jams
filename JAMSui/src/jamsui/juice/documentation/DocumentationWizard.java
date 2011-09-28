@@ -128,7 +128,7 @@ public class DocumentationWizard {
         try {
             forbidSystemExitCall();
             System.out.println(System.getProperty("java.class.path"));
-            org.apache.fop.cli.Main.main(new String[]{System.getProperty("java.class.path"), "-fo", developerDocumentation + "/tmp.fo", "-pdf", developerDocumentation + Bundle.resources.getString("Filename") + "pdf"});
+            org.apache.fop.cli.Main.main(new String[]{System.getProperty("java.class.path"), "-fo", developerDocumentation + "/tmp.fo", "-pdf", developerDocumentation + "/" + Bundle.resources.getString("Filename") + ".pdf"});
         } catch (ExitTrappedException t) {
             JOptionPane.showMessageDialog(null, Bundle.resources.getString("Your_documentation_was_created_successfully."));
             //normal
