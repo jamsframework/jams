@@ -1,6 +1,6 @@
 Development:
 Sven Kralisch, Christian Fischer, Christian Schwartze,
-Heiko Busch, Robert Riedel
+Heiko Busch, Robert Riedel, Christin Michel
 
 Support:
 Peter Krause & FSU/DGHM Team      

@@ -44,14 +44,14 @@ public class ComponentInfoDlg extends JDialog {
     private static final String DEFAULT_STRING = JAMS.i18n("[none]");
     private static final int TEXTAREA_WIDTH = 295;
     private static final int GRIDBAG_MAX_Y = 3;
-    private HashMap<String, JTextField> textFields = new HashMap<>();
-    private HashMap<String, JTextPane> textAreas = new HashMap<>();
+    private HashMap<String, JTextField> textFields = new HashMap<String, JTextField>();
+    private HashMap<String, JTextPane> textAreas = new HashMap<String, JTextPane>();
     private SimpleAttributeSet descriptionText;
     private JPanel contentPanel;
     private GridBagLayout mainLayout;
-    private ArrayList<JPanel> varPanels = new ArrayList<>();
+    private ArrayList<JPanel> varPanels = new ArrayList<JPanel>();
     private JLabel varLabel = new JLabel(JAMS.i18n("Variables:"));
-    private static HashMap<Class, JDialog> compViewDlgs = new HashMap<>();
+    private static HashMap<Class, JDialog> compViewDlgs = new HashMap<Class, JDialog>();
 
     @SuppressWarnings("unchecked")
     public ComponentInfoDlg(Frame owner, Class clazz) {
