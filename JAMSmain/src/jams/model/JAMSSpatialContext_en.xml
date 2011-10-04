@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>JAMSSpatialContext</title>
+  <subtitle>A component for iterating in space.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>iteration.space</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>entities</entry>
+          <entry>List of spatial model entities</entry>
+        </row>        
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>This component can be used to represent space in JAMS models. Based on a list of spatial
+      model entities (<emphasis role="italic">entities</emphasis>) it executes all of its child
+      components/contexts once for every entity. An example of a spatial context which is nested
+      within a temporal context is shown in <xref xmlns:xlink="http://www.w3.org/1999/xlink"
+        linkend="jams.model.JAMSSpatialContext_fig1"/>. While iterating over the list of entities,
+      JAMSSpatialContext allows its child components/contexts to access the current entity's
+      attribute values. The method <ns:code>getCurrent()</ns:code> of the attribute <emphasis
+        role="italic">entities</emphasis> can be used to access the current model entity during the
+      spatial iteration. For details on how to exchange data via contexts and how to access entity
+      attributes of spatial contexts please refer to the JAMS documentation. <figure
+        xml:id="jams.model.JAMSSpatialContext_fig1">
+        <title>Spatial context nested inside of a temporal context</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Time_Space_Context.png" scale="50"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </para>
+  </sect2>
+</sect1>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>JAMSTemporalContext</title>
+  <subtitle>A component used for iterating in time.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>iteration.time</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      
+      <tbody>
+        <row>
+          <entry>timeInterval</entry>
+          
+          <entry>time interval, consisting of starting point, end point and increment</entry>
+        </row>
+        
+        <row>
+          <entry>current</entry>
+          
+          <entry>current time</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  
+  <sect2>
+    <title>Component Description</title>
+    <para>This context component is used for iteration within a defined time interval (attribute
+        <emphasis role="italic">timeInterval</emphasis>) which is given by start and end point (two
+      objects of type <ns:code>Attribute.Calendar</ns:code>) as well as increment (consisting of
+      time unit and number). All child components/contexts of JAMSTemporalContext are executed once
+      for every discrete point in time which has been defined in this way. The current time is
+      available in the attribute <emphasis role="italic">current</emphasis> (type
+        <ns:code>Attribute.Calendar</ns:code>). For more information on contexts see also
+          <citation><xref linkend="kralisch_coupling_2009"/></citation> or.
+        <citation>kralisch_coupling_2009</citation>. An example for the implementation of a temporal
+      context is shown in <xref xmlns:xlink="http://www.w3.org/1999/xlink"
+        linkend="jams.model.JAMSTemporalContext_fig1"/> .<figure
+        xml:id="jams.model.JAMSTemporalContext_fig1">
+        <title>Temporal context nested inside of a spatial context</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Time_Space_Context.png" scale="50"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </para>
+  </sect2>
+  
+  <bibliography>
+    <title>Literature</title> 
+    <biblioentry role="inproceedings" xreflabel="Kralisch et.al 2009"
+      xml:id="kralisch_coupling_2009">
+      <abbrev>kralisch_coupling_2009</abbrev>
+      
+      <authorgroup>
+        <author>
+          <personname><firstname>S.</firstname><surname>Kralisch</surname></personname>
+        </author>
+        
+        <author>
+          <personname><firstname>F.</firstname><surname>Zander</surname></personname>
+        </author>
+        
+        <author>
+          <personname><firstname>P.</firstname><surname>Krause</surname></personname>
+        </author>
+      </authorgroup>
+      
+      <editor>
+        <personname><firstname>R.S.</firstname><surname>Anderssen</surname></personname>
+      </editor>
+      
+      <editor>
+        <personname><firstname>R.D.</firstname><surname>Braddock</surname></personname>
+      </editor>
+      
+      <editor>
+        <personname><firstname>L.T.H.</firstname><surname>Newham</surname></personname>
+      </editor>
+      
+      <title>Coupling the RBIS Environmental Information System and the JAMS
+        Modelling Framework</title>
+      
+      <citetitle pubwork="article">Coupling the RBIS Environmental Information
+        System and the JAMS Modelling Framework</citetitle>
+      
+      <pagenums>902-908</pagenums>
+      
+      <biblioid class="isbn">978-0-9758400-7-8</biblioid>
+      
+      <citetitle pubwork="book">Proceedings of the 18th World IMACS Congress
+        and MODSIM09 International Congress on Modelling and
+        Simulation</citetitle>
+      
+      <biblioid
+        class="uri">http://www.mssanz.org.au/modsim09/C3/kralisch.pdf</biblioid>
+      
+      <pubdate>2009-07</pubdate>
+    </biblioentry>
+  </bibliography>
+</sect1>
