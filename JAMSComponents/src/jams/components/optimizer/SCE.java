@@ -279,6 +279,7 @@ title="Title",
     int icall=0;
 
     public void init() {
+        super.init();
         if(enable.getValue()){
 	icall = 0;
 //generalise this!!
