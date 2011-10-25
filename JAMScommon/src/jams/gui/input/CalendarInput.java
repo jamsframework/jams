@@ -63,6 +63,9 @@ public class CalendarInput extends JPanel implements InputComponent {
 
     public CalendarInput() {
         this(true);
+        timeFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
+        dateFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
+        dateTimeFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);        
     }
 
     public CalendarInput(boolean doLayout) {

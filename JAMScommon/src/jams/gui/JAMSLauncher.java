@@ -540,6 +540,7 @@ public class JAMSLauncher extends JFrame {
                         runtime.resume(state.getSmallModelState());
                     }
                 } catch (Throwable t) {
+                    t.printStackTrace();
                     runtime.handle(t);
                 }
 

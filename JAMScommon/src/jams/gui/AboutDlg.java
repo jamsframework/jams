@@ -71,6 +71,7 @@ public class AboutDlg extends JDialog {
                 contactText = JAMSVersion.getInstance().getContactString();
             }
         } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
         
         Properties prop = System.getProperties();

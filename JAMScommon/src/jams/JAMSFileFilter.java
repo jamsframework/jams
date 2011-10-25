@@ -54,6 +54,16 @@ public class JAMSFileFilter {
             return JAMS.i18n("JAMS_Model_(*.jam;_*.xml)");
         }
     };
+    private static FileFilter xmlFilter = new FileFilter() {
+        @Override
+        public boolean accept(File f) {
+            return f.isDirectory() || f.getName().toLowerCase().endsWith(".xml");
+        }
+        @Override
+        public String getDescription() {
+            return JAMS.i18n("XML_FILE_(*.xml)");
+        }
+    };
     private static FileFilter serializationFilter = new FileFilter() {
         @Override
         public boolean accept(File f) {
@@ -118,6 +128,17 @@ public class JAMSFileFilter {
         }
     };
 
+    private static FileFilter oddFilter = new FileFilter() {
+        @Override
+        public boolean accept(File f) {
+            return f.isDirectory() || f.getName().toLowerCase().endsWith(".odd") || f.getName().toLowerCase().endsWith(".xml");
+        }
+        @Override
+        public String getDescription() {
+            return JAMS.i18n("Optimization_Description_Document_(*.odd)");
+        }
+    };
+
 
     private static FileFilter shapeFilter = new FileFilter() {
         @Override
@@ -171,6 +192,14 @@ public class JAMSFileFilter {
 
     /**
      *
+     * @return The filter for xml files
+     */
+    public static FileFilter getXMLFilter() {
+        return xmlFilter;
+    }
+
+    /**
+     *
      * @return The filter for parameter files
      */
     public static FileFilter getParameterFilter() {
@@ -203,6 +232,13 @@ public class JAMSFileFilter {
      */
     public static FileFilter getShapeFilter() {
         return shapeFilter;
+    }
+
+    /**
+     * @return the oddFilter
+     */
+    public static FileFilter getOddFilter() {
+        return oddFilter;
     }
 
 
