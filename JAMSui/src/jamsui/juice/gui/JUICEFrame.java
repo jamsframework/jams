@@ -44,7 +44,6 @@ import jamsui.juice.*;
 import jamsui.juice.documentation.DocumentationWizard;
 import jamsui.juice.gui.tree.LibTree;
 import jamsui.juice.gui.tree.ModelTree;
-import jamsui.juice.optimizer.wizard.OptimizationWizard;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -287,8 +286,8 @@ public class JUICEFrame extends JFrame {
                 applet.init();
                 applet.start();*/
                 ModelView view = getCurrentView();
-                OptimizationWizard.createDialog(JUICEFrame.this, view.getModelDoc(),
-                        JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);
+                /*optas.gui.OptimizationWizard.createDialog(JUICEFrame.this, view.getModelDoc(),
+                        JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);*/
 
             }
         };

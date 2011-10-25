@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import jams.JAMS;
 import jams.gui.input.ListInput;
+import jams.gui.input.TableInput;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
@@ -43,20 +44,27 @@ import jams.meta.OutputDSDescriptor.FilterDescriptor;
 import jams.tools.StringTools;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -64,9 +72,13 @@ import javax.swing.event.ListSelectionListener;
  */
 public class OutputDSDlg extends JDialog {
 
+    static final int BUTTON_SIZE = 20;
+    private static ImageIcon UP_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowup.png")).getImage().getScaledInstance(10, 5, Image.SCALE_SMOOTH));
+    private static ImageIcon DOWN_ICON = new ImageIcon(new ImageIcon(ClassLoader.getSystemResource("resources/images/arrowdown.png")).getImage().getScaledInstance(10, 5, Image.SCALE_SMOOTH));
+    private static final Dimension BUTTON_DIMENSION = new Dimension(BUTTON_SIZE, BUTTON_SIZE);
     private JButton okButton;
     private ModelDescriptor md;
-    private DSListInput dslist;
+    private DSTableInput dslist;
     private FilterListInput filterList;
     private AttributeListInput attributeList;
 
@@ -90,15 +102,15 @@ public class OutputDSDlg extends JDialog {
         storesPanel.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Datastores")));
         getContentPane().add(storesPanel, BorderLayout.WEST);
 
-        dslist = new DSListInput();
+        dslist = new DSTableInput();
         dslist.setPreferredSize(new Dimension(200, 200));
         storesPanel.add(dslist);
 
-        dslist.getListbox().addListSelectionListener(new ListSelectionListener() {
+        dslist.getTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    updateContextAttributes(e.getSource());
+                    updateContextAttributes(dslist);
                 }
             }
         });
@@ -141,10 +153,13 @@ public class OutputDSDlg extends JDialog {
         super.setVisible(b);
     }
 
-    private void updateContextAttributes(Object value) {
+    private void updateContextAttributes(DSTableInput value) {
 
-        JList list = (JList) value;
-        OutputDSDescriptor ods = (OutputDSDescriptor) list.getSelectedValue();
+        int selection = value.getTable().getSelectedRow();
+        if (selection == -1) {
+            return;
+        }
+        OutputDSDescriptor ods = (OutputDSDescriptor) value.getTableData().get(selection)[1];
 
         if (ods != null) {
 
@@ -233,6 +248,7 @@ public class OutputDSDlg extends JDialog {
             }
         }
 
+        @Override
         protected void editItem() {
             //get the current selection
             int selection = getListbox().getSelectedIndex();
@@ -256,6 +272,7 @@ public class OutputDSDlg extends JDialog {
             }
         }
 
+        @Override
         protected void removeItem() {
             //get the current selection
             int selection = getListbox().getSelectedIndex();
@@ -311,6 +328,7 @@ public class OutputDSDlg extends JDialog {
             this.setListData(aVector);
         }
 
+        @Override
         protected void addItem() {
 
             if (newDSDlg == null) {
@@ -411,13 +429,36 @@ public class OutputDSDlg extends JDialog {
         }
     }
 
-    class DSListInput extends ListInput {
+    class DSTableInput extends TableInput {
 
         private ModelDescriptor md;
         private DSDlg newDSDlg, editDSDlg;
 
-        public DSListInput() {
-            super(false);
+        public DSTableInput() {
+            super(new String[]{"enabled", "store"}, new Class[]{Boolean.class, String.class}, new boolean[]{true, false}, false);
+
+            getTable().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+            int vColIndex = 0;
+            TableColumn col = getTable().getColumnModel().getColumn(vColIndex);
+            int width = 50;
+            col.setPreferredWidth(width);
+
+
+            ((AbstractTableModel) this.getTable().getModel()).addTableModelListener(new TableModelListener() {
+
+                public void tableChanged(TableModelEvent e) {
+                    for (Object row[] : tableData.getValue()) {
+                        if (row[0] instanceof Boolean) {
+                            if ((Boolean) row[0]) {
+                                ((OutputDSDescriptor) row[1]).setEnabled(true);
+                            } else {
+                                ((OutputDSDescriptor) row[1]).setEnabled(false);
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         public void setValue(ModelDescriptor md) {
@@ -439,14 +480,18 @@ public class OutputDSDlg extends JDialog {
                 }
             });
 
-            Vector<Object> storesVector = new Vector<Object>();
+            ArrayList<Object[]> storesVector = new ArrayList<Object[]>();
             for (OutputDSDescriptor ods : storesList) {
-                storesVector.add(ods);
+                Object row[] = new Object[2];
+                row[0] = new Boolean(ods.isEnabled());
+                row[1] = ods;
+                storesVector.add(row);
             }
-            this.setListData(storesVector);
+            this.setTableData(storesVector);
 
         }
 
+        @Override
         protected void addItem() {
 
             if (newDSDlg == null) {
@@ -495,12 +540,13 @@ public class OutputDSDlg extends JDialog {
             }
         }
 
+        @Override
         protected void editItem() {
             //get the current selection
-            int selection = getListbox().getSelectedIndex();
+            int selection = getTable().getSelectedRow();
             if (selection >= 0) {
                 // edit this item
-                OutputDSDescriptor ods = (OutputDSDescriptor) listData.getElementAt(selection);
+                OutputDSDescriptor ods = (OutputDSDescriptor) tableData.getElementAt(selection)[1];
 
                 if (editDSDlg == null) {
                     editDSDlg = new DSDlg(OutputDSDlg.this, JAMS.i18n("Edit_datastore"), true, true, false);
@@ -522,23 +568,27 @@ public class OutputDSDlg extends JDialog {
                     scrollPane.revalidate();
                     scrollPane.repaint();
                 }
+                setValue(md);
             }
         }
 
+        @Override
         protected void removeItem() {
             //get the current selection
-            int selection = getListbox().getSelectedIndex();
-            OutputDSDescriptor value = (OutputDSDescriptor) getListbox().getSelectedValue();
+            int selection = getTable().getSelectedRow();
+
+            OutputDSDescriptor value = (OutputDSDescriptor) tableData.getValue().get(selection)[1];
             if (value != null) {
 
                 md.removeOutputDataStore(value);
                 setValue(md);
 
                 //select the next item
-                if (selection >= listData.getValue().size()) {
-                    selection = listData.getValue().size() - 1;
+                if (selection >= tableData.getValue().size()) {
+                    selection = tableData.getValue().size() - 1;
+                    getTable().setRowSelectionInterval(selection, selection);
                 }
-                getListbox().setSelectedIndex(selection);
+
             }
         }
     }
@@ -574,6 +624,7 @@ public class OutputDSDlg extends JDialog {
             if (showEnabledBox) {
                 GUIHelper.addGBComponent(contentPanel, mainLayout, enableBox, 1, 40, 1, 1, 0, 0);
             }
+            enableBox.setSelected(true);
 
             nameText = new JTextField();
             nameText.setPreferredSize(new Dimension(200, 20));
