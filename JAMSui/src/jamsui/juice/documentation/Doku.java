@@ -152,7 +152,7 @@ public class Doku {
             String entry = jarentries.nextElement().toString();
 //            Object entry1=jarentries.nextElement(); //neu
             if (entry.endsWith(".xml")) {
-                System.out.println("XML");
+               
 
                 ZipEntry zipentry = jfile.getEntry(entry);
                 File efile = new File(zipentry.getName());
@@ -182,8 +182,53 @@ public class Doku {
 
 
             }
+            
+            if (entry.endsWith(".png")) {
+               
 
-            if (!entry.endsWith(".class") && !entry.endsWith(".xml")) {
+                ZipEntry zipentry = jfile.getEntry(entry);
+                File efile = new File(zipentry.getName());
+                String filename = zipentry.getName();
+                filename = filename.replaceAll("/", ".");
+
+                   char[] c = filename.toCharArray();
+                    int start = 0;
+                    boolean first_point=false;
+                    filename=filename.replaceAll("/",".");
+                    for (int i = c.length - 1; i > 0; i--) {
+
+                        if (c[i] == '.') {
+                            start = i;
+                            if (first_point==true)
+                            {
+                                i = 0;
+                            }
+                            first_point=true;
+                        }
+                    }
+                 
+                    filename = filename.substring(start +1, c.length);
+                
+                jfile.getInputStream(zipentry);
+                InputStream in = new BufferedInputStream(jfile.getInputStream(zipentry));
+                OutputStream out = new BufferedOutputStream(new FileOutputStream(directory + filename));
+                byte[] buffer = new byte[4096];
+                for (;;) {
+                    int nBytes = in.read(buffer);
+                    if (nBytes <= 0) {
+                        break;
+                    }
+                    out.write(buffer, 0, nBytes);
+                }
+
+          
+                out.flush();
+                out.close();
+                in.close();
+
+
+            }
+            if (!entry.endsWith(".class") && !entry.endsWith(".xml") && !entry.endsWith(".png")) {
                 continue;
             }
             if (entry.endsWith(".class")) {
@@ -337,11 +382,7 @@ public class Doku {
 
     public static void AnnotationUpdate(String directory, String model_jar) {
 
-        /*
-        System.out.println(Unit.valueOf("mm*m^2")); // mm/ha
-        System.out.println( Unit.valueOf("C")); // degree celsius
-         */
-
+       
         //legt zu jeder Komponente eine Datei an, in welcher die Bemerkungen aus dem Quellcode enthalten sind
 
 
@@ -360,7 +401,7 @@ public class Doku {
             while (iter.hasNext()) {
                 String key = iter.next();
                 String value = test.get(key);
-                path = directory + "Component_Annotation." + key + ".xml"; //pfad f�r neue Komponente
+                path = directory + "Component_Annotation." + key + ".xml"; //pfad fï¿½r neue Komponente
                 String component_title;
                 component_title = key; //ermittelt komponentenname
                 char[] c = component_title.toCharArray();
@@ -380,7 +421,7 @@ public class Doku {
                 out.write("<title>" + key + "</title>\n");
                 out.write("<subtitle/>\n");
                 out.write(value);
-                System.out.println("<para>" + component_title + " </para>\n" + value);
+               
                 out.write("</sect1>\n");
                 out.close();
 
@@ -435,32 +476,17 @@ public class Doku {
     public static void main(String arg[]) {
         //   Locale loc = Locale.ENGLISH;
         //   Locale.setDefault(loc);
-
+         String directory = arg[1];
         String[] libList = StringTools.toArray(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER), ";");
         ArrayList<String> list = getJarList(libList);
         for (String s : list) {
             System.out.println("lib : " + s);
+             AnnotationUpdate(directory, s);
         }
-        
-        
-        //String directory="C:/Arbeit/TASK/J2000_S_N/";
-        // String directory="C:/Arbeit/TASK/ABCTest";
-        String directory = arg[1];//"Y:/Dokumentation/Gehlberg Modell";
-        //String model="C:/Arbeit/TASK/ABCModell/abc2.jam";
-        String model = arg[2]; //"C:/Arbeit/JAMS_Data/JAMS-Gehlberg/j2k_gehlberg.txt";
-        //String model_jar="C:/Arbeit/jams/nbprojects/jams-main/dist/jams-main.jar";
-        String model_jar = "/model.jar";
-        // String model1="C:/Arbeit/Erlbach/j2k_erlbach/j2k_erlbach_rr.jam";
 
-        String umgebung_jar = "/umgebung.jar";
-        String umgebung1_jar = "/umgebung1.jar";
-        //AnnotationUpdate(directory,model_jar);
-        AnnotationUpdate(directory, directory + "/jar" + model_jar);
-        AnnotationUpdate(directory, directory + "/jar" + umgebung_jar);
-        AnnotationUpdate(directory, directory + "/jar" + umgebung1_jar);
-        //AnnotationUpdate(directory,"C:/Arbeit/TASK/jar/JavaProject7.jar");
-        // AnnotationUpdate(directory,"C:/Arbeit/TASK/jar/JamsComponents.jar");
-        String pathin_vorlage = directory + "/KomponentenVorlage.xml";
+        String model = arg[2]; 
+   
+        String pathin_vorlage = directory + "/template.xml";
 
 
         ArrayList<ArrayList<String[]>> componentParameter = new ArrayList<ArrayList<String[]>>();
@@ -533,12 +559,12 @@ public class Doku {
 
                 }
 
-                if (line.contains("<attribute class") && line.contains("value=")) //Parameter f�r die Menge der Modellparameter
+                if (line.contains("<attribute class") && line.contains("value=")) //Parameter fï¿½r die Menge der Modellparameter
                 {
                     String[] ParameterAndValue = new String[2];
                     name = "";
                     value = "";
-                    System.out.println(line);
+                 
                     char[] c = line.toCharArray();
                     int i = 0;
                     while (!(c[i] == ('n') && c[i + 1] == ('a') && c[i + 2] == ('m') && c[i + 3] == ('e') && c[i + 4] == ('='))) {
@@ -550,7 +576,7 @@ public class Doku {
                         name = name + Character.toString(c[i + 6 + zahl]);
                         zahl++;
                     }
-                    System.out.println(name);
+                  
                     c = line.toCharArray();
                     i = 0;
                     while (!(c[i] == ('v') && c[i + 1] == ('a') && c[i + 2] == ('l') && c[i + 3] == ('u') && c[i + 4] == ('e') && c[i + 5] == ('='))) {
@@ -562,7 +588,7 @@ public class Doku {
                         value = value + Character.toString(c[i + 7 + zahl]);
                         zahl++;
                     }
-                    System.out.println(value);
+                   
                     parameter[count][0] = name;
                     parameter[count][1] = value;
                     ParameterAndValue[0] = name;
@@ -575,7 +601,7 @@ public class Doku {
                     String[] ParameterAndValue = new String[2];
                     name = "";
                     value = "";
-                    System.out.println(line);
+                  
                     char[] c = line.toCharArray();
                     int i = 0;
                     while (c.length > i + 3 && !(c[i] == ('n') && c[i + 1] == ('a') && c[i + 2] == ('m') && c[i + 3] == ('e') && c[i + 4] == ('='))) {
@@ -587,7 +613,7 @@ public class Doku {
                         name = name + Character.toString(c[i + 6 + zahl]);
                         zahl++;
                     }
-                    System.out.println(name);
+                    
                     c = line.toCharArray();
                     i = 0;
 
@@ -600,7 +626,7 @@ public class Doku {
                         value = value + Character.toString(c[i + 7 + zahl]);
                         zahl++;
                     }
-                    System.out.println(value);
+                    
                     parameter[count][0] = name;
                     parameter[count][1] = value;
                     ParameterAndValue[0] = name;
@@ -684,17 +710,14 @@ public class Doku {
         //erstellt ein Dokument indem die Struktur (Komponenten und Kontextkomponenten) aufgefuehrt werden.
         //erstellt weiterhin ein Dokument, welches die Komplettdokumentation erzeugt
 
-        /*
-        System.out.println(Unit.valueOf("mm*m^2")); // mm/ha
-        System.out.println( Unit.valueOf("C")); // degree celsius
-         */
+      
         String Modellname = "";
         String Modellautor = "";
         ArrayList<String> ContextComponent = new ArrayList<String>();
         directory = directory + "/";
         String pathout_txt = directory + "Modellkomponenten.txt";
         String pathout_xml = directory + "Modellkomponenten.xml";
-        String pathout_xml_docu_complet = directory + Bundle.resources.getString("Filename") + ".xml";
+        String pathout_xml_docu_complet = directory + Bundle.resources.getString("Filename");
         String pathout_biblio = directory + "bibliography_" + Bundle.resources.getString("lang") + ".xml";
 
 
@@ -709,16 +732,16 @@ public class Doku {
             BufferedWriter out_xml_docu_complet = new BufferedWriter(new FileWriter(pathout_xml_docu_complet));
             String line;
 
-            //Eröffnung des Literaturverzeichnisses
+            //ErÃ¶ffnung des Literaturverzeichnisses
             bibliography.write("<bibliography xmlns=\"http://docbook.org/ns/docbook\" version=\"5.0\" xml:lang=\"" + Bundle.resources.getString("lang") + "\">\n");
 
 
-            //Ende Eröffnung des Literaturverzeichnisses
+            //Ende ErÃ¶ffnung des Literaturverzeichnisses
 
             //StringTokenizer st;
             // int datafound = 0;
 
-            //iteration �ber line
+            //iteration ï¿½ber line
             line = in.readLine();
             //kopf des docbook Dokuments
 
@@ -777,7 +800,7 @@ public class Doku {
 
 
                     out_xml_docu_complet.write(titelseite);
-                    out_xml_docu_complet.write("<xi:include href=\"Modellbeschreibung_" + Bundle.resources.getString("lang") + ".xml\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"/>\n");
+                    out_xml_docu_complet.write("<xi:include href=\"modeldoc_" + Bundle.resources.getString("lang") + ".xml\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"/>\n");
                     out_xml_docu_complet.write("<xi:include href=\"Modellkomponenten.xml\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"/>\n");
 
                 }
@@ -805,7 +828,7 @@ public class Doku {
                     String line4 = "";
                     int i = 0;
                     if (line.contains("<contextcomponent") || line.contains("<component")) {
-                        int azahl = 0;//z�hlt die anfuehrungszeichen
+                        int azahl = 0;//zï¿½hlt die anfuehrungszeichen
                         int startc = 0;
                         int endc = 0;
                         int startn = 0;
@@ -861,8 +884,7 @@ public class Doku {
                     if (line.contains("contextcomponent")) {
                         out_xml.write("</emphasis></para>");
                     }
-                    //  out_xml.write("<cmdsynopsis><command/><sbr/></cmdsynopsis>\n");
-                    // System.out.println(line);
+                   
 
                     if (line.contains("<contextcomponent") || line.contains("<component")) //wenn Komponente oder Kontextkomponente
                     {
@@ -887,9 +909,9 @@ public class Doku {
                             c = line1.toCharArray();
 
                         }
-                        //einf�gen der komponenten in eine verwaltungsdatenstruktur
+                        //einfï¿½gen der komponenten in eine verwaltungsdatenstruktur
                         boolean doppelt = false;
-                        for (int j = 0; j < ComponentList.size(); j++)//test, ob componente schon in der sturktur enthalten ist, um dopplungen auszuschlie�en
+                        for (int j = 0; j < ComponentList.size(); j++)//test, ob componente schon in der sturktur enthalten ist, um dopplungen auszuschlieï¿½en
                         {
                             String line5 = ComponentList.get(j);
                             if (line5.equals(line4)) {
@@ -929,11 +951,11 @@ public class Doku {
         }
 
 
-        System.out.print("Anzahl der Komponenten: ");
+      /*  System.out.print("Anzahl der Komponenten: ");
         System.out.println(ComponentList.size());
         for (int i = 0; i < ComponentList.size(); i++) {
             System.out.println(ComponentList.get(i));
-        }
+        }*/
     }
 
     public static void Doku_AnnotitionAndManuell(BufferedWriter bibliography, ArrayList<String> BiblioEntryList, String pathin_vorlage, String pathin_annotation, String pathin_docu, String pathout, String pathout1, ArrayList<ArrayList<String[]>> component) {
@@ -980,36 +1002,36 @@ public class Doku {
                         }
                     }
                     component_title = component_title.substring(start + 1, c.length);
-                    System.out.println(component_title);
+                   
 
                 }
                 if (line_anno.contains("Paket")) {
                     line_anno = in_annotation.readLine();
-                    paket = line_anno.substring(37); //replace w�re besser
+                    paket = line_anno.substring(37); //replace wï¿½re besser
                     paket = paket.replace("</entry>", "");
-                    System.out.println(paket);
+                    
 
                 }
 
                 if (line_anno.contains("Autor")) {
                     line_anno = in_annotation.readLine();
-                    author = line_anno.substring(37); //replace w�re besser
+                    author = line_anno.substring(37); //replace wï¿½re besser
                     author = author.replace("</entry>", "");
-                    System.out.println(author);
+                   
 
                 }
                 if (line_anno.contains("Version")) {
                     line_anno = in_annotation.readLine();
                     version = line_anno.substring(37);
                     version = version.replace("</entry>", "");
-                    System.out.println(version);
+                
 
                 }
                 if (line_anno.contains("Modifikationsdatum")) {
                     line_anno = in_annotation.readLine();
                     date = line_anno.substring(37);
                     date = date.replace("</entry>", "");
-                    System.out.println(date);
+                   
 
                 }
             }
@@ -1045,37 +1067,37 @@ public class Doku {
                             line_anno = in_annotation1.readLine();
                             variable = line_anno.replace("<entry>", "");
                             variable = variable.replace("</entry>", "");
-                            System.out.println(variable);
+                          
 
                             line_anno = in_annotation1.readLine();
                             describtion = line_anno.replace("<entry>", "");
                             describtion = describtion.replace("</entry>", "");
-                            System.out.println(describtion);
+                          
 
                             line_anno = in_annotation1.readLine();
                             unit = line_anno.replace("<entry>", "");
                             unit = unit.replace("</entry>", "");
-                            System.out.println(unit);
+                          
 
                             line_anno = in_annotation1.readLine();
                             range = line_anno.replace("<entry>", "");
                             range = range.replace("</entry>", "");
-                            System.out.println(range);
+                       
 
                             line_anno = in_annotation1.readLine();
                             datatype = line_anno.replace("<entry>", "");
                             datatype = datatype.replace("</entry>", "");
-                            System.out.println(datatype);
+                            
 
                             line_anno = in_annotation1.readLine();
                             variabletype = line_anno.replace("<entry>", "");
                             variabletype = variabletype.replace("</entry>", "");
-                            System.out.println(variabletype);
+                           
 
                             line_anno = in_annotation1.readLine();
                             defaultvalue = line_anno.replace("<entry>", "");
                             defaultvalue = defaultvalue.replace("</entry>", "");
-                            System.out.println(defaultvalue);
+                        
 
                             variablen[variablencount][0] = variable;
                             variablen[variablencount][1] = describtion;
@@ -1120,7 +1142,7 @@ public class Doku {
             int row_count = 0;
             line_docu = in_docu.readLine();
 
-            System.out.println(line_docu);
+           
             int variablenblock = 0; //testet, ob man bereits im Variablenblock ist
             while (!line_docu.equals("</sect1>")) //Dokument ist zu ende
             {
@@ -1155,7 +1177,7 @@ public class Doku {
                         {
 
                             line_docu = in_docu.readLine(); //variable
-                            System.out.println(line_docu);
+                           
 
 
                             char[] c = line_docu.toCharArray();
@@ -1174,19 +1196,19 @@ public class Doku {
                                 if (variable.equals(variablen[i][0]))//sucht die relevante variable
                                 {
                                     line_docu = in_docu.readLine(); //beschreibung
-                                    System.out.println(line_docu);
+                                   
 
                                     line_docu = in_docu.readLine(); //unit
                                     //line_docu="<entry>"+variablen[i][2]+"</entry>"; //code hat vorfahrt
                                     line_docu = line_docu.replace("<entry/>", "<entry>" + variablen[i][2] + "</entry>"); //manuelle docu hat vorfahrt
 
-                                    System.out.println(line_docu);
+                                    
 
                                     line_docu = in_docu.readLine(); //range
                                     //line_docu="<entry>"+variablen[i][3]+"</entry>"; //code hat vorfahrt
                                     line_docu = line_docu.replace("<entry/>", "<entry>" + variablen[i][3] + "</entry>");
 
-                                    System.out.println(line_docu);
+                                   
 
                                     line_docu = in_docu.readLine(); //datatype
                                     //line_docu="<entry>"+variablen[i][4]+"</entry>"; //code hat vorfahrt
@@ -1200,7 +1222,7 @@ public class Doku {
                                      */
                                     line_docu = line_docu.replace("<entry/>", "<entry>" + variablen[i][4] + "</entry>");
 
-                                    System.out.println(line_docu);
+                                    
 
                                     line_docu = in_docu.readLine(); //type
                                     //line_docu="<entry>"+variablen[i][5]+"</entry>"; //code hat vorfahrt
@@ -1211,7 +1233,7 @@ public class Doku {
 
                                     line_docu = line_docu.replace("<entry/>", "<entry>" + variablen[i][5] + "</entry>");
 
-                                    System.out.println(line_docu);
+                                    
 
                                     line_docu = in_docu.readLine(); //defaultvalue
                                     if (variablen[i][6].equals("%NULL%")) {
@@ -1220,7 +1242,7 @@ public class Doku {
                                     line_docu = "<entry>" + variablen[i][6] + "</entry>"; //code hat vorfahrt
                                     //line_docu=line_docu.replace("<entry/>", "<entry>"+variablen[i][6]+"</entry>");
 
-                                    System.out.println(line_docu);
+                                   
 
                                     i = 50;
                                 }
@@ -1551,7 +1573,7 @@ public class Doku {
             
              */
 
-            System.out.println("Beschreibung der Komponente" + component_title);
+           
             line_docu = in_vorlage.readLine();
 
             while (!line_docu.contains("<title>Beschreibung der Komponente") && !line_docu.contains("<title>Component Description")) {
@@ -1565,7 +1587,7 @@ public class Doku {
                     line_docu = line_docu.replaceAll("ns3:", "m:");
                 }
                 out1.write(line_docu + "\n");
-                System.out.println(line_docu);
+               
                 line_docu = in_vorlage.readLine();
             }
 
@@ -1594,7 +1616,7 @@ public class Doku {
                         String biblio_id;
                         biblio_id = line_docu.substring(start, end);
                         boolean doppelt = false;
-                        for (int j = 0; j < BiblioEntryList.size(); j++)//test, ob Bibliothekseintrag schon in der sturktur enthalten ist, um dopplungen auszuschlie�en
+                        for (int j = 0; j < BiblioEntryList.size(); j++)//test, ob Bibliothekseintrag schon in der sturktur enthalten ist, um dopplungen auszuschlieï¿½en
                         {
                             String line5 = BiblioEntryList.get(j);
                             if (line5.equals(biblio_id)) {
