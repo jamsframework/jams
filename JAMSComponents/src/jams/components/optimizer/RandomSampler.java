@@ -5,8 +5,8 @@
 
 package jams.components.optimizer;
 
-import jams.JAMS;
-import jams.components.optimizer.MOOptimizer.SampleMO;
+import jams.components.optimizer.SampleFactory.Sample;
+
 import jams.io.SerializableBufferedWriter;
 import jams.model.JAMSComponentDescription;
 
@@ -19,7 +19,7 @@ import jams.model.JAMSComponentDescription;
 public class RandomSampler extends MOOptimizer{           
     SerializableBufferedWriter writer = null;
             
-    public SampleMO[] initialSimplex = null;
+    public Sample[] initialSimplex = null;
            
     @SuppressWarnings("unchecked")    
     @Override
@@ -33,7 +33,7 @@ public class RandomSampler extends MOOptimizer{
                 singleRun();
                 return;
             }        
-        SampleMO simplex[] = new SampleMO[this.maxn.getValue()];
+        Sample simplex[] = new Sample[this.maxn.getValue()];
         int i=0;
         if (x0!=null)
             simplex[i++] = this.getSample(x0);

@@ -69,6 +69,7 @@ public class DataDisturber extends JAMSContext {
 	}
 	catch(Exception e) {
 	    System.out.println("Konnte InputData nicht finden" + e.toString());
+            e.printStackTrace();
 	}
 			
 	System.out.println("Optimiere Trainingsdaten!");

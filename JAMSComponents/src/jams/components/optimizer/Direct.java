@@ -14,6 +14,7 @@ package jams.components.optimizer;
 import java.util.ArrayList;
 import jams.model.JAMSComponentDescription;
 import jams.JAMS;
+import jams.components.optimizer.SampleFactory.SampleSO;
 
 @JAMSComponentDescription(
         title="Branch and Bound Optimizer",
@@ -62,13 +63,13 @@ public class Direct extends SOOptimizer{
         // first element of f is going to be the function evaluated
         // at the center of the unit hyper-rectangle.                         
         fc[0] = this.funct(reTransform(c[0]));
-        Q.add(new SampleSO(reTransform(c[0]),fc[0]));       
+        Q.add(factory.getSampleSO(reTransform(c[0]),fc[0]));
     }
     
     @Override
     public void init(){        
         super.init();
-        
+
         if (!enable.getValue())
             return; 
         
@@ -76,13 +77,15 @@ public class Direct extends SOOptimizer{
             this.getModel().getRuntime().sendInfoMsg(JAMS.i18n("start_value_not_supported_by_branch_and_bound"));
         }
               
-        maxevals = this.maxn.getValue();                
-                        
-        lengths =       new int[maxevals+(int)Math.floor(0.1*maxevals)][n];
-        c =             new double[maxevals+(int)Math.floor(0.1*maxevals)][n];
-        fc =            new double[maxevals+(int)Math.floor(0.1*maxevals)];
-        szes =          new double[maxevals+(int)Math.floor(0.1*maxevals)];                                
-        
+        maxevals = this.maxn.getValue();
+        int k = (int)Math.ceil(n / 2.0);
+        System.out.println("maximum number of evalutions:"+maxevals);
+        lengths =       new int[k*maxevals][n];
+        c =             new double[k*maxevals][n];
+        fc =            new double[k*maxevals];
+        szes =          new double[k*maxevals];
+        Q.clear();
+
         l_thirds = new double[maxdeep];
         l_thirds[0] = 1.0/3.0;
         // start by calculating the thirds array
@@ -223,8 +226,8 @@ public class Direct extends SOOptimizer{
             x2 = reTransform(newc_right[i]);                        
             f_left[i] = this.funct(x1);
             f_right[i] = this.funct(x2);
-            Q.add(new SampleSO(reTransform(x1),f_left[i]));
-            Q.add(new SampleSO(reTransform(x2),f_right[i]));                        
+            Q.add(factory.getSampleSO(reTransform(x1),f_left[i]));
+            Q.add(factory.getSampleSO(reTransform(x2),f_right[i]));
         }
         double w[][] = new double[ls.size()][3];
         for (int i=0;i<ls.size();i++){
@@ -293,7 +296,9 @@ public class Direct extends SOOptimizer{
         int iter = 0;
         while (Q.size()<maxn.getValue()){
             ArrayList<Integer> final_pos = find_po(minval);
-            
+            if (final_pos.isEmpty()){
+                System.out.println("Error: no dividing position!");
+            }
             for (int i=0;i<final_pos.size();i++){
                 DIRDivide(final_pos.get(i).intValue());
             }            

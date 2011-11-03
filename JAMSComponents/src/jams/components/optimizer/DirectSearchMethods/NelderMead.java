@@ -8,10 +8,12 @@ package jams.components.optimizer.DirectSearchMethods;
 import Jama.Matrix;
 import jams.components.optimizer.LinearConstraintDirectPatternSearch;
 import jams.components.optimizer.Optimizer.ObjectiveAchievedException;
-import jams.components.optimizer.Optimizer.SampleLimitException;
+
 import jams.components.optimizer.SOOptimizer;
-import jams.components.optimizer.SOOptimizer.SampleSO;
-import jams.components.optimizer.SOOptimizer.SampleSOComperator;
+import jams.components.optimizer.SampleFactory.SampleSO;
+import jams.components.optimizer.SampleFactory.SampleSOComperator;
+import jams.components.optimizer.SampleLimitException;
+
 import java.util.Random;
 import java.util.Vector;
 
@@ -35,8 +37,8 @@ public class NelderMead extends PatternSearch{
 	// Assign the best and worst points:
 	double sb[] = new double[m];
 	double sw[] = new double[m];
-	double fb = Simplex[0].fx;
-	double fw = Simplex[n-1].fx;
+	double fb = Simplex[0].f();
+	double fw = Simplex[n-1].f();
 	
 	for (int i=0;i<m;i++) {
 	    sb[i] = Simplex[0].x[i];

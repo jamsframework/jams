@@ -158,10 +158,27 @@ public class TSDataStoreReader extends JAMSComponent {
         elevation.setValue(listToDoubleArray(dsDef.getAttributeValues("ELEVATION")));
         elevationArray = elevation.getValue();
         dataSetName.setValue(id.getValue());
+        
+        getModel().getRuntime().println("Datastore " + id + " initialized!", JAMS.VVERBOSE);
+        doubles = new double[store.getDataSetDefinition().getColumnCount()];
+        dataArray.setValue(doubles);
+    }
 
+    private double[] listToDoubleArray(ArrayList<Object> list) {
+        double[] result = new double[list.size()];
+        int i = 0;
+        for (Object o : list) {
+            result[i] = ((Double) o).doubleValue();
+            i++;
+        }
+        return result;
+    }
+
+    boolean shifted = false;
+    private void checkConsistency(){
         // check if we need to shift forward
-        if (store.getStartDate().before(timeInterval.getStart()) && (store.getStartDate().compareTo(timeInterval.getStart(), timeInterval.getTimeUnit()) != 0)) {
-
+        if (store.getStartDate().before(timeInterval.getStart()) && (store.getStartDate().compareTo(timeInterval.getStart(), timeInterval.getTimeUnit()) != 0) && !shifted) {
+            shifted = true;
             Attribute.Calendar current = store.getStartDate().clone();
             Attribute.Calendar targetDate = timeInterval.getStart().clone();
             current.removeUnsignificantComponents(timeInterval.getTimeUnit());
@@ -198,7 +215,7 @@ public class TSDataStoreReader extends JAMSComponent {
             } else {
 
                 // here we need to walk through time with a calendar object
-                // this costs more runtime, but works for monthly and yearly 
+                // this costs more runtime, but works for monthly and yearly
                 // steps as well
                 targetDate.add(timeUnit, -1 * timeUnitCount);
                 while (current.compareTo(targetDate, timeUnit) < 0) {
@@ -207,24 +224,12 @@ public class TSDataStoreReader extends JAMSComponent {
                 }
             }
         }
-
-        getModel().getRuntime().println("Datastore " + id + " initialized!", JAMS.VVERBOSE);
-        doubles = new double[store.getDataSetDefinition().getColumnCount()];
-        dataArray.setValue(doubles);
-    }
-
-    private double[] listToDoubleArray(ArrayList<Object> list) {
-        double[] result = new double[list.size()];
-        int i = 0;
-        for (Object o : list) {
-            result[i] = ((Double) o).doubleValue();
-            i++;
-        }
-        return result;
     }
 
     @Override
     public void run() {
+        checkConsistency();
+        
         DefaultDataSet ds = store.getNext();
         DataValue[] data = ds.getData();
         for (int i = 1; i < data.length; i++) {

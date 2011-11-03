@@ -5,9 +5,11 @@
 
 package jams.components.optimizer;
 
-import jams.components.optimizer.SOOptimizer.SampleSO;
+
 import java.util.Arrays;
 import jams.JAMS;
+import jams.components.optimizer.SampleFactory.SampleSO;
+import jams.components.optimizer.SampleFactory.SampleSOComperator;
 import jams.io.SerializableBufferedWriter;
 import jams.model.JAMSComponentDescription;
 
@@ -130,13 +132,13 @@ public class NelderMead extends SOOptimizer{
                 getModel().getRuntime().println(JAMS.i18n("reflection_step"));
                 reflection_SampleSO = this.getSample(reflection);
             
-                if (simplex[0].fx < reflection_SampleSO.fx && reflection_SampleSO.fx < simplex[m-1].fx){
+                if (simplex[0].f() < reflection_SampleSO.f() && reflection_SampleSO.f() < simplex[m-1].f()){
                     simplex[m-1] = reflection_SampleSO;
                     continue;
                 }
             }
             //expand
-            if (this.feasible(reflection) && simplex[0].fx >= reflection_SampleSO.fx){
+            if (this.feasible(reflection) && simplex[0].f() >= reflection_SampleSO.f()){
                 double expansion[] = new double[n];
                 for (int i=0;i<n;i++){
                     expansion[i] = centroid[i] + gamma*(centroid[i]-simplex[m-1].x[i]);
@@ -144,7 +146,7 @@ public class NelderMead extends SOOptimizer{
                 getModel().getRuntime().println(JAMS.i18n("expansion_step"));
                 
                 SampleSO expansion_SampleSO = this.getSample(expansion);
-                if (this.feasible(expansion) && expansion_SampleSO.fx < reflection_SampleSO.fx){
+                if (this.feasible(expansion) && expansion_SampleSO.f() < reflection_SampleSO.f()){
                     simplex[m-1] = expansion_SampleSO;
                 }else{
                     simplex[m-1] = reflection_SampleSO;                    
@@ -152,7 +154,7 @@ public class NelderMead extends SOOptimizer{
                 continue;                
             }
             //contraction
-            if (!this.feasible(reflection) || simplex[m-1].fx <= reflection_SampleSO.fx){                
+            if (!this.feasible(reflection) || simplex[m-1].f() <= reflection_SampleSO.f()){
                 double contraction[] = new double[n];
                 for (int i=0;i<n;i++){
                     contraction[i] = centroid[i] + rho*(centroid[i]-simplex[m-1].x[i]);
@@ -165,7 +167,7 @@ public class NelderMead extends SOOptimizer{
                     contraction_SampleSO = this.getSample(this.RandomSampler());
                 }else
                     contraction_SampleSO = this.getSample(contraction);
-                if (contraction_SampleSO.fx < simplex[m-1].fx){
+                if (contraction_SampleSO.f() < simplex[m-1].f()){
                     simplex[m-1] = contraction_SampleSO;
                     continue;
                 }

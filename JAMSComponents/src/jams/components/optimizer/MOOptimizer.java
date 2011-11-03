@@ -8,12 +8,13 @@
  */
 package jams.components.optimizer;
 
-import java.util.Comparator;
 import java.util.StringTokenizer;
 import jams.data.*;
 import jams.model.JAMSVarDescription;
 import jams.JAMS;
-import jams.components.optimizer.Optimizer.Sample;
+import jams.components.optimizer.SampleFactory.Sample;
+import jams.components.optimizer.SampleFactory.SampleComperator;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,9 +59,9 @@ public abstract class MOOptimizer extends Optimizer {
     access = JAMSVarDescription.AccessType.READ,
             update = JAMSVarDescription.UpdateType.RUN,
             description = "known optimal value",
-            defaultValue = "0;0"
+            defaultValue = "0"
             )
-            public Attribute.Double[] target;
+            public Attribute.DoubleArray target;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -75,60 +76,9 @@ public abstract class MOOptimizer extends Optimizer {
     public static abstract class AbstractMOFunction {
         public abstract double[] f(double x[]);
     }
-        
-    //class for representing samples
-    public class SampleMO extends Sample{
-        public SampleMO(double[] x, double[] fx) {
-            super(x,fx);
-        }
-        double [] getFX(){
-            return this.fx;
-        }
-        @Override
-        public SampleMO clone(){
-            Sample x = super.clone();
-            return new SampleMO(x.getParameter(),x.fx);            
-        }
-    }
-/*    SampleMO getFromSampleList(int i){
-        return (SampleMO)this.sampleList.get(i);
-    }*/
-    //compare samples
-    static public class SampleMOComperator implements Comparator {
-
-        private int order = 1;
-
-        public SampleMOComperator(boolean decreasing_order) {
-            order = decreasing_order ? -1 : 1;
-        }
-
-        public int compare(Object d1, Object d2) {
-            int m = ((Sample)d1).fx.length;
-            if (((Sample)d1).fx.length != ((Sample)d2).fx.length){
-                return 0;
-            }
-            int ord = 0;
-            for (int i=0;i<m;i++){
-                int nextOrd;
-                if (((Sample) d1).fx[i] < ((Sample) d2).fx[i]) {
-                    nextOrd = -1 * order;
-                } else if ( Math.abs(((Sample) d1).fx[i] - ((Sample) d2).fx[i] )<0.000000001) {
-                    nextOrd = 0 * order;
-                } else {
-                    nextOrd = 1 * order;
-                }
-                if (ord == 0)
-                    ord = nextOrd;
-                else{
-                    if (ord != nextOrd && nextOrd != 0)
-                        return 0;                    
-                }
-            }
-            return ord;
-        }
-    }            
+                     
     protected String[] efficiencyNames;    
-    protected Set<SampleMO> bestSamples;        
+    protected Set<Sample> bestSamples;        
     //number of efficiencies
     public int m;       
     protected AbstractMOFunction GoalFunction = null;
@@ -175,29 +125,29 @@ public abstract class MOOptimizer extends Optimizer {
                 stop(JAMS.i18n("efficiency_count_does_not_effMethodName_mode_count"));
             }
         }           
-        bestSamples = new HashSet<SampleMO>();
+        bestSamples = new HashSet<Sample>();
     }
                 
-    public SampleMO getSample(double[]x) throws SampleLimitException, ObjectiveAchievedException{
-        if (sampleList.size()>=this.maxn.getValue())
+    public Sample getSample(double[]x) throws SampleLimitException, ObjectiveAchievedException{
+        if (factory.sampleList.size()>=this.maxn.getValue())
             throw new SampleLimitException("maximum sample count reached");
-        SampleMO s = new SampleMO(x,funct(x));
+        Sample s = this.factory.getSample(x,funct(x));
         this.bestSamples.add(s);
         this.bestSamples = this.getParetoOptimalSet(this.bestSamples);
 
         return s;
     }
                   
-    public Set<SampleMO> getParetoOptimalSet(Set<SampleMO> set){        
-        SampleMOComperator comparer = new SampleMOComperator(true);
-        HashSet<SampleMO> result = new HashSet<SampleMO>();
-        Iterator<SampleMO> iter = set.iterator();
+    public Set<Sample> getParetoOptimalSet(Set<Sample> set){        
+        SampleComperator comparer = new SampleComperator(true);
+        HashSet<Sample> result = new HashSet<Sample>();
+        Iterator<Sample> iter = set.iterator();
         while(iter.hasNext()){
-            SampleMO candidate = iter.next();
+            Sample candidate = iter.next();
             boolean isDominated = false;
-            Iterator<SampleMO> iter2 = set.iterator();            
+            Iterator<Sample> iter2 = set.iterator();            
             while(iter2.hasNext()){
-                SampleMO rivale = iter2.next();
+                Sample rivale = iter2.next();
                 if (candidate == rivale)
                     continue;
                 if (comparer.compare(candidate,rivale)<0){
@@ -211,7 +161,7 @@ public abstract class MOOptimizer extends Optimizer {
         return result;
     }
     
-    public double[] funct(double x[]) throws ObjectiveAchievedException {
+    private double[] funct(double x[]) throws ObjectiveAchievedException {
         
         double value[] = new double[m];        
         if (GoalFunction == null) {          
@@ -222,7 +172,8 @@ public abstract class MOOptimizer extends Optimizer {
         } else {            
             value = GoalFunction.f(x);
         }
-        if (this.sampleWriter!=null){
+        //done in optimizer.java
+        /*if (this.sampleWriter!=null){
             try{
                 for (int i=0;i<x.length;i++)
                     sampleWriter.write(x[i]+"\t");
@@ -235,14 +186,14 @@ public abstract class MOOptimizer extends Optimizer {
             }catch(Exception e){
 
             }
-        }
+        }*/
         this.iterationCounter.setValue(this.iterationCounter.getValue()+1);
         for (int i=0;i<m;i++)
             value[i] = this.transformByMode(value[i], iMode[i]);
                         
-        Iterator<SampleMO> iter = this.bestSamples.iterator();        
+        Iterator<Sample> iter = this.bestSamples.iterator();
         for (int i=0;iter.hasNext();i++){
-            SampleMO s = iter.next();
+            Sample s = iter.next();
             
             ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
             Attribute.Entity entity = JAMSDataFactory.createEntity();
@@ -251,23 +202,23 @@ public abstract class MOOptimizer extends Optimizer {
                 entity.setDouble("x_"+(j+1), s.getParameter()[j]);
             }
             for (int j=0;j<m;j++){
-                entity.setDouble("y_"+(j+1), s.getFX()[j]);
+                entity.setDouble("y_"+(j+1), s.F()[j]);
             }
             list.add(entity);
 
             this.bestParameterSets.setEntities(list);
         }
         
-        if (target!=null && this.target.length == effValue.length){
+        if (target!=null && this.target.getValue().length == value.length){
             boolean objectiveAchieved = true;
-            for (int i=0;i<this.effValue.length;i++){
-                if (Math.abs(effValue[i].getValue() - target[i].getValue())>=this.epsilonToTarget.getValue())
+            for (int i=0;i<value.length;i++){
+                if ( value[i]-target.getValue()[i]  >=this.epsilonToTarget.getValue())
                     objectiveAchieved = false;
             }
             if (objectiveAchieved) {
-                double targets[] = new double[target.length];
+                double targets[] = new double[target.getValue().length];
                 for (int i = 0; i < targets.length; i++) {
-                    targets[i] = target[i].getValue();
+                    targets[i] = target.getValue()[i];
                 }
                 throw new ObjectiveAchievedException(value, targets);
             }

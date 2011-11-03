@@ -8,10 +8,12 @@ package jams.components.optimizer.DirectSearchMethods;
 import Jama.Matrix;
 import jams.components.optimizer.LinearConstraintDirectPatternSearch;
 import jams.components.optimizer.Optimizer.ObjectiveAchievedException;
-import jams.components.optimizer.Optimizer.SampleLimitException;
+
 import jams.components.optimizer.SOOptimizer;
-import jams.components.optimizer.SOOptimizer.SampleSO;
-import jams.components.optimizer.SOOptimizer.SampleSOComperator;
+import jams.components.optimizer.SampleFactory.SampleSO;
+import jams.components.optimizer.SampleFactory.SampleSOComperator;
+import jams.components.optimizer.SampleLimitException;
+
 import java.util.Random;
 import java.util.Vector;
 
@@ -62,7 +64,7 @@ public class MDS extends PatternSearch{
             if (i<m-1){
                 reflection[i] = context.getSample(x_new.getColumnPackedCopy());
             
-                if (reflection[i].fx < best.fx){
+                if (reflection[i].f() < best.f()){
                     successful = true;
                     best = reflection[i];
                 }
@@ -88,7 +90,7 @@ public class MDS extends PatternSearch{
                          
                 if (i<m-1){
                     expansion[i] = context.getSample(x_new.getColumnPackedCopy());
-                    if (expansion[i].fx < best.fx){                   
+                    if (expansion[i].f() < best.f()){
                         best = expansion[i];
                         expansion_successful = true;
                     }   
@@ -124,7 +126,7 @@ public class MDS extends PatternSearch{
                 SampleSO sample_new = context.getSample(x_new.getColumnPackedCopy());
                 if (i+1 < Simplex.length)
                     Simplex[i+1] = sample_new;
-                if (sample_new.fx < best.fx){                   
+                if (sample_new.f() < best.f()){
                     best = sample_new;
                 }
             }

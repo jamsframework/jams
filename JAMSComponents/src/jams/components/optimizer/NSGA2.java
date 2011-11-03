@@ -5,6 +5,8 @@
 package jams.components.optimizer;
 
 import jams.JAMS;
+import jams.components.optimizer.SampleFactory.Sample;
+import jams.components.optimizer.SampleFactory.SampleComperator;
 import jams.data.Attribute;
 import jams.data.JAMSBoolean;
 import jams.data.JAMSDataFactory;
@@ -22,51 +24,51 @@ public class NSGA2 extends MOOptimizer {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "population size",
-    defaultValue="500")
+    defaultValue="30")
     public Attribute.Integer populationSize;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "probability for population crossover, range between 0.5 and 1",
-            defaultValue="0.5")
+            defaultValue="0.9")
     public Attribute.Double crossoverProbability;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "probability for population mutation, range between 0.0 and 1/nvar",
-            defaultValue="0.5")
+            defaultValue="1.0")
     public Attribute.Double mutationProbability;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "crossover distribution index, range between 0.5 and 100",
-            defaultValue="10")
+            defaultValue="20")
     public Attribute.Double crossoverDistributionIndex;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "mutation distribution index, range between 0.5 and 100",
-            defaultValue="10")
+            defaultValue="20")
     public Attribute.Double mutationDistributionIndex;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "maximum number of generations",
-            defaultValue="100")
+            defaultValue="10000")
     public Attribute.Integer maxGeneration;
 
     int crossoverCount = 0;
     int mutationCount = 0;
 
-    SampleMOComperator moComparer = new SampleMOComperator(false);
+    SampleComperator moComparer = new SampleComperator(false);
     CustomRand generator = null;
 
     static private class Individual {
-        SampleMO sample;
+        Sample sample;
         int rank;/*Rank of the individual*/
         double cub_len;/*crowding distance of the individual*/
 
-        public Individual(SampleMO sample) {
+        public Individual(Sample sample) {
             this.sample = sample;
             this.rank = 0;
             this.cub_len = 0.0;
@@ -224,6 +226,9 @@ public class NSGA2 extends MOOptimizer {
         super.init();
         this.crossoverCount = 0;
         this.mutationCount  = 0;
+
+        if (this.mutationProbability.getValue()> 1.0 / this.parameters.length)
+            this.mutationProbability.setValue(1.0 / this.parameters.length);
     }
 
     void nselect(Population old_pop, Population pop2) {        
@@ -448,11 +453,11 @@ public class NSGA2 extends MOOptimizer {
         }
         globalPopulation.maxrank = rnk;
 
-        sayThis("   RANK     No Of Individuals");
+        /*sayThis("   RANK     No Of Individuals");
         String text = "";
         for (int i = 0; i < rnk; i++) 
             text += ("\t" + (i + 1) + "\t" + globalPopulation.rankno[i]) + "\n";
-        sayThis(text);
+        sayThis(text);*/
     }
     //simple bubblesort
     void sort(int m1, int index[], double value[]) {
@@ -586,7 +591,7 @@ public class NSGA2 extends MOOptimizer {
             for (int j = 0; j < nvar; j++)
                 text += (f.format(pop1.ind[i].sample.getParameter()[j]) + "\t");
             for (int j = 0; j < nfunc; j++)
-                text += (f.format(pop1.ind[i].sample.getFX()[j]) + "\t");
+                text += (f.format(pop1.ind[i].sample.F()[j]) + "\t");
             text += (pop1.ind[i].cub_len + "\t" + pop1.ind[i].rank);
             sayThis(text);
             text="";
@@ -598,7 +603,7 @@ public class NSGA2 extends MOOptimizer {
             for (int j = 0; j < nvar; j++)
                 text += f.format(pop2.ind[i].sample.getParameter()[j]) + "\t";
             for (int j = 0; j < nfunc; j++) 
-                text += f.format(pop2.ind[i].sample.getFX()[j]) + "\t";
+                text += f.format(pop2.ind[i].sample.F()[j]) + "\t";
 
             text += (pop2.ind[i].cub_len + "\t" + pop2.ind[i].rank);
             sayThis(text);
@@ -623,7 +628,7 @@ public class NSGA2 extends MOOptimizer {
         }
         if (this.mutationDistributionIndex == null ||
             this.mutationDistributionIndex.getValue() < 0.5 ||
-            this.mutationDistributionIndex.getValue() > 100.0){
+            this.mutationDistributionIndex.getValue() > 500.0){
             sayThis(JAMS.i18n("mutationDistributionIndex_not_specified_or_out_of_bounds"));
             return;
         }
@@ -639,6 +644,7 @@ public class NSGA2 extends MOOptimizer {
             sayThis(JAMS.i18n("mutationProbability_not_specified_or_out_of_bounds"));
             return;
         }
+        mutationProbability.setValue(1.0 / (double)this.n);
         if (this.maxGeneration == null ||
             this.maxGeneration.getValue() < 0.0){
             sayThis(JAMS.i18n("maxGeneration_not_specified_or_out_of_bounds"));
@@ -674,7 +680,8 @@ public class NSGA2 extends MOOptimizer {
             /*Elitism And Sharing Implemented*/
             keepalive(oldPopulation, newPopulation, matePopulation, i + 1);
             /*------------------REPORT PRINTING--------------------------------*/
-            report(i, oldPopulation, matePopulation);
+            //skip report because its toooo much information
+            //report(i, oldPopulation, matePopulation);
             /*==================================================================*/
             newPopulation = matePopulation;
             oldPopulation = newPopulation;                     
@@ -691,38 +698,66 @@ public class NSGA2 extends MOOptimizer {
 
         class TestFunction extends AbstractMOFunction{
             public double[] f(double x[]){
-                double y[] = new double[2];
-                y[0] = -Math.pow((x[1]-(5.1/(4*Math.PI*Math.PI))*x[0]*x[0]+5*x[0]/Math.PI-6),2.0)+10*(1-1/(8*Math.PI))*Math.cos(x[0])+10;
-                y[1] = -Math.pow(x[0]+2*x[1]-7,2.0)+Math.pow(2*x[0]+x[1]-5,2.0);
+                double y[] = new double[1];
+                int n = x.length;
+
+                double r = Math.pow((x[0]-1),2.0);
+                for (int i=1;i<n;i++){
+                    r += (i+1)*Math.pow((2*x[i]*x[i]-x[i-1]), 2);
+                }
+
+                /*double a = 20, b = 0.2, c = 2*Math.PI;
+                double shift = 1.0/3.0;
+                double s1 = 0, s2 = 0;
+                for (int i=0;i<n;i++){
+                    s1 += (x[i]+shift)*(x[i]+shift);
+                    s2 += Math.cos(2.0*Math.PI*(x[i]+shift));
+                }
+                s1 /= n;
+                s2 /= n;
+
+                double r = -a*Math.exp(-b*Math.sqrt(s1))-Math.exp(s2)+a+Math.exp(1);*/
+
+                y[0] = r;
                 return y;
             }
         }
 
         nsga.GoalFunction = new TestFunction();
         nsga.boundaries = (JAMSString)JAMSDataFactory.createString();
-        nsga.boundaries.setValue("[0.0>1.0];[0.0>1.0]");
-        nsga.parameterIDs = new JAMSDouble[2];
+        nsga.boundaries.setValue("[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];");
+        nsga.parameterIDs = new JAMSDouble[16];
 
         nsga.crossoverDistributionIndex = JAMSDataFactory.createDouble();
-        nsga.crossoverDistributionIndex.setValue(10.0);
+        nsga.crossoverDistributionIndex.setValue(20);
         nsga.crossoverProbability = JAMSDataFactory.createDouble();
-        nsga.crossoverProbability.setValue(0.5);
+        nsga.crossoverProbability.setValue(0.9);
         nsga.enable = (JAMSBoolean)JAMSDataFactory.createBoolean();
         nsga.enable.setValue(true);
         nsga.maxGeneration = JAMSDataFactory.createInteger();
-        nsga.maxGeneration.setValue(10);
+        nsga.maxGeneration.setValue(100000);
         nsga.mode = (JAMSString)JAMSDataFactory.createString();
-        nsga.mode.setValue("1;1");
+        nsga.mode.setValue("1");
+        nsga.target = JAMSDataFactory.createDoubleArray();
+        nsga.target.setValue(new double[]{0.00});
+        nsga.epsilonToTarget =JAMSDataFactory.createDouble();
+        nsga.epsilonToTarget.setValue(0.018);
         nsga.effMethodName = (JAMSString)JAMSDataFactory.createString();
-        nsga.effMethodName.setValue("f1;f2");
+        nsga.effMethodName.setValue("f1");
         nsga.mutationDistributionIndex = JAMSDataFactory.createDouble();
-        nsga.mutationDistributionIndex.setValue(10);
+        nsga.mutationDistributionIndex.setValue(20);
         nsga.mutationProbability = JAMSDataFactory.createDouble();
-        nsga.mutationProbability.setValue(0.5);
+        nsga.mutationProbability.setValue(1.0);
         nsga.populationSize = JAMSDataFactory.createInteger();
-        nsga.populationSize.setValue(20);
-
+        nsga.populationSize.setValue(30);
+        nsga.iterationCounter = JAMSDataFactory.createInteger();
+        nsga.maxn = JAMSDataFactory.createInteger();
+        nsga.maxn.setValue(10000000);
+        nsga.bestParameterSets = JAMSDataFactory.createEntityCollection();
         nsga.init();
         nsga.run();
+        for (Sample s : nsga.factory.getSampleList())
+            System.out.println(s);
+        System.out.println(nsga.iterationCounter);
     }
 }

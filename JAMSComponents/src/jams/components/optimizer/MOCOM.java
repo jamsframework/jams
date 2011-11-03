@@ -61,7 +61,8 @@ public class MOCOM extends MOOptimizer {
                                         
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "population size")
+    description = "population size",
+    defaultValue="500" )
     public JAMSInteger populationSize;
             
     int currentCount;
@@ -150,7 +151,7 @@ public class MOCOM extends MOOptimizer {
         double F[][] = new double[s][];
         
         for (int i = 0; i < s; i++) {            
-            F[i] = funct(D[i]);
+            F[i] = this.getSample((D[i])).F();
         }
         return F;
     }
@@ -389,13 +390,13 @@ public class MOCOM extends MOOptimizer {
                 Scon = newpar[0];
                 accept = isSampleValid(Scon);
             }
-            double Fcon[] = funct(Scon);
+            double Fcon[] = getSample(Scon).F();
             Snew = Scon;
             Fnew = Fcon;
         // Update number of function evaluations
         } else {
             // Compute corresponding objective function values
-            double Fref[] = funct(Sref);
+            double Fref[] = getSample(Sref).F();
             double SimplexTmp[][] = new double[Simplex.length][lenSF];
             for (int j = 0; j < lenSF; j++) {
                 for (int i = 0; i < Simplex.length - 1; i++) {
@@ -404,7 +405,7 @@ public class MOCOM extends MOOptimizer {
                 SimplexTmp[Simplex.length - 1][j] = Fref[j];
             }
             // Test for non dominance
-            Object ret[] = parrank(SimplexTmp, 2); // 2 ist possible wrong
+            Object ret[] = parrank(SimplexTmp, m); // 2 ist possible wrong
             int Rref[] = (int[]) ret[0];
 
             int Rrefmax = Integer.MIN_VALUE;
@@ -431,7 +432,7 @@ public class MOCOM extends MOOptimizer {
                     accept = isSampleValid(Scon);
                 }
                 // Compute corresponding objective function values
-                double Fcon[] = funct(Scon);
+                double Fcon[] = getSample(Scon).F();
                 Snew = Scon;
                 Fnew = Fcon;
             }
@@ -599,7 +600,7 @@ public class MOCOM extends MOOptimizer {
                     c++;
                 }
                 c = 0;
-                sayThis(JAMS.i18n("Number of model runs: ") + this.icall);
+                sayThis(JAMS.i18n("Number_of_model_runs") + this.icall);
                 out = JAMS.i18n("Rank")+"\t";
                 for (int i = 0; i < n; i++) {
 //                    out+=this.parameterNames[i] + "\t";

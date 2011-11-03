@@ -13,10 +13,11 @@ import java.util.Vector;
 import Jama.*;
 import jams.components.optimizer.LinearConstraintDirectPatternSearch;
 import jams.components.optimizer.Optimizer.ObjectiveAchievedException;
-import jams.components.optimizer.Optimizer.SampleLimitException;
+
 import jams.components.optimizer.SOOptimizer;
-import jams.components.optimizer.SOOptimizer.SampleSO;
-import jams.components.optimizer.SOOptimizer.SampleSOComperator;
+import jams.components.optimizer.SampleFactory.SampleSO;
+import jams.components.optimizer.SampleFactory.SampleSOComperator;
+import jams.components.optimizer.SampleLimitException;
 import java.util.Random;
 
 /**
@@ -77,11 +78,11 @@ public class ImplicitFiltering extends PatternSearch{
                 }                
                 SampleSO Sample_test = context.getSample(x_test);
                 if (method != 2){
-                    if (Sample_test.fx < Simplex[0].fx){
+                    if (Sample_test.f() < Simplex[0].f()){
                         return Sample_test;
                     }
                     else{
-                        if (Sample_test.fx < Simplex[Simplex.length-1].fx){
+                        if (Sample_test.f() < Simplex[Simplex.length-1].f()){
                             return Sample_test;
                         } 
                     }

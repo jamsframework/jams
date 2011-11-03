@@ -17,6 +17,7 @@ import java.util.Vector;
 import jams.model.JAMSComponentDescription;
 import jams.tools.FileTools;
 import jams.JAMS;
+import jams.components.optimizer.SampleFactory.SampleSO;
 
 @JAMSComponentDescription(
         title="Branch and Bound Optimizer",
@@ -76,13 +77,13 @@ public class BranchAndBound extends SOOptimizer{
             this.L = ApproxL(a,b,this);            
             if (parent!=null)
                 highestLowBound = Math.max(Math.max(-1000000000000.0,
-                                            Math.max(a.fx,b.fx)-VectorNorm2(VectorMul(VectorSub(b.x,a.x),L))),
-                                            midPoint.fx-VectorNorm2(VectorMul(VectorSub(b.x,a.x),L))/2.0);
+                                            Math.max(a.f(),b.f())-VectorNorm2(VectorMul(VectorSub(b.x,a.x),L))),
+                                            midPoint.f()-VectorNorm2(VectorMul(VectorSub(b.x,a.x),L))/2.0);
                                     
-            double minimum = Math.min(Math.min(a.fx, b.fx), midPoint.fx);
+            double minimum = Math.min(Math.min(a.f(), b.f()), midPoint.f());
             if (highestLowBound > minimum)   highestLowBound = minimum;
                         
-            goodOneFactor = ( (midPoint.fx - a.fx) + (midPoint.fx - b.fx));                        
+            goodOneFactor = ( (midPoint.f() - a.f()) + (midPoint.f() - b.f()));
         }
         
         public void AddCubeSample(SampleSO x){           
@@ -91,8 +92,8 @@ public class BranchAndBound extends SOOptimizer{
         
         double CalculateLForTarget(double target){
             //look which L value can realize highestLowBound                        
-            double L_theo1 = (Math.max(a.fx,b.fx)-target)/VectorNorm(VectorSub(b.x,a.x));
-            double L_theo2 = 2.0*(midPoint.fx-target)/VectorNorm(VectorSub(b.x,a.x));
+            double L_theo1 = (Math.max(a.f(),b.f())-target)/VectorNorm(VectorSub(b.x,a.x));
+            double L_theo2 = 2.0*(midPoint.f()-target)/VectorNorm(VectorSub(b.x,a.x));
                                     
             return Math.min(L_theo1, L_theo2);
         }
@@ -202,8 +203,8 @@ public class BranchAndBound extends SOOptimizer{
         double min = Double.MAX_VALUE;
         int index = 0;
         for (int i=0;i<Q.size();i++){
-            if (Q.get(i).fx < min){
-                min = Q.get(i).fx;
+            if (Q.get(i).f() < min){
+                min = Q.get(i).f();
                 index = i;
             }
         }
@@ -234,8 +235,8 @@ public class BranchAndBound extends SOOptimizer{
         }
         while(list.size() < 3*n+1){
             SampleSO rnd_point = getSample(RandomSampler());            
-            if (rnd_point.fx<a.fx&&rnd_point.fx<b.fx){
-                test = a.fx-rnd_point.fx + b.fx-rnd_point.fx;
+            if (rnd_point.f()<a.f()&&rnd_point.f()<b.f()){
+                test = a.f()-rnd_point.f() + b.f()-rnd_point.f();
             }
             myCube.AddCubeSample(rnd_point);
         }
@@ -317,7 +318,7 @@ public class BranchAndBound extends SOOptimizer{
         for (int i=0;i<list.size();i++){
             for (int j=i+1;j<list.size();j++){
                 double d = VectorNorm2(VectorSub(list.get(i).x,list.get(j).x));
-                sL = Math.max(Math.abs((list.get(i).fx-list.get(j).fx)/d), sL);
+                sL = Math.max(Math.abs((list.get(i).f()-list.get(j).f())/d), sL);
                 mean += sL;
                 //tmp.push(new Double(sL));
             }
@@ -342,6 +343,7 @@ public class BranchAndBound extends SOOptimizer{
             writer.close();
         }catch(Exception e)        {
             System.out.println(e.toString());
+            e.printStackTrace();
         }
     }
     
@@ -377,7 +379,7 @@ public class BranchAndBound extends SOOptimizer{
         //gamma holds minimum of samples
         int IndexWithMinimum = getMin(Q);
         SampleSO v = Q.get(IndexWithMinimum);
-        gamma = v.fx;
+        gamma = v.f();
         
         //calculate a lower approximation my        
         HyperCube R = new HyperCube(a,b,xR,null);                
@@ -385,8 +387,8 @@ public class BranchAndBound extends SOOptimizer{
         
         double L = R.L; 
 
-        myR = Math.max(Math.max(a.fx,b.fx) - VectorNorm(VectorMul(VectorSub(a.x,b.x),L)),
-                        xR.fx - (VectorNorm(VectorMul(VectorSub(a.x,b.x),L))/2.0));
+        myR = Math.max(Math.max(a.f(),b.f()) - VectorNorm(VectorMul(VectorSub(a.x,b.x),L)),
+                        xR.f() - (VectorNorm(VectorMul(VectorSub(a.x,b.x),L))/2.0));
         my = myR;        
                 
         Stack<HyperCube> queue = new Stack<HyperCube>();
@@ -402,7 +404,7 @@ public class BranchAndBound extends SOOptimizer{
             
             //SaveCubes(cubes,"cubedump" + xCount + ".dat");
             if (this.maxn != null){
-                if ( this.sampleList.size() >= this.maxn.getValue() ){                    
+                if ( this.factory.sampleList.size() >= this.maxn.getValue() ){
                     break;
                 }
             }                                    
@@ -459,7 +461,7 @@ public class BranchAndBound extends SOOptimizer{
             
             IndexWithMinimum = getMin(Q);
             v = Q.get(IndexWithMinimum);
-            gamma = v.fx;
+            gamma = v.f();
                         
             if (R1.goodOneFactor < tmp1)
                 R1.goodOneFactor = tmp1;

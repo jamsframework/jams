@@ -8,9 +8,9 @@
  */
 package jams.components.optimizer;
 
-import java.util.Comparator;
 import jams.data.*;
 import jams.JAMS;
+import jams.components.optimizer.SampleFactory.SampleSO;
 import jams.model.JAMSVarDescription;
 import java.util.ArrayList;
 
@@ -74,38 +74,7 @@ public abstract class SOOptimizer extends Optimizer {
     public static abstract class AbstractFunction {
         public abstract double f(double x[]) throws SampleLimitException, ObjectiveAchievedException;
     }        
-    //class for representing samples
-    public class SampleSO extends Sample {        
-        public double fx;
-        public double x[];
-        
-        public SampleSO(double[] x, double fx) {
-            super(x,new double[]{fx});            
-            this.fx = fx;
-            this.x = super.getParameter();
-        }    
-        @Override
-        public SampleSO clone(){
-            Sample x = super.clone();
-            return new SampleSO(x.getParameter(),x.fx[0]);            
-        }
-    }
-    //compare samples
-    static public class SampleSOComperator implements Comparator {
-        private int order = 1;
-        public SampleSOComperator(boolean decreasing_order) {
-            order = decreasing_order ? -1 : 1;
-        }
-        public int compare(Object d1, Object d2) {
-            if (((SampleSO) d1).fx < ((SampleSO) d2).fx) {
-                return -1 * order;
-            } else if (((SampleSO) d1).fx == ((SampleSO) d2).fx) {
-                return 0 * order;
-            } else {
-                return 1 * order;
-            }
-        }
-    }        
+    
     protected double bestValue;                
     protected AbstractFunction GoalFunction = null;
             
@@ -129,10 +98,10 @@ public abstract class SOOptimizer extends Optimizer {
     }
     
     public SampleSO getSample(double[]x) throws ObjectiveAchievedException, SampleLimitException{
-        if (sampleList.size()>=this.maxn.getValue())
+        if (this.factory.sampleList.size()>=this.maxn.getValue())
             throw new SampleLimitException("maximum sample count reached");
         
-        return new SampleSO(x,funct(x));
+        return factory.getSampleSO(x,funct(x));
     }
         
     public double funct(double x[]) throws ObjectiveAchievedException, SampleLimitException {

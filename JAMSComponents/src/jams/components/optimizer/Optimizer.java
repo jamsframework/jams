@@ -18,15 +18,13 @@ import jams.model.Component;
 import jams.model.JAMSContext;
 import jams.model.JAMSVarDescription;
 import jams.JAMS;
+import jams.components.optimizer.SampleFactory.Sample;
 import jams.workspace.stores.Filter;
 import jams.workspace.stores.OutputDataStore;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 
 /**
@@ -88,7 +86,7 @@ public abstract class Optimizer extends JAMSContext {
             update = JAMSVarDescription.UpdateType.RUN,
             description = "current iteration"
             )
-            public JAMSInteger iterationCounter;
+            public Attribute.Integer iterationCounter;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
@@ -97,20 +95,7 @@ public abstract class Optimizer extends JAMSContext {
             defaultValue = "false"
             )
             public JAMSBoolean debugMode;
-           
-    protected List<Sample> sampleList = new ArrayList<Sample>();
-
-    public class SampleLimitException extends Exception{
-        String msg;
-        SampleLimitException(String msg){
-            this.msg = msg;
-        }
-        @Override
-        public String toString(){
-            return msg;
-        }
-    }
-  
+                     
     public class ObjectiveAchievedException extends Exception{
         String msg;
         ObjectiveAchievedException(double value[], double target[]){
@@ -125,77 +110,8 @@ public abstract class Optimizer extends JAMSContext {
         }
     }
 
+    public SampleFactory factory = new SampleFactory();
 
-
-    //class for representing samples
-    public class Sample implements Serializable {
-        private double[] x;
-        protected double[] fx;
-
-        public Sample(){}
-
-        @SuppressWarnings("LeakingThisInConstructor")
-        public Sample(double[] x, double fx[]) {
-            this.fx = fx;
-            if(x == null)
-                return;
-            this.x = new double[x.length];
-            System.arraycopy(x, 0, this.x, 0, x.length);
-
-            sampleList.add(this);
-        }
-
-        public double[] getParameter(){
-            return x;
-        }
-        
-        @Override
-        public Sample clone(){
-            Sample cpy = new Sample();
-            cpy.x = new double[x.length];
-            cpy.fx = new double[fx.length];
-            System.arraycopy(x, 0, cpy.x, 0, x.length);
-            System.arraycopy(fx, 0, cpy.fx, 0, fx.length);
-            return cpy;
-        }
-
-        @Override
-        public boolean equals(Object obj){
-            if (!(obj instanceof Sample))
-                return false;
-            Sample s = (Sample)obj;
-            if (s.x.length != this.x.length)
-                return false;
-            if (s.fx.length != this.fx.length)
-                return false;
-
-            for (int i=0;i<this.x.length;i++){
-                if (s.x[i]!=x[i])
-                    return false;
-            }
-            return true;
-        }
-        //automatically gemerated
-        @Override
-        public int hashCode() {
-            int hash = 5;
-            hash = 79 * hash + Arrays.hashCode(this.x);
-            hash = 79 * hash + Arrays.hashCode(this.fx);
-            return hash;
-        }
-
-        @Override
-        public String toString() {
-            String s = "";
-            for (int i = 0; i < x.length; i++) {
-                s += x[i] + "\t";
-            }
-            for (int i = 0; i < fx.length; i++) {
-                s += fx[i] + "\t";
-            }
-            return s;
-        }
-    }
     protected JAMSDouble[] parameters;
     protected double[] lowBound;
     protected double[] upBound;
@@ -308,10 +224,10 @@ public abstract class Optimizer extends JAMSContext {
                 this.sampleWriter = null;
             }
         }
-        this.sampleList.clear();
+        factory = new SampleFactory();
         iterationCounter.setValue(0);
     }
-
+    
     @Override
     public void setupDataTracer(){
         super.setupDataTracer();
@@ -471,7 +387,7 @@ public abstract class Optimizer extends JAMSContext {
             return;
         if (this.sampleWriter!=null)
             try{
-                for (Sample s : this.sampleList)
+                for (Sample s : this.factory.sampleList)
                     sampleWriter.write(s + "\n");
                 this.sampleWriter.close();
             }catch(IOException e){

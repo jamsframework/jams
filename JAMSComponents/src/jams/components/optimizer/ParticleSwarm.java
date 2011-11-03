@@ -6,7 +6,7 @@
 package jams.components.optimizer;
 
 import jams.JAMS;
-import jams.components.optimizer.SOOptimizer.SampleSO;
+import jams.components.optimizer.SampleFactory.SampleSO;
 /**
  *
  * @author Christian Fischer
@@ -60,7 +60,7 @@ public class ParticleSwarm extends SOOptimizer {
             particles[i] = new Particle(rndSample,new double[n]);
                         
             if (bestParticle!=null){
-                if (bestParticle.particle.fx > particles[i].particle.fx)
+                if (bestParticle.particle.f() > particles[i].particle.f())
                     bestParticle = particles[i];
             }else
                 bestParticle = particles[i];            
@@ -98,9 +98,9 @@ public class ParticleSwarm extends SOOptimizer {
                 }    
                 //evaluate
                 particles[i].particle = this.getSample(nextPosition);
-                if (particles[i].particle.fx < particles[i].local_best.fx)
+                if (particles[i].particle.f() < particles[i].local_best.f())
                     particles[i].local_best = particles[i].particle;
-                if (particles[i].particle.fx < bestParticle.local_best.fx){
+                if (particles[i].particle.f() < bestParticle.local_best.f()){
                     bestParticle = particles[i];
                 }
             }

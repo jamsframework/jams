@@ -4,9 +4,9 @@
  */
 
 package jams.components.optimizer;
-import Jama.LUDecomposition;
 import Jama.Matrix;
 import jams.components.optimizer.SOOptimizer.*;
+import jams.components.optimizer.SampleFactory.SampleSO;
 import java.util.Vector;
 
 /**

@@ -211,6 +211,7 @@ import jams.model.*;
                 comp.init();
             } catch (Exception e) {
 		System.out.println(e.getMessage());
+                e.printStackTrace();
             }
         }
                 
@@ -221,6 +222,7 @@ import jams.model.*;
                 comp.run();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
+                e.printStackTrace();
             }
         }
         
@@ -231,6 +233,7 @@ import jams.model.*;
                 comp.cleanup();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
+                e.printStackTrace();
             }
         }
     }

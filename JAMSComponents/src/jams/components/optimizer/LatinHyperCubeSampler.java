@@ -6,7 +6,8 @@
 package jams.components.optimizer;
 
 import jams.JAMS;
-import jams.components.optimizer.MOOptimizer.SampleMO;
+import jams.components.optimizer.SampleFactory.Sample;
+
 import jams.io.SerializableBufferedWriter;
 import jams.model.JAMSComponentDescription;
 
@@ -19,7 +20,7 @@ import jams.model.JAMSComponentDescription;
 public class LatinHyperCubeSampler extends MOOptimizer{
     SerializableBufferedWriter writer = null;
 
-    public SampleMO[] initialSimplex = null;
+    public Sample[] initialSimplex = null;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -85,7 +86,7 @@ public class LatinHyperCubeSampler extends MOOptimizer{
             d[j] = this.upBound[j] - this.lowBound[j];
         }
         //first draw random points
-        SampleMO simplex[] = new SampleMO[divisions];
+        Sample simplex[] = new Sample[divisions];
         for (int i = 0; i < divisions; i++) {
             int indexSet[] = getFreeIndexSet();
             double[] sample = new double[divisions];

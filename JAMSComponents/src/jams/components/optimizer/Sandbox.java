@@ -9,12 +9,12 @@
 
 package jams.components.optimizer;
 
-import Jama.Matrix;
+import jams.components.optimizer.SampleFactory.Sample;
+import jams.components.optimizer.SampleFactory.SampleSO;
 import jams.tools.JAMSTools;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Vector;
 import jams.data.JAMSBoolean;
 import jams.data.JAMSDouble;
 import jams.data.JAMSInteger;
@@ -263,8 +263,8 @@ public class Sandbox extends SOOptimizer{
                 localFactor = 0.5;
             double next[] = FindMostProbablePoint().getParameter();
             SampleSO test = this.getSample(next);            
-            best = Math.min(test.fx, best);
-            System.out.println("BestValue:" + best + "\nk:" + sampleList.size() + "\nMyPoint:" + test.fx);
+            best = Math.min(test.f(), best);
+            System.out.println("BestValue:" + best + "\nk:" + factory.sampleList.size() + "\nMyPoint:" + test.fx);
             counter++;
         }
     }

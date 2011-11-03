@@ -230,6 +230,7 @@ public class CheckedTSDataReader extends JAMSComponent {
             
             
         } catch (IOException ioe) {
+            ioe.printStackTrace();
             getModel().getRuntime().handle(ioe);
         }
         

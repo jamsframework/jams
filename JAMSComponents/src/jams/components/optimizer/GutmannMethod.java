@@ -19,7 +19,8 @@ import jams.data.JAMSDataFactory;
 import jams.model.JAMSComponentDescription;
 import jams.tools.FileTools;
 import jams.JAMS;
-import java.util.Iterator;
+import jams.components.optimizer.SampleFactory.Sample;
+import jams.components.optimizer.SampleFactory.SampleSO;
 @JAMSComponentDescription(
         title="GutmanMethod",
         author="Christian Fischer",
@@ -29,8 +30,8 @@ import java.util.Iterator;
 public class GutmannMethod extends SOOptimizer {
                
     int initalSampleSize = 10;
-    SampleSO minValue = new SampleSO(null,Double.POSITIVE_INFINITY);
-    SampleSO maxValue = new SampleSO(null,Double.NEGATIVE_INFINITY);
+    SampleSO minValue = factory.getSampleSO(null,Double.POSITIVE_INFINITY);
+    SampleSO maxValue = factory.getSampleSO(null,Double.NEGATIVE_INFINITY);
     ArrayList<SampleSO> best10 = new ArrayList<SampleSO>();
 
     ArrayList<Sample> sortedSampleList = new ArrayList<Sample>();
@@ -174,7 +175,7 @@ public class GutmannMethod extends SOOptimizer {
     Matrix CreateInterpolant(){
         //N number of samples
         
-        int N = this.sampleList.size();
+        int N = factory.sampleList.size();
         int M = n+1;
         //system size
         Matrix A = new Matrix(N+M,N+M);
@@ -214,14 +215,14 @@ public class GutmannMethod extends SOOptimizer {
         }catch(Exception e){
             //so what do we do now???
             double min_d = Double.POSITIVE_INFINITY,min_d_index = 0;
-            for (int i=0;i<sampleList.size();i++){
-                for (int j=i+1;j<sampleList.size();j++){
+            for (int i=0;i<factory.sampleList.size();i++){
+                for (int j=i+1;j<factory.sampleList.size();j++){
                     double d = 0;
                     for (int k=0;k<n;k++){
                         d += (sortedSampleList.get(i).getParameter()[k]-sortedSampleList.get(j).getParameter()[k])*(sortedSampleList.get(i).getParameter()[k]-sortedSampleList.get(j).getParameter()[k]);
                     }
                     if (d <= 0.000000000001){
-                        sampleList.remove(j);
+                        factory.sampleList.remove(j);
                         j--;
                         continue;
                     }
@@ -232,7 +233,7 @@ public class GutmannMethod extends SOOptimizer {
                 }
             }
             System.out.println(JAMS.i18n("remove_index") + ":" + min_d_index);
-            sampleList.remove(min_d_index);
+            factory.sampleList.remove(min_d_index);
             return CreateInterpolant();
         }
         return solution;
@@ -258,7 +259,7 @@ public class GutmannMethod extends SOOptimizer {
                 double x[] = new double[2];
                 x[0] = 0.0 + (double)i / 50.0;
                 x[1] = 0.0 + (double)j / 50.0;
-                double guess = evaluate(this.sampleList.size(), n+1, coeff, x);
+                double guess = evaluate(this.factory.sampleList.size(), n+1, coeff, x);
                 try{
                     writer_mean.write( guess + "\t");                    
                 }catch(Exception e){
@@ -364,11 +365,11 @@ public class GutmannMethod extends SOOptimizer {
             }else
                 s = this.getSample(this.RandomSampler());
             
-            if (minValue.fx > s.fx){
+            if (minValue.f() > s.f()){
                 minValue = s;
                 best10.add(minValue);
             }
-            if (maxValue.fx < s.fx)
+            if (maxValue.f() < s.f())
                 maxValue = s;            
         }
         
@@ -408,14 +409,14 @@ public class GutmannMethod extends SOOptimizer {
                         
             Matrix coefficient = this.CreateInterpolant();
       
-            int k = sampleList.size() % cycleLength;
-            int n_snake = sampleList.size() - k - 1;
+            int k = factory.sampleList.size() % cycleLength;
+            int n_snake = factory.sampleList.size() - k - 1;
             
             
-            SampleSO myMin = this.FindInterpolatedMinimum(sampleList.size(), coefficient);
+            SampleSO myMin = this.FindInterpolatedMinimum(factory.sampleList.size(), coefficient);
 
             boolean toNear = false;
-            for (int i=0;i<this.sampleList.size();i++){
+            for (int i=0;i<this.factory.sampleList.size();i++){
                 double y[] = Transform(this.sortedSampleList.get(i).getParameter());
                 double r = 0;
                 for (int j=0;j<n;j++){                    
@@ -428,11 +429,11 @@ public class GutmannMethod extends SOOptimizer {
             }
             
             //double target = this.minValue.fx - (double)(k*k)*(getFromSampleList(((int)sigma(iterationCounter,n_snake,cycleLength)).fx-this.minValue.fx);
-            double target = (double)(k*k)*(sortedSampleList.get((int)sigma(sampleList.size()-1,n_snake,cycleLength)-1).fx[0]-this.minValue.fx);
+            double target = (double)(k*k)*(sortedSampleList.get((int)sigma(factory.sampleList.size()-1,n_snake,cycleLength)-1).F()[0]-this.minValue.f());
             double next[] = null;
             if (toNear){
                 System.out.println(JAMS.i18n("use_target_point"));
-                next = this.FindMostProbablePoint(this.sampleList.size(), coefficient, target);
+                next = this.FindMostProbablePoint(this.factory.sampleList.size(), coefficient, target);
             }
             else{
                 System.out.println(JAMS.i18n("use_minimum"));
@@ -443,7 +444,7 @@ public class GutmannMethod extends SOOptimizer {
             
             do{
                 minDist = Double.POSITIVE_INFINITY;
-                for (int j=0;j<sampleList.size();j++){                
+                for (int j=0;j<factory.sampleList.size();j++){
                     double y[] = Transform(sortedSampleList.get(j).getParameter());
                     double dist = 0;
                     for (int i=0;i<next.length;i++){                
@@ -461,11 +462,11 @@ public class GutmannMethod extends SOOptimizer {
             
             SampleSO s = this.getSample(ReTransform(next));
             
-            if (minValue.fx > s.fx){
+            if (minValue.f() > s.f()){
                 minValue = s;
                 best10.add(minValue);
             }
-            if (this.sampleList.size() > this.maxn.getValue()-10){
+            if (this.factory.sampleList.size() > this.maxn.getValue()-10){
                 //find new minimum
                 NelderMead neldermeadOptimizer = new NelderMead();
                 neldermeadOptimizer.GoalFunction = new innerOptimizer();
@@ -482,26 +483,26 @@ public class GutmannMethod extends SOOptimizer {
                     if (i==0)
                         initialSimplex[i] = best10.get(best10.size()-1);
                     else{
-                        Sample sample = sortedSampleList.get(generator.nextInt(sampleList.size()));
-                        initialSimplex[i] = new SampleSO(sample.getParameter(),sample.fx[0]);
+                        Sample sample = sortedSampleList.get(generator.nextInt(factory.sampleList.size()));
+                        initialSimplex[i] = factory.getSampleSO(sample.getParameter(),sample.fx[0]);
                     }
                 }
                 neldermeadOptimizer.initialSimplex = initialSimplex;
                 neldermeadOptimizer.setModel(this.getModel());
                 neldermeadOptimizer.run();                
-                this.sampleList.addAll(neldermeadOptimizer.sampleList);
-                this.sortedSampleList.addAll(neldermeadOptimizer.sampleList);
+                this.factory.sampleList.addAll(neldermeadOptimizer.factory.sampleList);
+                this.sortedSampleList.addAll(neldermeadOptimizer.factory.sampleList);
                 //iterationCounter += neldermeadOptimizer.sampleList.size();
-                for (int i=0;i<sampleList.size();i++){
-                    if (sortedSampleList.get(i).fx[0] < minValue.fx){
-                        minValue = new SampleSO(sortedSampleList.get(i).getParameter(),sortedSampleList.get(i).fx[0]);
+                for (int i=0;i<factory.sampleList.size();i++){
+                    if (sortedSampleList.get(i).fx[0] < minValue.f()){
+                        minValue = factory.getSampleSO(sortedSampleList.get(i).getParameter(),sortedSampleList.get(i).fx[0]);
                         best10.add(minValue);
                     }
-                    if (sortedSampleList.get(i).fx[0] > maxValue.fx)
-                        maxValue = new SampleSO(sortedSampleList.get(i).getParameter(),sortedSampleList.get(i).fx[0]);
+                    if (sortedSampleList.get(i).fx[0] > maxValue.f())
+                        maxValue = factory.getSampleSO(sortedSampleList.get(i).getParameter(),sortedSampleList.get(i).fx[0]);
                 }
             }
-            if (maxValue.fx < s.fx)
+            if (maxValue.f() < s.f())
                 maxValue = s;
             System.out.println(JAMS.i18n("minimum") + minValue);
                         

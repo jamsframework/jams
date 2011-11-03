@@ -31,6 +31,8 @@ import jams.components.optimizer.SOOptimizer.AbstractFunction;
 import java.util.Arrays;
 import jams.data.*;
 import jams.JAMS;
+import jams.components.optimizer.SampleFactory.SampleSO;
+import jams.components.optimizer.SampleFactory.SampleSOComperator;
 import jams.model.*;
 import java.util.Arrays.*;
 import java.util.StringTokenizer;
@@ -268,14 +270,14 @@ public class SimpleSCE extends SOOptimizer {
         SampleSO fnew = this.getSample(snew);
         
         // Reflection failed; now attempt a contraction point:
-        if (fnew.fx > sw.fx) {
+        if (fnew.f() > sw.f()) {
             for (int i = 0; i < nopt; i++) {
                 snew[i] = sw.x[i] + beta * (ce[i] - s[n-1].x[i]);
             }
             fnew = this.getSample(snew);
         }
         // Both reflection and contraction have failed, attempt a random point;
-        if (fnew.fx > sw.fx) {
+        if (fnew.f() > sw.f()) {
             snew = this.RandomSampler();
             fnew = this.getSample(snew);
         }
@@ -370,15 +372,16 @@ public class SimpleSCE extends SOOptimizer {
         for (int i = 0; i < nopt; i++) {
             bound[i] = bu[i] - bl[i];
         }
-
+        int i=0;
         SampleSO x[] = new SampleSO[npt];
         try{
             x[0] = getSample(x0);
-            for (int i = 0; i < npt; i++) {
+            for (i = 0; i < npt; i++) {
                 x[i] = getSample(RandomSampler());
             }
         }catch(Exception e){
             System.out.println(e);
+            return x[i];
         }
 
         int nloop = 0;        
@@ -409,19 +412,19 @@ public class SimpleSCE extends SOOptimizer {
                 int k1[] = new int[npg];
                 int k2[] = new int[npg];
 
-                for (int i = 0; i < npg; i++) {
+                for ( i = 0; i < npg; i++) {
                     k1[i] = i;
                     k2[i] = k1[i] * ngs + igs;
                 }
 
                 SampleSO c[] = new SampleSO[npg];                
-                for (int i = 0; i < npg; i++) {
+                for ( i = 0; i < npg; i++) {
                     c[k1[i]] = x[k2[i]].clone();
                 }
                 EvolveSubPopulation(nspl, nps, npg, nopt, c, bu, bl);
 
                 // Replace the complex back into the population;
-                for (int i = 0; i < npg; i++) {                    
+                for ( i = 0; i < npg; i++) {                    
                     x[k2[i]] = c[k1[i]];
                 }
             // End of Loop on Complex Evolution;
@@ -440,14 +443,14 @@ public class SimpleSCE extends SOOptimizer {
                 sayThis(JAMS.i18n("THE_POPULATION_HAS_CONVERGED_TO_A_PRESPECIFIED_SMALL_PARAMETER_SPACE"));
             }
 
-            for (int i = 0; i < kstop - 1; i++) {
+            for ( i = 0; i < kstop - 1; i++) {
                 criter[i] = criter[i + 1];
             }
-            criter[kstop - 1] = x[0].fx;
+            criter[kstop - 1] = x[0].f();
             if (nloop >= kstop) {
                 criter_change = Math.abs(criter[0] - criter[kstop - 1]) * 100.0;
                 double criter_mean = 0;
-                for (int i = 0; i < kstop; i++) {
+                for ( i = 0; i < kstop; i++) {
                     criter_mean += Math.abs(criter[i]);
                 }
                 criter_mean /= kstop;

@@ -7,9 +7,9 @@ package jams.components.optimizer.DirectSearchMethods;
 
 import Jama.Matrix;
 import jams.components.optimizer.Optimizer.ObjectiveAchievedException;
-import jams.components.optimizer.Optimizer.SampleLimitException;
 import jams.components.optimizer.SOOptimizer;
-import jams.components.optimizer.SOOptimizer.SampleSO;
+import jams.components.optimizer.SampleFactory.SampleSO;
+import jams.components.optimizer.SampleLimitException;
 import java.util.Random;
 import java.util.Vector;
 
@@ -26,7 +26,7 @@ abstract public class PatternSearch {
         for (int i=0;i<P.size();i++){
             Matrix x_next = x.plus(P.get(i));
             SampleSO next = context.getSample(x_next.getColumnPackedCopy());
-            if (next.fx < worst.fx){
+            if (next.f() < worst.f()){
                 return next;
             }
         }

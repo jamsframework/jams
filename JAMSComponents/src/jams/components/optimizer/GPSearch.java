@@ -21,6 +21,7 @@ import jams.model.JAMSVarDescription;
 import jams.components.machineLearning.GaussianLearner;
 
 //import jams.components.optimizer.
+import jams.components.optimizer.SampleFactory.SampleSO;
 import java.util.Arrays;
 @JAMSComponentDescription(
         title="NNOptimizer",
@@ -181,6 +182,7 @@ public class GPSearch extends SOOptimizer {
         try {
             writer = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + file));
         } catch (IOException ioe) {
+            ioe.printStackTrace();
             JAMSTools.handle(ioe);
         }
                 
@@ -216,6 +218,7 @@ public class GPSearch extends SOOptimizer {
             writer_mean = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + GPmeanFile));
             writer_var = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + GPvarFile));
         } catch (IOException ioe) {
+            ioe.printStackTrace();
             JAMSTools.handle(ioe);
         }                        
         for (int i=0;i<51;i++){
@@ -229,6 +232,7 @@ public class GPSearch extends SOOptimizer {
                     writer_mean.write( mean + "\t");
                     writer_var.write( variance + "\t");
                 }catch(Exception e){
+                    e.printStackTrace();
                     System.out.println(JAMS.i18n("Error") + " " + e.toString());
                 }           
             }
@@ -236,6 +240,7 @@ public class GPSearch extends SOOptimizer {
                     writer_mean.write("\n");
                     writer_var.write("\n");
                 }catch(Exception e){
+                    e.printStackTrace();
                     System.out.println(JAMS.i18n("Error") + " " + e.toString());
                 }
         }
@@ -258,6 +263,7 @@ public class GPSearch extends SOOptimizer {
         try {
             writer_prob = new BufferedWriter(new FileWriter(getModel().getWorkspaceDirectory().getPath() + "/" + GPprobFile));
         } catch (IOException ioe) {
+            ioe.printStackTrace();
             JAMSTools.handle(ioe);
         }     
         GaussEffFunction function = new GaussEffFunction();
@@ -275,18 +281,21 @@ public class GPSearch extends SOOptimizer {
                 try{
                     writer_prob.write( optprob + "\t");
                 }catch(Exception e){
+                    e.printStackTrace();
                     System.out.println(JAMS.i18n("Error") + " " + e.toString());
                 }           
             }
             try{
                     writer_prob.write("\n");
                 }catch(Exception e){
+                    e.printStackTrace();
                     System.out.println(JAMS.i18n("Error") + " " + e.toString());
                 }
         }
         try{
             writer_prob.close();
         }catch(Exception e){
+            e.printStackTrace();
             System.out.println(e.toString());
             e.printStackTrace();
         }
@@ -403,6 +412,7 @@ public class GPSearch extends SOOptimizer {
             try{
                 value = this.TransformAndEvaluate(nextSample);
             }catch(Exception e){
+                e.printStackTrace();
                 System.out.println(e);
                 return;
             }
