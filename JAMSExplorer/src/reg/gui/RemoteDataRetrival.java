@@ -5,13 +5,6 @@
 package reg.gui;
 
 import jams.gui.WorkerDlg;
-import jams.remote.client.Client;
-import jams.remote.common.ByteStream.ProgressInfo;
-import jams.remote.common.FileInfo;
-import jams.remote.common.JAMSConnection;
-import jams.remote.common.JAMSConnection.Operation;
-import jams.remote.common.JAMSConnection.ReceivePacketListener;
-import jams.remote.common.JobState;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -37,6 +30,13 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import optas.remote.client.ClientOPTAS;
+import optas.remote.common.ByteStream.ProgressInfo;
+import optas.remote.common.FileInfo;
+import optas.remote.common.JAMSConnection;
+import optas.remote.common.JAMSConnection.Operation;
+import optas.remote.common.JAMSConnection.ReceivePacketListener;
+import optas.remote.common.JobState;
 
 /**
  *
@@ -55,7 +55,7 @@ public class RemoteDataRetrival extends JPanel {
     JPanel fileState = new JPanel();
     JButton downloadButton;
     JButton closeButton;
-    Client client;
+    ClientOPTAS client;
     DefaultTableModel jobTableModel = null;
     JTable jobTable;
     JScrollPane jobListScrollPane;
@@ -330,7 +330,7 @@ public class RemoteDataRetrival extends JPanel {
         char password[] = passwordField.getPassword();
         String passwordString = new String(password);
 
-        client = new Client("sonne.geogr.uni-jena.de", 9000, username, passwordString);
+        client = new ClientOPTAS("sonne.geogr.uni-jena.de", 9000, username, passwordString);
         client.connect();
         client.getConnection().addReceivePacketListener(new ReceivePacketListener() {
 
