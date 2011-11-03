@@ -64,7 +64,7 @@ public class ScrollableMessageDialog extends JDialog {
         getContentPane().add(scrollPane, BorderLayout.CENTER);
 
         JButton yesButton = new JButton();
-        yesButton.setText(JAMS.i18n("YES"));
+        yesButton.setText(JAMS.i18n("Yes"));
         yesButton.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -73,7 +73,7 @@ public class ScrollableMessageDialog extends JDialog {
             }
         });
         JButton noButton = new JButton();
-        noButton.setText(JAMS.i18n("NO"));
+        noButton.setText(JAMS.i18n("No"));
         noButton.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
