@@ -207,6 +207,7 @@ public class JAMSui {
                             try {
                                 model.getRuntime().resume(state.getSmallModelState());
                             } catch (Exception e) {
+                                e.printStackTrace();
                                 JAMSTools.handle(e);
                             }
                             // collect some garbage ;)
@@ -221,6 +222,7 @@ public class JAMSui {
                 } catch (SAXException se) {
                     System.out.println(JAMS.i18n("The_model_definition_file_") + modelFileName + JAMS.i18n("_contained_errors!"));
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     if (runtime != null) {
                         runtime.handle(ex);
                     } else {
