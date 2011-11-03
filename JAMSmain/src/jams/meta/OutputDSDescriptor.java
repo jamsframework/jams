@@ -121,7 +121,7 @@ public class OutputDSDescriptor {
         } else {
             enabledChar = Character.toChars(9744)[0];
         }
-        return enabledChar + " " + name + " [" + context.getName() + "]";
+        return /*enabledChar + " " + */name + " [" + context.getName() + "]";
     }
 
     public FilterDescriptor addFilter(ContextDescriptor context, String expression) {

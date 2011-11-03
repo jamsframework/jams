@@ -35,7 +35,24 @@ public class JAMSLog extends Observable implements Serializable {
     
     StringBuffer logString = new StringBuffer();
     String lastString;
-    
+
+    int bufferSize = 32000000;
+
+    public void setBufferSize(int newBufferSize){
+        bufferSize = newBufferSize;
+        trimBuffer();
+    }
+
+    public int getBufferSize(){
+        return bufferSize;
+    }
+
+    private void trimBuffer(){
+        if (bufferSize != -1 && bufferSize < logString.length()){
+            logString.delete(0, logString.length()-bufferSize);
+        }
+    }
+
     public String getLogString() {
         return logString.toString();
     }
@@ -47,6 +64,8 @@ public class JAMSLog extends Observable implements Serializable {
     public void print(String str) {
         lastString = str;
         logString.append(str);
+        trimBuffer();
+
         this.setChanged();
         this.notifyObservers(str);
     }

@@ -96,7 +96,7 @@ public abstract class StandardInputDataStore implements InputDataStore, Serializ
                 ws.getRuntime().sendInfoMsg("Writing cache file .. " + file.getPath());
             }
         }
-        if (readCache()) {
+        if (!readCache()) {
             this.dataIO = createDataIO(doc);
             this.dsd = createDataSetDefinitionFromDocument(doc);
         }

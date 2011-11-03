@@ -92,7 +92,7 @@ public class ComponentField {
                 }
                 return;
             } else {
-                throw new AttributeLinkException("Semicolons are not allowed in attribute names!", JAMS.i18n("Error"));
+                throw new AttributeLinkException("Semicolons are not allowed in attribute names!("+attributeName+")", JAMS.i18n("Error"));
             }
         }
         if (this.type.isArray()) {
