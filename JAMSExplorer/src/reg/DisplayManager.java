@@ -30,6 +30,7 @@ import java.io.IOException;
 import reg.spreadsheet.JAMSSpreadSheet;
 import jams.workspace.stores.StandardInputDataStore;
 import jams.workspace.stores.TSDataStore;
+import java.awt.Component;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Observable;
@@ -37,7 +38,10 @@ import java.util.Observer;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import optas.hydro.data.DataCollection;
+import reg.gui.DataCollectionView;
 import reg.gui.InputDSInfoPanel;
 import reg.gui.TSPanel;
 import reg.gui.TreePanel;
@@ -54,7 +58,7 @@ public class DisplayManager implements Observer {
     private InputDSInfoPanel inputDSInfoPanel;
     private TSPanel tsPanel;
     private TreePanel treePanel;
-    private HashMap<String, JPanel> dataPanels = new HashMap<String, JPanel>();
+    private HashMap<String, Component> dataPanels = new HashMap<String, Component>();
     private JAMSExplorer explorer;
     private JAMSSpreadSheet spreadSheet = null;
 
@@ -91,7 +95,7 @@ public class DisplayManager implements Observer {
     }
 
     public void removeDisplay(String name) {
-        JPanel panel = dataPanels.get(name);
+        Component panel = dataPanels.get(name);
         explorer.getExplorerFrame().getTPane().remove(panel);
         dataPanels.remove(name);
     }
@@ -113,7 +117,7 @@ public class DisplayManager implements Observer {
 
                 if (dataPanels.containsKey(dsID)) {
 
-                    JPanel panel = dataPanels.get(dsID);
+                    Component panel = dataPanels.get(dsID);
                     explorer.getExplorerFrame().getTPane().setSelectedComponent(panel);
                     return;
 
@@ -144,15 +148,18 @@ public class DisplayManager implements Observer {
                 dsID = getIdFromName(datFile);
                 if (dataPanels.containsKey(dsID)) {
 
-                    JPanel panel = dataPanels.get(dsID);
-                    explorer.getExplorerFrame().getTPane().setSelectedComponent(panel);
+                    Component panel = dataPanels.get(dsID);
+                    if (explorer.getExplorerFrame().getTPane().indexOfComponent(panel)!=-1)
+                        explorer.getExplorerFrame().getTPane().setSelectedComponent(panel);
+                    else
+                        explorer.getExplorerFrame().getTPane().addTab(dsID, panel);
                     return;
 
                 }
 
                 try {
 
-                    JPanel outputPanel = OutputPanelFactory.getOutputDSPanel(explorer, datFile, dsID);
+                    Component outputPanel = OutputPanelFactory.getOutputDSPanel(explorer, datFile, dsID);
                     dataPanels.put(dsID, outputPanel);
                     explorer.getExplorerFrame().getTPane().addTab(dsID, outputPanel);
                     explorer.getExplorerFrame().getTPane().setSelectedComponent(outputPanel);
@@ -164,6 +171,17 @@ public class DisplayManager implements Observer {
                 }
                 break;
         }
+    }
+
+    public DataCollection getCurrentDataCollection(){
+        JComponent panel = (JComponent)explorer.getExplorerFrame().getTPane().getSelectedComponent();
+        if (panel==null)
+            return null;
+        if (panel instanceof DataCollectionView){
+            DataCollectionView dcView = (DataCollectionView)panel;
+            return dcView.getDataCollection();
+        }
+        return null;
     }
 
     public void deleteDS(DSTreeNode node) {

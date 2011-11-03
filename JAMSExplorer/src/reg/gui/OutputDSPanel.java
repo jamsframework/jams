@@ -27,7 +27,9 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
+import reg.DataCollectionViewController;
 import reg.JAMSExplorer;
+import reg.OutputPanelFactory;
 import reg.dsproc.DataStoreProcessor;
 import reg.spreadsheet.JAMSSpreadSheet;
 
@@ -57,8 +59,11 @@ public class OutputDSPanel extends JPanel {
                 Logger.getLogger(OutputDSPanel.class.getName()).log(Level.WARNING, "Unsupported datastore");
                 break;
 
+            case DataStoreProcessor.SimpleEnsembleDataStore:
+                break;
             case DataStoreProcessor.EnsembleTimeSeriesDataStore:
-                tsp = new EnsembleTimeSeriesPanel();
+
+                //tsp = new EnsembleTimeSeriesPanel();
                 break;
 
             case DataStoreProcessor.TimeSpaceDataStore:

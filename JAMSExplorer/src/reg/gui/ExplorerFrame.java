@@ -33,37 +33,42 @@ import jams.tools.StringTools;
 import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.JAMSWorkspace;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.w3c.dom.Document;
+import reg.DataCollectionViewController;
 import reg.JAMSExplorer;
+import optas.hydro.data.DataCollection;
+import reg.OutputPanelFactory;
 import reg.spreadsheet.STPConfigurator;
 import reg.viewer.Viewer;
 
@@ -78,7 +83,7 @@ public class ExplorerFrame extends JFrame {
     protected JFileChooser jfc = GUIHelper.getJFileChooser();
     protected WorkerDlg openWSDlg;
     protected Action openWSAction, openSTPAction, exitAction, editWSAction, editPrefsAction,
-            sensitivityAnalysisAction, reloadWSAction, createEnsembleAction;
+            sensitivityAnalysisAction, reloadWSAction, importDataAction;
     protected JLabel statusLabel;
     protected JSplitPane mainSplitPane;
     protected JTabbedPane tPane;
@@ -86,6 +91,9 @@ public class ExplorerFrame extends JFrame {
     protected PropertyDlg propertyDlg;
     protected WorkspaceDlg wsDlg;
     protected Document modelDoc = null;    
+    protected RemoteDataRetrival remoteClient = null;
+
+    private JMenuItem saveEnsembleItem;
 
     public ExplorerFrame(JAMSExplorer explorer) {
         this.explorer = explorer;        
@@ -136,10 +144,10 @@ public class ExplorerFrame extends JFrame {
             }
         };
         
-        createEnsembleAction = new AbstractAction("Create Ensemble") {
+        importDataAction = new AbstractAction("Import Data") {
 
             public void actionPerformed(ActionEvent e) {
-                createEnsemble();
+                importData();
             }
         };
 
@@ -263,8 +271,8 @@ public class ExplorerFrame extends JFrame {
         openWSItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
         fileMenu.add(openWSItem);
 
-        JMenuItem createEnsemble = new JMenuItem(createEnsembleAction);
-        fileMenu.add(createEnsemble);
+        JMenuItem importData = new JMenuItem(importDataAction);
+        fileMenu.add(importData);
 
         JMenuItem exitItem = new JMenuItem(exitAction);
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
@@ -273,7 +281,106 @@ public class ExplorerFrame extends JFrame {
         JMenuItem stpItem = new JMenuItem(openSTPAction);
 //        stpIcon.setAccelerator()
         plotMenu.add(stpItem);
+        
+        
+        //<editor-fold defaultstate="collapsed" desc="Ensembles Menu">
+        JMenu ensemblesMenu = new JMenu("Ensembles");
+        {
+            JMenuItem newEnsembleItem = new JMenuItem(new AbstractAction("New Ensembles ...") {
 
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    /* forward to controller */
+                    DataCollectionViewController controller = new DataCollectionViewController(new DataCollection());
+                    /* display data collection view */
+                    tPane.addTab("New Ensemble", controller.getView());
+                }
+            });
+            newEnsembleItem.setEnabled(true);
+            ensemblesMenu.add(newEnsembleItem);
+
+            //<editor-fold defaultstate="collapsed" desc="New Ensemble Menu Item">
+            JMenuItem newEnsembleFromFileItem = new JMenuItem(new AbstractAction("New Ensemble from File...") {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    
+                    /*ImportMonteCarloDataPanel importDlg = new ImportMonteCarloDataPanel(ExplorerFrame.this);
+                    importDlg.addActionEventListener(new ActionListener(){
+
+                        @Override
+                        public void actionPerformed(ActionEvent e){
+
+                            
+                            ImportMonteCarloDataPanel importDialog = (ImportMonteCarloDataPanel) e.getSource();
+                            DataCollection collection = importDialog.getEnsemble();
+                            
+                            
+                            DataCollectionViewController controller = new DataCollectionViewController(collection);
+                            
+                            tPane.addTab("New Ensemble", controller.getView());
+                        }
+                    });*/
+                    DataCollectionViewController controller = OutputPanelFactory.constructDataCollection(explorer.getExplorerFrame(), null, null);
+                    tPane.addTab("New Ensemble", controller.getView());
+                    //importDlg.getDialog().setVisible(true);
+                }
+            });
+            newEnsembleFromFileItem.setEnabled(true);
+            ensemblesMenu.add(newEnsembleFromFileItem);
+            //</editor-fold>
+
+            //<editor-fold <editor-fold defaultstate="collapsed" desc="Open Ensemble Menu Item">
+            JMenuItem openEnsembleItem = new JMenuItem(new AbstractAction("Open Ensemble...") {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                }
+            });
+            openEnsembleItem.setEnabled(false);
+            ensemblesMenu.add(openEnsembleItem);
+            //</editor-fold>
+
+            saveEnsembleItem = new JMenuItem(new AbstractAction("Save Ensemble...") {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String name = JOptionPane.showInputDialog(rootPane, "Please enter a filename");
+                    Component pane = ExplorerFrame.this.getTPane().getSelectedComponent();
+                    if (!(pane instanceof DataCollectionView))
+                        return;
+
+                    DataCollectionView view = (DataCollectionView)pane;
+                    String path = explorer.getWorkspace().getOutputDataDirectory().getAbsolutePath() + "/" + name;
+                    if (!explorer.getWorkspace().getOutputDataDirectory().exists()){
+                        explorer.getWorkspace().getOutputDataDirectory().mkdirs();
+                    }
+                    if (!path.endsWith(".cdat")){
+                        path = path.concat(".cdat");
+                    }                   
+                    view.getDataCollection().save(new File(path));
+                }
+            });
+            saveEnsembleItem.setEnabled(true);
+            ensemblesMenu.add(saveEnsembleItem);            
+        }
+
+        tPane.addChangeListener(new ChangeListener() {
+
+            public void stateChanged(ChangeEvent e) {
+                Component pane = ExplorerFrame.this.getTPane().getSelectedComponent();
+                if (pane instanceof DataCollectionView) {
+                    saveEnsembleItem.setEnabled(true);
+                } else {
+                    saveEnsembleItem.setEnabled(false);
+                }
+            }
+        });
+
+        mainMenu.add(ensemblesMenu);
+        //</editor-fold>
+        
+        
         setJMenuBar(mainMenu);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(Math.min(d.width, JAMSExplorer.SCREEN_WIDTH), Math.min(d.height, JAMSExplorer.SCREEN_HEIGHT));
@@ -289,32 +396,7 @@ public class ExplorerFrame extends JFrame {
         return toolBar;
     }
 
-    private void createEnsemble(){
-        ImportMonteCarloDataPanel importDlg = new ImportMonteCarloDataPanel(this);
-        importDlg.addActionEventListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                JFileChooser chooser = GUIHelper.getJFileChooser();
-                chooser.setFileFilter(new FileFilter(){
-                    public String getDescription(){
-                        return "data collection";
-                    }
-                    public boolean accept(File file){
-                        if (file.getAbsolutePath().endsWith("cdat"))
-                            return true;
-                        if (file.isDirectory())
-                            return true;
-                        return false;
-                    }
-                });
-                int result = chooser.showSaveDialog(ExplorerFrame.this);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    ((ImportMonteCarloDataPanel)e.getSource()).getEnsemble().save(chooser.getSelectedFile());
-                }
-            }
-        });
-        importDlg.getDialog().setVisible(true);
-    }
-
+        
     public void open(File workspaceFile) throws InvalidWorkspaceException {
         String[] libs = StringTools.toArray(explorer.getProperties().getProperty(SystemProperties.LIBS_IDENTIFIER, ""), ";");
         JAMSWorkspace workspace = new JAMSWorkspace(workspaceFile, explorer.getRuntime(), true);
@@ -323,6 +405,17 @@ public class ExplorerFrame extends JFrame {
         explorer.getDisplayManager().removeAllDisplays();
         explorer.setWorkspace(workspace);
         this.update();
+    }
+
+    protected void importData(){
+        if (remoteClient==null){
+            if (this.explorer.getWorkspace()==null){
+                JOptionPane.showMessageDialog(remoteClient, "Please open a workspace first!");
+            }
+            remoteClient = new RemoteDataRetrival(new File(this.explorer.getWorkspace().getOutputDataDirectory().getParentFile() + "/download/"));
+        }
+        JDialog dlg = remoteClient.getDialog(this);
+        dlg.setVisible(true);
     }
 
     protected void open() {

@@ -23,12 +23,19 @@
 package reg;
 
 import jams.io.BufferedFileReader;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import javax.swing.JPanel;
-import reg.gui.DataCollectionPanel;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import optas.hydro.data.DataCollection;
+import reg.dsproc.DataStoreProcessor;
+import reg.gui.ExplorerFrame;
+import reg.gui.ImportMonteCarloDataPanel;
 import reg.gui.OutputDSPanel;
 import reg.gui.SimpleOutputPanel;
 import reg.spreadsheet.JAMSSpreadSheet;
@@ -40,9 +47,38 @@ import reg.spreadsheet.SpreadsheetConstants;
  */
 public class OutputPanelFactory {
 
-    public static JPanel getOutputDSPanel(JAMSExplorer explorer, File file, String id) throws FileNotFoundException, IOException {
+    public static DataCollectionViewController constructDataCollection(ExplorerFrame frame, DataCollection dc, File f) {
+        ImportMonteCarloDataPanel importDlg = new ImportMonteCarloDataPanel(frame, dc, f);
+        importDlg.addActionEventListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+        JDialog dialog = importDlg.getDialog();
+        dialog.setModal(true);
+        dialog.setVisible(true);
+
+        //ImportMonteCarloDataPanel importDialog = (ImportMonteCarloDataPanel) e.getSource();
+        DataCollection collection = importDlg.getEnsemble();
+        DataCollectionViewController controller = new DataCollectionViewController(collection);
+
+        return controller;
+    }
+
+    public static Component getOutputDSPanel(JAMSExplorer explorer, File file, String id) throws FileNotFoundException, IOException {
         if (file.getAbsolutePath().endsWith("cdat")){
-            return new DataCollectionPanel(explorer.getExplorerFrame(), file, null);
+            //DataCollectionViewController controller = new DataCollectionViewController(collection);
+            //return new DataCollectionView(  explorer.getExplorerFrame(), file, null);
+            DataCollection collection = DataCollection.createFromFile(file);
+            if (collection == null){
+                JOptionPane.showMessageDialog(explorer.getExplorerFrame(), "failed to load data collection from file: " + file.getName());
+                return null;
+            }
+            DataCollectionViewController controller = new DataCollectionViewController(collection);
+            //tPane.addTab("New Ensemble", controller.getView());
+            return controller.getView();
         }
         BufferedFileReader reader = new BufferedFileReader(new FileInputStream(file));
         String line = reader.readLine();
@@ -53,6 +89,14 @@ public class OutputPanelFactory {
         }
 
         if (line.startsWith("@context")) {
+            if (DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.EnsembleTimeSeriesDataStore ||
+                DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.SimpleEnsembleDataStore){
+                DataCollectionViewController controller = OutputPanelFactory.constructDataCollection(explorer.getExplorerFrame(), null, file);
+                controller.getView();
+            }
+
+
+
             return new OutputDSPanel(explorer, file, id);
         }
 

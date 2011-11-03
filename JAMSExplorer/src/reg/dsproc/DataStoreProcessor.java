@@ -65,6 +65,7 @@ public class DataStoreProcessor {
     public static final int EnsembleTimeSeriesDataStore = 2;
     public static final int SimpleDataSerieDataStore = 3;
     public static final int SimpleTimeSerieDataStore = 4;
+    public static final int SimpleEnsembleDataStore = 5;
 
     public DataStoreProcessor(File dsFile) {
         this.dsFile = dsFile;
@@ -95,6 +96,9 @@ public class DataStoreProcessor {
             }
             if (dsdb.isEnsembleTimeSeriesDatastore()) {
                 return EnsembleTimeSeriesDataStore;
+            }
+            if (dsdb.isSimpleEnsembleDatastore()) {
+                return SimpleEnsembleDataStore;
             }
             return UnsupportedDataStore;
             //}
@@ -510,7 +514,22 @@ public class DataStoreProcessor {
         if (!cntxt.get(0).getType().equals("jams.model.JAMSTemporalContext")) {
             return false;
         }
-        if (!cntxt.get(1).getType().contains("jams.components.optimizer")) {
+        if (!cntxt.get(1).getType().contains("jams.components.optimizer") &&
+                !cntxt.get(1).getType().contains("optas.optimizer")) {
+            return false;
+        }
+
+        this.contexts = cntxt;
+        return true;
+    }
+
+    public synchronized boolean isSimpleEnsembleDatastore(){
+        ArrayList<DataStoreProcessor.ContextData> cntxt = getContexts();
+        if (cntxt.size() != 1) {
+            return false;
+        }
+        if (!cntxt.get(0).getType().contains("jams.components.optimizer") &&
+                !cntxt.get(0).getType().contains("optas.optimizer")) {
             return false;
         }
 
@@ -541,6 +560,11 @@ public class DataStoreProcessor {
             return false;
         }
         if (cntxt.get(0).getType().equals("jams.model.JAMSTemporalContext")) {
+            return false;
+        }
+
+        if (cntxt.get(0).getType().contains("optas.optimizer") ||
+            cntxt.get(0).getType().contains("jams.components.optimizer")) {
             return false;
         }
 

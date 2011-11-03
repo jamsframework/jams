@@ -24,10 +24,9 @@ package reg.tree;
 
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.J2KTSDataStore;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -42,8 +41,9 @@ import javax.swing.tree.TreePath;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
+import optas.hydro.data.DataCollection;
 import reg.JAMSExplorer;
-import reg.hydro.HydroAnalysisPanel;
+import reg.gui.ImportMonteCarloDataPanel;
 
 /**
  *
@@ -53,13 +53,14 @@ public class DSTree extends JAMSTree {
 
     private static final String ROOT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATENSPEICHER"), INPUT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EINGABEDATEN"), OUTPUT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AUSGABEDATEN");
 
-    private JPopupMenu popupDS;
-    private JPopupMenu popupIDS;
+    private JPopupMenu popupDS;    
     private JPopupMenu popupDir;
 
     private NodeObservable nodeObservable = new NodeObservable();
 
     private JAMSExplorer explorer;
+
+    JMenuItem addToEnsembleItem = new JMenuItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD_TO_ENSEMBLE"));
 
     public DSTree(JAMSExplorer explorer) {
         super();
@@ -73,15 +74,6 @@ public class DSTree extends JAMSTree {
 
             public void actionPerformed(ActionEvent evt) {
                 displayDSData();
-            }
-        });
-
-        JMenuItem hydroAnalyseItem = new JMenuItem("Hydrograph Analysis");
-        //detailItem.setAccelerator(KeyStroke.getKeyStroke('D'));
-        hydroAnalyseItem.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent evt) {
-                showHydrograph();
             }
         });
 
@@ -105,15 +97,19 @@ public class DSTree extends JAMSTree {
             }
         });
 
+        
+        addToEnsembleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0));
+        addToEnsembleItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addToEnsemble();
+            }
+        });
+        
         popupDS = new JPopupMenu();
         popupDS.add(detailItem);
         popupDS.add(deleteFileItem);
-
-        popupIDS = new JPopupMenu();
-        popupIDS.add(detailItem);
-        popupIDS.add(deleteFileItem);
-        popupIDS.add(hydroAnalyseItem);
-
+        popupDS.add(addToEnsembleItem);
+        
         popupDir = new JPopupMenu();
         popupDir.add(deleteDirItem);
 
@@ -144,6 +140,14 @@ public class DSTree extends JAMSTree {
             }
         });
 
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e){
+                if (e.getKeyCode() == KeyEvent.VK_F5){
+                    update();
+                }
+            }
+        });
         this.setVisible(false);
     }
 
@@ -181,22 +185,48 @@ public class DSTree extends JAMSTree {
         return outputRoot;
     }
 
-    private void showHydrograph(){
-        DSTreeNode node = (DSTreeNode) getLastSelectedPathComponent();
-        String dsID = node.toString();
-        InputDataStore store = explorer.getWorkspace().getInputDataStore(dsID);
-        if (store instanceof J2KTSDataStore){
-            JDialog hydroAnalysisDialog = new JDialog();
-            hydroAnalysisDialog.setLayout(new BorderLayout());
-            hydroAnalysisDialog.setPreferredSize(new Dimension(800,500));
-            hydroAnalysisDialog.setMinimumSize(new Dimension(800,500));
-            hydroAnalysisDialog.add(new HydroAnalysisPanel(this.explorer.getExplorerFrame(), (J2KTSDataStore)store ));
-            hydroAnalysisDialog.invalidate();
-            hydroAnalysisDialog.pack();
-            hydroAnalysisDialog.setVisible(true);
-        }else{
-            JOptionPane.showMessageDialog(this, "unsuitable datastore");
+    private boolean isNodeSuitableForEnsemble(DSTreeNode node){
+        switch(node.getType()){
+
+            case DSTreeNode.OUTPUT_DIR:
+                return false;
+            case DSTreeNode.INPUT_DS:
+                return false;
+            default:return true;
         }
+    }
+
+    private void addToEnsemble(){
+        DSTreeNode node = (DSTreeNode) getLastSelectedPathComponent();
+        //this shoulb be checked before calling that function, so that this message should never popup
+        if (!isNodeSuitableForEnsemble(node)){
+            JOptionPane.showMessageDialog(popupDS, "this element cannot be added to an ensemble");
+        }
+        optas.hydro.data.DataCollection collection = explorer.getDisplayManager().getCurrentDataCollection();
+        if (collection==null){
+            JOptionPane.showMessageDialog(popupDS, "there is no data collection selected");
+        }
+        FileObject fo = (FileObject) node.getUserObject();
+        if (fo.getFile().getAbsolutePath().endsWith("cdat")){
+            mergeEnsembles(fo, collection);
+        }else{
+            ImportMonteCarloDataPanel importer = new ImportMonteCarloDataPanel(this.explorer.getExplorerFrame(), collection, fo.getFile());
+            JDialog dialog = importer.getDialog();
+        
+            dialog.setModal(true);
+            dialog.setVisible(true);
+        }
+    }
+
+    private void mergeEnsembles(FileObject fo, DataCollection dc){
+        DataCollection src = DataCollection.createFromFile(fo.getFile());
+        if (src == null){
+            JOptionPane.showMessageDialog(popupDS, "failed to load data collection file!");
+            return;
+        }
+        Object[] values = new Object[]{"Attach collection", "Unify collection"};
+        JOptionPane.showInputDialog(popupDS, "Please select merging mode!", "Merge mode selection", JOptionPane.QUESTION_MESSAGE, null, values, values[0] );
+        dc.mergeDataCollections(src);
     }
 
     private void displayDSData() {
@@ -210,22 +240,37 @@ public class DSTree extends JAMSTree {
         explorer.getDisplayManager().deleteDS((DSTreeNode) getLastSelectedPathComponent());
     }
 
+    private void updatePopupMenu(DSTreeNode node){
+        if (!this.isNodeSuitableForEnsemble(node)){
+            addToEnsembleItem.setEnabled(false);
+            return;
+        }
+        if (this.explorer.getDisplayManager().getCurrentDataCollection()==null){
+            addToEnsembleItem.setEnabled(false);
+            return;
+        }
+        addToEnsembleItem.setEnabled(true);
+    }
+
     private void showPopup(MouseEvent evt) {
         TreePath p = this.getClosestPathForLocation(evt.getX(), evt.getY());
         this.setSelectionPath(p);
         DSTreeNode node = (DSTreeNode) this.getLastSelectedPathComponent();
 
         if ((node != null) && ((node.getType() == DSTreeNode.INPUT_DS) || (node.getType() == DSTreeNode.OUTPUT_DS))) {
+            updatePopupMenu(node);
             if ((node != null) && ((node.getType() == DSTreeNode.INPUT_DS))) {
                 InputDataStore store = explorer.getWorkspace().getInputDataStore(node.toString());
-                if (store instanceof J2KTSDataStore)
-                    popupIDS.show(this, evt.getX(), evt.getY());
-                else
+                updatePopupMenu(node);
+                if (store instanceof J2KTSDataStore){
+                    
+                } else
                     popupDS.show(this, evt.getX(), evt.getY());
             }else
                 popupDS.show(this, evt.getX(), evt.getY());
         }
         if ((node != null) && ((node.getType() == DSTreeNode.OUTPUT_DIR))) {
+            updatePopupMenu(node);
             popupDir.show(this, evt.getX(), evt.getY());
         }
     }

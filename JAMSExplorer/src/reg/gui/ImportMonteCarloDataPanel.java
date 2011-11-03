@@ -47,21 +47,26 @@ import reg.dsproc.EnsembleTimeSeriesProcessor;
 import reg.dsproc.Processor;
 import reg.dsproc.SimpleSerieProcessor;
 import reg.dsproc.TimeSpaceProcessor;
-import reg.hydro.data.DataCollection;
-import reg.hydro.data.DataSet.MismatchException;
-import reg.hydro.data.Efficiency;
-import reg.hydro.data.Measurement;
-import reg.hydro.data.Modelrun;
-import reg.hydro.data.Parameter;
-import reg.hydro.data.SimpleDataSet;
-import reg.hydro.data.StateVariable;
-import reg.hydro.data.TimeSerie;
+import optas.hydro.data.DataCollection;
+import optas.hydro.data.DataSet.MismatchException;
+import optas.hydro.data.Efficiency;
+import optas.hydro.data.Measurement;
+import optas.hydro.data.Modelrun;
+import optas.hydro.data.Parameter;
+import optas.hydro.data.SimpleDataSet;
+import optas.hydro.data.StateVariable;
+import optas.hydro.data.TimeSerie;
 
 /**
  *
  * @author chris
  */
 public class ImportMonteCarloDataPanel extends JPanel {
+
+    enum MergeMode{
+        ATTACH,     //attaches the new datacollection at the end of the old one
+        UNIFY       //unifies the attributes of both datacollections
+    };
 
     Dimension defaultFilesTable = new Dimension(500, 150);
     Dimension defaultDatasetTable = new Dimension(500, 200);
@@ -84,9 +89,14 @@ public class ImportMonteCarloDataPanel extends JPanel {
     DataCollection ensemble = null;
     JFileChooser chooser = new JFileChooser();
 
+    JComboBox mergeModeBox = new JComboBox(new String[]{"Attach Mode", "Unify Mode"});
+
     ArrayList<ActionListener> listenerList =  new ArrayList<ActionListener>();
     JFrame owner;
     JDialog ownerDlg = null;
+
+    boolean isImportCollection = false;
+    DataCollection importedCollection = null;
 
     final HashMap<String, String> defaultAttributeTypes = new HashMap<String, String>();
 
@@ -95,9 +105,23 @@ public class ImportMonteCarloDataPanel extends JPanel {
         init();
     }
     public ImportMonteCarloDataPanel(JFrame owner, DataCollection dc) {
-        this.owner = owner;        
+        this.owner = owner;
+        this.ensemble = dc;
         init();
     }
+    public ImportMonteCarloDataPanel(JFrame owner, DataCollection dc, File file) {
+        this.owner = owner;
+        this.ensemble = dc;
+        if (file.getAbsolutePath().endsWith("cdat")){
+            isImportCollection = true;
+            importedCollection = DataCollection.createFromFile(file);
+        }
+        init();
+
+        addFile(file);
+    }
+
+
 
     public JDialog getDialog(){
         ownerDlg = new JDialog(this.owner,"Import Ensemble Data");
@@ -106,6 +130,13 @@ public class ImportMonteCarloDataPanel extends JPanel {
         ownerDlg.setMinimumSize(defaultWindowSize);
 
         return ownerDlg;
+    }
+
+    private MergeMode getMergeMode(){
+        if (this.mergeModeBox.getSelectedIndex()==0)
+            return MergeMode.ATTACH;
+        else
+            return MergeMode.UNIFY;
     }
 
     private void loadDataStore(File file) {
@@ -131,6 +162,9 @@ public class ImportMonteCarloDataPanel extends JPanel {
             case DataStoreProcessor.TimeSpaceDataStore:
                 proc = new TimeSpaceProcessor(dsdb);
                 break;
+            case DataStoreProcessor.SimpleEnsembleDataStore:
+                proc = new SimpleSerieProcessor(dsdb);
+                break;
             case DataStoreProcessor.SimpleDataSerieDataStore:
                 proc = new SimpleSerieProcessor(dsdb);
                 break;
@@ -143,9 +177,10 @@ public class ImportMonteCarloDataPanel extends JPanel {
         }        
         fileProcessors.add(proc);
     }
+
     static int badIDCounter = 1000000;
     private DataCollection buildEnsemble() {
-        ensemble = new DataCollection();
+        DataCollection ensemble = new DataCollection();
         String samplerClass = null;
 
         for (AttributeData a : this.attributeDataMap.keySet()) {
@@ -166,6 +201,8 @@ public class ImportMonteCarloDataPanel extends JPanel {
             try {
                 for (String dataSetClassName : simpleDatasetClasses.keySet()) {
                     if (selection.equals(dataSetClassName)) {
+                        if (!(p instanceof SimpleSerieProcessor))
+                            continue;
                         SimpleSerieProcessor s = ((SimpleSerieProcessor) p);
                         String[] ids = s.getIDs();
                         for (AttributeData ad : s.getDataStoreProcessor().getAttributes())
@@ -281,6 +318,10 @@ public class ImportMonteCarloDataPanel extends JPanel {
         return types[0];
     }
 
+    public boolean isEmpty(){
+        return this.attributeDataMap.isEmpty();
+    }
+
     private void updateDataTable() {
         String ensembleVariableTypes[] = {emptyString, parameterString, stateVariableString, efficiencyStringNeg, efficiencyStringPos};
         String timeserieTypes[] = {emptyString, measurementString};
@@ -295,6 +336,9 @@ public class ImportMonteCarloDataPanel extends JPanel {
 
                 case DataStoreProcessor.EnsembleTimeSeriesDataStore:
                     processorTypeMap.put(p, ensembleTimeSerieTypes);
+                    break;
+                case DataStoreProcessor.SimpleEnsembleDataStore:
+                    processorTypeMap.put(p, ensembleVariableTypes);
                     break;
                 case DataStoreProcessor.SimpleDataSerieDataStore:
                     processorTypeMap.put(p, ensembleVariableTypes);
@@ -380,6 +424,35 @@ public class ImportMonteCarloDataPanel extends JPanel {
 
     }
 
+    private abstract class CustomRunnable implements Runnable{
+        private Object customData;
+
+        public CustomRunnable(Object o){
+            setCustomData(o);
+        }
+        public void setCustomData(Object o){
+            this.customData = o;
+        }
+        public Object getCustomData(){
+            return this.customData;
+        }
+    }
+
+    private void addFile(File file) {
+        WorkerDlg progress = new WorkerDlg(ImportMonteCarloDataPanel.this.owner, "Import Data");
+        progress.setInderminate(true);
+
+        progress.setTask(new CustomRunnable(file) {
+
+            public void run() {
+                loadDataStore((File)this.getCustomData());
+                updateFileTable();
+                updateDataTable();
+            }
+        });
+        progress.execute();
+    }
+
     private JPanel createFileTable() {
         JPanel overviewLoadedFiles = new JPanel(new BorderLayout());
 
@@ -408,7 +481,11 @@ public class ImportMonteCarloDataPanel extends JPanel {
         overviewLoadedFiles.add(loadedFilesScroll, BorderLayout.NORTH);
 
         JPanel buttonBar = new JPanel(new FlowLayout());
+
         JButton loadFileButton = new JButton("Load File");
+        if (isImportCollection)
+            loadFileButton.setEnabled(false);
+        
         loadFileButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -430,31 +507,16 @@ public class ImportMonteCarloDataPanel extends JPanel {
                 });
                 int returnValue = chooser.showOpenDialog(ImportMonteCarloDataPanel.this);
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
-                    WorkerDlg progress = new WorkerDlg(ImportMonteCarloDataPanel.this.owner, "Import Data");
-                    progress.setInderminate(true);
-                    progress.setTask(new Runnable() {
-
-                        File file = null;
-
-                        {
-                            //this have to be done in constructor because chooser is final
-                            file = chooser.getSelectedFile();
-                        }
-
-                        public void run() {
-                            loadDataStore(file);
-                            updateFileTable();
-                            updateDataTable();
-                        }
-                    });
-                    progress.execute();
+                    addFile(chooser.getSelectedFile());
                 }
             }
         });
         buttonBar.add(loadFileButton);
+        
 
         JButton removeFileButton = new JButton("Remove Dataset");
-
+        if (this.isImportCollection)
+            removeFileButton.setEnabled(false);
         removeFileButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -466,7 +528,8 @@ public class ImportMonteCarloDataPanel extends JPanel {
         });
 
         buttonBar.add(removeFileButton);
-
+        mergeModeBox.setSelectedIndex(1);
+        buttonBar.add(mergeModeBox);
         overviewLoadedFiles.add(loadedFilesScroll, BorderLayout.NORTH);
         overviewLoadedFiles.add(buttonBar, BorderLayout.SOUTH);
 
@@ -510,6 +573,7 @@ public class ImportMonteCarloDataPanel extends JPanel {
             System.out.println("Could not load DefaultAttributeTypes.properties!");
             ioe.printStackTrace();
         }
+
         Set<Object> keys = prop.keySet();
         for (Object key : keys){
             this.defaultAttributeTypes.put(key.toString(), prop.getProperty(key.toString()));
@@ -529,13 +593,38 @@ public class ImportMonteCarloDataPanel extends JPanel {
                 progress.setTask(new Runnable() {
 
                     public void run() {
-                        ImportMonteCarloDataPanel.this.buildEnsemble();
-                        ImportMonteCarloDataPanel.this.setVisible(false);
-                        if (ImportMonteCarloDataPanel.this.ownerDlg!=null){
-                            ImportMonteCarloDataPanel.this.ownerDlg.setVisible(false);
-                        }
-                        for (ActionListener listener : listenerList){
-                            listener.actionPerformed(new ActionEvent(ImportMonteCarloDataPanel.this,ActionEvent.ACTION_PERFORMED, "cmd"));
+                        try {
+                            DataCollection newCollection = null;
+                            if (isImportCollection)
+                                newCollection = importedCollection;
+                            else
+                                newCollection = ImportMonteCarloDataPanel.this.buildEnsemble();
+                            
+                            if (ensemble == null) {
+                                ensemble = newCollection;
+                            } else {
+                                switch (getMergeMode()) {
+                                    case ATTACH: {
+                                        ensemble.mergeDataCollections(newCollection);
+                                        break;
+                                    }
+                                    case UNIFY: {
+                                        ensemble.unifyDataCollections(newCollection);
+                                        break;
+                                    }
+                                }
+                            }
+
+                            ImportMonteCarloDataPanel.this.setVisible(false);
+                            if (ImportMonteCarloDataPanel.this.ownerDlg != null) {
+                                ImportMonteCarloDataPanel.this.ownerDlg.setVisible(false);
+                            }
+                            for (ActionListener listener : listenerList) {
+                                listener.actionPerformed(new ActionEvent(ImportMonteCarloDataPanel.this, ActionEvent.ACTION_PERFORMED, "cmd"));
+                            }
+                        } catch (Throwable t) {
+                            t.printStackTrace();
+                            System.out.println(t);
                         }
                     }
                 });
