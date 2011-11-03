@@ -95,7 +95,7 @@ public class TSDataStore extends TableDataStore {
         currentDate = JAMSDataFactory.createCalendar();
         calendar = new CalendarValue(currentDate);
     }
-
+    @SuppressWarnings("unchecked")
     public TSDataStore(JAMSWorkspace ws, String id, Document doc) throws IOException, ClassNotFoundException {
         super(ws, id, doc);
 
@@ -137,7 +137,7 @@ public class TSDataStore extends TableDataStore {
             
             latestTimesteps = new RingBuffer[dataIOArray.length];
             for (int i=0;i<dataIOArray.length;i++)
-                latestTimesteps[i] = new RingBuffer(2);
+                latestTimesteps[i] = new RingBuffer<Long>(2);
             //fillBuffer();
            
         }
