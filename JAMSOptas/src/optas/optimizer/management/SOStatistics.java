@@ -7,7 +7,7 @@ package optas.optimizer.management;
 
 import java.util.ArrayList;
 import optas.optimizer.management.SampleFactory.Sample;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 
 
@@ -56,9 +56,10 @@ public class SOStatistics extends Statistics{
     public Sample getMaximumInRange(int start, int last){
         return getMaximumInRange(start, last, 0);
     }
-    
+    //TODO: implement this function .. 
+    @Override
     public ArrayList<Sample> getSamplesByRank(int rk){
-        throw new NotImplementedException();
+        return null;
     }
     
     public Sample getBestSample(){

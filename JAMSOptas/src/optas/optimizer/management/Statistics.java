@@ -14,7 +14,6 @@ import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.SampleFactory.SampleComperator;
 import optas.regression.IDW;
 import optas.regression.Interpolation;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 /**
@@ -212,9 +211,9 @@ public class Statistics {
         else
             return this.sampleList.get(0).getParameter().length;
     }
-
+    //TODO:implement this function ... 
     public ArrayList<Sample> getSamplesByRank(int rk){
-        throw new NotImplementedException();
+        return null;
     }
 
     public ArrayList<Sample> getParetoFront(){
