@@ -69,21 +69,21 @@ public class TSDataStore extends TableDataStore {
         int size = 0;
         int fillsize = 0;
 
-        Object ring[] = null;
+        ArrayList<T> ring = null;
         public RingBuffer(int size){
             this.size = size;
-            ring = new Object[size];
+            ring = new ArrayList<T>(size);
         }
 
         public T get(int relativIndex){
             if (relativIndex<0){
                 relativIndex += ((int)(-relativIndex/size)+1)*(size);
             }
-            return (T)ring[(index+relativIndex)%size];
+            return ring.get((index+relativIndex)%size);
         }
         public void push(T o){
             index = (index+1)%size;
-            ring[index] = o;
+            ring.set(index, o);
             fillsize = Math.min(size, fillsize+1);
         }
     }
