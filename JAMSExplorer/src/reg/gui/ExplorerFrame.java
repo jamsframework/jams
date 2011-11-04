@@ -144,7 +144,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
         
-        importDataAction = new AbstractAction("Import Data") {
+        importDataAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("IMPORT_DATA")) {
 
             public void actionPerformed(ActionEvent e) {
                 importData();
@@ -286,7 +286,7 @@ public class ExplorerFrame extends JFrame {
         //<editor-fold defaultstate="collapsed" desc="Ensembles Menu">
         JMenu ensemblesMenu = new JMenu("Ensembles");
         {
-            JMenuItem newEnsembleItem = new JMenuItem(new AbstractAction("New Ensembles ...") {
+            JMenuItem newEnsembleItem = new JMenuItem(new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NEW_ENSEMBLE")) {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -298,54 +298,12 @@ public class ExplorerFrame extends JFrame {
             });
             newEnsembleItem.setEnabled(true);
             ensemblesMenu.add(newEnsembleItem);
-
-            //<editor-fold defaultstate="collapsed" desc="New Ensemble Menu Item">
-            JMenuItem newEnsembleFromFileItem = new JMenuItem(new AbstractAction("New Ensemble from File...") {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    
-                    /*ImportMonteCarloDataPanel importDlg = new ImportMonteCarloDataPanel(ExplorerFrame.this);
-                    importDlg.addActionEventListener(new ActionListener(){
-
-                        @Override
-                        public void actionPerformed(ActionEvent e){
-
-                            
-                            ImportMonteCarloDataPanel importDialog = (ImportMonteCarloDataPanel) e.getSource();
-                            DataCollection collection = importDialog.getEnsemble();
-                            
-                            
-                            DataCollectionViewController controller = new DataCollectionViewController(collection);
-                            
-                            tPane.addTab("New Ensemble", controller.getView());
-                        }
-                    });*/
-                    DataCollectionViewController controller = OutputPanelFactory.constructDataCollection(explorer.getExplorerFrame(), null, null);
-                    tPane.addTab("New Ensemble", controller.getView());
-                    //importDlg.getDialog().setVisible(true);
-                }
-            });
-            newEnsembleFromFileItem.setEnabled(true);
-            ensemblesMenu.add(newEnsembleFromFileItem);
-            //</editor-fold>
-
-            //<editor-fold <editor-fold defaultstate="collapsed" desc="Open Ensemble Menu Item">
-            JMenuItem openEnsembleItem = new JMenuItem(new AbstractAction("Open Ensemble...") {
+           
+            saveEnsembleItem = new JMenuItem(new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SAVE_ENSEMBLE")) {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                }
-            });
-            openEnsembleItem.setEnabled(false);
-            ensemblesMenu.add(openEnsembleItem);
-            //</editor-fold>
-
-            saveEnsembleItem = new JMenuItem(new AbstractAction("Save Ensemble...") {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String name = JOptionPane.showInputDialog(rootPane, "Please enter a filename");
+                    String name = JOptionPane.showInputDialog(rootPane, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLEASE_ENTER_A_FILENAME"));
                     Component pane = ExplorerFrame.this.getTPane().getSelectedComponent();
                     if (!(pane instanceof DataCollectionView))
                         return;
@@ -367,6 +325,7 @@ public class ExplorerFrame extends JFrame {
 
         tPane.addChangeListener(new ChangeListener() {
 
+            @Override
             public void stateChanged(ChangeEvent e) {
                 Component pane = ExplorerFrame.this.getTPane().getSelectedComponent();
                 if (pane instanceof DataCollectionView) {
@@ -410,7 +369,7 @@ public class ExplorerFrame extends JFrame {
     protected void importData(){
         if (remoteClient==null){
             if (this.explorer.getWorkspace()==null){
-                JOptionPane.showMessageDialog(remoteClient, "Please open a workspace first!");
+                JOptionPane.showMessageDialog(remoteClient, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLEASE_OPEN_A_WORKSPACE_FIRST"));
             }
             remoteClient = new RemoteDataRetrival(new File(this.explorer.getWorkspace().getOutputDataDirectory().getParentFile() + "/download/"));
         }
