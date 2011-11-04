@@ -1,13 +1,15 @@
 #JAMS-Konfigurationsdatei
-#Sat Feb 26 14:24:11 CET 2011
+#Fri Nov 04 09:29:09 CET 2011
 infolog=
-libs=/lib
+libs=lib
 guiconfig=1
+docbook-home=docbook/
 model=
 charset=
 username=
 splashtimeout=1000
 profiling=1
+defaultworkspace=1
 windowenable=1
 errordlg=1
 windowontop=0
@@ -20,4 +22,3 @@ windowwidth=900
 guiconfigwidth=600
 errorlog=
 helpbaseurl=
-docbook-home=/docbook/
