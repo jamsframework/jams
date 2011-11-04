@@ -131,13 +131,28 @@ public class DocumentationWizard {
             org.apache.fop.cli.Main.main(new String[]{System.getProperty("java.class.path"), "-fo", developerDocumentation + "/tmp.fo", "-pdf", developerDocumentation + "/" + Bundle.resources.getString("Filename") + ".pdf"});
         } catch (ExitTrappedException t) {
             JOptionPane.showMessageDialog(null, Bundle.resources.getString("Your_documentation_was_created_successfully."));
+            openPDF();
             //normal
-        } catch(Throwable t){
+        } catch (Throwable t) {
             t.printStackTrace();
             JOptionPane.showMessageDialog(null, "Failed to produce documentation");
-        }finally {
+        } finally {
             enableSystemExitCall();
         }
+    }
+
+    private void openPDF() {
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + new File(developerDocumentation, Bundle.resources.getString("Filename") + ".pdf"));
+                } catch (IOException ex) {
+                }
+            }
+        }).run();
+
     }
 
     public void createDocumentation(Frame parent, Document doc, JAMSProperties props, File savePath) {
@@ -172,7 +187,7 @@ public class DocumentationWizard {
         /*
         JFileChooser chooser = GUIHelper.getJFileChooser(false);
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY );
-
+        
         chooser.setDialogTitle("Select developer documentation directory");
         int returnValue = chooser.showOpenDialog(parent);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
