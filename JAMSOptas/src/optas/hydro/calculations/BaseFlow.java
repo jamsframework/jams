@@ -13,13 +13,18 @@ import optas.hydro.data.TimeSerie;
  *
  * @author chris
  */
-public class Groundwater {
+public class BaseFlow {
+
+    //this is adapted from local minimum method of hysep
     public static double[] groundwaterWindowMethod(TimeSerie hydrograph) {
+        return groundwaterWindowMethod(hydrograph, 150);
+    }
+    public static double[] groundwaterWindowMethod(TimeSerie hydrograph, int winSize) {
         int t = (int) hydrograph.getTimeDomain().getNumberOfTimesteps();
 
         double filteredSerie[] = new double[t];
-
-        int winSize = 150;
+//default 150
+        //int winSize = 30;
 
         ArrayList<Integer> minList = new ArrayList<Integer>();
 
@@ -64,8 +69,11 @@ public class Groundwater {
     }
 
     public static TimeSerie calculateGroundwater(TimeSerie hydrograph) {
+        return calculateGroundwater(hydrograph, 150);
+    }
+    public static TimeSerie calculateGroundwater(TimeSerie hydrograph, int windowSize) {
         try {
-            TimeSerie t = new TimeSerie(groundwaterWindowMethod(hydrograph), hydrograph.getTimeDomain(), "groundwater", null);
+            TimeSerie t = new TimeSerie(groundwaterWindowMethod(hydrograph, windowSize), hydrograph.getTimeDomain(), "groundwater", null);
             return t;
         } catch (MismatchException e) {
             System.out.println(e);
@@ -74,9 +82,12 @@ public class Groundwater {
     }
 
     public static ArrayList<HydrographSection> calculateBaseFlowPeriods(TimeSerie hydrograph, double threshold) {
+        return calculateBaseFlowPeriods(hydrograph, threshold, 150);
+    }
+    public static ArrayList<HydrographSection> calculateBaseFlowPeriods(TimeSerie hydrograph, double threshold, int windowSize) {
         ArrayList<HydrographSection> list = new ArrayList<HydrographSection>();
         int n = (int) hydrograph.getTimeDomain().getNumberOfTimesteps();
-        TimeSerie groundwater = calculateGroundwater(hydrograph);
+        TimeSerie groundwater = calculateGroundwater(hydrograph, windowSize);
         int i = 0;
         while (i < n) {
             if (Math.abs(hydrograph.getValue(i) - groundwater.getValue(i)) < threshold) {

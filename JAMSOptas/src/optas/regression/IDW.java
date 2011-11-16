@@ -5,6 +5,8 @@
 
 package optas.regression;
 
+import java.util.TreeSet;
+
 /**
  *
  * @author chris
@@ -90,26 +92,80 @@ public class IDW extends Interpolation{
 
     }
 
-    protected double getValue(int leaveOneOut){
-        int neighbours[] = nearestNeighbours[leaveOneOut];
-        double dist[] = distanceToNeighbour[leaveOneOut];
+    protected double[] getValue(TreeSet<Integer> validationSet) {
+        int counter = 0;
+        double ystar[] = new double[validationSet.size()];
 
-        double sum = 0;
-        for (int i=0;i<R;i++){
-            if (neighbours[i]==-1)
-                return -1.0;
-            sum += 1.0 / dist[i];
-        }
-        double ystar=0;
+        for (Integer id : validationSet) {
+            int nearestNeighbours[] = new int[R];
+            double distanceToNeighbour[] = new double[R];
 
-        for (int i=0;i<R;i++){
-            if (dist[i] < 0.0000001)
-                return y.getValue(neighbours[i]);
-            else
-                ystar += (1.0 / dist[i]) / sum * y.getValue(neighbours[i]);
+            int worstIndex = 0;
+
+            for (int i = 0; i < R; i++) {
+                nearestNeighbours[i] = -1;
+                distanceToNeighbour[i] = Double.MAX_VALUE;
+            }
+
+            double x_i[] = new double[n];
+
+            for (int i = 0; i < L; i++) {
+                int id_i = x[0].getId(i);
+
+                for (int j = 0; j < n; j++) {
+                    x_i[j] = x[j].getValue(id_i);
+                }
+                double dist = d(getX(id), x_i);
+                if (dist < distanceToNeighbour[worstIndex]) {
+                    distanceToNeighbour[worstIndex] = dist;
+                    nearestNeighbours[worstIndex] = id_i;
+
+                    for (int j = 0; j < R; j++) {
+                        if (distanceToNeighbour[worstIndex] < distanceToNeighbour[j]) {
+                            worstIndex = j;
+                        }
+                    }
+                }
+            }
+            double sum = 0;
+            for (int i = 0; i < R; i++) {
+                if (nearestNeighbours[i] == -1) {
+                    return null;
+                }
+                sum += 1.0 / distanceToNeighbour[i];
+            }
+
+            for (int i = 0; i < R; i++) {
+                if (distanceToNeighbour[i] < 0.0000001) {
+                    ystar[counter] = y.getValue(nearestNeighbours[i]);
+                } else {
+                    ystar[counter] += (1.0 / distanceToNeighbour[i]) / sum * y.getValue(nearestNeighbours[i]);
+                }
+            }
+            counter++;
         }
         return ystar;
-    }
+
+            /*
+            int neighbours[] = nearestNeighbours[leaveOneOut];
+            double dist[] = distanceToNeighbour[leaveOneOut];
+
+            double sum = 0;
+            for (int i=0;i<R;i++){
+            if (neighbours[i]==-1)
+            return -1.0;
+            sum += 1.0 / dist[i];
+            }
+            double ystar=0;
+
+            for (int i=0;i<R;i++){
+            if (dist[i] < 0.0000001)
+            return y.getValue(neighbours[i]);
+            else
+            ystar += (1.0 / dist[i]) / sum * y.getValue(neighbours[i]);
+            }
+            return ystar;*/
+        }
 
     public double getValue(double u[]){
         int      nearestNeighbours[] = new int[R];

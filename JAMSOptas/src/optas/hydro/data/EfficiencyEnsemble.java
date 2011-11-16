@@ -15,6 +15,8 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
     boolean isPostiveBest = true;
     double rangeMin = Double.NEGATIVE_INFINITY, rangeMax = Double.POSITIVE_INFINITY;
 
+    TimeFilter filter = null;
+
     public EfficiencyEnsemble(SimpleEnsemble s, boolean isPositiveBest) {
         super(s);
         this.isPostiveBest = isPositiveBest;
@@ -48,10 +50,21 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
         super.add(id,value);
     }
 
-    public EfficiencyEnsemble(String name, Measurement obs, TimeSerieEnsemble sim, Method m) {
+    boolean[] filterMap;
+
+    public EfficiencyEnsemble(String name, Measurement obs, TimeSerieEnsemble sim, Method m, TimeFilter filter) {
         super(name, sim.size);        
 
         int K = sim.getTimesteps();
+
+        this.filterMap = new boolean[K];
+
+        if (filter!=null){
+            this.filter = filter;
+            for (int i=0;i<K;i++){
+                filterMap[i] = filter.isFiltered(obs.getTime(i));
+            }
+        }
 
         switch(m){
             case NashSutcliffe:{
@@ -62,6 +75,8 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
                 aobs /= K;
                 double denumerator = 0;
                 for (int i=0;i<K;i++){
+                    if (filterMap[i])
+                        continue;
                     double d = obs.getValue(i)-aobs;
                     denumerator += d*d;
                 }
@@ -73,6 +88,8 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
 
 
                     for (int j=0;j<K;j++){
+                        if (filterMap[j])
+                            continue;
                         double d1 = (sim.get(j, id_i) - obs.getValue(j));                        
                         numerator += d1*d1;
                     }
@@ -89,6 +106,8 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
                     double rsme = 0;
 
                     for (int j=0;j<K;j++){
+                        if (filterMap[j])
+                            continue;
                         double d1 = (sim.get(j, id_i) - obs.getValue(j));
                         rsme += d1*d1;
                     }                    
@@ -104,6 +123,8 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
                     double abse = 0;
 
                     for (int j=0;j<K;j++){
+                        if (filterMap[j])
+                            continue;
                         double d1 = (sim.get(j, id_i) - obs.getValue(j));
                         abse += Math.abs(d1);
                     }                    
@@ -119,6 +140,8 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
                     double bias = 0;
 
                     for (int j=0;j<K;j++){
+                        if (filterMap[j])
+                            continue;
                         double d1 = (sim.get(j, id_i) - obs.getValue(j));
                         bias += (d1);
                     }                    

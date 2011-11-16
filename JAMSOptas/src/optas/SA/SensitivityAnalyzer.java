@@ -5,11 +5,16 @@
 
 package optas.SA;
 
-import optas.hydro.data.Efficiency;
+import java.util.ArrayList;
 import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.SimpleEnsemble;
-import optas.regression.IDW;
+import optas.optimizer.HaltonSequenceSampling;
+import optas.optimizer.Optimizer.AbstractFunction;
+import optas.optimizer.SampleLimitException;
+import optas.optimizer.management.ObjectiveAchievedException;
+import optas.optimizer.management.SampleFactory.Sample;
 import optas.regression.Interpolation;
+import optas.regression.NeuralNetwork;
 
 /**
  *
@@ -20,51 +25,218 @@ public abstract class SensitivityAnalyzer {
     EfficiencyEnsemble y;
 
     protected int n,m;
-    protected int L=0;
+    protected int L_raw=0,L;
 
-    protected boolean initSuccessful = false;
+    protected boolean isInit = false;
 
     Interpolation I;
+
+    private double CVError = 0;
+
+    protected SimpleEnsemble x_raw[];
+    protected EfficiencyEnsemble y_raw;
+
+    protected boolean isUsingInterpolation = true;
+    protected int sampleSize = 1000;
+    double range[][] = null;
+
+    double sensitivityIndex[];
+    double sensitivityVariance[];
+
+    boolean isVarianceCalulated = false;
+
+
+    protected double[] transformFromUnitCube(double x[]){
+        double[] y = new double[n];
+        for (int i=0;i<n;i++){
+            y[i] = range[i][0] + x[i]*(range[i][1]-range[i][0]);
+        }
+        return y;
+    }
+    protected double[] transformToUnitCube(double x[]){
+        double[] y = new double[n];
+        for (int i=0;i<n;i++){
+            y[i] = (x[i]-range[i][0])/(range[i][1]-range[i][0]);
+        }
+        return y;
+    }
 
     protected double[][] getParameterRange() {
         double range[][] = new double[n][2];
 
         for (int j = 0; j < n; j++) {
-            range[j][0] = x[j].getMin();
-            range[j][1] = x[j].getMax();
+            range[j][0] = x_raw[j].getMin();
+            range[j][1] = x_raw[j].getMax();
         }
         return range;
     }
 
-    public void setData(SimpleEnsemble x[], EfficiencyEnsemble y){
-        this.x = x;
-        this.y = y;
+    public void setInterpolation(boolean isUsingInterpolation){
+        this.isUsingInterpolation = isUsingInterpolation;
+        isInit = false;
+    }
 
-        n = x.length;
+    public boolean getInterpolation(){
+        return this.isUsingInterpolation;
+    }
+
+    public void setSampleSize(int sampleSize){
+        this.sampleSize = sampleSize;
+        isInit = false;
+    }
+
+    public int getSampleSize(){
+        return sampleSize;
+    }
+
+    private double[] getLowBound(){
+        double lb[] = new double[n];
+        for (int j = 0; j < n; j++) {
+            lb[j] = x_raw[j].getMin();
+        }
+        return lb;
+    }
+
+    private double[] getUpBound(){
+        double ub[] = new double[n];
+        for (int j = 0; j < n; j++) {
+            ub[j] = x_raw[j].getMax();
+        }
+        return ub;
+    }
+
+    protected void sampleData(int size){
+        x = new SimpleEnsemble[n];
+        for (int j=0;j<n;j++){
+            x[j] = new SimpleEnsemble(x_raw[j].name + "(*)", size);
+        }
+        y = new EfficiencyEnsemble(y_raw.name + "(*)", size, y_raw.isPositiveBest());
+
+        HaltonSequenceSampling sampler = new HaltonSequenceSampling();
+        sampler.setFunction(new AbstractFunction() {
+            @Override
+            public double[] f(double[] x) throws SampleLimitException, ObjectiveAchievedException {
+                return new double[]{I.getValue(x)};
+            }
+
+            @Override
+            public void logging(String msg) {
+                System.out.println(msg);
+            }
+        });
+
+        sampler.setAnalyzeQuality(false);
+
+
+        sampler.setBoundaries(getLowBound(), getUpBound());
+        sampler.setDebugMode(false);
+        sampler.setInputDimension(n);
+        sampler.setMaxn(size);
+        sampler.setOffset(0);
+        sampler.setOutputDimension(1);
+        sampler.optimize();
+        ArrayList<Sample> result = sampler.getSamples();
+
+        for (int i=0;i<result.size();i++){
+            Sample s = result.get(i);
+            for (int j=0;j<n;j++)
+                x[j].add(i, s.x[j]);
+            y.add(i, s.F()[0]);
+        }
+
+        L = result.size();
+    }
+
+    public void setData(SimpleEnsemble x[], EfficiencyEnsemble y){
+        this.x_raw = x;
+        this.y_raw = y;
+
+        n = x_raw.length;
         if (n==0){
             return;
         }
-        L = x[0].getSize();
+        L_raw = x_raw[0].getSize();
         for (int i=0;i<n;i++){
-            if (x[i].getSize()!=L)
+            if (x[i].getSize()!=L_raw)
                 return;            
         }
-        if (y.getSize()!=L)
+        if (y_raw.getSize()!=L_raw)
             return;
-        initSuccessful = true;
-
+        
+        isInit = false;
     }
+
     public void setInterpolationMethod(Interpolation I){
         this.I = I;
+        isInit = false;
     }
 
+    private void updateData(){
+        if (this.isUsingInterpolation && I != null){
+            sampleData(sampleSize);
+        }else{
+            this.x = x_raw;
+            this.y = y_raw;
+        }
+    }
+
+    public double getCVError(){
+        return CVError;
+    }
+
+    protected double getInterpolation(double[] x){
+        return I.getValue(x);
+    }
+            
     public void init(){
         if (I == null){
-            I = new IDW();
+            setInterpolationMethod(new NeuralNetwork());
         }
-        I.setData(x, y);
+        I.setData(x_raw, y_raw);
         I.init();
+
+        this.CVError = I.estimateCrossValidationError(5, Interpolation.ErrorMethod.E2);
+        updateData();
+
+        range = this.getParameterRange();
+
+        sensitivityIndex =new double[n];
+        sensitivityVariance = new double[n];
+
+        isInit = true;
     }
 
-    abstract public double getSensitivity(int parameter);
+    public double getSensitivity(int parameter){
+        if (!isInit){
+            System.out.println("Call to getSensitivity without calling init at first!");
+            return -1.0;
+        }
+        return sensitivityIndex[parameter];
+    }
+    
+    public double getVariance(int parameter){
+        int K = 10;
+        if (!isVarianceCalulated){
+            double statistics[][] = new double[n][K];
+            double mean[] = new double[n];
+            for (int k=0;k<K;k++){
+                init();
+                for (int j=0;j<n;j++){
+                    statistics[j][k] = sensitivityIndex[j];
+                    mean[j] += statistics[j][k];
+                    sensitivityVariance[j] = 0;
+                }
+            }
+            for (int k=0;k<K;k++){
+                for (int j=0;j<n;j++){
+                    sensitivityVariance[j] += (statistics[j][k] - mean[j]/K)*(statistics[j][k] - mean[j]/K);
+                }
+            }
+            for (int j=0;j<n;j++){
+                sensitivityVariance[j] /= (K-1);
+            }
+            isVarianceCalulated = true;
+        }
+        return Math.sqrt(sensitivityVariance[parameter]);
+    }
 }

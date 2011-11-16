@@ -13,9 +13,33 @@ import java.util.Date;
  */
 public abstract class TimeFilter {
     String name;
+    boolean isAdditive=false;
+    boolean isEnabled = true;
+    boolean isInverted = false;
 
     public String getName(){
         return name;
+    }
+
+    public void setAdditive(boolean isAdditive){
+        this.isAdditive = isAdditive;
+    }
+    public boolean isAdditive(){
+        return isAdditive;
+    }
+
+    public void setEnabled(boolean isEnabled){
+        this.isEnabled = isEnabled;
+    }
+    public boolean isEnabled(){
+        return isEnabled;
+    }
+
+    public void setInverted(boolean isInverted){
+        this.isInverted = isInverted;
+    }
+    public boolean isInverted(){
+        return isInverted;
     }
 
     abstract public boolean isFiltered(Date date);

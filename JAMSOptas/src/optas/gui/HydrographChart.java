@@ -3,16 +3,17 @@
  * and open the template in the editor.
  */
 
-package optas.hydro.gui;
+package optas.gui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import optas.hydro.calculations.Groundwater;
+import optas.hydro.calculations.BaseFlow;
 import optas.hydro.calculations.HydrographSection;
 import optas.hydro.calculations.Peak;
 import optas.hydro.calculations.RecessionCurve;
+import optas.hydro.data.TimeFilter;
 import optas.hydro.data.TimeSerie;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -30,7 +31,8 @@ import org.jfree.data.time.TimeSeriesCollection;
 public class HydrographChart {
     JFreeChart chart;
 
-    TimeSeriesCollection dataset1 = new TimeSeriesCollection();
+    TimeSeriesCollection datasetHydrograph = new TimeSeriesCollection();
+    TimeSeriesCollection datasetFiltered = new TimeSeriesCollection();
     TimeSeriesCollection datasetPeaks, datasetRecessionCurves, datasetGroundwater, datasetBaseFlow, datasetMark;
 
     TimeSerie hydrograph;
@@ -45,7 +47,8 @@ public class HydrographChart {
     ArrayList<HydrographSection> groundwaterSections = null;
 
     int[] markedTimeSteps = null;
-    
+    TimeFilter filter = null;
+
     public HydrographChart(){
         
         datasetPeaks = new TimeSeriesCollection();
@@ -58,7 +61,7 @@ public class HydrographChart {
                 "Hydrograph",
                 "time",
                 "runoff",
-                dataset1,
+                datasetHydrograph,
                 true,
                 true,
                 false);
@@ -115,6 +118,16 @@ public class HydrographChart {
         markRenderer.setDrawOutlines(true);
         markRenderer.setBaseShapesVisible(false);
         markRenderer.setStroke(new BasicStroke(5.0f));
+        
+        XYLineAndShapeRenderer filterRenderer = new XYLineAndShapeRenderer();
+        filterRenderer.setBaseFillPaint(new Color(255, 0, 0));
+        filterRenderer.setBaseLinesVisible(true);
+        filterRenderer.setDrawSeriesLineAsPath(true);
+        filterRenderer.setBaseOutlinePaint(new Color(255, 0, 0));
+        filterRenderer.setBaseSeriesVisible(true);
+        filterRenderer.setDrawOutlines(true);
+        filterRenderer.setBaseShapesVisible(false);
+        filterRenderer.setStroke(new BasicStroke(5.0f));
 
         chart.getXYPlot().setRenderer(0, hydrographRenderer); //?
 
@@ -129,6 +142,9 @@ public class HydrographChart {
 
         chart.getXYPlot().setDataset(5, datasetMark);
         chart.getXYPlot().setRenderer(5, markRenderer);
+
+        chart.getXYPlot().setDataset(6, datasetFiltered);
+        chart.getXYPlot().setRenderer(6, filterRenderer);
     }
 
     public void setHydrograph(TimeSerie hydrograph) {
@@ -136,9 +152,14 @@ public class HydrographChart {
 
         peaks = Peak.findPeaks(hydrograph);
         recessionCurves = RecessionCurve.findRecessionCurves(hydrograph);
-        groundwater = Groundwater.calculateGroundwater(hydrograph);
-        groundwaterSections = Groundwater.calculateBaseFlowPeriods(hydrograph, this.groundwaterThreshold);
+        groundwater = BaseFlow.calculateGroundwater(hydrograph);
+        groundwaterSections = BaseFlow.calculateBaseFlowPeriods(hydrograph, this.groundwaterThreshold);
 
+        update();
+    }
+
+    public void setFilter(TimeFilter filter){
+        this.filter = filter;
         update();
     }
 
@@ -168,23 +189,40 @@ public class HydrographChart {
     }
 
     public void setGroundwaterThreshold(double groundwaterThreshold){
-        groundwaterSections = Groundwater.calculateBaseFlowPeriods(hydrograph, groundwaterThreshold);
+        groundwaterSections = BaseFlow.calculateBaseFlowPeriods(hydrograph, groundwaterThreshold);
+        update();
+    }
+
+    public void setGroundwaterWindowSize(int windowSize){
+        groundwater = BaseFlow.calculateGroundwater(hydrograph, windowSize);
+        groundwaterSections = BaseFlow.calculateBaseFlowPeriods(hydrograph, groundwaterThreshold, windowSize);
         update();
     }
 
     public void update(){
         //update peaks
-        dataset1.removeAllSeries();
-
-        TimeSeries series = new TimeSeries("hydrograph");
+        datasetHydrograph.removeAllSeries();
+        datasetFiltered.removeAllSeries();
+        TimeSeries seriesHydrograph = new TimeSeries("hydrograph");
+        TimeSeries seriesFiltered = new TimeSeries("filtered");
 
         long n = hydrograph.getTimeDomain().getNumberOfTimesteps();
+        long lastNonFiltered = 0;
         for (long i = 0; i < n; i++) {
-            series.add(new Day(hydrograph.getTime((int) i)), hydrograph.getValue((int) i));
-        }
-        dataset1.addSeries(series);
+            seriesHydrograph.add(new Day(hydrograph.getTime((int) i)), hydrograph.getValue((int) i));
+            if (this.filter==null || this.filter.isFiltered(hydrograph.getTime((int) i))){
+                seriesFiltered.add(new Day(hydrograph.getTime((int) i)), hydrograph.getValue((int) i));
+                lastNonFiltered = i;
+            }else if ( i - lastNonFiltered == 1)
+                seriesFiltered.add(new Day(hydrograph.getTime((int) i)), Double.NaN);
 
-        chart.getXYPlot().setDataset(0, dataset1);
+        }
+        datasetHydrograph.addSeries(seriesHydrograph);
+        datasetFiltered.addSeries(seriesFiltered);
+
+
+        chart.getXYPlot().setDataset(0, datasetHydrograph);
+        chart.getXYPlot().setDataset(6, datasetFiltered);
 
         datasetPeaks.removeAllSeries();
 

@@ -293,10 +293,15 @@ public class MCAT5Toolbar extends JToolBar {
                 java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"),
                 DottyPlot.class));
 
-        registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
+        /*registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
                 "Simple Global Sensitivity",
                 java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"),
-                SimpleGlobalSensitivity.class));
+                SimpleGlobalSensitivity.class));*/
+
+        registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/sensitivity.png")),
+                "Sensitivityanalyzer",
+                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Sensitivity_Analysis"),
+                ShowSensitivity.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/aposterioriplot.png")),
                 java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CREATE_A_POSTERIORI_DISTRIBUTION_PLOT"),

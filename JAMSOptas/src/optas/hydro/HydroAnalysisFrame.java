@@ -83,7 +83,7 @@ import optas.hydro.data.SimpleEnsemble;
 import optas.hydro.data.TimeSerie;
 import optas.hydro.data.TimeSerieEnsemble;
 import optas.hydro.gui.GllobalSensitivityEfficiencyComparison;
-import optas.hydro.gui.HydrographChart;
+import optas.gui.HydrographChart;
 import optas.hydro.gui.SelectionDialog;
 import optas.hydro.gui.SimpleGlobalSensitivityAtPoint;
 import optas.hydro.gui.WeightChart;
@@ -582,18 +582,18 @@ public class HydroAnalysisFrame extends JFrame {
         groundwaterThresholdField.setEditable(false);
         baseFlowPanel.add(groundwaterThresholdField);
 
-        //eastPanel.add(peakPanel, c);
+        eastPanel.add(peakPanel, c);
 
         c.gridx = 1;
         c.gridy = 0;
-        //eastPanel.add(recessionPanel, c);
+        eastPanel.add(recessionPanel, c);
         c.gridx = 2;
         c.gridy = 0;
-        //eastPanel.add(groundwaterPanel, c);
+        eastPanel.add(groundwaterPanel, c);
 
         c.gridx = 0;
         c.gridy = 1;
-        //eastPanel.add(baseFlowPanel, c);
+        eastPanel.add(baseFlowPanel, c);
 
         /*c.gridx = 0;
         c.gridy = 4;

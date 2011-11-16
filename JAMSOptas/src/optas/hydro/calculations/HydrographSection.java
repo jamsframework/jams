@@ -5,6 +5,7 @@
 package optas.hydro.calculations;
 
 import java.util.ArrayList;
+import optas.hydro.data.TimeSerie;
 
 /**
  *
@@ -21,6 +22,15 @@ public class HydrographSection {
         this.value = new ArrayList<Double>();
         this.value.add(new Double(value));
         this.endIndex = startIndex + 1;
+    }
+
+     public HydrographSection(int startIndex, int endIndex, TimeSerie t) {
+        this.startIndex = startIndex;
+        this.endIndex = endIndex;
+        this.value = new ArrayList<Double>();
+        for (int i=startIndex;i<endIndex;i++){
+            this.value.add(new Double(t.getValue(i)));
+        }
     }
 
     public void add(double value) {

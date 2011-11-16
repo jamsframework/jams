@@ -16,16 +16,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.SortedMap;
+import java.util.TreeMap;
 import optas.metamodel.Optimization;
 import optas.metamodel.OptimizationDescriptionDocument;
 import optas.metamodel.Parameter;
-import optas.optimizer.NelderMead;
 
 
 import optas.optimizer.Optimizer;
 import optas.optimizer.Optimizer.AbstractFunction;
-import optas.optimizer.OptimizerLibrary;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.SampleLimitException;
 
@@ -179,7 +179,19 @@ public class AdvancedOptimizationController extends OptimizationController {
             });
 
             schedule = (OptimizationDescriptionDocument) encoder.readObject();
+                        
             encoder.close();
+
+            HashMap<Integer,Integer> oldNewIdMap = new HashMap<Integer,Integer>();
+            SortedMap<Integer, Parameter> parameterMap = schedule.getParameter();
+
+            for (Parameter p : parameterMap.values())
+            for (int i=0;i<n;i++){
+                if (this.names[i].compareTo(p.getChildName())==0){
+                    oldNewIdMap.put(p.getId(),i);
+                    p.setId(i);
+                }
+            }
         } catch (IOException ioe) {
             System.out.println("Could not load optimization scheme XML:" + ioe.toString());
             return;
@@ -188,7 +200,7 @@ public class AdvancedOptimizationController extends OptimizationController {
     
     public void procedure() {
         for (Optimization o : schedule.getOptimization()) {            
-            OptimizationConfiguration conf = new OptimizationConfiguration(o);
+            OptimizationConfiguration conf = new AdvancedOptimizationConfiguration(o);
 
             if (o.getOptimizerDescription().getDoSpatialRelaxation().isValue()) {
                 //relaxationProcedure(o);

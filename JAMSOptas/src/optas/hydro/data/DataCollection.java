@@ -200,6 +200,66 @@ public class DataCollection extends DataSet implements Serializable{
         }
     }
 
+    public void addEnsemble(SimpleEnsemble s){
+        isBusy = true;
+        Integer srcIdList[] = s.getIds();
+        Integer dstIdList[] = getModelrunIds();
+
+        Set<Integer> srcIdSet = new HashSet<Integer>();
+        Set<Integer> dstIdSet = new HashSet<Integer>();
+
+        Set<Integer> commonIds = new HashSet<Integer>();
+        Set<Integer> newIds = new HashSet<Integer>();
+
+        dstIdSet.addAll(Arrays.asList(dstIdList));
+        srcIdSet.addAll(Arrays.asList(srcIdList));
+
+        commonIds.addAll(srcIdSet);
+        commonIds.retainAll(dstIdSet);
+
+        newIds.addAll(srcIdSet);
+        newIds.removeAll(commonIds);
+
+        for (Integer id : commonIds){
+            double srcR = s.getValue(id);
+
+            Modelrun dstR = this.set.get(id);
+
+            try {
+                if (s instanceof EfficiencyEnsemble) {
+                    dstR.addDataSet(new Efficiency(new SimpleDataSet(srcR, s.name, this), ((EfficiencyEnsemble) s).isPostiveBest));
+                } else {
+                    dstR.addDataSet(new SimpleDataSet(srcR, s.name, this));
+                }
+            } catch (MismatchException me) {
+                me.printStackTrace();
+            }
+        }
+
+        for (Integer id : newIds){
+            Modelrun dstR = new Modelrun(id,null);
+            double srcR = s.getValue(id);
+
+            try {
+                if (s instanceof EfficiencyEnsemble) {
+                    dstR.addDataSet(new Efficiency(new SimpleDataSet(srcR, s.name, this), ((EfficiencyEnsemble) s).isPostiveBest));
+                } else {
+                    dstR.addDataSet(new SimpleDataSet(srcR, s.name, this));
+                }
+                this.addModelRun(dstR);
+            } catch (MismatchException me) {
+                me.printStackTrace();
+            }
+        }
+        if (s instanceof EfficiencyEnsemble)
+            this.datasets.put(s.name, Efficiency.class);
+        else
+            this.datasets.put(s.name, Parameter.class);
+        
+        isBusy = false;
+        fireChangeEvent(new DatasetChangeEvent(this, this));
+    }
+
     public void addTimeSerie(TimeSerie s){
         globalDatasets.put(s.name,s);
         this.datasets.put(s.name, s.getClass());

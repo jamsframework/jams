@@ -156,7 +156,7 @@ public class HaltonSequenceSampling extends Optimizer{
                 continue;
             }
 
-            if (i % 100 == 0 && i > 0){
+            if (i % 100 == 0 && i > 0 && analyzeQuality){
                 this.log("Estimating Quality of sampling (prior optimization).. ");
                 double quality = this.factory.getStatistics().calcQuality();
                 this.log("Averaged LOO Quality based on E2 is: " + quality);

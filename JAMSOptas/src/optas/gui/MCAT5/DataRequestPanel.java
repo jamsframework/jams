@@ -75,7 +75,7 @@ public final class DataRequestPanel extends JPanel{
                 box.addItem(d);
             }
 
-            if (request.clazz.equals(Efficiency.class)){
+            if (request.clazz.equals(Efficiency.class) && ObjectiveConstructorDialog.isApplicable(data)){
                 box.addItem("User defined");
             }
 
@@ -90,6 +90,7 @@ public final class DataRequestPanel extends JPanel{
                         if (dlg.getApproved()){
                             EfficiencyEnsemble ensemble = dlg.getResult();
                             JComboBox box = (JComboBox)e.getSource();
+                            DataRequestPanel.this.data.addEnsemble(ensemble);
                             box.addItem(ensemble);
                             box.setSelectedItem(box);
                         }

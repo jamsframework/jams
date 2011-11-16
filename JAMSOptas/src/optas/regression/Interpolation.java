@@ -5,6 +5,7 @@
 
 package optas.regression;
 
+import java.util.TreeSet;
 import optas.hydro.data.SimpleEnsemble;
 
 /**
@@ -60,8 +61,16 @@ public abstract class Interpolation {
         }
         setWeighting(weights);
     }
-    
-    abstract protected double getValue(int leaveOneOut);
+
+    protected double[] getX(int id){
+        double row[] = new double[n];
+        for (int i=0;i<n;i++){
+            row[i] = x[i].getValue(id);
+        }
+        return row;
+    }
+
+    abstract protected double[] getValue(TreeSet<Integer> leaveOut);
     public abstract double getValue(double u[]);
 
     private double calcDifference(ErrorMethod e, double sim[], double obs[]){
@@ -222,6 +231,46 @@ public abstract class Interpolation {
         
     }
 
+    public double estimateCrossValidationError(int K, ErrorMethod e){
+        double error = 0;
+
+        double obs[] = new double[L];
+        double sim[] = new double[L];
+
+        this.calculate();
+
+        for (int k=0;k<K;k++){
+
+
+            int indexStart = k*(L/K);
+            int indexEnd   = Math.min((k+1)*(L/K)-1,L-1);
+            int size = indexEnd-indexStart;
+            if (size == 0)
+                continue;
+
+            TreeSet<Integer> validationSet = new TreeSet<Integer>();
+            double validation[] = new double[size];
+
+            for (int j=indexStart;j<indexEnd;j++){
+                int id_loi = x[0].getId(j);
+                validationSet.add(id_loi);
+                validation[j-indexStart] = y.getValue(id_loi);
+            }
+
+            double y_star[] = getValue(validationSet);
+
+            for (int j=0;j<size;j++){
+                error += Math.abs(y_star[j] - validation[j]);
+
+                obs[j] = validation[j];
+                sim[j] = y_star[j];
+            }
+
+        }
+
+        return calcDifference(e, sim, obs);
+    }
+
     public double estimateLOOError(ErrorMethod e){
         double error = 0;
 
@@ -240,13 +289,15 @@ public abstract class Interpolation {
                 x_star[i] = x[i].getValue(id_loi);
             }
 
-            double y_star = getValue(id_loi);
+            TreeSet<Integer> indexSet = new TreeSet<Integer>();
+            indexSet.add(id_loi);
+            double y_star[] = getValue(indexSet);
 
 
-            error += Math.abs(y_star - y.getValue(id_loi));
+            error += Math.abs(y_star[0] - y.getValue(id_loi));
 
             obs[leaveOutIndex] = y.getValue(id_loi);
-            sim[leaveOutIndex] = y_star;
+            sim[leaveOutIndex] = y_star[0];
         }
 
         return calcDifference(e, sim, obs);

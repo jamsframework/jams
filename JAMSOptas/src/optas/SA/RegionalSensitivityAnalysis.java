@@ -17,13 +17,10 @@ import optas.hydro.data.EfficiencyEnsemble;
 public class RegionalSensitivityAnalysis extends SensitivityAnalyzer{
 
     int currentIndex = 0;
-    double sensitivityIndex[];
 
     @Override
     public void init(){
         super.init();
-
-        double range[][] = this.getParameterRange();
 
         ArrayList<Integer> behavourialBox = new ArrayList<Integer>();
         ArrayList<Integer> nonBehavourialBox = new ArrayList<Integer>();
@@ -85,9 +82,11 @@ public class RegionalSensitivityAnalysis extends SensitivityAnalyzer{
             sensitivityIndex[i] = 0;
 
             for (int k=0;k<behavourialBox.size();k++){
-                double value = behavourialBox.get(k);
-                while(nonBehavourialBox.get(k2)<value){
+                double value = x[currentIndex].getValue(behavourialBox.get(k));
+                double value2 = x[currentIndex].getValue(nonBehavourialBox.get(k2));
+                while(value2<value && k2 < nonBehavourialBox.size()-1){
                     k2++;
+                    value2 = x[currentIndex].getValue(nonBehavourialBox.get(k2));
                     nonBehavourialDistribution += step2;
                 }
                 behavourialDistribution += step1;
@@ -102,10 +101,6 @@ public class RegionalSensitivityAnalysis extends SensitivityAnalyzer{
         for (int k=0;k<n;k++){
             sensitivityIndex[k] /= sum;
         }
-    }
-
-    public double getSensitivity(int parameter){
-        return sensitivityIndex[parameter];
     }
 
 }
