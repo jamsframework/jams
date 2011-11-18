@@ -33,6 +33,8 @@ public class Objective implements Serializable, Comparable {
     private int id;
     transient static int id_counter = 0;
 
+    private String customName;
+
     @Override
     public Objective clone(){
         Objective o = new Objective();
@@ -133,7 +135,10 @@ public class Objective implements Serializable, Comparable {
 
     @Override
     public String toString(){
-        return "("+getId()+")" + this.getMethodName();
+        if (getCustomName()!=null)
+            return getCustomName();
+        else
+            return "("+getId()+")" + this.getMethodName();
     }
 
     public int compareTo(Object o){
@@ -145,6 +150,20 @@ public class Objective implements Serializable, Comparable {
      */
     public void setTimeDomain(ArrayList<TimeInterval> timeDomain) {
         this.timeDomain = timeDomain;
+    }
+
+    /**
+     * @return the customName
+     */
+    public String getCustomName() {
+        return customName;
+    }
+
+    /**
+     * @param customName the customName to set
+     */
+    public void setCustomName(String customName) {
+        this.customName = customName;
     }
 
 }

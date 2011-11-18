@@ -6,6 +6,7 @@ package optas.metamodel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.OptimizerLibrary;
 
@@ -72,8 +73,9 @@ public class Optimization implements Serializable {
     /**
      * @param objective the objective to set
      */
-    public void setObjective(ArrayList<Objective> objective) {
-        this.objective = objective;
+    public void setObjective(Collection<Objective> objective) {
+        this.objective = new ArrayList<Objective>();
+        this.objective.addAll(objective);
     }
 
     /**

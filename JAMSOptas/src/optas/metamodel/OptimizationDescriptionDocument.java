@@ -27,9 +27,7 @@ public class OptimizationDescriptionDocument implements Serializable{
     private ArrayList<optas.metamodel.AttributeWrapper> output = new ArrayList<optas.metamodel.AttributeWrapper>();
     
     private ArrayList<Optimization> optimization = new ArrayList<Optimization>();
-
-    private Objective mainObjective = new Objective();
-
+    
     private String workspace="";
     private boolean removeRedundantComponents=true;
     private boolean removeGUIComponents=true;
@@ -226,21 +224,7 @@ public class OptimizationDescriptionDocument implements Serializable{
     public void setRemoveGUIComponents(boolean removeGUIComponents) {
         this.removeGUIComponents = removeGUIComponents;
     }
-
-    /**
-     * @return the mainObjective
-     */
-    public Objective getMainObjective() {
-        return mainObjective;
-    }
-
-    /**
-     * @param mainObjective the mainObjective to set
-     */
-    public void setMainObjective(Objective mainObjective) {
-        this.mainObjective = mainObjective;
-    }
-
+    
     /**
      * @return the adjustModellTimeInterval
      */

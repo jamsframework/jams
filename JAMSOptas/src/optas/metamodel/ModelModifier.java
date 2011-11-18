@@ -360,12 +360,7 @@ public class ModelModifier {
     }
 
     public ModificationExecutor modifyModel() throws WizardException {
-        log("checking document");
-        if (this.odd.getMainObjective().getMeasurement()==null ||
-            this.odd.getMainObjective().getSimulation() == null){
-            log("failure:main objective not complete");
-            return null;
-        }
+        log("checking document");        
         for (Optimization o : this.odd.getOptimization()){
             if (o.getObjective().isEmpty()){
                 log("failure: optimization " + o.getName() + " has no objective");
@@ -386,7 +381,6 @@ public class ModelModifier {
 
         ArrayList<Objective> effList = new ArrayList<Objective>();
         effList.addAll(odd.getObjective().values());
-        effList.add(odd.getMainObjective());
 
         log("optimizing model structure");
         ModelOptimizer modelOptimizer = new ModelOptimizer(doc, model, effList);
