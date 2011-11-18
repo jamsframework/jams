@@ -30,10 +30,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
@@ -159,7 +158,7 @@ public class OptimizationWizard extends JPanel {
             optimizerWizard.add(optimizerWizardPanel);
             mainPane.addTab(optimizerWizardPanel.getDescription().getName(), optimizerWizardPanel);
             setData();
-        } else if (analyzer != null){
+        } else if (analyzer != null) {
             SortedSet<AttributeWrapper> objList = this.analyzer.getObjectives();
             SortedSet<AttributeWrapper> parameterList = new TreeSet<AttributeWrapper>();
             parameterList.addAll(this.analyzer.getParameters());
@@ -188,7 +187,7 @@ public class OptimizationWizard extends JPanel {
         dialog.getContentPane().add(wizard);
         /*wizard.loadPropertiesFile(propertyFile);
         wizard.loadModel(modelFile);*/
-        
+
         /*wizard.setModel(new File("C:/Arbeit/modeldata/JAMS-Gehlberg/j2k_gehlberg.jam"),
         new File("C:/Arbeit/JAMS/standard.jap"));*/
         //wizard.setModel(modelFile, propertyFile);
@@ -205,33 +204,28 @@ public class OptimizationWizard extends JPanel {
     }
 //use createFrame instead
     /*public static JFrame createDialog(JFrame parent, File modelFile, File propertyFile) {
-        JFrame dialog = new JFrame(JAMS.i18n("Optimization_Wizard"));
-        OptimizationWizard wizard = new OptimizationWizard(modelFile, propertyFile, null, dialog);
-        dialog.getContentPane().add(wizard);
-        wizard.setModel(new File("C:/Arbeit/modeldata/JAMS-Gehlberg/j2k_gehlberg.jam"),
-        new File("C:/Arbeit/JAMS/standard.jap"));
-        //wizard.setModel(modelFile, propertyFile);
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialog.setSize(750, 800);
-        //dialog.setMaximumSize(new Dimension(750,700));
-        //dialog.setPreferredSize(new Dimension(750,700));
-        dialog.setResizable(false);
-        dialog.pack();
-        dialog.getContentPane().add(new JButton("Ok"){
+    JFrame dialog = new JFrame(JAMS.i18n("Optimization_Wizard"));
+    OptimizationWizard wizard = new OptimizationWizard(modelFile, propertyFile, null, dialog);
+    dialog.getContentPane().add(wizard);
+    wizard.setModel(new File("C:/Arbeit/modeldata/JAMS-Gehlberg/j2k_gehlberg.jam"),
+    new File("C:/Arbeit/JAMS/standard.jap"));
+    //wizard.setModel(modelFile, propertyFile);
+    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    dialog.setSize(750, 800);
+    //dialog.setMaximumSize(new Dimension(750,700));
+    //dialog.setPreferredSize(new Dimension(750,700));
+    dialog.setResizable(false);
+    dialog.pack();
+    dialog.getContentPane().add(new JButton("Ok"){
 
-            @Override
-            public void addActionListener(ActionListener l) {
-                super.addActionListener(new );
-            }
-
-        });
-        return dialog;
-    }*/
-
-    private void showMainObjectiveConfigurator() {
-        WizardObjectivePanel wop = new WizardObjectivePanel(this.scheme.getMainObjective(), this.analyzer.getObjectives());
-        wop.showDialog(this.owner);
+    @Override
+    public void addActionListener(ActionListener l) {
+    super.addActionListener(new );
     }
+
+    });
+    return dialog;
+    }*/
 
     private void showOutputAttributeConfigurator() {
         WizardOutputPanel wop = new WizardOutputPanel(this.analyzer.getAttributes(), this.scheme.getOutput());
@@ -402,7 +396,7 @@ public class OptimizationWizard extends JPanel {
     private void exportModifiedModel(File path) {
         try {
             XMLTools.writeXmlFile(modifiedModel, path);
-            String fileName = path.getParent() + "/"+ this.schemaName;
+            String fileName = path.getParent() + "/" + this.schemaName;
             OptimizationWizard.this.exportScheme(new File(fileName));
         } catch (IOException ioe) {
             JOptionPane.showMessageDialog(mainPane, "An error occured during saving the new model\n" + ioe.toString());
@@ -424,223 +418,247 @@ public class OptimizationWizard extends JPanel {
 
     }
 
-    private static JFrame createFrame(final OptimizationWizard wizard) {
-        final JFrame frame = new JFrame(JAMS.i18n("Optimization_Wizard"));
-        frame.setSize(750, 800);
+    public class OptimizationWizardFrame extends JFrame {
 
-        frame.getContentPane().add(wizard);
+        OptimizationWizard wizard;
 
-        JToolBar toolbar = new JToolBar("main toolbar");
-        JButton modify = new JButton((new ImageIcon(ClassLoader.getSystemResource("resources/images/working.png"))));
-        modify.addActionListener(new ActionListener() {
+        public OptimizationWizardFrame(OptimizationWizard wizard1) {
+            super(JAMS.i18n("Optimization_Wizard"));
+            this.wizard = wizard1;
+            setSize(750, 800);
 
-            public void actionPerformed(ActionEvent e) {
-                wizard.modifyModel();
-            }
-        });
+            getContentPane().add(wizard);
 
-        toolbar.add(modify);
+            JToolBar toolbar = new JToolBar("main toolbar");
+            JButton modify = new JButton("Create Optimization Model");
+            modify.addActionListener(new ActionListener() {
 
-        JButton launchLocally = new JButton((new ImageIcon(ClassLoader.getSystemResource("resources/images/ModelRun.png"))));
-        launchLocally.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                wizard.launchLocally();
-            }
-        });
-        toolbar.add(modify);
-        toolbar.add(launchLocally);
-        toolbar.setFloatable(false);
-
-        frame.getContentPane().setLayout(new BorderLayout());
-        frame.getContentPane().add(toolbar, BorderLayout.NORTH);
-
-        //toolBar.add(modify);
-
-        JMenuItem newMenu = new JMenuItem("New");
-        JMenuItem openModelMenu = new JMenuItem("Open model");
-        JMenuItem openPropertyFileMenu = new JMenuItem("Open property file");
-        JMenuItem openOptimizationScheme = new JMenuItem("Open scheme");
-
-        newMenu.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                wizard.clear();
-            }
-        });
-        openPropertyFileMenu.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                wizard.openPropertyFile();
-            }
-        });
-        openModelMenu.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                wizard.openModel();
-            }
-        });
-
-        openOptimizationScheme.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                wizard.openOptimizationScheme();
-            }
-        });
-
-        JMenuItem subOptimization = new JMenuItem("Add sub optimization");
-        subOptimization.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                wizard.addSubOptimization();
-            }
-        });
-
-
-        JMenuItem exitMenu = new JMenuItem("Exit");
-        exitMenu.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
-
-        JMenuBar mainMenu = new JMenuBar();
-
-        JMenu openMenu = new JMenu("Open");
-        openMenu.add(openModelMenu);
-        openMenu.add(openPropertyFileMenu);
-        openMenu.add(openOptimizationScheme);
-
-        JMenu optionsMenu = new JMenu("Options");
-
-        JCheckBoxMenuItem adjustModellingTimeIntervalMenu = new JCheckBoxMenuItem("Adjust Model Time Interval");
-        adjustModellingTimeIntervalMenu.setState(wizard.scheme.isAdjustModellTimeInterval());
-        adjustModellingTimeIntervalMenu.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                boolean isOn = ((JCheckBoxMenuItem) e.getSource()).getState();
-                wizard.scheme.setAdjustModellTimeInterval(isOn);
-            }
-        });
-
-        JCheckBoxMenuItem removeRedundandComponentsMenu = new JCheckBoxMenuItem("Remove redundant components");
-        removeRedundandComponentsMenu.setState(wizard.isRemoveRedundantComponents());
-        removeRedundandComponentsMenu.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                boolean isOn = ((JCheckBoxMenuItem) e.getSource()).getState();
-                wizard.scheme.setRemoveRedundantComponents(isOn);
-            }
-        });
-
-        JCheckBoxMenuItem removeGUIComponentsMenu = new JCheckBoxMenuItem("Remove graphical components");
-        removeGUIComponentsMenu.setState(wizard.isRemoveGUIComponents());
-        removeGUIComponentsMenu.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                boolean isOn = ((JCheckBoxMenuItem) e.getSource()).getState();
-                wizard.scheme.setRemoveGUIComponents(isOn);
-            }
-        });
-
-        JMenuItem changeWorkspace = new JMenuItem("Change Workspace");
-        changeWorkspace.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser chooser = GUIHelper.getJFileChooser();
-                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-                    //do workspace check ..
-                    wizard.scheme.setWorkspace(chooser.getSelectedFile().getAbsolutePath());
+                public void actionPerformed(ActionEvent e) {
+                    wizard.modifyModel();
                 }
+            });
+
+            toolbar.add(modify);
+            toolbar.setBorderPainted(true);
+
+            JButton launchLocally = new JButton(("Finish & Return to JUICE"));
+            launchLocally.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    wizard.modifyModel();
+                    finish();
+                }
+            });
+            toolbar.add(modify);
+            toolbar.add(launchLocally);
+            toolbar.setFloatable(false);
+
+            getContentPane().setLayout(new BorderLayout());
+            getContentPane().add(toolbar, BorderLayout.NORTH);
+
+            //toolBar.add(modify);
+
+            JMenuItem newMenu = new JMenuItem("New");
+            JMenuItem openModelMenu = new JMenuItem("Open model");
+            JMenuItem openPropertyFileMenu = new JMenuItem("Open property file");
+            JMenuItem openOptimizationScheme = new JMenuItem("Open scheme");
+
+            newMenu.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    wizard.clear();
+                }
+            });
+            openPropertyFileMenu.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    wizard.openPropertyFile();
+                }
+            });
+            openModelMenu.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    wizard.openModel();
+                }
+            });
+
+            openOptimizationScheme.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    wizard.openOptimizationScheme();
+                }
+            });
+
+            JMenuItem subOptimization = new JMenuItem("Add sub optimization");
+            subOptimization.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    wizard.addSubOptimization();
+                }
+            });
+
+
+            JMenuItem exitMenu = new JMenuItem("Exit");
+            exitMenu.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    System.exit(0);
+                }
+            });
+
+            JMenuBar mainMenu = new JMenuBar();
+
+            JMenu openMenu = new JMenu("Open");
+            openMenu.add(openModelMenu);
+            openMenu.add(openPropertyFileMenu);
+            openMenu.add(openOptimizationScheme);
+
+            JMenu optionsMenu = new JMenu("Options");
+
+            JCheckBoxMenuItem adjustModellingTimeIntervalMenu = new JCheckBoxMenuItem("Adjust Model Time Interval");
+            adjustModellingTimeIntervalMenu.setState(wizard.scheme.isAdjustModellTimeInterval());
+            adjustModellingTimeIntervalMenu.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    boolean isOn = ((JCheckBoxMenuItem) e.getSource()).getState();
+                    wizard.scheme.setAdjustModellTimeInterval(isOn);
+                }
+            });
+
+            JCheckBoxMenuItem removeRedundandComponentsMenu = new JCheckBoxMenuItem("Remove redundant components");
+            removeRedundandComponentsMenu.setState(wizard.isRemoveRedundantComponents());
+            removeRedundandComponentsMenu.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    boolean isOn = ((JCheckBoxMenuItem) e.getSource()).getState();
+                    wizard.scheme.setRemoveRedundantComponents(isOn);
+                }
+            });
+
+            JCheckBoxMenuItem removeGUIComponentsMenu = new JCheckBoxMenuItem("Remove graphical components");
+            removeGUIComponentsMenu.setState(wizard.isRemoveGUIComponents());
+            removeGUIComponentsMenu.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    boolean isOn = ((JCheckBoxMenuItem) e.getSource()).getState();
+                    wizard.scheme.setRemoveGUIComponents(isOn);
+                }
+            });
+
+            JMenuItem changeWorkspace = new JMenuItem("Change Workspace");
+            changeWorkspace.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    JFileChooser chooser = GUIHelper.getJFileChooser();
+                    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    if (chooser.showOpenDialog(OptimizationWizardFrame.this) == JFileChooser.APPROVE_OPTION) {
+                        //do workspace check ..
+                        wizard.scheme.setWorkspace(chooser.getSelectedFile().getAbsolutePath());
+                    }
+                }
+            });
+
+            JMenuItem setOutputMenu = new JMenuItem("Set Output Attributes");
+            setOutputMenu.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    wizard.showOutputAttributeConfigurator();
+                }
+            });
+
+            optionsMenu.add(setOutputMenu);
+
+            optionsMenu.add(adjustModellingTimeIntervalMenu);
+            optionsMenu.add(removeRedundandComponentsMenu);
+            optionsMenu.add(removeGUIComponentsMenu);
+            optionsMenu.add(changeWorkspace);
+
+
+            JMenu exportMenu = new JMenu("Export");
+
+            JMenuItem exportSchemeMenu = new JMenuItem("Scheme (odd file)");
+            exportSchemeMenu.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    wizard.exportToXml();
+                }
+            });
+
+            JMenuItem saveModifiedModelMenu = new JMenuItem("Calibration Model (xml file)");
+            saveModifiedModelMenu.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    wizard.exportModifiedModel();
+                }
+            });
+
+            exportMenu.add(exportSchemeMenu);
+            exportMenu.add(saveModifiedModelMenu);
+
+            JMenu fileMenu = new JMenu("File");
+            fileMenu.add(newMenu);
+            fileMenu.add(openMenu);
+            fileMenu.add(exportMenu);
+
+            fileMenu.add(exitMenu);
+
+            JMenu editMenu = new JMenu("Edit");
+            editMenu.add(subOptimization);
+
+            mainMenu.add(fileMenu);
+            mainMenu.add(editMenu);
+            mainMenu.add(optionsMenu);
+
+            setJMenuBar(mainMenu);
+            getContentPane().add(wizard, BorderLayout.CENTER);
+            /*wizard.setModel(new File("C:/Arbeit/modeldata/JAMS-Gehlberg/j2k_gehlberg.jam"),
+            new File("C:/Arbeit/JAMS/standard.jap"));*/
+            setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            setMinimumSize(new Dimension(750, 700));
+            setResizable(false);
+            pack();
+        }
+
+        HashSet<ActionListener> listeners = new HashSet<ActionListener>();
+        public void addActionListener(ActionListener listener){
+            listeners.add(listener);
+        }
+        public void removeActionListener(ActionListener listener){
+            listeners.remove(listener);
+        }
+        public OptimizationWizard getWizard(){
+            return OptimizationWizard.this;
+        }
+        private void finish(){
+            //export odd file
+            for (ActionListener l : listeners){
+                l.actionPerformed(new ActionEvent(OptimizationWizard.this, 0, "modified model exported"));
+                String fileName = OptimizationWizard.this.getWorkspace() + "/launch" + System.currentTimeMillis() + ".jam";
+                exportModifiedModel(new File(fileName));
             }
-        });
-
-        JMenuItem setOutputMenu = new JMenuItem("Set Output Attributes");
-        setOutputMenu.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                wizard.showOutputAttributeConfigurator();
-            }
-        });
-
-        JMenuItem setMainObjectiveMenu = new JMenuItem("Set Main Objective");
-        setMainObjectiveMenu.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                wizard.showMainObjectiveConfigurator();
-            }
-        });
-
-        optionsMenu.add(setMainObjectiveMenu);
-        optionsMenu.add(setOutputMenu);
-
-        optionsMenu.add(adjustModellingTimeIntervalMenu);
-        optionsMenu.add(removeRedundandComponentsMenu);
-        optionsMenu.add(removeGUIComponentsMenu);
-        optionsMenu.add(changeWorkspace);
-
-
-        JMenu exportMenu = new JMenu("Export");
-
-        JMenuItem exportSchemeMenu = new JMenuItem("Scheme (odd file)");
-        exportSchemeMenu.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                wizard.exportToXml();
-            }
-        });
-
-        JMenuItem saveModifiedModelMenu = new JMenuItem("Calibration Model (xml file)");
-        saveModifiedModelMenu.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                wizard.exportModifiedModel();
-            }
-        });
-
-        exportMenu.add(exportSchemeMenu);
-        exportMenu.add(saveModifiedModelMenu);
-
-        JMenu fileMenu = new JMenu("File");
-        fileMenu.add(newMenu);
-        fileMenu.add(openMenu);
-        fileMenu.add(exportMenu);
-
-        fileMenu.add(exitMenu);
-
-        JMenu editMenu = new JMenu("Edit");
-        editMenu.add(subOptimization);
-
-        mainMenu.add(fileMenu);
-        mainMenu.add(editMenu);
-        mainMenu.add(optionsMenu);
-
-        frame.setJMenuBar(mainMenu);
-        frame.getContentPane().add(wizard, BorderLayout.CENTER);
-        /*wizard.setModel(new File("C:/Arbeit/modeldata/JAMS-Gehlberg/j2k_gehlberg.jam"),
-        new File("C:/Arbeit/JAMS/standard.jap"));*/
-        frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        frame.setMinimumSize(new Dimension(750, 700));
-        frame.setResizable(false);
-        frame.pack();
-
-        return frame;
+        }
     }
 
-    public static JFrame createFrame(File modelFile, File propertyFile, OptimizationDescriptionDocument scheme) {
-        
-        final OptimizationWizard wizard = new OptimizationWizard(modelFile, propertyFile, scheme, null);
 
-        return createFrame(wizard);
+
+    private OptimizationWizardFrame createFrame() {
+        OptimizationWizardFrame wizardFrame = new OptimizationWizardFrame(this);
+
+        return wizardFrame;
     }
 
-    public static JFrame createFrame(Document modelFile, JAMSProperties propertyFile, OptimizationDescriptionDocument scheme) {
+    public static OptimizationWizardFrame createFrame(File modelFile, File propertyFile, OptimizationDescriptionDocument scheme) {
 
         final OptimizationWizard wizard = new OptimizationWizard(modelFile, propertyFile, scheme, null);
 
-        return createFrame(wizard);
+        return wizard.createFrame();
+    }
+
+    public static OptimizationWizardFrame createFrame(Document modelFile, JAMSProperties propertyFile, OptimizationDescriptionDocument scheme) {
+
+        final OptimizationWizard wizard = new OptimizationWizard(modelFile, propertyFile, scheme, null);
+
+        return wizard.createFrame();
     }
 
     /*public static void main(String arg[]) {

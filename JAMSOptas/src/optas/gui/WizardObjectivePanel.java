@@ -28,11 +28,14 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import optas.efficiencies.EfficiencyCalculator;
@@ -51,7 +54,8 @@ public class WizardObjectivePanel extends JPanel implements Comparable{
 
     Class methods[] = null;
     
-    JTextField nameField = new JTextField();
+    JTextField nameField = new JTextField(30);
+    JTextField customNameField = new JTextField(10);
         
     Objective objective;
 
@@ -102,6 +106,28 @@ public class WizardObjectivePanel extends JPanel implements Comparable{
                 WizardObjectivePanel.this.updateMainPanel();
             }
         });
+        JPanel namePanel = new JPanel(new FlowLayout());
+        namePanel.add(new JLabel("Name"));
+        namePanel.add(this.customNameField);
+        customNameField.setText(objective.getCustomName());
+        namePanel.add(new JLabel("Description"));
+        namePanel.add(nameField);
+        nameField.setEditable(false);
+        
+        customNameField.getDocument().addDocumentListener(new DocumentListener() {
+
+            public void insertUpdate(DocumentEvent e) {
+                WizardObjectivePanel.this.objective.setCustomName(customNameField.getText());
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                WizardObjectivePanel.this.objective.setCustomName(customNameField.getText());
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+                WizardObjectivePanel.this.objective.setCustomName(customNameField.getText());
+            }
+        });
         JPanel itemPanel = new JPanel(new FlowLayout());
         JComboBox methodBox = new JComboBox(methods);
         itemPanel.add(methodBox);
@@ -115,7 +141,11 @@ public class WizardObjectivePanel extends JPanel implements Comparable{
         objective.setMethod(methods[0].getName());
         itemPanel.add(addTimeInterval);
 
-        objectiveConfigurationPanel.add(itemPanel, BorderLayout.NORTH);
+        JPanel northPanel = new JPanel(new BorderLayout());
+        northPanel.add(namePanel, BorderLayout.NORTH);
+        northPanel.add(itemPanel, BorderLayout.SOUTH);
+
+        objectiveConfigurationPanel.add(northPanel, BorderLayout.NORTH);
         objectiveConfigurationPanel.add(getTimeIntervalList(), BorderLayout.CENTER);
 
         add(dataLists, BorderLayout.NORTH);
@@ -264,8 +294,10 @@ public class WizardObjectivePanel extends JPanel implements Comparable{
         });
     }
 
-    public void showDialog(JFrame owner){
+    private boolean isApproved;
+    public boolean showDialog(JFrame owner){
         final JDialog dialog = new JDialog(owner,"Objective configurator",true);
+
         JPanel rootPanel = new JPanel(new BorderLayout());
         rootPanel.add(this,BorderLayout.CENTER);
 
@@ -274,13 +306,27 @@ public class WizardObjectivePanel extends JPanel implements Comparable{
 
             public void actionPerformed(ActionEvent e) {
                 dialog.setVisible(false);
+                isApproved = true;
             }
         });
-        rootPanel.add(okButton,BorderLayout.SOUTH);
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                dialog.setVisible(false);
+                isApproved = false;
+            }
+        });
+        JPanel southPanel = new JPanel(new FlowLayout());
+        southPanel.add(okButton);
+        southPanel.add(cancelButton);
+        rootPanel.add(southPanel,BorderLayout.SOUTH);
+
         dialog.getContentPane().add(rootPanel);
         dialog.setSize(new Dimension(700,700));
         dialog.invalidate();
         dialog.setVisible(true);
+        return isApproved;
     }
 
     @Override

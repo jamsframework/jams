@@ -4,7 +4,10 @@
  */
 package optas.gui;
 
+import jams.gui.input.TableInput;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dialog;
 import optas.optimizer.management.StringOptimizerParameter;
 import optas.optimizer.management.NumericOptimizerParameter;
 import optas.optimizer.management.BooleanOptimizerParameter;
@@ -15,6 +18,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -23,18 +27,25 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
 import optas.metamodel.AttributeWrapper;
 import optas.metamodel.Objective;
 import optas.metamodel.Optimization;
@@ -105,118 +116,140 @@ public class WizardOptimizerPanel extends JPanel {
         updateUI();
     }
 
+    
+    private class CreateObjectiveDialog extends JDialog {        
+        JComboBox objList = null;
+        JButton createButton = null;
 
-    private JComboBox getObjectiveComboBox(Objective o) {
-        JComboBox b = new JComboBox();        
-        b.removeAllItems();
-        for (Objective panel : availableObjectives) {
-            b.addItem(panel);
+        boolean isApproved;
+        DefaultComboBoxModel model = null;
+
+        public CreateObjectiveDialog() {
+            super(owner, "Create Objective");
+            objList = new JComboBox();
+
+            model = new DefaultComboBoxModel(WizardOptimizerPanel.availableObjectives.toArray());
+            objList.setModel(model);
+
+            createButton = new JButton(new AbstractAction("Create Objective") {
+
+                public void actionPerformed(ActionEvent e) {
+                    Objective o = new Objective();
+                    WizardObjectivePanel wizard = new WizardObjectivePanel(o, objectiveData);
+                    if (wizard.showDialog(owner)){
+                        availableObjectives.add(o);
+                        model = new DefaultComboBoxModel(WizardOptimizerPanel.availableObjectives.toArray());
+                        objList.setModel(model);
+                        objList.setSelectedItem(o);
+                    }
+                }
+            });
+
+            JPanel contentPanel = new JPanel(new BorderLayout());
+
+            JPanel centerPanel = new JPanel(new FlowLayout());
+
+            centerPanel.add(objList);
+            centerPanel.add(createButton);
+
+            JPanel southPanel = new JPanel(new FlowLayout());
+
+            southPanel.add(new JButton(new AbstractAction("Ok") {
+
+                public void actionPerformed(ActionEvent e) {
+                    isApproved = true;
+                    setVisible(false);
+                }
+            }));
+
+            southPanel.add(new JButton(new AbstractAction("Cancel") {
+
+                public void actionPerformed(ActionEvent e) {
+                    isApproved = false;
+                    setVisible(false);
+                }
+            }));
+
+            contentPanel.add(centerPanel, BorderLayout.CENTER);
+            contentPanel.add(southPanel, BorderLayout.SOUTH);
+
+            this.getContentPane().add(contentPanel);
+            this.pack();
+
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            Dimension preferredSize = this.getPreferredSize();
+            preferredSize.width = 450;
+            this.setPreferredSize(preferredSize);
+            this.setSize(preferredSize);
+
+            int top = (screenSize.height - this.getPreferredSize().height) / 2;
+            int left = (screenSize.width - this.getPreferredSize().width) / 2;
+            this.setLocation(left, top);
+            this.setModal(true);
+            
         }
-        b.setSelectedItem(o);
-        b.setMinimumSize(new Dimension(150,20));
-        b.setPreferredSize(new Dimension(150,20));
-        return b;
+
+        public Objective getObjective(){
+            if (objList.getSelectedItem()!=null)
+                return (Objective)objList.getSelectedItem();
+            return null;
+        }
+    }
+
+    private class ObjectiveTableList extends TableInput{
+        public ObjectiveTableList() {
+            super(new String[]{"name", "simulation", "measurement"}, new Class[]{String.class,String.class, String.class}, new boolean[]{false, false, false}, true);
+
+            getTable().setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            
+            ((AbstractTableModel) this.getTable().getModel()).addTableModelListener(new TableModelListener() {
+
+                public void tableChanged(TableModelEvent e) {
+                    ArrayList<Objective> list = new ArrayList<Objective>();
+                    for (Object row[] : tableData.getValue()) {
+                        if (row[0] instanceof Objective){
+                            list.add((Objective)row[0]);
+                        }
+                    }
+                    WizardOptimizerPanel.this.optimizationScheme.setObjective(list);
+                }
+            });
+
+            setPreferredSize(new Dimension(450, 200));
+        }
+
+        @Override
+        protected void editItem() {
+            //get the current selection
+            int selection = getTable().getSelectedRow();
+            Object selectedData = tableData.getElementAt(selection)[0];
+
+            if (selectedData instanceof Objective){
+                Objective o = (Objective)selectedData;
+                WizardObjectivePanel panel = new WizardObjectivePanel(o, objectiveData);
+                panel.showDialog(WizardOptimizerPanel.this.owner);
+                tableData.setElementAt(selection, new Object[]{selectedData, o.getSimulation(), o.getMeasurement()});
+                this.setTableData(tableData.getValue());
+            }
+        }
+
+        @Override
+        protected void addItem() {
+            CreateObjectiveDialog createObjectiveDialog = new CreateObjectiveDialog();
+            createObjectiveDialog.setVisible(true);
+            if (createObjectiveDialog.isApproved){
+                Objective o = createObjectiveDialog.getObjective();
+                tableData.addElement( new Object[]{o, o.getSimulation(), o.getMeasurement()});
+                this.setTableData(tableData.getValue());
+            }
+        }
     }
 
     private JComponent getObjectiveSpecificationPanel() {
-        JScrollPane scrollPaneObjectiveSpecificationPanel = new JScrollPane(objectiveSpecificationPanel);
-        scrollPaneObjectiveSpecificationPanel.setPreferredSize(new Dimension(700, 250));
-        scrollPaneObjectiveSpecificationPanel.setBorder(BorderFactory.createTitledBorder(
-                "Objective Configuration"));
-
-        objectiveSpecificationPanel.removeAll();
-
-        GridBagConstraints c = new GridBagConstraints();
-        int counter = 0;
-        c.gridx = 0;
-        c.gridy = counter++;
-        c.insets = new Insets(0, 0, 2, 0);
-
-        ArrayList<Objective> list = optimizationScheme.getObjective();
-
-        for (int i = 0; i < list.size(); i++) {
-            JPanel objectiveRow = new JPanel(new FlowLayout());
-            JComboBox objectiveBox = getObjectiveComboBox(list.get(i));
-            objectiveBox.setSelectedItem(list.get(i));
-
-            JButton editButton = new JButton("Edit");
-            JButton plusButton = new JButton("Duplicate");
-            JButton rmButton = new JButton("Delete");
-
-            editButton.putClientProperty("data", objectiveBox);
-            plusButton.putClientProperty("data", objectiveBox);
-            rmButton.putClientProperty("data", objectiveBox);
-
-            editButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    JButton src = (JButton) e.getSource();
-                    JComboBox b = (JComboBox)src.getClientProperty("data");
-                    Objective o = (Objective)b.getSelectedItem();
-
-                    WizardObjectivePanel panel = new WizardObjectivePanel(o, objectiveData);
-                    panel.showDialog(WizardOptimizerPanel.this.owner);
-                    updateMainPanel();
-                }
-            });
-
-            plusButton.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent e) {
-                    JButton src = (JButton) e.getSource();
-                    JComboBox b = (JComboBox)src.getClientProperty("data");
-                    Objective o = (Objective)b.getSelectedItem();
-                    Objective oCopy = o.clone();
-                    availableObjectives.add(oCopy);
-                    optimizationScheme.getObjective().add(oCopy);
-                    updateMainPanel();
-                }
-            });
-
-            rmButton.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent e) {
-                    JButton src = (JButton) e.getSource();
-                    JComboBox b = (JComboBox)src.getClientProperty("data");
-                    Objective o = (Objective)b.getSelectedItem();
-                    optimizationScheme.getObjective().remove(o);
-                    updateMainPanel();
-                }
-            });
-
-            objectiveRow.add(objectiveBox);
-            objectiveRow.add(plusButton);
-            objectiveRow.add(editButton);
-            objectiveRow.add(rmButton);
-
-            c.gridx = 0;
-            c.gridy = counter++;
-            c.gridwidth = 1;
-            c.anchor = GridBagConstraints.NORTH;
-            c.insets = new Insets(0, 0, 2, 0);
-
-            objectiveSpecificationPanel.add(objectiveRow, c);
-        }
-        JButton createNewObjective = new JButton("Create");
-        createNewObjective.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                Objective o = new Objective();
-                WizardObjectivePanel wizard = new WizardObjectivePanel(o, objectiveData);
-                wizard.showDialog(owner);
-                optimizationScheme.addObjective(o);
-                availableObjectives.add(o);
-                WizardOptimizerPanel.this.updateMainPanel();
-            }
-        });
-
-        c.gridx = 0;
-        c.gridy = counter++;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.NORTH;
-        c.insets = new Insets(0, 0, 2, 0);
-        objectiveSpecificationPanel.add(createNewObjective, c);
-
-        return scrollPaneObjectiveSpecificationPanel;
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Objectives"));
+        contentPanel.add(new ObjectiveTableList(), BorderLayout.CENTER);
+        return contentPanel;        
     }
 
     private JComponent getStringField(StringOptimizerParameter p) {
