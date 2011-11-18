@@ -44,6 +44,8 @@ import jamsui.juice.*;
 import jamsui.juice.documentation.DocumentationWizard;
 import jamsui.juice.gui.tree.LibTree;
 import jamsui.juice.gui.tree.ModelTree;
+import optas.gui.OptimizationWizard;
+import optas.gui.OptimizationWizard.OptimizationWizardFrame;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -278,17 +280,26 @@ public class JUICEFrame extends JFrame {
         OptimizationWizardGUIAction = new AbstractAction(JAMS.i18n("Optimization_Wizard")) {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                /*OptimizationWizard wizard = new OptimizationWizard();
+            public void actionPerformed(ActionEvent e) {                                
                 ModelView view = getCurrentView();
-                wizard.runWizard(view.getModelDoc(), JUICE.getJamsProperties(), JUICEFrame.this);*/
-                /*WizardApplet applet = new WizardApplet();
-                applet.init();
-                applet.start();*/
-                ModelView view = getCurrentView();
-                /*optas.gui.OptimizationWizard.createDialog(JUICEFrame.this, view.getModelDoc(),
-                        JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);*/
+                OptimizationWizardFrame frame = optas.gui.OptimizationWizard.createFrame(view.getModelDoc(), JUICE.getJamsProperties(), null);
+                frame.getWizard().setWorkspace(view.getSavePath().getParent());
+                frame.addActionListener(new ActionListener() {
 
+                    public void actionPerformed(ActionEvent e) {
+                        OptimizationWizard wizard = (OptimizationWizard)e.getSource();
+                        Document newModelDoc = wizard.getNewModel();
+                        JUICEFrame.this.newModel();
+                        try{
+                            Thread.sleep(500);
+                        }catch(Exception e2){
+                            
+                        }
+                        ModelView view = JUICEFrame.this.getCurrentView();
+                        view.setTree(new ModelTree(view,newModelDoc));
+                    }
+                });
+                frame.setVisible(true);
             }
         };
 

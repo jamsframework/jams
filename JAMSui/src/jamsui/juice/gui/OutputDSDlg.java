@@ -437,7 +437,7 @@ public class OutputDSDlg extends JDialog {
         public DSTableInput() {
             super(new String[]{"enabled", "store"}, new Class[]{Boolean.class, String.class}, new boolean[]{true, false}, false);
 
-            getTable().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            getTable().setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
             int vColIndex = 0;
             TableColumn col = getTable().getColumnModel().getColumn(vColIndex);
