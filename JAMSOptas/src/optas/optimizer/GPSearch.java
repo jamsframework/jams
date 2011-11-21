@@ -16,10 +16,10 @@ import jams.JAMS;
 import jams.tools.JAMSTools;
 import jams.data.*;
 import jams.model.JAMSComponentDescription;
-import jams.components.machineLearning.GaussianLearner;
+import optas.datamining.GaussianLearner;
 
 //import jams.components.optimizer.
-import jams.components.optimizer.SimpleSCE;
+import optas.optimizer.SCE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -353,7 +353,7 @@ public class GPSearch extends optas.optimizer.Optimizer {
         double cumulatedProb = 0.0;
 
         if (this.n != -1){ 
-            SimpleSCE sce = new SimpleSCE();
+            SCE sce = new SCE();
             double[] normedLowBound = new double[n];
             double[] normedUpBound = new double[n];
             for (int i=0;i<n;i++){
@@ -367,6 +367,9 @@ public class GPSearch extends optas.optimizer.Optimizer {
 
             SCE optimizer = new SCE();
             optimizer.x0 = startpoint;
+            optimizer.setInputDimension(n);
+            optimizer.setOutputDimension(1);
+            optimizer.setWorkspace(workspace);
             optimizer.lowBound = normedLowBound;
             optimizer.upBound = normedUpBound;
             optimizer.complexesCount = 3;

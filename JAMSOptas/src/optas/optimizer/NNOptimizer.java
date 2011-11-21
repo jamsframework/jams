@@ -9,9 +9,9 @@
 
 package optas.optimizer;
 
-import jams.components.optimizer.nn.InputNeuron;
-import jams.components.optimizer.nn.NeuralConnection;
-import jams.components.optimizer.nn.Neuron;
+import optas.optimizer.nn.InputNeuron;
+import optas.optimizer.nn.NeuralConnection;
+import optas.optimizer.nn.Neuron;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
