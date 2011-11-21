@@ -33,7 +33,7 @@ public class DataCollection extends DataSet implements Serializable{
     HashMap<String, DataSet> globalDatasets = new HashMap<String, DataSet>();
 
     HashMap<String, Class> datasets;
-    Class samplerClass;
+    String samplerClass;
 
     boolean isBusy = false;
     transient Set<DatasetChangeListener> listener = new HashSet<DatasetChangeListener>();
@@ -72,14 +72,14 @@ public class DataCollection extends DataSet implements Serializable{
     }
 
     public void setSamplerClass(String typeId) {
-        try {
-            this.samplerClass = ClassLoader.getSystemClassLoader().loadClass(typeId);
-        } catch (ClassNotFoundException cnfe) {
+        //try {
+            this.samplerClass = typeId;//ClassLoader.getSystemClassLoader().loadClass(typeId);
+        /*} /*catch (ClassNotFoundException cnfe) {
             this.samplerClass = null;//jams.components.optimizer.Optimizer.class;
-        }
+        }*/
     }
 
-    public Class getSamplerClass() {
+    public String getSamplerClass() {
         if (samplerClass == null) {
             return null;//jams.components.optimizer.Optimizer.class;
         }
