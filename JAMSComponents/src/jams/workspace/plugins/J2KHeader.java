@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  *
@@ -16,7 +17,7 @@ import java.util.GregorianCalendar;
  */
 public class J2KHeader {
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat j2kSdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
     public enum TimePeriod {
 
@@ -299,12 +300,15 @@ public class J2KHeader {
          * y	5620906	5616856	5629818	5628111	5635626	5637345	5633382	5648145	5644173	5650160	5613300	5628317	5626336	5644937
          * dataColumn	1	2	3	4	5	6	7	8	9	10	11	12	13	14
          */
-
-        SimpleDateFormat j2kSdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        
+        j2kSdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         String header = "";
         header += "@dataConnection" + "\n";
-        header += "mode\tOUTPUT" + "\n";
+        if (this.isInputFile)
+            header += "mode\tINPUT" + "\n";
+        else
+            header += "mode\tOUTPUT" + "\n";
         header += "@dataValueAttribs" + "\n";
         //this information is not accessible :(
         header += this.getProperty() + "\t" + this.getLowerBound() + "\t" + this.getUpperBound() + "\t" + "??" + "\n";
@@ -340,7 +344,7 @@ public class J2KHeader {
 
         for (int i = 0; i < this.stationIDs.length; i++) {
             nameLine += "SO_" + this.getStationNames()[i] + "\t";
-            idLine += this.getStationIDs()[i];
+            idLine += this.getStationIDs()[i] + "\t";
 
             xLine += this.getX()[i] + "\t";
             yLine += this.getY()[i] + "\t";
@@ -364,6 +368,8 @@ public class J2KHeader {
         Boolean isDataValueAttribsSet = false;
         Boolean isDataSetAttribsSet = false;
         Boolean isStatAttribValSet = false;
+
+        j2kSdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         int k = 0;
         while (k < lines.length) {
@@ -401,8 +407,8 @@ public class J2KHeader {
                 isDataValueAttribsSet = true;
             }
             if (line.toLowerCase().equals("@datasetattribs")) {
-                for (int i = 0; i < 4; i++) {
-                    String attributeString = lines[k++];
+                String attributeString = null;
+                while( !(attributeString = lines[k++]).startsWith("@") ){
                     String[] attribute = attributeString.split("\t");
                     if (attribute.length != 2) {
                         throw new J2KHeaderException("dataSetAttribs does not contain enough tokens! found: " + attribute.length + " required: " + 2);
@@ -411,14 +417,14 @@ public class J2KHeader {
                         this.missingDataValue = Double.parseDouble(attribute[1]);
                     } else if (attribute[0].toLowerCase().equals("datastart")) {
                         try {
-                            this.dateStart = sdf.parse(attribute[1]);
+                            this.dateStart = j2kSdf.parse(attribute[1]);
                         } catch (ParseException pe) {
                             throw new J2KHeaderException("Unable to parse startDate:" + pe.toString());
                         }
 
                     } else if (attribute[0].toLowerCase().equals("dataend")) {
                         try {
-                            this.dateEnd = sdf.parse(attribute[1]);
+                            this.dateEnd = j2kSdf.parse(attribute[1]);
                         } catch (ParseException pe) {
                             throw new J2KHeaderException("Unable to parse startDate:" + pe.toString());
                         }
@@ -442,8 +448,8 @@ public class J2KHeader {
                 }
             }
             if (line.toLowerCase().equals("@statattribval")) {
-                for (int i = 0; i < 6; i++) {
-                    String attributeString = lines[k++];
+                String attributeString = null;
+                while( !(attributeString = lines[k++]).startsWith("@") ){
 
                     String[] attribute = attributeString.split("\t");
                     if (elementCount == 0) {
