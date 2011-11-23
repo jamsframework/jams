@@ -62,6 +62,8 @@ import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
 import jams.meta.ModelNode;
 import jamsui.juice.gui.tree.JAMSNode;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
 
 /**
  *
@@ -70,7 +72,7 @@ import jamsui.juice.gui.tree.JAMSNode;
 public class ComponentPanel extends JPanel {
 
     private static final String DEFAULT_STRING = JAMS.i18n("[none]"), ATTR_CONFIG_STRING = JAMS.i18n("Attribute_configuration:"), MODEL_CONFIG_STRING = JAMS.i18n("Model_configuration:"), ATTR_OVERVIEW_STRING = JAMS.i18n("Attribute_overview:");
-    private static final Dimension BUTTON_DIMENSION = new Dimension(90, 20);
+    private static final Dimension BUTTON_DIMENSION = new Dimension(100, 20);
     private static final Dimension TABLE_DIMENSION = new Dimension(500, 200);
     private ComponentDescriptor componentDescriptor = null;
     private HashMap<String, JTextField> textFields = new HashMap<String, JTextField>();
@@ -128,16 +130,19 @@ public class ComponentPanel extends JPanel {
                 }
             }
         });
-        JPanel nameEditButtonPanel = new JPanel();
-        nameEditButtonPanel.setLayout(new BorderLayout());
-        nameEditButtonPanel.add(nameEditButton, BorderLayout.WEST);
+        
+        JPanel namePanel = new JPanel();
+        ((FlowLayout)namePanel.getLayout()).setVgap(0);
+        namePanel.add(getTextField("name", "", false));
+        namePanel.add(nameEditButton);
 
-        GUIHelper.addGBComponent(componentPanel, mainLayout, getTextField("name", "", false), 1, 0, 1, 1, 1.0, 1.0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, nameEditButtonPanel, 2, 0, 1, 1, 1.0, 1.0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, getTextField("type", "", false), 1, 1, 1, 1, 1.0, 1.0);
+        JPanel typePanel = new JPanel();
+        ((FlowLayout)typePanel.getLayout()).setVgap(0);
+        typePanel.add(getTextField("type", "", false));
 
-        //GUIHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 0, 1, 1, 1.0, 1.0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 3, 0, 1, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, namePanel, 1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.VERTICAL, GridBagConstraints.WEST);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, typePanel, 1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.VERTICAL, GridBagConstraints.WEST);
+
 
         //create var table
         varTable = new JTable() {
@@ -298,10 +303,10 @@ public class ComponentPanel extends JPanel {
 
         JLabel attrOverviewLabel = new JLabel(ATTR_OVERVIEW_STRING);
         attrOverviewLabel.setFont(labelFont);
-
+        
         GUIHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 2, 4, 1, 1.0, 1.0);
         GUIHelper.addGBComponent(componentPanel, mainLayout, attrOverviewLabel, 0, 10, 4, 1, 0, 0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, tabPane, 0, 20, 4, 1, 1.0, 1.0);
+        GUIHelper.addGBComponent(componentPanel, mainLayout, tabPane, 0, 20, 4, 1, 1.0, 1.0, GridBagConstraints.VERTICAL, GridBagConstraints.WEST);
         GUIHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 25, 4, 1, 1.0, 1.0);
         GUIHelper.addGBComponent(componentPanel, mainLayout, configLabel, 0, 27, 4, 1, 0, 0);
         GUIHelper.addGBComponent(componentPanel, mainLayout, switchPanel, 0, 30, 4, 1, 1.0, 1.0);
@@ -309,6 +314,7 @@ public class ComponentPanel extends JPanel {
         switchPanel.add(attributeConfigPanel);
 
         reset(DEFAULT_STRING);
+        setLayout(new FlowLayout(FlowLayout.LEFT));
         add(componentPanel);
     }
 

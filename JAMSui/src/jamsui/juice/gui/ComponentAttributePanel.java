@@ -110,7 +110,7 @@ public class ComponentAttributePanel extends JPanel {
 
         JPanel detailPanel = new JPanel();
         detailPanel.setBorder(BorderFactory.createLoweredBevelBorder());
-        detailPanel.setPreferredSize(DETAILPANEL_DIMENSION);
+        //detailPanel.setPreferredSize(DETAILPANEL_DIMENSION);
         detailPanel.add(infoPanel);
 
         this.add(detailPanel);
