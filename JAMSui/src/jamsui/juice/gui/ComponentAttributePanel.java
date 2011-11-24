@@ -55,6 +55,7 @@ import jams.meta.ComponentField.AttributeLinkException;
 import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
 import jams.tools.StringTools;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;

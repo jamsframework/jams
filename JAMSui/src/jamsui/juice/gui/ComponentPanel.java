@@ -62,8 +62,11 @@ import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
 import jams.meta.ModelNode;
 import jamsui.juice.gui.tree.JAMSNode;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
+import java.awt.ScrollPane;
+import javax.swing.BoxLayout;
 
 /**
  *
@@ -312,7 +315,9 @@ public class ComponentPanel extends JPanel {
         GUIHelper.addGBComponent(componentPanel, mainLayout, switchPanel, 0, 30, 4, 1, 1.0, 1.0);
 
         switchPanel.add(attributeConfigPanel);
-
+        ((FlowLayout)switchPanel.getLayout()).setHgap(0);
+        ((FlowLayout)switchPanel.getLayout()).setVgap(0);
+        
         reset(DEFAULT_STRING);
         setLayout(new FlowLayout(FlowLayout.LEFT));
         add(componentPanel);
