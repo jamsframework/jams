@@ -221,7 +221,7 @@ public class ModelDescriptor extends ComponentCollection {
 
             throw new JAMSException(JAMS.i18n("Component_") + propertyElement.getAttribute("component")
                     + JAMS.i18n("_does_not_exist,_but_is_referred_in_list_of_model_parameters!")
-                    + JAMS.i18n("Will_be_removed_when_model_is_saved!"), JAMS.i18n("Model_loading_error"));
+                    + JAMS.i18n("Will_be_removed_when_model_is_saved!"), JAMS.i18n("Error_loading_model"));
         }
 
         String attributeName = propertyElement.getAttribute("attribute");
@@ -248,7 +248,7 @@ public class ModelDescriptor extends ComponentCollection {
 
             throw new JAMSException(JAMS.i18n("Attribute_") + attributeName
                     + JAMS.i18n("_does_not_exist_in_component_") + property.component.getName()
-                    + JAMS.i18n("._Removing_visual_editor!"), JAMS.i18n("Model_loading_error"));
+                    + JAMS.i18n("._Removing_visual_editor!"), JAMS.i18n("Error_loading_model"));
         }
 
         // not used anymore

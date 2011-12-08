@@ -284,7 +284,7 @@ public class ModelIO {
 
         if (field == null) {
             throw new NullFieldException(JAMS.i18n("Error_while_loading_component_") + cd.getName()
-                    + JAMS.i18n("_component_attribute_") + fieldName + JAMS.i18n("_does_not_exist!"), JAMS.i18n("Model_loading_error"));
+                    + JAMS.i18n("_component_attribute_") + fieldName + JAMS.i18n("_does_not_exist!"), JAMS.i18n("Error_loading_model"));
         }
 
         if (e.hasAttribute("attribute")) {
@@ -297,7 +297,7 @@ public class ModelIO {
             ContextDescriptor context = (ContextDescriptor) md.getComponentDescriptor(contextName);
             if (context == null) {
                 throw new NullFieldException(JAMS.i18n("Error_while_loading_component_") + cd.getName()
-                        + JAMS.i18n("_context_") + contextName + JAMS.i18n("_does_not_exist!"), JAMS.i18n("Model_loading_error"));
+                        + JAMS.i18n("_context_") + contextName + JAMS.i18n("_does_not_exist!"), JAMS.i18n("Error_loading_model"));
             }
 
             String attribute = e.getAttribute("attribute");
@@ -333,7 +333,7 @@ public class ModelIO {
             type = Class.forName(typeName);
         } catch (ClassNotFoundException ex) {
             throw new JAMSException("Given type " + typeName + " for context attribute "
-                    + attribute + " in context " + cd.getName() + " does not exist!", JAMS.i18n("Model_loading_error"));
+                    + attribute + " in context " + cd.getName() + " does not exist!", JAMS.i18n("Error_loading_model"));
         }
 
         // workaround for models that use the "old" API, i.e. JAMSData
