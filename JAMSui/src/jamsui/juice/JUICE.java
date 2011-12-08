@@ -40,6 +40,7 @@ import jamsui.juice.gui.JUICEFrame;
 import jamsui.juice.gui.ModelView;
 import jamsui.juice.gui.tree.LibTree;
 import jamsui.cmdline.JAMSCmdLine;
+import jamsui.juice.gui.NotificationDlg;
 
 /**
  *
@@ -60,6 +61,7 @@ public class JUICE {
     private static LibTree libTree;
     private static WorkerDlg loadLibsDlg;
     private static ExceptionHandler exHandler, multiExHandler;
+    private static NotificationDlg notificationDlg;
 
     public static void main(String args[]) {
 
@@ -226,16 +228,20 @@ public class JUICE {
      * @return the exHandler
      */
     public static ExceptionHandler getExHandler() {
-        
+
+        if (notificationDlg == null) {
+            notificationDlg = new NotificationDlg(juiceFrame, JAMS.i18n("Error"));
+        }
+
         if (exHandler == null) {
             exHandler = new ExceptionHandler() {
 
                 public void handle(JAMSException ex) {
-                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
+//                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
+                    notificationDlg.addNotification(ex);
                 }
 
                 public void handle(ArrayList<JAMSException> exList) {
-                    
                 }
             };
         }
@@ -247,16 +253,21 @@ public class JUICE {
      * @return the exMultiHandler
      */
     public static ExceptionHandler getMultiExHandler() {
+
+        if (notificationDlg == null) {
+            notificationDlg = new NotificationDlg(juiceFrame, JAMS.i18n("Error"));
+        }        
+        
         if (multiExHandler == null) {
             multiExHandler = new ExceptionHandler() {
 
                 public void handle(JAMSException ex) {
-
                 }
 
                 public void handle(ArrayList<JAMSException> exList) {
                     for (JAMSException ex : exList) {
-                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
+//                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
+                        notificationDlg.addNotification(ex);
                     }
                 }
             };

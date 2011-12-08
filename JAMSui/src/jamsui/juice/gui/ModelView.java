@@ -486,7 +486,7 @@ public class ModelView {
         } catch (FileNotFoundException fnfe) {
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("File_") + fileName + JAMS.i18n("_could_not_be_loaded."), JAMS.i18n("File_open_error"));
         } catch (Exception e) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("Unknown_error_during_Model_loading"), JAMS.i18n("Model_loading_error"));
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("Unknown_error_during_Model_loading"), JAMS.i18n("Error_loading_model"));
             e.printStackTrace();
         }
     }
