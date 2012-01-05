@@ -53,9 +53,18 @@ public class ModelIO {
     private String modelName;
     private NodeFactory nodeFactory;
 
-    public ModelIO(ClassLoader loader, NodeFactory nodeFactory) {
-        this.loader = loader;
+    public ModelIO(NodeFactory nodeFactory) {
         this.nodeFactory = nodeFactory;
+    }
+
+    public static ModelIO getStandardModelIO() {
+        return new ModelIO(new NodeFactory() {
+
+            @Override
+            public ModelNode createNode(ComponentDescriptor cd) {
+                return new ModelNode(cd);
+            }
+        });
     }
 
 //    public ModelIO(ModelDescriptor md, JAMSClassLoader loader) {
@@ -75,8 +84,9 @@ public class ModelIO {
         return md;
     }
 
-    public ModelDescriptor loadModel(Document modelDoc, boolean processEditors, ExceptionHandler exHandler) throws JAMSException {
+    public ModelDescriptor loadModel(Document modelDoc, ClassLoader loader, boolean processEditors, ExceptionHandler exHandler) throws JAMSException {
 
+        this.loader = loader;
         return getModelDescriptor(modelDoc, processEditors, exHandler);
 
     }
@@ -135,7 +145,7 @@ public class ModelIO {
 
                 try {
                     rootNode.add(getSubTree(element, md, exHandler));
-                }catch (NoClassDefFoundError ncdfe){
+                } catch (NoClassDefFoundError ncdfe) {
                     //TODO exception handling
                     System.out.println(ncdfe);
                     ncdfe.printStackTrace();
@@ -172,7 +182,7 @@ public class ModelIO {
                 md.setModelParameters(launcherNode, exHandler);
             }
         }
-        
+
         md.initDatastores(exHandler);
 
         return md;

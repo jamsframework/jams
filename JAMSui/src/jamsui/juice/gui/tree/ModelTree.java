@@ -73,7 +73,7 @@ public class ModelTree extends JAMSTree {
         new DefaultTreeTransferHandler(this, DnDConstants.ACTION_COPY_OR_MOVE);
         getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
         this.view = view;
-        this.modelIO = new ModelIO(JUICE.getLoader(), new NodeFactory() {
+        this.modelIO = new ModelIO(new NodeFactory() {
 
             @Override
             public ModelNode createNode(ComponentDescriptor cd) {
@@ -340,7 +340,7 @@ public class ModelTree extends JAMSTree {
             }
         } else {
             try {
-                ModelDescriptor md = modelIO.loadModel(modelDoc, true, JUICE.getExHandler());
+                ModelDescriptor md = modelIO.loadModel(modelDoc, JUICE.getLoader(), true, JUICE.getExHandler());
                 view.setModelDescriptor(md);
                 this.setComponentCollection(md);
                 rootNode = md.getRootNode();

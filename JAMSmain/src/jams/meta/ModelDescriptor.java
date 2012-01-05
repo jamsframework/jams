@@ -48,7 +48,7 @@ public class ModelDescriptor extends ComponentCollection {
 
     private HashMap<String, OutputDSDescriptor> outputDataStores;
     private ModelProperties modelProperties;
-    private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "";
+    private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "", modelName = "";
     private Node dataStoresNode;
     private ModelNode rootNode;
 
@@ -347,6 +347,13 @@ public class ModelDescriptor extends ComponentCollection {
      */
     public void setRootNode(ModelNode rootNode) {
         this.rootNode = rootNode;
+    }
+    
+    /**
+     * @return the modelName
+     */
+    public String getModelName() {
+        return ((ComponentDescriptor) rootNode.getUserObject()).getName();
     }
 
     /**

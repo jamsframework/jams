@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.runtime;
 
 import java.io.Serializable;
@@ -32,35 +31,34 @@ import java.util.Observer;
  * @author Sven Kralisch
  */
 public class JAMSLog extends Observable implements Serializable {
-    
+
     StringBuffer logString = new StringBuffer();
     String lastString;
-
     int bufferSize = 32000000;
 
-    public void setBufferSize(int newBufferSize){
+    public void setBufferSize(int newBufferSize) {
         bufferSize = newBufferSize;
         trimBuffer();
     }
 
-    public int getBufferSize(){
+    public int getBufferSize() {
         return bufferSize;
     }
 
-    private void trimBuffer(){
-        if (bufferSize != -1 && bufferSize < logString.length()){
-            logString.delete(0, logString.length()-bufferSize);
+    private void trimBuffer() {
+        if (bufferSize != -1 && bufferSize < logString.length()) {
+            logString.delete(0, logString.length() - bufferSize);
         }
     }
 
     public String getLogString() {
         return logString.toString();
     }
-    
+
     public String getLastString() {
         return lastString;
     }
-    
+
     public void print(String str) {
         lastString = str;
         logString.append(str);
@@ -69,7 +67,7 @@ public class JAMSLog extends Observable implements Serializable {
         this.setChanged();
         this.notifyObservers(str);
     }
-    
+
     public void print(char c) {
         logString.append(c);
         this.setChanged();
@@ -77,7 +75,7 @@ public class JAMSLog extends Observable implements Serializable {
     }
 
     @Override
-    public void addObserver(Observer o){
+    public void addObserver(Observer o) {
         this.deleteObserver(o);
         super.addObserver(o);
     }

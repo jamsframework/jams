@@ -61,7 +61,6 @@ import jams.runtime.JAMSRuntime;
 import jams.gui.input.InputComponentFactory;
 import jams.model.JAMSFullModelState;
 import jams.model.Model;
-import jams.tools.StringTools;
 import java.awt.Frame;
 import java.io.File;
 import org.w3c.dom.DOMException;

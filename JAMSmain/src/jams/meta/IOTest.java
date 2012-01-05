@@ -50,7 +50,7 @@ public class IOTest {
         String[] libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
         ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
 
-        ModelIO io = new ModelIO(classLoader, new NodeFactory() {
+        ModelIO io = new ModelIO(new NodeFactory() {
 
             public ModelNode createNode(ComponentDescriptor cd) {
                 return new ModelNode(cd);
@@ -64,7 +64,7 @@ public class IOTest {
         ModelDescriptor md = null;
 
         try {
-            md = io.loadModel(doc, true, new ExceptionHandler() {
+            md = io.loadModel(doc, classLoader, true, new ExceptionHandler() {
 
                 public void handle(JAMSException ex) {
                     ex.printStackTrace();

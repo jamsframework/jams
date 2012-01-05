@@ -49,11 +49,8 @@ import jams.data.JAMSData;
 import jams.io.ModelLoader;
 import jams.model.SmallModelState;
 import jams.io.ParameterProcessor;
-import jams.meta.ComponentDescriptor;
 import jams.meta.ModelDescriptor;
 import jams.meta.ModelIO;
-import jams.meta.ModelNode;
-import jams.meta.NodeFactory;
 import jams.model.FullModelState;
 import jams.model.GUIComponent;
 import jams.model.JAMSContext;
@@ -100,6 +97,10 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private int runState = -1;
     private HashMap<String, Integer> idMap;
     transient private SmallModelState state = new JAMSSmallModelState();
+    
+    public StandardRuntime() {
+        
+    }
 
     /**
      * Loads a model from an XML document
@@ -174,19 +175,13 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
             // create a ModelIO instance and load the model from XML into a 
             // ModelDescriptor object
-            ModelIO modelIO = new ModelIO(this.getClassLoader(), new NodeFactory() {
-
-                public ModelNode createNode(ComponentDescriptor cd) {
-                    return new ModelNode(cd);
-                }
-            });
-            ModelDescriptor md = modelIO.loadModel(modelDocument, false, exHandler);
+            ModelIO modelIO = ModelIO.getStandardModelIO();
+            ModelDescriptor md = modelIO.loadModel(modelDocument, this.getClassLoader(), false, exHandler);
             
             if (StringTools.isEmptyString(md.getWorkspacePath()) && (defaultWorkspacePath != null)) {
                 md.setWorkspacePath(defaultWorkspacePath);
                 this.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + defaultWorkspacePath);
             }
-            
 
             // create a ModelLoader and pass the ModelDescriptor to generate
             // the final JAMS model
@@ -243,6 +238,107 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         runState = JAMSRuntime.STATE_RUN;
 
     }
+    
+    /**
+     * Loads a model from an XML document
+     * @param modelDocument the XML document
+     * @param properties a set of system properties providing information on
+     * libs to be used and other parameter
+     */
+    public void loadModel(ModelDescriptor md, SystemProperties properties, String defaultWorkspacePath) {
+
+        this.properties = properties;
+
+        initLogging();
+
+        String user = properties.getProperty(JAMSProperties.USERNAME_IDENTIFIER);
+        if (!StringTools.isEmptyString(user)) {
+            user = System.getProperty("user.name") + " (" + user + ")";
+        } else {
+            user = System.getProperty("user.name");
+        }
+
+        this.println(JAMS.i18n("JAMS_version") + JAMSVersion.getInstance().getVersionDateString(), JAMS.STANDARD);
+        this.println(JAMS.i18n("User_name_:") + user, JAMS.STANDARD);
+        this.println(JAMS.i18n("Date_time") + new SimpleDateFormat().format(new Date()), JAMS.STANDARD);
+        this.println("", JAMS.STANDARD);
+
+
+        // start the loading process
+        long start = System.currentTimeMillis();
+
+        // get libraries specified in properties
+        libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
+
+        // load the libraries and create the class loader
+
+        this.println(JAMS.i18n("Creating_class_loader"), JAMS.STANDARD);
+        this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
+
+        classLoader = JAMSClassLoader.createClassLoader(libs, this);
+
+        // load the model
+        this.println("", JAMS.STANDARD);
+        this.println(JAMS.i18n("Loading_Model"), JAMS.STANDARD);
+
+        ExceptionHandler exHandler = new ExceptionHandler() {
+
+            public void handle(JAMSException ex) {
+                StandardRuntime.this.handle(ex, true);
+            }
+
+            public void handle(ArrayList<JAMSException> exList) {
+                for (JAMSException jex : exList) {
+                    StandardRuntime.this.handle(jex, true);
+                }
+            }
+        };
+
+        try {
+
+            if (StringTools.isEmptyString(md.getWorkspacePath()) && (defaultWorkspacePath != null)) {
+                md.setWorkspacePath(defaultWorkspacePath);
+                this.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + defaultWorkspacePath);
+            }
+            
+
+            // create a ModelLoader and pass the ModelDescriptor to generate
+            // the final JAMS model
+            ModelLoader modelLoader = new ModelLoader(this);
+            this.model = modelLoader.loadModel(md, exHandler);
+
+            // get the id map which maps class names to id values (used during logging)
+            this.idMap = modelLoader.getIdMap();
+
+        } catch (Exception jex) {
+            this.handle(jex, false);
+        }
+
+        // define if the model should profile or not
+        boolean doProfiling = ("1".equals(properties.getProperty(JAMSProperties.PROFILE_IDENTIFIER, "0")) ? true : false);
+        this.model.setProfiling(doProfiling);
+
+        // create GUI if needed
+        int wEnable = Integer.parseInt(properties.getProperty("windowenable", "1"));
+        if (wEnable != 0) {
+            int width = Integer.parseInt(properties.getProperty("windowwidth", "600"));
+            int height = Integer.parseInt(properties.getProperty("windowheight", "400"));
+            int ontop = Integer.parseInt(properties.getProperty("windowontop", "0"));
+            this.initGUI(model.getName(), (ontop == 1 ? true : false), width, height);
+            this.guiEnabled = true;
+        }
+
+        long end = System.currentTimeMillis();
+        this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
+        this.println(JAMS.i18n("JAMS_model_setup_time:_") + (end - start) + " ms", JAMS.STANDARD);
+        this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
+
+//        classLoader = null;
+//        Runtime.getRuntime().gc();
+
+        runState = JAMSRuntime.STATE_RUN;
+
+    }    
 
     public Document getModelDocument() {
         return this.modelDocument;
