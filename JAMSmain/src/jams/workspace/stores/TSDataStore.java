@@ -73,6 +73,9 @@ public class TSDataStore extends TableDataStore {
         public RingBuffer(int size){
             this.size = size;
             ring = new ArrayList<T>(size);
+            for (int i=0;i<size;i++){
+                ring.add(null);
+            }
         }
 
         public T get(int relativIndex){
@@ -306,7 +309,7 @@ public class TSDataStore extends TableDataStore {
         // check interval size for all columns
         for (int i = 0; i < dataIOArray.length; i++) {
             //get the timestamps of the first two rows (in seconds)
-            this.latestTimesteps[i].push(dataIOArray[i].getData()[0].getData()[0].getLong());
+            this.latestTimesteps[i].push(dataIOArray[i].getData()[currentPosition].getData()[0].getLong());
             if (this.latestTimesteps[i].fillsize < 2) {
                 continue;
             }
