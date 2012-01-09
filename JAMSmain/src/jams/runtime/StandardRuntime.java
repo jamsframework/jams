@@ -97,9 +97,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private int runState = -1;
     private HashMap<String, Integer> idMap;
     transient private SmallModelState state = new JAMSSmallModelState();
-    
-    public StandardRuntime() {
-        
+
+    public StandardRuntime(SystemProperties properties) {
+        this.properties = properties;
+
+        init(true);
+
     }
 
     /**
@@ -109,25 +112,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
      * libs to be used and other parameter
      */
     @Override
-    public void loadModel(Document modelDocument, SystemProperties properties, String defaultWorkspacePath) {
+    public void loadModel(Document modelDocument, String defaultWorkspacePath) {
 
         this.modelDocument = modelDocument;
-        this.properties = properties;
-
-        initLogging();
-
-        String user = properties.getProperty(JAMSProperties.USERNAME_IDENTIFIER);
-        if (!StringTools.isEmptyString(user)) {
-            user = System.getProperty("user.name") + " (" + user + ")";
-        } else {
-            user = System.getProperty("user.name");
-        }
-
-        this.println(JAMS.i18n("JAMS_version") + JAMSVersion.getInstance().getVersionDateString(), JAMS.STANDARD);
-        this.println(JAMS.i18n("User_name_:") + user, JAMS.STANDARD);
-        this.println(JAMS.i18n("Date_time") + new SimpleDateFormat().format(new Date()), JAMS.STANDARD);
-        this.println("", JAMS.STANDARD);
-
 
         // start the loading process
         long start = System.currentTimeMillis();
@@ -135,34 +122,19 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         // get libraries specified in properties
         libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
 
-        // load the libraries and create the class loader
-
-        this.println(JAMS.i18n("Creating_class_loader"), JAMS.STANDARD);
-        this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
-
-        classLoader = JAMSClassLoader.createClassLoader(libs, this);
-
-        // create model config object from config document
-        //ModelConfig config = new ModelConfig(modelDocument);
-
-        // create preprocessor
-        //ModelPreprocessor preProc = new ModelPreprocessor(modelDocument, config, this);
-
         // run preprocessor
-        //preProc.process();
         ParameterProcessor.preProcess(modelDocument);
-
 
         // load the model
         this.println("", JAMS.STANDARD);
         this.println(JAMS.i18n("Loading_Model"), JAMS.STANDARD);
 
         ExceptionHandler exHandler = new ExceptionHandler() {
-
+            @Override
             public void handle(JAMSException ex) {
                 StandardRuntime.this.handle(ex, true);
             }
-
+            @Override
             public void handle(ArrayList<JAMSException> exList) {
                 for (JAMSException jex : exList) {
                     StandardRuntime.this.handle(jex, true);
@@ -170,14 +142,13 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             }
         };
 
-
         try {
 
             // create a ModelIO instance and load the model from XML into a 
             // ModelDescriptor object
             ModelIO modelIO = ModelIO.getStandardModelIO();
             ModelDescriptor md = modelIO.loadModel(modelDocument, this.getClassLoader(), false, exHandler);
-            
+
             if (StringTools.isEmptyString(md.getWorkspacePath()) && (defaultWorkspacePath != null)) {
                 md.setWorkspacePath(defaultWorkspacePath);
                 this.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + defaultWorkspacePath);
@@ -198,24 +169,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         // define if the model should profile or not
         boolean doProfiling = ("1".equals(properties.getProperty(JAMSProperties.PROFILE_IDENTIFIER, "0")) ? true : false);
         this.model.setProfiling(doProfiling);
-
-
-        //this.idMap.put(JAMSWorkspace.class.getName(), 0);
-        //this.idMap.put(JAMSModel.class.getName(), 0);
-
-//        // create IDs for all used components
-//        HashSet<Class> componentClassSet = new HashSet<Class>();
-//        for (Component component : modelLoader.getComponentRepository().values()) {
-//            componentClassSet.add(component.getClass());
-//        }
-//
-//        int i = 1;
-//        for (Class c : componentClassSet) {
-//            componentMap.put(c, i);
-//            idMap.put(i, c);
-//            println(String.format("%03d", i) + ": " + c.getName(), JAMS.VERBOSE);
-//            i++;
-//        }
 
         // create GUI if needed
         int wEnable = Integer.parseInt(properties.getProperty("windowenable", "1"));
@@ -238,7 +191,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         runState = JAMSRuntime.STATE_RUN;
 
     }
-    
+
     /**
      * Loads a model from an XML document
      * @param modelDocument the XML document
@@ -249,44 +202,22 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         this.properties = properties;
 
-        initLogging();
-
-        String user = properties.getProperty(JAMSProperties.USERNAME_IDENTIFIER);
-        if (!StringTools.isEmptyString(user)) {
-            user = System.getProperty("user.name") + " (" + user + ")";
-        } else {
-            user = System.getProperty("user.name");
-        }
-
-        this.println(JAMS.i18n("JAMS_version") + JAMSVersion.getInstance().getVersionDateString(), JAMS.STANDARD);
-        this.println(JAMS.i18n("User_name_:") + user, JAMS.STANDARD);
-        this.println(JAMS.i18n("Date_time") + new SimpleDateFormat().format(new Date()), JAMS.STANDARD);
-        this.println("", JAMS.STANDARD);
-
-
         // start the loading process
         long start = System.currentTimeMillis();
 
         // get libraries specified in properties
         libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
 
-        // load the libraries and create the class loader
-
-        this.println(JAMS.i18n("Creating_class_loader"), JAMS.STANDARD);
-        this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
-
-        classLoader = JAMSClassLoader.createClassLoader(libs, this);
-
         // load the model
         this.println("", JAMS.STANDARD);
         this.println(JAMS.i18n("Loading_Model"), JAMS.STANDARD);
 
         ExceptionHandler exHandler = new ExceptionHandler() {
-
+            @Override
             public void handle(JAMSException ex) {
                 StandardRuntime.this.handle(ex, true);
             }
-
+            @Override
             public void handle(ArrayList<JAMSException> exList) {
                 for (JAMSException jex : exList) {
                     StandardRuntime.this.handle(jex, true);
@@ -300,7 +231,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
                 md.setWorkspacePath(defaultWorkspacePath);
                 this.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + defaultWorkspacePath);
             }
-            
 
             // create a ModelLoader and pass the ModelDescriptor to generate
             // the final JAMS model
@@ -338,13 +268,39 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         runState = JAMSRuntime.STATE_RUN;
 
-    }    
+    }
 
+    @Override
     public Document getModelDocument() {
         return this.modelDocument;
     }
 
-    private void initLogging() {
+    private void init(boolean start) {
+
+        if (start) {
+            String user = properties.getProperty(JAMSProperties.USERNAME_IDENTIFIER);
+            if (!StringTools.isEmptyString(user)) {
+                user = System.getProperty("user.name") + " (" + user + ")";
+            } else {
+                user = System.getProperty("user.name");
+            }
+            this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
+            this.println(JAMS.i18n("JAMS_version") + JAMSVersion.getInstance().getVersionDateString(), JAMS.STANDARD);
+            this.println(JAMS.i18n("User_name_:") + user, JAMS.STANDARD);
+            this.println(JAMS.i18n("Date_time") + new SimpleDateFormat().format(new Date()), JAMS.STANDARD);
+            this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
+            this.println("", JAMS.STANDARD);
+        }
+
+        // load the libraries and create the class loader
+
+//        this.println(JAMS.i18n("Creating_class_loader"), JAMS.STANDARD);
+        JAMSLog log = new JAMSLog();
+        classLoader = JAMSClassLoader.createClassLoader(getLibs(), log);
+        for (String line : log.toString().split("\n")) {
+            this.println(line, JAMS.STANDARD);
+        }
+
         // set the debug (i.e. output verbosity) level
         this.setDebugLevel(Integer.parseInt(properties.getProperty(SystemProperties.DEBUG_IDENTIFIER, "1")));
 
@@ -377,15 +333,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
                 @Override
                 public void update(Observable obs, Object obj) {
-
                     Object[] options = {JAMS.i18n("OK"), JAMS.i18n("OK,_skip_other_messages")};
                     int result = JOptionPane.showOptionDialog(frame, obj.toString(), JAMS.i18n("Model_execution_error"),
                             JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-
                     if (result == 1) {
                         StandardRuntime.this.deleteErrorLogObserver(this);
                     }
-
                 }
             });
         }
@@ -410,7 +363,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     }
 
     public String[] getLibs() {
-        return libs;
+        return StringTools.toArray(properties.getProperty("libs", ""), ";");
     }
 
     public FullModelState getFullModelState() {
@@ -810,12 +763,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             return jamsID;
         }
 
-//        int i = 1;
-//        String caller = Reflection.getCallerClass(i).getName();
-//        while (caller.equals("jams.runtime.StandardRuntime")) {
-//            caller = Reflection.getCallerClass(++i).getName();
-//        }
-
         StackTraceElement[] ste = Thread.currentThread().getStackTrace();
         int i = 1;
         String caller = ste[i].getClassName();
@@ -946,9 +893,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         deleteErrorLogObservers();
         deleteInfoLogObservers();
-        this.initLogging();
+        this.init(false);
 
-        classLoader = JAMSClassLoader.createClassLoader(libs, this);
+//        classLoader = JAMSClassLoader.createClassLoader(libs, this);
     }
 
     private void writeObject(ObjectOutputStream objOut) throws IOException {

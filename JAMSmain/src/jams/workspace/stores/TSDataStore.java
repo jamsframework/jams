@@ -98,6 +98,7 @@ public class TSDataStore extends TableDataStore {
         currentDate = JAMSDataFactory.createCalendar();
         calendar = new CalendarValue(currentDate);
     }
+    
     @SuppressWarnings("unchecked")
     public TSDataStore(JAMSWorkspace ws, String id, Document doc) throws IOException, ClassNotFoundException {
         super(ws, id, doc);

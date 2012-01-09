@@ -24,6 +24,7 @@ package reg;
 
 import jams.gui.tools.GUIHelper;
 import jams.tools.FileTools;
+import jams.tools.StringTools;
 import jams.workspace.stores.InputDataStore;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -134,7 +135,10 @@ public class DisplayManager implements Observer {
                     try {
                         spreadSheet.loadTSDS((TSDataStore) store, explorer.getWorkspace().getInputDirectory());
                     } catch (Throwable e) {
-                        GUIHelper.showErrorDlg(explorer.getExplorerFrame(), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AN_ERROR_OCCURED_WHILE_TRYING_TO_READ_FROM_DATASTORE_") + store.getID() + "\"", java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
+                        GUIHelper.showErrorDlg(explorer.getExplorerFrame(), 
+                                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AN_ERROR_OCCURED_WHILE_TRYING_TO_READ_FROM_DATASTORE_") 
+                                + store.getID() + "\"\n" + e.toString() + "\n" + StringTools.getStackTraceString(e.getStackTrace()),
+                                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
                     }
 
                 }

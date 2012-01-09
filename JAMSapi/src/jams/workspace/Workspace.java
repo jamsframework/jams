@@ -254,7 +254,7 @@ public interface Workspace extends Serializable {
      * Creates an individual class loader
      * @param libs Array of libs that the new classloader will be based on
      */
-    void setLibs(String[] libs);
+//    void setLibs(String[] libs);
 
     /**
      * Sets the default model path of the workspace

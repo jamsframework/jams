@@ -107,7 +107,7 @@ public class ModelView {
             public void run() {
                 try {
                     // create the runtime
-                    runtime = new StandardRuntime();
+                    runtime = new StandardRuntime(JUICE.getJamsProperties());
 
                     // add info and error log output
                     runtime.addInfoLogObserver(new Observer() {
@@ -135,7 +135,7 @@ public class ModelView {
                             defaultWorkspacePath = getSavePath().getParent();
                         }
 
-                        runtime.loadModel(modelDoc, JUICE.getJamsProperties(), defaultWorkspacePath);
+                        runtime.loadModel(modelDoc, defaultWorkspacePath);
 
                         // if workspace has not been provided, check if the document has been
                         // read from file and try to use parent directory instead

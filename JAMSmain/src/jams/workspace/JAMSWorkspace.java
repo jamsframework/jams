@@ -252,9 +252,9 @@ public class JAMSWorkspace implements Workspace {
      * Creates an individual class loader
      * @param libs Array of libs that the new classloader will be based on
      */
-    public void setLibs(String[] libs) {
-        this.classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
-    }
+//    public void setLibs(String[] libs) {
+//        this.classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
+//    }
 
     /**
      *
@@ -855,7 +855,11 @@ public class JAMSWorkspace implements Workspace {
 //    }
     public static void main(String[] args) throws IOException, InvalidWorkspaceException {
 
-        JAMSRuntime runtime = new StandardRuntime();
+        SystemProperties properties = JAMSProperties.createProperties();
+        properties.load("D:/jamsapplication/nsk.jap");
+        String[] libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
+
+        JAMSRuntime runtime = new StandardRuntime(properties);
         runtime.setDebugLevel(JAMS.VERBOSE);
         runtime.addErrorLogObserver(new Observer() {
 
@@ -872,15 +876,10 @@ public class JAMSWorkspace implements Workspace {
             }
         });
 
-        SystemProperties properties = JAMSProperties.createProperties();
-        properties.load("D:/jamsapplication/nsk.jap");
-        String[] libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
-
-
         JAMSWorkspace ws;
         ws = new JAMSWorkspace(new File("D:/jamsapplication/JAMS-Gehlberg"), runtime, true);
         //JAMSWorkspace ws = new JAMSWorkspace(new File("D:/jamsapplication/ws_test"), runtime);
-        ws.setLibs(libs);
+//        ws.setLibs(libs);
         ws.init();
 
         //System.out.println(ws.dataStoreToString("tmin"));

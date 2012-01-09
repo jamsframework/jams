@@ -54,6 +54,10 @@ public class JAMSLog extends Observable implements Serializable {
     public String getLogString() {
         return logString.toString();
     }
+    
+    public String toString() {
+        return getLogString();
+    }    
 
     public String getLastString() {
         return lastString;
@@ -67,6 +71,10 @@ public class JAMSLog extends Observable implements Serializable {
         this.setChanged();
         this.notifyObservers(str);
     }
+
+    public void println(String str) {
+        print(str + "\n");
+    }    
 
     public void print(char c) {
         logString.append(c);

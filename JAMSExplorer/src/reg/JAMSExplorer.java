@@ -70,8 +70,19 @@ public class JAMSExplorer {
 
         this.standAlone = standAlone;
 
+        properties = JAMSProperties.createProperties();
+        String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
+        File file = new File(defaultFile);
+        if (file.exists() && standAlone) {
+            try {
+                properties.load(defaultFile);
+            } catch (IOException ioe) {
+                Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, ioe.getMessage(), ioe);
+            }
+        }
+
         if (runtime == null) {
-            this.runtime = new StandardRuntime();
+            this.runtime = new StandardRuntime(properties);
             this.runtime.setDebugLevel(JAMS.VERBOSE);
             this.runtime.addErrorLogObserver(new Observer() {
 
@@ -87,19 +98,8 @@ public class JAMSExplorer {
             });
         } else {
             this.runtime = runtime;
-        }
-
-        properties = JAMSProperties.createProperties();
-        String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
-        File file = new File(defaultFile);
-        if (file.exists() && standAlone) {
-            try {
-                properties.load(defaultFile);
-            } catch (IOException ioe) {
-                Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, ioe.getMessage(), ioe);
-            }
-        }
-
+        }        
+        
         displayManager = new DisplayManager(this);
         explorerFrame = new ExplorerFrame(JAMSExplorer.this);
 

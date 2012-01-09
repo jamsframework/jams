@@ -27,6 +27,7 @@ import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.data.JAMSEntity;
 import jams.runtime.JAMSClassLoader;
+import jams.runtime.JAMSLog;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import jams.tools.StringTools;
@@ -44,11 +45,13 @@ public class IOTest {
 
     public static void main(String[] args) throws IOException, JAMSException {
 
-        JAMSRuntime runtime = new StandardRuntime();
         SystemProperties properties = JAMSProperties.createProperties();
         properties.load("d:/jamsapplication/nsk.jap");
         String[] libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
-        ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
+        
+        JAMSRuntime runtime = new StandardRuntime(properties);
+
+        ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, new JAMSLog());
 
         ModelIO io = new ModelIO(new NodeFactory() {
 

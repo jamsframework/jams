@@ -24,7 +24,6 @@ package jams.workspace.stores;
 
 import jams.workspace.DataSet;
 import jams.workspace.DataSetDefinition;
-import java.io.IOException;
 
 /**
  *

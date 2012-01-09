@@ -226,9 +226,9 @@ public class ModelAnalyzer {
         properties = propertyFile;
         this.doc = modelFile;
 
-        rt = new StandardRuntime();
+        rt = new StandardRuntime(properties);
         try{
-            rt.loadModel(doc, properties, null);
+            rt.loadModel(doc, null);
         }catch(Throwable t){
             if (rt.getDebugLevel() >= 3) {
                 if (rt.getErrorLog().length()>2){

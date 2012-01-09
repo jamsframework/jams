@@ -125,14 +125,14 @@ public class JAMSui {
 
                 try {
                     Properties props = null;
-                    if (cmdLine.getJmpFileName()!=null){
+                    if (cmdLine.getJmpFileName() != null) {
                         props = new Properties();
                         FileInputStream fis = new FileInputStream(new File(cmdLine.getJmpFileName()));
                         props.load(fis);
                         fis.close();
                     }
                     startGUI(modelFileName, cmdLineParameterValues, props);
-                    
+
                 } catch (Exception e) {
                     JAMSui.handle(e);
                 }
@@ -171,19 +171,19 @@ public class JAMSui {
                     Document modelDoc = XMLTools.getDocumentFromString(xmlString);
 
                     String jmpFileName = cmdLine.getJmpFileName();
-                    if (jmpFileName!=null){
+                    if (jmpFileName != null) {
                         modelDoc = ParameterProcessor.loadParams(modelDoc, new File(jmpFileName));
                     }
 
-                    runtime = new StandardRuntime();
-                    
                     // try to determine the default workspace directory
                     String defaultWorkspacePath = null;
                     if (properties.getProperty(JAMSProperties.USE_DEFAULT_WS_PATH).equals("1") && !StringTools.isEmptyString(modelFileName)) {
                         defaultWorkspacePath = new File(modelFileName).getParent();
                     }
-                    
-                    runtime.loadModel(modelDoc, properties, defaultWorkspacePath);
+
+                    runtime = new StandardRuntime(properties);
+
+                    runtime.loadModel(modelDoc, defaultWorkspacePath);
 
                     // if workspace has not been provided, check if the document has been
                     // read from file and try to use parent directory instead

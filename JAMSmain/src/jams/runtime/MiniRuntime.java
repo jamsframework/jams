@@ -22,15 +22,12 @@
  */
 package jams.runtime;
 
-import jams.ExceptionHandler;
 import java.awt.BorderLayout;
 import java.util.HashMap;
 import java.util.Observer;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import jams.JAMS;
-import jams.JAMSException;
-import jams.SystemProperties;
 import jams.data.JAMSData;
 import jams.model.Component;
 import jams.model.GUIComponent;
@@ -228,7 +225,7 @@ public class MiniRuntime implements JAMSRuntime {
     }
 
     @Override
-    public void loadModel(Document modelDocument, SystemProperties properties, String defaultWorkspacePath) {
+    public void loadModel(Document modelDocument, String defaultWorkspacePath) {
     }
 
     @Override

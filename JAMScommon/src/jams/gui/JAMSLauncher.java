@@ -135,33 +135,34 @@ public class JAMSLauncher extends JFrame {
                 // create a copy of the model document                
                 Document modelDocCopy = (Document) getModelDocument().cloneNode(true);
 
-                // create the runtime
-                runtime = new StandardRuntime();
-
-                // add info and error log output
-                runtime.addInfoLogObserver(new Observer() {
-
-                    public void update(Observable obs, Object obj) {
-                        processInfoLog(obj.toString());
-                    }
-                });
-                runtime.addErrorLogObserver(
-                        new Observer() {
-
-                            public void update(Observable obs, Object obj) {
-//                        GUIHelper.showErrorDlg(JAMSLauncher.this, "An error has occurred! Please check the error log for further information!", "JAMS Error");
-                                processErrorLog(obj.toString());
-                            }
-                        });
-
                 // try to determine the default workspace directory
                 String defaultWorkspacePath = null;
                 if (properties.getProperty(JAMSProperties.USE_DEFAULT_WS_PATH).equals("1") && (loadPath != null)) {
                     defaultWorkspacePath = loadPath.getParent();
                 }
 
+                // create the runtime
+                runtime = new StandardRuntime(getProperties());
+
+                // add info and error log output
+                runtime.addInfoLogObserver(new Observer() {
+
+                    @Override
+                    public void update(Observable obs, Object obj) {
+                        processInfoLog(obj.toString());
+                    }
+                });
+                runtime.addErrorLogObserver(new Observer() {
+
+                    @Override
+                    public void update(Observable obs, Object obj) {
+//                        GUIHelper.showErrorDlg(JAMSLauncher.this, "An error has occurred! Please check the error log for further information!", "JAMS Error");
+                        processErrorLog(obj.toString());
+                    }
+                });                
+                
                 // load the model
-                runtime.loadModel(modelDocCopy, getProperties(), defaultWorkspacePath);
+                runtime.loadModel(modelDocCopy, defaultWorkspacePath);
 
                 // if workspace has not been provided, check if the document has been
                 // read from file and try to use parent directory instead

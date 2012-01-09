@@ -34,6 +34,7 @@ import jams.tools.JAMSTools;
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.runtime.JAMSClassLoader;
+import jams.runtime.JAMSLog;
 import jams.runtime.StandardRuntime;
 import jams.tools.StringTools;
 import jamsui.juice.gui.JUICEFrame;
@@ -160,7 +161,7 @@ public class JUICE {
 
         String[] libsArray = StringTools.toArray(libs, ";");
 
-        JUICE.loader = JAMSClassLoader.createClassLoader(libsArray, new StandardRuntime());
+        JUICE.loader = JAMSClassLoader.createClassLoader(libsArray, new JAMSLog());
     }
 
     private static Class[] getJAMSDataClasses() {

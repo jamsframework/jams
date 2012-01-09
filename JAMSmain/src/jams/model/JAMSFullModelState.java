@@ -6,6 +6,7 @@
 package jams.model;
 
 import jams.runtime.JAMSClassLoader;
+import jams.runtime.JAMSLog;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import java.io.ByteArrayInputStream;
@@ -86,7 +87,7 @@ public class JAMSFullModelState implements FullModelState{
             //load the rest of JAMSRuntime
             String libs[] = (String[]) objIn.readObject();
             // load the libraries and create the class loader        
-            ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, new StandardRuntime());            
+            ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, new JAMSLog());            
             objIn.setClassLoader(classLoader);
             
             Model model = (Model) objIn.readObject();                       

@@ -223,7 +223,7 @@ public class ServerChild {
             return;
         }
         
-        runtime = new StandardRuntime();
+        runtime = new StandardRuntime(properties);
         
         infoStream = new PrintStream(workspaceDir + "/$info.log");
         errorStream = new PrintStream(workspaceDir + "/$error.log");
@@ -240,8 +240,7 @@ public class ServerChild {
             }
         });
         
-        
-        runtime.loadModel(modelDoc, properties, null);
+        runtime.loadModel(modelDoc, null);
         
         if (!info.equals("")) {
             runtime.println(info);

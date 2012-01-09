@@ -51,25 +51,25 @@ public class JAMSClassLoader extends URLClassLoader {
         return defineClass(name, data, 0, data.length);
     }
 
-    private static void addFile(Set<URL> urls, File f, JAMSRuntime rt) {
+    private static void addFile(Set<URL> urls, File f, JAMSLog log) {
         try {
             URL url = f.toURI().toURL();
             if (!urls.add(url)) {
-                rt.println(JAMS.i18n("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.i18n("_is_already_loaded"));
+                log.println(JAMS.i18n("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.i18n("_is_already_loaded"));
             }
         } catch (MalformedURLException murle) {
-            rt.println(JAMS.i18n("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.i18n("_could_not_be_converted_to_URL."));
+            log.println(JAMS.i18n("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.i18n("_could_not_be_converted_to_URL."));
         }
     }
 
-    public static ClassLoader createClassLoader(String[] libs, JAMSRuntime rt) {
+    public static ClassLoader createClassLoader(String[] libs, JAMSLog log) {
         Set<URL> urls = new HashSet<URL>();
         for (String lib : libs) {
 
             File dir = new File(lib);
 
             if (!dir.exists()) {
-                rt.println(JAMS.i18n("DANGER_-_directory_") + dir.getAbsolutePath() + JAMS.i18n("_does_not_exist"), JAMS.STANDARD);
+                log.println(JAMS.i18n("DANGER_-_directory_") + dir.getAbsolutePath() + JAMS.i18n("_does_not_exist"));
                 continue;
             }
 
@@ -77,19 +77,19 @@ public class JAMSClassLoader extends URLClassLoader {
                 File[] files = dir.listFiles();
                 for (File file : files) {
                     if (file.getName().endsWith(".jar")) {
-                        addFile(urls, file, rt);
+                        addFile(urls, file, log);
                     }
                 }
             } else {
 
-                addFile(urls, dir, rt);
+                addFile(urls, dir, log);
 
             }
         }
 
-        rt.println(JAMS.i18n("created_class_loader_using_"), JAMS.STANDARD);
+        log.println(JAMS.i18n("created_class_loader_using_"));
         for (URL url : urls) {
-            rt.println("\t" + url.toString(), JAMS.STANDARD);
+            log.println("\t" + url.toString());
         }
 
 
