@@ -130,10 +130,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         this.println(JAMS.i18n("Loading_Model"), JAMS.STANDARD);
 
         ExceptionHandler exHandler = new ExceptionHandler() {
+
             @Override
             public void handle(JAMSException ex) {
                 StandardRuntime.this.handle(ex, true);
             }
+
             @Override
             public void handle(ArrayList<JAMSException> exList) {
                 for (JAMSException jex : exList) {
@@ -192,13 +194,91 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     }
 
+    public void loadModel(ModelDescriptor md, String defaultWorkspacePath) {
+
+        ModelIO modelIO = ModelIO.getStandardModelIO();
+        this.modelDocument = modelIO.getModelDocument(md);
+
+        // start the loading process
+        long start = System.currentTimeMillis();
+
+        // get libraries specified in properties
+        libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
+
+        // load the model
+        this.println("", JAMS.STANDARD);
+        this.println(JAMS.i18n("Loading_Model"), JAMS.STANDARD);
+
+        ExceptionHandler exHandler = new ExceptionHandler() {
+
+            @Override
+            public void handle(JAMSException ex) {
+                StandardRuntime.this.handle(ex, true);
+            }
+
+            @Override
+            public void handle(ArrayList<JAMSException> exList) {
+                for (JAMSException jex : exList) {
+                    StandardRuntime.this.handle(jex, true);
+                }
+            }
+        };
+
+        try {
+
+            // create a ModelIO instance and load the model from XML into a 
+            // ModelDescriptor object
+
+            if (StringTools.isEmptyString(md.getWorkspacePath()) && (defaultWorkspacePath != null)) {
+                md.setWorkspacePath(defaultWorkspacePath);
+                this.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + defaultWorkspacePath);
+            }
+
+            // create a ModelLoader and pass the ModelDescriptor to generate
+            // the final JAMS model
+            ModelLoader modelLoader = new ModelLoader(this);
+            this.model = modelLoader.loadModel(md, exHandler);
+
+            // get the id map which maps class names to id values (used during logging)
+            this.idMap = modelLoader.getIdMap();
+
+        } catch (Exception jex) {
+            this.handle(jex, false);
+        }
+
+        // define if the model should profile or not
+        boolean doProfiling = ("1".equals(properties.getProperty(JAMSProperties.PROFILE_IDENTIFIER, "0")) ? true : false);
+        this.model.setProfiling(doProfiling);
+
+        // create GUI if needed
+        int wEnable = Integer.parseInt(properties.getProperty("windowenable", "1"));
+        if (wEnable != 0) {
+            int width = Integer.parseInt(properties.getProperty("windowwidth", "600"));
+            int height = Integer.parseInt(properties.getProperty("windowheight", "400"));
+            int ontop = Integer.parseInt(properties.getProperty("windowontop", "0"));
+            this.initGUI(model.getName(), (ontop == 1 ? true : false), width, height);
+            this.guiEnabled = true;
+        }
+
+        long end = System.currentTimeMillis();
+        this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
+        this.println(JAMS.i18n("JAMS_model_setup_time:_") + (end - start) + " ms", JAMS.STANDARD);
+        this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
+
+//        classLoader = null;
+//        Runtime.getRuntime().gc();
+
+        runState = JAMSRuntime.STATE_RUN;
+
+    }
+
     /**
      * Loads a model from an XML document
      * @param modelDocument the XML document
      * @param properties a set of system properties providing information on
      * libs to be used and other parameter
      */
-    public void loadModel(ModelDescriptor md, SystemProperties properties, String defaultWorkspacePath) {
+    public void loadModel__(ModelDescriptor md, SystemProperties properties, String defaultWorkspacePath) {
 
         this.properties = properties;
 
@@ -213,10 +293,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         this.println(JAMS.i18n("Loading_Model"), JAMS.STANDARD);
 
         ExceptionHandler exHandler = new ExceptionHandler() {
+
             @Override
             public void handle(JAMSException ex) {
                 StandardRuntime.this.handle(ex, true);
             }
+
             @Override
             public void handle(ArrayList<JAMSException> exList) {
                 for (JAMSException jex : exList) {
@@ -865,8 +947,10 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         try {
             File modelFile = new File(this.model.getWorkspace().getOutputDataDirectory().getPath()
-                    + File.separator + JAMS.DEFAULT_MODEL_FILENAME);
+                    + File.separator + JAMS.DEFAULT_MODEL_PARAMETER_FILENAME);
             modelFile.getParentFile().mkdirs();
+
+            //            ParameterProcessor.saveParams(this.modelDescriptor, modelFile, this.properties.getProperty("username"), null);
             ParameterProcessor.saveParams(this.modelDocument, modelFile, this.properties.getProperty("username"), null);
         } catch (IOException ioe) {
             getModel().getRuntime().handle(ioe);

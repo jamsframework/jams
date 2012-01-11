@@ -34,6 +34,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.JAMS;
+import jams.meta.ComponentField;
+import jams.meta.ModelDescriptor;
+import jams.tools.StringTools;
 
 /**
  *
@@ -84,23 +87,23 @@ public class ParameterProcessor {
 
                 if (value != null) {
                     attribute.setAttribute("value", value);
-                     //System.out.println("loadParams. attKey:" + key + " -> new value:" + value);
+                    //System.out.println("loadParams. attKey:" + key + " -> new value:" + value);
                 }
             }
         }
         return model;
     }
 
-/**
- * set new attribute
- * e.g.
- * before <var attribute="dataValue" context="StationLoop" name="dataValue"/>
- * after  <var attribute="newAttribute" context="StationLoop" name="dataValue"/>
- * @param model
- * @param theAttributeName
- * @param newAttribute
- * @return true, if attribute could be renamed
- */
+    /**
+     * set new attribute
+     * e.g.
+     * before <var attribute="dataValue" context="StationLoop" name="dataValue"/>
+     * after  <var attribute="newAttribute" context="StationLoop" name="dataValue"/>
+     * @param model
+     * @param theAttributeName
+     * @param newAttribute
+     * @return true, if attribute could be renamed
+     */
     public static boolean renameAttribute(Document model, String theAttributeName, String newAttribute) {
 
         boolean found = false;
@@ -136,7 +139,6 @@ public class ParameterProcessor {
         }
         return found;
     }
-
 
     /**
      * get value of certain attribute
@@ -186,20 +188,45 @@ public class ParameterProcessor {
                 params.setProperty(componentName + "." + attribute.getAttribute("name"), attribute.getAttribute("value"));
             }
         }
-        
+
         String userNameString = System.getProperty("user.name");
         if ((userName != null) && !userName.equals("")) {
+            userNameString += " <" + userName + ">";
+        }
+
+        String modelNameString = model.getDocumentElement().getAttribute("name");
+        if ((modelFileName != null) && !modelFileName.equals("")) {
+            modelNameString += " <" + modelFileName + ">";
+        }
+
+        params.store(new FileOutputStream(paramsFile), JAMS.i18n("JAMS_model_parameter_file")
+                + "\nUser: " + userNameString + "\nModel: " + modelNameString);
+    }
+    
+    static public void saveParams(ModelDescriptor md, File paramsFile, String userName, String modelFileName) throws IOException {
+
+        ArrayList<ComponentField> cfList = md.getParameterFields();
+        
+        Properties params = new Properties();
+
+        for (ComponentField cf : cfList) {
+                System.out.println(cf.getParent().getName() + "." + cf.getName() + " <-> " + cf.getValue());
+                params.setProperty(cf.getParent().getName() + "." + cf.getName(), cf.getValue());
+        }
+        
+        String userNameString = System.getProperty("user.name");
+        if (!StringTools.isEmptyString(userName)) {
             userNameString +=  " <" + userName + ">";
         }
         
-        String modelNameString = model.getDocumentElement().getAttribute("name");
-        if ((modelFileName != null) && !modelFileName.equals("")) {
+        String modelNameString = md.getModelName();
+        if (!StringTools.isEmptyString(modelFileName)) {
             modelNameString +=  " <" + modelFileName + ">";
         }
         
         params.store(new FileOutputStream(paramsFile), JAMS.i18n("JAMS_model_parameter_file") +
                 "\nUser: " + userNameString + "\nModel: " + modelNameString);
-    }
+    }    
 
     /**
      * This method returns a HashMap that contains component names as keys and
@@ -253,7 +280,7 @@ public class ParameterProcessor {
 
             componentHash.put(element.getAttribute("name"), attributeHash);
         }
-        
+
         /*
         NodeList componentList = root.getElementsByTagName("component");
         for (int i = 0; i < componentList.getLength(); i++) {
@@ -332,13 +359,14 @@ public class ParameterProcessor {
             Element propertyElement = (Element) propertyList.item(i);
 
             // check if this is an "%enable%" property and if so, if its value is "0"
-            if (propertyElement.getAttribute("attribute").equals(ParameterProcessor.COMPONENT_ENABLE_VALUE) &&
-                    propertyElement.getAttribute("value").equals("0")) {
+            if (propertyElement.getAttribute("attribute").equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)
+                    && propertyElement.getAttribute("value").equals("0")) {
 
                 // get the belonging element object and remove it from its parent
                 Element componentElement = componentHash.get(propertyElement.getAttribute("component"));
-                if (componentElement != null)
+                if (componentElement != null) {
                     componentElement.getParentNode().removeChild(componentElement);
+                }
             }
         }
     }

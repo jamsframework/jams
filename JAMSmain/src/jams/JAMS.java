@@ -64,7 +64,7 @@ public class JAMS {
     /**
      * Default name of model output file
      */
-    public static final String DEFAULT_MODEL_FILENAME = "model.jmp";
+    public static final String DEFAULT_MODEL_PARAMETER_FILENAME = "model.jmp";
     /**
      * Default name of parameter output file
      */
