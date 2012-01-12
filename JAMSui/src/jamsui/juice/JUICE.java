@@ -16,7 +16,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  */
 package jamsui.juice;
@@ -34,7 +34,6 @@ import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSLog;
-import jams.runtime.StandardRuntime;
 import jams.tools.StringTools;
 import jamsui.juice.gui.JUICEFrame;
 import jamsui.juice.gui.ModelView;
@@ -256,8 +255,8 @@ public class JUICE {
 
         if (notificationDlg == null) {
             notificationDlg = new NotificationDlg(juiceFrame, JAMS.i18n("Error"));
-        }        
-        
+        }
+
         if (multiExHandler == null) {
             multiExHandler = new ExceptionHandler() {
 

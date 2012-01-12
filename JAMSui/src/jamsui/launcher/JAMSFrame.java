@@ -1,5 +1,5 @@
 /*
- * LauncherFrame.java
+ * JAMSFrame.java
  * Created on 27. August 2006, 21:55
  *
  * This file is part of JAMS
