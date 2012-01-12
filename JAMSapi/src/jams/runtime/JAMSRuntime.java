@@ -22,7 +22,6 @@
  */
 package jams.runtime;
 
-import jams.SystemProperties;
 import java.io.Serializable;
 import java.util.*;
 import javax.swing.JFrame;
