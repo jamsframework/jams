@@ -226,7 +226,7 @@ public class ParameterProcessor {
         
         params.store(new FileOutputStream(paramsFile), JAMS.i18n("JAMS_model_parameter_file") +
                 "\nUser: " + userNameString + "\nModel: " + modelNameString);
-    }    
+    }
 
     /**
      * This method returns a HashMap that contains component names as keys and
