@@ -513,9 +513,8 @@ public class JAMSContext extends JAMSComponent implements Context {
         for (OutputDataStore store : stores) {
             this.dataTracers[i] = createDataTracer(store);
             i++;
-        }
-
-        initTracerDataAccess();
+        }        
+        //initTracerDataAccess();
 
         for (int j = 0; j < this.components.size(); j++) {
             Component comp = components.get(j);
@@ -565,8 +564,10 @@ public class JAMSContext extends JAMSComponent implements Context {
         }
 
         initEntityData();
-//        initTracerDataAccess();
 
+        if (dataTracers != null)
+            for (DataTracer t : this.dataTracers)
+                t.updateDataAccessors();
 
         createRunRunnable(getModel().isProfiling());
         createResumeRunnable(getModel().isProfiling());
