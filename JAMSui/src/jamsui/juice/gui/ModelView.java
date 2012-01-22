@@ -278,7 +278,7 @@ public class ModelView {
      * loaded
      */
     public void runModelFromLauncher() {
-        launcherPanel.updateProperties();
+//        launcherPanel.updateProperties();
         JAMSLauncher launcher = new JAMSLauncher(JUICE.getJuiceFrame(), JUICE.getJamsProperties(), getModelDoc(), getSavePath());
         launcher.setVisible(true);
     }
@@ -459,7 +459,7 @@ public class ModelView {
             return null;
         }
 
-        launcherPanel.updateProperties();
+//        launcherPanel.updateProperties();
         return tree.getModelDocument(getModelDescriptor());
     }
 

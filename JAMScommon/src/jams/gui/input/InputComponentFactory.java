@@ -25,15 +25,7 @@ package jams.gui.input;
 import jams.data.Attribute;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
-import jams.data.JAMSBoolean;
 import jams.data.JAMSDataFactory;
-import jams.data.JAMSDirName;
-import jams.data.JAMSDouble;
-import jams.data.JAMSFileName;
-import jams.data.JAMSFloat;
-import jams.data.JAMSInteger;
-import jams.data.JAMSLong;
-import jams.data.JAMSTimeInterval;
 
 /**
  *

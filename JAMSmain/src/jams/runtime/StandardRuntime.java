@@ -121,9 +121,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         // get libraries specified in properties
         libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
 
-        // run preprocessor
-        ParameterProcessor.preProcess(modelDocument);
-
         // load the model
         this.println("", JAMS.STANDARD);
         this.println(JAMS.i18n("Loading_Model"), JAMS.STANDARD);

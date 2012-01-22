@@ -329,7 +329,7 @@ public class ModelGUIPanel extends JPanel {
             updateGroup(group.getGroup());
             return;
         }
-        updateProperties();
+//        updateProperties();
 
         GridBagLayout gbl = new GridBagLayout();
 
@@ -451,18 +451,14 @@ public class ModelGUIPanel extends JPanel {
         } else {
             ic = InputComponentFactory.createInputComponent(JUICE.JAMS_DATA_TYPES[0], true);
         }
+
         ic.setRange(property.lowerBound, property.upperBound);
         ic.setLength(property.length);
         ic.setHelpText(property.description);
-        ic.setValue(property.value);
+        ic.getComponent().setEnabled(false);
+//        ic.setValue(property.value);
 
-        if ((property.attribute == null) && (property.var == null)) {
-            ic.getComponent().setEnabled(true);
-        } else {
-            ic.getComponent().setEnabled(false);
-        }
-
-        inputMap.put(property, ic);
+//        inputMap.put(property, ic);
         GUIHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder());
 
@@ -771,15 +767,14 @@ public class ModelGUIPanel extends JPanel {
         }
     }
 
-    public void updateProperties() {
-
-        // set values of properties to provided
-        for (ModelProperty property : inputMap.keySet()) {
-            InputComponent ic = inputMap.get(property);
-            property.value = ic.getValue();
-        }
-    }
-
+//    public void updateProperties() {
+//
+//        // set values of properties to provided
+//        for (ModelProperty property : inputMap.keySet()) {
+//            InputComponent ic = inputMap.get(property);
+//            property.value = ic.getValue();
+//        }
+//    }
     class ElementButton extends JButton {
 
         ModelElement element;

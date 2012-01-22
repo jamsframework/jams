@@ -77,6 +77,7 @@ public class JAMSLauncher extends JFrame {
     protected static final String BASE_TITLE = JAMS.i18n("JAMS_Launcher");
     private static final int BUTTON_SIZE = 20;
     private Map<InputComponent, Element> inputMap;
+    private Map<InputComponent, String> attributeNameMap;
     private Map<InputComponent, JScrollPane> groupMap;
     protected Document modelDocument = null;
     private JTabbedPane tabbedPane = new JTabbedPane();
@@ -158,8 +159,8 @@ public class JAMSLauncher extends JFrame {
 //                        GUIHelper.showErrorDlg(JAMSLauncher.this, "An error has occurred! Please check the error log for further information!", "JAMS Error");
                         processErrorLog(obj.toString());
                     }
-                });                
-                
+                });
+
                 // load the model
                 runtime.loadModel(modelDocCopy, defaultWorkspacePath);
 
@@ -304,6 +305,7 @@ public class JAMSLauncher extends JFrame {
         tabbedPane.removeAll();
 
         inputMap = new HashMap<InputComponent, Element>();
+        attributeNameMap = new HashMap<InputComponent, String>();
         groupMap = new HashMap<InputComponent, JScrollPane>();
 
         JPanel contentPanel, scrollPanel;
@@ -388,50 +390,50 @@ public class JAMSLauncher extends JFrame {
             Element property, HashMap<String, HashMap<String, Element>> componentHash, int row) {
 
         String componentName = property.getAttribute("component");
-        String attributeName = property.getAttribute("attribute");
-        HashMap<String, Element> attributeMap = componentHash.get(componentName);
-
-        Element attribute;
-        if (attributeMap == null) {
-            attribute = null;
-        } else {
-            attribute = componentHash.get(componentName).get(attributeName);
-        }
-
+        String componentAttributeName = property.getAttribute("attribute");
+        String elementAttributeName;
         Element targetElement;
+        HashMap<String, Element> attributeMap;
 
-        // check type of property
-        if (attribute != null) {
-
-            // case 1: attribute is referred
-
-            targetElement = attribute;
-
-            // keep compatibility to old launcher behaviour
-            if (property.hasAttribute("value")) {
-                attribute.setAttribute("value", property.getAttribute("value"));
-
-                // remove property's  value and default attributes
-                property.removeAttribute("value");
-                property.removeAttribute("default");
-            }
-
-        } else if (attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
-
-            // case 2: "enable" property of a component is referred
-
-            targetElement = property;
-
-            // remove property's default attributes
-            property.removeAttribute("default");
-
-        } else {
-
-            // case 3: attribute does not exist, property removed
+        attributeMap = componentHash.get(componentName);
+        if (attributeMap == null) {
             property.getParentNode().removeChild(property);
-            GUIHelper.showInfoDlg(this, JAMS.i18n("Attribute_") + attributeName + JAMS.i18n("_does_not_exist_in_component_") + componentName + JAMS.i18n("!_Removing_visual_editor!"), JAMS.i18n("Info"));
+            GUIHelper.showInfoDlg(this, JAMS.i18n("Component_with_name_") + componentName + JAMS.i18n("_does_not_exist!") + JAMS.i18n("!_Removing_visual_editor!"), JAMS.i18n("Info"));
             return;
         }
+
+        // check type of property
+        if (componentAttributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
+            
+            // case 1: "enable" property of a component is referred
+            elementAttributeName = "enabled";
+            targetElement = attributeMap.get(componentName);
+            
+        } else {
+            
+            // case 2: attribute is referred
+            elementAttributeName = "value";
+            targetElement = attributeMap.get(componentAttributeName);
+            
+        }
+
+        // check if attribute is existing
+        if (targetElement == null) {
+            // attribute does not exist, property removed
+            property.getParentNode().removeChild(property);
+            GUIHelper.showInfoDlg(this, JAMS.i18n("Attribute_") + componentAttributeName + JAMS.i18n("_does_not_exist_in_component_") + componentName + JAMS.i18n("!_Removing_visual_editor!"), JAMS.i18n("Info"));
+            return;
+        }
+
+//        // keep compatibility to old launcher behaviour
+//        if (property.hasAttribute("value")) {
+//            System.out.println(componentName + "." + elementAttributeName + " - " + property.getAttribute("value"));
+//
+//            targetElement.setAttribute(elementAttributeName, property.getAttribute("value"));
+//            // remove property's  value and default attributes
+//            property.removeAttribute("value");
+//            property.removeAttribute("default");
+//        }
 
         // create a label with the property's name and some space in front of it
         JLabel nameLabel = new JLabel(property.getAttribute("name"));
@@ -469,9 +471,10 @@ public class JAMSLauncher extends JFrame {
             }
 
             ic.setHelpText(property.getAttribute("description"));
-            ic.setValue(targetElement.getAttribute("value"));
+            ic.setValue(targetElement.getAttribute(elementAttributeName));
 
             getInputMap().put(ic, targetElement);
+            getAttributeNameMap().put(ic, elementAttributeName);
             getGroupMap().put(ic, scrollPane);
 
             GUIHelper.addGBComponent(contentPanel, gbl, (Component) ic, 1, row, 2, 1, 1, 1);
@@ -489,7 +492,6 @@ public class JAMSLauncher extends JFrame {
                     1, 1);
         }
 
-
         return;
     }
 
@@ -506,8 +508,9 @@ public class JAMSLauncher extends JFrame {
         //check if model definition has been modified
         for (InputComponent ic : getInputMap().keySet()) {
             Element element = getInputMap().get(ic);
+            String attributeName = getAttributeNameMap().get(ic);
             if (ic.verify()) {
-                element.setAttribute("value", ic.getValue());
+                element.setAttribute(attributeName, ic.getValue());
             }
         }
     }
@@ -557,6 +560,10 @@ public class JAMSLauncher extends JFrame {
 
     public Map<InputComponent, Element> getInputMap() {
         return inputMap;
+    }
+
+    public Map<InputComponent, String> getAttributeNameMap() {
+        return attributeNameMap;
     }
 
     public Map<InputComponent, JScrollPane> getGroupMap() {

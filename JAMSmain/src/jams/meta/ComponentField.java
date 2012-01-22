@@ -106,7 +106,7 @@ public class ComponentField {
         ContextAttribute attribute = context.getDynamicAttributes().get(attributeName);
         // check if already existing
         if ((attribute != null) && (attribute.getType() != basicType)) {
-            throw new AttributeLinkException("Attribute " + attributeName + " already exists in context " + context.getName() + " with different type " + attribute.getType(), JAMS.i18n("Error"));
+            throw new AttributeLinkException("Attribute " + attributeName + " already exists in context " + context.getInstanceName() + " with different type " + attribute.getType(), JAMS.i18n("Error"));
         }
         if (!this.type.isArray()) {
             // unlink from old ContextAttribute

@@ -60,7 +60,7 @@ JAMSTools.configureLocaleEncoding(properties)
 modelDoc = XMLTools.getDocument(modelFile)
 
 // do some preprocessing on the XML
-ParameterProcessor.preProcess(modelDoc);
+//ParameterProcessor.preProcess(modelDoc);
 
 // create a runtime object
 runtime = new StandardRuntime(properties)
@@ -68,6 +68,8 @@ runtime = new StandardRuntime(properties)
 // create a ModelDescriptor object, i.e. a representation of the XML for further tweaking etc.
 modelIO = ModelIO.getStandardModelIO()
 modelDescriptor = modelIO.loadModel(modelDoc, runtime.getClassLoader(), false, new ExHandler())
+
+
 
 // set the workspace explicitly if needed
 modelDescriptor.setWorkspacePath(defaultWorkspacePath)

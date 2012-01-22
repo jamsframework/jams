@@ -61,7 +61,7 @@ public class ModelLoader {
 
         // create an empty model
         jamsModel = new JAMSModel(rt);
-        
+
         // this context refers to itself
         jamsModel.setModel(jamsModel);
     }
@@ -80,7 +80,7 @@ public class ModelLoader {
         rootNode = md.getRootNode();
 
         ContextDescriptor modelContext = (ContextDescriptor) rootNode.getUserObject();
-        jamsModel.setName(modelContext.getName());
+        jamsModel.setName(modelContext.getInstanceName());
         jamsModel.setAuthor(md.getAuthor());
         jamsModel.setDate(md.getDate());
 
@@ -127,8 +127,9 @@ public class ModelLoader {
             try {
 
                 topComponent = loadComponent(node);
-                jamsModel.addComponent(topComponent);
-                childComponentList.add(topComponent);
+                if (topComponent != null) {
+                    childComponentList.add(topComponent);
+                }
 
             } catch (ModelSpecificationException iae) {
 
@@ -169,7 +170,11 @@ public class ModelLoader {
 
         ComponentDescriptor rootCd = (ComponentDescriptor) rootNode.getUserObject();
 
-        componentName = rootCd.getName();
+        if (!rootCd.isEnabled()) {
+            return null;
+        }
+
+        componentName = rootCd.getInstanceName();
 
         componentClassName = rootCd.getClazz().getName();
 
@@ -277,7 +282,7 @@ public class ModelLoader {
                     if (cdField.getContext() != null) {
 
                         // obtain providing context name
-                        String contextName = cdField.getContext().getName();
+                        String contextName = cdField.getContext().getInstanceName();
 
                         // get the context from the component repository
                         Component context = this.componentRepository.get(contextName);

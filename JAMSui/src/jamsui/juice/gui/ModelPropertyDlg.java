@@ -219,7 +219,7 @@ public class ModelPropertyDlg extends JDialog {
         componentCombo.setModel(new DefaultComboBoxModel(compNameArray));
 
         if (property != null) {
-            componentCombo.setSelectedItem(property.component.getName());
+            componentCombo.setSelectedItem(property.component.getInstanceName());
 
             if (property.var != null) {
                 varCombo.setSelectedItem(property.var.getName());

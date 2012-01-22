@@ -130,7 +130,7 @@ public class ModelDescriptor extends ComponentCollection {
                 String attributeName = attributeElement.getAttribute("id");
                 ContextAttribute ca = context.getDynamicAttributes().get(attributeName);
                 if (ca == null) {
-//                        Logger.getLogger(ModelDescriptor.class.getName()).log(Level.INFO,
+//                        Logger.getLogger(ModelDescriptor.class.getInstanceName()).log(Level.INFO,
                     exHandler.handle(new JAMSException(MessageFormat.format(JAMS.i18n("Attribute_does_not_exist_and_is_removed"),
                             attributeName, od.getName()), JAMS.i18n("Error")));
                 } else {
@@ -225,9 +225,9 @@ public class ModelDescriptor extends ComponentCollection {
         }
 
         String attributeName = propertyElement.getAttribute("attribute");
-        if (attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
-            property.value = propertyElement.getAttribute("value");
-        } else {
+        if (!attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
+//            property.value = propertyElement.getAttribute("value");
+//        } else {
             // could refer to a component var or a context attribute
             // only one of them will be != null
             property.var = property.component.getComponentFields().get(attributeName);
@@ -247,7 +247,7 @@ public class ModelDescriptor extends ComponentCollection {
                 && !attributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
 
             throw new JAMSException(JAMS.i18n("Attribute_") + attributeName
-                    + JAMS.i18n("_does_not_exist_in_component_") + property.component.getName()
+                    + JAMS.i18n("_does_not_exist_in_component_") + property.component.getInstanceName()
                     + JAMS.i18n("._Removing_visual_editor!"), JAMS.i18n("Error_loading_model"));
         }
 
@@ -353,7 +353,7 @@ public class ModelDescriptor extends ComponentCollection {
      * @return the modelName
      */
     public String getModelName() {
-        return ((ComponentDescriptor) rootNode.getUserObject()).getName();
+        return ((ComponentDescriptor) rootNode.getUserObject()).getInstanceName();
     }
 
     /**

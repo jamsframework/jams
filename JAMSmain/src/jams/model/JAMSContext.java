@@ -97,6 +97,7 @@ public class JAMSContext extends JAMSComponent implements Context {
      */
     public void addComponent(Component c) {
         components.add(c);
+        c.setContext(this);
     }
 
     /**

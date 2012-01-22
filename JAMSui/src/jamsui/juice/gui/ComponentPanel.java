@@ -433,7 +433,7 @@ public class ComponentPanel extends JPanel {
         }
 
         textFields.get("type").setText(componentDescriptor.getClazz().getCanonicalName());
-        textFields.get("name").setText(componentDescriptor.getName());
+        textFields.get("name").setText(componentDescriptor.getInstanceName());
 
         updateCmpAttrs();
         updateCtxtAttrs();
@@ -539,7 +539,7 @@ public class ComponentPanel extends JPanel {
                 Logger.getLogger(ComponentPanel.class.getName()).log(Level.WARNING, null, ex);
             }
 
-            textFields.get("name").setText(componentDescriptor.getName());
+            textFields.get("name").setText(componentDescriptor.getInstanceName());
         }
     }
 

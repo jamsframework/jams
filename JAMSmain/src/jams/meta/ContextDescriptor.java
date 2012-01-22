@@ -126,7 +126,7 @@ public class ContextDescriptor extends ComponentDescriptor {
     @Override
     public ContextDescriptor cloneNode() throws AttributeLinkException, NullClassException {
 
-        ContextDescriptor copy = new ContextDescriptor(getName(), getClazz());
+        ContextDescriptor copy = new ContextDescriptor(getInstanceName(), getClazz());
         for (String name : componentFields.keySet()) {
             ComponentField ca = componentFields.get(name);
             ComponentField caCopy = new ComponentField(ca.getName(), ca.getType(), ca.getAccessType(), this);
@@ -134,7 +134,7 @@ public class ContextDescriptor extends ComponentDescriptor {
             copy.componentFields.put(name, caCopy);
             if (ca.getContextAttributes().size() > 0) {
                 caCopy.linkToAttribute(ca.getContext(), ca.getAttribute());
-                //copy.linkComponentAttribute(ca.name, ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
+                //copy.linkComponentAttribute(ca.name, ca.getContextAttribute().getContext(), ca.getContextAttribute().getInstanceName());
             }
         }
         for (String name : staticAttributes.keySet()) {

@@ -252,7 +252,7 @@ public class SearchDlg extends JDialog {
         }
 
         if (inInstanceName.isSelected()) {
-            if (contains(cd.getName(), needle, caseSensitive, wholeString)) {
+            if (contains(cd.getInstanceName(), needle, caseSensitive, wholeString)) {
                 return FOUND_IN_INSTANCE;
             }
         }

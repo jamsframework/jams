@@ -33,6 +33,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import jams.JAMS;
+import jams.data.Attribute;
+import jams.data.JAMSDataFactory;
 import jams.meta.ComponentField;
 import jams.meta.ModelDescriptor;
 import jams.tools.StringTools;
@@ -201,30 +203,29 @@ public class ParameterProcessor {
         params.store(new FileOutputStream(paramsFile), JAMS.i18n("JAMS_model_parameter_file")
                 + "\nUser: " + userNameString + "\nModel: " + modelNameString);
     }
-    
+
     static public void saveParams(ModelDescriptor md, File paramsFile, String userName, String modelFileName) throws IOException {
 
         ArrayList<ComponentField> cfList = md.getParameterFields();
-        
+
         Properties params = new Properties();
 
         for (ComponentField cf : cfList) {
-                System.out.println(cf.getParent().getName() + "." + cf.getName() + " <-> " + cf.getValue());
-                params.setProperty(cf.getParent().getName() + "." + cf.getName(), cf.getValue());
+            params.setProperty(cf.getParent().getInstanceName() + "." + cf.getName(), cf.getValue());
         }
-        
+
         String userNameString = System.getProperty("user.name");
         if (!StringTools.isEmptyString(userName)) {
-            userNameString +=  " <" + userName + ">";
+            userNameString += " <" + userName + ">";
         }
-        
+
         String modelNameString = md.getModelName();
         if (!StringTools.isEmptyString(modelFileName)) {
-            modelNameString +=  " <" + modelFileName + ">";
+            modelNameString += " <" + modelFileName + ">";
         }
-        
-        params.store(new FileOutputStream(paramsFile), JAMS.i18n("JAMS_model_parameter_file") +
-                "\nUser: " + userNameString + "\nModel: " + modelNameString);
+
+        params.store(new FileOutputStream(paramsFile), JAMS.i18n("JAMS_model_parameter_file")
+                + "\nUser: " + userNameString + "\nModel: " + modelNameString);
     }
 
     /**
@@ -263,6 +264,10 @@ public class ParameterProcessor {
 
             HashMap<String, Element> attributeHash = new HashMap<String, Element>();
 
+            // put the element itself into the map
+            attributeHash.put(element.getAttribute("name"), element);
+
+            // put all the var and attribute elements into the map
             NodeList childs = element.getChildNodes();
             for (int j = 0; j < childs.getLength(); j++) {
                 Node child = childs.item(j);
@@ -344,29 +349,73 @@ public class ParameterProcessor {
     }
 
     /**
-     * This method searches for property nodes that refer to attribute 
-     * COMPONENT_ENABLE_VALUE. If it finds one, the referred component is removed
-     * from its parent if the property node's value is "0"
+     * This method searches for property nodes that contain value attributes
+     * If it finds one, the value is written to the referred component 
+     * and the value attribute is removed from the property node
      * @param modelDoc The model document to be processed
      */
     public static void preProcess(Document modelDoc) {
 
-        NodeList propertyList = modelDoc.getDocumentElement().getElementsByTagName("property");
-        HashMap<String, Element> componentHash = getComponentHash(modelDoc);
+        Element launcherElement = (Element) modelDoc.getDocumentElement().getElementsByTagName("launcher").item(0);
+        NodeList propertyList = launcherElement.getElementsByTagName("property");
+//        HashMap<String, Element> componentHash = getComponentHash(modelDoc);
+        HashMap<String, HashMap<String, Element>> attributeHash = getAttributeHash(modelDoc);
+        Element targetElement;
+        String elementAttributeName, value;
 
         for (int i = 0; i < propertyList.getLength(); i++) {
             Element propertyElement = (Element) propertyList.item(i);
 
-            // check if this is an "%enable%" property and if so, if its value is "0"
-            if (propertyElement.getAttribute("attribute").equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)
-                    && propertyElement.getAttribute("value").equals("0")) {
+            // keep compatibility to old launcher behaviour
+            if (propertyElement.hasAttribute("value")) {
 
-                // get the belonging element object and remove it from its parent
-                Element componentElement = componentHash.get(propertyElement.getAttribute("component"));
-                if (componentElement != null) {
-                    componentElement.getParentNode().removeChild(componentElement);
+                String componentName = propertyElement.getAttribute("component");
+                String componentAttributeName = propertyElement.getAttribute("attribute");
+
+                HashMap<String, Element> attributeMap = attributeHash.get(componentName);
+
+                if (attributeMap == null) {
+                    continue;
                 }
+
+                // check type of property
+                if (componentAttributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
+
+                    // case 1: "enable" property of a component is referred
+                    elementAttributeName = "enabled";
+                    targetElement = attributeMap.get(componentName);
+
+                    //convert to proper boolean representation
+                    Attribute.Boolean a = JAMSDataFactory.createBoolean();
+                    a.setValue(propertyElement.getAttribute("value"));
+                    value = a.toString();
+
+                } else {
+
+                    // case 2: attribute is referred
+                    elementAttributeName = "value";
+                    targetElement = attributeMap.get(componentAttributeName);
+                    value = propertyElement.getAttribute("value");
+
+                }
+
+                targetElement.setAttribute(elementAttributeName, value);
+
+                // remove property's  value and default attributes
+                propertyElement.removeAttribute("value");
+                propertyElement.removeAttribute("default");
             }
+
+            // check if this is an "%enable%" property and if so, if its value is "0"
+//            if (propertyElement.getAttribute("attribute").equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)
+//                    && propertyElement.getAttribute("value").equals("0")) {
+//
+//                // get the belonging element object and remove it from its parent
+//                Element componentElement = componentHash.get(propertyElement.getAttribute("component"));
+//                if (componentElement != null) {
+//                    componentElement.getParentNode().removeChild(componentElement);
+//                }
+//            }
         }
     }
 }

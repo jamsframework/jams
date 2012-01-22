@@ -87,6 +87,10 @@ public class ModelIO {
     public ModelDescriptor loadModel(Document modelDoc, ClassLoader loader, boolean processEditors, ExceptionHandler exHandler) throws JAMSException {
 
         this.loader = loader;
+
+        // do some preprocessing on the XML document to be backward compatible
+        ParameterProcessor.preProcess(modelDoc);
+
         return getModelDescriptor(modelDoc, processEditors, exHandler);
 
     }
@@ -193,21 +197,16 @@ public class ModelIO {
         Class<?> clazz;
         String componentName = "", className = "";
         ModelNode rootNode = null;
+        boolean enabled = true;
 
         try {
 
             componentName = rootElement.getAttribute("name");
-
             className = rootElement.getAttribute("class");
+            if (rootElement.hasAttribute("enabled")) {
+                enabled = Boolean.parseBoolean(rootElement.getAttribute("enabled"));
+            }
             clazz = loader.loadClass(className);
-
-//            GUI
-//            cd.addObserver(new Observer() {
-//
-//                public void update(Observable o, Object arg) {
-//                    ModelTree.this.updateUI();
-//                }
-//            });
 
         } catch (ClassNotFoundException cnfe) {
             throw new ModelLoadException(JAMS.i18n("Could_not_load_component_")
@@ -226,6 +225,7 @@ public class ModelIO {
         if (type.equals("component")) {
 
             ComponentDescriptor cd = new ComponentDescriptor(componentName, clazz, md, exHandler);
+            cd.setEnabled(enabled);
             rootNode = nodeFactory.createNode(cd);
             rootNode.setType(ModelNode.COMPONENT_TYPE);
 
@@ -243,6 +243,7 @@ public class ModelIO {
         } else if (type.equals("contextcomponent")) {
 
             ContextDescriptor cd = new ContextDescriptor(componentName, clazz, md, exHandler);
+            cd.setEnabled(enabled);
             rootNode = nodeFactory.createNode(cd);
             rootNode.setType(ModelNode.CONTEXT_TYPE);
 
@@ -293,7 +294,7 @@ public class ModelIO {
         ComponentField field = cd.getComponentFields().get(fieldName);
 
         if (field == null) {
-            throw new NullFieldException(JAMS.i18n("Error_while_loading_component_") + cd.getName()
+            throw new NullFieldException(JAMS.i18n("Error_while_loading_component_") + cd.getInstanceName()
                     + JAMS.i18n("_component_attribute_") + fieldName + JAMS.i18n("_does_not_exist!"), JAMS.i18n("Error_loading_model"));
         }
 
@@ -306,7 +307,7 @@ public class ModelIO {
 
             ContextDescriptor context = (ContextDescriptor) md.getComponentDescriptor(contextName);
             if (context == null) {
-                throw new NullFieldException(JAMS.i18n("Error_while_loading_component_") + cd.getName()
+                throw new NullFieldException(JAMS.i18n("Error_while_loading_component_") + cd.getInstanceName()
                         + JAMS.i18n("_context_") + contextName + JAMS.i18n("_does_not_exist!"), JAMS.i18n("Error_loading_model"));
             }
 
@@ -343,7 +344,7 @@ public class ModelIO {
             type = Class.forName(typeName);
         } catch (ClassNotFoundException ex) {
             throw new JAMSException("Given type " + typeName + " for context attribute "
-                    + attribute + " in context " + cd.getName() + " does not exist!", JAMS.i18n("Error_loading_model"));
+                    + attribute + " in context " + cd.getInstanceName() + " does not exist!", JAMS.i18n("Error_loading_model"));
         }
 
         // workaround for models that use the "old" API, i.e. JAMSData
@@ -392,7 +393,7 @@ public class ModelIO {
             ComponentDescriptor cd = (ComponentDescriptor) rootNode.getUserObject();
 
             Element rootElement = (Element) document.createElement("model");
-            rootElement.setAttribute("name", cd.getName());
+            rootElement.setAttribute("name", cd.getInstanceName());
             rootElement.setAttribute("author", md.getAuthor());
             rootElement.setAttribute("date", md.getDate());
             rootElement.setAttribute("helpbaseurl", md.getHelpBaseUrl());
@@ -506,7 +507,7 @@ public class ModelIO {
     // ModelProperty object
     private Element createPropertyElement(Document document, ModelProperty property) {
         Element propertyElement = (Element) document.createElement("property");
-        propertyElement.setAttribute("component", property.component.getName());
+        propertyElement.setAttribute("component", property.component.getInstanceName());
         if (property.var != null) {
             propertyElement.setAttribute("attribute", property.var.getName());
             propertyElement.setAttribute("type", JAMSDataFactory.getBelongingInterface(property.var.getType()).getSimpleName());
@@ -516,7 +517,7 @@ public class ModelIO {
         } else {
             propertyElement.setAttribute("attribute", ParameterProcessor.COMPONENT_ENABLE_VALUE);
             propertyElement.setAttribute("type", Attribute.Boolean.class.getSimpleName());
-            propertyElement.setAttribute("value", property.value);
+//            propertyElement.setAttribute("value", property.value);
         }
         //propertyElement.setAttribute("default", property.defaultValue);
         propertyElement.setAttribute("description", property.description);
@@ -556,8 +557,9 @@ public class ModelIO {
                 cd.setClazz(jams.model.JAMSContext.class);
         }
 
-        rootElement.setAttribute("name", cd.getName());
+        rootElement.setAttribute("name", cd.getInstanceName());
         rootElement.setAttribute("class", cd.getClazz().getName());
+        rootElement.setAttribute("enabled", Boolean.toString(cd.isEnabled()));
         rootElement.appendChild(document.createTextNode("\n"));
 
         Element element;
@@ -586,7 +588,7 @@ public class ModelIO {
                 element.setAttribute("name", var.getName());
                 if (!var.getAttribute().equals("")) {
                     element.setAttribute("attribute", var.getAttribute());
-                    element.setAttribute("context", var.getContext().getName());
+                    element.setAttribute("context", var.getContext().getInstanceName());
                 }
                 if (!StringTools.isEmptyString(var.getValue())) {
                     element.setAttribute("value", var.getValue());

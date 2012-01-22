@@ -309,7 +309,7 @@ public class ComponentAttributePanel extends JPanel {
 
         //set component's and var's name
         localNameText.setText(var.getName());
-        compNameText.setText(component.getName());
+        compNameText.setText(component.getInstanceName());
 
         //fill the context combo box
         this.contextCombo.setModel(new DefaultComboBoxModel(ancestorArray));

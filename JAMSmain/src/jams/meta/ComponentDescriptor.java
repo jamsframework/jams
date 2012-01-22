@@ -48,6 +48,7 @@ public class ComponentDescriptor extends Observable {
 //    private int type;
     private ComponentCollection componentRepository;
     private ModelNode node;
+    private boolean enabled = true;
 
     public ComponentDescriptor(String instanceName, Class clazz) throws NullClassException {
 
@@ -58,24 +59,15 @@ public class ComponentDescriptor extends Observable {
         this.clazz = clazz;
         this.instanceName = instanceName;
 
-//        if (Model.class.isAssignableFrom(clazz)) {
-//            this.type = MODEL_TYPE;
-//        } else if (Context.class.isAssignableFrom(clazz)) {
-//            this.type = CONTEXT_TYPE;
-//        } else {
-//            this.type = COMPONENT_TYPE;
-//        }
-
         init();
-
     }
 
-    public ComponentDescriptor(String instanceName, Class clazz, ComponentCollection md, ExceptionHandler jeh) throws NullClassException {
+    public ComponentDescriptor(String instanceName, Class clazz, ComponentCollection md, ExceptionHandler eh) throws NullClassException {
         this(instanceName, clazz);
         try {
             register(md);
         } catch (RenameException re) {
-            jeh.handle(re);
+            eh.handle(re);
         }
     }
 
@@ -110,7 +102,7 @@ public class ComponentDescriptor extends Observable {
 
     @Override
     public String toString() {
-        return getName();
+        return getInstanceName();
     }
 
     public void setComponentAttribute_(String name, String value) {
@@ -123,14 +115,15 @@ public class ComponentDescriptor extends Observable {
     public void outputUnsetAttributes() {
         for (ComponentField ad : getComponentFields().values()) {
             if (ad.getAttribute() == null && ad.getContext() == null && ad.getValue() == null) {
-                Logger.getLogger(ComponentDescriptor.class.getName()).log(Level.INFO, JAMS.i18n("Attribute_") + ad.getName() + " (" + ad.getType() + JAMS.i18n(")_not_set_in_component_") + getName());
+                Logger.getLogger(ComponentDescriptor.class.getName()).log(Level.INFO, JAMS.i18n("Attribute_") + ad.getName() + " (" + ad.getType() + JAMS.i18n(")_not_set_in_component_") + getInstanceName());
             }
         }
     }
 
     public ComponentDescriptor cloneNode() throws JAMSException {
 
-        ComponentDescriptor copy = new ComponentDescriptor(getName(), getClazz());
+        ComponentDescriptor copy = new ComponentDescriptor(getInstanceName(), getClazz());
+        copy.setEnabled(this.isEnabled());
         for (String name : componentFields.keySet()) {
             ComponentField ca = componentFields.get(name);
             ComponentField caCopy = new ComponentField(ca.getName(), ca.getType(), ca.getAccessType(), copy);
@@ -138,14 +131,14 @@ public class ComponentDescriptor extends Observable {
             copy.componentFields.put(name, caCopy);
             if (ca.getContextAttributes().size() > 0) {
                 caCopy.linkToAttribute(ca.getContext(), ca.getAttribute());
-                //copy.linkComponentAttribute(ca.name, ca.getContextAttribute().getContext(), ca.getContextAttribute().getName());
+                //copy.linkComponentAttribute(ca.name, ca.getContextAttribute().getContext(), ca.getContextAttribute().getInstanceName());
             }
         }
 
         return copy;
     }
 
-    public String getName() {
+    public String getInstanceName() {
         return instanceName;
     }
 
@@ -191,6 +184,14 @@ public class ComponentDescriptor extends Observable {
         if (!this.instanceName.equals(name)) {
             throw new RenameException(MessageFormat.format(JAMS.i18n("Component_name_is_already_in_use._Renamed_component_to_"), name, this.instanceName), JAMS.i18n("Invalid_value!"));
         }
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public class RenameException extends JAMSException {

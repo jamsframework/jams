@@ -37,9 +37,9 @@ public class BooleanInput extends JCheckBox implements InputComponent {
 
     public String getValue() {
         if (isSelected()) {
-            return "1";
+            return "true";
         } else {
-            return "0";
+            return "false";
         }
     }
 

@@ -133,7 +133,7 @@ public class ContextReplaceDlg extends JDialog {
         //get component names, sort them and put them into JLabel
         ArrayList<String> componentNames = new ArrayList<String>();
         for (ComponentDescriptor cd : components) {
-            componentNames.add(cd.getName());
+            componentNames.add(cd.getInstanceName());
         }
         Collections.sort(componentNames);
         for (String name : componentNames) {

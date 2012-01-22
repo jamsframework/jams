@@ -76,7 +76,7 @@ public class JAMSTree extends JTree {
             } catch (InterruptedException ex) {
             } catch (InvocationTargetException ex) {
             }
-        
+
         } else {
 
             // just call updateUI the normal way
@@ -121,6 +121,11 @@ public class JAMSTree extends JTree {
             if (node instanceof JAMSNode) {
                 JAMSNode jNode = (JAMSNode) node;
                 setIcon(JAMSNode.NODE_ICON[jNode.getType()]);
+                Object o = jNode.getUserObject();
+                if (o instanceof ComponentDescriptor) {
+                    ComponentDescriptor cd = (ComponentDescriptor) o;
+                    this.setEnabled(cd.isEnabled());
+                }
             }
             return this;
         }

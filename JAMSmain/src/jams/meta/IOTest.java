@@ -86,7 +86,7 @@ public class IOTest {
         ArrayList<ComponentField> fields = md.getParameterFields();
 
         for (ComponentField field : fields) {
-            System.out.println(field.getParent().getName() + "." + field.getName());
+            System.out.println(field.getParent().getInstanceName() + "." + field.getName());
         }
 
 
@@ -132,7 +132,7 @@ public class IOTest {
     }
 
     static void output(ComponentDescriptor cd, String indent) {
-        System.out.println(indent + cd.getName() + " [" + cd.getClazz() + "] " + cd.getNode().getType());
+        System.out.println(indent + cd.getInstanceName() + " [" + cd.getClazz() + "] " + cd.getNode().getType());
         HashMap<String, ComponentField> fields = cd.getComponentFields();
         for (String fieldName : fields.keySet()) {
             ComponentField field = fields.get(fieldName);

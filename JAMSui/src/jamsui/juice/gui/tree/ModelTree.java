@@ -23,6 +23,7 @@ package jamsui.juice.gui.tree;
 
 import jams.JAMS;
 import jams.JAMSException;
+import java.awt.Component;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +34,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -51,6 +53,8 @@ import jamsui.juice.JUICE;
 import jamsui.juice.gui.ComponentInfoDlg;
 import javax.swing.JFrame;
 import jamsui.juice.gui.ModelView;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import org.w3c.dom.Document;
 
 /**
@@ -88,6 +92,16 @@ public class ModelTree extends JAMSTree {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
                 displayComponentInfo();
+            }
+        });
+
+        JMenuItem toggleEnabledItem = new JMenuItem(JAMS.i18n("Toggle_enable"));
+        toggleEnabledItem.setAccelerator(KeyStroke.getKeyStroke('E'));
+        toggleEnabledItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                toggleEnable();
             }
         });
 
@@ -131,6 +145,7 @@ public class ModelTree extends JAMSTree {
         });
 
         popup = new JPopupMenu();
+        popup.add(toggleEnabledItem);
         popup.add(showMetadataItem);
         popup.add(deleteItem);
         popup.add(moveUpItem);
@@ -195,6 +210,20 @@ public class ModelTree extends JAMSTree {
         }
 
         this.setSelectionPath(null);
+    }
+
+    private void toggleEnable() {
+        if (this.getSelectionPaths() == null) {
+            return;
+        }
+
+        for (TreePath path : this.getSelectionPaths()) {
+
+            JAMSNode node = (JAMSNode) path.getLastPathComponent();
+            ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
+            cd.setEnabled(!cd.isEnabled());
+            this.updateUI();
+        }
     }
 
     private void showMetaData() {

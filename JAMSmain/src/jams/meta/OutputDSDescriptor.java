@@ -51,14 +51,14 @@ public class OutputDSDescriptor {
         Document document = builder.newDocument();
 
         Element dsElement = (Element) document.createElement("outputdatastore");
-        dsElement.setAttribute("context", this.context.getName());
+        dsElement.setAttribute("context", this.context.getInstanceName());
         dsElement.setAttribute("name", this.getName());
         dsElement.setAttribute("enabled", Boolean.toString(this.enabled));
         dsElement.appendChild(document.createTextNode("\n"));
 
         for (FilterDescriptor f : filters) {
             Element filterElement = (Element) document.createElement("filter");
-            filterElement.setAttribute("context", f.context.getName());
+            filterElement.setAttribute("context", f.context.getInstanceName());
             filterElement.setAttribute("expression", f.expression);
             dsElement.appendChild(filterElement);
         }
@@ -121,7 +121,7 @@ public class OutputDSDescriptor {
         } else {
             enabledChar = Character.toChars(9744)[0];
         }
-        return /*enabledChar + " " + */name + " [" + context.getName() + "]";
+        return /*enabledChar + " " + */name + " [" + context.getInstanceName() + "]";
     }
 
     public FilterDescriptor addFilter(ContextDescriptor context, String expression) {
@@ -155,7 +155,7 @@ public class OutputDSDescriptor {
         public ContextDescriptor context;
 
         public String toString() {
-            return expression + " [" + context.getName() + "]";
+            return expression + " [" + context.getInstanceName() + "]";
         }
     }
 }

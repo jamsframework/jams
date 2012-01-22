@@ -136,10 +136,11 @@ public class JAMSFrame extends JAMSLauncher {
             // finally, create the model document from the string
             this.modelDocument = XMLTools.getDocumentFromString(xmlString);
 
-            if (jmpParameters!=null){
+            if (jmpParameters != null) {
                 modelDocument = ParameterProcessor.loadParams(modelDocument, jmpParameters);
             }
 
+            ParameterProcessor.preProcess(modelDocument);            
             this.initialModelDocString = XMLTools.getStringFromDocument(this.modelDocument);
 
         } catch (IOException ioe) {
@@ -619,14 +620,17 @@ public class JAMSFrame extends JAMSLauncher {
         }
     }
 
+    @Override
     protected void processInfoLog(String logText) {
         JAMSFrame.this.getInfoDlg().appendText(logText);
     }
 
+    @Override
     protected void processErrorLog(String logText) {
         JAMSFrame.this.getErrorDlg().appendText(logText);
     }
 
+    @Override
     protected void exit() {
         //close the current model
         if (!closeModel()) {

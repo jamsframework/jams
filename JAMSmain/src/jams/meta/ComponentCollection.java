@@ -47,7 +47,7 @@ public class ComponentCollection {
     }
 
     public void unRegisterComponentDescriptor(ComponentDescriptor cd) {
-        componentDescriptors.remove(cd.getName());
+        componentDescriptors.remove(cd.getInstanceName());
     }
 
     public String createComponentInstanceName(String name) {

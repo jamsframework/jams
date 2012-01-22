@@ -254,7 +254,7 @@ public class ModelProperties {
 
     public class ModelProperty extends ModelElement {
 
-        public String value,  description;
+        public String description;
         public ComponentDescriptor component;
         public ComponentField var;
         public ContextAttribute attribute;
