@@ -1,5 +1,5 @@
 #JAMS-Konfigurationsdatei
-#Fri Nov 04 10:57:27 CET 2011
+#Mon Jan 23 21:36:14 CET 2012
 infolog=
 libs=lib
 guiconfig=1
@@ -7,14 +7,14 @@ docbook-home=docbook/
 model=
 charset=
 username=
-profiling=0
-defaultworkspace=1
-windowenable=1
-errordlg=1
-windowontop=0
+profiling=false
+defaultworkspace=true
+windowenable=true
+errordlg=true
+windowontop=false
 forcelocale=
 windowheight=600
-verbose=0
+verbose=false
 debug=1
 guiconfigheight=600
 windowwidth=900
