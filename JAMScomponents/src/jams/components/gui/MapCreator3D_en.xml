@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>MapCreator3D</title>
+  <subtitle>A component for 3D visualization of a catchment area.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>visualization</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>stylesFileName</entry>
+          <entry>name of SLD-File containing layer style information</entry>
+        </row>
+        <row>
+          <entry>styleID</entry>
+          <entry>ID of a style in the SLD-File to be used for mapping</entry>
+        </row>
+        <row>
+          <entry>hrus</entry>
+          <entry>name of the HRU attribute to be used for mapping</entry>
+        </row>
+        <row>
+          <entry>showAttr</entry>
+          <entry>list of attributes used for mapping</entry>
+        </row>
+        <row>
+          <entry>numOfRanges</entry>
+          <entry>number of ranges to classify attributes</entry>
+        </row>
+        <row>
+          <entry>rangeColor</entry>
+          <entry>color to shade ranges</entry>
+        </row>
+        <row>
+          <entry>shapeFileName1</entry>
+          <entry>name of shapefile to map additional layers</entry>
+        </row>
+        <row>
+          <entry>shapeFileName2</entry>
+          <entry>name of shapefile to map additional layers</entry>
+        </row>
+        <row>
+          <entry>shapeFileName3</entry>
+          <entry>name of shapefile to map additional layers</entry>
+        </row>
+        <row>
+          <entry>shapeColors</entry>
+          <entry>colors for additional shapefiles</entry>
+        </row>
+        <row>
+          <entry>baseShape</entry>
+          <entry>original name of shapefile</entry>
+        </row>
+        <row>
+          <entry>heightMap</entry>
+          <entry>filename of a height map of the catchment area </entry>
+        </row>
+        <row>
+          <entry>resolution</entry>
+          <entry>horizontal/vertical resolution of the calculated 3D model</entry>
+        </row>
+        <row>
+          <entry>light</entry>
+          <entry>switch for light of 3D model</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+    <sect2>
+    <title>Component Description</title>
+      <para>It creates an interactive three-dimensional visualization of the catchment area.
+      Spatially distinct attributes of the hrus attribute can be projected on the map's surface. The
+      layer style can be adjusted by using an sld file and color shades. Extra shape layers can be
+      added.</para>
+  </sect2>
+</sect1>
