@@ -130,7 +130,7 @@ public class ModelView {
 
                         // try to determine the default workspace directory
                         String defaultWorkspacePath = null;
-                        if (JUICE.getJamsProperties().getProperty(JAMSProperties.USE_DEFAULT_WS_PATH).equals("1") && (getSavePath() != null)) {
+                        if (Boolean.parseBoolean(JUICE.getJamsProperties().getProperty(JAMSProperties.USE_DEFAULT_WS_PATH)) && (getSavePath() != null)) {
                             defaultWorkspacePath = getSavePath().getParent();
                         }
 

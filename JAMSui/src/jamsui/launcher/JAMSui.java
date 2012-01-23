@@ -95,20 +95,20 @@ public class JAMSui {
         JAMSTools.configureLocaleEncoding(properties);
 
         if (cmdLine.isNogui()) {
-            properties.setProperty(JAMSProperties.GUICONFIG_IDENTIFIER, "0");
-            properties.setProperty(JAMSProperties.WINDOWENABLE_IDENTIFIER, "0");
-            properties.setProperty(JAMSProperties.VERBOSITY_IDENTIFIER, "1");
-            properties.setProperty(JAMSProperties.ERRORDLG_IDENTIFIER, "0");
+            properties.setProperty(JAMSProperties.GUICONFIG_IDENTIFIER, "false");
+            properties.setProperty(JAMSProperties.WINDOWENABLE_IDENTIFIER, "false");
+            properties.setProperty(JAMSProperties.VERBOSITY_IDENTIFIER, "true");
+            properties.setProperty(JAMSProperties.ERRORDLG_IDENTIFIER, "false");
         }
 
-        int guiConfig = Integer.parseInt(properties.getProperty(SystemProperties.GUICONFIG_IDENTIFIER, "0"));
+        boolean guiConfig = Boolean.parseBoolean(properties.getProperty(SystemProperties.GUICONFIG_IDENTIFIER, "false"));
         String modelFileName = cmdLine.getModelFileName();
 
         // check if there is a model file provided
         if ((modelFileName == null)) {
 
             //check if at least GUI is enabled
-            if (guiConfig == 1) {
+            if (guiConfig) {
                 startGUI();
             } else {
                 System.out.println(JAMS.i18n("You_must_provide_a_model_file_name_(see_JAMS_--help)_when_disabling_GUI_config!"));
@@ -120,7 +120,7 @@ public class JAMSui {
             String cmdLineParameterValues = cmdLine.getParameterValues();
 
             // if there is a model file, check if the user wants to use GUI
-            if (guiConfig == 1) {
+            if (guiConfig) {
 
                 try {
                     Properties props = null;
@@ -176,7 +176,7 @@ public class JAMSui {
 
                     // try to determine the default workspace directory
                     String defaultWorkspacePath = null;
-                    if (properties.getProperty(JAMSProperties.USE_DEFAULT_WS_PATH).equals("1") && !StringTools.isEmptyString(modelFileName)) {
+                    if (Boolean.parseBoolean(properties.getProperty(JAMSProperties.USE_DEFAULT_WS_PATH)) && !StringTools.isEmptyString(modelFileName)) {
                         defaultWorkspacePath = new File(modelFileName).getParent();
                     }
 

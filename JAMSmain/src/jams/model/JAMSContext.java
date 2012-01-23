@@ -566,9 +566,11 @@ public class JAMSContext extends JAMSComponent implements Context {
 
         initEntityData();
 
-        if (dataTracers != null)
-            for (DataTracer t : this.dataTracers)
+        if (dataTracers != null) {
+            for (DataTracer t : this.dataTracers) {
                 t.updateDataAccessors();
+            }
+        }
 
         createRunRunnable(getModel().isProfiling());
         createResumeRunnable(getModel().isProfiling());

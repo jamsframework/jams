@@ -137,7 +137,7 @@ public class JAMSLauncher extends JFrame {
 
                 // try to determine the default workspace directory
                 String defaultWorkspacePath = null;
-                if (properties.getProperty(JAMSProperties.USE_DEFAULT_WS_PATH).equals("1") && (loadPath != null)) {
+                if (Boolean.parseBoolean(properties.getProperty(JAMSProperties.USE_DEFAULT_WS_PATH)) && (loadPath != null)) {
                     defaultWorkspacePath = loadPath.getParent();
                 }
 

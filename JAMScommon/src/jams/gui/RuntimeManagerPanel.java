@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.DefaultListModel;
@@ -88,9 +89,9 @@ public class RuntimeManagerPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                Object[] rtInfoArray = runtimeList.getSelectedValues();
-                if (rtInfoArray != null) {
-                    for (Object o : rtInfoArray) {
+                List rtInfoList = runtimeList.getSelectedValuesList();
+                if (rtInfoList != null) {
+                    for (Object o : rtInfoList) {
                         RuntimeManager.RuntimeInfo rtInfo = (RuntimeManager.RuntimeInfo) o;
                         rtInfo.getRuntime().sendHalt();
                     }

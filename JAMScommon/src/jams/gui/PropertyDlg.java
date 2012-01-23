@@ -266,7 +266,7 @@ public class PropertyDlg extends JDialog {
         windowEnable.setValue(properties.getProperty(SystemProperties.WINDOWENABLE_IDENTIFIER));
         errorDlg.setValue(properties.getProperty(SystemProperties.ERRORDLG_IDENTIFIER));
         windowOnTop.setValue(properties.getProperty(SystemProperties.WINDOWONTOP_IDENTIFIER));
-        profiling.setValue(properties.getProperty(SystemProperties.PROFILE_IDENTIFIER));
+        profiling.setValue(properties.getProperty(SystemProperties.PROFILING_IDENTIFIER));
         defaultWSPath.setValue(properties.getProperty(SystemProperties.USE_DEFAULT_WS_PATH));
         forceLocale.setValue(properties.getProperty(SystemProperties.LOCALE_IDENTIFIER));
         charset.setValue(properties.getProperty(SystemProperties.CHARSET_IDENTIFIER));
@@ -296,7 +296,7 @@ public class PropertyDlg extends JDialog {
         properties.setProperty(SystemProperties.WINDOWENABLE_IDENTIFIER, windowEnable.getValue());
         properties.setProperty(SystemProperties.ERRORDLG_IDENTIFIER, errorDlg.getValue());
         properties.setProperty(SystemProperties.WINDOWONTOP_IDENTIFIER, windowOnTop.getValue());
-        properties.setProperty(SystemProperties.PROFILE_IDENTIFIER, profiling.getValue());
+        properties.setProperty(SystemProperties.PROFILING_IDENTIFIER, profiling.getValue());
         properties.setProperty(SystemProperties.USE_DEFAULT_WS_PATH, defaultWSPath.getValue());
         properties.setProperty(SystemProperties.LOCALE_IDENTIFIER, forceLocale.getValue());
         properties.setProperty(SystemProperties.CHARSET_IDENTIFIER, charset.getValue());
