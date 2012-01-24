@@ -76,12 +76,12 @@
     </target-->
 
     <target name="doJ2K">
-        <ant antfile="../../nbprojects/J2K/build.xml" inheritall="false" target="jar"/>
+        <ant antfile="../../jamsmodels/nbprojects/J2K/build.xml" inheritall="false" target="jar"/>
         <echo>Created J2K</echo>
     </target>
 
     <target name="doThornthwaite">
-        <ant antfile="../../nbprojects/Thornthwaite/build.xml" inheritall="false" target="jar"/>
+        <ant antfile="../../jamsmodels/nbprojects/Thornthwaite/build.xml" inheritall="false" target="jar"/>
         <echo>Created Thornthwaite</echo>
     </target>
 
