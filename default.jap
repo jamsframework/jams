@@ -2,7 +2,7 @@
 #Mon Jan 23 21:36:14 CET 2012
 infolog=
 libs=lib
-guiconfig=1
+guiconfig=true
 docbook-home=docbook/
 model=
 charset=
